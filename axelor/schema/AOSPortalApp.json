@@ -1,0 +1,48 @@
+{
+  "name": "AOSPortalApp",
+  "table": "portal_portal_app",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "String",
+      "name": "code"
+    },
+    {
+      "type": "String",
+      "name": "color"
+    },
+    {
+      "type": "String",
+      "name": "background"
+    },
+    {
+      "type": "String",
+      "name": "icon"
+    },
+    {
+      "type": "String",
+      "name": "installed"
+    },
+    {
+      "type": "Int",
+      "name": "orderForMySpaceMenu"
+    },
+    {
+      "type": "Int",
+      "name": "orderForTopMenu"
+    },
+    {
+      "type": "Boolean",
+      "name": "showInMySpace"
+    },
+    {
+      "type": "Boolean",
+      "name": "showInTopMenu"
+    }
+  ]
+}

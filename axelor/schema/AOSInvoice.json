@@ -1,0 +1,64 @@
+{
+  "name": "AOSInvoice",
+  "table": "account_invoice",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "invoiceId"
+    },
+    {
+      "type": "Int",
+      "name": "operationTypeSelect"
+    },
+    {
+      "type": "Date",
+      "name": "invoiceDate"
+    },
+    {
+      "type": "Date",
+      "name": "dueDate"
+    },
+    { "type": "Decimal", "name": "exTaxTotal" },
+    { "type": "Decimal", "name": "inTaxTotal" },
+    {
+      "type": "Decimal",
+      "name": "amountRemaining"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "company",
+      "target": "AOSCompany"
+    },
+    {
+      "type": "String",
+      "name": "note"
+    },
+    {
+      "type": "OneToMany",
+      "name": "invoiceLineList",
+      "target": "AOSInvoiceLine",
+      "mappedBy": "invoice"
+    },
+    {
+      "type": "Decimal",
+      "name": "taxTotal"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "partner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "paymentCondition",
+      "target": "AOSPaymentCondition"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "currency",
+      "target": "AOSCurrency"
+    }
+  ]
+}

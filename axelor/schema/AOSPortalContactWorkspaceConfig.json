@@ -1,0 +1,29 @@
+{
+  "name": "AOSPortalContactWorkspaceConfig",
+  "table": "portal_portal_contact_workspace_config",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalWorkspace",
+      "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "OneToMany",
+      "name": "contactAppPermissionList",
+      "target": "AOSPortalContactAppPermission",
+      "mappedBy": "contactWorkspaceConfig"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "contacts",
+      "target": "AOSPartner",
+      "mappedBy": "contactWorkspaceConfigSet"
+    }
+  ]
+}

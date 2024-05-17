@@ -1,0 +1,83 @@
+{
+  "name": "AOSOrder",
+  "table": "sale_sale_order",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "saleOrderSeq"
+    },
+    { "type": "Decimal", "name": "statusSelect" },
+    { "type": "Decimal", "name": "deliveryState" },
+    {
+      "type": "Date",
+      "name": "createdOn"
+    },
+    {
+      "type": "Decimal",
+      "name": "inTaxTotal"
+    },
+    {
+      "type": "Decimal",
+      "name": "exTaxTotal"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "currency",
+      "target": "AOSCurrency"
+    },
+    {
+      "type": "Boolean",
+      "name": "template"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "shipmentMode",
+      "target": "AOSShipmentMode"
+    },
+    { "type": "ManyToOne", "name": "clientPartner", "target": "AOSPartner" },
+    {
+      "type": "ManyToOne",
+      "name": "company",
+      "target": "AOSCompany"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "mainInvoicingAddress",
+      "target": "AOSAddress"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "deliveryAddress",
+      "target": "AOSAddress"
+    },
+    {
+      "type": "OneToMany",
+      "name": "saleOrderLineList",
+      "target": "AOSSaleOrderLine",
+      "mappedBy": "saleOrder"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "currency",
+      "target": "AOSCurrency"
+    },
+    {
+      "type": "String",
+      "name": "externalReference"
+    },
+    {
+      "type": "Date",
+      "name": "endOfValidityDate"
+    },{
+      "type":"ManyToOne",
+      "name":"contactPartner",
+      "target":"AOSPartner"
+    }
+  ]
+}

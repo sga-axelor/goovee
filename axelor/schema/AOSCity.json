@@ -1,0 +1,21 @@
+{
+  "name": "AOSCity",
+  "table": "base_city",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "String",
+      "name": "zip"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "country",
+      "target": "AOSCountry"
+    }
+  ]
+}

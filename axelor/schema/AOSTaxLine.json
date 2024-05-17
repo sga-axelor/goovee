@@ -1,0 +1,21 @@
+{
+  "name": "AOSTaxLine",
+  "table": "account_tax_line",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "Int",
+      "name": "value"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "tax",
+      "target": "AOSTax"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+.badge {
+  position: absolute !important;
+  left: 1rem;
+  font-size: 0.65rem;
+  top: -0.5rem;
+  [dir="rtl"] & {
+    left: unset;
+    right: 1rem;
+  }
+}

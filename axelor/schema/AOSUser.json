@@ -1,0 +1,16 @@
+{
+  "name": "AOSUser",
+  "table": "auth_user",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "id"
+    },
+    {
+      "type": "String",
+      "name": "name"
+    }
+  ]
+}

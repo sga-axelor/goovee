@@ -1,0 +1,9 @@
+export { Card } from "./card-view";
+export { Contacts } from "./contacts";
+export { Comments } from "./comments";
+export { History } from "./history";
+export { Informations } from "./information";
+export { Products } from "./products";
+export { ProductCard } from "./product-card";
+export { QuotationsTable } from "./table";
+export { Total } from "./total";

@@ -1,0 +1,38 @@
+{
+  "name": "AOSPartnerPortalWorkspace",
+  "table": "portal_partner_portal_workspace",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "apps",
+      "target": "AOSPortalApp"
+    },
+    {
+      "type": "Boolean",
+      "name": "defaultWorkspace",
+      "column": "is_default_workspace_after_login"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalAppConfig",
+      "target": "AOSPortalAppConfig"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "workspace",
+      "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "partners",
+      "target": "AOSPartner",
+      "mappedBy": "partnerWorkspaceSet"
+    }
+  ]
+}

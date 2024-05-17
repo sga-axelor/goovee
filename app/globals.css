@@ -1,0 +1,77 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: linear-gradient(0deg, #f8f9fa, #f8f9fa),
+    linear-gradient(
+      121.39deg,
+      rgba(248, 249, 250, 0.4) 2.84%,
+      rgba(246, 241, 255, 0.4) 87.79%
+    ),
+    linear-gradient(
+      240.93deg,
+      rgba(248, 249, 250, 0.3) 30.33%,
+      rgba(230, 231, 231, 0.3) 92.1%
+    );
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+:root {
+  --portal-blue-50: #d0e3ff;
+  --portal-blue-100: #4360c7;
+
+  --portal-orange-50: #ffdacc;
+  --portal-orange-100: #fb5c23;
+
+  --portal-purple-50: #f6f1ff;
+  --portal-purple-100: #ac8fd6;
+
+  --portal-pink-50: #fbd0e1;
+  --portal-pink-100: #ee4488;
+
+  --portal-green-50: #d0eedb;
+  --portal-green-100: #72cd93;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(179, 177, 177);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(136, 136, 136);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(100, 100, 100);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgb(68, 68, 68);
+  border-radius: 10px;
+}
+
+@media (max-width: 576px) {
+  .portal-container {
+    max-width: 375px;
+  }
+}

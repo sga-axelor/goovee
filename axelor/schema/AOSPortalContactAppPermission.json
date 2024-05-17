@@ -1,0 +1,22 @@
+{
+  "name": "AOSPortalContactAppPermission",
+  "table": "portal_portal_contact_app_permission",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "roleSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "app",
+      "target": "AOSPortalApp"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "contactWorkspaceConfig",
+      "target": "AOSPortalContactWorkspaceConfig"
+    }
+  ]
+}
