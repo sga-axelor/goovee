@@ -2,9 +2,9 @@
 
 import React from "react";
 
-import { Box, Button } from "@axelor/ui";
+import { Box } from "@axelor/ui";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-
+import { Button } from "@/components/ui/button"
 // ---- CORE IMPORTS ---- //
 import { BackgroundImage } from "@/ui/components";
 import { getImageURL } from "@/utils/product";
@@ -45,20 +45,12 @@ export function ProductListItem({
 
   return (
     <Box
-      shadow="lg"
-      bg="white"
-      d="grid"
-      gridTemplateColumns="auto 1fr"
-      gap="1rem"
-      p={3}
-      w={100}
-      className="pointer"
-      style={{ borderRadius: "1rem" }}
+      className="cursor-pointer rounded-2xl grid grid-cols-[238px_1fr] gap-6 w-full bg-background text-primary"
     >
       <BackgroundImage
         position="relative"
-        height={large ? 260 : 80}
-        width={large ? 260 : 80}
+        height={large ? 235 : 80}
+        width={large ? 238 : 80}
         src={getImageURL(product.images?.[0])}
         border
       >
@@ -86,24 +78,24 @@ export function ProductListItem({
           </Box>
         )}
       </BackgroundImage>
-      <Box d="flex" flexDirection="column" justifyContent="space-between">
+      <Box className="p-6 pl-0 flex flex-col justify-between">
         <Box onClick={handleClick}>
           <>
-            <Box d="flex" justifyContent="space-between" mb={2} gap="0.5rem">
+            <Box className="flex justify-between mb-6">
               <Box>
-                <Box as={large ? "h5" : "p"} mb={0} fontWeight="bold">
+                <Box as={large ? "h5" : "p"} className="text-base font-medium mb-0">
                   {i18n.getValueAttribute(product.name)}
                 </Box>
               </Box>
               <Box flexShrink={0} textAlign="end">
                 {displayPrices && (
                   <>
-                    <Box as={large ? "h4" : "p"} mb={0}>
-                      <b>{displayPrimary}</b>
+                    <Box as={large ? "h4" : "p"} className="text-xl font-semibold mb-0">
+                    {displayPrimary}
                     </Box>
                     {displayTwoPrices && (
-                      <Box as={large ? "h6" : "small"} mt={2} mb={0}>
-                        <b>{displaySecondary}</b>
+                      <Box as={large ? "h6" : "small"} className="text-sm font-medium mt-2 mb-0">
+                        {displaySecondary}
                       </Box>
                     )}
                   </>
@@ -112,7 +104,7 @@ export function ProductListItem({
             </Box>
             <Box
               as="p"
-              fontSize={6}
+              className="text-xs mb-0"
               dangerouslySetInnerHTML={{
                 __html: product.description || "",
               }}
@@ -122,22 +114,16 @@ export function ProductListItem({
             ></Box>
           </>
         </Box>
-        <Box textAlign="end">
+        <Box className="flex justify-end">
           <Button
-            gap="1rem"
-            p={3}
-            variant="primary"
-            rounded="pill"
             onClick={handleAdd}
-            d="inline-flex"
-            alignItems="center"
-            size="sm"
+            className="flex bg-primary gap-4 items-center"
           >
-            <Box d="inline-flex">
-              <MaterialIcon icon="add_shopping_cart" />
+            <Box className="inline-flex">
+              <MaterialIcon icon="add_shopping_cart" className="text-primary-foreground" />
             </Box>
             {large && (
-              <Box as="p" d="inline-block" mb={0} fontSize={6}>
+              <Box as="p" className="text-sm font-medium mb-0 text-primary-foreground">
                 {i18n.get("Add to cart")}
               </Box>
             )}

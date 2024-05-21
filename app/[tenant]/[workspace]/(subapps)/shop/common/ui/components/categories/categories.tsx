@@ -49,7 +49,7 @@ function MobileCategories({
         <Box d="flex">
           <MaterialIcon
             icon="menu"
-            className="pointer"
+            className="cursor-pointer"
             onClick={() => (show ? hideDrawer() : showDrawer())}
           />
         </Box>
@@ -99,13 +99,7 @@ export const Categories = ({
 
   return large ? (
     <Box
-      mx="auto"
-      d="flex"
-      alignItems="center"
-      gap="1rem"
-      mb={1}
-      className={clsx(cs("container"), "portal-container")}
-      style={{ overflowX: "auto" }}
+      className="mx-auto flex items-center gap-4 mb-0 overflow-x-auto px-6 py-4 bg-background border-t border-border border-solid"
     >
       {items.map((category, index) => {
         return (
@@ -185,21 +179,16 @@ const Category = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={closeDropdown}
-      position="relative"
-      flexShrink={0}
-      py={1}
+      className="shrink-0 relative"
     >
       {item.items?.length ? (
         <>
           <Box
-            d="flex"
-            alignItems="center"
             onClick={handleDropdownClick}
-            className="pointer"
-            justifyContent="space-between"
             ref={setTarget}
+            className="flex items-center justify-center cursor-pointer text-base font-medium text-primary"
           >
-            <Box as="p" mb={0} p={2} fontSize={5}>
+            <Box as="p"className="px-2 mb-0">
               {i18n.get(item.name)}
             </Box>
             <MaterialIcon
@@ -217,10 +206,7 @@ const Category = ({
       ) : (
         <Box
           as="p"
-          p={2}
-          mb={0}
-          fontSize={5}
-          className="pointer"
+          className="cursor-pointer pl-4 mb-0 text-base font-medium text-primary border-l-2 border-primary border-solid"
           onClick={handleClick}
         >
           {i18n.get(item.name)}

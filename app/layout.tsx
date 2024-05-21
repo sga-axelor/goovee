@@ -25,7 +25,7 @@ export default async function RootLayout({
   return (
     <Theme options={themeOptions}>
       <html lang="en">
-        <body>
+        <body className="bg-muted">
           <AuthContext>
             <Locale>{children}</Locale>
           </AuthContext>
