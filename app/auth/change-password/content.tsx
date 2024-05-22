@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Button, TextField } from "@axelor/ui";
-
+import { TextField } from "@axelor/ui";
+import { Button } from "@/components/ui/button"
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
-
+import { Toast } from "@/ui/components";
 export default function Content() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -19,18 +19,12 @@ export default function Content() {
   };
 
   return (
-    <Box px={{ base: 3, md: 5 }} py={{ base: 2, md: 3 }}>
-      <Box as="h2" mb={3}>
-        <b>{i18n.get("Change password")}</b>
-      </Box>
-      <Box
-        as="form"
-        bg="white"
-        rounded={2}
-        p={3}
-        d="grid"
-        gridTemplateColumns="1fr"
-        gap="1rem"
+    <div className="mx-auto p-6 md:p-4 w-[1185px]">
+      <h5 className="mb-3 font-medium text-primary">
+        {i18n.get("Change password")}
+      </h5>
+      <form
+        className="bg-background rounded-lg py-4 px-6 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}
       >
         <TextField
@@ -57,10 +51,13 @@ export default function Content() {
             },
           ]}
         />
-        <Button type="submit" variant="primary" rounded="pill">
+        <Button type="submit"
+          className="rounded-full">
           {i18n.get("Submit")}
         </Button>
-      </Box>
-    </Box>
+        <Toast variant="error" show={true} heading={i18n.get("Your passwords do not match, please try again.")} description={i18n.get("The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.")} />
+        <Toast variant="success" show={true} heading={i18n.get("Your password has been successfully updated.")} description={i18n.get("Add text here if necessary.")} />
+      </form>
+    </div>
   );
 }

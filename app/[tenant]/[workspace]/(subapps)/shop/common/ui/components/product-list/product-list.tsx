@@ -304,7 +304,7 @@ export function ProductList({
             <Box>{i18n.get("No product available.")}</Box>
           )}
         </Box>
-        {/* <Box mt={4} mb={3} d="flex" alignItems="center" justifyContent="center">
+        <Box mt={4} mb={3} d="flex" alignItems="center" justifyContent="center">
           <Pagination
             page={page}
             pages={pages}
@@ -314,7 +314,7 @@ export function ProductList({
             onNext={handleNextPage}
             onPage={handlePage}
           />
-        </Box> */}
+        </Box>
       </Box>
     </Box>
   );

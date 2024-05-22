@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Box, Button, TextField, Divider } from "@axelor/ui";
+import { TextField } from "@axelor/ui";
 import { BootstrapIcon } from "@axelor/ui/icons/bootstrap-icon";
-
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
-
 // ---- LOCAL IMPORTS ---- //
 import { register } from "./actions";
 
@@ -67,23 +67,13 @@ export default function Content() {
   };
 
   return (
-    <Box
-      px={{ base: 5, md: 5 }}
-      py={{ base: 4 }}
-      style={{ width: 500 }}
-      mx="auto"
+    <div className="mx-auto p-6 md:p-4 w-[1185px]"
     >
-      <Box as="h2" mb={3}>
-        <b>{i18n.get("Sign Up")}</b>
-      </Box>
-      <Box
-        as="form"
-        bg="white"
-        rounded={2}
-        p={3}
-        d="grid"
-        gridTemplateColumns="1fr"
-        gap="1rem"
+      <h5 className="mb-3 font-medium text-primary">
+        {i18n.get("Sign Up")}
+      </h5>
+      <form
+        className="bg-background rounded-lg py-4 px-6 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}
       >
         <TextField
@@ -167,40 +157,40 @@ export default function Content() {
           ]}
           required
         />
-        <Button type="submit" variant="primary" rounded="pill">
+        <Button type="submit"
+          className="rounded-full">
           {i18n.get("Sign Up")}
         </Button>
-        <Box>
-          <Box as="p" mb={0} d="inline-block" me={2}>
+        <div>
+          <p className="text-primary inline-flex text-lg mr-2 mb-0">
             {i18n.get("Already have an account")} ?
-          </Box>
-          <Link href={`/auth/login?${searchQuery}`}>
-            <Box d="inline-block" color="secondary">
-              {i18n.get("Sign In")}
-            </Box>
+          </p>
+          <Link href={`/auth/login?${searchQuery}`} className="text-main_purple inline-flex text-decoration-underline text-lg">
+            {i18n.get("Log In")}
           </Link>
-        </Box>
-        {error && <Box color="danger">{error}</Box>}
-      </Box>
-      <Box mt={3} alignItems="center" gap="1rem" d="none">
-        <Box flexGrow={1}>
-          <Divider />
-        </Box>
-        <Box as="h2" mb={0}>
-          <b>{i18n.get("Or")}</b>
-        </Box>
-        <Box flexGrow={1}>
-          <Divider />
-        </Box>
-      </Box>
-      <Box mt={3} d="none">
-        <Button outline variant="primary" rounded="pill" w={100}>
-          <Box d="flex" alignItems="center" justifyContent="center" gap="1rem">
+        </div>
+        {error && <div className="text-[#B2150D]">{error}</div>}
+      </form>
+      <div className="flex items-center gap-4 mt-4">
+        <div className="grow">
+          <Separator />
+        </div>
+        <h5 className="mb-0 font-medium text-primary">
+          {i18n.get("Or")}
+        </h5>
+        <div className="grow">
+          <Separator />
+        </div>
+      </div>
+      <div className="mt-4 hidden">
+        <Button 
+          type="button"
+          variant="outline"
+          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-background">
             <BootstrapIcon icon="google" />
-            <Box>{i18n.get("Create an with Google")}</Box>
-          </Box>
+            <span className="text-primary font-medium">{i18n.get("Create an with Google")}</span>
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

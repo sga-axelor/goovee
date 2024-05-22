@@ -3,11 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Box, Button, TextField } from "@axelor/ui";
-
+import { TextField } from "@axelor/ui";
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
-
+import { Toast } from "@/ui/components";
 export default function Content() {
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
@@ -17,23 +18,13 @@ export default function Content() {
   };
 
   return (
-    <Box
-      px={{ base: 5, md: 5 }}
-      py={{ base: 4 }}
-      style={{ width: 500 }}
-      mx="auto"
+    <div className="mx-auto p-6 md:p-4 w-[1185px]"
     >
-      <Box as="h2" mb={3}>
-        <b>{i18n.get("Forgot Password")} ?</b>
-      </Box>
-      <Box
-        as="form"
-        bg="white"
-        rounded={2}
-        p={3}
-        d="grid"
-        gridTemplateColumns="1fr"
-        gap="1rem"
+      <h5 className="mb-3 font-medium text-primary">
+        {i18n.get("Forgot Password")} ?
+      </h5>
+      <form
+        className="bg-background rounded-lg py-4 px-6 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}
       >
         <TextField
@@ -42,20 +33,19 @@ export default function Content() {
           name="email"
           placeholder="Enter email"
         />
-        <Button type="submit" variant="primary" rounded="pill">
+        <Button type="submit"
+          className="rounded-full">
           {i18n.get("Submit")}
         </Button>
-        <Box>
-          <Box as="p" mb={0} d="inline-block" me={2}>
-            {i18n.get("Remember password")} ?
-          </Box>
-          <Link href={`/auth/login?${searchQuery}`}>
-            <Box d="inline-block" color="secondary">
-              {i18n.get("Sign In")}
-            </Box>
+        <div className="flex items-center">
+        <Label className="mr-2 mb-0 text-primary inline-flex">{i18n.get("Remember password")} ?</Label>
+          <Link href={`/auth/login?${searchQuery}`} className="text-main_purple flex text-decoration-underline">
+            {i18n.get("Log In")}
           </Link>
-        </Box>
-      </Box>
-    </Box>
+        </div>
+        <Toast variant="error" show={true} heading={i18n.get("Your email has not been recognised.")} description={i18n.get("The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.")} />
+        <Toast variant="success" show={true} heading={i18n.get("A link has been sent in your mailbox successfully.")} description={i18n.get("Sometimesit can take up to 5 minutes to receive the email. If you don’t receive anything please try again.")} />
+      </form>
+    </div>
   );
 }

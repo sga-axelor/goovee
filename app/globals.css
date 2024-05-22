@@ -5,35 +5,37 @@
 
   @layer base {
     :root {
-      --background: 0 0% 3.9%;
-      --foreground: 0, 0%, 100%, 1;
+      --main_purple: 269.29, 96.59%, 34.51%;
+      --background: 0 0% 100%;
+      --foreground: 0 0% 3.9%;
 
-      --card: 0 0% 3.9%;
-      --card-foreground: 0, 0%, 100%, 1;
+      --card: 0 0% 100%;
+      --card-foreground: 0 0% 3.9%;
 
-      --popover: 0 0% 3.9%;
-      --popover-foreground: 0, 0%, 100%, 1;
+      --popover: 0 0% 100%;
+      --popover-foreground: 0 0% 3.9%;
 
-      --primary: 0, 0%, 100%, 1;
-      --primary-foreground: 180, 2.94%, 13.33%;
+      --primary: 180, 2.94%, 13.33%;
+      --primary-foreground: 0, 0%, 100%, 1;
 
-      --secondary: 0 0% 14.9%;
-      --secondary-foreground: 0, 0%, 100%, 1;
+      --content-primary: 217.5, 22.22%, 21.18%;
+      --content-foreground: 0, 0%, 100%, 1;
 
-      --muted: 0 0% 14.9%;
-      --muted-foreground: 0 0% 63.9%;
+      --secondary: 0 0% 96.1%;
+      --secondary-foreground: 180, 2.94%, 13.33%;
 
-      --accent: 0 0% 14.9%;
-      --accent-foreground: 0, 0%, 100%, 1;
+      --muted: 0 0% 96.1%;
+      --muted-foreground: 0 0% 45.1%;
 
-      --destructive: 0 62.8% 30.6%;
+      --accent: 0 0% 96.1%;
+      --accent-foreground: 180, 2.94%, 13.33%;
+
+      --destructive: 0 84.2% 60.2%;
       --destructive-foreground: 0, 0%, 100%, 1;
 
-      --border: 0 0% 14.9%;
-      --input: 0 0% 14.9%;
-      --ring: 0 0% 83.1%;
-
-      --radius: 32px;
+      --border: 0 0% 89.8%;
+      --input: 0 0% 89.8%;
+      --ring: 0 0% 3.9%;
     }
 
     .dark {
