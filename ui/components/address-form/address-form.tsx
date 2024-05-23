@@ -1,20 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Divider,
-  TextField,
-  Button,
-  Input,
-  InputLabel,
-  Select,
-} from "@axelor/ui";
 
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import type { Address, Country } from "@/types";
-
+import { TextField } from "@/components/ui/TextField";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator";
 export type AddressFormProps = {
   values?: Partial<Address> & { multipletype?: boolean };
   countries: Country[];
@@ -56,11 +60,11 @@ export function AddressForm({
   }, [valuesProp]);
 
   return (
-    <Box as="form" onSubmit={handleSubmit}>
-      <Box bg="white" rounded={2} p={3} mt={2}>
-        <Box as="h3">{i18n.get("Address Information")}</Box>
-        <Divider my={2} />
-        <Box d="flex" flexDirection="column" gap="1rem">
+    <form onSubmit={handleSubmit}>
+      <div >
+        <h3 >{i18n.get("Address Information")}</h3>
+        <Separator className="my-2" />
+        <div >
           <TextField
             label={i18n.get("Recipient details")}
             name="addressl2"
@@ -88,39 +92,41 @@ export function AddressForm({
             required
           />
 
-          <Box>
-            <InputLabel>{i18n.get("Country")}</InputLabel>
-            {/* @ts-expect-error */}
-            <Select
-              clearIcon={false}
-              value={values.addressl7country}
-              onChange={(o) =>
-                setValues((v) => ({ ...v, addressl7country: o } as any))
-              }
-              options={countries}
-              optionKey={(o: any) => o.id}
-              optionLabel={(o: any) => o.name}
-            />
-          </Box>
-          <Box d="flex" alignItems="center">
+          <div>
+            <Label>{i18n.get("Country")}</Label>
+            <Select onValueChange={(o) =>
+              setValues((v) => ({ ...v, addressl7country: o } as any))}
+              defaultValue={values.addressl7country as string |undefined}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a fruit" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Country</SelectLabel>
+                  {countries.map((op: any) => {
+                    return <SelectItem key={op?.id} value={op?.id}>{op?.name}</SelectItem>
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div >
             <Input
-              d="inline-block"
               type="checkbox"
-              mt={0}
-              me={2}
-              name="multipletype"
               onChange={handleChange}
+              name="multipletype"
             />
-            <InputLabel mb={0}>
+            <Label >
               {i18n.get("Use this address for both billing and delivery")}
-            </InputLabel>
-          </Box>
-        </Box>
-      </Box>
-      <Button variant="primary" w={100} rounded="pill" type="submit">
+            </Label>
+          </div>
+        </div>
+      </div>
+      <Button variant="secondary" type="submit">
         {i18n.get("Save modifications")}
       </Button>
-    </Box>
+    </form>
   );
 }
 

@@ -1,11 +1,9 @@
 "use client";
-
 import { useState } from "react";
-
-import { Box, Button } from "@axelor/ui";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
 import Swiper, { FreeMode, Navigation, Thumbs } from "swiper";
 import { Swiper as SwiperCarousel, SwiperSlide } from "swiper/react";
+import { Button } from "@/components/ui/button";
 
 export const ThumbsCarousel = ({
   images = [],
@@ -19,7 +17,7 @@ export const ThumbsCarousel = ({
   if (!images?.length) return null;
 
   return (
-    <Box position="relative" rounded={2} border p={2}>
+    <div className="relative rounded-lg p-2 border">
       <SwiperCarousel
         spaceBetween={10}
         pagination={false}
@@ -31,8 +29,9 @@ export const ThumbsCarousel = ({
       >
         {images?.map(({ url, id }) => (
           <SwiperSlide key={id}>
-            <Box
-              mb={5}
+            <div
+              className="mb-4"
+
               style={{
                 backgroundImage: `url(${url})`,
                 backgroundPosition: "center",
@@ -40,42 +39,37 @@ export const ThumbsCarousel = ({
                 backgroundSize: "contain",
                 height: 400,
               }}
-            ></Box>
+            ></div>
           </SwiperSlide>
         ))}
       </SwiperCarousel>
 
-      <Box
-        position="absolute"
+      <div
+        className="absolute h-full w-full"
         style={{ top: 0, left: 0, zIndex: 1 }}
-        h={100}
-        w={100}
       >
-        <Box>
+        <div>
           <Button
-            variant="primary"
-            rounded="circle"
+
             ref={(node: any) => setPrevEl(node)}
-            p={1}
+
             style={{ position: "absolute", top: "45%", left: "1rem" }}
           >
-            <Box d="flex">
+            <div className="flex">
               <MaterialIcon color="white" icon="chevron_left" />
-            </Box>
+            </div>
           </Button>
           <Button
-            variant="primary"
-            rounded="circle"
+
             ref={(node: any) => setNextEl(node)}
-            p={1}
             style={{ position: "absolute", top: "45%", right: "1rem" }}
           >
-            <Box d="flex">
+            <div className="flex">
               <MaterialIcon color="white" icon="chevron_right" />
-            </Box>
+            </div>
           </Button>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       <SwiperCarousel
         freeMode
@@ -88,8 +82,8 @@ export const ThumbsCarousel = ({
       >
         {images?.map(({ url, id }) => (
           <SwiperSlide key={id}>
-            <Box
-              rounded={2}
+            <div
+              className="rounded-lg"
               style={{
                 backgroundImage: `url(${url})`,
                 backgroundPosition: "center",
@@ -101,7 +95,7 @@ export const ThumbsCarousel = ({
           </SwiperSlide>
         ))}
       </SwiperCarousel>
-    </Box>
+    </div>
   );
 };
 

@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Box, Input, Button, TextField, InputLabel, Divider } from "@axelor/ui";
+import { Box, Input, Button, InputLabel, Divider } from "@axelor/ui";
 import { BootstrapIcon } from "@axelor/ui/icons/bootstrap-icon";
 
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
+import { TextField } from "@/components/ui/TextField";
 
 export default function Content({ canRegister }: { canRegister?: boolean }) {
   const [values, setValues] = useState({ email: "", password: "" });

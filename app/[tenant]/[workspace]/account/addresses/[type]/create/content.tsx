@@ -30,7 +30,6 @@ export default function Content({
     values: Partial<Address> & { multipletype?: boolean }
   ) => {
     event.preventDefault();
-
     let isDeliveryAddr, isInvoicingAddr;
 
     if (values.multipletype) {
@@ -52,7 +51,7 @@ export default function Content({
       const _address = await createAddress({
         address: {
           ...address,
-          addressl7country: addressl7country?.id,
+          addressl7country: addressl7country,
           formattedFullName: address.addressl2,
           fullName: address.addressl2,
         } as Address,

@@ -1,77 +1,76 @@
-html {
-  height: 100%;
-}
+@tailwind base;
+  @tailwind components;
+  @tailwind utilities;
 
-body {
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  background: linear-gradient(0deg, #f8f9fa, #f8f9fa),
-    linear-gradient(
-      121.39deg,
-      rgba(248, 249, 250, 0.4) 2.84%,
-      rgba(246, 241, 255, 0.4) 87.79%
-    ),
-    linear-gradient(
-      240.93deg,
-      rgba(248, 249, 250, 0.3) 30.33%,
-      rgba(230, 231, 231, 0.3) 92.1%
-    );
-}
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 0 0% 3.9%;
 
-a {
-  text-decoration: none !important;
-}
+      --card: 0 0% 100%;
+      --card-foreground: 0 0% 3.9%;
 
-.pointer {
-  cursor: pointer;
-}
+      --popover: 0 0% 100%;
+      --popover-foreground: 0 0% 3.9%;
 
-:root {
-  --portal-blue-50: #d0e3ff;
-  --portal-blue-100: #4360c7;
+      --primary: 0 0% 9%;
+      --primary-foreground: 0 0% 98%;
 
-  --portal-orange-50: #ffdacc;
-  --portal-orange-100: #fb5c23;
+      --secondary: 0 0% 96.1%;
+      --secondary-foreground: 0 0% 9%;
 
-  --portal-purple-50: #f6f1ff;
-  --portal-purple-100: #ac8fd6;
+      --muted: 0 0% 96.1%;
+      --muted-foreground: 0 0% 45.1%;
 
-  --portal-pink-50: #fbd0e1;
-  --portal-pink-100: #ee4488;
+      --accent: 0 0% 96.1%;
+      --accent-foreground: 0 0% 9%;
 
-  --portal-green-50: #d0eedb;
-  --portal-green-100: #72cd93;
-}
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 98%;
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+      --border: 0 0% 89.8%;
+      --input: 0 0% 89.8%;
+      --ring: 0 0% 3.9%;
 
-::-webkit-scrollbar-track {
-  background: rgb(179, 177, 177);
-  border-radius: 10px;
-}
+      --radius: 0.5rem;
+    }
 
-::-webkit-scrollbar-thumb {
-  background: rgb(136, 136, 136);
-  border-radius: 10px;
-}
+    .dark {
+      --background: 0 0% 3.9%;
+      --foreground: 0 0% 98%;
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(100, 100, 100);
-  border-radius: 10px;
-}
+      --card: 0 0% 3.9%;
+      --card-foreground: 0 0% 98%;
 
-::-webkit-scrollbar-thumb:active {
-  background: rgb(68, 68, 68);
-  border-radius: 10px;
-}
+      --popover: 0 0% 3.9%;
+      --popover-foreground: 0 0% 98%;
 
-@media (max-width: 576px) {
-  .portal-container {
-    max-width: 375px;
+      --primary: 0 0% 98%;
+      --primary-foreground: 0 0% 9%;
+
+      --secondary: 0 0% 14.9%;
+      --secondary-foreground: 0 0% 98%;
+
+      --muted: 0 0% 14.9%;
+      --muted-foreground: 0 0% 63.9%;
+
+      --accent: 0 0% 14.9%;
+      --accent-foreground: 0 0% 98%;
+
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+
+      --border: 0 0% 14.9%;
+      --input: 0 0% 14.9%;
+      --ring: 0 0% 83.1%;
+    }
   }
-}
+
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+  }
