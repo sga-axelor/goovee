@@ -17,8 +17,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { CheckedState } from "@radix-ui/react-checkbox";
 export type AddressFormProps = {
   values?: Partial<Address> & { multipletype?: boolean };
   countries: Country[];
@@ -33,21 +34,22 @@ const defaultAddress = {
   multipletype: false,
 };
 
-export function AddressForm({
-  values: valuesProp,
-  countries,
-  onSubmit,
-}: AddressFormProps) {
-  const [values, setValues] = useState(
-    valuesProp || { ...defaultAddress, addressl7country: countries?.[0] }
-  );
-  const [selectedValue, setSelectedValue] = useState<String>(countries?.[0].id.toString())
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target;
+export function AddressForm({ values: valuesProp, countries, onSubmit }: AddressFormProps) {
+  const [values, setValues] = useState(valuesProp || { ...defaultAddress, addressl7country: countries?.[0] });
+  const [selectedValue, setSelectedValue] = useState<String>(countries?.[0].id.toString());
 
+  const handleCheckbox = (event: any) => {
     setValues((v) => ({
       ...v,
-      [name]: type === "checkbox" ? checked : value,
+      multipletype: event,
+    }));
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = event.target;
+    setValues((v) => ({
+      ...v,
+      [name]: value,
     }));
   };
 
@@ -61,10 +63,10 @@ export function AddressForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div >
-        <h3 >{i18n.get("Address Information")}</h3>
+      <div>
+        <h3>{i18n.get("Address Information")}</h3>
         <Separator className="my-2" />
-        <div >
+        <div>
           <TextField
             label={i18n.get("Recipient details")}
             name="addressl2"
@@ -94,13 +96,12 @@ export function AddressForm({
 
           <div className="w-full mb-4">
             <Label className="text-base font-medium text-primary mb-1">{i18n.get("Country")}</Label>
-            <Select onValueChange={(o) => {
-              let selectedCountry = countries?.find((op) => op.id === o)
-              setSelectedValue(o)
-              setValues((v) => ({ ...v, addressl7country: selectedCountry } as any))
-            }
-            }
-
+            <Select
+              onValueChange={(o) => {
+                let selectedCountry = countries?.find((op) => op.id === o);
+                setSelectedValue(o);
+                setValues((v) => ({ ...v, addressl7country: selectedCountry } as any));
+              }}
               defaultValue={selectedValue as string | undefined}
             >
               <SelectTrigger className="w-full">
@@ -110,7 +111,11 @@ export function AddressForm({
                 <SelectGroup>
                   <SelectLabel>Country</SelectLabel>
                   {countries.map((op: any) => {
-                    return <SelectItem key={op?.id} value={op.id}>{op?.name}</SelectItem>
+                    return (
+                      <SelectItem key={op?.id} value={op.id}>
+                        {op?.name}
+                      </SelectItem>
+                    );
                   })}
                 </SelectGroup>
               </SelectContent>
@@ -118,13 +123,11 @@ export function AddressForm({
           </div>
           <div className="flex items-center space-x-2 mb-6">
             <Checkbox
-              // onChange={handleChange}
+              onCheckedChange={handleCheckbox}
               name="multipletype"
-              // checked={false}
+              checked={values.multipletype}
             />
-            <Label className="ml-2 text-primary">
-              {i18n.get("Use this address for both billing and delivery")}
-            </Label>
+            <Label className="ml-2 text-primary">{i18n.get("Use this address for both billing and delivery")}</Label>
           </div>
         </div>
       </div>
