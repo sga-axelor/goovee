@@ -51,7 +51,7 @@ export default function Content({
       const _address = await createAddress({
         address: {
           ...address,
-          addressl7country: addressl7country,
+          addressl7country: addressl7country?.id,
           formattedFullName: address.addressl2,
           fullName: address.addressl2,
         } as Address,

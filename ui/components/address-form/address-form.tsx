@@ -41,7 +41,7 @@ export function AddressForm({
   const [values, setValues] = useState(
     valuesProp || { ...defaultAddress, addressl7country: countries?.[0] }
   );
-
+  const [selectedValue, setSelectedValue] = useState<String>(countries?.[0].id.toString())
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
 
@@ -94,9 +94,14 @@ export function AddressForm({
 
           <div>
             <Label>{i18n.get("Country")}</Label>
-            <Select onValueChange={(o) =>
-              setValues((v) => ({ ...v, addressl7country: o } as any))}
-              defaultValue={values.addressl7country as string |undefined}
+            <Select onValueChange={(o) => {
+              let selectedCountry = countries?.find((op) => op.id === o)
+              setSelectedValue(o)
+              setValues((v) => ({ ...v, addressl7country: selectedCountry } as any))
+            }
+            }
+
+              defaultValue={selectedValue as string | undefined}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a fruit" />
@@ -105,7 +110,7 @@ export function AddressForm({
                 <SelectGroup>
                   <SelectLabel>Country</SelectLabel>
                   {countries.map((op: any) => {
-                    return <SelectItem key={op?.id} value={op?.id}>{op?.name}</SelectItem>
+                    return <SelectItem key={op?.id} value={op.id}>{op?.name}</SelectItem>
                   })}
                 </SelectGroup>
               </SelectContent>
