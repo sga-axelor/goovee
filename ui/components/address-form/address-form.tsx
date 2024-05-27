@@ -8,7 +8,7 @@ import type { Address, Country } from "@/types";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -92,8 +92,8 @@ export function AddressForm({
             required
           />
 
-          <div>
-            <Label>{i18n.get("Country")}</Label>
+          <div className="w-full mb-4">
+            <Label className="text-base font-medium text-primary mb-1">{i18n.get("Country")}</Label>
             <Select onValueChange={(o) => {
               let selectedCountry = countries?.find((op) => op.id === o)
               setSelectedValue(o)
@@ -103,7 +103,7 @@ export function AddressForm({
 
               defaultValue={selectedValue as string | undefined}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a fruit" />
               </SelectTrigger>
               <SelectContent>
@@ -116,19 +116,19 @@ export function AddressForm({
               </SelectContent>
             </Select>
           </div>
-          <div >
-            <Input
-              type="checkbox"
-              onChange={handleChange}
+          <div className="flex items-center space-x-2 mb-6">
+            <Checkbox
+              // onChange={handleChange}
               name="multipletype"
+              // checked={false}
             />
-            <Label >
+            <Label className="ml-2 text-primary">
               {i18n.get("Use this address for both billing and delivery")}
             </Label>
           </div>
         </div>
       </div>
-      <Button variant="secondary" type="submit">
+      <Button type="submit" className="rounded-full">
         {i18n.get("Save modifications")}
       </Button>
     </form>

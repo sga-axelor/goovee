@@ -13,14 +13,13 @@ export function Quantity({
   onDecrement?: () => void;
 }) {
   return (
-    <div className="flex items-center gap-5" >
-      <h5
-      className="mb-0 !p-2 border rounded text-center inline-flex"
-       
-      >
+    <div className="flex items-center gap-4">
+      <div className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10" style={{width: '55px'}}>
+        <span className="text-primary text-base">
         {value}
-      </h5>
-      <div className="border rounded">
+        </span>
+      </div>
+      <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
         <MaterialIcon
           className="courser-pointer block p-2"
           icon="remove"
@@ -29,7 +28,7 @@ export function Quantity({
           {...({ fontSize: 32 } as any)}
         />
       </div>
-      <div className="border rounded">
+      <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
         <MaterialIcon
           className="courser-pointer block p-2"
           icon="add"

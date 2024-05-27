@@ -19,13 +19,10 @@ export function BackgroundImage({
   const url = src || defaultSrc;
   return (
     <div
-      className="rounded-lg"
+      className="rounded-lg bg-contain bg-no-repeat bg-center"
       style={{
         height,
         width,
-        backgroundSize: "contain",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
         backgroundImage: `url(${url})`,
         ...style,
       }}

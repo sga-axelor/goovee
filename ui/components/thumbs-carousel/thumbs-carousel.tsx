@@ -30,14 +30,9 @@ export const ThumbsCarousel = ({
         {images?.map(({ url, id }) => (
           <SwiperSlide key={id}>
             <div
-              className="mb-4"
-
+              className="mb-4 bg-center bg-contain bg-no-repeat height-[400px]"
               style={{
-                backgroundImage: `url(${url})`,
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "contain",
-                height: 400,
+                backgroundImage: `url(${url})`
               }}
             ></div>
           </SwiperSlide>
@@ -52,8 +47,7 @@ export const ThumbsCarousel = ({
           <Button
 
             ref={(node: any) => setPrevEl(node)}
-
-            style={{ position: "absolute", top: "45%", left: "1rem" }}
+            className="absolute top-[45%] left-4"
           >
             <div className="flex">
               <MaterialIcon color="white" icon="chevron_left" />
@@ -62,7 +56,7 @@ export const ThumbsCarousel = ({
           <Button
 
             ref={(node: any) => setNextEl(node)}
-            style={{ position: "absolute", top: "45%", right: "1rem" }}
+            className="absolute top-[45%] right-4"
           >
             <div className="flex">
               <MaterialIcon color="white" icon="chevron_right" />
@@ -83,13 +77,9 @@ export const ThumbsCarousel = ({
         {images?.map(({ url, id }) => (
           <SwiperSlide key={id}>
             <div
-              className="rounded-lg"
+              className="rounded-lg bg-center bg-cover bg-no-repeat height-[120px]"
               style={{
-                backgroundImage: `url(${url})`,
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                height: 120,
+                backgroundImage: `url(${url})`
               }}
             />
           </SwiperSlide>
