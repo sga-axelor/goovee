@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Tabs } from "../tabs";
-import { Box } from "@axelor/ui";
 import styles from "./style.module.scss";
 
 interface TabItem {
@@ -24,10 +23,10 @@ export const NavView = ({
   children,
 }: NavViewProps) => {
   return (
-    <Box>
+    <div>
       <Tabs items={items} activeTab={activeTab} onTabChange={onTabChange} />
-      <Box className={styles["nav-view-tab-content"]}>{children}</Box>
-    </Box>
+      <div className={styles["nav-view-tab-content"]}>{children}</div>
+    </div>
   );
 };
 

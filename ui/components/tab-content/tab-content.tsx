@@ -1,4 +1,3 @@
-import { Box } from "@axelor/ui";
 import styles from "./index.module.scss";
 
 type TabContentProps = {
@@ -6,11 +5,12 @@ type TabContentProps = {
   active: boolean;
 };
 
+
 export const TabContent = ({ children, active }: TabContentProps) => {
   return (
-    <Box className={`${styles.tab} ${active ? styles.active : ""}`}>
+    <div className={`${styles.tab} ${active ? styles.active : ""}`}>
       {children}
-    </Box>
+    </div>
   );
 };
 

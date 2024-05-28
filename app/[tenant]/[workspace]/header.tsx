@@ -24,7 +24,7 @@ function BadgeIcon({
 }) {
   return (
     <Box as="span" d="flex" position="relative">
-      <MaterialIcon {...props} />
+      <MaterialIcon {...props} className="text-foreground" />
       {count ? (
         <Badge rounded bg="black" className={styles.badge}>
           {count}
@@ -42,8 +42,7 @@ function Logo() {
         as="img"
         src="/images/logo.png"
         alt="Axelor Logo"
-        height="40"
-        me={3}
+        className="h-8 mr-4"
       />
     </Link>
   );
@@ -53,10 +52,8 @@ function Notification() {
   const { workspaceURI } = useWorkspace();
 
   return (
-    <Link href={`${workspaceURI}/notifications`}>
-      <Box d="inline-block">
-        <MaterialIcon icon="notifications" className="pointer" />
-      </Box>
+    <Link href={`${workspaceURI}/notifications`} className="inline-flex">
+      <MaterialIcon icon="notifications" className="cursor-pointer text-foreground" />
     </Link>
   );
 }
@@ -71,15 +68,13 @@ function Cart() {
   );
 
   return (
-    <Link href={`${workspaceURI}/shop/cart`}>
-      <Box d="inline-block">
+    <Link href={`${workspaceURI}/shop/cart`} className="inline-flex">
         <Box
           as={BadgeIcon}
           count={count}
           icon="shopping_cart"
-          className="pointer"
+          className="cursor-pointer text-foreground"
         />
-      </Box>
     </Link>
   );
 }
@@ -88,10 +83,10 @@ export default function Header({ subapps }: { subapps: any }) {
   const { workspaceURI } = useWorkspace();
 
   return (
-    <Box shadow d="flex" alignItems="center" bg="white" p={3} px={5}>
+    <Box className="bg-background px-6 py-2 flex items-center">
       <Logo />
       <Box flexGrow={1} />
-      <Box d="flex" alignItems="center" gap="1rem">
+      <Box className="flex items-center gap-8">
         {subapps
           .filter((app: any) => app.installed && app.showInTopMenu)
           .sort(
@@ -105,7 +100,7 @@ export default function Header({ subapps }: { subapps: any }) {
               <Link key={code} href={`${workspaceURI}/${code}${page}`}>
                 <Box d="inline-block" title={name}>
                   {icon ? (
-                    <MaterialIcon icon={icon as any} className="pointer" />
+                    <MaterialIcon icon={icon as any} className="cursor-pointer text-foreground" />
                   ) : (
                     <Box as="p" mb={0}>
                       {name}

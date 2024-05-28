@@ -1,9 +1,7 @@
-import { Box } from "@axelor/ui";
 
 export function Logo({ height = 50, ...rest }: any) {
   return (
-    <Box
-      as="img"
+    <img
       alt="Company Logo"
       src="/images/logo.png"
       height={height}

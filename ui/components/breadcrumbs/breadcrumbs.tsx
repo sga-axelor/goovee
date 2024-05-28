@@ -1,53 +1,47 @@
-import React, { Fragment } from "react";
-import { Box } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+import React from "react";
+import { 
+  Breadcrumb,   
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@ui/components/breadcrumb";
+import { ChevronRight } from "lucide-react";
 
 export type BreadcrumbsProps = {
-  breadcrumbs: [];
+  breadcrumbs: { name: string; onClick?: () => void }[];
   onClick: (option: any) => void;
 };
 
 export const Breadcrumbs = ({ breadcrumbs, onClick }: BreadcrumbsProps) => {
   return (
-    <>
-      <Box mb={4}>
-        {breadcrumbs?.length > 1 ? (
-          <Box d="flex" gap="1rem" alignItems="center">
-            {breadcrumbs.map((crumb: any, i: number) => {
-              const islast = breadcrumbs.length - 1 === i;
-              return (
-                <Fragment key={i}>
-                  <Box
-                    d="flex"
-                    alignItems="center"
-                    {...(islast ? {} : { className: "pointer" })}
+    <Breadcrumb>
+      <BreadcrumbList>
+        {breadcrumbs.map((crumb, i) => {
+          const isLast = breadcrumbs.length - 1 === i;
+
+          return (
+            <React.Fragment key={i}>
+              <BreadcrumbItem>
+                {isLast ? (
+                  <BreadcrumbPage>{crumb.name}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink
+                    asChild
+                    onClick={() => onClick(crumb)}
+                    className="text-secondary cursor-pointer"
                   >
-                    <Box
-                      {...(islast
-                        ? {
-                            color: "primary",
-                            fontWeight: "bold",
-                          }
-                        : {
-                            color: "secondary",
-                            onClick: () => onClick(crumb),
-                          })}
-                    >
-                      {crumb.name}
-                    </Box>
-                    {!islast && (
-                      <Box d="flex">
-                        <MaterialIcon icon="chevron_right" />
-                      </Box>
-                    )}
-                  </Box>
-                </Fragment>
-              );
-            })}
-          </Box>
-        ) : null}
-      </Box>
-    </>
+                    <span>{crumb.name}</span>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+              {!isLast && <BreadcrumbSeparator><ChevronRight /></BreadcrumbSeparator>}
+            </React.Fragment>
+          );
+        })}
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 };
 

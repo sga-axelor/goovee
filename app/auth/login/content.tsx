@@ -4,12 +4,22 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Box, Input, Button, TextField, InputLabel, Divider } from "@axelor/ui";
 import { BootstrapIcon } from "@axelor/ui/icons/bootstrap-icon";
-
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+ 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
+import { TextField } from "@/components/ui/TextField";
 
+import { Toast } from "@/ui/components";
 export default function Content({ canRegister }: { canRegister?: boolean }) {
   const [values, setValues] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -60,23 +70,13 @@ export default function Content({ canRegister }: { canRegister?: boolean }) {
   };
 
   return (
-    <Box
-      px={{ base: 5, md: 5 }}
-      py={{ base: 4 }}
-      style={{ width: 500 }}
-      mx="auto"
+    <div className="mx-auto p-4 sm:p-6 max-w-[1185px] w-full"
     >
-      <Box as="h2" mb={3}>
-        <b>{i18n.get("Log in")}</b>
-      </Box>
-      <Box
-        as="form"
-        bg="white"
-        rounded={2}
-        p={3}
-        d="grid"
-        gridTemplateColumns="1fr"
-        gap="1rem"
+      <h5 className="mb-3 font-medium text-primary">
+        {i18n.get("Log in")}
+      </h5>
+      <form
+        className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}
       >
         <TextField
@@ -103,79 +103,77 @@ export default function Content({ canRegister }: { canRegister?: boolean }) {
           value={values.password}
           onChange={handleChange}
         />
-        <Box d="flex" alignItems="center">
-          <Input type="checkbox" me={2} disabled={submitting} />
-          <InputLabel mb={0}>{i18n.get("Remember Me")}</InputLabel>
-          <Box flexGrow={1} />
+        {error && (
+          // <Box color="danger">
+          //   {i18n.get(
+          //     "Invalid credentials. Try email from partners. For e.g info@apollo.fr"
+          //   )}
+          // </Box>
+          <Toast variant="error" show={true} heading={i18n.get("The email or the password is wrong.")} description={i18n.get("The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.")} />
+        )}
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Checkbox id="terms" disabled={submitting} />
+            <Label htmlFor="terms" className="ml-2 text-primary">{i18n.get("Remember Me")}</Label>
+          </div>
+          {/* <Input type="checkbox" me={2} disabled={submitting} />
+          <InputLabel mb={0}>{i18n.get("Remember Me")}</InputLabel> */}
           <Link
             href={`/auth/forgot-password?${searchQuery}`}
             aria-disabled={submitting}
+            className="text-main_purple flex text-decoration-underline"
           >
-            <Box color="secondary" d="inline-block">
-              {i18n.get("Forgot Password ?")}
-            </Box>
+            {i18n.get("Forgot Password ?")}
           </Link>
-        </Box>
+        </div>
         <Button
           type="submit"
-          variant="primary"
-          rounded="pill"
           disabled={submitting}
+          className="rounded-full"
         >
           {i18n.get("Log In")}
         </Button>
         {canRegister && (
-          <Box>
-            <Box as="p" mb={0} d="inline-block" me={2}>
+          <div>
+            <p className="text-primary inline-flex text-lg mr-2 mb-0">
               {i18n.get("Don't have an account yet ?")}
-            </Box>
+            </p>
             <Link
               href={`/auth/register?${searchQuery}`}
               aria-disabled={submitting}
+              className="text-main_purple inline-flex text-decoration-underline text-lg"
             >
-              <Box d="inline-block" color="secondary">
-                {i18n.get("Sign Up")}
-              </Box>
+              {i18n.get("Sign Up")}
             </Link>
-          </Box>
-        )}
-        {error && (
-          <Box color="danger">
-            {i18n.get(
-              "Invalid credentials. Try email from partners. For e.g info@apollo.fr"
-            )}
-          </Box>
+          </div>
         )}
         {searchParams.get("success") && (
-          <Box color="success">{searchParams.get("success")}</Box>
+          <div className="text-[#328D54]">{searchParams.get("success")}</div>
         )}
-      </Box>
-      <Box d="flex" mt={3} alignItems="center" gap="1rem">
-        <Box flexGrow={1}>
-          <Divider />
-        </Box>
-        <Box as="h2" mb={0}>
-          <b>{i18n.get("Or")}</b>
-        </Box>
-        <Box flexGrow={1}>
-          <Divider />
-        </Box>
-      </Box>
-      <Box mt={3}>
+      </form>
+      <div className="flex items-center gap-4 mt-4">
+        <div className="grow">
+          <Separator />
+        </div>
+        <h5 className="mb-0 font-medium text-primary">
+          {i18n.get("Or")}
+        </h5>
+        <div className="grow">
+          <Separator />
+        </div>
+      </div>
+      <div className="mt-4">
         <Button
           type="button"
-          outline
-          variant="primary"
-          rounded="pill"
-          w={100}
+          variant="outline"
           onClick={loginWithGoogle}
+          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-background"
         >
-          <Box d="flex" alignItems="center" justifyContent="center" gap="1rem">
-            <BootstrapIcon icon="google" />
-            <Box>{i18n.get("Log In with Google")}</Box>
-          </Box>
+          <BootstrapIcon icon="google" />
+          <span className="text-primary font-medium">{i18n.get("Log In with Google")}</span>
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

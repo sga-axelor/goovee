@@ -1,6 +1,4 @@
 "use client";
-
-import { Box } from "@axelor/ui";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
 
 export function Quantity({
@@ -15,43 +13,31 @@ export function Quantity({
   onDecrement?: () => void;
 }) {
   return (
-    <Box d="flex" alignItems="center" gap={4}>
-      <Box
-        as="h5"
-        mb={0}
-        p={2}
-        border
-        rounded
-        textAlign="center"
-        style={{ minWidth: "3rem" }}
-      >
-        <b>{value}</b>
-      </Box>
-      <Box border rounded>
-        <Box
-          as={MaterialIcon}
-          d="block"
-          className="pointer"
+    <div className="flex items-center gap-4">
+      <div className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10" style={{width: '55px'}}>
+        <span className="text-primary text-base">
+        {value}
+        </span>
+      </div>
+      <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
+        <MaterialIcon
+          className="courser-pointer block p-2"
           icon="remove"
-          p={2}
           onClick={onDecrement}
           disabled={disabled}
           {...({ fontSize: 32 } as any)}
         />
-      </Box>
-      <Box border rounded>
-        <Box
-          as={MaterialIcon}
-          d="block"
-          className="pointer"
+      </div>
+      <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
+        <MaterialIcon
+          className="courser-pointer block p-2"
           icon="add"
-          p={2}
           onClick={onIncrement}
           disabled={disabled}
           {...({ fontSize: 32 } as any)}
         />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 

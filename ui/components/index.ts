@@ -9,7 +9,7 @@ export { Breadcrumbs } from "./breadcrumbs";
 export { Toast } from "./toast";
 export { TabContent } from "./tab-content";
 export { Tabs } from "./tabs";
-export { Tag } from "./tag";
+export {Tag} from "./tag"
 export { Pagination } from "./pagination";
 export { NavView } from "./nav-view";
 export { StyledTable } from "./table";

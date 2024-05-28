@@ -1,19 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Divider,
-  TextField,
-  Button,
-  Input,
-  InputLabel,
-  Select,
-} from "@axelor/ui";
 
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import type { Address, Country } from "@/types";
+import { TextField } from "@ui/components/TextField";
+import { Button } from "@ui/components/button";
+import { Label } from "@ui/components/label";
+import { Checkbox } from "@ui/components/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@ui/components/separator";
 
 export type AddressFormProps = {
   values?: Partial<Address> & { multipletype?: boolean };
@@ -29,21 +34,22 @@ const defaultAddress = {
   multipletype: false,
 };
 
-export function AddressForm({
-  values: valuesProp,
-  countries,
-  onSubmit,
-}: AddressFormProps) {
-  const [values, setValues] = useState(
-    valuesProp || { ...defaultAddress, addressl7country: countries?.[0] }
-  );
+export function AddressForm({ values: valuesProp, countries, onSubmit }: AddressFormProps) {
+  const [values, setValues] = useState(valuesProp || { ...defaultAddress, addressl7country: countries?.[0] });
+  const [selectedValue, setSelectedValue] = useState<String>(countries?.[0].id.toString());
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target;
-
+  const handleCheckbox = (event: any) => {
     setValues((v) => ({
       ...v,
-      [name]: type === "checkbox" ? checked : value,
+      multipletype: event,
+    }));
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = event.target;
+    setValues((v) => ({
+      ...v,
+      [name]: value,
     }));
   };
 
@@ -56,11 +62,11 @@ export function AddressForm({
   }, [valuesProp]);
 
   return (
-    <Box as="form" onSubmit={handleSubmit}>
-      <Box bg="white" rounded={2} p={3} mt={2}>
-        <Box as="h3">{i18n.get("Address Information")}</Box>
-        <Divider my={2} />
-        <Box d="flex" flexDirection="column" gap="1rem">
+    <form onSubmit={handleSubmit}>
+      <div>
+        <h3>{i18n.get("Address Information")}</h3>
+        <Separator className="my-2" />
+        <div>
           <TextField
             label={i18n.get("Recipient details")}
             name="addressl2"
@@ -88,39 +94,47 @@ export function AddressForm({
             required
           />
 
-          <Box>
-            <InputLabel>{i18n.get("Country")}</InputLabel>
-            {/* @ts-expect-error */}
+          <div className="w-full mb-4">
+            <Label className="text-base font-medium text-primary mb-1">{i18n.get("Country")}</Label>
             <Select
-              clearIcon={false}
-              value={values.addressl7country}
-              onChange={(o) =>
-                setValues((v) => ({ ...v, addressl7country: o } as any))
-              }
-              options={countries}
-              optionKey={(o: any) => o.id}
-              optionLabel={(o: any) => o.name}
-            />
-          </Box>
-          <Box d="flex" alignItems="center">
-            <Input
-              d="inline-block"
-              type="checkbox"
-              mt={0}
-              me={2}
+              onValueChange={(o) => {
+                let selectedCountry = countries?.find((op) => op.id === o);
+                setSelectedValue(o);
+                setValues((v) => ({ ...v, addressl7country: selectedCountry } as any));
+              }}
+              defaultValue={selectedValue as string | undefined}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a fruit" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Country</SelectLabel>
+                  {countries.map((op: any) => {
+                    return (
+                      <SelectItem key={op?.id} value={op.id}>
+                        {op?.name}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center space-x-2 mb-6">
+            <Checkbox
+              onCheckedChange={handleCheckbox}
               name="multipletype"
-              onChange={handleChange}
+              checked={values.multipletype}
             />
-            <InputLabel mb={0}>
-              {i18n.get("Use this address for both billing and delivery")}
-            </InputLabel>
-          </Box>
-        </Box>
-      </Box>
-      <Button variant="primary" w={100} rounded="pill" type="submit">
+            <Label className="ml-2 text-primary">{i18n.get("Use this address for both billing and delivery")}</Label>
+          </div>
+        </div>
+      </div>
+      <Button type="submit" className="rounded-full">
         {i18n.get("Save modifications")}
       </Button>
-    </Box>
+    </form>
   );
 }
 

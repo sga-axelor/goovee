@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Box, Button } from "@axelor/ui";
+import { Box } from "@axelor/ui";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-
+import { Button } from "@/components/ui/button"
 // ---- CORE IMPORTS ---- //
 import { BackgroundImage } from "@/ui/components";
 import { getImageURL } from "@/utils/product";
@@ -38,21 +38,12 @@ export function ProductCard({
 
   return (
     <Box
-      d="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      p={3}
-      shadow="lg"
-      bg="white"
-      className="pointer"
-      style={{ borderRadius: "1rem", minHeight: 500 }}
+      className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[410px] bg-background text-primary"
     >
       <Box onClick={handleClick}>
         <BackgroundImage
-          position="relative"
-          height={260}
           src={getImageURL(product.images?.[0])}
-          style={{ backgroundSize: "cover" }}
+          className="rounded-t-lg bg-cover relative h-[232px]"
         >
           {Boolean(quantity) && (
             <Box
@@ -78,32 +69,34 @@ export function ProductCard({
             </Box>
           )}
         </BackgroundImage>
-        <Box as="h5" mb={0} mt={3}>
-          {i18n.getValueAttribute(product.name)}
-        </Box>
-        {displayPrices && (
-          <>
-            <Box as="h4" mt={3} mb={0}>
-              <b>{displayPrimary}</b>
-            </Box>
-            {displayTwoPrices && (
-              <Box as="h6" mt={2} mb={0}>
-                <b>{displaySecondary}</b>
+        <Box className="py-4 px-6">
+          <Box as="h5" className="text-base font-medium mt-0 mb-0">
+            {i18n.getValueAttribute(product.name)}
+          </Box>
+          {displayPrices && (
+            <>
+              <Box as="h5" className="text-base font-semibold mt-2 mb-0">
+                {displayPrimary}
               </Box>
-            )}
-          </>
-        )}
+              {displayTwoPrices && (
+                <Box as="span" className="text-xs font-medium mt-0 mb-0">
+                  {displaySecondary}
+                </Box>
+              )}
+            </>
+          )}
+        </Box>
       </Box>
-      <Box d="flex" alignItems="center" justifyContent="flex-end" pb={4} pe={2}>
+      <Box className="flex items-start justify-between p-6 pt-0">
+        <Box as="span" className="text-xs font-medium mt-0 mb-0 text-destructive">
+          Only 6 left
+        </Box>
         <Button
-          p={3}
-          variant="primary"
-          rounded="circle"
-          size="sm"
           onClick={handleAdd}
+          className="bg-primary rounded-full h-12 w-12"
         >
           <Box d="flex">
-            <MaterialIcon icon="add_shopping_cart" />
+            <MaterialIcon className="text-primary-foreground" icon="add_shopping_cart" />
           </Box>
         </Button>
       </Box>

@@ -51,7 +51,7 @@ export default async function Layout({
         <CartContext>
           <Header subapps={subapps} />
           {children}
-          <Footer />
+          {/* <Footer /> */}
         </CartContext>
       </Workspace>
     </>

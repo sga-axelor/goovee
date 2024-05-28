@@ -4,9 +4,9 @@ import React, { Fragment } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Box, Input, useClassNames, clsx } from "@axelor/ui";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-
+import { Button } from "@/components/ui/button"
 // ---- CORE IMPORTS ---- //
-import { Pagination } from "@/ui/components";
+import { Pagination, } from "@/ui/components";
 import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
 import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
 import { i18n } from "@/lib/i18n";
@@ -152,32 +152,14 @@ export function ProductList({
       <Categories items={categories} onClick={handleCategoryClick} />
       {showSummary && (
         <Box
-          d="flex"
-          alignItems="center"
-          justifyContent="center"
-          position="relative"
-          style={{
-            backgroundImage: "url(/images/bg.jpeg)",
-            backgroundPosition: "center",
-            height: 350,
-          }}
+          className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]"
         >
           <Box
-            position="absolute"
-            w={100}
-            style={{
-              top: 0,
-              left: 0,
-              height: 350,
-              backgroundColor: "rgba(0,0,0,0.65)",
-            }}
+            className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]"
           />
           <Box
             as="h1"
-            color="white"
-            fontWeight="bold"
-            m={0}
-            style={{ zIndex: 1 }}
+            className="font-bold m-0 z-[1] text-primary-foreground"
           >
             {i18n.get("Shop summary")}
           </Box>
@@ -216,8 +198,16 @@ export function ProductList({
             </Box>
           ) : null}
         </Box>
-        <Box d="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Box as="h2">{category && <b>{category?.name}</b>}</Box>
+        <Box className="flex items-center justify-between">
+          <Box as="h4" className="text-xl font-medium text-primary">{category && category?.name}</Box>
+          <Box as="h4" className="text-sm font-medium text-primary flex items-center">See all 
+              <MaterialIcon 
+                className="cursor-pointer ml-2"
+                icon="arrow_forward"
+              /> 
+            </Box>
+        </Box>
+        <Box d="flex" justifyContent="end" alignItems="center" mb={2}>
           <Box d="flex" alignItems="center" gap="1rem">
             <MaterialIcon
               color={isGridView ? "primary" : "secondary"}
@@ -233,7 +223,7 @@ export function ProductList({
             />
           </Box>
         </Box>
-        <Box d="flex" alignItems="center" mb={3} gap="1rem">
+        {/* <Box d="flex" alignItems="center" mb={3} gap="1rem">
           <Box
             as="form"
             onSubmit={handleChangeSearch}
@@ -256,7 +246,7 @@ export function ProductList({
             onChange={handleChangeSortBy}
             value={sort}
           />
-        </Box>
+        </Box> */}
         <Box
           bg="white"
           shadow
@@ -287,7 +277,7 @@ export function ProductList({
                   xl: "1fr 1fr 1fr 1fr",
                 }
           }
-          gridGap="1rem"
+          gridGap="1.25rem"
         >
           {products?.length ? (
             products.map((computedProduct) => {

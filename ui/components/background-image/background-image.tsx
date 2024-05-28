@@ -1,14 +1,13 @@
 "use client";
 
-import { Box } from "@axelor/ui";
-
 export type BackgroundImageProps = {
   src?: string;
   defaultSrc?: string;
   height?: string | number;
   width?: string | number;
   style?: React.CSSProperties;
-} & React.ComponentProps<typeof Box>;
+  className?:string;
+}
 
 export function BackgroundImage({
   src,
@@ -16,23 +15,22 @@ export function BackgroundImage({
   height,
   width,
   defaultSrc = "/images/no-image.png",
+  className,
   ...rest
 }: BackgroundImageProps) {
   const url = src || defaultSrc;
   return (
-    <Box
-      rounded={2}
+    <div
+      className={`${className}  bg-no-repeat bg-center`}
       style={{
         height,
         width,
-        backgroundSize: "contain",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
         backgroundImage: `url(${url})`,
         ...style,
+        
       }}
       {...rest}
-    />
+    ></div>
   );
 }
 

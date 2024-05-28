@@ -1,5 +1,4 @@
 "use client";
-import { Box } from "@axelor/ui";
 
 interface Props {
   children?: React.ReactNode;
@@ -7,18 +6,13 @@ interface Props {
 }
 export function Container(props: Props) {
   return (
-    <Box
-      d="flex"
-      flexDirection="column"
-      gap="1.5rem"
-      px={{ base: 3, md: 5 }}
-      py={{ base: 2, md: 3 }}
-    >
-      <Box as="h2">
-        <b>{props.title}</b>
-      </Box>
+    <div
+      className="flex flex-col gap-6 px-4 md:px-5 py-2 md:py-4">
+      <h2 className="font-bold">
+        {props.title}
+      </h2>
       {props.children}
-    </Box>
+    </div>
   );
 }
 

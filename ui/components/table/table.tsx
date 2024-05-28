@@ -1,20 +1,19 @@
 "use client";
 
 import React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@axelor/ui";
 import { TableHeadProps, TableProps } from "./types";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@ui/components/table";
 
 export const StyledHead = ({ columns }: TableHeadProps) => {
+  
   return (
     <>
-      <TableHead mb={3}>
+      
         <TableRow>
           {columns?.map((column: any, index: number) => (
             <TableCell
-              as="th"
               key={column.key}
-              bgColor="dark"
-              color="light"
+              className="text-primary text-base font-semibold"
               style={{
                 paddingInline: "24px",
                 border: "none",
@@ -30,7 +29,7 @@ export const StyledHead = ({ columns }: TableHeadProps) => {
             </TableCell>
           ))}
         </TableRow>
-      </TableHead>
+      
     </>
   );
 };
@@ -38,7 +37,7 @@ export const StyledHead = ({ columns }: TableHeadProps) => {
 export const StyledTable = ({ columns, children }: TableProps) => {
   return (
     <>
-      <Table>
+      <Table className="w-full rounded-lg bg-background">
         <StyledHead columns={columns} />
         <TableBody>{children}</TableBody>
       </Table>

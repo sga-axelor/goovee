@@ -30,7 +30,6 @@ export default function Content({
     values: Partial<Address> & { multipletype?: boolean }
   ) => {
     event.preventDefault();
-
     let isDeliveryAddr, isInvoicingAddr;
 
     if (values.multipletype) {
