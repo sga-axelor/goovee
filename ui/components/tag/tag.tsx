@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@ui/components/badge";
 
 type Variant = "success" | "error" | "warning" | "primary" | "secondary" | "default";
 

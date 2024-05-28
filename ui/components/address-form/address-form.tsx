@@ -5,10 +5,10 @@ import { useState, useEffect } from "react";
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import type { Address, Country } from "@/types";
-import { TextField } from "@/components/ui/TextField";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TextField } from "@ui/components/TextField";
+import { Button } from "@ui/components/button";
+import { Label } from "@ui/components/label";
+import { Checkbox } from "@ui/components/checkbox";
 import {
   Select,
   SelectContent,
@@ -18,8 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { CheckedState } from "@radix-ui/react-checkbox";
+import { Separator } from "@ui/components/separator";
+
 export type AddressFormProps = {
   values?: Partial<Address> & { multipletype?: boolean };
   countries: Country[];

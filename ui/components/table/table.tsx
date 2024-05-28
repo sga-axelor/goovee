@@ -2,7 +2,7 @@
 
 import React from "react";
 import { TableHeadProps, TableProps } from "./types";
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@ui/components/table";
 
 export const StyledHead = ({ columns }: TableHeadProps) => {
   

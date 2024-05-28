@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "@ui/components/alert";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
 
 type Variant = "success" | "error" | "warning" | "primary";

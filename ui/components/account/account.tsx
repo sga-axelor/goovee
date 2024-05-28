@@ -3,7 +3,7 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
 import { usePathname } from "next/navigation";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/components/dropdown-menu";
 
 export function Account({ baseURL = "" }: { baseURL?: string }) {
 

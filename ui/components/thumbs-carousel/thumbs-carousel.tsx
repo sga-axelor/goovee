@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
 import Swiper, { FreeMode, Navigation, Thumbs } from "swiper";
 import { Swiper as SwiperCarousel, SwiperSlide } from "swiper/react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ui/components/button";
 
 export const ThumbsCarousel = ({
   images = [],
