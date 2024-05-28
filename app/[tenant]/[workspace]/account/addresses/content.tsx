@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Box, Divider, Button } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-
+import { LuPlus } from "react-icons/lu";
+import { LuPencil } from "react-icons/lu";
+import { Button } from "@ui/components/button"
+import { Separator } from "@ui/components/separator"
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
@@ -22,58 +23,50 @@ function AddressList({
 
   return (
     <>
-      <Box as="h4" mb={3} fontWeight="bold">
+      <h4 className="text-lg font-medium text-primary mb-4">
         {title}
-      </Box>
+      </h4>
       {Boolean(addresses?.length) ? (
-        <Box
-          my={3}
-          d="grid"
-          gap="1rem"
-          gridTemplateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }}
+        <div 
+          className="my-4 grid gap-4 grid-col-1 md:grid-col-3"
         >
           {addresses?.map(({ id, address }) => {
             return (
-              <Box
+              <div
                 key={id}
-                rounded={2}
-                p={2}
-                border
-                d="flex"
-                flexDirection="column"
-                justifyContent="space-between"
+                className="rounded-md p-2 border flex flex-col justify-between"
               >
-                <Box>
-                  <Box as="h5" fontWeight="bold">
+                <div>
+                  <h5 className="font-bold">
                     {address.addressl2}
-                  </Box>
-                  <Box as="h6">{address.addressl4}</Box>
-                  <Box as="h6">{address.addressl6}</Box>
-                  <Box as="h6">{address.addressl7country?.name}</Box>
-                </Box>
-                <Box textAlign="end">
+                  </h5>
+                  <h6>{address.addressl4}</h6>
+                  <h6>{address.addressl6}</h6>
+                  <h6>{address.addressl7country?.name}</h6>
+                </div>
+                <div className="text-right">
                   <Link href={`${workspaceURI}/account/addresses/edit/${id}`}>
-                    <Button variant="primary" outline rounded="pill">
-                      <Box d="flex" alignItems="center">
-                        <MaterialIcon icon="edit" />
-                        <Box as="p" mb={0} ms={1}>
+                    <Button variant="outline" className="rounded-full">
+                      <div className="flex items-center">
+                        <LuPencil className="text-xl" />
+                        <p className="mb-0 ml-1">
                           {i18n.get("Edit")}
-                        </Box>
-                      </Box>
+                        </p>
+                      </div>
                     </Button>
                   </Link>
-                </Box>
-              </Box>
+                </div>
+              </div>
             );
           })}
-        </Box>
+        </div>
       ) : null}
       <Link href={`${workspaceURI}/account/addresses/${type}/create`}>
-        <Button variant="primary" d="flex" alignItems="center" rounded="pill">
-          <MaterialIcon icon="add" />
-          <Box as="p" mb={0} ms={2}>
+        <Button className="rounded-full flex items-center">
+          <LuPlus className="text-xl" />
+          <p className="mb-0 ml-2">
             {i18n.get("Create Address")}
-          </Box>
+          </p>
         </Button>
       </Link>
     </>
@@ -89,33 +82,28 @@ export default function Content({
 }) {
   return (
     <>
-      <Box as="h2" mb={3}>
-        <b>{i18n.get("Addresses")}</b>
-      </Box>
-      <Box
-        p={3}
-        rounded={2}
-        bg="white"
-        d="flex"
-        flexDirection="column"
-        gap="1rem"
+      <h4 className="text-lg font-medium text-primary mb-4">
+        {i18n.get("Addresses")}
+      </h4>
+      <div
+        className="p-4 rounded-md flex flex-col gap-4 bg-white"
       >
-        <Box border p={2} rounded={2}>
+        <div className="p-2 rounded-md border">
           <AddressList
             title={i18n.get("Invoicing Address")}
             addresses={invoicingAddresses}
             type="invoicing"
           />
-        </Box>
-        <Divider />
-        <Box border p={2} rounded={2}>
+        </div>
+        <Separator />
+        <div className="p-2 rounded-md border">
           <AddressList
             title={i18n.get("Delivery Address")}
             addresses={deliveryAddresses}
             type="delivery"
           />
-        </Box>
-      </Box>
+        </div>
+      </div>
     </>
   );
 }

@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Box } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
 
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
 import { SUBAPP_PAGE } from "@/constants";
+import DynamicIcon from "@/components/ui/icons";
 
 export default function Content({ subapps }: { subapps: any }) {
   const { workspaceURI } = useWorkspace();
@@ -16,17 +15,15 @@ export default function Content({ subapps }: { subapps: any }) {
 
   return (
     <>
-      <Box as="h2" mb={3}>
-        <b>
+      <h4 className="text-lg font-medium text-primary mb-6">
           {i18n.get("My Account")} {session ? `- ${session?.user?.name}` : ""}{" "}
           {session?.user && (
-            <Box as="span" fontWeight="normal" color="secondary" fontSize={5}>
+            <span className="text-secondary text-base">
               ({session?.user?.email})
-            </Box>
+            </span>
           )}
-        </b>
-      </Box>
-      <Box d="flex" flexDirection="column" gap="1rem">
+      </h4>
+      <div className="flex flex-col gap-4">
         {subapps
           .filter((app: any) => app.installed && app.showInMySpace)
           .sort(
@@ -37,31 +34,27 @@ export default function Content({ subapps }: { subapps: any }) {
           .map(({ code, name, icon, color, background }: any) => {
             const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || "";
             return (
-              <Link key={code} href={`${workspaceURI}/${code}${page}`}>
-                <Box p={3} rounded border bg="white">
-                  <Box d="flex" alignItems="center" gap="0.5rem">
-                    <Box
-                      p={2}
-                      d="flex"
-                      rounded
+              <Link key={code} href={`${workspaceURI}/${code}${page}`} className="no-underline">
+                <div className="p-6 rounded-lg border bg-background">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-[72px] h-[72px] p-4 rounded-lg flex items-center justify-center"
                       style={{
                         background,
                         color,
                       }}
                     >
                       {icon && (
-                        <MaterialIcon icon={icon as any} fontSize="1.5rem" />
+                        <DynamicIcon icon={icon as any} fontSize="2.5rem"/>
                       )}
-                    </Box>
-                    <Box as="p" mb={0}>
-                      <b>{i18n.get(name)}</b>
-                    </Box>
-                  </Box>
-                </Box>
+                    </div>
+                    <p className="text-lg font-semibold text-primary mb-0">{i18n.get(name)}</p>
+                  </div>
+                </div>
               </Link>
             );
           })}
-      </Box>
+      </div>
     </>
   );
 }

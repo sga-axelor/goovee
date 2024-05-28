@@ -1,6 +1,5 @@
 "use client";
 
-import { Box } from "@axelor/ui";
 import { useRouter } from "next/navigation";
 
 // ---- CORE IMPORTS ---- //
@@ -67,9 +66,9 @@ export default function Content({
 
   return (
     <>
-      <Box as="h2" mb={3}>
-        <b>{title}</b>
-      </Box>
+      <h2 className="mb-4">
+        {title}
+      </h2>
       <AddressForm onSubmit={handleSubmit} countries={countries} />
     </>
   );
