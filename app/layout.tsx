@@ -9,6 +9,7 @@ import Locale from "./locale";
 import AuthContext from "./auth-context";
 import type { Metadata } from "next";
 import "./globals.css";
+import { getTheme } from "@/orm/webTheme";
 
 export const metadata: Metadata = {
   title: "Customer Portal",
@@ -21,9 +22,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const themeOptions = await findThemeOptions();
-
+// const themeData = await getTheme()
   return (
-    <Theme options={themeOptions}>
+    <Theme options={themeOptions} >
       <html lang="en">
         <body>
           <AuthContext>
