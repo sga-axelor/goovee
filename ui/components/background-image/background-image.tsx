@@ -6,6 +6,7 @@ export type BackgroundImageProps = {
   height?: string | number;
   width?: string | number;
   style?: React.CSSProperties;
+  className?:string;
 }
 
 export function BackgroundImage({
@@ -14,17 +15,19 @@ export function BackgroundImage({
   height,
   width,
   defaultSrc = "/images/no-image.png",
+  className,
   ...rest
 }: BackgroundImageProps) {
   const url = src || defaultSrc;
   return (
     <div
-      className="rounded-lg bg-contain bg-no-repeat bg-center"
+      className={`${className}  bg-no-repeat bg-center`}
       style={{
         height,
         width,
         backgroundImage: `url(${url})`,
         ...style,
+        
       }}
       {...rest}
     ></div>

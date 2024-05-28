@@ -48,11 +48,10 @@ export function ProductListItem({
       className="cursor-pointer rounded-2xl grid grid-cols-[238px_1fr] gap-6 w-full bg-background text-primary"
     >
       <BackgroundImage
-        position="relative"
         height={large ? 235 : 80}
         width={large ? 238 : 80}
         src={getImageURL(product.images?.[0])}
-        border
+        className="rounded-l-lg relative bg-cover"
       >
         {Boolean(quantity) && (
           <Box

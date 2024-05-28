@@ -199,7 +199,7 @@ export function ProductList({
           ) : null}
         </Box>
         <Box className="flex items-center justify-between">
-          <Box as="h4" className="text-xl font-medium text-primary">Focused Category</Box>
+          <Box as="h4" className="text-xl font-medium text-primary">{category && category?.name}</Box>
           <Box as="h4" className="text-sm font-medium text-primary flex items-center">See all 
               <MaterialIcon 
                 className="cursor-pointer ml-2"
@@ -207,8 +207,7 @@ export function ProductList({
               /> 
             </Box>
         </Box>
-        <Box d="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Box as="h2">{category && <b>{category?.name}</b>}</Box>
+        <Box d="flex" justifyContent="end" alignItems="center" mb={2}>
           <Box d="flex" alignItems="center" gap="1rem">
             <MaterialIcon
               color={isGridView ? "primary" : "secondary"}

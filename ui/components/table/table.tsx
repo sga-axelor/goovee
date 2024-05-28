@@ -8,14 +8,12 @@ export const StyledHead = ({ columns }: TableHeadProps) => {
   
   return (
     <>
-      <TableHead className="mb-3 ">
+      
         <TableRow>
           {columns?.map((column: any, index: number) => (
             <TableCell
-             
               key={column.key}
-              
-              className="bg-background text-primary text-base font-semibold"
+              className="text-primary text-base font-semibold"
               style={{
                 paddingInline: "24px",
                 border: "none",
@@ -31,7 +29,7 @@ export const StyledHead = ({ columns }: TableHeadProps) => {
             </TableCell>
           ))}
         </TableRow>
-      </TableHead>
+      
     </>
   );
 };
@@ -39,7 +37,7 @@ export const StyledHead = ({ columns }: TableHeadProps) => {
 export const StyledTable = ({ columns, children }: TableProps) => {
   return (
     <>
-      <Table className="w-full">
+      <Table className="w-full rounded-lg bg-background">
         <StyledHead columns={columns} />
         <TableBody>{children}</TableBody>
       </Table>

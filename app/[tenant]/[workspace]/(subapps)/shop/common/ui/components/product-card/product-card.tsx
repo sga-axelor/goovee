@@ -42,10 +42,8 @@ export function ProductCard({
     >
       <Box onClick={handleClick}>
         <BackgroundImage
-          position="relative"
-          height={232}
           src={getImageURL(product.images?.[0])}
-          style={{ backgroundSize: "cover" }}
+          className="rounded-t-lg bg-cover relative h-[232px]"
         >
           {Boolean(quantity) && (
             <Box
