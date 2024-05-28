@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { Box, Divider, Button } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+import { MdOutlineModeEdit } from "react-icons/md";
+
+import { IoAdd } from "react-icons/io5";
 
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
@@ -55,7 +57,7 @@ function AddressList({
                   <Link href={`${workspaceURI}/account/addresses/edit/${id}`}>
                     <Button variant="primary" outline rounded="pill">
                       <Box d="flex" alignItems="center">
-                        <MaterialIcon icon="edit" />
+                        <MdOutlineModeEdit size={24} />
                         <Box as="p" mb={0} ms={1}>
                           {i18n.get("Edit")}
                         </Box>
@@ -70,7 +72,8 @@ function AddressList({
       ) : null}
       <Link href={`${workspaceURI}/account/addresses/${type}/create`}>
         <Button variant="primary" d="flex" alignItems="center" rounded="pill">
-          <MaterialIcon icon="add" />
+          <IoAdd size={24} />
+
           <Box as="p" mb={0} ms={2}>
             {i18n.get("Create Address")}
           </Box>

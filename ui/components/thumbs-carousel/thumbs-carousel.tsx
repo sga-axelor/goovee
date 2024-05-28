@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
 import Swiper, { FreeMode, Navigation, Thumbs } from "swiper";
 import { Swiper as SwiperCarousel, SwiperSlide } from "swiper/react";
 import { Button } from "@ui/components/button";
+import { FaChevronLeft,FaChevronRight } from "react-icons/fa";
 
 export const ThumbsCarousel = ({
   images = [],
@@ -50,7 +50,7 @@ export const ThumbsCarousel = ({
             className="absolute top-[45%] left-4"
           >
             <div className="flex">
-              <MaterialIcon color="white" icon="chevron_left" />
+              <FaChevronLeft color="white"/>
             </div>
           </Button>
           <Button
@@ -59,7 +59,7 @@ export const ThumbsCarousel = ({
             className="absolute top-[45%] right-4"
           >
             <div className="flex">
-              <MaterialIcon color="white" icon="chevron_right" />
+              <FaChevronRight color="white"/>
             </div>
           </Button>
         </div>

@@ -1,5 +1,5 @@
 "use client";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+import { IoAdd, IoRemove } from "react-icons/io5";
 
 export function Quantity({
   value,
@@ -14,27 +14,24 @@ export function Quantity({
 }) {
   return (
     <div className="flex items-center gap-4">
-      <div className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10" style={{width: '55px'}}>
+      <div className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10" style={{ width: '55px' }}>
         <span className="text-primary text-base">
-        {value}
+          {value}
         </span>
       </div>
       <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
-        <MaterialIcon
+        <IoAdd
           className="courser-pointer block p-2"
-          icon="remove"
-          onClick={onDecrement}
-          disabled={disabled}
-          {...({ fontSize: 32 } as any)}
+          size={32}
+          onClick={() => !disabled && onDecrement?.()}
         />
+
       </div>
       <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
-        <MaterialIcon
+        <IoRemove
           className="courser-pointer block p-2"
-          icon="add"
-          onClick={onIncrement}
-          disabled={disabled}
-          {...({ fontSize: 32 } as any)}
+          onClick={() => !disabled && onIncrement?.()}
+          size={32}
         />
       </div>
     </div>

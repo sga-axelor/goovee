@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { TextField } from "@axelor/ui";
-import { Button } from "@/components/ui/button"
+import { Button } from "@ui/components/button";
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import { Toast } from "@/ui/components";
+import { TextField } from "@ui/components/TextField";
 export default function Content() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -27,36 +27,49 @@ export default function Content() {
         className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}
       >
-        <TextField
-          label={i18n.get("New Password")}
-          name="password"
-          placeholder="Password"
-          type={showPassword ? "text" : "password"}
-          icons={[
-            {
-              icon: showPassword ? "visibility_off" : "visibility",
-              onClick: toggleShowPassword,
-            },
-          ]}
+        <div>
+          <TextField
+            label={i18n.get("New Password")}
+            name="password"
+            placeholder="Password"
+            type={showPassword ? "text" : "password"}
+            icons={[
+              {
+                icon: showPassword ? "visibility_off" : "visibility",
+                onClick: toggleShowPassword,
+              },
+            ]}
+          />
+          <TextField
+            label={i18n.get("Confirm Password")}
+            name="confirmPassword"
+            placeholder="Password"
+            type={showConfirmPassword ? "text" : "password"}
+            icons={[
+              {
+                icon: showConfirmPassword ? "visibility_off" : "visibility",
+                onClick: toggleShowConfirmPassword,
+              },
+            ]}
+          />
+          <Button type="submit" className="rounded-full">
+            {i18n.get("Submit")}
+          </Button>
+        </div>
+        <Toast
+          variant="error"
+          show={true}
+          heading={i18n.get("Your passwords do not match, please try again.")}
+          description={i18n.get(
+            "The description line of a sticky alert. Helpful component that is designed to be placed near to alert context."
+          )}
         />
-        <TextField
-          label={i18n.get("Confirm Password")}
-          name="confirmPassword"
-          placeholder="Password"
-          type={showConfirmPassword ? "text" : "password"}
-          icons={[
-            {
-              icon: showConfirmPassword ? "visibility_off" : "visibility",
-              onClick: toggleShowConfirmPassword,
-            },
-          ]}
+        <Toast
+          variant="success"
+          show={true}
+          heading={i18n.get("Your password has been successfully updated.")}
+          description={i18n.get("Add text here if necessary.")}
         />
-        <Button type="submit"
-          className="rounded-full">
-          {i18n.get("Submit")}
-        </Button>
-        <Toast variant="error" show={true} heading={i18n.get("Your passwords do not match, please try again.")} description={i18n.get("The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.")} />
-        <Toast variant="success" show={true} heading={i18n.get("Your password has been successfully updated.")} description={i18n.get("Add text here if necessary.")} />
       </form>
     </div>
   );

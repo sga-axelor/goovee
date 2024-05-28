@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@ui/components/breadcrumb";
-import { ChevronRight } from "lucide-react";
+import { FaChevronRight } from "react-icons/fa";
 
 export type BreadcrumbsProps = {
   breadcrumbs: { name: string; onClick?: () => void }[];
@@ -36,7 +36,7 @@ export const Breadcrumbs = ({ breadcrumbs, onClick }: BreadcrumbsProps) => {
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
-              {!isLast && <BreadcrumbSeparator><ChevronRight /></BreadcrumbSeparator>}
+              {!isLast && <BreadcrumbSeparator><FaChevronRight /></BreadcrumbSeparator>}
             </React.Fragment>
           );
         })}
