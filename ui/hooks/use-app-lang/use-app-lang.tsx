@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import {useEffect, useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import { toTitleCase } from "@/utils/names";
+import {toTitleCase} from '@/utils/names';
 
 const RTL_LANGS = [
-  "ar", // Arabic
-  "fa", // Persian
-  "he", // Hebrew
-  "ur", // Urdu
+  'ar', // Arabic
+  'fa', // Persian
+  'he', // Hebrew
+  'ur', // Urdu
 ];
 
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
@@ -19,14 +19,14 @@ function toLangTag(lang: string) {
     parts[1] = toTitleCase(parts[1]);
     parts[2] = parts[2].toUpperCase();
   }
-  return parts.join("-");
+  return parts.join('-');
 }
 
 const isRTL = (lang: string) =>
-  RTL_LANGS.some((x) => lang === x || lang.startsWith(`${x}-`));
+  RTL_LANGS.some(x => lang === x || lang.startsWith(`${x}-`));
 
 export function useAppLang() {
-  const [locale, setLocale] = useState("en");
+  const [locale, setLocale] = useState('en');
 
   useEffect(() => {
     const locale = navigator.language || navigator?.userLanguage;
@@ -34,13 +34,13 @@ export function useAppLang() {
   }, []);
 
   const lang = useMemo(() => toLangTag(locale), [locale]);
-  const dir = useMemo(() => (isRTL(lang) ? "rtl" : "ltr"), [lang]);
+  const dir = useMemo(() => (isRTL(lang) ? 'rtl' : 'ltr'), [lang]);
 
   return useMemo(
     () => ({
       dir,
       lang,
     }),
-    [lang, dir]
+    [lang, dir],
   );
 }

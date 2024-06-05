@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React from "react";
-import { TableCell, TableRow } from "@axelor/ui";
+import React from 'react';
+import {TableCell, TableRow} from '@axelor/ui';
 
 // ---- CORE IMPORTS ---- //
-import { parseDate } from "@/utils";
-import { StyledTable, Tag } from "@/ui/components";
-import type { Item } from "@/types";
+import {parseDate} from '@/utils';
+import {StyledTable, Tag} from '@/ui/components';
+import type {Item} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { getStatus } from "@/subapps/invoices/common/utils/invoices";
+import {getStatus} from '@/subapps/invoices/common/utils/invoices';
 
 type ArchivedTableProps = {
   columns: Item[];
@@ -25,13 +25,12 @@ export const ArchivedTable = ({
     <>
       <StyledTable columns={columns}>
         {rows?.map((row: any, index: number) => {
-          const { status, variant } = getStatus(row.amountRemaining);
+          const {status, variant} = getStatus(row.amountRemaining);
           return (
             <TableRow
               key={index}
               className="pointer"
-              onClick={() => handleRowClick(row.id)}
-            >
+              onClick={() => handleRowClick(row.id)}>
               <TableCell px={4}>{row.invoiceId}</TableCell>
               <TableCell px={4}>
                 <Tag variant={variant}>{status}</Tag>
@@ -43,8 +42,7 @@ export const ArchivedTable = ({
                 px={4}
                 style={{
                   fontSize: 18,
-                }}
-              >
+                }}>
                 {row.inTaxTotal}
               </TableCell>
             </TableRow>

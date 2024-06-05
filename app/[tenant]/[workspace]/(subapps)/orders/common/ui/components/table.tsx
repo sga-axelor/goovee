@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React from "react";
-import { TableCell, TableRow } from "@axelor/ui";
+import React from 'react';
+import {TableCell, TableRow} from '@axelor/ui';
 
 // ---- CORE IMPORTS ---- //
-import { StyledTable, Tag } from "@/ui/components";
-import { parseDate } from "@/utils";
-import type { Item } from "@/types";
-import { i18n } from "@/lib/i18n";
+import {StyledTable, Tag} from '@/ui/components';
+import {parseDate} from '@/utils';
+import type {Item} from '@/types';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import { getStatus } from "@/subapps/orders/common/utils/orders";
-import styles from "./styles.module.scss";
+import {getStatus} from '@/subapps/orders/common/utils/orders';
+import styles from './styles.module.scss';
 
 export const OrdersTable = ({
   columns,
@@ -26,36 +26,34 @@ export const OrdersTable = ({
     <div>
       <StyledTable columns={columns}>
         {orders?.map((order: any, index: number) => {
-          const { status, variant } = getStatus(
+          const {status, variant} = getStatus(
             order.statusSelect,
-            order.deliveryState
+            order.deliveryState,
           );
 
           return (
             <TableRow
-              className={styles["table-row"]}
+              className={styles['table-row']}
               key={index}
-              onClick={() => handleRowClick(order.id)}
-            >
-              <TableCell className={styles["table-cell"]}>
+              onClick={() => handleRowClick(order.id)}>
+              <TableCell className={styles['table-cell']}>
                 {order.saleOrderSeq}
               </TableCell>
-              <TableCell className={styles["table-cell"]}>
+              <TableCell className={styles['table-cell']}>
                 <Tag variant={variant}>{status}</Tag>
               </TableCell>
-              <TableCell className={styles["table-cell"]}>
+              <TableCell className={styles['table-cell']}>
                 {parseDate(order.createdOn)}
               </TableCell>
-              <TableCell className={styles["table-cell"]}>
+              <TableCell className={styles['table-cell']}>
                 {order.exTaxTotal}
               </TableCell>
               <TableCell
-                className={styles["table-cell"]}
+                className={styles['table-cell']}
                 style={{
                   fontSize: 18,
                 }}
-                fontWeight="bold"
-              >
+                fontWeight="bold">
                 {order.inTaxTotal}
               </TableCell>
             </TableRow>

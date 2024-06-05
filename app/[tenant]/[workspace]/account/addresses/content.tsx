@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Box, Divider, Button } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+import Link from 'next/link';
+import {Box, Divider, Button} from '@axelor/ui';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
 
 // ---- CORE IMPORTS ---- //
-import { i18n } from "@/lib/i18n";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import type { PartnerAddress } from "@/types";
+import {i18n} from '@/lib/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {PartnerAddress} from '@/types';
 
 function AddressList({
   title,
@@ -15,10 +15,10 @@ function AddressList({
   addresses,
 }: {
   title: string;
-  type: "delivery" | "invoicing";
+  type: 'delivery' | 'invoicing';
   addresses: PartnerAddress[] | null;
 }) {
-  const { workspaceURI } = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   return (
     <>
@@ -30,9 +30,8 @@ function AddressList({
           my={3}
           d="grid"
           gap="1rem"
-          gridTemplateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }}
-        >
-          {addresses?.map(({ id, address }) => {
+          gridTemplateColumns={{base: '1fr', md: '1fr 1fr 1fr'}}>
+          {addresses?.map(({id, address}) => {
             return (
               <Box
                 key={id}
@@ -41,8 +40,7 @@ function AddressList({
                 border
                 d="flex"
                 flexDirection="column"
-                justifyContent="space-between"
-              >
+                justifyContent="space-between">
                 <Box>
                   <Box as="h5" fontWeight="bold">
                     {address.addressl2}
@@ -57,7 +55,7 @@ function AddressList({
                       <Box d="flex" alignItems="center">
                         <MaterialIcon icon="edit" />
                         <Box as="p" mb={0} ms={1}>
-                          {i18n.get("Edit")}
+                          {i18n.get('Edit')}
                         </Box>
                       </Box>
                     </Button>
@@ -72,7 +70,7 @@ function AddressList({
         <Button variant="primary" d="flex" alignItems="center" rounded="pill">
           <MaterialIcon icon="add" />
           <Box as="p" mb={0} ms={2}>
-            {i18n.get("Create Address")}
+            {i18n.get('Create Address')}
           </Box>
         </Button>
       </Link>
@@ -90,7 +88,7 @@ export default function Content({
   return (
     <>
       <Box as="h2" mb={3}>
-        <b>{i18n.get("Addresses")}</b>
+        <b>{i18n.get('Addresses')}</b>
       </Box>
       <Box
         p={3}
@@ -98,11 +96,10 @@ export default function Content({
         bg="white"
         d="flex"
         flexDirection="column"
-        gap="1rem"
-      >
+        gap="1rem">
         <Box border p={2} rounded={2}>
           <AddressList
-            title={i18n.get("Invoicing Address")}
+            title={i18n.get('Invoicing Address')}
             addresses={invoicingAddresses}
             type="invoicing"
           />
@@ -110,7 +107,7 @@ export default function Content({
         <Divider />
         <Box border p={2} rounded={2}>
           <AddressList
-            title={i18n.get("Delivery Address")}
+            title={i18n.get('Delivery Address')}
             addresses={deliveryAddresses}
             type="delivery"
           />

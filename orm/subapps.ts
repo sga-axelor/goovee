@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
-import { findWorkspaceApps } from "@/orm/workspace";
-import { clone } from "@/utils";
-import type { PortalWorkspace, User } from "@/types";
+import {findWorkspaceApps} from '@/orm/workspace';
+import {clone} from '@/utils';
+import type {PortalWorkspace, User} from '@/types';
 
 export async function findSubapp(
   code: string,
@@ -11,9 +11,9 @@ export async function findSubapp(
   }: {
     workspace?: PortalWorkspace;
     user?: User;
-  } = {}
+  } = {},
 ) {
-  const subapps = await findSubapps({ workspace, user });
+  const subapps = await findSubapps({workspace, user});
 
   return subapps.find((app: any) => app.code === code);
 }
@@ -30,11 +30,11 @@ export async function findSubapps({
     user,
   })
     .then(clone)
-    .then((subapps) =>
+    .then(subapps =>
       subapps.map((app: any) => ({
         ...app,
-        installed: app?.installed === "yes",
-      }))
+        installed: app?.installed === 'yes',
+      })),
     );
 
   return apps;

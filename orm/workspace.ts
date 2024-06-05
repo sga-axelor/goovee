@@ -1,7 +1,7 @@
-import { client } from "@/globals";
-import type { User, Partner, PortalWorkspace } from "@/types";
+import {client} from '@/globals';
+import type {User, Partner, PortalWorkspace} from '@/types';
 
-export async function findDefaultWorkspace({ url }: { url: string }) {
+export async function findDefaultWorkspace({url}: {url: string}) {
   const c = await client;
 
   const workspace = await c.aOSPortalWorkspace.findOne({
@@ -50,7 +50,7 @@ export async function findPartnerWorkspace({
   id,
   url,
 }: {
-  id?: Partner["id"];
+  id?: Partner['id'];
   url: string;
 }) {
   if (!id) return null;
@@ -103,7 +103,7 @@ export async function findPartnerWorkspace({
     return null;
   }
 
-  const { workspace, portalAppConfig } = res.partnerWorkspaceSet[0];
+  const {workspace, portalAppConfig} = res.partnerWorkspaceSet[0];
 
   workspace.config = portalAppConfig;
   workspace.portalAppConfig = undefined;
@@ -111,13 +111,7 @@ export async function findPartnerWorkspace({
   return workspace;
 }
 
-export async function findWorkspace({
-  user,
-  url,
-}: {
-  user?: User;
-  url: string;
-}) {
+export async function findWorkspace({user, url}: {user?: User; url: string}) {
   let workspace: PortalWorkspace | null | undefined;
 
   if (!url) return null;
@@ -130,13 +124,13 @@ export async function findWorkspace({
   }
 
   if (!workspace) {
-    workspace = await findDefaultWorkspace({ url });
+    workspace = await findDefaultWorkspace({url});
   }
 
   return workspace;
 }
 
-export async function findWorkspaces({ url }: { url?: string }) {
+export async function findWorkspaces({url}: {url?: string}) {
   if (!url) return [];
 
   const c = await client;
@@ -154,7 +148,7 @@ export async function findWorkspaces({ url }: { url?: string }) {
         publicEshop: true,
       },
     },
-    orderBy: { updatedOn: "DESC" },
+    orderBy: {updatedOn: 'DESC'},
   });
 
   return workspaces;
@@ -162,14 +156,14 @@ export async function findWorkspaces({ url }: { url?: string }) {
 
 const defaultApps = [
   {
-    name: "Addresses",
-    code: "account/addresses",
-    icon: "home",
-    color: "var(--portal-green-100)",
-    background: "white",
+    name: 'Addresses',
+    code: 'account/addresses',
+    icon: 'home',
+    color: 'var(--portal-green-100)',
+    background: 'white',
     showInTopMenu: false,
     showInMySpace: true,
-    installed: "yes",
+    installed: 'yes',
   },
 ];
 
@@ -260,11 +254,11 @@ export async function findWorkspaceApps({
     (w: any) => ({
       ...w.app,
       role: w.roleSelect,
-    })
+    }),
   );
 
   const available = (app: any) =>
-    availableApps.some((a) => a.code === app.code && a.installed === "yes");
+    availableApps.some(a => a.code === app.code && a.installed === 'yes');
 
   const availableContactApps = (contactApps || [])?.filter(available);
 

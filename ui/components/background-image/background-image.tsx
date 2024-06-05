@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 export type BackgroundImageProps = {
   src?: string;
@@ -6,15 +6,15 @@ export type BackgroundImageProps = {
   height?: string | number;
   width?: string | number;
   style?: React.CSSProperties;
-  className?:string;
-}
+  className?: string;
+};
 
 export function BackgroundImage({
   src,
   style,
   height,
   width,
-  defaultSrc = "/images/no-image.png",
+  defaultSrc = '/images/no-image.png',
   className,
   ...rest
 }: BackgroundImageProps) {
@@ -27,10 +27,8 @@ export function BackgroundImage({
         width,
         backgroundImage: `url(${url})`,
         ...style,
-        
       }}
-      {...rest}
-    ></div>
+      {...rest}></div>
   );
 }
 

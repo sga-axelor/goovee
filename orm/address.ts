@@ -1,7 +1,7 @@
-import { client } from "@/globals";
-import { PartnerAddress, Partner } from "@/types";
+import {client} from '@/globals';
+import {PartnerAddress, Partner} from '@/types';
 
-export async function findPartnerAddress(addressId: PartnerAddress["id"]) {
+export async function findPartnerAddress(addressId: PartnerAddress['id']) {
   if (!addressId) return null;
 
   const c = await client;
@@ -31,8 +31,8 @@ export async function findPartnerAddress(addressId: PartnerAddress["id"]) {
 }
 
 export async function createPartnerAddress(
-  partnerId: Partner["id"],
-  values: Partial<PartnerAddress>
+  partnerId: Partner['id'],
+  values: Partial<PartnerAddress>,
 ) {
   if (!partnerId) return null;
 
@@ -65,8 +65,8 @@ export async function createPartnerAddress(
 }
 
 export async function updatePartnerAddress(
-  partnerId: Partner["id"],
-  values: Partial<PartnerAddress>
+  partnerId: Partner['id'],
+  values: Partial<PartnerAddress>,
 ) {
   if (!partnerId) return null;
 
@@ -94,7 +94,7 @@ export async function updatePartnerAddress(
   return address;
 }
 
-export async function findAddresses(partnerId: Partner["id"]) {
+export async function findAddresses(partnerId: Partner['id']) {
   if (!partnerId) return null;
 
   const c = await client;
@@ -124,7 +124,7 @@ export async function findAddresses(partnerId: Partner["id"]) {
   return addresses;
 }
 
-export async function findDeliveryAddresses(partnerId: Partner["id"]) {
+export async function findDeliveryAddresses(partnerId: Partner['id']) {
   if (!partnerId) return null;
 
   const c = await client;
@@ -155,7 +155,7 @@ export async function findDeliveryAddresses(partnerId: Partner["id"]) {
   return addresses;
 }
 
-export async function findInvoicingAddresses(partnerId: Partner["id"]) {
+export async function findInvoicingAddresses(partnerId: Partner['id']) {
   if (!partnerId) return null;
 
   const c = await client;

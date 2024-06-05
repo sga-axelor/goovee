@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import { Box } from "@axelor/ui";
-import { useRouter } from "next/navigation";
+import {Box} from '@axelor/ui';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import { capitalise } from "@/utils";
-import { AddressForm } from "@/ui/components";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { i18n } from "@/lib/i18n";
-import type { Address, Country } from "@/types";
+import {capitalise} from '@/utils';
+import {AddressForm} from '@/ui/components';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
+import type {Address, Country} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { createAddress } from "./actions";
+import {createAddress} from './actions';
 
 export default function Content({
   type,
   countries,
 }: {
-  type: "delivery" | "invoicing";
+  type: 'delivery' | 'invoicing';
   countries: Country[];
 }) {
   const title = `${capitalise(type)} Address`;
 
   const router = useRouter();
-  const { workspaceURI } = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
-    values: Partial<Address> & { multipletype?: boolean }
+    values: Partial<Address> & {multipletype?: boolean},
   ) => {
     event.preventDefault();
     let isDeliveryAddr, isInvoicingAddr;
@@ -37,15 +37,15 @@ export default function Content({
       isInvoicingAddr = true;
     }
 
-    if (type === "delivery") {
+    if (type === 'delivery') {
       isDeliveryAddr = true;
     }
 
-    if (type === "invoicing") {
+    if (type === 'invoicing') {
       isInvoicingAddr = true;
     }
 
-    const { multipletype, addressl7country, ...address } = values;
+    const {multipletype, addressl7country, ...address} = values;
 
     try {
       const _address = await createAddress({
@@ -61,7 +61,7 @@ export default function Content({
 
       router.push(`${workspaceURI}/account/addresses/${_address?.id}`);
     } catch (err) {
-      alert(i18n.get("Error creating address"));
+      alert(i18n.get('Error creating address'));
     }
   };
 

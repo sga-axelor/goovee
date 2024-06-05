@@ -1,12 +1,18 @@
-"use client";
+'use client';
 
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import { PREFIX_CART_KEY } from "@/constants";
-import { getitem, setitem } from "@/lib/storage";
-import type { Product } from "@/types";
-import { useWorkspace } from "./workspace-context";
+import {PREFIX_CART_KEY} from '@/constants';
+import {getitem, setitem} from '@/lib/storage';
+import type {Product} from '@/types';
+import {useWorkspace} from './workspace-context';
 
 const CartContext = React.createContext<any>({});
 
@@ -17,163 +23,169 @@ export default function CartContextProvider({
 }) {
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const { workspaceURI } = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
-  const CART_KEY = PREFIX_CART_KEY + workspaceURI;
+  const CART_KEY = useMemo(
+    () => PREFIX_CART_KEY + workspaceURI,
+    [workspaceURI],
+  );
 
-  const clearCart = async () => {
+  const clearCart = useCallback(async () => {
     setCart({
       items: [],
     });
-  };
+  }, []);
 
-  const getProductQuantity = async (productId: Product["id"]) => {
-    return (
-      cart?.items.find((i: any) => Number(i?.product) === Number(productId))
-        ?.quantity || 0
-    );
-  };
+  const getProductQuantity = useCallback(
+    async (productId: Product['id']) => {
+      return (
+        cart?.items.find((i: any) => Number(i?.product) === Number(productId))
+          ?.quantity || 0
+      );
+    },
+    [cart?.items],
+  );
 
-  const getProductNote = async (productId: Product["id"]) => {
-    return (
-      cart?.items.find((i: any) => Number(i?.product) === Number(productId))
-        ?.note || ""
-    );
-  };
+  const getProductNote = useCallback(
+    async (productId: Product['id']) => {
+      return (
+        cart?.items.find((i: any) => Number(i?.product) === Number(productId))
+          ?.note || ''
+      );
+    },
+    [cart?.items],
+  );
 
-  const setProductNote = async (productId: Product["id"], note: string) => {
-    setCart((cart: any) => {
-      return {
-        ...cart,
-        items: cart.items.map((i: any) => {
-          if (Number(i.product) === Number(productId)) {
-            i.note = note;
-          }
-
-          return i;
-        }),
-      };
-    });
-  };
-
-  const addItem = async ({
-    productId,
-    quantity,
-  }: {
-    productId: Product["id"];
-    quantity: string | number;
-  }) => {
-    const existing = await getProductQuantity(productId);
-
-    if (!existing) {
-      setCart((cart: any) => ({
-        ...cart,
-        items: [
-          ...cart?.items,
-          {
-            product: productId,
-            quantity,
-          },
-        ],
-      }));
-    } else {
-      await incrementQuantity({ productId, quantity });
-    }
-  };
-
-  const incrementQuantity = async ({
-    productId,
-    quantity,
-  }: {
-    productId: Product["id"];
-    quantity: string | number;
-  }) => {
-    const existing = await getProductQuantity(productId);
-
-    if (!existing) {
-      return await addItem({ productId, quantity });
-    }
-
-    setCart((cart: any) => {
-      return {
-        ...cart,
-        items: cart.items.map((i: any) => {
-          if (Number(i.product) === Number(productId)) {
-            i.quantity = Number(i.quantity) + Number(quantity);
-          }
-
-          return i;
-        }),
-      };
-    });
-  };
-
-  const decrementQuantity = async ({
-    productId,
-    quantity,
-  }: {
-    productId: Product["id"];
-    quantity: string | number;
-  }) => {
-    const existing = await getProductQuantity(productId);
-
-    if (existing) {
+  const setProductNote = useCallback(
+    async (productId: Product['id'], note: string) => {
       setCart((cart: any) => {
         return {
           ...cart,
           items: cart.items.map((i: any) => {
             if (Number(i.product) === Number(productId)) {
-              i.quantity = Number(i.quantity) - Number(quantity);
+              i.note = note;
             }
 
             return i;
           }),
         };
       });
-    }
-  };
+    },
+    [],
+  );
 
-  const updateQuantity = async ({
-    productId,
-    quantity,
-  }: {
-    productId: Product["id"];
-    quantity: string | number;
-  }) => {
-    const existing = await getProductQuantity(productId);
+  const addItem = useCallback(
+    async ({
+      productId,
+      quantity,
+    }: {
+      productId: Product['id'];
+      quantity: string | number;
+    }) => {
+      const existing = await getProductQuantity(productId);
 
-    if (!existing) {
-      return await addItem({ productId, quantity });
-    }
+      if (!existing) {
+        setCart((cart: any) => ({
+          ...cart,
+          items: [
+            ...cart?.items,
+            {
+              product: productId,
+              quantity,
+            },
+          ],
+        }));
+      } else {
+        setCart((cart: any) => ({
+          ...cart,
+          items: cart.items.map((i: any) => {
+            if (Number(i.product) === Number(productId)) {
+              i.quantity = Number(i.quantity) + Number(quantity);
+            }
 
-    setCart((cart: any) => {
-      return {
-        ...cart,
-        items: cart.items.map((i: any) => {
-          if (Number(i.product) === Number(productId)) {
-            i.quantity = Number(quantity);
-          }
+            return i;
+          }),
+        }));
+      }
+    },
+    [getProductQuantity],
+  );
 
-          return i;
-        }),
-      };
-    });
-  };
+  const decrementQuantity = useCallback(
+    async ({
+      productId,
+      quantity,
+    }: {
+      productId: Product['id'];
+      quantity: string | number;
+    }) => {
+      const existing = await getProductQuantity(productId);
 
-  const removeItem = async (productId: Product["id"]) => {
-    const existing = await getProductQuantity(productId);
+      if (existing) {
+        setCart((cart: any) => {
+          return {
+            ...cart,
+            items: cart.items.map((i: any) => {
+              if (Number(i.product) === Number(productId)) {
+                i.quantity = Number(i.quantity) - Number(quantity);
+              }
 
-    if (existing) {
+              return i;
+            }),
+          };
+        });
+      }
+    },
+    [getProductQuantity],
+  );
+
+  const updateQuantity = useCallback(
+    async ({
+      productId,
+      quantity,
+    }: {
+      productId: Product['id'];
+      quantity: string | number;
+    }) => {
+      const existing = await getProductQuantity(productId);
+
+      if (!existing) {
+        return await addItem({productId, quantity});
+      }
+
       setCart((cart: any) => {
         return {
           ...cart,
-          items: cart.items.filter(
-            (i: any) => Number(i.product) !== Number(productId)
-          ),
+          items: cart.items.map((i: any) => {
+            if (Number(i.product) === Number(productId)) {
+              i.quantity = Number(quantity);
+            }
+
+            return i;
+          }),
         };
       });
-    }
-  };
+    },
+    [addItem, getProductQuantity],
+  );
+
+  const removeItem = useCallback(
+    async (productId: Product['id']) => {
+      const existing = await getProductQuantity(productId);
+
+      if (existing) {
+        setCart((cart: any) => {
+          return {
+            ...cart,
+            items: cart.items.filter(
+              (i: any) => Number(i.product) !== Number(productId),
+            ),
+          };
+        });
+      }
+    },
+    [getProductQuantity],
+  );
 
   useEffect(() => {
     const init = async () => {
@@ -181,7 +193,7 @@ export default function CartContextProvider({
         let cart = await getitem(CART_KEY);
 
         if (!cart) {
-          cart = { items: [] };
+          cart = {items: []};
         }
 
         setCart(cart);
@@ -192,21 +204,21 @@ export default function CartContextProvider({
     };
 
     init();
-  }, [workspaceURI]);
+  }, [CART_KEY, workspaceURI]);
 
   useEffect(() => {
     const updateCart = async () => {
       await setitem(CART_KEY, cart);
     };
+
     updateCart();
-  }, [cart]);
+  }, [CART_KEY, cart]);
 
   const value = useMemo(
     () => ({
       cart,
       addItem,
       getProductQuantity,
-      incrementQuantity,
       updateQuantity,
       removeItem,
       clearCart,
@@ -217,13 +229,12 @@ export default function CartContextProvider({
       cart,
       addItem,
       getProductQuantity,
-      incrementQuantity,
       updateQuantity,
       removeItem,
       clearCart,
       getProductNote,
       setProductNote,
-    ]
+    ],
   );
 
   if (loading) {

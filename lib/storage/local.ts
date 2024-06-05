@@ -1,4 +1,4 @@
-import localforage from "localforage";
+import localforage from 'localforage';
 
 export async function getitem(key: string) {
   try {

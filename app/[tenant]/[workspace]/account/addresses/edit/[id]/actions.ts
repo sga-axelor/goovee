@@ -1,10 +1,10 @@
-"use server";
+'use server';
 
 // ---- CORE IMPORTS ---- //
-import { getSession } from "@/orm/auth";
-import { updatePartnerAddress } from "@/orm/address";
-import { PartnerAddress } from "@/types";
-import { clone } from "@/utils";
+import {getSession} from '@/orm/auth';
+import {updatePartnerAddress} from '@/orm/address';
+import {PartnerAddress} from '@/types';
+import {clone} from '@/utils';
 
 export async function updateAddress(values: Partial<PartnerAddress>) {
   const session = await getSession();
@@ -12,7 +12,7 @@ export async function updateAddress(values: Partial<PartnerAddress>) {
   if (!session) return null;
 
   const address = await updatePartnerAddress(session.user?.id, values).then(
-    clone
+    clone,
   );
 
   return address;

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import {useState, useEffect} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import { i18n } from "@/lib/i18n";
-import type { Address, Country } from "@/types";
-import { TextField } from "@ui/components/TextField";
-import { Button } from "@ui/components/button";
-import { Label } from "@ui/components/label";
-import { Checkbox } from "@ui/components/checkbox";
+import {i18n} from '@/lib/i18n';
+import type {Address, Country} from '@/types';
+import {TextField} from '@ui/components/TextField';
+import {Button} from '@ui/components/button';
+import {Label} from '@ui/components/label';
+import {Checkbox} from '@ui/components/checkbox';
 import {
   Select,
   SelectContent,
@@ -17,37 +17,45 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@ui/components/separator";
+} from '@/components/ui/select';
+import {Separator} from '@ui/components/separator';
 
 export type AddressFormProps = {
-  values?: Partial<Address> & { multipletype?: boolean };
+  values?: Partial<Address> & {multipletype?: boolean};
   countries: Country[];
   onSubmit: (event: React.FormEvent<any>, values: Partial<Address>) => void;
 };
 
 const defaultAddress = {
-  addressl2: "",
-  addressl3: "",
-  addressl4: "",
-  addressl6: "",
+  addressl2: '',
+  addressl3: '',
+  addressl4: '',
+  addressl6: '',
   multipletype: false,
 };
 
-export function AddressForm({ values: valuesProp, countries, onSubmit }: AddressFormProps) {
-  const [values, setValues] = useState(valuesProp || { ...defaultAddress, addressl7country: countries?.[0] });
-  const [selectedValue, setSelectedValue] = useState<String>(countries?.[0].id.toString());
+export function AddressForm({
+  values: valuesProp,
+  countries,
+  onSubmit,
+}: AddressFormProps) {
+  const [values, setValues] = useState(
+    valuesProp || {...defaultAddress, addressl7country: countries?.[0]},
+  );
+  const [selectedValue, setSelectedValue] = useState<String>(
+    countries?.[0].id.toString(),
+  );
 
   const handleCheckbox = (event: any) => {
-    setValues((v) => ({
+    setValues(v => ({
       ...v,
       multipletype: event,
     }));
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = event.target;
-    setValues((v) => ({
+    const {name, value, type} = event.target;
+    setValues(v => ({
       ...v,
       [name]: value,
     }));
@@ -64,30 +72,30 @@ export function AddressForm({ values: valuesProp, countries, onSubmit }: Address
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <h3>{i18n.get("Address Information")}</h3>
+        <h3>{i18n.get('Address Information')}</h3>
         <Separator className="my-2" />
         <div>
           <TextField
-            label={i18n.get("Recipient details")}
+            label={i18n.get('Recipient details')}
             name="addressl2"
             value={values.addressl2}
             onChange={handleChange}
           />
           <TextField
-            label={i18n.get("N° and Street label")}
+            label={i18n.get('N° and Street label')}
             name="addressl4"
             value={values.addressl4}
             onChange={handleChange}
             required
           />
           <TextField
-            label={i18n.get("Address precision")}
+            label={i18n.get('Address precision')}
             name="addressl3"
             value={values.addressl3}
             onChange={handleChange}
           />
           <TextField
-            label={i18n.get("Zip/City")}
+            label={i18n.get('Zip/City')}
             name="addressl6"
             value={values.addressl6}
             onChange={handleChange}
@@ -95,15 +103,18 @@ export function AddressForm({ values: valuesProp, countries, onSubmit }: Address
           />
 
           <div className="w-full mb-4">
-            <Label className="text-base font-medium text-primary mb-1">{i18n.get("Country")}</Label>
+            <Label className="text-base font-medium text-primary mb-1">
+              {i18n.get('Country')}
+            </Label>
             <Select
-              onValueChange={(o) => {
-                let selectedCountry = countries?.find((op) => op.id === o);
+              onValueChange={o => {
+                let selectedCountry = countries?.find(op => op.id === o);
                 setSelectedValue(o);
-                setValues((v) => ({ ...v, addressl7country: selectedCountry } as any));
+                setValues(
+                  v => ({...v, addressl7country: selectedCountry}) as any,
+                );
               }}
-              defaultValue={selectedValue as string | undefined}
-            >
+              defaultValue={selectedValue as string | undefined}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a fruit" />
               </SelectTrigger>
@@ -127,12 +138,14 @@ export function AddressForm({ values: valuesProp, countries, onSubmit }: Address
               name="multipletype"
               checked={values.multipletype}
             />
-            <Label className="ml-2 text-primary">{i18n.get("Use this address for both billing and delivery")}</Label>
+            <Label className="ml-2 text-primary">
+              {i18n.get('Use this address for both billing and delivery')}
+            </Label>
           </div>
         </div>
       </div>
       <Button type="submit" className="rounded-full">
-        {i18n.get("Save modifications")}
+        {i18n.get('Save modifications')}
       </Button>
     </form>
   );

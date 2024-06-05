@@ -1,20 +1,20 @@
-import React from "react";
-import { 
-  Breadcrumb,   
+import React from 'react';
+import {
+  Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@ui/components/breadcrumb";
-import { ChevronRight } from "lucide-react";
+} from '@ui/components/breadcrumb';
+import {ChevronRight} from 'lucide-react';
 
 export type BreadcrumbsProps = {
-  breadcrumbs: { name: string; onClick?: () => void }[];
+  breadcrumbs: {name: string; onClick?: () => void}[];
   onClick: (option: any) => void;
 };
 
-export const Breadcrumbs = ({ breadcrumbs, onClick }: BreadcrumbsProps) => {
+export const Breadcrumbs = ({breadcrumbs, onClick}: BreadcrumbsProps) => {
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -30,13 +30,16 @@ export const Breadcrumbs = ({ breadcrumbs, onClick }: BreadcrumbsProps) => {
                   <BreadcrumbLink
                     asChild
                     onClick={() => onClick(crumb)}
-                    className="text-secondary cursor-pointer"
-                  >
+                    className="text-secondary cursor-pointer">
                     <span>{crumb.name}</span>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
-              {!isLast && <BreadcrumbSeparator><ChevronRight /></BreadcrumbSeparator>}
+              {!isLast && (
+                <BreadcrumbSeparator>
+                  <ChevronRight />
+                </BreadcrumbSeparator>
+              )}
             </React.Fragment>
           );
         })}

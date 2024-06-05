@@ -1,21 +1,21 @@
-"use server";
+'use server';
 
-import axios from "axios";
+import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
-import { getSession } from "@/orm/auth";
-import { clone } from "@/utils";
-import { computeTotal } from "@/utils/cart";
-import type { PortalWorkspace, Product } from "@/types";
+import {getSession} from '@/orm/auth';
+import {clone} from '@/utils';
+import {computeTotal} from '@/utils/cart';
+import type {PortalWorkspace, Product} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { findProduct as $findProduct } from "@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product";
+import {findProduct as $findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
 
 export async function findProduct({
   id,
   workspace,
 }: {
-  id: Product["id"];
+  id: Product['id'];
   workspace?: PortalWorkspace;
 }) {
   return await $findProduct({
@@ -45,7 +45,7 @@ export async function requestQuotation({
 
   try {
     const computedProducts = await Promise.all(
-      cart.items.map((i: any) => findProduct(i.product))
+      cart.items.map((i: any) => findProduct(i.product)),
     );
 
     const $cart = {
@@ -54,20 +54,20 @@ export async function requestQuotation({
         ...cart?.items?.map((i: any) => ({
           ...i,
           computedProduct: computedProducts.find(
-            (cp) => Number(cp?.product?.id) === Number(i.product)
+            cp => Number(cp?.product?.id) === Number(i.product),
           ),
         })),
       ],
     };
 
-    const { total } = computeTotal({ cart: $cart, workspace });
+    const {total} = computeTotal({cart: $cart, workspace});
 
     let partnerId, contactId;
 
-    const { user } = session;
+    const {user} = session;
 
     if (user) {
-      const { id, isContact, mainPartnerId } = user;
+      const {id, isContact, mainPartnerId} = user;
       if (isContact && mainPartnerId) {
         partnerId = mainPartnerId;
         contactId = id;
@@ -81,14 +81,14 @@ export async function requestQuotation({
       contactId,
       shipping: 0,
       total,
-      inAti: workspace?.config?.mainPrice === "ati",
+      inAti: workspace?.config?.mainPrice === 'ati',
       items: $cart.items.map((i: any) => {
-        const { computedProduct, note, quantity } = i;
+        const {computedProduct, note, quantity} = i;
         if (!computedProduct) return null;
-        const { product, price } = computedProduct;
+        const {product, price} = computedProduct;
         return {
           productId: product?.id,
-          note: note || "",
+          note: note || '',
           quantity,
           price: price?.ati,
         };

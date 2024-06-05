@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React, { Fragment } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Box, Input, useClassNames, clsx } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-import { Button } from "@/components/ui/button"
+import React, {Fragment} from 'react';
+import {useRouter, usePathname, useSearchParams} from 'next/navigation';
+import {Box, Input, useClassNames, clsx} from '@axelor/ui';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
+import {Button} from '@/components/ui/button';
 // ---- CORE IMPORTS ---- //
-import { Pagination, } from "@/ui/components";
-import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { i18n } from "@/lib/i18n";
-import type { ComputedProduct, Product, PortalWorkspace } from "@/types";
+import {Pagination} from '@/ui/components';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
+import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -19,12 +19,12 @@ import {
   ProductCard,
   ProductListItem,
   Categories,
-} from "..";
-import styles from "./product-list.module.scss";
+} from '..';
+import styles from './product-list.module.scss';
 
 const VIEW = {
-  GRID: "grid",
-  LIST: "list",
+  GRID: 'grid',
+  LIST: 'list',
 };
 
 function MobileFilters() {
@@ -34,7 +34,7 @@ function MobileFilters() {
         <MaterialIcon icon="filter_alt" />
       </Box>
       <Box as="p" mb={0} fontWeight="bold">
-        {i18n.get("Filters")}
+        {i18n.get('Filters')}
       </Box>
     </Box>
   );
@@ -44,7 +44,7 @@ export function ProductList({
   products = [],
   categories,
   category,
-  pageInfo = { page: 1, pages: 1 },
+  pageInfo = {page: 1, pages: 1},
   workspace,
   breadcrumbs,
   showSummary,
@@ -59,28 +59,28 @@ export function ProductList({
   showSummary?: boolean;
   productPath?: string;
 }) {
-  const { cart, addItem } = useCart();
-  const { workspaceURI } = useWorkspace();
+  const {cart, addItem} = useCart();
+  const {workspaceURI} = useWorkspace();
 
-  const { page, pages } = pageInfo;
+  const {page, pages} = pageInfo;
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const cs = useClassNames();
 
-  const search = searchParams.get("search") || "";
-  const sort = searchParams.get("sort");
-  const view = searchParams.get("view") || VIEW.GRID;
+  const search = searchParams.get('search') || '';
+  const sort = searchParams.get('sort');
+  const view = searchParams.get('view') || VIEW.GRID;
 
   const updateSearchParams = (
     values: Array<{
       key: string;
       value?: string | number;
-    }>
+    }>,
   ) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    values.forEach(({ key, value = "" }: any) => {
+    values.forEach(({key, value = ''}: any) => {
       value = value && String(value)?.trim();
       if (!value) {
         current.delete(key);
@@ -89,13 +89,13 @@ export function ProductList({
       }
     });
     const search = current.toString();
-    const query = search ? `?${search}` : "";
+    const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`);
   };
 
   const handleAdd = async (computedProduct: ComputedProduct) => {
-    const { product } = computedProduct;
-    await addItem({ productId: product?.id, quantity: 1 });
+    const {product} = computedProduct;
+    await addItem({productId: product?.id, quantity: 1});
     router.refresh();
   };
 
@@ -103,44 +103,44 @@ export function ProductList({
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     updateSearchParams([
-      { key: "page" },
-      { key: "search", value: formData.get("search") as string },
+      {key: 'page'},
+      {key: 'search', value: formData.get('search') as string},
     ]);
   };
 
-  const handleChangeSortBy = ({ value }: any) => {
-    updateSearchParams([{ key: "sort", value }]);
+  const handleChangeSortBy = ({value}: any) => {
+    updateSearchParams([{key: 'sort', value}]);
   };
 
   const handleChangeView = (type: string) => {
-    updateSearchParams([{ key: "view", value: type }]);
+    updateSearchParams([{key: 'view', value: type}]);
   };
 
   const handlePreviousPage = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { page, hasPrev } = pageInfo;
+    const {page, hasPrev} = pageInfo;
     if (!hasPrev) return;
-    updateSearchParams([{ key: "page", value: Math.max(Number(page) - 1, 1) }]);
+    updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
   };
 
   const handleNextPage = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { page, hasNext } = pageInfo;
+    const {page, hasNext} = pageInfo;
     if (!hasNext) return;
-    updateSearchParams([{ key: "page", value: Number(page) + 1 }]);
+    updateSearchParams([{key: 'page', value: Number(page) + 1}]);
   };
 
   const handlePage = (page: string | number) => {
-    updateSearchParams([{ key: "page", value: page }]);
+    updateSearchParams([{key: 'page', value: page}]);
   };
 
   const handleCategoryClick = (category: any) => {
     router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`
+      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
   };
 
   const handleProductClick = (product: Product) => {
     router.push(
-      `${productPath}/${encodeURIComponent(product.name)}-${product.id}`
+      `${productPath}/${encodeURIComponent(product.name)}-${product.id}`,
     );
   };
 
@@ -151,21 +151,14 @@ export function ProductList({
     <Box>
       <Categories items={categories} onClick={handleCategoryClick} />
       {showSummary && (
-        <Box
-          className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]"
-        >
-          <Box
-            className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]"
-          />
-          <Box
-            as="h1"
-            className="font-bold m-0 z-[1] text-primary-foreground"
-          >
-            {i18n.get("Shop summary")}
+        <Box className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]">
+          <Box className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
+          <Box as="h1" className="font-bold m-0 z-[1] text-primary-foreground">
+            {i18n.get('Shop summary')}
           </Box>
         </Box>
       )}
-      <Box className={clsx(cs("container"), "portal-container")} py={3}>
+      <Box className={clsx(cs('container'), 'portal-container')} py={3}>
         <Box mb={4}>
           {breadcrumbs?.length > 1 ? (
             <Box d="flex" gap="1rem" alignItems="center">
@@ -178,12 +171,11 @@ export function ProductList({
                       <Box
                         {...(islast
                           ? {
-                              color: "primary",
-                              fontWeight: "bold",
+                              color: 'primary',
+                              fontWeight: 'bold',
                             }
-                          : { color: "secondary" })}
-                        onClick={() => handleCategoryClick(crumb)}
-                      >
+                          : {color: 'secondary'})}
+                        onClick={() => handleCategoryClick(crumb)}>
                         {i18n.get(crumb.name)}
                       </Box>
                       {!islast && (
@@ -199,24 +191,29 @@ export function ProductList({
           ) : null}
         </Box>
         <Box className="flex items-center justify-between">
-          <Box as="h4" className="text-xl font-medium text-primary">{category && category?.name}</Box>
-          <Box as="h4" className="text-sm font-medium text-primary flex items-center">See all 
-              <MaterialIcon 
-                className="cursor-pointer ml-2"
-                icon="arrow_forward"
-              /> 
-            </Box>
+          <Box as="h4" className="text-xl font-medium text-primary">
+            {category && category?.name}
+          </Box>
+          <Box
+            as="h4"
+            className="text-sm font-medium text-primary flex items-center">
+            See all
+            <MaterialIcon
+              className="cursor-pointer ml-2"
+              icon="arrow_forward"
+            />
+          </Box>
         </Box>
         <Box d="flex" justifyContent="end" alignItems="center" mb={2}>
           <Box d="flex" alignItems="center" gap="1rem">
             <MaterialIcon
-              color={isGridView ? "primary" : "secondary"}
+              color={isGridView ? 'primary' : 'secondary'}
               className="pointer"
               icon="grid_view"
               onClick={() => handleChangeView(VIEW.GRID)}
             />
             <MaterialIcon
-              color={isListView ? "primary" : "secondary"}
+              color={isListView ? 'primary' : 'secondary'}
               className="pointer"
               icon="list"
               onClick={() => handleChangeView(VIEW.LIST)}
@@ -251,12 +248,11 @@ export function ProductList({
           bg="white"
           shadow
           mb={3}
-          d={{ base: "grid", md: "none" }}
+          d={{base: 'grid', md: 'none'}}
           gridTemplateColumns="1fr 1fr"
           gap="0.5rem"
           py={2}
-          px={2}
-        >
+          px={2}>
           <MobileSortBy
             active={sort}
             workspace={workspace}
@@ -268,22 +264,21 @@ export function ProductList({
           d="grid"
           gridTemplateColumns={
             isListView
-              ? { base: "1fr", sm: "1fr", md: "1fr" }
+              ? {base: '1fr', sm: '1fr', md: '1fr'}
               : {
-                  base: "1fr",
-                  sm: "1fr",
-                  md: "1fr 1fr",
-                  lg: "1fr 1fr 1fr",
-                  xl: "1fr 1fr 1fr 1fr",
+                  base: '1fr',
+                  sm: '1fr',
+                  md: '1fr 1fr',
+                  lg: '1fr 1fr 1fr',
+                  xl: '1fr 1fr 1fr 1fr',
                 }
           }
-          gridGap="1.25rem"
-        >
+          gridGap="1.25rem">
           {products?.length ? (
-            products.map((computedProduct) => {
+            products.map(computedProduct => {
               const quantity = cart?.items?.find(
                 (i: any) =>
-                  Number(i.product) === Number(computedProduct?.product.id)
+                  Number(i.product) === Number(computedProduct?.product.id),
               )?.quantity;
 
               const Component = isListView ? ProductListItem : ProductCard;
@@ -300,7 +295,7 @@ export function ProductList({
               );
             })
           ) : (
-            <Box>{i18n.get("No product available.")}</Box>
+            <Box>{i18n.get('No product available.')}</Box>
           )}
         </Box>
         <Box mt={4} mb={3} d="flex" alignItems="center" justifyContent="center">

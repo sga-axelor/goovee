@@ -1,14 +1,14 @@
-"use client";
-import { useState } from "react";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-import Swiper, { FreeMode, Navigation, Thumbs } from "swiper";
-import { Swiper as SwiperCarousel, SwiperSlide } from "swiper/react";
-import { Button } from "@ui/components/button";
+'use client';
+import {useState} from 'react';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
+import Swiper, {FreeMode, Navigation, Thumbs} from 'swiper';
+import {Swiper as SwiperCarousel, SwiperSlide} from 'swiper/react';
+import {Button} from '@ui/components/button';
 
 export const ThumbsCarousel = ({
   images = [],
 }: {
-  images?: Array<{ url: string; id: string | number }>;
+  images?: Array<{url: string; id: string | number}>;
 }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<Swiper>();
   const [prevEl, setPrevEl] = useState<HTMLElement | null>(null);
@@ -21,43 +21,36 @@ export const ThumbsCarousel = ({
       <SwiperCarousel
         spaceBetween={10}
         pagination={false}
-        navigation={{ prevEl, nextEl }}
+        navigation={{prevEl, nextEl}}
         modules={[FreeMode, Navigation, Thumbs]}
         thumbs={{
           swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
-        }}
-      >
-        {images?.map(({ url, id }) => (
+        }}>
+        {images?.map(({url, id}) => (
           <SwiperSlide key={id}>
             <div
               className="mb-4 bg-center bg-contain bg-no-repeat height-[400px]"
               style={{
-                backgroundImage: `url(${url})`
-              }}
-            ></div>
+                backgroundImage: `url(${url})`,
+              }}></div>
           </SwiperSlide>
         ))}
       </SwiperCarousel>
 
       <div
         className="absolute h-full w-full"
-        style={{ top: 0, left: 0, zIndex: 1 }}
-      >
+        style={{top: 0, left: 0, zIndex: 1}}>
         <div>
           <Button
-
             ref={(node: any) => setPrevEl(node)}
-            className="absolute top-[45%] left-4"
-          >
+            className="absolute top-[45%] left-4">
             <div className="flex">
               <MaterialIcon color="white" icon="chevron_left" />
             </div>
           </Button>
           <Button
-
             ref={(node: any) => setNextEl(node)}
-            className="absolute top-[45%] right-4"
-          >
+            className="absolute top-[45%] right-4">
             <div className="flex">
               <MaterialIcon color="white" icon="chevron_right" />
             </div>
@@ -72,14 +65,13 @@ export const ThumbsCarousel = ({
         slidesPerView={5}
         watchSlidesProgress
         onSwiper={setThumbsSwiper}
-        modules={[FreeMode, Navigation, Thumbs]}
-      >
-        {images?.map(({ url, id }) => (
+        modules={[FreeMode, Navigation, Thumbs]}>
+        {images?.map(({url, id}) => (
           <SwiperSlide key={id}>
             <div
               className="rounded-lg bg-center bg-cover bg-no-repeat height-[120px]"
               style={{
-                backgroundImage: `url(${url})`
+                backgroundImage: `url(${url})`,
               }}
             />
           </SwiperSlide>

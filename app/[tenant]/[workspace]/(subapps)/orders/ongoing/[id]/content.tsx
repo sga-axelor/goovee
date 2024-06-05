@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Box } from "@axelor/ui";
+import React from 'react';
+import {Box} from '@axelor/ui';
 
 // ---- CORE IMPORTS ---- //
-import { Container } from "@/ui/components";
-import { i18n } from "@/lib/i18n";
+import {Container} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -14,11 +14,11 @@ import {
   History,
   Informations,
   Total,
-} from "@/subapps/orders/common/ui/components";
-import { getStatus } from "@/subapps/orders/common/utils/orders";
-import { ORDER_TYPE } from "@/subapps/orders/common/constants/orders";
+} from '@/subapps/orders/common/ui/components';
+import {getStatus} from '@/subapps/orders/common/utils/orders';
+import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
 
-const Content = ({ order }: { order: any }) => {
+const Content = ({order}: {order: any}) => {
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -35,13 +35,13 @@ const Content = ({ order }: { order: any }) => {
     totalDiscount,
   } = order;
 
-  const { status, variant } = getStatus(statusSelect, deliveryState);
+  const {status, variant} = getStatus(statusSelect, deliveryState);
 
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
 
   return (
     <>
-      <Container title={`${i18n.get("Order number")} ${saleOrderSeq}`}>
+      <Container title={`${i18n.get('Order number')} ${saleOrderSeq}`}>
         <Informations
           createdOn={createdOn}
           shipmentMode={shipmentMode}
@@ -50,19 +50,17 @@ const Content = ({ order }: { order: any }) => {
         />
 
         <Box
-          d={"flex"}
-          flexFlow={{ base: "column-reverse", md: "row" }}
-          gap="1rem"
-        >
+          d={'flex'}
+          flexFlow={{base: 'column-reverse', md: 'row'}}
+          gap="1rem">
           <Box
             d="flex"
             flexDirection="column"
             gap="1.5rem"
             flexBasis={{
-              base: "100%",
-              md: "75%",
-            }}
-          >
+              base: '100%',
+              md: '75%',
+            }}>
             <Contact
               clientPartner={clientPartner}
               company={company}

@@ -1,11 +1,11 @@
 // ---- CORE IMPORTS ---- //
-import { DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL } from "@/constants";
-import { client } from "@/globals";
-import { getFormattedValue, scale } from "@/utils";
-import { Partner } from "@/types";
+import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+import {client} from '@/globals';
+import {getFormattedValue, scale} from '@/utils';
+import {Partner} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import type { Invoice } from "@/subapps/invoices/common/types/invoices";
+import type {Invoice} from '@/subapps/invoices/common/types/invoices';
 
 const fetchInvoices = async ({
   where,
@@ -13,12 +13,12 @@ const fetchInvoices = async ({
 }: {
   where: {
     partner: {
-      id: Partner["id"];
+      id: Partner['id'];
     };
   };
   type?: string;
 }) => {
-  const { id: partnerId } = where?.partner;
+  const {id: partnerId} = where?.partner;
 
   if (!partnerId) return null;
 
@@ -28,11 +28,11 @@ const fetchInvoices = async ({
     ...where,
   };
 
-  if (type === "archived") {
+  if (type === 'archived') {
     whereClause.archived = true;
     whereClause.operationTypeSelect = 3;
   } else {
-    whereClause.amountRemaining = { ne: 0 };
+    whereClause.amountRemaining = {ne: 0};
   }
 
   const $invoices = await c.aOSInvoice.find({
@@ -53,7 +53,7 @@ const fetchInvoices = async ({
   });
 
   const invoices = $invoices.map((invoice: any) => {
-    const { currency, exTaxTotal, inTaxTotal } = invoice;
+    const {currency, exTaxTotal, inTaxTotal} = invoice;
     const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
     const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
     return {
@@ -65,15 +65,15 @@ const fetchInvoices = async ({
   return invoices;
 };
 
-export const findUnpaidInvoices = async ({ where }: { where: any }) => {
-  return await fetchInvoices({ where });
+export const findUnpaidInvoices = async ({where}: {where: any}) => {
+  return await fetchInvoices({where});
 };
 
-export const findArchivedInvoices = async ({ where }: { where: any }) => {
-  return await fetchInvoices({ where, type: "archived" });
+export const findArchivedInvoices = async ({where}: {where: any}) => {
+  return await fetchInvoices({where, type: 'archived'});
 };
 
-export const findInvoice = async (id: Invoice["id"]) => {
+export const findInvoice = async (id: Invoice['id']) => {
   const c = await client;
 
   const invoice = await c.aOSInvoice.findOne({

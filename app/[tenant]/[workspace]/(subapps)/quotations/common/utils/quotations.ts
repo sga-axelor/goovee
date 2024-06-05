@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import { ROLE } from "@/constants";
+import {ROLE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -9,34 +9,34 @@ import {
   QUOTATION_STATUS,
   QUOTATION_TYPE,
   SECONDS,
-} from "@/subapps/quotations/common/constants/quotations";
+} from '@/subapps/quotations/common/constants/quotations';
 
 export function getStatus(statusSelect: number | string): {
   status: string | number;
-  variant: "secondary" | "warning" | "error" | "default";
+  variant: 'secondary' | 'warning' | 'error' | 'default';
 } {
   let status: string | number;
-  let variant: "secondary" | "warning" | "error" | "default";
+  let variant: 'secondary' | 'warning' | 'error' | 'default';
 
   switch (statusSelect) {
     case QUOTATION_STATUS.DRAFT_QUOTATION:
       status = QUOTATION_TYPE.DRAFT;
-      variant = "secondary";
+      variant = 'secondary';
       break;
     case QUOTATION_STATUS.FINALISED_QUOTATION:
       status = QUOTATION_TYPE.FINALISED;
-      variant = "warning";
+      variant = 'warning';
       break;
     case QUOTATION_STATUS.CANCELED_QUOTATION:
       status = QUOTATION_TYPE.CANCELED;
-      variant = "error";
+      variant = 'error';
       break;
     default:
       status = QUOTATION_TYPE.UNKNOWN;
-      variant = "default";
+      variant = 'default';
   }
 
-  return { status, variant };
+  return {status, variant};
 }
 
 export const updateDocument = (date1: any, date2: any) => {
@@ -62,23 +62,23 @@ export function getWhereClause(
   isContact: boolean | undefined,
   role: any,
   mainPartnerId: string | number | undefined,
-  id: string | number | undefined
+  id: string | number | undefined,
 ) {
   let where;
 
   if (isContact) {
     if (role === ROLE.TOTAL) {
       where = {
-        clientPartner: { id: mainPartnerId },
+        clientPartner: {id: mainPartnerId},
       };
     } else {
       where = {
-        contactPartner: { id },
+        contactPartner: {id},
       };
     }
   } else {
     where = {
-      clientPartner: { id },
+      clientPartner: {id},
     };
   }
 
