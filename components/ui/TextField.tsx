@@ -22,7 +22,7 @@ const TextField = React.forwardRef<HTMLInputElement, InputProps>(
         <label className="text-base font-medium text-primary mb-1">
           {label}
         </label>
-        <div className='relative'>
+        <div className='relative block w-full'>
         <input
           type={type}
         style={{

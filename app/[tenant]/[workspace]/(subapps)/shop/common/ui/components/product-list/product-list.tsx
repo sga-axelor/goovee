@@ -1,17 +1,20 @@
 'use client';
 
-import React, {Fragment} from 'react';
-import {useRouter, usePathname, useSearchParams} from 'next/navigation';
-import {Box, Input, useClassNames, clsx} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-import {Button} from '@/components/ui/button';
+import React, { Fragment } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { BiSearch } from "react-icons/bi";
+import { MdOutlineFilterAlt } from "react-icons/md";
+import { LuChevronRight } from "react-icons/lu";
+import { IoIosArrowRoundForward } from "react-icons/io";
+import { MdGridView } from "react-icons/md";
+import { MdOutlineList } from "react-icons/md";
+import { TextField } from "@/components/ui/TextField";
 // ---- CORE IMPORTS ---- //
-import {Pagination} from '@/ui/components';
-import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
-import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
-
+import { Pagination } from "@/ui/components";
+import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
+import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
+import { i18n } from "@/lib/i18n";
+import type { ComputedProduct, Product, PortalWorkspace } from "@/types";
 // ---- LOCAL IMPORTS ---- //
 import {
   MobileSortBy,
@@ -26,20 +29,14 @@ const VIEW = {
   GRID: 'grid',
   LIST: 'list',
 };
-
 function MobileFilters() {
   return (
-    <Box color="secondary" d="flex" alignItems="center" gap="0.5rem">
-      <Box d="flex">
-        <MaterialIcon icon="filter_alt" />
-      </Box>
-      <Box as="p" mb={0} fontWeight="bold">
-        {i18n.get('Filters')}
-      </Box>
-    </Box>
+    <div className="flex items-center gap-2 text-secondary">
+      <MdOutlineFilterAlt className="text-xl" />
+      <p className="mb-0 font-bold">{i18n.get("Filters")}</p>
+    </div>
   );
 }
-
 export function ProductList({
   products = [],
   categories,
@@ -59,20 +56,15 @@ export function ProductList({
   showSummary?: boolean;
   productPath?: string;
 }) {
-  const {cart, addItem} = useCart();
-  const {workspaceURI} = useWorkspace();
-
-  const {page, pages} = pageInfo;
-
+  const { cart, addItem } = useCart();
+  const { workspaceURI } = useWorkspace();
+  const { page, pages } = pageInfo;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const cs = useClassNames();
-
-  const search = searchParams.get('search') || '';
-  const sort = searchParams.get('sort');
-  const view = searchParams.get('view') || VIEW.GRID;
-
+  const search = searchParams.get("search") || "";
+  const sort = searchParams.get("sort");
+  const view = searchParams.get("view") || VIEW.GRID;
   const updateSearchParams = (
     values: Array<{
       key: string;
@@ -92,13 +84,11 @@ export function ProductList({
     const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`);
   };
-
   const handleAdd = async (computedProduct: ComputedProduct) => {
     const {product} = computedProduct;
     await addItem({productId: product?.id, quantity: 1});
     router.refresh();
   };
-
   const handleChangeSearch = (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
@@ -107,180 +97,145 @@ export function ProductList({
       {key: 'search', value: formData.get('search') as string},
     ]);
   };
-
-  const handleChangeSortBy = ({value}: any) => {
-    updateSearchParams([{key: 'sort', value}]);
+  const handleChangeSortBy = ({ value }: any) => {
+    updateSearchParams([{ key: "sort", value }]);
   };
-
   const handleChangeView = (type: string) => {
     updateSearchParams([{key: 'view', value: type}]);
   };
-
   const handlePreviousPage = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {page, hasPrev} = pageInfo;
     if (!hasPrev) return;
     updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
   };
-
   const handleNextPage = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {page, hasNext} = pageInfo;
     if (!hasNext) return;
     updateSearchParams([{key: 'page', value: Number(page) + 1}]);
   };
-
   const handlePage = (page: string | number) => {
     updateSearchParams([{key: 'page', value: page}]);
   };
-
   const handleCategoryClick = (category: any) => {
     router.push(
       `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
   };
-
   const handleProductClick = (product: Product) => {
     router.push(
       `${productPath}/${encodeURIComponent(product.name)}-${product.id}`,
     );
   };
-
   const isGridView = view === VIEW.GRID;
   const isListView = view === VIEW.LIST;
 
   return (
-    <Box>
+    <div>
       <Categories items={categories} onClick={handleCategoryClick} />
       {showSummary && (
-        <Box className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]">
-          <Box className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
-          <Box as="h1" className="font-bold m-0 z-[1] text-primary-foreground">
-            {i18n.get('Shop summary')}
-          </Box>
-        </Box>
+        <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]">
+          <div className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
+          <h1 className="font-bold m-0 z-[1] text-primary-foreground">
+            {i18n.get("Shop summary")}
+          </h1>
+        </div>
       )}
-      <Box className={clsx(cs('container'), 'portal-container')} py={3}>
-        <Box mb={4}>
+
+      <div className={"container portal-container"} >
+        <div className="mb-6">
           {breadcrumbs?.length > 1 ? (
-            <Box d="flex" gap="1rem" alignItems="center">
+            <div className="flex items-center gap-4">
               {breadcrumbs.map((crumb: any, i: number) => {
                 const islast = breadcrumbs.length - 1 === i;
 
                 return (
                   <Fragment key={i}>
-                    <Box d="flex" alignItems="center" className="pointer">
-                      <Box
+                    <div className="flex items-center cursor-pointer">
+                      <div
                         {...(islast
                           ? {
-                              color: 'primary',
-                              fontWeight: 'bold',
-                            }
-                          : {color: 'secondary'})}
-                        onClick={() => handleCategoryClick(crumb)}>
+                            color: "primary",
+                            fontWeight: "bold",
+                          }
+                          : { color: "secondary" })}
+                        onClick={() => handleCategoryClick(crumb)}
+                      >
                         {i18n.get(crumb.name)}
-                      </Box>
+                      </div>
                       {!islast && (
-                        <Box d="flex">
-                          <MaterialIcon icon="chevron_right" />
-                        </Box>
+                        <div className="flex">
+                          <LuChevronRight className="text-xl" />
+                        </div>
                       )}
-                    </Box>
+                    </div>
                   </Fragment>
                 );
               })}
-            </Box>
+            </div>
           ) : null}
-        </Box>
-        <Box className="flex items-center justify-between">
-          <Box as="h4" className="text-xl font-medium text-primary">
+        </div>
+        <div className="flex items-center justify-between mb-6">
+          <h4 className="text-xl font-medium text-primary">
             {category && category?.name}
-          </Box>
-          <Box
-            as="h4"
-            className="text-sm font-medium text-primary flex items-center">
+          </h4>
+          <p className="text-sm font-medium text-primary flex items-center mb-0">
             See all
-            <MaterialIcon
-              className="cursor-pointer ml-2"
-              icon="arrow_forward"
-            />
-          </Box>
-        </Box>
-        <Box d="flex" justifyContent="end" alignItems="center" mb={2}>
-          <Box d="flex" alignItems="center" gap="1rem">
-            <MaterialIcon
-              color={isGridView ? 'primary' : 'secondary'}
-              className="pointer"
-              icon="grid_view"
+            <IoIosArrowRoundForward className="cursor-pointer text-xl ml-2" />
+          </p>
+        </div>
+        <div className="flex items-center justify-end mb-2">
+          <div className="flex items-center gap-4">
+            <MdGridView
+              color={isGridView ? "primary" : "secondary"}
+              className="cursor-pointer text-2xl"
               onClick={() => handleChangeView(VIEW.GRID)}
             />
-            <MaterialIcon
-              color={isListView ? 'primary' : 'secondary'}
-              className="pointer"
-              icon="list"
+            <MdOutlineList
+              color={isListView ? "primary" : "secondary"}
+              className="cursor-pointer text-2xl"
               onClick={() => handleChangeView(VIEW.LIST)}
             />
-          </Box>
-        </Box>
-        {/* <Box d="flex" alignItems="center" mb={3} gap="1rem">
-          <Box
-            as="form"
+          </div>
+        </div>
+        <div className="flex items-start gap-4 mb-4">
+          <form
             onSubmit={handleChangeSearch}
-            flexBasis={{ base: "100%", md: "70%" }}
-            className={styles.wrapper}
+            className={`${styles.wrapper} basis-full md:basis-[70%]`}
           >
-            <Input
+            <TextField
               name="search"
               placeholder="Search"
-              rounded="pill"
-              ps={5}
               defaultValue={search}
+              className="pl-12 rounded-full"
             />
-            <Box className={styles.icons}>
-              <MaterialIcon icon="search" />
-            </Box>
-          </Box>
+            <div className={`${styles.icons} top-[10px] !pt-0`}>
+              <BiSearch className="text-2xl" />
+            </div>
+          </form>
           <SortBy
             workspace={workspace}
             onChange={handleChangeSortBy}
             value={sort}
           />
-        </Box> */}
-        <Box
-          bg="white"
-          shadow
-          mb={3}
-          d={{base: 'grid', md: 'none'}}
-          gridTemplateColumns="1fr 1fr"
-          gap="0.5rem"
-          py={2}
-          px={2}>
+        </div>
+        <div className="bg-white shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
+          
           <MobileSortBy
             active={sort}
             workspace={workspace}
             onChange={handleChangeSortBy}
           />
           <MobileFilters />
-        </Box>
-        <Box
-          d="grid"
-          gridTemplateColumns={
-            isListView
-              ? {base: '1fr', sm: '1fr', md: '1fr'}
-              : {
-                  base: '1fr',
-                  sm: '1fr',
-                  md: '1fr 1fr',
-                  lg: '1fr 1fr 1fr',
-                  xl: '1fr 1fr 1fr 1fr',
-                }
-          }
-          gridGap="1.25rem">
+        </div>
+        <div
+          className={`${isListView ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"} grid gap-5 `}
+        >
           {products?.length ? (
             products.map(computedProduct => {
               const quantity = cart?.items?.find(
                 (i: any) =>
                   Number(i.product) === Number(computedProduct?.product.id),
               )?.quantity;
-
               const Component = isListView ? ProductListItem : ProductCard;
 
               return (
@@ -295,10 +250,10 @@ export function ProductList({
               );
             })
           ) : (
-            <Box>{i18n.get('No product available.')}</Box>
+            <div>{i18n.get("No product available.")}</div>
           )}
-        </Box>
-        <Box mt={4} mb={3} d="flex" alignItems="center" justifyContent="center">
+        </div>
+        <div className="mt-6 mb-4 flex items-center justify-center">
           <Pagination
             page={page}
             pages={pages}
@@ -308,10 +263,9 @@ export function ProductList({
             onNext={handleNextPage}
             onPage={handlePage}
           />
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }
-
 export default ProductList;

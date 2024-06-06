@@ -1,22 +1,21 @@
 'use client';
 
-import React, {Fragment, useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {Box, Button, InputLabel, useClassNames} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import React, { Fragment, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { MdChevronRight } from "react-icons/md";
+import { MdOutlineShoppingBasket } from "react-icons/md";
 // ---- CORE IMPORTS ---- //
-import {Quantity, ThumbsCarousel} from '@/ui/components';
-import {useQuantity} from '@/ui/hooks';
-import {i18n} from '@/lib/i18n';
-import {getImageURL} from '@/utils/product';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
-import type {ComputedProduct, PortalWorkspace} from '@/types';
-
+import { Quantity, ThumbsCarousel } from "@/ui/components";
+import { useQuantity } from "@/ui/hooks";
+import { i18n } from "@/lib/i18n";
+import { getImageURL } from "@/utils/product";
+import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
+import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
+import type { ComputedProduct, PortalWorkspace } from "@/types";
+import { Label } from "@ui/components/label";
+import { Button } from "@ui/components/button";
 // ---- LOCAL IMPORTS ---- //
-import {Categories} from '..';
-
+import { Categories } from "..";
 export function ProductView({
   product: computedProduct,
   workspace,
@@ -36,8 +35,7 @@ export function ProductView({
   const {addItem, getProductQuantity, getProductNote, setProductNote} =
     useCart();
   const [cartQuantity, setCartQuantity] = useState(0);
-  const [note, setNote] = useState('');
-
+  const [note, setNote] = useState("");
   const handleAddToCart = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
@@ -46,7 +44,6 @@ export function ProductView({
     await addItem({productId: product.id, quantity});
     setUpdating(false);
   };
-
   const handleChangeNote = async (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
@@ -54,7 +51,6 @@ export function ProductView({
     setNote(value);
     await setProductNote(product.id, value);
   };
-
   const handleCategoryClick = (category: any) => {
     router.push(
       `${workspaceURI}/shop/category/${category.name}-${category.id}`,
@@ -71,121 +67,107 @@ export function ProductView({
     })();
   }, [getProductNote, getProductQuantity, product]);
 
-  const cs = useClassNames();
-
   return (
-    <Box>
+    <div>
       <Categories items={categories} onClick={handleCategoryClick} />
-      <Box className={cs('container')} py={{base: 2, md: 3}}>
-        <Box mb={4} pt={3}>
+      <div className={"container py-2 md:py-4"} >
+        <div className="mb-6 pt-4">
           {breadcrumbs?.length > 1 ? (
-            <Box d="flex" gap="1rem" alignItems="center">
+            <div className="flex items-center gap-4">
               {breadcrumbs.map((crumb: any, i: number) => {
                 const islast = breadcrumbs.length - 1 === i;
                 return (
                   <Fragment key={i}>
-                    <Box
-                      d="flex"
-                      alignItems="center"
-                      {...(islast ? {} : {className: 'pointer'})}>
-                      <Box
-                        {...(islast
-                          ? {
-                              color: 'primary',
-                              fontWeight: 'bold',
-                            }
-                          : {
-                              color: 'secondary',
-                              onClick: () => handleCategoryClick(crumb),
-                            })}>
+                    <div
+                      {...(islast
+                        ? {}
+                        : { className: "cursor-pointer flex items-center" })}
+                    >
+                      <div
+                        onClick={() => {
+                          if (!islast) {
+                            handleCategoryClick(crumb)
+                          }
+                        }}
+                        className={`${islast ? "text-primary font-bold":"text-secondary"}`}
+                       
+                      >
+
                         {i18n.get(crumb.name)}
-                      </Box>
+                      </div>
                       {!islast && (
-                        <Box d="flex">
-                          <MaterialIcon icon="chevron_right" />
-                        </Box>
+                        <div className="flex">
+                          <MdChevronRight className="text-2xl" />
+                        </div>
                       )}
-                    </Box>
+                    </div>
                   </Fragment>
                 );
               })}
-            </Box>
+            </div>
           ) : null}
-        </Box>
-        <Box
-          d="grid"
-          gridTemplateColumns={{base: '1fr', md: '1fr 2fr'}}
-          gridGap="1rem">
-          <Box overflow="hidden">
+        </div>
+        <div className="grid md:grid-cols-[30%_1fr] grid-cols-1 gap-5">
+          <div className="overflow-hidden rounded-lg">
             <ThumbsCarousel
               images={product.images?.map(i => ({
                 id: i as string,
                 url: getImageURL(i) as string,
               }))}
             />
-          </Box>
-          <Box p={3} bg="white" rounded border>
-            <Box as="p" fontSize={3} fontWeight="bold" mb={5}>
+          </div>
+          <div className="rounded-lg border bg-white p-4">
+            <p className="text-xl font-semibold mb-12">
               {i18n.getValueAttribute(product.name)}
-            </Box>
+            </p>
             {workspace?.config?.displayPrices && (
               <>
-                <Box as="p" fontSize={3} fontWeight="bold">
-                  {price.displayPrimary}
-                </Box>
                 {price.displayTwoPrices && (
-                  <Box as="p" fontSize={5} fontWeight="bold">
+                  <p className="text-xl font-semibold mb-2">
                     {price.displaySecondary}
-                  </Box>
+                  </p>
                 )}
+                <p className="text-sm">{price.displayPrimary}</p>
               </>
             )}
-            <Box
-              as="p"
-              fontSize={6}
+            <p
+              className="text-sm mb-0"
               dangerouslySetInnerHTML={{
-                __html: product.description || '',
-              }}></Box>
+                __html: product.description || "",
+              }}
+            ></p>
             {Boolean(cartQuantity) && product.allowCustomNote && (
-              <Box>
-                <InputLabel color="secondary">{i18n.get('Note')}</InputLabel>
+              <div>
+                <Label className="text-secondary">{i18n.get("Note")}</Label>
                 <textarea
-                  className={cs('form-control')}
+                  className="border rounded-lg"
                   value={note}
                   onChange={handleChangeNote}
                 />
-              </Box>
+              </div>
             )}
-            <Box mt={3}>
+            <div className="mt-4">
               <Quantity
                 value={quantity}
                 onIncrement={increment}
                 onDecrement={decrement}
               />
-            </Box>
+            </div>
             <Button
-              variant="primary"
               onClick={handleAddToCart}
-              w={100}
-              rounded="pill"
-              mt={3}>
-              <Box
-                d="flex"
-                alignItems="center"
-                justifyContent="center"
-                p={1}
-                gap={8}>
-                <MaterialIcon icon="shopping_basket" />
-                <Box as="p" mb={0}>
-                  {i18n.get('Add to Cart')}
-                </Box>
-              </Box>
+              className="w-full rounded-full mt-4"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <MdOutlineShoppingBasket className="text-primary-foreground text-2xl" />
+                <span className="text-sm font-medium mb-0">
+                  {i18n.get("Add to Cart")}
+                </span>
+              </div>
             </Button>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
-
 export default ProductView;

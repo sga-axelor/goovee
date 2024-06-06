@@ -1,15 +1,13 @@
 'use client';
 
-import React from 'react';
-import {Box} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-import {Button} from '@/components/ui/button';
+import React from "react";
+import { MdAddShoppingCart } from "react-icons/md";
+import { Button } from "@ui/components/button";
 // ---- CORE IMPORTS ---- //
-import {BackgroundImage} from '@/ui/components';
-import {getImageURL} from '@/utils/product';
-import {i18n} from '@/lib/i18n';
-import type {ComputedProduct, Product} from '@/types';
-
+import { BackgroundImage } from "@/ui/components";
+import { getImageURL } from "@/utils/product";
+import { i18n } from "@/lib/i18n";
+import type { ComputedProduct, Product } from "@/types";
 export type ProductCardProps = {
   product: ComputedProduct;
   quantity?: string | number;
@@ -17,7 +15,6 @@ export type ProductCardProps = {
   onClick: (product: Product) => void;
   displayPrices?: boolean;
 };
-
 export function ProductCard({
   product: computedProduct,
   quantity = 0,
@@ -25,83 +22,58 @@ export function ProductCard({
   onClick,
   displayPrices,
 }: ProductCardProps) {
-  const {product, price} = computedProduct;
-  const {displayTwoPrices, displayPrimary, displaySecondary} = price;
-
+  const { product, price } = computedProduct;
+  const { displayTwoPrices, displayPrimary, displaySecondary } = price;
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
   };
-
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     onClick && onClick(product);
   };
 
   return (
-    <Box className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[410px] bg-background text-primary">
-      <Box onClick={handleClick}>
+    <div className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[410px] bg-background text-primary">
+      <div onClick={handleClick}>
         <BackgroundImage
+          className="rounded-t-lg bg-cover relative h-[232px]"
           src={getImageURL(product.images?.[0])}
-          className="rounded-t-lg bg-cover relative h-[232px]">
-          {Boolean(quantity) && (
-            <Box
-              border
-              shadow="lg"
-              position="absolute"
-              bg="white"
-              p={3}
-              rounded="circle"
-              style={{
-                height: 60,
-                width: 60,
-                bottom: '1rem',
-                right: '1rem',
-              }}
-              d="flex"
-              alignItems="center"
-              justifyContent="center">
-              <Box as="p" mb={0} fontSize={5}>
-                <b>{quantity}</b>
-              </Box>
-            </Box>
-          )}
+        >
+          {Boolean(quantity) ? (
+            <div className="border shadow-lg absolute bg-white p-4 rounded-full flex items-center justify-center w-[60px] h-[60px] bottom-4 right-4">
+              <p className="mb-0 text-xl font-bold">{quantity}</p>
+            </div>
+          ):""}
         </BackgroundImage>
-        <Box className="py-4 px-6">
-          <Box as="h5" className="text-base font-medium mt-0 mb-0">
+        <div className="py-4 px-6">
+          <h5 className="text-base font-medium mt-0 mb-0">
             {i18n.getValueAttribute(product.name)}
-          </Box>
+          </h5>
           {displayPrices && (
             <>
-              <Box as="h5" className="text-base font-semibold mt-2 mb-0">
+              <h5 className="text-base font-semibold mt-2 mb-0">
                 {displayPrimary}
-              </Box>
+              </h5>
               {displayTwoPrices && (
-                <Box as="span" className="text-xs font-medium mt-0 mb-0">
+                <span className="text-xs font-medium mt-0 mb-0">
                   {displaySecondary}
-                </Box>
+                </span>
               )}
             </>
           )}
-        </Box>
-      </Box>
-      <Box className="flex items-start justify-between p-6 pt-0">
-        <Box
-          as="span"
-          className="text-xs font-medium mt-0 mb-0 text-destructive">
+        </div>
+      </div>
+      <div className="flex items-start justify-between p-6 pt-0">
+        <span className="text-xs font-medium mt-0 mb-0 text-destructive">
           Only 6 left
-        </Box>
+        </span>
         <Button
           onClick={handleAdd}
-          className="bg-primary rounded-full h-12 w-12">
-          <Box d="flex">
-            <MaterialIcon
-              className="text-primary-foreground"
-              icon="add_shopping_cart"
-            />
-          </Box>
+          className="bg-primary rounded-full h-12 w-12 p-2"
+        >
+          <MdAddShoppingCart className="text-primary-foreground text-2xl" />
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
-
 export default ProductCard;

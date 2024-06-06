@@ -1,37 +1,35 @@
 'use client';
 
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import Link from 'next/link';
-import {usePathname, useRouter} from 'next/navigation';
-import {useSession} from 'next-auth/react';
-import {Box, Button, Divider, InputLabel, useClassNames} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { LuChevronLeft } from "react-icons/lu";
+import { MdDeleteOutline } from "react-icons/md";
+import { Label } from "@ui/components/label";
+import { Button } from "@ui/components/button";
+import { Separator } from "@ui/components/separator";
 // ---- CORE IMPORTS ---- //
-import {BackgroundImage, Quantity} from '@/ui/components';
-import {useQuantity} from '@/ui/hooks';
-import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
-import {computeTotal} from '@/utils/cart';
-import {getImageURL} from '@/utils/product';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
-import type {Cart, Product, PortalWorkspace} from '@/types';
-
+import { BackgroundImage, Quantity } from "@/ui/components";
+import { useQuantity } from "@/ui/hooks";
+import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
+import { computeTotal } from "@/utils/cart";
+import { getImageURL } from "@/utils/product";
+import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
+import { i18n } from "@/lib/i18n";
+import type { Cart, Product, PortalWorkspace } from "@/types";
 // ---- LOCAL IMPORTS ---- //
-import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
-
-function CartItem({item, disabled, handleRemove, displayPrices}: any) {
+import { findProduct } from "@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart";
+function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
   const [updating, setUpdating] = useState(false);
-  const {updateQuantity, getProductNote, setProductNote} = useCart();
-  const {workspaceURI} = useWorkspace();
-  const [note, setNote] = useState('');
-
-  const {product, price} = item.computedProduct ?? {};
-
-  const {quantity, increment, decrement} = useQuantity({
+  const { updateQuantity, getProductNote, setProductNote } = useCart();
+  const { workspaceURI } = useWorkspace();
+  const [note, setNote] = useState("");
+  if (!item.computedProduct) return null;
+  const { product, price } = item.computedProduct;
+  const { quantity, increment, decrement } = useQuantity({
     initialValue: Number(item.quantity),
   });
-
   const handleUpdateQuantity = useCallback(
     async ({
       productId,
@@ -46,7 +44,6 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
     },
     [updateQuantity],
   );
-
   useEffect(() => {
     if (Number(quantity) !== Number(item.quantity)) {
       handleUpdateQuantity({
@@ -55,7 +52,6 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
       });
     }
   }, [quantity, item, handleUpdateQuantity]);
-
   const handleChangeNote = async (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
@@ -63,7 +59,6 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
     setNote(value);
     await setProductNote(product.id, value);
   };
-
   useEffect(() => {
     (async () => {
       if (!product) return;
@@ -72,70 +67,65 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
     })();
   }, [getProductNote, product]);
 
-  const cs = useClassNames();
-
-  if (!item.computedProduct) return null;
-
   return (
-    <Box
+    <div
       key={item.id}
-      d="flex"
-      alignItems="center"
-      gap={8}
-      bg="white"
-      p={3}
-      rounded={2}>
+      className="flex-col md:flex-row flex items-start gap-6 bg-white p-4 rounded-lg"
+    >
       <BackgroundImage
-        rounded={2}
-        height={200}
-        width={200}
+        className="rounded-lg h-[200px] md:w-[200px] w-full min-w-[200px]"
         src={getImageURL(product?.images?.[0])}
       />
-      <Box d="flex" flexDirection="column" h={100} py={2}>
-        <Link
-          href={`${workspaceURI}/shop/product/${encodeURIComponent(
-            product.name,
-          )}-${product.id}`}>
-          <Box as="h4">{i18n.getValueAttribute(product.name)}</Box>
-        </Link>
-        {product.allowCustomNote && (
-          <Box>
-            <InputLabel color="secondary">{i18n.get('Note')}</InputLabel>
-            <textarea
-              className={cs('form-control')}
-              value={note}
-              onChange={handleChangeNote}
+      <div className="flex-col md:flex-row flex items-start justify-between w-full h-full">
+        <div className="flex flex-col items-start justify-between py-2 h-full">
+          <Link
+            className="no-underline text-inherit"
+            href={`${workspaceURI}/shop/product/${encodeURIComponent(
+              product.name
+            )}-${product.id}`}
+          >
+            <h6 className="text-base mb-2">
+              {i18n.getValueAttribute(product.name)}
+            </h6>
+          </Link>
+          {product.allowCustomNote && (
+            <div>
+              <Label className="text-secondary">{i18n.get("Note")}</Label>
+              <textarea
+                className="border rounded-lg"
+                value={note}
+                onChange={handleChangeNote}
+              />
+            </div>
+          )}
+          <div className="flex flex-col mt-auto">
+            <p className="mb-2 text-base font-semibold">
+              {i18n.get("Quantity")}
+            </p>
+            <Quantity
+              value={quantity}
+              disabled={updating}
+              onIncrement={increment}
+              onDecrement={decrement}
             />
-          </Box>
-        )}
-        <Box flexGrow={1} />
-        <Box as="p" mb={1} fontSize={5}>
-          {i18n.get('Quantity')}
-        </Box>
-        <Quantity
-          value={quantity}
-          disabled={updating}
-          onIncrement={increment}
-          onDecrement={decrement}
-        />
-      </Box>
-      <Box flexGrow={1} />
-      <Box d="flex" flexDirection="column" h={100} py={2}>
-        <Box as="p" fontSize={4} fontWeight="bold">
-          {displayPrices && price.displayPrimary}
-        </Box>
-        <Box flexGrow={1} />
-        <Button
-          color="danger"
-          disabled={disabled || updating}
-          onClick={handleRemove(product)}>
-          <Box as={MaterialIcon} verticalAlign="middle" icon="delete" />
-        </Button>
-      </Box>
-    </Box>
+          </div>
+        </div>
+        <div className="flex flex-col items-start ml-auto py-2 h-full">
+          <p className="text-xl font-semibold mb-1">
+            {displayPrices && price.displayPrimary}
+          </p>
+          <Button
+            disabled={disabled || updating}
+            onClick={handleRemove(product)}
+            className="w-6 bg-transparent hover:bg-transparent text-[red] p-0 ml-auto mt-auto"
+          >
+            <MdDeleteOutline className="text-2xl" />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
-
 function CartItems({
   cart,
   disabled,
@@ -153,7 +143,7 @@ function CartItems({
     };
 
   return (
-    <Box d="flex" flexDirection="column" gap={4}>
+    <div className="flex flex-col gap-6">
       {cart?.items?.map((item: any) => (
         <CartItem
           key={item?.computedProduct?.product?.id}
@@ -163,10 +153,9 @@ function CartItems({
           displayPrices={workspace?.config?.displayPrices}
         />
       ))}
-    </Box>
+    </div>
   );
 }
-
 function CartSummary({
   cart,
   onRequestQuotation,
@@ -181,73 +170,51 @@ function CartSummary({
   workspace?: PortalWorkspace;
 }) {
   const pathname = usePathname();
-
   const noitem = !cart?.items?.length;
-  const {displayTotal} = computeTotal({cart, workspace});
-
-  const {workspaceURI} = useWorkspace();
-  const {data: session} = useSession();
-
+  const { displayTotal } = computeTotal({ cart, workspace });
+  const { workspaceURI } = useWorkspace();
+  const { data: session } = useSession();
   const authenticated = session?.user?.id;
 
   return (
-    <Box p={3} bg="white" rounded={2}>
+    <div className="p-4 bg-white rounded-lg h-[420px]">
       {workspace?.config?.displayPrices && (
         <>
-          <Box as="p" fontSize={3} fontWeight="bold">
-            {i18n.get('Total')}
-          </Box>
-          <Divider mb={2} />
-          <Box d="flex" justifyContent="space-between">
-            <Box as="p" fontSize={5}>
-              {i18n.get('Products')}
-            </Box>
-            <Box as="p" fontSize={5} fontWeight="bold">
-              {displayTotal}
-            </Box>
-          </Box>
-          <Box d="flex" justifyContent="space-between">
-            <Box as="p" fontSize={5} mb={0}>
-              {i18n.get('Shipping')}
-            </Box>
-            <Box as="p" fontSize={5} mb={0} fontWeight="bold">
-              {i18n.get('To be determined')}
-            </Box>
-          </Box>
-          <Divider mt={2} mb={2} />
-          <Box d="flex" justifyContent="space-between" mt={3} mb={3}>
-            <Box as="p" fontSize={4} mb={0}>
-              <b>{i18n.get('Total Price')}</b>
-            </Box>
-            <Box as="p" fontSize={4} mb={0} fontWeight="bold">
-              {displayTotal}
-            </Box>
-          </Box>
+          <p className="text-xl font-semibold mb-6">{i18n.get("Total")}</p>
+          <Separator className="mb-2" />
+          <div className="flex justify-between">
+            <p className="text-base mb-4">{i18n.get("Products")}</p>
+            <p className="text-base font-semibold mb-4">{displayTotal}</p>
+          </div>
+          <div className="flex justify-between">
+            <p className="text-base mb-4">{i18n.get("Shipping")}</p>
+            <p className="text-xs mb-4">{i18n.get("To be determined")}</p>
+          </div>
+          <Separator className="my-2" />
+          <div className="flex justify-between my-4">
+            <p className="text-base font-medium mb-0">
+              {i18n.get("Total Price")}
+            </p>
+            <p className="text-xl font-semibold mb-0">{displayTotal}</p>
+          </div>
         </>
       )}
       {authenticated ? (
         <>
           {!hideCheckout && (
-            <Link href={`${workspaceURI}/shop/cart/checkout`}>
-              <Button
-                d="block"
-                variant="primary"
-                size="lg"
-                mb={2}
-                w={100}
-                disabled={noitem}>
-                {i18n.get('Checkout')}
+            <Link
+              href={`${workspaceURI}/shop/cart/checkout`}
+              className="no-underline text-inherit"
+            >
+              <Button className="w-full rounded-full mb-4" disabled={noitem}>
+                {i18n.get("Checkout")}
               </Button>
             </Link>
           )}
           {!hideRequestQuotation && (
             <Button
-              d="block"
-              variant="primary"
-              outline
-              mb={2}
-              size="lg"
-              w={100}
+              variant="outline"
+              className="w-full rounded-full mb-4"
               disabled={noitem}
               onClick={onRequestQuotation}>
               {i18n.get('Request Quotation')}
@@ -256,38 +223,42 @@ function CartSummary({
         </>
       ) : (
         <Link
+          className="no-underline text-inherit"
           href={`/auth/login?callbackurl=${encodeURIComponent(
-            pathname,
-          )}&workspaceURI=${encodeURIComponent(workspaceURI)}`}>
-          <Button d="block" variant="primary" mb={2} size="lg" w={100}>
-            {i18n.get('Login for checkout')}
+            pathname
+          )}&workspaceURI=${encodeURIComponent(workspaceURI)}`}
+        >
+          <Button className="mb-4 w-full rounded-full">
+            {i18n.get("Login for checkout")}
           </Button>
         </Link>
       )}
-
-      <hr />
-      <Box d="flex" alignItems="center">
-        <MaterialIcon icon="chevron_left" />
-        <Button>
-          <Link href={`${workspaceURI}/shop`}>
-            <Box as="p" mb={0}>
-              {i18n.get('Continue Shopping')}
-            </Box>
+      <Separator className="mb-4" />
+      <div className="flex items-center">
+        <LuChevronLeft className="text-2xl" />
+        <Button className="w-full rounded-full">
+          <Link
+            href={`${workspaceURI}/shop`}
+            className="no-underline text-inherit"
+          >
+            {i18n.get("Continue Shopping")}
           </Link>
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
-
-export default function Content({workspace}: {workspace?: PortalWorkspace}) {
-  const {cart, removeItem} = useCart();
-  const {workspaceURI} = useWorkspace();
+export default function Content({
+  workspace,
+}: {
+  workspace?: PortalWorkspace;
+}) {
+  const { cart, removeItem } = useCart();
+  const { workspaceURI } = useWorkspace();
   const router = useRouter();
   const [updating, setUpdating] = useState(false);
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const handleRemove = async (product: Product) => {
     if (window?.confirm(`Do you want to remove ${product?.name}`)) {
       setUpdating(true);
@@ -295,24 +266,20 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       setUpdating(false);
     }
   };
-
   const handleRequestQuotation = async () => {
     if (window.confirm('Do you want to request quotation')) {
       router.replace(`${workspaceURI}/shop/cart/request-quotation`);
     }
   };
-
   useEffect(() => {
     const init = async () => {
       const computedProductIDs = computedProducts
         .map(cp => cp?.product?.id)
         .filter(Boolean);
       const cartItemIDs = cart?.items?.map((i: any) => i.product);
-
       const diff = cartItemIDs.filter(
         (id: string) => !computedProductIDs.includes(id),
       );
-
       if (diff.length) {
         await Promise.all(
           cart.items.map((i: any) => findProduct({id: i.product, workspace})),
@@ -326,8 +293,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       }
     };
     init();
-  }, [cart, computedProducts, workspace]);
-
+  }, [cart, computedProducts]);
   const $cart = useMemo(
     () => ({
       ...cart,
@@ -342,20 +308,14 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
     }),
     [cart, computedProducts],
   );
-
   if (loading) {
     return <p>{i18n.get('Loading')}...</p>;
   }
 
   return (
     <>
-      <Box as="h2" mb={3}>
-        <b>{i18n.get('Cart')}</b>
-      </Box>
-      <Box
-        d="grid"
-        gridTemplateColumns={{base: '1fr', md: '2fr 1fr'}}
-        gap="1rem">
+      <h4 className="mb-6 text-xl font-medium">{i18n.get("Cart")}</h4>
+      <div className="grid lg:grid-cols-[1fr_25%] xl:grid-cols-[1fr_21%] grid-cols-1 gap-4">
         {cart?.items?.length ? (
           <CartItems
             cart={$cart}
@@ -364,9 +324,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
             workspace={workspace}
           />
         ) : (
-          <Box as="p" fontSize={5} fontWeight="bold">
-            {i18n.get('Your cart is empty.')}
-          </Box>
+          <p className="text-xl font-bold">{i18n.get("Your cart is empty.")}</p>
         )}
         <CartSummary
           cart={$cart}
@@ -375,7 +333,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
           hideRequestQuotation={!workspace?.config?.requestQuotation}
           hideCheckout={!workspace?.config?.confirmOrder}
         />
-      </Box>
+      </div>
     </>
   );
 }
