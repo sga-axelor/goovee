@@ -1,14 +1,11 @@
-import {useState} from 'react';
-import Link from 'next/link';
-import {signOut, useSession} from 'next-auth/react';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-import {usePathname} from 'next/navigation';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@ui/components/dropdown-menu';
+import { useState } from "react";
+import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/components/dropdown-menu";
+import { MdOutlineAccountCircle } from "react-icons/md";
+
+export function Account({ baseURL = "" }: { baseURL?: string }) {
 
 export function Account({baseURL = ''}: {baseURL?: string}) {
   const pathname = usePathname();
@@ -31,7 +28,7 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <MaterialIcon icon="account_circle" className="pointer" />
+          <MdOutlineAccountCircle size={25} className="pointer" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {loggedin ? (
@@ -52,8 +49,8 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
             </>
           )}
         </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+      </DropdownMenu></>
+
   );
 }
 

@@ -1,0 +1,40 @@
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+import { CalendarIcon } from 'lucide-react'
+import React from 'react'
+import { format } from "date-fns"
+import { DayPickerSingleProps } from 'react-day-picker'
+interface DatePickerProps {
+    value: any;
+    onChange: DayPickerSingleProps["onSelect"] | any;
+}
+const DatePicker = ({ value, onChange }: DatePickerProps) => {
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                    variant={"outline"}
+                    className={cn(
+                        "w-full justify-start text-left font-normal md-4",
+                        !value && "text-muted-foreground"
+                    )}
+                >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {value ? format(value, "PPP") : <span>Pick a date</span>}
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+                <Calendar
+                    mode="single"
+                    selected={value}
+                    onSelect={onChange}
+                    initialFocus
+                />
+            </PopoverContent>
+        </Popover>
+    )
+}
+
+export default DatePicker

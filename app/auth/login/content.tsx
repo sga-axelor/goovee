@@ -1,19 +1,17 @@
 'use client';
 
-import React, {useState} from 'react';
-import Link from 'next/link';
-import {useRouter, useSearchParams} from 'next/navigation';
-import {signIn} from 'next-auth/react';
-import {BootstrapIcon} from '@axelor/ui/icons/bootstrap-icon';
-import {Checkbox} from '@/components/ui/checkbox';
-import {Label} from '@/components/ui/label';
-import {Button} from '@/components/ui/button';
-import {Separator} from '@/components/ui/separator';
-
-import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { FaGoogle } from "react-icons/fa";
+import { Checkbox } from "@ui/components/checkbox";
+import { Label } from "@ui/components/label";
+import { Button } from "@ui/components/button";
+import { Separator } from "@ui/components/separator";
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-import {TextField} from '@/components/ui/TextField';
+import { i18n } from "@/lib/i18n";
+import { TextField } from "@ui/components/TextField";
 
 import {Toast} from '@/ui/components';
 export default function Content({canRegister}: {canRegister?: boolean}) {
@@ -67,34 +65,37 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
 
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[1185px] w-full">
-      <h5 className="mb-3 font-medium text-primary">{i18n.get('Log in')}</h5>
+      <h5 className="mb-3 font-medium text-primary">{i18n.get("Log in")}</h5>
       <form
         className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
-        onSubmit={handleSubmit}>
-        <TextField
-          label={i18n.get('Email')}
-          type="email"
-          name="email"
-          placeholder={i18n.get('Enter email')}
-          disabled={submitting}
-          value={values.email}
-          onChange={handleChange}
-        />
-        <TextField
-          label={i18n.get('Password')}
-          placeholder={i18n.get('Password')}
-          name="password"
-          type={showPassword ? 'text' : 'password'}
-          icons={[
-            {
-              icon: showPassword ? 'visibility_off' : 'visibility',
-              onClick: toggleShowPassword,
-            },
-          ]}
-          disabled={submitting}
-          value={values.password}
-          onChange={handleChange}
-        />
+        onSubmit={handleSubmit}
+      >
+        <div>
+          <TextField
+            label={i18n.get("Email")}
+            type="email"
+            name="email"
+            placeholder={i18n.get("Enter email")}
+            disabled={submitting}
+            value={values.email}
+            onChange={handleChange}
+          />
+          <TextField
+            label={i18n.get("Password")}
+            placeholder={i18n.get("Password")}
+            name="password"
+            type={showPassword ? "text" : "password"}
+            icons={[
+              {
+                icon: showPassword ? "visibility_off" : "visibility",
+                onClick: toggleShowPassword,
+              },
+            ]}
+            disabled={submitting}
+            value={values.password}
+            onChange={handleChange}
+          />
+        </div>
         {error && (
           // <Box color="danger">
           //   {i18n.get(
@@ -104,9 +105,9 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           <Toast
             variant="error"
             show={true}
-            heading={i18n.get('The email or the password is wrong.')}
+            heading={i18n.get("The email or the password is wrong.")}
             description={i18n.get(
-              'The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.',
+              "The description line of a sticky alert. Helpful component that is designed to be placed near to alert context."
             )}
           />
         )}
@@ -115,7 +116,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           <div className="flex items-center space-x-2">
             <Checkbox id="terms" disabled={submitting} />
             <Label htmlFor="terms" className="ml-2 text-primary">
-              {i18n.get('Remember Me')}
+              {i18n.get("Remember Me")}
             </Label>
           </div>
           {/* <Input type="checkbox" me={2} disabled={submitting} />
@@ -128,7 +129,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           </Link>
         </div>
         <Button type="submit" disabled={submitting} className="rounded-full">
-          {i18n.get('Log In')}
+          {i18n.get("Log In")}
         </Button>
         {canRegister && (
           <div>
@@ -151,7 +152,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
         <div className="grow">
           <Separator />
         </div>
-        <h5 className="mb-0 font-medium text-primary">{i18n.get('Or')}</h5>
+        <h5 className="mb-0 font-medium text-primary">{i18n.get("Or")}</h5>
         <div className="grow">
           <Separator />
         </div>
@@ -161,10 +162,11 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           type="button"
           variant="outline"
           onClick={loginWithGoogle}
-          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-background">
-          <BootstrapIcon icon="google" />
+          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-background"
+        >
+          <FaGoogle className="text-xl" />
           <span className="text-primary font-medium">
-            {i18n.get('Log In with Google')}
+            {i18n.get("Log In with Google")}
           </span>
         </Button>
       </div>
