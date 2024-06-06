@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import { client } from "@/globals";
-import { PortalWorkspace } from "@/types";
+import {client} from '@/globals';
+import {PortalWorkspace} from '@/types';
 
 function transform($categories: any[]) {
   const categories: any = {};
@@ -19,7 +19,7 @@ function transform($categories: any[]) {
     return categories[category.id];
   };
 
-  $categories.forEach((c) => {
+  $categories.forEach(c => {
     const category = get(c);
 
     if (category.parent) {
@@ -53,7 +53,7 @@ export async function findCategories({
           id: true,
         },
       },
-      parentProductCategory: { id: true },
+      parentProductCategory: {id: true},
     },
   });
 

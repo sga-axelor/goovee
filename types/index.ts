@@ -84,8 +84,8 @@ export interface Cart extends Model {
 
 export interface CartItem extends Model {
   quantity: string | number;
-  cart: Cart["id"];
-  product: Product["id"];
+  cart: Cart['id'];
+  product: Product['id'];
   note?: string;
 }
 
@@ -142,7 +142,7 @@ export type ComputedProduct = {
     displayWt?: string;
     displayPrimary?: string;
     displaySecondary?: string;
-    mainPrice?: PortalAppConfig["mainPrice"];
+    mainPrice?: PortalAppConfig['mainPrice'];
     displayTwoPrices?: boolean;
   };
   currency: Currency;

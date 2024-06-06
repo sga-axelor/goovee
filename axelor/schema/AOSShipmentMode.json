@@ -1,13 +1,12 @@
 {
-    "name": "AOSShipmentMode",
-    "table": "stock_shipment_mode",
-    "extends": "Model",
-    "synchronize": false,
-    "fields": [
-      {
-        "type": "String",
-        "name": "name"
-      }
-    ]
-  }
-  
+  "name": "AOSShipmentMode",
+  "table": "stock_shipment_mode",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    }
+  ]
+}

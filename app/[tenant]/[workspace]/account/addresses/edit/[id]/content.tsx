@@ -1,11 +1,18 @@
+<<<<<<< HEAD
 "use client";
+=======
+'use client';
+
+import {Box} from '@axelor/ui';
+
+>>>>>>> 3305013b3d476d434f8f24ecdc27a077cdf14385
 // ---- CORE IMPORTS ---- //
-import { i18n } from "@/lib/i18n";
-import { AddressForm } from "@/ui/components";
-import type { PartnerAddress, Country, Address } from "@/types";
+import {i18n} from '@/lib/i18n';
+import {AddressForm} from '@/ui/components';
+import type {PartnerAddress, Country, Address} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { updateAddress } from "./actions";
+import {updateAddress} from './actions';
 
 export default function Content({
   id,
@@ -16,11 +23,11 @@ export default function Content({
   partnerAddress: PartnerAddress;
   countries: Country[];
 }) {
-  const { address } = partnerAddress;
+  const {address} = partnerAddress;
 
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
-    values: Partial<Address> & { multipletype?: boolean }
+    values: Partial<Address> & {multipletype?: boolean},
   ) => {
     event.preventDefault();
 
@@ -32,7 +39,7 @@ export default function Content({
       isInvoicingAddr = true;
     }
 
-    const { multipletype, addressl7country, ...address } = values;
+    const {multipletype, addressl7country, ...address} = values;
 
     const _address = await updateAddress({
       id,

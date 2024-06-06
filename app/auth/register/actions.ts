@@ -1,6 +1,6 @@
-"use server";
+'use server';
 
-import { registerPartner } from "@/orm/partner";
+import {registerPartner} from '@/orm/partner';
 
 export async function register({
   firstName,
@@ -16,11 +16,11 @@ export async function register({
   confirmPassword: string;
 }) {
   if (!(name && email && password && confirmPassword)) {
-    throw new Error("Name, email and password is required.");
+    throw new Error('Name, email and password is required.');
   }
 
   if (password !== confirmPassword) {
-    throw new Error("Password and confirm password mismatch");
+    throw new Error('Password and confirm password mismatch');
   }
 
   const partner = await registerPartner({

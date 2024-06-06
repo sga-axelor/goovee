@@ -1,4 +1,4 @@
-import { AxelorClient, createClient } from "./.generated/client";
+import {AxelorClient, createClient} from './.generated/client';
 
 let client: AxelorClient;
 

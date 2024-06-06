@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
+import React, {useEffect} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import { useAppLang } from "@/ui/hooks";
-import { i18n } from "@/lib/i18n";
-import { useRouter } from "next/navigation";
+import {useAppLang} from '@/ui/hooks';
+import {i18n} from '@/lib/i18n';
+import {useRouter} from 'next/navigation';
 
-export default function Locale({ children }: { children: React.ReactNode }) {
-  const { dir, lang } = useAppLang();
+export default function Locale({children}: {children: React.ReactNode}) {
+  const {dir, lang} = useAppLang();
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function Locale({ children }: { children: React.ReactNode }) {
       }
     };
     load();
-  }, [dir, lang]);
+  }, [dir, lang, router]);
 
   return <>{children}</>;
 }

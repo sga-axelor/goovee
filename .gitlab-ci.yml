@@ -1,0 +1,15 @@
+image: node:20-bullseye
+
+before_script:
+  - corepack enable
+  - corepack prepare pnpm@9.0.6 --activate
+  - pnpm install
+
+stages:
+  - format
+
+format:
+  stage: format
+  script:
+    - pnpm format:check
+    - pnpm lint

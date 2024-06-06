@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import type { ID } from "@/types";
+import type {ID} from '@/types';
 
 export type Quotations = {
   id: ID;

@@ -1,14 +1,14 @@
 // ---- CORE IMPORTS ---- //
-import { client } from "@/globals";
-import { DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL } from "@/constants";
-import { getFormattedValue, getPageInfo, getSkipInfo, scale } from "@/utils";
-import type { ID } from "@/types";
+import {client} from '@/globals';
+import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
+import type {ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { QUOTATION_STATUS } from "@/subapps/quotations/common/constants/quotations";
+import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 
 export const RELATED_MODELS = {
-  SALE_ORDER_MODEL: "com.axelor.apps.sale.db.SaleOrder",
+  SALE_ORDER_MODEL: 'com.axelor.apps.sale.db.SaleOrder',
 };
 
 export const fetchQuotations = async ({
@@ -25,7 +25,7 @@ export const fetchQuotations = async ({
 }) => {
   const c = await client;
   const skip = getSkipInfo(limit, page);
-  
+
   const whereClause: any = {
     template: false,
     ...where,
@@ -47,7 +47,7 @@ export const fetchQuotations = async ({
     .find({
       where: whereClause,
       take: limit,
-      ...(skip ? { skip } : {}),
+      ...(skip ? {skip} : {}),
       select: {
         saleOrderSeq: true,
         statusSelect: true,
@@ -65,7 +65,7 @@ export const fetchQuotations = async ({
     page,
     limit,
   });
-  if (!partnerId) return { quotations: [], pageInfo };
+  if (!partnerId) return {quotations: [], pageInfo};
 
   return {
     quotations,
@@ -132,21 +132,21 @@ export async function findQuotation(id: any) {
       },
     },
   });
-  const { currency, saleOrderLineList, exTaxTotal, inTaxTotal } = quotation;
+  const {currency, saleOrderLineList, exTaxTotal, inTaxTotal} = quotation;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
   const sumOfDiscounts = saleOrderLineList.reduce(
-    (total: number, { discountAmount }: any) => {
+    (total: number, {discountAmount}: any) => {
       return total + parseFloat(discountAmount);
     },
-    0
+    0,
   );
   const totalDiscount =
     sumOfDiscounts === 0
       ? 0
       : ((100 * sumOfDiscounts) / (sumOfDiscounts + +exTaxTotal)).toFixed(
-          currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE
+          currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE,
         );
 
   return {

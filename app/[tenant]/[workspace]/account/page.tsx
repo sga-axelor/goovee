@@ -1,25 +1,25 @@
-import { notFound } from "next/navigation";
+import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import { getSession } from "@/orm/auth";
-import { findSubapps } from "@/orm/subapps";
-import { findWorkspace } from "@/orm/workspace";
-import { clone } from "@/utils";
-import { workspacePathname } from "@/utils/workspace";
+import {getSession} from '@/orm/auth';
+import {findSubapps} from '@/orm/subapps';
+import {findWorkspace} from '@/orm/workspace';
+import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from "./content";
+import Content from './content';
 
 export default async function Account({
   params,
 }: {
-  params: { tenant: string; workspace: string };
+  params: {tenant: string; workspace: string};
 }) {
   const session = await getSession();
 
   if (!session) return notFound();
 
-  const { workspaceURL } = workspacePathname(params);
+  const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
@@ -28,7 +28,7 @@ export default async function Account({
 
   if (!workspace) return notFound();
 
-  const subapps = await findSubapps({ workspace, user: session?.user });
+  const subapps = await findSubapps({workspace, user: session?.user});
 
   return <Content subapps={subapps} />;
 }

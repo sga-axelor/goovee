@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { LuPlus } from "react-icons/lu";
@@ -6,9 +6,9 @@ import { LuPencil } from "react-icons/lu";
 import { Button } from "@ui/components/button"
 import { Separator } from "@ui/components/separator"
 // ---- CORE IMPORTS ---- //
-import { i18n } from "@/lib/i18n";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import type { PartnerAddress } from "@/types";
+import {i18n} from '@/lib/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {PartnerAddress} from '@/types';
 
 function AddressList({
   title,
@@ -16,10 +16,10 @@ function AddressList({
   addresses,
 }: {
   title: string;
-  type: "delivery" | "invoicing";
+  type: 'delivery' | 'invoicing';
   addresses: PartnerAddress[] | null;
 }) {
-  const { workspaceURI } = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   return (
     <>
@@ -90,7 +90,7 @@ export default function Content({
       >
         <div className="p-2 rounded-md border">
           <AddressList
-            title={i18n.get("Invoicing Address")}
+            title={i18n.get('Invoicing Address')}
             addresses={invoicingAddresses}
             type="invoicing"
           />
@@ -98,7 +98,7 @@ export default function Content({
         <Separator />
         <div className="p-2 rounded-md border">
           <AddressList
-            title={i18n.get("Delivery Address")}
+            title={i18n.get('Delivery Address')}
             addresses={deliveryAddresses}
             type="delivery"
           />

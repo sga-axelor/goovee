@@ -1,16 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Box, Button } from "@axelor/ui";
+import Link from 'next/link';
+import {Box, Button} from '@axelor/ui';
 
 export default function NotFound() {
   return (
     <Box
-      style={{ height: "100vh" }}
+      style={{height: '100vh'}}
       d="flex"
       alignItems="center"
-      justifyContent="center"
-    >
+      justifyContent="center">
       <Box>
         <h2>404 | Not Found</h2>
         <p>Could not find requested resource</p>

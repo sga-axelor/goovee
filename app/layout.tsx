@@ -1,18 +1,18 @@
-import Script from "next/script";
+import Script from 'next/script';
 
 // ---- CORE IMPORTS ---- //
-import { findThemeOptions } from "@/orm/theme";
+import {findThemeOptions} from '@/orm/theme';
 
 // ---- LOCAL IMPORTS ---- //
-import Theme from "./theme";
-import Locale from "./locale";
-import AuthContext from "./auth-context";
-import type { Metadata } from "next";
-import "./globals.css";
+import Theme from './theme';
+import Locale from './locale';
+import AuthContext from './auth-context';
+import type {Metadata} from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Customer Portal",
-  description: "Next generation portal by Axelor",
+  title: 'Customer Portal',
+  description: 'Next generation portal by Axelor',
 };
 
 export default async function RootLayout({

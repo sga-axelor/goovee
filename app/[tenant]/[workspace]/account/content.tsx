@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -9,9 +9,9 @@ import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
 import { SUBAPP_PAGE } from "@/constants";
 import DynamicIcon from "@/components/ui/icons";
 
-export default function Content({ subapps }: { subapps: any }) {
-  const { workspaceURI } = useWorkspace();
-  const { data: session } = useSession();
+export default function Content({subapps}: {subapps: any}) {
+  const {workspaceURI} = useWorkspace();
+  const {data: session} = useSession();
 
   return (
     <>
@@ -28,11 +28,11 @@ export default function Content({ subapps }: { subapps: any }) {
           .filter((app: any) => app.installed && app.showInMySpace)
           .sort(
             (app1: any, app2: any) =>
-              app1.orderForMySpaceMenu - app2.orderForMySpaceMenu
+              app1.orderForMySpaceMenu - app2.orderForMySpaceMenu,
           )
           .reverse()
-          .map(({ code, name, icon, color, background }: any) => {
-            const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || "";
+          .map(({code, name, icon, color, background}: any) => {
+            const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
             return (
               <Link key={code} href={`${workspaceURI}/${code}${page}`} className="no-underline">
                 <div className="p-6 rounded-lg border bg-background">
@@ -42,8 +42,7 @@ export default function Content({ subapps }: { subapps: any }) {
                       style={{
                         background,
                         color,
-                      }}
-                    >
+                      }}>
                       {icon && (
                         <DynamicIcon icon={icon as any} fontSize="2.5rem"/>
                       )}

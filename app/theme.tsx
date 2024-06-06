@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import React, { useCallback, useContext, useMemo, useState } from "react";
-import { ThemeProvider } from "@axelor/ui";
-import { ThemeOptions } from "@axelor/ui/core/styles/theme/types";
-import "swiper/css";
-import "swiper/css/free-mode";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/thumbs";
+import React, {useCallback, useContext, useMemo, useState} from 'react';
+import {ThemeProvider} from '@axelor/ui';
+import {ThemeOptions} from '@axelor/ui/core/styles/theme/types';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/thumbs';
 
 const ThemeContext = React.createContext({});
 
@@ -29,7 +29,7 @@ export default function Theme({
       options,
       updateThemeOptions,
     }),
-    [options, updateThemeOptions]
+    [options, updateThemeOptions],
   );
 
   return (

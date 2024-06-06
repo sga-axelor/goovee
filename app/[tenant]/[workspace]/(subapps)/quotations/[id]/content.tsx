@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Box } from "@axelor/ui";
+import React from 'react';
+import {Box} from '@axelor/ui';
 
 // ---- CORE IMPORTS ---- //
-import { Container } from "@/ui/components";
-import { i18n } from "@/lib/i18n";
+import {Container} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -14,19 +14,19 @@ import {
   Informations,
   Total,
   Contacts,
-} from "@/subapps/quotations/common/ui/components";
-import { QUOTATION_STATUS } from "@/subapps/quotations/common/constants/quotations";
+} from '@/subapps/quotations/common/ui/components';
+import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {
   CommentsProps,
   Quotation,
-} from "@/subapps/quotations/common/types/quotations";
+} from '@/subapps/quotations/common/types/quotations';
 
 type Props = {
   quotation: Quotation;
   comments: CommentsProps[];
 };
 
-const Content = ({ quotation, comments }: Props) => {
+const Content = ({quotation, comments}: Props) => {
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -43,29 +43,27 @@ const Content = ({ quotation, comments }: Props) => {
 
   return (
     <>
-      <Container title={`${i18n.get("Quotation")} ${saleOrderSeq}`}>
+      <Container title={`${i18n.get('Quotation')} ${saleOrderSeq}`}>
         <Informations
           endOfValidityDate={endOfValidityDate}
           statusSelect={statusSelect}
         />
         <Box
-          d={"flex"}
-          flexFlow={{ base: "column-reverse", lg: "row" }}
-          gap="1rem"
-        >
+          d={'flex'}
+          flexFlow={{base: 'column-reverse', lg: 'row'}}
+          gap="1rem">
           <Box
             d="flex"
             flexDirection="column"
             gap="1.5rem"
             flexBasis={{
-              base: "100%",
+              base: '100%',
               lg: `${
                 statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION
-                  ? "75%"
-                  : "100%"
+                  ? '75%'
+                  : '100%'
               }`,
-            }}
-          >
+            }}>
             <Contacts
               clientPartner={clientPartner}
               company={company}
@@ -83,10 +81,9 @@ const Content = ({ quotation, comments }: Props) => {
               flexDirection="column"
               gap="1.5rem"
               flexBasis={{
-                base: "100%",
-                lg: "25%",
-              }}
-            >
+                base: '100%',
+                lg: '25%',
+              }}>
               <Total
                 exTaxTotal={exTaxTotal}
                 inTaxTotal={inTaxTotal}

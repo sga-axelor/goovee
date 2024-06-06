@@ -1,36 +1,34 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Box, Button, Divider, InputLabel, useClassNames } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import Link from 'next/link';
+import {usePathname, useRouter} from 'next/navigation';
+import {useSession} from 'next-auth/react';
+import {Box, Button, Divider, InputLabel, useClassNames} from '@axelor/ui';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
 
 // ---- CORE IMPORTS ---- //
-import { BackgroundImage, Quantity } from "@/ui/components";
-import { useQuantity } from "@/ui/hooks";
-import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
-import { computeTotal } from "@/utils/cart";
-import { getImageURL } from "@/utils/product";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { i18n } from "@/lib/i18n";
-import type { Cart, Product, PortalWorkspace } from "@/types";
+import {BackgroundImage, Quantity} from '@/ui/components';
+import {useQuantity} from '@/ui/hooks';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {computeTotal} from '@/utils/cart';
+import {getImageURL} from '@/utils/product';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
+import type {Cart, Product, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { findProduct } from "@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart";
+import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 
-function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
+function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   const [updating, setUpdating] = useState(false);
-  const { updateQuantity, getProductNote, setProductNote } = useCart();
-  const { workspaceURI } = useWorkspace();
-  const [note, setNote] = useState("");
+  const {updateQuantity, getProductNote, setProductNote} = useCart();
+  const {workspaceURI} = useWorkspace();
+  const [note, setNote] = useState('');
 
-  if (!item.computedProduct) return null;
+  const {product, price} = item.computedProduct ?? {};
 
-  const { product, price } = item.computedProduct;
-
-  const { quantity, increment, decrement } = useQuantity({
+  const {quantity, increment, decrement} = useQuantity({
     initialValue: Number(item.quantity),
   });
 
@@ -39,29 +37,29 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       productId,
       quantity,
     }: {
-      productId: Product["id"];
+      productId: Product['id'];
       quantity: number;
     }) => {
       setUpdating(true);
-      await updateQuantity({ productId, quantity });
+      await updateQuantity({productId, quantity});
       setUpdating(false);
     },
-    []
+    [updateQuantity],
   );
 
   useEffect(() => {
     if (Number(quantity) !== Number(item.quantity)) {
       handleUpdateQuantity({
-        productId: item.computedProduct.product.id,
+        productId: item.computedProduct?.product?.id,
         quantity,
       });
     }
   }, [quantity, item, handleUpdateQuantity]);
 
   const handleChangeNote = async (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    const { value } = event.target;
+    const {value} = event.target;
     setNote(value);
     await setProductNote(product.id, value);
   };
@@ -72,9 +70,11 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       const note = await getProductNote(product.id);
       setNote(note);
     })();
-  }, [product]);
+  }, [getProductNote, product]);
 
   const cs = useClassNames();
+
+  if (!item.computedProduct) return null;
 
   return (
     <Box
@@ -84,8 +84,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       gap={8}
       bg="white"
       p={3}
-      rounded={2}
-    >
+      rounded={2}>
       <BackgroundImage
         rounded={2}
         height={200}
@@ -95,16 +94,15 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       <Box d="flex" flexDirection="column" h={100} py={2}>
         <Link
           href={`${workspaceURI}/shop/product/${encodeURIComponent(
-            product.name
-          )}-${product.id}`}
-        >
+            product.name,
+          )}-${product.id}`}>
           <Box as="h4">{i18n.getValueAttribute(product.name)}</Box>
         </Link>
         {product.allowCustomNote && (
           <Box>
-            <InputLabel color="secondary">{i18n.get("Note")}</InputLabel>
+            <InputLabel color="secondary">{i18n.get('Note')}</InputLabel>
             <textarea
-              className={cs("form-control")}
+              className={cs('form-control')}
               value={note}
               onChange={handleChangeNote}
             />
@@ -112,7 +110,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
         )}
         <Box flexGrow={1} />
         <Box as="p" mb={1} fontSize={5}>
-          {i18n.get("Quantity")}
+          {i18n.get('Quantity')}
         </Box>
         <Quantity
           value={quantity}
@@ -130,8 +128,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
         <Button
           color="danger"
           disabled={disabled || updating}
-          onClick={handleRemove(product)}
-        >
+          onClick={handleRemove(product)}>
           <Box as={MaterialIcon} verticalAlign="middle" icon="delete" />
         </Button>
       </Box>
@@ -186,10 +183,10 @@ function CartSummary({
   const pathname = usePathname();
 
   const noitem = !cart?.items?.length;
-  const { displayTotal } = computeTotal({ cart, workspace });
+  const {displayTotal} = computeTotal({cart, workspace});
 
-  const { workspaceURI } = useWorkspace();
-  const { data: session } = useSession();
+  const {workspaceURI} = useWorkspace();
+  const {data: session} = useSession();
 
   const authenticated = session?.user?.id;
 
@@ -198,12 +195,12 @@ function CartSummary({
       {workspace?.config?.displayPrices && (
         <>
           <Box as="p" fontSize={3} fontWeight="bold">
-            {i18n.get("Total")}
+            {i18n.get('Total')}
           </Box>
           <Divider mb={2} />
           <Box d="flex" justifyContent="space-between">
             <Box as="p" fontSize={5}>
-              {i18n.get("Products")}
+              {i18n.get('Products')}
             </Box>
             <Box as="p" fontSize={5} fontWeight="bold">
               {displayTotal}
@@ -211,16 +208,16 @@ function CartSummary({
           </Box>
           <Box d="flex" justifyContent="space-between">
             <Box as="p" fontSize={5} mb={0}>
-              {i18n.get("Shipping")}
+              {i18n.get('Shipping')}
             </Box>
             <Box as="p" fontSize={5} mb={0} fontWeight="bold">
-              {i18n.get("To be determined")}
+              {i18n.get('To be determined')}
             </Box>
           </Box>
           <Divider mt={2} mb={2} />
           <Box d="flex" justifyContent="space-between" mt={3} mb={3}>
             <Box as="p" fontSize={4} mb={0}>
-              <b>{i18n.get("Total Price")}</b>
+              <b>{i18n.get('Total Price')}</b>
             </Box>
             <Box as="p" fontSize={4} mb={0} fontWeight="bold">
               {displayTotal}
@@ -238,9 +235,8 @@ function CartSummary({
                 size="lg"
                 mb={2}
                 w={100}
-                disabled={noitem}
-              >
-                {i18n.get("Checkout")}
+                disabled={noitem}>
+                {i18n.get('Checkout')}
               </Button>
             </Link>
           )}
@@ -253,20 +249,18 @@ function CartSummary({
               size="lg"
               w={100}
               disabled={noitem}
-              onClick={onRequestQuotation}
-            >
-              {i18n.get("Request Quotation")}
+              onClick={onRequestQuotation}>
+              {i18n.get('Request Quotation')}
             </Button>
           )}
         </>
       ) : (
         <Link
           href={`/auth/login?callbackurl=${encodeURIComponent(
-            pathname
-          )}&workspaceURI=${encodeURIComponent(workspaceURI)}`}
-        >
+            pathname,
+          )}&workspaceURI=${encodeURIComponent(workspaceURI)}`}>
           <Button d="block" variant="primary" mb={2} size="lg" w={100}>
-            {i18n.get("Login for checkout")}
+            {i18n.get('Login for checkout')}
           </Button>
         </Link>
       )}
@@ -277,7 +271,7 @@ function CartSummary({
         <Button>
           <Link href={`${workspaceURI}/shop`}>
             <Box as="p" mb={0}>
-              {i18n.get("Continue Shopping")}
+              {i18n.get('Continue Shopping')}
             </Box>
           </Link>
         </Button>
@@ -286,13 +280,9 @@ function CartSummary({
   );
 }
 
-export default function Content({
-  workspace,
-}: {
-  workspace?: PortalWorkspace;
-}) {
-  const { cart, removeItem } = useCart();
-  const { workspaceURI } = useWorkspace();
+export default function Content({workspace}: {workspace?: PortalWorkspace}) {
+  const {cart, removeItem} = useCart();
+  const {workspaceURI} = useWorkspace();
   const router = useRouter();
   const [updating, setUpdating] = useState(false);
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
@@ -307,7 +297,7 @@ export default function Content({
   };
 
   const handleRequestQuotation = async () => {
-    if (window.confirm("Do you want to request quotation")) {
+    if (window.confirm('Do you want to request quotation')) {
       router.replace(`${workspaceURI}/shop/cart/request-quotation`);
     }
   };
@@ -315,19 +305,19 @@ export default function Content({
   useEffect(() => {
     const init = async () => {
       const computedProductIDs = computedProducts
-        .map((cp) => cp?.product?.id)
+        .map(cp => cp?.product?.id)
         .filter(Boolean);
       const cartItemIDs = cart?.items?.map((i: any) => i.product);
 
       const diff = cartItemIDs.filter(
-        (id: string) => !computedProductIDs.includes(id)
+        (id: string) => !computedProductIDs.includes(id),
       );
 
       if (diff.length) {
         await Promise.all(
-          cart.items.map((i: any) => findProduct({ id: i.product, workspace }))
+          cart.items.map((i: any) => findProduct({id: i.product, workspace})),
         )
-          .then((computedProducts) => {
+          .then(computedProducts => {
             setComputedProducts(computedProducts);
           })
           .finally(() => {
@@ -336,7 +326,7 @@ export default function Content({
       }
     };
     init();
-  }, [cart, computedProducts]);
+  }, [cart, computedProducts, workspace]);
 
   const $cart = useMemo(
     () => ({
@@ -345,28 +335,27 @@ export default function Content({
         ...cart?.items?.map((i: any) => ({
           ...i,
           computedProduct: computedProducts.find(
-            (cp) => Number(cp?.product?.id) === Number(i.product)
+            cp => Number(cp?.product?.id) === Number(i.product),
           ),
         })),
       ],
     }),
-    [cart, computedProducts]
+    [cart, computedProducts],
   );
 
   if (loading) {
-    return <p>{i18n.get("Loading")}...</p>;
+    return <p>{i18n.get('Loading')}...</p>;
   }
 
   return (
     <>
       <Box as="h2" mb={3}>
-        <b>{i18n.get("Cart")}</b>
+        <b>{i18n.get('Cart')}</b>
       </Box>
       <Box
         d="grid"
-        gridTemplateColumns={{ base: "1fr", md: "2fr 1fr" }}
-        gap="1rem"
-      >
+        gridTemplateColumns={{base: '1fr', md: '2fr 1fr'}}
+        gap="1rem">
         {cart?.items?.length ? (
           <CartItems
             cart={$cart}
@@ -376,7 +365,7 @@ export default function Content({
           />
         ) : (
           <Box as="p" fontSize={5} fontWeight="bold">
-            {i18n.get("Your cart is empty.")}
+            {i18n.get('Your cart is empty.')}
           </Box>
         )}
         <CartSummary

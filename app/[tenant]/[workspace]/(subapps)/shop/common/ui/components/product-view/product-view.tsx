@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import React, { Fragment, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Box, Button, InputLabel, useClassNames } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+import React, {Fragment, useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Box, Button, InputLabel, useClassNames} from '@axelor/ui';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
 
 // ---- CORE IMPORTS ---- //
-import { Quantity, ThumbsCarousel } from "@/ui/components";
-import { useQuantity } from "@/ui/hooks";
-import { i18n } from "@/lib/i18n";
-import { getImageURL } from "@/utils/product";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
-import type { ComputedProduct, PortalWorkspace } from "@/types";
+import {Quantity, ThumbsCarousel} from '@/ui/components';
+import {useQuantity} from '@/ui/hooks';
+import {i18n} from '@/lib/i18n';
+import {getImageURL} from '@/utils/product';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import type {ComputedProduct, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { Categories } from "..";
+import {Categories} from '..';
 
 export function ProductView({
   product: computedProduct,
@@ -29,39 +29,35 @@ export function ProductView({
   breadcrumbs: any;
 }) {
   const router = useRouter();
-  const { workspaceURI } = useWorkspace();
-  const { product, price } = computedProduct;
+  const {workspaceURI} = useWorkspace();
+  const {product, price} = computedProduct;
   const [updating, setUpdating] = useState(false);
-  const { quantity, increment, decrement } = useQuantity();
-  const {
-    getProductQuantity,
-    incrementQuantity,
-    getProductNote,
-    setProductNote,
-  } = useCart();
+  const {quantity, increment, decrement} = useQuantity();
+  const {addItem, getProductQuantity, getProductNote, setProductNote} =
+    useCart();
   const [cartQuantity, setCartQuantity] = useState(0);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState('');
 
   const handleAddToCart = async (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setUpdating(true);
-    setCartQuantity((q) => Number(q) + Number(quantity));
-    await incrementQuantity({ productId: product.id, quantity });
+    setCartQuantity(q => Number(q) + Number(quantity));
+    await addItem({productId: product.id, quantity});
     setUpdating(false);
   };
 
   const handleChangeNote = async (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    const { value } = event.target;
+    const {value} = event.target;
     setNote(value);
     await setProductNote(product.id, value);
   };
 
   const handleCategoryClick = (category: any) => {
     router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`
+      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
   };
 
@@ -73,14 +69,14 @@ export function ProductView({
       const note = await getProductNote(product.id);
       setNote(note);
     })();
-  }, [getProductQuantity, product]);
+  }, [getProductNote, getProductQuantity, product]);
 
   const cs = useClassNames();
 
   return (
     <Box>
       <Categories items={categories} onClick={handleCategoryClick} />
-      <Box className={cs("container")} py={{ base: 2, md: 3 }}>
+      <Box className={cs('container')} py={{base: 2, md: 3}}>
         <Box mb={4} pt={3}>
           {breadcrumbs?.length > 1 ? (
             <Box d="flex" gap="1rem" alignItems="center">
@@ -91,19 +87,17 @@ export function ProductView({
                     <Box
                       d="flex"
                       alignItems="center"
-                      {...(islast ? {} : { className: "pointer" })}
-                    >
+                      {...(islast ? {} : {className: 'pointer'})}>
                       <Box
                         {...(islast
                           ? {
-                              color: "primary",
-                              fontWeight: "bold",
+                              color: 'primary',
+                              fontWeight: 'bold',
                             }
                           : {
-                              color: "secondary",
+                              color: 'secondary',
                               onClick: () => handleCategoryClick(crumb),
-                            })}
-                      >
+                            })}>
                         {i18n.get(crumb.name)}
                       </Box>
                       {!islast && (
@@ -120,12 +114,11 @@ export function ProductView({
         </Box>
         <Box
           d="grid"
-          gridTemplateColumns={{ base: "1fr", md: "1fr 2fr" }}
-          gridGap="1rem"
-        >
+          gridTemplateColumns={{base: '1fr', md: '1fr 2fr'}}
+          gridGap="1rem">
           <Box overflow="hidden">
             <ThumbsCarousel
-              images={product.images?.map((i) => ({
+              images={product.images?.map(i => ({
                 id: i as string,
                 url: getImageURL(i) as string,
               }))}
@@ -151,14 +144,13 @@ export function ProductView({
               as="p"
               fontSize={6}
               dangerouslySetInnerHTML={{
-                __html: product.description || "",
-              }}
-            ></Box>
+                __html: product.description || '',
+              }}></Box>
             {Boolean(cartQuantity) && product.allowCustomNote && (
               <Box>
-                <InputLabel color="secondary">{i18n.get("Note")}</InputLabel>
+                <InputLabel color="secondary">{i18n.get('Note')}</InputLabel>
                 <textarea
-                  className={cs("form-control")}
+                  className={cs('form-control')}
                   value={note}
                   onChange={handleChangeNote}
                 />
@@ -176,18 +168,16 @@ export function ProductView({
               onClick={handleAddToCart}
               w={100}
               rounded="pill"
-              mt={3}
-            >
+              mt={3}>
               <Box
                 d="flex"
                 alignItems="center"
                 justifyContent="center"
                 p={1}
-                gap={8}
-              >
+                gap={8}>
                 <MaterialIcon icon="shopping_basket" />
                 <Box as="p" mb={0}>
-                  {i18n.get("Add to Cart")}
+                  {i18n.get('Add to Cart')}
                 </Box>
               </Box>
             </Button>

@@ -20,8 +20,8 @@
       "type": "Date",
       "name": "dueDate"
     },
-    { "type": "Decimal", "name": "exTaxTotal" },
-    { "type": "Decimal", "name": "inTaxTotal" },
+    {"type": "Decimal", "name": "exTaxTotal"},
+    {"type": "Decimal", "name": "inTaxTotal"},
     {
       "type": "Decimal",
       "name": "amountRemaining"

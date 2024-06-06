@@ -1,11 +1,11 @@
-import { client } from "@/globals";
-import { clone } from "@/utils";
-import { hash } from "@/utils/auth";
+import {client} from '@/globals';
+import {clone} from '@/utils';
+import {hash} from '@/utils/auth';
 
 export async function registerPartner({
   firstName,
   name,
-  password = "",
+  password = '',
   email,
 }: {
   firstName?: string;
@@ -24,7 +24,7 @@ export async function registerPartner({
         name,
         password: hashedPassword,
         isContact: false,
-        fullName: `${name} ${firstName || ""}`,
+        fullName: `${name} ${firstName || ''}`,
         emailAddress: {
           create: {
             address: email,
