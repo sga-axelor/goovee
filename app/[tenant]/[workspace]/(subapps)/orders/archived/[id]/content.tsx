@@ -1,10 +1,10 @@
-"use client";
-import React from "react";
-import { Box } from "@axelor/ui";
+'use client';
+import React from 'react';
+import {Box} from '@axelor/ui';
 
 // ---- CORE IMPORTS ---- //
-import { Container } from "@/ui/components";
-import { i18n } from "@/lib/i18n";
+import {Container} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -13,11 +13,11 @@ import {
   History,
   Informations,
   Total,
-} from "@/subapps/orders/common/ui/components";
-import { getStatus } from "@/subapps/orders/common/utils/orders";
-import { ORDER_TYPE } from "@/subapps/orders/common/constants/orders";
+} from '@/subapps/orders/common/ui/components';
+import {getStatus} from '@/subapps/orders/common/utils/orders';
+import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
 
-const Content = ({ order }: { order: any }) => {
+const Content = ({order}: {order: any}) => {
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -34,33 +34,28 @@ const Content = ({ order }: { order: any }) => {
     totalDiscount,
   } = order;
 
-  const { status, variant } = getStatus(statusSelect, deliveryState);
+  const {status, variant} = getStatus(statusSelect, deliveryState);
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
 
   return (
     <>
-      <Container title={`${i18n.get("Order number")} ${saleOrderSeq}`}>
+      <Container title={`${i18n.get('Order number')} ${saleOrderSeq}`}>
         <Informations
           createdOn={createdOn}
           shipmentMode={shipmentMode}
           status={status}
           variant={variant}
         />
-        <Box
-          d="flex"
-          gap="1rem"
-          flexFlow={{ base: "column-reverse", lg: "row" }}
-        >
+        <Box d="flex" gap="1rem" flexFlow={{base: 'column-reverse', lg: 'row'}}>
           <Box
             w={100}
             d="flex"
             flexDirection="column"
             gap="1.5rem"
             flexBasis={{
-              base: "100%",
-              lg: "75%",
-            }}
-          >
+              base: '100%',
+              lg: '75%',
+            }}>
             <Contact
               clientPartner={clientPartner}
               company={company}
@@ -76,10 +71,9 @@ const Content = ({ order }: { order: any }) => {
             flexDirection="column"
             gap="1.5rem"
             flexBasis={{
-              base: "100%",
-              lg: "25%",
-            }}
-          >
+              base: '100%',
+              lg: '25%',
+            }}>
             <Total
               exTaxTotal={exTaxTotal}
               inTaxTotal={inTaxTotal}

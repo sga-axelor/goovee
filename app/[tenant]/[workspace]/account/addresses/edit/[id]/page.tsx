@@ -1,14 +1,14 @@
-import { findCountries, findPartnerAddress } from "@/orm/address";
-import { clone } from "@/utils";
-import { redirect } from "next/navigation";
-import Content from "./content";
+import {findCountries, findPartnerAddress} from '@/orm/address';
+import {clone} from '@/utils';
+import {redirect} from 'next/navigation';
+import Content from './content';
 
 export default async function Page({
   params,
 }: {
-  params: { id: string; tenant: string; workspace: string };
+  params: {id: string; tenant: string; workspace: string};
 }) {
-  const { tenant, workspace, id } = params;
+  const {tenant, workspace, id} = params;
 
   let partnerAddress = await findPartnerAddress(id).then(clone);
 

@@ -73,7 +73,7 @@ export function ProductListItem({
             <p
               className="text-xs mb-4 md:mb-0"
               dangerouslySetInnerHTML={{
-                __html: product.description || "",
+                __html: product.description || '',
               }}
               ref={(clampee: any) => {
                 !large && clampee && clamp?.(clampee, { clamp: 3 });

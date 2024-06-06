@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@ui/components/button";
@@ -17,8 +17,8 @@ import type { PortalWorkspace } from "@/types";
 import { findProduct } from "@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart";
 import styles from "./content.module.scss";
 const SHIPPING_TYPE = {
-  REGULAR: "regular",
-  FAST: "fast",
+  REGULAR: 'regular',
+  FAST: 'fast',
 };
 const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.REGULAR]: 2,
@@ -34,7 +34,7 @@ function Summary({ cart }: any) {
       <div className="flex flex-col gap-4 pt-4">
         {cart.items.map(
           ({
-            computedProduct: { product, price } = {},
+            computedProduct: {product, price} = {},
             quantity,
             note,
           }: any = {}) => (
@@ -77,7 +77,7 @@ function Total({ cart, shippingType, workspace }: any) {
     currency: { symbol: currencySymbol },
   } = computeTotal({ cart, workspace });
   const shipping = Number(
-    scale(SHIPPING_TYPE_COST[shippingType], currencyScale)
+    scale(SHIPPING_TYPE_COST[shippingType], currencyScale),
   ) as number;
   const totalWithShipping = Number(total) + Number(shipping);
 
@@ -192,13 +192,13 @@ function Title({ text, ...rest }: { text: string } & any) {
 }
 export default function Content({ workspace }: { workspace: PortalWorkspace }) {
   const [shippingType, setShippingType] = useState<string>(
-    SHIPPING_TYPE.REGULAR
+    SHIPPING_TYPE.REGULAR,
   );
-  const { cart } = useCart();
+  const {cart} = useCart();
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const handleChangeShippingType = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setShippingType(event.target.value);
   };
@@ -207,7 +207,7 @@ export default function Content({ workspace }: { workspace: PortalWorkspace }) {
     const init = async () => {
       if (!computedProducts?.length && cart) {
         await Promise.all(cart.items.map((i: any) => findProduct(i.product)))
-          .then((computedProducts) => {
+          .then(computedProducts => {
             setComputedProducts(computedProducts);
           })
           .finally(() => {
@@ -225,16 +225,16 @@ export default function Content({ workspace }: { workspace: PortalWorkspace }) {
         ...cart?.items?.map((i: any) => ({
           ...i,
           computedProduct: computedProducts.find(
-            (cp) => Number(cp?.product?.id) === Number(i.product)
+            cp => Number(cp?.product?.id) === Number(i.product),
           ),
         })),
       ],
     }),
-    [cart, computedProducts]
+    [cart, computedProducts],
   );
 
   if (loading) {
-    return <p>{i18n.get("Loading")}...</p>;
+    return <p>{i18n.get('Loading')}...</p>;
   }
 
   return (

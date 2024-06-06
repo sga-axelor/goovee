@@ -1,5 +1,5 @@
-"use client";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+'use client';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
 
 export function Quantity({
   value,
@@ -14,10 +14,10 @@ export function Quantity({
 }) {
   return (
     <div className="flex items-center gap-4">
-      <div className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10" style={{width: '55px'}}>
-        <span className="text-primary text-base">
-        {value}
-        </span>
+      <div
+        className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10"
+        style={{width: '55px'}}>
+        <span className="text-primary text-base">{value}</span>
       </div>
       <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
         <MaterialIcon
@@ -25,7 +25,7 @@ export function Quantity({
           icon="remove"
           onClick={onDecrement}
           disabled={disabled}
-          {...({ fontSize: 32 } as any)}
+          {...({fontSize: 32} as any)}
         />
       </div>
       <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
@@ -34,7 +34,7 @@ export function Quantity({
           icon="add"
           onClick={onIncrement}
           disabled={disabled}
-          {...({ fontSize: 32 } as any)}
+          {...({fontSize: 32} as any)}
         />
       </div>
     </div>

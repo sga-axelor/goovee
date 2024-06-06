@@ -1,12 +1,12 @@
-import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
-import type { NextAuthOptions } from "next-auth";
+import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
+import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import { client } from "@/globals";
-import { compare } from "@/utils/auth";
-import { registerPartner } from "@/orm/partner";
-import { clone } from "@/utils";
+import {client} from '@/globals';
+import {compare} from '@/utils/auth';
+import {registerPartner} from '@/orm/partner';
+import {clone} from '@/utils';
 
 async function findPartner(email: string) {
   if (!email) return null;
@@ -40,12 +40,12 @@ async function findPartner(email: string) {
 export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        email: {label: 'Email', type: 'text'},
+        password: {label: 'Password', type: 'password'},
       },
-      async authorize({ email, password }: any, req) {
+      async authorize({email, password}: any, req) {
         if (!email) return null;
 
         const user = await findPartner(email);
@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const { id, fullName: name, password: hashedpassword } = user;
+        const {id, fullName: name, password: hashedpassword} = user;
 
         if (password && hashedpassword) {
           const isvalid = await compare(password, hashedpassword);
@@ -74,18 +74,12 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session }) {
+    async session({session}) {
       const user =
         session?.user?.email && (await findPartner(session.user.email));
 
       if (user) {
-        const {
-          id,
-          emailAddress,
-          fullName: name,
-          isContact,
-          mainPartner,
-        } = user;
+        const {id, emailAddress, fullName: name, isContact, mainPartner} = user;
 
         session.user = {
           id,
@@ -98,9 +92,9 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
-    async signIn({ account, profile }: any) {
-      if (account.provider === "google") {
-        const { given_name, family_name, email } = profile;
+    async signIn({account, profile}: any) {
+      if (account.provider === 'google') {
+        const {given_name, family_name, email} = profile;
         const exists = await findPartner(email);
         if (!exists) {
           try {

@@ -1,23 +1,27 @@
-import { useState } from "react";
-import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-import { usePathname } from "next/navigation";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/components/dropdown-menu";
+import {useState} from 'react';
+import Link from 'next/link';
+import {signOut, useSession} from 'next-auth/react';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
+import {usePathname} from 'next/navigation';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@ui/components/dropdown-menu';
 
-export function Account({ baseURL = "" }: { baseURL?: string }) {
-
+export function Account({baseURL = ''}: {baseURL?: string}) {
   const pathname = usePathname();
   const encodedPathname = encodeURIComponent(pathname);
-  const { data: session } = useSession();
+  const {data: session} = useSession();
 
   const loggedin = !!session;
 
   const handleLogout = () => {
-    if (window.confirm("Do you want to logout ?")) {
+    if (window.confirm('Do you want to logout ?')) {
       signOut({
         callbackUrl: `/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
-          baseURL
+          baseURL,
         )}`,
       });
     }
@@ -26,30 +30,30 @@ export function Account({ baseURL = "" }: { baseURL?: string }) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger><MaterialIcon icon="account_circle" className="pointer" /></DropdownMenuTrigger>
+        <DropdownMenuTrigger>
+          <MaterialIcon icon="account_circle" className="pointer" />
+        </DropdownMenuTrigger>
         <DropdownMenuContent>
-          {loggedin ?
+          {loggedin ? (
             <>
-              <Link href={`${baseURL || ""}/account`}>
+              <Link href={`${baseURL || ''}/account`}>
                 <DropdownMenuItem>My Account</DropdownMenuItem>
               </Link>
-              <DropdownMenuItem
-                onClick={handleLogout}
-
-              >logout</DropdownMenuItem>
-
+              <DropdownMenuItem onClick={handleLogout}>logout</DropdownMenuItem>
             </>
-            : <>
-              <Link href={`/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
-                baseURL
-              )}`}>
+          ) : (
+            <>
+              <Link
+                href={`/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
+                  baseURL,
+                )}`}>
                 <DropdownMenuItem>Log In</DropdownMenuItem>
-
-              </Link></>
-          }
+              </Link>
+            </>
+          )}
         </DropdownMenuContent>
-      </DropdownMenu></>
-   
+      </DropdownMenu>
+    </>
   );
 }
 

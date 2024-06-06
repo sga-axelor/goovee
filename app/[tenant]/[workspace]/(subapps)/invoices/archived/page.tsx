@@ -1,15 +1,15 @@
 // ---- CORE IMPORTS ---- //
-import { clone } from "@/utils";
-import { getSession } from "@/orm/auth";
-import { notFound } from "next/navigation";
+import {clone} from '@/utils';
+import {getSession} from '@/orm/auth';
+import {notFound} from 'next/navigation';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from "./content";
-import { findArchivedInvoices } from "@/subapps/invoices/common/orm/invoices";
-import { workspacePathname } from "@/utils/workspace";
-import { findWorkspace } from "@/orm/workspace";
-import { findSubapp } from "@/orm/subapps";
-import { getWhereClause } from "@/subapps/invoices/common/utils/invoices";
+import Content from './content';
+import {findArchivedInvoices} from '@/subapps/invoices/common/orm/invoices';
+import {workspacePathname} from '@/utils/workspace';
+import {findWorkspace} from '@/orm/workspace';
+import {findSubapp} from '@/orm/subapps';
+import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
 
 export default async function Invoices({
   params,
@@ -23,7 +23,7 @@ export default async function Invoices({
 
   if (!session) return notFound();
 
-  const { workspaceURL } = workspacePathname(params);
+  const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
@@ -32,19 +32,19 @@ export default async function Invoices({
 
   if (!workspace) return notFound();
 
-  const app = await findSubapp("invoices", { workspace, user: session?.user });
+  const app = await findSubapp('invoices', {workspace, user: session?.user});
 
-  const { id, isContact, mainPartnerId } = session?.user;
+  const {id, isContact, mainPartnerId} = session?.user;
 
   if (!app?.installed) {
     return notFound();
   }
 
-  const { role } = app;
+  const {role} = app;
 
   const where = getWhereClause(isContact, role, mainPartnerId, id);
 
-  const invoices = await findArchivedInvoices({ where });
+  const invoices = await findArchivedInvoices({where});
 
   return <Content invoices={clone(invoices)} />;
 }

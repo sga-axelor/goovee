@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,36 +28,32 @@ export function ProductView({
   breadcrumbs: any;
 }) {
   const router = useRouter();
-  const { workspaceURI } = useWorkspace();
-  const { product, price } = computedProduct;
+  const {workspaceURI} = useWorkspace();
+  const {product, price} = computedProduct;
   const [updating, setUpdating] = useState(false);
-  const { quantity, increment, decrement } = useQuantity();
-  const {
-    getProductQuantity,
-    incrementQuantity,
-    getProductNote,
-    setProductNote,
-  } = useCart();
+  const {quantity, increment, decrement} = useQuantity();
+  const {addItem, getProductQuantity, getProductNote, setProductNote} =
+    useCart();
   const [cartQuantity, setCartQuantity] = useState(0);
   const [note, setNote] = useState("");
   const handleAddToCart = async (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setUpdating(true);
-    setCartQuantity((q) => Number(q) + Number(quantity));
-    await incrementQuantity({ productId: product.id, quantity });
+    setCartQuantity(q => Number(q) + Number(quantity));
+    await addItem({productId: product.id, quantity});
     setUpdating(false);
   };
   const handleChangeNote = async (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    const { value } = event.target;
+    const {value} = event.target;
     setNote(value);
     await setProductNote(product.id, value);
   };
   const handleCategoryClick = (category: any) => {
     router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`
+      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
   };
 
@@ -69,7 +65,7 @@ export function ProductView({
       const note = await getProductNote(product.id);
       setNote(note);
     })();
-  }, [getProductQuantity, product]);
+  }, [getProductNote, getProductQuantity, product]);
 
   return (
     <div>
@@ -114,7 +110,7 @@ export function ProductView({
         <div className="grid md:grid-cols-[30%_1fr] grid-cols-1 gap-5">
           <div className="overflow-hidden rounded-lg">
             <ThumbsCarousel
-              images={product.images?.map((i) => ({
+              images={product.images?.map(i => ({
                 id: i as string,
                 url: getImageURL(i) as string,
               }))}

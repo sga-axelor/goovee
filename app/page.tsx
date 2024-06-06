@@ -1,15 +1,15 @@
-import { notFound, redirect } from "next/navigation";
+import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import { findWorkspace, findWorkspaces } from "@/orm/workspace";
-import { findSubapp } from "@/orm/subapps";
-import { getSession } from "@/orm/auth";
-import { clone } from "@/utils";
+import {findWorkspace, findWorkspaces} from '@/orm/workspace';
+import {findSubapp} from '@/orm/subapps';
+import {getSession} from '@/orm/auth';
+import {clone} from '@/utils';
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { workspaceURI?: string };
+  searchParams: {workspaceURI?: string};
 }) {
   const session = await getSession();
 
@@ -19,7 +19,7 @@ export default async function Page({
 
   if (!workspaces?.length) return notFound();
 
-  const { workspaceURI } = searchParams;
+  const {workspaceURI} = searchParams;
 
   let workspace: any;
 
@@ -38,7 +38,7 @@ export default async function Page({
         workspace = $workspace;
         workspace.url = workspaceURL;
       } else if (session) {
-        const app = await findSubapp("shop", {
+        const app = await findSubapp('shop', {
           workspace,
           user: session?.user,
         });

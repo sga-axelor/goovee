@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Box, Button, Divider } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
+import React from 'react';
+import {Box, Button, Divider} from '@axelor/ui';
+import {MaterialIcon} from '@axelor/ui/icons/material-icon';
 
 // ---- CORE IMPORTS ---- //
-import { i18n } from "@/lib/i18n";
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import { QUOTATION_STATUS } from "@/subapps/quotations/common/constants/quotations";
-import type { TotalProps } from "@/subapps/quotations/common/types/quotations";
-import styles from "./styles.module.scss";
+import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
+import type {TotalProps} from '@/subapps/quotations/common/types/quotations';
+import styles from './styles.module.scss';
 
 export const Total = ({
   exTaxTotal,
@@ -28,31 +28,30 @@ export const Total = ({
         py={3}
         rounded={2}
         borderColor="black"
-        border
-      >
+        border>
         <Box fontSize={2} fontWeight="normal">
-          {i18n.get("Offered price")}
+          {i18n.get('Offered price')}
         </Box>
         <Divider />
 
         <Box d="flex" flexDirection="column" gap="1rem" mb={2}>
-          <Box d="flex" flexDirection="column" gap={"0.5rem"}>
+          <Box d="flex" flexDirection="column" gap={'0.5rem'}>
             <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get("Total WT")}:</Box>
+              <Box>{i18n.get('Total WT')}:</Box>
               <Box>{exTaxTotal}</Box>
             </Box>
             <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get("Total ATI")}:</Box>
+              <Box>{i18n.get('Total ATI')}:</Box>
               <Box>{inTaxTotal}</Box>
             </Box>
             <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get("Discount")}:</Box>
+              <Box>{i18n.get('Discount')}:</Box>
               <Box>{totalDiscount}%</Box>
             </Box>
           </Box>
 
           <Box d="flex" alignItems="center" justifyContent="space-between">
-            <Box fontWeight="bold">{i18n.get("Total price")}:</Box>
+            <Box fontWeight="bold">{i18n.get('Total price')}:</Box>
             <Box fontWeight="bolder" fontSize={4}>
               {inTaxTotal}
             </Box>
@@ -68,10 +67,9 @@ export const Total = ({
                   justifyContent="center"
                   gap="10"
                   rounded="pill"
-                  className={styles.success}
-                >
+                  className={styles.success}>
                   <MaterialIcon icon="check_circle" />
-                  {i18n.get("Accept and sign")}
+                  {i18n.get('Accept and sign')}
                 </Button>
               </Box>
               <Box d="flex" justifyContent="center">
@@ -84,10 +82,9 @@ export const Total = ({
                   justifyContent="center"
                   gap="10"
                   rounded="pill"
-                  className={styles.danger}
-                >
+                  className={styles.danger}>
                   <MaterialIcon icon="disabled_by_default" />
-                  {i18n.get("Reject")}
+                  {i18n.get('Reject')}
                 </Button>
               </Box>
             </>
@@ -103,9 +100,8 @@ export const Total = ({
                 alignItems="center"
                 justifyContent="center"
                 gap="10"
-                rounded="pill"
-              >
-                {i18n.get("Pay")} <MaterialIcon icon="arrow_right_alt" />
+                rounded="pill">
+                {i18n.get('Pay')} <MaterialIcon icon="arrow_right_alt" />
               </Button>
             </Box>
           )}

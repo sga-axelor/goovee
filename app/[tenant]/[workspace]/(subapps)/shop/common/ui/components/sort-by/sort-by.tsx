@@ -20,28 +20,28 @@ import {
 } from "@/components/ui/select"
 const SORT_BY_OPTIONS = [
   {
-    value: "byNewest",
-    label: i18n.get("New"),
+    value: 'byNewest',
+    label: i18n.get('New'),
   },
   {
-    value: "byFeature",
-    label: i18n.get("Featured"),
+    value: 'byFeature',
+    label: i18n.get('Featured'),
   },
   {
-    value: "byAToZ",
-    label: i18n.get("Name: A-Z"),
+    value: 'byAToZ',
+    label: i18n.get('Name: A-Z'),
   },
   {
-    value: "byZToA",
-    label: i18n.get("Name: Z-A"),
+    value: 'byZToA',
+    label: i18n.get('Name: Z-A'),
   },
   {
-    value: "byLessExpensive",
-    label: i18n.get("Price: Low-High"),
+    value: 'byLessExpensive',
+    label: i18n.get('Price: Low-High'),
   },
   {
-    value: "byMostExpensive",
-    label: i18n.get("Price: High-Low"),
+    value: 'byMostExpensive',
+    label: i18n.get('Price: High-Low'),
   },
 ];
 export function SortBy({
@@ -54,9 +54,9 @@ export function SortBy({
   const options =
     optionsProp ||
     SORT_BY_OPTIONS.filter(
-      (o) =>
+      o =>
         workspace?.config &&
-        (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean)
+        (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean),
     );
   const value = SORT_BY_OPTIONS.find((o) => o.value === valueProp);
 
@@ -87,16 +87,16 @@ export function MobileSortBy({
   active,
 }: {
   workspace?: PortalWorkspace;
-  onChange: ({ value }: { value: string }) => void;
+  onChange: ({value}: {value: string}) => void;
   active?: string | null;
 }) {
   const [open, setOpen] = useState(false);
   const [targetEl, setTargetEl] = useState<HTMLElement | null>(null);
   const toggle = () => setOpen((v) => !v);
   const options = SORT_BY_OPTIONS.filter(
-    (o) =>
+    o =>
       workspace?.config &&
-      (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean)
+      (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean),
   );
 
   return (

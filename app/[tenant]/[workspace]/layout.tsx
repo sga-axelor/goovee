@@ -1,26 +1,26 @@
-import React from "react";
+import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import { clone } from "@/utils";
-import { getSession } from "@/orm/auth";
-import { workspacePathname } from "@/utils/workspace";
-import { findWorkspace } from "@/orm/workspace";
-import { findSubapps } from "@/orm/subapps";
+import {clone} from '@/utils';
+import {getSession} from '@/orm/auth';
+import {workspacePathname} from '@/utils/workspace';
+import {findWorkspace} from '@/orm/workspace';
+import {findSubapps} from '@/orm/subapps';
 
 // ---- LOCAL IMPORTS ---- //
-import Workspace from "./workspace-context";
-import CartContext from "./cart-context";
-import Header from "./header";
-import Footer from "./footer";
+import Workspace from './workspace-context';
+import CartContext from './cart-context';
+import Header from './header';
+import Footer from './footer';
 
 export default async function Layout({
   params,
   children,
 }: {
-  params: { tenant: string; workspace: string };
+  params: {tenant: string; workspace: string};
   children: React.ReactNode;
 }) {
-  const { workspace, tenant, workspaceURL } = workspacePathname(params);
+  const {workspace, tenant, workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
 

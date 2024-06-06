@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { Fragment } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -22,12 +22,12 @@ import {
   ProductCard,
   ProductListItem,
   Categories,
-} from "..";
-import styles from "./product-list.module.scss";
+} from '..';
+import styles from './product-list.module.scss';
 
 const VIEW = {
-  GRID: "grid",
-  LIST: "list",
+  GRID: 'grid',
+  LIST: 'list',
 };
 function MobileFilters() {
   return (
@@ -41,7 +41,7 @@ export function ProductList({
   products = [],
   categories,
   category,
-  pageInfo = { page: 1, pages: 1 },
+  pageInfo = {page: 1, pages: 1},
   workspace,
   breadcrumbs,
   showSummary,
@@ -69,10 +69,10 @@ export function ProductList({
     values: Array<{
       key: string;
       value?: string | number;
-    }>
+    }>,
   ) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    values.forEach(({ key, value = "" }: any) => {
+    values.forEach(({key, value = ''}: any) => {
       value = value && String(value)?.trim();
       if (!value) {
         current.delete(key);
@@ -81,49 +81,49 @@ export function ProductList({
       }
     });
     const search = current.toString();
-    const query = search ? `?${search}` : "";
+    const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`);
   };
   const handleAdd = async (computedProduct: ComputedProduct) => {
-    const { product } = computedProduct;
-    await addItem({ productId: product?.id, quantity: 1 });
+    const {product} = computedProduct;
+    await addItem({productId: product?.id, quantity: 1});
     router.refresh();
   };
   const handleChangeSearch = (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     updateSearchParams([
-      { key: "page" },
-      { key: "search", value: formData.get("search") as string },
+      {key: 'page'},
+      {key: 'search', value: formData.get('search') as string},
     ]);
   };
   const handleChangeSortBy = ({ value }: any) => {
     updateSearchParams([{ key: "sort", value }]);
   };
   const handleChangeView = (type: string) => {
-    updateSearchParams([{ key: "view", value: type }]);
+    updateSearchParams([{key: 'view', value: type}]);
   };
   const handlePreviousPage = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { page, hasPrev } = pageInfo;
+    const {page, hasPrev} = pageInfo;
     if (!hasPrev) return;
-    updateSearchParams([{ key: "page", value: Math.max(Number(page) - 1, 1) }]);
+    updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
   };
   const handleNextPage = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { page, hasNext } = pageInfo;
+    const {page, hasNext} = pageInfo;
     if (!hasNext) return;
-    updateSearchParams([{ key: "page", value: Number(page) + 1 }]);
+    updateSearchParams([{key: 'page', value: Number(page) + 1}]);
   };
   const handlePage = (page: string | number) => {
-    updateSearchParams([{ key: "page", value: page }]);
+    updateSearchParams([{key: 'page', value: page}]);
   };
   const handleCategoryClick = (category: any) => {
     router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`
+      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
   };
   const handleProductClick = (product: Product) => {
     router.push(
-      `${productPath}/${encodeURIComponent(product.name)}-${product.id}`
+      `${productPath}/${encodeURIComponent(product.name)}-${product.id}`,
     );
   };
   const isGridView = view === VIEW.GRID;
@@ -231,10 +231,10 @@ export function ProductList({
           className={`${isListView ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"} grid gap-5 `}
         >
           {products?.length ? (
-            products.map((computedProduct) => {
+            products.map(computedProduct => {
               const quantity = cart?.items?.find(
                 (i: any) =>
-                  Number(i.product) === Number(computedProduct?.product.id)
+                  Number(i.product) === Number(computedProduct?.product.id),
               )?.quantity;
               const Component = isListView ? ProductListItem : ProductCard;
 

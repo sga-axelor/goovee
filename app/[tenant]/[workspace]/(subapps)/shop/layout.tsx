@@ -1,14 +1,14 @@
-import React from "react";
-import { notFound } from "next/navigation";
+import React from 'react';
+import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import { findSubapp } from "@/orm/subapps";
-import { getSession } from "@/orm/auth";
-import { workspacePathname } from "@/utils/workspace";
-import { findWorkspace } from "@/orm/workspace";
-import { clone } from "@/utils";
+import {findSubapp} from '@/orm/subapps';
+import {getSession} from '@/orm/auth';
+import {workspacePathname} from '@/utils/workspace';
+import {findWorkspace} from '@/orm/workspace';
+import {clone} from '@/utils';
 
-export default async function ({
+export default async function Layout({
   params,
   children,
 }: {
@@ -20,7 +20,7 @@ export default async function ({
 }) {
   const session = await getSession();
 
-  const { workspaceURL } = workspacePathname(params);
+  const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
@@ -33,7 +33,7 @@ export default async function ({
 
   if (!ispublic) {
     if (session) {
-      const app = await findSubapp("shop", { workspace, user: session?.user });
+      const app = await findSubapp('shop', {workspace, user: session?.user});
       if (!app?.installed) {
         return notFound();
       }

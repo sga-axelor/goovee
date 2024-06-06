@@ -1,18 +1,14 @@
-import React from "react";
-import { redirect } from "next/navigation";
+import React from 'react';
+import {redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import { getSession } from "@/orm/auth";
+import {getSession} from '@/orm/auth';
 
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function Layout({children}: {children: React.ReactNode}) {
   const session = await getSession();
 
   if (!session?.user) {
-    redirect("/auth/login");
+    redirect('/auth/login');
   }
 
   return <>{children}</>;

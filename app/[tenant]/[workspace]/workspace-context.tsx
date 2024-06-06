@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React, { useContext, useEffect, useMemo, useRef } from "react";
+import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import {
   DEFAULT_TENANT,
   DEFAULT_WORKSPACE,
   DEFAULT_WORKSPACE_URI,
-} from "@/constants";
-import { ThemeOptions } from "@axelor/ui/core/styles/theme/types";
+} from '@/constants';
+import {ThemeOptions} from '@axelor/ui/core/styles/theme/types';
 
 // ---- CORE IMPORTS ---- //
-import { useTheme } from "@/app/theme";
+import {useTheme} from '@/app/theme';
 
 export const WorkspaceContext = React.createContext<{
   tenant: string;
@@ -29,18 +29,18 @@ export function Workspace({
 }: {
   tenant: string;
   workspace: string;
-  theme?: { id: string; name: string; options: ThemeOptions };
+  theme?: {id: string; name: string; options: ThemeOptions};
   children: React.ReactNode;
 }) {
-  const { updateThemeOptions } = useTheme();
+  const {updateThemeOptions} = useTheme();
   const prevTheme = useRef<any>();
 
   const workspaceURI = `/${tenant}/${workspace}`;
   const workspaceURL = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;
 
   const value = useMemo(
-    () => ({ tenant, workspace, workspaceURI, workspaceURL }),
-    [tenant, workspace]
+    () => ({tenant, workspace, workspaceURI, workspaceURL}),
+    [tenant, workspace, workspaceURI, workspaceURL],
   );
 
   useEffect(() => {

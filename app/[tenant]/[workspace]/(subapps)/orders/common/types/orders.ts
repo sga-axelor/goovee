@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import type { Address, ID, Product, Unit } from "@/types";
+import type {Address, ID, Product, Unit} from '@/types';
 
 export type Order = {
   id: ID;

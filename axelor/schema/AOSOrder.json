@@ -8,8 +8,8 @@
       "type": "String",
       "name": "saleOrderSeq"
     },
-    { "type": "Decimal", "name": "statusSelect" },
-    { "type": "Decimal", "name": "deliveryState" },
+    {"type": "Decimal", "name": "statusSelect"},
+    {"type": "Decimal", "name": "deliveryState"},
     {
       "type": "Date",
       "name": "createdOn"
@@ -40,7 +40,7 @@
       "name": "shipmentMode",
       "target": "AOSShipmentMode"
     },
-    { "type": "ManyToOne", "name": "clientPartner", "target": "AOSPartner" },
+    {"type": "ManyToOne", "name": "clientPartner", "target": "AOSPartner"},
     {
       "type": "ManyToOne",
       "name": "company",
@@ -74,10 +74,11 @@
     {
       "type": "Date",
       "name": "endOfValidityDate"
-    },{
-      "type":"ManyToOne",
-      "name":"contactPartner",
-      "target":"AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "contactPartner",
+      "target": "AOSPartner"
     }
   ]
 }

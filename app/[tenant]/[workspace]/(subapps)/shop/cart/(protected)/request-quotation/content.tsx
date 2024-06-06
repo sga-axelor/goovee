@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect } from "react";
 import Link from "next/link";
@@ -19,7 +19,7 @@ export default function Content({ workspace }: { workspace: PortalWorkspace }) {
     const request = async () => {
       const $cart = await requestQuotation({ cart, workspace });
       if (!$cart) {
-        alert("Error creating quotation. Try again.");
+        alert('Error creating quotation. Try again.');
         router.replace(`${workspaceURI}/shop/cart`);
       } else {
         clearCart();
@@ -27,7 +27,7 @@ export default function Content({ workspace }: { workspace: PortalWorkspace }) {
     };
 
     request();
-  }, []);
+  }, [cart, clearCart, router, workspace, workspaceURI]);
 
   return (
     <div className="shadow bg-white rounded-lg p-12">

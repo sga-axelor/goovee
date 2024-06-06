@@ -1,11 +1,11 @@
-import { client } from "@/globals";
-import { NextResponse } from "next/server";
+import {client} from '@/globals';
+import {NextResponse} from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { code: string } }
+  {params}: {params: {code: string}},
 ) {
-  const { code } = params;
+  const {code} = params;
 
   const c = await client;
 

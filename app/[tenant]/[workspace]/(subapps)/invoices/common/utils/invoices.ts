@@ -1,25 +1,25 @@
 // ---- CORE IMPORTS ---- //
-import { ROLE } from "@/constants";
+import {ROLE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   INVOICE_TYPE,
   INVOICE_STATUS,
-} from "@/subapps/invoices/common/constants/invoices";
+} from '@/subapps/invoices/common/constants/invoices';
 
 export function getStatus(value: string | number): {
   status: string;
-  variant: "success" | "error";
+  variant: 'success' | 'error';
 } {
   if (Number(value) !== INVOICE_STATUS.UNPAID) {
     return {
       status: INVOICE_TYPE.UNPAID,
-      variant: "error",
+      variant: 'error',
     };
   } else {
     return {
       status: INVOICE_TYPE.PAID,
-      variant: "success",
+      variant: 'success',
     };
   }
 }
@@ -28,7 +28,7 @@ export function getWhereClause(
   isContact: boolean | undefined,
   role: any,
   mainPartnerId: string | number | undefined,
-  id: string | number | undefined
+  id: string | number | undefined,
 ) {
   let where;
 
@@ -36,20 +36,20 @@ export function getWhereClause(
     if (role === ROLE.TOTAL) {
       where = {
         partner: {
-          id: mainPartnerId || "",
+          id: mainPartnerId || '',
         },
       };
     } else if (role === ROLE.RESTRICTED) {
       where = {
         partner: {
-          id: id || "",
+          id: id || '',
         },
       };
     }
   } else {
     where = {
       partner: {
-        id: id || "",
+        id: id || '',
       },
     };
   }

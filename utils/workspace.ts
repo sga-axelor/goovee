@@ -1,8 +1,5 @@
-export function workspacePathname(params: {
-  tenant: string;
-  workspace: string;
-}) {
-  const { tenant, workspace } = params;
+export function workspacePathname(params: {tenant: string; workspace: string}) {
+  const {tenant, workspace} = params;
 
   const workspaceURI = `/${tenant}/${workspace}`;
   const workspaceURL = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;

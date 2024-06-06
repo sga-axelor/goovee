@@ -11,8 +11,8 @@ import { findCategories } from "@/app/[tenant]/[workspace]/(subapps)/shop/common
 export default async function Page({
   params,
 }: {
-  params: { tenant: string; workspace: string; "product-id": string };
-  searchParams: { [key: string]: string };
+  params: {tenant: string; workspace: string; 'product-id': string};
+  searchParams: {[key: string]: string};
 }) {
   const session = await getSession();
   const id = params["product-id"]?.split("-")?.at(-1);
@@ -30,7 +30,7 @@ export default async function Page({
   let breadcrumbs: any = [];
   const { product } = computedProduct;
   if (breadcrumbs.length) {
-    breadcrumbs.push({ id: product.id, name: product.name });
+    breadcrumbs.push({id: product.id, name: product.name});
   }
   const categories = await findCategories({ workspace }).then(clone);
   const parentcategories = categories?.filter((c: any) => !c.parent);

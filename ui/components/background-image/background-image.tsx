@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { ReactElement } from "react";
 
@@ -17,7 +17,7 @@ export function BackgroundImage({
   style,
   height,
   width,
-  defaultSrc = "/images/no-image.png",
+  defaultSrc = '/images/no-image.png',
   className,
   children
 }: BackgroundImageProps) {

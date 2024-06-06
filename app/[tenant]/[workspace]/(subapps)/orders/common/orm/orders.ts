@@ -1,12 +1,12 @@
 // ---- CORE IMPORTS ---- //
-import { client } from "@/globals";
-import { DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL } from "@/constants";
-import type { Partner } from "@/types";
-import { getFormattedValue, getPageInfo, getSkipInfo, scale } from "@/utils";
+import {client} from '@/globals';
+import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+import type {Partner} from '@/types';
+import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import { ORDER_STATUS } from "@/subapps/orders/common/constants/orders";
-import type { Order } from "@/subapps/orders/common/types/orders";
+import {ORDER_STATUS} from '@/subapps/orders/common/constants/orders';
+import type {Order} from '@/subapps/orders/common/types/orders';
 
 const fetchOrders = async ({
   partnerId,
@@ -16,7 +16,7 @@ const fetchOrders = async ({
   skip,
   where,
 }: {
-  partnerId?: Partner["id"];
+  partnerId?: Partner['id'];
   archived?: boolean;
   limit?: string | number;
   page?: string | number;
@@ -53,7 +53,7 @@ const fetchOrders = async ({
     .find({
       where: whereClause,
       take: limit,
-      ...(skip ? { skip } : {}),
+      ...(skip ? {skip} : {}),
       select: {
         saleOrderSeq: true,
         statusSelect: true,
@@ -69,7 +69,7 @@ const fetchOrders = async ({
     });
 
   const orders = $orders.map((order: any) => {
-    const { inTaxTotal, exTaxTotal, currency } = order;
+    const {inTaxTotal, exTaxTotal, currency} = order;
     const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
     const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
     return {
@@ -104,7 +104,7 @@ export async function findOngoingOrders({
 }): Promise<any> {
   const skip = getSkipInfo(limit, page);
 
-  return await fetchOrders({ partnerId, page, limit, skip, where });
+  return await fetchOrders({partnerId, page, limit, skip, where});
 }
 
 export async function findArchivedOrders({
@@ -130,7 +130,7 @@ export async function findArchivedOrders({
   });
 }
 
-export async function findOrder(id: Order["id"]) {
+export async function findOrder(id: Order['id']) {
   const c = await client;
   const order = await c.aOSOrder.findOne({
     where: {
@@ -193,21 +193,21 @@ export async function findOrder(id: Order["id"]) {
     },
   });
 
-  const { currency, exTaxTotal, inTaxTotal, saleOrderLineList } = order;
+  const {currency, exTaxTotal, inTaxTotal, saleOrderLineList} = order;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
   const sumOfDiscounts = saleOrderLineList.reduce(
-    (total: number, { discountAmount }: any) => {
+    (total: number, {discountAmount}: any) => {
       return total + parseFloat(discountAmount);
     },
-    0
+    0,
   );
   const totalDiscount =
     sumOfDiscounts === 0
       ? 0
       : ((100 * sumOfDiscounts) / (sumOfDiscounts + +exTaxTotal)).toFixed(
-          currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE
+          currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE,
         );
 
   return {

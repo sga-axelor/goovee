@@ -1,19 +1,19 @@
 // ---- CORE IMPORTS ---- //
-import { client } from "@/globals";
-import { clone, scale } from "@/utils";
+import {client} from '@/globals';
+import {clone, scale} from '@/utils';
 import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_TAX_VALUE,
   DEFAULT_UNIT_PRICE_SCALE,
-} from "@/constants";
+} from '@/constants';
 import type {
   Partner,
   Product,
   Currency,
   ComputedProduct,
   PortalWorkspace,
-} from "@/types";
+} from '@/types';
 
 function getPageInfo({
   count = 0,
@@ -45,7 +45,7 @@ export async function findProducts({
   limit,
   workspace,
 }: {
-  ids?: Product["id"][];
+  ids?: Product['id'][];
   search?: string;
   sort?: string;
   categoryids?: (string | number)[];
@@ -60,24 +60,24 @@ export async function findProducts({
   let orderBy;
 
   switch (sort) {
-    case "byMostExpensive":
-      orderBy = { salePrice: "DESC" };
+    case 'byMostExpensive':
+      orderBy = {salePrice: 'DESC'};
       break;
-    case "byLessExpensive":
-      orderBy = { salePrice: "ASC" };
+    case 'byLessExpensive':
+      orderBy = {salePrice: 'ASC'};
       break;
-    case "byZToA":
-      orderBy = { name: "DESC" };
+    case 'byZToA':
+      orderBy = {name: 'DESC'};
       break;
-    case "byFeature":
-      orderBy = { featured: "DESC" };
+    case 'byFeature':
+      orderBy = {featured: 'DESC'};
       break;
-    case "byNewest":
-      orderBy = { createdOn: "DESC" };
+    case 'byNewest':
+      orderBy = {createdOn: 'DESC'};
       break;
-    case "byAToZ":
+    case 'byAToZ':
     default:
-      orderBy = { name: "ASC" };
+      orderBy = {name: 'ASC'};
   }
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
@@ -114,7 +114,7 @@ export async function findProducts({
       },
       orderBy,
       take: limit,
-      ...(skip ? { skip } : {}),
+      ...(skip ? {skip} : {}),
       select: {
         name: true,
         code: true,
@@ -194,12 +194,12 @@ export async function findProducts({
       product?.productCompanyList?.find(
         (c: any) =>
           c.company &&
-          Number(c.company.id) === Number(workspace?.config?.company?.id)
+          Number(c.company.id) === Number(workspace?.config?.company?.id),
       );
 
     const account = product?.productFamily?.accountManagementList?.[0];
 
-    const getTax = (): ComputedProduct["tax"] => {
+    const getTax = (): ComputedProduct['tax'] => {
       return {
         value: productcompany?.company
           ? account?.saleTax?.activeTaxLine?.value || DEFAULT_TAX_VALUE
@@ -207,7 +207,7 @@ export async function findProducts({
       };
     };
 
-    const getScale = (): ComputedProduct["scale"] => {
+    const getScale = (): ComputedProduct['scale'] => {
       return {
         unit: appbase?.nbDecimalDigitForUnitPrice || DEFAULT_UNIT_PRICE_SCALE,
         currency:
@@ -225,7 +225,7 @@ export async function findProducts({
       );
     };
 
-    const getPrice = (): ComputedProduct["price"] => {
+    const getPrice = (): ComputedProduct['price'] => {
       const value = productcompany?.salePrice || product.salePrice;
 
       const inati = product.inAti;
@@ -234,8 +234,8 @@ export async function findProducts({
 
       let ati, wt, displayAti, displayWt;
 
-      const { config = {} }: any = workspace;
-      const { mainPrice, displayTwoPrices } = config;
+      const {config = {}}: any = workspace;
+      const {mainPrice, displayTwoPrices} = config;
 
       const currencySymbol = getCurrency().symbol;
       const unitScale = getScale().unit;
@@ -256,7 +256,7 @@ export async function findProducts({
 
       let primary, secondary, displayPrimary, displaySecondary;
 
-      if (mainPrice === "at") {
+      if (mainPrice === 'at') {
         primary = ati;
         secondary = wt;
         displayPrimary = `${ati} ${getCurrency().symbol} ATI`;
@@ -278,7 +278,7 @@ export async function findProducts({
         displayPrimary,
         displaySecondary,
         mainPrice,
-        displayTwoPrices: displayTwoPrices === "yes",
+        displayTwoPrices: displayTwoPrices === 'yes',
       };
     };
 
@@ -313,13 +313,13 @@ export async function findProduct({
   id,
   workspace,
 }: {
-  id: Product["id"];
+  id: Product['id'];
   workspace?: PortalWorkspace;
 }) {
   return (
     id &&
-    findProducts({ ids: [id], workspace }).then(
-      ({ products }: any = {}) => products && products[0]
+    findProducts({ids: [id], workspace}).then(
+      ({products}: any = {}) => products && products[0],
     )
   );
 }

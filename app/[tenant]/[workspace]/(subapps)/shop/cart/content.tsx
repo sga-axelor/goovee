@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -35,27 +35,27 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       productId,
       quantity,
     }: {
-      productId: Product["id"];
+      productId: Product['id'];
       quantity: number;
     }) => {
       setUpdating(true);
-      await updateQuantity({ productId, quantity });
+      await updateQuantity({productId, quantity});
       setUpdating(false);
     },
-    []
+    [updateQuantity],
   );
   useEffect(() => {
     if (Number(quantity) !== Number(item.quantity)) {
       handleUpdateQuantity({
-        productId: item.computedProduct.product.id,
+        productId: item.computedProduct?.product?.id,
         quantity,
       });
     }
   }, [quantity, item, handleUpdateQuantity]);
   const handleChangeNote = async (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    const { value } = event.target;
+    const {value} = event.target;
     setNote(value);
     await setProductNote(product.id, value);
   };
@@ -65,7 +65,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       const note = await getProductNote(product.id);
       setNote(note);
     })();
-  }, [product]);
+  }, [getProductNote, product]);
 
   return (
     <div
@@ -216,9 +216,8 @@ function CartSummary({
               variant="outline"
               className="w-full rounded-full mb-4"
               disabled={noitem}
-              onClick={onRequestQuotation}
-            >
-              {i18n.get("Request Quotation")}
+              onClick={onRequestQuotation}>
+              {i18n.get('Request Quotation')}
             </Button>
           )}
         </>
@@ -268,24 +267,24 @@ export default function Content({
     }
   };
   const handleRequestQuotation = async () => {
-    if (window.confirm("Do you want to request quotation")) {
+    if (window.confirm('Do you want to request quotation')) {
       router.replace(`${workspaceURI}/shop/cart/request-quotation`);
     }
   };
   useEffect(() => {
     const init = async () => {
       const computedProductIDs = computedProducts
-        .map((cp) => cp?.product?.id)
+        .map(cp => cp?.product?.id)
         .filter(Boolean);
       const cartItemIDs = cart?.items?.map((i: any) => i.product);
       const diff = cartItemIDs.filter(
-        (id: string) => !computedProductIDs.includes(id)
+        (id: string) => !computedProductIDs.includes(id),
       );
       if (diff.length) {
         await Promise.all(
-          cart.items.map((i: any) => findProduct({ id: i.product, workspace }))
+          cart.items.map((i: any) => findProduct({id: i.product, workspace})),
         )
-          .then((computedProducts) => {
+          .then(computedProducts => {
             setComputedProducts(computedProducts);
           })
           .finally(() => {
@@ -302,15 +301,15 @@ export default function Content({
         ...cart?.items?.map((i: any) => ({
           ...i,
           computedProduct: computedProducts.find(
-            (cp) => Number(cp?.product?.id) === Number(i.product)
+            cp => Number(cp?.product?.id) === Number(i.product),
           ),
         })),
       ],
     }),
-    [cart, computedProducts]
+    [cart, computedProducts],
   );
   if (loading) {
-    return <p>{i18n.get("Loading")}...</p>;
+    return <p>{i18n.get('Loading')}...</p>;
   }
 
   return (

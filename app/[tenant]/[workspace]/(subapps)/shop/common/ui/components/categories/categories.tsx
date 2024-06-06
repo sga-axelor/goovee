@@ -7,9 +7,9 @@ import {
   SheetTrigger,
 } from "@ui/components/sheet"
 // ---- CORE IMPORTS ---- //
-import { useResponsive } from "@/ui/hooks";
-import { i18n } from "@/lib/i18n";
-import type { Category } from "@/types";
+import {useResponsive} from '@/ui/hooks';
+import {i18n} from '@/lib/i18n';
+import type {Category} from '@/types';
 
 import {
   NavigationMenu,
@@ -126,7 +126,7 @@ export const Categories = ({
 }) => {
   const level = 0;
   const res: any = useResponsive();
-  const large = ["lg", "xl", "xxl"].some((x) => res[x]);
+  const large = ['lg', 'xl', 'xxl'].some(x => res[x]);
 
   return large ? (
     <div className="mx-auto flex items-center gap-4 mb-0 px-6 py-4 bg-background border-t border-border border-solid">
@@ -161,7 +161,7 @@ const Category = ({
 
   const toggleDropdown = () => {
     handleClick();
-    setOpen((prev) => !prev);
+    setOpen(prev => !prev);
   };
 
   const handleDropdownClick = () => {
