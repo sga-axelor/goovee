@@ -4,7 +4,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdChevronRight } from "react-icons/md";
 import { MdOutlineShoppingBasket } from "react-icons/md";
-import { Box, useClassNames } from "@axelor/ui";
 // ---- CORE IMPORTS ---- //
 import { Quantity, ThumbsCarousel } from "@/ui/components";
 import { useQuantity } from "@/ui/hooks";
@@ -71,12 +70,11 @@ export function ProductView({
       setNote(note);
     })();
   }, [getProductQuantity, product]);
-  const cs = useClassNames();
 
   return (
     <div>
       <Categories items={categories} onClick={handleCategoryClick} />
-      <Box className={cs("container")} py={{ base: 2, md: 3 }}>
+      <div className={"container py-2 md:py-4"} >
         <div className="mb-6 pt-4">
           {breadcrumbs?.length > 1 ? (
             <div className="flex items-center gap-4">
@@ -89,19 +87,18 @@ export function ProductView({
                         ? {}
                         : { className: "cursor-pointer flex items-center" })}
                     >
-                      <Box
-                        {...(islast
-                          ? {
-                              color: "primary",
-                              fontWeight: "bold",
-                            }
-                          : {
-                              color: "secondary",
-                              onClick: () => handleCategoryClick(crumb),
-                            })}
+                      <div
+                        onClick={() => {
+                          if (!islast) {
+                            handleCategoryClick(crumb)
+                          }
+                        }}
+                        className={`${islast ? "text-primary font-bold":"text-secondary"}`}
+                       
                       >
+
                         {i18n.get(crumb.name)}
-                      </Box>
+                      </div>
                       {!islast && (
                         <div className="flex">
                           <MdChevronRight className="text-2xl" />
@@ -173,7 +170,7 @@ export function ProductView({
             </Button>
           </div>
         </div>
-      </Box>
+      </div>
     </div>
   );
 }

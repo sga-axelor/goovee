@@ -38,11 +38,11 @@ export function ProductCard({
           className="rounded-t-lg bg-cover relative h-[232px]"
           src={getImageURL(product.images?.[0])}
         >
-          {Boolean(quantity) && (
+          {Boolean(quantity) ? (
             <div className="border shadow-lg absolute bg-white p-4 rounded-full flex items-center justify-center w-[60px] h-[60px] bottom-4 right-4">
               <p className="mb-0 text-xl font-bold">{quantity}</p>
             </div>
-          )}
+          ):""}
         </BackgroundImage>
         <div className="py-4 px-6">
           <h5 className="text-base font-medium mt-0 mb-0">

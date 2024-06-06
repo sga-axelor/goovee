@@ -1,11 +1,23 @@
-import { Select, Popper, List, ListItem } from "@axelor/ui";
 import { MdSort } from "react-icons/md";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@ui/components/popover"
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import type { PortalAppConfig, PortalWorkspace } from "@/types";
 // ---- LOCAL IMPORTS ---- //
 import styles from "./sort-by.module.scss";
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 const SORT_BY_OPTIONS = [
   {
     value: "byNewest",
@@ -38,6 +50,7 @@ export function SortBy({
   value: valueProp,
   workspace,
 }: any) {
+
   const options =
     optionsProp ||
     SORT_BY_OPTIONS.filter(
@@ -50,14 +63,21 @@ export function SortBy({
   return (
     <div className={`${styles.sortby} hidden md:flex items-center grow gap-4`}>
       <p className="mb-0 shrink-0 text-sm">Sort By</p>
-      <Select
-        clearIcon={false}
-        onChange={onChange}
-        options={options}
-        optionKey={(o) => o.value}
-        optionLabel={(o) => o.label}
-        value={value}
-      />
+
+      <Select defaultValue={value?.value} onValueChange={(e) => {
+        onChange({ value: e })
+      }}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {Array.isArray(options) && options?.map((o) => (
+              <SelectItem key={o?.value} value={o?.value}>{o?.label}</SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   );
 }
@@ -85,32 +105,30 @@ export function MobileSortBy({
       ref={setTargetEl}
       onClick={toggle}
     >
-      <div className="flex">
-        <MdSort className="text-2xl" />
-      </div>
-      <p className="text-sm mb-0 font-bold">{i18n.get("Sort By")}</p>
-      <Popper open={open} target={targetEl}>
-        <List flush p={0}>
-          {options.map((o) => {
-            const isactive = o.value === active;
-            return (
-              <ListItem
-                className="cursor-pointer"
-                key={o.value}
-                {...(isactive
-                  ? {
-                      bg: "light",
-                      fontWeight: "bold",
-                    }
-                  : {})}
-                onClick={() => onChange({ value: o.value })}
-              >
-                {o.label}
-              </ListItem>
-            );
-          })}
-        </List>
-      </Popper>
+      <Popover trigger={targetEl}>
+        <PopoverTrigger asChild>
+          <div className="flex">
+            <MdSort className="text-2xl" />
+            <p className="text-sm mb-0 font-bold">{i18n.get("Sort By")}</p>
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-80">
+          <ul className="p-0">
+            {options.map((o) => {
+              const isactive = o.value === active;
+              return (
+                <li
+                  className={`${isactive ? "bg-gray-100 font-bold" : ""} pointer`}
+                  key={o.value}
+                  onClick={() => onChange({ value: o.value })}
+                >
+                  {o.label}
+                </li>
+              );
+            })}
+          </ul>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

@@ -9,7 +9,6 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { MdGridView } from "react-icons/md";
 import { MdOutlineList } from "react-icons/md";
 import { TextField } from "@/components/ui/TextField";
-import { Box, useClassNames, clsx } from "@axelor/ui";
 // ---- CORE IMPORTS ---- //
 import { Pagination } from "@/ui/components";
 import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
@@ -25,6 +24,7 @@ import {
   Categories,
 } from "..";
 import styles from "./product-list.module.scss";
+
 const VIEW = {
   GRID: "grid",
   LIST: "list",
@@ -62,7 +62,6 @@ export function ProductList({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const cs = useClassNames();
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort");
   const view = searchParams.get("view") || VIEW.GRID;
@@ -141,7 +140,8 @@ export function ProductList({
           </h1>
         </div>
       )}
-      <Box className={clsx(cs("container"), "portal-container")} py={3}>
+
+      <div className={"container portal-container"} >
         <div className="mb-6">
           {breadcrumbs?.length > 1 ? (
             <div className="flex items-center gap-4">
@@ -154,9 +154,9 @@ export function ProductList({
                       <div
                         {...(islast
                           ? {
-                              color: "primary",
-                              fontWeight: "bold",
-                            }
+                            color: "primary",
+                            fontWeight: "bold",
+                          }
                           : { color: "secondary" })}
                         onClick={() => handleCategoryClick(crumb)}
                       >
@@ -219,6 +219,7 @@ export function ProductList({
           />
         </div>
         <div className="bg-white shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
+          
           <MobileSortBy
             active={sort}
             workspace={workspace}
@@ -226,20 +227,8 @@ export function ProductList({
           />
           <MobileFilters />
         </div>
-        <Box
-          d="grid"
-          gridTemplateColumns={
-            isListView
-              ? { base: "1fr", sm: "1fr", md: "1fr" }
-              : {
-                  base: "1fr",
-                  sm: "1fr",
-                  md: "1fr 1fr",
-                  lg: "1fr 1fr 1fr",
-                  xl: "1fr 1fr 1fr 1fr",
-                }
-          }
-          gridGap="1.25rem"
+        <div
+          className={`${isListView ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"} grid gap-5 `}
         >
           {products?.length ? (
             products.map((computedProduct) => {
@@ -263,7 +252,7 @@ export function ProductList({
           ) : (
             <div>{i18n.get("No product available.")}</div>
           )}
-        </Box>
+        </div>
         <div className="mt-6 mb-4 flex items-center justify-center">
           <Pagination
             page={page}
@@ -275,7 +264,7 @@ export function ProductList({
             onPage={handlePage}
           />
         </div>
-      </Box>
+      </div>
     </div>
   );
 }

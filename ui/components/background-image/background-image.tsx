@@ -1,5 +1,7 @@
 "use client";
 
+import { ReactElement } from "react";
+
 export type BackgroundImageProps = {
   src?: string;
   defaultSrc?: string;
@@ -7,6 +9,7 @@ export type BackgroundImageProps = {
   width?: string | number;
   style?: React.CSSProperties;
   className?:string;
+  children?:ReactElement |any
 }
 
 export function BackgroundImage({
@@ -16,7 +19,7 @@ export function BackgroundImage({
   width,
   defaultSrc = "/images/no-image.png",
   className,
-  ...rest
+  children
 }: BackgroundImageProps) {
   const url = src || defaultSrc;
   return (
@@ -27,9 +30,8 @@ export function BackgroundImage({
         width,
         backgroundImage: `url(${url})`,
         ...style,
-        
       }}
-      {...rest}
+      {...children}
     ></div>
   );
 }

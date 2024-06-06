@@ -1,21 +1,72 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import {useRef, useState, useCallback } from "react";
 import { MdOutlineMenu } from "react-icons/md";
 import { MdOutlineCategory } from "react-icons/md";
 import {
-  Grow,
-  Popper,
-  useClassNames,
-  NavMenu,
-} from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-import { Button } from "@ui/components/button"
-import { Sheet ,  SheetClose,
+  Sheet,
   SheetContent,
-  SheetTrigger, } from "@ui/components/sheet"
+  SheetTrigger,
+} from "@ui/components/sheet"
 // ---- CORE IMPORTS ---- //
 import { useResponsive } from "@/ui/hooks";
 import { i18n } from "@/lib/i18n";
 import type { Category } from "@/types";
+
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
+interface NavItem {
+  id?: number | string
+  title: string,
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>,
+  iconColor?: string,
+  items?: NavItem[],
+}
+function RenderNavItem({ items, onClick }: any) {
+
+  return (
+    <>
+      {
+        items?.map((a: NavItem, i: number) => {
+          return (
+            <>
+              <Accordion key={i} asChild multiple collapsible className="w-fulls border-0">
+                {a?.items?.length ? <>
+                  <AccordionItem value={a?.title}>
+                    <AccordionTrigger className={"text-base"}>{a?.title}{" "} {a?.icon && <a.icon color={a.iconColor} />}</AccordionTrigger>
+                    <AccordionContent>
+                      {
+                        <RenderNavItem items={a?.items} onClick={onClick} />
+                      }
+
+                    </AccordionContent>
+                  </AccordionItem>
+                </> : <>
+                  <AccordionContent className={"text-base"} onClick={() => { onClick(a) }}>
+                    {
+                      a?.title
+                    }
+
+                  </AccordionContent>
+                </>}
+              </Accordion>
+            </>
+          )
+        })
+      }
+    </>
+  )
+}
 function MobileCategories({
   items = [],
   onClick,
@@ -24,17 +75,14 @@ function MobileCategories({
   onClick?: any;
 }) {
   const [show, setShow] = useState<boolean>(false);
-  const showDrawer = () => {
-    setShow(true);
-  };
+
   const hideDrawer = useCallback(() => {
     setShow(false);
   }, []);
+
   const handleItemClick = useCallback((item: any) => {
     if (item.root) return;
-
     onClick(item);
-
     if (!item?.items?.length) {
       hideDrawer();
     }
@@ -52,23 +100,17 @@ function MobileCategories({
             </div>
           </div>
         </SheetTrigger>
-        <SheetContent side={"left"}>
-          <div className="flex bg-white border flex-grow-1 pt-4">
-            <NavMenu
-              mode="accordion"
-              show="inline"
-              onItemClick={handleItemClick}
-              items={[
-                {
-                  id: "1",
-                  root: true,
-                  title: i18n.get("Categories"),
-                  icon: () => <MdOutlineCategory className="text-xl" />,
-                  iconColor: "black",
-                  items: items as any,
-                } as any,
-              ]}
-            />
+        <SheetContent side="left">
+          <div className="flex bg-white flex-grow-1 pt-0">
+
+            <RenderNavItem onClick={handleItemClick} items={[{
+              id: "1",
+              title: i18n.get("Categories"),
+              icon: () => <MdOutlineCategory className="text-xl" />,
+              iconColor: "black",
+              items: items as any,
+            }]} />
+
           </div>
         </SheetContent>
       </Sheet>
@@ -83,12 +125,11 @@ export const Categories = ({
   onClick?: any;
 }) => {
   const level = 0;
-  const cs = useClassNames();
   const res: any = useResponsive();
   const large = ["lg", "xl", "xxl"].some((x) => res[x]);
 
   return large ? (
-    <div className="mx-auto flex items-center gap-4 mb-0 overflow-x-auto px-6 py-4 bg-background border-t border-border border-solid">
+    <div className="mx-auto flex items-center gap-4 mb-0 px-6 py-4 bg-background border-t border-border border-solid">
       {items.map((category, index) => {
         return (
           <Category
@@ -117,73 +158,62 @@ const Category = ({
   const [open, setOpen] = useState(false);
   let ref = useRef();
   const [target, setTarget] = useState<any>(null);
-  const onMouseEnter = () => {
-    setOpen(true);
-  };
-  const onMouseLeave = () => {
-    setOpen(false);
-  };
+
   const toggleDropdown = () => {
     handleClick();
     setOpen((prev) => !prev);
   };
-  const closeDropdown = () => {
-    open && setOpen(false);
-  };
+
   const handleDropdownClick = () => {
     toggleDropdown();
   };
   const handleClick = () => {
     onClick && onClick(item);
   };
-  useEffect(() => {
-    const handler = (event: any) => {
-      if (open && ref.current && !(ref.current as any).contains(event.target)) {
-        // setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    document.addEventListener("touchstart", handler);
-    return () => {
-      // Cleanup the event listener
-      document.removeEventListener("mousedown", handler);
-      document.removeEventListener("touchstart", handler);
-    };
-  }, [open]);
+
 
   return (
     <div
       {...{ ref: ref as any }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onClick={closeDropdown}
-      className="shrink-0 relative"
+
+      className="shrink-0 relative flex items-center z-[9]"
     >
+
       {item.items?.length ? (
         <>
-          <div
-            onClick={handleDropdownClick}
-            ref={setTarget}
-            className="flex items-center justify-center cursor-pointer text-base font-medium text-primary"
-          >
-            <p className="px-2 mb-0">{i18n.get(item.name)}</p>
-            <MaterialIcon
-              icon={level > 0 ? "arrow_right" : "keyboard_arrow_down"}
-            />
-          </div>
-          <Dropdown
-            level={level}
-            items={item.items}
-            open={open}
-            onClick={onClick}
-            target={target}
-          />
+
+          <NavigationMenu>
+            <NavigationMenuList className="mb-0 px-0">
+              <NavigationMenuItem>
+                <div
+                  onClick={handleDropdownClick}
+                  ref={setTarget}
+                  className="flex items-center justify-center cursor-pointer text-base font-medium text-primary"
+                >
+                  <NavigationMenuTrigger className="px-0 hover:bg-transparent">
+                    <p className="px-2 mb-0 text-base font-medium text-primary">{i18n.get(item.name)}</p>
+
+                  </NavigationMenuTrigger>
+                </div>
+
+                <Dropdown
+                  level={level}
+                  items={item.items}
+                  open={open}
+                  onClick={onClick}
+                  target={target}
+                />
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+
         </>
       ) : (
         <p
           className="cursor-pointer pl-4 mb-0 text-base font-medium text-primary border-l-2 border-primary border-solid"
           onClick={handleClick}
         >
+
           {i18n.get(item.name)}
         </p>
       )}
@@ -206,15 +236,9 @@ const Dropdown = ({
   level = level + 1;
 
   return (
-    <Popper
-      open={open}
-      target={target}
-      offset={[0, 4]}
-      transition={Grow}
-      {...(level > 1
-        ? { placement: "end-top" }
-        : { placement: "bottom-start" })}
-    >
+
+    <NavigationMenuContent >
+
       <div className="!min-w-[200px]">
         {items.map((category: Category, index: number) => (
           <Category
@@ -225,6 +249,6 @@ const Dropdown = ({
           />
         ))}
       </div>
-    </Popper>
+    </NavigationMenuContent>
   );
 };

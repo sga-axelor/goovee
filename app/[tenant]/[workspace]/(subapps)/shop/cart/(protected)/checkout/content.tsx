@@ -138,24 +138,14 @@ function Shipping({ value, onChange }: { value: string; onChange: any }) {
         text={i18n.get("Shipping Method")}
       />
       <Separator className="my-4" />
-      <div className="border rounded-lg flex p-4 gap-4 items-center">
-        {/* please check zaid the input attributes as i have add radio  */}
-        {/* <Input
-          type="radio"
-          name="shipping"
-          value={SHIPPING_TYPE.REGULAR}
-          checked={value === SHIPPING_TYPE.REGULAR}
-          className={`${styles.radio} m-0`}
-          onChange={onChange}
-        /> */}
-        <RadioGroup>
+      <RadioGroup defaultValue={value}>
+        <div className="border rounded-lg flex p-4 gap-4 items-center">
           <div className="flex items-center space-x-2">
             <RadioGroupItem
               name="shipping"
               value={SHIPPING_TYPE.REGULAR}
-              checked={value === SHIPPING_TYPE.REGULAR}
               className={`${styles.radio} m-0`}
-              onChange={onChange}
+              onClick={onChange}
               id="r1"
             />
             <Label className="text-base font-medium !ml-4" htmlFor="r1">
@@ -165,27 +155,18 @@ function Shipping({ value, onChange }: { value: string; onChange: any }) {
               )}`}</small>
             </Label>
           </div>
-        </RadioGroup>
-        <Title className="text-xs font-medium m-0 ml-auto" text="2.00 €" />
-      </div>
-      <div className="border rounded-lg flex p-4 gap-4 mt-4">
-        {/* please check zaid the input attributes as i have add radio  */}
-        {/* <Input
-          type="radio"
-          name="shipping"
-          value={SHIPPING_TYPE.FAST}
-          checked={value === SHIPPING_TYPE.FAST}
-          className={`${styles.radio} m-0`}
-          onChange={onChange}
-        /> */}
-        <RadioGroup>
+
+          <Title className="text-xs font-medium m-0 ml-auto" text="2.00 €" />
+        </div>
+
+        <div className="border rounded-lg flex p-4 gap-4 mt-4">
+
           <div className="flex items-center space-x-2">
             <RadioGroupItem
               name="shipping"
               value={SHIPPING_TYPE.FAST}
-              checked={value === SHIPPING_TYPE.FAST}
               className={`${styles.radio} m-0`}
-              onChange={onChange}
+              onClick={onChange}
               id="r2"
             />
             <Label className="text-base font-medium !ml-4" htmlFor="r1">
@@ -195,9 +176,10 @@ function Shipping({ value, onChange }: { value: string; onChange: any }) {
               )}`}</small>
             </Label>
           </div>
-        </RadioGroup>
-        <Title className="text-xs font-medium m-0 ml-auto" text="5.00 €" />
-      </div>
+
+          <Title className="text-xs font-medium m-0 ml-auto" text="5.00 €" />
+        </div>
+      </RadioGroup>
     </div>
   );
 }
