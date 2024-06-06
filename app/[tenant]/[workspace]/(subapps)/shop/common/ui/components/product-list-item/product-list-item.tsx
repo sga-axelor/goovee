@@ -1,17 +1,13 @@
 "use client";
-
 import React from "react";
-
-import { Box } from "@axelor/ui";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-import { Button } from "@/components/ui/button"
+import { MdAddShoppingCart } from "react-icons/md";
+import { Button } from "@/components/ui/button";
 // ---- CORE IMPORTS ---- //
 import { BackgroundImage } from "@/ui/components";
 import { getImageURL } from "@/utils/product";
 import { useResponsive } from "@/ui/hooks";
 import { i18n } from "@/lib/i18n";
 import type { ComputedProduct, Product } from "@/types";
-
 export type ProductListItemProps = {
   product: ComputedProduct;
   quantity?: string | number;
@@ -19,7 +15,6 @@ export type ProductListItemProps = {
   onClick: (product: Product) => void;
   displayPrices?: boolean;
 };
-
 export function ProductListItem({
   product: computedProduct,
   quantity = 0,
@@ -29,108 +24,80 @@ export function ProductListItem({
 }: ProductListItemProps) {
   const { product, price } = computedProduct;
   const { displayTwoPrices, displayPrimary, displaySecondary } = price;
-
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
   };
-
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     onClick && onClick(product);
   };
-
   const res: any = useResponsive();
   const large = ["md", "lg", "xl", "xxl"].some((x) => res[x]);
-
   const clamp = (window as any)?.$clamp;
 
   return (
-    <Box
-      className="cursor-pointer rounded-2xl grid grid-cols-[238px_1fr] gap-6 w-full bg-background text-primary"
-    >
+    <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[238px_1fr] gap-6 w-full bg-background text-primary">
       <BackgroundImage
-        height={large ? 235 : 80}
-        width={large ? 238 : 80}
+        className="rounded-l-lg relative bg-cover md:w-[238px] w-[80px] md:h-[235px] h-[80px]"
         src={getImageURL(product.images?.[0])}
-        className="rounded-l-lg relative bg-cover"
       >
         {Boolean(quantity) && (
-          <Box
-            border
-            shadow="lg"
-            position="absolute"
-            bg="white"
-            p={3}
-            rounded="circle"
-            style={{
-              height: large ? 60 : 20,
-              width: large ? 60 : 20,
-              bottom: "1rem",
-              right: "1rem",
-            }}
-            d="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Box as="p" mb={0} fontSize={5}>
-              <b>{quantity}</b>
-            </Box>
-          </Box>
+          <div className="border shadow-lg absolute bottom-4 right-4 bg-white p-1 md:p-4 rounded-full flex items-center justify-center w-[30px] md:w-[60px] h-[30px] md:h-[60px]">
+            <p className="mb-0 text-sm md:text-xl">{quantity}</p>
+          </div>
         )}
       </BackgroundImage>
-      <Box className="p-6 pl-0 flex flex-col justify-between">
-        <Box onClick={handleClick}>
+      <div className="p-6 pl-6 md:pl-0 flex flex-col justify-between">
+        <div onClick={handleClick}>
           <>
-            <Box className="flex justify-between mb-6">
-              <Box>
-                <Box as={large ? "h5" : "p"} className="text-base font-medium mb-0">
+            <div className="flex-col md:flex-row flex justify-between mb-6">
+              <div>
+                <p className="text-base font-medium mb-2 md:mb-0">
                   {i18n.getValueAttribute(product.name)}
-                </Box>
-              </Box>
-              <Box flexShrink={0} textAlign="end">
+                </p>
+              </div>
+              <div className="shrink-0 text-right">
                 {displayPrices && (
                   <>
-                    <Box as={large ? "h4" : "p"} className="text-xl font-semibold mb-0">
-                    {displayPrimary}
-                    </Box>
+                    <h4 className="text-xl font-semibold mb-0">
+                      {displayPrimary}
+                    </h4>
                     {displayTwoPrices && (
-                      <Box as={large ? "h6" : "small"} className="text-sm font-medium mt-2 mb-0">
+                      <p className="text-sm font-medium mt-2 mb-0">
                         {displaySecondary}
-                      </Box>
+                      </p>
                     )}
                   </>
                 )}
-              </Box>
-            </Box>
-            <Box
-              as="p"
-              className="text-xs mb-0"
+              </div>
+            </div>
+            <p
+              className="text-xs mb-4 md:mb-0"
               dangerouslySetInnerHTML={{
                 __html: product.description || "",
               }}
               ref={(clampee: any) => {
                 !large && clampee && clamp?.(clampee, { clamp: 3 });
               }}
-            ></Box>
+            ></p>
           </>
-        </Box>
-        <Box className="flex justify-end">
+        </div>
+        <div className="flex justify-end">
           <Button
             onClick={handleAdd}
-            className="flex bg-primary gap-4 items-center"
+            className="flex bg-primary gap-2 items-center rounded-full w-12 md:w-auto h-12 md:h-auto"
           >
-            <Box className="inline-flex">
-              <MaterialIcon icon="add_shopping_cart" className="text-primary-foreground" />
-            </Box>
+            <div className="inline-flex">
+              <MdAddShoppingCart className="text-primary-foreground text-2xl" />
+            </div>
             {large && (
-              <Box as="p" className="text-sm font-medium mb-0 text-primary-foreground">
+              <p className="text-sm font-medium mb-0 text-primary-foreground">
                 {i18n.get("Add to cart")}
-              </Box>
+              </p>
             )}
           </Button>
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }
-
 export default ProductListItem;

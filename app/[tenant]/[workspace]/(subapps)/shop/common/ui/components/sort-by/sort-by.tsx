@@ -1,14 +1,11 @@
-import { Select, Box, Popper, List, ListItem } from "@axelor/ui";
-
+import { Select, Popper, List, ListItem } from "@axelor/ui";
+import { MdSort } from "react-icons/md";
 // ---- CORE IMPORTS ---- //
 import { i18n } from "@/lib/i18n";
 import type { PortalAppConfig, PortalWorkspace } from "@/types";
-
 // ---- LOCAL IMPORTS ---- //
 import styles from "./sort-by.module.scss";
 import { useState } from "react";
-import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-
 const SORT_BY_OPTIONS = [
   {
     value: "byNewest",
@@ -35,7 +32,6 @@ const SORT_BY_OPTIONS = [
     label: i18n.get("Price: High-Low"),
   },
 ];
-
 export function SortBy({
   onChange,
   options: optionsProp,
@@ -49,21 +45,11 @@ export function SortBy({
         workspace?.config &&
         (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean)
     );
-
   const value = SORT_BY_OPTIONS.find((o) => o.value === valueProp);
 
   return (
-    <Box
-      alignItems="center"
-      flexGrow={1}
-      gap="1rem"
-      d={{ base: "none", md: "flex" }}
-      className={styles.sortby}
-    >
-      <Box as="p" mb={0} flexShrink={0}>
-        Sort By
-      </Box>
-      {/*@ts-expect-error */}
+    <div className={`${styles.sortby} hidden md:flex items-center grow gap-4`}>
+      <p className="mb-0 shrink-0 text-sm">Sort By</p>
       <Select
         clearIcon={false}
         onChange={onChange}
@@ -72,10 +58,9 @@ export function SortBy({
         optionLabel={(o) => o.label}
         value={value}
       />
-    </Box>
+    </div>
   );
 }
-
 export function MobileSortBy({
   workspace,
   onChange,
@@ -87,9 +72,7 @@ export function MobileSortBy({
 }) {
   const [open, setOpen] = useState(false);
   const [targetEl, setTargetEl] = useState<HTMLElement | null>(null);
-
   const toggle = () => setOpen((v) => !v);
-
   const options = SORT_BY_OPTIONS.filter(
     (o) =>
       workspace?.config &&
@@ -97,28 +80,22 @@ export function MobileSortBy({
   );
 
   return (
-    <Box
-      d="flex"
-      alignItems="center"
-      gap="0.5rem"
-      borderEnd
-      className="pointer"
+    <div
+      className="cursor-pointer flex items-center gap-2 border-r"
       ref={setTargetEl}
       onClick={toggle}
     >
-      <Box d="flex">
-        <MaterialIcon icon="sort" />
-      </Box>
-      <Box as="p" mb={0} fontWeight="bold">
-        {i18n.get("Sort By")}
-      </Box>
+      <div className="flex">
+        <MdSort className="text-2xl" />
+      </div>
+      <p className="text-sm mb-0 font-bold">{i18n.get("Sort By")}</p>
       <Popper open={open} target={targetEl}>
         <List flush p={0}>
           {options.map((o) => {
             const isactive = o.value === active;
             return (
               <ListItem
-                className="pointer"
+                className="cursor-pointer"
                 key={o.value}
                 {...(isactive
                   ? {
@@ -134,8 +111,7 @@ export function MobileSortBy({
           })}
         </List>
       </Popper>
-    </Box>
+    </div>
   );
 }
-
 export default SortBy;

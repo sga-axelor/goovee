@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { MdOutlineMenu } from "react-icons/md";
+import { MdOutlineCategory } from "react-icons/md";
 import {
-  Box,
   Grow,
   Popper,
-  Drawer,
   useClassNames,
-  clsx,
   NavMenu,
-  ClickAwayListener,
 } from "@axelor/ui";
 import { MaterialIcon } from "@axelor/ui/icons/material-icon";
-
+import { Button } from "@ui/components/button"
+import { Sheet ,  SheetClose,
+  SheetContent,
+  SheetTrigger, } from "@ui/components/sheet"
 // ---- CORE IMPORTS ---- //
 import { useResponsive } from "@/ui/hooks";
 import { i18n } from "@/lib/i18n";
 import type { Category } from "@/types";
-
 function MobileCategories({
   items = [],
   onClick,
@@ -24,15 +24,12 @@ function MobileCategories({
   onClick?: any;
 }) {
   const [show, setShow] = useState<boolean>(false);
-
   const showDrawer = () => {
     setShow(true);
   };
-
   const hideDrawer = useCallback(() => {
     setShow(false);
   }, []);
-
   const handleItemClick = useCallback((item: any) => {
     if (item.root) return;
 
@@ -45,24 +42,18 @@ function MobileCategories({
 
   return (
     <>
-      <Box px={4} bg="white" p={3} borderTop borderBottom>
-        <Box d="flex">
-          <MaterialIcon
-            icon="menu"
-            className="cursor-pointer"
-            onClick={() => (show ? hideDrawer() : showDrawer())}
-          />
-        </Box>
-      </Box>
-      <Drawer
-        d="flex"
-        bgColor="white"
-        placement="start"
-        open={show}
-        onClose={hideDrawer}
-      >
-        <ClickAwayListener onClickAway={hideDrawer}>
-          <Box d="flex" border flexGrow={1} pt={3} bgColor="white">
+      <Sheet>
+        <SheetTrigger asChild>
+          <div className="px-6 bg-white p-4 border-t border-b">
+            <div className="flex">
+              <MdOutlineMenu
+                className="cursor-pointer text-2xl"
+              />
+            </div>
+          </div>
+        </SheetTrigger>
+        <SheetContent side={"left"}>
+          <div className="flex bg-white border flex-grow-1 pt-4">
             <NavMenu
               mode="accordion"
               show="inline"
@@ -72,19 +63,18 @@ function MobileCategories({
                   id: "1",
                   root: true,
                   title: i18n.get("Categories"),
-                  icon: () => <MaterialIcon icon="category" />,
+                  icon: () => <MdOutlineCategory className="text-xl" />,
                   iconColor: "black",
                   items: items as any,
                 } as any,
               ]}
             />
-          </Box>
-        </ClickAwayListener>
-      </Drawer>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
-
 export const Categories = ({
   items = [],
   onClick,
@@ -98,9 +88,7 @@ export const Categories = ({
   const large = ["lg", "xl", "xxl"].some((x) => res[x]);
 
   return large ? (
-    <Box
-      className="mx-auto flex items-center gap-4 mb-0 overflow-x-auto px-6 py-4 bg-background border-t border-border border-solid"
-    >
+    <div className="mx-auto flex items-center gap-4 mb-0 overflow-x-auto px-6 py-4 bg-background border-t border-border border-solid">
       {items.map((category, index) => {
         return (
           <Category
@@ -111,14 +99,12 @@ export const Categories = ({
           />
         );
       })}
-    </Box>
+    </div>
   ) : (
     <MobileCategories items={items} onClick={onClick} />
   );
 };
-
 export default Categories;
-
 const Category = ({
   item,
   level,
@@ -129,35 +115,27 @@ const Category = ({
   onClick?: any;
 }) => {
   const [open, setOpen] = useState(false);
-
   let ref = useRef();
   const [target, setTarget] = useState<any>(null);
-
   const onMouseEnter = () => {
     setOpen(true);
   };
-
   const onMouseLeave = () => {
     setOpen(false);
   };
-
   const toggleDropdown = () => {
     handleClick();
     setOpen((prev) => !prev);
   };
-
   const closeDropdown = () => {
     open && setOpen(false);
   };
-
   const handleDropdownClick = () => {
     toggleDropdown();
   };
-
   const handleClick = () => {
     onClick && onClick(item);
   };
-
   useEffect(() => {
     const handler = (event: any) => {
       if (open && ref.current && !(ref.current as any).contains(event.target)) {
@@ -174,7 +152,7 @@ const Category = ({
   }, [open]);
 
   return (
-    <Box
+    <div
       {...{ ref: ref as any }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -183,18 +161,16 @@ const Category = ({
     >
       {item.items?.length ? (
         <>
-          <Box
+          <div
             onClick={handleDropdownClick}
             ref={setTarget}
             className="flex items-center justify-center cursor-pointer text-base font-medium text-primary"
           >
-            <Box as="p"className="px-2 mb-0">
-              {i18n.get(item.name)}
-            </Box>
+            <p className="px-2 mb-0">{i18n.get(item.name)}</p>
             <MaterialIcon
               icon={level > 0 ? "arrow_right" : "keyboard_arrow_down"}
             />
-          </Box>
+          </div>
           <Dropdown
             level={level}
             items={item.items}
@@ -204,18 +180,16 @@ const Category = ({
           />
         </>
       ) : (
-        <Box
-          as="p"
+        <p
           className="cursor-pointer pl-4 mb-0 text-base font-medium text-primary border-l-2 border-primary border-solid"
           onClick={handleClick}
         >
           {i18n.get(item.name)}
-        </Box>
+        </p>
       )}
-    </Box>
+    </div>
   );
 };
-
 const Dropdown = ({
   items,
   open,
@@ -241,7 +215,7 @@ const Dropdown = ({
         ? { placement: "end-top" }
         : { placement: "bottom-start" })}
     >
-      <Box style={{ minWidth: 200 }}>
+      <div className="!min-w-[200px]">
         {items.map((category: Category, index: number) => (
           <Category
             item={category}
@@ -250,7 +224,7 @@ const Dropdown = ({
             onClick={onClick}
           />
         ))}
-      </Box>
+      </div>
     </Popper>
   );
 };
