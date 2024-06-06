@@ -156,11 +156,11 @@ export async function findWorkspaces({url}: {url?: string}) {
 
 const defaultApps = [
   {
-    name: 'Addresses',
-    code: 'account/addresses',
-    icon: 'home',
-    color: 'var(--portal-green-100)',
-    background: 'white',
+    name: "Addresses",
+    code: "account/addresses",
+    icon: "AiFillAccountBook",
+    color: "var(--portal-green-100)",
+    background: "white",
     showInTopMenu: false,
     showInMySpace: true,
     installed: 'yes',
