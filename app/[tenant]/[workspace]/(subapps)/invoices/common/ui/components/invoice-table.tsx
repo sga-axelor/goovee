@@ -1,55 +1,47 @@
 'use client';
-
 import React from 'react';
-import {Box} from '@axelor/ui';
-
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {
-  InvoiceTable,
+  InvoiceTable as Invoice_Table,
   TableBodyProps,
   TableFooterProps,
   TableHeaderProps,
 } from '@/subapps/invoices/common/types/invoices';
-import {INVOICE_COLUMNS} from '@/subapps/invoices/common/constants/invoices';
+import { INVOICE_COLUMNS } from '@/subapps/invoices/common/constants/invoices';
 
-function TableHeader({columns}: TableHeaderProps) {
+function TableHeader({ columns }: TableHeaderProps) {
   return (
     <>
       {columns.map((column, i) => (
-        <Box
+        <div
           key={i}
-          className="header"
-          mb={3}
-          textTransform="uppercase"
-          style={{color: '#7441C4', fontWeight: 500}}
-          textAlign={i === 0 ? 'start' : 'end'}>
+          className={`${i === 0 ? 'text-left' : 'text-right'} header mb-4 uppercase !text-[#7441C4] font-bold`}>
           {column}
-        </Box>
+        </div>
       ))}
     </>
   );
 }
 
-function TableBody({invoiceLineList}: TableBodyProps) {
-  return invoiceLineList.map(({productName, price, qty, exTaxTotal}, index) => {
+function TableBody({ invoiceLineList }: TableBodyProps) {
+  return invoiceLineList.map(({ productName, price, qty, exTaxTotal }, index) => {
     const showBottomBorder = index !== invoiceLineList.length - 1;
     return (
       <React.Fragment key={index}>
-        <Box borderBottom={showBottomBorder} py={2}>
-          <Box>{productName}</Box>
-        </Box>
-        <Box borderBottom={showBottomBorder} py={2} textAlign="end">
-          <Box>{price}</Box>
-        </Box>
-        <Box borderBottom={showBottomBorder} py={2} textAlign="end">
-          <Box>{qty}</Box>
-        </Box>
-        <Box borderBottom={showBottomBorder} py={2} textAlign="end">
-          <Box>{exTaxTotal}</Box>
-        </Box>
+        <div className={`${showBottomBorder ? 'border-b' : ''} py-2`}>
+          <p className="mb-0">{productName}</p>
+        </div>
+        <div className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
+          <p className="mb-0">{price}</p>
+        </div>
+        <div className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
+          <p className="mb-0">{qty}</p>
+        </div>
+        <div className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
+          <p className="mb-0">{exTaxTotal}</p>
+        </div>
       </React.Fragment>
     );
   });
@@ -65,49 +57,38 @@ function TableFooter({
   return (
     <>
       {/* Row 4 */}
-      <Box></Box>
-      <Box borderBottom py={2} textAlign="end">
-        <Box>{i18n.get('Subtotal')}</Box>
-        <Box>{i18n.get('Discount')}</Box>
-        <Box>{i18n.get('Tax')}</Box>
-      </Box>
-      <Box borderBottom py={2} textAlign="end">
-        <Box>{exTaxTotal}</Box>
-        <Box>{sumOfDiscounts}</Box>
-        <Box>{taxTotal}</Box>
-      </Box>
-
+      <div></div>
+      <div className="border-b py-2 text-right">
+        <p className="mb-0">{i18n.get('Subtotal')}</p>
+        <p className="mb-0">{i18n.get('Discount')}</p>
+        <p className="mb-0">{i18n.get('Tax')}</p>
+      </div>
+      <div className="border-b py-2 text-right">
+        <p className="mb-0">{exTaxTotal}</p>
+        <p className="mb-0">{sumOfDiscounts}</p>
+        <p className="mb-0">{taxTotal}</p>
+      </div>
       {/* Row 5 */}
-      <Box></Box>
-      <Box
-        py={2}
-        textAlign="end"
-        style={{
-          borderBottom: '3px solid #2924BF',
-        }}>
-        <Box>{i18n.get('Total')}</Box>
-        <Box>{i18n.get('Deposit Requested')}</Box>
-      </Box>
-      <Box
-        py={2}
-        textAlign="end"
-        style={{
-          borderBottom: '3px solid #2924BF',
-        }}>
-        <Box>{inTaxTotal}</Box>
-        <Box>
+      <div></div>
+      <div
+        className="!border-b-[3px] border-solid !border-[#2924BF] py-2 text-right">
+        <p className="mb-0">{i18n.get('Total')}</p>
+        <p className="mb-0">{i18n.get('Deposit Requested')}</p>
+      </div>
+      <div className="!border-b-[3px] border-solid !border-[#2924BF] py-2 text-right">
+        <p className="mb-0">{inTaxTotal}</p>
+        <p className="mb-0">
           {amountRemaining.value} {amountRemaining.symbol}
-        </Box>
-      </Box>
-
+        </p>
+      </div>
       {/* Row 6 */}
-      <Box></Box>
-      <Box py={2} textAlign="end" fontWeight="bold">
+      <div></div>
+      <h6 className="text-base text-right py-2 font-bold">
         {i18n.get('Deposit Due')}
-      </Box>
-      <Box py={2} textAlign="end" fontWeight="bold">
+      </h6>
+      <h6 className="text-base text-right py-2 font-bold">
         {amountRemaining.value} {amountRemaining.symbol}
-      </Box>
+      </h6>
     </>
   );
 }
@@ -118,22 +99,18 @@ export function InvoiceTable({
   inTaxTotal,
   amountRemaining,
   taxTotal,
-}: InvoiceTable) {
-  const sumOfDiscounts = invoiceLineList.reduce((total, {discountAmount}) => {
+}: Invoice_Table) {
+  const sumOfDiscounts = invoiceLineList.reduce((total, { discountAmount }) => {
     return total + parseFloat(discountAmount);
   }, 0);
 
   return (
     <>
-      <Box
-        d="grid"
-        gridTemplateColumns="2fr 1fr 1fr 1fr"
-        lineHeight="lg"
-        mb={4}>
+      <div className="grid grid-cols-[2fr_1fr_1fr_1fr] leading-5 mb-6">
         <TableHeader columns={INVOICE_COLUMNS} />
         <TableBody invoiceLineList={invoiceLineList} />
-      </Box>
-      <Box d="grid" gridTemplateColumns="2fr 1fr 1fr " lineHeight="lg">
+      </div>
+      <div className="grid grid-cols-[2fr_1fr_1fr] leading-5">
         <TableFooter
           exTaxTotal={exTaxTotal}
           inTaxTotal={inTaxTotal}
@@ -141,9 +118,8 @@ export function InvoiceTable({
           amountRemaining={amountRemaining}
           sumOfDiscounts={sumOfDiscounts}
         />
-      </Box>
+      </div>
     </>
   );
 }
-
 export default InvoiceTable;

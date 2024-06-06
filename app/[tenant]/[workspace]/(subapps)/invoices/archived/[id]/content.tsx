@@ -1,19 +1,17 @@
 'use client';
 
 import React from 'react';
-import {Box, Divider} from '@axelor/ui';
-
+import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
-import {Tag} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
-
+import { parseDate } from '@/utils';
+import { Tag } from '@/ui/components';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
-import {getStatus} from '@/subapps/invoices/common/utils/invoices';
-import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
+import { Invoice, Total } from '@/subapps/invoices/common/ui/components';
+import { getStatus } from '@/subapps/invoices/common/utils/invoices';
+import { INVOICE_TYPE } from '@/subapps/invoices/common/constants/invoices';
 
-export default function Content({invoice}: any) {
+export default function Content({ invoice }: any) {
   const {
     invoiceId,
     dueDate,
@@ -22,47 +20,40 @@ export default function Content({invoice}: any) {
     exTaxTotal,
     amountRemaining,
     invoiceLineList,
-    currency: {numberOfDecimals},
+    currency: { numberOfDecimals },
   } = invoice;
-  const {status, variant} = getStatus(amountRemaining.value);
+  const { status, variant } = getStatus(amountRemaining.value);
   const isUnpaid = status === INVOICE_TYPE.UNPAID;
 
   return (
     <>
-      <Box px={{base: 3, md: 5}} py={{base: 2, md: 3}}>
-        <Box as="h2" mb={3}>
+      <div className="px-4 md:px-12 py-2 md:py-4">
+        <h4 className="text-xl font-medium mb-4">
           {`${i18n.get('Invoice number')} ${invoiceId}`}
-        </Box>
-        <Box
-          bg="white"
-          d={{base: 'flex', md: 'block'}}
-          flexDirection={{base: 'column', md: 'row'}}
-          px={4}
-          py={3}
-          mb={4}
-          rounded={3}>
-          <Box as="h2">{i18n.get('Informations')}</Box>
-          <Divider />
-          <Box>
-            <Box d="flex" alignItems="center" gap="1rem">
-              <Box style={{fontSize: 18, fontWeight: 600}}>
+        </h4>
+        <div className='bg-white flex md:block flex-col md:flex-row px-6 py-4 mb-6 rounded-lg'>
+          <h4 className="text-xl font-medium mb-0">{i18n.get('Informations')}</h4>
+          <Separator className="my-2" />
+          <div>
+            <div className="flex items-center gap-4">
+              <h5 className="text-lg font-semibold">
                 {i18n.get('Status')}:
-              </Box>
-              <Box>
+              </h5>
+              <div>
                 <Tag variant={variant}>{status}</Tag>
-              </Box>
-            </Box>
-            <Box d="flex" alignItems="center" gap="0.1rem">
-              <Box pe={1} style={{fontSize: 18, fontWeight: 600}}>
+              </div>
+            </div>
+            <div className="flex items-center gap-[0.1rem] mt-1">
+              <h5 className="text-lg font-semibold pr-1">
                 {isUnpaid
                   ? `${i18n.get('Due date')}:`
                   : `${i18n.get('Paid on')}:`}
-              </Box>
-              <Box> {parseDate(isUnpaid ? dueDate : invoiceDate)}</Box>
-            </Box>
-          </Box>
-        </Box>
-        <Box d={{base: 'block', md: 'flex'}} mb={4} gap="1rem" rounded={3}>
+              </h5>
+              <p className="text-base mb-0"> {parseDate(isUnpaid ? dueDate : invoiceDate)}</p>
+            </div>
+          </div>
+        </div>
+        <div className='block md:flex flex-col lg:flex-row gap-4 mb-6 rounded-lg'>
           <Invoice invoice={invoice} isUnpaid={isUnpaid} />
           {isUnpaid && (
             <Total
@@ -72,8 +63,8 @@ export default function Content({invoice}: any) {
               numberOfDecimals={numberOfDecimals}
             />
           )}
-        </Box>
-      </Box>
+        </div>
+      </div>
     </>
   );
 }
