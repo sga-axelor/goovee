@@ -11,6 +11,7 @@ export default async function Page({
 }: {
   searchParams: {workspaceURI?: string};
 }) {
+  
   const session = await getSession();
 
   const workspaces = await findWorkspaces({
