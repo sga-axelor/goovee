@@ -34,7 +34,7 @@ export default function Content() {
             type={showPassword ? "text" : "password"}
             icons={[
               {
-                icon: showPassword ? "visibility_off" : "visibility",
+                icon: showPassword ? "MdOutlineVisibility" : "MdOutlineVisibilityOff",
                 onClick: toggleShowPassword,
               },
             ]}
@@ -46,7 +46,7 @@ export default function Content() {
             type={showConfirmPassword ? "text" : "password"}
             icons={[
               {
-                icon: showConfirmPassword ? "visibility_off" : "visibility",
+                icon: showConfirmPassword ? "MdOutlineVisibility" : "MdOutlineVisibilityOff",
                 onClick: toggleShowConfirmPassword,
               },
             ]}

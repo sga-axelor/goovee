@@ -87,7 +87,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
             type={showPassword ? "text" : "password"}
             icons={[
               {
-                icon: showPassword ? "visibility_off" : "visibility",
+                icon: showPassword ? "MdOutlineVisibility" : "MdOutlineVisibilityOff",
                 onClick: toggleShowPassword,
               },
             ]}

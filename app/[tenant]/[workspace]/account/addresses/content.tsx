@@ -88,7 +88,7 @@ export default function Content({
       <div
         className="p-4 rounded-md flex flex-col gap-4 bg-white"
       >
-        <div className="p-2 rounded-md border">
+        <div className="p-4 rounded-md border">
           <AddressList
             title={i18n.get('Invoicing Address')}
             addresses={invoicingAddresses}
@@ -96,7 +96,7 @@ export default function Content({
           />
         </div>
         <Separator />
-        <div className="p-2 rounded-md border">
+        <div className="p-4 rounded-md border">
           <AddressList
             title={i18n.get('Delivery Address')}
             addresses={deliveryAddresses}

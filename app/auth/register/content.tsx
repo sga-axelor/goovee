@@ -143,7 +143,7 @@ export default function Content() {
             type={showPassword ? "text" : "password"}
             icons={[
               {
-                icon: showPassword ? "visibility_off" : "visibility",
+                icon: showPassword ? "MdOutlineVisibility" : "MdOutlineVisibilityOff",
                 onClick: toggleShowPassword,
               },
             ]}

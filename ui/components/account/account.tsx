@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/components/dropdown-menu";
 import { MdOutlineAccountCircle } from "react-icons/md";
 
-export function Account({ baseURL = "" }: { baseURL?: string }) {
+
 
 export function Account({baseURL = ''}: {baseURL?: string}) {
   const pathname = usePathname();
