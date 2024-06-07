@@ -1,4 +1,4 @@
-import { ThemeOptions } from "@axelor/ui/core/styles/theme/types";
+import {ThemeOptions} from '@axelor/ui/core/styles/theme/types';
 
 const generateCssVar = (css: ThemeOptions) => {
   const dynamicCss = `
