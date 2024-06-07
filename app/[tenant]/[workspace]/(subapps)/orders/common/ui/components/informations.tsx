@@ -1,17 +1,15 @@
 'use client';
 
 import React from 'react';
-import {Box, Button, Divider} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import { Separator } from '@ui/components/separator';
+import { Button } from '@ui/components/button';
+import { MdOutlineFileDownload } from "react-icons/md";
 // ---- CORE IMPORTS ---- //
-import {Tag} from '@/ui/components';
-import {parseDate} from '@/utils';
-import {i18n} from '@/lib/i18n';
-
+import { Tag } from '@/ui/components';
+import { parseDate } from '@/utils';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
-
+import { ORDER_TYPE } from '@/subapps/orders/common/constants/orders';
 export const Informations = ({
   createdOn,
   shipmentMode,
@@ -23,58 +21,46 @@ export const Informations = ({
   );
   return (
     <>
-      <Box
-        bg="white"
-        d={{base: 'flex', md: 'block'}}
-        flexDirection="column"
-        rounded={3}
-        p={{base: 3, md: 4}}>
-        <Box as="h2">{i18n.get('Informations')}</Box>
-        <Divider />
-        <Box d="flex" flexDirection="column" gap="1rem">
-          <Box d="flex" alignItems="center" gap="1rem">
-            <Box style={{fontSize: 18, fontWeight: 600}}>
+      <div className="bg-white flex md:block flex-col rounded-lg p-4 md:p-6">
+        <h4 className="text-xl font-medium mb-0">{i18n.get('Informations')}</h4>
+        <Separator className="my-1" />
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <h5 className="text-lg font-semibold mb-0">
               {i18n.get('Status')}:
-            </Box>
+            </h5>
             <Tag variant={variant}>{status}</Tag>
-            <Box></Box>
-          </Box>
-          <Box d="flex" alignItems="center" gap="0.1rem">
-            <Box pe={1} style={{fontSize: 18, fontWeight: 600}}>
+            <div></div>
+          </div>
+          <div className="flex items-center gap-2">
+            <h5 className="text-lg font-semibold mb-0 pr-1">
               {i18n.get('Created on')}:
-            </Box>
-            <Box>{parseDate(createdOn)}</Box>
-          </Box>
-          <Box d="flex" alignItems="center" gap="0.1rem">
-            <Box pe={1} style={{fontSize: 18, fontWeight: 600}}>
+            </h5>
+            <p className="text-base mb-0">{parseDate(createdOn)}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <h5 className="text-lg font-semibold mb-0 pr-1">
               {i18n.get('Shipping method')}:
-            </Box>
-            <Box>{shipmentMode?.name}</Box>
-          </Box>
+            </h5>
+            <p className="text-base mb-0">{shipmentMode?.name}</p>
+          </div>
           {showShippingLink && (
-            <Box d="flex" alignItems="center" gap="0.1rem">
-              <Box textDecoration="underline" style={{color: '#2D60C4'}}>
+            <div className="flex items-center gap-2">
+              <p className="text-base underline text-[#2D60C4] mb-0">
                 {i18n.get('Shipping link to follow the delivery path')}
-              </Box>
-            </Box>
+              </p>
+            </div>
           )}
-          <Box d="flex">
+          <div className="flex">
             <Button
-              variant="dark"
-              outline
-              d="flex"
-              alignItems="center"
-              justifyContent="center"
-              gap="10"
-              rounded="pill"
-              flexBasis={{base: '100%', md: 'fit-content'}}>
-              <MaterialIcon icon="download" /> {i18n.get('Download bill')}
+              variant="outline"
+              className="flex items-center justify-center gap-3 rounded-full !font-medium basis-full md:basis-0">
+              <MdOutlineFileDownload className="text-2xl" /> {i18n.get('Download bill')}
             </Button>
-          </Box>
-        </Box>
-      </Box>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
-
 export default Informations;

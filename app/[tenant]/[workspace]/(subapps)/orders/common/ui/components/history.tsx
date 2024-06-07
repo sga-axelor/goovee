@@ -1,37 +1,22 @@
 'use client';
-
 import React from 'react';
-import {Box, Divider} from '@axelor/ui';
-
+import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-
+import { i18n } from '@/lib/i18n';
 export const History = () => {
   return (
     <>
-      <Box
-        d="flex"
-        flexDirection="column"
-        gap="1rem"
-        bg="white"
-        p={4}
-        rounded={3}>
-        <Box as="h2">{i18n.get('History')}</Box>
-        <Divider />
-        <Box>
-          <Box
-            d="flex"
-            justifyContent="space-between"
-            p={3}
-            borderStart
-            style={{borderColor: '#212323 !important'}}>
-            <Box style={{fontWeight: 600}}>{i18n.get('History action')}</Box>
-            <Box style={{color: '#464555'}}>23/11/2023</Box>
-          </Box>
-        </Box>
-      </Box>
+      <div className="flex flex-col gap-4 bg-white p-6 rounded-lg">
+        <h4 className="text-xl font-medium mb-0">{i18n.get('History')}</h4>
+        <Separator />
+        <div>
+          <div className="flex justify-between p-4 border-l !border-[#212323]">
+            <h6 className="text-base font-semibold mb-0">{i18n.get('History action')}</h6>
+            <h6 className="text-base text-[#464555] mb-0">23/11/2023</h6>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
-
 export default History;

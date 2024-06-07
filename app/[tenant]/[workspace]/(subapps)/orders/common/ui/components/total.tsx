@@ -1,62 +1,45 @@
 'use client';
-
 import React from 'react';
-import {Box, Divider} from '@axelor/ui';
-
+import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-
+import { i18n } from '@/lib/i18n';
 export type TotalProps = {
   inTaxTotal: string;
   exTaxTotal: number | string;
   totalDiscount: number;
 };
-export const Total = ({exTaxTotal, inTaxTotal, totalDiscount}: TotalProps) => {
+export const Total = ({ exTaxTotal, inTaxTotal, totalDiscount }: TotalProps) => {
   return (
     <>
-      <Box
-        d="flex"
-        flexDirection="column"
-        bg="white"
-        px={4}
-        py={3}
-        rounded={2}
-        flexBasis={{
-          base: '100%',
-          md: '25%',
-        }}
-        style={{height: 'fit-content'}}>
-        <Box fontSize={2} style={{fontWeight: 500}}>
+      <div className="flex flex-col bg-white px-6 py-4 rounded-lg basis-full md:basis-1/4" style={{ height: 'fit-content' }}>
+        <h4 className="text-xl font-medium mb-0">
           {i18n.get('Total price')}
-        </Box>
-        <Divider />
-
-        <Box d="flex" flexDirection="column" gap="1rem" mb={2}>
-          <Box d="flex" flexDirection="column" gap={'0.5rem'}>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Total WT')}:</Box>
-              <Box>{exTaxTotal}</Box>
-            </Box>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Total ATI')}:</Box>
-              <Box>{inTaxTotal}</Box>
-            </Box>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Discount')}:</Box>
-              <Box>{totalDiscount}%</Box>
-            </Box>
-          </Box>
-
-          <Box d="flex" alignItems="center" justifyContent="space-between">
-            <Box fontWeight="bold">{i18n.get('Total price')}:</Box>
-            <Box fontWeight="bolder" fontSize={4}>
+        </h4>
+        <Separator className="my-3" />
+        <div className="flex flex-col gap-4 mb-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Total WT')}:</p>
+              <p className="text-base mb-0">{exTaxTotal}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Total ATI')}:</p>
+              <p className="text-base mb-0">{inTaxTotal}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Discount')}:</p>
+              <p className="text-base mb-0">{totalDiscount}%</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <h4 className="text-xl font-medium mb-0">{i18n.get('Total price')}:</h4>
+            <h4 className="text-xl font-medium mb-0">
               {inTaxTotal}
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+            </h4>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
-
 export default Total;

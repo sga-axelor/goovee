@@ -1,11 +1,8 @@
 'use client';
 import React from 'react';
-import {Box} from '@axelor/ui';
-
 // ---- CORE IMPORTS ---- //
-import {Container} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
-
+import { Container } from '@/ui/components';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {
   Contact,
@@ -14,10 +11,9 @@ import {
   Informations,
   Total,
 } from '@/subapps/orders/common/ui/components';
-import {getStatus} from '@/subapps/orders/common/utils/orders';
-import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
-
-const Content = ({order}: {order: any}) => {
+import { getStatus } from '@/subapps/orders/common/utils/orders';
+import { ORDER_TYPE } from '@/subapps/orders/common/constants/orders';
+const Content = ({ order }: { order: any }) => {
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -33,8 +29,7 @@ const Content = ({order}: {order: any}) => {
     saleOrderLineList,
     totalDiscount,
   } = order;
-
-  const {status, variant} = getStatus(statusSelect, deliveryState);
+  const { status, variant } = getStatus(statusSelect, deliveryState);
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
 
   return (
@@ -46,16 +41,8 @@ const Content = ({order}: {order: any}) => {
           status={status}
           variant={variant}
         />
-        <Box d="flex" gap="1rem" flexFlow={{base: 'column-reverse', lg: 'row'}}>
-          <Box
-            w={100}
-            d="flex"
-            flexDirection="column"
-            gap="1.5rem"
-            flexBasis={{
-              base: '100%',
-              lg: '75%',
-            }}>
+        <div className="flex flex-col-reverse lg:flex-row gap-6 lg:gap-4">
+          <div className="flex flex-col gap-6 basis-full md:basis-3/4">
             <Contact
               clientPartner={clientPartner}
               company={company}
@@ -65,25 +52,17 @@ const Content = ({order}: {order: any}) => {
             />
             {false && <History />}
             {showContactUs && <ContactUs />}
-          </Box>
-          <Box
-            d="flex"
-            flexDirection="column"
-            gap="1.5rem"
-            flexBasis={{
-              base: '100%',
-              lg: '25%',
-            }}>
+          </div>
+          <div className="flex flex-col gap-6 basis-full lg:basis-1/4">
             <Total
               exTaxTotal={exTaxTotal}
               inTaxTotal={inTaxTotal}
               totalDiscount={totalDiscount}
             />
-          </Box>
-        </Box>
+          </div>
+        </div>
       </Container>
     </>
   );
 };
-
 export default Content;

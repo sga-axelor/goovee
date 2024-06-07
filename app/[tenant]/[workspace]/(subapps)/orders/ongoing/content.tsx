@@ -1,37 +1,27 @@
 'use client';
-
 import React from 'react';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {Box} from '@axelor/ui';
-
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 // ---- CORE IMPORTS ---- //
-import {Container, NavView, Pagination} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
-
+import { Container, NavView, Pagination } from '@/ui/components';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import {OrdersTable, Card} from '@/subapps/orders/common/ui/components';
-import {ORDERS_COLUMNS, ITEMS} from '@/subapps/orders/common/constants/orders';
-
+import { OrdersTable, Card } from '@/subapps/orders/common/ui/components';
+import { ORDERS_COLUMNS, ITEMS } from '@/subapps/orders/common/constants/orders';
 type ContentProps = {
   orders: [];
   pageInfo?: any;
 };
-
-const Content = ({orders, pageInfo}: ContentProps) => {
-  const {page, pages} = pageInfo || {};
-
+const Content = ({ orders, pageInfo }: ContentProps) => {
+  const { page, pages } = pageInfo || {};
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const handleTabChange = (e: any) => {
     router.push(`${e.href}`);
   };
-
   const handleClick = (id: string) => {
     router.push(`${pathname}/${id}`);
   };
-
   const updateSearchParams = (
     values: Array<{
       key: string;
@@ -39,7 +29,7 @@ const Content = ({orders, pageInfo}: ContentProps) => {
     }>,
   ) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    values.forEach(({key, value = ''}: any) => {
+    values.forEach(({ key, value = '' }: any) => {
       value = value && String(value)?.trim();
       if (!value) {
         current.delete(key);
@@ -51,43 +41,35 @@ const Content = ({orders, pageInfo}: ContentProps) => {
     const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`);
   };
-
   const handlePreviousPage = () => {
-    const {page, hasPrev} = pageInfo;
+    const { page, hasPrev } = pageInfo;
     if (!hasPrev) return;
-    updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
+    updateSearchParams([{ key: 'page', value: Math.max(Number(page) - 1, 1) }]);
   };
-
   const handleNextPage = () => {
-    const {page, hasNext} = pageInfo;
+    const { page, hasNext } = pageInfo;
     if (!hasNext) return;
-    updateSearchParams([{key: 'page', value: Number(page) + 1}]);
+    updateSearchParams([{ key: 'page', value: Number(page) + 1 }]);
   };
-
   const handlePage = (page: string | number) => {
-    updateSearchParams([{key: 'page', value: page}]);
+    updateSearchParams([{ key: 'page', value: page }]);
   };
 
   return (
     <>
       <Container title={i18n.get('Orders')}>
         <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
-          <Box d={{base: 'none', md: 'block'}}>
+          <div className="hidden md:block">
             <OrdersTable
               columns={ORDERS_COLUMNS}
               orders={orders}
               handleRowClick={handleClick}
             />
-          </Box>
-          <Box d={{base: 'block', md: 'none'}}>
+          </div>
+          <div className="block md:hidden">
             <Card orders={orders} handleRowClick={handleClick} />
-          </Box>
-          <Box
-            mt={4}
-            mb={3}
-            d="flex"
-            alignItems="center"
-            justifyContent="center">
+          </div>
+          <div className="flex items-center justify-center mt-6 mb-4">
             <Pagination
               page={page}
               pages={pages}
@@ -97,11 +79,10 @@ const Content = ({orders, pageInfo}: ContentProps) => {
               onNext={handleNextPage}
               onPage={handlePage}
             />
-          </Box>
+          </div>
         </NavView>
       </Container>
     </>
   );
 };
-
 export default Content;

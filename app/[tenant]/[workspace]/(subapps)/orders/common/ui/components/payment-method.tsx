@@ -1,46 +1,35 @@
 'use client';
-
 import React from 'react';
-import {Box, Divider} from '@axelor/ui';
-
+import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-
+import { i18n } from '@/lib/i18n';
 export const PaymentMethod = () => {
   return (
     <>
-      <Box d="flex" flexDirection="column" gap="1rem">
-        <Box as="h2">{i18n.get('Payment Method')}</Box>
-        <Divider />
-        <Box
-          d="flex"
-          flexDirection="column"
-          gap="1rem"
-          border
-          rounded={3}
-          p={3}
-          style={{borderColor: '#E6E7E7'}}>
-          <Box style={{fontSize: 20, fontWeight: 600}}>
+      <div className="flex flex-col gap-4">
+        <h4 className="text-xl font-medium mb-0">{i18n.get('Payment Method')}</h4>
+        <Separator />
+        <div className="flex flex-col gap-4 border !border-[#E6E7E7] p-4 rounded-lg">
+          <h4 className="text-xl font-semibold mb-0">
             {i18n.get('Paid with')}...
-          </Box>
-          <Box d="flex" flexDirection="column" gap="0.5rem">
-            <Box d="flex">
-              <Box>{i18n.get('Card Number')}: </Box>
-              <Box>7639************</Box>
-            </Box>
-            <Box d="flex">
-              <Box>{i18n.get('Expiration date')}: </Box>
-              <Box>**/**/27</Box>
-            </Box>
-            <Box d="flex">
-              <Box>{i18n.get('Name')}: </Box>
-              <Box>Hem********</Box>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+          </h4>
+          <div className="flex flex-col gap-2">
+            <div className="flex">
+              <h6 className="text-base font-medium mb-0">{i18n.get('Card Number')}: </h6>
+              <p className="text-base mb-0">7639************</p>
+            </div>
+            <div className="flex">
+              <h6 className="text-base font-medium mb-0">{i18n.get('Expiration date')}: </h6>
+              <p className="text-base mb-0">**/**/27</p>
+            </div>
+            <div className="flex">
+              <h6 className="text-base font-medium mb-0">{i18n.get('Name')}: </h6>
+              <p className="text-base mb-0">Hem********</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
-
 export default PaymentMethod;

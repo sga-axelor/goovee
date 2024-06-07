@@ -4,14 +4,14 @@ import React from 'react';
 import {TableHeadProps, TableProps} from './types';
 import {Table, TableBody, TableCell, TableRow} from '@ui/components/table';
 
-export const StyledHead = ({columns}: TableHeadProps) => {
+export const StyledHead = ({columns, className}: TableHeadProps) => {
   return (
     <>
       <TableRow>
         {columns?.map((column: any, index: number) => (
           <TableCell
             key={column.key}
-            className="text-primary text-base font-semibold"
+            className={`${className} text-primary text-base font-semibold`}
             style={{
               paddingInline: '24px',
               border: 'none',
@@ -30,11 +30,11 @@ export const StyledHead = ({columns}: TableHeadProps) => {
   );
 };
 
-export const StyledTable = ({columns, children}: TableProps) => {
+export const StyledTable = ({columns, children, className, headStyle}: TableProps) => {
   return (
     <>
-      <Table className="w-full rounded-lg bg-background">
-        <StyledHead columns={columns} />
+      <Table className={`w-full rounded-lg bg-background ${className}`}>
+        <StyledHead className={headStyle} columns={columns} />
         <TableBody>{children}</TableBody>
       </Table>
     </>
