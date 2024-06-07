@@ -1,11 +1,4 @@
-<<<<<<< HEAD
 "use client";
-=======
-'use client';
-
-import {Box} from '@axelor/ui';
-
->>>>>>> 3305013b3d476d434f8f24ecdc27a077cdf14385
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {AddressForm} from '@/ui/components';
