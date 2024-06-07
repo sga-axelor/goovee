@@ -1,16 +1,13 @@
 'use client';
-
 import React from 'react';
-import {Box, Button, Divider} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import { MdEast } from "react-icons/md";
+import { Button } from "@ui/components/button"
+import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {DEFAULT_CURRENCY_SCALE} from '@/constants';
-import {i18n} from '@/lib/i18n';
-
+import { DEFAULT_CURRENCY_SCALE } from '@/constants';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import {TotalProps} from '@/subapps/invoices/common/types/invoices';
-
+import { TotalProps } from '@/subapps/invoices/common/types/invoices';
 export function Total({
   exTaxTotal,
   inTaxTotal,
@@ -18,73 +15,53 @@ export function Total({
   numberOfDecimals,
 }: TotalProps) {
   const sumOfDiscounts: number = invoiceLineList.reduce(
-    (total, {discountAmount}) => {
+    (total, { discountAmount }) => {
       return total + parseFloat(discountAmount);
     },
     0,
   );
-
   const discount =
     sumOfDiscounts === 0
       ? 0
       : ((100 * sumOfDiscounts) / (sumOfDiscounts + +exTaxTotal)).toFixed(
-          numberOfDecimals || DEFAULT_CURRENCY_SCALE,
-        );
+        numberOfDecimals || DEFAULT_CURRENCY_SCALE,
+      );
 
   return (
     <>
-      <Box
-        flexBasis={{base: '100%', md: '25%'}}
-        d="flex"
-        flexDirection="column"
-        bg="white"
-        px={4}
-        py={3}
-        border
-        rounded={2}
-        borderColor="dark"
-        style={{height: 'fit-content'}}>
-        <Box fontSize={2} style={{fontWeight: 500}}>
+      <div className="flex basis-full md:basis-1/4 flex-col bg-white p-4 md:p-6 border rounded-lg border-[#212323] mt-6 md:mt-0" style={{ height: 'fit-content' }}>
+        <h4 className="text-xl font-medium mb-0">
           {i18n.get('Total')}
-        </Box>
-        <Divider />
-
-        <Box d="flex" flexDirection="column" gap="1rem" mb={2}>
-          <Box d="flex" flexDirection="column" gap={'0.5rem'}>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Total WT')}:</Box>
-              <Box>{exTaxTotal}</Box>
-            </Box>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Total ATI')}:</Box>
-              <Box>{inTaxTotal}</Box>
-            </Box>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Discount')}:</Box>
-              <Box>{discount}%</Box>
-            </Box>
-          </Box>
-
-          <Box d="flex" alignItems="center" justifyContent="space-between">
-            <Box fontWeight="bold">{i18n.get('Total price')}:</Box>
-            <Box fontWeight="bolder" fontSize={4}>
+        </h4>
+        <Separator className="my-3" />
+        <div className="flex flex-col gap-4 mb-3">
+          <div className="flex flex-col gap-[0.5rem]">
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Total WT')}:</p>
+              <p className="text-base mb-0">{exTaxTotal}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <h6 className="text-base font-medium mb-0">{i18n.get('Total ATI')}:</h6>
+              <h6 className="text-base font-medium mb-0">{inTaxTotal}</h6>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Discount')}:</p>
+              <p className="text-base mb-0">{discount}%</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <h4 className="text-xl font-medium mb-0">{i18n.get('Total price')}:</h4>
+            <h4 className="text-xl font-medium mb-0">
               {inTaxTotal}
-            </Box>
-          </Box>
-        </Box>
-        <Box>
-          <Button
-            variant="dark"
-            d="flex"
-            alignItems="center"
-            justifyContent="center"
-            gap="10"
-            w={100}
-            rounded="pill">
-            {i18n.get('Pay')} <MaterialIcon icon="east" />
+            </h4>
+          </div>
+        </div>
+        <div>
+          <Button className="flex items-center justify-center gap-3 w-full rounded-full">
+            {i18n.get('Pay')} <MdEast className="text-2xl" />
           </Button>
-        </Box>
-      </Box>
+        </div>
+      </div>
     </>
   );
 }

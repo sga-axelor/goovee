@@ -1,17 +1,13 @@
 'use client';
-
 import React from 'react';
-import {Box, Button} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import { MdEast } from "react-icons/md";
+import { Button } from "@ui/components/button"
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
-import {Tag} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
-
+import { parseDate } from '@/utils';
+import { Tag } from '@/ui/components';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import {getStatus} from '@/subapps/invoices/common/utils/invoices';
-
+import { getStatus } from '@/subapps/invoices/common/utils/invoices';
 export const Card = ({
   invoices,
   handleRowClick,
@@ -21,68 +17,48 @@ export const Card = ({
 }) => {
   return (
     <>
-      <Box d={{base: 'block', md: 'none'}}>
+      <div className="block md:hidden">
         {invoices?.map((invoice: any, i: number) => {
-          const {status, variant} = getStatus(invoice.amountRemaining);
+          const { status, variant } = getStatus(invoice.amountRemaining);
           return (
-            <Box
+            <div
               key={i}
-              rounded
-              bg="white"
-              px={3}
-              py={4}
-              d="flex"
-              flexDirection="column"
-              gap="1rem"
-              border
-              style={{borderColor: '#E6E7E7 !important', cursor: 'pointer'}}
+              className="rounded border border-solid !border-[#E6E7E7] bg-white px-4 py-6 flex flex-col gap-4 !cursor-pointer"
               onClick={() => handleRowClick(invoice.id)}>
-              <Box
-                d="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                style={{fontWeight: 'bold'}}>
-                <Box>{i18n.get('Invoice number')}</Box>
-                <Box>{invoice.invoiceId}</Box>
-              </Box>
-              <Box d="flex" alignItems="center" justifyContent="space-between">
-                <Box style={{fontWeight: 'bold'}}>{i18n.get('Status')}</Box>
-                <Box>
+              <div className="flex items-center justify-between font-bold">
+                <h6 className='text-base mb-0'>{i18n.get('Invoice number')}</h6>
+                <h6 className='text-base mb-0'>{invoice.invoiceId}</h6>
+              </div>
+              <div className="flex items-center justify-between">
+                <h6 className='text-base font-bold mb-0'>{i18n.get('Status')}</h6>
+                <p className='text-base mb-0'>
                   <Tag variant={variant}>{status}</Tag>
-                </Box>
-              </Box>
-              <Box d="flex" alignItems="center" justifyContent="space-between">
-                <Box style={{fontWeight: 'bold'}}>{i18n.get('Created on')}</Box>
-                <Box>{parseDate(invoice.dueDate)}</Box>
-              </Box>
-              <Box d="flex" alignItems="center" justifyContent="space-between">
-                <Box style={{fontWeight: 'bold'}}>{i18n.get('Total WT')}</Box>
-                <Box> {invoice.exTaxTotal}</Box>
-              </Box>
-              <Box d="flex" alignItems="center" justifyContent="space-between">
-                <Box style={{fontWeight: 'bold'}}>{i18n.get('Total ATI')}</Box>
-                <Box style={{fontSize: 18, fontWeight: 'bold'}}>
+                </p>
+              </div>
+              <div className="flex items-center justify-between">
+                <h6 className='text-base font-bold mb-0'>{i18n.get('Created on')}</h6>
+                <p className='text-base mb-0'>{parseDate(invoice.dueDate)}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <h6 className='text-base font-bold mb-0'>{i18n.get('Total WT')}</h6>
+                <p className='text-base mb-0'> {invoice.exTaxTotal}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <h6 className='text-base font-bold mb-0'>{i18n.get('Total ATI')}</h6>
+                <h5 className='text-lg font-bold mb-0'>
                   {invoice.inTaxTotal}
-                </Box>
-              </Box>
-              <Box>
-                <Button
-                  variant="dark"
-                  d="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  gap="10"
-                  w={100}
-                  rounded="pill">
-                  {i18n.get('Pay')} <MaterialIcon icon="east" />
+                </h5>
+              </div>
+              <div>
+                <Button className="flex items-center justify-center gap-3 w-full rounded-full">
+                  {i18n.get('Pay')} <MdEast className="text-2xl" />
                 </Button>
-              </Box>
-            </Box>
+              </div>
+            </div>
           );
         })}
-      </Box>
+      </div>
     </>
   );
 };
-
 export default Card;

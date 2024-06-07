@@ -1,15 +1,10 @@
 'use client';
-
-import {Box} from '@axelor/ui';
-
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
-import {i18n} from '@/lib/i18n';
-
+import { parseDate } from '@/utils';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import {InvoiceTable} from '.';
-
-export function InvoiceContent({invoice}: {invoice: any}) {
+import { InvoiceTable } from '.';
+export function InvoiceContent({ invoice }: { invoice: any }) {
   const {
     invoiceId,
     dueDate,
@@ -24,94 +19,85 @@ export function InvoiceContent({invoice}: {invoice: any}) {
     partner,
     paymentCondition,
   } = invoice;
-
   const {
     address: {
       addressl4,
       addressl6,
-      addressl7country: {name: countryName},
+      addressl7country: { name: countryName },
       zip,
     },
     name,
   } = company;
   const companyPartnerNumber = company.partner.fixedPhone.replace(/\./g, '-');
   const companyCityName = addressl6.split(' ').pop();
-  const {simpleFullName, mainAddress} = partner;
+  const { simpleFullName, mainAddress } = partner;
   const partnerNumber = partner.fixedPhone.replace(/\./g, '-');
   const partnerCityName = mainAddress.addressl6.split(' ').pop();
 
   return (
     <>
-      <Box border py={1}>
-        <Box rounded border shadow px={5} py={5}>
-          <Box d="flex" justifyContent="space-between" mb={5}>
-            <Box style={{fontSize: 48}} textTransform="uppercase">
+      <div className="rounded-lg border shadow px-12 py-12 w-full overflow-auto">
+        <div className="min-w-[837px] lg:min-w-[100%] overflow-x-auto">
+          <div className="flex justify-between mb-12">
+            <h2 style={{ fontSize: "48px" }} className="uppercase">
               {i18n.get('Invoice')}
-            </Box>
-            <Box textAlign="end">
-              <Box fontWeight="bold">{name}</Box>
-              <Box>{addressl4}</Box>
-              <Box>{companyCityName}</Box>
-              <Box>{zip}</Box>
-              <Box>{countryName}</Box>
-              <Box>{companyPartnerNumber}</Box>
-            </Box>
-          </Box>
-          <Box
-            d="flex"
-            w={100}
-            gap="3rem"
-            mb={4}
-            style={{
-              paddingBottom: '4rem',
-              borderBottom: '3px solid #2924BF',
-            }}>
-            <Box flex="1">
-              <Box style={{color: '#7441C4', fontWeight: 500}}>
+            </h2>
+            <div className='text-right'>
+              <h6 className="font-bold">{name}</h6>
+              <p className="mb-0">{addressl4}</p>
+              <p className="mb-0">{companyCityName}</p>
+              <p className="mb-0">{zip}</p>
+              <p className="mb-0">{countryName}</p>
+              <p className="mb-0">{companyPartnerNumber}</p>
+            </div>
+          </div>
+          <div
+            className="flex w-full gap-12 mb-6 pb-[64px] border-b-[3px] border-solid border-[#2924BF]">
+            <div className="flex-1">
+              <h6 className="text-[#7441C4] font-medium">
                 {i18n.get('Billed To')}
-              </Box>
-              <Box>{simpleFullName}</Box>
-              <Box>{mainAddress.addressl4}</Box>
-              <Box>{partnerCityName}</Box>
-              <Box>{mainAddress.zip}</Box>
-              <Box>{mainAddress.addressl7country.name}</Box>
-              <Box>{partnerNumber}</Box>
-            </Box>
-            <Box flex="1" d="flex" flexDirection="column" gap="2rem">
-              <Box d="flex" justifyContent="space-between">
-                <Box>
-                  <Box style={{color: '#7441C4', fontWeight: 500}}>
+              </h6>
+              <p className="mb-0">{simpleFullName}</p>
+              <p className="mb-0">{mainAddress.addressl4}</p>
+              <p className="mb-0">{partnerCityName}</p>
+              <p className="mb-0">{mainAddress.zip}</p>
+              <p className="mb-0">{mainAddress.addressl7country.name}</p>
+              <p className="mb-0">{partnerNumber}</p>
+            </div>
+            <div className="flex-1 flex flex-col gap-8">
+              <div className="flex justify-between">
+                <div>
+                  <h6 className="text-[#7441C4] font-medium">
                     {i18n.get('Date Issued')}
-                  </Box>
-                  <Box>{parseDate(invoiceDate)}</Box>
-                </Box>
-                <Box>
-                  <Box style={{color: '#7441C4', fontWeight: 500}}>
+                  </h6>
+                  <p className="mb-0">{parseDate(invoiceDate)}</p>
+                </div>
+                <div>
+                  <h6 className="text-[#7441C4] font-medium">
                     {i18n.get('Invoice Number')}
-                  </Box>
-                  <Box>{invoiceId}</Box>
-                </Box>
-                <Box>
-                  <Box style={{color: '#7441C4', fontWeight: 500}}>
+                  </h6>
+                  <p className="mb-0">{invoiceId}</p>
+                </div>
+                <div>
+                  <h6 className="text-[#7441C4] font-medium">
                     {i18n.get('Amount Due')}
-                  </Box>
-                  <Box fontWeight="bold">
+                  </h6>
+                  <p className="mb-0 font-bold">
                     {amountRemaining.value} {amountRemaining.symbol}
-                  </Box>
-                </Box>
-              </Box>
-              <Box d="flex">
-                <Box>
-                  <Box style={{color: '#7441C4', fontWeight: 500}}>
+                  </p>
+                </div>
+              </div>
+              <div className="flex">
+                <div>
+                  <h6 className="text-[#7441C4] font-medium">
                     {i18n.get('Due Date')}
-                  </Box>
-                  <Box>{parseDate(dueDate)}</Box>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-
-          <Box mb={3}>
+                  </h6>
+                  <p className="mb-0">{parseDate(dueDate)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mb-4">
             <InvoiceTable
               invoiceLineList={invoiceLineList}
               exTaxTotal={exTaxTotal}
@@ -119,23 +105,22 @@ export function InvoiceContent({invoice}: {invoice: any}) {
               amountRemaining={amountRemaining}
               taxTotal={taxTotal}
             />
-          </Box>
-          <Box mb={3}>
-            <Box style={{color: '#7441C4', fontWeight: 500}}>
+          </div>
+          <div className="mb-4">
+            <h6 className="text-[#7441C4] font-medium">
               {i18n.get('Notes')}
-            </Box>
-            <Box>{note}</Box>
-          </Box>
-          <Box>
-            <Box style={{color: '#7441C4', fontWeight: 500}}>
+            </h6>
+            <p className="mb-0">{note}</p>
+          </div>
+          <div>
+            <h6 className="text-[#7441C4] font-medium">
               {i18n.get('Terms')}
-            </Box>
-            <Box>{paymentCondition.name}</Box>
-          </Box>
-        </Box>
-      </Box>
+            </h6>
+            <p className="mb-0">{paymentCondition.name}</p>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
-
 export default InvoiceContent;
