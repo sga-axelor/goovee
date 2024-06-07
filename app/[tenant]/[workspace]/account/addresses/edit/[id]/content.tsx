@@ -1,4 +1,4 @@
-"use client";
+'use client';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {AddressForm} from '@/ui/components';
@@ -49,9 +49,7 @@ export default function Content({
 
   return (
     <>
-      <h2 className="mb-4">
-        {i18n.get("Edit Address")}
-      </h2>
+      <h2 className="mb-4">{i18n.get('Edit Address')}</h2>
       <AddressForm
         onSubmit={handleSubmit}
         countries={countries}
