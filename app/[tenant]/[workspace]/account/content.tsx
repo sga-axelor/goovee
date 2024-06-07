@@ -1,13 +1,13 @@
 'use client';
 
-import Link from "next/link";
-import { useSession } from "next-auth/react";
+import Link from 'next/link';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
-import { i18n } from "@/lib/i18n";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { SUBAPP_PAGE } from "@/constants";
-import DynamicIcon from "@/components/ui/icons";
+import {i18n} from '@/lib/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {SUBAPP_PAGE} from '@/constants';
+import DynamicIcon from '@/components/ui/icons';
 
 export default function Content({subapps}: {subapps: any}) {
   const {workspaceURI} = useWorkspace();
@@ -16,12 +16,12 @@ export default function Content({subapps}: {subapps: any}) {
   return (
     <>
       <h4 className="text-lg font-medium text-primary mb-6">
-          {i18n.get("My Account")} {session ? `- ${session?.user?.name}` : ""}{" "}
-          {session?.user && (
-            <span className="text-secondary text-base">
-              ({session?.user?.email})
-            </span>
-          )}
+        {i18n.get('My Account')} {session ? `- ${session?.user?.name}` : ''}{' '}
+        {session?.user && (
+          <span className="text-secondary text-base">
+            ({session?.user?.email})
+          </span>
+        )}
       </h4>
       <div className="flex flex-col gap-4">
         {subapps
@@ -34,7 +34,10 @@ export default function Content({subapps}: {subapps: any}) {
           .map(({code, name, icon, color, background}: any) => {
             const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
             return (
-              <Link key={code} href={`${workspaceURI}/${code}${page}`} className="no-underline">
+              <Link
+                key={code}
+                href={`${workspaceURI}/${code}${page}`}
+                className="no-underline">
                 <div className="p-6 rounded-lg border bg-background">
                   <div className="flex items-center gap-2">
                     <div
@@ -44,10 +47,12 @@ export default function Content({subapps}: {subapps: any}) {
                         color,
                       }}>
                       {icon && (
-                        <DynamicIcon icon={icon as any} fontSize="2.5rem"/>
+                        <DynamicIcon icon={icon as any} fontSize="2.5rem" />
                       )}
                     </div>
-                    <p className="text-lg font-semibold text-primary mb-0">{i18n.get(name)}</p>
+                    <p className="text-lg font-semibold text-primary mb-0">
+                      {i18n.get(name)}
+                    </p>
                   </div>
                 </div>
               </Link>

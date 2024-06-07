@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from "next/navigation";
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {capitalise} from '@/utils';
@@ -66,9 +66,7 @@ export default function Content({
 
   return (
     <>
-      <h2 className="mb-4">
-        {title}
-      </h2>
+      <h2 className="mb-4">{title}</h2>
       <AddressForm onSubmit={handleSubmit} countries={countries} />
     </>
   );

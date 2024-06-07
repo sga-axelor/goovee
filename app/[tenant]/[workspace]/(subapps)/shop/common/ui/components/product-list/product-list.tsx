@@ -1,20 +1,20 @@
 'use client';
 
-import React, { Fragment } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { BiSearch } from "react-icons/bi";
-import { MdOutlineFilterAlt } from "react-icons/md";
-import { LuChevronRight } from "react-icons/lu";
-import { IoIosArrowRoundForward } from "react-icons/io";
-import { MdGridView } from "react-icons/md";
-import { MdOutlineList } from "react-icons/md";
-import { TextField } from "@/components/ui/TextField";
+import React, {Fragment} from 'react';
+import {useRouter, usePathname, useSearchParams} from 'next/navigation';
+import {BiSearch} from 'react-icons/bi';
+import {MdOutlineFilterAlt} from 'react-icons/md';
+import {LuChevronRight} from 'react-icons/lu';
+import {IoIosArrowRoundForward} from 'react-icons/io';
+import {MdGridView} from 'react-icons/md';
+import {MdOutlineList} from 'react-icons/md';
+import {TextField} from '@/components/ui/TextField';
 // ---- CORE IMPORTS ---- //
-import { Pagination } from "@/ui/components";
-import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { i18n } from "@/lib/i18n";
-import type { ComputedProduct, Product, PortalWorkspace } from "@/types";
+import {Pagination} from '@/ui/components';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
+import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {
   MobileSortBy,
@@ -33,7 +33,7 @@ function MobileFilters() {
   return (
     <div className="flex items-center gap-2 text-secondary">
       <MdOutlineFilterAlt className="text-xl" />
-      <p className="mb-0 font-bold">{i18n.get("Filters")}</p>
+      <p className="mb-0 font-bold">{i18n.get('Filters')}</p>
     </div>
   );
 }
@@ -56,15 +56,15 @@ export function ProductList({
   showSummary?: boolean;
   productPath?: string;
 }) {
-  const { cart, addItem } = useCart();
-  const { workspaceURI } = useWorkspace();
-  const { page, pages } = pageInfo;
+  const {cart, addItem} = useCart();
+  const {workspaceURI} = useWorkspace();
+  const {page, pages} = pageInfo;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const search = searchParams.get("search") || "";
-  const sort = searchParams.get("sort");
-  const view = searchParams.get("view") || VIEW.GRID;
+  const search = searchParams.get('search') || '';
+  const sort = searchParams.get('sort');
+  const view = searchParams.get('view') || VIEW.GRID;
   const updateSearchParams = (
     values: Array<{
       key: string;
@@ -97,8 +97,8 @@ export function ProductList({
       {key: 'search', value: formData.get('search') as string},
     ]);
   };
-  const handleChangeSortBy = ({ value }: any) => {
-    updateSearchParams([{ key: "sort", value }]);
+  const handleChangeSortBy = ({value}: any) => {
+    updateSearchParams([{key: 'sort', value}]);
   };
   const handleChangeView = (type: string) => {
     updateSearchParams([{key: 'view', value: type}]);
@@ -136,12 +136,12 @@ export function ProductList({
         <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]">
           <div className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
           <h1 className="font-bold m-0 z-[1] text-primary-foreground">
-            {i18n.get("Shop summary")}
+            {i18n.get('Shop summary')}
           </h1>
         </div>
       )}
 
-      <div className={"container portal-container"} >
+      <div className={'container portal-container'}>
         <div className="mb-6">
           {breadcrumbs?.length > 1 ? (
             <div className="flex items-center gap-4">
@@ -154,12 +154,11 @@ export function ProductList({
                       <div
                         {...(islast
                           ? {
-                            color: "primary",
-                            fontWeight: "bold",
-                          }
-                          : { color: "secondary" })}
-                        onClick={() => handleCategoryClick(crumb)}
-                      >
+                              color: 'primary',
+                              fontWeight: 'bold',
+                            }
+                          : {color: 'secondary'})}
+                        onClick={() => handleCategoryClick(crumb)}>
                         {i18n.get(crumb.name)}
                       </div>
                       {!islast && (
@@ -186,12 +185,12 @@ export function ProductList({
         <div className="flex items-center justify-end mb-2">
           <div className="flex items-center gap-4">
             <MdGridView
-              color={isGridView ? "primary" : "secondary"}
+              color={isGridView ? 'primary' : 'secondary'}
               className="cursor-pointer text-2xl"
               onClick={() => handleChangeView(VIEW.GRID)}
             />
             <MdOutlineList
-              color={isListView ? "primary" : "secondary"}
+              color={isListView ? 'primary' : 'secondary'}
               className="cursor-pointer text-2xl"
               onClick={() => handleChangeView(VIEW.LIST)}
             />
@@ -200,8 +199,7 @@ export function ProductList({
         <div className="flex items-start gap-4 mb-4">
           <form
             onSubmit={handleChangeSearch}
-            className={`${styles.wrapper} basis-full md:basis-[70%]`}
-          >
+            className={`${styles.wrapper} basis-full md:basis-[70%]`}>
             <TextField
               name="search"
               placeholder="Search"
@@ -219,7 +217,6 @@ export function ProductList({
           />
         </div>
         <div className="bg-white shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
-          
           <MobileSortBy
             active={sort}
             workspace={workspace}
@@ -228,8 +225,7 @@ export function ProductList({
           <MobileFilters />
         </div>
         <div
-          className={`${isListView ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"} grid gap-5 `}
-        >
+          className={`${isListView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'} grid gap-5 `}>
           {products?.length ? (
             products.map(computedProduct => {
               const quantity = cart?.items?.find(
@@ -250,7 +246,7 @@ export function ProductList({
               );
             })
           ) : (
-            <div>{i18n.get("No product available.")}</div>
+            <div>{i18n.get('No product available.')}</div>
           )}
         </div>
         <div className="mt-6 mb-4 flex items-center justify-center">

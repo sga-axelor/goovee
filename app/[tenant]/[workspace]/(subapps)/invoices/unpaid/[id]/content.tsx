@@ -1,18 +1,18 @@
 'use client';
 import React from 'react';
-import { Separator } from '@ui/components/separator';
+import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import { parseDate } from '@/utils';
-import { Tag } from '@/ui/components';
-import { i18n } from '@/lib/i18n';
+import {parseDate} from '@/utils';
+import {Tag} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { Invoice, Total } from '@/subapps/invoices/common/ui/components';
+import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
 import {
   INVOICE_STATUS,
   INVOICE_TYPE,
 } from '@/subapps/invoices/common/constants/invoices';
 
-export default function Content({ invoice }: any) {
+export default function Content({invoice}: any) {
   const {
     invoiceId,
     dueDate,
@@ -21,7 +21,7 @@ export default function Content({ invoice }: any) {
     exTaxTotal,
     amountRemaining,
     invoiceLineList,
-    currency: { numberOfDecimals },
+    currency: {numberOfDecimals},
   } = invoice;
   const status =
     Number(amountRemaining.value) !== INVOICE_STATUS.UNPAID
@@ -35,14 +35,14 @@ export default function Content({ invoice }: any) {
         <h4 className="text-xl font-medium mb-4">
           {i18n.get('Invoice number')} {invoiceId}
         </h4>
-        <div className='bg-white flex md:block flex-col md:flex-row px-6 py-4 mb-6 rounded-lg'>
-          <h4 className="text-xl font-medium mb-0">{i18n.get('Informations')}</h4>
+        <div className="bg-white flex md:block flex-col md:flex-row px-6 py-4 mb-6 rounded-lg">
+          <h4 className="text-xl font-medium mb-0">
+            {i18n.get('Informations')}
+          </h4>
           <Separator className="my-2" />
           <div>
             <div className="flex items-center gap-4">
-              <h5 className="text-lg font-semibold">
-                {i18n.get('Status')}:
-              </h5>
+              <h5 className="text-lg font-semibold">{i18n.get('Status')}:</h5>
               <div>
                 <Tag variant={isUnpaid ? 'error' : 'success'}>
                   {i18n.get(status)}
@@ -55,11 +55,14 @@ export default function Content({ invoice }: any) {
                   ? `${i18n.get('Due date:')}`
                   : `${i18n.get('Paid on:')}`}
               </h5>
-              <p className="text-base mb-0"> {parseDate(isUnpaid ? dueDate : invoiceDate)}</p>
+              <p className="text-base mb-0">
+                {' '}
+                {parseDate(isUnpaid ? dueDate : invoiceDate)}
+              </p>
             </div>
           </div>
         </div>
-        <div className='block md:flex flex-col lg:flex-row gap-4 mb-6 rounded-lg'>
+        <div className="block md:flex flex-col lg:flex-row gap-4 mb-6 rounded-lg">
           <Invoice invoice={invoice} isUnpaid={isUnpaid} />
           {isUnpaid && (
             <Total

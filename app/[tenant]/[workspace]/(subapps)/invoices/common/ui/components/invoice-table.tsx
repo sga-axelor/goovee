@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 // ---- CORE IMPORTS ---- //
-import { i18n } from '@/lib/i18n';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {
   InvoiceTable as Invoice_Table,
@@ -9,9 +9,9 @@ import {
   TableFooterProps,
   TableHeaderProps,
 } from '@/subapps/invoices/common/types/invoices';
-import { INVOICE_COLUMNS } from '@/subapps/invoices/common/constants/invoices';
+import {INVOICE_COLUMNS} from '@/subapps/invoices/common/constants/invoices';
 
-function TableHeader({ columns }: TableHeaderProps) {
+function TableHeader({columns}: TableHeaderProps) {
   return (
     <>
       {columns.map((column, i) => (
@@ -25,21 +25,24 @@ function TableHeader({ columns }: TableHeaderProps) {
   );
 }
 
-function TableBody({ invoiceLineList }: TableBodyProps) {
-  return invoiceLineList.map(({ productName, price, qty, exTaxTotal }, index) => {
+function TableBody({invoiceLineList}: TableBodyProps) {
+  return invoiceLineList.map(({productName, price, qty, exTaxTotal}, index) => {
     const showBottomBorder = index !== invoiceLineList.length - 1;
     return (
       <React.Fragment key={index}>
         <div className={`${showBottomBorder ? 'border-b' : ''} py-2`}>
           <p className="mb-0">{productName}</p>
         </div>
-        <div className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
+        <div
+          className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
           <p className="mb-0">{price}</p>
         </div>
-        <div className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
+        <div
+          className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
           <p className="mb-0">{qty}</p>
         </div>
-        <div className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
+        <div
+          className={`${showBottomBorder ? 'border-b' : ''} py-2 text-right`}>
           <p className="mb-0">{exTaxTotal}</p>
         </div>
       </React.Fragment>
@@ -70,8 +73,7 @@ function TableFooter({
       </div>
       {/* Row 5 */}
       <div></div>
-      <div
-        className="!border-b-[3px] border-solid !border-[#2924BF] py-2 text-right">
+      <div className="!border-b-[3px] border-solid !border-[#2924BF] py-2 text-right">
         <p className="mb-0">{i18n.get('Total')}</p>
         <p className="mb-0">{i18n.get('Deposit Requested')}</p>
       </div>
@@ -100,7 +102,7 @@ export function InvoiceTable({
   amountRemaining,
   taxTotal,
 }: Invoice_Table) {
-  const sumOfDiscounts = invoiceLineList.reduce((total, { discountAmount }) => {
+  const sumOfDiscounts = invoiceLineList.reduce((total, {discountAmount}) => {
     return total + parseFloat(discountAmount);
   }, 0);
 

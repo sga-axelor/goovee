@@ -1,171 +1,171 @@
 type Theme = {
-    palette: {
-      blue: string;
-      green: string;
-      purple: string;
-      red: string;
-      yellow: string;
-      cyan: string;
-      white: string;
-      black: string;
-      body_color: string;
-      emphasis_color: string;
+  palette: {
+    blue: string;
+    green: string;
+    purple: string;
+    red: string;
+    yellow: string;
+    cyan: string;
+    white: string;
+    black: string;
+    body_color: string;
+    emphasis_color: string;
+  };
+  border: {
+    color: string;
+  };
+  typography: {
+    body: {
+      fontSize: string;
     };
-    border: {
-      color: string;
-    };
-    typography: {
-      body: {
-        fontSize: string;
+  };
+  components: {
+    Shell: {
+      sidebar: {
+        bg: string;
       };
     };
-    components: {
-      Shell: {
-        sidebar: {
-          bg: string;
-        };
-      };
-      Panel: {
-        header: {
-          bg: string;
-          border: {
-            width: number;
-          };
-        };
-        title: {
-          padding: string;
-        };
-      };
-      Dropdown: {
-        border: {
-          color: string;
-        };
-        item_hover: {
-          bg: string;
-        };
-        item_active: {
-          bg: string;
-          color: string;
-        };
-        divider: {
-          bg: string;
-        };
-      };
-      NavMenu: {
-        item: {
-          border: {
-            radius: string;
-          };
-        };
-        item_hover: {
-          bg: string;
-        };
-        item_active: {
-          bg: string;
-          color: string;
-        };
-        icon: {
-          bg: string;
-        };
-        icon_hover: {
-          bg: string;
-        };
-        icon_active: {
-          color: string;
-        };
-      };
-      NavTabs: {
-        item: {
-          padding: string;
-        };
-        text: {
-          transform: string;
-        };
-        icon: {
-          bg: string;
-        };
-        icon_hover: {
-          bg: string;
-        };
-        icon_active: {
-          bg: string;
-        };
-      };
-      CommandBar: {
-        button: {
-          padding: string;
-        };
-        button_hover: {
-          bg: string;
-        };
-        button_active: {
-          bg: string;
-        };
-      };
-      Table: {
+    Panel: {
+      header: {
         bg: string;
         border: {
-          color: string;
-        };
-        header: {
-          bg: string;
-        };
-        row_odd: {
-          bg: string;
-        };
-        row_hover: {
-          bg: string;
-        };
-        row_active: {
-          bg: string;
-        };
-        cell_active: {
-          bg: string;
-        };
-        cell: {
-          padding: string;
+          width: number;
         };
       };
-      Button: {
-        paddingX: string;
-        paddingY: string;
-      };
-      Badge: {
+      title: {
         padding: string;
+      };
+    };
+    Dropdown: {
+      border: {
+        color: string;
+      };
+      item_hover: {
+        bg: string;
+      };
+      item_active: {
+        bg: string;
+        color: string;
+      };
+      divider: {
+        bg: string;
+      };
+    };
+    NavMenu: {
+      item: {
         border: {
           radius: string;
         };
       };
-      Form: {
-        padding: string;
-        gap: string;
+      item_hover: {
+        bg: string;
       };
-      Input: {
-        padding: string;
-        focus: {
-          shadow: string;
-          border_width: string;
-        };
-        invalid_focus: {
-          shadow: string;
-          border_width: string;
-        };
-        placeholder: {
-          color: string;
-        };
-        invalid: {
-          border_width: string;
-        };
-        border: {
-          radius: number;
-        };
-        border_width: string;
+      item_active: {
+        bg: string;
+        color: string;
+      };
+      icon: {
+        bg: string;
+      };
+      icon_hover: {
+        bg: string;
+      };
+      icon_active: {
+        color: string;
       };
     };
+    NavTabs: {
+      item: {
+        padding: string;
+      };
+      text: {
+        transform: string;
+      };
+      icon: {
+        bg: string;
+      };
+      icon_hover: {
+        bg: string;
+      };
+      icon_active: {
+        bg: string;
+      };
+    };
+    CommandBar: {
+      button: {
+        padding: string;
+      };
+      button_hover: {
+        bg: string;
+      };
+      button_active: {
+        bg: string;
+      };
+    };
+    Table: {
+      bg: string;
+      border: {
+        color: string;
+      };
+      header: {
+        bg: string;
+      };
+      row_odd: {
+        bg: string;
+      };
+      row_hover: {
+        bg: string;
+      };
+      row_active: {
+        bg: string;
+      };
+      cell_active: {
+        bg: string;
+      };
+      cell: {
+        padding: string;
+      };
+    };
+    Button: {
+      paddingX: string;
+      paddingY: string;
+    };
+    Badge: {
+      padding: string;
+      border: {
+        radius: string;
+      };
+    };
+    Form: {
+      padding: string;
+      gap: string;
+    };
+    Input: {
+      padding: string;
+      focus: {
+        shadow: string;
+        border_width: string;
+      };
+      invalid_focus: {
+        shadow: string;
+        border_width: string;
+      };
+      placeholder: {
+        color: string;
+      };
+      invalid: {
+        border_width: string;
+      };
+      border: {
+        radius: number;
+      };
+      border_width: string;
+    };
   };
-  
-const generateCssVar = (css:Theme) =>{
-    const dynamicCss = `
+};
+
+const generateCssVar = (css: Theme) => {
+  const dynamicCss = `
     :root {
     --palette-blue: ${css?.palette?.blue};
     --palette-green: ${css?.palette?.green};
@@ -228,6 +228,6 @@ const generateCssVar = (css:Theme) =>{
     --components-Input-border_width: ${css?.components?.Input?.border_width};
     }
     `;
-    return dynamicCss
-}
+  return dynamicCss;
+};
 export default generateCssVar;

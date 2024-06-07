@@ -1,15 +1,15 @@
 'use client';
 import React from 'react';
-import { MdOutlineFileDownload } from "react-icons/md";
-import { Separator } from '@ui/components/separator';
-import { Button } from '@ui/components/button';
+import {MdOutlineFileDownload} from 'react-icons/md';
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
-import { i18n } from '@/lib/i18n';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { InvoiceProps } from '@/subapps/invoices/common/types/invoices';
-import { InvoiceContent } from '.';
+import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
+import {InvoiceContent} from '.';
 
-export function Invoice({ invoice, isUnpaid }: InvoiceProps) {
+export function Invoice({invoice, isUnpaid}: InvoiceProps) {
   return (
     <>
       <div
@@ -20,10 +20,13 @@ export function Invoice({ invoice, isUnpaid }: InvoiceProps) {
           <Button
             variant="outline"
             className="flex items-center justify-center gap-3 rounded-full">
-            <MdOutlineFileDownload className="text-2xl" /> {i18n.get('Download Invoice')}
+            <MdOutlineFileDownload className="text-2xl" />{' '}
+            {i18n.get('Download Invoice')}
           </Button>
         </div>
-        <div className="rounded-lg" style={{ border: '1px solid red !important' }}>
+        <div
+          className="rounded-lg"
+          style={{border: '1px solid red !important'}}>
           <InvoiceContent invoice={invoice} />
         </div>
       </div>

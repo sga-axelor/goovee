@@ -1,21 +1,21 @@
 'use client';
 
-import React, { Fragment, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { MdChevronRight } from "react-icons/md";
-import { MdOutlineShoppingBasket } from "react-icons/md";
+import React, {Fragment, useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {MdChevronRight} from 'react-icons/md';
+import {MdOutlineShoppingBasket} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
-import { Quantity, ThumbsCarousel } from "@/ui/components";
-import { useQuantity } from "@/ui/hooks";
-import { i18n } from "@/lib/i18n";
-import { getImageURL } from "@/utils/product";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
-import type { ComputedProduct, PortalWorkspace } from "@/types";
-import { Label } from "@ui/components/label";
-import { Button } from "@ui/components/button";
+import {Quantity, ThumbsCarousel} from '@/ui/components';
+import {useQuantity} from '@/ui/hooks';
+import {i18n} from '@/lib/i18n';
+import {getImageURL} from '@/utils/product';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import type {ComputedProduct, PortalWorkspace} from '@/types';
+import {Label} from '@ui/components/label';
+import {Button} from '@ui/components/button';
 // ---- LOCAL IMPORTS ---- //
-import { Categories } from "..";
+import {Categories} from '..';
 export function ProductView({
   product: computedProduct,
   workspace,
@@ -35,7 +35,7 @@ export function ProductView({
   const {addItem, getProductQuantity, getProductNote, setProductNote} =
     useCart();
   const [cartQuantity, setCartQuantity] = useState(0);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState('');
   const handleAddToCart = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
@@ -70,7 +70,7 @@ export function ProductView({
   return (
     <div>
       <Categories items={categories} onClick={handleCategoryClick} />
-      <div className={"container py-2 md:py-4"} >
+      <div className={'container py-2 md:py-4'}>
         <div className="mb-6 pt-4">
           {breadcrumbs?.length > 1 ? (
             <div className="flex items-center gap-4">
@@ -81,18 +81,14 @@ export function ProductView({
                     <div
                       {...(islast
                         ? {}
-                        : { className: "cursor-pointer flex items-center" })}
-                    >
+                        : {className: 'cursor-pointer flex items-center'})}>
                       <div
                         onClick={() => {
                           if (!islast) {
-                            handleCategoryClick(crumb)
+                            handleCategoryClick(crumb);
                           }
                         }}
-                        className={`${islast ? "text-primary font-bold":"text-secondary"}`}
-                       
-                      >
-
+                        className={`${islast ? 'text-primary font-bold' : 'text-secondary'}`}>
                         {i18n.get(crumb.name)}
                       </div>
                       {!islast && (
@@ -133,12 +129,11 @@ export function ProductView({
             <p
               className="text-sm mb-0"
               dangerouslySetInnerHTML={{
-                __html: product.description || "",
-              }}
-            ></p>
+                __html: product.description || '',
+              }}></p>
             {Boolean(cartQuantity) && product.allowCustomNote && (
               <div>
-                <Label className="text-secondary">{i18n.get("Note")}</Label>
+                <Label className="text-secondary">{i18n.get('Note')}</Label>
                 <textarea
                   className="border rounded-lg"
                   value={note}
@@ -155,12 +150,11 @@ export function ProductView({
             </div>
             <Button
               onClick={handleAddToCart}
-              className="w-full rounded-full mt-4"
-            >
+              className="w-full rounded-full mt-4">
               <div className="flex items-center justify-center gap-2">
                 <MdOutlineShoppingBasket className="text-primary-foreground text-2xl" />
                 <span className="text-sm font-medium mb-0">
-                  {i18n.get("Add to Cart")}
+                  {i18n.get('Add to Cart')}
                 </span>
               </div>
             </Button>

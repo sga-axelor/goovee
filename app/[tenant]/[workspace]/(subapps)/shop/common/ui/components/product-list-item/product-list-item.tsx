@@ -1,13 +1,13 @@
-"use client";
-import React from "react";
-import { MdAddShoppingCart } from "react-icons/md";
-import { Button } from "@/components/ui/button";
+'use client';
+import React from 'react';
+import {MdAddShoppingCart} from 'react-icons/md';
+import {Button} from '@/components/ui/button';
 // ---- CORE IMPORTS ---- //
-import { BackgroundImage } from "@/ui/components";
-import { getImageURL } from "@/utils/product";
-import { useResponsive } from "@/ui/hooks";
-import { i18n } from "@/lib/i18n";
-import type { ComputedProduct, Product } from "@/types";
+import {BackgroundImage} from '@/ui/components';
+import {getImageURL} from '@/utils/product';
+import {useResponsive} from '@/ui/hooks';
+import {i18n} from '@/lib/i18n';
+import type {ComputedProduct, Product} from '@/types';
 export type ProductListItemProps = {
   product: ComputedProduct;
   quantity?: string | number;
@@ -22,8 +22,8 @@ export function ProductListItem({
   onClick,
   displayPrices,
 }: ProductListItemProps) {
-  const { product, price } = computedProduct;
-  const { displayTwoPrices, displayPrimary, displaySecondary } = price;
+  const {product, price} = computedProduct;
+  const {displayTwoPrices, displayPrimary, displaySecondary} = price;
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
   };
@@ -31,15 +31,14 @@ export function ProductListItem({
     onClick && onClick(product);
   };
   const res: any = useResponsive();
-  const large = ["md", "lg", "xl", "xxl"].some((x) => res[x]);
+  const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
   const clamp = (window as any)?.$clamp;
 
   return (
     <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[238px_1fr] gap-6 w-full bg-background text-primary">
       <BackgroundImage
         className="rounded-l-lg relative bg-cover md:w-[238px] w-[80px] md:h-[235px] h-[80px]"
-        src={getImageURL(product.images?.[0])}
-      >
+        src={getImageURL(product.images?.[0])}>
         {Boolean(quantity) && (
           <div className="border shadow-lg absolute bottom-4 right-4 bg-white p-1 md:p-4 rounded-full flex items-center justify-center w-[30px] md:w-[60px] h-[30px] md:h-[60px]">
             <p className="mb-0 text-sm md:text-xl">{quantity}</p>
@@ -76,22 +75,20 @@ export function ProductListItem({
                 __html: product.description || '',
               }}
               ref={(clampee: any) => {
-                !large && clampee && clamp?.(clampee, { clamp: 3 });
-              }}
-            ></p>
+                !large && clampee && clamp?.(clampee, {clamp: 3});
+              }}></p>
           </>
         </div>
         <div className="flex justify-end">
           <Button
             onClick={handleAdd}
-            className="flex bg-primary gap-2 items-center rounded-full w-12 md:w-auto h-12 md:h-auto"
-          >
+            className="flex bg-primary gap-2 items-center rounded-full w-12 md:w-auto h-12 md:h-auto">
             <div className="inline-flex">
               <MdAddShoppingCart className="text-primary-foreground text-2xl" />
             </div>
             {large && (
               <p className="text-sm font-medium mb-0 text-primary-foreground">
-                {i18n.get("Add to cart")}
+                {i18n.get('Add to cart')}
               </p>
             )}
           </Button>

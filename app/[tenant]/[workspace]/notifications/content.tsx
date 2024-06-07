@@ -1,4 +1,4 @@
-"use client";
+'use client';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 
@@ -6,7 +6,7 @@ export default function Content() {
   return (
     <div className="px-4 md:px-12 py-2 md:py-4">
       <h2 className="text-3xl font-bold text-primary mb-4">
-        {i18n.get("Notifications")}
+        {i18n.get('Notifications')}
       </h2>
     </div>
   );

@@ -1,20 +1,20 @@
 'use client';
 import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import {usePathname, useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
-import { Container, NavView } from '@/ui/components';
-import { i18n } from '@/lib/i18n';
+import {Container, NavView} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {
   ARCHIVED_INVOICE_COLUMNS,
   ITEMS,
 } from '@/subapps/invoices/common/constants/invoices';
-import { Card, ArchivedTable } from '@/subapps/invoices/common/ui/components';
+import {Card, ArchivedTable} from '@/subapps/invoices/common/ui/components';
 type ContentProps = {
   invoices: [];
   pageInfo?: any;
 };
-export default function Content({ invoices = [] }: ContentProps) {
+export default function Content({invoices = []}: ContentProps) {
   const router = useRouter();
   const pathname = usePathname();
   const handleTabChange = () => {

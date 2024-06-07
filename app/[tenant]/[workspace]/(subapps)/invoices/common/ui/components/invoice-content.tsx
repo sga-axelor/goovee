@@ -1,10 +1,10 @@
 'use client';
 // ---- CORE IMPORTS ---- //
-import { parseDate } from '@/utils';
-import { i18n } from '@/lib/i18n';
+import {parseDate} from '@/utils';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { InvoiceTable } from '.';
-export function InvoiceContent({ invoice }: { invoice: any }) {
+import {InvoiceTable} from '.';
+export function InvoiceContent({invoice}: {invoice: any}) {
   const {
     invoiceId,
     dueDate,
@@ -23,14 +23,14 @@ export function InvoiceContent({ invoice }: { invoice: any }) {
     address: {
       addressl4,
       addressl6,
-      addressl7country: { name: countryName },
+      addressl7country: {name: countryName},
       zip,
     },
     name,
   } = company;
   const companyPartnerNumber = company.partner.fixedPhone.replace(/\./g, '-');
   const companyCityName = addressl6.split(' ').pop();
-  const { simpleFullName, mainAddress } = partner;
+  const {simpleFullName, mainAddress} = partner;
   const partnerNumber = partner.fixedPhone.replace(/\./g, '-');
   const partnerCityName = mainAddress.addressl6.split(' ').pop();
 
@@ -39,10 +39,10 @@ export function InvoiceContent({ invoice }: { invoice: any }) {
       <div className="rounded-lg border shadow px-12 py-12 w-full overflow-auto">
         <div className="min-w-[837px] lg:min-w-[100%] overflow-x-auto">
           <div className="flex justify-between mb-12">
-            <h2 style={{ fontSize: "48px" }} className="uppercase">
+            <h2 style={{fontSize: '48px'}} className="uppercase">
               {i18n.get('Invoice')}
             </h2>
-            <div className='text-right'>
+            <div className="text-right">
               <h6 className="font-bold">{name}</h6>
               <p className="mb-0">{addressl4}</p>
               <p className="mb-0">{companyCityName}</p>
@@ -51,8 +51,7 @@ export function InvoiceContent({ invoice }: { invoice: any }) {
               <p className="mb-0">{companyPartnerNumber}</p>
             </div>
           </div>
-          <div
-            className="flex w-full gap-12 mb-6 pb-[64px] border-b-[3px] border-solid border-[#2924BF]">
+          <div className="flex w-full gap-12 mb-6 pb-[64px] border-b-[3px] border-solid border-[#2924BF]">
             <div className="flex-1">
               <h6 className="text-[#7441C4] font-medium">
                 {i18n.get('Billed To')}
@@ -107,15 +106,11 @@ export function InvoiceContent({ invoice }: { invoice: any }) {
             />
           </div>
           <div className="mb-4">
-            <h6 className="text-[#7441C4] font-medium">
-              {i18n.get('Notes')}
-            </h6>
+            <h6 className="text-[#7441C4] font-medium">{i18n.get('Notes')}</h6>
             <p className="mb-0">{note}</p>
           </div>
           <div>
-            <h6 className="text-[#7441C4] font-medium">
-              {i18n.get('Terms')}
-            </h6>
+            <h6 className="text-[#7441C4] font-medium">{i18n.get('Terms')}</h6>
             <p className="mb-0">{paymentCondition.name}</p>
           </div>
         </div>

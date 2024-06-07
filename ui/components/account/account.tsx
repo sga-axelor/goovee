@@ -1,11 +1,14 @@
-import { useState } from "react";
-import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/components/dropdown-menu";
-import { MdOutlineAccountCircle } from "react-icons/md";
-
-
+import {useState} from 'react';
+import Link from 'next/link';
+import {signOut, useSession} from 'next-auth/react';
+import {usePathname} from 'next/navigation';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@ui/components/dropdown-menu';
+import {MdOutlineAccountCircle} from 'react-icons/md';
 
 export function Account({baseURL = ''}: {baseURL?: string}) {
   const pathname = usePathname();
@@ -49,8 +52,8 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
             </>
           )}
         </DropdownMenuContent>
-      </DropdownMenu></>
-
+      </DropdownMenu>
+    </>
   );
 }
 

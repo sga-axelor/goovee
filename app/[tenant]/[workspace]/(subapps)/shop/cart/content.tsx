@@ -1,33 +1,33 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { LuChevronLeft } from "react-icons/lu";
-import { MdDeleteOutline } from "react-icons/md";
-import { Label } from "@ui/components/label";
-import { Button } from "@ui/components/button";
-import { Separator } from "@ui/components/separator";
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import Link from 'next/link';
+import {usePathname, useRouter} from 'next/navigation';
+import {useSession} from 'next-auth/react';
+import {LuChevronLeft} from 'react-icons/lu';
+import {MdDeleteOutline} from 'react-icons/md';
+import {Label} from '@ui/components/label';
+import {Button} from '@ui/components/button';
+import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import { BackgroundImage, Quantity } from "@/ui/components";
-import { useQuantity } from "@/ui/hooks";
-import { useCart } from "@/app/[tenant]/[workspace]/cart-context";
-import { computeTotal } from "@/utils/cart";
-import { getImageURL } from "@/utils/product";
-import { useWorkspace } from "@/app/[tenant]/[workspace]/workspace-context";
-import { i18n } from "@/lib/i18n";
-import type { Cart, Product, PortalWorkspace } from "@/types";
+import {BackgroundImage, Quantity} from '@/ui/components';
+import {useQuantity} from '@/ui/hooks';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {computeTotal} from '@/utils/cart';
+import {getImageURL} from '@/utils/product';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
+import type {Cart, Product, PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
-import { findProduct } from "@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart";
-function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
+import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
+function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   const [updating, setUpdating] = useState(false);
-  const { updateQuantity, getProductNote, setProductNote } = useCart();
-  const { workspaceURI } = useWorkspace();
-  const [note, setNote] = useState("");
+  const {updateQuantity, getProductNote, setProductNote} = useCart();
+  const {workspaceURI} = useWorkspace();
+  const [note, setNote] = useState('');
   if (!item.computedProduct) return null;
-  const { product, price } = item.computedProduct;
-  const { quantity, increment, decrement } = useQuantity({
+  const {product, price} = item.computedProduct;
+  const {quantity, increment, decrement} = useQuantity({
     initialValue: Number(item.quantity),
   });
   const handleUpdateQuantity = useCallback(
@@ -70,8 +70,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
   return (
     <div
       key={item.id}
-      className="flex-col md:flex-row flex items-start gap-6 bg-white p-4 rounded-lg"
-    >
+      className="flex-col md:flex-row flex items-start gap-6 bg-white p-4 rounded-lg">
       <BackgroundImage
         className="rounded-lg h-[200px] md:w-[200px] w-full min-w-[200px]"
         src={getImageURL(product?.images?.[0])}
@@ -81,16 +80,15 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
           <Link
             className="no-underline text-inherit"
             href={`${workspaceURI}/shop/product/${encodeURIComponent(
-              product.name
-            )}-${product.id}`}
-          >
+              product.name,
+            )}-${product.id}`}>
             <h6 className="text-base mb-2">
               {i18n.getValueAttribute(product.name)}
             </h6>
           </Link>
           {product.allowCustomNote && (
             <div>
-              <Label className="text-secondary">{i18n.get("Note")}</Label>
+              <Label className="text-secondary">{i18n.get('Note')}</Label>
               <textarea
                 className="border rounded-lg"
                 value={note}
@@ -100,7 +98,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
           )}
           <div className="flex flex-col mt-auto">
             <p className="mb-2 text-base font-semibold">
-              {i18n.get("Quantity")}
+              {i18n.get('Quantity')}
             </p>
             <Quantity
               value={quantity}
@@ -117,8 +115,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
           <Button
             disabled={disabled || updating}
             onClick={handleRemove(product)}
-            className="w-6 bg-transparent hover:bg-transparent text-[red] p-0 ml-auto mt-auto"
-          >
+            className="w-6 bg-transparent hover:bg-transparent text-[red] p-0 ml-auto mt-auto">
             <MdDeleteOutline className="text-2xl" />
           </Button>
         </div>
@@ -171,29 +168,29 @@ function CartSummary({
 }) {
   const pathname = usePathname();
   const noitem = !cart?.items?.length;
-  const { displayTotal } = computeTotal({ cart, workspace });
-  const { workspaceURI } = useWorkspace();
-  const { data: session } = useSession();
+  const {displayTotal} = computeTotal({cart, workspace});
+  const {workspaceURI} = useWorkspace();
+  const {data: session} = useSession();
   const authenticated = session?.user?.id;
 
   return (
     <div className="p-4 bg-white rounded-lg h-[420px]">
       {workspace?.config?.displayPrices && (
         <>
-          <p className="text-xl font-semibold mb-6">{i18n.get("Total")}</p>
+          <p className="text-xl font-semibold mb-6">{i18n.get('Total')}</p>
           <Separator className="mb-2" />
           <div className="flex justify-between">
-            <p className="text-base mb-4">{i18n.get("Products")}</p>
+            <p className="text-base mb-4">{i18n.get('Products')}</p>
             <p className="text-base font-semibold mb-4">{displayTotal}</p>
           </div>
           <div className="flex justify-between">
-            <p className="text-base mb-4">{i18n.get("Shipping")}</p>
-            <p className="text-xs mb-4">{i18n.get("To be determined")}</p>
+            <p className="text-base mb-4">{i18n.get('Shipping')}</p>
+            <p className="text-xs mb-4">{i18n.get('To be determined')}</p>
           </div>
           <Separator className="my-2" />
           <div className="flex justify-between my-4">
             <p className="text-base font-medium mb-0">
-              {i18n.get("Total Price")}
+              {i18n.get('Total Price')}
             </p>
             <p className="text-xl font-semibold mb-0">{displayTotal}</p>
           </div>
@@ -204,10 +201,9 @@ function CartSummary({
           {!hideCheckout && (
             <Link
               href={`${workspaceURI}/shop/cart/checkout`}
-              className="no-underline text-inherit"
-            >
+              className="no-underline text-inherit">
               <Button className="w-full rounded-full mb-4" disabled={noitem}>
-                {i18n.get("Checkout")}
+                {i18n.get('Checkout')}
               </Button>
             </Link>
           )}
@@ -225,11 +221,10 @@ function CartSummary({
         <Link
           className="no-underline text-inherit"
           href={`/auth/login?callbackurl=${encodeURIComponent(
-            pathname
-          )}&workspaceURI=${encodeURIComponent(workspaceURI)}`}
-        >
+            pathname,
+          )}&workspaceURI=${encodeURIComponent(workspaceURI)}`}>
           <Button className="mb-4 w-full rounded-full">
-            {i18n.get("Login for checkout")}
+            {i18n.get('Login for checkout')}
           </Button>
         </Link>
       )}
@@ -239,22 +234,17 @@ function CartSummary({
         <Button className="w-full rounded-full">
           <Link
             href={`${workspaceURI}/shop`}
-            className="no-underline text-inherit"
-          >
-            {i18n.get("Continue Shopping")}
+            className="no-underline text-inherit">
+            {i18n.get('Continue Shopping')}
           </Link>
         </Button>
       </div>
     </div>
   );
 }
-export default function Content({
-  workspace,
-}: {
-  workspace?: PortalWorkspace;
-}) {
-  const { cart, removeItem } = useCart();
-  const { workspaceURI } = useWorkspace();
+export default function Content({workspace}: {workspace?: PortalWorkspace}) {
+  const {cart, removeItem} = useCart();
+  const {workspaceURI} = useWorkspace();
   const router = useRouter();
   const [updating, setUpdating] = useState(false);
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
@@ -314,7 +304,7 @@ export default function Content({
 
   return (
     <>
-      <h4 className="mb-6 text-xl font-medium">{i18n.get("Cart")}</h4>
+      <h4 className="mb-6 text-xl font-medium">{i18n.get('Cart')}</h4>
       <div className="grid lg:grid-cols-[1fr_25%] xl:grid-cols-[1fr_21%] grid-cols-1 gap-4">
         {cart?.items?.length ? (
           <CartItems
@@ -324,7 +314,7 @@ export default function Content({
             workspace={workspace}
           />
         ) : (
-          <p className="text-xl font-bold">{i18n.get("Your cart is empty.")}</p>
+          <p className="text-xl font-bold">{i18n.get('Your cart is empty.')}</p>
         )}
         <CartSummary
           cart={$cart}
