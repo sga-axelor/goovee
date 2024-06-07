@@ -1,24 +1,28 @@
 import React from 'react';
 import { TableCell, TableRow } from '@ui/components/table';
-import { MdArrowDropDown } from "react-icons/md";
-import { MdArrowDropUp } from "react-icons/md";
-import {Collapse,} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
+import {
+  Collapsible,
+  CollapsibleContent,
+} from "@/components/ui/collapsible"
+
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import { i18n } from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
+import DynamicIcon from '@/components/ui/icons';
+import Image from 'next/image';
+
 export const ProductCard = (props: any) => {
-  const {product} = props;
+  const { product } = props;
   const [show, setShow] = React.useState(false);
   return (
     <>
+
       <TableRow key={product.id}>
         <TableCell className="p-4">
           <div className="flex items-center gap-2">
             <div className="flex items-center">
-              {/* please check by zaid */}
-              {/* <Image src="" alt="product" width="24" height="24" className={styles['product-image']} /> */}
+              <Image src="" alt="product" width="24" height="24" className={styles['product-image']} />
             </div>
             <p className="text-sm mb-0">
               {product.productName}
@@ -32,38 +36,41 @@ export const ProductCard = (props: any) => {
           {product.inTaxTotal}
         </TableCell>
         <TableCell>
-          {/* <MaterialIcon
-            icon={show ? '<MdArrowDropUp />' : '<MdArrowDropDown />'}
-            onClick={() => setShow(!show)}
-          /> */}
+          <DynamicIcon
+            icon={show ? 'MdArrowDropUp' : 'MdArrowDropDown'}
+            onClick={() => { setShow(!show) }}
+          />
         </TableCell>
       </TableRow>
       <TableRow>
         <TableCell colSpan={4} >
-          <Collapse in={show}>
-            <div>
-              <div className="flex justify-between px-4">
-                <p className="text-sm font-semibold mb-0">{i18n.get('Unit')}</p>
-                <p className="text-sm mb-0">{product?.unit?.name}</p>
+
+          <Collapsible open={show}>
+            <CollapsibleContent>
+              <div>
+                <div className="flex justify-between px-4">
+                  <p className="text-sm font-semibold mb-0">{i18n.get('Unit')}</p>
+                  <p className="text-sm mb-0">{product?.unit?.name}</p>
+                </div>
+                <div className="flex justify-between px-4">
+                  <p className="text-sm font-semibold mb-0">{i18n.get('Unit power WT')}</p>
+                  <p className="text-sm mb-0">{product?.price}</p>
+                </div>
+                <div className="flex justify-between px-4">
+                  <p className="text-sm font-semibold mb-0">{i18n.get('Total WT')}</p>
+                  <p className="text-sm mb-0">{product?.price}</p>
+                </div>
+                <div className="flex justify-between px-4">
+                  <p className="text-sm font-semibold mb-0">{i18n.get('Tax')}</p>
+                  <p className="text-sm mb-0">{product?.taxLine?.value} %</p>
+                </div>
+                <div className="flex justify-between px-4">
+                  <p className="text-sm font-semibold mb-0">{i18n.get('Discount')}</p>
+                  <p className="text-sm mb-0">{product?.discountAmount}%</p>
+                </div>
               </div>
-              <div className="flex justify-between px-4">
-                <p className="text-sm font-semibold mb-0">{i18n.get('Unit power WT')}</p>
-                <p className="text-sm mb-0">{product?.price}</p>
-              </div>
-              <div className="flex justify-between px-4">
-                <p className="text-sm font-semibold mb-0">{i18n.get('Total WT')}</p>
-                <p className="text-sm mb-0">{product?.price}</p>
-              </div>
-              <div className="flex justify-between px-4">
-                <p className="text-sm font-semibold mb-0">{i18n.get('Tax')}</p>
-                <p className="text-sm mb-0">{product?.taxLine?.value} %</p>
-              </div>
-              <div className="flex justify-between px-4">
-                <p className="text-sm font-semibold mb-0">{i18n.get('Discount')}</p>
-                <p className="text-sm mb-0">{product?.discountAmount}%</p>
-              </div>
-            </div>
-          </Collapse>
+            </CollapsibleContent>
+          </Collapsible>
         </TableCell>
       </TableRow>
     </>
