@@ -1,42 +1,34 @@
 'use client';
-
 import React from 'react';
 import moment from 'moment';
-import {Box, Button, Divider, Image, Input} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import { Separator } from "@ui/components/separator"
+import { Button } from "@ui/components/button"
+import { MdEast } from "react-icons/md";
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
-import {i18n} from '@/lib/i18n';
-
+import { parseDate } from '@/utils';
+import { i18n } from '@/lib/i18n';
+import { TextField } from '@ui/components/TextField';
 // ---- LOCAL IMPORTS ---- //
-import type {CommentsProps} from '@/subapps/quotations/common/types/quotations';
-import {updateDocument} from '@/subapps/quotations/common/utils/quotations';
+import type { CommentsProps } from '@/subapps/quotations/common/types/quotations';
+import { updateDocument } from '@/subapps/quotations/common/utils/quotations';
 import styles from './styles.module.scss';
-
+import Image from 'next/image';
 type Props = {
   comments: CommentsProps[];
 };
-
-export const Comments = ({comments}: Props) => {
+export const Comments = ({ comments }: Props) => {
   return (
-    <Box
-      d="flex"
-      flexDirection="column"
-      gap="1rem"
-      bg="white"
-      p={4}
-      rounded={3}>
-      <Box d="flex" flexDirection="column" gap="0.5rem">
-        <Box as="h2" mb={0}>
+    <div className="flex flex-col gap-4 bg-white p-6 rounded-lg">
+      <div className="flex flex-col gap-2">
+        <h4 className="text-xl font-medium mb-0">
           {i18n.get('Comments')}
-        </Box>
-        <Box>
+        </h4>
+        <p className="text-xs mb-0">
           {comments?.length} {i18n.get('comments')}
-        </Box>
-      </Box>
-      <Divider />
-      <Box d="flex" flexDirection="column" gap="1rem">
+        </p>
+      </div>
+      <Separator />
+      <div className="flex flex-col gap-4">
         {comments?.map((comment: CommentsProps) => {
           let currentDate = moment();
           let updateDate = comment?.updatedOn
@@ -45,52 +37,43 @@ export const Comments = ({comments}: Props) => {
 
           const docUpdate = updateDocument(currentDate, updateDate);
           return (
-            <Box d="flex" p={4} border rounded={1} gap="1rem" key={comment.id}>
+            <div className="flex gap-4 p-6 border rounded" key={comment.id}>
               <Image
                 src=""
                 alt="user"
-                rounded="circle"
-                className={styles['comment-user-image']}
+                className={`${styles['comment-user-image']} rounded-full`}
               />
-              <Box w={100} d="flex" flexDirection="column" gap="0.25rem">
-                <Box d="flex" justifyContent="space-between">
-                  <Box fontSize={6} fontWeight="bold">
+              <div className="flex flex-col gap-1 w-full">
+                <div className="flex justify-between">
+                  <h6 className="text-base font-semibold mb-0">
                     {comment.subject ? comment.subject : comment.body}
-                  </Box>
-                  <Box className={styles['comment-date']}>
+                  </h6>
+                  <span className={`${styles['comment-date']} mb-0`}>
                     {comment?.updatedOn
                       ? parseDate(comment.updatedOn)
                       : parseDate(comment.createdOn)}
-                  </Box>
-                </Box>
-                <Box className={styles['comment-paragraph']}>
+                  </span>
+                </div>
+                <p className={`${styles['comment-paragraph']} mb-0`}>
                   {`${comment?.author?.name} updated document ${docUpdate} ago`}
-                </Box>
-              </Box>
-            </Box>
+                </p>
+              </div>
+            </div>
           );
         })}
-        <Box>
-          <Input
-            className={styles['comment-input']}
-            p={4}
+        <div>
+          <TextField
             placeholder={i18n.get('Write your comment here...')}
+            className={`${styles['comment-input']} p-6`}
           />
-          <Box p={1} d="flex" justifyContent="flex-end">
-            <Button
-              variant="dark"
-              d="flex"
-              alignItems="center"
-              justifyContent="center"
-              gap="10"
-              rounded="pill">
-              {i18n.get('Send comment')} <MaterialIcon icon="east" />
+          <div className="flex justify-end p-1">
+            <Button className="flex items-center justify-center gap-3 rounded-full">
+              {i18n.get('Send comment')} <MdEast className="text-2xl" />
             </Button>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-
 export default Comments;
