@@ -1,13 +1,9 @@
+const { fontFamily } = require("tailwindcss/defaultTheme")
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
-  prefix: "",
+  content: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"],
   theme: {
     container: {
       center: true,
@@ -17,106 +13,48 @@ module.exports = {
       },
     },
     extend: {
-      colors: {
-        blue: 'var(--palette-blue)',
-        green: 'var(--palette-green)',
-        purple: 'var(--palette-purple)',
-        red: 'var(--palette-red)',
-        yellow: 'var(--palette-yellow)',
-        cyan: 'var(--palette-cyan)',
-        white: 'var(--palette-white)',
-        black: 'var(--palette-black)',
-        body: 'var(--palette-body_color)',
-        emphasis: 'var(--palette-emphasis_color)',
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        border: 'var(--border-color)',
-        'dropdown-item-hover': 'var(--components-Dropdown-item_hover-bg)',
-        'dropdown-item-active': 'var(--components-Dropdown-item_active-bg)',
-        'dropdown-item-active-color': 'var(--components-Dropdown-item_active-color)',
-        'navmenu-item-hover': 'var(--components-NavMenu-item_hover-bg)',
-        'navmenu-item-active': 'var(--components-NavMenu-item_active-bg)',
-        'commandbar-button-hover': 'var(--components-CommandBar-button_hover-bg)',
-        'commandbar-button-active': 'var(--components-CommandBar-button_active-bg)',
-        'table-row-odd': 'var(--components-Table-row_odd-bg)',
-        'table-row-hover': 'var(--components-Table-row_hover-bg)',
-        'table-row-active': 'var(--components-Table-row_active-bg)',
-        'table-cell-active': 'var(--components-Table-cell_active-bg)',
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        main_purple: "hsl(var(--main_purple))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        content: {
-          DEFAULT: "hsl(var(--content))",
-          foreground: "hsl(var(--content-foreground))",
-        },
+      colors: { 
+        border: "var(--border-color)",
+        input: "var(--input-color)",
+        ring: "var(--ring)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "var(--primary-default)",
+          foreground: "var(--primary-foreground)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "var(--secondary-default)",
+          foreground: "var(--secondary-foreground)",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "var(--destructive-default)",
+          foreground: "var(--destructive-foreground)",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "var(--muted-default)",
+          foreground: "var(--muted-foreground)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "var(--accent-default)",
+          foreground: "var(--accent-foreground)",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "var(--popover))",
+          foreground: "var(--popover-foreground)",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
         },
       },
-      spacing: {
-        'panel-title-padding-x': '0.5rem',
-        'panel-title-padding-y': '0.25rem',
-        'button-padding-x': 'var(--components-Button-paddingX)',
-        'navtabs_item': 'var(--navtabs-item-padding)',
-        'button-padding-y': 'var(--components-Button-paddingY)',
-        'badge-padding-x': 'var(--components-Badge-padding-x)',
-        'badge-padding-y': 'var(--components-Badge-padding-y)',
-        'form-padding': 'var(--components-Form-padding)',
-        'form-gap-x': 'var(--components-Form-gap-x)',
-        'form-gap-y': 'var(--components-Form-gap-y)',
-        'input-padding-y': 'var(--components-Input-padding-y)',
-        'input-padding-bottom': 'var(--components-Input-padding-bottom)',
-      },
       borderRadius: {
-        'navmenu-item': 'var(--components-NavMenu-item-border-radius)',
-        'badge': 'var(--components-Badge-border-radius)',
-        'input': 'var(--components-Input-border-radius)',
+        lg: `var(--border-radius)`,
+        md: `calc(var(--border-radius) - 2px)`,
+        sm: "calc(var(--border-radius) - 4px)",
       },
-      borderWidth: {
-        'input-focus': 'var(--components-Input-focus-border_width)',
-        'input-invalid-focus': 'var(--components-Input-invalid_focus-border_width)',
-        'input-invalid': 'var(--components-Input-invalid-border_width)',
-      },
-      fontSize: {
-        'body': 'var(--typography-body-fontSize)',
-      },
-      placeholderColor: {
-        input: 'var(--components-Input-placeholder-color)',
-      },
-      boxShadow: {
-        'input-focus': 'none',
-        'input-invalid-focus': 'none',
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {
@@ -134,45 +72,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    function ({ addUtilities }) {
-      addUtilities({
-        '.input-padding': {
-          padding: 'var(--components-Input-padding)',
-        },
-        '.input-focus': {
-          boxShadow: 'none',
-          borderWidth: 'var(--components-Input-focus-border_width)',
-        },
-        '.input-invalid-focus': {
-          boxShadow: 'none',
-          borderWidth: 'var(--components-Input-invalid_focus-border_width)',
-        },
-        '.input-invalid': {
-          borderWidth: 'var(--components-Input-invalid-border_width)',
-        },
-        '.input-placeholder': {
-          '::placeholder': {
-            color: 'var(--components-Input-placeholder-color)',
-          },
-        },
-        '.button-padding': {
-          padding: 'var(--components-Button-paddingY) var(--components-Button-paddingX)',
-        },
-        '.badge-padding': {
-          padding: 'var(--components-Badge-padding)',
-        },
-        '.form-padding': {
-          padding: 'var(--components-Form-padding)',
-        },
-        '.form-gap-x': {
-          columnGap: 'var(--components-Form-gap-x)',
-        },
-        '.form-gap-y': {
-          rowGap: 'var(--components-Form-gap-y)',
-        },
-      });
-    }
-  ],
+  plugins: [require("tailwindcss-animate")],
 }

@@ -1,170 +1,6 @@
-type Theme = {
-  palette: {
-    blue: string;
-    green: string;
-    purple: string;
-    red: string;
-    yellow: string;
-    cyan: string;
-    white: string;
-    black: string;
-    body_color: string;
-    emphasis_color: string;
-  };
-  border: {
-    color: string;
-  };
-  typography: {
-    body: {
-      fontSize: string;
-    };
-  };
-  components: {
-    Shell: {
-      sidebar: {
-        bg: string;
-      };
-    };
-    Panel: {
-      header: {
-        bg: string;
-        border: {
-          width: number;
-        };
-      };
-      title: {
-        padding: string;
-      };
-    };
-    Dropdown: {
-      border: {
-        color: string;
-      };
-      item_hover: {
-        bg: string;
-      };
-      item_active: {
-        bg: string;
-        color: string;
-      };
-      divider: {
-        bg: string;
-      };
-    };
-    NavMenu: {
-      item: {
-        border: {
-          radius: string;
-        };
-      };
-      item_hover: {
-        bg: string;
-      };
-      item_active: {
-        bg: string;
-        color: string;
-      };
-      icon: {
-        bg: string;
-      };
-      icon_hover: {
-        bg: string;
-      };
-      icon_active: {
-        color: string;
-      };
-    };
-    NavTabs: {
-      item: {
-        padding: string;
-      };
-      text: {
-        transform: string;
-      };
-      icon: {
-        bg: string;
-      };
-      icon_hover: {
-        bg: string;
-      };
-      icon_active: {
-        bg: string;
-      };
-    };
-    CommandBar: {
-      button: {
-        padding: string;
-      };
-      button_hover: {
-        bg: string;
-      };
-      button_active: {
-        bg: string;
-      };
-    };
-    Table: {
-      bg: string;
-      border: {
-        color: string;
-      };
-      header: {
-        bg: string;
-      };
-      row_odd: {
-        bg: string;
-      };
-      row_hover: {
-        bg: string;
-      };
-      row_active: {
-        bg: string;
-      };
-      cell_active: {
-        bg: string;
-      };
-      cell: {
-        padding: string;
-      };
-    };
-    Button: {
-      paddingX: string;
-      paddingY: string;
-    };
-    Badge: {
-      padding: string;
-      border: {
-        radius: string;
-      };
-    };
-    Form: {
-      padding: string;
-      gap: string;
-    };
-    Input: {
-      padding: string;
-      focus: {
-        shadow: string;
-        border_width: string;
-      };
-      invalid_focus: {
-        shadow: string;
-        border_width: string;
-      };
-      placeholder: {
-        color: string;
-      };
-      invalid: {
-        border_width: string;
-      };
-      border: {
-        radius: number;
-      };
-      border_width: string;
-    };
-  };
-};
+import { ThemeOptions } from "@axelor/ui/core/styles/theme/types";
 
-const generateCssVar = (css: Theme) => {
+const generateCssVar = (css: ThemeOptions) => {
   const dynamicCss = `
     :root {
     --palette-blue: ${css?.palette?.blue};
@@ -178,6 +14,24 @@ const generateCssVar = (css: Theme) => {
     --palette-body_color: ${css?.palette?.body_color};
     --palette-emphasis_color: ${css?.palette?.emphasis_color};
     --border-color: ${css?.border?.color};
+    --border-radius:${css?.border?.radius};
+    --input-color:${css?.components?.Input?.color};
+    --background:${css?.background};
+    --foreground:${css?.foreground};
+    --primary-default:${css?.primary?.DEFAULT};
+    --primary-foreground:${css?.primary?.foreground};
+    --secondary-default:${css?.secondary?.DEFAULT};
+    --secondary-foreground:${css?.secondary?.DEFAULT};
+    --destructive-default:${css?.destructive?.DEFAULT};
+    --destructive-foreground:${css?.destructive?.foreground};
+    --muted-default:${css?.muted?.DEFAULT};
+    --muted-foreground:${css?.muted?.foreground};
+    --accent-default:${css?.accent?.DEFAULT};
+    --accent-foreground:${css?.accent?.foreground};
+    --popover:${css?.popover?.DEFAULT};
+    --popover-foreground:${css?.popover?.foreground};
+    --card:${css?.card?.DEFAULT};
+    --card-foreground:${css?.card?.foreground};
     --typography-body-fontSize: ${css?.typography?.body?.fontSize};
     --components-Shell-sidebar-bg: ${css?.components?.Shell?.sidebar?.bg};
     --components-Panel-header-bg: ${css?.components?.Panel?.header?.bg};
