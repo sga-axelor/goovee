@@ -1,12 +1,10 @@
 'use client';
-
 import React from 'react';
-import {Box, Divider, Image, TableCell, TableRow} from '@axelor/ui';
-
+import {TableCell, TableRow} from '@ui/components/table';
+import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
 import {StyledTable} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
-
 // ---- LOCAL IMPORTS ---- //
 import {ProductCard} from './product-card';
 import {
@@ -15,72 +13,58 @@ import {
 } from '@/subapps/quotations/common/constants/quotations';
 import type {Product} from '@/subapps/quotations/common/types/quotations';
 import styles from './styles.module.scss';
-
+import Image from 'next/image';
 type Props = {
   saleOrderLineList: Product[];
 };
-
 export const Products = ({saleOrderLineList}: Props) => {
   return (
     <>
-      <Box d="flex" flexDirection="column" gap="1rem">
-        <Box as="h2">{i18n.get('Products')}</Box>
-        <Divider />
-        <Box d={{base: 'none', lg: 'block'}}>
-          <StyledTable columns={PRODUCT_COLUMNS}>
+      <div className="flex flex-col gap-4">
+        <h4 className="text-xl font-medium mb-0">{i18n.get('Products')}</h4>
+        <Separator />
+        <div className="hidden lg:block">
+          <StyledTable
+            headStyle="bg-primary !text-white !rounded-none !text-sm !px-4"
+            columns={PRODUCT_COLUMNS}>
             {saleOrderLineList?.map((product: any) => {
               return (
                 <TableRow key={product.id}>
-                  <TableCell py={3} px={4}>
-                    <Box as="div" d="flex">
-                      <Box d="flex" alignItems="center">
+                  <TableCell>
+                    <div className="flex">
+                      <div className="flex items-center">
                         <Image
                           src=""
                           alt="product"
                           className={styles['product-image']}
                         />
-                      </Box>
-                      <Box d="flex" alignItems="center">
-                        {product.productName}
-                      </Box>
-                    </Box>
+                      </div>
+                      <p className="text-sm mb-0">{product.productName}</p>
+                    </div>
                   </TableCell>
-                  <TableCell py={3} px={4}>
-                    {product.qty}
-                  </TableCell>
-                  <TableCell py={3} px={4}>
-                    {product?.unit?.name}
-                  </TableCell>
-                  <TableCell py={3} px={4}>
-                    {product.price}
-                  </TableCell>
-                  <TableCell py={3} px={4}>
-                    {product.exTaxTotal}
-                  </TableCell>
-                  <TableCell py={3} px={4}>
-                    {product?.taxLine?.value}%
-                  </TableCell>
-                  <TableCell py={3} px={4}>
-                    {product.discountAmount}%
-                  </TableCell>
-                  <TableCell py={3} px={4}>
-                    {product.inTaxTotal}
-                  </TableCell>
+                  <TableCell>{product.qty}</TableCell>
+                  <TableCell>{product?.unit?.name}</TableCell>
+                  <TableCell>{product.price}</TableCell>
+                  <TableCell>{product.exTaxTotal}</TableCell>
+                  <TableCell>{product?.taxLine?.value}%</TableCell>
+                  <TableCell>{product.discountAmount}%</TableCell>
+                  <TableCell>{product.inTaxTotal}</TableCell>
                 </TableRow>
               );
             })}
           </StyledTable>
-        </Box>
-        <Box d={{base: 'block', lg: 'none'}}>
-          <StyledTable columns={PRODUCT_CARD_COLUMNS}>
+        </div>
+        <div className="block lg:hidden">
+          <StyledTable
+            headStyle="bg-primary !text-white !rounded-none !text-sm !px-4"
+            columns={PRODUCT_CARD_COLUMNS}>
             {saleOrderLineList?.map((product: any) => {
               return <ProductCard key={product.id} product={product} />;
             })}
           </StyledTable>
-        </Box>
-      </Box>
+        </div>
+      </div>
     </>
   );
 };
-
 export default Products;

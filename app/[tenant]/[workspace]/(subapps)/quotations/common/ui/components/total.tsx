@@ -1,17 +1,16 @@
 'use client';
-
 import React from 'react';
-import {Box, Button, Divider} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
+import {MdCheckCircleOutline} from 'react-icons/md';
+import {MdOutlineDisabledByDefault} from 'react-icons/md';
+import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {TotalProps} from '@/subapps/quotations/common/types/quotations';
 import styles from './styles.module.scss';
-
 export const Total = ({
   exTaxTotal,
   inTaxTotal,
@@ -20,95 +19,61 @@ export const Total = ({
 }: TotalProps) => {
   return (
     <>
-      <Box
-        d="flex"
-        flexDirection="column"
-        bg="white"
-        px={4}
-        py={3}
-        rounded={2}
-        borderColor="black"
-        border>
-        <Box fontSize={2} fontWeight="normal">
+      <div className="flex flex-col bg-white px-6 py-4 rounded-lg border border-black">
+        <h4 className="text-xl font-medium mb-0">
           {i18n.get('Offered price')}
-        </Box>
-        <Divider />
-
-        <Box d="flex" flexDirection="column" gap="1rem" mb={2}>
-          <Box d="flex" flexDirection="column" gap={'0.5rem'}>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Total WT')}:</Box>
-              <Box>{exTaxTotal}</Box>
-            </Box>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Total ATI')}:</Box>
-              <Box>{inTaxTotal}</Box>
-            </Box>
-            <Box d="flex" alignItems="center" justifyContent="space-between">
-              <Box>{i18n.get('Discount')}:</Box>
-              <Box>{totalDiscount}%</Box>
-            </Box>
-          </Box>
-
-          <Box d="flex" alignItems="center" justifyContent="space-between">
-            <Box fontWeight="bold">{i18n.get('Total price')}:</Box>
-            <Box fontWeight="bolder" fontSize={4}>
-              {inTaxTotal}
-            </Box>
-          </Box>
-
+        </h4>
+        <Separator className="my-3" />
+        <div className="flex flex-col gap-4 mb-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Total WT')}:</p>
+              <p className="text-base mb-0">{exTaxTotal}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Total ATI')}:</p>
+              <p className="text-base mb-0">{inTaxTotal}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-base mb-0">{i18n.get('Discount')}:</p>
+              <p className="text-base mb-0">{totalDiscount}%</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <h6 className="text-base font-medium mb-0">
+              {i18n.get('Total price')}:
+            </h6>
+            <h4 className="text-xl font-medium mb-0">{inTaxTotal}</h4>
+          </div>
           {statusSelect !== QUOTATION_STATUS.CANCELED_QUOTATION && (
             <>
-              <Box d="flex" justifyContent="center">
+              <div className="flex justify-center">
                 <Button
-                  d="flex"
-                  w={100}
-                  alignItems="center"
-                  justifyContent="center"
-                  gap="10"
-                  rounded="pill"
-                  className={styles.success}>
-                  <MaterialIcon icon="check_circle" />
+                  className={`${styles.success} flex items-center justify-center gap-3 rounded-full w-full`}>
+                  <MdCheckCircleOutline className="text-2xl" />
                   {i18n.get('Accept and sign')}
                 </Button>
-              </Box>
-              <Box d="flex" justifyContent="center">
+              </div>
+              <div className="flex justify-center">
                 <Button
-                  variant="danger"
-                  d="flex"
-                  w={100}
-                  fontWeight="normal"
-                  alignItems="center"
-                  justifyContent="center"
-                  gap="10"
-                  rounded="pill"
-                  className={styles.danger}>
-                  <MaterialIcon icon="disabled_by_default" />
+                  className={`${styles.danger} flex items-center justify-center gap-3 rounded-full w-full font-normal`}>
+                  <MdOutlineDisabledByDefault className="text-2xl" />
                   {i18n.get('Reject')}
                 </Button>
-              </Box>
+              </div>
             </>
           )}
-
           {false && (
-            <Box d="flex" justifyContent="center">
-              <Button
-                variant="dark"
-                w={100}
-                fontWeight="normal"
-                d="flex"
-                alignItems="center"
-                justifyContent="center"
-                gap="10"
-                rounded="pill">
-                {i18n.get('Pay')} <MaterialIcon icon="arrow_right_alt" />
+            <div className="flex justify-center">
+              <Button className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
+                {i18n.get('Pay')}{' '}
+                <LiaLongArrowAltRightSolid className="text-2xl" />
               </Button>
-            </Box>
+            </div>
           )}
-        </Box>
-      </Box>
+        </div>
+      </div>
     </>
   );
 };
-
 export default Total;

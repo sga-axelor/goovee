@@ -1,14 +1,12 @@
 'use client';
-
 import React from 'react';
-import {Box, Button, TableCell, TableRow} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import {Button} from '@ui/components/button';
+import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
+import {TableCell, TableRow} from '@ui/components/table';
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
 import {StyledTable, Tag} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
-
 // ---- LOCAL IMPORTS ---- //
 import type {
   Quotations,
@@ -17,7 +15,6 @@ import type {
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import styles from './styles.module.scss';
-
 export const QuotationsTable = ({
   columns,
   quotations,
@@ -25,7 +22,7 @@ export const QuotationsTable = ({
 }: QuotationsTableProps) => {
   return (
     <>
-      <Box>
+      <div>
         <StyledTable columns={columns}>
           {quotations?.map((quotation: Quotations) => {
             const {status, variant} = getStatus(quotation.statusSelect);
@@ -35,34 +32,28 @@ export const QuotationsTable = ({
                 className={styles['table-row']}
                 onClick={() => onClick(quotation.id)}>
                 <TableCell
-                  className={styles['table-cell']}
-                  fontWeight="bold"
-                  py={3}
-                  px={4}>
+                  className={`${styles['table-cell']} border-b font-semibold px-6 py-4`}>
                   {i18n.get('Sale quotation')} {quotation.saleOrderSeq}
                   {quotation.externalReference &&
                     ` ( ${quotation.externalReference} )`}
                 </TableCell>
-                <TableCell className={styles['table-cell']} py={3} px={4}>
+                <TableCell
+                  className={`${styles['table-cell']} border-b px-6 py-4`}>
                   <Tag variant={variant}>{status}</Tag>
                 </TableCell>
-                <TableCell className={styles['table-cell']} py={3} px={4}>
+                <TableCell
+                  className={`${styles['table-cell']} border-b px-6 py-4`}>
                   {parseDate(quotation.createdOn)}
                 </TableCell>
-                <TableCell className={styles['table-cell']} py={3} px={4}>
+                <TableCell
+                  className={`${styles['table-cell']} border-b px-6 py-4`}>
                   {quotation?.statusSelect ===
                     QUOTATION_STATUS.FINALISED_QUOTATION && (
                     <Button
-                      variant="dark"
-                      outline
-                      d="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      gap="10"
-                      rounded="pill"
-                      w={100}>
+                      variant="outline"
+                      className="flex items-center justify-center gap-3 w-full rounded-full">
                       {i18n.get('Give a reponse')}{' '}
-                      <MaterialIcon icon="arrow_right_alt" />
+                      <LiaLongArrowAltRightSolid className="text-2xl" />
                     </Button>
                   )}
                 </TableCell>
@@ -70,9 +61,8 @@ export const QuotationsTable = ({
             );
           })}
         </StyledTable>
-      </Box>
+      </div>
     </>
   );
 };
-
 export default QuotationsTable;

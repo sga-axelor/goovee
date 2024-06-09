@@ -1,12 +1,8 @@
 'use client';
-
 import React from 'react';
-import {Box} from '@axelor/ui';
-
 // ---- CORE IMPORTS ---- //
 import {Container} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
-
 // ---- LOCAL IMPORTS ---- //
 import {
   Comments,
@@ -20,12 +16,10 @@ import type {
   CommentsProps,
   Quotation,
 } from '@/subapps/quotations/common/types/quotations';
-
 type Props = {
   quotation: Quotation;
   comments: CommentsProps[];
 };
-
 const Content = ({quotation, comments}: Props) => {
   const {
     saleOrderSeq,
@@ -48,22 +42,9 @@ const Content = ({quotation, comments}: Props) => {
           endOfValidityDate={endOfValidityDate}
           statusSelect={statusSelect}
         />
-        <Box
-          d={'flex'}
-          flexFlow={{base: 'column-reverse', lg: 'row'}}
-          gap="1rem">
-          <Box
-            d="flex"
-            flexDirection="column"
-            gap="1.5rem"
-            flexBasis={{
-              base: '100%',
-              lg: `${
-                statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION
-                  ? '75%'
-                  : '100%'
-              }`,
-            }}>
+        <div className="flex flex-col-reverse xl:flex-row gap-6 xl:gap-4">
+          <div
+            className={`${statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION ? 'lg:basis-3/4' : 'lg:basis-full'} flex flex-col gap-6 basis-full`}>
             <Contacts
               clientPartner={clientPartner}
               company={company}
@@ -73,29 +54,20 @@ const Content = ({quotation, comments}: Props) => {
             />
             <History />
             <Comments comments={comments} />
-          </Box>
-
+          </div>
           {statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION && (
-            <Box
-              d="flex"
-              flexDirection="column"
-              gap="1.5rem"
-              flexBasis={{
-                base: '100%',
-                lg: '25%',
-              }}>
+            <div className="flex flex-col gap-6 basis-full lg:basis-1/4">
               <Total
                 exTaxTotal={exTaxTotal}
                 inTaxTotal={inTaxTotal}
                 statusSelect={statusSelect}
                 totalDiscount={totalDiscount}
               />
-            </Box>
+            </div>
           )}
-        </Box>
+        </div>
       </Container>
     </>
   );
 };
-
 export default Content;

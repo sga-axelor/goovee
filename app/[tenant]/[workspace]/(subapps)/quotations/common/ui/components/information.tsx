@@ -1,79 +1,58 @@
 'use client';
-
 import React from 'react';
-import {Box, Button, Divider} from '@axelor/ui';
-import {MaterialIcon} from '@axelor/ui/icons/material-icon';
-
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
+import {MdOutlineFileDownload} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {Tag} from '@/ui/components';
 import {parseDate} from '@/utils';
 import {i18n} from '@/lib/i18n';
-
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {InfoProps} from '@/subapps/quotations/common/types/quotations';
 import styles from './styles.module.scss';
-
 export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
   const {variant, status} = getStatus(statusSelect);
   return (
     <>
-      <Box
-        bg="white"
-        d={{base: 'flex', md: 'block'}}
-        flexDirection="column"
-        rounded={3}
-        p={{base: 3, md: 4}}>
-        <Box as="h2">{i18n.get('Informations')}</Box>
-        <Divider />
-        <Box d="flex" flexDirection="column" gap="1rem">
-          <Box d="flex" alignItems="center" gap="1rem">
-            <Box className={styles.text}>{i18n.get('Status')}:</Box>
+      <div className="bg-white flex md:block flex-col rounded-lg p-4 md:p-6">
+        <h4 className="text-xl font-medium mb-0">{i18n.get('Informations')}</h4>
+        <Separator className="my-2" />
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <h5 className={`${styles.text} text-lg font-semibold mb-0`}>
+              {i18n.get('Status')}:
+            </h5>
             <Tag variant={variant}>{status}</Tag>
-          </Box>
-          <Box d="flex" alignItems="center" gap="0.1rem">
-            <Box pe={1} fontSize={6} fontWeight="bold">
+          </div>
+          <div className="flex items-center gap-[0.1rem]">
+            <h5 className="text-lg font-semibold pr-1 mb-0">
               {i18n.get('End of validity')}:
-            </Box>
-            <Box>{endOfValidityDate ? parseDate(endOfValidityDate) : ''}</Box>
-          </Box>
+            </h5>
+            <p className="text-base mb-0">
+              {endOfValidityDate ? parseDate(endOfValidityDate) : ''}
+            </p>
+          </div>
           {statusSelect === QUOTATION_STATUS.CANCELED_QUOTATION && (
-            <Box
-              d={'flex'}
-              flexFlow={{base: 'column-reverse', md: 'row'}}
-              gap="1rem">
+            <div className="flex flex-col-reverse md:flex-row gap-4">
               <Button
-                variant="dark"
-                outline
-                d="flex"
-                alignItems="center"
-                justifyContent="center"
-                mx={3}
-                gap="10"
-                rounded="pill"
-                fontWeight="normal">
-                <MaterialIcon icon="download" />
+                variant="outline"
+                className="flex items-center justify-center mx-4 gap-3 rounded-full font-normal">
+                <MdOutlineFileDownload className="text-2xl" />
                 {i18n.get('Dowload order signed confirmation')}
               </Button>
               <Button
-                variant="dark"
-                outline
-                d="flex"
-                alignItems="center"
-                justifyContent="center"
-                mx={3}
-                gap="10"
-                rounded="pill"
-                fontWeight="normal">
-                <MaterialIcon icon="download" /> {i18n.get('Download invoice')}
+                variant="outline"
+                className="flex items-center justify-center mx-4 gap-3 rounded-full font-normal">
+                <MdOutlineFileDownload className="text-2xl" />{' '}
+                {i18n.get('Download invoice')}
               </Button>
-            </Box>
+            </div>
           )}
-        </Box>
-      </Box>
+        </div>
+      </div>
     </>
   );
 };
-
 export default Informations;
