@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
 // ---- CORE IMPORTS ---- //
-import { Container } from '@/ui/components';
-import { i18n } from '@/lib/i18n';
+import {Container} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {
   Contact,
@@ -11,9 +11,9 @@ import {
   Informations,
   Total,
 } from '@/subapps/orders/common/ui/components';
-import { getStatus } from '@/subapps/orders/common/utils/orders';
-import { ORDER_TYPE } from '@/subapps/orders/common/constants/orders';
-const Content = ({ order }: { order: any }) => {
+import {getStatus} from '@/subapps/orders/common/utils/orders';
+import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
+const Content = ({order}: {order: any}) => {
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -29,7 +29,7 @@ const Content = ({ order }: { order: any }) => {
     saleOrderLineList,
     totalDiscount,
   } = order;
-  const { status, variant } = getStatus(statusSelect, deliveryState);
+  const {status, variant} = getStatus(statusSelect, deliveryState);
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
 
   return (

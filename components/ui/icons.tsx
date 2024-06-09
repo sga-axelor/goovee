@@ -1,4 +1,4 @@
-import { DynamicIconProps, iconsMap } from '@/utils/icons';
+import {DynamicIconProps, iconsMap} from '@/utils/icons';
 
 const DynamicIcon: React.FC<DynamicIconProps> = ({
   icon,
@@ -7,6 +7,10 @@ const DynamicIcon: React.FC<DynamicIconProps> = ({
   ...rest
 }) => {
   const IconComponent = iconsMap[icon];
-  return IconComponent ? <IconComponent size={fontSize} onClick={onClick}{...rest} /> : '';
+  return IconComponent ? (
+    <IconComponent size={fontSize} onClick={onClick} {...rest} />
+  ) : (
+    ''
+  );
 };
 export default DynamicIcon;

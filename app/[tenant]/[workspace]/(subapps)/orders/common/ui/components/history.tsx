@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
-import { Separator } from '@ui/components/separator';
+import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import { i18n } from '@/lib/i18n';
+import {i18n} from '@/lib/i18n';
 export const History = () => {
   return (
     <>
@@ -11,7 +11,9 @@ export const History = () => {
         <Separator />
         <div>
           <div className="flex justify-between p-4 border-l !border-[#212323]">
-            <h6 className="text-base font-semibold mb-0">{i18n.get('History action')}</h6>
+            <h6 className="text-base font-semibold mb-0">
+              {i18n.get('History action')}
+            </h6>
             <h6 className="text-base text-[#464555] mb-0">23/11/2023</h6>
           </div>
         </div>

@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
 // ---- CORE IMPORTS ---- //
-import { parseDate } from '@/utils';
-import { Tag } from '@/ui/components';
-import { i18n } from '@/lib/i18n';
+import {parseDate} from '@/utils';
+import {Tag} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { getStatus } from '@/subapps/orders/common/utils/orders';
+import {getStatus} from '@/subapps/orders/common/utils/orders';
 export const Card = ({
   orders,
   handleRowClick,
@@ -16,7 +16,7 @@ export const Card = ({
   return (
     <>
       {orders?.map((order: any, i: number) => {
-        const { status, variant } = getStatus(
+        const {status, variant} = getStatus(
           order.statusSelect,
           order.deliveryState,
         );
@@ -26,28 +26,32 @@ export const Card = ({
             className="rounded border border-solid !border-[#E6E7E7] bg-white px-4 py-6 flex flex-col gap-4 !cursor-pointer"
             onClick={() => handleRowClick(order.id)}>
             <div className="flex items-center justify-between font-bold">
-              <h6 className='text-base mb-0'>{i18n.get('Order number')}</h6>
-              <h6 className='text-base mb-0'>{order.saleOrderSeq}</h6>
+              <h6 className="text-base mb-0">{i18n.get('Order number')}</h6>
+              <h6 className="text-base mb-0">{order.saleOrderSeq}</h6>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className='text-base font-bold mb-0'>{i18n.get('Status')}</h6>
-              <p className='text-base mb-0'>
+              <h6 className="text-base font-bold mb-0">{i18n.get('Status')}</h6>
+              <p className="text-base mb-0">
                 <Tag variant={variant}>{status}</Tag>
               </p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className='text-base font-bold mb-0'>{i18n.get('Created on')}</h6>
-              <p className='text-base mb-0'>{parseDate(order.createdOn)}</p>
+              <h6 className="text-base font-bold mb-0">
+                {i18n.get('Created on')}
+              </h6>
+              <p className="text-base mb-0">{parseDate(order.createdOn)}</p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className='text-base font-bold mb-0'>{i18n.get('Total WT')}</h6>
-              <p className='text-base mb-0'> {order.exTaxTotal}</p>
+              <h6 className="text-base font-bold mb-0">
+                {i18n.get('Total WT')}
+              </h6>
+              <p className="text-base mb-0"> {order.exTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className='text-base font-bold mb-0'>{i18n.get('Total ATI')}</h6>
-              <h5 className='text-lg font-bold mb-0'>
-                {order.inTaxTotal}
-              </h5>
+              <h6 className="text-base font-bold mb-0">
+                {i18n.get('Total ATI')}
+              </h6>
+              <h5 className="text-lg font-bold mb-0">{order.inTaxTotal}</h5>
             </div>
           </div>
         );

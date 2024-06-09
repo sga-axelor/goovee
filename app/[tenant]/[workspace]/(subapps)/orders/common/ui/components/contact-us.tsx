@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
-import { MdKeyboardReturn } from "react-icons/md";
-import { MdHelpOutline } from "react-icons/md";
-import { Separator } from '@ui/components/separator';
-import { Button } from "@ui/components/button"
+import {MdKeyboardReturn} from 'react-icons/md';
+import {MdHelpOutline} from 'react-icons/md';
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
-import { i18n } from '@/lib/i18n';
+import {i18n} from '@/lib/i18n';
 export const ContactUs = () => {
   return (
     <>

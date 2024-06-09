@@ -1,13 +1,13 @@
 'use client';
 import React from 'react';
-import { TableCell, TableRow } from '@ui/components/table';
+import {TableCell, TableRow} from '@ui/components/table';
 // ---- CORE IMPORTS ---- //
-import { StyledTable, Tag } from '@/ui/components';
-import { parseDate } from '@/utils';
-import type { Item } from '@/types';
-import { i18n } from '@/lib/i18n';
+import {StyledTable, Tag} from '@/ui/components';
+import {parseDate} from '@/utils';
+import type {Item} from '@/types';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { getStatus } from '@/subapps/orders/common/utils/orders';
+import {getStatus} from '@/subapps/orders/common/utils/orders';
 import styles from './styles.module.scss';
 export const OrdersTable = ({
   columns,
@@ -22,7 +22,7 @@ export const OrdersTable = ({
     <div>
       <StyledTable columns={columns}>
         {orders?.map((order: any, index: number) => {
-          const { status, variant } = getStatus(
+          const {status, variant} = getStatus(
             order.statusSelect,
             order.deliveryState,
           );
@@ -32,7 +32,8 @@ export const OrdersTable = ({
               className={styles['table-row']}
               key={index}
               onClick={() => handleRowClick(order.id)}>
-              <TableCell className={`${styles['table-cell']} !text-sm font-semibold`}>
+              <TableCell
+                className={`${styles['table-cell']} !text-sm font-semibold`}>
                 {order.saleOrderSeq}
               </TableCell>
               <TableCell className={styles['table-cell']}>

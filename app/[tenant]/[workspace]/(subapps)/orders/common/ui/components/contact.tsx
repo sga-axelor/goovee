@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
-import { Separator } from '@ui/components/separator';
-import { Button } from '@ui/components/button';
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
-import { getCityName } from '@/utils';
-import { i18n } from '@/lib/i18n';
+import {getCityName} from '@/utils';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { PaymentMethod, Products } from '@/subapps/orders/common/ui/components';
+import {PaymentMethod, Products} from '@/subapps/orders/common/ui/components';
 export const Contact = ({
   clientPartner,
   company,

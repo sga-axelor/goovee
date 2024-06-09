@@ -30,7 +30,12 @@ export const StyledHead = ({columns, className}: TableHeadProps) => {
   );
 };
 
-export const StyledTable = ({columns, children, className, headStyle}: TableProps) => {
+export const StyledTable = ({
+  columns,
+  children,
+  className,
+  headStyle,
+}: TableProps) => {
   return (
     <>
       <Table className={`w-full rounded-lg bg-background ${className}`}>
