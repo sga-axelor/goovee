@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
 // ---- CORE IMPORTS ---- //
-import { Container } from '@/ui/components';
-import { i18n } from '@/lib/i18n';
+import {Container} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {
   Comments,
@@ -11,7 +11,7 @@ import {
   Total,
   Contacts,
 } from '@/subapps/quotations/common/ui/components';
-import { QUOTATION_STATUS } from '@/subapps/quotations/common/constants/quotations';
+import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {
   CommentsProps,
   Quotation,
@@ -20,7 +20,7 @@ type Props = {
   quotation: Quotation;
   comments: CommentsProps[];
 };
-const Content = ({ quotation, comments }: Props) => {
+const Content = ({quotation, comments}: Props) => {
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -43,7 +43,8 @@ const Content = ({ quotation, comments }: Props) => {
           statusSelect={statusSelect}
         />
         <div className="flex flex-col-reverse xl:flex-row gap-6 xl:gap-4">
-          <div className={`${statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION ? 'lg:basis-3/4' : 'lg:basis-full'} flex flex-col gap-6 basis-full`}>
+          <div
+            className={`${statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION ? 'lg:basis-3/4' : 'lg:basis-full'} flex flex-col gap-6 basis-full`}>
             <Contacts
               clientPartner={clientPartner}
               company={company}

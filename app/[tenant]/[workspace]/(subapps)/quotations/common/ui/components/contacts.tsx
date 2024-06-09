@@ -1,13 +1,13 @@
 'use client';
 import React from 'react';
-import { Separator } from "@ui/components/separator"
-import { Button } from "@ui/components/button"
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
-import { getCityName } from '@/utils';
-import { i18n } from '@/lib/i18n';
+import {getCityName} from '@/utils';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import Products from './products';
-import type { ContactProps } from '@/subapps/quotations/common/types/quotations';
+import type {ContactProps} from '@/subapps/quotations/common/types/quotations';
 export const Contacts = ({
   clientPartner,
   company,
@@ -32,10 +32,14 @@ export const Contacts = ({
                 {clientPartner?.fullName}, {company?.name}
               </h6>
               <div>
-                <p className="text-base mb-0">{mainInvoicingAddress?.addressl4}</p>
+                <p className="text-base mb-0">
+                  {mainInvoicingAddress?.addressl4}
+                </p>
                 <p className="text-base mb-0">{billingAddressCity}</p>
                 <p className="text-base mb-0">{mainInvoicingAddress?.zip}</p>
-                <p className="text-base mb-0">{mainInvoicingAddress?.addressl7country?.name}</p>
+                <p className="text-base mb-0">
+                  {mainInvoicingAddress?.addressl7country?.name}
+                </p>
               </div>
             </div>
             <div className="flex">
@@ -59,7 +63,9 @@ export const Contacts = ({
                 <p className="text-base mb-0">{deliveryAddress?.addressl4}</p>
                 <p className="text-base mb-0">{deliveryAddressCity}</p>
                 <p className="text-base mb-0">{deliveryAddress?.zip}</p>
-                <p className="text-base mb-0">{deliveryAddress?.addressl7country?.name}</p>
+                <p className="text-base mb-0">
+                  {deliveryAddress?.addressl7country?.name}
+                </p>
               </div>
             </div>
             <div className="flex">

@@ -1,20 +1,20 @@
 'use client';
 import React from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
-import { Container, Pagination } from '@/ui/components';
-import { i18n } from '@/lib/i18n';
+import {Container, Pagination} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { Card, QuotationsTable } from '@/subapps/quotations/common/ui/components';
-import { QUOTATIONS_COLUMNS } from '@/subapps/quotations/common/constants/quotations';
-import type { Quotations } from '@/subapps/quotations/common/types/quotations';
+import {Card, QuotationsTable} from '@/subapps/quotations/common/ui/components';
+import {QUOTATIONS_COLUMNS} from '@/subapps/quotations/common/constants/quotations';
+import type {Quotations} from '@/subapps/quotations/common/types/quotations';
 type Props = {
   quotations: Quotations[];
   pageInfo?: any;
 };
 const Content = (props: Props) => {
-  const { quotations, pageInfo } = props;
-  const { page, pages } = pageInfo || {};
+  const {quotations, pageInfo} = props;
+  const {page, pages} = pageInfo || {};
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -28,7 +28,7 @@ const Content = (props: Props) => {
     }>,
   ) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    values.forEach(({ key, value = '' }: any) => {
+    values.forEach(({key, value = ''}: any) => {
       value = value && String(value)?.trim();
       if (!value) {
         current.delete(key);
@@ -41,17 +41,17 @@ const Content = (props: Props) => {
     router.push(`${pathname}${query}`);
   };
   const handlePreviousPage = () => {
-    const { page, hasPrev } = pageInfo;
+    const {page, hasPrev} = pageInfo;
     if (!hasPrev) return;
-    updateSearchParams([{ key: 'page', value: Math.max(Number(page) - 1, 1) }]);
+    updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
   };
   const handleNextPage = () => {
-    const { page, hasNext } = pageInfo;
+    const {page, hasNext} = pageInfo;
     if (!hasNext) return;
-    updateSearchParams([{ key: 'page', value: Number(page) + 1 }]);
+    updateSearchParams([{key: 'page', value: Number(page) + 1}]);
   };
   const handlePage = (page: string | number) => {
-    updateSearchParams([{ key: 'page', value: page }]);
+    updateSearchParams([{key: 'page', value: page}]);
   };
 
   return (

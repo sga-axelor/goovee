@@ -8,6 +8,10 @@ const DynamicIcon: React.FC<DynamicIconProps> = ({
 }) => {
   const IconComponent = iconsMap[icon];
   console.log(IconComponent);
-  return IconComponent ? <IconComponent size={fontSize} {...rest} onClick={onClick}/> : '';
+  return IconComponent ? (
+    <IconComponent size={fontSize} {...rest} onClick={onClick} />
+  ) : (
+    ''
+  );
 };
 export default DynamicIcon;

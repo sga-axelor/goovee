@@ -1,15 +1,15 @@
 'use client';
 import React from 'react';
-import { Separator } from "@ui/components/separator"
-import { Button } from "@ui/components/button"
-import { MdCheckCircleOutline } from "react-icons/md";
-import { MdOutlineDisabledByDefault } from "react-icons/md";
-import { LiaLongArrowAltRightSolid } from "react-icons/lia";
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
+import {MdCheckCircleOutline} from 'react-icons/md';
+import {MdOutlineDisabledByDefault} from 'react-icons/md';
+import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 // ---- CORE IMPORTS ---- //
-import { i18n } from '@/lib/i18n';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { QUOTATION_STATUS } from '@/subapps/quotations/common/constants/quotations';
-import type { TotalProps } from '@/subapps/quotations/common/types/quotations';
+import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
+import type {TotalProps} from '@/subapps/quotations/common/types/quotations';
 import styles from './styles.module.scss';
 export const Total = ({
   exTaxTotal,
@@ -40,10 +40,10 @@ export const Total = ({
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <h6 className="text-base font-medium mb-0">{i18n.get('Total price')}:</h6>
-            <h4 className="text-xl font-medium mb-0">
-              {inTaxTotal}
-            </h4>
+            <h6 className="text-base font-medium mb-0">
+              {i18n.get('Total price')}:
+            </h6>
+            <h4 className="text-xl font-medium mb-0">{inTaxTotal}</h4>
           </div>
           {statusSelect !== QUOTATION_STATUS.CANCELED_QUOTATION && (
             <>
@@ -65,9 +65,9 @@ export const Total = ({
           )}
           {false && (
             <div className="flex justify-center">
-              <Button
-                className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
-                {i18n.get('Pay')} <LiaLongArrowAltRightSolid className="text-2xl" />
+              <Button className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
+                {i18n.get('Pay')}{' '}
+                <LiaLongArrowAltRightSolid className="text-2xl" />
               </Button>
             </div>
           )}

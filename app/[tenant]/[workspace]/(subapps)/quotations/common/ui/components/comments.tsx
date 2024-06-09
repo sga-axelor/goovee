@@ -1,28 +1,26 @@
 'use client';
 import React from 'react';
 import moment from 'moment';
-import { Separator } from "@ui/components/separator"
-import { Button } from "@ui/components/button"
-import { MdEast } from "react-icons/md";
+import {Separator} from '@ui/components/separator';
+import {Button} from '@ui/components/button';
+import {MdEast} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
-import { parseDate } from '@/utils';
-import { i18n } from '@/lib/i18n';
-import { TextField } from '@ui/components/TextField';
+import {parseDate} from '@/utils';
+import {i18n} from '@/lib/i18n';
+import {TextField} from '@ui/components/TextField';
 // ---- LOCAL IMPORTS ---- //
-import type { CommentsProps } from '@/subapps/quotations/common/types/quotations';
-import { updateDocument } from '@/subapps/quotations/common/utils/quotations';
+import type {CommentsProps} from '@/subapps/quotations/common/types/quotations';
+import {updateDocument} from '@/subapps/quotations/common/utils/quotations';
 import styles from './styles.module.scss';
 import Image from 'next/image';
 type Props = {
   comments: CommentsProps[];
 };
-export const Comments = ({ comments }: Props) => {
+export const Comments = ({comments}: Props) => {
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-lg">
       <div className="flex flex-col gap-2">
-        <h4 className="text-xl font-medium mb-0">
-          {i18n.get('Comments')}
-        </h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.get('Comments')}</h4>
         <p className="text-xs mb-0">
           {comments?.length} {i18n.get('comments')}
         </p>
