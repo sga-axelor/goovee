@@ -29,9 +29,11 @@ export const ThumbsCarousel = ({
         {images?.map(({url, id}) => (
           <SwiperSlide key={id}>
             <div
-              className="mb-4 bg-center bg-contain bg-no-repeat height-[400px]"
+              className="mb-4 bg-center bg-contain bg-no-repeat rounded-lg"
               style={{
                 backgroundImage: `url(${url})`,
+                width: '380px',
+                height: '380px'
               }}></div>
           </SwiperSlide>
         ))}
@@ -43,14 +45,15 @@ export const ThumbsCarousel = ({
         <div>
           <Button
             ref={(node: any) => setPrevEl(node)}
-            className="absolute top-[45%] left-4">
+            className="absolute left-4"
+            style={{top: '40%'}}>
             <div className="flex">
               <FaChevronLeft color="white" />
             </div>
           </Button>
           <Button
             ref={(node: any) => setNextEl(node)}
-            className="absolute top-[45%] right-4">
+            className="absolute right-4" style={{top: '40%'}}>
             <div className="flex">
               <FaChevronRight color="white" />
             </div>
@@ -69,9 +72,11 @@ export const ThumbsCarousel = ({
         {images?.map(({url, id}) => (
           <SwiperSlide key={id}>
             <div
-              className="rounded-lg bg-center bg-cover bg-no-repeat height-[120px]"
+              className="rounded-lg bg-center bg-cover bg-no-repeat rounded-lg"
               style={{
                 backgroundImage: `url(${url})`,
+                width: '80px',
+                height: '80px'
               }}
             />
           </SwiperSlide>

@@ -103,7 +103,7 @@ export function ProductView({
             </div>
           ) : null}
         </div>
-        <div className="grid md:grid-cols-[30%_1fr] grid-cols-1 gap-5">
+        <div className="grid md:grid-cols-[36%_1fr] grid-cols-1 gap-5">
           <div className="overflow-hidden rounded-lg">
             <ThumbsCarousel
               images={product.images?.map(i => ({

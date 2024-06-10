@@ -31,7 +31,7 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <MdOutlineAccountCircle size={25} className="pointer" />
+          <MdOutlineAccountCircle size={24} className="pointer" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {loggedin ? (

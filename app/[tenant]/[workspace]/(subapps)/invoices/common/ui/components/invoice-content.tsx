@@ -36,8 +36,8 @@ export function InvoiceContent({invoice}: {invoice: any}) {
 
   return (
     <>
-      <div className="rounded-lg border shadow px-12 py-12 w-full overflow-auto">
-        <div className="min-w-[837px] lg:min-w-[100%] overflow-x-auto">
+      <div className="rounded-lg border shadow px-12 py-12 w-full overflow-x-auto overflow-y-hidden">
+        <div className="min-w-[837px] lg:min-w-[100%] overflow-x-auto overflow-y-hidden">
           <div className="flex justify-between mb-12">
             <h2 style={{fontSize: '48px'}} className="uppercase">
               {i18n.get('Invoice')}

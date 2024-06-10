@@ -23,13 +23,13 @@ export function Quantity({
         <IoAdd
           className="courser-pointer block p-2"
           size={32}
-          onClick={() => !disabled && onDecrement?.()}
+          onClick={() => !disabled && onIncrement?.()}
         />
       </div>
       <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
         <IoRemove
           className="courser-pointer block p-2"
-          onClick={() => !disabled && onIncrement?.()}
+          onClick={() => !disabled && onDecrement?.()}
           size={32}
         />
       </div>
