@@ -45,8 +45,8 @@ export const ThumbsCarousel = ({
         <div>
           <Button
             ref={(node: any) => setPrevEl(node)}
-            className="absolute left-4"
-            style={{top: '40%'}}>
+            className="absolute"
+            style={{top: '40%',left:"1rem"}}>
             <div className="flex">
               <FaChevronLeft color="white" />
             </div>

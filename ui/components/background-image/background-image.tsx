@@ -22,6 +22,7 @@ export function BackgroundImage({
   children,
 }: BackgroundImageProps) {
   const url = src || defaultSrc;
+  
   return (
     <div
       className={`${className}  bg-no-repeat bg-center`}

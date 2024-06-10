@@ -85,6 +85,7 @@ export default function Header({subapps}: {subapps: any}) {
   return (
     <Box className="bg-background px-6 py-2 flex items-center">
       <Logo />
+      
       <Box flexGrow={1} />
       <Box className="flex items-center gap-8">
         {subapps

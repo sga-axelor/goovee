@@ -9,10 +9,10 @@ import React, {
 } from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {PREFIX_CART_KEY} from '@/constants';
-import {getitem, setitem} from '@/lib/storage';
-import type {Product} from '@/types';
-import {useWorkspace} from './workspace-context';
+import { PREFIX_CART_KEY } from '@/constants';
+import { getitem, setitem } from '@/lib/storage';
+import type { ComputedProduct, Product } from '@/types';
+import { useWorkspace } from './workspace-context';
 
 const CartContext = React.createContext<any>({});
 
@@ -23,7 +23,7 @@ export default function CartContextProvider({
 }) {
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const {workspaceURI} = useWorkspace();
+  const { workspaceURI } = useWorkspace();
 
   const CART_KEY = useMemo(
     () => PREFIX_CART_KEY + workspaceURI,
@@ -78,9 +78,13 @@ export default function CartContextProvider({
     async ({
       productId,
       quantity,
+      images,
+      computedProduct
     }: {
       productId: Product['id'];
       quantity: string | number;
+      images: [string];
+      computedProduct:ComputedProduct
     }) => {
       const existing = await getProductQuantity(productId);
 
@@ -92,6 +96,8 @@ export default function CartContextProvider({
             {
               product: productId,
               quantity,
+              images,
+              computedProduct
             },
           ],
         }));
@@ -150,7 +156,7 @@ export default function CartContextProvider({
       const existing = await getProductQuantity(productId);
 
       if (!existing) {
-        return await addItem({productId, quantity});
+        return await addItem({ productId, quantity });
       }
 
       setCart((cart: any) => {
@@ -193,7 +199,7 @@ export default function CartContextProvider({
         let cart = await getitem(CART_KEY);
 
         if (!cart) {
-          cart = {items: []};
+          cart = { items: [] };
         }
 
         setCart(cart);

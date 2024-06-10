@@ -1,33 +1,33 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import {usePathname, useRouter} from 'next/navigation';
-import {useSession} from 'next-auth/react';
-import {LuChevronLeft} from 'react-icons/lu';
-import {MdDeleteOutline} from 'react-icons/md';
-import {Label} from '@ui/components/label';
-import {Button} from '@ui/components/button';
-import {Separator} from '@ui/components/separator';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { LuChevronLeft } from 'react-icons/lu';
+import { MdDeleteOutline } from 'react-icons/md';
+import { Label } from '@ui/components/label';
+import { Button } from '@ui/components/button';
+import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {BackgroundImage, Quantity} from '@/ui/components';
-import {useQuantity} from '@/ui/hooks';
-import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
-import {computeTotal} from '@/utils/cart';
-import {getImageURL} from '@/utils/product';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
-import type {Cart, Product, PortalWorkspace} from '@/types';
+import { BackgroundImage, Quantity } from '@/ui/components';
+import { useQuantity } from '@/ui/hooks';
+import { useCart } from '@/app/[tenant]/[workspace]/cart-context';
+import { computeTotal } from '@/utils/cart';
+import { getImageURL } from '@/utils/product';
+import { useWorkspace } from '@/app/[tenant]/[workspace]/workspace-context';
+import { i18n } from '@/lib/i18n';
+import type { Cart, Product, PortalWorkspace } from '@/types';
 // ---- LOCAL IMPORTS ---- //
-import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
-function CartItem({item, disabled, handleRemove, displayPrices}: any) {
+import { findProduct } from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
+function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
   const [updating, setUpdating] = useState(false);
-  const {updateQuantity, getProductNote, setProductNote} = useCart();
-  const {workspaceURI} = useWorkspace();
+  const { updateQuantity, getProductNote, setProductNote } = useCart();
+  const { workspaceURI } = useWorkspace();
   const [note, setNote] = useState('');
   if (!item.computedProduct) return null;
-  const {product, price} = item.computedProduct;
-  const {quantity, increment, decrement} = useQuantity({
+  const { product, price } = item.computedProduct;
+  const { quantity, increment, decrement } = useQuantity({
     initialValue: Number(item.quantity),
   });
   const handleUpdateQuantity = useCallback(
@@ -39,7 +39,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
       quantity: number;
     }) => {
       setUpdating(true);
-      await updateQuantity({productId, quantity});
+      await updateQuantity({ productId, quantity });
       setUpdating(false);
     },
     [updateQuantity],
@@ -55,7 +55,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   const handleChangeNote = async (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    const {value} = event.target;
+    const { value } = event.target;
     setNote(value);
     await setProductNote(product.id, value);
   };
@@ -66,7 +66,6 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
       setNote(note);
     })();
   }, [getProductNote, product]);
-
   return (
     <div
       key={item.id}
@@ -111,6 +110,9 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
         <div className="flex flex-col items-start ml-auto py-2 h-full">
           <p className="text-xl font-semibold mb-1">
             {displayPrices && price.displayPrimary}
+          </p>
+          <p className="text-xl font-semibold mb-1">
+            {displayPrices && price.displaySecondary}
           </p>
           <Button
             disabled={disabled || updating}
@@ -168,9 +170,9 @@ function CartSummary({
 }) {
   const pathname = usePathname();
   const noitem = !cart?.items?.length;
-  const {displayTotal} = computeTotal({cart, workspace});
-  const {workspaceURI} = useWorkspace();
-  const {data: session} = useSession();
+  const { displayTotal } = computeTotal({ cart, workspace });
+  const { workspaceURI } = useWorkspace();
+  const { data: session } = useSession();
   const authenticated = session?.user?.id;
 
   return (
@@ -242,9 +244,9 @@ function CartSummary({
     </div>
   );
 }
-export default function Content({workspace}: {workspace?: PortalWorkspace}) {
-  const {cart, removeItem} = useCart();
-  const {workspaceURI} = useWorkspace();
+export default function Content({ workspace }: { workspace?: PortalWorkspace }) {
+  const { cart, removeItem } = useCart();
+  const { workspaceURI } = useWorkspace();
   const router = useRouter();
   const [updating, setUpdating] = useState(false);
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
@@ -272,7 +274,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       );
       if (diff.length) {
         await Promise.all(
-          cart.items.map((i: any) => findProduct({id: i.product, workspace})),
+          cart.items.map((i: any) => findProduct({ id: i.product, workspace })),
         )
           .then(computedProducts => {
             setComputedProducts(computedProducts);
