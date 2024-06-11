@@ -14,39 +14,44 @@ module.exports = {
     },
     extend: {
       colors: { 
-        border: "#e5e5e5",
-        input: "#e5e5e5",
-        ring: "#0a0a0a",
-        background: "#ffffff",
-        foreground: "#0a0a0a",
+        border: "var(--border-color)",
+        input: "var(--input-color)",
+        ring: "var(--ring)",
+        background: "var(--background)",
+        foreground: "hsl(var(--foreground))", //we should hsl value here
         primary: {
-          DEFAULT: "#212323",
-          foreground: "#ffffff",
+          DEFAULT: "var(--primary-default)",
+          foreground: "var(--primary-foreground)",
         },
         secondary: {
-          DEFAULT: "#f5f5f5",
-          foreground: "#212323",
+          DEFAULT: "var(--secondary-default)",
+          foreground: "var(--secondary-foreground)",
         },
         destructive: {
-          DEFAULT: "#ef4444",
-          foreground: "#ffffff",
+          DEFAULT: "var(--destructive-default)",
+          foreground: "var(--destructive-foreground)",
         },
         muted: {
-          DEFAULT: "#f5f5f5",
-          foreground: "#737373",
+          DEFAULT: "var(--muted-default)",
+          foreground: "var(--muted-foreground)",
         },
         accent: {
-          DEFAULT: "#f5f5f5",
-          foreground: "#212323",
+          DEFAULT: "var(--accent-default)",
+          foreground: "var(--accent-foreground)",
         },
         popover: {
-          DEFAULT: "#ffffff",
-          foreground: "#0a0a0a",
+          DEFAULT: "hsl(var(--popover))",//we should hsl value here
+          foreground: "var(--popover-foreground)",
         },
         card: {
-          DEFAULT: "#ffffff",
-          foreground: "#0a0a0a",
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
         },
+      },
+      borderRadius: {
+        lg: `var(--border-radius)`,
+        md: `calc(var(--border-radius) - 2px)`,
+        sm: "calc(var(--border-radius) - 4px)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],

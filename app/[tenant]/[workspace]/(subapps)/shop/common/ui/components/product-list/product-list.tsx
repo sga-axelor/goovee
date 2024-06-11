@@ -142,6 +142,7 @@ export function ProductList({
         </div>
       )}
 
+
       <div className={'container portal-container'}>
         <div className="mb-6">
           {breadcrumbs?.length > 1 ? (

@@ -29,7 +29,7 @@ import * as TiIcons from 'react-icons/ti';
 import * as WiIcons from 'react-icons/wi';
 import * as VscIcons from 'react-icons/vsc';
 
-type IconName =
+export type IconName =
   | keyof typeof BootstrapIcon
   | keyof typeof Fa6Icon
   | keyof typeof AiIcons

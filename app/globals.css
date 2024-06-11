@@ -7,7 +7,7 @@
   :root {
     --main_purple: #5603ad;
     --background: #ffffff;
-    --foreground: #0a0a0a;
+    --foreground: 0 0% 3.92%;
 
     --card: #ffffff;
     --card-foreground: #0a0a0a;
@@ -89,6 +89,10 @@ body {
   padding-left: 1rem;
   margin-right: auto;
   margin-left: auto;
+}
+.subcategory .first-item:first-child .first-border {
+  border-left: 0px;
+
 }
 a{
   text-decoration: inherit !important;

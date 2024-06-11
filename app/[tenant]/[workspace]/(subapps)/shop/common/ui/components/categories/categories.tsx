@@ -132,7 +132,7 @@ export const Categories = ({
   const large = ['lg', 'xl', 'xxl'].some(x => res[x]);
 
   return large ? (
-    <div className="mx-auto flex items-center gap-4 mb-0 px-6 py-4 bg-background border-t border-border border-solid">
+    <div className="mx-auto flex items-center gap-4 mb-0 px-6 py-4 bg-background border-t border-border border-solid subcategory">
       {items.map((category, index) => {
         return (
           <Category
@@ -177,7 +177,7 @@ const Category = ({
   return (
     <div
       {...{ref: ref as any}}
-      className="shrink-0 relative flex items-center z-[9]">
+      className="shrink-0 relative first-item flex items-center z-[9]">
       {item.items?.length ? (
         <>
           <NavigationMenu>
@@ -188,7 +188,7 @@ const Category = ({
                   ref={setTarget}
                   className="flex items-center justify-center cursor-pointer text-base font-medium text-primary">
                   <NavigationMenuTrigger className="px-0 hover:bg-transparent">
-                    <p className="px-2 mb-0 text-base font-medium text-primary">
+                    <p className="px-2 mb-0 text-base font-medium text-primary first-border border-l-2 border-primary border-solid">
                       {i18n.get(item.name)}
                     </p>
                   </NavigationMenuTrigger>
@@ -207,7 +207,7 @@ const Category = ({
         </>
       ) : (
         <p
-          className="cursor-pointer pl-4 mb-0 text-base font-medium text-primary border-l-2 border-primary border-solid"
+          className="cursor-pointer pl-4 mb-0 text-base font-medium text-primary border-l-2 border-primary border-solid first-border"
           onClick={handleClick}>
           {i18n.get(item.name)}
         </p>
