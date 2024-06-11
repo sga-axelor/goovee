@@ -31,15 +31,15 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <MdOutlineAccountCircle size={24} className="pointer" />
+          <MdOutlineAccountCircle size={24} className="cursor-pointer" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {loggedin ? (
             <>
-              <Link href={`${baseURL || ''}/account`}>
+              <Link href={`${baseURL || ''}/account`} className="cursor-pointer">
                 <DropdownMenuItem>My Account</DropdownMenuItem>
               </Link>
-              <DropdownMenuItem onClick={handleLogout}>logout</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>logout</DropdownMenuItem>
             </>
           ) : (
             <>

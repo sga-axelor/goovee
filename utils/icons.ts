@@ -95,6 +95,7 @@ export const iconsMap = {
 };
 export interface DynamicIconProps {
   icon: IconName;
+  className?: string;
   fontSize?: string | number;
   onClick?: () => void;
 }
