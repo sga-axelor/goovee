@@ -183,7 +183,7 @@ function Shipping({ value, onChange }: { value: string; onChange: any }) {
 }
 function Title({ text, ...rest }: { text: string } & any) {
   return (
-    <h3 className="font-bold" {...rest}>
+    <h3 className="font-bold text-[28px]" {...rest}>
       {text}
     </h3>
   );

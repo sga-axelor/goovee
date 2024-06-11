@@ -30,7 +30,7 @@ export const Breadcrumbs = ({breadcrumbs, onClick}: BreadcrumbsProps) => {
                   <BreadcrumbLink
                     asChild
                     onClick={() => onClick(crumb)}
-                    className="text-secondary cursor-pointer">
+                    className="text-primary cursor-pointer">
                     <span>{crumb.name}</span>
                   </BreadcrumbLink>
                 )}

@@ -57,7 +57,7 @@ export default function Content({
 
   return (
     <>
-      <h2 className="mb-4">{i18n.get('Edit Address')}</h2>
+      <h2 className="mb-4 text-[32px]">{i18n.get('Edit Address')}</h2>
       <AddressForm
         onSubmit={handleSubmit}
         countries={countries}

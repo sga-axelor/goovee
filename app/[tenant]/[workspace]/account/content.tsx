@@ -18,7 +18,7 @@ export default function Content({subapps}: {subapps: any}) {
       <h4 className="text-lg font-medium text-primary mb-6">
         {i18n.get('My Account')} {session ? `- ${session?.user?.name}` : ''}{' '}
         {session?.user && (
-          <span className="text-secondary text-base">
+          <span className="text-primary text-base">
             ({session?.user?.email})
           </span>
         )}

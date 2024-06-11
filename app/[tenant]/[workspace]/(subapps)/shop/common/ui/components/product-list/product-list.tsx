@@ -31,7 +31,7 @@ const VIEW = {
 };
 function MobileFilters() {
   return (
-    <div className="flex items-center gap-2 text-secondary">
+    <div className="flex items-center gap-2 text-primary">
       <MdOutlineFilterAlt className="text-xl" />
       <p className="mb-0 font-bold">{i18n.get('Filters')}</p>
     </div>
@@ -136,7 +136,7 @@ export function ProductList({
       {showSummary && (
         <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]">
           <div className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
-          <h1 className="font-bold m-0 z-[1] text-primary-foreground">
+          <h1 className="font-bold text-[40px] m-0 z-[1] text-primary-foreground">
             {i18n.get('Shop summary')}
           </h1>
         </div>

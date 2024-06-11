@@ -19,7 +19,7 @@ export default function Content() {
 
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[1185px] w-full">
-      <h5 className="mb-3 font-medium text-primary">
+      <h5 className="mb-3 font-medium text-primary text-xl">
         {i18n.get('Forgot Password')} ?
       </h5>
       <form

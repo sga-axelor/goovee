@@ -72,7 +72,7 @@ export function AddressForm({
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <h3>{i18n.get('Address Information')}</h3>
+        <h3 className="text-[28px]">{i18n.get('Address Information')}</h3>
         <Separator className="my-2" />
         <div>
           <TextField

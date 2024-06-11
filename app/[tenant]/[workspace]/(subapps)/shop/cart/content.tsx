@@ -87,7 +87,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
           </Link>
           {product.allowCustomNote && (
             <div>
-              <Label className="text-secondary">{i18n.get('Note')}</Label>
+              <Label className="text-primary">{i18n.get('Note')}</Label>
               <textarea
                 className="border rounded-lg"
                 value={note}

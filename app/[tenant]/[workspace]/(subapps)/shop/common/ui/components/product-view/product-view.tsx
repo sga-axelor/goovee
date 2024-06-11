@@ -88,7 +88,7 @@ export function ProductView({
                             handleCategoryClick(crumb);
                           }
                         }}
-                        className={`${islast ? 'text-primary font-bold' : 'text-secondary'}`}>
+                        className={`${islast ? 'text-primary font-bold' : 'text-primary'}`}>
                         {i18n.get(crumb.name)}
                       </div>
                       {!islast && (
@@ -133,7 +133,7 @@ export function ProductView({
               }}></p>
             {Boolean(cartQuantity) && product.allowCustomNote && (
               <div>
-                <Label className="text-secondary">{i18n.get('Note')}</Label>
+                <Label className="text-primary">{i18n.get('Note')}</Label>
                 <textarea
                   className="border rounded-lg"
                   value={note}

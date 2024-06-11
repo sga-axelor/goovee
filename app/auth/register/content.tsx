@@ -77,7 +77,7 @@ export default function Content() {
   };
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[1185px] w-full">
-      <h5 className="mb-3 font-medium text-primary">{i18n.get('Sign Up')}</h5>
+      <h5 className="mb-3 font-medium text-primary text-xl">{i18n.get('Sign Up')}</h5>
       <form
         className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}>
@@ -189,7 +189,7 @@ export default function Content() {
         <div className="grow">
           <Separator />
         </div>
-        <h5 className="mb-0 font-medium text-primary">{i18n.get('Or')}</h5>
+        <h5 className="mb-0 font-medium text-primary text-xl">{i18n.get('Or')}</h5>
         <div className="grow">
           <Separator />
         </div>

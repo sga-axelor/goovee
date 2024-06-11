@@ -14,44 +14,39 @@ module.exports = {
     },
     extend: {
       colors: { 
-        border: "var(--border-color)",
-        input: "var(--input-color)",
-        ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: "#e5e5e5",
+        input: "#e5e5e5",
+        ring: "#0a0a0a",
+        background: "#ffffff",
+        foreground: "#0a0a0a",
         primary: {
-          DEFAULT: "var(--primary-default)",
-          foreground: "var(--primary-foreground)",
+          DEFAULT: "#212323",
+          foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "var(--secondary-default)",
-          foreground: "var(--secondary-foreground)",
+          DEFAULT: "#f5f5f5",
+          foreground: "#212323",
         },
         destructive: {
-          DEFAULT: "var(--destructive-default)",
-          foreground: "var(--destructive-foreground)",
+          DEFAULT: "#ef4444",
+          foreground: "#ffffff",
         },
         muted: {
-          DEFAULT: "var(--muted-default)",
-          foreground: "var(--muted-foreground)",
+          DEFAULT: "#f5f5f5",
+          foreground: "#737373",
         },
         accent: {
-          DEFAULT: "var(--accent-default)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: "#f5f5f5",
+          foreground: "#212323",
         },
         popover: {
-          DEFAULT: "var(--popover))",
-          foreground: "var(--popover-foreground)",
+          DEFAULT: "#ffffff",
+          foreground: "#0a0a0a",
         },
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          DEFAULT: "#ffffff",
+          foreground: "#0a0a0a",
         },
-      },
-      borderRadius: {
-        lg: `var(--border-radius)`,
-        md: `calc(var(--border-radius) - 2px)`,
-        sm: "calc(var(--border-radius) - 4px)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
