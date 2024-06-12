@@ -10,11 +10,11 @@ export const History = () => {
         <h4 className="text-xl font-medium mb-0">{i18n.get('History')}</h4>
         <Separator />
         <div>
-          <div className="flex justify-between p-4 border-l !border-[#212323]">
+          <div className="flex justify-between p-4 border-l !border-primary">
             <h6 className="text-base font-semibold mb-0">
               {i18n.get('History action')}
             </h6>
-            <h6 className="text-base text-[#464555] mb-0">23/11/2023</h6>
+            <h6 className="text-base text-detail-blue mb-0">23/11/2023</h6>
           </div>
         </div>
       </div>

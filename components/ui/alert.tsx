@@ -11,11 +11,11 @@ const alertVariants = cva(
         default: 'bg-background text-foreground',
         destructive:
           'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
-        success: 'border-[#4FC179] text-[#328D54] bg-[#D0EED8]/50',
+        success: 'border-success-dark text-success-dark bg-success-light [&>svg]:text-success-dark',
         error:
-          'border-[#F14E46] text-[#B2150D] bg-[#FBC6C4]/50 dark:border-destructive [&>svg]:text-destructive',
-        warning: 'bg-[#FFE6BF]/50 border-[#FFA114] text-[#BF7300]',
-        primary: 'bg-[#F6F1FF]/50 border-[#5603AD] text-[#340077]',
+          'border-error-dark text-error-dark bg-error-light dark:border-destructive [&>svg]:text-error-dark',
+        warning: 'bg-warning-light border-warning-dark text-warning-dark [&>svg]:text-warning-dark',
+        primary: 'bg-primary-light border-primary-dark text-primary-dark [&>svg]:text-primary-dark',
       },
     },
     defaultVariants: {

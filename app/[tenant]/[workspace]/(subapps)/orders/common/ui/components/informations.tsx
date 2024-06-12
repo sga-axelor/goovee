@@ -46,7 +46,7 @@ export const Informations = ({
           </div>
           {showShippingLink && (
             <div className="flex items-center gap-2">
-              <p className="text-base underline text-[#2D60C4] mb-0">
+              <p className="text-base underline text-link-blue mb-0">
                 {i18n.get('Shipping link to follow the delivery path')}
               </p>
             </div>

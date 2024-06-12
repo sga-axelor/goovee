@@ -136,7 +136,7 @@ export function ProductList({
       {showSummary && (
         <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]">
           <div className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
-          <h1 className="font-bold text-[40px] m-0 z-[1] text-primary-foreground">
+          <h1 className="font-bold text-4xl m-0 z-[1] text-primary-foreground">
             {i18n.get('Shop summary')}
           </h1>
         </div>

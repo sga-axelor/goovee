@@ -98,11 +98,6 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           />
         </div>
         {error && (
-          // <Box color="danger">
-          //   {i18n.get(
-          //     "Invalid credentials. Try email from partners. For e.g info@apollo.fr"
-          //   )}
-          // </Box>
           <Toast
             variant="error"
             show={true}
@@ -120,8 +115,6 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
               {i18n.get('Remember Me')}
             </Label>
           </div>
-          {/* <Input type="checkbox" me={2} disabled={submitting} />
-          <InputLabel mb={0}>{i18n.get("Remember Me")}</InputLabel> */}
           <Link
             href={`/auth/forgot-password?${searchQuery}`}
             aria-disabled={submitting}
@@ -146,7 +139,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           </div>
         )}
         {searchParams.get('success') && (
-          <div className="text-[#328D54]">{searchParams.get('success')}</div>
+          <div className="text-success-dark">{searchParams.get('success')}</div>
         )}
       </form>
       <div className="flex items-center gap-4 mt-4">
