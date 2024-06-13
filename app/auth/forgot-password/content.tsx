@@ -18,7 +18,7 @@ export default function Content() {
   };
 
   return (
-    <div className="mx-auto p-4 sm:p-6 max-w-[1185px] w-full">
+    <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
       <h5 className="mb-3 font-medium text-primary text-xl">
         {i18n.get('Forgot Password')} ?
       </h5>
@@ -42,7 +42,7 @@ export default function Content() {
           </Label>
           <Link
             href={`/auth/login?${searchQuery}`}
-            className="text-main_purple flex text-decoration-underline">
+            className="text-main-purple flex text-decoration-underline">
             {i18n.get('Log In')}
           </Link>
         </div>

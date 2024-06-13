@@ -64,7 +64,7 @@ export function SortBy({
         onValueChange={e => {
           onChange({value: e});
         }}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select" />
         </SelectTrigger>
         <SelectContent>

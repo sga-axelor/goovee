@@ -5,101 +5,84 @@
 
 @layer base {
   :root {
-    --main_purple: #5603ad;
-    --detail-blue: #464555;
-    --link-blue: #2d60c4;
-
-    --success-light: #d0eed8;
-    --success-dark: #4fc179;
-    --error-light: #fbc6c4;
-    --error-dark: #f14e46;
-    --warning-light: #ffe6bf;
-    --warning-dark: #ffa114;
-    --primary-light: #f6f1ff;
-    --primary-dark: #5603ad;
-    --secondary-light: #d0e3ff;
-    --secondary-dark: #2d60c4;
-    --default-light: #adb5bd;
-    --default-dark: #495057;
-
-    --background: #ffffff;
+    --body-light: hsl(210, 17%, 98%);
+    --main-purple: hsl(269, 97%, 35%);
+    --detail-blue: hsl(244, 10%, 30%);
+    --link-blue: hsl(220, 63%, 47%);
+    --success-light: hsl(136, 47%, 87%);
+    --success-dark: hsl(142, 48%, 53%);
+    --error-light: hsl(2, 87%, 88%);
+    --error-dark: hsl(3, 86%, 61%);
+    --warning-light: hsl(37, 100%, 87%);
+    --warning-dark: hsl(36, 100%, 54%);
+    --primary-light: hsl(261, 100%, 97%);
+    --primary-dark: hsl(269, 97%, 35%);
+    --secondary-light: hsl(216, 100%, 91%);
+    --secondary-dark: hsl(220, 63%, 47%);
+    --default-light: hsl(210, 11%, 71%);
+    --default-dark: hsl(210, 9%, 31%);
+    --background: hsl(0, 0%, 100%);
     --foreground: 0 0% 3.92%;
 
-    --card: #ffffff;
-    --card-foreground: #0a0a0a;
-
-    --popover: #ffffff;
-    --popover-foreground: #0a0a0a;
-
-    --primary: #212323;
-    --primary-foreground: #ffffff;
-
-    --content-primary: #2a3342;
-    --content-foreground: #ffffff;
-
-    --secondary: #f5f5f5;
-    --secondary-foreground: #212323;
-
-    --muted: #f5f5f5;
-    --muted-foreground: #737373;
-
-    --accent: #f5f5f5;
-    --accent-foreground: #212323;
-
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-
-    --border: #e5e5e5;
-    --input: #e5e5e5;
-    --ring: #0a0a0a;
+    --primary: hsl(180, 3%, 13%);
+    --primary-foreground: hsl(0, 0%, 100%);
+    --secondary: hsl(0, 0%, 96%);
+    --secondary-foreground: hsl(180, 3%, 13%);
+    --destructive: hsl(0, 84%, 60%);
+    --destructive-foreground: hsl(0, 0%, 100%);
+    --muted: hsl(0, 0%, 96%);
+    --muted-foreground: hsl(0, 0%, 45%);
+    --accent: hsl(0, 0%, 96%);
+    --accent-foreground: hsl(180, 3%, 13%);
+    --card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(0, 0%, 4%);
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --content-primary: hsl(218, 22%, 21%);
+    --content-foreground: hsl(0, 0%, 100%);
+    --input: hsl(180, 2%, 90%);
+    --ring: 0 0% 3.9%;
+    --border: hsl(180, 2%, 90%);
+    --width: 0.0625rem;
+    --radius: 0.25rem;
   }
 
   .dark {
-    --background: #0a0a0a;
-    --foreground: #ffffff;
+    --background: hsl(0, 0%, 4%);
+    --foreground: hsl(0, 0%, 100%);
 
-    --card: #0a0a0a;
-    --card-foreground: #ffffff;
+    --card: hsl(0, 0%, 4%);
+    --card-foreground: hsl(0, 0%, 100%);
 
-    --popover: #0a0a0a;
-    --popover-foreground: #ffffff;
+    --popover: hsl(0, 0%, 4%);
+    --popover-foreground: hsl(0, 0%, 100%);
 
-    --primary: #ffffff;
-    --primary-foreground: #212323;
+    --primary: hsl(0, 0%, 100%);
+    --primary-foreground: hsl(180, 3%, 13%);
 
-    --secondary: #262626;
-    --secondary-foreground: #ffffff;
+    --secondary: hsl(0, 0%, 15%);
+    --secondary-foreground: hsl(0, 0%, 100%);
 
-    --muted: #262626;
-    --muted-foreground: #a3a3a3;
+    --muted: hsl(0, 0%, 15%);
+    --muted-foreground: hsl(0, 0%, 64%);
 
-    --accent: #262626;
-    --accent-foreground: #ffffff;
+    --accent: hsl(0, 0%, 15%);
+    --accent-foreground: hsl(0, 0%, 100%);
 
-    --destructive: #7f1d1d;
-    --destructive-foreground: #ffffff;
+    --destructive: hsl(0, 63%, 31%);
+    --destructive-foreground: hsl(0, 0%, 100%);
 
-    --border: #262626;
-    --input: #262626;
-    --ring: #d4d4d4;
+    --border: hsl(0, 0%, 15%);
+    --input: hsl(0, 0%, 15%);
+    --ring: hsl(0, 0%, 83%);
   }
 }
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 body {
   font-family: 'Poppins', sans-serif !important;
-  background: #f8f9fa !important;
+  background: var(--body-light) !important;
 }
 .container {
-  max-width: 1140px;
+  max-width: 71.25rem;
   width: 100%;
   padding-right: 1rem;
   padding-left: 1rem;
@@ -107,7 +90,7 @@ body {
   margin-left: auto;
 }
 .subcategory .first-item:first-child .first-border {
-  border-left: 0px;
+  border-left: 0rem;
 }
 a {
   text-decoration: inherit !important;

@@ -33,8 +33,8 @@ export const ThumbsCarousel = ({
               style={{
                 backgroundImage: `url(${url})`,
                 backgroundSize: 'cover',
-                width: '380px',
-                height: '380px',
+                width: '23.75rem',
+                height: '23.75rem'
               }}></div>
           </SwiperSlide>
         ))}
@@ -79,8 +79,8 @@ export const ThumbsCarousel = ({
                 backgroundImage: `url(${url})`,
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
-                width: '68px',
-                height: '68px',
+                width: '4.25rem',
+                height: '4.25rem'
               }}
             />
           </SwiperSlide>

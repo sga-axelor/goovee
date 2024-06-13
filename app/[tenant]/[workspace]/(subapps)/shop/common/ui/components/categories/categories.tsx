@@ -235,7 +235,7 @@ const Dropdown = ({
 
   return (
     <NavigationMenuContent>
-      <div className="!min-w-[200px]">
+      <div className="!min-w-[12.5rem]">
         {items.map((category: Category, index: number) => (
           <Category
             item={category}

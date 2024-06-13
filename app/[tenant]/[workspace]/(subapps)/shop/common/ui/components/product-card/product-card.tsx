@@ -32,13 +32,13 @@ export function ProductCard({
   };
 
   return (
-    <div className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[410px] bg-background text-primary">
+    <div className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[25.625rem] bg-background text-primary">
       <div onClick={handleClick}>
         <BackgroundImage
-          className="rounded-t-lg bg-cover relative h-[232px]"
+          className="rounded-t-lg bg-cover relative h-[14.5rem]"
           src={getImageURL(product.images?.[0])}>
           {Boolean(quantity) ? (
-            <div className="border shadow-lg absolute bg-white p-4 rounded-full flex items-center justify-center w-[60px] h-[60px] bottom-4 right-4">
+            <div className="border shadow-lg absolute bg-white p-4 rounded-full flex items-center justify-center w-[3.75rem] h-[3.75rem] bottom-4 right-4">
               <p className="mb-0 text-xl font-bold">{quantity}</p>
             </div>
           ) : (
