@@ -66,34 +66,5 @@ export const DEFAULT_THEME_OPTIONS = {
       foreground: '0 0% 3.9%',
     },
   },
-  borderWidth: {
-    width: 'var(--width)',
-    '0': '0',
-    '2': '2px',
-    '3': '3px',
-    '4': '4px',
-    '6': '6px',
-    '8': '8px',
-  },
-  borderRadius: {
-    sm: 'calc(var(--radius) - 2px)',
-    md: 'calc(var(--radius) - -2px)',
-    lg: 'calc(var(--radius) - -4px)',
-    xl: 'calc(var(--radius) - -8px)',
-    '2xl': 'calc(var(--radius) - -12px)',
-    '3xl': 'calc(var(--radius) - -20px)',
-  },
-  fontFamily: {
-    sans: ['var(--font-sans)', '...fontFamily.sans'],
-  },
-  keyframes: {
-    'accordion-down': {
-      from: {height: '0'},
-      to: {height: 'var(--radix-accordion-content-height)'},
-    },
-    'accordion-up': {
-      from: {height: 'var(--radix-accordion-content-height)'},
-      to: {height: '0'},
-    },
-  },
+  fontFamily: "'Poppins', sans-serif"
 };
