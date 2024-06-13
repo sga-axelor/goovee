@@ -7,14 +7,13 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {ThemeOptions} from '@axelor/ui/core/styles/theme/types';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
 import generateCssVar from '@/utils/DynamicCssVar';
-
+import {ThemeOptions} from '@/types/ThemeOptions';
 
 const ThemeContext = React.createContext({});
 

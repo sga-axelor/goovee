@@ -1,6 +1,6 @@
-import { Theme } from "@/types/Theme";
+import {ThemeOptions} from '@/types/ThemeOptions';
 
-const generateCssVar = (css: Theme) => {
+const generateCssVar = (css: ThemeOptions) => {
   const dynamicCss = `
     :root {
         

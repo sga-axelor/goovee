@@ -6,10 +6,10 @@ import {
   DEFAULT_WORKSPACE,
   DEFAULT_WORKSPACE_URI,
 } from '@/constants';
-import {ThemeOptions} from '@axelor/ui/core/styles/theme/types';
 
 // ---- CORE IMPORTS ---- //
 import {useTheme} from '@/app/theme';
+import {ThemeOptions} from '@/types/ThemeOptions';
 
 export const WorkspaceContext = React.createContext<{
   tenant: string;
