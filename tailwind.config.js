@@ -14,74 +14,70 @@ module.exports = {
     },
     extend: {
       colors: { 
-        border: "var(--border)",
-        input: "var(--input-color)",
-        ring: "var(--ring)",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input-color))",
+        ring: "hsl(var(--ring))",
         body: {
-          light : "var(--body-light)",
+          light : "hsl(var(--body-light))",
         },
         main: {
-          purple: "var(--main-purple)",
+          purple: "hsl(var(--main-purple))",
         },
         detail: {
-          blue: "var(--detail-blue)",
+          blue: "hsl(var(--detail-blue))",
         },
         link: {
-          blue: "var(--link-blue)",
+          blue: "hsl(var(--link-blue))",
         },
         success: {
-          light: 'var(--success-light)',
-          dark: 'var(--success-dark)',
+          light: 'hsl(var(--success-light))',
+          dark: 'hsl(var(--success-dark))',
         },
         error: {
-          light: 'var(--error-light)',
-          dark: 'var(--error-dark)',
+          light: 'hsl(var(--error-light))',
+          dark: 'hsl(var(--error-dark))',
         },
         warning: {
-          light: 'var(--warning-light)',
-          dark: 'var(--warning-dark)',
-        },
-        primary: {
-          light: 'var(--primary-light)',
-          dark: 'var(--primary-dark)',
-        },
-        secondary: {
-          light: 'var(--secondary-light)',
-          dark: 'var(--secondary-dark)',
+          light: 'hsl(var(--warning-light))',
+          dark: 'hsl(var(--warning-dark))',
         },
         default: {
-          light: 'var(--default-light)',
-          dark: 'var(--default-dark)',
+          light: 'hsl(var(--default-light))',
+          dark: 'hsl(var(--default-dark))',
         },
-        background: "var(--background)",
+        background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))", //we should hsl value here
         primary: {
-          DEFAULT: "var(--primary-default)",
-          foreground: "var(--primary-foreground)",
+          light: 'hsl(var(--primary-light))',
+          dark: 'hsl(var(--primary-dark))',
+          DEFAULT: "hsl(var(--primary-default))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "var(--secondary-default)",
-          foreground: "var(--secondary-foreground)",
+          light: 'hsl(var(--secondary-light))',
+          dark: 'hsl(var(--secondary-dark))',
+          DEFAULT: "hsl(var(--secondary-default))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "var(--destructive-default)",
-          foreground: "var(--destructive-foreground)",
+          DEFAULT: "hsl(var(--destructive-default))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "var(--muted-default)",
-          foreground: "var(--muted-foreground)",
+          DEFAULT: "hsl(var(--muted-default))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "var(--accent-default)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: "hsl(var(--accent-default))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",//we should hsl value here
-          foreground: "var(--popover-foreground)",
+          foreground: "hsl(var(--popover-foreground))",
         },
       },
       borderWidth: { 
