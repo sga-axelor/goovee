@@ -8,12 +8,11 @@ interface IconMapping {
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
-
   const iconMapping: IconMapping = {
     storeFront: MdStorefront,
   };
 
-  const icon = iconMapping[type]; 
+  const icon = iconMapping[type];
 
   return icon;
 }
@@ -32,7 +31,7 @@ const Icons = ({
 }) => {
   let IconComponent: any = getIcon(name);
 
-  console.log("icons ",name);
+  console.log('icons ', name);
 
   return <IconComponent {...rest} />;
 };

@@ -37,7 +37,7 @@ const TextField = React.forwardRef<HTMLInputElement, InputProps>(
           />
           {Array.isArray(icons) &&
             icons?.map((ic, i) => (
-              <> 
+              <>
                 <Icons
                   className="absolute right-4 top-2"
                   key={i}
