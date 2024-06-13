@@ -16,7 +16,13 @@ function Logo() {
   const {workspaceURI} = useWorkspace();
   return (
     <Link href={`/?workspaceURI=${workspaceURI}`}>
-      <img src="/images/logo.png" alt="Axelor Logo" className="h-8 mr-4" />
+      <Image
+        src="/images/logo.png"
+        alt="Axelor Logo"
+        width={100}
+        height={50}
+        className="h-8 mr-4"
+      />
     </Link>
   );
 }

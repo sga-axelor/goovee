@@ -82,13 +82,16 @@ function MobileCategories({
     setShow(false);
   }, []);
 
-  const handleItemClick = useCallback((item: any) => {
-    if (item.root) return;
-    onClick(item);
-    if (!item?.items?.length) {
-      hideDrawer();
-    }
-  }, []);
+  const handleItemClick = useCallback(
+    (item: any) => {
+      if (item.root) return;
+      onClick(item);
+      if (!item?.items?.length) {
+        hideDrawer();
+      }
+    },
+    [hideDrawer, onClick],
+  );
 
   return (
     <>

@@ -218,7 +218,7 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
       }
     };
     init();
-  }, [cart, computedProducts]);
+  }, [cart, computedProducts, workspace]);
 
   const $cart = useMemo(
     () => ({

@@ -1,6 +1,13 @@
+import Image from 'next/image';
+
 export function Logo({height = 50, ...rest}: any) {
   return (
-    <img alt="Company Logo" src="/images/logo.png" height={height} {...rest} />
+    <Image
+      alt="Company Logo"
+      src="/images/logo.png"
+      height={height}
+      {...rest}
+    />
   );
 }
 

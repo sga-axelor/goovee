@@ -20,16 +20,18 @@ import {i18n} from '@/lib/i18n';
 import type {Cart, Product, PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
+
 function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   const [updating, setUpdating] = useState(false);
   const {updateQuantity, getProductNote, setProductNote} = useCart();
   const {workspaceURI} = useWorkspace();
   const [note, setNote] = useState('');
-  if (!item.computedProduct) return null;
-  const {product, price} = item.computedProduct;
+
+  // Hooks should always be called unconditionally
   const {quantity, increment, decrement} = useQuantity({
-    initialValue: Number(item.quantity),
+    initialValue: item?.computedProduct ? Number(item.quantity) : 0,
   });
+
   const handleUpdateQuantity = useCallback(
     async ({
       productId,
@@ -44,28 +46,36 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
     },
     [updateQuantity],
   );
+
   useEffect(() => {
-    if (Number(quantity) !== Number(item.quantity)) {
+    if (item?.computedProduct && Number(quantity) !== Number(item.quantity)) {
       handleUpdateQuantity({
         productId: item.computedProduct?.product?.id,
         quantity,
       });
     }
   }, [quantity, item, handleUpdateQuantity]);
+
+  useEffect(() => {
+    (async () => {
+      if (!item?.computedProduct?.product) return;
+      const note = await getProductNote(item.computedProduct.product.id);
+      setNote(note);
+    })();
+  }, [getProductNote, item?.computedProduct?.product]);
+
   const handleChangeNote = async (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const {value} = event.target;
     setNote(value);
-    await setProductNote(product.id, value);
+    await setProductNote(item.computedProduct.product.id, value);
   };
-  useEffect(() => {
-    (async () => {
-      if (!product) return;
-      const note = await getProductNote(product.id);
-      setNote(note);
-    })();
-  }, [getProductNote, product]);
+
+  if (!item.computedProduct) return null;
+
+  const {product, price} = item.computedProduct;
+
   return (
     <div
       key={item.id}
@@ -126,6 +136,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
     </div>
   );
 }
+
 function CartItems({
   cart,
   disabled,
@@ -156,6 +167,7 @@ function CartItems({
     </div>
   );
 }
+
 function CartSummary({
   cart,
   onRequestQuotation,
@@ -245,6 +257,7 @@ function CartSummary({
     </div>
   );
 }
+
 export default function Content({workspace}: {workspace?: PortalWorkspace}) {
   const {cart, removeItem} = useCart();
   const {workspaceURI} = useWorkspace();
@@ -252,6 +265,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
   const [updating, setUpdating] = useState(false);
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
   const handleRemove = async (product: Product) => {
     if (window?.confirm(`Do you want to remove ${product?.name}`)) {
       setUpdating(true);
@@ -259,11 +273,13 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       setUpdating(false);
     }
   };
+
   const handleRequestQuotation = async () => {
     if (window.confirm('Do you want to request quotation')) {
       router.replace(`${workspaceURI}/shop/cart/request-quotation`);
     }
   };
+
   useEffect(() => {
     const init = async () => {
       const computedProductIDs = computedProducts
@@ -286,7 +302,8 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       }
     };
     init();
-  }, [cart, computedProducts]);
+  }, [cart, computedProducts, workspace]);
+
   const $cart = useMemo(
     () => ({
       ...cart,
@@ -301,6 +318,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
     }),
     [cart, computedProducts],
   );
+
   if (loading) {
     return <p>{i18n.get('Loading')}...</p>;
   }
