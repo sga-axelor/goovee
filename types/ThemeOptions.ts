@@ -85,5 +85,5 @@ export type ThemeOptions = {
   };
   fontFamily?: {
     sans?: string[];
-  }
+  };
 };

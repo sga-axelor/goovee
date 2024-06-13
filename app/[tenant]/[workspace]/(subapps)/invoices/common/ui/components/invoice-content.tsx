@@ -104,11 +104,15 @@ export function InvoiceContent({invoice}: {invoice: any}) {
             />
           </div>
           <div className="mb-4">
-            <h6 className="text-main-purple font-medium text-base">{i18n.get('Notes')}</h6>
+            <h6 className="text-main-purple font-medium text-base">
+              {i18n.get('Notes')}
+            </h6>
             <p className="mb-0">{note}</p>
           </div>
           <div>
-            <h6 className="text-main-purple font-medium text-base">{i18n.get('Terms')}</h6>
+            <h6 className="text-main-purple font-medium text-base">
+              {i18n.get('Terms')}
+            </h6>
             <p className="mb-0">{paymentCondition.name}</p>
           </div>
         </div>
