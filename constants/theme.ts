@@ -66,5 +66,5 @@ export const DEFAULT_THEME_OPTIONS = {
       foreground: '0 0% 3.9%',
     },
   },
-  fontFamily: "'Poppins', sans-serif"
+  fontFamily: "'Poppins', sans-serif",
 };
