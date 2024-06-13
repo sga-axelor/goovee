@@ -17,8 +17,35 @@ module.exports = {
         border: "var(--border-color)",
         input: "var(--input-color)",
         ring: "var(--ring)",
+        main_purple: "var(--main_purple)",
+        detail_blue: "var(--detail-blue)",
+        link_blue: "var(--link-blue)",
         background: "var(--background)",
         foreground: "hsl(var(--foreground))", //we should hsl value here
+        success: {
+          light: 'var(--success-light)',
+          dark: 'var(--success-dark)',
+        },
+        error: {
+          light: 'var(--error-light)',
+          dark: 'var(--error-dark)',
+        },
+        warning: {
+          light: 'var(--warning-light)',
+          dark: 'var(--warning-dark)',
+        },
+        primary: {
+          light: 'var(--primary-light)',
+          dark: 'var(--primary-dark)',
+        },
+        secondary: {
+          light: 'var(--secondary-light)',
+          dark: 'var(--secondary-dark)',
+        },
+        default: {
+          light: 'var(--default-light)',
+          dark: 'var(--default-dark)',
+        },
         primary: {
           DEFAULT: "var(--primary-default)",
           foreground: "var(--primary-foreground)",

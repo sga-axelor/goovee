@@ -72,6 +72,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       className="flex-col md:flex-row flex items-start gap-6 bg-white p-4 rounded-lg">
       <BackgroundImage
         className="rounded-lg h-[200px] md:w-[200px] w-full min-w-[200px]"
+        style={{backgroundSize: 'cover'}}
         src={getImageURL(product?.images?.[0])}
       />
       <div className="flex-col md:flex-row flex items-start justify-between w-full h-full">
@@ -117,7 +118,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
           <Button
             disabled={disabled || updating}
             onClick={handleRemove(product)}
-            className="w-6 bg-transparent hover:bg-transparent text-[red] p-0 ml-auto mt-auto">
+            className="w-6 bg-transparent hover:bg-transparent text-red p-0 ml-auto mt-auto">
             <MdDeleteOutline className="text-2xl" />
           </Button>
         </div>

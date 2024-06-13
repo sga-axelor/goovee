@@ -191,7 +191,7 @@ const themeOptions: any = {
   },
   typography: {
     body: {
-      fontSize: '16px',
+      fontSize: '1rem',
     },
   },
 };

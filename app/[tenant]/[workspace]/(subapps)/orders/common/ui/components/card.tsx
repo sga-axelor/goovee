@@ -23,7 +23,7 @@ export const Card = ({
         return (
           <div
             key={i}
-            className="rounded border border-solid !border-[#E6E7E7] bg-white px-4 py-6 flex flex-col gap-4 !cursor-pointer"
+            className="rounded border border-solid !border-border] bg-white px-4 py-6 flex flex-col gap-4 !cursor-pointer mb-3"
             onClick={() => handleRowClick(order.id)}>
             <div className="flex items-center justify-between font-bold">
               <h6 className="text-base mb-0">{i18n.get('Order number')}</h6>

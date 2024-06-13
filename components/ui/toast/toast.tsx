@@ -3,8 +3,6 @@
 import React, {useState, useEffect} from 'react';
 import {Alert, AlertTitle, AlertDescription} from '@ui/components/alert';
 import { MdClose } from "react-icons/md";
-import DynamicIcon from '@/components/ui/icons';
-import { IconName } from '@/utils/icons';
 
 type Variant = 'success' | 'error' | 'warning' | 'primary';
 
@@ -41,20 +39,20 @@ export const Toast = ({
     }
   > = {
     success: {
-      styles: 'border-[#4FC179] text-[#328D54] bg-[#D0EED8]/50',
+      styles: 'border-success-dark text-success-dark bg-success-light [&>svg]:text-success-dark',
       icon: 'MdOutlineCheckCircle',
     },
     error: {
       styles:
-        'border-[#F14E46] text-[#B2150D] bg-[#FBC6C4]/50 dark:border-destructive [&>svg]:text-destructive',
+        'border-error-dark text-error-dark bg-error-light dark:border-destructive [&>svg]:text-error-dark',
       icon: 'MdErrorOutline',
     },
     warning: {
-      styles: 'bg-[#FFE6BF]/50 border-[#FFA114] text-[#BF7300]',
+      styles: 'bg-warning-light border-warning-dark text-warning-dark [&>svg]:text-warning-dark',
       icon: 'MdOutlineWarningAmber',
     },
     primary: {
-      styles: 'bg-[#F6F1FF]/50 border-[#5603AD] text-[#340077]',
+      styles: 'bg-primary-dark border-primary-dark text-primary-dark [&>svg]:text-primary-dark',
       icon: 'MdErrorOutline',
     },
   };
@@ -67,7 +65,7 @@ export const Toast = ({
     <Alert
       className={`${alertType[variant].styles} border relative flex items-start justify-between py-4 px-8`}>
       <div className="flex items-start">
-        <DynamicIcon icon={alertType[variant].icon as IconName} className="mr-4" />
+        {/* <DynamicIcon icon={alertType[variant].icon as IconName} className="mr-4" /> */}
         <div className="flex-1">
           <AlertTitle className="text-base font-medium">{heading}</AlertTitle>
           <AlertDescription className="text-sm">{description}</AlertDescription>

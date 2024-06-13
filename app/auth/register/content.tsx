@@ -182,7 +182,6 @@ export default function Content() {
             {i18n.get('Log In')}
           </Link>
         </div>
-        {/* {error && <div className="text-[#B2150D]">{error}</div>} */}
         {error && <Toast variant="error" show={true} heading={error} />}
       </form>
       <div className="flex items-center gap-4 mt-4">

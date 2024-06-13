@@ -17,7 +17,7 @@ function TableHeader({columns}: TableHeaderProps) {
       {columns.map((column, i) => (
         <div
           key={i}
-          className={`${i === 0 ? 'text-left' : 'text-right'} header mb-4 uppercase !text-[#7441C4] font-bold`}>
+          className={`${i === 0 ? 'text-left' : 'text-right'} header mb-4 uppercase !text-main_purple font-bold`}>
           {column}
         </div>
       ))}
@@ -73,11 +73,11 @@ function TableFooter({
       </div>
       {/* Row 5 */}
       <div></div>
-      <div className="!border-b-[3px] border-solid !border-[#2924BF] py-2 text-right">
+      <div className="!border-b-[3px] border-solid !border-main_purple py-2 text-right">
         <p className="mb-0">{i18n.get('Total')}</p>
         <p className="mb-0">{i18n.get('Deposit Requested')}</p>
       </div>
-      <div className="!border-b-[3px] border-solid !border-[#2924BF] py-2 text-right">
+      <div className="!border-b-[3px] border-solid !border-main_purple py-2 text-right">
         <p className="mb-0">{inTaxTotal}</p>
         <p className="mb-0">
           {amountRemaining.value} {amountRemaining.symbol}

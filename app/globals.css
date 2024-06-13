@@ -6,6 +6,22 @@
 @layer base {
   :root {
     --main_purple: #5603ad;
+    --detail-blue: #464555;
+    --link-blue: #2D60C4;
+
+    --success-light: #D0EED8;
+    --success-dark: #4FC179;
+    --error-light: #FBC6C4;
+    --error-dark: #F14E46;
+    --warning-light: #FFE6BF;
+    --warning-dark: #FFA114;
+    --primary-light: #F6F1FF;
+    --primary-dark: #5603AD;
+    --secondary-light: #D0E3FF;
+    --secondary-dark: #2D60C4;
+    --default-light: #adb5bd;
+    --default-dark: #495057;
+
     --background: #ffffff;
     --foreground: 0 0% 3.92%;
 

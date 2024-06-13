@@ -30,7 +30,7 @@ export function Total({
   return (
     <>
       <div
-        className="flex basis-full md:basis-1/4 flex-col bg-white p-4 md:p-6 border rounded-lg border-[#212323] mt-6 md:mt-0"
+        className="flex basis-full md:basis-1/4 flex-col bg-white p-4 md:p-6 border rounded-lg border-primary mt-6 md:mt-0"
         style={{height: 'fit-content'}}>
         <h4 className="text-xl font-medium mb-0">{i18n.get('Total')}</h4>
         <Separator className="my-3" />

@@ -29,9 +29,10 @@ export const ThumbsCarousel = ({
         {images?.map(({url, id}) => (
           <SwiperSlide key={id}>
             <div
-              className="mb-4 bg-center bg-contain bg-no-repeat rounded-lg"
+              className="mb-4 bg-center bg-cover rounded-lg"
               style={{
                 backgroundImage: `url(${url})`,
+                backgroundSize: 'cover',
                 width: '380px',
                 height: '380px'
               }}></div>
@@ -75,8 +76,10 @@ export const ThumbsCarousel = ({
               className="rounded-lg bg-center bg-cover bg-no-repeat rounded-lg"
               style={{
                 backgroundImage: `url(${url})`,
-                width: '80px',
-                height: '80px'
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'cover',
+                width: '68px',
+                height: '68px'
               }}
             />
           </SwiperSlide>

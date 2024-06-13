@@ -1,32 +1,27 @@
 'use client';
 import Link from 'next/link';
-import { Badge } from "@ui/components/badge"
-import { MdOutlineShoppingCart } from "react-icons/md";
-import { MdNotificationsNone } from "react-icons/md";
+import {Badge} from '@ui/components/badge';
+import {MdOutlineShoppingCart} from 'react-icons/md';
+import {MdNotificationsNone} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
-import { Account } from '@ui/components/index';
-import { useCart } from '@/app/[tenant]/[workspace]/cart-context';
-import { SUBAPP_PAGE } from '@/constants';
+import {Account} from '@ui/components/index';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {SUBAPP_PAGE} from '@/constants';
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
-import { useWorkspace } from './workspace-context';
+import {useWorkspace} from './workspace-context';
 import Image from 'next/image';
-import DynamicIcon from '@/components/ui/icons';
 
 function Logo() {
-  const { workspaceURI } = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   return (
     <Link href={`/?workspaceURI=${workspaceURI}`}>
-      <img
-        src="/images/logo.png"
-        alt="Axelor Logo"
-        className="h-8 mr-4"
-      />
+      <img src="/images/logo.png" alt="Axelor Logo" className="h-8 mr-4" />
     </Link>
   );
 }
 function Notification() {
-  const { workspaceURI } = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   return (
     <Link href={`${workspaceURI}/notifications`} className="inline-flex">
@@ -36,8 +31,8 @@ function Notification() {
 }
 
 function Cart() {
-  const { cart } = useCart();
-  const { workspaceURI } = useWorkspace();
+  const {cart} = useCart();
+  const {workspaceURI} = useWorkspace();
   const count = cart?.items?.reduce(
     (count: number, i: any) => count + Number(i.quantity),
     0,
@@ -47,16 +42,14 @@ function Cart() {
     <Link href={`${workspaceURI}/shop/cart`} className="flex relative">
       <MdOutlineShoppingCart className="cursor-pointer text-foreground text-2xl" />
       {count ? (
-        <Badge className={`${styles.badge} rounded bg-black`}>
-          {count}
-        </Badge>
+        <Badge className={`${styles.badge} rounded bg-black`}>{count}</Badge>
       ) : null}
     </Link>
   );
 }
 
-export default function Header({ subapps }: { subapps: any }) {
-  const { workspaceURI } = useWorkspace();
+export default function Header({subapps}: {subapps: any}) {
+  const {workspaceURI} = useWorkspace();
   return (
     <div className="bg-background px-6 py-2 flex items-center">
       <Logo />
@@ -70,21 +63,12 @@ export default function Header({ subapps }: { subapps: any }) {
               app1.orderForTopMenu - app2.orderForTopMenu,
           )
           .reverse()
-          .map(({ name, icon, code }: any) => {
+          .map(({name, icon, code}: any) => {
             const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
             return (
               <Link key={code} href={`${workspaceURI}/${code}${page}`}>
                 <div className="inline-block" title={name}>
-                  {icon ? (
-                    <DynamicIcon
-                      icon={icon as any}
-                      className="cursor-pointer text-foreground"
-                    />
-                  ) : (
-                    <p className="mb-0">
-                      {name}
-                    </p>
-                  )}
+                  {icon ? null : <p className="mb-0">{name}</p>}
                 </div>
               </Link>
             );

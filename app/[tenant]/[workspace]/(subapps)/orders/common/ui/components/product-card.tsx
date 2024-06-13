@@ -6,7 +6,6 @@ import {Collapsible, CollapsibleContent} from '@/components/ui/collapsible';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
-import DynamicIcon from '@/components/ui/icons';
 import Image from 'next/image';
 
 export const ProductCard = (props: any) => {
@@ -32,12 +31,12 @@ export const ProductCard = (props: any) => {
         <TableCell className="p-4 text-sm">{product.qty}</TableCell>
         <TableCell className="p-4 text-sm">{product.inTaxTotal}</TableCell>
         <TableCell>
-          <DynamicIcon
+          {/* <DynamicIcon
             icon={show ? 'MdArrowDropUp' : 'MdArrowDropDown'}
             onClick={() => {
               setShow(!show);
             }}
-          />
+          /> */}
         </TableCell>
       </TableRow>
       <TableRow>

@@ -36,7 +36,7 @@ export default function Content({invoices = []}: ContentProps) {
   return (
     <>
       <Container title={i18n.get('Invoices')}>
-        <Toast show={hasUpcomingInvoices} variant="primary" heading={HEADING} />
+        <Toast show={hasUpcomingInvoices} variant="warning"  heading={HEADING} />
         <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
           <div className="hidden md:block">
             <UnpaidTable

@@ -7,7 +7,7 @@ export const DEFAULT_THEME_OPTIONS = {
   },
   typography: {
     body: {
-      fontSize: '16px',
+      fontSize: '1rem',
     },
   },
 };

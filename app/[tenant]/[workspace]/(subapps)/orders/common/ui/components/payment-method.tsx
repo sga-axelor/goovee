@@ -11,7 +11,7 @@ export const PaymentMethod = () => {
           {i18n.get('Payment Method')}
         </h4>
         <Separator />
-        <div className="flex flex-col gap-4 border !border-[#E6E7E7] p-4 rounded-lg">
+        <div className="flex flex-col gap-4 border !border-border] p-4 rounded-lg">
           <h4 className="text-xl font-semibold mb-0">
             {i18n.get('Paid with')}...
           </h4>

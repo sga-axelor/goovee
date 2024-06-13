@@ -23,10 +23,10 @@ export const Tabs = ({ items, activeTab, onTabChange, children }: TabsProps) => 
 
   return (
     <>
-      <NavTabs defaultValue={activeTab} className="w-full !border-b border-solid !border-[#000] ">
+      <NavTabs defaultValue={activeTab} className="w-full !border-b border-solid !border-black">
         <TabsList className="w-full flex bg-transparent items-center justify-start">
           {Array.isArray(items) && items.map((t) => (
-            <TabsTrigger className="rounded-t text-base font-semibold text-[#fff] bg-[#212323]" key={t?.id} value={t?.id} onClick={() => onTabChange?.(t)} >{t?.title}</TabsTrigger>
+            <TabsTrigger className="rounded-t text-base font-semibold data-[state=active]:text-primary-foreground data-[state=active]:bg-primary" key={t?.id} value={t?.id} onClick={() => onTabChange?.(t)} >{t?.title}</TabsTrigger>
           ))}
         </TabsList>
         {children}
