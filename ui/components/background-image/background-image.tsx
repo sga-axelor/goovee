@@ -8,8 +8,8 @@ export type BackgroundImageProps = {
   height?: string | number;
   width?: string | number;
   style?: React.CSSProperties;
-  className?: string;
-  children?: ReactElement | any;
+  className?: any;
+  children?:  any;
 };
 
 export function BackgroundImage({

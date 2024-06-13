@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {cn} from '@/lib/utils';
-import DynamicIcon from './icons';
 
 interface IconProps {
   icon: string;
@@ -39,12 +38,12 @@ const TextField = React.forwardRef<HTMLInputElement, InputProps>(
           {Array.isArray(icons) &&
             icons?.map((ic, i) => (
               <>
-                <DynamicIcon
+                {/* <DynamicIcon
                   className="absolute right-4 top-2"
                   key={i}
                   icon={ic.icon}
                   onClick={ic.onClick}
-                />
+                /> */}
               </>
             ))}
         </div>

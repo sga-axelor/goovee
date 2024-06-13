@@ -44,7 +44,7 @@ export function ProductCard({
           ) : (
             ''
           )}
-        </BackgroundImage>
+          </BackgroundImage>
         <div className="py-4 px-6">
           <h5 className="text-base font-medium mt-0 mb-0">
             {i18n.getValueAttribute(product.name)}
