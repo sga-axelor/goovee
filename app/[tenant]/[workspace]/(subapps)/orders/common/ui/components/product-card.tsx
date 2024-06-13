@@ -7,11 +7,12 @@ import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
 import Image from 'next/image';
-import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
+import MdUpDownIcon from './MdUpDownIcon';
 
 export const ProductCard = (props: any) => {
   const {product} = props;
   const [show, setShow] = React.useState(false);
+
   return (
     <>
       <TableRow key={product.id}>
@@ -32,11 +33,7 @@ export const ProductCard = (props: any) => {
         <TableCell className="p-4 text-sm">{product.qty}</TableCell>
         <TableCell className="p-4 text-sm">{product.inTaxTotal}</TableCell>
         <TableCell>
-          {show ? (
-            <MdArrowDropUp onClick={() => setShow(!show)} />
-          ) : (
-            <MdArrowDropDown onClick={() => setShow(!show)} />
-          )}
+          <MdUpDownIcon show={show} onClick={() => setShow(!show)} />
         </TableCell>
       </TableRow>
       <TableRow>
