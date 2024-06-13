@@ -134,7 +134,7 @@ export function ProductList({
     <div>
       <Categories items={categories} onClick={handleCategoryClick} />
       {showSummary && (
-        <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[650px]">
+        <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[40.625rem]">
           <div className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
           <h1 className="font-bold text-4xl m-0 z-[1] text-primary-foreground">
             {i18n.get('Shop summary')}
@@ -208,7 +208,7 @@ export function ProductList({
               defaultValue={search}
               className="pl-12 rounded-full"
             />
-            <div className={`${styles.icons} top-[10px] !pt-0`}>
+            <div className={`${styles.icons} top-[0.625rem] !pt-0`}>
               <BiSearch className="text-2xl" />
             </div>
           </form>

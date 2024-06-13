@@ -13,13 +13,13 @@ export const StyledHead = ({columns, className}: TableHeadProps) => {
             key={column.key}
             className={`${className} text-primary text-base font-semibold`}
             style={{
-              paddingInline: '24px',
+              paddingInline: '1.5rem',
               border: 'none',
               borderRadius:
                 index === 0
-                  ? '8px 0px 0px 8px'
+                  ? '0.5rem 0rem 0rem 0.5rem'
                   : index === columns.length - 1
-                    ? '0 8px 8px 0'
+                    ? '0 0.5rem 0.5rem 0'
                     : '',
             }}>
             {column.label}

@@ -35,12 +35,12 @@ export function ProductListItem({
   const clamp = (window as any)?.$clamp;
 
   return (
-    <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[238px_1fr] gap-6 w-full bg-background text-primary">
+    <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[14.875rem_1fr] gap-6 w-full bg-background text-primary">
       <BackgroundImage
-        className="rounded-l-lg relative bg-cover md:w-[238px] w-[80px] md:h-[235px] h-[80px]"
+        className="rounded-l-lg relative bg-cover md:w-[14.875rem] w-[5rem] md:h-[14.6875rem] h-[5rem]"
         src={getImageURL(product.images?.[0])}>
         {Boolean(quantity) && (
-          <div className="border shadow-lg absolute bottom-4 right-4 bg-white p-1 md:p-4 rounded-full flex items-center justify-center w-[30px] md:w-[60px] h-[30px] md:h-[60px]">
+          <div className="border shadow-lg absolute bottom-4 right-4 bg-white p-1 md:p-4 rounded-full flex items-center justify-center w-[1.875rem] md:w-[3.75rem] h-[1.875rem] md:h-[3.75rem]">
             <p className="mb-0 text-sm md:text-xl">{quantity}</p>
           </div>
         )}

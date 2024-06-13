@@ -25,8 +25,8 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
           </Button>
         </div>
         <div
-          className="rounded-lg"
-          style={{border: '1px solid red !important'}}>
+          className="rounded-lg !border"
+          style={{borderColor: 'red !important'}}>
           <InvoiceContent invoice={invoice} />
         </div>
       </div>

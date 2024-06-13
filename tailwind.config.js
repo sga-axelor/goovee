@@ -14,14 +14,21 @@ module.exports = {
     },
     extend: {
       colors: { 
-        border: "var(--border-color)",
+        border: "var(--border)",
         input: "var(--input-color)",
         ring: "var(--ring)",
-        main_purple: "var(--main_purple)",
-        detail_blue: "var(--detail-blue)",
-        link_blue: "var(--link-blue)",
-        background: "var(--background)",
-        foreground: "hsl(var(--foreground))", //we should hsl value here
+        body: {
+          light : "var(--body-light)",
+        },
+        main: {
+          purple: "var(--main-purple)",
+        },
+        detail: {
+          blue: "var(--detail-blue)",
+        },
+        link: {
+          blue: "var(--link-blue)",
+        },
         success: {
           light: 'var(--success-light)',
           dark: 'var(--success-dark)',
@@ -46,6 +53,8 @@ module.exports = {
           light: 'var(--default-light)',
           dark: 'var(--default-dark)',
         },
+        background: "var(--background)",
+        foreground: "hsl(var(--foreground))", //we should hsl value here
         primary: {
           DEFAULT: "var(--primary-default)",
           foreground: "var(--primary-foreground)",
@@ -66,19 +75,31 @@ module.exports = {
           DEFAULT: "var(--accent-default)",
           foreground: "var(--accent-foreground)",
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",//we should hsl value here
-          foreground: "var(--popover-foreground)",
-        },
         card: {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",
         },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",//we should hsl value here
+          foreground: "var(--popover-foreground)",
+        },
+      },
+      borderWidth: { 
+        width: 'var(--width)',
+        '0': '0',
+        '2': '2px',
+        '3': '3px',
+        '4': '4px',
+        '6': '6px',
+        '8': '8px',
       },
       borderRadius: {
-        lg: `var(--border-radius)`,
-        md: `calc(var(--border-radius) - 2px)`,
-        sm: "calc(var(--border-radius) - 4px)",
+        sm: `calc(var(--radius) - 2px)`,
+        md: `calc(var(--radius) - -2px)`,
+        lg: `calc(var(--radius) - -4px)`,
+        xl: `calc(var(--radius) - -8px)`,
+        '2xl': `calc(var(--radius) - -12px)`,
+        '3xl': `calc(var(--radius) - -20px)`,
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],

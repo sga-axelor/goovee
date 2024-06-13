@@ -71,7 +71,7 @@ function CartItem({ item, disabled, handleRemove, displayPrices }: any) {
       key={item.id}
       className="flex-col md:flex-row flex items-start gap-6 bg-white p-4 rounded-lg">
       <BackgroundImage
-        className="rounded-lg h-[200px] md:w-[200px] w-full min-w-[200px]"
+        className="rounded-lg h-[12.5rem] md:w-[12.5rem] w-full min-w-[12.5rem]"
         style={{backgroundSize: 'cover'}}
         src={getImageURL(product?.images?.[0])}
       />
@@ -177,7 +177,7 @@ function CartSummary({
   const authenticated = session?.user?.id;
 
   return (
-    <div className="p-4 bg-white rounded-lg h-[420px]">
+    <div className="p-4 bg-white rounded-lg h-[26.25rem]">
       {workspace?.config?.displayPrices && (
         <>
           <p className="text-xl font-semibold mb-6">{i18n.get('Total')}</p>

@@ -9,7 +9,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         tag_default:
-          'border-0 px-4 py-[7px] capitalize text-base font-semibold',
+          'border-0 px-4 py-[0.4375rem] capitalize text-base font-semibold',
         default:
           'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
         secondary:

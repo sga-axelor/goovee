@@ -76,7 +76,7 @@ export default function Content() {
     setSubmitting(false);
   };
   return (
-    <div className="mx-auto p-4 sm:p-6 max-w-[1185px] w-full">
+    <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
       <h5 className="mb-3 font-medium text-primary text-xl">{i18n.get('Sign Up')}</h5>
       <form
         className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
@@ -178,7 +178,7 @@ export default function Content() {
           </p>
           <Link
             href={`/auth/login?${searchQuery}`}
-            className="text-main_purple inline-flex text-decoration-underline text-lg">
+            className="text-main-purple inline-flex text-decoration-underline text-lg">
             {i18n.get('Log In')}
           </Link>
         </div>

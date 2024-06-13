@@ -40,7 +40,7 @@ export default function Content({subapps}: {subapps: any}) {
                 <div className="p-6 rounded-lg border bg-background">
                   <div className="flex items-center gap-2">
                     <div
-                      className="w-[72px] h-[72px] p-4 rounded-lg flex items-center justify-center"
+                      className="w-[4.5rem] h-[4.5rem] p-4 rounded-lg flex items-center justify-center"
                       style={{
                         background,
                         color,
