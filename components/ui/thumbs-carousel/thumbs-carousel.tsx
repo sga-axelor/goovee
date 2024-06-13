@@ -34,7 +34,7 @@ export const ThumbsCarousel = ({
                 backgroundImage: `url(${url})`,
                 backgroundSize: 'cover',
                 width: '380px',
-                height: '380px'
+                height: '380px',
               }}></div>
           </SwiperSlide>
         ))}
@@ -47,14 +47,15 @@ export const ThumbsCarousel = ({
           <Button
             ref={(node: any) => setPrevEl(node)}
             className="absolute"
-            style={{top: '40%',left:"1rem"}}>
+            style={{top: '40%', left: '1rem'}}>
             <div className="flex">
               <FaChevronLeft color="white" />
             </div>
           </Button>
           <Button
             ref={(node: any) => setNextEl(node)}
-            className="absolute right-4" style={{top: '40%'}}>
+            className="absolute right-4"
+            style={{top: '40%'}}>
             <div className="flex">
               <FaChevronRight color="white" />
             </div>
@@ -79,7 +80,7 @@ export const ThumbsCarousel = ({
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
                 width: '68px',
-                height: '68px'
+                height: '68px',
               }}
             />
           </SwiperSlide>

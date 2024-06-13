@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Tabs } from "../tabs";
-import { TabsContent } from "@/components/ui/tabs";
+import React from 'react';
+import {Tabs} from '../tabs';
+import {TabsContent} from '@/components/ui/tabs';
 
 interface TabItem {
   id: string;
@@ -24,12 +24,9 @@ export const NavView = ({
 }: NavViewProps) => {
   return (
     <div>
-      <Tabs items={items} activeTab={activeTab} onTabChange={onTabChange} >
-      <TabsContent value={activeTab}>
-        {children}
-      </TabsContent>
-      
-    </Tabs>
+      <Tabs items={items} activeTab={activeTab} onTabChange={onTabChange}>
+        <TabsContent value={activeTab}>{children}</TabsContent>
+      </Tabs>
     </div>
   );
 };

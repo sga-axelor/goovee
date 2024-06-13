@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { FaGoogle } from 'react-icons/fa';
-import { Button } from '@ui/components/button';
-import { Separator } from '@ui/components/separator';
+import {useRouter, useSearchParams} from 'next/navigation';
+import {FaGoogle} from 'react-icons/fa';
+import {Button} from '@ui/components/button';
+import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import { i18n } from '@/lib/i18n';
-import { TextField } from '@ui/components/TextField';
-import { Toast } from '@ui/components/index';
+import {i18n} from '@/lib/i18n';
+import {TextField} from '@ui/components/TextField';
+import {Toast} from '@ui/components/index';
 // ---- LOCAL IMPORTS ---- //
-import { register } from './actions';
+import {register} from './actions';
 import DatePicker from '@/components/ui/calender/calender';
 interface UserValues {
   firstName: string;
@@ -41,8 +41,8 @@ export default function Content() {
   const searchQuery = new URLSearchParams(searchParams).toString();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setValues(v => ({ ...v, [name]: value }));
+    const {name, value} = event.target;
+    setValues(v => ({...v, [name]: value}));
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -53,7 +53,7 @@ export default function Content() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const { password, confirmPassword } = values;
+    const {password, confirmPassword} = values;
 
     setError('');
 
@@ -77,7 +77,9 @@ export default function Content() {
   };
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[1185px] w-full">
-      <h5 className="mb-3 font-medium text-primary text-xl">{i18n.get('Sign Up')}</h5>
+      <h5 className="mb-3 font-medium text-primary text-xl">
+        {i18n.get('Sign Up')}
+      </h5>
       <form
         className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}>
@@ -188,7 +190,9 @@ export default function Content() {
         <div className="grow">
           <Separator />
         </div>
-        <h5 className="mb-0 font-medium text-primary text-xl">{i18n.get('Or')}</h5>
+        <h5 className="mb-0 font-medium text-primary text-xl">
+          {i18n.get('Or')}
+        </h5>
         <div className="grow">
           <Separator />
         </div>

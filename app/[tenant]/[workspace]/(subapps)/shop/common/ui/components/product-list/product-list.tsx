@@ -1,20 +1,20 @@
 'use client';
 
-import React, { Fragment } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { BiSearch } from 'react-icons/bi';
-import { MdOutlineFilterAlt } from 'react-icons/md';
-import { LuChevronRight } from 'react-icons/lu';
-import { IoIosArrowRoundForward } from 'react-icons/io';
-import { MdGridView } from 'react-icons/md';
-import { MdOutlineList } from 'react-icons/md';
-import { TextField } from '@/components/ui/TextField';
+import React, {Fragment} from 'react';
+import {useRouter, usePathname, useSearchParams} from 'next/navigation';
+import {BiSearch} from 'react-icons/bi';
+import {MdOutlineFilterAlt} from 'react-icons/md';
+import {LuChevronRight} from 'react-icons/lu';
+import {IoIosArrowRoundForward} from 'react-icons/io';
+import {MdGridView} from 'react-icons/md';
+import {MdOutlineList} from 'react-icons/md';
+import {TextField} from '@/components/ui/TextField';
 // ---- CORE IMPORTS ---- //
-import { Pagination } from '@ui/components/index';
-import { useCart } from '@/app/[tenant]/[workspace]/cart-context';
-import { useWorkspace } from '@/app/[tenant]/[workspace]/workspace-context';
-import { i18n } from '@/lib/i18n';
-import type { ComputedProduct, Product, PortalWorkspace } from '@/types';
+import {Pagination} from '@ui/components/index';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
+import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {
   MobileSortBy,
@@ -41,7 +41,7 @@ export function ProductList({
   products = [],
   categories,
   category,
-  pageInfo = { page: 1, pages: 1 },
+  pageInfo = {page: 1, pages: 1},
   workspace,
   breadcrumbs,
   showSummary,
@@ -56,9 +56,9 @@ export function ProductList({
   showSummary?: boolean;
   productPath?: string;
 }) {
-  const { cart, addItem } = useCart();
-  const { workspaceURI } = useWorkspace();
-  const { page, pages } = pageInfo;
+  const {cart, addItem} = useCart();
+  const {workspaceURI} = useWorkspace();
+  const {page, pages} = pageInfo;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -72,7 +72,7 @@ export function ProductList({
     }>,
   ) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    values.forEach(({ key, value = '' }: any) => {
+    values.forEach(({key, value = ''}: any) => {
       value = value && String(value)?.trim();
       if (!value) {
         current.delete(key);
@@ -85,37 +85,42 @@ export function ProductList({
     router.push(`${pathname}${query}`);
   };
   const handleAdd = async (computedProduct: ComputedProduct) => {
-    const { product } = computedProduct;
+    const {product} = computedProduct;
 
-    await addItem({ productId: product?.id, quantity: 1, images: product?.images, computedProduct: computedProduct });
+    await addItem({
+      productId: product?.id,
+      quantity: 1,
+      images: product?.images,
+      computedProduct: computedProduct,
+    });
     router.refresh();
   };
   const handleChangeSearch = (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     updateSearchParams([
-      { key: 'page' },
-      { key: 'search', value: formData.get('search') as string },
+      {key: 'page'},
+      {key: 'search', value: formData.get('search') as string},
     ]);
   };
-  const handleChangeSortBy = ({ value }: any) => {
-    updateSearchParams([{ key: 'sort', value }]);
+  const handleChangeSortBy = ({value}: any) => {
+    updateSearchParams([{key: 'sort', value}]);
   };
   const handleChangeView = (type: string) => {
-    updateSearchParams([{ key: 'view', value: type }]);
+    updateSearchParams([{key: 'view', value: type}]);
   };
   const handlePreviousPage = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { page, hasPrev } = pageInfo;
+    const {page, hasPrev} = pageInfo;
     if (!hasPrev) return;
-    updateSearchParams([{ key: 'page', value: Math.max(Number(page) - 1, 1) }]);
+    updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
   };
   const handleNextPage = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { page, hasNext } = pageInfo;
+    const {page, hasNext} = pageInfo;
     if (!hasNext) return;
-    updateSearchParams([{ key: 'page', value: Number(page) + 1 }]);
+    updateSearchParams([{key: 'page', value: Number(page) + 1}]);
   };
   const handlePage = (page: string | number) => {
-    updateSearchParams([{ key: 'page', value: page }]);
+    updateSearchParams([{key: 'page', value: page}]);
   };
   const handleCategoryClick = (category: any) => {
     router.push(
@@ -142,7 +147,6 @@ export function ProductList({
         </div>
       )}
 
-
       <div className={'container portal-container'}>
         <div className="mb-6">
           {breadcrumbs?.length > 1 ? (
@@ -156,10 +160,10 @@ export function ProductList({
                       <div
                         {...(islast
                           ? {
-                            color: 'primary',
-                            fontWeight: 'bold',
-                          }
-                          : { color: 'secondary' })}
+                              color: 'primary',
+                              fontWeight: 'bold',
+                            }
+                          : {color: 'secondary'})}
                         onClick={() => handleCategoryClick(crumb)}>
                         {i18n.get(crumb.name)}
                       </div>

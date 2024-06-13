@@ -7,18 +7,18 @@
   :root {
     --main_purple: #5603ad;
     --detail-blue: #464555;
-    --link-blue: #2D60C4;
+    --link-blue: #2d60c4;
 
-    --success-light: #D0EED8;
-    --success-dark: #4FC179;
-    --error-light: #FBC6C4;
-    --error-dark: #F14E46;
-    --warning-light: #FFE6BF;
-    --warning-dark: #FFA114;
-    --primary-light: #F6F1FF;
-    --primary-dark: #5603AD;
-    --secondary-light: #D0E3FF;
-    --secondary-dark: #2D60C4;
+    --success-light: #d0eed8;
+    --success-dark: #4fc179;
+    --error-light: #fbc6c4;
+    --error-dark: #f14e46;
+    --warning-light: #ffe6bf;
+    --warning-dark: #ffa114;
+    --primary-light: #f6f1ff;
+    --primary-dark: #5603ad;
+    --secondary-light: #d0e3ff;
+    --secondary-dark: #2d60c4;
     --default-light: #adb5bd;
     --default-dark: #495057;
 
@@ -96,7 +96,7 @@
 
 body {
   font-family: 'Poppins', sans-serif !important;
-  background: #F8F9FA !important;
+  background: #f8f9fa !important;
 }
 .container {
   max-width: 1140px;
@@ -108,8 +108,7 @@ body {
 }
 .subcategory .first-item:first-child .first-border {
   border-left: 0px;
-
 }
-a{
+a {
   text-decoration: inherit !important;
 }

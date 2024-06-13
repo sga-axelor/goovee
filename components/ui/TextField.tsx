@@ -15,7 +15,6 @@ export interface InputProps
 
 const TextField = React.forwardRef<HTMLInputElement, InputProps>(
   ({className, type, label, icons, ...props}, ref) => {
-
     return (
       <>
         <label className="text-base font-medium text-primary mb-1">

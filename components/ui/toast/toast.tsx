@@ -2,7 +2,7 @@
 
 import React, {useState, useEffect} from 'react';
 import {Alert, AlertTitle, AlertDescription} from '@ui/components/alert';
-import { MdClose } from "react-icons/md";
+import {MdClose} from 'react-icons/md';
 
 type Variant = 'success' | 'error' | 'warning' | 'primary';
 
@@ -13,7 +13,11 @@ type ToastProps = {
   description?: string;
 };
 
-type IconType = 'MdOutlineWarningAmber' | 'MdErrorOutline' | 'MdOutlineCheckCircle' | 'info';
+type IconType =
+  | 'MdOutlineWarningAmber'
+  | 'MdErrorOutline'
+  | 'MdOutlineCheckCircle'
+  | 'info';
 
 export const Toast = ({
   show,
@@ -39,7 +43,8 @@ export const Toast = ({
     }
   > = {
     success: {
-      styles: 'border-success-dark text-success-dark bg-success-light [&>svg]:text-success-dark',
+      styles:
+        'border-success-dark text-success-dark bg-success-light [&>svg]:text-success-dark',
       icon: 'MdOutlineCheckCircle',
     },
     error: {
@@ -48,11 +53,13 @@ export const Toast = ({
       icon: 'MdErrorOutline',
     },
     warning: {
-      styles: 'bg-warning-light border-warning-dark text-warning-dark [&>svg]:text-warning-dark',
+      styles:
+        'bg-warning-light border-warning-dark text-warning-dark [&>svg]:text-warning-dark',
       icon: 'MdOutlineWarningAmber',
     },
     primary: {
-      styles: 'bg-primary-dark border-primary-dark text-primary-dark [&>svg]:text-primary-dark',
+      styles:
+        'bg-primary-dark border-primary-dark text-primary-dark [&>svg]:text-primary-dark',
       icon: 'MdErrorOutline',
     },
   };
@@ -71,7 +78,11 @@ export const Toast = ({
           <AlertDescription className="text-sm">{description}</AlertDescription>
         </div>
       </div>
-      <MdClose className="cursor-pointer ml-2 text-2xl right-4" style={{left:"unset"}}  onClick={handleClose} />
+      <MdClose
+        className="cursor-pointer ml-2 text-2xl right-4"
+        style={{left: 'unset'}}
+        onClick={handleClose}
+      />
     </Alert>
   );
 };

@@ -1,12 +1,12 @@
 'use client';
 // ---- CORE IMPORTS ---- //
-import { i18n } from '@/lib/i18n';
-import { AddressForm } from '@ui/components/index';
-import type { PartnerAddress, Country, Address } from '@/types';
+import {i18n} from '@/lib/i18n';
+import {AddressForm} from '@ui/components/index';
+import type {PartnerAddress, Country, Address} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import { updateAddress } from './actions';
-import { useState } from 'react';
+import {updateAddress} from './actions';
+import {useState} from 'react';
 
 export default function Content({
   id,
@@ -17,16 +17,16 @@ export default function Content({
   partnerAddress: PartnerAddress;
   countries: Country[];
 }) {
-  const { address } = partnerAddress;
-  const [loading, setLoading] = useState(false)
+  const {address} = partnerAddress;
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
-    values: Partial<Address> & { multipletype?: boolean },
+    values: Partial<Address> & {multipletype?: boolean},
   ) => {
     try {
       event.preventDefault();
       if (loading) return;
-      setLoading(true)
+      setLoading(true);
       let isDeliveryAddr = partnerAddress.isDeliveryAddr,
         isInvoicingAddr = partnerAddress.isInvoicingAddr;
 
@@ -35,7 +35,7 @@ export default function Content({
         isInvoicingAddr = true;
       }
 
-      const { multipletype, addressl7country, ...address } = values;
+      const {multipletype, addressl7country, ...address} = values;
 
       const _address = await updateAddress({
         id,
@@ -48,10 +48,10 @@ export default function Content({
         isInvoicingAddr,
         isDeliveryAddr,
       });
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      console.log(error)
+      setLoading(false);
+      console.log(error);
     }
   };
 

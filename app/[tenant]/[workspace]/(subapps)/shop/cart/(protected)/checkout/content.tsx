@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Button } from '@ui/components/button';
-import { Separator } from '@ui/components/separator';
-import { Label } from '@ui/components/label';
-import { RadioGroup, RadioGroupItem } from '@ui/components/radio-group';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Button} from '@ui/components/button';
+import {Separator} from '@ui/components/separator';
+import {Label} from '@ui/components/label';
+import {RadioGroup, RadioGroupItem} from '@ui/components/radio-group';
 // ---- CORE IMPORTS ---- //
-import { BackgroundImage } from '@ui/components/index';
-import { useCart } from '@/app/[tenant]/[workspace]/cart-context';
-import { scale } from '@/utils';
-import { computeTotal } from '@/utils/cart';
-import { getImageURL } from '@/utils/product';
-import { i18n } from '@/lib/i18n';
-import type { PortalWorkspace } from '@/types';
+import {BackgroundImage} from '@ui/components/index';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {scale} from '@/utils';
+import {computeTotal} from '@/utils/cart';
+import {getImageURL} from '@/utils/product';
+import {i18n} from '@/lib/i18n';
+import type {PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
-import { findProduct } from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
+import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 import styles from './content.module.scss';
 const SHIPPING_TYPE = {
   REGULAR: 'regular',
@@ -24,7 +24,7 @@ const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.REGULAR]: 2,
   [SHIPPING_TYPE.FAST]: 5,
 };
-function Summary({ cart }: any) {
+function Summary({cart}: any) {
   return (
     <div className="bg-white p-6 rounded-lg">
       <Title
@@ -34,10 +34,10 @@ function Summary({ cart }: any) {
       <div className="flex flex-col gap-4 pt-4">
         {cart.items.map(
           ({
-            computedProduct: { product, price } = {},
+            computedProduct: {product, price} = {},
             quantity,
             note,
-            images
+            images,
           }: any = {}) => (
             <div key={product?.id} className="flex gap-4">
               <BackgroundImage
@@ -68,13 +68,13 @@ function Summary({ cart }: any) {
     </div>
   );
 }
-function Total({ cart, shippingType, workspace }: any) {
+function Total({cart, shippingType, workspace}: any) {
   const {
     total,
     displayTotal,
-    scale: { currency: currencyScale },
-    currency: { symbol: currencySymbol },
-  } = computeTotal({ cart, workspace });
+    scale: {currency: currencyScale},
+    currency: {symbol: currencySymbol},
+  } = computeTotal({cart, workspace});
   const shipping = Number(
     scale(SHIPPING_TYPE_COST[shippingType], currencyScale),
   ) as number;
@@ -129,7 +129,7 @@ function Contact() {
     </div>
   );
 }
-function Shipping({ value, onChange }: { value: string; onChange: any }) {
+function Shipping({value, onChange}: {value: string; onChange: any}) {
   return (
     <div className="bg-white p-6 rounded-lg">
       <Title
@@ -181,19 +181,18 @@ function Shipping({ value, onChange }: { value: string; onChange: any }) {
     </div>
   );
 }
-function Title({ text, ...rest }: { text: string } & any) {
+function Title({text, ...rest}: {text: string} & any) {
   return (
     <h3 className="font-bold text-3xl" {...rest}>
       {text}
     </h3>
   );
 }
-export default function Content({ workspace }: { workspace: PortalWorkspace }) {
-
+export default function Content({workspace}: {workspace: PortalWorkspace}) {
   const [shippingType, setShippingType] = useState<string>(
     SHIPPING_TYPE.REGULAR,
   );
-  const { cart } = useCart();
+  const {cart} = useCart();
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const handleChangeShippingType = (
@@ -203,12 +202,14 @@ export default function Content({ workspace }: { workspace: PortalWorkspace }) {
   };
 
   useEffect(() => {
-    
     const init = async () => {
       if (!computedProducts?.length && cart) {
-        await Promise.all(cart.items.map((i: any) => findProduct({id:i.product,workspace:workspace})))
+        await Promise.all(
+          cart.items.map((i: any) =>
+            findProduct({id: i.product, workspace: workspace}),
+          ),
+        )
           .then(computedProducts => {
-            
             setComputedProducts(computedProducts);
           })
           .finally(() => {

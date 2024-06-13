@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { MdAddShoppingCart } from 'react-icons/md';
-import { Button } from '@ui/components/button';
+import {MdAddShoppingCart} from 'react-icons/md';
+import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
-import { BackgroundImage } from '@ui/components/index';
-import { getImageURL } from '@/utils/product';
-import { i18n } from '@/lib/i18n';
-import type { ComputedProduct, Product } from '@/types';
+import {BackgroundImage} from '@ui/components/index';
+import {getImageURL} from '@/utils/product';
+import {i18n} from '@/lib/i18n';
+import type {ComputedProduct, Product} from '@/types';
 export type ProductCardProps = {
   product: ComputedProduct;
   quantity?: string | number;
@@ -22,8 +22,8 @@ export function ProductCard({
   onClick,
   displayPrices,
 }: ProductCardProps) {
-  const { product, price } = computedProduct;
-  const { displayTwoPrices, displayPrimary, displaySecondary } = price;
+  const {product, price} = computedProduct;
+  const {displayTwoPrices, displayPrimary, displaySecondary} = price;
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
   };
@@ -44,7 +44,7 @@ export function ProductCard({
           ) : (
             ''
           )}
-          </BackgroundImage>
+        </BackgroundImage>
         <div className="py-4 px-6">
           <h5 className="text-base font-medium mt-0 mb-0">
             {i18n.getValueAttribute(product.name)}

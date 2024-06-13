@@ -1,24 +1,24 @@
 'use client';
 import React from 'react';
-import { Button } from '@ui/components/button';
-import { LiaLongArrowAltRightSolid } from 'react-icons/lia';
+import {Button} from '@ui/components/button';
+import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 // ---- CORE IMPORTS ---- //
-import { Tag } from '@ui/components/index';
-import { parseDate } from '@/utils';
-import { i18n } from '@/lib/i18n';
+import {Tag} from '@ui/components/index';
+import {parseDate} from '@/utils';
+import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
-import { getStatus } from '@/subapps/quotations/common/utils/quotations';
-import { QUOTATION_STATUS } from '@/subapps/quotations/common/constants/quotations';
+import {getStatus} from '@/subapps/quotations/common/utils/quotations';
+import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {
   Quotations,
   CardViewProps,
 } from '@/subapps/quotations/common/types/quotations';
 import styles from './styles.module.scss';
-export const Card = ({ quotations, onClick }: CardViewProps) => {
+export const Card = ({quotations, onClick}: CardViewProps) => {
   return (
     <>
       {quotations?.map((quotation: Quotations, i: number) => {
-        const { status, variant } = getStatus(quotation.statusSelect);
+        const {status, variant} = getStatus(quotation.statusSelect);
         return (
           <div
             key={quotation.id}
@@ -49,13 +49,13 @@ export const Card = ({ quotations, onClick }: CardViewProps) => {
             <div className="flex items-center justify-between">
               {quotation?.statusSelect ===
                 QUOTATION_STATUS.FINALISED_QUOTATION && (
-                  <Button
-                    variant="outline"
-                    className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
-                    {i18n.get('Give a reponse')}
-                    <LiaLongArrowAltRightSolid className="text-2xl" />
-                  </Button>
-                )}
+                <Button
+                  variant="outline"
+                  className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
+                  {i18n.get('Give a reponse')}
+                  <LiaLongArrowAltRightSolid className="text-2xl" />
+                </Button>
+              )}
             </div>
           </div>
         );

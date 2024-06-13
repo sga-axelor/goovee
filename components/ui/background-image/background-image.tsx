@@ -9,7 +9,7 @@ export type BackgroundImageProps = {
   width?: string | number;
   style?: React.CSSProperties;
   className?: any;
-  children?:  any;
+  children?: any;
 };
 
 export function BackgroundImage({
@@ -22,7 +22,7 @@ export function BackgroundImage({
   children,
 }: BackgroundImageProps) {
   const url = src || defaultSrc;
-  
+
   return (
     <div
       className={`${className}  bg-no-repeat bg-center`}

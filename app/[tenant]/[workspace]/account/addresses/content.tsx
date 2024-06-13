@@ -35,7 +35,9 @@ function AddressList({
                   <h5 className="font-bold text-xl">{address.addressl2}</h5>
                   <h6 className="text-base">{address.addressl4}</h6>
                   <h6 className="text-base">{address.addressl6}</h6>
-                  <h6 className="text-base">{address.addressl7country?.name}</h6>
+                  <h6 className="text-base">
+                    {address.addressl7country?.name}
+                  </h6>
                 </div>
                 <div className="text-right">
                   <Link href={`${workspaceURI}/account/addresses/edit/${id}`}>

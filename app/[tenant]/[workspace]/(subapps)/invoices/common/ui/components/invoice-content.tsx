@@ -39,9 +39,7 @@ export function InvoiceContent({invoice}: {invoice: any}) {
       <div className="rounded-lg border shadow px-12 py-12 w-full overflow-x-auto overflow-y-hidden">
         <div className="min-w-[837px] lg:min-w-[100%] overflow-x-auto overflow-y-hidden">
           <div className="flex justify-between mb-12">
-            <h2 className="uppercase !text-5xl">
-              {i18n.get('Invoice')}
-            </h2>
+            <h2 className="uppercase !text-5xl">{i18n.get('Invoice')}</h2>
             <div className="text-right">
               <h6 className="font-bold text-base">{name}</h6>
               <p className="mb-0">{addressl4}</p>
@@ -106,11 +104,15 @@ export function InvoiceContent({invoice}: {invoice: any}) {
             />
           </div>
           <div className="mb-4">
-            <h6 className="text-main_purple font-medium text-base">{i18n.get('Notes')}</h6>
+            <h6 className="text-main_purple font-medium text-base">
+              {i18n.get('Notes')}
+            </h6>
             <p className="mb-0">{note}</p>
           </div>
           <div>
-            <h6 className="text-main_purple font-medium text-base">{i18n.get('Terms')}</h6>
+            <h6 className="text-main_purple font-medium text-base">
+              {i18n.get('Terms')}
+            </h6>
             <p className="mb-0">{paymentCondition.name}</p>
           </div>
         </div>

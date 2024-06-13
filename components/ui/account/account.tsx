@@ -36,10 +36,18 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
         <DropdownMenuContent>
           {loggedin ? (
             <>
-              <Link href={`${baseURL || ''}/account`} className="cursor-pointer">
-                <DropdownMenuItem className="cursor-pointer">My Account</DropdownMenuItem>
+              <Link
+                href={`${baseURL || ''}/account`}
+                className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer">
+                  My Account
+                </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>logout</DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={handleLogout}>
+                logout
+              </DropdownMenuItem>
             </>
           ) : (
             <>
