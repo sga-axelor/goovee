@@ -66,7 +66,7 @@ export type ThemeOptions = {
       foreground?: string;
     };
   };
-  borderWidth : string,
-  borderRadius: string,
-  fontFamily?: string
+  borderWidth: string;
+  borderRadius: string;
+  fontFamily?: string;
 };
