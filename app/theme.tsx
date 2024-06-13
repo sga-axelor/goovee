@@ -14,7 +14,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
 import generateCssVar from '@/utils/DynamicCssVar';
-import themeOptions from './dummy-theme-data';
+
 
 const ThemeContext = React.createContext({});
 
@@ -39,16 +39,17 @@ export default function Theme({
     [options, updateThemeOptions],
   );
 
-  useEffect(() => {
-    if (!options || options === null || !Object.keys(options)?.length) return;
-    let cssVar = generateCssVar(themeOptions);
-    const styleElement = document.createElement('style');
-    styleElement.appendChild(document.createTextNode(cssVar));
-    document.head.appendChild(styleElement);
-    return () => {
-      document.head.removeChild(styleElement);
-    };
-  }, [options]);
+  // useEffect(() => {
+  //   if (!options || options === null || !Object.keys(options)?.length) return;
+  //   let cssVar = generateCssVar(null);
+  //   const styleElement = document.createElement('style');
+  //   styleElement.appendChild(document.createTextNode(cssVar));
+  //   document.head.appendChild(styleElement);
+  //   return () => {
+  //     document.head.removeChild(styleElement);
+  //   };
+  // }, [options]);
+
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
