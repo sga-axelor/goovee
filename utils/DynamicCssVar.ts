@@ -39,10 +39,8 @@ const generateCssVar = (css: ThemeOptions) => {
         --input: ${css?.colors?.input};
         --ring:${css?.colors?.ring};
         --border: ${css?.colors?.border};
-        --width: ${css.borderWidth};
-        --radius: ${css.borderRadius};
     }
-        
+
     body : {
       font-family : ${css.fontFamily} !important
     }
