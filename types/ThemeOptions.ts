@@ -66,24 +66,7 @@ export type ThemeOptions = {
       foreground?: string;
     };
   };
-  borderWidth?: {
-    width?: string;
-    '0'?: string;
-    '2'?: string;
-    '3'?: string;
-    '4'?: string;
-    '6'?: string;
-    '8'?: string;
-  };
-  borderRadius?: {
-    sm?: string;
-    md?: string;
-    lg?: string;
-    xl?: string;
-    '2xl'?: string;
-    '3xl'?: string;
-  };
-  fontFamily?: {
-    sans?: string[];
-  };
+  borderWidth : string,
+  borderRadius: string,
+  fontFamily?: string
 };
