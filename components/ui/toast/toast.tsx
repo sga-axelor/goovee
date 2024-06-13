@@ -3,6 +3,7 @@
 import React, {useState, useEffect} from 'react';
 import {Alert, AlertTitle, AlertDescription} from '@ui/components/alert';
 import {MdClose} from 'react-icons/md';
+import Icons from '@/utils/Icons';
 
 type Variant = 'success' | 'error' | 'warning' | 'primary';
 
@@ -72,7 +73,7 @@ export const Toast = ({
     <Alert
       className={`${alertType[variant].styles} border relative flex items-start justify-between py-4 px-8`}>
       <div className="flex items-start">
-        {/* <DynamicIcon icon={alertType[variant].icon as IconName} className="mr-4" /> */}
+        <Icons name={alertType[variant].icon} className="mr-4" />
         <div className="flex-1">
           <AlertTitle className="text-base font-medium">{heading}</AlertTitle>
           <AlertDescription className="text-sm">{description}</AlertDescription>

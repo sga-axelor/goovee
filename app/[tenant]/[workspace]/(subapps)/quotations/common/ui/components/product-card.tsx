@@ -6,6 +6,7 @@ import {i18n} from '@/lib/i18n';
 import styles from './styles.module.scss';
 import {Collapsible, CollapsibleContent} from '@/components/ui/collapsible';
 import Image from 'next/image';
+import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 export const ProductCard = (props: any) => {
   const {product} = props;
   const [show, setShow] = React.useState(false);
@@ -23,10 +24,11 @@ export const ProductCard = (props: any) => {
         <TableCell className="p-4 text-sm">{product.qty}</TableCell>
         <TableCell className="p-4 text-sm">{product.inTaxTotal}</TableCell>
         <TableCell>
-          {/* <DynamicIcon
-            icon={show ? 'MdArrowDropUp' : 'MdArrowDropDown'}
-            onClick={() => setShow(!show)}
-          /> */}
+          {show ? (
+            <MdArrowDropUp onClick={() => setShow(!show)} />
+          ) : (
+            <MdArrowDropDown onClick={() => setShow(!show)} />
+          )}
         </TableCell>
       </TableRow>
       <TableRow>

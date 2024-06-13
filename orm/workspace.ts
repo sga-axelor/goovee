@@ -158,7 +158,7 @@ const defaultApps = [
   {
     name: 'Addresses',
     code: 'account/addresses',
-    icon: 'AiFillAccountBook',
+    icon: 'storeFront',
     color: 'var(--portal-green-100)',
     background: 'white',
     showInTopMenu: false,
