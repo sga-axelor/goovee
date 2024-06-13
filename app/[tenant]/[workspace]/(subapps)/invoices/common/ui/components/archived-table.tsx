@@ -3,7 +3,7 @@ import React from 'react';
 import {TableCell, TableRow} from '@ui/components/table';
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
-import {StyledTable, Tag} from '@/ui/components';
+import {StyledTable, Tag} from '@ui/components/index';
 import type {Item} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/invoices/common/utils/invoices';

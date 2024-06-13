@@ -1,7 +1,7 @@
 'use client';
 // ---- CORE IMPORTS ---- //
 import { i18n } from '@/lib/i18n';
-import { AddressForm } from '@/ui/components';
+import { AddressForm } from '@ui/components/index';
 import type { PartnerAddress, Country, Address } from '@/types';
 
 // ---- LOCAL IMPORTS ---- //

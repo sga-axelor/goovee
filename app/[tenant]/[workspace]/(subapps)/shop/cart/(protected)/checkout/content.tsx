@@ -6,7 +6,7 @@ import { Separator } from '@ui/components/separator';
 import { Label } from '@ui/components/label';
 import { RadioGroup, RadioGroupItem } from '@ui/components/radio-group';
 // ---- CORE IMPORTS ---- //
-import { BackgroundImage } from '@/ui/components';
+import { BackgroundImage } from '@ui/components/index';
 import { useCart } from '@/app/[tenant]/[workspace]/cart-context';
 import { scale } from '@/utils';
 import { computeTotal } from '@/utils/cart';
@@ -189,6 +189,7 @@ function Title({ text, ...rest }: { text: string } & any) {
   );
 }
 export default function Content({ workspace }: { workspace: PortalWorkspace }) {
+
   const [shippingType, setShippingType] = useState<string>(
     SHIPPING_TYPE.REGULAR,
   );
@@ -202,10 +203,12 @@ export default function Content({ workspace }: { workspace: PortalWorkspace }) {
   };
 
   useEffect(() => {
+    
     const init = async () => {
       if (!computedProducts?.length && cart) {
-        await Promise.all(cart.items.map((i: any) => findProduct(i.product)))
+        await Promise.all(cart.items.map((i: any) => findProduct({id:i.product,workspace:workspace})))
           .then(computedProducts => {
+            
             setComputedProducts(computedProducts);
           })
           .finally(() => {
@@ -255,7 +258,7 @@ export default function Content({ workspace }: { workspace: PortalWorkspace }) {
           <div className="flex flex-col gap-6">
             <Summary cart={$cart} />
             <Total
-              cart={cart}
+              cart={$cart}
               shippingType={shippingType}
               workspace={workspace}
             />

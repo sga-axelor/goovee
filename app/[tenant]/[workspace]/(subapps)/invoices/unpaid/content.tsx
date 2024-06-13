@@ -2,7 +2,7 @@
 import React, {useMemo} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
-import {Container, NavView, Toast} from '@/ui/components';
+import {Container, NavView, Toast} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {

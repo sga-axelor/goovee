@@ -4,7 +4,7 @@ import React, {useState} from 'react';
 import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {Toast} from '@/ui/components';
+import {Toast} from '@ui/components/index';
 import {TextField} from '@ui/components/TextField';
 export default function Content() {
   const [showPassword, setShowPassword] = useState(false);

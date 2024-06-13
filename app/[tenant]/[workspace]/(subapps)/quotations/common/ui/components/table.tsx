@@ -5,7 +5,7 @@ import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 import {TableCell, TableRow} from '@ui/components/table';
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
-import {StyledTable, Tag} from '@/ui/components';
+import {StyledTable, Tag} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import type {

@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {MdChevronRight} from 'react-icons/md';
 import {MdOutlineShoppingBasket} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
-import {Quantity, ThumbsCarousel} from '@/ui/components';
+import {Quantity, ThumbsCarousel} from '@ui/components/index';
 import {useQuantity} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
 import {getImageURL} from '@/utils/product';

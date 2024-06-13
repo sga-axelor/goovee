@@ -13,7 +13,7 @@ import {Separator} from '@ui/components/separator';
 import {i18n} from '@/lib/i18n';
 import {TextField} from '@ui/components/TextField';
 
-import {Toast} from '@/ui/components';
+import {Toast} from '@ui/components/index';
 export default function Content({canRegister}: {canRegister?: boolean}) {
   const [values, setValues] = useState({email: '', password: ''});
   const [showPassword, setShowPassword] = useState(false);

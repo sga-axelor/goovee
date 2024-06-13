@@ -2,7 +2,7 @@
 import React from 'react';
 import {TableCell, TableRow} from '@ui/components/table';
 // ---- CORE IMPORTS ---- //
-import {StyledTable, Tag} from '@/ui/components';
+import {StyledTable, Tag} from '@ui/components/index';
 import {parseDate} from '@/utils';
 import type {Item} from '@/types';
 import {i18n} from '@/lib/i18n';

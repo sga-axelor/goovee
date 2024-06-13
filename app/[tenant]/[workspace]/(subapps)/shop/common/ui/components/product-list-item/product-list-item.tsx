@@ -3,7 +3,7 @@ import React from 'react';
 import {MdAddShoppingCart} from 'react-icons/md';
 import {Button} from '@/components/ui/button';
 // ---- CORE IMPORTS ---- //
-import {BackgroundImage} from '@/ui/components';
+import {BackgroundImage} from '@ui/components/index';
 import {getImageURL} from '@/utils/product';
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';

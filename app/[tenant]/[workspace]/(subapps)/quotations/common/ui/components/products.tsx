@@ -3,7 +3,7 @@ import React from 'react';
 import {TableCell, TableRow} from '@ui/components/table';
 import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {StyledTable} from '@/ui/components';
+import {StyledTable} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {ProductCard} from './product-card';

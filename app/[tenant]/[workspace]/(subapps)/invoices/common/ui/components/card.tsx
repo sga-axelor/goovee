@@ -4,7 +4,7 @@ import {MdEast} from 'react-icons/md';
 import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
-import {Tag} from '@/ui/components';
+import {Tag} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/invoices/common/utils/invoices';

@@ -2,7 +2,7 @@
 import React from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
-import {Container, NavView, Pagination} from '@/ui/components';
+import {Container, NavView, Pagination} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {ORDERS_COLUMNS, ITEMS} from '@/subapps/orders/common/constants/orders';

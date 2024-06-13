@@ -1,18 +1,18 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import {useRouter, useSearchParams} from 'next/navigation';
-import {FaGoogle} from 'react-icons/fa';
-import {Button} from '@ui/components/button';
-import {Separator} from '@ui/components/separator';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FaGoogle } from 'react-icons/fa';
+import { Button } from '@ui/components/button';
+import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-import {TextField} from '@ui/components/TextField';
-import {Toast} from '@/ui/components';
+import { i18n } from '@/lib/i18n';
+import { TextField } from '@ui/components/TextField';
+import { Toast } from '@ui/components/index';
 // ---- LOCAL IMPORTS ---- //
-import {register} from './actions';
-import DatePicker from '@/ui/components/calender/calender';
+import { register } from './actions';
+import DatePicker from '@/components/ui/calender/calender';
 interface UserValues {
   firstName: string;
   name: string;
@@ -41,8 +41,8 @@ export default function Content() {
   const searchQuery = new URLSearchParams(searchParams).toString();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = event.target;
-    setValues(v => ({...v, [name]: value}));
+    const { name, value } = event.target;
+    setValues(v => ({ ...v, [name]: value }));
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -53,7 +53,7 @@ export default function Content() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const {password, confirmPassword} = values;
+    const { password, confirmPassword } = values;
 
     setError('');
 

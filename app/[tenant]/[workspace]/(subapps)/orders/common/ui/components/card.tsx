@@ -2,7 +2,7 @@
 import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
-import {Tag} from '@/ui/components';
+import {Tag} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/orders/common/utils/orders';

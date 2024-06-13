@@ -10,7 +10,7 @@ import { Label } from '@ui/components/label';
 import { Button } from '@ui/components/button';
 import { Separator } from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import { BackgroundImage, Quantity } from '@/ui/components';
+import { BackgroundImage, Quantity } from '@ui/components/index';
 import { useQuantity } from '@/ui/hooks';
 import { useCart } from '@/app/[tenant]/[workspace]/cart-context';
 import { computeTotal } from '@/utils/cart';

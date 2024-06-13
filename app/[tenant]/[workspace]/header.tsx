@@ -4,7 +4,7 @@ import { Badge } from "@ui/components/badge"
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { MdNotificationsNone } from "react-icons/md";
 // ---- CORE IMPORTS ---- //
-import { Account } from '@/ui/components';
+import { Account } from '@ui/components/index';
 import { useCart } from '@/app/[tenant]/[workspace]/cart-context';
 import { SUBAPP_PAGE } from '@/constants';
 // ---- LOCAL IMPORTS ---- //

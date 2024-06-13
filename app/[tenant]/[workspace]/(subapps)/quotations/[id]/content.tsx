@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 // ---- CORE IMPORTS ---- //
-import {Container} from '@/ui/components';
+import {Container} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {

@@ -5,7 +5,7 @@ import {Separator} from '@ui/components/separator';
 import {Button} from '@ui/components/button';
 import {MdOutlineFileDownload} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
-import {Tag} from '@/ui/components';
+import {Tag} from '@ui/components/index';
 import {parseDate} from '@/utils';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //

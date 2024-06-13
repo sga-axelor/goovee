@@ -7,7 +7,7 @@ import {Button} from '@ui/components/button';
 import {Label} from '@ui/components/label';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {Toast} from '@/ui/components';
+import {Toast} from '@ui/components/index';
 import {TextField} from '@ui/components/TextField';
 export default function Content() {
   const searchParams = useSearchParams();
