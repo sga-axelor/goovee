@@ -10,7 +10,7 @@ const generateCssVar = (css: ThemeOptions) => {
         --success-light: ${css?.colors?.success?.light};
         --success-dark: ${css?.colors?.success?.dark};
         --error-light: ${css?.colors?.error?.light};
-        --error-dark:${css?.colors?.error?.light};
+        --error-dark:${css?.colors?.error?.dark};
         --warning-light: ${css?.colors?.warning?.light};
         --warning-dark: ${css?.colors?.warning?.dark};
         --primary-light: ${css?.colors?.primary?.light};
