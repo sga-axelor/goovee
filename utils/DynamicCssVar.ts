@@ -29,9 +29,9 @@ const generateCssVar = (css: ThemeOptions) => {
         --destructive: ${css?.colors?.destructive?.DEFAULT};
         --destructive-foreground:${css?.colors?.destructive?.foreground};
         --muted: ${css?.colors?.muted?.DEFAULT};
-        --muted-foreground: ${css?.colors?.destructive?.foreground};
+        --muted-foreground: ${css?.colors?.muted?.foreground};
         --accent: ${css?.colors?.accent?.DEFAULT};
-        --accent-foreground: ${css?.colors?.destructive?.foreground};
+        --accent-foreground: ${css?.colors?.accent?.foreground};
         --card: ${css?.colors?.card?.DEFAULT};
         --card-foreground: ${css?.colors?.card?.foreground};
         --popover:${css?.colors?.popover?.DEFAULT};
