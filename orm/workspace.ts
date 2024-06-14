@@ -185,9 +185,9 @@ export async function findWorkspaceApps({
   const c = await client;
 
   const partner = await c.aOSPartner.findOne({
-    // where: {
-    //   id: partnerId,
-    // },
+    where: {
+      id: partnerId,
+    },
     select: {
       partnerWorkspaceSet: {
         where: {

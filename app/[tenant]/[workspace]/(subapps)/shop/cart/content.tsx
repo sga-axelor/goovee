@@ -118,11 +118,11 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             />
           </div>
         </div>
-        <div className="flex flex-col items-start ml-auto py-2 h-full">
+        <div className="flex flex-col items-end ml-auto py-2 h-full">
           <p className="text-xl font-semibold mb-1">
             {displayPrices && price.displayPrimary}
           </p>
-          <p className="text-xl font-semibold mb-1">
+          <p className="text-sm font-medium mb-1">
             {displayPrices && price.displaySecondary}
           </p>
           <Button
