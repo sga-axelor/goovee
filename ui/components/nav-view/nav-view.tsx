@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {Tabs} from '../tabs';
+import {Tabs} from '../tabs/index';
 import {TabsContent} from '@ui/components/tabs';
 
 interface TabItem {
