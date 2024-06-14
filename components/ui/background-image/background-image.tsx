@@ -1,15 +1,15 @@
 'use client';
 
-import {ReactElement} from 'react';
+import { ReactElement, CSSProperties, ReactNode } from 'react';
 
 export type BackgroundImageProps = {
   src?: string;
   defaultSrc?: string;
   height?: string | number;
   width?: string | number;
-  style?: React.CSSProperties;
-  className?: any;
-  children?: any;
+  style?: CSSProperties;
+  className?: string;
+  children?: ReactNode;
 };
 
 export function BackgroundImage({
@@ -25,14 +25,15 @@ export function BackgroundImage({
 
   return (
     <div
-      className={`${className}  bg-no-repeat bg-center`}
+      className={`${className} bg-no-repeat bg-center`}
       style={{
         height,
         width,
         backgroundImage: `url(${url})`,
         ...style,
-      }}
-      {...children}></div>
+      }}>
+      {children}
+    </div>
   );
 }
 
