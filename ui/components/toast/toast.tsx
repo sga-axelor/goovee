@@ -40,28 +40,28 @@ export const Toast = ({
     Variant,
     {
       styles: string;
-      icon: IconType;
+      icon: string;
     }
   > = {
     success: {
       styles:
         'border-success-dark text-success-dark bg-success-light [&>svg]:text-success-dark',
-      icon: 'MdOutlineCheckCircle',
+      icon: 'toastSuccess',
     },
     error: {
       styles:
         'border-error-dark text-error-dark bg-error-light dark:border-destructive [&>svg]:text-error-dark',
-      icon: 'MdErrorOutline',
+      icon: 'toastError',
     },
     warning: {
       styles:
         'bg-warning-light border-warning-dark text-warning-dark [&>svg]:text-warning-dark',
-      icon: 'MdOutlineWarningAmber',
+      icon: 'toastWarning',
     },
     primary: {
       styles:
         'bg-primary-dark border-primary-dark text-primary-dark [&>svg]:text-primary-dark',
-      icon: 'MdErrorOutline',
+      icon: 'toastPrimary',
     },
   };
 
@@ -73,7 +73,7 @@ export const Toast = ({
     <Alert
       className={`${alertType[variant].styles} border relative flex items-start justify-between py-4 px-8`}>
       <div className="flex items-start">
-        <Icons name={alertType[variant].icon} className="mr-4" />
+        <Icons name={alertType[variant].icon} className="mr-4 text-2xl" />
         <div className="flex-1">
           <AlertTitle className="text-base font-medium">{heading}</AlertTitle>
           <AlertDescription className="text-sm">{description}</AlertDescription>

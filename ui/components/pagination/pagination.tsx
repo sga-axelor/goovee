@@ -62,8 +62,7 @@ export function Pagination({
             onClick={() => onPage?.(current)}
             outline={String(page !== current)}
             className="p-4 py-2 pointer-events-none border-0 rounded-full !opacity-100"
-            active={Number(page) === current}
-            >
+            active={Number(page) === current}>
             {current}
           </RoundButton>
         );
