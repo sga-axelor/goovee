@@ -31,6 +31,10 @@ const Icons = ({
 }) => {
   let IconComponent: any = getIcon(name);
 
+  if(!IconComponent){
+    return null;
+  }
+
   return <IconComponent {...rest} />;
 };
 
