@@ -16,28 +16,28 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const variantStyles: Record<Variant, React.CSSProperties> = {
   success: {
-    backgroundColor: 'var(--success-light)',
-    color: 'var(--success-dark)',
+    backgroundColor: 'hsl(var(--success-light))',
+    color: 'hsl(var(--success-dark))',
   },
   error: {
-    backgroundColor: 'var(--error-light)',
-    color: 'var(--error-dark)',
+    backgroundColor: 'hsl(var(--error-light))',
+    color: 'hsl(var(--error-dark))',
   },
   warning: {
-    backgroundColor: 'var(--warning-light)',
-    color: 'var(--warning-dark)',
+    backgroundColor: 'hsl(var(--warning-light))',
+    color: 'hsl(var(--warning-dark))',
   },
   primary: {
-    backgroundColor: 'var(--primary-light)',
-    color: 'var(--primary-dark)',
+    backgroundColor: 'hsl(var(--primary-light))',
+    color: 'hsl(var(--primary-dark))',
   },
   secondary: {
-    backgroundColor: 'var(--secondary-light)',
-    color: 'var(--secondary-dark)',
+    backgroundColor: 'hsl(var(--secondary-light))',
+    color: 'hsl(var(--secondary-dark))',
   },
   default: {
-    backgroundColor: 'var(--default-light)',
-    color: 'var(--default-dark)',
+    backgroundColor: 'hsl(var(--default-light))',
+    color: 'hsl(var(--default-dark))',
   },
 };
 

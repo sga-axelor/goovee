@@ -15,7 +15,7 @@ module.exports = {
     extend: {
       colors: { 
         border: "hsl(var(--border))",
-        input: "hsl(var(--input-color))",
+        input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         body: {
           light : "hsl(var(--body-light))",
@@ -50,25 +50,25 @@ module.exports = {
         primary: {
           light: 'hsl(var(--primary-light))',
           dark: 'hsl(var(--primary-dark))',
-          DEFAULT: "hsl(var(--primary-default))",
+          DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           light: 'hsl(var(--secondary-light))',
           dark: 'hsl(var(--secondary-dark))',
-          DEFAULT: "hsl(var(--secondary-default))",
+          DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive-default))",
+          DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted-default))",
+          DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent-default))",
+          DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
         card: {

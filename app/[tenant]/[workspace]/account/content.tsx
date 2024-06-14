@@ -46,7 +46,7 @@ export default function Content({subapps}: {subapps: any}) {
                         background,
                         color,
                       }}>
-                      {icon ? <Icons name={icon} /> : null}
+                      {icon ? <Icons name={icon} className='text-2xl' /> : null}
                     </div>
                     <p className="text-lg font-semibold text-primary mb-0">
                       {i18n.get(name)}

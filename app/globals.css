@@ -79,7 +79,7 @@
 }
 body {
   font-family: 'Poppins', sans-serif !important;
-  background: var(--body-light) !important;
+  background: hsl(var(--body-light)) !important;
 }
 .container {
   max-width: 71.25rem;

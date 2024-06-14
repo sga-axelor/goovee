@@ -35,7 +35,7 @@ const Icons = ({
     return null;
   }
 
-  return <IconComponent {...rest} />;
+  return <IconComponent className={`${className}`} {...rest} />;
 };
 
 export default Icons;
