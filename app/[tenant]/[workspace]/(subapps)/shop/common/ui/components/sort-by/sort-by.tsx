@@ -13,7 +13,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ui/components/select';
 const SORT_BY_OPTIONS = [
   {
     value: 'byNewest',

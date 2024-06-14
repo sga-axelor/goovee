@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {MdAddShoppingCart} from 'react-icons/md';
-import {Button} from '@/components/ui/button';
+import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
 import {BackgroundImage} from '@ui/components/index';
 import {getImageURL} from '@/utils/product';

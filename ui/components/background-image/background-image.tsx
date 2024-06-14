@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, CSSProperties, ReactNode } from 'react';
+import {ReactElement, CSSProperties, ReactNode} from 'react';
 
 export type BackgroundImageProps = {
   src?: string;

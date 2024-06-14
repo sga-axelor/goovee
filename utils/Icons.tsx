@@ -31,7 +31,7 @@ const Icons = ({
 }) => {
   let IconComponent: any = getIcon(name);
 
-  if(!IconComponent){
+  if (!IconComponent) {
     return null;
   }
 

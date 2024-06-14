@@ -17,7 +17,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ui/components/select';
 import {Separator} from '@ui/components/separator';
 
 export type AddressFormProps = {

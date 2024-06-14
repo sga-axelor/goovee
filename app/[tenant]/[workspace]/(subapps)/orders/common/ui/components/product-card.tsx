@@ -1,6 +1,6 @@
 import React from 'react';
 import {TableCell, TableRow} from '@ui/components/table';
-import {Collapsible, CollapsibleContent} from '@/components/ui/collapsible';
+import {Collapsible, CollapsibleContent} from '@ui/components/collapsible';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';

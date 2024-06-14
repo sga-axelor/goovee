@@ -4,7 +4,7 @@ import {TableCell, TableRow} from '@ui/components/table';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
-import {Collapsible, CollapsibleContent} from '@/components/ui/collapsible';
+import {Collapsible, CollapsibleContent} from '@ui/components/collapsible';
 import Image from 'next/image';
 import MdUpDownIcon from '../../../../orders/common/ui/components/MdUpDownIcon';
 export const ProductCard = (props: any) => {

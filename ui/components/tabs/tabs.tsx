@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Tabs as NavTabs, TabsList, TabsTrigger} from '@/components/ui/tabs';
+import {Tabs as NavTabs, TabsList, TabsTrigger} from '@ui/components/tabs';
 interface TabItem {
   id: string;
   title?: React.ReactNode;

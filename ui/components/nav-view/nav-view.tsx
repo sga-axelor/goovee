@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {Tabs} from '../tabs';
-import {TabsContent} from '@/components/ui/tabs';
+import {TabsContent} from '@ui/components/tabs';
 
 interface TabItem {
   id: string;

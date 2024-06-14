@@ -13,13 +13,13 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
+} from '@ui/components/navigation-menu';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
+} from '@ui/components/accordion';
 
 interface NavItem {
   id?: number | string;

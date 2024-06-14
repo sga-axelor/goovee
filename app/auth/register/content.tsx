@@ -12,7 +12,7 @@ import {TextField} from '@ui/components/TextField';
 import {Toast} from '@ui/components/index';
 // ---- LOCAL IMPORTS ---- //
 import {register} from './actions';
-import DatePicker from '@/components/ui/calender/calender';
+import DatePicker from '@ui/components/calender/calender';
 interface UserValues {
   firstName: string;
   name: string;

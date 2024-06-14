@@ -2,10 +2,23 @@ import * as React from 'react';
 import {ChevronLeft, ChevronRight, MoreHorizontal} from 'lucide-react';
 
 import {cn} from '@/lib/utils';
-import {ButtonProps, buttonVariants} from '@/components/ui/button';
+import {ButtonProps, buttonVariants} from '@ui/components/button';
 
-
-const Pagination = ({ className, disablePrev, disableNext, onPrev, onNext, onPage, ...props }: React.ComponentProps<'nav'> & { disablePrev?: boolean; disableNext?: boolean; onPrev?: () => void; onNext?: () => void; onPage?: () => void; }) => (
+const Pagination = ({
+  className,
+  disablePrev,
+  disableNext,
+  onPrev,
+  onNext,
+  onPage,
+  ...props
+}: React.ComponentProps<'nav'> & {
+  disablePrev?: boolean;
+  disableNext?: boolean;
+  onPrev?: () => void;
+  onNext?: () => void;
+  onPage?: () => void;
+}) => (
   <nav
     role="navigation"
     aria-label="pagination"

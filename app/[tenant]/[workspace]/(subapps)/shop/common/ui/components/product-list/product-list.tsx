@@ -8,7 +8,7 @@ import {LuChevronRight} from 'react-icons/lu';
 import {IoIosArrowRoundForward} from 'react-icons/io';
 import {MdGridView} from 'react-icons/md';
 import {MdOutlineList} from 'react-icons/md';
-import {TextField} from '@/components/ui/TextField';
+import {TextField} from '@ui/components/TextField';
 // ---- CORE IMPORTS ---- //
 import {Pagination} from '@ui/components/index';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
