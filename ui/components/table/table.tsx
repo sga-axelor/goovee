@@ -2,31 +2,37 @@
 
 import React from 'react';
 import {TableHeadProps, TableProps} from './types';
-import {Table, TableBody, TableCell, TableRow} from '@ui/components/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableHead,
+  TableFooter,
+  TableHeader,
+} from '@ui/components/table';
 
 export const StyledHead = ({columns, className}: TableHeadProps) => {
   return (
-    <>
-      <TableRow>
-        {columns?.map((column: any, index: number) => (
-          <TableCell
-            key={column.key}
-            className={`${className} text-primary text-base font-semibold`}
-            style={{
-              paddingInline: '1.5rem',
-              border: 'none',
-              borderRadius:
-                index === 0
-                  ? '0.5rem 0rem 0rem 0.5rem'
-                  : index === columns.length - 1
-                    ? '0 0.5rem 0.5rem 0'
-                    : '',
-            }}>
-            {column.label}
-          </TableCell>
-        ))}
-      </TableRow>
-    </>
+    <TableRow>
+      {columns?.map((column: any, index: number) => (
+        <TableHead
+          key={column.key}
+          className={`${className} text-primary text-base font-semibold`}
+          style={{
+            paddingInline: '1.5rem',
+            border: 'none',
+            borderRadius:
+              index === 0
+                ? '0.5rem 0rem 0rem 0.5rem'
+                : index === columns.length - 1
+                  ? '0 0.5rem 0.5rem 0'
+                  : '',
+          }}>
+          {column.label}
+        </TableHead>
+      ))}
+    </TableRow>
   );
 };
 
@@ -37,12 +43,13 @@ export const StyledTable = ({
   headStyle,
 }: TableProps) => {
   return (
-    <>
-      <Table className={`w-full rounded-lg bg-background ${className}`}>
+    <Table className={`w-full rounded-lg bg-background ${className}`}>
+      <TableHeader>
         <StyledHead className={headStyle} columns={columns} />
-        <TableBody>{children}</TableBody>
-      </Table>
-    </>
+      </TableHeader>
+      <TableBody>{children}</TableBody>
+      <TableFooter></TableFooter>
+    </Table>
   );
 };
 
