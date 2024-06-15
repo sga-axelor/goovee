@@ -149,7 +149,7 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
             />
             <Label className="text-base font-medium !ml-4" htmlFor="r1">
               {i18n.get('Regular Shipping')}{' '}
-              <small className="text-xs font-medium ml-1 text-muted">{`5-10 ${i18n.get(
+              <small className="text-xs font-medium ml-1 text-primary">{`5-10 ${i18n.get(
                 'Business Days',
               )}`}</small>
             </Label>
@@ -169,7 +169,7 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
             />
             <Label className="text-base font-medium !ml-4" htmlFor="r1">
               {i18n.get('Fast Shipping')}{' '}
-              <small className="text-xs font-medium ml-1 text-muted">{`2-3 ${i18n.get(
+              <small className="text-xs font-medium ml-1 text-primary">{`2-3 ${i18n.get(
                 'Business Days',
               )}`}</small>
             </Label>
