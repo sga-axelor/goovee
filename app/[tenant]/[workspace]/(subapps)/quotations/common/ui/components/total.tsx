@@ -19,7 +19,7 @@ export const Total = ({
 }: TotalProps) => {
   return (
     <>
-      <div className="flex flex-col bg-white px-6 py-4 rounded-lg border border-black">
+      <div className="flex flex-col bg-background px-6 py-4 rounded-lg border border-foreground">
         <h4 className="text-xl font-medium mb-0">
           {i18n.get('Offered price')}
         </h4>
@@ -49,14 +49,14 @@ export const Total = ({
             <>
               <div className="flex justify-center">
                 <Button
-                  className={`${styles.success} flex items-center justify-center gap-3 rounded-full w-full`}>
+                  className={`${styles.success} hover:bg-success-dark flex items-center justify-center gap-3 rounded-full w-full`}>
                   <MdCheckCircleOutline className="text-2xl" />
                   {i18n.get('Accept and sign')}
                 </Button>
               </div>
               <div className="flex justify-center">
                 <Button
-                  className={`${styles.danger} flex items-center justify-center gap-3 rounded-full w-full font-normal`}>
+                  className={`${styles.danger} hover:bg-error-dark flex items-center justify-center gap-3 rounded-full w-full font-normal`}>
                   <MdOutlineDisabledByDefault className="text-2xl" />
                   {i18n.get('Reject')}
                 </Button>

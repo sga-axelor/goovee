@@ -18,7 +18,7 @@ type Props = {
 };
 export const Comments = ({comments}: Props) => {
   return (
-    <div className="flex flex-col gap-4 bg-white p-6 rounded-lg">
+    <div className="flex flex-col gap-4 bg-background p-6 rounded-lg">
       <div className="flex flex-col gap-2">
         <h4 className="text-xl font-medium mb-0">{i18n.get('Comments')}</h4>
         <p className="text-xs mb-0">

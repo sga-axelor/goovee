@@ -13,7 +13,7 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
   return (
     <>
       <div
-        className={`${isUnpaid ? 'md:basis-9/12' : 'md:basis-full'} flex flex-col basis-full bg-white px-6 py-4 gap-4 rounded-lg`}>
+        className={`${isUnpaid ? 'md:basis-9/12' : 'md:basis-full'} flex flex-col basis-full bg-background px-6 py-4 gap-4 rounded-lg`}>
         <h4 className="text-xl font-medium mb-0">{i18n.get('Invoice')}</h4>
         <Separator />
         <div className="flex justify-end">

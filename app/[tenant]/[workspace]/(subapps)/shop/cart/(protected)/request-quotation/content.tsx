@@ -30,7 +30,7 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
   }, [cart, clearCart, router, workspace, workspaceURI]);
 
   return (
-    <div className="shadow bg-white rounded-lg p-12">
+    <div className="shadow bg-background rounded-lg p-12">
       <h4 className="text-success">{i18n.get('Quotation Requested')}</h4>
       <Link href={`${workspaceURI}/shop`}>
         <Button className="rounded-full mt-4">

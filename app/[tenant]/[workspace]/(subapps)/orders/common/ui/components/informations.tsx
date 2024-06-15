@@ -21,7 +21,7 @@ export const Informations = ({
   );
   return (
     <>
-      <div className="bg-white flex md:block flex-col rounded-lg p-4 md:p-6">
+      <div className="bg-background flex md:block flex-col rounded-lg p-4 md:p-6">
         <h4 className="text-xl font-medium mb-0">{i18n.get('Informations')}</h4>
         <Separator className="my-1" />
         <div className="flex flex-col gap-4">

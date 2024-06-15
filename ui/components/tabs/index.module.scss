@@ -1,7 +1,7 @@
 .tabs {
-  border-bottom: 0.0625rem solid #464555;
+  border-bottom: 0.0625rem solid hsl(var(--detail-blue));
   --ax-nav-tabs-tab-text-transform: capitalize;
   --ax-nav-tabs-indicator-color: transparent;
-  --ax-nav-tabs-tab-active-bg: black;
-  --ax-nav-tabs-tab-active-color: white;
+  --ax-nav-tabs-tab-active-bg: hsl(var(--forground));
+  --ax-nav-tabs-tab-active-color: hsl(var(--background));
 }

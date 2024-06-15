@@ -40,7 +40,7 @@ export function ProductListItem({
         className="rounded-l-lg relative bg-cover md:w-[14.875rem] w-[5rem] md:h-[14.6875rem] h-[5rem]"
         src={getImageURL(product.images?.[0])}>
         {Boolean(quantity) && (
-          <div className="border shadow-lg absolute bottom-4 right-4 bg-white p-1 md:p-4 rounded-full flex items-center justify-center w-[1.875rem] md:w-[3.75rem] h-[1.875rem] md:h-[3.75rem]">
+          <div className="border shadow-lg absolute bottom-4 right-4 bg-background p-1 md:p-4 rounded-full flex items-center justify-center w-[1.875rem] md:w-[3.75rem] h-[1.875rem] md:h-[3.75rem]">
             <p className="mb-0 text-sm md:text-xl">{quantity}</p>
           </div>
         )}

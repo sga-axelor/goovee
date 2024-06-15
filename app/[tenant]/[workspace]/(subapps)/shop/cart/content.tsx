@@ -79,7 +79,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   return (
     <div
       key={item.id}
-      className="flex-col md:flex-row flex items-start gap-6 bg-white p-4 rounded-lg">
+      className="flex-col md:flex-row flex items-start gap-6 bg-background p-4 rounded-lg">
       <BackgroundImage
         className="rounded-lg h-[12.5rem] md:w-[12.5rem] w-full min-w-[12.5rem]"
         style={{backgroundSize: 'cover'}}
@@ -92,7 +92,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             href={`${workspaceURI}/shop/product/${encodeURIComponent(
               product.name,
             )}-${product.id}`}>
-            <h6 className="text-base mb-2">
+            <h6 className="text-base font-medium mb-2">
               {i18n.getValueAttribute(product.name)}
             </h6>
           </Link>
@@ -128,7 +128,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
           <Button
             disabled={disabled || updating}
             onClick={handleRemove(product)}
-            className="w-6 bg-transparent hover:bg-transparent text-red p-0 ml-auto mt-auto">
+            className="w-6 bg-transparent hover:bg-transparent text-destructive p-0 ml-auto mt-auto">
             <MdDeleteOutline className="text-2xl" />
           </Button>
         </div>
@@ -189,7 +189,7 @@ function CartSummary({
   const authenticated = session?.user?.id;
 
   return (
-    <div className="p-4 bg-white rounded-lg h-[26.25rem]">
+    <div className="p-4 bg-background rounded-lg h-[26.25rem]">
       {workspace?.config?.displayPrices && (
         <>
           <p className="text-xl font-semibold mb-6">{i18n.get('Total')}</p>

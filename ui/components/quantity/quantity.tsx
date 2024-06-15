@@ -19,18 +19,16 @@ export function Quantity({
         style={{width: '3.5rem'}}>
         <span className="text-primary text-base">{value}</span>
       </div>
-      <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
+      <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
         <IoAdd
-          className="courser-pointer block p-2"
-          size={32}
+          className="courser-pointer block p-2 text-4xl"
           onClick={() => !disabled && onIncrement?.()}
         />
       </div>
-      <div className="border rounded-lg h-10 flex items-center justify-center cursor-pointer">
+      <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
         <IoRemove
-          className="courser-pointer block p-2"
+          className="courser-pointer block p-2 text-4xl"
           onClick={() => !disabled && onDecrement?.()}
-          size={32}
         />
       </div>
     </div>

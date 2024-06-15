@@ -112,7 +112,7 @@ export function ProductView({
               }))}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border bg-background p-4">
             <p className="text-xl font-semibold mb-12">
               {i18n.getValueAttribute(product.name)}
             </p>

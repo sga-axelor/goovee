@@ -222,7 +222,7 @@ export function ProductList({
             value={sort}
           />
         </div>
-        <div className="bg-white shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
+        <div className="bg-background shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
           <MobileSortBy
             active={sort}
             workspace={workspace}

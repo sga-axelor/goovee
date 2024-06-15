@@ -18,9 +18,7 @@ type TabsProps = {
 export const Tabs = ({items, activeTab, onTabChange, children}: TabsProps) => {
   return (
     <>
-      <NavTabs
-        defaultValue={activeTab}
-        className="w-full !border-b border-solid !border-black">
+      <NavTabs defaultValue={activeTab} className="w-full">
         <TabsList className="w-full flex bg-transparent items-center justify-start">
           {Array.isArray(items) &&
             items.map(t => (

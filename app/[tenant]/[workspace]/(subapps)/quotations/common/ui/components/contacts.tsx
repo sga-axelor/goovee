@@ -20,7 +20,7 @@ export const Contacts = ({
 
   return (
     <>
-      <div className="flex flex-col gap-4 bg-white p-6 rounded-lg">
+      <div className="flex flex-col gap-4 bg-background p-6 rounded-lg">
         <h4 className="text-xl font-medium mb-0">{i18n.get('Contact')}</h4>
         <div className="flex flex-col gap-4 border rounded-lg p-4">
           <div className="flex flex-col gap-4">

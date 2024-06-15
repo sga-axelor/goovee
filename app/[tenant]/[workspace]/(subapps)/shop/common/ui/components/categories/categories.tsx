@@ -97,22 +97,24 @@ function MobileCategories({
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <div className="px-6 bg-white p-4 border-t border-b">
+          <div className="px-6 bg-background p-4 border-t border-b">
             <div className="flex">
               <MdOutlineMenu className="cursor-pointer text-2xl" />
             </div>
           </div>
         </SheetTrigger>
         <SheetContent side="left">
-          <div className="flex bg-white flex-grow-1 pt-0">
+          <div className="flex bg-background flex-grow-1 pt-0">
             <RenderNavItem
               onClick={handleItemClick}
               items={[
                 {
                   id: '1',
                   title: i18n.get('Categories'),
-                  icon: () => <MdOutlineCategory className="text-xl" />,
-                  iconColor: 'black',
+                  icon: () => (
+                    <MdOutlineCategory className="text-xl text-foreground" />
+                  ),
+                  iconColor: 'foreground',
                   items: items as any,
                 },
               ]}

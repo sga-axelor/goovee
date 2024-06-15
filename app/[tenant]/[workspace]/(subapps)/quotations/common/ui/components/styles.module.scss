@@ -15,11 +15,11 @@
 }
 .comment-input {
   font-size: 0.875rem;
-  --ax-input-placeholder-color: #cfd2d1;
+  --ax-input-placeholder-color: hsl(var(--input));
 }
 
 .history-date {
-  color: #464555;
+  color: hsl(var(--detail-blue));
 }
 
 .product-image {
@@ -29,13 +29,13 @@
 }
 
 .success {
-  color: white;
-  background-color: #4fc179;
+  color: hsl(var(--background));
+  background-color: hsl(var(--success-dark));
 }
 
 .danger {
-  color: white;
-  background-color: #f14e46;
+  color: hsl(var(--background));
+  background-color: hsl(var(--error-dark));
 }
 
 .comment-user-image {

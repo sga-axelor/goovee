@@ -22,7 +22,7 @@ export const Card = ({quotations, onClick}: CardViewProps) => {
         return (
           <div
             key={quotation.id}
-            className={`${styles['card-wrapper']} bg-white flex flex-col gap-4 border rounded px-4 py-6`}
+            className={`${styles['card-wrapper']} bg-background flex flex-col gap-4 border rounded px-4 py-6 mb-3`}
             onClick={() => onClick(quotation.id)}>
             <div className="flex items-center justify-between">
               <h6 className="text-base font-semibold mb-0">

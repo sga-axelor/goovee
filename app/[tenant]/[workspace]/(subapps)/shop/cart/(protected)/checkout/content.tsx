@@ -26,7 +26,7 @@ const SHIPPING_TYPE_COST = {
 };
 function Summary({cart}: any) {
   return (
-    <div className="bg-white p-6 rounded-lg">
+    <div className="bg-background p-6 rounded-lg">
       <Title
         className="text-xl font-semibold mb-6"
         text={i18n.get('Summary')}
@@ -81,7 +81,7 @@ function Total({cart, shippingType, workspace}: any) {
   const totalWithShipping = Number(total) + Number(shipping);
 
   return (
-    <div className="rounded-lg p-4 bg-white">
+    <div className="rounded-lg p-4 bg-background">
       <Title className="text-xl font-semibold mb-6" text="Total" />
       <Separator className="my-4" />
       <div className="flex justify-between">
@@ -114,7 +114,7 @@ function Total({cart, shippingType, workspace}: any) {
 }
 function Contact() {
   return (
-    <div className="bg-white p-6 rounded-lg">
+    <div className="bg-background p-6 rounded-lg">
       <Title className="text-xl font-medium" text={i18n.get('Contact')} />
       <Separator className="my-4" />
       <div className="border p-4 rounded-lg">
@@ -131,7 +131,7 @@ function Contact() {
 }
 function Shipping({value, onChange}: {value: string; onChange: any}) {
   return (
-    <div className="bg-white p-6 rounded-lg">
+    <div className="bg-background p-6 rounded-lg">
       <Title
         className="text-xl font-medium"
         text={i18n.get('Shipping Method')}

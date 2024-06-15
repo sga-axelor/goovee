@@ -45,9 +45,9 @@ export const fetchQuotations = async ({
 
   const quotations = await c.aOSOrder
     .find({
-      where: whereClause,
-      take: limit,
-      ...(skip ? {skip} : {}),
+      // where: whereClause,
+      // take: limit,
+      // ...(skip ? {skip} : {}),
       select: {
         saleOrderSeq: true,
         statusSelect: true,

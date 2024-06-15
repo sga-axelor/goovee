@@ -76,7 +76,7 @@ export default function Content({
       <h4 className="text-lg font-medium text-primary mb-4">
         {i18n.get('Addresses')}
       </h4>
-      <div className="p-4 rounded-md flex flex-col gap-4 bg-white">
+      <div className="p-4 rounded-md flex flex-col gap-4 bg-background">
         <div className="p-4 rounded-md border">
           <AddressList
             title={i18n.get('Invoicing Address')}

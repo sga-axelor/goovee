@@ -80,6 +80,7 @@
 body {
   font-family: 'Poppins', sans-serif !important;
   background: hsl(var(--body-light)) !important;
+  color: hsl(var(--primary));
 }
 .container {
   max-width: 71.25rem;

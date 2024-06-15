@@ -50,17 +50,17 @@ export const Toast = ({
     },
     error: {
       styles:
-        'border-error-dark text-error-dark bg-error-light dark:border-destructive [&>svg]:text-error-dark',
+        'border-error-dark text-error-dark bg-error-light [&>svg]:text-error-dark',
       icon: 'toastError',
     },
     warning: {
       styles:
-        'bg-warning-light border-warning-dark text-warning-dark [&>svg]:text-warning-dark',
+        'border-warning-dark text-warning-dark bg-warning-light [&>svg]:text-warning-dark',
       icon: 'toastWarning',
     },
     primary: {
       styles:
-        'bg-primary-dark border-primary-dark text-primary-dark [&>svg]:text-primary-dark',
+        'border-primary-dark text-primary-dark bg-primary-light [&>svg]:text-primary-dark',
       icon: 'toastPrimary',
     },
   };

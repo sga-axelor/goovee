@@ -20,7 +20,7 @@ export const Products = ({saleOrderLineList}: any) => {
         <Separator />
         <div className="hidden lg:block">
           <StyledTable
-            headStyle="bg-primary !text-white !rounded-none !text-sm !px-4"
+            headStyle="bg-primary !text-background !rounded-none !text-sm !px-4"
             columns={PRODUCT_COLUMNS}>
             {saleOrderLineList.map((product: any) => {
               return (
@@ -40,7 +40,7 @@ export const Products = ({saleOrderLineList}: any) => {
         </div>
         <div className="block lg:hidden">
           <StyledTable
-            headStyle="bg-primary !text-white !rounded-none !text-sm !px-4"
+            headStyle="bg-primary !text-background !rounded-none !text-sm !px-4"
             columns={PRODUCT_CARD_COLUMNS}>
             {saleOrderLineList?.map((product: any) => {
               return <ProductCard key={product.id} product={product} />;

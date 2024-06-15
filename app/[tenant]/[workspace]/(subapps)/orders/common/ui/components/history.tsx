@@ -6,7 +6,7 @@ import {i18n} from '@/lib/i18n';
 export const History = () => {
   return (
     <>
-      <div className="flex flex-col gap-4 bg-white p-6 rounded-lg">
+      <div className="flex flex-col gap-4 bg-background p-6 rounded-lg">
         <h4 className="text-xl font-medium mb-0">{i18n.get('History')}</h4>
         <Separator />
         <div>
