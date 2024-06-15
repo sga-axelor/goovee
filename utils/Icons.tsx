@@ -6,7 +6,9 @@ import {
   MdOutlineCheckCircle,
   MdOutlineWarningAmber,
   MdStorefront,
+  MdOutlineLocalPrintshop,
 } from 'react-icons/md';
+import {CiShop, CiFileOn, CiShoppingTag} from 'react-icons/ci';
 
 interface IconMapping {
   storeFront: IconType;
@@ -14,6 +16,10 @@ interface IconMapping {
   toastError: IconType;
   toastWarning: IconType;
   toastPrimary: IconType;
+  shop: IconType;
+  quotation: IconType;
+  invoice: IconType;
+  order: IconType;
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
@@ -23,6 +29,10 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
     toastError: MdErrorOutline,
     toastWarning: MdOutlineWarningAmber,
     toastPrimary: MdErrorOutline,
+    shop: CiShop,
+    quotation: MdOutlineLocalPrintshop,
+    invoice: CiFileOn,
+    order: CiShoppingTag,
   };
 
   const icon = iconMapping[type];
