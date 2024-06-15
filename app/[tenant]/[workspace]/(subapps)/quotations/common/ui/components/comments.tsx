@@ -1,5 +1,5 @@
 'use client';
-import React, { useState} from 'react';
+import React, {useState} from 'react';
 import moment from 'moment';
 import {Separator} from '@ui/components/separator';
 import {Button} from '@ui/components/button';
@@ -17,7 +17,7 @@ type Props = {
   comments: CommentsProps[];
 };
 export const Comments = ({comments}: Props) => {
-  const [comment,setComment] = useState("");
+  const [comment, setComment] = useState('');
   return (
     <div className="flex flex-col gap-4 bg-background p-6 rounded-lg">
       <div className="flex flex-col gap-2">
@@ -40,7 +40,7 @@ export const Comments = ({comments}: Props) => {
                 src=""
                 alt="user"
                 className={`${styles['comment-user-image']} rounded-full`}
-              /> 
+              />
               <div className="flex flex-col gap-1 w-full">
                 <div className="flex justify-between">
                   <h6 className="text-base font-semibold mb-0">
@@ -64,7 +64,7 @@ export const Comments = ({comments}: Props) => {
             placeholder={i18n.get('Write your comment here...')}
             className={`${styles['comment-input']} p-6`}
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            onChange={e => setComment(e.target.value)}
           />
           <div className="flex justify-end p-1">
             <Button className="flex items-center justify-center gap-3 rounded-full">
