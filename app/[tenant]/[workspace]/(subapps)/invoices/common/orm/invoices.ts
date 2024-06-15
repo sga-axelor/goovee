@@ -36,7 +36,7 @@ const fetchInvoices = async ({
   }
 
   const $invoices = await c.aOSInvoice.find({
-    // where: whereClause,
+    where: whereClause,
     select: {
       invoiceId: true,
       dueDate: true,

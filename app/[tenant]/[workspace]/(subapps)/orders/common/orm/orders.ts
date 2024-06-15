@@ -51,9 +51,9 @@ const fetchOrders = async ({
 
   const $orders = await c.aOSOrder
     .find({
-      // where: whereClause,
-      // take: limit,
-      // ...(skip ? {skip} : {}),
+      where: whereClause,
+      take: limit,
+      ...(skip ? {skip} : {}),
       select: {
         saleOrderSeq: true,
         statusSelect: true,
