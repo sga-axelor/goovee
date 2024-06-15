@@ -22,6 +22,7 @@ function Logo() {
         width={100}
         height={50}
         className="h-8 mr-4"
+        style={{width: 'auto', height: 'auto'}}
       />
     </Link>
   );

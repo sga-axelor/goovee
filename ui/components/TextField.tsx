@@ -14,12 +14,16 @@ export interface InputProps
 }
 
 const TextField = React.forwardRef<HTMLInputElement, InputProps>(
-  ({className, type, label, icons, ...props}, ref) => {
+  ({className, type, label, icons, value, ...props}, ref) => {
+    const inputValue = value !== undefined && value !== null ? value : '';
+
     return (
       <>
-        <label className="text-base font-medium text-primary mb-1">
-          {label}
-        </label>
+        {label && (
+          <label className="text-base font-medium text-primary mb-1">
+            {label}
+          </label>
+        )}
         <div className="relative block w-full">
           <input
             type={type}
@@ -32,6 +36,7 @@ const TextField = React.forwardRef<HTMLInputElement, InputProps>(
               className,
             )}
             ref={ref}
+            value={inputValue}
             {...props}
           />
           {Array.isArray(icons) &&

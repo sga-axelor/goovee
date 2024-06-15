@@ -209,8 +209,9 @@ export function ProductList({
             <TextField
               name="search"
               placeholder="Search"
-              defaultValue={search}
+              value={search}
               className="pl-12 rounded-full"
+              onChange={() => {}}
             />
             <div className={`${styles.icons} top-[0.625rem] !pt-0`}>
               <BiSearch className="text-2xl" />
