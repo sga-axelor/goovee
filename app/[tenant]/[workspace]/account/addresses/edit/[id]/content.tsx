@@ -7,6 +7,8 @@ import type {PartnerAddress, Country, Address} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {updateAddress} from './actions';
 import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export default function Content({
   id,
@@ -19,6 +21,8 @@ export default function Content({
 }) {
   const {address} = partnerAddress;
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const {workspaceURI} = useWorkspace();
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
     values: Partial<Address> & {multipletype?: boolean},
@@ -49,6 +53,7 @@ export default function Content({
         isDeliveryAddr,
       });
       setLoading(false);
+      router.push(`${workspaceURI}/account/addresses/${_address.id}`);
     } catch (error) {
       setLoading(false);
       console.log(error);
