@@ -15,7 +15,6 @@ export interface InputProps
 
 const TextField = React.forwardRef<HTMLInputElement, InputProps>(
   ({className, type, label, icons, value, ...props}, ref) => {
-    // Ensure value is always defined if controlled
     const inputValue = value !== undefined && value !== null ? value : '';
 
     return (
