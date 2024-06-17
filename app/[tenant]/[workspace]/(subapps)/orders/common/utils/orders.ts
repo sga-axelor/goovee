@@ -41,8 +41,8 @@ export function getStatus(
 export function getWhereClause(
   isContact: boolean | undefined,
   role: any = ROLE.RESTRICTED,
-  mainPartnerId: string | number | undefined,
   id: string | number | undefined,
+  mainPartnerId: string | number | undefined,
 ) {
   let where;
 

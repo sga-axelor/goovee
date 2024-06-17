@@ -27,8 +27,8 @@ export function getStatus(value: string | number): {
 export function getWhereClause(
   isContact: boolean | undefined,
   role: any,
-  mainPartnerId: string | number | undefined,
   id: string | number | undefined,
+  mainPartnerId: string | number | undefined,
 ) {
   let where;
 

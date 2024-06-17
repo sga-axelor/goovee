@@ -42,7 +42,7 @@ export default async function Invoices({
 
   const {role} = app;
 
-  const where = getWhereClause(isContact, role, mainPartnerId, id);
+  const where = getWhereClause(isContact, role, id, mainPartnerId );
 
   const invoices = await findUnpaidInvoices({where});
 

@@ -61,8 +61,8 @@ export const updateDocument = (date1: any, date2: any) => {
 export function getWhereClause(
   isContact: boolean | undefined,
   role: any,
-  mainPartnerId: string | number | undefined,
   id: string | number | undefined,
+  mainPartnerId: string | number | undefined,
 ) {
   let where;
 
