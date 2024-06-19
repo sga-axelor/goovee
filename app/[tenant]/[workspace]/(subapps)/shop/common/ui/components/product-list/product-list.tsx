@@ -1,6 +1,6 @@
 'use client';
 
-import React, {Fragment} from 'react';
+import React, {Fragment, useState} from 'react';
 import {useRouter, usePathname, useSearchParams} from 'next/navigation';
 import {BiSearch} from 'react-icons/bi';
 import {MdOutlineFilterAlt} from 'react-icons/md';
@@ -65,6 +65,7 @@ export function ProductList({
   const search = searchParams.get('search') || '';
   const sort = searchParams.get('sort');
   const view = searchParams.get('view') || VIEW.GRID;
+  const [searching, setSearching] = useState<string>('');
   const updateSearchParams = (
     values: Array<{
       key: string;
@@ -209,9 +210,9 @@ export function ProductList({
             <TextField
               name="search"
               placeholder="Search"
-              value={search}
+              value={searching}
+              onChange={e => setSearching(e.target.value)}
               className="pl-12 rounded-full"
-              onChange={() => {}}
             />
             <div className={`${styles.icons} top-[0.625rem] !pt-0`}>
               <BiSearch className="text-2xl" />
