@@ -49,9 +49,7 @@ function Cart() {
     <Link href={`${workspaceURI}/shop/cart`} className="flex relative">
       <MdOutlineShoppingCart className="cursor-pointer text-foreground text-2xl" />
       {count ? (
-        <Badge className={`${styles.badge} rounded bg-primary`}>
-          {count}
-        </Badge>
+        <Badge className={`${styles.badge} rounded bg-primary`}>{count}</Badge>
       ) : null}
     </Link>
   );

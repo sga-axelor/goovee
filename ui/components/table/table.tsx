@@ -43,7 +43,8 @@ export const StyledTable = ({
   headStyle,
 }: TableProps) => {
   return (
-    <Table className={`w-full rounded-lg bg-card text-card-foreground ${className}`}>
+    <Table
+      className={`w-full rounded-lg bg-card text-card-foreground ${className}`}>
       <TableHeader>
         <StyledHead className={headStyle} columns={columns} />
       </TableHeader>

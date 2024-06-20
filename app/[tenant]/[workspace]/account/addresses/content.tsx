@@ -73,9 +73,7 @@ export default function Content({
 }) {
   return (
     <>
-      <h4 className="text-lg font-medium mb-4">
-        {i18n.get('Addresses')}
-      </h4>
+      <h4 className="text-lg font-medium mb-4">{i18n.get('Addresses')}</h4>
       <div className="p-4 rounded-md flex flex-col gap-4 bg-card text-card-foreground">
         <div className="p-4 rounded-md border">
           <AddressList

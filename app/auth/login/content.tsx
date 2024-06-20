@@ -65,9 +65,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
 
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
-      <h5 className="mb-3 font-medium text-xl">
-        {i18n.get('Log in')}
-      </h5>
+      <h5 className="mb-3 font-medium text-xl">{i18n.get('Log in')}</h5>
       <form
         className="bg-card text-card-foreground rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}>
@@ -148,9 +146,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
         <div className="grow">
           <Separator />
         </div>
-        <h5 className="mb-0 font-medium text-xl">
-          {i18n.get('Or')}
-        </h5>
+        <h5 className="mb-0 font-medium text-xl">{i18n.get('Or')}</h5>
         <div className="grow">
           <Separator />
         </div>

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 // ---- CORE IMPORTS ---- //
 export function ProductListColorFilter() {
   const [bgColor, setBgColor] = useState<boolean>(false);
@@ -12,19 +12,17 @@ export function ProductListColorFilter() {
   };
   return (
     <div className="flex flex-col gap-2">
-      <h6 className='text-base font-semibold'>Color</h6>
+      <h6 className="text-base font-semibold">Color</h6>
       <div className="flex flex-wrap gap-2">
         <div
           className={`${bgColor ? 'bg-[#F6F1FF]' : 'bg-transparent'} inline-flex items-center gap-4 px-2 py-1 border border-primary rounded-full cursor-pointer`}
-          onClick={handleClick}
-        >
+          onClick={handleClick}>
           <span className="rounded-full w-4 h-4 min-w-4 bg-product_filter-red"></span>
           <span className="text-xs font-medium text-primary">Red</span>
         </div>
         <div
           className={`${bgColor1 ? 'bg-[#F6F1FF]' : 'bg-transparent'} inline-flex items-center gap-4 px-2 py-1 border border-primary rounded-full cursor-pointer`}
-          onClick={handleClick1}
-        >
+          onClick={handleClick1}>
           <span className="rounded-full w-4 h-4 min-w-4 bg-product_filter-black"></span>
           <span className="text-xs font-medium text-primary">Black</span>
         </div>

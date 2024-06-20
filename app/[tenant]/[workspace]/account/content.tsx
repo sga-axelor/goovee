@@ -18,9 +18,7 @@ export default function Content({subapps}: {subapps: any}) {
       <h4 className="text-lg font-medium mb-6">
         {i18n.get('My Account')} {session ? `- ${session?.user?.name}` : ''}{' '}
         {session?.user && (
-          <span className="text-base">
-            ({session?.user?.email})
-          </span>
+          <span className="text-base">({session?.user?.email})</span>
         )}
       </h4>
       <div className="flex flex-col gap-4">

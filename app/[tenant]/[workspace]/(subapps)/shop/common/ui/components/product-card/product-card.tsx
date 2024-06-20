@@ -67,9 +67,7 @@ export function ProductCard({
         <span className="text-xs font-medium mt-0 mb-0 text-destructive">
           Only 6 left
         </span>
-        <Button
-          onClick={handleAdd}
-          className="rounded-full h-12 w-12 p-2">
+        <Button onClick={handleAdd} className="rounded-full h-12 w-12 p-2">
           <MdAddShoppingCart className="text-2xl" />
         </Button>
       </div>
