@@ -22,6 +22,8 @@ import {
   ProductCard,
   ProductListItem,
   Categories,
+  ProductListBrandFilter,
+  ProductListColorFilter,
 } from '..';
 import styles from './product-list.module.scss';
 
@@ -31,7 +33,7 @@ const VIEW = {
 };
 function MobileFilters() {
   return (
-    <div className="flex items-center gap-2 text-primary">
+    <div className="flex items-center gap-2 text-foreground">
       <MdOutlineFilterAlt className="text-xl" />
       <p className="mb-0 font-bold">{i18n.get('Filters')}</p>
     </div>
@@ -141,7 +143,7 @@ export function ProductList({
       <Categories items={categories} onClick={handleCategoryClick} />
       {showSummary && (
         <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[40.625rem]">
-          <div className="absolute top-0 left-0 w-full h-full bg-foreground/[.65]" />
+          <div className="absolute top-0 left-0 w-full h-full bg-black/[.65]" />
           <h1 className="font-bold text-4xl m-0 z-[1] text-primary-foreground">
             {i18n.get('Shop summary')}
           </h1>
@@ -149,7 +151,7 @@ export function ProductList({
       )}
 
       <div className={'container portal-container'}>
-        <div className="mb-6">
+        <div className="mb-6 mt-3 text-foreground">
           {breadcrumbs?.length > 1 ? (
             <div className="flex items-center gap-4">
               {breadcrumbs.map((crumb: any, i: number) => {
@@ -161,7 +163,7 @@ export function ProductList({
                       <div
                         {...(islast
                           ? {
-                              color: 'primary',
+                              color: 'foreground',
                               fontWeight: 'bold',
                             }
                           : {color: 'secondary'})}
@@ -181,10 +183,8 @@ export function ProductList({
           ) : null}
         </div>
         <div className="flex items-center justify-between mb-6">
-          <h4 className="text-xl font-medium text-primary">
-            {category && category?.name}
-          </h4>
-          <p className="text-sm font-medium text-primary flex items-center mb-0">
+          <h4 className="text-xl font-medium">{category && category?.name}</h4>
+          <p className="text-sm font-medium flex items-center mb-0">
             See all
             <IoIosArrowRoundForward className="cursor-pointer text-xl ml-2" />
           </p>
@@ -224,7 +224,7 @@ export function ProductList({
             value={sort}
           />
         </div>
-        <div className="bg-background shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
+        <div className="bg-card text-card-foreground shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
           <MobileSortBy
             active={sort}
             workspace={workspace}
@@ -232,30 +232,37 @@ export function ProductList({
           />
           <MobileFilters />
         </div>
-        <div
-          className={`${isListView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'} grid gap-5 `}>
-          {products?.length ? (
-            products.map(computedProduct => {
-              const quantity = cart?.items?.find(
-                (i: any) =>
-                  Number(i.product) === Number(computedProduct?.product.id),
-              )?.quantity;
-              const Component = isListView ? ProductListItem : ProductCard;
 
-              return (
-                <Component
-                  key={computedProduct?.product.id}
-                  product={computedProduct}
-                  quantity={quantity}
-                  onAdd={handleAdd}
-                  displayPrices={workspace?.config?.displayPrices}
-                  onClick={handleProductClick}
-                />
-              );
-            })
-          ) : (
-            <div>{i18n.get('No product available.')}</div>
-          )}
+        <div className="grid gap-5 lg:grid-cols-[17.3125rem_1fr] grid-cols-1">
+          <div className="flex flex-col gap-6">
+            <ProductListColorFilter />
+            <ProductListBrandFilter />
+          </div>
+          <div
+            className={`${isListView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'} grid gap-5 `}>
+            {products?.length ? (
+              products.map(computedProduct => {
+                const quantity = cart?.items?.find(
+                  (i: any) =>
+                    Number(i.product) === Number(computedProduct?.product.id),
+                )?.quantity;
+                const Component = isListView ? ProductListItem : ProductCard;
+
+                return (
+                  <Component
+                    key={computedProduct?.product.id}
+                    product={computedProduct}
+                    quantity={quantity}
+                    onAdd={handleAdd}
+                    displayPrices={workspace?.config?.displayPrices}
+                    onClick={handleProductClick}
+                  />
+                );
+              })
+            ) : (
+              <div>{i18n.get('No product available.')}</div>
+            )}
+          </div>
         </div>
         <div className="mt-6 mb-4 flex items-center justify-center">
           <Pagination

@@ -27,7 +27,7 @@ function RoundButton({
       onClick={onClick}
       disabled={disabled}
       {...rest}
-      className={`${active ? 'text-primary bg-success-light' : 'text-primary-forground bg-success-dark'} mr-1 ${className}`}>
+      className={`${active ? 'text-forground bg-success-dark' : 'bg-success-light'} mr-1 ${className}`}>
       {children}
     </Button>
   );

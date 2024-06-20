@@ -3,6 +3,19 @@ export type ThemeOptions = {
     border?: string;
     input?: string;
     ring?: string;
+    product_filter?: {
+      red?: string;
+      black?: string;
+      pink?: string;
+      purple?: string;
+      yellow?: string;
+      orange?: string;
+      green?: string;
+      grey?: string;
+      blue?: string;
+      white?: string;
+      brown?: string;
+    };
     body?: {
       light?: string;
     };

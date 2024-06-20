@@ -5,6 +5,17 @@
 
 @layer base {
   :root {
+    --product_filter-red: 0 94% 66%;
+    --product_filter-black: 0 0% 7%;
+    --product_filter-pink: 337 84% 69%;
+    --product_filter-purple: 274 100% 69%;
+    --product_filter-yellow: 54 100% 50;
+    --product_filter-orange: 32 100% 50%;
+    --product_filter-green: 133 100% 42%;
+    --product_filter-grey: 0 2% 66%;
+    --product_filter-blue: 230 100% 67%;
+    --product_filter-white: 0 0% 100%;
+    --product_filter-brown: 18 38% 42%;
     --body-light: 210 17% 98%;
     --main-purple: 269 97% 35%;
     --detail-blue: 244 10% 30%;
@@ -80,7 +91,7 @@
 body {
   font-family: 'Poppins', sans-serif !important;
   background: hsl(var(--body-light)) !important;
-  color: hsl(var(--primary));
+  color: hsl(var(--foreground));
 }
 .container {
   max-width: 71.25rem;

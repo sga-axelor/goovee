@@ -49,7 +49,7 @@ export const ThumbsCarousel = ({
             className="absolute"
             style={{top: '40%', left: '1rem'}}>
             <div className="flex">
-              <FaChevronLeft className="text-background" />
+              <FaChevronLeft className="text-primary-foreground" />
             </div>
           </Button>
           <Button
@@ -57,7 +57,7 @@ export const ThumbsCarousel = ({
             className="absolute right-4"
             style={{top: '40%'}}>
             <div className="flex">
-              <FaChevronRight className="text-background" />
+              <FaChevronRight className="text-primary-foreground" />
             </div>
           </Button>
         </div>

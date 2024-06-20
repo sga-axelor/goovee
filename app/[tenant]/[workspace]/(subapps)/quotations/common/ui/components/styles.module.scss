@@ -29,12 +29,12 @@
 }
 
 .success {
-  color: hsl(var(--background));
+  color: hsl(var(--primary-foreground));
   background-color: hsl(var(--success-dark));
 }
 
 .danger {
-  color: hsl(var(--background));
+  color: hsl(var(--primary-foreground));
   background-color: hsl(var(--error-dark));
 }
 

@@ -77,11 +77,9 @@ export default function Content() {
   };
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
-      <h5 className="mb-3 font-medium text-primary text-xl">
-        {i18n.get('Sign Up')}
-      </h5>
+      <h5 className="mb-3 font-medium text-xl">{i18n.get('Sign Up')}</h5>
       <form
-        className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
+        className="bg-card text-card-foreground rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}>
         <div>
           <TextField
@@ -122,7 +120,7 @@ export default function Content() {
                 type="number"
                 placeholder="Enter phone"
               />
-              <label className="text-base font-medium text-primary mb-1">
+              <label className="text-base font-medium text-card-foreground mb-1">
                 {i18n.get('Birthdate')}
               </label>
               <DatePicker
@@ -175,7 +173,7 @@ export default function Content() {
           </Button>
         </div>
         <div>
-          <p className="text-primary inline-flex text-lg mr-2 mb-0">
+          <p className="text-card-foreground inline-flex text-lg mr-2 mb-0">
             {i18n.get('Already have an account')} ?
           </p>
           <Link
@@ -190,9 +188,7 @@ export default function Content() {
         <div className="grow">
           <Separator />
         </div>
-        <h5 className="mb-0 font-medium text-primary text-xl">
-          {i18n.get('Or')}
-        </h5>
+        <h5 className="mb-0 font-medium text-xl">{i18n.get('Or')}</h5>
         <div className="grow">
           <Separator />
         </div>
@@ -201,7 +197,7 @@ export default function Content() {
         <Button
           type="button"
           variant="outline"
-          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-background">
+          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-primary-foreground">
           <FaGoogle className="text-xl" />
           <span className="text-primary font-medium">
             {i18n.get('Create an account with Google')}

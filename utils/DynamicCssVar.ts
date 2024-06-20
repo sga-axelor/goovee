@@ -3,6 +3,17 @@ import {ThemeOptions} from '@/types/ThemeOptions';
 const generateCssVar = (css: ThemeOptions) => {
   const dynamicCss = `
     :root {
+        --product_filter-red: ${css?.colors?.product_filter?.red};
+        --product_filter-black: ${css?.colors?.product_filter?.black};
+        --product_filter-pink: ${css?.colors?.product_filter?.pink};
+        --product_filter-purple: ${css?.colors?.product_filter?.purple};
+        --product_filter-yellow: ${css?.colors?.product_filter?.yellow};
+        --product_filter-orange: ${css?.colors?.product_filter?.orange};
+        --product_filter-green: ${css?.colors?.product_filter?.green};
+        --product_filter-grey: ${css?.colors?.product_filter?.grey};
+        --product_filter-blue: ${css?.colors?.product_filter?.blue};
+        --product_filter-white: ${css?.colors?.product_filter?.white};
+        --product_filter-brown: ${css?.colors?.product_filter?.brown};
         --body-light: ${css?.colors?.body?.light};
         --main-purple: ${css?.colors?.main?.purple};
         --detail-blue: ${css?.colors?.detail?.blue};

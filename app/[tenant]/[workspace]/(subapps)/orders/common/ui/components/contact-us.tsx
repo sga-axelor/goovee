@@ -9,7 +9,7 @@ import {i18n} from '@/lib/i18n';
 export const ContactUs = () => {
   return (
     <>
-      <div className="flex flex-col gap-4 bg-background p-6 rounded-lg">
+      <div className="flex flex-col gap-4 bg-card text-card-foreground p-6 rounded-lg">
         <h4 className="text-xl font-medium mb-0">{i18n.get('ContactUs')}</h4>
         <Separator />
         <Button

@@ -97,14 +97,14 @@ function MobileCategories({
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <div className="px-6 bg-background p-4 border-t border-b">
+          <div className="px-6 bg-background p-4 border-t border-b text-foreground">
             <div className="flex">
               <MdOutlineMenu className="cursor-pointer text-2xl" />
             </div>
           </div>
         </SheetTrigger>
         <SheetContent side="left">
-          <div className="flex bg-background flex-grow-1 pt-0">
+          <div className="flex bg-background text-foreground flex-grow-1 pt-0">
             <RenderNavItem
               onClick={handleItemClick}
               items={[
@@ -137,7 +137,7 @@ export const Categories = ({
   const large = ['lg', 'xl', 'xxl'].some(x => res[x]);
 
   return large ? (
-    <div className="mx-auto flex items-center gap-4 mb-0 px-6 py-4 bg-background border-t border-border border-solid subcategory">
+    <div className="mx-auto flex items-center gap-4 mb-0 px-6 py-4 bg-background text-foreground subcategory">
       {items.map((category, index) => {
         return (
           <Category
@@ -191,9 +191,9 @@ const Category = ({
                 <div
                   onClick={handleDropdownClick}
                   ref={setTarget}
-                  className="flex items-center justify-center cursor-pointer text-base font-medium text-primary">
-                  <NavigationMenuTrigger className="px-0 hover:bg-transparent">
-                    <p className="px-2 mb-0 text-base font-medium text-primary first-border border-l-2 border-primary border-solid">
+                  className="flex items-center justify-center cursor-pointer text-base font-medium text-foreground">
+                  <NavigationMenuTrigger className="px-0 bg-transparent hover:bg-transparent">
+                    <p className="px-2 mb-0 text-base font-medium text-foreground first-border border-l-2 border-foreground border-solid">
                       {i18n.get(item.name)}
                     </p>
                   </NavigationMenuTrigger>
@@ -212,7 +212,7 @@ const Category = ({
         </>
       ) : (
         <p
-          className="cursor-pointer pl-4 mb-0 text-base font-medium text-primary border-l-2 border-primary border-solid first-border"
+          className="cursor-pointer pl-4 mb-0 text-base font-medium text-foreground border-l-2 border-foreground border-solid first-border"
           onClick={handleClick}>
           {i18n.get(item.name)}
         </p>

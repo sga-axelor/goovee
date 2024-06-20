@@ -18,7 +18,7 @@ export const Contact = ({
   const deliveryAddressCity = getCityName(deliveryAddress?.addressl6);
   return (
     <>
-      <div className="flex flex-col gap-4 bg-background p-6 rounded-lg">
+      <div className="flex flex-col gap-4 bg-card text-card-foreground p-6 rounded-lg">
         <h4 className="text-xl font-medium mb-0">{i18n.get('Contact')}</h4>
         <div className="flex flex-col gap-4 border !border-border] p-4 rounded-lg">
           <div className="flex flex-col gap-4">

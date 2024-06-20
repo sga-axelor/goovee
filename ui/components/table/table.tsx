@@ -18,7 +18,7 @@ export const StyledHead = ({columns, className}: TableHeadProps) => {
       {columns?.map((column: any, index: number) => (
         <TableHead
           key={column.key}
-          className={`${className} text-primary text-base font-semibold`}
+          className={`${className} text-card-foreground text-base font-semibold`}
           style={{
             paddingInline: '1.5rem',
             border: 'none',
@@ -43,7 +43,8 @@ export const StyledTable = ({
   headStyle,
 }: TableProps) => {
   return (
-    <Table className={`w-full rounded-lg bg-background ${className}`}>
+    <Table
+      className={`w-full rounded-lg bg-card text-card-foreground ${className}`}>
       <TableHeader>
         <StyledHead className={headStyle} columns={columns} />
       </TableHeader>

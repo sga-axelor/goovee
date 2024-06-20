@@ -32,13 +32,13 @@ export function ProductCard({
   };
 
   return (
-    <div className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[25.625rem] bg-background text-primary">
+    <div className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[25.625rem] bg-card text-card-foreground">
       <div onClick={handleClick}>
         <BackgroundImage
           className="rounded-t-lg bg-cover relative h-[14.5rem]"
           src={getImageURL(product.images?.[0])}>
           {Boolean(quantity) ? (
-            <div className="border shadow-lg absolute bg-background p-4 rounded-full flex items-center justify-center w-[3.75rem] h-[3.75rem] bottom-4 right-4">
+            <div className="border shadow-lg absolute bg-card p-4 rounded-full flex items-center justify-center w-[3.75rem] h-[3.75rem] bottom-4 right-4">
               <p className="mb-0 text-xl font-bold">{quantity}</p>
             </div>
           ) : (
@@ -67,10 +67,8 @@ export function ProductCard({
         <span className="text-xs font-medium mt-0 mb-0 text-destructive">
           Only 6 left
         </span>
-        <Button
-          onClick={handleAdd}
-          className="bg-primary rounded-full h-12 w-12 p-2">
-          <MdAddShoppingCart className="text-primary-foreground text-2xl" />
+        <Button onClick={handleAdd} className="rounded-full h-12 w-12 p-2">
+          <MdAddShoppingCart className="text-2xl" />
         </Button>
       </div>
     </div>

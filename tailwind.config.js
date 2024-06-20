@@ -13,7 +13,20 @@ module.exports = {
       },
     },
     extend: {
-      colors: { 
+      colors: {
+        product_filter: {
+          red: "hsl(var(--product_filter-red))",
+          black: "hsl(var(--product_filter-black))",
+          pink: "hsl(var(--product_filter-pink))",
+          purple: "hsl(var(--product_filter-purple))",
+          yellow: "hsl(var(--product_filter-yellow))",
+          orange: "hsl(var(--product_filter-orange))",
+          green: "hsl(var(--product_filter-green))",
+          grey: "hsl(var(--product_filter-grey))",
+          blue: "hsl(var(--product_filter-blue))",
+          white: "hsl(var(--product_filter-white))",
+          brown: "hsl(var(--product_filter-brown))"
+        }, 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
