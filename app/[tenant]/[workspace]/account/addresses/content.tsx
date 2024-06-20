@@ -23,7 +23,7 @@ function AddressList({
 
   return (
     <>
-      <h4 className="text-lg font-medium text-primary mb-4">{title}</h4>
+      <h4 className="text-lg font-medium text-card-foreground mb-4">{title}</h4>
       {Boolean(addresses?.length) ? (
         <div className="my-4 grid gap-4 grid-col-1 md:grid-col-3">
           {addresses?.map(({id, address}) => {
@@ -73,10 +73,10 @@ export default function Content({
 }) {
   return (
     <>
-      <h4 className="text-lg font-medium text-primary mb-4">
+      <h4 className="text-lg font-medium mb-4">
         {i18n.get('Addresses')}
       </h4>
-      <div className="p-4 rounded-md flex flex-col gap-4 bg-background">
+      <div className="p-4 rounded-md flex flex-col gap-4 bg-card text-card-foreground">
         <div className="p-4 rounded-md border">
           <AddressList
             title={i18n.get('Invoicing Address')}

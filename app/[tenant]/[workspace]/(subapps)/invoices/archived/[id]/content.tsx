@@ -31,7 +31,7 @@ export default function Content({invoice}: any) {
         <h4 className="text-xl font-medium mb-4">
           {`${i18n.get('Invoice number')} ${invoiceId}`}
         </h4>
-        <div className="bg-background flex md:block flex-col md:flex-row px-6 py-4 mb-6 rounded-lg">
+        <div className="bg-card text-card-foreground flex md:block flex-col md:flex-row px-6 py-4 mb-6 rounded-lg">
           <h4 className="text-xl font-medium mb-0">
             {i18n.get('Informations')}
           </h4>

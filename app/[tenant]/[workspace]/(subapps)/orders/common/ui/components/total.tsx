@@ -12,7 +12,7 @@ export const Total = ({exTaxTotal, inTaxTotal, totalDiscount}: TotalProps) => {
   return (
     <>
       <div
-        className="flex flex-col bg-background px-6 py-4 rounded-lg basis-full md:basis-1/4"
+        className="flex flex-col bg-card text-card-foreground px-6 py-4 rounded-lg basis-full md:basis-1/4"
         style={{height: 'fit-content'}}>
         <h4 className="text-xl font-medium mb-0">{i18n.get('Total price')}</h4>
         <Separator className="my-3" />

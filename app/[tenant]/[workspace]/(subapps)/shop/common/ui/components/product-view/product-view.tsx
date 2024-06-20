@@ -88,7 +88,7 @@ export function ProductView({
                             handleCategoryClick(crumb);
                           }
                         }}
-                        className={`${islast ? 'text-primary font-bold' : 'text-primary'}`}>
+                        className={`${islast ? 'text-forground font-bold' : 'text-forground'}`}>
                         {i18n.get(crumb.name)}
                       </div>
                       {!islast && (
@@ -112,7 +112,7 @@ export function ProductView({
               }))}
             />
           </div>
-          <div className="rounded-lg border bg-background p-4">
+          <div className="rounded-lg border bg-card text-card-foreground p-4">
             <p className="text-xl font-semibold mb-12">
               {i18n.getValueAttribute(product.name)}
             </p>
@@ -133,7 +133,7 @@ export function ProductView({
               }}></p>
             {Boolean(cartQuantity) && product.allowCustomNote && (
               <div>
-                <Label className="text-primary">{i18n.get('Note')}</Label>
+                <Label>{i18n.get('Note')}</Label>
                 <textarea
                   className="border rounded-lg"
                   value={note}
@@ -152,7 +152,7 @@ export function ProductView({
               onClick={handleAddToCart}
               className="w-full rounded-full mt-4">
               <div className="flex items-center justify-center gap-2">
-                <MdOutlineShoppingBasket className="text-primary-foreground text-2xl" />
+                <MdOutlineShoppingBasket className="text-2xl" />
                 <span className="text-sm font-medium mb-0">
                   {i18n.get('Add to Cart')}
                 </span>

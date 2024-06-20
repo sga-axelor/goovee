@@ -103,7 +103,7 @@ export function AddressForm({
           />
 
           <div className="w-full mb-4">
-            <Label className="text-base font-medium text-primary mb-1">
+            <Label className="text-base font-medium mb-1">
               {i18n.get('Country')}
             </Label>
             <Select
@@ -138,7 +138,7 @@ export function AddressForm({
               name="multipletype"
               checked={values.multipletype}
             />
-            <Label className="ml-2 text-primary">
+            <Label className="ml-2">
               {i18n.get('Use this address for both billing and delivery')}
             </Label>
           </div>

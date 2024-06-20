@@ -35,12 +35,12 @@ export function ProductListItem({
   const clamp = (window as any)?.$clamp;
 
   return (
-    <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[14.875rem_1fr] gap-6 w-full bg-background text-primary">
+    <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[14.875rem_1fr] gap-6 w-full bg-card text-card-foreground">
       <BackgroundImage
         className="rounded-l-lg relative bg-cover md:w-[14.875rem] w-[5rem] md:h-[14.6875rem] h-[5rem]"
         src={getImageURL(product.images?.[0])}>
         {Boolean(quantity) && (
-          <div className="border shadow-lg absolute bottom-4 right-4 bg-background p-1 md:p-4 rounded-full flex items-center justify-center w-[1.875rem] md:w-[3.75rem] h-[1.875rem] md:h-[3.75rem]">
+          <div className="border shadow-lg absolute bottom-4 right-4 bg-card p-1 md:p-4 rounded-full flex items-center justify-center w-[1.875rem] md:w-[3.75rem] h-[1.875rem] md:h-[3.75rem]">
             <p className="mb-0 text-sm md:text-xl">{quantity}</p>
           </div>
         )}
@@ -82,9 +82,9 @@ export function ProductListItem({
         <div className="flex justify-end">
           <Button
             onClick={handleAdd}
-            className="flex bg-primary gap-2 items-center rounded-full w-12 md:w-auto h-12 md:h-auto">
+            className="flex gap-2 items-center rounded-full w-12 md:w-auto h-12 md:h-auto">
             <div className="inline-flex">
-              <MdAddShoppingCart className="text-primary-foreground text-2xl" />
+              <MdAddShoppingCart className="text-2xl" />
             </div>
             {large && (
               <p className="text-sm font-medium mb-0 text-primary-foreground">

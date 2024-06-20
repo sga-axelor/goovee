@@ -19,7 +19,7 @@ export const Total = ({
 }: TotalProps) => {
   return (
     <>
-      <div className="flex flex-col bg-background px-6 py-4 rounded-lg border border-foreground">
+      <div className="flex flex-col bg-card text-card-foreground px-6 py-4 rounded-lg border border-card-foreground">
         <h4 className="text-xl font-medium mb-0">
           {i18n.get('Offered price')}
         </h4>

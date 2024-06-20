@@ -79,7 +79,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   return (
     <div
       key={item.id}
-      className="flex-col md:flex-row flex items-start gap-6 bg-background p-4 rounded-lg">
+      className="flex-col md:flex-row flex items-start gap-6 bg-card text-card-foreground p-4 rounded-lg">
       <BackgroundImage
         className="rounded-lg h-[12.5rem] md:w-[12.5rem] w-full min-w-[12.5rem]"
         style={{backgroundSize: 'cover'}}
@@ -98,7 +98,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
           </Link>
           {product.allowCustomNote && (
             <div>
-              <Label className="text-primary">{i18n.get('Note')}</Label>
+              <Label>{i18n.get('Note')}</Label>
               <textarea
                 className="border rounded-lg"
                 value={note}
@@ -189,7 +189,7 @@ function CartSummary({
   const authenticated = session?.user?.id;
 
   return (
-    <div className="p-4 bg-background rounded-lg h-[26.25rem]">
+    <div className="p-4 bg-card text-card-foreground rounded-lg h-[26.25rem]">
       {workspace?.config?.displayPrices && (
         <>
           <p className="text-xl font-semibold mb-6">{i18n.get('Total')}</p>

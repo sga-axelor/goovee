@@ -65,11 +65,11 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
 
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
-      <h5 className="mb-3 font-medium text-primary text-xl">
+      <h5 className="mb-3 font-medium text-xl">
         {i18n.get('Log in')}
       </h5>
       <form
-        className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
+        className="bg-card text-card-foreground rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}>
         <div>
           <TextField
@@ -113,7 +113,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Checkbox id="terms" disabled={submitting} />
-            <Label htmlFor="terms" className="ml-2 text-primary">
+            <Label htmlFor="terms" className="ml-2">
               {i18n.get('Remember Me')}
             </Label>
           </div>
@@ -129,7 +129,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
         </Button>
         {canRegister && (
           <div>
-            <p className="text-primary inline-flex text-lg mr-2 mb-0">
+            <p className="text-card-foreground inline-flex text-lg mr-2 mb-0">
               {i18n.get("Don't have an account yet ?")}
             </p>
             <Link
@@ -148,7 +148,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
         <div className="grow">
           <Separator />
         </div>
-        <h5 className="mb-0 font-medium text-primary text-xl">
+        <h5 className="mb-0 font-medium text-xl">
           {i18n.get('Or')}
         </h5>
         <div className="grow">
@@ -160,7 +160,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           type="button"
           variant="outline"
           onClick={loginWithGoogle}
-          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-background">
+          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-primary-foreground">
           <FaGoogle className="text-xl" />
           <span className="text-primary font-medium">
             {i18n.get('Log In with Google')}

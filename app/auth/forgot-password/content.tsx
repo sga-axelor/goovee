@@ -19,11 +19,11 @@ export default function Content() {
 
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
-      <h5 className="mb-3 font-medium text-primary text-xl">
+      <h5 className="mb-3 font-medium text-xl">
         {i18n.get('Forgot Password')} ?
       </h5>
       <form
-        className="bg-background rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
+        className="bg-card text-card-foreground rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}>
         <div>
           <TextField
@@ -37,7 +37,7 @@ export default function Content() {
           </Button>
         </div>
         <div className="flex items-center">
-          <Label className="mr-2 mb-0 text-primary inline-flex">
+          <Label className="mr-2 mb-0 inline-flex">
             {i18n.get('Remember password')} ?
           </Label>
           <Link

@@ -49,7 +49,7 @@ function Cart() {
     <Link href={`${workspaceURI}/shop/cart`} className="flex relative">
       <MdOutlineShoppingCart className="cursor-pointer text-foreground text-2xl" />
       {count ? (
-        <Badge className={`${styles.badge} rounded bg-foreground`}>
+        <Badge className={`${styles.badge} rounded bg-primary`}>
           {count}
         </Badge>
       ) : null}
@@ -60,7 +60,7 @@ function Cart() {
 export default function Header({subapps}: {subapps: any}) {
   const {workspaceURI} = useWorkspace();
   return (
-    <div className="bg-background px-6 py-2 flex items-center">
+    <div className="bg-background text-foreground px-6 py-2 flex items-center border-b border-border border-solid">
       <Logo />
 
       <div className="grow" />

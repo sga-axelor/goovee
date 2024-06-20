@@ -23,7 +23,7 @@ export const Card = ({
           return (
             <div
               key={i}
-              className="rounded border border-solid !border-border bg-background px-4 py-6 flex flex-col gap-4 !cursor-pointer mb-3"
+              className="rounded border border-solid !border-border bg-card px-4 py-6 flex flex-col gap-4 !cursor-pointer mb-3"
               onClick={() => handleRowClick(invoice.id)}>
               <div className="flex items-center justify-between font-bold">
                 <h6 className="text-base mb-0">{i18n.get('Invoice number')}</h6>
