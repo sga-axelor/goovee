@@ -1,0 +1,12 @@
+{
+  "name": "AOSAppBase",
+  "table": "studio_app_base",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "Int",
+      "name": "nbDecimalDigitForUnitPrice"
+    }
+  ]
+}

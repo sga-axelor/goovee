@@ -1,10 +1,14 @@
-import {client} from '@/globals';
+import {getClient} from '@/goovee';
 import type {User, Partner, PortalWorkspace} from '@/types';
 
-export async function findDefaultWorkspace({url}: {url: string}) {
-  const c = await client;
+export async function findDefaultWorkspace({
+  url,
+}: {
+  url: string;
+}): Promise<PortalWorkspace | null> {
+  const client = await getClient();
 
-  const workspace = await c.aOSPortalWorkspace.findOne({
+  const workspace: any = await client.aOSPortalWorkspace.findOne({
     where: {
       url: {
         like: url,
@@ -55,9 +59,9 @@ export async function findPartnerWorkspace({
 }) {
   if (!id) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const res = await c.aOSPartner.findOne({
+  const res: any = await client.aOSPartner.findOne({
     where: {
       id,
     },
@@ -133,9 +137,9 @@ export async function findWorkspace({user, url}: {user?: User; url: string}) {
 export async function findWorkspaces({url}: {url?: string}) {
   if (!url) return [];
 
-  const c = await client;
+  const client = await getClient();
 
-  const workspaces = await c.aOSPortalWorkspace.find({
+  const workspaces = await client.aOSPortalWorkspace.find({
     where: {
       url: {
         like: `${url}%`,
@@ -182,9 +186,9 @@ export async function findWorkspaceApps({
     return [...defaultApps];
   }
 
-  const c = await client;
+  const client = await getClient();
 
-  const partner = await c.aOSPartner.findOne({
+  const partner = await client.aOSPartner.findOne({
     where: {
       id: partnerId,
     },
@@ -202,10 +206,10 @@ export async function findWorkspaceApps({
     },
   });
 
-  let partnerWorkpace = partner?.partnerWorkspaceSet?.[0];
+  let partnerWorkpace: any = partner?.partnerWorkspaceSet?.[0];
 
   if (!partnerWorkpace) {
-    const defaultWorkspace = await findDefaultWorkspace({
+    const defaultWorkspace: any = await findDefaultWorkspace({
       url: workspace?.url,
     });
 
@@ -224,7 +228,7 @@ export async function findWorkspaceApps({
     return availableApps;
   }
 
-  const contact = await c.aOSPartner.findOne({
+  const contact = await client.aOSPartner.findOne({
     where: {
       id: user.id,
     },
@@ -248,7 +252,7 @@ export async function findWorkspaceApps({
     },
   });
 
-  const contactWorkpace = contact?.contactWorkspaceConfigSet?.[0];
+  const contactWorkpace: any = contact?.contactWorkspaceConfigSet?.[0];
 
   const contactApps = contactWorkpace?.contactAppPermissionList?.map(
     (w: any) => ({

@@ -20,7 +20,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 # ORM
 
-The application make use of `@axelor/cms-core` orm for data access. You can set the
+The application make use of `@goovee/orm` orm for data access. You can set the
 database url in `.env` file. For e.g
 
 ```

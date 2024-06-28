@@ -1,5 +1,4 @@
 // ---- CORE IMPORTS ---- //
-import {client} from '@/globals';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 import type {Partner} from '@/types';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
@@ -7,6 +6,7 @@ import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_STATUS} from '@/subapps/orders/common/constants/orders';
 import type {Order} from '@/subapps/orders/common/types/orders';
+import {getClient} from '@/goovee';
 
 const fetchOrders = async ({
   partnerId,
@@ -25,7 +25,7 @@ const fetchOrders = async ({
 }) => {
   if (!partnerId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
   const whereClause: any = {
     ...where,
@@ -49,7 +49,7 @@ const fetchOrders = async ({
     whereClause.statusSelect = ORDER_STATUS.CONFIRMED;
   }
 
-  const $orders = await c.aOSOrder
+  const $orders = await client.aOSOrder
     .find({
       where: whereClause,
       take: limit,
@@ -131,8 +131,8 @@ export async function findArchivedOrders({
 }
 
 export async function findOrder(id: Order['id']) {
-  const c = await client;
-  const order = await c.aOSOrder.findOne({
+  const client = await getClient();
+  const order = await client.aOSOrder.findOne({
     where: {
       id,
     },

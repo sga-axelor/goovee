@@ -1,0 +1,12 @@
+{
+  "name": "AOSMetaFile",
+  "table": "meta_file",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "fileName"
+    }
+  ]
+}

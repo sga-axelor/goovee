@@ -1,11 +1,11 @@
 // ---- CORE IMPORTS ---- //
-import {client} from '@/globals';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
 import type {ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
+import {getClient} from '@/goovee';
 
 export const RELATED_MODELS = {
   SALE_ORDER_MODEL: 'com.axelor.apps.sale.db.SaleOrder',
@@ -23,7 +23,7 @@ export const fetchQuotations = async ({
   partnerId?: ID;
   where?: any;
 }) => {
-  const c = await client;
+  const client = await getClient();
   const skip = getSkipInfo(limit, page);
 
   const whereClause: any = {
@@ -43,7 +43,7 @@ export const fetchQuotations = async ({
     ],
   };
 
-  const quotations = await c.aOSOrder
+  const quotations = await client.aOSOrder
     .find({
       where: whereClause,
       take: limit,
@@ -74,9 +74,9 @@ export const fetchQuotations = async ({
 };
 
 export async function findQuotation(id: any) {
-  const c = await client;
+  const client = await getClient();
 
-  const quotation = await c.aOSOrder.findOne({
+  const quotation = await client.aOSOrder.findOne({
     where: {
       id,
     },
@@ -168,9 +168,9 @@ export async function findQuotation(id: any) {
 }
 
 export async function getComments(id: string | number) {
-  const c = await client;
+  const client = await getClient();
 
-  const comments = await c.aOSMailMessage.find({
+  const comments = await client.aOSMailMessage.find({
     where: {
       relatedId: id,
       relatedModel: RELATED_MODELS.SALE_ORDER_MODEL as string,

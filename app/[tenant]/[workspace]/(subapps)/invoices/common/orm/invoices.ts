@@ -1,11 +1,11 @@
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
-import {client} from '@/globals';
 import {getFormattedValue, scale} from '@/utils';
 import {Partner} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
+import {getClient} from '@/goovee';
 
 const fetchInvoices = async ({
   where,
@@ -22,7 +22,7 @@ const fetchInvoices = async ({
 
   if (!partnerId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
   const whereClause: any = {
     ...where,
@@ -35,7 +35,7 @@ const fetchInvoices = async ({
     whereClause.amountRemaining = {ne: 0};
   }
 
-  const $invoices = await c.aOSInvoice.find({
+  const $invoices = await client.aOSInvoice.find({
     where: whereClause,
     select: {
       invoiceId: true,
@@ -74,9 +74,9 @@ export const findArchivedInvoices = async ({where}: {where: any}) => {
 };
 
 export const findInvoice = async (id: Invoice['id']) => {
-  const c = await client;
+  const client = await getClient();
 
-  const invoice = await c.aOSInvoice.findOne({
+  const invoice = await client.aOSInvoice.findOne({
     where: {
       id,
     },

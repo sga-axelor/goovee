@@ -1,4 +1,4 @@
-import {client} from '@/globals';
+import {getClient} from '@/goovee';
 import {NextResponse} from 'next/server';
 
 export async function GET(
@@ -7,10 +7,10 @@ export async function GET(
 ) {
   const {code} = params;
 
-  const c = await client;
+  const client = await getClient();
 
   try {
-    let translations = await c.aOSMetaTranslation.find({
+    let translations = await client.aOSMetaTranslation.find({
       where: {
         language: code,
       },

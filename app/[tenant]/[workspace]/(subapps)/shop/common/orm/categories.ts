@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {client} from '@/globals';
+import {getClient} from '@/goovee';
 import {PortalWorkspace} from '@/types';
 
 function transform($categories: any[]) {
@@ -37,9 +37,9 @@ export async function findCategories({
 }) {
   if (!workspace) return [];
 
-  const c = await client;
+  const client = await getClient();
 
-  const categories = await c.aOSProductCategory.find({
+  const categories = await client.aOSProductCategory.find({
     where: {
       portalWorkspace: {
         id: workspace.id,

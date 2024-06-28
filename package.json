@@ -9,10 +9,10 @@
     "lint": "next lint",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
-    "generate": "axelor-cms generate"
+    "generate": "goovee generate"
   },
   "dependencies": {
-    "@axelor/cms-core": "file:lib/axelor-cms-core-0.0.1.tgz",
+    "@goovee/orm": "^0.0.2",
     "@hookform/resolvers": "^3.4.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -34,6 +34,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "graphql": "^16.8.1",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.379.0",

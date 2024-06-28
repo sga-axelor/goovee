@@ -1,4 +1,4 @@
-import {client} from '@/globals';
+import {getClient} from '@/goovee';
 import {clone} from '@/utils';
 import {hash} from '@/utils/auth';
 
@@ -13,11 +13,11 @@ export async function registerPartner({
   password?: string;
   email: string;
 }) {
-  const c = await client;
+  const client = await getClient();
 
   const hashedPassword = await hash(password);
 
-  const partner = await c.aOSPartner
+  const partner = await client.aOSPartner
     .create({
       data: {
         firstName,

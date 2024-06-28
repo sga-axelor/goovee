@@ -1,0 +1,22 @@
+{
+  "name": "CartItem",
+  "table": "customer_portal_cart_item",
+  "extends": "Model",
+  "synchronize": true,
+  "fields": [
+    {
+      "type": "Int",
+      "name": "quantity"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "cart",
+      "target": "Cart"
+    },
+    {
+      "type": "OneToOne",
+      "name": "product",
+      "target": "AOSProduct"
+    }
+  ]
+}

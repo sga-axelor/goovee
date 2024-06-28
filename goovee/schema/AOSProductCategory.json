@@ -1,0 +1,28 @@
+{
+  "name": "AOSProductCategory",
+  "table": "base_product_category",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "OneToMany",
+      "name": "items",
+      "target": "AOSProductCategory",
+      "mappedBy": "parentProductCategory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "parentProductCategory",
+      "target": "AOSProductCategory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalWorkspace",
+      "target": "AOSPortalWorkspace"
+    }
+  ]
+}

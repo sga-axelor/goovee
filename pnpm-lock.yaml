@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@axelor/cms-core':
-    specifier: file:lib/axelor-cms-core-0.0.1.tgz
-    version: file:lib/axelor-cms-core-0.0.1.tgz
+  '@goovee/orm':
+    specifier: ^0.0.2
+    version: 0.0.2(graphql@16.8.1)(pg@8.11.5)
   '@hookform/resolvers':
     specifier: ^3.4.2
     version: 3.4.2(react-hook-form@7.51.5)
@@ -71,6 +71,9 @@ dependencies:
   date-fns:
     specifier: ^3.6.0
     version: 3.6.0
+  graphql:
+    specifier: ^16.8.1
+    version: 16.8.1
   localforage:
     specifier: ^1.10.0
     version: 1.10.0
@@ -1531,6 +1534,38 @@ packages:
 
   /@floating-ui/utils@0.2.2:
     resolution: {integrity: sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==}
+    dev: false
+
+  /@goovee/orm@0.0.2(graphql@16.8.1)(pg@8.11.5):
+    resolution: {integrity: sha1-W8ytflJR3Pd/3Q8rupiuZTUO0tQ=, tarball: https://git.axelor.com/api/v4/projects/1708/packages/npm/@goovee/orm/-/@goovee/orm-0.0.2.tgz}
+    hasBin: true
+    peerDependencies:
+      graphql: ^16.8.1
+      pg: ^8.11.5
+    dependencies:
+      commander: 12.1.0
+      graphql: 16.8.1
+      pg: 8.11.5
+      reflect-metadata: 0.2.2
+      typeorm: 0.3.20(pg@8.11.5)
+    transitivePeerDependencies:
+      - '@google-cloud/spanner'
+      - '@sap/hana-client'
+      - better-sqlite3
+      - hdb-pool
+      - ioredis
+      - mongodb
+      - mssql
+      - mysql2
+      - oracledb
+      - pg-native
+      - pg-query-stream
+      - redis
+      - sql.js
+      - sqlite3
+      - supports-color
+      - ts-node
+      - typeorm-aurora-data-api-driver
     dev: false
 
   /@hookform/resolvers@3.4.2(react-hook-form@7.51.5):
@@ -3386,6 +3421,11 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
+    dev: false
+
+  /commander@12.1.0:
+    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
+    engines: {node: '>=18'}
     dev: false
 
   /commander@4.1.1:
@@ -5654,10 +5694,6 @@ packages:
     dependencies:
       picomatch: 2.3.1
 
-  /reflect-metadata@0.1.14:
-    resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
-    dev: false
-
   /reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
     dev: false
@@ -6585,35 +6621,4 @@ packages:
 
   /zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-    dev: false
-
-  file:lib/axelor-cms-core-0.0.1.tgz:
-    resolution: {integrity: sha512-c9dtIfqcxqVbZa3aB/DHaiM6VFN95q7FXUi1N3cgd0/+YEWcCH8AX/Tg+OfxLWeLoijILebNn4sx+xB4OZllaA==, tarball: file:lib/axelor-cms-core-0.0.1.tgz}
-    name: '@axelor/cms-core'
-    version: 0.0.1
-    hasBin: true
-    dependencies:
-      graphql: 16.8.1
-      pg: 8.11.5
-      reflect-metadata: 0.1.14
-      typeorm: 0.3.20(pg@8.11.5)
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@google-cloud/spanner'
-      - '@sap/hana-client'
-      - better-sqlite3
-      - hdb-pool
-      - ioredis
-      - mongodb
-      - mssql
-      - mysql2
-      - oracledb
-      - pg-native
-      - pg-query-stream
-      - redis
-      - sql.js
-      - sqlite3
-      - supports-color
-      - ts-node
-      - typeorm-aurora-data-api-driver
     dev: false

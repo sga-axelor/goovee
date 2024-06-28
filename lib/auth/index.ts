@@ -3,7 +3,7 @@ import Google from 'next-auth/providers/google';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import {client} from '@/globals';
+import {getClient} from '@/goovee';
 import {compare} from '@/utils/auth';
 import {registerPartner} from '@/orm/partner';
 import {clone} from '@/utils';
@@ -11,9 +11,9 @@ import {clone} from '@/utils';
 async function findPartner(email: string) {
   if (!email) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const partner = await c.aOSPartner
+  const partner = await client.aOSPartner
     .findOne({
       where: {
         emailAddress: {

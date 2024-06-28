@@ -1,0 +1,95 @@
+{
+  "name": "AOSPortalAppConfig",
+  "table": "portal_portal_app_config",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "Boolean",
+      "name": "allowOnlinePaymentForEcommerce"
+    },
+    {
+      "type": "Boolean",
+      "name": "allowOnlinePaymentForInvoices"
+    },
+    {
+      "type": "Boolean",
+      "name": "byAToZ",
+      "column": "byatoz"
+    },
+    {
+      "type": "Boolean",
+      "name": "byZToA",
+      "column": "byztoa"
+    },
+    {
+      "type": "Boolean",
+      "name": "byFeature"
+    },
+    {
+      "type": "Boolean",
+      "name": "byLessExpensive"
+    },
+    {
+      "type": "Boolean",
+      "name": "byMostExpensive"
+    },
+    {
+      "type": "Boolean",
+      "name": "byNewest",
+      "column": "by_newst"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "company",
+      "target": "AOSCompany"
+    },
+    {
+      "type": "Boolean",
+      "name": "confirmOrder"
+    },
+    {
+      "type": "Boolean",
+      "name": "displayOutOfStock"
+    },
+    {
+      "type": "Boolean",
+      "name": "displayPrices"
+    },
+    {
+      "type": "String",
+      "name": "displayTwoPrices",
+      "column": "display_two_prices_select"
+    },
+    {
+      "type": "String",
+      "name": "mainPrice",
+      "column": "main_price_select"
+    },
+    {
+      "type": "Boolean",
+      "name": "eSignature"
+    },
+    {
+      "type": "Boolean",
+      "name": "payInAdvance"
+    },
+    {
+      "type": "String",
+      "name": "priceAfterLogin",
+      "column": "price_after_login_select"
+    },
+    {
+      "type": "Boolean",
+      "name": "requestQuotation"
+    },
+    {
+      "type": "Boolean",
+      "name": "publicEshop"
+    }
+  ]
+}

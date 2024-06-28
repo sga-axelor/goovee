@@ -1,0 +1,24 @@
+{
+  "name": "AOSCurrency",
+  "table": "base_currency",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "String",
+      "name": "code"
+    },
+    {
+      "type": "String",
+      "name": "symbol"
+    },
+    {
+      "type": "Int",
+      "name": "numberOfDecimals"
+    }
+  ]
+}

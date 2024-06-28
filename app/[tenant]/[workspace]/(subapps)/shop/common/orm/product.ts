@@ -1,5 +1,4 @@
 // ---- CORE IMPORTS ---- //
-import {client} from '@/globals';
 import {clone, scale} from '@/utils';
 import {
   DEFAULT_CURRENCY_SCALE,
@@ -8,12 +7,12 @@ import {
   DEFAULT_UNIT_PRICE_SCALE,
 } from '@/constants';
 import type {
-  Partner,
   Product,
   Currency,
   ComputedProduct,
   PortalWorkspace,
 } from '@/types';
+import {getClient} from '@/goovee';
 
 function getPageInfo({
   count = 0,
@@ -55,7 +54,7 @@ export async function findProducts({
 }) {
   if (!(workspace && workspace.config)) return [];
 
-  const c = await client;
+  const client = await getClient();
 
   let orderBy;
 
@@ -82,7 +81,7 @@ export async function findProducts({
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
 
-  const $products = await c.aOSProduct
+  const $products = await client.aOSProduct
     .find({
       where: {
         ...(ids?.length
@@ -180,7 +179,7 @@ export async function findProducts({
       return [];
     });
 
-  const appbase = await c.aOSAppBase
+  const appbase = await client.aOSAppBase
     .findOne({
       select: {
         nbDecimalDigitForUnitPrice: true,

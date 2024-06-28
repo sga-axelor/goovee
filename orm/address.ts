@@ -1,12 +1,12 @@
-import {client} from '@/globals';
+import {getClient} from '@/goovee';
 import {PartnerAddress, Partner} from '@/types';
 
 export async function findPartnerAddress(addressId: PartnerAddress['id']) {
   if (!addressId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const address = await c.aOSPartnerAddress.findOne({
+  const address = await client.aOSPartnerAddress.findOne({
     where: {
       id: addressId,
     },
@@ -36,9 +36,9 @@ export async function createPartnerAddress(
 ) {
   if (!partnerId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const address = await c.aOSPartnerAddress.create({
+  const address = await client.aOSPartnerAddress.create({
     data: {
       partner: {
         select: {
@@ -70,11 +70,12 @@ export async function updatePartnerAddress(
 ) {
   if (!partnerId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const address = await c.aOSPartnerAddress.update({
+  const address = await client.aOSPartnerAddress.update({
     data: {
-      id: values.id,
+      id: values.id as any,
+      version: values.version as any,
       address: {
         update: {
           ...values.address,
@@ -97,9 +98,9 @@ export async function updatePartnerAddress(
 export async function findAddresses(partnerId: Partner['id']) {
   if (!partnerId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const addresses = await c.aOSPartnerAddress.find({
+  const addresses = await client.aOSPartnerAddress.find({
     where: {
       partner: {
         id: partnerId,
@@ -127,9 +128,9 @@ export async function findAddresses(partnerId: Partner['id']) {
 export async function findDeliveryAddresses(partnerId: Partner['id']) {
   if (!partnerId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const addresses = await c.aOSPartnerAddress.find({
+  const addresses = await client.aOSPartnerAddress.find({
     where: {
       partner: {
         id: partnerId,
@@ -158,9 +159,9 @@ export async function findDeliveryAddresses(partnerId: Partner['id']) {
 export async function findInvoicingAddresses(partnerId: Partner['id']) {
   if (!partnerId) return null;
 
-  const c = await client;
+  const client = await getClient();
 
-  const addresses = await c.aOSPartnerAddress.find({
+  const addresses = await client.aOSPartnerAddress.find({
     where: {
       partner: {
         id: partnerId,
@@ -187,9 +188,9 @@ export async function findInvoicingAddresses(partnerId: Partner['id']) {
 }
 
 export async function findCountries() {
-  const c = await client;
+  const client = await getClient();
 
-  const countries = await c.aOSCountry.find();
+  const countries = await client.aOSCountry.find();
 
   return countries;
 }
