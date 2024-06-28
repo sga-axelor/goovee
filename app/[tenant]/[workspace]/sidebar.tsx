@@ -3,7 +3,6 @@
 import {useState} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {useSession} from 'next-auth/react';
 import {MdApps} from 'react-icons/md';
 import {cn} from '@/lib/utils';
 import Icons from '@/utils/Icons';
@@ -27,18 +26,13 @@ export function Sidebar({
   const [collapsed, setCollapsed] = useState(true);
   const {workspaceURI, workspaceURL} = useWorkspace();
 
-  const {data: session} = useSession();
   const router = useRouter();
-
-  const authenticated = session?.user?.id;
 
   const toggle = () => setCollapsed(c => !c);
 
   const redirect = (value: any) => {
     router.push(value);
   };
-
-  if (!authenticated) return null;
 
   return (
     <div

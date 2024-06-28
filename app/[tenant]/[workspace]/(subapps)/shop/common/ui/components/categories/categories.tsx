@@ -1,7 +1,4 @@
 import {useRef, useState, useCallback} from 'react';
-import {MdOutlineMenu} from 'react-icons/md';
-import {MdOutlineCategory} from 'react-icons/md';
-import {Sheet, SheetContent, SheetTrigger} from '@ui/components/sheet';
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
@@ -14,117 +11,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@ui/components/navigation-menu';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@ui/components/accordion';
 
-interface NavItem {
-  id?: number | string;
-  title: string;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  iconColor?: string;
-  items?: NavItem[];
-}
-function RenderNavItem({items, onClick}: any) {
-  return (
-    <>
-      {items?.map((a: NavItem, i: number) => {
-        return (
-          <>
-            <Accordion
-              key={i}
-              asChild
-              multiple
-              collapsible
-              className="w-fulls border-0">
-              {a?.items?.length ? (
-                <>
-                  <AccordionItem value={a?.title}>
-                    <AccordionTrigger className={'text-base'}>
-                      {a?.title} {a?.icon && <a.icon color={a.iconColor} />}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      {<RenderNavItem items={a?.items} onClick={onClick} />}
-                    </AccordionContent>
-                  </AccordionItem>
-                </>
-              ) : (
-                <>
-                  <AccordionContent
-                    className={'text-base'}
-                    onClick={() => {
-                      onClick(a);
-                    }}>
-                    {a?.title}
-                  </AccordionContent>
-                </>
-              )}
-            </Accordion>
-          </>
-        );
-      })}
-    </>
-  );
-}
-function MobileCategories({
-  items = [],
-  onClick,
-}: {
-  items?: Category[];
-  onClick?: any;
-}) {
-  const [show, setShow] = useState<boolean>(false);
-
-  const hideDrawer = useCallback(() => {
-    setShow(false);
-  }, []);
-
-  const handleItemClick = useCallback(
-    (item: any) => {
-      if (item.root) return;
-      onClick(item);
-      if (!item?.items?.length) {
-        hideDrawer();
-      }
-    },
-    [hideDrawer, onClick],
-  );
-
-  return (
-    <>
-      <Sheet>
-        <SheetTrigger asChild>
-          <div className="px-6 bg-background p-4 border-t border-b text-foreground">
-            <div className="flex">
-              <MdOutlineMenu className="cursor-pointer text-2xl" />
-            </div>
-          </div>
-        </SheetTrigger>
-        <SheetContent side="left">
-          <div className="flex bg-background text-foreground flex-grow-1 pt-0">
-            <RenderNavItem
-              onClick={handleItemClick}
-              items={[
-                {
-                  id: '1',
-                  title: i18n.get('Categories'),
-                  icon: () => (
-                    <MdOutlineCategory className="text-xl text-foreground" />
-                  ),
-                  iconColor: 'foreground',
-                  items: items as any,
-                },
-              ]}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
-    </>
-  );
-}
 export const Categories = ({
   items = [],
   onClick,
@@ -149,11 +36,10 @@ export const Categories = ({
         );
       })}
     </div>
-  ) : (
-    <MobileCategories items={items} onClick={onClick} />
-  );
+  ) : null;
 };
 export default Categories;
+
 const Category = ({
   item,
   level,

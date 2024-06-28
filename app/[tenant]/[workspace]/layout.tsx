@@ -12,6 +12,8 @@ import Workspace from './workspace-context';
 import CartContext from './cart-context';
 import Header from './header';
 import Sidebar from './sidebar';
+import MobileMenu from './mobile-menu';
+import {findCategories} from './(subapps)/shop/common/orm/categories';
 
 export default async function Layout({
   params,
@@ -49,6 +51,9 @@ export default async function Layout({
     user: session?.user,
   });
 
+  const categories = await findCategories({workspace: $workspace}).then(clone);
+  const parentcategories = categories?.filter((c: any) => !c.parent);
+
   return (
     <Workspace workspace={workspace} tenant={tenant} theme={theme}>
       <CartContext>
@@ -58,6 +63,11 @@ export default async function Layout({
             <Header subapps={subapps} />
             {children}
           </div>
+          <MobileMenu
+            subapps={subapps}
+            workspaces={workspaces}
+            categories={parentcategories}
+          />
         </div>
       </CartContext>
     </Workspace>
