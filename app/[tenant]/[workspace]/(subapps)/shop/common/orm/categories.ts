@@ -5,25 +5,18 @@ import {PortalWorkspace} from '@/types';
 function transform($categories: any[]) {
   const categories: any = {};
 
-  const get = (category: any) => {
-    if (!categories[category.id]) {
-      categories[category.id] = {
-        id: category.id,
-        name: category.name,
-        title: category.name,
-        parent: category.parentProductCategory,
-        items: category?.items ? [] : null,
-      };
-    }
+  $categories.forEach(category => {
+    categories[category.id] = {
+      ...category,
+      parent: category.parentProductCategory,
+      items: [],
+    };
+  });
 
-    return categories[category.id];
-  };
-
-  $categories.forEach(c => {
-    const category = get(c);
-
-    if (category.parent) {
-      get(category.parent).items.push(category);
+  Object.values(categories).forEach((category: any) => {
+    const {parent} = category;
+    if (parent && categories[parent.id]) {
+      categories[parent.id].items.push(category);
     }
   });
 
@@ -46,13 +39,7 @@ export async function findCategories({
       },
     },
     select: {
-      items: {
-        id: true,
-        name: true,
-        parentProductCategory: {
-          id: true,
-        },
-      },
+      name: true,
       parentProductCategory: {id: true},
     },
   });

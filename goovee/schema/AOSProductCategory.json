@@ -9,12 +9,6 @@
       "name": "name"
     },
     {
-      "type": "OneToMany",
-      "name": "items",
-      "target": "AOSProductCategory",
-      "mappedBy": "parentProductCategory"
-    },
-    {
       "type": "ManyToOne",
       "name": "parentProductCategory",
       "target": "AOSProductCategory"
