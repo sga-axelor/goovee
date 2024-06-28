@@ -56,6 +56,21 @@
     --border: 180 2% 90%;
     --width: 0.0625rem;
     --radius: 0.25rem;
+
+    --portal-blue-50: #d0e3ff;
+    --portal-blue-100: #4360c7;
+  
+    --portal-orange-50: #ffdacc;
+    --portal-orange-100: #fb5c23;
+  
+    --portal-purple-50: #f6f1ff;
+    --portal-purple-100: #ac8fd6;
+  
+    --portal-pink-50: #fbd0e1;
+    --portal-pink-100: #ee4488;
+  
+    --portal-green-50: #d0eedb;
+    --portal-green-100: #72cd93;
   }
 
   .dark {

@@ -4,13 +4,14 @@ import React from 'react';
 import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
+import {findWorkspace, findWorkspaces} from '@/orm/workspace';
 import {findSubapps} from '@/orm/subapps';
 
 // ---- LOCAL IMPORTS ---- //
 import Workspace from './workspace-context';
 import CartContext from './cart-context';
 import Header from './header';
+import Sidebar from './sidebar';
 
 export default async function Layout({
   params,
@@ -19,6 +20,10 @@ export default async function Layout({
   params: {tenant: string; workspace: string};
   children: React.ReactNode;
 }) {
+  const workspaces = await findWorkspaces({
+    url: process.env.NEXT_PUBLIC_HOST,
+  }).then(clone);
+
   const {workspace, tenant, workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
@@ -45,13 +50,16 @@ export default async function Layout({
   });
 
   return (
-    <>
-      <Workspace workspace={workspace} tenant={tenant} theme={theme}>
-        <CartContext>
-          <Header subapps={subapps} />
-          {children}
-        </CartContext>
-      </Workspace>
-    </>
+    <Workspace workspace={workspace} tenant={tenant} theme={theme}>
+      <CartContext>
+        <div className="h-full w-full flex">
+          <Sidebar subapps={subapps} workspaces={workspaces} />
+          <div className="max-h-full flex-1">
+            <Header subapps={subapps} />
+            {children}
+          </div>
+        </div>
+      </CartContext>
+    </Workspace>
   );
 }

@@ -7,6 +7,7 @@ import {
   MdOutlineWarningAmber,
   MdStorefront,
   MdOutlineLocalPrintshop,
+  MdAppRegistration,
 } from 'react-icons/md';
 import {CiShop, CiFileOn, CiShoppingTag} from 'react-icons/ci';
 
@@ -20,6 +21,7 @@ interface IconMapping {
   quotation: IconType;
   invoice: IconType;
   order: IconType;
+  app: IconType;
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
@@ -33,6 +35,7 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
     quotation: MdOutlineLocalPrintshop,
     invoice: CiFileOn,
     order: CiShoppingTag,
+    app: MdAppRegistration,
   };
 
   const icon = iconMapping[type];
@@ -50,6 +53,7 @@ const Icons = ({
   name: any;
   className?: string;
   size?: string;
+  style?: React.CSSProperties;
   onClick?: () => void;
 }) => {
   let IconComponent: any = getIcon(name);
