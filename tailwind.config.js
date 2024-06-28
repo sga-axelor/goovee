@@ -1,46 +1,46 @@
-const { fontFamily } = require("tailwindcss/defaultTheme")
+const {fontFamily} = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
-  content: ["app/**/*.{ts,tsx}", "ui/components/**/*.{ts,tsx}"],
+  darkMode: ['class'],
+  content: ['app/**/*.{ts,tsx}', 'ui/components/**/*.{ts,tsx}'],
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: '2rem',
       screens: {
-        "2xl": "1400px",
+        '2xl': '1400px',
       },
     },
     extend: {
       colors: {
         product_filter: {
-          red: "hsl(var(--product_filter-red))",
-          black: "hsl(var(--product_filter-black))",
-          pink: "hsl(var(--product_filter-pink))",
-          purple: "hsl(var(--product_filter-purple))",
-          yellow: "hsl(var(--product_filter-yellow))",
-          orange: "hsl(var(--product_filter-orange))",
-          green: "hsl(var(--product_filter-green))",
-          grey: "hsl(var(--product_filter-grey))",
-          blue: "hsl(var(--product_filter-blue))",
-          white: "hsl(var(--product_filter-white))",
-          brown: "hsl(var(--product_filter-brown))"
-        }, 
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+          red: 'hsl(var(--product_filter-red))',
+          black: 'hsl(var(--product_filter-black))',
+          pink: 'hsl(var(--product_filter-pink))',
+          purple: 'hsl(var(--product_filter-purple))',
+          yellow: 'hsl(var(--product_filter-yellow))',
+          orange: 'hsl(var(--product_filter-orange))',
+          green: 'hsl(var(--product_filter-green))',
+          grey: 'hsl(var(--product_filter-grey))',
+          blue: 'hsl(var(--product_filter-blue))',
+          white: 'hsl(var(--product_filter-white))',
+          brown: 'hsl(var(--product_filter-brown))',
+        },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
         body: {
-          light : "hsl(var(--body-light))",
+          light: 'hsl(var(--body-light))',
         },
         main: {
-          purple: "hsl(var(--main-purple))",
+          purple: 'hsl(var(--main-purple))',
         },
         detail: {
-          blue: "hsl(var(--detail-blue))",
+          blue: 'hsl(var(--detail-blue))',
         },
         link: {
-          blue: "hsl(var(--link-blue))",
+          blue: 'hsl(var(--link-blue))',
         },
         success: {
           light: 'hsl(var(--success-light))',
@@ -58,49 +58,45 @@ module.exports = {
           light: 'hsl(var(--default-light))',
           dark: 'hsl(var(--default-dark))',
         },
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))", //we should hsl value here
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))', //we should hsl value here
         primary: {
-          light: 'hsl(var(--primary-light))',
-          dark: 'hsl(var(--primary-dark))',
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
-          light: 'hsl(var(--secondary-light))',
-          dark: 'hsl(var(--secondary-dark))',
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",//we should hsl value here
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
       },
-      borderWidth: { 
+      borderWidth: {
         width: 'var(--width)',
-        '0': '0',
-        '2': '2px',
-        '3': '3px',
-        '4': '4px',
-        '6': '6px',
-        '8': '8px',
+        0: '0',
+        2: '2px',
+        3: '3px',
+        4: '4px',
+        6: '6px',
+        8: '8px',
       },
       borderRadius: {
         sm: `calc(var(--radius) - 2px)`,
@@ -111,23 +107,23 @@ module.exports = {
         '3xl': `calc(var(--radius) - -20px)`,
       },
       fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
+        sans: ['var(--font-sans)', ...fontFamily.sans],
       },
       keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+        'accordion-down': {
+          from: {height: '0'},
+          to: {height: 'var(--radix-accordion-content-height)'},
         },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+        'accordion-up': {
+          from: {height: 'var(--radix-accordion-content-height)'},
+          to: {height: '0'},
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-}
+  plugins: [require('tailwindcss-animate')],
+};

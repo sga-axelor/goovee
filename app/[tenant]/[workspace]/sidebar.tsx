@@ -43,7 +43,7 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        'hidden lg:block sticky left-0 top-0 h-full min-h-screen transition-all bg-primary text-primary-foreground w-60 py-3 px-6',
+        'hidden lg:block sticky left-0 top-0 h-full min-h-screen transition-all bg-secondary text-secondary-foreground w-60 py-3 px-6',
         {'w-14 py-3 px-4': collapsed},
       )}>
       <div className="flex items-center gap-4 mb-10">

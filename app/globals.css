@@ -26,10 +26,6 @@
     --error-dark: 3 86% 61%;
     --warning-light: 37 100% 87%;
     --warning-dark: 36 100% 54%;
-    --primary-light: 261 100% 97%;
-    --primary-dark: 269 97% 35%;
-    --secondary-light: 216 100% 91%;
-    --secondary-dark: 220 63% 47%;
     --default-light: 210 11% 71%;
     --default-dark: 210 9% 31%;
     --background: 0 0% 100%;
@@ -37,20 +33,28 @@
 
     --primary: 180 3% 13%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 180 3% 13%;
+
+    --secondary: 237, 50%, 22%;
+    --secondary-foreground: 0 0% 100%;
+
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
+
     --accent: 0 0% 96%;
     --accent-foreground: 180 3% 13%;
+
     --card: 0 0% 100%;
     --card-foreground: 0 0% 4%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
+
     --content-primary: 218 22% 21%;
     --content-foreground: 0 0% 100%;
+
     --input: 180 2% 90%;
     --ring: 0 0% 3.9%;
     --border: 180 2% 90%;
@@ -59,16 +63,16 @@
 
     --portal-blue-50: #d0e3ff;
     --portal-blue-100: #4360c7;
-  
+
     --portal-orange-50: #ffdacc;
     --portal-orange-100: #fb5c23;
-  
+
     --portal-purple-50: #f6f1ff;
     --portal-purple-100: #ac8fd6;
-  
+
     --portal-pink-50: #fbd0e1;
     --portal-pink-100: #ee4488;
-  
+
     --portal-green-50: #d0eedb;
     --portal-green-100: #72cd93;
   }

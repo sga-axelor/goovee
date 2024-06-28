@@ -49,8 +49,8 @@ export const DEFAULT_THEME_OPTIONS = {
     secondary: {
       light: '216 100% 91%',
       dark: '220 63% 47%',
-      DEFAULT: '0 0% 96%',
-      foreground: '180 3% 13%',
+      DEFAULT: '237 50% 22%',
+      foreground: '0 0% 100%',
     },
     default: {
       light: '210 11% 71%',
