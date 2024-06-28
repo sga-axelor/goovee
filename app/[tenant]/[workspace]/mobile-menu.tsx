@@ -24,6 +24,7 @@ import {Category} from '@/types';
 import Icons from '@/utils/Icons';
 import {cn} from '@/lib/utils';
 import {SUBAPP_PAGE} from '@/constants';
+import {Account} from '@/ui/components';
 import {useWorkspace} from './workspace-context';
 import styles from './styles.module.scss';
 
@@ -193,6 +194,7 @@ export function MobileMenu({subapps, workspaces, categories}: any) {
           className="cursor-pointer h-6 w-6"
           onClick={redirect}
         />
+        <Account />
       </div>
     </nav>
   );
