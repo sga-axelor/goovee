@@ -11,7 +11,6 @@ import {findSubapps} from '@/orm/subapps';
 import Workspace from './workspace-context';
 import CartContext from './cart-context';
 import Header from './header';
-import Footer from './footer';
 
 export default async function Layout({
   params,
@@ -51,7 +50,6 @@ export default async function Layout({
         <CartContext>
           <Header subapps={subapps} />
           {children}
-          {/* <Footer /> */}
         </CartContext>
       </Workspace>
     </>
