@@ -1,3 +1,5 @@
+import 'server-only';
+
 import {getClient} from '@/goovee';
 import type {User, Partner, PortalWorkspace} from '@/types';
 
