@@ -5,6 +5,7 @@ import {
   DEFAULT_TENANT,
   DEFAULT_WORKSPACE,
   DEFAULT_WORKSPACE_URI,
+  DEFAULT_WORKSPACE_URL,
 } from '@/constants';
 
 // ---- CORE IMPORTS ---- //
@@ -15,10 +16,12 @@ export const WorkspaceContext = React.createContext<{
   tenant: string;
   workspace: string;
   workspaceURI: string;
+  workspaceURL: string;
 }>({
   tenant: DEFAULT_TENANT,
   workspace: DEFAULT_WORKSPACE,
   workspaceURI: DEFAULT_WORKSPACE_URI,
+  workspaceURL: DEFAULT_WORKSPACE_URL,
 });
 
 export function Workspace({
