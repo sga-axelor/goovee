@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {Badge} from '@ui/components/badge';
+import {cn} from '@/lib/utils';
 
 type Variant =
   | 'success'
-  | 'error'
-  | 'warning'
-  | 'primary'
-  | 'secondary'
+  | 'destructive'
+  | 'yellow'
+  | 'purple'
+  | 'blue'
   | 'default';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,46 +15,26 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   variant: Variant;
 }
 
-const variantStyles: Record<Variant, React.CSSProperties> = {
-  success: {
-    backgroundColor: 'hsl(var(--success-light))',
-    color: 'hsl(var(--success-dark))',
-  },
-  error: {
-    backgroundColor: 'hsl(var(--error-light))',
-    color: 'hsl(var(--error-dark))',
-  },
-  warning: {
-    backgroundColor: 'hsl(var(--warning-light))',
-    color: 'hsl(var(--warning-dark))',
-  },
-  primary: {
-    backgroundColor: 'hsl(var(--primary-light))',
-    color: 'hsl(var(--primary-dark))',
-  },
-  secondary: {
-    backgroundColor: 'hsl(var(--secondary-light))',
-    color: 'hsl(var(--secondary-dark))',
-  },
-  default: {
-    backgroundColor: 'hsl(var(--default-light))',
-    color: 'hsl(var(--default-dark))',
-  },
+const classes: Record<Variant, string> = {
+  success: 'bg-success/[.25] text-success-dark',
+  destructive: 'bg-destructive/[.25] text-destructive-dark',
+  yellow: 'bg-palette-yellow text-palette-yellow-dark',
+  purple: 'bg-palette-purple text-palette-purple-dark',
+  blue: 'bg-palette-blue text-palette-blue-dark',
+  default: 'bg-primary/[.25] text-primary',
 };
 
 export const Tag: React.FC<TagProps> = ({
   children,
   variant = 'default',
-  style,
+  className,
   ...props
 }) => {
-  const combinedStyles = {
-    ...variantStyles[variant],
-    ...style,
-  };
-
   return (
-    <Badge style={combinedStyles} variant="tag_default" {...props}>
+    <Badge
+      className={cn(classes[variant], className)}
+      variant="tag_default"
+      {...props}>
       {children}
     </Badge>
   );

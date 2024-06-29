@@ -36,17 +36,17 @@ export const Informations = ({
             <h5 className="text-lg font-semibold mb-0 pr-1">
               {i18n.get('Created on')}:
             </h5>
-            <p className="text-base mb-0">{parseDate(createdOn)}</p>
+            <p>{parseDate(createdOn)}</p>
           </div>
           <div className="flex items-center gap-2">
             <h5 className="text-lg font-semibold mb-0 pr-1">
               {i18n.get('Shipping method')}:
             </h5>
-            <p className="text-base mb-0">{shipmentMode?.name}</p>
+            <p>{shipmentMode?.name}</p>
           </div>
           {showShippingLink && (
             <div className="flex items-center gap-2">
-              <p className="text-base underline text-link-blue mb-0">
+              <p className="underline text-palette-blue-dark">
                 {i18n.get('Shipping link to follow the delivery path')}
               </p>
             </div>

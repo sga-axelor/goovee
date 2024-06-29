@@ -46,18 +46,12 @@ export function ProductCard({
           )}
         </BackgroundImage>
         <div className="py-4 px-6">
-          <h5 className="text-base font-medium mt-0 mb-0">
-            {i18n.getValueAttribute(product.name)}
-          </h5>
+          <h5 className="font-medium">{i18n.getValueAttribute(product.name)}</h5>
           {displayPrices && (
             <>
-              <h5 className="text-base font-semibold mt-2 mb-0">
-                {displayPrimary}
-              </h5>
+              <h5 className="font-semibold mt-2">{displayPrimary}</h5>
               {displayTwoPrices && (
-                <span className="text-xs font-medium mt-0 mb-0">
-                  {displaySecondary}
-                </span>
+                <span className="text-xs font-medium">{displaySecondary}</span>
               )}
             </>
           )}

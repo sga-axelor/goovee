@@ -9,12 +9,12 @@ import {
 
 export function getStatus(value: string | number): {
   status: string;
-  variant: 'success' | 'error';
+  variant: 'success' | 'destructive';
 } {
   if (Number(value) !== INVOICE_STATUS.UNPAID) {
     return {
       status: INVOICE_TYPE.UNPAID,
-      variant: 'error',
+      variant: 'destructive',
     };
   } else {
     return {

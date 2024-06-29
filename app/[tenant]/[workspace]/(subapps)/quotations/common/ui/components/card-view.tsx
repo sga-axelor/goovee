@@ -13,7 +13,7 @@ import type {
   Quotations,
   CardViewProps,
 } from '@/subapps/quotations/common/types/quotations';
-import styles from './styles.module.scss';
+
 export const Card = ({quotations, onClick}: CardViewProps) => {
   return (
     <>
@@ -22,28 +22,22 @@ export const Card = ({quotations, onClick}: CardViewProps) => {
         return (
           <div
             key={quotation.id}
-            className={`${styles['card-wrapper']} bg-card flex flex-col gap-4 border rounded px-4 py-6 mb-3`}
+            className={`flex flex-col gap-4 bg-card border rounded px-4 py-6 mb-3 cursor-pointer`}
             onClick={() => onClick(quotation.id)}>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-semibold mb-0">
-                {i18n.get('Quotation number')}
-              </h6>
+              <h6 className="font-semibold">{i18n.get('Quotation number')}</h6>
               <p className="text-sm font-semibold mb-0">
                 {quotation.saleOrderSeq}
               </p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-semibold mb-0">
-                {i18n.get('Status')}
-              </h6>
+              <h6 className="font-semibold">{i18n.get('Status')}</h6>
               <div>
                 <Tag variant={variant}>{status}</Tag>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-semibold mb-0">
-                {i18n.get('Created on')}
-              </h6>
+              <h6 className="font-semibold">{i18n.get('Created on')}</h6>
               <p className="text-sm mb-0">{parseDate(quotation.createdOn)}</p>
             </div>
             <div className="flex items-center justify-between">

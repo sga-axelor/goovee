@@ -7,13 +7,13 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import {generateCSSVariableString} from '@/utils/css';
+import type {ThemeOptions} from '@/types/theme';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
-import generateCssVar from '@/utils/DynamicCssVar';
-import {ThemeOptions} from '@/types/ThemeOptions';
 
 const ThemeContext = React.createContext({});
 
@@ -39,11 +39,18 @@ export default function Theme({
   );
 
   useEffect(() => {
-    if (!options || options === null || !Object.keys(options)?.length) return;
-    let cssVar = generateCssVar(options);
+    if (!options) return;
+
+    if (Object.keys(options).length === 0) {
+      return;
+    }
+
+    const cssVariables = generateCSSVariableString(options);
+
     const styleElement = document.createElement('style');
-    styleElement.appendChild(document.createTextNode(cssVar));
+    styleElement.textContent = cssVariables;
     document.head.appendChild(styleElement);
+
     return () => {
       document.head.removeChild(styleElement);
     };

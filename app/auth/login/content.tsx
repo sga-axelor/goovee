@@ -118,7 +118,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           <Link
             href={`/auth/forgot-password?${searchQuery}`}
             aria-disabled={submitting}
-            className="text-main-purple flex text-decoration-underline">
+            className="text-palette-purple-dark flex text-decoration-underline">
             {i18n.get('Forgot Password ?')}
           </Link>
         </div>
@@ -133,7 +133,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
             <Link
               href={`/auth/register?${searchQuery}`}
               aria-disabled={submitting}
-              className="text-main-purple inline-flex text-decoration-underline text-lg">
+              className="text-palette-purple-dark inline-flex text-decoration-underline text-lg">
               {i18n.get('Sign Up')}
             </Link>
           </div>

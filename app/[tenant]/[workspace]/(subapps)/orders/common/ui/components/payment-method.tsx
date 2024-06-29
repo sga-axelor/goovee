@@ -17,22 +17,16 @@ export const PaymentMethod = () => {
           </h4>
           <div className="flex flex-col gap-2">
             <div className="flex">
-              <h6 className="text-base font-medium mb-0">
-                {i18n.get('Card Number')}:{' '}
-              </h6>
-              <p className="text-base mb-0">7639************</p>
+              <h6 className="font-medium">{i18n.get('Card Number')}: </h6>
+              <p>7639************</p>
             </div>
             <div className="flex">
-              <h6 className="text-base font-medium mb-0">
-                {i18n.get('Expiration date')}:{' '}
-              </h6>
-              <p className="text-base mb-0">**/**/27</p>
+              <h6 className="font-medium">{i18n.get('Expiration date')}: </h6>
+              <p>**/**/27</p>
             </div>
             <div className="flex">
-              <h6 className="text-base font-medium mb-0">
-                {i18n.get('Name')}:{' '}
-              </h6>
-              <p className="text-base mb-0">Hem********</p>
+              <h6 className="font-medium">{i18n.get('Name')}: </h6>
+              <p>Hem********</p>
             </div>
           </div>
         </div>

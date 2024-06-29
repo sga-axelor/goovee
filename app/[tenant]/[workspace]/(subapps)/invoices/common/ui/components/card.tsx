@@ -26,34 +26,32 @@ export const Card = ({
               className="rounded border border-solid !border-border bg-card px-4 py-6 flex flex-col gap-4 !cursor-pointer mb-3"
               onClick={() => handleRowClick(invoice.id)}>
               <div className="flex items-center justify-between font-bold">
-                <h6 className="text-base mb-0">{i18n.get('Invoice number')}</h6>
-                <h6 className="text-base mb-0">{invoice.invoiceId}</h6>
+                <h6>{i18n.get('Invoice number')}</h6>
+                <h6>{invoice.invoiceId}</h6>
               </div>
               <div className="flex items-center justify-between">
-                <h6 className="text-base font-bold mb-0">
-                  {i18n.get('Status')}
-                </h6>
-                <p className="text-base mb-0">
+                <h6 className="font-bold">{i18n.get('Status')}</h6>
+                <p>
                   <Tag variant={variant}>{status}</Tag>
                 </p>
               </div>
               <div className="flex items-center justify-between">
-                <h6 className="text-base font-bold mb-0">
+                <h6 className="font-bold">
                   {i18n.get('Created on')}
                 </h6>
-                <p className="text-base mb-0">{parseDate(invoice.dueDate)}</p>
+                <p>{parseDate(invoice.dueDate)}</p>
               </div>
               <div className="flex items-center justify-between">
-                <h6 className="text-base font-bold mb-0">
+                <h6 className="font-bold">
                   {i18n.get('Total WT')}
                 </h6>
-                <p className="text-base mb-0"> {invoice.exTaxTotal}</p>
+                <p> {invoice.exTaxTotal}</p>
               </div>
               <div className="flex items-center justify-between">
-                <h6 className="text-base font-bold mb-0">
+                <h6 className="font-bold">
                   {i18n.get('Total ATI')}
                 </h6>
-                <h5 className="text-lg font-bold mb-0">{invoice.inTaxTotal}</h5>
+                <h5 className="text-lg font-bold">{invoice.inTaxTotal}</h5>
               </div>
               <div>
                 <Button className="flex items-center justify-center gap-3 w-full rounded-full">

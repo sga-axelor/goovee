@@ -17,7 +17,7 @@ export function Quantity({
       <div
         className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10"
         style={{width: '3.5rem'}}>
-        <span className="text-base">{value}</span>
+        <span>{value}</span>
       </div>
       <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
         <IoAdd

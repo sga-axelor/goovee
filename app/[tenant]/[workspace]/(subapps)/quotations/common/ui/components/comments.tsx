@@ -43,7 +43,7 @@ export const Comments = ({comments}: Props) => {
               />
               <div className="flex flex-col gap-1 w-full">
                 <div className="flex justify-between">
-                  <h6 className="text-base font-semibold mb-0">
+                  <h6 className="font-semibold">
                     {comment.subject ? comment.subject : comment.body}
                   </h6>
                   <span className={`${styles['comment-date']} mb-0`}>
@@ -62,7 +62,7 @@ export const Comments = ({comments}: Props) => {
         <div>
           <TextField
             placeholder={i18n.get('Write your comment here...')}
-            className={`${styles['comment-input']} p-6`}
+            className={'p-6 font-[0.875rem]'}
             value={comment}
             onChange={e => setComment(e.target.value)}
           />

@@ -30,9 +30,7 @@ export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
             <h5 className="text-lg font-semibold pr-1 mb-0">
               {i18n.get('End of validity')}:
             </h5>
-            <p className="text-base mb-0">
-              {endOfValidityDate ? parseDate(endOfValidityDate) : ''}
-            </p>
+            <p>{endOfValidityDate ? parseDate(endOfValidityDate) : ''}</p>
           </div>
           {statusSelect === QUOTATION_STATUS.CANCELED_QUOTATION && (
             <div className="flex flex-col-reverse md:flex-row gap-4">

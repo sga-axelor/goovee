@@ -103,7 +103,7 @@ export function AddressForm({
           />
 
           <div className="w-full mb-4">
-            <Label className="text-base font-medium mb-1">
+            <Label className="font-medium mb-1">
               {i18n.get('Country')}
             </Label>
             <Select

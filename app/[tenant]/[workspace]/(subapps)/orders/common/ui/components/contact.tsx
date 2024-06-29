@@ -19,25 +19,19 @@ export const Contact = ({
   return (
     <>
       <div className="flex flex-col gap-4 bg-card text-card-foreground p-6 rounded-lg">
-        <h4 className="text-xl font-medium mb-0">{i18n.get('Contact')}</h4>
+        <h4 className="text-xl font-medium">{i18n.get('Contact')}</h4>
         <div className="flex flex-col gap-4 border !border-border] p-4 rounded-lg">
           <div className="flex flex-col gap-4">
-            <h6 className="text-base font-semibold mb-0">
-              {i18n.get('Billing address')}
-            </h6>
+            <h6 className="font-semibold">{i18n.get('Billing address')}</h6>
             <div className="flex flex-col gap-4">
-              <h6 className="font-semibold text-base mb-0">
+              <h6 className="font-semibold">
                 {clientPartner?.fullName}, {company?.name}
               </h6>
               <div>
-                <p className="text-base mb-0">
-                  {mainInvoicingAddress?.addressl4}
-                </p>
-                <p className="text-base mb-0">{billingAddressCity}</p>
-                <p className="text-base mb-0">{mainInvoicingAddress?.zip}</p>
-                <p className="text-base mb-0">
-                  {mainInvoicingAddress?.addressl7country?.name}
-                </p>
+                <p>{mainInvoicingAddress?.addressl4}</p>
+                <p>{billingAddressCity}</p>
+                <p>{mainInvoicingAddress?.zip}</p>
+                <p>{mainInvoicingAddress?.addressl7country?.name}</p>
               </div>
             </div>
             <div className="flex">
@@ -50,20 +44,18 @@ export const Contact = ({
           </div>
           <Separator />
           <div className="flex flex-col gap-4">
-            <h6 className="text-base font-semibold mb-0">
+            <h6 className="font-semibold">
               {i18n.get('Delivery address')}
             </h6>
             <div className="flex flex-col gap-4">
-              <h6 className="text-base font-semibold mb-0">
+              <h6 className="font-semibold">
                 {clientPartner?.fullName}, {company?.name}
               </h6>
               <div>
-                <p className="text-base mb-0">{deliveryAddress?.addressl4}</p>
-                <p className="text-base mb-0">{deliveryAddressCity}</p>
-                <p className="text-base mb-0">{deliveryAddress.zip}</p>
-                <p className="text-base mb-0">
-                  {deliveryAddress?.addressl7country?.name}
-                </p>
+                <p>{deliveryAddress?.addressl4}</p>
+                <p>{deliveryAddressCity}</p>
+                <p>{deliveryAddress.zip}</p>
+                <p>{deliveryAddress?.addressl7country?.name}</p>
               </div>
             </div>
             <div className="flex">

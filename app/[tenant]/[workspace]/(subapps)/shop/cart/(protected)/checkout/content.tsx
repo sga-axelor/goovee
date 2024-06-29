@@ -45,9 +45,7 @@ function Summary({cart}: any) {
                 className="rounded-lg w-[5rem] h-[5rem]"
               />
               <div>
-                <Title
-                  className="text-base font-medium"
-                  text={i18n.getValueAttribute(product?.name)}></Title>
+                <Title text={i18n.getValueAttribute(product?.name)}></Title>
                 {note && (
                   <div>
                     {i18n.get('Note')} : {note}
@@ -58,7 +56,7 @@ function Summary({cart}: any) {
                   <p className="border rounded px-4">{quantity}</p>
                 </div>
                 <Title
-                  className="text-base font-semibold"
+                  className="font-semibold"
                   text={price?.displayPrimary}></Title>
               </div>
             </div>
@@ -85,26 +83,22 @@ function Total({cart, shippingType, workspace}: any) {
       <Title className="text-xl font-semibold mb-6" text="Total" />
       <Separator className="my-4" />
       <div className="flex justify-between">
-        <p className="text-base m-0">{i18n.get('Products')}:</p>
+        <p>{i18n.get('Products')}:</p>
         <div>
-          <p className="text-base font-semibold text-right m-0">
-            {displayTotal}
-          </p>
+          <p className="font-semibold text-right">{displayTotal}</p>
         </div>
       </div>
       <div className="flex items-center justify-between mt-4">
-        <p className="text-base m-0">{i18n.get('Shipping')}:</p>
+        <p>{i18n.get('Shipping')}:</p>
         <div>
-          <p className="text-xs m-0">{`${shipping} ${currencySymbol}`}</p>
+          <p className="text-xs">{`${shipping} ${currencySymbol}`}</p>
         </div>
       </div>
       <Separator className="my-4" />
       <div className="flex items-center justify-between">
-        <p className="text-base font-medium font-m m-0">
-          {i18n.get('Total price')}:
-        </p>
+        <p className="font-medium font-m">{i18n.get('Total price')}:</p>
         <div>
-          <p className="text-xl font-semibold m-0">
+          <p className="text-xl font-semibold">
             {`${totalWithShipping} ${currencySymbol}`}
           </p>
         </div>
@@ -143,11 +137,11 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
             <RadioGroupItem
               name="shipping"
               value={SHIPPING_TYPE.REGULAR}
-              className={`${styles.radio} m-0`}
+              className={`${styles.radio}`}
               onClick={onChange}
               id="r1"
             />
-            <Label className="text-base font-medium !ml-4" htmlFor="r1">
+            <Label className="font-medium !ml-4" htmlFor="r1">
               {i18n.get('Regular Shipping')}{' '}
               <small className="text-xs font-medium ml-1">{`5-10 ${i18n.get(
                 'Business Days',
@@ -155,7 +149,7 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
             </Label>
           </div>
 
-          <Title className="text-xs font-medium m-0 ml-auto" text="2.00 €" />
+          <Title className="text-xs font-medium ml-auto" text="2.00 €" />
         </div>
 
         <div className="border rounded-lg flex p-4 gap-4 mt-4">
@@ -163,11 +157,11 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
             <RadioGroupItem
               name="shipping"
               value={SHIPPING_TYPE.FAST}
-              className={`${styles.radio} m-0`}
+              className={`${styles.radio}`}
               onClick={onChange}
               id="r2"
             />
-            <Label className="text-base font-medium !ml-4" htmlFor="r1">
+            <Label className="font-medium !ml-4" htmlFor="r1">
               {i18n.get('Fast Shipping')}{' '}
               <small className="text-xs font-medium ml-1">{`2-3 ${i18n.get(
                 'Business Days',
@@ -175,7 +169,7 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
             </Label>
           </div>
 
-          <Title className="text-xs font-medium m-0 ml-auto" text="5.00 €" />
+          <Title className="text-xs font-medium ml-auto" text="5.00 €" />
         </div>
       </RadioGroup>
     </div>

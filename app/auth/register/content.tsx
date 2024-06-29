@@ -120,7 +120,7 @@ export default function Content() {
                 type="number"
                 placeholder="Enter phone"
               />
-              <label className="text-base font-medium text-card-foreground mb-1">
+              <label className="font-medium text-card-foreground mb-1">
                 {i18n.get('Birthdate')}
               </label>
               <DatePicker
@@ -178,7 +178,7 @@ export default function Content() {
           </p>
           <Link
             href={`/auth/login?${searchQuery}`}
-            className="text-main-purple inline-flex text-decoration-underline text-lg">
+            className="text-palette-purple-dark inline-flex text-decoration-underline text-lg">
             {i18n.get('Log In')}
           </Link>
         </div>

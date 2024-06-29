@@ -37,18 +37,16 @@ export function Total({
         <div className="flex flex-col gap-4 mb-3">
           <div className="flex flex-col gap-[0.5rem]">
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Total WT')}:</p>
-              <p className="text-base mb-0">{exTaxTotal}</p>
+              <p>{i18n.get('Total WT')}:</p>
+              <p>{exTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-medium mb-0">
-                {i18n.get('Total ATI')}:
-              </h6>
-              <h6 className="text-base font-medium mb-0">{inTaxTotal}</h6>
+              <h6 className="font-medium">{i18n.get('Total ATI')}:</h6>
+              <h6 className="font-medium">{inTaxTotal}</h6>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Discount')}:</p>
-              <p className="text-base mb-0">{discount}%</p>
+              <p>{i18n.get('Discount')}:</p>
+              <p>{discount}%</p>
             </div>
           </div>
           <div className="flex items-center justify-between">

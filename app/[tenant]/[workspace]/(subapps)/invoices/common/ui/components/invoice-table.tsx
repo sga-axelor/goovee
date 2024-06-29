@@ -17,7 +17,7 @@ function TableHeader({columns}: TableHeaderProps) {
       {columns.map((column, i) => (
         <div
           key={i}
-          className={`${i === 0 ? 'text-left' : 'text-right'} header mb-4 uppercase !text-main-purple font-bold`}>
+          className={`${i === 0 ? 'text-left' : 'text-right'} header mb-4 uppercase !text-palette-purple-dark font-bold`}>
           {column}
         </div>
       ))}
@@ -73,11 +73,11 @@ function TableFooter({
       </div>
       {/* Row 5 */}
       <div></div>
-      <div className="!border-b-[0.1875rem] border-solid !border-main-purple py-2 text-right">
+      <div className="!border-b-[0.1875rem] border-solid !border-palette-purple py-2 text-right">
         <p className="mb-0">{i18n.get('Total')}</p>
         <p className="mb-0">{i18n.get('Deposit Requested')}</p>
       </div>
-      <div className="!border-b-[0.1875rem] border-solid !border-main-purple py-2 text-right">
+      <div className="!border-b-[0.1875rem] border-solid !border-palette-purple py-2 text-right">
         <p className="mb-0">{inTaxTotal}</p>
         <p className="mb-0">
           {amountRemaining.value} {amountRemaining.symbol}
@@ -85,10 +85,8 @@ function TableFooter({
       </div>
       {/* Row 6 */}
       <div></div>
-      <h6 className="text-base text-right py-2 font-bold">
-        {i18n.get('Deposit Due')}
-      </h6>
-      <h6 className="text-base text-right py-2 font-bold">
+      <h6 className="text-right py-2 font-bold">{i18n.get('Deposit Due')}</h6>
+      <h6 className="text-right py-2 font-bold">
         {amountRemaining.value} {amountRemaining.symbol}
       </h6>
     </>

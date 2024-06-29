@@ -1,83 +1,52 @@
-export const DEFAULT_THEME_OPTIONS = {
+import type {ThemeOptions} from '@/types/theme';
+
+export const DEFAULT_THEME_OPTIONS: ThemeOptions = {
   colors: {
-    border: '180 2% 90%',
-    input: '180 2% 90%',
-    ring: '0 0% 3.9%',
-    product_filter: {
-      red: '0 94% 66%',
-      black: '0 0% 7%',
-      pink: '337 84% 69%',
-      purple: '274 100% 69%',
-      yellow: '54 100% 50',
-      orange: '32 100% 50%',
-      green: '133 100% 42%',
-      grey: '0 2% 66%',
-      blue: '230 100% 67%',
-      white: '0 0% 100%',
-      brown: '18 38% 42%',
-    },
-    body: {
-      light: '210 17% 98%',
-    },
-    main: {
-      purple: '269 97% 35%',
-    },
-    detail: {
-      blue: '244 10% 30%',
-    },
-    link: {
-      blue: '220 63% 47%',
-    },
-    success: {
-      light: '136 47% 87%',
-      dark: '142 48% 53%',
-    },
-    error: {
-      light: '2 87% 88%',
-      dark: '3 86% 61%',
-    },
-    warning: {
-      light: '37 100% 87%',
-      dark: '36 100% 54%',
-    },
-    primary: {
-      light: '261 100% 97%',
-      dark: '269 97% 35%',
-      DEFAULT: '180 3% 13%',
-      foreground: '0 0% 100%',
-    },
-    secondary: {
-      light: '216 100% 91%',
-      dark: '220 63% 47%',
-      DEFAULT: '237 50% 22%',
-      foreground: '0 0% 100%',
-    },
-    default: {
-      light: '210 11% 71%',
-      dark: '210 9% 31%',
-    },
     background: '0 0% 100%',
-    foreground: '0 0% 3.92%',
-    destructive: {
-      DEFAULT: '0 84% 60%',
-      foreground: '0 0% 100%',
-    },
-    muted: {
-      DEFAULT: '0 0% 96%',
-      foreground: '0 0% 45%',
-    },
-    accent: {
-      DEFAULT: '0 0% 96%',
-      foreground: '180 3% 13%',
-    },
-    card: {
-      DEFAULT: '0 0% 100%',
-      foreground: '0 0% 3.9%',
-    },
-    popover: {
-      DEFAULT: '0 0% 100%',
-      foreground: '0 0% 3.9%',
+    foreground: '222.2 84% 4.9%',
+
+    card: '0 0% 100%',
+    'card-foreground': '222.2 84% 4.9%',
+
+    popover: '0 0% 100%',
+    'popover-foreground': '222.2 84% 4.9%',
+
+    primary: '222.2 47.4% 11.2%',
+    'primary-foreground': '210 40% 98%',
+
+    secondary: '237, 50%, 22%',
+    'secondary-foreground': '0 0% 100',
+
+    muted: '210 40% 96.1%',
+    'muted-foreground': '215.4 16.3% 46.9%',
+
+    accent: '210 40% 96.1%',
+    'accent-foreground': '222.2 47.4% 11.2%',
+
+    destructive: '0 84.2% 60.2%',
+    'destructive-foreground': '210 40% 98%',
+
+    success: '153 60% 59%', 
+    'success-foreground': '210 40% 98%',
+
+    border: '214.3 31.8% 91.4%',
+    input: '214.3 31.8% 91.4%',
+    ring: '222.2 84% 4.9%',
+
+    palette: {
+      purple: {
+        default: '261 100% 97%',
+        dark: '269 97% 35%',
+      },
+      blue: {
+        default: '216 100% 91%',
+        dark: '220 63% 47%',
+      },
+      yellow: {
+        default: '37 100% 87%',
+        dark: '36 100% 54%',
+      },
     },
   },
-  fontFamily: "'Poppins', sans-serif",
+  radius: '0.5rem',
 };

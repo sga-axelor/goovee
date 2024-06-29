@@ -44,7 +44,7 @@ export default function Content({invoice}: any) {
             <div className="flex items-center gap-4">
               <h5 className="text-lg font-semibold">{i18n.get('Status')}:</h5>
               <div>
-                <Tag variant={isUnpaid ? 'error' : 'success'}>
+                <Tag variant={isUnpaid ? 'destructive' : 'success'}>
                   {i18n.get(status)}
                 </Tag>
               </div>
@@ -55,10 +55,7 @@ export default function Content({invoice}: any) {
                   ? `${i18n.get('Due date:')}`
                   : `${i18n.get('Paid on:')}`}
               </h5>
-              <p className="text-base mb-0">
-                {' '}
-                {parseDate(isUnpaid ? dueDate : invoiceDate)}
-              </p>
+              <p>{parseDate(isUnpaid ? dueDate : invoiceDate)}</p>
             </div>
           </div>
         </div>

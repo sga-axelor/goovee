@@ -27,36 +27,32 @@ export const Total = ({
         <div className="flex flex-col gap-4 mb-2">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Total WT')}:</p>
-              <p className="text-base mb-0">{exTaxTotal}</p>
+              <p>{i18n.get('Total WT')}:</p>
+              <p>{exTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Total ATI')}:</p>
-              <p className="text-base mb-0">{inTaxTotal}</p>
+              <p>{i18n.get('Total ATI')}:</p>
+              <p>{inTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Discount')}:</p>
-              <p className="text-base mb-0">{totalDiscount}%</p>
+              <p>{i18n.get('Discount')}:</p>
+              <p>{totalDiscount}%</p>
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <h6 className="text-base font-medium mb-0">
-              {i18n.get('Total price')}:
-            </h6>
-            <h4 className="text-xl font-medium mb-0">{inTaxTotal}</h4>
+            <h6 className="font-medium">{i18n.get('Total price')}:</h6>
+            <h4 className="text-xl font-medium">{inTaxTotal}</h4>
           </div>
           {statusSelect !== QUOTATION_STATUS.CANCELED_QUOTATION && (
             <>
               <div className="flex justify-center">
-                <Button
-                  className={`${styles.success} hover:bg-success-dark flex items-center justify-center gap-3 rounded-full w-full`}>
+                <Button className="text-success-foreground bg-success hover:bg-success-dark flex items-center justify-center gap-3 rounded-full w-full">
                   <MdCheckCircleOutline className="text-2xl" />
                   {i18n.get('Accept and sign')}
                 </Button>
               </div>
               <div className="flex justify-center">
-                <Button
-                  className={`${styles.danger} hover:bg-error-dark flex items-center justify-center gap-3 rounded-full w-full font-normal`}>
+                <Button className="text-destructive-foreground bg-destructive hover:bg-error-dark flex items-center justify-center gap-3 rounded-full w-full font-normal">
                   <MdOutlineDisabledByDefault className="text-2xl" />
                   {i18n.get('Reject')}
                 </Button>

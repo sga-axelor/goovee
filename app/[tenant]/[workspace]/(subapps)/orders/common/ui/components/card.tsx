@@ -26,31 +26,25 @@ export const Card = ({
             className="rounded border border-solid !border-border bg-card px-4 py-6 flex flex-col gap-4 !cursor-pointer mb-3"
             onClick={() => handleRowClick(order.id)}>
             <div className="flex items-center justify-between font-bold">
-              <h6 className="text-base mb-0">{i18n.get('Order number')}</h6>
-              <h6 className="text-base mb-0">{order.saleOrderSeq}</h6>
+              <h6>{i18n.get('Order number')}</h6>
+              <h6>{order.saleOrderSeq}</h6>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-bold mb-0">{i18n.get('Status')}</h6>
-              <p className="text-base mb-0">
+              <h6 className="font-bold">{i18n.get('Status')}</h6>
+              <p>
                 <Tag variant={variant}>{status}</Tag>
               </p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-bold mb-0">
-                {i18n.get('Created on')}
-              </h6>
-              <p className="text-base mb-0">{parseDate(order.createdOn)}</p>
+              <h6 className="font-bold">{i18n.get('Created on')}</h6>
+              <p>{parseDate(order.createdOn)}</p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-bold mb-0">
-                {i18n.get('Total WT')}
-              </h6>
-              <p className="text-base mb-0"> {order.exTaxTotal}</p>
+              <h6 className="font-bold">{i18n.get('Total WT')}</h6>
+              <p> {order.exTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="text-base font-bold mb-0">
-                {i18n.get('Total ATI')}
-              </h6>
+              <h6 className="font-bold">{i18n.get('Total ATI')}</h6>
               <h5 className="text-lg font-bold mb-0">{order.inTaxTotal}</h5>
             </div>
           </div>

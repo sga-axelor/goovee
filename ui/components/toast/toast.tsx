@@ -5,7 +5,7 @@ import {Alert, AlertTitle, AlertDescription} from '@ui/components/alert';
 import {MdClose} from 'react-icons/md';
 import Icons from '@/utils/Icons';
 
-type Variant = 'success' | 'error' | 'warning' | 'primary';
+type Variant = 'success' | 'error' | 'warning' | 'purple';
 
 type ToastProps = {
   show: boolean;
@@ -13,12 +13,6 @@ type ToastProps = {
   heading: string;
   description?: string;
 };
-
-type IconType =
-  | 'MdOutlineWarningAmber'
-  | 'MdErrorOutline'
-  | 'MdOutlineCheckCircle'
-  | 'info';
 
 export const Toast = ({
   show,
@@ -58,9 +52,9 @@ export const Toast = ({
         'border-warning-dark text-warning-dark bg-warning-light [&>svg]:text-warning-dark',
       icon: 'toastWarning',
     },
-    primary: {
+    purple: {
       styles:
-        'border-primary-dark text-primary-dark bg-primary-light [&>svg]:text-primary-dark',
+        'border-palette-purple-dark text-palette-purple-dark bg-palette-purple [&>svg]:text-palette-purple-dark',
       icon: 'toastPrimary',
     },
   };

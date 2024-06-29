@@ -155,7 +155,7 @@ function MobileSidebar({subapps, workspaces}: any) {
                       className="h-6 w-6"
                       style={{color}}
                     />
-                    <p className="max-w-full whitespace-nowrap text-main-black text-base font-normal">
+                    <p className="max-w-full whitespace-nowrap text-main-black">
                       {name}
                     </p>
                   </div>

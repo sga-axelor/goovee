@@ -41,7 +41,7 @@ export function InvoiceContent({invoice}: {invoice: any}) {
           <div className="flex justify-between mb-12">
             <h2 className="uppercase !text-5xl">{i18n.get('Invoice')}</h2>
             <div className="text-right">
-              <h6 className="font-bold text-base">{name}</h6>
+              <h6 className="font-bold">{name}</h6>
               <p className="mb-0">{addressl4}</p>
               <p className="mb-0">{companyCityName}</p>
               <p className="mb-0">{zip}</p>
@@ -49,9 +49,9 @@ export function InvoiceContent({invoice}: {invoice: any}) {
               <p className="mb-0">{companyPartnerNumber}</p>
             </div>
           </div>
-          <div className="flex w-full gap-12 mb-6 pb-[4rem] border-b-[0.1875rem] border-solid border-main-purple">
+          <div className="flex w-full gap-12 mb-6 pb-[4rem] border-b-[0.1875rem] border-solid border-palette-purple">
             <div className="flex-1">
-              <h6 className="text-main-purple font-medium text-base">
+              <h6 className="text-palette-purple-dark font-medium">
                 {i18n.get('Billed To')}
               </h6>
               <p className="mb-0">{simpleFullName}</p>
@@ -64,19 +64,19 @@ export function InvoiceContent({invoice}: {invoice: any}) {
             <div className="flex-1 flex flex-col gap-8">
               <div className="flex justify-between">
                 <div>
-                  <h6 className="text-main-purple font-medium text-base">
+                  <h6 className="text-palette-purple-dark font-medium">
                     {i18n.get('Date Issued')}
                   </h6>
                   <p className="mb-0">{parseDate(invoiceDate)}</p>
                 </div>
                 <div>
-                  <h6 className="text-main-purple font-medium text-base">
+                  <h6 className="text-palette-purple-dark font-medium">
                     {i18n.get('Invoice Number')}
                   </h6>
                   <p className="mb-0">{invoiceId}</p>
                 </div>
                 <div>
-                  <h6 className="text-main-purple font-medium text-base">
+                  <h6 className="text-palette-purple-dark font-medium">
                     {i18n.get('Amount Due')}
                   </h6>
                   <p className="mb-0 font-bold">
@@ -86,7 +86,7 @@ export function InvoiceContent({invoice}: {invoice: any}) {
               </div>
               <div className="flex">
                 <div>
-                  <h6 className="text-main-purple font-medium text-base">
+                  <h6 className="text-palette-purple-dark font-medium">
                     {i18n.get('Due Date')}
                   </h6>
                   <p className="mb-0">{parseDate(dueDate)}</p>
@@ -104,13 +104,13 @@ export function InvoiceContent({invoice}: {invoice: any}) {
             />
           </div>
           <div className="mb-4">
-            <h6 className="text-main-purple font-medium text-base">
+            <h6 className="text-palette-purple-dark font-medium">
               {i18n.get('Notes')}
             </h6>
             <p className="mb-0">{note}</p>
           </div>
           <div>
-            <h6 className="text-main-purple font-medium text-base">
+            <h6 className="text-palette-purple-dark font-medium">
               {i18n.get('Terms')}
             </h6>
             <p className="mb-0">{paymentCondition.name}</p>

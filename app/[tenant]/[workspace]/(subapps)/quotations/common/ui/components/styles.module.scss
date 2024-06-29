@@ -13,29 +13,11 @@
 .comment-paragraph {
   font-size: 0.875rem;
 }
-.comment-input {
-  font-size: 0.875rem;
-  --ax-input-placeholder-color: hsl(var(--input));
-}
-
-.history-date {
-  color: hsl(var(--detail-blue));
-}
 
 .product-image {
   width: 1.5rem !important;
   height: 1.5rem !important;
   overflow: hidden;
-}
-
-.success {
-  color: hsl(var(--primary-foreground));
-  background-color: hsl(var(--success-dark));
-}
-
-.danger {
-  color: hsl(var(--primary-foreground));
-  background-color: hsl(var(--error-dark));
 }
 
 .comment-user-image {

@@ -92,9 +92,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             href={`${workspaceURI}/shop/product/${encodeURIComponent(
               product.name,
             )}-${product.id}`}>
-            <h6 className="text-base font-medium mb-2">
-              {i18n.getValueAttribute(product.name)}
-            </h6>
+            <h6 className="font-medium mb-2">{i18n.getValueAttribute(product.name)}</h6>
           </Link>
           {product.allowCustomNote && (
             <div>
@@ -107,9 +105,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             </div>
           )}
           <div className="flex flex-col mt-auto">
-            <p className="mb-2 text-base font-semibold">
-              {i18n.get('Quantity')}
-            </p>
+            <p className="mb-2 font-semibold">{i18n.get('Quantity')}</p>
             <Quantity
               value={quantity}
               disabled={updating}
@@ -195,18 +191,16 @@ function CartSummary({
           <p className="text-xl font-semibold mb-6">{i18n.get('Total')}</p>
           <Separator className="mb-2" />
           <div className="flex justify-between">
-            <p className="text-base mb-4">{i18n.get('Products')}</p>
-            <p className="text-base font-semibold mb-4">{displayTotal}</p>
+            <p className="mb-4">{i18n.get('Products')}</p>
+            <p className="font-semibold mb-4">{displayTotal}</p>
           </div>
           <div className="flex justify-between">
-            <p className="text-base mb-4">{i18n.get('Shipping')}</p>
+            <p className="mb-4">{i18n.get('Shipping')}</p>
             <p className="text-xs mb-4">{i18n.get('To be determined')}</p>
           </div>
           <Separator className="my-2" />
           <div className="flex justify-between my-4">
-            <p className="text-base font-medium mb-0">
-              {i18n.get('Total Price')}
-            </p>
+            <p className="font-medium">{i18n.get('Total Price')}</p>
             <p className="text-xl font-semibold mb-0">{displayTotal}</p>
           </div>
         </>

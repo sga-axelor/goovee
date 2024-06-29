@@ -1,4 +1,6 @@
 import Script from 'next/script';
+import {Poppins as FontSans} from 'next/font/google';
+import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {findThemeOptions} from '@/orm/theme';
@@ -7,11 +9,20 @@ import {findThemeOptions} from '@/orm/theme';
 import Theme from './theme';
 import Locale from './locale';
 import AuthContext from './auth-context';
-import type {Metadata} from 'next';
 import './globals.css';
 
+const fontSans = FontSans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal'],
+  variable: '--font-sans',
+});
+
 export const metadata: Metadata = {
-  title: 'Customer Portal',
+  title: {
+    template: '%s | Goovee',
+    default: 'Portal | Goovee',
+  },
   description: 'Next generation portal by Axelor',
 };
 
@@ -25,7 +36,7 @@ export default async function RootLayout({
   return (
     <Theme options={themeOptions}>
       <html lang="en">
-        <body>
+        <body className={fontSans.className}>
           <AuthContext>
             <Locale>{children}</Locale>
           </AuthContext>

@@ -1,9 +1,9 @@
-import {useRef, useState, useCallback} from 'react';
+import {useRef, useState} from 'react';
+
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
 import type {Category} from '@/types';
-
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -68,7 +68,7 @@ const Category = ({
   return (
     <div
       {...{ref: ref as any}}
-      className="shrink-0 relative first-item flex items-center z-[9]">
+      className="shrink-0 relative flex items-center z-[9]">
       {item.items?.length ? (
         <>
           <NavigationMenu>
@@ -77,9 +77,9 @@ const Category = ({
                 <div
                   onClick={handleDropdownClick}
                   ref={setTarget}
-                  className="flex items-center justify-center cursor-pointer text-base font-medium text-foreground">
+                  className="flex items-center justify-center cursor-pointer text-foreground font-medium">
                   <NavigationMenuTrigger className="px-0 bg-transparent hover:bg-transparent">
-                    <p className="px-2 mb-0 text-base font-medium text-foreground first-border border-l-2 border-foreground border-solid">
+                    <p className="px-2 text-foreground border-l-2 border-foreground border-solid font-medium">
                       {i18n.get(item.name)}
                     </p>
                   </NavigationMenuTrigger>
@@ -98,7 +98,7 @@ const Category = ({
         </>
       ) : (
         <p
-          className="cursor-pointer pl-4 mb-0 text-base font-medium text-foreground border-l-2 border-foreground border-solid first-border"
+          className="cursor-pointer pl-4 text-foreground border-l-2 border-foreground border-solid first-border font-medium"
           onClick={handleClick}>
           {i18n.get(item.name)}
         </p>

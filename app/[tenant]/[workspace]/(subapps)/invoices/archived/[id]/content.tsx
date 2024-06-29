@@ -49,10 +49,7 @@ export default function Content({invoice}: any) {
                   ? `${i18n.get('Due date')}:`
                   : `${i18n.get('Paid on')}:`}
               </h5>
-              <p className="text-base mb-0">
-                {' '}
-                {parseDate(isUnpaid ? dueDate : invoiceDate)}
-              </p>
+              <p>{parseDate(isUnpaid ? dueDate : invoiceDate)}</p>
             </div>
           </div>
         </div>

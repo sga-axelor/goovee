@@ -42,7 +42,7 @@ export default function Content() {
           </Label>
           <Link
             href={`/auth/login?${searchQuery}`}
-            className="text-main-purple flex text-decoration-underline">
+            className="text-palette-purple-dark flex text-decoration-underline">
             {i18n.get('Log In')}
           </Link>
         </div>

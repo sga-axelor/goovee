@@ -33,11 +33,9 @@ function AddressList({
                 className="rounded-md p-2 border flex flex-col justify-between">
                 <div>
                   <h5 className="font-bold text-xl">{address.addressl2}</h5>
-                  <h6 className="text-base">{address.addressl4}</h6>
-                  <h6 className="text-base">{address.addressl6}</h6>
-                  <h6 className="text-base">
-                    {address.addressl7country?.name}
-                  </h6>
+                  <h6>{address.addressl4}</h6>
+                  <h6>{address.addressl6}</h6>
+                  <h6>{address.addressl7country?.name}</h6>
                 </div>
                 <div className="text-right">
                   <Link href={`${workspaceURI}/account/addresses/edit/${id}`}>

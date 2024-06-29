@@ -11,25 +11,27 @@ import {
   SECONDS,
 } from '@/subapps/quotations/common/constants/quotations';
 
+type Variant = 'blue' | 'yellow' | 'destructive' | 'default';
+
 export function getStatus(statusSelect: number | string): {
   status: string | number;
-  variant: 'secondary' | 'warning' | 'error' | 'default';
+  variant: Variant;
 } {
   let status: string | number;
-  let variant: 'secondary' | 'warning' | 'error' | 'default';
+  let variant: Variant;
 
   switch (statusSelect) {
     case QUOTATION_STATUS.DRAFT_QUOTATION:
       status = QUOTATION_TYPE.DRAFT;
-      variant = 'secondary';
+      variant = 'blue';
       break;
     case QUOTATION_STATUS.FINALISED_QUOTATION:
       status = QUOTATION_TYPE.FINALISED;
-      variant = 'warning';
+      variant = 'yellow';
       break;
     case QUOTATION_STATUS.CANCELED_QUOTATION:
       status = QUOTATION_TYPE.CANCELED;
-      variant = 'error';
+      variant = 'destructive';
       break;
     default:
       status = QUOTATION_TYPE.UNKNOWN;

@@ -14,52 +14,11 @@ module.exports = {
     },
     extend: {
       colors: {
-        product_filter: {
-          red: 'hsl(var(--product_filter-red))',
-          black: 'hsl(var(--product_filter-black))',
-          pink: 'hsl(var(--product_filter-pink))',
-          purple: 'hsl(var(--product_filter-purple))',
-          yellow: 'hsl(var(--product_filter-yellow))',
-          orange: 'hsl(var(--product_filter-orange))',
-          green: 'hsl(var(--product_filter-green))',
-          grey: 'hsl(var(--product_filter-grey))',
-          blue: 'hsl(var(--product_filter-blue))',
-          white: 'hsl(var(--product_filter-white))',
-          brown: 'hsl(var(--product_filter-brown))',
-        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        body: {
-          light: 'hsl(var(--body-light))',
-        },
-        main: {
-          purple: 'hsl(var(--main-purple))',
-        },
-        detail: {
-          blue: 'hsl(var(--detail-blue))',
-        },
-        link: {
-          blue: 'hsl(var(--link-blue))',
-        },
-        success: {
-          light: 'hsl(var(--success-light))',
-          dark: 'hsl(var(--success-dark))',
-        },
-        error: {
-          light: 'hsl(var(--error-light))',
-          dark: 'hsl(var(--error-dark))',
-        },
-        warning: {
-          light: 'hsl(var(--warning-light))',
-          dark: 'hsl(var(--warning-dark))',
-        },
-        default: {
-          light: 'hsl(var(--default-light))',
-          dark: 'hsl(var(--default-dark))',
-        },
         background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))', //we should hsl value here
+        foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -68,46 +27,54 @@ module.exports = {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+          dark: 'hsl(var(--destructive-dark))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+          dark: 'hsl(var(--success-dark))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
         },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+        palette: {
+          purple: {
+            DEFAULT: 'hsl(var(--palette-purple))',
+            dark: 'hsl(var(--palette-purple-dark))',
+          },
+          blue: {
+            DEFAULT: 'hsl(var(--palette-blue))',
+            dark: 'hsl(var(--palette-blue-dark))',
+          },
+          yellow: {
+            DEFAULT: 'hsl(var(--palette-yellow))',
+            dark: 'hsl(var(--palette-yellow-dark))',
+          },
         },
-      },
-      borderWidth: {
-        width: 'var(--width)',
-        0: '0',
-        2: '2px',
-        3: '3px',
-        4: '4px',
-        6: '6px',
-        8: '8px',
-      },
-      borderRadius: {
-        sm: `calc(var(--radius) - 2px)`,
-        md: `calc(var(--radius) - -2px)`,
-        lg: `calc(var(--radius) - -4px)`,
-        xl: `calc(var(--radius) - -8px)`,
-        '2xl': `calc(var(--radius) - -12px)`,
-        '3xl': `calc(var(--radius) - -20px)`,
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
         'accordion-down': {

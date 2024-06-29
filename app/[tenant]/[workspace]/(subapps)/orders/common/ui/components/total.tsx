@@ -19,16 +19,16 @@ export const Total = ({exTaxTotal, inTaxTotal, totalDiscount}: TotalProps) => {
         <div className="flex flex-col gap-4 mb-2">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Total WT')}:</p>
-              <p className="text-base mb-0">{exTaxTotal}</p>
+              <p>{i18n.get('Total WT')}:</p>
+              <p>{exTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Total ATI')}:</p>
-              <p className="text-base mb-0">{inTaxTotal}</p>
+              <p>{i18n.get('Total ATI')}:</p>
+              <p>{inTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-base mb-0">{i18n.get('Discount')}:</p>
-              <p className="text-base mb-0">{totalDiscount}%</p>
+              <p>{i18n.get('Discount')}:</p>
+              <p>{totalDiscount}%</p>
             </div>
           </div>
           <div className="flex items-center justify-between">

@@ -50,7 +50,7 @@ export function ProductListItem({
           <>
             <div className="flex-col md:flex-row flex justify-between mb-6">
               <div>
-                <p className="text-base font-medium mb-2 md:mb-0">
+                <p className="font-medium mb-2 md:mb-0">
                   {i18n.getValueAttribute(product.name)}
                 </p>
               </div>

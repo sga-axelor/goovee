@@ -33,7 +33,7 @@ export const UnpaidTable = ({
                 {row.invoiceId}
               </TableCell>
               <TableCell className="px-6 py-4">
-                <Tag variant="error">{i18n.get(INVOICE_TYPE.UNPAID)}</Tag>
+                <Tag variant="destructive">{i18n.get(INVOICE_TYPE.UNPAID)}</Tag>
               </TableCell>
               <TableCell className="px-6 py-4">
                 {parseDate(row.dueDate)}

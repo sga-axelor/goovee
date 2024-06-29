@@ -6,7 +6,7 @@ import {Checkbox} from '@ui/components/checkbox';
 export function ProductListBrandFilter() {
   return (
     <div className="flex flex-col gap-2">
-      <h6 className="text-base font-semibold">Brand</h6>
+      <h6 className="font-semibold">Brand</h6>
       <div className="flex items-center space-x-2">
         <Checkbox />
         <Label className="ml-4 text-xs">Brand 1</Label>
