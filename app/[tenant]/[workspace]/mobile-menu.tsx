@@ -96,6 +96,7 @@ export function MobileCategories({
 }
 
 function MobileSidebar({subapps, workspaces}: any) {
+  const {data: session} = useSession();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -112,6 +113,10 @@ function MobileSidebar({subapps, workspaces}: any) {
   useEffect(() => {
     closeSidebar();
   }, [pathname, closeSidebar]);
+
+  if (!session?.user?.id) {
+    return null;
+  }
 
   return (
     <>
@@ -185,7 +190,7 @@ export function MobileMenu({subapps, workspaces, categories}: any) {
   return (
     <nav className="flex items-center w-screen fixed left-0 bottom-0 h-[72px] bg-white z-50 lg:hidden dark:bg-secondary px-8 pt-4 pb-6">
       <div className="flex items-center justify-between w-full">
-        {true && <MobileSidebar subapps={subapps} workspaces={workspaces} />}
+        <MobileSidebar subapps={subapps} workspaces={workspaces} />
         <MobileCategories
           categories={categories}
           onClick={handleCategoryClick}
