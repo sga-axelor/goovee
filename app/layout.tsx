@@ -1,4 +1,3 @@
-import Script from 'next/script';
 import {Poppins as FontSans} from 'next/font/google';
 import type {Metadata} from 'next';
 
@@ -40,7 +39,6 @@ export default async function RootLayout({
           <AuthContext>
             <Locale>{children}</Locale>
           </AuthContext>
-          <Script src="/js/vendors/clamp.min.js" strategy="beforeInteractive" />
         </body>
       </html>
     </Theme>

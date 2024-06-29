@@ -6,8 +6,10 @@ import {Button} from '@ui/components/button';
 import {BackgroundImage} from '@ui/components/index';
 import {getImageURL} from '@/utils/product';
 import {useResponsive} from '@/ui/hooks';
+import {cn} from '@/lib/utils';
 import {i18n} from '@/lib/i18n';
 import type {ComputedProduct, Product} from '@/types';
+
 export type ProductListItemProps = {
   product: ComputedProduct;
   quantity?: string | number;
@@ -15,6 +17,7 @@ export type ProductListItemProps = {
   onClick: (product: Product) => void;
   displayPrices?: boolean;
 };
+
 export function ProductListItem({
   product: computedProduct,
   quantity = 0,
@@ -24,15 +27,17 @@ export function ProductListItem({
 }: ProductListItemProps) {
   const {product, price} = computedProduct;
   const {displayTwoPrices, displayPrimary, displaySecondary} = price;
+
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
   };
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     onClick && onClick(product);
   };
+
   const res: any = useResponsive();
   const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
-  const clamp = (window as any)?.$clamp;
 
   return (
     <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[14.875rem_1fr] gap-6 w-full bg-card text-card-foreground">
@@ -70,12 +75,9 @@ export function ProductListItem({
               </div>
             </div>
             <p
-              className="text-xs mb-4 md:mb-0"
+              className={cn('text-xs mb-4 md:mb-0', {'line-clamp-3': !large})}
               dangerouslySetInnerHTML={{
                 __html: product.description || '',
-              }}
-              ref={(clampee: any) => {
-                !large && clampee && clamp?.(clampee, {clamp: 3});
               }}></p>
           </>
         </div>
