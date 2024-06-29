@@ -26,7 +26,7 @@ export const DEFAULT_THEME_OPTIONS: ThemeOptions = {
     destructive: '0 84.2% 60.2%',
     'destructive-foreground': '210 40% 98%',
 
-    success: '153 60% 59%', 
+    success: '153 60% 59%',
     'success-foreground': '210 40% 98%',
 
     border: '214.3 31.8% 91.4%',

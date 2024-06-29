@@ -36,21 +36,15 @@ export const Card = ({
                 </p>
               </div>
               <div className="flex items-center justify-between">
-                <h6 className="font-bold">
-                  {i18n.get('Created on')}
-                </h6>
+                <h6 className="font-bold">{i18n.get('Created on')}</h6>
                 <p>{parseDate(invoice.dueDate)}</p>
               </div>
               <div className="flex items-center justify-between">
-                <h6 className="font-bold">
-                  {i18n.get('Total WT')}
-                </h6>
+                <h6 className="font-bold">{i18n.get('Total WT')}</h6>
                 <p> {invoice.exTaxTotal}</p>
               </div>
               <div className="flex items-center justify-between">
-                <h6 className="font-bold">
-                  {i18n.get('Total ATI')}
-                </h6>
+                <h6 className="font-bold">{i18n.get('Total ATI')}</h6>
                 <h5 className="text-lg font-bold">{invoice.inTaxTotal}</h5>
               </div>
               <div>

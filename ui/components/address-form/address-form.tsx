@@ -103,9 +103,7 @@ export function AddressForm({
           />
 
           <div className="w-full mb-4">
-            <Label className="font-medium mb-1">
-              {i18n.get('Country')}
-            </Label>
+            <Label className="font-medium mb-1">{i18n.get('Country')}</Label>
             <Select
               onValueChange={o => {
                 let selectedCountry = countries?.find(op => op.id === o);

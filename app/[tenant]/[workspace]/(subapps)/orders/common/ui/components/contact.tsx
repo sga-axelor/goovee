@@ -44,9 +44,7 @@ export const Contact = ({
           </div>
           <Separator />
           <div className="flex flex-col gap-4">
-            <h6 className="font-semibold">
-              {i18n.get('Delivery address')}
-            </h6>
+            <h6 className="font-semibold">{i18n.get('Delivery address')}</h6>
             <div className="flex flex-col gap-4">
               <h6 className="font-semibold">
                 {clientPartner?.fullName}, {company?.name}

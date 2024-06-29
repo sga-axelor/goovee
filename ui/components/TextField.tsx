@@ -20,9 +20,7 @@ const TextField = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <>
         {label && (
-          <label className="font-medium text-foreground mb-1">
-            {label}
-          </label>
+          <label className="font-medium text-foreground mb-1">{label}</label>
         )}
         <div className="relative block w-full">
           <input

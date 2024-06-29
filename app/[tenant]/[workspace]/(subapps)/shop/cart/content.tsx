@@ -92,7 +92,9 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             href={`${workspaceURI}/shop/product/${encodeURIComponent(
               product.name,
             )}-${product.id}`}>
-            <h6 className="font-medium mb-2">{i18n.getValueAttribute(product.name)}</h6>
+            <h6 className="font-medium mb-2">
+              {i18n.getValueAttribute(product.name)}
+            </h6>
           </Link>
           {product.allowCustomNote && (
             <div>
