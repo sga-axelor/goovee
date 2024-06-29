@@ -1,4 +1,4 @@
-export type ThemeOptions = {
+export type Theme = {
   colors?: {
     background?: string;
     foreground?: string;

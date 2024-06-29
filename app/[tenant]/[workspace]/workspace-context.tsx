@@ -9,7 +9,7 @@ import {
 
 // ---- CORE IMPORTS ---- //
 import {useTheme} from '@/app/theme';
-import {ThemeOptions} from '@/types/ThemeOptions';
+import {Theme} from '@/types/theme';
 
 export const WorkspaceContext = React.createContext<{
   tenant: string;
@@ -29,10 +29,10 @@ export function Workspace({
 }: {
   tenant: string;
   workspace: string;
-  theme?: {id: string; name: string; options: ThemeOptions};
+  theme?: {id: string; name: string; options: Theme};
   children: React.ReactNode;
 }) {
-  const {updateThemeOptions} = useTheme();
+  const {updateTheme} = useTheme();
   const prevTheme = useRef<any>();
 
   const workspaceURI = `/${tenant}/${workspace}`;
@@ -45,10 +45,10 @@ export function Workspace({
 
   useEffect(() => {
     if (theme && theme.options && theme.id !== prevTheme.current) {
-      updateThemeOptions(theme?.options);
+      updateTheme(theme?.options);
       prevTheme.current = theme.id;
     }
-  }, [theme, updateThemeOptions]);
+  }, [theme, updateTheme]);
 
   return (
     <WorkspaceContext.Provider value={value}>

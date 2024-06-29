@@ -2,7 +2,7 @@ import {Poppins as FontSans} from 'next/font/google';
 import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
-import {findThemeOptions} from '@/orm/theme';
+import {findTheme} from '@/orm/theme';
 
 // ---- LOCAL IMPORTS ---- //
 import Theme from './theme';
@@ -30,10 +30,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const themeOptions = await findThemeOptions();
+  const theme = await findTheme();
 
   return (
-    <Theme options={themeOptions}>
+    <Theme theme={theme}>
       <html lang="en">
         <body className={fontSans.className}>
           <AuthContext>

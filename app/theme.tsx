@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 import {generateCSSVariableString} from '@/utils/css';
-import type {ThemeOptions} from '@/types/theme';
+import type {Theme} from '@/types/theme';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
@@ -19,33 +19,33 @@ const ThemeContext = React.createContext({});
 
 export default function Theme({
   children,
-  options: optionsProp,
+  theme: themeProp,
 }: {
   children: React.ReactElement;
-  options: ThemeOptions;
+  theme: Theme;
 }) {
-  const [options, setOptions] = useState(optionsProp);
+  const [theme, setTheme] = useState(themeProp);
 
-  const updateThemeOptions = useCallback((options: ThemeOptions) => {
-    setOptions(options);
+  const updateTheme = useCallback((theme: Theme) => {
+    setTheme(theme);
   }, []);
 
   const value = useMemo(
     () => ({
-      options,
-      updateThemeOptions,
+      theme,
+      updateTheme,
     }),
-    [options, updateThemeOptions],
+    [theme, updateTheme],
   );
 
   useEffect(() => {
-    if (!options) return;
+    if (!theme) return;
 
-    if (Object.keys(options).length === 0) {
+    if (Object.keys(theme).length === 0) {
       return;
     }
 
-    const cssVariables = generateCSSVariableString(options);
+    const cssVariables = generateCSSVariableString(theme);
 
     const styleElement = document.createElement('style');
     styleElement.textContent = cssVariables;
@@ -54,7 +54,7 @@ export default function Theme({
     return () => {
       document.head.removeChild(styleElement);
     };
-  }, [options]);
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
