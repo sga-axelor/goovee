@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {Swiper, SwiperSlide} from 'swiper/react';
-import {Pagination} from 'swiper/modules';
+// import {Pagination} from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import {usePathname, useRouter} from 'next/navigation';
@@ -11,7 +11,7 @@ import {usePathname, useRouter} from 'next/navigation';
 import {Button} from '@/ui/components/button';
 
 //---- LOCAL IMPORTS ---- //
-import styles from '@/app/news/common/ui/styles/news.module.scss';
+import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 import {getImageURL} from '@/subapps/news/common/utils';
 
 export const CategorySlider = ({
@@ -52,7 +52,7 @@ export const CategorySlider = ({
             pagination={{
               clickable: true,
             }}
-            modules={[Pagination]}
+            // modules={[Pagination]}
             wrapperClass={styles.wrapper}
             breakpoints={{
               320: {

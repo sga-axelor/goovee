@@ -13,7 +13,7 @@ import {
   NewsList,
   Pagination,
 } from '@/subapps/news/common/ui/components';
-import styles from '@/app/news/common/ui/styles/news.module.scss';
+import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 import {useSearchParams} from '@/subapps/news/common/ui/hooks';
 import {
   FEATURED_NEWS,
