@@ -1,0 +1,34 @@
+{
+  "name": "AOSPortalNewsCategory",
+  "table": "portal_portal_news_category",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "color",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "type": "String"
+    },
+    {
+      "name": "image",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
+    },
+    {
+      "name": "parentCategory",
+      "type": "ManyToOne",
+      "target": "AOSPortalNewsCategory"
+    },
+    {
+      "name": "slug",
+      "type": "String"
+    }
+  ]
+}
