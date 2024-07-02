@@ -54,8 +54,33 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
         palette: {
+          snow: '#FAFBFB',
+          black: {
+            800: '#212323',
+          },
+          gray: {
+            50: '#F8F9FA',
+            100: '#E6E7E7',
+            200: '#B8B8B8',
+            300: '#5A605F',
+            400: '#212323',
+          },
+          indigo: {
+            900: '#1C1F55',
+          },
+          green: {
+            400: '#56D59C',
+            800: '#31C482',
+          },
+          teal: {
+            100: '#E9F8F4',
+          },
+          emerald: {
+            400: '#3ECF8E',
+          },
           purple: {
             DEFAULT: 'hsl(var(--palette-purple))',
+            100: '#FAF9FD',
             dark: 'hsl(var(--palette-purple-dark))',
           },
           blue: {
