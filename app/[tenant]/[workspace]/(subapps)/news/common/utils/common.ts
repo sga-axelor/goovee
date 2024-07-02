@@ -48,7 +48,7 @@ export function getImageURL(id?: string | number) {
     return `/images/no-image.png`;
   }
 
-  return `${process.env.NEXT_PUBLIC_URL}/api/image/${id}`;
+  return `${process.env.NEXT_PUBLIC_HOST}/api/image/${id}`;
 }
 
 export function getPageInfo({
