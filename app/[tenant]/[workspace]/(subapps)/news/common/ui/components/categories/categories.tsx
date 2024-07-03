@@ -11,6 +11,7 @@ import {Separator} from '@/ui/components/separator';
 // ---- LOCAL IMPORTS ---- //
 import {Category} from '@/subapps/news/common/types';
 import {buildCategoryHierarchy} from '@/subapps/news/common/utils';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export const Categories = ({categories}: {categories: Category[]}) => {
   const categoriesRef = useRef<HTMLDivElement>(null);
@@ -109,6 +110,7 @@ const Menu = ({
   setOpenSubSubMenu: (id: number | null) => void;
 }) => {
   const router = useRouter();
+  const {workspaceURI} = useWorkspace();
 
   const onHover = (id: number) => {
     setOpenSubMenu(id);
@@ -128,7 +130,7 @@ const Menu = ({
       : parentSlug
         ? `/news/${parentSlug}/${slug}`
         : `/news/${slug}`;
-    router.push(route);
+    router.push(`${workspaceURI}/${route}`);
   };
 
   return (

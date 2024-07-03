@@ -24,6 +24,7 @@ import {
   NO_NEWS_AVAILABLE,
 } from '@/subapps/news/common/constants';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export const Homepage = ({
   latestNews,
@@ -35,9 +36,10 @@ export const Homepage = ({
   categories: any;
 }) => {
   const router = useRouter();
+  const {workspaceURI} = useWorkspace();
 
   const handleClick = (slug: string) => {
-    router.push(`/news/article/${slug}`);
+    router.push(`${workspaceURI}/news/article/${slug}`);
   };
 
   return (

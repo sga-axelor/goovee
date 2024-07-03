@@ -11,12 +11,14 @@ import {ScrollArea} from '@/ui/components/scroll-area';
 // ---- LOCAL IMPORTS ---- //
 import {i18n} from '@/subapps/news/common/utils';
 import {SEARCH_HERE} from '@/subapps/news/common/constants';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export const Search = ({items}: {items: any}) => {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState([]);
 
   const route = useRouter();
+  const {workspaceURI} = useWorkspace();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value;
@@ -24,7 +26,7 @@ export const Search = ({items}: {items: any}) => {
   };
 
   const handleClick = (slug: string) => {
-    route.push(`/news/article/${slug}`);
+    route.push(`${workspaceURI}/news/article/${slug}`);
   };
 
   useEffect(() => {

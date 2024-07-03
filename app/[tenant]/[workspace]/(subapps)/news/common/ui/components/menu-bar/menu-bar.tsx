@@ -17,6 +17,7 @@ import {Avatar, AvatarImage} from '@/ui/components/avatar';
 // ---- LOCAL IMPORTS ---- //
 import {Category} from '@/subapps/news/common/types';
 import {buildCategoryHierarchy} from '@/subapps/news/common/utils';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 enum MenuState {
   Hidden,
@@ -86,6 +87,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({categories}) => {
   const [categoryStack, setCategoryStack] = useState<Category[]>([]);
 
   const router = useRouter();
+  const {workspaceURI} = useWorkspace();
 
   const categoryHierarchy = useMemo(() => {
     return buildCategoryHierarchy(categories);
@@ -128,7 +130,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({categories}) => {
 
   const handleRoute = (categoryPath: Category[]) => {
     const path = categoryPath.map(category => category.slug).join('/');
-    router.push(`/news/${path}`);
+    router.push(`${workspaceURI}/news/${path}`);
   };
 
   return (
