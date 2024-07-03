@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -11,7 +11,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/ui/components/pagination";
+} from '@/ui/components/pagination';
 
 type PaginationProps = {
   page?: string | number;
@@ -39,12 +39,12 @@ export const Pagination = ({
             <PaginationPrevious
               onClick={onPrev}
               className={`${
-                disablePrev ? "text-gray-400  pointer-events-none" : ""
+                disablePrev ? 'text-gray-400  pointer-events-none' : ''
               } `}
               // disabled={disablePrev}
             />
           </PaginationItem>
-          {Array.from({ length: Number(pages) }).map((_, i) => {
+          {Array.from({length: Number(pages)}).map((_, i) => {
             const current = i + 1;
 
             return (
@@ -54,11 +54,10 @@ export const Pagination = ({
                   href="#"
                   className={
                     current === page
-                      ? "bg-palette-emerald text-white rounded-full"
-                      : "hover:rounded-full font-normal text-sm"
+                      ? 'bg-palette-emerald-400 text-white rounded-full border-none'
+                      : 'hover:rounded-full font-normal text-sm'
                   }
-                  onClick={() => onPage?.(current)}
-                >
+                  onClick={() => onPage?.(current)}>
                   {current}
                 </PaginationLink>
               </PaginationItem>
@@ -74,7 +73,7 @@ export const Pagination = ({
             <PaginationNext
               onClick={onNext}
               className={`${
-                disableNext ? "text-gray-400  pointer-events-none" : ""
+                disableNext ? 'text-gray-400  pointer-events-none' : ''
               } `}
               // disabled={disableNext}
             />
