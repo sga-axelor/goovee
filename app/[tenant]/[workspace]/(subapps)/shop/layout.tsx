@@ -8,6 +8,10 @@ import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 
+// ---- LOCAL IMPORTS ---- //
+import MobileMenuCategory from './mobile-menu-category';
+import {findCategories} from './common/orm/categories';
+
 export default async function Layout({
   params,
   children,
@@ -42,5 +46,13 @@ export default async function Layout({
     }
   }
 
-  return <>{children}</>;
+  const categories = await findCategories({workspace}).then(clone);
+  const parentcategories = categories?.filter((c: any) => !c.parent);
+
+  return (
+    <>
+      {children}
+      <MobileMenuCategory categories={parentcategories} />
+    </>
+  );
 }
