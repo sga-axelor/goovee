@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {Swiper, SwiperSlide} from 'swiper/react';
-// import {Pagination} from 'swiper/modules';
+import {Pagination} from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import {usePathname, useRouter} from 'next/navigation';
@@ -52,7 +52,7 @@ export const CategorySlider = ({
             pagination={{
               clickable: true,
             }}
-            // modules={[Pagination]}
+            modules={[Pagination]}
             wrapperClass={styles.wrapper}
             breakpoints={{
               320: {
@@ -86,6 +86,7 @@ export const CategorySlider = ({
                 slug: string;
               }) => (
                 <SwiperSlide
+                  key={id}
                   style={{
                     width: '154px',
                     marginRight: 20,
