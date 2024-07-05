@@ -14,3 +14,4 @@ export {Pagination} from './pagination';
 export {NavView} from './nav-view';
 export {StyledTable} from './table/table';
 export {Loader} from './loader';
+export {Portal} from './portal';
