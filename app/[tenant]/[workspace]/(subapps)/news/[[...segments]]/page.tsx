@@ -18,7 +18,6 @@ import {
   Article,
   Categories,
   Homepage,
-  // MenuBar,
 } from '@/subapps/news/common/ui/components';
 import {DEFAULT_LIMIT, ORDER_BY} from '@/subapps/news/common/constants';
 
@@ -83,7 +82,6 @@ export default async function Page({
           featuredNews={homePageFeaturedNews}
           categories={parentCategories}
         />
-        {/* <MenuBar categories={allCategories} /> */}
       </div>
     );
   }
@@ -94,7 +92,6 @@ export default async function Page({
         <Categories categories={allCategories} />
       </div>
       <CategoryPage segments={segments} page={page} limit={limit} />
-      {/* <MenuBar categories={allCategories} /> */}
     </div>
   );
 }
