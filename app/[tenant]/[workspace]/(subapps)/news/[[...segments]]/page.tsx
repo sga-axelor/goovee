@@ -2,6 +2,10 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/subapps/news/common/utils';
+import {getSession} from '@/orm/auth';
+import {findWorkspace} from '@/orm/workspace';
+import {workspacePathname} from '@/utils/workspace';
+import {findSubapp} from '@/orm/subapps';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/news/[[...segments]]/content';
@@ -29,6 +33,25 @@ export default async function Page({
   params: any;
   searchParams: {[key: string]: string | undefined};
 }) {
+  const session = await getSession();
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  }).then(clone);
+
+  if (!workspace) return notFound();
+
+  const app = await findSubapp('news', {
+    workspace,
+    user: session?.user,
+  });
+
+  if (!app?.installed) {
+    return notFound();
+  }
+
   const {segments} = params;
   const homepage = !segments;
 
