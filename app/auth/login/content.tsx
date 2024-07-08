@@ -17,6 +17,9 @@ import {
   StyledAlert,
 } from '@/ui/components';
 
+// ---- LOCAL IMPORTS ---- //
+import {revalidate} from './actions';
+
 export default function Content({canRegister}: {canRegister?: boolean}) {
   const [values, setValues] = useState({email: '', password: ''});
   const [showPassword, setShowPassword] = useState(false);
@@ -52,6 +55,9 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
     });
 
     if (login?.ok) {
+      if (callbackurl) {
+        await revalidate(callbackurl);
+      }
       router.replace(redirection);
     } else {
       setError(true);
