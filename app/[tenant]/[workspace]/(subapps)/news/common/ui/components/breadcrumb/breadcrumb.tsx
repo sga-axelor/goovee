@@ -29,27 +29,27 @@ export const Breadcrumb = ({items, title}: {items: any; title: string}) => {
           <BreadcrumbItem>
             <BreadcrumbLink
               href={`/news`}
-              className="text-xs font-normal text-palette-gray-400 opacity-50">
+              className="text-xs font-normal text-stone-400">
               {i18n.get(NEWS)}
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
+          <BreadcrumbSeparator className="text-black" />
           {items?.map((item: any, i: number) => {
             return (
               <>
                 <BreadcrumbItem>
                   <BreadcrumbLink
                     href={`/news/${generateRoute(i)}`}
-                    className="text-xs font-normal text-palette-gray-400 opacity-50">
+                    className="text-xs font-normal text-stone-400">
                     {item.title}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
+                <BreadcrumbSeparator className="text-black" />
               </>
             );
           })}
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-xs font-normal text-palette-gray-400">
+            <BreadcrumbPage className="text-xs font-normal text-black">
               {title}
             </BreadcrumbPage>
           </BreadcrumbItem>

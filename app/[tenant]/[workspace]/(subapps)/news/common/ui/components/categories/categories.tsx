@@ -42,7 +42,7 @@ export const Categories = ({categories}: {categories: Category[]}) => {
   return (
     <div
       ref={categoriesRef}
-      className="hidden md:flex justify-center gap-5 px-6 py-4 relative overflow-x-auto">
+      className="hidden md:flex justify-center gap-5 px-6 py-4 relative overflow-x-auto bg-white">
       <Menu
         items={categoryHierarchy}
         openSubMenu={openSubMenu}
@@ -147,10 +147,7 @@ const Menu = ({
             handleRoute={handleRoute}
           />
           {i !== items.length - 1 && (
-            <Separator
-              className="bg-palette-gray-400 w-[2px]"
-              orientation="vertical"
-            />
+            <Separator className="bg-black w-[2px]" orientation="vertical" />
           )}
         </React.Fragment>
       ))}
@@ -180,7 +177,7 @@ const SubMenu = ({
 
   return ReactDOM.createPortal(
     <div
-      className="min-w-[295px] absolute z-10 bg-palette-snow flex flex-col gap-12 py-6 px-4"
+      className="min-w-[295px] absolute z-10 bg-white flex flex-col gap-12 py-6 px-4"
       style={{top: `${parentRect.bottom}px`, left: `${parentRect.left}px`}}>
       {item.childCategory.map(child => {
         const categoryLength = child.childCategory.length;
@@ -232,7 +229,7 @@ const SubSubMenu = ({
 }) => {
   return (
     <div
-      className="min-w-[200px] outline-1 outline-slate-800 bg-white absolute left-full top-0 z-10 flex flex-col gap-12 py-6 px-4 border border-palette-gray-50"
+      className="min-w-[200px] outline-1 outline-slate-800 bg-white absolute left-full top-0 z-10 flex flex-col gap-12 py-6 px-4 border border-slate-50"
       onMouseEnter={() => setOpenSubSubMenu(item.id)}
       onMouseLeave={() => setOpenSubSubMenu(null)}>
       {item.childCategory.map(subChild => (

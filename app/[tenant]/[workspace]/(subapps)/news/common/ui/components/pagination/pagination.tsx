@@ -54,7 +54,7 @@ export const Pagination = ({
                   href="#"
                   className={
                     current === page
-                      ? 'bg-palette-emerald-400 text-white rounded-full border-none'
+                      ? 'bg-success text-white rounded-full border-none'
                       : 'hover:rounded-full font-normal text-sm'
                   }
                   onClick={() => onPage?.(current)}>

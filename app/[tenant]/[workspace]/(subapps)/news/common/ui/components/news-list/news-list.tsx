@@ -46,7 +46,7 @@ export const NewsList = ({
           </div>
         </div>
 
-        <div className="font-medium text-[10px] text-palette-gray-300">
+        <div className="font-medium text-[10px] text-zinc-500">
           {getPublishedLabel(publicationDateTime)}
         </div>
       </div>

@@ -60,7 +60,7 @@ export const Comments = ({
     <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
       <div>
         <div className="text-xl font-semibold pb-2">{i18n.get(COMMENTS)}</div>
-        <Separator className="bg-palette-gray-100" />
+        <Separator className="bg-zinc-300" />
       </div>
       {comments?.map((comment: any) => (
         <div className="p-4 flex gap-4" key={comment.id}>
@@ -88,7 +88,7 @@ export const Comments = ({
           onChange={handleChange}
         />
         <Button
-          className="w-40 absolute right-4 top-2 bg-palette-green-400 rounded-lg px-3 py-2 text-base font-medium"
+          className="w-40 absolute right-4 top-2 bg-success hover:bg-success-dark rounded-lg px-3 py-2 text-base font-medium"
           onClick={handleSubmit}>
           {i18n.get(SEND)}
         </Button>

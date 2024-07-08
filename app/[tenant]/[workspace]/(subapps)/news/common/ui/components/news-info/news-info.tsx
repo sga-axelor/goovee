@@ -34,7 +34,7 @@ export const NewsInfo = ({
   };
 }) => {
   return (
-    <div className="bg-white rounded-lg p-4 font-normal text-sm text-palette-gray-300 flex flex-col gap-4">
+    <div className="bg-white rounded-lg p-4 font-normal text-sm text-zinc-500 flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <div className="flex gap-2">
           {categorySet?.map(({id, name}) => (
@@ -61,7 +61,7 @@ export const NewsInfo = ({
             </Avatar>
             <div className="flex flex-col gap-2 w-full ">
               <div className=" w-full">
-                <div className="text-sm font-semibold text-palette-black-800 leading-[21px]">
+                <div className="text-sm font-semibold text-black leading-[21px]">
                   {author?.simpleFullName}
                 </div>
                 <div className="text-xs font-normal text-palette-mediumGray leading-[18px]">
@@ -70,7 +70,7 @@ export const NewsInfo = ({
               </div>
             </div>
           </div>
-          <Separator className="bg-palette-gray-100" />
+          <Separator className="bg-zinc-300" />
         </div>
         <div dangerouslySetInnerHTML={{__html: content}} />
       </div>

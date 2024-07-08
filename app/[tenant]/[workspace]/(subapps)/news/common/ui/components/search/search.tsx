@@ -53,7 +53,7 @@ export const Search = ({items}: {items: any}) => {
         />
       </div>
       {search.length > 0 && results.length > 0 && (
-        <div className="w-full bg-white text-black border rounded-lg border-palette-gray-100 absolute z-50">
+        <div className="w-full bg-white text-black border rounded-lg border-zinc-300 absolute z-50">
           <ScrollArea className="max-h-[395px] w-full rounded-lg border p-4 overflow-y-auto">
             <div className="flex flex-col gap-4">
               {results.map(
@@ -74,7 +74,7 @@ export const Search = ({items}: {items: any}) => {
                         ))}
                       </div>
                     </div>
-                    <div className="line-clamp-1 font-normal text-xs text-palette-gray-400">
+                    <div className="line-clamp-1 font-normal text-xs text-black">
                       {description}
                     </div>
                   </div>

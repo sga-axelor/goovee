@@ -15,7 +15,7 @@ import {i18n} from '@/subapps/news/common/utils';
 export const SocialMedia = () => {
   return (
     <div className="bg-white rounded-lg p-4 flex flex-col gap-4">
-      <div className="text-xl font-semibold text-palette-gray-400">
+      <div className="text-xl font-semibold text-black">
         {i18n.get(SHARE_ON_SOCIAL_MEDIA)}
       </div>
       <div className="flex gap-6">

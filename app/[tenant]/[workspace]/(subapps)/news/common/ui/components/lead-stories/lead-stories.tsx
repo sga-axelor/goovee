@@ -117,7 +117,7 @@ export const LeadStories = ({
                     <div className="font-medium text-xs line-clamp-3">
                       {description}
                     </div>
-                    <div className="flex-1 content-end font-medium text-[10px] mt-1 text-palette-gray-300">
+                    <div className="flex-1 content-end font-medium text-[10px] mt-1 text-zinc-500">
                       {getPublishedLabel(publicationDateTime)}
                     </div>
                   </div>

@@ -69,17 +69,17 @@ export const FeedList = ({
                           {title}
                         </div>
                       </div>
-                      <div className="font-medium text-[10px] text-palette-gray-300">
+                      <div className="font-medium text-[10px] text-zinc-500">
                         {getPublishedLabel(publicationDateTime)}
                       </div>
                     </div>
                   </div>
-                  <div className="bg-palette-teal-100 rounded-lg w-8 h-8 flex items-center justify-center">
-                    <MdChevronRight className="text-palette-green-400 text-2xl" />
+                  <div className="bg-success/10 rounded-lg w-8 h-8 flex items-center justify-center">
+                    <MdChevronRight className="text-success text-2xl" />
                   </div>
                 </div>
                 {index < items.length - 1 && (
-                  <Separator className="bg-palette-gray-100" />
+                  <Separator className="bg-zinc-300" />
                 )}
               </React.Fragment>
             );

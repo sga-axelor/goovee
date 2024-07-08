@@ -17,7 +17,7 @@ export const Banner = ({
 }) => {
   return (
     <div
-      className={`text-white p-4 lg:p-0 flex flex-col justify-center items-center bg-palette-indigo-900 bg-[length:100%_100%] min-h-[353px]`}
+      className={`text-white p-4 lg:p-0 flex flex-col justify-center items-center bg-secondary bg-[length:100%_100%] min-h-[353px]`}
       style={{backgroundImage: `url(${backgroundImage.src})`}}>
       <div className="w-full lg:w-1/2 relative">
         <div className="flex flex-col justify-center items-center gap-2 mb-8">
