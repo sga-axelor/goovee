@@ -39,6 +39,7 @@ export interface PortalAppConfig extends Model {
   payInAdvance: boolean;
   priceAfterLogin: string;
   requestQuotation: boolean;
+  publicEshop: boolean;
 }
 
 export interface PortalPartnerWorkspace extends Model {
