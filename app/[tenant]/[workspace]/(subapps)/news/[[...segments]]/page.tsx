@@ -1,7 +1,7 @@
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ----//
-import {clone} from '@/subapps/news/common/utils';
+import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';

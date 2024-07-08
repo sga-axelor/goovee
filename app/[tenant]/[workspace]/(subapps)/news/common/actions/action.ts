@@ -1,7 +1,7 @@
 'use server';
 
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/subapps/news/common/utils';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {addComment} from '@/subapps/news/common/orm/news';
