@@ -1,3 +1,5 @@
+import TerserPlugin from 'terser-webpack-plugin';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
@@ -20,10 +22,20 @@ const nextConfig = {
     svgrules.exclude = /\.svg$/i;
 
     /**
-     * Disable minimize (ORM relation doesn't exists issue)
+     * Disable minimize (ORM issue)
      */
 
-    config.optimization.minimize = false;
+    config.optimization = {
+      ...config.optimization,
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            keep_classnames: true,
+          },
+        }),
+      ],
+    };
 
     return config;
   },
