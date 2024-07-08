@@ -1,9 +1,11 @@
 'use client';
 import React, {useMemo} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
-import {Container, NavView, Toast} from '@ui/components/index';
+import {Container, NavView, StyledAlert} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   UNPAID_INVOICE_COLUMNS,
@@ -36,7 +38,11 @@ export default function Content({invoices = []}: ContentProps) {
   return (
     <>
       <Container title={i18n.get('Invoices')}>
-        <Toast show={hasUpcomingInvoices} variant="purple" heading={HEADING} />
+        <StyledAlert
+          show={hasUpcomingInvoices}
+          variant="purple"
+          heading={HEADING}
+        />
         <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
           <div className="hidden md:block">
             <UnpaidTable

@@ -4,8 +4,8 @@ import React, {useState} from 'react';
 import {Button} from '@ui/components/button';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {Toast} from '@ui/components/index';
-import {TextField} from '@ui/components/TextField';
+import {StyledAlert, TextField} from '@ui/components/index';
+
 export default function Content() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -58,7 +58,7 @@ export default function Content() {
             {i18n.get('Submit')}
           </Button>
         </div>
-        <Toast
+        <StyledAlert
           variant="error"
           show={true}
           heading={i18n.get('Your passwords do not match, please try again.')}
@@ -66,7 +66,7 @@ export default function Content() {
             'The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.',
           )}
         />
-        <Toast
+        <StyledAlert
           variant="success"
           show={true}
           heading={i18n.get('Your password has been successfully updated.')}

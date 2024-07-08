@@ -24,7 +24,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {cn} from '@/utils/css';
-import {useToast} from '@/ui/components/use-toast';
+import {useToast} from '@/ui/hooks/use-toast';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 import {create} from './action';

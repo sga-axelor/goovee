@@ -5,7 +5,7 @@ import {useSession} from 'next-auth/react';
 import {usePathname, useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {MdApps, MdNotificationsNone} from 'react-icons/md';
-import {Sheet, SheetContent} from '@/ui/components/sheet';
+import {Sheet, SheetContent} from '@/ui/components/sheet/sheet';
 import {
   Select,
   SelectContent,

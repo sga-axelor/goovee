@@ -5,15 +5,18 @@ import Link from 'next/link';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {signIn} from 'next-auth/react';
 import {FaGoogle} from 'react-icons/fa';
-import {Checkbox} from '@ui/components/checkbox';
-import {Label} from '@ui/components/label';
-import {Button} from '@ui/components/button';
-import {Separator} from '@ui/components/separator';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {TextField} from '@ui/components/TextField';
+import {
+  TextField,
+  Checkbox,
+  Label,
+  Button,
+  Separator,
+  StyledAlert,
+} from '@/ui/components';
 
-import {Toast} from '@ui/components/index';
 export default function Content({canRegister}: {canRegister?: boolean}) {
   const [values, setValues] = useState({email: '', password: ''});
   const [showPassword, setShowPassword] = useState(false);
@@ -98,7 +101,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           />
         </div>
         {error && (
-          <Toast
+          <StyledAlert
             variant="error"
             show={true}
             heading={i18n.get('The email or the password is wrong.')}

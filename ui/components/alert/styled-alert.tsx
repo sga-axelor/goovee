@@ -1,25 +1,25 @@
 'use client';
 
 import React, {useState, useEffect} from 'react';
-import {Alert, AlertTitle, AlertDescription} from '@ui/components/alert';
 import {MdClose} from 'react-icons/md';
 import Icons from '@/utils/Icons';
+import {Alert, AlertTitle, AlertDescription} from './alert';
 
 type Variant = 'success' | 'error' | 'warning' | 'purple';
 
-type ToastProps = {
+type StyledAlertProps = {
   show: boolean;
   variant: Variant;
   heading: string;
   description?: string;
 };
 
-export const Toast = ({
+export const StyledAlert = ({
   show,
   heading,
   description = '',
   variant = 'error',
-}: ToastProps) => {
+}: StyledAlertProps) => {
   const [visible, setVisible] = useState<boolean>(show);
 
   useEffect(() => {
@@ -82,4 +82,4 @@ export const Toast = ({
   );
 };
 
-export default Toast;
+export default StyledAlert;

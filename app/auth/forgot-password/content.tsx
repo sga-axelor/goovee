@@ -3,12 +3,14 @@
 import React from 'react';
 import Link from 'next/link';
 import {useSearchParams} from 'next/navigation';
-import {Button} from '@ui/components/button';
-import {Label} from '@ui/components/label';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {Toast} from '@ui/components/index';
+import {StyledAlert} from '@ui/components/index';
+import {Button} from '@ui/components/button';
+import {Label} from '@ui/components/label';
 import {TextField} from '@ui/components/TextField';
+
 export default function Content() {
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
@@ -46,7 +48,7 @@ export default function Content() {
             {i18n.get('Log In')}
           </Link>
         </div>
-        <Toast
+        <StyledAlert
           variant="error"
           show={true}
           heading={i18n.get('Your email has not been recognised.')}
@@ -54,7 +56,7 @@ export default function Content() {
             'The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.',
           )}
         />
-        <Toast
+        <StyledAlert
           variant="success"
           show={true}
           heading={i18n.get(

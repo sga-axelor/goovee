@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/ui/components/select';
 import {Textarea} from '@/ui/components/textarea';
-import {useToast} from '@/ui/components/use-toast';
+import {useToast} from '@/ui/hooks/use-toast';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';

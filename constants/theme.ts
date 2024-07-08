@@ -1,6 +1,6 @@
-import type {ThemeOptions} from '@/types/theme';
+import type {Theme} from '@/types/theme';
 
-export const DEFAULT_THEME_OPTIONS: ThemeOptions = {
+export const DEFAULT_THEME_OPTIONS: Theme = {
   colors: {
     background: '0 0% 100%',
     foreground: '222.2 84% 4.9%',
