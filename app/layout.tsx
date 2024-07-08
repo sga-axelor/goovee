@@ -3,6 +3,7 @@ import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {findTheme} from '@/orm/theme';
+import {Toaster} from '@/ui/components/toaster';
 
 // ---- LOCAL IMPORTS ---- //
 import Theme from './theme';
@@ -39,6 +40,7 @@ export default async function RootLayout({
           <AuthContext>
             <Locale>{children}</Locale>
           </AuthContext>
+          <Toaster />
         </body>
       </html>
     </Theme>

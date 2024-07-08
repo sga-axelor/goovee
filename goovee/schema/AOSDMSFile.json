@@ -1,0 +1,45 @@
+{
+  "name": "AOSDMSFile",
+  "table": "dms_file",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "fileName"
+    },
+    {
+      "type": "String",
+      "name": "content"
+    },
+    {
+      "type": "String",
+      "name": "contentType"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "parent",
+      "target": "AOSDMSFile"
+    },
+    {
+      "type": "Boolean",
+      "name": "isDirectory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "metaFile",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "createdBy",
+      "target": "AOSUser"
+    },
+    {
+      "type": "OneToMany",
+      "name": "children",
+      "target": "AOSDMSFile",
+      "mappedBy": "parent"
+    }
+  ]
+}

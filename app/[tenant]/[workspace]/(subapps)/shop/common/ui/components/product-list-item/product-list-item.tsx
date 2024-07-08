@@ -6,7 +6,7 @@ import {Button} from '@ui/components/button';
 import {BackgroundImage} from '@ui/components/index';
 import {getImageURL} from '@/utils/product';
 import {useResponsive} from '@/ui/hooks';
-import {cn} from '@/lib/utils';
+import {cn} from '@/utils/css';
 import {i18n} from '@/lib/i18n';
 import type {ComputedProduct, Product} from '@/types';
 

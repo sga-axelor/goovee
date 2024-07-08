@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Badge} from '@ui/components/badge';
-import {cn} from '@/lib/utils';
+import {cn} from '@/utils/css';
 
 type Variant =
   | 'success'

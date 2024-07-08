@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {MdApps} from 'react-icons/md';
 import {useSession} from 'next-auth/react';
-import {cn} from '@/lib/utils';
+import {cn} from '@/utils/css';
 import Icons from '@/utils/Icons';
 import {
   Select,

@@ -85,7 +85,7 @@
     @apply border-border;
   }
   body {
-    @apply text-foreground;
+    @apply text-foreground min-h-screen;
     background: linear-gradient(
       121deg,
       rgba(248, 249, 250, 0.4) 2.84%,

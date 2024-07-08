@@ -7,6 +7,27 @@
     {
       "type": "String",
       "name": "fileName"
+    },
+    {
+      "type": "String",
+      "name": "filePath"
+    },
+    {
+      "type": "String",
+      "name": "fileSize"
+    },
+    {
+      "type": "String",
+      "name": "fileType"
+    },
+    {
+      "type": "String",
+      "name": "description"
+    },
+    {
+      "type": "String",
+      "name": "sizeText",
+      "column": "file_size_text"
     }
   ]
 }

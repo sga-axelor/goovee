@@ -1,6 +1,6 @@
 'use client';
 
-import {cn} from '@/lib/utils';
+import {cn} from '@/utils/css';
 import React, {useState} from 'react';
 
 const filters = [

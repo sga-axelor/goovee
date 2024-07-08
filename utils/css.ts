@@ -1,6 +1,12 @@
-import {ThemeOptions} from '@/types/theme';
+import {twMerge} from 'tailwind-merge';
+import {Theme} from '@/types/theme';
+import {type ClassValue, clsx} from 'clsx';
 
-export function generateCSSVariableString(options: ThemeOptions) {
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function generateCSSVariableString(options: Theme) {
   return `
     :root {
       --background: ${options?.colors?.background};
