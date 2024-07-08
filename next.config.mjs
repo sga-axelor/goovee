@@ -2,14 +2,6 @@
 const nextConfig = {
   reactStrictMode: false,
   webpack: (config, context) => {
-    config.module.rules
-      .find(rule => typeof rule.oneOf === 'object')
-      ?.oneOf?.filter(x => x.use)
-      .flatMap(x => [x.use].flat())
-      .filter(x => x.loader && x.loader.includes('css-loader'))
-      .filter(x => x.options?.modules?.mode === 'pure')
-      .forEach(x => (x.options.modules.mode = 'local'));
-
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find(rule =>
       rule.test?.test?.('.svg'),
