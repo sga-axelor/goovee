@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import {Tabs} from '../tabs/index';
-import {TabsContent} from '@ui/components/tabs';
+import {TabsContent, StyledTabs} from '@/ui/components/tabs';
 
 interface TabItem {
   id: string;
@@ -24,9 +23,9 @@ export const NavView = ({
 }: NavViewProps) => {
   return (
     <div>
-      <Tabs items={items} activeTab={activeTab} onTabChange={onTabChange}>
+      <StyledTabs items={items} activeTab={activeTab} onTabChange={onTabChange}>
         <TabsContent value={activeTab}>{children}</TabsContent>
-      </Tabs>
+      </StyledTabs>
     </div>
   );
 };

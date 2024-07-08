@@ -4,12 +4,11 @@ import {useState, useEffect} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import type {Address, Country} from '@/types';
-import {TextField} from '@ui/components/TextField';
-import {Button} from '@ui/components/button';
-import {Label} from '@ui/components/label';
-import {Checkbox} from '@ui/components/checkbox';
 import {
+  TextField,
+  Button,
+  Label,
+  Checkbox,
   Select,
   SelectContent,
   SelectGroup,
@@ -17,8 +16,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@ui/components/select';
-import {Separator} from '@ui/components/separator';
+  Separator,
+} from '@/ui/components';
+import type {Address, Country} from '@/types';
 
 export type AddressFormProps = {
   values?: Partial<Address> & {multipletype?: boolean};

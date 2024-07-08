@@ -6,10 +6,7 @@ import {useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {StyledAlert} from '@ui/components/index';
-import {Button} from '@ui/components/button';
-import {Label} from '@ui/components/label';
-import {TextField} from '@ui/components/TextField';
+import {TextField, Button, Label, StyledAlert} from '@/ui/components';
 
 export default function Content() {
   const searchParams = useSearchParams();

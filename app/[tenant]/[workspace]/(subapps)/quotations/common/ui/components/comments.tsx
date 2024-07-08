@@ -1,21 +1,23 @@
 'use client';
 import React, {useState} from 'react';
+import Image from 'next/image';
 import moment from 'moment';
-import {Separator} from '@ui/components/separator';
-import {Button} from '@ui/components/button';
 import {MdEast} from 'react-icons/md';
+
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
 import {i18n} from '@/lib/i18n';
-import {TextField} from '@ui/components/TextField';
+import {TextField, Separator, Button} from '@/ui/components';
+
 // ---- LOCAL IMPORTS ---- //
 import type {CommentsProps} from '@/subapps/quotations/common/types/quotations';
 import {updateDocument} from '@/subapps/quotations/common/utils/quotations';
 import styles from './styles.module.scss';
-import Image from 'next/image';
+
 type Props = {
   comments: CommentsProps[];
 };
+
 export const Comments = ({comments}: Props) => {
   const [comment, setComment] = useState('');
   return (

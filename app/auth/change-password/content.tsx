@@ -1,10 +1,10 @@
 'use client';
 
 import React, {useState} from 'react';
-import {Button} from '@ui/components/button';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {StyledAlert, TextField} from '@ui/components/index';
+import {StyledAlert, TextField, Button} from '@/ui/components';
 
 export default function Content() {
   const [showPassword, setShowPassword] = useState(false);

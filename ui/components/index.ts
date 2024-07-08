@@ -6,9 +6,8 @@ export {Account} from './account';
 export {ThumbsCarousel} from './thumbs-carousel';
 export {Container} from './container';
 export {Breadcrumbs} from './breadcrumbs';
-export {Toast} from './toast';
 export {TabContent} from './tab-content';
-export {Tabs} from './tabs';
+export {StyledTabs, Tabs, TabsContent, TabsList, TabsTrigger} from './tabs';
 export {Tag} from './tag';
 export {Pagination} from './pagination';
 export {NavView} from './nav-view';
@@ -159,4 +158,16 @@ export {
 } from './table';
 export {Textarea} from './textarea';
 export {Toaster} from './toaster';
-export {TextField} from './TextField';
+export {TextField} from './text-field';
+export {DatePicker} from './date-picker';
+export {
+  Toast,
+  ToastAction,
+  ToastClose,
+  ToastDescription,
+  type ToastActionElement,
+  type ToastProps,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from './toast';

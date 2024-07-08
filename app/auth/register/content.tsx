@@ -4,15 +4,20 @@ import React, {useState} from 'react';
 import Link from 'next/link';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {FaGoogle} from 'react-icons/fa';
-import {Button} from '@ui/components/button';
-import {Separator} from '@ui/components/separator';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {TextField} from '@ui/components/TextField';
-import {Toast} from '@ui/components/index';
+import {
+  Button,
+  Separator,
+  TextField,
+  StyledAlert,
+  DatePicker,
+} from '@/ui/components';
+
 // ---- LOCAL IMPORTS ---- //
 import {register} from './actions';
-import DatePicker from '@ui/components/calender/calender';
+
 interface UserValues {
   firstName: string;
   name: string;
@@ -182,7 +187,7 @@ export default function Content() {
             {i18n.get('Log In')}
           </Link>
         </div>
-        {error && <Toast variant="error" show={true} heading={error} />}
+        {error && <StyledAlert variant="error" show={true} heading={error} />}
       </form>
       <div className="flex items-center gap-4 mt-4">
         <div className="grow">

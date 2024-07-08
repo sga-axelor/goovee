@@ -8,13 +8,14 @@ import {LuChevronRight} from 'react-icons/lu';
 import {IoIosArrowRoundForward} from 'react-icons/io';
 import {MdGridView} from 'react-icons/md';
 import {MdOutlineList} from 'react-icons/md';
-import {TextField} from '@ui/components/TextField';
+
 // ---- CORE IMPORTS ---- //
-import {Pagination} from '@ui/components/index';
+import {Pagination,TextField} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   MobileSortBy,

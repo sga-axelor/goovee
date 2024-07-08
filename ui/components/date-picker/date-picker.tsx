@@ -1,16 +1,23 @@
-import {Button} from '@ui/components/button';
-import {Calendar} from '@ui/components/calendar';
-import {Popover, PopoverContent, PopoverTrigger} from '@ui/components/popover';
-import {cn} from '@/utils/css';
-import {CalendarIcon} from 'lucide-react';
 import React from 'react';
 import {format} from 'date-fns';
 import {DayPickerSingleProps} from 'react-day-picker';
+import {CalendarIcon} from 'lucide-react';
+
+import {cn} from '@/utils/css';
+import {
+  Button,
+  Calendar,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/ui/components';
+
 interface DatePickerProps {
   value: any;
   onChange: DayPickerSingleProps['onSelect'] | any;
 }
-const DatePicker = ({value, onChange}: DatePickerProps) => {
+
+export const DatePicker = ({value, onChange}: DatePickerProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
