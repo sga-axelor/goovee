@@ -6,9 +6,10 @@ import React from 'react';
 import {Badge} from '@/ui/components/badge';
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import {getImageURL, i18n, parseDate} from '@/subapps/news/common/utils';
+import {getImageURL, parseDate} from '@/subapps/news/common/utils';
 import {PUBLISHED_ON} from '@/subapps/news/common/constants';
 
 export const NewsInfo = ({

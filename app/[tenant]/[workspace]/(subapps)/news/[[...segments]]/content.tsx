@@ -4,6 +4,9 @@ import React from 'react';
 import {MdOutlineNotificationAdd} from 'react-icons/md';
 import {usePathname, useRouter} from 'next/navigation';
 
+// ---- CORE IMPORTS ---- //
+import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   CategorySlider,
@@ -21,7 +24,6 @@ import {
   SUBSCRIBE,
   URL_PARAMS,
 } from '@/subapps/news/common/constants';
-import {i18n} from '@/subapps/news/common/utils';
 
 const Content = ({
   category,

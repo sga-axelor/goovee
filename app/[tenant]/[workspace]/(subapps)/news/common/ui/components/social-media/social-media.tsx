@@ -4,13 +4,13 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   SHARE_ON_SOCIAL_MEDIA,
   SOCIAL_ICONS,
 } from '@/subapps/news/common/constants';
-import {i18n} from '@/subapps/news/common/utils';
 
 export const SocialMedia = () => {
   return (

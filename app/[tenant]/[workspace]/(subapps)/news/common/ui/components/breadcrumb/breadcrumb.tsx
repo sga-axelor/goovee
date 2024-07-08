@@ -9,10 +9,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/ui/components/breadcrumb';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {NEWS} from '@/subapps/news/common/constants';
-import {i18n} from '@/subapps/news/common/utils';
 
 export const Breadcrumb = ({items, title}: {items: any; title: string}) => {
   const generateRoute = (index: number) => {

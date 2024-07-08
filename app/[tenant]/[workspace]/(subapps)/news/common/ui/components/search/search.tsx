@@ -7,9 +7,9 @@ import {useRouter} from 'next/navigation';
 import {Input} from '@/ui/components/input';
 import {Badge} from '@/ui/components/badge';
 import {ScrollArea} from '@/ui/components/scroll-area';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import {i18n} from '@/subapps/news/common/utils';
 import {SEARCH_HERE} from '@/subapps/news/common/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 

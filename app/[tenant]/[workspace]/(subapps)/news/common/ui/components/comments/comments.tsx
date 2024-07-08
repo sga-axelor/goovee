@@ -9,6 +9,7 @@ import {Button} from '@/ui/components/button';
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
 import {Input} from '@/ui/components/input';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {createComment} from '@/subapps/news/common/actions/action';
@@ -18,7 +19,7 @@ import {
   SEND,
   WRITE_YOUR_COMMENT,
 } from '@/subapps/news/common/constants';
-import {getImageURL, parseDate, i18n} from '@/subapps/news/common/utils';
+import {getImageURL, parseDate} from '@/subapps/news/common/utils';
 
 export const Comments = ({
   newsId,

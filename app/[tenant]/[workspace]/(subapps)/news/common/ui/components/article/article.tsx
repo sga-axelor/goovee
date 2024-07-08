@@ -4,7 +4,7 @@ import React from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/subapps/news/common/utils';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
