@@ -96,11 +96,11 @@ export function buildCategoryHierarchy(categories: any): Category[] {
   const categoryMap: {[id: number]: Category} = {};
   const rootCategories: Category[] = [];
 
-  categories.forEach((category: Category) => {
+  categories?.forEach((category: Category) => {
     categoryMap[category.id] = {...category, childCategory: []};
   });
 
-  categories.forEach((category: Category) => {
+  categories?.forEach((category: Category) => {
     if (category.parentCategory && category.parentCategory.id !== undefined) {
       const parent = categoryMap[category.parentCategory.id];
       if (parent) {
@@ -112,4 +112,34 @@ export function buildCategoryHierarchy(categories: any): Category[] {
   });
 
   return rootCategories;
+}
+
+export function transformCategories(categories: any[]): any[] {
+  const groupedCategories: any[] = [];
+
+  const categoryMap = new Map<string, any>();
+
+  categories.forEach((category: any) => {
+    category.items = [];
+    category.url = category.slug;
+    categoryMap.set(category.id, category);
+  });
+
+  categoryMap.forEach(category => {
+    const parentCategory = category.parentCategory;
+    if (parentCategory) {
+      const parent = categoryMap.get(parentCategory.id);
+      if (parent) {
+        category.url = `${parent.url}/${category.slug}`;
+        if (!parent.items) {
+          parent.items = [];
+        }
+        parent.items.push(category);
+      }
+    } else {
+      groupedCategories.push(category);
+    }
+  });
+
+  return groupedCategories;
 }
