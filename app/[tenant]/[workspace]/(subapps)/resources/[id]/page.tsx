@@ -31,6 +31,7 @@ export default async function Page({params}: {params: {id: string}}) {
   let Viewer = viewer[file?.metaFile?.fileType || file?.contentType];
 
   if (!Viewer) {
+    // eslint-disable-next-line react/display-name
     Viewer = () => <p>No viewer available for this file type.</p>;
   }
 

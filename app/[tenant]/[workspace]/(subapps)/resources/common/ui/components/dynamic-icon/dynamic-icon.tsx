@@ -17,8 +17,6 @@ export function DynamicIcon({
 }) {
   const [library, name] = icon?.split('-');
 
-  if (!(library && name)) return null;
-
   const IconComponent: React.JSXElementConstructor<any> = useMemo(() => {
     switch (library) {
       case 'md':
