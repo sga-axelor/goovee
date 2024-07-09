@@ -4,7 +4,7 @@
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {addComment} from '@/subapps/news/common/orm/news';
+import {addComment, findNews} from '@/subapps/news/common/orm/news';
 
 export async function createComment({
   id,
@@ -14,4 +14,9 @@ export async function createComment({
   return await addComment({id, contentComment, publicationDateTime}).then(
     clone,
   );
+}
+
+export async function findSearchNews() {
+  const {news} = await findNews({}).then(clone);
+  return news;
 }
