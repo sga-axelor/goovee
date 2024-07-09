@@ -33,6 +33,10 @@
       "name": "partners",
       "target": "AOSPartner",
       "mappedBy": "partnerWorkspaceSet"
+    },
+    {
+      "type": "Boolean",
+      "name": "isDefaultWorkspaceAfterLogin"
     }
   ]
 }
