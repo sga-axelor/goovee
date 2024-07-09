@@ -8,6 +8,8 @@ import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
+import {findSubappAccess} from '@/orm/subapps';
+import {SUBAPP_CODES} from '@/constants';
 
 export default async function Page({
   params,
@@ -27,5 +29,13 @@ export default async function Page({
     redirect(`${workspaceURI}/shop/cart`);
   }
 
-  return <Content workspace={workspace} />;
+  const quotationSubapp = await findSubappAccess({
+    code: SUBAPP_CODES.quotations,
+    user: session?.user,
+    workspaceURL,
+  });
+
+  return (
+    <Content workspace={workspace} quotationSubapp={Boolean(quotationSubapp)} />
+  );
 }

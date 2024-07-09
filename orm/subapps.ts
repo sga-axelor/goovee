@@ -62,5 +62,5 @@ export async function findSubappAccess({
 
   if (!subapp?.installed) return null;
 
-  return subapp
+  return subapp;
 }

@@ -14,6 +14,7 @@ import {Pagination, TextField} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
+import {useToast} from '@/ui/hooks';
 import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -69,6 +70,8 @@ export function ProductList({
   const sort = searchParams.get('sort');
   const view = searchParams.get('view') || VIEW.GRID;
   const [searching, setSearching] = useState<string>('');
+  const {toast} = useToast();
+
   const updateSearchParams = (
     values: Array<{
       key: string;
@@ -97,6 +100,11 @@ export function ProductList({
       images: product?.images,
       computedProduct: computedProduct,
     });
+
+    toast({
+      title: i18n.get('Added to cart'),
+    });
+
     router.refresh();
   };
   const handleChangeSearch = (event: React.FormEvent) => {

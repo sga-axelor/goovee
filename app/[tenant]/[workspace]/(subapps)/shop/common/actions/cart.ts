@@ -45,7 +45,7 @@ export async function requestQuotation({
 
   try {
     const computedProducts = await Promise.all(
-      cart.items.map((i: any) => findProduct(i.product)),
+      cart.items.map((i: any) => findProduct({id: i.product, workspace})),
     );
 
     const $cart = {

@@ -2,12 +2,14 @@
 
 import React from 'react';
 import {MdAddShoppingCart} from 'react-icons/md';
-import {Button} from '@ui/components/button';
+
 // ---- CORE IMPORTS ---- //
-import {BackgroundImage} from '@ui/components/index';
+import {BackgroundImage, Button} from '@/ui/components';
 import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
+import {useToast} from '@/ui/hooks';
 import type {ComputedProduct, Product} from '@/types';
+
 export type ProductCardProps = {
   product: ComputedProduct;
   quantity?: string | number;
@@ -24,9 +26,15 @@ export function ProductCard({
 }: ProductCardProps) {
   const {product, price} = computedProduct;
   const {displayTwoPrices, displayPrimary, displaySecondary} = price;
+  const {toast} = useToast();
+
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
+    toast({
+      title: i18n.get('Added to cart'),
+    });
   };
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     onClick && onClick(product);
   };

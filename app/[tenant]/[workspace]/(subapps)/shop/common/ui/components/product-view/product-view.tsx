@@ -4,18 +4,19 @@ import React, {Fragment, useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {MdChevronRight} from 'react-icons/md';
 import {MdOutlineShoppingBasket} from 'react-icons/md';
+
 // ---- CORE IMPORTS ---- //
-import {Quantity, ThumbsCarousel} from '@ui/components/index';
-import {useQuantity} from '@/ui/hooks';
+import {Quantity, ThumbsCarousel, Label, Button} from '@/ui/components';
+import {useQuantity, useToast} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
 import {getImageURL} from '@/utils/product';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import type {ComputedProduct, PortalWorkspace} from '@/types';
-import {Label} from '@ui/components/label';
-import {Button} from '@ui/components/button';
+
 // ---- LOCAL IMPORTS ---- //
 import {Categories} from '..';
+
 export function ProductView({
   product: computedProduct,
   workspace,
@@ -36,14 +37,20 @@ export function ProductView({
     useCart();
   const [cartQuantity, setCartQuantity] = useState(0);
   const [note, setNote] = useState('');
+  const {toast} = useToast();
+
   const handleAddToCart = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setUpdating(true);
     setCartQuantity(q => Number(q) + Number(quantity));
     await addItem({productId: product.id, quantity});
+    toast({
+      title: i18n.get('Added to cart'),
+    });
     setUpdating(false);
   };
+
   const handleChangeNote = async (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
