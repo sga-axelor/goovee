@@ -10,7 +10,7 @@ import {Separator} from '@/ui/components/separator';
 
 // ---- LOCAL IMPORTS ---- //
 import {Category} from '@/subapps/news/common/types';
-import {buildCategoryHierarchy} from '@/subapps/news/common/utils';
+import {transformCategories} from '@/subapps/news/common/utils';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export const Categories = ({categories}: {categories: Category[]}) => {
@@ -19,7 +19,7 @@ export const Categories = ({categories}: {categories: Category[]}) => {
   const [openSubMenu, setOpenSubMenu] = useState<number | null>(null);
   const [openSubSubMenu, setOpenSubSubMenu] = useState<number | null>(null);
 
-  const categoryHierarchy = buildCategoryHierarchy(categories);
+  const categoryHierarchy = transformCategories(categories);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -63,7 +63,7 @@ const MenuItem = ({
   setOpenSubSubMenu,
   handleRoute,
 }: {
-  item: Category;
+  item: any;
   isOpen: boolean;
   onHover: (id: number) => void;
   onLeave: () => void;
@@ -82,7 +82,7 @@ const MenuItem = ({
       <span className="cursor-pointer" onClick={() => handleRoute(item.slug)}>
         {item.name}
       </span>
-      {isOpen && item.childCategory.length > 0 && itemRef.current && (
+      {isOpen && item.items.length > 0 && itemRef.current && (
         <SubMenu
           item={item}
           onHover={onHover}
@@ -163,7 +163,7 @@ const SubMenu = ({
   onHover,
   parentRect,
 }: {
-  item: Category;
+  item: any;
   openSubSubMenu: number | null;
   setOpenSubSubMenu: (id: any) => void;
   handleRoute: (slug: string, parentSlug?: string) => void;
@@ -179,8 +179,8 @@ const SubMenu = ({
     <div
       className="min-w-[295px] absolute z-10 bg-white flex flex-col gap-12 py-6 px-4"
       style={{top: `${parentRect.bottom}px`, left: `${parentRect.left}px`}}>
-      {item.childCategory.map(child => {
-        const categoryLength = child.childCategory.length;
+      {item.items.map((child: any) => {
+        const categoryLength = child.items.length;
         return (
           <div key={child.id} className="flex w-full">
             <li className="z-20 flex w-full relative">
@@ -222,7 +222,7 @@ const SubSubMenu = ({
   handleRoute,
   setOpenSubSubMenu,
 }: {
-  item: Category;
+  item: any;
   topParentSlug: string;
   handleRoute: (slug: string, parentSlug?: string, topParentSLug?: any) => void;
   setOpenSubSubMenu: (id: number | null) => void;
@@ -232,7 +232,7 @@ const SubSubMenu = ({
       className="min-w-[200px] outline-1 outline-slate-800 bg-white absolute left-full top-0 z-10 flex flex-col gap-12 py-6 px-4 border border-slate-50"
       onMouseEnter={() => setOpenSubSubMenu(item.id)}
       onMouseLeave={() => setOpenSubSubMenu(null)}>
-      {item.childCategory.map(subChild => (
+      {item.items.map((subChild: any) => (
         <div
           key={subChild.id}
           className="flex gap-12 items-center justify-between relative">

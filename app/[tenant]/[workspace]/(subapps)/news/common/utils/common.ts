@@ -82,28 +82,6 @@ export function parseDate(dateString: any) {
   return date.format(formatString);
 }
 
-export function buildCategoryHierarchy(categories: any): Category[] {
-  const categoryMap: {[id: number]: Category} = {};
-  const rootCategories: Category[] = [];
-
-  categories?.forEach((category: Category) => {
-    categoryMap[category.id] = {...category, childCategory: []};
-  });
-
-  categories?.forEach((category: Category) => {
-    if (category.parentCategory && category.parentCategory.id !== undefined) {
-      const parent = categoryMap[category.parentCategory.id];
-      if (parent) {
-        parent.childCategory.push(categoryMap[category.id]);
-      }
-    } else {
-      rootCategories.push(categoryMap[category.id]);
-    }
-  });
-
-  return rootCategories;
-}
-
 export function transformCategories(categories: any[]): any[] {
   const groupedCategories: any[] = [];
 
