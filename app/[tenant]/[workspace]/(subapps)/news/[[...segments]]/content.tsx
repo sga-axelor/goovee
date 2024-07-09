@@ -6,6 +6,7 @@ import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -17,7 +18,6 @@ import {
   Pagination,
 } from '@/subapps/news/common/ui/components';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
-import {useSearchParams} from '@/subapps/news/common/ui/hooks';
 import {
   FEATURED_NEWS,
   NO_NEWS_AVAILABLE,
