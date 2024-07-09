@@ -285,10 +285,6 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       const diff = cartItemIDs.filter(
         (id: string) => !computedProductIDs.includes(id),
       );
-<<<<<<< HEAD
-=======
-
->>>>>>> f687c3d (Bad head)
       if (diff.length) {
         await Promise.all(
           cart.items.map((i: any) => findProduct({id: i.product, workspace})),
