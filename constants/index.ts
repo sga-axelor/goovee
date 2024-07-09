@@ -52,3 +52,14 @@ export const SUBAPP_PAGE = {
   orders: '/ongoing',
   invoices: '/unpaid',
 };
+
+/**
+ * SUBAPP CODES
+ */
+export const SUBAPP_CODES = {
+  shop: 'shop',
+  quotations: 'quotations',
+  orders: 'orders',
+  invoices: 'invoices',
+  resources: 'resources',
+};

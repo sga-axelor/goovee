@@ -2,11 +2,10 @@ import React from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {findSubapp} from '@/orm/subapps';
+import {findSubappAccess} from '@/orm/subapps';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
-import {clone} from '@/utils';
+import {SUBAPP_CODES} from '@/constants';
 
 export default async function Layout({
   params,
@@ -18,24 +17,13 @@ export default async function Layout({
   };
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.invoices,
+    user: (await getSession())?.user,
+    workspaceURL: workspacePathname(params)?.workspaceURL,
+  });
 
-  if (!session) return notFound();
-
-  const {workspaceURL} = workspacePathname(params);
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-  }).then(clone);
-
-  if (!workspace) return notFound();
-
-  const app = await findSubapp('invoices', {workspace, user: session?.user});
-
-  if (!app?.installed) {
-    return notFound();
-  }
+  if (!subapp) return notFound();
 
   return <>{children}</>;
 }
