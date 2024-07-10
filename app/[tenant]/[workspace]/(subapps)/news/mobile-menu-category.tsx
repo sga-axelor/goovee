@@ -14,7 +14,7 @@ import {
 import {Sheet, SheetContent} from '@/ui/components/sheet';
 import {Portal} from '@/ui/components';
 import {Category} from '@/types';
-import {cn} from '@/lib/utils';
+import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
