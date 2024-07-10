@@ -29,6 +29,11 @@
     {
       "name": "slug",
       "type": "String"
+    },
+    {
+      "name": "workspace",
+      "type": "ManyToOne",
+      "target": "AOSPortalWorkspace"
     }
   ]
 }

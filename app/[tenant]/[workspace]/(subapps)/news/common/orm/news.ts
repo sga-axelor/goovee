@@ -1,5 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_PAGE} from '@/subapps/news/common/constants';
@@ -105,15 +106,22 @@ export async function findCategories({
   category = null,
   showAllCategories = false,
   slug = null,
+  workspace,
 }: {
   category?: any;
   showAllCategories?: boolean;
   slug?: string | null;
+  workspace: PortalWorkspace;
 }) {
+  if (!workspace) return [];
+
   const c = await getClient();
 
   const categories = await c.aOSPortalNewsCategory.find({
     where: {
+      workspace: {
+        id: workspace.id,
+      },
       ...(category
         ? {
             parentCategory: {
@@ -144,6 +152,7 @@ export async function findCategories({
       image: true,
       parentCategory: true,
       slug: true,
+      workspace: true,
     },
   });
 

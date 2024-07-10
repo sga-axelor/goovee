@@ -2,6 +2,10 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
+import {getSession} from '@/orm/auth';
+import {workspacePathname} from '@/utils/workspace';
+import {findWorkspace} from '@/orm/workspace';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/news/[[...segments]]/content';
@@ -28,7 +32,13 @@ export default async function Page({
   params: any;
   searchParams: {[key: string]: string | undefined};
 }) {
+  const session = await getSession();
+  const {workspaceURL} = workspacePathname(params);
 
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  }).then(clone);
 
   const {segments} = params;
   const homepage = !segments;
@@ -37,6 +47,7 @@ export default async function Page({
 
   const allCategories = await findCategories({
     showAllCategories: true,
+    workspace,
   }).then(clone);
 
   if (homepage) {
@@ -49,6 +60,7 @@ export default async function Page({
     }).then(clone);
     const parentCategories = await findCategories({
       category: null,
+      workspace,
     }).then(clone);
 
     return (
@@ -70,7 +82,12 @@ export default async function Page({
       <div className="hidden md:block">
         <Categories categories={allCategories} />
       </div>
-      <CategoryPage segments={segments} page={page} limit={limit} />
+      <CategoryPage
+        segments={segments}
+        page={page}
+        limit={limit}
+        workspace={workspace}
+      />
     </div>
   );
 }
@@ -79,10 +96,12 @@ async function CategoryPage({
   segments,
   page,
   limit,
+  workspace,
 }: {
   segments: string[];
   page?: string;
   limit?: string | number;
+  workspace: PortalWorkspace;
 }) {
   const slug = segments?.at(-1) || '';
   const articlepage = segments.includes('article');
@@ -134,6 +153,7 @@ async function CategoryPage({
 
   const subCategories = await findCategories({
     slug,
+    workspace,
   }).then(clone);
 
   return (
