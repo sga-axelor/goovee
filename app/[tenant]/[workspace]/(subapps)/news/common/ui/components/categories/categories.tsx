@@ -39,6 +39,10 @@ export const Categories = ({categories}: {categories: Category[]}) => {
     };
   }, []);
 
+  if (!categories.length) {
+    return null;
+  }
+
   return (
     <div
       ref={categoriesRef}

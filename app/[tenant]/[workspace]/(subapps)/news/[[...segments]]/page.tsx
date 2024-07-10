@@ -64,7 +64,7 @@ export default async function Page({
     }).then(clone);
 
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full flex-1">
         <div className="hidden md:block">
           <Categories categories={allCategories} />
         </div>
@@ -78,7 +78,7 @@ export default async function Page({
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full flex-1">
       <div className="hidden md:block">
         <Categories categories={allCategories} />
       </div>

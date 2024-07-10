@@ -43,14 +43,14 @@ export const Homepage = ({
   };
 
   return (
-    <div className="h-full flex flex-col mb-12 md:mb-0">
+    <div className="h-full flex flex-col">
       <Banner
         title={BANNER_TITLE}
         description={BANNER_DESCRIPTION}
         items={latestNews}
       />
       <div
-        className={`px-4 lg:px-[100px] flex flex-col flex-auto gap-6 ${styles['news-container']}`}>
+        className={`px-4 lg:px-[100px] flex flex-col gap-6 flex-auto ${styles['news-container']}`}>
         {latestNews?.length ? (
           <>
             <div className="mt-6">
@@ -87,7 +87,7 @@ export const Homepage = ({
             </div>
           </>
         ) : (
-          <div className="font-medium text-center flex items-center justify-center h-full py-4">
+          <div className="font-medium text-center flex items-center justify-center py-4 flex-1">
             {i18n.get(NO_NEWS_AVAILABLE)}
           </div>
         )}
