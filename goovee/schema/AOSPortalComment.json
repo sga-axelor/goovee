@@ -4,7 +4,7 @@
   "extends": "Model",
   "synchronize": false,
   "fields": [
-    { "name": "parentNews", "type": "ManyToOne", "target": "AOSPortalNews" },
+    {"name": "parentNews", "type": "ManyToOne", "target": "AOSPortalNews"},
     {
       "name": "author",
       "type": "ManyToOne",
@@ -14,7 +14,7 @@
       "name": "publicationDateTime",
       "type": "DateTime"
     },
-    { "name": "title", "type": "String" },
+    {"name": "title", "type": "String"},
     {
       "name": "contentComment",
       "type": "String"

@@ -1,1 +1,1 @@
-export * from "./lead-stories";
+export * from './lead-stories';
