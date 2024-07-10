@@ -73,7 +73,10 @@ export const NewsInfo = ({
           </div>
           <Separator className="bg-zinc-300" />
         </div>
-        <div dangerouslySetInnerHTML={{__html: content}} />
+        <div
+          className="relative overflow-auto"
+          dangerouslySetInnerHTML={{__html: content}}
+        />
       </div>
     </div>
   );
