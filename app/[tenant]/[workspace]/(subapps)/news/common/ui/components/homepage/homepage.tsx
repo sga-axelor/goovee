@@ -76,13 +76,23 @@ export const Homepage = ({
               )}
               <div className="lg:w-3/5 flex flex-col gap-4">
                 {latestNews.slice(3, 7).map((news: any) => (
-                  <NewsList id={news.id} news={news} onClick={handleClick} />
+                  <NewsList
+                    key={news.id}
+                    id={news.id}
+                    news={news}
+                    onClick={handleClick}
+                  />
                 ))}
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5 mb-10">
               {latestNews.slice(7, 12).map((news: any) => (
-                <NewsCard id={news.id} news={news} onClick={handleClick} />
+                <NewsCard
+                  key={news.id}
+                  id={news.id}
+                  news={news}
+                  onClick={handleClick}
+                />
               ))}
             </div>
           </>

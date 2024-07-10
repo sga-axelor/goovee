@@ -20,7 +20,9 @@ export const SocialMedia = () => {
       </div>
       <div className="flex gap-6">
         {SOCIAL_ICONS.map(icon => (
-          <Avatar className={`w-8 h-8 bg-[${icon.color}] p-1 rounded`}>
+          <Avatar
+            key={icon.key}
+            className={`w-8 h-8 bg-[${icon.color}] p-1 rounded`}>
             <AvatarImage src={`${icon.image}`} />
           </Avatar>
         ))}

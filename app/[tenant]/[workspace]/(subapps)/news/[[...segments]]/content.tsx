@@ -65,7 +65,12 @@ const Content = ({
     return news
       .slice(start, end)
       .map(newsItem => (
-        <Component id={newsItem.id} news={newsItem} onClick={handleClick} />
+        <Component
+          key={newsItem.id}
+          id={newsItem.id}
+          news={newsItem}
+          onClick={handleClick}
+        />
       ));
   };
 
