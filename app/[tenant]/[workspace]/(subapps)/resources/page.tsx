@@ -6,6 +6,8 @@ import {
   fetchLatestFolders,
 } from '@/subapps/resources/common/orm/dms';
 import {clone} from '@/utils';
+import {Banner} from '@/ui/components';
+import {BANNER_DESCRIPTION, BANNER_TITLE} from './common/constants';
 
 import Categories from './categories';
 import Search from './search';
@@ -16,7 +18,9 @@ export default async function Page() {
 
   return (
     <>
-      <Search />
+      <Banner title={BANNER_TITLE} description={BANNER_DESCRIPTION}>
+        <Search />
+      </Banner>
       <main className="container p-4 mx-auto space-y-6">
         <Categories items={folders} />
         <h2 className="font-semibold text-xl">New Resources</h2>

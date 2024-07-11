@@ -90,3 +90,7 @@ export const ICONS = [
   'md-CurrencyExchange',
   'md-Dangerous',
 ];
+
+export const BANNER_TITLE = 'Resources';
+export const BANNER_DESCRIPTION =
+  'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam';
