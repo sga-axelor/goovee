@@ -12,6 +12,7 @@ import {
   MdReceiptLong,
   MdOutlineReceipt,
   MdPayment,
+  MdNewspaper,
 } from 'react-icons/md';
 
 interface IconMapping {
@@ -26,6 +27,7 @@ interface IconMapping {
   order: IconType;
   resource: IconType;
   app: IconType;
+  newspaper: IconType;
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
@@ -41,6 +43,7 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
     order: MdReceiptLong,
     resource: MdDocumentScanner,
     app: MdAppRegistration,
+    newspaper: MdNewspaper,
   };
 
   const icon = iconMapping[type];

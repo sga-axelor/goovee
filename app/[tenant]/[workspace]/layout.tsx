@@ -55,7 +55,7 @@ export default async function Layout({
       <CartContext>
         <div className="h-full w-full flex">
           <Sidebar subapps={subapps} workspaces={workspaces} />
-          <div className="max-h-full max-w-full flex-1">
+          <div className="max-h-full max-w-full flex-1 flex flex-col">
             <Header subapps={subapps} />
             {children}
           </div>

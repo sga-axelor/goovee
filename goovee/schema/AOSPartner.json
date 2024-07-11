@@ -62,6 +62,7 @@
       "type": "ManyToOne",
       "name": "mainPartner",
       "target": "AOSPartner"
-    }
+    },
+    {"name": "picture", "type": "ManyToOne", "target": "AOSMetaFile"}
   ]
 }

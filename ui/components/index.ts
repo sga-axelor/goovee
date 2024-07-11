@@ -9,7 +9,6 @@ export {Breadcrumbs} from './breadcrumbs';
 export {TabContent} from './tab-content';
 export {StyledTabs, Tabs, TabsContent, TabsList, TabsTrigger} from './tabs';
 export {Tag} from './tag';
-export {Pagination} from './pagination';
 export {NavView} from './nav-view';
 export {StyledTable} from './styled-table';
 export {Loader} from './loader';
@@ -184,3 +183,5 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './alert-dialog';
+export {Banner} from './banner';
+export {Pagination} from './custom-pagination';

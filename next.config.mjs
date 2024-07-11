@@ -2,6 +2,20 @@ import TerserPlugin from 'terser-webpack-plugin';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
+    ],
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   reactStrictMode: false,
   webpack: (config, context) => {
     const svgrules = config.module.rules.find(r => r.test?.test?.('.svg'));

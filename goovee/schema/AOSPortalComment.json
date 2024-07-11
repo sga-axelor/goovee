@@ -1,0 +1,33 @@
+{
+  "name": "AOSPortalComment",
+  "table": "portal_portal_comment",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {"name": "parentNews", "type": "ManyToOne", "target": "AOSPortalNews"},
+    {
+      "name": "author",
+      "type": "ManyToOne",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "publicationDateTime",
+      "type": "DateTime"
+    },
+    {"name": "title", "type": "String"},
+    {
+      "name": "contentComment",
+      "type": "String"
+    },
+    {
+      "name": "publicationDateTime",
+      "type": "DateTime"
+    },
+    {
+      "name": "parentCommentList",
+      "type": "OneToMany",
+      "target": "AOSPortalComment",
+      "mappedBy": "childComment"
+    }
+  ]
+}

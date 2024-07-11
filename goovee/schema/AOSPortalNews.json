@@ -1,0 +1,58 @@
+{
+  "name": "AOSPortalNews",
+  "table": "portal_portal_news",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "title",
+      "type": "String"
+    },
+    {
+      "name": "publicationDateTime",
+      "type": "DateTime"
+    },
+    {
+      "name": "categorySet",
+      "type": "ManyToMany",
+      "target": "AOSPortalNewsCategory"
+    },
+    {
+      "name": "description",
+      "type": "String"
+    },
+    {
+      "name": "content",
+      "type": "String"
+    },
+    {
+      "name": "image",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
+    },
+    {
+      "name": "isFeaturedNews",
+      "type": "Boolean"
+    },
+    {
+      "name": "author",
+      "type": "ManyToOne",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "relatedNewsSet",
+      "type": "ManyToMany",
+      "target": "AOSPortalNews"
+    },
+    {
+      "name": "slug",
+      "type": "String"
+    },
+    {
+      "name": "portalCommentList",
+      "type": "OneToMany",
+      "target": "AOSPortalComment",
+      "mappedBy": "parentNews"
+    }
+  ]
+}
