@@ -117,7 +117,7 @@ export function FeaturedCategories({
               </div>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {category?.products.map((computedProduct: ComputedProduct) => {
+              {category?.products?.map((computedProduct: ComputedProduct) => {
                 const quantity = cart?.items?.find(
                   (i: any) =>
                     Number(i.product) === Number(computedProduct?.product.id),
