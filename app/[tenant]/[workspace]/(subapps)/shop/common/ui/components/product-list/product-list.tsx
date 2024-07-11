@@ -48,7 +48,6 @@ export function ProductList({
   pageInfo = {page: 1, pages: 1},
   workspace,
   breadcrumbs,
-  showSummary,
   productPath,
 }: {
   breadcrumbs?: any;
@@ -57,7 +56,6 @@ export function ProductList({
   category?: any;
   pageInfo?: any;
   workspace?: PortalWorkspace;
-  showSummary?: boolean;
   productPath?: string;
 }) {
   const {cart, addItem} = useCart();
@@ -150,15 +148,6 @@ export function ProductList({
   return (
     <div>
       <Categories items={categories} onClick={handleCategoryClick} />
-      {showSummary && (
-        <div className="flex items-center justify-center relative bg-[url('/images/bg.jpeg')] bg-center h-[40.625rem]">
-          <div className="absolute top-0 left-0 w-full h-full bg-black/[.65]" />
-          <h1 className="font-bold text-4xl m-0 z-[1] text-primary-foreground">
-            {i18n.get('Shop summary')}
-          </h1>
-        </div>
-      )}
-
       <div className={'container portal-container'}>
         <div className="mb-6 mt-3 text-foreground">
           {breadcrumbs?.length > 1 ? (
@@ -259,7 +248,7 @@ export function ProductList({
 
                 return (
                   <Component
-                    key={computedProduct?.product.id}
+                    key={computedProduct?.product?.id}
                     product={computedProduct}
                     quantity={quantity}
                     onAdd={handleAdd}

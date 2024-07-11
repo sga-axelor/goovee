@@ -95,7 +95,6 @@ export default async function Shop({
       categories={parentcategories}
       pageInfo={pageInfo}
       workspace={workspace}
-      showSummary={false}
       productPath={`${workspaceURI}/shop/category/${$category.id}/product/`}
     />
   );

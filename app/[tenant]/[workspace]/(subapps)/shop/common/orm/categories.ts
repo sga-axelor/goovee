@@ -46,3 +46,32 @@ export async function findCategories({
 
   return transform(categories);
 }
+
+export async function findFeaturedCategories({
+  workspace,
+}: {
+  workspace: PortalWorkspace;
+}) {
+  if (!workspace) return [];
+
+  const client = await getClient();
+
+  const categories = await client.aOSProductCategory.find({
+    where: {
+      portalWorkspace: {
+        id: workspace.id,
+      },
+    },
+    select: {
+      name: true,
+      parentProductCategory: {id: true},
+      productList: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  return categories;
+}

@@ -7,9 +7,12 @@ import {DEFAULT_LIMIT} from '@/constants';
 import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductList} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
+import {FeaturedCategories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
 import {findProducts} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
-import {findCategories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/categories';
+import {
+  findCategories,
+  findFeaturedCategories,
+} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/categories';
 
 export default async function Shop({
   params,
@@ -71,13 +74,26 @@ export default async function Shop({
 
   const parentcategories = categories?.filter((c: any) => !c.parent);
 
+  const featuredCategories: any = await findFeaturedCategories({
+    workspace,
+  }).then(clone);
+
+  for (const category of featuredCategories) {
+    if (category?.productList?.length) {
+      const res = await findProducts({
+        ids: category.productList.map((p: any) => p.id),
+        workspace,
+      }).then(clone);
+
+      category.products = res?.products;
+    }
+  }
+
   return (
-    <ProductList
-      products={clone(products)}
+    <FeaturedCategories
       categories={parentcategories}
-      pageInfo={pageInfo}
+      featuredCategories={featuredCategories}
       workspace={workspace}
-      showSummary={true}
       productPath={`${workspaceURI}/shop/product/`}
     />
   );

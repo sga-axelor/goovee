@@ -19,8 +19,8 @@
       "target": "AOSCompany"
     },
     {
-      "type": "ManyToOne",
-      "name": "saleTax",
+      "type": "ManyToMany",
+      "name": "saleTaxSet",
       "target": "AOSTax"
     }
   ]

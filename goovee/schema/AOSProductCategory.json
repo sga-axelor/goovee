@@ -9,6 +9,10 @@
       "name": "name"
     },
     {
+      "type": "Boolean",
+      "name": "isFeatured"
+    },
+    {
       "type": "ManyToOne",
       "name": "parentProductCategory",
       "target": "AOSProductCategory"
@@ -17,6 +21,12 @@
       "type": "ManyToOne",
       "name": "portalWorkspace",
       "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "OneToMany",
+      "name": "productList",
+      "target": "AOSProduct",
+      "mappedBy": "productCategory"
     }
   ]
 }

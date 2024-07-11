@@ -137,11 +137,6 @@ export async function findProducts({
           },
         },
         productCompanyList: {
-          /*where: {
-          company: {
-            id: workspace?.config?.company?.id,
-          },
-        },*/ // ORM Error - self_company is used multiple time
           select: {
             salePrice: true,
             company: {
@@ -164,7 +159,7 @@ export async function findProducts({
             },
             select: {
               name: true,
-              saleTax: {
+              saleTaxSet: {
                 activeTaxLine: {
                   name: true,
                   value: true,
@@ -176,6 +171,7 @@ export async function findProducts({
       },
     })
     .catch((err: any) => {
+      console.log(err);
       return [];
     });
 
@@ -199,10 +195,12 @@ export async function findProducts({
     const account = product?.productFamily?.accountManagementList?.[0];
 
     const getTax = (): ComputedProduct['tax'] => {
+      const activeTaxLine =
+        account?.saleTaxSet?.find((t: any) => t.activeTaxLine)?.value ||
+        DEFAULT_TAX_VALUE;
+
       return {
-        value: productcompany?.company
-          ? account?.saleTax?.activeTaxLine?.value || DEFAULT_TAX_VALUE
-          : DEFAULT_TAX_VALUE || DEFAULT_TAX_VALUE,
+        value: productcompany?.company ? activeTaxLine : DEFAULT_TAX_VALUE,
       };
     };
 
