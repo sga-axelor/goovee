@@ -65,7 +65,7 @@ export default async function Page({
 
     return (
       <div className="flex flex-col h-full flex-1">
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <Categories categories={allCategories} />
         </div>
         <Homepage
@@ -79,7 +79,7 @@ export default async function Page({
 
   return (
     <div className="flex flex-col h-full flex-1">
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <Categories categories={allCategories} />
       </div>
       <CategoryPage
