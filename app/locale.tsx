@@ -1,11 +1,11 @@
 'use client';
 
 import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {useAppLang} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
-import {useRouter} from 'next/navigation';
 
 export default function Locale({children}: {children: React.ReactNode}) {
   const {dir, lang} = useAppLang();

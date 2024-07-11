@@ -8,7 +8,7 @@ import {Toaster} from '@/ui/components/toaster';
 // ---- LOCAL IMPORTS ---- //
 import Theme from './theme';
 import Locale from './locale';
-import AuthContext from './auth-context';
+import Session from './session';
 import './globals.css';
 
 const fontSans = FontSans({
@@ -37,9 +37,9 @@ export default async function RootLayout({
     <Theme theme={theme}>
       <html lang="en">
         <body className={fontSans.className}>
-          <AuthContext>
+          <Session>
             <Locale>{children}</Locale>
-          </AuthContext>
+          </Session>
           <Toaster />
         </body>
       </html>
