@@ -6,12 +6,11 @@ import React from 'react';
 import {
   Pagination as ShadCnPagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/ui/components/pagination';
+} from '@/ui/components/custom-pagination';
 
 type PaginationProps = {
   page?: string | number;
@@ -41,7 +40,6 @@ export const Pagination = ({
               className={`${
                 disablePrev ? 'text-gray-400  pointer-events-none' : ''
               } `}
-              // disabled={disablePrev}
             />
           </PaginationItem>
           {Array.from({length: Number(pages)}).map((_, i) => {
@@ -63,19 +61,13 @@ export const Pagination = ({
               </PaginationItem>
             );
           })}
-          {/* <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem> */}
-          {/* <PaginationItem>
-            <PaginationLink href="#">{16}</PaginationLink>
-          </PaginationItem> */}
+
           <PaginationItem className="cursor-pointer">
             <PaginationNext
               onClick={onNext}
               className={`${
                 disableNext ? 'text-gray-400  pointer-events-none' : ''
               } `}
-              // disabled={disableNext}
             />
           </PaginationItem>
         </PaginationContent>
