@@ -184,3 +184,4 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './alert-dialog';
+export {Banner} from './banner';

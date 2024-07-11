@@ -1,5 +1,4 @@
 export {Categories} from './categories';
-export {Banner} from './banner';
 export {LeadStories} from './lead-stories';
 export {CategorySlider} from './category-slider';
 export {NewsList} from './news-list';

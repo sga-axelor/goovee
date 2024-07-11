@@ -19,7 +19,7 @@ import {Badge} from '@/ui/components/badge';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {findSearchNews} from '@/subapps/news/common/actions/action';
 
-export const Search = ({items}: {items: any}) => {
+export const Search = () => {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);

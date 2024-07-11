@@ -5,15 +5,16 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+import {Banner} from '@/ui/components/banner';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  Banner,
   LeadStories,
   CategorySlider,
   NewsList,
   NewsCard,
   FeedList,
+  Search,
 } from '@/subapps/news/common/ui/components';
 import {
   BANNER_DESCRIPTION,
@@ -44,11 +45,9 @@ export const Homepage = ({
 
   return (
     <div className="h-full flex flex-col">
-      <Banner
-        title={BANNER_TITLE}
-        description={BANNER_DESCRIPTION}
-        items={latestNews}
-      />
+      <Banner title={BANNER_TITLE} description={BANNER_DESCRIPTION}>
+        <Search />
+      </Banner>
       <div
         className={`px-4 lg:px-[100px] flex flex-col gap-6 flex-auto ${styles['news-container']}`}>
         {latestNews?.length ? (

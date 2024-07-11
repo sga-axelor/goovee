@@ -2,17 +2,14 @@
 
 import React from 'react';
 
-// ---- LOCAL IMPORTS ---- //
-import {Search} from '@/subapps/news/common/ui/components';
-
 export const Banner = ({
   title,
   description,
-  items,
+  children,
 }: {
   title: string;
   description: string;
-  items: any;
+  children: React.ReactNode;
 }) => {
   return (
     <div
@@ -23,7 +20,7 @@ export const Banner = ({
         <p className="lg:text-lg text-base font-medium mb-8 md:max-w-screen-sm lg:max-w-screen-md text-center">
           {description}
         </p>
-        <Search items={items} />
+        {children}
       </div>
     </div>
   );
