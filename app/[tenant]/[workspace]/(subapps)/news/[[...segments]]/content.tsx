@@ -7,6 +7,7 @@ import {usePathname, useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
+import {Pagination} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -15,7 +16,6 @@ import {
   LeadStories,
   NewsCard,
   NewsList,
-  Pagination,
 } from '@/subapps/news/common/ui/components';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 import {
@@ -121,7 +121,7 @@ const Content = ({
             </div>
             <div className="mb-12 md:mb-0">
               <Pagination
-                page={Number(page)}
+                page={page}
                 pages={pages}
                 disablePrev={!hasPrev}
                 disableNext={!hasNext}

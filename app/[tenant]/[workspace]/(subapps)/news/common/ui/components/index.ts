@@ -7,7 +7,6 @@ export {FeedList} from './feed-list';
 export {SocialMedia} from './social-media';
 export {Comments} from './comments';
 export {NewsInfo} from './news-info';
-export {Pagination} from './pagination';
 export {Homepage} from './homepage';
 export {Article} from './article';
 export {Search} from './search';
