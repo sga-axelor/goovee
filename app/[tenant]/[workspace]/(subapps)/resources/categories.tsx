@@ -22,13 +22,13 @@ export default function Categories({items}: any) {
       spaceBetween={30}
       modules={[FreeMode, Pagination]}
       className="space-y-6"
-      wrapperClass="flex items-center gap-4"
+      wrapperClass="flex gap-4"
       pagination={{
         el: '.swiper-pagination',
         type: 'bullets',
         clickable: true,
       }}>
-      {items.map(({fileName, id}: any) => (
+      {items.map(({fileName, description, id}: any) => (
         <SwiperSlide
           key={id}
           className="!mr-0 !w-[281px] cursor-pointer"
@@ -42,7 +42,7 @@ export default function Categories({items}: any) {
                 {fileName}
               </h3>
               <p className="leading-4 text-[0.625rem] px-4 text-muted-foreground">
-                Lorem ipsum dolor sit amet consectetur. Sodales vitae laoreet.
+                {description}
               </p>
             </div>
           </div>

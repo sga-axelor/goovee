@@ -1,13 +1,16 @@
 // ---- CORE IMPORTS ---- //
+import {clone} from '@/utils';
+import {Banner} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
+import {findWorkspace} from '@/orm/workspace';
+import {workspacePathname} from '@/utils/workspace';
+import {getSession} from '@/orm/auth';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   fetchLatestFiles,
   fetchLatestFolders,
 } from '@/subapps/resources/common/orm/dms';
-import {clone} from '@/utils';
-import {Banner} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
-
-// ---- LOCAL IMPORTS ---- //
 import {ResourceList} from '@/subapps/resources/common/ui/components';
 import {
   BANNER_DESCRIPTION,
@@ -16,14 +19,27 @@ import {
 import Categories from './categories';
 import Search from './search';
 
-export default async function Page() {
-  const files = await fetchLatestFiles().then(clone);
-  const folders = await fetchLatestFolders().then(clone);
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string};
+}) {
+  const session = await getSession();
+
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  }).then(clone);
+
+  const files = await fetchLatestFiles({workspace}).then(clone);
+  const folders = await fetchLatestFolders({workspace}).then(clone);
 
   return (
     <>
       <Banner title={BANNER_TITLE} description={BANNER_DESCRIPTION}>
-        <Search />
+        <Search workspace={workspace} />
       </Banner>
       <main className="container p-4 mx-auto space-y-6">
         <Categories items={folders} />

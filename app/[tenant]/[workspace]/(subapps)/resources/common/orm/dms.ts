@@ -1,57 +1,88 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {clone} from '@/utils';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {COLORS, ICONS} from '@/subapps/resources/common/constants';
 
-export async function fetchLatestFolders() {
+export async function fetchFolders({
+  workspace,
+  params,
+}: {
+  params?: any;
+  workspace: PortalWorkspace;
+}) {
+  if (!workspace) return [];
+
   const client = await getClient();
 
-  const latestFolders = await client.aOSDMSFile.find({
+  const folders = await client.aOSDMSFile.find({
     where: {
       isDirectory: true,
+      workspaceSet: {
+        id: workspace?.id,
+      },
+      ...params?.where,
     },
     select: {
       fileName: true,
       parent: true,
       contentType: true,
+      description: true,
     },
     orderBy: {
       updatedOn: 'DESC',
     },
-    take: 10,
+    take: params?.take,
   });
 
-  return latestFolders;
+  return folders;
 }
 
-export async function fetchRootFolders() {
-  const client = await getClient();
-
-  const rootFolders = await client.aOSDMSFile.find({
-    where: {
-      parent: {
-        id: null,
-      },
-      isDirectory: true,
+export async function fetchLatestFolders({
+  workspace,
+}: {
+  workspace: PortalWorkspace;
+}) {
+  return fetchFolders({
+    workspace,
+    params: {
+      take: 10,
     },
-    select: {
-      fileName: true,
-      parent: true,
-      contentType: true,
-      children: {
-        where: {
-          isDirectory: true,
-        },
+  });
+}
+
+export async function fetchSharedFolders({
+  workspace,
+  params,
+}: {
+  workspace: PortalWorkspace;
+  params?: any;
+}) {
+  return fetchFolders({
+    workspace,
+    params: {
+      ...params,
+      where: {
+        isSharedFolder: true,
+        ...params?.where,
       },
     },
   });
-
-  return rootFolders;
 }
 
-export async function fetchFiles(id: string) {
+export async function fetchFiles({
+  id,
+  workspace,
+}: {
+  id: string;
+  workspace: PortalWorkspace;
+}) {
+  if (!workspace) {
+    return [];
+  }
+
   const client = await getClient();
 
   const files = await client.aOSDMSFile.find({
@@ -72,13 +103,22 @@ export async function fetchFiles(id: string) {
   return files;
 }
 
-export async function fetchLatestFiles() {
+export async function fetchLatestFiles({
+  workspace,
+}: {
+  workspace: PortalWorkspace;
+}) {
+  if (!workspace) return [];
+
   const client = await getClient();
 
   const files = await client.aOSDMSFile.find({
     where: {
       isDirectory: {
         ne: true,
+      },
+      workspaceSet: {
+        id: workspace?.id,
       },
     },
     select: {
@@ -124,13 +164,22 @@ export async function fetchIcons() {
   return ICONS;
 }
 
-export async function fetchExplorerCategories() {
+export async function fetchExplorerCategories({
+  workspace,
+}: {
+  workspace: PortalWorkspace;
+}) {
+  if (!workspace) return [];
+
   const client = await getClient();
 
   const categories = await client.aOSDMSFile
     .find({
       where: {
         isDirectory: true,
+        workspaceSet: {
+          id: workspace.id,
+        },
       },
       select: {
         parent: {

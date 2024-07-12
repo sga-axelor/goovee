@@ -8,9 +8,15 @@ import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
+import {i18n} from '@/lib/i18n';
+import {getSession} from '@/orm/auth';
+import {findSubappAccess} from '@/orm/subapps';
+import {SUBAPP_CODES} from '@/constants';
+import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFileSizeText} from '@/subapps/resources/common/utils';
+import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';
 
 const pump = promisify(pipeline);
 
@@ -50,7 +56,14 @@ function extractFileValues(formData: FormData) {
   return values;
 }
 
-export async function upload(formData: FormData) {
+export async function upload(formData: FormData, workspaceURL: string) {
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: i18n.get('Workspace not provided.'),
+    };
+  }
+
   const client = await getClient();
 
   const category = formData.get('category');
@@ -58,7 +71,52 @@ export async function upload(formData: FormData) {
   if (!category) {
     return {
       error: true,
-      message: 'Category is required',
+      message: i18n.get('Category is required'),
+    };
+  }
+
+  const session = await getSession();
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.resources,
+    user: session?.user,
+    workspaceURL,
+  });
+
+  if (!subapp) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
+
+  const isSharedCategory = (
+    await fetchSharedFolders({
+      workspace,
+      params: {
+        where: {
+          id: category,
+        },
+      },
+    })
+  )?.length;
+
+  if (!isSharedCategory) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
     };
   }
 

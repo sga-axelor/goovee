@@ -16,13 +16,14 @@ import {
 import {cn} from '@/utils/css';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFileTypeIcon, getIconColor} from '@/subapps/resources/common/utils';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components';
 import {findDmsFiles} from './action';
 
-export function Search() {
+export function Search({workspace}: {workspace: PortalWorkspace}) {
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [files, setFiles] = useState<any[]>([]);
@@ -30,9 +31,9 @@ export function Search() {
   useEffect(() => {
     setOpen(search ? true : false);
     if (search) {
-      findDmsFiles({search}).then(setFiles);
+      findDmsFiles({search, workspace}).then(setFiles);
     }
-  }, [search]);
+  }, [search, workspace]);
 
   return (
     <div className="w-full relative">

@@ -6,6 +6,8 @@ import {Button} from '@/ui/components/button';
 import {workspacePathname} from '@/utils/workspace';
 import {clone} from '@/utils';
 import {i18n} from '@/lib/i18n';
+import {getSession} from '@/orm/auth';
+import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -28,16 +30,23 @@ export default async function Page({
 }) {
   const {id} = searchParams;
 
+  const session = await getSession();
+
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  }).then(clone);
+
   let files;
 
   if (id) {
-    files = await fetchFiles(id).then(clone);
+    files = await fetchFiles({id, workspace}).then(clone);
   } else {
-    files = await fetchLatestFiles().then(clone);
+    files = await fetchLatestFiles({workspace}).then(clone);
   }
-  const categories = await fetchExplorerCategories().then(clone);
-
-  const {workspaceURI} = workspacePathname(params);
+  const categories = await fetchExplorerCategories({workspace}).then(clone);
 
   return (
     <main className="container p-4 mx-auto space-y-6">

@@ -59,7 +59,7 @@ const formSchema = z.object({
 export default function ResourceForm({categories}: any) {
   const {toast} = useToast();
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -82,7 +82,7 @@ export default function ResourceForm({categories}: any) {
       formData.append(`values[${index}][file]`, value.file);
     });
 
-    const result = await upload(formData);
+    const result = await upload(formData, workspaceURL);
 
     if (result.success) {
       toast({

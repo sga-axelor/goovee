@@ -14,6 +14,10 @@
     },
     {
       "type": "String",
+      "name": "description"
+    },
+    {
+      "type": "String",
       "name": "contentType"
     },
     {
@@ -24,6 +28,10 @@
     {
       "type": "Boolean",
       "name": "isDirectory"
+    },
+    {
+      "type": "Boolean",
+      "name": "isSharedFolder"
     },
     {
       "type": "ManyToOne",
@@ -40,6 +48,11 @@
       "name": "children",
       "target": "AOSDMSFile",
       "mappedBy": "parent"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "workspaceSet",
+      "target": "AOSPortalWorkspace"
     }
   ]
 }

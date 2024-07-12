@@ -3,8 +3,17 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {clone} from '@/utils';
+import type {PortalWorkspace} from '@/types';
 
-export async function findDmsFiles({search = ''}: {search: string}) {
+export async function findDmsFiles({
+  search = '',
+  workspace,
+}: {
+  search: string;
+  workspace: PortalWorkspace;
+}) {
+  if (!workspace) return [];
+
   const client = await getClient();
 
   return client.aOSDMSFile
@@ -17,6 +26,9 @@ export async function findDmsFiles({search = ''}: {search: string}) {
               },
             }
           : {}),
+        workspaceSet: {
+          id: workspace.id,
+        },
       },
       select: {
         fileName: true,

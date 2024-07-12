@@ -46,7 +46,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
   const formRef = useRef<HTMLFormElement>(null);
   const {toast} = useToast();
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,7 +67,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
     formData.append('parent', values.parent);
     formData.append('color', values.color);
 
-    const result = await create(formData);
+    const result = await create(formData, workspaceURL);
 
     if (result.success) {
       toast({
