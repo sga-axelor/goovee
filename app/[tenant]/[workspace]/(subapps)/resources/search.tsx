@@ -2,6 +2,9 @@
 
 import {useRouter} from 'next/navigation';
 import React, {useEffect, useState} from 'react';
+
+// ---- CORE IMPORTS ---- //
+import {parseDate} from '@/utils';
 import {
   Command,
   CommandEmpty,
@@ -11,8 +14,10 @@ import {
   CommandList,
 } from '@/ui/components/command';
 import {cn} from '@/utils/css';
-import {parseDate} from '@/utils';
+import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+
+// ---- LOCAL IMPORTS ---- //
 import {getFileTypeIcon, getIconColor} from '@/subapps/resources/common/utils';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components';
 import {findDmsFiles} from './action';
@@ -46,7 +51,7 @@ export function Search() {
             'absolute bg-white top-[60px] right-0 border border-grey-1 rounded-lg no-scrollbar text-main-black z-50 w-full p-0',
             open ? 'block' : 'hidden',
           )}>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>{i18n.get('No results found.')}</CommandEmpty>
           <CommandGroup className="p-2">
             {Boolean(files?.length)
               ? files.map(file => (

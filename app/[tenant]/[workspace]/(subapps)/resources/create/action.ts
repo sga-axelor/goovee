@@ -6,8 +6,10 @@ import {pipeline} from 'stream';
 import {promisify} from 'util';
 import moment from 'moment';
 
+// ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 
+// ---- LOCAL IMPORTS ---- //
 import {getFileSizeText} from '@/subapps/resources/common/utils';
 
 const pump = promisify(pipeline);

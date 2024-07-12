@@ -1,16 +1,19 @@
 'use client';
 
+import {useMemo} from 'react';
+import {MdFolderOpen} from 'react-icons/md';
+
+// ---- CORE IMPORTS ---- //
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/ui/components/accordion';
-import {useMemo} from 'react';
 import {cn} from '@/utils/css';
-import {MdFolderOpen} from 'react-icons/md';
-import {useSearchParams} from '@/subapps/resources/common/ui/hooks/use-search-params';
 
+// ---- LOCAL IMPORTS ---- //
+import {useSearchParams} from '@/subapps/resources/common/ui/hooks/use-search-params';
 import styles from './category-explorer.module.scss';
 
 interface CategoryExplorerProps extends React.HTMLAttributes<HTMLDivElement> {

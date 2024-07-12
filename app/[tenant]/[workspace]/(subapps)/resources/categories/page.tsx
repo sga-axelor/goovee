@@ -1,20 +1,22 @@
-export const dynamic = 'force-dynamic';
-
 import Link from 'next/link';
-import {Button} from '@/ui/components/button';
 
+// ---- CORE IMPORTS ---- //
+import {Button} from '@/ui/components/button';
+import {workspacePathname} from '@/utils/workspace';
+import {clone} from '@/utils';
+import {i18n} from '@/lib/i18n';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   CategoryExplorer,
   ResourceList,
   SortBy,
 } from '@/subapps/resources/common/ui/components';
-import {clone} from '@/utils';
 import {
   fetchExplorerCategories,
   fetchFiles,
   fetchLatestFiles,
 } from '@/subapps/resources/common/orm/dms';
-import {workspacePathname} from '@/utils/workspace';
 
 export default async function Page({
   searchParams,
@@ -40,11 +42,11 @@ export default async function Page({
     <main className="container p-4 mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="font-semibold text-xl leading-8 grow">
-          Resource Category
+          {i18n.get('Resource Category')}
         </h2>
         <SortBy className="hidden sm:flex me-2" />
         <Link href={`${workspaceURI}/resources/create`}>
-          <Button>Add New</Button>
+          <Button>{i18n.get('Add New')}</Button>
         </Link>
       </div>
       <p className="leading-5 text-sm">

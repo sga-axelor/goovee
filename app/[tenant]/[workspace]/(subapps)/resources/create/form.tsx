@@ -1,6 +1,14 @@
 'use client';
 
 import {useRef} from 'react';
+import {useRouter} from 'next/navigation';
+import {useDropzone} from 'react-dropzone';
+import {useForm, useFieldArray} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {MdDelete} from 'react-icons/md';
+
+// ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
 import {
   Form,
@@ -20,14 +28,9 @@ import {
 } from '@/ui/components/select';
 import {Textarea} from '@/ui/components/textarea';
 import {useToast} from '@/ui/hooks/use-toast';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm, useFieldArray} from 'react-hook-form';
-import {z} from 'zod';
-import {useRouter} from 'next/navigation';
-import {useDropzone} from 'react-dropzone';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {MdDelete} from 'react-icons/md';
 
+// ---- LOCAL IMPORTS ---- //
 import {upload} from './action';
 import {getFileSizeText} from '@/subapps/resources/common/utils';
 

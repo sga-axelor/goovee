@@ -1,6 +1,9 @@
+// ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
-import {COLORS, ICONS} from '@/subapps/resources/common/constants';
 import {clone} from '@/utils';
+
+// ---- LOCAL IMPORTS ---- //
+import {COLORS, ICONS} from '@/subapps/resources/common/constants';
 
 export async function fetchLatestFolders() {
   const client = await getClient();

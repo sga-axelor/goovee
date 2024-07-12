@@ -2,6 +2,11 @@
 
 import {useRef} from 'react';
 import {useRouter} from 'next/navigation';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useForm} from 'react-hook-form';
+import {z} from 'zod';
+
+// ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
 import {
   Form,
@@ -20,13 +25,12 @@ import {
   SelectValue,
 } from '@/ui/components/select';
 import {Textarea} from '@/ui/components/textarea';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm} from 'react-hook-form';
-import {z} from 'zod';
-import {cn} from '@/utils/css';
 import {useToast} from '@/ui/hooks/use-toast';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {cn} from '@/utils/css';
+import {i18n} from '@/lib/i18n';
 
+// ---- LOCAL IMPORTS ---- //
 import {create} from './action';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components';
 
@@ -67,7 +71,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
 
     if (result.success) {
       toast({
-        title: 'Category created successfully.',
+        title: i18n.get('Category created successfully.'),
       });
       router.push(
         `${workspaceURI}/resources/categories?id=${result?.data?.id}`,
@@ -75,7 +79,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
     } else {
       toast({
         variant: 'destructive',
-        title: 'Error creating resource',
+        title: i18n.get('Error creating category'),
       });
     }
   };
@@ -91,9 +95,12 @@ export default function ResourceForm({categories, colors, icons}: any) {
           name="title"
           render={({field}) => (
             <FormItem>
-              <FormLabel>Category title*</FormLabel>
+              <FormLabel>{i18n.get('Category title')}*</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Category title" {...field} />
+                <Input
+                  placeholder={i18n.get('Enter Category title')}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -105,11 +112,11 @@ export default function ResourceForm({categories, colors, icons}: any) {
           name="parent"
           render={({field}) => (
             <FormItem>
-              <FormLabel>Parent</FormLabel>
+              <FormLabel>{i18n.get('Parent')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a parent" />
+                    <SelectValue placeholder={i18n.get('Select a parent')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -130,9 +137,12 @@ export default function ResourceForm({categories, colors, icons}: any) {
           name="description"
           render={({field}) => (
             <FormItem>
-              <FormLabel>Category description</FormLabel>
+              <FormLabel>{i18n.get('Category description')}</FormLabel>
               <FormControl>
-                <Textarea placeholder="Enter category description" {...field} />
+                <Textarea
+                  placeholder={i18n.get('Enter category description')}
+                  {...field}
+                />
               </FormControl>
             </FormItem>
           )}
@@ -143,7 +153,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
           name="icon"
           render={({field}) => (
             <FormItem>
-              <FormLabel>Icon</FormLabel>
+              <FormLabel>{i18n.get('Icon')}</FormLabel>
               <FormControl>
                 <div className="border rounded-lg p-6 flex gap-6 flex-wrap">
                   {icons.map((icon: string, i: string) => {
@@ -172,11 +182,11 @@ export default function ResourceForm({categories, colors, icons}: any) {
           name="color"
           render={({field}) => (
             <FormItem>
-              <FormLabel>Color</FormLabel>
+              <FormLabel>{i18n.get('Color')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a color" />
+                    <SelectValue placeholder={i18n.get('Select a color')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -193,7 +203,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
         />
 
         <Button type="submit" className="w-full">
-          Add new category
+          {i18n.get('Add new category')}
         </Button>
       </form>
     </Form>

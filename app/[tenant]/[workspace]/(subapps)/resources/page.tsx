@@ -1,14 +1,18 @@
-export const dynamic = 'force-dynamic';
-
-import {ResourceList} from '@/subapps/resources/common/ui/components';
+// ---- CORE IMPORTS ---- //
 import {
   fetchLatestFiles,
   fetchLatestFolders,
 } from '@/subapps/resources/common/orm/dms';
 import {clone} from '@/utils';
 import {Banner} from '@/ui/components';
-import {BANNER_DESCRIPTION, BANNER_TITLE} from './common/constants';
+import {i18n} from '@/lib/i18n';
 
+// ---- LOCAL IMPORTS ---- //
+import {ResourceList} from '@/subapps/resources/common/ui/components';
+import {
+  BANNER_DESCRIPTION,
+  BANNER_TITLE,
+} from '@/subapps/resources/common/constants';
 import Categories from './categories';
 import Search from './search';
 
@@ -23,7 +27,7 @@ export default async function Page() {
       </Banner>
       <main className="container p-4 mx-auto space-y-6">
         <Categories items={folders} />
-        <h2 className="font-semibold text-xl">New Resources</h2>
+        <h2 className="font-semibold text-xl">{i18n.get('New Resources')}</h2>
         <ResourceList resources={files} />
       </main>
     </>

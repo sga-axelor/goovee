@@ -4,6 +4,8 @@ import {useRouter} from 'next/navigation';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {FreeMode, Pagination} from 'swiper/modules';
 import {MdOutlineCategory} from 'react-icons/md';
+
+// ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export default function Categories({items}: any) {

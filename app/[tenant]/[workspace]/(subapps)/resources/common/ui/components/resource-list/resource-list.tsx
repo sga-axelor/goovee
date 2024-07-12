@@ -4,14 +4,17 @@ import React from 'react';
 import {useRouter} from 'next/navigation';
 import {MdOutlineFileDownload} from 'react-icons/md';
 
-import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
+// ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+
+// ---- LOCAL IMPORTS ---- //
+import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
 import {
   download,
   getFileTypeIcon,
   getIconColor,
 } from '@/subapps/resources/common/utils';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export function ResourceList({resources}: any) {
   const router = useRouter();

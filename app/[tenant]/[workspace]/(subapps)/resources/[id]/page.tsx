@@ -1,9 +1,13 @@
 import React from 'react';
 import {notFound} from 'next/navigation';
 import {MdHistory, MdWeb} from 'react-icons/md';
+
+// ---- CORE IMPORTS ---- //
 import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {clone, parseDate} from '@/utils';
+import {i18n} from '@/lib/i18n';
 
+// ---- LOCAL IMPORTS ---- //
 import DownloadIcon from './download-icon';
 import ImageViewer from './image-viewer';
 import HTMLViewer from './html-viewer';
@@ -32,7 +36,7 @@ export default async function Page({params}: {params: {id: string}}) {
 
   if (!Viewer) {
     // eslint-disable-next-line react/display-name
-    Viewer = () => <p>No viewer available for this file type.</p>;
+    Viewer = () => <p>{i18n.get('No viewer available for this file type.')}</p>;
   }
 
   const name = file?.fileName || '--';
@@ -55,14 +59,14 @@ export default async function Page({params}: {params: {id: string}}) {
         </div>
         <div className="flex items-start gap-4 text-xs leading-4">
           <p className="grow">
-            Posted on {date} by {author}
+            {i18n.get('Posted on')} {date} {i18n.get('by')} {author}
           </p>
           <p className="pe-2">
-            <span className="font-semibold">Size: </span>
+            <span className="font-semibold">{i18n.get('Size')}: </span>
             {size}
           </p>
           <p className="hidden">
-            <span className="font-semibold">Views: </span>43
+            <span className="font-semibold">{i18n.get('Views')}: </span>43
           </p>
         </div>
       </div>

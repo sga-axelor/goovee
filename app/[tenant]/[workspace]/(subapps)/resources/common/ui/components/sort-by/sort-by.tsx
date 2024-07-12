@@ -1,5 +1,6 @@
 'use client';
 
+// ---- CORE IMPORTS ---- //
 import {Label} from '@/ui/components/label';
 import {
   Select,
