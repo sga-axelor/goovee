@@ -28,6 +28,7 @@ import {
 } from '@/ui/components/select';
 import {Textarea} from '@/ui/components/textarea';
 import {useToast} from '@/ui/hooks/use-toast';
+import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
@@ -40,16 +41,19 @@ const formSchema = z.object({
   values: z
     .array(
       z.object({
-        title: z.string().min(2, {message: 'Title is required'}),
+        title: z.string().min(2, {message: i18n.get('Title is required')}),
         description: z.string(),
         file: z
           .any()
-          .refine(file => file, 'File is required.')
-          .refine(file => file.size <= MAX_FILE_SIZE, `Max file size is 20MB.`),
+          .refine(file => file, i18n.get('File is required.'))
+          .refine(
+            file => file.size <= MAX_FILE_SIZE,
+            i18n.get(`Max file size is 20MB.`),
+          ),
       }),
     )
-    .min(1, {message: 'Single file is required to create resource'}),
-  category: z.string().min(1, {message: 'Category is required'}),
+    .min(1, {message: i18n.get('Single file is required to create resource')}),
+  category: z.string().min(1, {message: i18n.get('Category is required')}),
 });
 
 export default function ResourceForm({categories}: any) {
@@ -82,13 +86,13 @@ export default function ResourceForm({categories}: any) {
 
     if (result.success) {
       toast({
-        title: 'Resource created successfully.',
+        title: i18n.get('Resource created successfully.'),
       });
       router.push(`${workspaceURI}/resources/categories?id=${values.category}`);
     } else {
       toast({
         variant: 'destructive',
-        title: 'Error creating resource',
+        title: i18n.get('Error creating resource'),
       });
     }
   };
@@ -120,16 +124,19 @@ export default function ResourceForm({categories}: any) {
           name="category"
           render={({field}) => (
             <FormItem>
-              <FormLabel>Category*</FormLabel>
+              <FormLabel>{i18n.get('Category')}*</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
+                    <SelectValue placeholder={i18n.get('Select a category')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {categories.map((category: any) => (
-                    <SelectItem value={category.id} key={category.id}>
+                    <SelectItem
+                      value={category.id}
+                      key={category.id}
+                      className="data-[highlighted]:text-success-dark data-[highlighted]:bg-success/20">
                       {category.fileName}
                     </SelectItem>
                   ))}
@@ -143,11 +150,17 @@ export default function ResourceForm({categories}: any) {
           {...getRootProps({className: 'dropzone'})}
           className="flex justify-center items-center cursor-pointer rounded bg-muted h-36">
           <input {...getInputProps()} />
-          <p>Drag and drop some files here, or click to select files</p>
+          <p>
+            {i18n.get(
+              'Drag and drop some files here, or click to select files',
+            )}
+          </p>
         </div>
         {fields?.length ? (
           <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-semibold">Uploaded Files</h4>
+            <h4 className="text-lg font-semibold">
+              {i18n.get('Uploaded Files')}
+            </h4>
             {fields.map((field, index) => (
               <div
                 key={`${field.file?.name}-${index}`}
@@ -159,9 +172,7 @@ export default function ResourceForm({categories}: any) {
                   </p>
                   <MdDelete
                     className="h-6 w-6 text-destructive cursor-pointer shrink-0"
-                    onClick={() =>
-                      window.confirm('Do you want to remove?') && remove(index)
-                    }
+                    onClick={() => remove(index)}
                   />
                 </div>
                 <FormField
@@ -170,7 +181,10 @@ export default function ResourceForm({categories}: any) {
                   render={({field}) => (
                     <FormItem className="inline-block">
                       <FormControl>
-                        <Input placeholder="Enter resource title*" {...field} />
+                        <Input
+                          placeholder={`${i18n.get('Enter resource title')}*`}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -183,7 +197,7 @@ export default function ResourceForm({categories}: any) {
                     <FormItem className="inline-block">
                       <FormControl>
                         <Textarea
-                          placeholder="Enter resource description"
+                          placeholder={i18n.get('Enter resource description')}
                           {...field}
                         />
                       </FormControl>
@@ -194,7 +208,9 @@ export default function ResourceForm({categories}: any) {
             ))}
           </div>
         ) : null}
-        <Button type="submit">Submit</Button>
+        <Button type="submit" variant="success" className="w-full">
+          {i18n.get('Add new resource')}
+        </Button>
         {form?.formState?.errors?.values && (
           <p className="block text-destructive">
             {form.formState.errors.values.message}

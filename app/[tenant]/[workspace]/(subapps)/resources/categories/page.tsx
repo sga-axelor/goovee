@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {MdAdd} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
@@ -46,7 +47,10 @@ export default async function Page({
         </h2>
         <SortBy className="hidden sm:flex me-2" />
         <Link href={`${workspaceURI}/resources/create`}>
-          <Button>{i18n.get('Add New')}</Button>
+          <Button variant="success" className="flex items-center">
+            <MdAdd className="size-6" />
+            <span>{i18n.get('Add New')}</span>
+          </Button>
         </Link>
       </div>
       <p className="leading-5 text-sm">

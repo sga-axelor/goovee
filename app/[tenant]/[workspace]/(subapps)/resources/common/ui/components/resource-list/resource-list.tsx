@@ -6,6 +6,7 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils';
+import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
@@ -74,7 +75,7 @@ export function ResourceList({resources}: any) {
                       {size}
                     </p>
                     <MdOutlineFileDownload
-                      className="shrink-0 h-6 w-6 border-lg bg-muted text-muted-foreground cursor-pointer"
+                      className="shrink-0 h-6 w-6 bg-success/20 text-success-dark cursor-pointer"
                       onClick={handleDownload(resource)}
                     />
                   </div>
@@ -87,14 +88,14 @@ export function ResourceList({resources}: any) {
               </div>
               {resource?.metaFile?.description && (
                 <p className="leading-4 text-xs line-clamp-2">
-                  Description: {resource?.metaFile?.description}
+                  {i18n.get('Description')}: {resource?.metaFile?.description}
                 </p>
               )}
             </div>
           );
         })
       ) : (
-        <p className="py-2 px-4">No resources available.</p>
+        <p className="py-2 px-4">{i18n.get('No resources available.')}</p>
       )}
     </div>
   );

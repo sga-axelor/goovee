@@ -55,8 +55,8 @@ export function CategoryExplorer({categories = []}: CategoryExplorerProps) {
         key={id}>
         <AccordionTrigger
           className={cn('hover:no-underline py-0 px-2 rounded-lg', {
-            'bg-muted': active,
-            'text-muted-foreground': active,
+            'bg-success/20': active,
+            'text-success-dark': active,
           })}
           icon={!leaf}
           onClick={handleClick}>

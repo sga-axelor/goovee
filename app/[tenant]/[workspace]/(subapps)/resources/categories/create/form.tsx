@@ -121,7 +121,10 @@ export default function ResourceForm({categories, colors, icons}: any) {
                 </FormControl>
                 <SelectContent>
                   {categories.map((category: any) => (
-                    <SelectItem value={category.id} key={category.id}>
+                    <SelectItem
+                      value={category.id}
+                      key={category.id}
+                      className="data-[highlighted]:text-success-dark data-[highlighted]:bg-success/20">
                       {category.fileName}
                     </SelectItem>
                   ))}
@@ -202,7 +205,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" variant="success">
           {i18n.get('Add new category')}
         </Button>
       </form>
