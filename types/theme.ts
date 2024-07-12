@@ -22,9 +22,11 @@ export type Theme = {
     'accent-foreground'?: string;
 
     destructive?: string;
+    'destructive-dark'?: string;
     'destructive-foreground'?: string;
 
     success?: string;
+    'success-dark'?: string;
     'success-foreground'?: string;
 
     border?: string;

@@ -31,9 +31,11 @@ export function generateCSSVariableString(options: Theme) {
       --accent-foreground: ${options?.colors?.['accent-foreground']};
 
       --destructive: ${options?.colors?.destructive};
+      --destructive-dark: ${options?.colors?.['destructive-dark']};
       --destructive-foreground: ${options?.colors?.['destructive-foreground']};
 
       --success: ${options?.colors?.success};
+      --success-dark: ${options?.colors?.['success-dark']};
       --success-foreground: ${options?.colors?.['success-foreground']};
 
       --border: ${options?.colors?.border};
