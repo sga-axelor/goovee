@@ -16,7 +16,7 @@ export async function findPartnerAddress(addressId: PartnerAddress['id']) {
         addressl2: true,
         addressl4: true,
         addressl6: true,
-        addressl7country: {
+        country: {
           id: true,
           name: true,
         },
@@ -48,9 +48,9 @@ export async function createPartnerAddress(
       address: {
         create: {
           ...values.address,
-          addressl7country: {
+          country: {
             select: {
-              id: values?.address?.addressl7country,
+              id: values?.address?.country,
             },
           },
         },
@@ -79,9 +79,9 @@ export async function updatePartnerAddress(
       address: {
         update: {
           ...values.address,
-          addressl7country: {
+          country: {
             select: {
-              id: values?.address?.addressl7country,
+              id: values?.address?.country,
             },
           },
         },
@@ -112,7 +112,7 @@ export async function findAddresses(partnerId: Partner['id']) {
         addressl2: true,
         addressl4: true,
         addressl6: true,
-        addressl7country: {
+        country: {
           name: true,
         },
       },
@@ -143,7 +143,7 @@ export async function findDeliveryAddresses(partnerId: Partner['id']) {
         addressl2: true,
         addressl4: true,
         addressl6: true,
-        addressl7country: {
+        country: {
           name: true,
         },
       },
@@ -174,7 +174,7 @@ export async function findInvoicingAddresses(partnerId: Partner['id']) {
         addressl2: true,
         addressl4: true,
         addressl6: true,
-        addressl7country: {
+        country: {
           name: true,
         },
       },

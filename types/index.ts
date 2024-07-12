@@ -109,7 +109,7 @@ export interface Address extends Model {
   addressl4?: string;
   addressl5?: string;
   addressl6?: string;
-  addressl7country?: Country;
+  country?: Country;
   city?: City;
   zip?: string;
 }

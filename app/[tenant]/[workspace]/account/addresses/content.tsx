@@ -25,7 +25,7 @@ function AddressList({
     <>
       <h4 className="text-lg font-medium text-card-foreground mb-4">{title}</h4>
       {Boolean(addresses?.length) ? (
-        <div className="my-4 grid gap-4 grid-col-1 md:grid-col-3">
+        <div className="my-4 grid gap-4 md:grid-cols-3">
           {addresses?.map(({id, address}) => {
             return (
               <div
@@ -35,7 +35,7 @@ function AddressList({
                   <h5 className="font-bold text-xl">{address.addressl2}</h5>
                   <h6>{address.addressl4}</h6>
                   <h6>{address.addressl6}</h6>
-                  <h6>{address.addressl7country?.name}</h6>
+                  <h6>{address.country?.name}</h6>
                 </div>
                 <div className="text-right">
                   <Link href={`${workspaceURI}/account/addresses/edit/${id}`}>

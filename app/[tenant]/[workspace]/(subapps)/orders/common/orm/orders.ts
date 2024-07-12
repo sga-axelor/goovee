@@ -156,7 +156,7 @@ export async function findOrder(id: Order['id']) {
         zip: true,
         addressl4: true,
         addressl6: true,
-        addressl7country: {
+        country: {
           name: true,
         },
       },
@@ -164,7 +164,7 @@ export async function findOrder(id: Order['id']) {
         zip: true,
         addressl4: true,
         addressl6: true,
-        addressl7country: {
+        country: {
           name: true,
         },
       },

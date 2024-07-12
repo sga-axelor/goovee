@@ -105,7 +105,7 @@ export const findInvoice = async (id: Invoice['id']) => {
           addressl2: true,
           addressl4: true,
           addressl6: true,
-          addressl7country: {
+          country: {
             name: true,
           },
         },
@@ -121,7 +121,7 @@ export const findInvoice = async (id: Invoice['id']) => {
           addressl2: true,
           addressl4: true,
           addressl6: true,
-          addressl7country: {
+          country: {
             name: true,
           },
         },

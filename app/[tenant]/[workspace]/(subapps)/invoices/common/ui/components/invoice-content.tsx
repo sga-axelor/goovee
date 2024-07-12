@@ -23,7 +23,7 @@ export function InvoiceContent({invoice}: {invoice: any}) {
     address: {
       addressl4,
       addressl6,
-      addressl7country: {name: countryName},
+      country: {name: countryName},
       zip,
     },
     name,
@@ -58,7 +58,7 @@ export function InvoiceContent({invoice}: {invoice: any}) {
               <p className="mb-0">{mainAddress.addressl4}</p>
               <p className="mb-0">{partnerCityName}</p>
               <p className="mb-0">{mainAddress.zip}</p>
-              <p className="mb-0">{mainAddress.addressl7country.name}</p>
+              <p className="mb-0">{mainAddress.country.name}</p>
               <p className="mb-0">{partnerNumber}</p>
             </div>
             <div className="flex-1 flex flex-col gap-8">

@@ -31,7 +31,7 @@ export const Contact = ({
                 <p>{mainInvoicingAddress?.addressl4}</p>
                 <p>{billingAddressCity}</p>
                 <p>{mainInvoicingAddress?.zip}</p>
-                <p>{mainInvoicingAddress?.addressl7country?.name}</p>
+                <p>{mainInvoicingAddress?.country?.name}</p>
               </div>
             </div>
             <div className="flex">
@@ -53,7 +53,7 @@ export const Contact = ({
                 <p>{deliveryAddress?.addressl4}</p>
                 <p>{deliveryAddressCity}</p>
                 <p>{deliveryAddress.zip}</p>
-                <p>{deliveryAddress?.addressl7country?.name}</p>
+                <p>{deliveryAddress?.country?.name}</p>
               </div>
             </div>
             <div className="flex">

@@ -77,7 +77,7 @@ export type Quotation = {
     addressl4: string;
     addressl6: string;
     zip: string;
-    addressl7country: {
+    country: {
       id: ID;
       name: string;
     };
@@ -91,7 +91,7 @@ export type Quotation = {
     addressl4: string;
     addressl6: string;
     zip: string;
-    addressl7country: {
+    country: {
       id: ID;
       name: string;
     };
@@ -128,7 +128,7 @@ export type ContactProps = {
     addressl4: string;
     addressl6: string;
     zip: string;
-    addressl7country: {
+    country: {
       id: ID;
       name: string;
     };
@@ -138,7 +138,7 @@ export type ContactProps = {
     addressl4: string;
     addressl6: string;
     zip: string;
-    addressl7country: {
+    country: {
       id: ID;
       name: string;
     };

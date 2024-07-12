@@ -1,7 +1,9 @@
 'use client';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {AddressForm} from '@ui/components/index';
+import {useToast} from '@/ui/hooks';
 import type {PartnerAddress, Country, Address} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -23,6 +25,8 @@ export default function Content({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
+  const {toast} = useToast();
+
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
     values: Partial<Address> & {multipletype?: boolean},
@@ -39,13 +43,13 @@ export default function Content({
         isInvoicingAddr = true;
       }
 
-      const {multipletype, addressl7country, ...address} = values;
+      const {multipletype, country, ...address} = values;
 
       const _address = await updateAddress({
         id,
         address: {
           ...address,
-          addressl7country: addressl7country?.id,
+          country: country?.id,
           formattedFullName: address.addressl2,
           fullName: address.addressl2,
         } as Address,
@@ -53,10 +57,21 @@ export default function Content({
         isDeliveryAddr,
       });
       setLoading(false);
-      router.push(`${workspaceURI}/account/addresses/${_address.id}`);
+
+      toast({
+        variant: 'success',
+        title: i18n.get('Address successfully edited'),
+      });
+
+      router.refresh();
+
+      router.push(`${workspaceURI}/account/addresses`);
     } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error editing address'),
+      });
       setLoading(false);
-      console.log(error);
     }
   };
 
