@@ -165,8 +165,6 @@ const defaultApps = [
     name: 'Addresses',
     code: 'account/addresses',
     icon: 'storeFront',
-    color: 'brown',
-    background: 'white',
     showInTopMenu: false,
     showInMySpace: true,
     installed: 'yes',
