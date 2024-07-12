@@ -5,7 +5,6 @@ import {useRouter, usePathname, useSearchParams} from 'next/navigation';
 import {BiSearch} from 'react-icons/bi';
 import {MdOutlineFilterAlt} from 'react-icons/md';
 import {LuChevronRight} from 'react-icons/lu';
-import {IoIosArrowRoundForward} from 'react-icons/io';
 import {MdGridView} from 'react-icons/md';
 import {MdOutlineList} from 'react-icons/md';
 
@@ -180,12 +179,8 @@ export function ProductList({
             </div>
           ) : null}
         </div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6">
           <h4 className="text-xl font-medium">{category && category?.name}</h4>
-          <p className="text-sm font-medium flex items-center mb-0">
-            See all
-            <IoIosArrowRoundForward className="cursor-pointer text-xl ml-2" />
-          </p>
         </div>
         <div className="flex items-center justify-end mb-2">
           <div className="flex items-center gap-4">
@@ -263,15 +258,17 @@ export function ProductList({
           </div>
         </div>
         <div className="mt-6 mb-4 flex items-center justify-center">
-          <Pagination
-            page={page}
-            pages={pages}
-            disablePrev={!pageInfo?.hasPrev}
-            disableNext={!pageInfo?.hasNext}
-            onPrev={handlePreviousPage}
-            onNext={handleNextPage}
-            onPage={handlePage}
-          />
+          {products.length ? (
+            <Pagination
+              page={page}
+              pages={pages}
+              disablePrev={!pageInfo?.hasPrev}
+              disableNext={!pageInfo?.hasNext}
+              onPrev={handlePreviousPage}
+              onNext={handleNextPage}
+              onPage={handlePage}
+            />
+          ) : null}
         </div>
       </div>
     </div>
