@@ -67,8 +67,8 @@ export function ProductCard({
           )}
         </div>
       </div>
-      <div className="flex items-start justify-between p-6 pt-0">
-        <span className="text-xs font-medium mt-0 mb-0 text-destructive">
+      <div className="flex items-start justify-end p-6 pt-0">
+        <span className="hidden text-xs font-medium mt-0 mb-0 text-destructive">
           Only 6 left
         </span>
         <Button onClick={handleAdd} className="rounded-full h-12 w-12 p-2">
