@@ -10,7 +10,17 @@ import {Label} from '@ui/components/label';
 import {Button} from '@ui/components/button';
 import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {BackgroundImage, Quantity} from '@ui/components/index';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  BackgroundImage,
+  Quantity,
+} from '@ui/components/index';
 import {useQuantity} from '@/ui/hooks';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {computeTotal} from '@/utils/cart';
@@ -261,6 +271,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
   const [updating, setUpdating] = useState(false);
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirmationDialog, setConfirmationDialog] = useState(false);
 
   const handleRemove = async (product: Product) => {
     if (window?.confirm(`Do you want to remove ${product?.name}`)) {
@@ -270,10 +281,17 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
     }
   };
 
+  const openConfirmation = () => {
+    setConfirmationDialog(true);
+  };
+
+  const closeConfirmation = () => {
+    setConfirmationDialog(false);
+  };
+
   const handleRequestQuotation = async () => {
-    if (window.confirm('Do you want to request quotation')) {
-      router.replace(`${workspaceURI}/shop/cart/request-quotation`);
-    }
+    closeConfirmation();
+    router.replace(`${workspaceURI}/shop/cart/request-quotation`);
   };
 
   useEffect(() => {
@@ -337,11 +355,28 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
         )}
         <CartSummary
           cart={$cart}
-          onRequestQuotation={handleRequestQuotation}
+          onRequestQuotation={openConfirmation}
           workspace={workspace}
           hideRequestQuotation={!workspace?.config?.requestQuotation}
           hideCheckout={!workspace?.config?.confirmOrder}
         />
+        <AlertDialog open={confirmationDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {i18n.get('Do you want to request quotation?')}
+              </AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={closeConfirmation}>
+                {i18n.get('Cancel')}
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={handleRequestQuotation}>
+                {i18n.get('Continue')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );
