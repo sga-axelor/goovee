@@ -104,7 +104,7 @@ export function FeaturedCategories({
           },
         )}
       </Swiper>
-      <div className="container flex flex-col gap-6 mx-auto px-2 sm:px-0">
+      <div className="container flex flex-col gap-6 mx-auto px-2 mb-4">
         {featuredCategories.map(category =>
           category?.products?.length ? (
             <Fragment key={category.id}>
