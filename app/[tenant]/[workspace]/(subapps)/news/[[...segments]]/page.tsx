@@ -118,9 +118,15 @@ async function CategoryPage({
 
       const results = slicedArray?.map(async (segment: string) => {
         const categorySegment: CategorySegment = {slug: segment};
+
         try {
-          const categoryTitle =
-            await findCategoryTitleBySlugName(categorySegment);
+          const categoryTitle = await findCategoryTitleBySlugName({
+            slug: categorySegment,
+            workspace,
+          });
+          if (!categoryTitle) {
+            return notFound();
+          }
           return {title: categoryTitle, slug: segment};
         } catch (error) {
           console.error(error);
@@ -137,7 +143,12 @@ async function CategoryPage({
 
   const categoryTitle = await findCategoryTitleBySlugName({
     slug,
+    workspace,
   });
+
+  if (!categoryTitle) {
+    return notFound();
+  }
 
   const {news: categoryNews, pageInfo} = await findNews({
     orderBy: {publicationDateTime: ORDER_BY.DESC},
