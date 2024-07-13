@@ -55,9 +55,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
     });
 
     if (login?.ok) {
-      if (callbackurl) {
-        await revalidate(callbackurl);
-      }
+      await revalidate();
       router.replace(redirection);
     } else {
       setError(true);
