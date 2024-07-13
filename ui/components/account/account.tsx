@@ -4,29 +4,47 @@ import {useState} from 'react';
 import Link from 'next/link';
 import {signOut, useSession} from 'next-auth/react';
 import {usePathname} from 'next/navigation';
+import {MdOutlineAccountCircle} from 'react-icons/md';
+
+import {i18n} from '@/lib/i18n';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ui/components/dropdown-menu';
-import {MdOutlineAccountCircle} from 'react-icons/md';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@ui/components/alert-dialog';
 
 export function Account({baseURL = ''}: {baseURL?: string}) {
   const pathname = usePathname();
   const encodedPathname = encodeURIComponent(pathname);
   const {data: session} = useSession();
+  const [confirmationDialog, setConfirmationDialog] = useState(false);
+
+  const openConfirmation = () => {
+    setConfirmationDialog(true);
+  };
+
+  const closeConfirmation = () => {
+    setConfirmationDialog(false);
+  };
 
   const loggedin = !!session;
 
   const handleLogout = () => {
-    if (window.confirm('Do you want to logout ?')) {
-      signOut({
-        callbackUrl: `/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
-          baseURL,
-        )}`,
-      });
-    }
+    signOut({
+      callbackUrl: `/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
+        baseURL,
+      )}`,
+    });
   };
 
   return (
@@ -47,7 +65,7 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
               </Link>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={handleLogout}>
+                onClick={openConfirmation}>
                 logout
               </DropdownMenuItem>
             </>
@@ -63,6 +81,23 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+      <AlertDialog open={confirmationDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {i18n.get('Do you want to logout?')}
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeConfirmation}>
+              {i18n.get('Cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>
+              {i18n.get('Continue')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

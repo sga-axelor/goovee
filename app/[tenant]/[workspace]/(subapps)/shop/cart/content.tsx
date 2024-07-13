@@ -271,22 +271,38 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
   const [updating, setUpdating] = useState(false);
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [confirmationDialog, setConfirmationDialog] = useState(false);
 
-  const handleRemove = async (product: Product) => {
-    if (window?.confirm(`Do you want to remove ${product?.name}`)) {
-      setUpdating(true);
-      await removeItem(product.id);
-      setUpdating(false);
-    }
+  const [confirmationDialog, setConfirmationDialog] = useState<any>(null);
+
+  const handleRemoveProduct = async (product: Product) => {
+    setUpdating(true);
+    await removeItem(product.id);
+    setUpdating(false);
   };
 
-  const openConfirmation = () => {
-    setConfirmationDialog(true);
+  const openConfirmation = (confirmationDialog: {
+    title: string;
+    onContinue: any;
+  }) => {
+    setConfirmationDialog(confirmationDialog);
   };
 
   const closeConfirmation = () => {
-    setConfirmationDialog(false);
+    setConfirmationDialog(null);
+  };
+
+  const openProductConfirmation = async (product: Product) => {
+    openConfirmation({
+      title: `${i18n.get('Do you want to remove')} ${product?.name}?`,
+      onContinue: () => handleRemoveProduct(product),
+    });
+  };
+
+  const openQuotationConfirmation = () => {
+    openConfirmation({
+      title: i18n.get('Do you want to request quotation?'),
+      onContinue: handleRequestQuotation,
+    });
   };
 
   const handleRequestQuotation = async () => {
@@ -346,7 +362,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
         {cart?.items?.length ? (
           <CartItems
             cart={$cart}
-            onRemove={handleRemove}
+            onRemove={openProductConfirmation}
             disabled={updating}
             workspace={workspace}
           />
@@ -355,23 +371,25 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
         )}
         <CartSummary
           cart={$cart}
-          onRequestQuotation={openConfirmation}
+          onRequestQuotation={openQuotationConfirmation}
           workspace={workspace}
           hideRequestQuotation={!workspace?.config?.requestQuotation}
           hideCheckout={!workspace?.config?.confirmOrder}
         />
-        <AlertDialog open={confirmationDialog}>
+        <AlertDialog open={Boolean(confirmationDialog)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>
-                {i18n.get('Do you want to request quotation?')}
-              </AlertDialogTitle>
+              <AlertDialogTitle>{confirmationDialog?.title}</AlertDialogTitle>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={closeConfirmation}>
                 {i18n.get('Cancel')}
               </AlertDialogCancel>
-              <AlertDialogAction onClick={handleRequestQuotation}>
+              <AlertDialogAction
+                onClick={() => {
+                  confirmationDialog?.onContinue();
+                  closeConfirmation();
+                }}>
                 {i18n.get('Continue')}
               </AlertDialogAction>
             </AlertDialogFooter>
