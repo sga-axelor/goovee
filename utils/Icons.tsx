@@ -13,6 +13,7 @@ import {
   MdOutlineReceipt,
   MdPayment,
   MdNewspaper,
+  MdEvent,
 } from 'react-icons/md';
 
 interface IconMapping {
@@ -28,6 +29,7 @@ interface IconMapping {
   resource: IconType;
   app: IconType;
   newspaper: IconType;
+  event: IconType;
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
@@ -44,6 +46,7 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
     resource: MdDocumentScanner,
     app: MdAppRegistration,
     newspaper: MdNewspaper,
+    event: MdEvent,
   };
 
   const icon = iconMapping[type];
