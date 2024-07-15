@@ -160,9 +160,12 @@ export async function findProducts({
             select: {
               name: true,
               saleTaxSet: {
-                activeTaxLine: {
+                select: {
                   name: true,
-                  value: true,
+                  activeTaxLine: {
+                    name: true,
+                    value: true,
+                  },
                 },
               },
             },
@@ -195,12 +198,13 @@ export async function findProducts({
     const account = product?.productFamily?.accountManagementList?.[0];
 
     const getTax = (): ComputedProduct['tax'] => {
-      const activeTaxLine =
-        account?.saleTaxSet?.find((t: any) => t.activeTaxLine)?.value ||
-        DEFAULT_TAX_VALUE;
+      const activeTax = account?.saleTaxSet?.find((t: any) => t.activeTaxLine);
+
+      const activeTaxLineValue =
+        activeTax?.activeTaxLine?.value || DEFAULT_CURRENCY_SYMBOL;
 
       return {
-        value: productcompany?.company ? activeTaxLine : DEFAULT_TAX_VALUE,
+        value: productcompany?.company ? activeTaxLineValue : DEFAULT_TAX_VALUE,
       };
     };
 
