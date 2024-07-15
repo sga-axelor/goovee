@@ -60,6 +60,7 @@ export const Homepage = ({
               />
             </div>
             <CategorySlider
+              showTitle={categories.length}
               title={i18n.get(CATEGORIES)}
               categories={categories}
             />

@@ -20,12 +20,14 @@ export const CategorySlider = ({
   buttonText = '',
   categories = [],
   buttonIcon: Icon,
+  showTitle = true,
 }: {
   title?: string;
   showButton?: boolean;
   buttonText?: string;
   categories: any[];
   buttonIcon?: any;
+  showTitle?: boolean;
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -33,6 +35,10 @@ export const CategorySlider = ({
   const handleClick = (slug: string) => {
     router.push(`${pathname}/${slug}`);
   };
+
+  if (!showTitle) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-6 mt-6">

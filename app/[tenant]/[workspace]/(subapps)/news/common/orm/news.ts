@@ -161,12 +161,19 @@ export async function findCategories({
 
 export async function findCategoryTitleBySlugName({
   slug,
+  workspace,
 }: {
-  slug: string | null;
+  slug: any;
+  workspace: PortalWorkspace;
 }) {
   const c = await getClient();
   const title = await c.aOSPortalNewsCategory.findOne({
-    where: {slug},
+    where: {
+      slug,
+      workspace: {
+        id: workspace.id,
+      },
+    },
     select: {
       name: true,
     },
