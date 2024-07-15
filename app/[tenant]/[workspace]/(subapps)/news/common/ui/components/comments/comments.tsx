@@ -71,7 +71,7 @@ export const Comments = ({
           <div className="flex flex-col gap-2">
             <div className="">
               <div className="text-sm font-semibold pb-1">
-                {'Name Surname' ?? comment?.author?.simpleFullName}
+                {comment?.author?.simpleFullName ?? 'Name Surname'}
               </div>
               <div className="text-xs font-normal text-palette-mediumGray">
                 {i18n.get(POSTED_ON)} {parseDate(comment?.publicationDateTime)}
