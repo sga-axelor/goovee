@@ -1,6 +1,6 @@
 import fs, {Stats} from 'fs';
 import {getClient} from '@/goovee';
-import {NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import type {ReadableOptions} from 'stream';
 
 function streamFile(
@@ -25,31 +25,55 @@ function streamFile(
   });
 }
 
-export async function GET(request: Request, {params}: {params: {id: string}}) {
+export async function GET(
+  request: NextRequest,
+  {params}: {params: {id: string}},
+) {
   const client = await getClient();
 
-  const record = await client.aOSDMSFile.findOne({
-    where: {id: params?.id},
-    select: {
-      metaFile: true,
-    },
-  });
+  const searchParams = request.nextUrl.searchParams;
+  const meta = searchParams.get('meta') === 'true';
 
-  if (!record) {
-    return new NextResponse('File not found', {status: 404});
+  let record, filePath, fileName, fileType;
+
+  if (meta) {
+    record = await client.aOSMetaFile.findOne({
+      where: {id: params?.id},
+    });
+
+    if (!record) {
+      return new NextResponse('File not found', {status: 404});
+    }
+
+    filePath = `${process.env.DATA_STORAGE}/${record?.filePath}`;
+    fileName = record?.fileName;
+    fileType = record?.fileType;
+  } else {
+    record = await client.aOSDMSFile.findOne({
+      where: {id: params?.id},
+      select: {
+        metaFile: true,
+      },
+    });
+
+    if (!record) {
+      return new NextResponse('File not found', {status: 404});
+    }
+
+    filePath = `${process.env.DATA_STORAGE}/${record?.metaFile?.filePath}`;
+    fileName = record?.metaFile?.fileName;
+    fileType = record?.metaFile?.fileType;
   }
 
   try {
-    const filePath = `${process.env.DATA_STORAGE}/${record.metaFile?.filePath}`;
-
     const data: ReadableStream<Uint8Array> = streamFile(filePath);
     const stats: Stats = await fs.promises.stat(filePath);
 
     const res = new NextResponse(data, {
       status: 200,
       headers: new Headers({
-        'content-disposition': `attachment; filename=${record?.metaFile?.fileName}`,
-        'content-type': record?.metaFile?.fileType,
+        'content-disposition': `attachment; filename=${fileName}`,
+        'content-type': fileType,
         'content-length': stats.size + '',
       }),
     });
