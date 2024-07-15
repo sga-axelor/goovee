@@ -19,8 +19,9 @@ export {
   AccordionItem,
   AccordionTrigger,
 } from './accordion';
+export {Avatar, AvatarImage, AvatarFallback} from './avatar';
 export {Alert, AlertDescription, AlertTitle, StyledAlert} from './alert';
-export {Badge} from './badge';
+export {Badge, badgeVariants} from './badge';
 export {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -30,7 +31,7 @@ export {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from './breadcrumb';
-export {Button} from './button';
+export {Button, buttonVariants} from './button';
 export {
   Card,
   CardHeader,

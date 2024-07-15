@@ -8,7 +8,7 @@ import {MdOutlineArrowDropDown} from 'react-icons/md';
 import {addMonths, subMonths} from 'date-fns';
 
 // ---- CORE IMPORTS ---- //
-import {cn} from '@/utils';
+import {cn} from '@/utils/css';
 import {
   DropdownMenu,
   DropdownMenuContent,

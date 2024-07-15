@@ -4,7 +4,7 @@ import {useState} from 'react';
 // ---- CORE IMPORTS ---- //
 import {Button, Card, Textarea} from '@/ui/components';
 import {convertDateWithMinutes} from '@/utils/functions';
-import {cn} from '@/utils';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {CommentCard} from '@/subapps/events/common/ui/components';

@@ -13,7 +13,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/ui/components';
-import {cn} from '@/utils';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import type {HeroProps} from '@/subapps/events/common/ui/components';
