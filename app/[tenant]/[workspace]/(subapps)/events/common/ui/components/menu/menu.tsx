@@ -5,6 +5,7 @@ import {MdNotificationsNone} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Avatar, AvatarFallback, AvatarImage} from '@/ui/components';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -15,11 +16,13 @@ import {
 export const Menu = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const {workspaceURI} = useWorkspace();
+
   const toggleNotification = () => {
     if (pathname.includes('notifications')) {
       router.back();
     } else {
-      router.push('/notifications');
+      router.push(`${workspaceURI}/notifications`);
     }
   };
   return (

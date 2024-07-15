@@ -14,6 +14,7 @@ import {
   CommandList,
 } from '@/ui/components';
 import {cn} from '@/utils/css';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import type {HeroProps} from '@/subapps/events/common/ui/components';
@@ -26,6 +27,8 @@ export const Hero = ({className}: HeroProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
   const [allEvents, setAllEvents] = useState<Event[]>([]);
+
+  const {workspaceURI} = useWorkspace();
 
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -94,7 +97,9 @@ export const Hero = ({className}: HeroProps) => {
                       key={event.id}
                       value={event.eventTitle}
                       className="block py-2 sm:px-6">
-                      <Link href={`/events/${event.id}`} className="space-y-2">
+                      <Link
+                        href={`${workspaceURI}/events/${event.id}`}
+                        className="space-y-2">
                         <div className="flex items-start justify-between">
                           <p className="text-sm font-semibold text-main-black pr-2">
                             {event.eventTitle}

@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {convertDate} from '@/utils/functions';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -28,9 +29,10 @@ export function EventDetails({
   userId: string;
 }) {
   const router = useRouter();
+  const {workspaceURI} = useWorkspace();
 
   const handleClose = () => {
-    router.push(`/events/${eventId}?success=false`);
+    router.push(`${workspaceURI}/events/${eventId}?success=false`);
   };
 
   return (

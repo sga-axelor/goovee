@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/functions';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
@@ -37,6 +38,7 @@ export const Events = ({
   );
   const [currentPage, setCurrentPage] = useState<number>(page);
   const {update} = useSearchParams();
+  const {workspaceURI} = useWorkspace();
 
   const updatePage = (index: number) => {
     update([{key: 'page', value: index.toString()}]);
@@ -89,7 +91,10 @@ export const Events = ({
         <div className="flex flex-col space-y-4 w-full  xl:max-w-[48.938rem]">
           {events && events.length > 0 ? (
             events.map(event => (
-              <Link href={`/events/${event.id}`} key={event.id} passHref>
+              <Link
+                href={`${workspaceURI}/events/${event.id}`}
+                key={event.id}
+                passHref>
                 <EventCard event={event} key={event.id} />
               </Link>
             ))

@@ -19,6 +19,7 @@ import {
   extractCustomData,
   formatStudioFields,
 } from '@/ui/form/studio/display.helpers';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -81,6 +82,7 @@ export const RegistrationForm = ({
 }: EventPageCardProps) => {
   const [tempError, setTempError] = useState<boolean>(false);
   const router = useRouter();
+  const {workspaceURI} = useWorkspace();
 
   const participantForm = useMemo(
     () => [...basicPerson, ...formatStudioFields(metaFields)],
@@ -173,7 +175,7 @@ export const RegistrationForm = ({
       }
 
       await RegistrationEvent(eventDetails?.id, result);
-      router.push(`/events/${eventDetails?.id}?success=true`);
+      router.push(`${workspaceURI}/events/${eventDetails?.id}?success=true`);
     } catch (err) {
       setTempError(true);
     }

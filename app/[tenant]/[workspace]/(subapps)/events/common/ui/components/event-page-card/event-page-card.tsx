@@ -13,11 +13,14 @@ import {
   Button,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/image';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardBadges} from '@/subapps/events/common/ui/components';
 
 export const EventPageCard = ({eventDetails}: any & any) => {
+  const {workspaceURI} = useWorkspace();
+
   return (
     <Card className="max-w-screen-lg min-w-full lg:min-w-[50rem] xl:min-w-[57.75rem] xl:max-w-[57.75rem]  w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-4 space-y-4">
@@ -69,7 +72,7 @@ export const EventPageCard = ({eventDetails}: any & any) => {
       {eventDetails?.eventAllowRegistration === true && (
         <CardFooter className="px-4 pb-4">
           <Link
-            href={`/events/${eventDetails?.id}/register`}
+            href={`${workspaceURI}/events/${eventDetails?.id}/register`}
             className="w-full">
             <Button size="sm" className="w-full text-base font-medium">
               Register to the event
