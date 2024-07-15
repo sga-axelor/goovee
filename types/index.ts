@@ -167,3 +167,18 @@ export type Item = {
   key: string;
   label: string;
 };
+
+export type Participant = {
+  id?: ID;
+  name: string;
+  surname: string;
+  emailAddress: string;
+  phone: string;
+  contact?: any;
+};
+
+export type Comment = {
+  image?: any;
+  contentComment: string;
+  publicationDateTime: Date;
+};
