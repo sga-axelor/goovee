@@ -5,6 +5,11 @@ import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findSubappAccess} from '@/orm/subapps';
 import {SUBAPP_CODES} from '@/constants';
+import {clone} from '@/utils';
+
+// ---- LOCAL IMPORTS ---- //
+import {findEventCategories} from '@/subapps/events/common/orm/event-category';
+import {MobileMenuCategory} from '@/subapps/events/common/ui/components';
 
 export default async function Layout({
   params,
@@ -27,5 +32,12 @@ export default async function Layout({
 
   if (!subapp) return notFound();
 
-  return <>{children}</>;
+  const categories = await findEventCategories().then(clone);
+
+  return (
+    <>
+      {children}
+      <MobileMenuCategory categories={categories} />
+    </>
+  );
 }
