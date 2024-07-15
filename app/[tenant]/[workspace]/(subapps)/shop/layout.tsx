@@ -1,5 +1,6 @@
 import React from 'react';
 import {notFound} from 'next/navigation';
+import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {findSubapp} from '@/orm/subapps';
@@ -7,10 +8,15 @@ import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import MobileMenuCategory from './mobile-menu-category';
 import {findCategories} from './common/orm/categories';
+
+export const metadata: Metadata = {
+  title: i18n.get('Shop'),
+};
 
 export default async function Layout({
   params,
