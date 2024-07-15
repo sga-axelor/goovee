@@ -7,7 +7,7 @@ import {
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-} from '@/ui/components';
+} from '@/ui/components/pagination';
 
 // ---- LOCAL IMPORTS ---- //
 import type {PaginationProps} from '@/subapps/events/common/ui/components';
