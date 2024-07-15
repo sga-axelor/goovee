@@ -63,4 +63,5 @@ export const SUBAPP_CODES = {
   invoices: 'invoices',
   resources: 'resources',
   news: 'news',
+  events: 'events',
 };
