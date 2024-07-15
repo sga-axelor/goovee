@@ -16,11 +16,11 @@ import {
 import {cn} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import type {HeroProps} from '@/app/events/common/ui/components';
-import type {Event} from '@/app/events/common/ui/components';
-import {getAllEvents} from '@/app/events/common/actions/actions';
+import type {HeroProps} from '@/subapps/events/common/ui/components';
+import type {Event} from '@/subapps/events/common/ui/components';
+import {getAllEvents} from '@/subapps/events/common/actions/actions';
 import {convertDate} from '@/utils/functions';
-import styles from '@/app/events/common/ui/components/hero/hero.module.css';
+import styles from '@/subapps/events/common/ui/components/hero/hero.module.css';
 
 export const Hero = ({className}: HeroProps) => {
   const [inputValue, setInputValue] = useState<string>('');

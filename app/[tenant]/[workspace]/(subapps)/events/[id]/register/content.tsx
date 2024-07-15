@@ -5,7 +5,7 @@ import {convertDate} from '@/utils/functions';
 import {
   EventDateCard,
   RegistrationForm,
-} from '@/app/events/common/ui/components';
+} from '@/subapps/events/common/ui/components';
 
 const Content = ({
   eventDetails,

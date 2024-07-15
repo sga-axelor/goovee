@@ -10,7 +10,7 @@ import {Avatar, AvatarFallback, AvatarImage} from '@/ui/components';
 import {
   MobileSidebar,
   CategoriesSidebar,
-} from '@/app/events/common/ui/components';
+} from '@/subapps/events/common/ui/components';
 
 export const Menu = () => {
   const router = useRouter();

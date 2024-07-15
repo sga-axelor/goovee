@@ -1,8 +1,8 @@
 'use client';
 
 // ---- LOCAL IMPORTS ---- //
-import {Category, Events} from '@/app/events/common/ui/components';
-import {LIMIT} from '@/app/events/common/constants';
+import {Category, Events} from '@/subapps/events/common/ui/components';
+import {LIMIT} from '@/subapps/events/common/constants';
 
 type ContentProps = {
   categories: Category[];

@@ -6,7 +6,7 @@ import {MdOutlineCalendarMonth} from 'react-icons/md';
 import {Badge, Card} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventDateCardProps} from '@/app/events/common/ui/components';
+import {EventDateCardProps} from '@/subapps/events/common/ui/components';
 
 export const EventDateCard = ({
   startDate,

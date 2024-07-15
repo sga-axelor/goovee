@@ -2,9 +2,9 @@
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from '@/app/events/[id]/register/content';
-import {findEvent} from '@/app/events/common/orm/event';
-import {findModelFields} from '@/app/events/common/orm/meta-json-field';
+import Content from '@/subapps/events/[id]/register/content';
+import {findEvent} from '@/subapps/events/common/orm/event';
+import {findModelFields} from '@/subapps/events/common/orm/meta-json-field';
 
 export default async function Page({params}: {params: {id: string}}) {
   const eventDetails = await findEvent(params.id).then(clone);

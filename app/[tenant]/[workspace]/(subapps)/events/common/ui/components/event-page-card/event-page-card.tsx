@@ -15,7 +15,7 @@ import {
 import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventCardBadges} from '@/app/events/common/ui/components';
+import {EventCardBadges} from '@/subapps/events/common/ui/components';
 
 export const EventPageCard = ({eventDetails}: any & any) => {
   return (

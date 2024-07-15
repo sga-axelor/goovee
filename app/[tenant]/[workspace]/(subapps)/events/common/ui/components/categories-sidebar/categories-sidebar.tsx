@@ -9,7 +9,7 @@ import {MdOutlineCalendarMonth} from 'react-icons/md';
 import {Sheet, SheetContent} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {useMobileCategoriesSidebar} from '@/app/events/common/ui/hooks';
+import {useMobileCategoriesSidebar} from '@/subapps/events/common/ui/hooks';
 
 const categories = [
   {label: 'All events', url: '/'},

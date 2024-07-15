@@ -7,8 +7,8 @@ import {Button, Card} from '@/ui/components';
 import type {
   EventSelectorProps,
   Category,
-} from '@/app/events/common/ui/components';
-import {Calendar} from '@/app/events/common/ui/components';
+} from '@/subapps/events/common/ui/components';
+import {Calendar} from '@/subapps/events/common/ui/components';
 
 export const EventSelector = ({
   date,

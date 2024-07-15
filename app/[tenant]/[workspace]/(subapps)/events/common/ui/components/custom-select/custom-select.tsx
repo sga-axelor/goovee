@@ -8,8 +8,8 @@ import {createDefaultValues} from '@/ui/form/display.helpers';
 import {Field} from '@/ui/form/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {searchContacts} from '@/app/events/common/actions/actions';
-import type {OptionType} from '@/app/events/common/ui/components/custom-select/types';
+import {searchContacts} from '@/subapps/events/common/actions/actions';
+import type {OptionType} from '@/subapps/events/common/ui/components/custom-select/types';
 
 function formatItems(array: any[]) {
   return (

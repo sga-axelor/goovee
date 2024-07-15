@@ -2,7 +2,7 @@
 import {Badge} from '@/ui/components/badge';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventCardBadgesProps} from '@/app/events/common/ui/components';
+import {EventCardBadgesProps} from '@/subapps/events/common/ui/components';
 
 export const EventCardBadges = ({categories}: EventCardBadgesProps) => {
   return (

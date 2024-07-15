@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 // ---- LOCAL IMPORTS ---- //
-import {Event} from '@/app/events/common/ui/components';
+import {Event} from '@/subapps/events/common/ui/components';
 
 export const convertDate = (dateString: string) => {
   const date = moment(dateString);

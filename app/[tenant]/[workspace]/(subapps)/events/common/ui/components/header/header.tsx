@@ -11,8 +11,8 @@ import {
 } from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {Logo} from '@/app/events/common/ui/components';
-import {Notifications} from '@/app/events/common/ui/components/notifications/components';
+import {Logo} from '@/subapps/events/common/ui/components';
+import {Notifications} from '@/subapps/events/common/ui/components/notifications/components';
 
 export const Header = () => {
   return (

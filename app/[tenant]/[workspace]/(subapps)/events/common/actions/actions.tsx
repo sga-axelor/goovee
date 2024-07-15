@@ -5,18 +5,18 @@ import {clone} from '@/utils';
 import {Comment, Participant} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEvent, findEvents} from '@/app/events/common/orm/event';
-import {findContactByName} from '@/app/events/common/orm/partner';
+import {findEvent, findEvents} from '@/subapps/events/common/orm/event';
+import {findContactByName} from '@/subapps/events/common/orm/partner';
 import {
   createComment,
   findCommentsForEvent,
-} from '@/app/events/common/orm/comment';
+} from '@/subapps/events/common/orm/comment';
 import {
   findParticipant,
   findParticipantByName,
   registerParticipant,
   registerParticipants,
-} from '@/app/events/common/orm/registration';
+} from '@/subapps/events/common/orm/registration';
 
 export async function getAllEvents({
   limit,

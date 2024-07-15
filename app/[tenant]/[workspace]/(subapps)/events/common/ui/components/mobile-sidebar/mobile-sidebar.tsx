@@ -9,8 +9,8 @@ import {MdApps} from 'react-icons/md';
 import {Sheet, SheetContent} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {sidebarLinks} from '@/app/events/common/ui/components';
-import {useMobileSidebar} from '@/app/events/common/ui/hooks';
+import {sidebarLinks} from '@/subapps/events/common/ui/components';
+import {useMobileSidebar} from '@/subapps/events/common/ui/hooks';
 
 export const MobileSidebar = () => {
   const pathname = usePathname();

@@ -17,8 +17,8 @@ import {convertDate} from '@/utils/functions';
 import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventCardBadges} from '@/app/events/common/ui/components';
-import {EventCardProps} from '@/app/events/common/ui/components/events/types';
+import {EventCardBadges} from '@/subapps/events/common/ui/components';
+import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
 
 export const EventCard = ({event}: EventCardProps) => {
   return (

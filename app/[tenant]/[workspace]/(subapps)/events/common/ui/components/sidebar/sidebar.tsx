@@ -6,7 +6,7 @@ import {ChevronDown} from 'lucide-react';
 import {MdApps} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {sidebarLinks} from '@/app/events/common/ui/components';
+import {sidebarLinks} from '@/subapps/events/common/ui/components';
 
 export const Sidebar = () => {
   const [expanded, setExpanded] = useState<boolean>(false);

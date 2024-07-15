@@ -10,7 +10,7 @@ import {
 } from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {NotificationCard} from '@/app/events/common/ui/components/notifications/components';
+import {NotificationCard} from '@/subapps/events/common/ui/components/notifications/components';
 
 const notifications = [
   {

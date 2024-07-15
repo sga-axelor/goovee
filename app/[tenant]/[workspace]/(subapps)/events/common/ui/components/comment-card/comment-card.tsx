@@ -10,7 +10,7 @@ import {
 import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Comment} from '@/app/events/common/ui/components';
+import type {Comment} from '@/subapps/events/common/ui/components';
 
 export const CommentCard = ({
   id,

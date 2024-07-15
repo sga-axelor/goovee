@@ -7,14 +7,14 @@ import Link from 'next/link';
 import {convertDateToISO8601} from '@/utils/functions';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Event, Category} from '@/app/events/common/ui/components';
+import type {Event, Category} from '@/subapps/events/common/ui/components';
 import {
   EventSelector,
   EventCard,
   Hero,
   PaginationControls,
-} from '@/app/events/common/ui/components';
-import {useSearchParams} from '@/app/events/common/ui/hooks';
+} from '@/subapps/events/common/ui/components';
+import {useSearchParams} from '@/subapps/events/common/ui/hooks';
 
 export const Events = ({
   limit,

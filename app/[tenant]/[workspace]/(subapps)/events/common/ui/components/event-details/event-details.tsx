@@ -11,8 +11,8 @@ import {
   EventPageCard,
   CommentsSection,
   EventDateCard,
-} from '@/app/events/common/ui/components';
-import type {Event, Comment} from '@/app/events/common/ui/components';
+} from '@/subapps/events/common/ui/components';
+import type {Event, Comment} from '@/subapps/events/common/ui/components';
 
 export function EventDetails({
   eventDetails,

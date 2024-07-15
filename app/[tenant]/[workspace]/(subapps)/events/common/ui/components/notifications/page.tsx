@@ -5,7 +5,7 @@ import {useEffect, useState} from 'react';
 import {useWindowSize} from 'usehooks-ts';
 
 // ---- LOCAL IMPORTS ---- //
-import {Notifications} from '@/app/events/common/ui/components/notifications/components';
+import {Notifications} from '@/subapps/events/common/ui/components/notifications/components';
 
 const NotificationsPage = () => {
   const [isMounted, setIsMounted] = useState(false);

@@ -10,7 +10,7 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import type {SidebarProps} from '@/app/events/common/ui/components';
+import type {SidebarProps} from '@/subapps/events/common/ui/components';
 
 export const sidebarLinks: SidebarProps[] = [
   {

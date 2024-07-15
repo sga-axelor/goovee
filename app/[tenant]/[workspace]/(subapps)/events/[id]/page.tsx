@@ -1,9 +1,9 @@
 // ---- CORE IMPORTS ---- //
-import {findEvent} from '@/app/events/common/orm/event';
+import {findEvent} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventDetails} from '@/app/events/common/ui/components';
+import {EventDetails} from '@/subapps/events/common/ui/components';
 
 export const metadata = {
   title: 'Event',

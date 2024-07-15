@@ -7,13 +7,13 @@ import {convertDateWithMinutes} from '@/utils/functions';
 import {cn} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {CommentCard} from '@/app/events/common/ui/components';
-import type {CommentSectionProps} from '@/app/events/common/ui/components';
+import {CommentCard} from '@/subapps/events/common/ui/components';
+import type {CommentSectionProps} from '@/subapps/events/common/ui/components';
 import {
   addComment,
   getCommentsByEvent,
-} from '@/app/events/common/actions/actions';
-import styles from '@/app/events/common/ui/components/comments-section/comments-section.module.css';
+} from '@/subapps/events/common/actions/actions';
+import styles from '@/subapps/events/common/ui/components/comments-section/comments-section.module.css';
 
 export const CommentsSection = ({
   eventId,

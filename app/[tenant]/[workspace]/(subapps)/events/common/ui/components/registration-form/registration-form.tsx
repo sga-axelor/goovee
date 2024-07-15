@@ -21,9 +21,12 @@ import {
 } from '@/ui/form/studio/display.helpers';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventCardBadges, CustomSelect} from '@/app/events/common/ui/components';
-import type {EventPageCardProps} from '@/app/events/common/ui/components';
-import {RegistrationEvent} from '@/app/events/common/actions/actions';
+import {
+  EventCardBadges,
+  CustomSelect,
+} from '@/subapps/events/common/ui/components';
+import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
+import {RegistrationEvent} from '@/subapps/events/common/actions/actions';
 
 const basicPerson = [
   {

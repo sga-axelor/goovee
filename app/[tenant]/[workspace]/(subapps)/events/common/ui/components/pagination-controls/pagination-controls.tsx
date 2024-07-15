@@ -10,7 +10,7 @@ import {
 } from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import type {PaginationProps} from '@/app/events/common/ui/components';
+import type {PaginationProps} from '@/subapps/events/common/ui/components';
 
 export const PaginationControls = ({
   totalItems,

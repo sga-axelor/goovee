@@ -19,9 +19,9 @@ import {
 import {datesBetweenTwoDates, dateIsExist} from '@/utils/functions';
 
 // ---- LOCAL IMPORTS ---- //
-import {getAllEvents} from '@/app/events/common/actions/actions';
-import {CalendarProps} from '@/app/events/common/ui/components/calendar/types';
-import styles from '@/app/events/common/ui/components/calendar/calendar.module.css';
+import {getAllEvents} from '@/subapps/events/common/actions/actions';
+import {CalendarProps} from '@/subapps/events/common/ui/components/calendar/types';
+import styles from '@/subapps/events/common/ui/components/calendar/calendar.module.css';
 
 const months = Array.from({length: 12}, (_, i) =>
   new Date(0, i).toLocaleString('en-US', {month: 'long'}),

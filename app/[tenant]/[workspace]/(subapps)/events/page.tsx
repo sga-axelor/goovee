@@ -1,12 +1,12 @@
 // ---- CORE IMPORTS ----//
-import {findEventCategories} from '@/app/events/common/orm/event-category';
+import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {Category} from '@/app/events/common/ui/components';
-import {getAllEvents} from '@/app/events/common/actions/actions';
-import Content from '@/app/events/content';
-import {LIMIT} from '@/app/events/common/constants';
+import {Category} from '@/subapps/events/common/ui/components';
+import {getAllEvents} from '@/subapps/events/common/actions/actions';
+import Content from '@/subapps/events/content';
+import {LIMIT} from '@/subapps/events/common/constants';
 
 export default async function Page(context: any) {
   const page = context?.searchParams?.page || 1;
