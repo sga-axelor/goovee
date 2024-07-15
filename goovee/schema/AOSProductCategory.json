@@ -27,6 +27,12 @@
       "name": "productList",
       "target": "AOSProduct",
       "mappedBy": "portalCategorySet"
+    },
+    {
+      "type": "OneToMany",
+      "name": "items",
+      "target": "AOSProductCategory",
+      "mappedBy": "parentProductCategory"
     }
   ]
 }

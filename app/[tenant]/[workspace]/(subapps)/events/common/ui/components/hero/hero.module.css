@@ -1,0 +1,54 @@
+.hero-bg {
+  position: relative;
+  background-color: #1c1f55;
+}
+
+.hero-bg::before,
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 100%;
+
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.hero-bg::before {
+  left: 0;
+  background-image: url('/bg/bg_desktop_left.svg');
+  width: 30rem;
+}
+
+.hero-bg::after {
+  right: 0;
+  background-image: url('/bg/bg_desktop_right.svg');
+  width: 33.75rem;
+}
+
+@media (max-width: 960px) {
+  .hero-bg::before {
+    left: 0;
+    background-image: url('/bg/bg_left.svg');
+    width: 10.313rem;
+  }
+
+  .hero-bg::after {
+    right: 0;
+    background-image: url('/bg/bg_right.svg');
+    width: 17.75rem;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar-track {
+  display: none;
+}

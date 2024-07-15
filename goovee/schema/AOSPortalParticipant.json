@@ -1,0 +1,42 @@
+{
+  "name": "AOSPortalParticipant",
+  "table": "portal_portal_participant",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "surname",
+      "type": "String"
+    },
+    {
+      "name": "emailAddress",
+      "type": "String"
+    },
+    {
+      "name": "phone",
+      "type": "String"
+    },
+    {
+      "name": "company",
+      "type": "String"
+    },
+    {
+      "name": "contactAttrs",
+      "type": "JSON"
+    },
+    {
+      "name": "contact",
+      "type": "ManyToOne",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "registration",
+      "type": "ManyToOne",
+      "target": "AOSRegistration"
+    }
+  ]
+}

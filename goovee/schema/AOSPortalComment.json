@@ -27,6 +27,27 @@
       "type": "OneToMany",
       "target": "AOSPortalComment",
       "mappedBy": "childComment"
+    },
+    {
+      "name": "image",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
+    },
+    {
+      "name": "parentComment",
+      "type": "ManyToOne",
+      "target": "AOSPortalComment"
+    },
+    {
+      "name": "childCommentList",
+      "type": "OneToMany",
+      "target": "AOSPortalComment",
+      "mappedBy": "parentComment"
+    },
+    {
+      "name": "portalEvent",
+      "type": "ManyToOne",
+      "target": "AOSPortalEvent"
     }
   ]
 }

@@ -1,0 +1,40 @@
+export interface Event {
+  key: string | undefined;
+  id: string;
+  eventVisibility: boolean;
+  eventTitle: string;
+  eventStartDateTime: string;
+  eventImage: {
+    id: string | number;
+  };
+  eventEndDateTime: string;
+  eventDescription: string;
+  eventDegressiveNumberPartcipant: number;
+  eventCategorySet: [Category];
+  eventAllowRegistration: boolean;
+  eventAllowMultipleRegistrations: boolean;
+  eventAllDay: boolean;
+  _count: number | undefined;
+  _hasNext: boolean;
+  eventProduct: {
+    salePrice: string;
+  } | null;
+}
+export interface EventsProps {
+  events: Event[];
+}
+export interface perPageProps {
+  perpage: number;
+}
+export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  version: number;
+}
+export interface CategoriesProps {
+  eventsCategories: Category[];
+}
+export interface EventCardProps {
+  event: Event;
+}
