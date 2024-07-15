@@ -3,5 +3,5 @@ export function getImageURL(id?: string | number) {
     return undefined;
   }
 
-  return `${process.env.NEXT_PUBLIC_HOST}/api/image/${id}`;
+  return `${process.env.NEXT_PUBLIC_HOST}/api/download/${id}?meta=true`;
 }
