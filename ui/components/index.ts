@@ -31,6 +31,14 @@ export {
   BreadcrumbSeparator,
 } from './breadcrumb';
 export {Button} from './button';
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from './card';
 export {Calendar} from './calendar';
 export {Checkbox} from './checkbox';
 export {
