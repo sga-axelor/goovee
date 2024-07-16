@@ -31,7 +31,8 @@
     },
     {
       "type": "String",
-      "name": "password"
+      "name": "password",
+      "column": "portal_password"
     },
     {
       "type": "OneToMany",
