@@ -54,13 +54,13 @@
     },
     {
       "type": "ManyToOne",
-      "name": "product",
-      "target": "AOSProduct"
+      "name": "company",
+      "target": "AOSCompany"
     },
     {
       "type": "ManyToOne",
-      "name": "company",
-      "target": "AOSCompany"
+      "name": "product",
+      "target": "AOSProduct"
     },
     {
       "type": "OneToMany",
@@ -89,12 +89,12 @@
       "target": "AOSPortalWorkspace"
     },
     {
-      "type": "Int",
-      "name": "featured"
+      "type": "Boolean",
+      "name": "homepage"
     },
     {
-      "type": "Date",
-      "name": "createdOn"
+      "type": "Int",
+      "name": "featured"
     }
   ]
 }

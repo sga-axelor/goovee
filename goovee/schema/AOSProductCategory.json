@@ -23,10 +23,10 @@
       "target": "AOSPortalWorkspace"
     },
     {
-      "type": "OneToMany",
+      "type": "ManyToMany",
       "name": "productList",
       "target": "AOSProduct",
-      "mappedBy": "productCategory"
+      "mappedBy": "portalCategorySet"
     }
   ]
 }
