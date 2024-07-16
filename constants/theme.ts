@@ -28,6 +28,7 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
 
     success: '153 60% 59%',
     'success-foreground': '210 40% 98%',
+    'success-dark': '142 48% 37%',
 
     border: '214.3 31.8% 91.4%',
     input: '214.3 31.8% 91.4%',
