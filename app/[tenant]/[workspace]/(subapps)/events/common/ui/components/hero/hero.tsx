@@ -15,12 +15,13 @@ import {
 } from '@/ui/components';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {DATE_FORMATS} from '@/constants';
+import {parseDate} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import type {HeroProps} from '@/subapps/events/common/ui/components';
 import type {Event} from '@/subapps/events/common/ui/components';
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
-import {convertDate} from '@/utils/functions';
 import styles from '@/subapps/events/common/ui/components/hero/hero.module.css';
 
 export const Hero = ({className}: HeroProps) => {
@@ -105,7 +106,10 @@ export const Hero = ({className}: HeroProps) => {
                             {event.eventTitle}
                           </p>
                           <p className="text-sm font-normal text-main-black min-w-fit">
-                            {convertDate(event.eventStartDateTime)}
+                            {parseDate(
+                              event.eventStartDateTime,
+                              DATE_FORMATS.full_month_day_year_12_hour,
+                            )}
                           </p>
                         </div>
                         <p className="overflow-hidden text-xs font-normal text-main-black line-clamp-1">

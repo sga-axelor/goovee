@@ -1,5 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import {convertDate} from '@/utils/functions';
+import {parseDate} from '@/utils';
+import {DATE_FORMATS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -24,8 +25,14 @@ const Content = ({
           />
         </div>
         <EventDateCard
-          startDate={convertDate(eventDetails?.eventStartDateTime)}
-          endDate={convertDate(eventDetails?.eventEndDateTime)}
+          startDate={parseDate(
+            eventDetails?.eventStartDateTime,
+            DATE_FORMATS.full_month_day_year_12_hour,
+          )}
+          endDate={parseDate(
+            eventDetails?.eventEndDateTime,
+            DATE_FORMATS.full_month_day_year_12_hour,
+          )}
           registered={eventDetails?.eventAllowRegistration}
         />
       </main>

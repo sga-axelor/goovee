@@ -4,6 +4,7 @@ import moment from 'moment';
 import {getClient} from '@/goovee';
 import type {ID} from '@/types';
 import {formatDateToISOString} from '@/utils/date';
+import {DATE_FORMATS} from '@/constants';
 
 export async function findEvent(id: ID) {
   if (!id) return null;
@@ -127,8 +128,8 @@ export async function findEvents({
   const eventStartDateTimeCriteria = selectedDates?.map((date: any) => ({
     eventStartDateTime: {
       between: [
-        moment(date).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-        moment(date).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        moment(date).startOf('day').format(DATE_FORMATS.timestamp_with_seconds),
+        moment(date).endOf('day').format(DATE_FORMATS.timestamp_with_seconds),
       ],
     },
   }));

@@ -3,8 +3,9 @@ import {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Card, Textarea} from '@/ui/components';
-import {convertDateWithMinutes} from '@/utils/functions';
+import {parseDate} from '@/utils';
 import {cn} from '@/utils/css';
+import {DATE_FORMATS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {CommentCard} from '@/subapps/events/common/ui/components';
@@ -53,8 +54,9 @@ export const CommentsSection = ({
           id={comment.id}
           author={comment?.author}
           image={comment.image}
-          publicationDateTime={convertDateWithMinutes(
+          publicationDateTime={parseDate(
             comment.publicationDateTime,
+            DATE_FORMATS.custom,
           )}
           contentComment={comment.contentComment}
         />

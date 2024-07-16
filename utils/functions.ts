@@ -1,17 +1,5 @@
-import moment from 'moment';
-
 // ---- LOCAL IMPORTS ---- //
 import {Event} from '@/subapps/events/common/ui/components';
-
-export const convertDate = (dateString: string) => {
-  const date = moment(dateString);
-  return date.format('MMMM D YYYY - hA');
-};
-
-export const convertDateWithMinutes = (dateString: string) => {
-  const date = moment(dateString);
-  return date.format('MMMM D YYYY - h:mm A');
-};
 
 export const convertDateToISO8601 = (date: Date | undefined) => {
   if (!date) return undefined;

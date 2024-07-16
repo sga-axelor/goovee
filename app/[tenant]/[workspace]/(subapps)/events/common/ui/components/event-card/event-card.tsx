@@ -13,8 +13,9 @@ import {
   Button,
   Badge,
 } from '@/ui/components';
-import {convertDate} from '@/utils/functions';
+import {parseDate} from '@/utils';
 import {getImageURL} from '@/utils/image';
+import {DATE_FORMATS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardBadges} from '@/subapps/events/common/ui/components';
@@ -49,8 +50,13 @@ export const EventCard = ({event}: EventCardProps) => {
             )}
           </CardTitle>
           <CardDescription className="text-sm font-medium">
-            {convertDate(event.eventStartDateTime)} to{' '}
-            {convertDate(event.eventEndDateTime)}
+            {`${parseDate(
+              event.eventStartDateTime,
+              DATE_FORMATS.full_month_day_year_12_hour,
+            )} to ${parseDate(
+              event.eventEndDateTime,
+              DATE_FORMATS.full_month_day_year_12_hour,
+            )}`}
           </CardDescription>
           <EventCardBadges categories={event.eventCategorySet} />
         </CardHeader>
