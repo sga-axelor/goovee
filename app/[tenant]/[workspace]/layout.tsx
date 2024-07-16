@@ -6,6 +6,7 @@ import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace, findWorkspaces} from '@/orm/workspace';
 import {findSubapps} from '@/orm/subapps';
+import {DEFAULT_THEME_OPTIONS} from '@/constants/theme';
 
 // ---- LOCAL IMPORTS ---- //
 import Workspace from './workspace-context';
@@ -13,6 +14,12 @@ import CartContext from './cart-context';
 import Header from './header';
 import Sidebar from './sidebar';
 import MobileMenu from './mobile-menu';
+
+const defaultTheme = {
+  id: -1,
+  name: 'Default Theme',
+  css: JSON.stringify(DEFAULT_THEME_OPTIONS),
+};
 
 export default async function Layout({
   params,
@@ -37,10 +44,8 @@ export default async function Layout({
   let theme;
 
   try {
-    if ($workspace?.defaultTheme) {
-      theme = $workspace.defaultTheme;
-      theme.options = JSON.parse($workspace?.defaultTheme?.css || null);
-    }
+    theme = $workspace?.defaultTheme || defaultTheme;
+    theme.options = JSON.parse(theme?.css);
   } catch (err: any) {
     console.error(err.message);
   }
