@@ -9,5 +9,5 @@ export {Comments} from './comments';
 export {NewsInfo} from './news-info';
 export {Homepage} from './homepage';
 export {Article} from './article';
-export {Search, SearchResultItem} from './search';
+export {SearchItem} from './search-item';
 export {Breadcrumb} from './breadcrumb';

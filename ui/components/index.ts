@@ -195,3 +195,4 @@ export {
 export {Banner} from './banner';
 export {Pagination} from './custom-pagination';
 export {HeroSearch} from './hero-search';
+export {Search} from './search';

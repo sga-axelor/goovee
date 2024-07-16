@@ -72,6 +72,3 @@ export const COMMENTS = 'Comments';
 export const POSTED_ON = 'Posted on';
 export const PUBLISHED_ON = 'Published on';
 export const WRITE_YOUR_COMMENT = 'Write your comment';
-export const BANNER_TITLE = 'News';
-export const BANNER_DESCRIPTION =
-  'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam';

@@ -2,6 +2,9 @@
 
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
+
+// ---- CORE IMPORTS ---- //
+import {cn} from '@/utils/css';
 import {
   Command,
   CommandEmpty,
@@ -10,16 +13,18 @@ import {
   CommandItem,
   CommandList,
 } from '@/ui/components/command';
-import {cn} from '@/utils/css';
-
-// ---- CORE IMPORTS ---- //
-import {Badge} from '@/ui/components/badge';
 
 // ---- LOCAL IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {findSearchNews} from '@/subapps/news/common/actions/action';
 
-export const Search = () => {
+export const Search = ({
+  findQuery,
+  renderItem,
+}: {
+  findQuery: any;
+  renderItem: any;
+}) => {
+  const RenderItem = renderItem;
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -34,7 +39,7 @@ export const Search = () => {
   useEffect(() => {
     setOpen(search ? true : false);
     if (search) {
-      findSearchNews().then(setResults);
+      findQuery().then(setResults);
     }
   }, [search]);
 
@@ -64,7 +69,7 @@ export const Search = () => {
                       key={result.id}
                       value={result.title}
                       className="block py-2 sm:px-6">
-                      <SearchResultItem result={result} onClick={handleClick} />
+                      <RenderItem result={result} onClick={handleClick} />
                     </CommandItem>
                   ))
                 : null}
@@ -75,37 +80,5 @@ export const Search = () => {
     </>
   );
 };
-
-export function SearchResultItem({
-  result,
-  onClick,
-}: {
-  result: any;
-  onClick: any;
-}) {
-  const {id, slug, title, categorySet, description} = result;
-  return (
-    <div
-      key={id}
-      className="flex flex-col gap-2 cursor-pointer"
-      onClick={() => onClick(slug)}>
-      <div className="flex justify-between">
-        <div className="text-sm font-semibold">{title}</div>
-        <div className="flex gap-2 h-max">
-          {categorySet.map((category: any, i: any) => (
-            <Badge
-              key={i}
-              className="px-2 p-1 rounded font-normal text-[8px] leading-[12px]">
-              {category.name}
-            </Badge>
-          ))}
-        </div>
-      </div>
-      <div className="line-clamp-1 font-normal text-xs text-black">
-        {description}
-      </div>
-    </div>
-  );
-}
 
 export default Search;
