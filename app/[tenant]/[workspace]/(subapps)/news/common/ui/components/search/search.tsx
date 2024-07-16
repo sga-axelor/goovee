@@ -85,11 +85,11 @@ function Item({result, onClick}: {result: any; onClick: any}) {
       onClick={() => onClick(slug)}>
       <div className="flex justify-between">
         <div className="text-sm font-semibold">{title}</div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 h-max">
           {categorySet.map((category: any, i: any) => (
             <Badge
               key={i}
-              className="px-2 p-1 rounded font-normal text-[8px] leading-[12px] ">
+              className="px-2 p-1 rounded font-normal text-[8px] leading-[12px]">
               {category.name}
             </Badge>
           ))}
