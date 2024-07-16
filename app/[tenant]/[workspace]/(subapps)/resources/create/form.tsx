@@ -88,6 +88,7 @@ export default function ResourceForm({categories}: any) {
       toast({
         title: i18n.get('Resource created successfully.'),
       });
+      router.refresh();
       router.push(`${workspaceURI}/resources/categories?id=${values.category}`);
     } else {
       toast({
