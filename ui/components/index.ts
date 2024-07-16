@@ -194,4 +194,3 @@ export {
 } from './alert-dialog';
 export {Banner} from './banner';
 export {Pagination} from './custom-pagination';
-export {MobileMenuCategory} from '../../app/[tenant]/[workspace]/(subapps)/events/common/ui/components/mobile-menu-category';
