@@ -50,15 +50,21 @@ export default async function Page({
 
   return (
     <main className="container p-4 mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="font-semibold text-xl leading-8 grow">
           {i18n.get('Resource Category')}
         </h2>
-        <SortBy className="hidden sm:flex me-2" />
+        {/* <SortBy className="hidden sm:flex me-2" /> */}
+        <Link href={`${workspaceURI}/resources/categories/create`}>
+          <Button variant="success" className="flex items-center">
+            <MdAdd className="size-6" />
+            <span>{i18n.get('New Category')}</span>
+          </Button>
+        </Link>
         <Link href={`${workspaceURI}/resources/create`}>
           <Button variant="success" className="flex items-center">
             <MdAdd className="size-6" />
-            <span>{i18n.get('Add New')}</span>
+            <span>{i18n.get('New Resource')}</span>
           </Button>
         </Link>
       </div>
@@ -75,9 +81,7 @@ export default async function Page({
         <div className="bg-white rounded-lg py-6 px-2">
           <CategoryExplorer categories={categories} />
         </div>
-        <div className="sm:hidden">
-          <SortBy />
-        </div>
+        <div className="sm:hidden">{/* <SortBy /> */}</div>
         <div className="sm:col-span-3 overflow-auto">
           <ResourceList resources={files} />
         </div>
