@@ -54,7 +54,7 @@ export function ProductCard({
           )}
         </BackgroundImage>
         <div className="py-4 px-6">
-          <h5 className="font-medium">
+          <h5 className="font-medium line-clamp-1">
             {i18n.getValueAttribute(product.name)}
           </h5>
           {displayPrices && (
