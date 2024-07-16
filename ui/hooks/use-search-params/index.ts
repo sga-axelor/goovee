@@ -1,1 +1,1 @@
-export * from './use-search-parmas';
+export * from './use-search-params';
