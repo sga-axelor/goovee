@@ -61,11 +61,18 @@ export async function findFeaturedCategories({
       portalWorkspace: {
         id: workspace.id,
       },
+      isFeatured: true,
     },
     select: {
       name: true,
       parentProductCategory: {id: true},
       productList: {
+        where: {
+          homepage: true,
+        },
+        orderBy: {
+          featured: 'DESC',
+        },
         select: {
           id: true,
         },
