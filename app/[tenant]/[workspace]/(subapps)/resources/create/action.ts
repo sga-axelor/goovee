@@ -146,6 +146,9 @@ export async function upload(formData: FormData, workspaceURL: string) {
           parent: {select: {id: Number(category)}},
           createdOn: timestamp as unknown as Date,
           updatedOn: timestamp as unknown as Date,
+          workspaceSet: {
+            select: [{id: workspace.id}],
+          },
           metaFile: {
             create: {
               fileName: name,
