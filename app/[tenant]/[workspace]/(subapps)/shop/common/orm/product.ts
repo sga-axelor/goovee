@@ -145,6 +145,7 @@ export async function findProducts({
               currency: {
                 code: true,
                 numberOfDecimals: true,
+                symbol: true,
               },
             },
           },
@@ -201,7 +202,7 @@ export async function findProducts({
       const activeTax = account?.saleTaxSet?.find((t: any) => t.activeTaxLine);
 
       const activeTaxLineValue =
-        activeTax?.activeTaxLine?.value || DEFAULT_CURRENCY_SYMBOL;
+        activeTax?.activeTaxLine?.value || DEFAULT_TAX_VALUE;
 
       return {
         value: productcompany?.company ? activeTaxLineValue : DEFAULT_TAX_VALUE,
@@ -227,7 +228,7 @@ export async function findProducts({
     };
 
     const getPrice = (): ComputedProduct['price'] => {
-      const value = productcompany?.salePrice || product.salePrice;
+      const value = productcompany?.salePrice || product.salePrice || 0;
 
       const inati = product.inAti;
 
