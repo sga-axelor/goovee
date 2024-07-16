@@ -194,3 +194,4 @@ export {
 } from './alert-dialog';
 export {Banner} from './banner';
 export {Pagination} from './custom-pagination';
+export {HeroSearch} from './hero-search';

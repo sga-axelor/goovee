@@ -64,7 +64,7 @@ export const Search = () => {
                       key={result.id}
                       value={result.title}
                       className="block py-2 sm:px-6">
-                      <Item result={result} onClick={handleClick} />
+                      <SearchResultItem result={result} onClick={handleClick} />
                     </CommandItem>
                   ))
                 : null}
@@ -76,7 +76,13 @@ export const Search = () => {
   );
 };
 
-function Item({result, onClick}: {result: any; onClick: any}) {
+export function SearchResultItem({
+  result,
+  onClick,
+}: {
+  result: any;
+  onClick: any;
+}) {
   const {id, slug, title, categorySet, description} = result;
   return (
     <div

@@ -77,3 +77,8 @@ export const DATE_FORMATS = {
   full_month_day_year_12_hour: 'MMMM D YYYY - hA',
   custom: 'MMMM D YYYY - h:mm A',
 };
+
+/**
+ * BANNER IMAGE
+ */
+export const IMAGE_URL = `url("/images/hero-bg.svg")`;

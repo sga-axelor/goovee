@@ -5,7 +5,8 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {Banner} from '@/ui/components/banner';
+import {IMAGE_URL} from '@/constants';
+import {HeroSearch} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -43,11 +44,16 @@ export const Homepage = ({
     router.push(`${workspaceURI}/news/article/${slug}`);
   };
 
+  const renderSearch = () => <Search />;
+
   return (
     <div className="h-full flex flex-col">
-      <Banner title={BANNER_TITLE} description={BANNER_DESCRIPTION}>
-        <Search />
-      </Banner>
+      <HeroSearch
+        title={BANNER_TITLE}
+        description={BANNER_DESCRIPTION}
+        image={IMAGE_URL}
+        renderSearch={renderSearch}
+      />
       <div
         className={`px-4 lg:px-[100px] flex flex-col gap-6 flex-auto ${styles['news-container']}`}>
         {latestNews?.length ? (
