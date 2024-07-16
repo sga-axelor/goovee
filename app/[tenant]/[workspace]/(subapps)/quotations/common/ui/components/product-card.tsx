@@ -54,7 +54,9 @@ export const ProductCard = (props: any) => {
                   <p className="text-sm font-semibold mb-0">
                     {i18n.get('Tax')}
                   </p>
-                  <p className="text-sm mb-0">{product?.taxLine?.value} %</p>
+                  <p className="text-sm mb-0">
+                    {product?.taxLineSet[0]?.value} %
+                  </p>
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-sm font-semibold mb-0">

@@ -132,7 +132,7 @@ export async function findArchivedOrders({
 
 export async function findOrder(id: Order['id']) {
   const client = await getClient();
-  const order = await client.aOSOrder.findOne({
+  const order: any = await client.aOSOrder.findOne({
     where: {
       id,
     },
@@ -179,9 +179,11 @@ export async function findOrder(id: Order['id']) {
           exTaxTotal: true,
           discountAmount: true,
           inTaxTotal: true,
-          taxLine: {
-            name: true,
-            value: true,
+          taxLineSet: {
+            select: {
+              name: true,
+              value: true,
+            },
           },
         },
       },

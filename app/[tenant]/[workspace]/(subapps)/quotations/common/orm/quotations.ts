@@ -76,7 +76,7 @@ export const fetchQuotations = async ({
 export async function findQuotation(id: any) {
   const client = await getClient();
 
-  const quotation = await client.aOSOrder.findOne({
+  const quotation: any = await client.aOSOrder.findOne({
     where: {
       id,
     },
@@ -117,9 +117,8 @@ export async function findQuotation(id: any) {
           },
           price: true,
           exTaxTotal: true,
-          taxLine: {
-            name: true,
-            value: true,
+          taxLineSet: {
+            select: {name: true, value: true},
           },
           discountAmount: true,
           inTaxTotal: true,

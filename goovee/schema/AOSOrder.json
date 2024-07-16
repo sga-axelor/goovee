@@ -23,11 +23,6 @@
       "name": "exTaxTotal"
     },
     {
-      "type": "ManyToOne",
-      "name": "currency",
-      "target": "AOSCurrency"
-    },
-    {
       "type": "Boolean",
       "name": "template"
     },
