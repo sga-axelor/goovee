@@ -71,7 +71,7 @@ export const CommentsSection = ({
         />
         <Button
           type="submit"
-          className="p-3 lg:w-[7.75rem] w-14 absolute top-[0.625rem] h-9 right-3 ">
+          className="p-3 lg:w-[7.75rem] w-14 absolute top-[0.625rem] h-9 right-3 bg-success hover:bg-success-dark">
           Send
         </Button>
       </form>

@@ -60,7 +60,7 @@ export const LeadStories = ({
                   </div>
                   <div className="flex flex-col flex-1 justify-between gap-2 text-white z-10">
                     <div className="flex flex-col justify-between flex-1">
-                      <div className="font-semibold text-base line-clamp-3">
+                      <div className="font-semibold text-base line-clamp-3 h-[72px]">
                         {title}
                       </div>
                       <div className="font-medium text-xs line-clamp-3">

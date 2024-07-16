@@ -49,7 +49,7 @@ const FormView = ({
 
   const renderItem = useCallback(
     (item: Field, key: string) => {
-      const renderFieldContent = ({field}) => {
+      const renderFieldContent = ({field}: any) => {
         if (item.widget === 'custom') {
           return React.createElement(item.customComponent, {
             key: `custom.${key}`,
@@ -121,7 +121,7 @@ const FormView = ({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
         {visibleFields.map(_i => renderItem(_i, _i.name))}
         <Button
-          className="text-base font-medium leading-6 p-3 w-full"
+          className="text-base font-medium leading-6 p-3 w-full bg-success hover:bg-success-dark"
           type="submit">
           {submitTitle}
         </Button>

@@ -74,7 +74,9 @@ export const EventPageCard = ({eventDetails}: any & any) => {
           <Link
             href={`${workspaceURI}/events/${eventDetails?.id}/register`}
             className="w-full">
-            <Button size="sm" className="w-full text-base font-medium">
+            <Button
+              size="sm"
+              className="w-full text-base font-medium bg-success hover:bg-success-dark">
               Register to the event
             </Button>
           </Link>

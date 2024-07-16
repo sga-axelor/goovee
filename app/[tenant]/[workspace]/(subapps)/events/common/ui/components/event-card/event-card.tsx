@@ -62,7 +62,11 @@ export const EventCard = ({event}: EventCardProps) => {
         </CardContent>
       </div>
       <div className="flex-col hidden ml-auto lg:flex items-center justify-center">
-        <Button size="icon" variant="ghost" className="" asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="bg-success/10 text-success"
+          asChild>
           <MdChevronRight className="w-10 h-10" />
         </Button>
       </div>
