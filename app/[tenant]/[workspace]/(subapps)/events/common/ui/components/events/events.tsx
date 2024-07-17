@@ -2,20 +2,24 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/functions';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {HeroSearch, Search} from '@/ui/components';
+import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
 import {
   EventSelector,
   EventCard,
-  Hero,
   PaginationControls,
 } from '@/subapps/events/common/ui/components';
 import {useSearchParams} from '@/subapps/events/common/ui/hooks';
+import {SearchItem} from '@/app/[tenant]/[workspace]/(subapps)/events/common/ui/components';
+import {getAllEvents} from '@/subapps/events/common/actions/actions';
 
 export const Events = ({
   limit,
@@ -39,6 +43,7 @@ export const Events = ({
   const [currentPage, setCurrentPage] = useState<number>(page);
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
+  const router = useRouter();
 
   const updatePage = (index: number) => {
     update([{key: 'page', value: index.toString()}]);
@@ -77,9 +82,27 @@ export const Events = ({
     events[0]?._count !== undefined &&
     events[0]._count > limit;
 
+  const handlClick = (id: string | number) => {
+    router.push(`${workspaceURI}/events/${id}`);
+  };
+
+  const renderSearch = () => (
+    <Search
+      findQuery={() => getAllEvents({})}
+      renderItem={SearchItem}
+      searchKey={'eventTitle'}
+      onItemClick={handlClick}
+    />
+  );
+
   return (
     <>
-      <Hero />
+      <HeroSearch
+        title={BANNER_TITLES.events}
+        description={BANNER_DESCRIPTION}
+        image={IMAGE_URL}
+        renderSearch={renderSearch}
+      />
       <div className="container py-6 px-4 overflow-hidden flex lg:flex-row flex-col space-y-6 lg:space-y-0 lg:gap-x-6 ">
         <EventSelector
           date={date}

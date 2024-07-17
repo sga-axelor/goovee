@@ -44,7 +44,12 @@ export const Homepage = ({
   };
 
   const renderSearch = () => (
-    <Search findQuery={findSearchNews} renderItem={SearchItem} />
+    <Search
+      searchKey="title"
+      findQuery={findSearchNews}
+      renderItem={SearchItem}
+      onItemClick={handleClick}
+    />
   );
 
   return (

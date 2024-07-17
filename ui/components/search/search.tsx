@@ -13,6 +13,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/ui/components/command';
+import {NO_RESULTS_FOUND} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -20,9 +21,13 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 export const Search = ({
   findQuery,
   renderItem,
+  searchKey = 'title',
+  onItemClick,
 }: {
   findQuery: any;
   renderItem: any;
+  searchKey?: string;
+  onItemClick?: any;
 }) => {
   const RenderItem = renderItem;
   const [search, setSearch] = useState('');
@@ -31,10 +36,6 @@ export const Search = ({
 
   const route = useRouter();
   const {workspaceURI} = useWorkspace();
-
-  const handleClick = (slug: string) => {
-    route.push(`${workspaceURI}/news/article/${slug}`);
-  };
 
   useEffect(() => {
     setOpen(search ? true : false);
@@ -61,15 +62,15 @@ export const Search = ({
               'absolute bg-white top-[60px] right-0 border border-grey-1 rounded-lg no-scrollbar text-main-black z-50 w-full p-0',
               open ? 'block' : 'hidden',
             )}>
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>{NO_RESULTS_FOUND}</CommandEmpty>
             <CommandGroup className="p-2">
               {Boolean(results?.length)
                 ? results.map((result: any) => (
                     <CommandItem
                       key={result.id}
-                      value={result.title}
+                      value={result[searchKey]}
                       className="block py-2 sm:px-6">
-                      <RenderItem result={result} onClick={handleClick} />
+                      <RenderItem result={result} onClick={onItemClick} />
                     </CommandItem>
                   ))
                 : null}

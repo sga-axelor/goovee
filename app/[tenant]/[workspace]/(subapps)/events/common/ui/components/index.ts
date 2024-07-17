@@ -49,3 +49,4 @@ export type {CustomSelectProps} from './custom-select';
 export {EventDetails} from './event-details';
 
 export {MobileMenuCategory} from './mobile-menu-category';
+export {SearchItem} from './search-item';

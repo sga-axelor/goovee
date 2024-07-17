@@ -1,6 +1,6 @@
 'use client';
+
 import {useEffect, useRef, useState} from 'react';
-import Link from 'next/link';
 import type {ChangeEvent} from 'react';
 import {MdOutlineSearch} from 'react-icons/md';
 
@@ -15,14 +15,16 @@ import {
 } from '@/ui/components';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {DATE_FORMATS} from '@/constants';
-import {parseDate} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import type {HeroProps} from '@/subapps/events/common/ui/components';
+import {
+  SearchItem,
+  type HeroProps,
+} from '@/subapps/events/common/ui/components';
 import type {Event} from '@/subapps/events/common/ui/components';
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
 import styles from '@/subapps/events/common/ui/components/hero/hero.module.css';
+import {useRouter} from 'next/navigation';
 
 export const Hero = ({className}: HeroProps) => {
   const [inputValue, setInputValue] = useState<string>('');
@@ -30,6 +32,7 @@ export const Hero = ({className}: HeroProps) => {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
 
   const {workspaceURI} = useWorkspace();
+  const router = useRouter();
 
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -43,7 +46,13 @@ export const Hero = ({className}: HeroProps) => {
       console.log(err);
     }
   };
+
+  const handlClick = (id: string | number) => {
+    router.push(`${workspaceURI}/events/${id}`);
+  };
+
   const commandRef = useRef<HTMLDivElement>(null);
+
   const handleClickOutside = (event: MouseEvent) => {
     if (
       commandRef.current &&
@@ -98,24 +107,7 @@ export const Hero = ({className}: HeroProps) => {
                       key={event.id}
                       value={event.eventTitle}
                       className="block py-2 sm:px-6">
-                      <Link
-                        href={`${workspaceURI}/events/${event.id}`}
-                        className="space-y-2">
-                        <div className="flex items-start justify-between">
-                          <p className="text-sm font-semibold text-main-black pr-2">
-                            {event.eventTitle}
-                          </p>
-                          <p className="text-sm font-normal text-main-black min-w-fit">
-                            {parseDate(
-                              event.eventStartDateTime,
-                              DATE_FORMATS.full_month_day_year_12_hour,
-                            )}
-                          </p>
-                        </div>
-                        <p className="overflow-hidden text-xs font-normal text-main-black line-clamp-1">
-                          {event.eventDescription}
-                        </p>
-                      </Link>
+                      <SearchItem result={event} onClick={handlClick} />
                     </CommandItem>
                   ))}
               </CommandGroup>

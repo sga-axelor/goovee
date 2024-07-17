@@ -91,3 +91,8 @@ export const BANNER_DESCRIPTION =
   'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam';
 
 export const IMAGE_URL = `url("/images/hero-bg.svg")`;
+
+/**
+ * OTHERS
+ */
+export const NO_RESULTS_FOUND = 'No results found.';
