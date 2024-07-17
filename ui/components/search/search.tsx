@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {cn} from '@/utils/css';
@@ -14,9 +13,6 @@ import {
   CommandList,
 } from '@/ui/components/command';
 import {NO_RESULTS_FOUND} from '@/constants';
-
-// ---- LOCAL IMPORTS ---- //
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 export const Search = ({
   findQuery,
@@ -33,10 +29,6 @@ export const Search = ({
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-
-  const route = useRouter();
-  const {workspaceURI} = useWorkspace();
-
   useEffect(() => {
     setOpen(search ? true : false);
     if (search) {
