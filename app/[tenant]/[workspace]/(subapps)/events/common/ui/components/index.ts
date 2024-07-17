@@ -12,8 +12,6 @@ export {CategoriesSidebar} from './categories-sidebar';
 export {PaginationControls} from './pagination-controls';
 export type {PaginationProps} from './pagination-controls';
 
-export {Hero} from './hero';
-export type {HeroProps} from './hero';
 export {Events} from './events';
 export type {Event} from './events';
 export type {EventsProps} from './events';
