@@ -24,6 +24,10 @@ export const PREFIX_CART_KEY = 'ct';
  * QUERY
  */
 export const DEFAULT_LIMIT = 12;
+export const ORDER_BY = {
+  ASC: 'ASC' as const,
+  DESC: 'DESC' as const,
+};
 
 /**
  * TENANT

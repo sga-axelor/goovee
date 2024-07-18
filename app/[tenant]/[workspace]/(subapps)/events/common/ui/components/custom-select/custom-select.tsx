@@ -6,6 +6,7 @@ import Select, {SingleValue, MultiValue} from 'react-select';
 // ---- CORE IMPORTS ---- //
 import {createDefaultValues} from '@/ui/form/display.helpers';
 import {Field} from '@/ui/form/types';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {searchContacts} from '@/subapps/events/common/actions/actions';
@@ -106,7 +107,7 @@ export const CustomSelect = ({
     <Select
       isMulti
       options={filteredOptions}
-      placeholder="Select a user"
+      placeholder={i18n.get('Select a user')}
       value={form.watch(field.name) ?? []}
       onChange={handleChange}
       onInputChange={handleInputChange}

@@ -21,7 +21,7 @@ export default async function Page({
   const session = await getSession();
   const eventDetails = await findEvent(params.id).then(clone);
   const successMessage = searchParams.success === 'true';
-  const userId = session?.user?.id;
+  const userId = session?.user?.id.toString() || '';
 
   return (
     <EventDetails

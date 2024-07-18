@@ -3,7 +3,6 @@
 import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {MdCheckCircleOutline, MdClose} from 'react-icons/md';
-import {z} from 'zod';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -20,6 +19,7 @@ import {
   formatStudioFields,
 } from '@/ui/form/studio/display.helpers';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -78,7 +78,7 @@ const basicPerson = [
 
 export const RegistrationForm = ({
   eventDetails,
-  metaFields,
+  metaFields = [],
 }: EventPageCardProps) => {
   const [tempError, setTempError] = useState<boolean>(false);
   const router = useRouter();
@@ -129,11 +129,11 @@ export const RegistrationForm = ({
         widget: 'custom',
         helper: null,
         hidden: false,
-        hideIf: formState => !formState?.addOtherPeople,
+        hideIf: (formState: any) => !formState?.addOtherPeople,
         required: false,
         readonly: false,
         order: 110,
-        customComponent: props =>
+        customComponent: (props: any) =>
           CustomSelect({
             ...props,
             arrayName: 'otherPeople',
@@ -147,11 +147,11 @@ export const RegistrationForm = ({
         widget: 'custom',
         helper: null,
         hidden: false,
-        hideIf: formState => !formState?.addOtherPeople,
+        hideIf: (formState: any) => !formState?.addOtherPeople,
         required: false,
         readonly: false,
         order: 120,
-        customComponent: props =>
+        customComponent: (props: any) =>
           ArrayComponent({
             ...props,
             addTitle: 'Add a new person that does not have an account',
@@ -162,7 +162,7 @@ export const RegistrationForm = ({
     [participantForm, externalParticipantForm],
   );
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: any) => {
     try {
       const result = extractCustomData(values, 'contactAttrs', metaFields);
 
@@ -190,7 +190,7 @@ export const RegistrationForm = ({
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
         {eventDetails?.eventProduct?.salePrice && (
           <CardDescription className="my-6 text-xl font-semibold">
-            {`Price : ${parseFloat(eventDetails?.eventProduct?.salePrice).toFixed(2)}€`}
+            {`${i18n.get('Price')} : ${parseFloat(eventDetails?.eventProduct?.salePrice).toFixed(2)}€`}
           </CardDescription>
         )}
       </CardHeader>
@@ -204,7 +204,7 @@ export const RegistrationForm = ({
           onSubmit={onSubmit}
           submitTitle={
             'Register' +
-            (parseFloat(eventDetails?.eventProduct?.salePrice) > 0
+            (parseFloat(eventDetails?.eventProduct?.salePrice ?? '0') > 0
               ? ' and pay'
               : '')
           }
@@ -213,8 +213,9 @@ export const RegistrationForm = ({
           <div className="flex lg:items-center justify-between text-red-1 bg-red-2 rounded-[0.313rem] py-4 px-8 border border-red-1 text-base font-normal leading-7 tracking-[0.031rem] w-full h-fit">
             <p className="gap-x-4 flex lg:items-center">
               <MdCheckCircleOutline className="shrink-0 w-6 h-6" />
-              Sorry there has been a problem with your registration. Please try
-              again.
+              {i18n.get(
+                'Sorry there has been a problem with your registration. Please try again.',
+              )}
             </p>
             <MdClose className="cursor-pointer shrink-0 w-6 h-6" />
           </div>

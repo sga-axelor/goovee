@@ -1,7 +1,3 @@
-export {Sidebar} from './sidebar';
-export type {SidebarProps} from './sidebar';
-export {sidebarLinks} from './sidebar';
-
 export {Logo} from './logo';
 export {Navbar} from './navbar';
 export {ThemeProvider} from './theme-provider';

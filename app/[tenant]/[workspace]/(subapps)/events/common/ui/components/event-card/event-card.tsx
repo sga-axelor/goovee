@@ -16,6 +16,7 @@ import {
 import {parseDate} from '@/utils';
 import {getImageURL} from '@/utils/image';
 import {DATE_FORMATS} from '@/constants';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardBadges} from '@/subapps/events/common/ui/components';
@@ -45,7 +46,7 @@ export const EventCard = ({event}: EventCardProps) => {
               <Badge
                 variant="outline"
                 className="text-[0.625rem] xs:ml-auto font-medium py-1 px-2">
-                #Registered
+                {i18n.get('#Registered')}
               </Badge>
             )}
           </CardTitle>
@@ -53,7 +54,7 @@ export const EventCard = ({event}: EventCardProps) => {
             {`${parseDate(
               event.eventStartDateTime,
               DATE_FORMATS.full_month_day_year_12_hour,
-            )} to ${parseDate(
+            )} ${i18n.get('to')} ${parseDate(
               event.eventEndDateTime,
               DATE_FORMATS.full_month_day_year_12_hour,
             )}`}

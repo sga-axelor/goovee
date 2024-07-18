@@ -7,6 +7,7 @@ import {useRouter} from 'next/navigation';
 import {parseDate} from '@/utils';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {DATE_FORMATS} from '@/constants';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -15,6 +16,7 @@ import {
   EventDateCard,
 } from '@/subapps/events/common/ui/components';
 import type {Event, Comment} from '@/subapps/events/common/ui/components';
+import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
 
 export function EventDetails({
   eventDetails,
@@ -43,7 +45,7 @@ export function EventDetails({
           <div className="min-w-full lg:min-w-[67.5rem] xl:max-w-[75rem] xl:min-w-[50rem] flex items-center justify-between text-green-600 bg-green-200 rounded-[0.313rem] py-4 px-8 border border-green-500 text-base font-normal leading-7 tracking-[0.031rem] w-full max-w-screen-lg shadow-lg">
             <p className="gap-x-4 flex items-center">
               <MdCheckCircleOutline className="shrink-0 w-6 h-6" />
-              You have been successfully registered to this event.
+              {i18n.get(SUCCESS_REGISTER_MESSAGE)}
             </p>
             <button
               type="button"

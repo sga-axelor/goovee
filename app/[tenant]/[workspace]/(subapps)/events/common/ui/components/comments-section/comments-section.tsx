@@ -6,6 +6,7 @@ import {Button, Card, Textarea} from '@/ui/components';
 import {parseDate} from '@/utils';
 import {cn} from '@/utils/css';
 import {DATE_FORMATS} from '@/constants';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {CommentCard} from '@/subapps/events/common/ui/components';
@@ -48,7 +49,7 @@ export const CommentsSection = ({
 
   return (
     <Card className="rounded-2xl border-none shadow-none p-4 w-full max-w-screen-lg space-y-4 ">
-      <h2 className="text-xl font-semibold">Comments</h2>
+      <h2 className="text-xl font-semibold">{i18n.get('Comments')}</h2>
       {allComments?.map(comment => (
         <CommentCard
           key={comment.id}
@@ -75,7 +76,7 @@ export const CommentsSection = ({
         <Button
           type="submit"
           className="p-3 lg:w-[7.75rem] w-14 absolute top-[0.625rem] h-9 right-3 bg-success hover:bg-success-dark">
-          Send
+          {i18n.get('Send')}
         </Button>
       </form>
     </Card>

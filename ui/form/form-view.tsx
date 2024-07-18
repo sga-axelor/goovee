@@ -25,7 +25,7 @@ const FormView = ({
   onSubmit,
   submitTitle,
 }: {
-  fields: Field[];
+  fields: any[];
   onSubmit: (values: any) => Promise<void>;
   submitTitle: string;
 }) => {

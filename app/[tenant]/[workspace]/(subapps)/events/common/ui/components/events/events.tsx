@@ -10,6 +10,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {HeroSearch, Search} from '@/ui/components';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {useSearchParams} from '@/ui/hooks';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
@@ -123,8 +124,8 @@ export const Events = ({
             ))
           ) : (
             <>
-              <h5 className="text-lg font-bold">No events</h5>
-              <p>There are no events today</p>
+              <h5 className="text-lg font-bold">{i18n.get('No events')}</h5>
+              <p>{i18n.get('There are no events today')}</p>
             </>
           )}
           {hasPagination && (

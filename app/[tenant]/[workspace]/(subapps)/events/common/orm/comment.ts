@@ -1,4 +1,5 @@
 // ---- CORE IMPORTS ---- //
+import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import type {ID, Comment} from '@/types';
 
@@ -15,7 +16,7 @@ export async function findCommentsForEvent(id: ID) {
         },
       },
     },
-    orderBy: {publicationDateTime: 'ASC'},
+    orderBy: {publicationDateTime: ORDER_BY.ASC},
     select: {
       id: true,
       contentComment: true,

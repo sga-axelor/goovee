@@ -14,6 +14,7 @@ import {
 } from '@/ui/components';
 import {getImageURL} from '@/utils/image';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardBadges} from '@/subapps/events/common/ui/components';
@@ -47,20 +48,20 @@ export const EventPageCard = ({eventDetails}: any & any) => {
         <div className="border-l space-y-4  text-base font-semibold px-4">
           {eventDetails?.eventPlace && (
             <p>
-              Place:{' '}
+              {i18n.get('Place')}:{' '}
               <span className="font-normal"> {eventDetails?.eventPlace}</span>
             </p>
           )}
           {eventDetails?.eventLink && (
             <p>
-              Link:
+              {i18n.get('Link')}:
               <span className="font-normal"> {eventDetails?.eventLink}</span>
             </p>
           )}
           {eventDetails?.eventProduct?.salePrice &&
             parseFloat(eventDetails?.eventProduct?.salePrice) > 0 && (
               <p>
-                Price:
+                {i18n.get('Price')}:
                 <span className="font-semibold">
                   {' '}
                   {parseFloat(eventDetails.eventProduct.salePrice).toFixed(2)}€
@@ -77,7 +78,7 @@ export const EventPageCard = ({eventDetails}: any & any) => {
             <Button
               size="sm"
               className="w-full text-base font-medium bg-success hover:bg-success-dark">
-              Register to the event
+              {i18n.get('Register to the event')}
             </Button>
           </Link>
         </CardFooter>

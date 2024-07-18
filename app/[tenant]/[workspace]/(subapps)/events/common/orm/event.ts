@@ -4,7 +4,7 @@ import moment from 'moment';
 import {getClient} from '@/goovee';
 import type {ID} from '@/types';
 import {formatDateToISOString} from '@/utils/date';
-import {DATE_FORMATS} from '@/constants';
+import {DATE_FORMATS, ORDER_BY} from '@/constants';
 
 export async function findEvent(id: ID) {
   if (!id) return null;
@@ -198,7 +198,7 @@ export async function findEvents({
   const events = await c.aOSPortalEvent
     .find({
       where: whereClause,
-      orderBy: {eventStartDateTime: 'DESC'},
+      orderBy: {eventStartDateTime: ORDER_BY.DESC},
       take: limit,
       ...(skip ? {skip} : {}),
       select: {
@@ -259,7 +259,7 @@ export async function findEventsByCategory(categoryIds: ID[]) {
           }
         : {}),
     },
-    orderBy: {eventStartDateTime: 'ASC'},
+    orderBy: {eventStartDateTime: ORDER_BY.ASC},
     select: {
       id: true,
       eventTitle: true,

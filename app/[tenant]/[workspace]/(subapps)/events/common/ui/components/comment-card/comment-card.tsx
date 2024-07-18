@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/image';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Comment} from '@/subapps/events/common/ui/components';
@@ -31,7 +32,7 @@ export const CommentCard = ({
             {author?.name}
           </CardTitle>
           <CardDescription className="text-xs font-normal">
-            Posted on {publicationDateTime}
+            {i18n.get('Posted on')} {publicationDateTime}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 pl-[0.93rem] pb-0 pr-0">

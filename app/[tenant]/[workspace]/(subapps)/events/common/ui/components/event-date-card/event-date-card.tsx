@@ -4,6 +4,7 @@ import {MdOutlineCalendarMonth} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Badge, Card} from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
@@ -15,17 +16,17 @@ export const EventDateCard = ({
 }: EventDateCardProps) => {
   const [startDay, startTime] = startDate
     ? startDate.split(' - ')
-    : ['Date not available', ''];
+    : [i18n.get('Date not available'), ''];
   const [endDay, endTime] = endDate
     ? endDate.split(' - ')
-    : ['Date not available', ''];
+    : [i18n.get('Date not available'), ''];
   return (
     <Card className="min-w-[16.438rem] order-1 lg:order-2 border-none shadow-none h-fit p-4 rounded-lg">
       {registered === false && (
         <Badge
           variant="outline"
           className="mb-[0.688rem] text-[0.625rem] font-medium px-2 py-1">
-          #Registered
+          {i18n.get('#Registered')}
         </Badge>
       )}
       <div className=" flex gap-x-3">

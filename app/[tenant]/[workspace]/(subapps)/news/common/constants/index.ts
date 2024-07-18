@@ -20,12 +20,6 @@ export const URL_PARAMS = {
   page: 'page',
 };
 
-// Query
-export const ORDER_BY = {
-  ASC: 'ASC',
-  DESC: 'DESC',
-};
-
 // Time Units
 export const TIME_UNITS = {
   DAY: 'day',
