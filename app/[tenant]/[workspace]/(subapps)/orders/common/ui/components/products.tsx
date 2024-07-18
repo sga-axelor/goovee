@@ -30,7 +30,7 @@ export const Products = ({saleOrderLineList}: any) => {
                   <TableCell>{product?.unit?.name}</TableCell>
                   <TableCell>{product.price}</TableCell>
                   <TableCell>{product.exTaxTotal}</TableCell>
-                  <TableCell>{product?.taxLine?.value}%</TableCell>
+                  <TableCell>{product?.taxLineSet[0]?.value}%</TableCell>
                   <TableCell>{product.discountAmount}%</TableCell>
                   <TableCell>{product.inTaxTotal}</TableCell>
                 </TableRow>

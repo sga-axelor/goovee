@@ -39,8 +39,8 @@
       "name": "inTaxTotal"
     },
     {
-      "type": "ManyToOne",
-      "name": "taxLine",
+      "type": "ManyToMany",
+      "name": "taxLineSet",
       "target": "AOSTaxLine"
     }
   ]
