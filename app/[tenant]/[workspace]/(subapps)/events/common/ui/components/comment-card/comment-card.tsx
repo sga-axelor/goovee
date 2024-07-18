@@ -23,10 +23,7 @@ export const CommentCard = ({
     <Card className="shadow-none border-none flex p-4">
       <Avatar className="w-8 h-8">
         <AvatarImage src={getImageURL(image?.id)} />
-        <AvatarFallback>
-          {author?.name.split(' ')[0][0]}
-          {author?.name.split(' ')[1][0]}
-        </AvatarFallback>
+        <AvatarFallback>{author?.name}</AvatarFallback>
       </Avatar>
       <div>
         <CardHeader className="pt-0 pl-[0.93rem] pb-2 pr-0">

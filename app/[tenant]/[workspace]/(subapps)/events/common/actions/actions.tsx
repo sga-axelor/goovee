@@ -81,7 +81,7 @@ export async function getCommentsByEvent(eventId: string) {
     console.log(err);
   }
 }
-export async function RegistrationEvent(eventId: any, form: any) {
+export async function eventRegistration(eventId: any, form: any) {
   if (!eventId || !form) return undefined;
   const event = await findEvent(eventId);
   if (!event) return undefined;
@@ -89,9 +89,7 @@ export async function RegistrationEvent(eventId: any, form: any) {
     const {otherPeople, ...rest} = form;
     if (otherPeople.length === 0) {
       rest.emailAddress = rest.emailAddress.toLowerCase();
-      console.log(rest);
       const record = await registerParticipant(eventId, rest).then(clone);
-
       return record;
     }
     otherPeople.push(rest);

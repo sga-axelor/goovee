@@ -27,7 +27,7 @@ import {
   CustomSelect,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
-import {RegistrationEvent} from '@/subapps/events/common/actions/actions';
+import {eventRegistration} from '@/subapps/events/common/actions/actions';
 
 const basicPerson = [
   {
@@ -174,7 +174,7 @@ export const RegistrationForm = ({
         );
       }
 
-      await RegistrationEvent(eventDetails?.id, result);
+      await eventRegistration(eventDetails?.id, result);
       router.push(`${workspaceURI}/events/${eventDetails?.id}?success=true`);
     } catch (err) {
       setTempError(true);

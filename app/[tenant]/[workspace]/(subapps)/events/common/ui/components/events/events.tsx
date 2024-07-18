@@ -9,6 +9,7 @@ import {convertDateToISO8601} from '@/utils/functions';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {HeroSearch, Search} from '@/ui/components';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
+import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
@@ -17,7 +18,6 @@ import {
   EventCard,
   PaginationControls,
 } from '@/subapps/events/common/ui/components';
-import {useSearchParams} from '@/subapps/events/common/ui/hooks';
 import {SearchItem} from '@/app/[tenant]/[workspace]/(subapps)/events/common/ui/components';
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
 

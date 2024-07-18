@@ -3,12 +3,8 @@ export type {SidebarProps} from './sidebar';
 export {sidebarLinks} from './sidebar';
 
 export {Logo} from './logo';
-export {Header} from './header';
 export {Navbar} from './navbar';
 export {ThemeProvider} from './theme-provider';
-export {Menu} from './menu';
-export {MobileSidebar} from './mobile-sidebar';
-export {CategoriesSidebar} from './categories-sidebar';
 export {PaginationControls} from './pagination-controls';
 export type {PaginationProps} from './pagination-controls';
 

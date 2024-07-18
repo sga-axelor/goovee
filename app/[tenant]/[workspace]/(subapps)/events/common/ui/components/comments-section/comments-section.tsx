@@ -21,7 +21,7 @@ export const CommentsSection = ({
   comments,
   userId,
 }: CommentSectionProps) => {
-  const [Allcomments, setAllComments] = useState(comments);
+  const [allComments, setAllComments] = useState(comments);
   const [comment, setComment] = useState('');
 
   const handleInputChange = (e: any) => {
@@ -45,10 +45,11 @@ export const CommentsSection = ({
       }
     }
   };
+
   return (
     <Card className="rounded-2xl border-none shadow-none p-4 w-full max-w-screen-lg space-y-4 ">
       <h2 className="text-xl font-semibold">Comments</h2>
-      {Allcomments?.map(comment => (
+      {allComments?.map(comment => (
         <CommentCard
           key={comment.id}
           id={comment.id}

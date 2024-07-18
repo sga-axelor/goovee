@@ -18,19 +18,19 @@ import type {Event, Comment} from '@/subapps/events/common/ui/components';
 
 export function EventDetails({
   eventDetails,
-  eventId,
   successMessage,
   comments,
   userId,
 }: {
   eventDetails: Event;
-  eventId: string;
   successMessage: boolean;
   comments: Comment[];
   userId: string;
 }) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
+
+  const eventId = eventDetails.id;
 
   const handleClose = () => {
     router.push(`${workspaceURI}/events/${eventId}?success=false`);
