@@ -39,7 +39,7 @@ export const GroupActionList = ({title}: {title: string}) => {
                     <Avatar className="rounded-lg h-6 w-6 bg-red-400">
                       {/* <AvatarImage src="/images/user.png" /> */}
                     </Avatar>
-                    <p className="font-normal text-sm leading-5">
+                    <p className="font-normal text-sm leading-5 line-clamp-1">
                       {GROUP_NAME}
                     </p>
                   </div>

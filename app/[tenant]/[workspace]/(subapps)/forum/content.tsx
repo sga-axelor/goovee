@@ -7,7 +7,7 @@ import {GROUPS, MEMBER, NOT_MEMBER} from '@/subapps/forum/common/constants';
 const Content = () => {
   return (
     <div className="flex gap-5 px-[100px] py-6 w-full">
-      <div className="w-1/4 flex flex-col gap-6 bg-white p-4 rounded-lg">
+      <div className="w-1/5 min-w-[281px] flex flex-col gap-6 bg-white p-4 rounded-lg">
         <div>
           <h1 className="font-semibold text-xl leading-[30px]">{GROUPS}</h1>
         </div>
@@ -15,7 +15,7 @@ const Content = () => {
         <GroupActionList title={MEMBER} />
         <GroupActionList title={NOT_MEMBER} />
       </div>
-      <div className="w-3/4">
+      <div className="w-4/5">
         <h1>Content</h1>
       </div>
     </div>
