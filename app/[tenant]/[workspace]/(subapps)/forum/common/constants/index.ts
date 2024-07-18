@@ -1,0 +1,9 @@
+export const GROUPS = 'Groups';
+export const MEMBER = 'Member';
+export const NOT_MEMBER = 'Not member';
+export const SEARCH_HERE = 'Search here';
+export const MARK_AS_READ = 'Mark as read';
+export const PIN = 'Pin';
+export const NOTIFICATIONS = 'Notifications';
+export const LEAVE_THIS_GROUP = 'Leave this group';
+export const GROUP_NAME = 'Group name';
