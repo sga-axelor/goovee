@@ -142,6 +142,14 @@ export async function findWorkspaces({url}: {url?: string}) {
       appConfig: {
         publicEshop: true,
       },
+      defaultPartnerWorkspace: {
+        apps: true,
+        portalAppConfig: appConfigFields,
+      },
+      defaultGuestWorkspace: {
+        apps: true,
+        portalAppConfig: appConfigFields,
+      },
     },
     orderBy: {updatedOn: 'DESC'},
   });
