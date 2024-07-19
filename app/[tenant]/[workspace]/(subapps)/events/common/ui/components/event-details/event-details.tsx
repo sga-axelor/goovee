@@ -4,7 +4,7 @@ import {MdCheckCircleOutline, MdClose} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/lib/i18n';

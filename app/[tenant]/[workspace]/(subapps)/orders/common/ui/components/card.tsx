@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {Tag} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //

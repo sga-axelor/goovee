@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {DATE_FORMATS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //

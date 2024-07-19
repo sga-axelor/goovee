@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 

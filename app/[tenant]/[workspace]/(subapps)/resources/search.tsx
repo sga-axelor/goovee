@@ -4,7 +4,7 @@ import {useRouter} from 'next/navigation';
 import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {
   Command,
   CommandEmpty,

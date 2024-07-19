@@ -17,13 +17,6 @@ export function capitalise(text: string) {
   return text && text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-export function parseDate(
-  dateString: any,
-  format: string = DATE_FORMATS.us_date,
-) {
-  return moment(dateString).format(format);
-}
-
 export function formatPrice(
   num: number | string,
   currency: string = DEFAULT_CURRENCY_SYMBOL,

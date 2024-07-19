@@ -13,7 +13,7 @@ import {
   Button,
   Badge,
 } from '@/ui/components';
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {getImageURL} from '@/utils/image';
 import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/lib/i18n';

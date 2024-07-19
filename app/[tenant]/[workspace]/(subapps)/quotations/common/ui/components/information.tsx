@@ -1,17 +1,18 @@
 'use client';
 import React from 'react';
-import {Separator} from '@ui/components/separator';
-import {Button} from '@ui/components/button';
 import {MdOutlineFileDownload} from 'react-icons/md';
+
 // ---- CORE IMPORTS ---- //
-import {Tag} from '@ui/components/index';
-import {parseDate} from '@/utils';
+import {Separator, Button, Tag} from '@/ui/components';
+import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {InfoProps} from '@/subapps/quotations/common/types/quotations';
 import styles from './styles.module.scss';
+
 export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
   const {variant, status} = getStatus(statusSelect);
   return (

@@ -3,7 +3,7 @@ import {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Card, Textarea} from '@/ui/components';
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {cn} from '@/utils/css';
 import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/lib/i18n';

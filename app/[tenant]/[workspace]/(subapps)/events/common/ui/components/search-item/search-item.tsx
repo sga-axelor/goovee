@@ -2,7 +2,7 @@
 
 // ---- CORE IMPORTS ---- //
 import {DATE_FORMATS} from '@/constants';
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 
 export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
   const {id, eventTitle, eventStartDateTime, eventDescription} = result;

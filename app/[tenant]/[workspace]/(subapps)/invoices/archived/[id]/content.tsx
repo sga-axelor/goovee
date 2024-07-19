@@ -3,7 +3,7 @@
 import React from 'react';
 import {Separator} from '@ui/components/separator';
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {Tag} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //

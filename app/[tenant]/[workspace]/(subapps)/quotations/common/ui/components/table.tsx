@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
-import {Button} from '@ui/components/button';
 import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
-import {TableCell, TableRow} from '@ui/components/table';
+
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
-import {StyledTable, Tag} from '@ui/components/index';
+import {Button, TableCell, TableRow, StyledTable, Tag} from '@/ui/components';
+import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import type {
   Quotations,

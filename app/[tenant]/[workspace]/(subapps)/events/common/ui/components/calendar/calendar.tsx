@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
   buttonVariants,
 } from '@/ui/components';
-import {datesBetweenTwoDates, dateIsExist} from '@/utils/functions';
+import {datesBetweenTwoDates, dateIsExist} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
