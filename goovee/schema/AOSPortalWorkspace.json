@@ -27,7 +27,13 @@
       "type": "ManyToOne",
       "name": "defaultPartnerWorkspace",
       "target": "AOSPartnerPortalWorkspace",
-      "column": "defaultpwafter_registration"
+      "column": "default_partner_workspace"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "defaultGuestWorkspace",
+      "target": "AOSPartnerPortalWorkspace",
+      "column": "default_guest_workspace"
     }
   ]
 }

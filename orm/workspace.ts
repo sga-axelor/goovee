@@ -3,6 +3,26 @@ import 'server-only';
 import {getClient} from '@/goovee';
 import type {User, Partner, PortalWorkspace} from '@/types';
 
+const appConfigFields = {
+  name: true,
+  company: {
+    id: true,
+    name: true,
+  },
+  byNewest: true,
+  byFeature: true,
+  byAToZ: true,
+  byZToA: true,
+  byLessExpensive: true,
+  byMostExpensive: true,
+  displayPrices: true,
+  mainPrice: true,
+  displayTwoPrices: true,
+  confirmOrder: true,
+  requestQuotation: true,
+  publicEshop: true,
+};
+
 export async function findDefaultWorkspace({
   url,
 }: {
@@ -20,27 +40,14 @@ export async function findDefaultWorkspace({
       defaultTheme: true,
       defaultPartnerWorkspace: {
         apps: true,
+        portalAppConfig: appConfigFields,
+      },
+      defaultGuestWorkspace: {
+        apps: true,
+        portalAppConfig: appConfigFields,
       },
       url: true,
-      appConfig: {
-        name: true,
-        company: {
-          id: true,
-          name: true,
-        },
-        byNewest: true,
-        byFeature: true,
-        byAToZ: true,
-        byZToA: true,
-        byLessExpensive: true,
-        byMostExpensive: true,
-        displayPrices: true,
-        mainPrice: true,
-        displayTwoPrices: true,
-        confirmOrder: true,
-        requestQuotation: true,
-        publicEshop: true,
-      },
+      appConfig: appConfigFields,
     },
   });
 
@@ -81,25 +88,7 @@ export async function findPartnerWorkspace({
             url,
             defaultTheme: true,
           },
-          portalAppConfig: {
-            name: true,
-            company: {
-              id: true,
-              name: true,
-            },
-            byNewest: true,
-            byFeature: true,
-            byAToZ: true,
-            byZToA: true,
-            byLessExpensive: true,
-            byMostExpensive: true,
-            displayPrices: true,
-            mainPrice: true,
-            displayTwoPrices: true,
-            confirmOrder: true,
-            requestQuotation: true,
-            publicEshop: true,
-          },
+          portalAppConfig: appConfigFields,
         },
       },
     },
