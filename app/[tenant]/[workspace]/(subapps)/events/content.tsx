@@ -10,9 +10,17 @@ type ContentProps = {
   page: any;
   category: any;
   date: any;
+  workspace: any;
 };
 
-const Content = ({categories, events, page, category, date}: ContentProps) => {
+const Content = ({
+  categories,
+  events,
+  page,
+  category,
+  date,
+  workspace,
+}: ContentProps) => {
   return (
     <main className="h-full w-full">
       <Events
@@ -22,6 +30,7 @@ const Content = ({categories, events, page, category, date}: ContentProps) => {
         events={events}
         category={category}
         dateOfEvent={date}
+        workspace={workspace}
       />
     </main>
   );

@@ -1,5 +1,10 @@
 import type {Dispatch, SetStateAction} from 'react';
-import type {Category} from '../events';
+
+// ---- CORE IMPORTS ---- //
+import {PortalWorkspace} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
+import type {Category} from '@/subapps/events/common/ui/components';
 
 export interface EventSelectorProps {
   date: Date | undefined;
@@ -7,4 +12,5 @@ export interface EventSelectorProps {
   updateCateg: (Input: Category) => void;
   categories: Category[];
   setCurrentPage: Dispatch<SetStateAction<number>>;
+  workspace: PortalWorkspace;
 }

@@ -1,6 +1,9 @@
 // ---- CORE IMPORTS ----//
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {clone} from '@/utils';
+import {getSession} from '@/orm/auth';
+import {findWorkspace} from '@/orm/workspace';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {Category} from '@/subapps/events/common/ui/components';
@@ -9,7 +12,16 @@ import Content from '@/subapps/events/content';
 import {LIMIT} from '@/subapps/events/common/constants';
 
 export default async function Page(context: any) {
+  const params = context?.params;
   const page = context?.searchParams?.page || 1;
+
+  const session = await getSession();
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  }).then(clone);
 
   const category = context?.searchParams?.category
     ? Array.isArray(context?.searchParams?.category)
@@ -26,9 +38,12 @@ export default async function Page(context: any) {
     day: new Date(date).getDate() || undefined,
     month: new Date(date).getMonth() + 1 || undefined,
     year: new Date(date).getFullYear() || undefined,
+    workspace,
   });
 
-  const categories: Category[] = await findEventCategories().then(clone);
+  const categories: Category[] = await findEventCategories({workspace}).then(
+    clone,
+  );
 
   return (
     <Content
@@ -37,6 +52,7 @@ export default async function Page(context: any) {
       events={events}
       page={page}
       date={date}
+      workspace={workspace}
     />
   );
 }

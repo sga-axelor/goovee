@@ -21,6 +21,7 @@ import {
 } from '@/subapps/events/common/ui/components';
 import {SearchItem} from '@/app/[tenant]/[workspace]/(subapps)/events/common/ui/components';
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
+import {PortalWorkspace} from '@/types';
 
 export const Events = ({
   limit,
@@ -29,6 +30,7 @@ export const Events = ({
   events,
   category,
   dateOfEvent,
+  workspace,
 }: {
   limit: number;
   categories: Category[];
@@ -36,6 +38,7 @@ export const Events = ({
   events: Event[];
   category: any[];
   dateOfEvent: string;
+  workspace: PortalWorkspace;
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
@@ -89,7 +92,7 @@ export const Events = ({
 
   const renderSearch = () => (
     <Search
-      findQuery={() => getAllEvents({})}
+      findQuery={() => getAllEvents({workspace})}
       renderItem={SearchItem}
       searchKey={'eventTitle'}
       onItemClick={handlClick}
@@ -111,6 +114,7 @@ export const Events = ({
           updateCateg={updateCateg}
           categories={categories}
           setCurrentPage={setCurrentPage}
+          workspace={workspace}
         />
         <div className="flex flex-col space-y-4 w-full  xl:max-w-[48.938rem]">
           {events && events.length > 0 ? (

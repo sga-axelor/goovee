@@ -2,7 +2,7 @@
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {Comment, Participant} from '@/types';
+import {Comment, Participant, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEvent, findEvents} from '@/subapps/events/common/orm/event';
@@ -27,6 +27,7 @@ export async function getAllEvents({
   month,
   year,
   dates,
+  workspace,
 }: {
   limit?: number;
   page?: number;
@@ -37,6 +38,7 @@ export async function getAllEvents({
   month?: number;
   year?: number;
   dates?: [Date | undefined];
+  workspace?: PortalWorkspace;
 }) {
   try {
     const events = await findEvents({
@@ -48,6 +50,7 @@ export async function getAllEvents({
       month: month,
       year: year,
       selectedDates: dates,
+      workspace,
     }).then(clone);
     return events;
   } catch (err) {

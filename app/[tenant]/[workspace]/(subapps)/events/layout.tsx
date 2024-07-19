@@ -6,6 +6,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {findSubappAccess} from '@/orm/subapps';
 import {SUBAPP_CODES} from '@/constants';
 import {clone} from '@/utils';
+import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
@@ -32,7 +33,12 @@ export default async function Layout({
 
   if (!subapp) return notFound();
 
-  const categories = await findEventCategories().then(clone);
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  }).then(clone);
+
+  const categories = await findEventCategories({workspace}).then(clone);
 
   return (
     <>

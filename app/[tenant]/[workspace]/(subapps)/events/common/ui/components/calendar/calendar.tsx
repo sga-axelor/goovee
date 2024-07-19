@@ -143,8 +143,9 @@ export function Calendar({
   classNames,
   showOutsideDays = false,
   date,
+  workspace,
   ...props
-}: CalendarProps & {date: Date | undefined}) {
+}: CalendarProps & {date: Date | undefined; workspace: any}) {
   const [eventDates, setEventDates] = React.useState<Date[]>([]);
   const today = date !== undefined ? new Date(date) : new Date();
 
@@ -212,8 +213,8 @@ export function Calendar({
         const data = await getAllEvents({
           month: month.getMonth() + 1,
           year: month.getFullYear(),
+          workspace,
         });
-
         const allDates = datesBetweenTwoDates(data);
 
         setEventDates(allDates);
@@ -222,7 +223,7 @@ export function Calendar({
       }
     };
     fetchEventDates();
-  }, [month]);
+  }, [month, workspace]);
 
   return (
     <DayPicker

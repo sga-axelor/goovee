@@ -2,7 +2,7 @@ import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
-import type {ID} from '@/types';
+import type {ID, PortalWorkspace} from '@/types';
 import {formatDateToISOString} from '@/utils/date';
 import {DATE_FORMATS, ORDER_BY} from '@/constants';
 
@@ -94,6 +94,7 @@ export async function findEvents({
   month,
   year,
   selectedDates,
+  workspace,
 }: {
   ids?: ID[];
   search?: string;
@@ -104,6 +105,7 @@ export async function findEvents({
   month?: string | number;
   year?: string | number;
   selectedDates?: any[];
+  workspace?: PortalWorkspace;
 }) {
   const c = await getClient();
 
@@ -135,6 +137,11 @@ export async function findEvents({
   }));
 
   const whereClause = {
+    eventCategorySet: {
+      workspace: {
+        id: workspace?.id,
+      },
+    },
     ...(ids?.length
       ? {
           id: {
@@ -231,58 +238,8 @@ export async function findEvents({
       },
     })
     .catch((err: any) => {
+      console.log(err);
       return [];
     });
-
-  return events;
-}
-
-export async function findEventsByCategory(categoryIds: ID[]) {
-  if (!categoryIds) return null;
-
-  const c = await getClient();
-
-  const events = await c.aOSPortalEvent.find({
-    where: {
-      ...(categoryIds?.length
-        ? {
-            AND: [
-              {
-                eventCategorySet: {
-                  id: {
-                    in: categoryIds,
-                  },
-                },
-              },
-              {eventVisibility: true},
-            ],
-          }
-        : {}),
-    },
-    orderBy: {eventStartDateTime: ORDER_BY.ASC},
-    select: {
-      id: true,
-      eventTitle: true,
-      eventCategorySet: {
-        select: {
-          id: true,
-          name: true,
-          color: true,
-        },
-      },
-      eventImage: {
-        id: true,
-      },
-      eventDescription: true,
-      eventStartDateTime: true,
-      eventEndDateTime: true,
-      eventAllDay: true,
-      eventDegressiveNumberPartcipant: true,
-      eventAllowRegistration: true,
-      eventAllowMultipleRegistrations: true,
-      eventVisibility: true,
-    },
-  });
-
   return events;
 }
