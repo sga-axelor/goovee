@@ -41,9 +41,18 @@ export async function create(formData: FormData, workspaceURL: string) {
 
   const session = await getSession();
 
+  const user = session?.user;
+
+  if (!user) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.resources,
-    user: session?.user,
+    user,
     url: workspaceURL,
   });
 
@@ -55,7 +64,7 @@ export async function create(formData: FormData, workspaceURL: string) {
   }
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   });
 

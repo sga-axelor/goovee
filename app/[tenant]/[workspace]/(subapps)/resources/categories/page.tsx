@@ -34,10 +34,12 @@ export default async function Page({
 
   const session = await getSession();
 
+  const user = session?.user;
+
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   }).then(clone);
 
@@ -57,18 +59,22 @@ export default async function Page({
           {i18n.get('Resource Category')}
         </h2>
         {/* <SortBy className="hidden sm:flex me-2" /> */}
-        <Link href={`${workspaceURI}/resources/categories/create`}>
-          <Button variant="success" className="flex items-center">
-            <MdAdd className="size-6" />
-            <span>{i18n.get('New Category')}</span>
-          </Button>
-        </Link>
-        <Link href={`${workspaceURI}/resources/create`}>
-          <Button variant="success" className="flex items-center">
-            <MdAdd className="size-6" />
-            <span>{i18n.get('New Resource')}</span>
-          </Button>
-        </Link>
+        {user && (
+          <>
+            <Link href={`${workspaceURI}/resources/categories/create`}>
+              <Button variant="success" className="flex items-center">
+                <MdAdd className="size-6" />
+                <span>{i18n.get('New Category')}</span>
+              </Button>
+            </Link>
+            <Link href={`${workspaceURI}/resources/create`}>
+              <Button variant="success" className="flex items-center">
+                <MdAdd className="size-6" />
+                <span>{i18n.get('New Resource')}</span>
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
       <p className="leading-5 text-sm">
         This is the folder description : Office ipsum you must be muted. Ground

@@ -1,3 +1,5 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {i18n} from '@/lib/i18n';
@@ -20,10 +22,16 @@ export default async function Page({
 }) {
   const session = await getSession();
 
+  const user = session?.user;
+
+  if (!user) {
+    return notFound();
+  }
+
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   }).then(clone);
 
