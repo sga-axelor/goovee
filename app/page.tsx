@@ -3,8 +3,7 @@ export const dynamic = 'force-dynamic';
 import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {findWorkspace, findWorkspaces} from '@/orm/workspace';
-import {findSubapp} from '@/orm/subapps';
+import {findWorkspaces, findSubapps} from '@/orm/workspace';
 import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 
@@ -14,6 +13,7 @@ export default async function Page({
   searchParams: {workspaceURI?: string};
 }) {
   const session = await getSession();
+  const user = session?.user;
 
   const workspaces = await findWorkspaces({
     url: process.env.NEXT_PUBLIC_HOST,
@@ -23,41 +23,32 @@ export default async function Page({
 
   const {workspaceURI} = searchParams;
 
-  let workspace: any;
-
   if (workspaceURI) {
-    const workspaceURL = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;
 
-    const $workspace = await findWorkspace({
-      user: session?.user,
-      url: workspaceURL,
+    const workspaceApps = await findSubapps({
+      user,
+      url,
     }).then(clone);
 
-    if ($workspace) {
-      const ispublic = $workspace?.config?.publicEshop;
-
-      if (ispublic) {
-        workspace = $workspace;
-        workspace.url = workspaceURL;
-      } else if (session) {
-        const app = await findSubapp('shop', {
-          workspace,
-          user: session?.user,
-        });
-
-        if (app?.installed) {
-          workspace = $workspace;
-          workspace.url = workspaceURL;
-        }
-      }
+    if (workspaceApps?.length) {
+      return redirect(`${url}/${workspaceApps[0].code}`);
     }
-  } else {
-    workspace = workspaces.find((w: any) => w?.appConfig?.publicEshop);
   }
 
-  if (!workspace) {
+  let redirectURL;
+
+  for (const w of workspaces) {
+    const apps = await findSubapps({url: w.url!, user});
+    if (apps?.length) {
+      redirectURL = `${w.url}/${apps[0].code}`;
+      break;
+    }
+  }
+
+  if (!redirectURL) {
     notFound();
   }
 
-  return redirect(`${workspace.url}/shop`);
+  return redirect(redirectURL);
 }

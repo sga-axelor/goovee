@@ -1,16 +1,16 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
+import {findWorkspace, findSubapp} from '@/orm/workspace';
+import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/orm/auth';
-import {DEFAULT_LIMIT} from '@/constants';
+import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
 import {clone} from '@/utils';
 import {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {findArchivedOrders} from '@/subapps/orders/common/orm/orders';
 import Content from './content';
-import {notFound} from 'next/navigation';
-import {findSubapp} from '@/orm/subapps';
-import {findWorkspace} from '@/orm/workspace';
-import {workspacePathname} from '@/utils/workspace';
+import {findArchivedOrders} from '@/subapps/orders/common/orm/orders';
 import {getWhereClause} from '@/subapps/orders/common/utils/orders';
 
 export default async function Page({
@@ -31,8 +31,9 @@ export default async function Page({
 
   if (!workspace) return notFound();
 
-  const app = await findSubapp('orders', {
-    workspace,
+  const app = await findSubapp({
+    code: SUBAPP_CODES.orders,
+    url: workspace.url,
     user: session?.user,
   });
 

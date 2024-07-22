@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
-import {findSubappAccess} from '@/orm/subapps';
+import {findSubappAccess} from '@/orm/workspace';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
@@ -26,7 +26,7 @@ export default async function Layout({
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.resources,
     user: (await getSession())?.user,
-    workspaceURL: workspacePathname(params)?.workspaceURL,
+    url: workspacePathname(params)?.workspaceURL,
   });
 
   if (!subapp) return notFound();

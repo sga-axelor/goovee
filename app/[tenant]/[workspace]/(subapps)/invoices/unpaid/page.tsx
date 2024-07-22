@@ -1,14 +1,15 @@
-// ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
 import {notFound} from 'next/navigation';
+
+// ---- CORE IMPORTS ---- //
+import {getSession} from '@/orm/auth';
+import {findWorkspace, findSubapp} from '@/orm/workspace';
+import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findUnpaidInvoices} from '@/subapps/invoices/common/orm/invoices';
-import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
-import {findSubapp} from '@/orm/subapps';
 import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
 
 export default async function Invoices({
@@ -32,7 +33,11 @@ export default async function Invoices({
 
   if (!workspace) return notFound();
 
-  const app = await findSubapp('invoices', {workspace, user: session?.user});
+  const app = await findSubapp({
+    code: SUBAPP_CODES.invoices,
+    url: workspace.url,
+    user: session?.user,
+  });
 
   const {id, isContact, mainPartnerId} = session?.user;
 

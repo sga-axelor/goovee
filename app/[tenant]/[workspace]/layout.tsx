@@ -4,8 +4,7 @@ import React from 'react';
 import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace, findWorkspaces} from '@/orm/workspace';
-import {findSubapps} from '@/orm/subapps';
+import {findWorkspace, findWorkspaces, findSubapps} from '@/orm/workspace';
 import {DEFAULT_THEME_OPTIONS} from '@/constants/theme';
 
 // ---- LOCAL IMPORTS ---- //
@@ -44,14 +43,14 @@ export default async function Layout({
   let theme;
 
   try {
-    theme = $workspace?.defaultTheme || defaultTheme;
+    theme = $workspace?.theme || defaultTheme;
     theme.options = JSON.parse(theme?.css);
   } catch (err: any) {
     console.error(err.message);
   }
 
   const subapps = await findSubapps({
-    workspace: $workspace,
+    url: $workspace?.url,
     user: session?.user,
   });
 

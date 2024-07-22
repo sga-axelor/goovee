@@ -2,7 +2,7 @@ import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/orm/auth';
-import {findWorkspace} from '@/orm/workspace';
+import {findSubapps} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
 export default async function Page({
@@ -18,14 +18,14 @@ export default async function Page({
     return notFound();
   }
 
-  const workspace = await findWorkspace({
+  const apps = await findSubapps({
     user: session?.user,
     url: workspaceURL,
   });
 
-  if (!workspace?.config?.publicEshop) {
+  if (!apps?.length) {
     return notFound();
   }
 
-  redirect(`${workspaceURL}/shop`);
+  redirect(`${workspaceURL}/${apps[0].code}`);
 }

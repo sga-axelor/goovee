@@ -10,9 +10,8 @@ import moment from 'moment';
 import {getClient} from '@/goovee';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
-import {findSubappAccess} from '@/orm/subapps';
 import {SUBAPP_CODES} from '@/constants';
-import {findWorkspace} from '@/orm/workspace';
+import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFileSizeText} from '@/subapps/resources/common/utils';
@@ -80,7 +79,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.resources,
     user: session?.user,
-    workspaceURL,
+    url: workspaceURL,
   });
 
   if (!subapp) {

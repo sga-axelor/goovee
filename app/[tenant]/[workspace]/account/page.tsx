@@ -2,8 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/orm/auth';
-import {findSubapps} from '@/orm/subapps';
-import {findWorkspace} from '@/orm/workspace';
+import {findWorkspace, findSubapps} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
@@ -28,7 +27,7 @@ export default async function Account({
 
   if (!workspace) return notFound();
 
-  const subapps = await findSubapps({workspace, user: session?.user});
+  const subapps = await findSubapps({url: workspace.url, user: session?.user});
 
   return <Content subapps={subapps} />;
 }

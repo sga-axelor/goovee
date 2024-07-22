@@ -86,10 +86,6 @@
     {
       "type": "Boolean",
       "name": "requestQuotation"
-    },
-    {
-      "type": "Boolean",
-      "name": "publicEshop"
     }
   ]
 }

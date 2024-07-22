@@ -3,12 +3,12 @@ import {notFound} from 'next/navigation';
 import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
-import {findSubapp} from '@/orm/subapps';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
+import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {i18n} from '@/lib/i18n';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import MobileMenuCategory from './mobile-menu-category';
@@ -39,17 +39,14 @@ export default async function Layout({
 
   if (!workspace) return notFound();
 
-  const ispublic = workspace?.config?.publicEshop;
+  const app = await findSubapp({
+    code: SUBAPP_CODES.shop,
+    url: workspace.url,
+    user: session?.user,
+  });
 
-  if (!ispublic) {
-    if (session) {
-      const app = await findSubapp('shop', {workspace, user: session?.user});
-      if (!app?.installed) {
-        return notFound();
-      }
-    } else {
-      return notFound();
-    }
+  if (!app?.installed) {
+    return notFound();
   }
 
   const categories = await findCategories({workspace}).then(clone);

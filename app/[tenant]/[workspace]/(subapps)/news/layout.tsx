@@ -4,8 +4,8 @@ import type {Metadata} from 'next';
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
+import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-import {findSubappAccess} from '@/orm/subapps';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {i18n} from '@/lib/i18n';
@@ -39,7 +39,7 @@ export default async function Layout({
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.news,
     user: session?.user,
-    workspaceURL,
+    url: workspaceURL,
   });
 
   if (!subapp) return notFound();

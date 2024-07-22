@@ -1,3 +1,5 @@
+import {Theme} from '@/types/theme';
+
 export type ID = string | number;
 export type Version = number;
 
@@ -15,8 +17,10 @@ export type User = {
 };
 
 export interface PortalWorkspace extends Model {
-  config?: PortalAppConfig;
   url: string;
+  theme?: Theme;
+  config?: PortalAppConfig;
+  apps?: PortalApp[];
 }
 
 export interface PortalAppConfig extends Model {
@@ -39,12 +43,6 @@ export interface PortalAppConfig extends Model {
   payInAdvance: boolean;
   priceAfterLogin: string;
   requestQuotation: boolean;
-  publicEshop: boolean;
-}
-
-export interface PortalPartnerWorkspace extends Model {
-  apps?: PortalApp[];
-  config?: PortalAppConfig;
 }
 
 export interface PortalApp extends Model {

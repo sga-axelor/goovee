@@ -4,8 +4,7 @@
 import {getClient} from '@/goovee';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
-import {findSubappAccess} from '@/orm/subapps';
-import {findWorkspace} from '@/orm/workspace';
+import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 
@@ -45,7 +44,7 @@ export async function create(formData: FormData, workspaceURL: string) {
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.resources,
     user: session?.user,
-    workspaceURL,
+    url: workspaceURL,
   });
 
   if (!subapp) {

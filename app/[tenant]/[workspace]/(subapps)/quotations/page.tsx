@@ -1,18 +1,16 @@
-'use server';
+import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
+import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/orm/auth';
+import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {DEFAULT_LIMIT, ROLE} from '@/constants';
-import {User} from '@/types';
+import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
+import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {fetchQuotations} from '@/subapps/quotations/common/orm/quotations';
-import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
-import {notFound} from 'next/navigation';
-import {findSubapp} from '@/orm/subapps';
 import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
 
 export default async function Page({
@@ -34,8 +32,9 @@ export default async function Page({
 
   if (!workspace) return notFound();
 
-  const app = await findSubapp('quotations', {
-    workspace,
+  const app = await findSubapp({
+    code: SUBAPP_CODES.quotations,
+    url: workspace.url,
     user: session?.user,
   });
 

@@ -2,14 +2,13 @@ import {redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/orm/auth';
-import {findWorkspace} from '@/orm/workspace';
+import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
-import {findSubappAccess} from '@/orm/subapps';
-import {SUBAPP_CODES} from '@/constants';
 
 export default async function Page({
   params,
@@ -32,7 +31,7 @@ export default async function Page({
   const quotationSubapp = await findSubappAccess({
     code: SUBAPP_CODES.quotations,
     user: session?.user,
-    workspaceURL,
+    url: workspaceURL,
   });
 
   return (
