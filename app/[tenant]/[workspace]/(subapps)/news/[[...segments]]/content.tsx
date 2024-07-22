@@ -8,6 +8,7 @@ import {usePathname, useRouter} from 'next/navigation';
 import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {Pagination} from '@/ui/components';
+import {URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -22,7 +23,6 @@ import {
   FEATURED_NEWS,
   NO_NEWS_AVAILABLE,
   SUBSCRIBE,
-  URL_PARAMS,
 } from '@/subapps/news/common/constants';
 
 const Content = ({

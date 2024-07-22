@@ -15,11 +15,6 @@ export const LATEST_NEWS = 'Latest News';
 export const RELATED_NEWS = 'Related News';
 export const CATEGORIES = 'Categories';
 
-// URL
-export const URL_PARAMS = {
-  page: 'page',
-};
-
 // Time Units
 export const TIME_UNITS = {
   DAY: 'day',

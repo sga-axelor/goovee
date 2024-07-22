@@ -100,3 +100,10 @@ export const IMAGE_URL = `url("/images/hero-bg.svg")`;
  * OTHERS
  */
 export const NO_RESULTS_FOUND = 'No results found.';
+
+/**
+ * URL
+ */
+export const URL_PARAMS = {
+  page: 'page',
+};
