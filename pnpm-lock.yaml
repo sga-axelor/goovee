@@ -9,8 +9,8 @@ dependencies:
     specifier: ^1.16.6
     version: 1.16.6(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
   '@goovee/orm':
-    specifier: ^0.0.2
-    version: 0.0.2(graphql@16.9.0)(pg@8.12.0)
+    specifier: beta
+    version: 0.0.3-beta.4-g8d529e8(graphql@16.9.0)(pg@8.12.0)
   '@hookform/resolvers':
     specifier: ^3.9.0
     version: 3.9.0(react-hook-form@7.52.1)
@@ -1786,8 +1786,8 @@ packages:
     resolution: {integrity: sha512-dWO2pw8hhi+WrXq1YJy2yCuWoL20PddgGaqTgVe4cOS9Q6qklXCiA1tJEqX6BEwRNSCP84/afac9hd4MS+zEUA==}
     dev: false
 
-  /@goovee/orm@0.0.2(graphql@16.9.0)(pg@8.12.0):
-    resolution: {integrity: sha1-W8ytflJR3Pd/3Q8rupiuZTUO0tQ=, tarball: https://git.axelor.com/api/v4/projects/1708/packages/npm/@goovee/orm/-/@goovee/orm-0.0.2.tgz}
+  /@goovee/orm@0.0.3-beta.4-g8d529e8(graphql@16.9.0)(pg@8.12.0):
+    resolution: {integrity: sha1-UMW4SgUAf25agzSdov1jKP6WA9M=, tarball: https://git.axelor.com/api/v4/projects/1708/packages/npm/@goovee/orm/-/@goovee/orm-0.0.3-beta.4-g8d529e8.tgz}
     hasBin: true
     peerDependencies:
       graphql: ^16.8.1
