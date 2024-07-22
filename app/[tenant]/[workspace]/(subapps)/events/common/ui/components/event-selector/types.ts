@@ -11,6 +11,5 @@ export interface EventSelectorProps {
   setDate: (input: Date | undefined) => void;
   updateCateg: (Input: Category) => void;
   categories: Category[];
-  setCurrentPage: Dispatch<SetStateAction<number>>;
   workspace: PortalWorkspace;
 }

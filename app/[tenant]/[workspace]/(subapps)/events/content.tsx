@@ -7,7 +7,7 @@ import {LIMIT} from '@/subapps/events/common/constants';
 type ContentProps = {
   categories: Category[];
   events: any;
-  page: any;
+  pageInfo: any;
   category: any;
   date: any;
   workspace: any;
@@ -16,7 +16,7 @@ type ContentProps = {
 const Content = ({
   categories,
   events,
-  page,
+  pageInfo,
   category,
   date,
   workspace,
@@ -26,8 +26,8 @@ const Content = ({
       <Events
         categories={categories}
         limit={LIMIT}
-        page={parseInt(page)}
         events={events}
+        pageInfo={pageInfo}
         category={category}
         dateOfEvent={date}
         workspace={workspace}

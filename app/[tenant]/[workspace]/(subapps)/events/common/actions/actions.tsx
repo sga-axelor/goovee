@@ -41,7 +41,7 @@ export async function getAllEvents({
   workspace?: PortalWorkspace;
 }) {
   try {
-    const events = await findEvents({
+    const {events, pageInfo} = await findEvents({
       limit: limit,
       page: page,
       categoryids: categories,
@@ -52,7 +52,7 @@ export async function getAllEvents({
       selectedDates: dates,
       workspace,
     }).then(clone);
-    return events;
+    return {events, pageInfo};
   } catch (err) {
     console.log(err);
   }

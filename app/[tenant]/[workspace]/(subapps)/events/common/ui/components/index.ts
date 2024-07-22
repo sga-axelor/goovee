@@ -1,8 +1,6 @@
 export {Logo} from './logo';
 export {Navbar} from './navbar';
 export {ThemeProvider} from './theme-provider';
-export {PaginationControls} from './pagination-controls';
-export type {PaginationProps} from './pagination-controls';
 
 export {Events} from './events';
 export type {Event} from './events';

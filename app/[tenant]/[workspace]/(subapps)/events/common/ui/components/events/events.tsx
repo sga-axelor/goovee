@@ -7,52 +7,47 @@ import {useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {HeroSearch, Search} from '@/ui/components';
-import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
+import {HeroSearch, Search, Pagination} from '@/ui/components';
+import {
+  BANNER_DESCRIPTION,
+  BANNER_TITLES,
+  IMAGE_URL,
+  URL_PARAMS,
+} from '@/constants';
 import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
-import {
-  EventSelector,
-  EventCard,
-  PaginationControls,
-} from '@/subapps/events/common/ui/components';
+import {EventSelector, EventCard} from '@/subapps/events/common/ui/components';
 import {SearchItem} from '@/app/[tenant]/[workspace]/(subapps)/events/common/ui/components';
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
-import {PortalWorkspace} from '@/types';
 
 export const Events = ({
   limit,
   categories,
-  page,
   events,
   category,
   dateOfEvent,
   workspace,
+  pageInfo: {page, pages, hasPrev, hasNext} = {},
 }: {
   limit: number;
   categories: Category[];
-  page: number;
   events: Event[];
   category: any[];
   dateOfEvent: string;
   workspace: PortalWorkspace;
+  pageInfo: any;
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
-  const [currentPage, setCurrentPage] = useState<number>(page);
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
-
-  const updatePage = (index: number) => {
-    update([{key: 'page', value: index.toString()}]);
-    setCurrentPage(index);
-  };
 
   const updateCateg = (category: Category) => {
     const updatedCategories = selectedCategory.some(
@@ -67,7 +62,6 @@ export const Events = ({
     ]);
 
     setSelectedCategory(updatedCategories);
-    setCurrentPage(1);
   };
 
   const updateDate = (d: Date | undefined) => {
@@ -78,13 +72,21 @@ export const Events = ({
       {key: 'page', value: 1},
       {key: 'date', value: convertDateToISO8601(d) || ''},
     ]);
-    setCurrentPage(1);
   };
 
-  const hasPagination =
-    events.length > 0 &&
-    events[0]?._count !== undefined &&
-    events[0]._count > limit;
+  const handlePreviousPage = () => {
+    if (!hasPrev) return;
+    update([{key: URL_PARAMS.page, value: Math.max(Number(page) - 1, 1)}]);
+  };
+
+  const handleNextPage = () => {
+    if (!hasNext) return;
+    update([{key: URL_PARAMS.page, value: Number(page) + 1}]);
+  };
+
+  const handlePage = (page: string | number) => {
+    update([{key: URL_PARAMS.page, value: page}]);
+  };
 
   const handlClick = (id: string | number) => {
     router.push(`${workspaceURI}/events/${id}`);
@@ -92,7 +94,14 @@ export const Events = ({
 
   const renderSearch = () => (
     <Search
-      findQuery={() => getAllEvents({workspace})}
+      findQuery={async () => {
+        const response = await getAllEvents({workspace});
+        if (response) {
+          const {events} = response;
+          return events;
+        }
+        return [];
+      }}
       renderItem={SearchItem}
       searchKey={'eventTitle'}
       onItemClick={handlClick}
@@ -113,7 +122,6 @@ export const Events = ({
           setDate={updateDate}
           updateCateg={updateCateg}
           categories={categories}
-          setCurrentPage={setCurrentPage}
           workspace={workspace}
         />
         <div className="flex flex-col space-y-4 w-full  xl:max-w-[48.938rem]">
@@ -132,16 +140,17 @@ export const Events = ({
               <p>{i18n.get('There are no events today')}</p>
             </>
           )}
-          {hasPagination && (
-            <div className="w-full mt-10 flex items-center justify-center ml-auto">
-              <PaginationControls
-                totalItems={events[0]._count}
-                itemsPerPage={limit}
-                currentPage={currentPage}
-                setCurrentPage={updatePage}
-              />
-            </div>
-          )}
+          <div className="w-full mt-10 flex items-center justify-center ml-auto">
+            <Pagination
+              page={page}
+              pages={pages}
+              disablePrev={!hasPrev}
+              disableNext={!hasNext}
+              onPrev={handlePreviousPage}
+              onNext={handleNextPage}
+              onPage={handlePage}
+            />
+          </div>
         </div>
       </div>
     </>

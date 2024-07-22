@@ -31,7 +31,7 @@ export default async function Page(context: any) {
 
   const date = context?.searchParams?.date || undefined;
 
-  const events = await getAllEvents({
+  const {events, pageInfo}: any = await getAllEvents({
     limit: LIMIT,
     page: page,
     categories: category,
@@ -50,7 +50,7 @@ export default async function Page(context: any) {
       category={category}
       categories={categories}
       events={events}
-      page={page}
+      pageInfo={pageInfo}
       date={date}
       workspace={workspace}
     />

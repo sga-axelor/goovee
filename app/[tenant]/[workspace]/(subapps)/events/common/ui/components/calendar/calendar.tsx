@@ -210,7 +210,7 @@ export function Calendar({
   React.useEffect(() => {
     const fetchEventDates = async () => {
       try {
-        const data = await getAllEvents({
+        const {events: data}: any = await getAllEvents({
           month: month.getMonth() + 1,
           year: month.getFullYear(),
           workspace,
