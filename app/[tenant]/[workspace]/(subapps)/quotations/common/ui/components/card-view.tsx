@@ -4,7 +4,7 @@ import {Button} from '@ui/components/button';
 import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 // ---- CORE IMPORTS ---- //
 import {Tag} from '@ui/components/index';
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';

@@ -1,0 +1,104 @@
+{
+  "name": "AOSMetaJsonField",
+  "table": "meta_json_field",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name",
+      "required": true
+    },
+    {
+      "type": "String",
+      "name": "title"
+    },
+    {
+      "type": "String",
+      "name": "type",
+      "column": "type_name",
+      "required": true
+    },
+    {
+      "type": "String",
+      "name": "defaultValue"
+    },
+    {
+      "type": "String",
+      "name": "model",
+      "column": "model_name",
+      "required": true,
+      "internal": true
+    },
+    {
+      "type": "String",
+      "name": "modelField",
+      "column": "model_field",
+      "required": true,
+      "internal": true
+    },
+    {
+      "type": "String",
+      "name": "selection"
+    },
+    {
+      "type": "String",
+      "name": "widget"
+    },
+    {
+      "type": "String",
+      "name": "help"
+    },
+    {
+      "type": "Boolean",
+      "name": "hidden",
+      "column": "is_hidden"
+    },
+    {
+      "type": "Boolean",
+      "name": "required",
+      "column": "is_required"
+    },
+    {
+      "type": "Boolean",
+      "name": "readonly",
+      "column": "is_readonly"
+    },
+    {
+      "type": "Boolean",
+      "name": "nameField"
+    },
+    {
+      "type": "Int",
+      "name": "minSize",
+      "column": "min_size"
+    },
+    {
+      "type": "Int",
+      "name": "maxSize",
+      "column": "max_size"
+    },
+    {
+      "type": "Int",
+      "name": "precision",
+      "column": "decimal_precision"
+    },
+    {
+      "type": "Int",
+      "name": "scale",
+      "column": "decimal_scale"
+    },
+    {
+      "type": "Int",
+      "name": "sequence"
+    },
+    {
+      "type": "Int",
+      "name": "columnSequence"
+    },
+    {
+      "type": "String",
+      "name": "regex"
+    }
+  ]
+}

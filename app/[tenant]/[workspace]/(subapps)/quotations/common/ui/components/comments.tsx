@@ -5,7 +5,7 @@ import moment from 'moment';
 import {MdEast} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 import {TextField, Separator, Button} from '@/ui/components';
 

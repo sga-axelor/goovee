@@ -41,31 +41,6 @@ export function getImageURL(id?: string | number) {
   return `${process.env.NEXT_PUBLIC_HOST}/api/image/${id}`;
 }
 
-export function getPageInfo({
-  count = 0,
-  limit,
-  page,
-}: {
-  count?: number | string;
-  limit?: number | string;
-  page?: number | string;
-}) {
-  const pages = Math.ceil(Number(count) / Number(limit));
-
-  return {
-    count,
-    limit,
-    page,
-    pages,
-    hasNext: Number(page) < Number(pages),
-    hasPrev: Number(page) > 1,
-  };
-}
-
-export function getSkipInfo(limit?: string | number, page?: string | number) {
-  return Number(limit) * Math.max(Number(page) - 1, 0);
-}
-
 export function parseDate(dateString: any) {
   const date = moment(dateString);
   const currentYear = moment().year();

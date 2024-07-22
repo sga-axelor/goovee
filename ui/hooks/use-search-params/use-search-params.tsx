@@ -13,16 +13,20 @@ export const useSearchParams = () => {
   const searchParams = useNextSearchParams();
 
   const update = useCallback(
-    (
-      values: Array<{
-        key: string;
-        value?: string | number;
-      }>,
-    ) => {
+    (values: any) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
       values.forEach(({key, value = ''}: any) => {
-        value = value && String(value)?.trim();
-        value ? current.set(key, value) : current.delete(key);
+        if (Array.isArray(value)) {
+          current.delete(key);
+          value.forEach(val => {
+            if (val != null) {
+              current.append(key, String(val).trim());
+            }
+          });
+        } else {
+          value = value && String(value)?.trim();
+          value ? current.set(key, value) : current.delete(key);
+        }
       });
       const query = current.toString();
       router.push(`${pathname}${query ? `?${query}` : ''}`);

@@ -19,8 +19,9 @@ export {
   AccordionItem,
   AccordionTrigger,
 } from './accordion';
+export {Avatar, AvatarImage, AvatarFallback} from './avatar';
 export {Alert, AlertDescription, AlertTitle, StyledAlert} from './alert';
-export {Badge} from './badge';
+export {Badge, badgeVariants} from './badge';
 export {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -30,7 +31,15 @@ export {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from './breadcrumb';
-export {Button} from './button';
+export {Button, buttonVariants} from './button';
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from './card';
 export {Calendar} from './calendar';
 export {Checkbox} from './checkbox';
 export {
@@ -185,3 +194,5 @@ export {
 } from './alert-dialog';
 export {Banner} from './banner';
 export {Pagination} from './custom-pagination';
+export {HeroSearch} from './hero-search';
+export {Search} from './search';

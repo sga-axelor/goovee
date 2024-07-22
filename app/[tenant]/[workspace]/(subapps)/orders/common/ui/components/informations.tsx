@@ -6,7 +6,7 @@ import {Button} from '@ui/components/button';
 import {MdOutlineFileDownload} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {Tag} from '@ui/components/index';
-import {parseDate} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';

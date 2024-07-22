@@ -1,0 +1,73 @@
+{
+  "name": "AOSPortalEvent",
+  "table": "portal_portal_event",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "eventTitle",
+      "type": "String"
+    },
+    {
+      "name": "eventCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPortalEventCategory"
+    },
+    {
+      "name": "eventStartDateTime",
+      "type": "DateTime"
+    },
+    {
+      "name": "eventAllDay",
+      "type": "Boolean"
+    },
+    {
+      "name": "eventEndDateTime",
+      "type": "DateTime"
+    },
+    {
+      "name": "eventImage",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
+    },
+    {
+      "name": "eventPlace",
+      "type": "String"
+    },
+    {
+      "name": "eventLink",
+      "type": "String"
+    },
+    {
+      "name": "eventDegressiveNumberPartcipant",
+      "type": "Int"
+    },
+    {
+      "name": "eventAllowRegistration",
+      "type": "Boolean"
+    },
+    {
+      "name": "eventAllowMultipleRegistrations",
+      "type": "Boolean"
+    },
+    {
+      "name": "eventVisibility",
+      "type": "Boolean"
+    },
+    {
+      "name": "eventDescription",
+      "type": "String"
+    },
+    {
+      "name": "eventCommentList",
+      "type": "OneToMany",
+      "target": "AOSPortalComment",
+      "mappedBy": "portalEvent"
+    },
+    {
+      "name": "eventProduct",
+      "type": "ManyToOne",
+      "target": "AOSProduct"
+    }
+  ]
+}

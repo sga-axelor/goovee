@@ -1,5 +1,9 @@
 import moment from 'moment';
-import {DEFAULT_CURRENCY_SYMBOL, DEFAULT_SCALE} from '@/constants';
+import {
+  DATE_FORMATS,
+  DEFAULT_CURRENCY_SYMBOL,
+  DEFAULT_SCALE,
+} from '@/constants';
 
 export function clone(obj: any) {
   return obj && JSON.parse(JSON.stringify(obj));
@@ -11,10 +15,6 @@ export function scale(n: number | string, s: number = DEFAULT_SCALE) {
 
 export function capitalise(text: string) {
   return text && text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-export function parseDate(date: any) {
-  return moment(date).format('MM/DD/YYYY');
 }
 
 export function formatPrice(

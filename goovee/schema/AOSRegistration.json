@@ -1,0 +1,19 @@
+{
+  "name": "AOSRegistration",
+  "table": "portal_registration",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "participantList",
+      "type": "OneToMany",
+      "target": "AOSPortalParticipant",
+      "mappedBy": "registration"
+    },
+    {
+      "name": "event",
+      "type": "ManyToOne",
+      "target": "AOSPortalEvent"
+    }
+  ]
+}

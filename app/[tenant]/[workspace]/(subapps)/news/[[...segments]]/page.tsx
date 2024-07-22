@@ -6,6 +6,7 @@ import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {PortalWorkspace} from '@/types';
+import {ORDER_BY} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/news/[[...segments]]/content';
@@ -19,7 +20,7 @@ import {
   Categories,
   Homepage,
 } from '@/subapps/news/common/ui/components';
-import {DEFAULT_LIMIT, ORDER_BY} from '@/subapps/news/common/constants';
+import {DEFAULT_LIMIT} from '@/subapps/news/common/constants';
 
 interface CategorySegment {
   slug: string;

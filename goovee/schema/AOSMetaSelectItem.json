@@ -1,0 +1,31 @@
+{
+  "name": "AOSMetaSelectItem",
+  "table": "meta_select_item",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "color"
+    },
+    {
+      "type": "Int",
+      "name": "order",
+      "column": "order_seq"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "select",
+      "target": "AOSMetaSelect",
+      "column": "select_id"
+    },
+    {
+      "type": "String",
+      "name": "title"
+    },
+    {
+      "type": "String",
+      "name": "value"
+    }
+  ]
+}

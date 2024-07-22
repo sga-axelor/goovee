@@ -4,7 +4,6 @@ import fs from 'fs';
 import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
-import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
@@ -12,6 +11,7 @@ import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
+import {getCurrentDateTime} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFileSizeText} from '@/subapps/resources/common/utils';
@@ -136,7 +136,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
         fs.createWriteStream(path.resolve(storage, timestampFilename)),
       );
 
-      const timestamp = moment().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
+      const timestamp = getCurrentDateTime();
 
       await client.aOSDMSFile.create({
         data: {

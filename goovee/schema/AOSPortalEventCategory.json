@@ -1,0 +1,25 @@
+{
+  "name": "AOSPortalEventCategory",
+  "table": "portal_portal_event_category",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "color",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "type": "String"
+    },
+    {
+      "name": "workspace",
+      "type": "ManyToOne",
+      "target": "AOSPortalWorkspace"
+    }
+  ]
+}

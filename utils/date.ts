@@ -1,0 +1,76 @@
+import moment from 'moment';
+
+// ---- CORE IMPORTS ---- //
+import {DATE_FORMATS} from '@/constants';
+
+// ---- LOCAL IMPORTS ---- //
+import {Event} from '@/subapps/events/common/ui/components';
+
+export function parseDate(
+  dateString: any,
+  format: string = DATE_FORMATS.us_date,
+) {
+  return moment(dateString).format(format);
+}
+
+export function formatDateToISOString(mdate: any) {
+  return moment(mdate).utc().format(DATE_FORMATS.iso_8601_utc_timestamp);
+}
+
+export function getCurrentDateTime() {
+  return moment().format(DATE_FORMATS.timestamp_with_microseconds);
+}
+
+export const convertDateToISO8601 = (date: Date | undefined) => {
+  if (!date) return undefined;
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+export const isSameDay = (date1: Date, date2: Date) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
+};
+
+export const datesBetweenTwoDates = (data: Event[]): Date[] => {
+  const Dates: Date[] = [];
+
+  data.forEach((event: Event) => {
+    const startDate = new Date(event.eventStartDateTime);
+    const endDate = new Date(event.eventEndDateTime);
+    for (
+      let d = new Date(startDate);
+      d <= endDate;
+      d.setDate(d.getDate() + 1)
+    ) {
+      Dates.push(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+    }
+    Dates.push(
+      new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()),
+    );
+  });
+
+  const uniqueDates = Dates.filter(
+    (date, index, self) => index === self.findIndex(d => isSameDay(d, date)),
+  );
+
+  return uniqueDates;
+};
+
+export const dateIsExist = (dateToCheck: Date, datesArray: Date[]) => {
+  const formattedDateToCheck = new Date(dateToCheck).toISOString();
+
+  for (let date of datesArray) {
+    const formattedDate = new Date(date).toISOString();
+    if (formattedDate === formattedDateToCheck) {
+      return true;
+    }
+  }
+
+  return false;
+};

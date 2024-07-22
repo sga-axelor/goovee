@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useState} from 'react';
-import moment from 'moment';
 import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -10,6 +9,7 @@ import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
 import {Input} from '@/ui/components/input';
 import {i18n} from '@/lib/i18n';
+import {getCurrentDateTime} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {createComment} from '@/subapps/news/common/actions/action';
@@ -42,7 +42,7 @@ export const Comments = ({
       return;
     }
 
-    const publicationDateTime = moment().format('YYYY-MM-DD HH:mm:ss:SSS');
+    const publicationDateTime = getCurrentDateTime();
 
     try {
       await createComment({

@@ -24,6 +24,10 @@ export const PREFIX_CART_KEY = 'ct';
  * QUERY
  */
 export const DEFAULT_LIMIT = 12;
+export const ORDER_BY = {
+  ASC: 'ASC' as const,
+  DESC: 'DESC' as const,
+};
 
 /**
  * TENANT
@@ -63,4 +67,43 @@ export const SUBAPP_CODES = {
   invoices: 'invoices',
   resources: 'resources',
   news: 'news',
+  events: 'events',
+};
+
+/**
+ * DATE FORMATS
+ */
+export const DATE_FORMATS = {
+  timestamp_with_seconds: 'YYYY-MM-DD HH:mm:ss',
+  timestamp_with_microseconds: 'YYYY-MM-DD HH:mm:ss.SSSSSS',
+  iso_8601_utc_timestamp: 'YYYY-MM-DDTHH:mm[Z]',
+  us_date: 'MM/DD/YYYY',
+  full_month_day_year_12_hour: 'MMMM D YYYY - hA',
+  custom: 'MMMM D YYYY - h:mm A',
+};
+
+/**
+ * BANNER
+ */
+
+export const BANNER_TITLES = {
+  resources: 'Resources',
+  news: 'News',
+  events: 'Events',
+};
+export const BANNER_DESCRIPTION =
+  'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam';
+
+export const IMAGE_URL = `url("/images/hero-bg.svg")`;
+
+/**
+ * OTHERS
+ */
+export const NO_RESULTS_FOUND = 'No results found.';
+
+/**
+ * URL
+ */
+export const URL_PARAMS = {
+  page: 'page',
 };

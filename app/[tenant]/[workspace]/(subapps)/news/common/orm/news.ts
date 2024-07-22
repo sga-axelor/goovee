@@ -1,10 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {PortalWorkspace} from '@/types';
+import {getPageInfo, getSkipInfo} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_PAGE} from '@/subapps/news/common/constants';
-import {getPageInfo, getSkipInfo} from '@/subapps/news/common/utils';
 
 export async function findNews({
   id = '',

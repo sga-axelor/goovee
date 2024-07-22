@@ -5,7 +5,8 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {Banner} from '@/ui/components/banner';
+import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
+import {HeroSearch, Search} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -14,11 +15,9 @@ import {
   NewsList,
   NewsCard,
   FeedList,
-  Search,
+  SearchItem,
 } from '@/subapps/news/common/ui/components';
 import {
-  BANNER_DESCRIPTION,
-  BANNER_TITLE,
   CATEGORIES,
   FEATURED_NEWS,
   LATEST_NEWS,
@@ -26,6 +25,7 @@ import {
 } from '@/subapps/news/common/constants';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {findSearchNews} from '@/subapps/news/common/actions/action';
 
 export const Homepage = ({
   latestNews,
@@ -43,11 +43,23 @@ export const Homepage = ({
     router.push(`${workspaceURI}/news/article/${slug}`);
   };
 
+  const renderSearch = () => (
+    <Search
+      searchKey="title"
+      findQuery={findSearchNews}
+      renderItem={SearchItem}
+      onItemClick={handleClick}
+    />
+  );
+
   return (
     <div className="h-full flex flex-col">
-      <Banner title={BANNER_TITLE} description={BANNER_DESCRIPTION}>
-        <Search />
-      </Banner>
+      <HeroSearch
+        title={BANNER_TITLES.news}
+        description={BANNER_DESCRIPTION}
+        image={IMAGE_URL}
+        renderSearch={renderSearch}
+      />
       <div
         className={`px-4 lg:px-[100px] flex flex-col gap-6 flex-auto ${styles['news-container']}`}>
         {latestNews?.length ? (

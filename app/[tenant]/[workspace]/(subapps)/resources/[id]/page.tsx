@@ -4,7 +4,8 @@ import {MdHistory, MdWeb} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {fetchFile} from '@/subapps/resources/common/orm/dms';
-import {clone, parseDate} from '@/utils';
+import {clone} from '@/utils';
+import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
