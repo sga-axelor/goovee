@@ -31,7 +31,7 @@ export const GroupActionList = ({title}: {title: string}) => {
       <h1 className="font-semibold text-base leading-6 mb-6">{title}</h1>
       <div className="flex flex-col gap-4">
         {Array.from({length: 6}).map((_, i) => (
-          <div className="flex flex-col gap-2">
+          <div key={i} className="flex flex-col gap-2">
             <Collapsible>
               <CollapsibleTrigger className="w-full">
                 <div className="w-full flex-shrink-0 flex justify-between items-center gap-2">

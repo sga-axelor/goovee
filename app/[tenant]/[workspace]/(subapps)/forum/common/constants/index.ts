@@ -7,3 +7,25 @@ export const PIN = 'Pin';
 export const NOTIFICATIONS = 'Notifications';
 export const LEAVE_THIS_GROUP = 'Leave this group';
 export const GROUP_NAME = 'Group name';
+
+export const GROUP_SORT_BY = [
+  {
+    id: 'default',
+    title: 'Default',
+  },
+  {
+    id: 'asc',
+    title: 'A-Z',
+  },
+  {
+    id: 'dsc',
+    title: 'Z-A',
+  },
+];
+
+export const NOTIFICATIONS_OPTION = [
+  {id: 'all', title: 'All new posts and new comments'},
+  {id: 'all-my-posts', title: 'All new posts and new comments on my posts'},
+  {id: 'comments-my-posts', title: 'Only new comments on my posts'},
+  {id: 'no-notifications', title: 'No notifications'},
+];
