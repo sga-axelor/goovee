@@ -1,10 +1,11 @@
 'use client';
 
 import {useCallback, useEffect, useState} from 'react';
-import {useSession} from 'next-auth/react';
 import {usePathname, useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {MdApps, MdNotificationsNone} from 'react-icons/md';
+
+// ---- CORE IMPORTS ---- //
 import {Sheet, SheetContent} from '@/ui/components/sheet/sheet';
 import {
   Select,
@@ -16,10 +17,9 @@ import {
 import Icons from '@/utils/Icons';
 import {SUBAPP_PAGE} from '@/constants';
 import {Account} from '@/ui/components';
-import {useWorkspace} from './workspace-context';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 function MobileSidebar({subapps, workspaces}: any) {
-  const {data: session} = useSession();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -36,10 +36,6 @@ function MobileSidebar({subapps, workspaces}: any) {
   useEffect(() => {
     closeSidebar();
   }, [pathname, closeSidebar]);
-
-  if (!session?.user?.id) {
-    return null;
-  }
 
   return (
     <>
@@ -97,11 +93,7 @@ function MobileSidebar({subapps, workspaces}: any) {
 }
 
 export function MobileMenu({subapps, workspaces}: any) {
-  const {data: session} = useSession();
   const router = useRouter();
-
-  const authenticated = session?.user?.id;
-
   const redirect = () => router.push('/notifications');
 
   return (

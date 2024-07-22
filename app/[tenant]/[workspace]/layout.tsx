@@ -34,9 +34,10 @@ export default async function Layout({
   const {workspace, tenant, workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
+  const user = session?.user;
 
   const $workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   }).then(clone);
 
@@ -51,7 +52,7 @@ export default async function Layout({
 
   const subapps = await findSubapps({
     url: $workspace?.url,
-    user: session?.user,
+    user,
   });
 
   return (
@@ -60,7 +61,7 @@ export default async function Layout({
         <div className="h-full w-full flex">
           <Sidebar subapps={subapps} workspaces={workspaces} />
           <div className="flex flex-col flex-1 max-h-full max-w-full min-w-0">
-            <Header subapps={subapps} />
+            <Header subapps={subapps} user={user} />
             {children}
           </div>
           <MobileMenu subapps={subapps} workspaces={workspaces} />
