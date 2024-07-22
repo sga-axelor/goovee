@@ -3,9 +3,6 @@ import moment from 'moment';
 // ---- CORE IMPORTS ---- //
 import {DATE_FORMATS} from '@/constants';
 
-// ---- LOCAL IMPORTS ---- //
-import {Event} from '@/subapps/events/common/ui/components';
-
 export function parseDate(
   dateString: any,
   format: string = DATE_FORMATS.us_date,
@@ -35,31 +32,6 @@ export const isSameDay = (date1: Date, date2: Date) => {
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
   );
-};
-
-export const datesBetweenTwoDates = (data: Event[]): Date[] => {
-  const Dates: Date[] = [];
-
-  data.forEach((event: Event) => {
-    const startDate = new Date(event.eventStartDateTime);
-    const endDate = new Date(event.eventEndDateTime);
-    for (
-      let d = new Date(startDate);
-      d <= endDate;
-      d.setDate(d.getDate() + 1)
-    ) {
-      Dates.push(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
-    }
-    Dates.push(
-      new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()),
-    );
-  });
-
-  const uniqueDates = Dates.filter(
-    (date, index, self) => index === self.findIndex(d => isSameDay(d, date)),
-  );
-
-  return uniqueDates;
 };
 
 export const dateIsExist = (dateToCheck: Date, datesArray: Date[]) => {

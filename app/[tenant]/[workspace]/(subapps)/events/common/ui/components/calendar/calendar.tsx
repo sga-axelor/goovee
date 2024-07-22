@@ -16,12 +16,13 @@ import {
   DropdownMenuTrigger,
   buttonVariants,
 } from '@/ui/components';
-import {datesBetweenTwoDates, dateIsExist} from '@/utils/date';
+import {dateIsExist} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
 import {CalendarProps} from '@/subapps/events/common/ui/components/calendar/types';
 import styles from '@/subapps/events/common/ui/components/calendar/calendar.module.css';
+import {datesBetweenTwoDates} from '@/subapps/events/common/utils';
 
 const months = Array.from({length: 12}, (_, i) =>
   new Date(0, i).toLocaleString('en-US', {month: 'long'}),
