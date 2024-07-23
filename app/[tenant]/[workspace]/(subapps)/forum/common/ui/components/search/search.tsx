@@ -14,7 +14,7 @@ export const Search = () => {
         placeholder={SEARCH_HERE}
       />
       <Button className="bg-success px-2 py-1 h-7 w-9 hover:bg-success-dark absolute top-[6px] right-[9px]">
-        <MdOutlineSearch className="" />
+        <MdOutlineSearch className="w-5 h-5" />
       </Button>
     </div>
   );
