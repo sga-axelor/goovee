@@ -56,7 +56,7 @@ export function EventDetails({
           </div>
         </div>
       )}
-      <div className="w-screen lg:w-full py-4 flex flex-col lg:flex-row lg:gap-x-6 gap-y-6 lg:space-y-0 justify-center px-4 lg:px-0">
+      <div className="w-full flex flex-col lg:flex-row lg:gap-x-6 gap-y-6 lg:space-y-0 justify-center px-4 pt-4 pb-20 lg:py-4 lg:px-0">
         <div className="order-2 lg:order-1 space-y-6">
           <EventPageCard eventDetails={eventDetails} />
           <CommentsSection

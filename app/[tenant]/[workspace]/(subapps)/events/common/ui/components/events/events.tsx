@@ -116,7 +116,7 @@ export const Events = ({
         image={IMAGE_URL}
         renderSearch={renderSearch}
       />
-      <div className="container py-6 px-4 overflow-hidden flex lg:flex-row flex-col space-y-6 lg:space-y-0 lg:gap-x-6 ">
+      <div className="container py-6 px-4 overflow-hidden flex lg:flex-row flex-col space-y-6 lg:space-y-0 lg:gap-x-6 mb-16">
         <EventSelector
           date={date}
           setDate={updateDate}

@@ -23,7 +23,7 @@ export const EventPageCard = ({eventDetails}: any & any) => {
   const {workspaceURI} = useWorkspace();
 
   return (
-    <Card className="max-w-screen-lg min-w-full lg:min-w-[50rem] xl:min-w-[57.75rem] xl:max-w-[57.75rem]  w-full rounded-2xl border-none shadow-none">
+    <Card className="min-w-full lg:min-w-[50rem] xl:min-w-[57.75rem] xl:max-w-[57.75rem]  w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-4 space-y-4">
         <CardTitle>
           <p className=" text-xl font-semibold">{eventDetails?.eventTitle}</p>
@@ -45,17 +45,21 @@ export const EventPageCard = ({eventDetails}: any & any) => {
           dangerouslySetInnerHTML={{
             __html: eventDetails?.eventDescription,
           }}></CardDescription>
-        <div className="border-l space-y-4  text-base font-semibold px-4">
+        <div className="border-l border-success space-y-4 text-base font-semibold px-4">
           {eventDetails?.eventPlace && (
             <p>
               {i18n.get('Place')}:{' '}
-              <span className="font-normal"> {eventDetails?.eventPlace}</span>
+              <span className="font-normal break-words">
+                {eventDetails?.eventPlace}
+              </span>
             </p>
           )}
           {eventDetails?.eventLink && (
             <p>
               {i18n.get('Link')}:
-              <span className="font-normal"> {eventDetails?.eventLink}</span>
+              <span className="font-normal break-words">
+                {eventDetails?.eventLink}
+              </span>
             </p>
           )}
           {eventDetails?.eventProduct?.salePrice &&

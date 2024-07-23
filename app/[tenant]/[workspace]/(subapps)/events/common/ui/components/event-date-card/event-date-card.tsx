@@ -30,7 +30,7 @@ export const EventDateCard = ({
         </Badge>
       )}
       <div className=" flex gap-x-3">
-        <MdOutlineCalendarMonth className="w-8 h-8" />
+        <MdOutlineCalendarMonth className="w-8 h-8 text-success" />
         <div className=" space-y-[0.688rem]">
           <p className=" font-semibold text-xl">{startDay}</p>
           <p className="text-base font-medium">{startTime}</p>

@@ -69,7 +69,7 @@ export const CommentsSection = ({
           onChange={handleInputChange}
           placeholder="Write your comment"
           className={cn(
-            'lg:placeholder:text-base lg:placeholder:font-medium border-[0.03rem] lg:pr-[9.375rem] pl-[0.625rem] py-4 pr-[5rem] min-h-14 lg:pl-4 lg:text-base lg:font-medium text-sm font-normal placeholder:text-sm resize-none placeholder:font-normal rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 h-14',
+            'lg:placeholder:text-base lg:placeholder:font-medium placeholder:text-palette-mediumGray border-[0.03rem] lg:pr-[9.375rem] pl-[0.625rem] py-4 pr-[5rem] min-h-14 lg:pl-4 lg:text-base lg:font-medium text-sm font-normal placeholder:text-sm resize-none placeholder:font-normal rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 h-14',
             styles['no-scrollbar'],
           )}
         />
