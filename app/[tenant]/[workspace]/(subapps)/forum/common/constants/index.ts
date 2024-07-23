@@ -29,3 +29,9 @@ export const NOTIFICATIONS_OPTION = [
   {id: 'comments-my-posts', title: 'Only new comments on my posts'},
   {id: 'no-notifications', title: 'No notifications'},
 ];
+
+export const MENU = [
+  {id: 1, name: 'Homepage', link: ''},
+  {id: 2, name: 'Forum notifications', link: '/manage-notifications'},
+  {id: 3, name: 'My profile', link: '/profile'},
+];

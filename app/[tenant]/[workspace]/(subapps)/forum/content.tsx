@@ -1,23 +1,29 @@
 'use client';
 
+import {useRouter} from 'next/navigation';
+
 // ---- LOCAL IMPORTS ---- //
-import {GroupActionList, Search} from '@/subapps/forum/common/ui/components';
-import {GROUPS, MEMBER, NOT_MEMBER} from '@/subapps/forum/common/constants';
+import {
+  NavMenu,
+  HomePage,
+} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
+import {MENU} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 const Content = () => {
+  const router = useRouter();
+  const {workspaceURI} = useWorkspace();
+
+  const handleMenuClick = (link: string) => {
+    router.push(`${workspaceURI}/forum/${link}`);
+  };
+
   return (
-    <div className="flex gap-5 px-[100px] py-6 w-full">
-      <div className="w-1/5 min-w-[281px] flex flex-col gap-6 bg-white p-4 rounded-lg">
-        <div>
-          <h1 className="font-semibold text-xl leading-[30px]">{GROUPS}</h1>
-        </div>
-        <Search />
-        <GroupActionList title={MEMBER} />
-        <GroupActionList title={NOT_MEMBER} />
+    <div className="flex flex-col h-full flex-1">
+      <div className="hidden lg:block">
+        <NavMenu items={MENU} onClick={handleMenuClick} />
       </div>
-      <div className="w-4/5">
-        <h1>Content</h1>
-      </div>
+      <HomePage />
     </div>
   );
 };
