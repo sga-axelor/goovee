@@ -1,7 +1,8 @@
-import {Field, Widget} from '../types';
-import SelectionPicker from '../selection-picker';
+// ---- CORE IMPORTS ---- //
+import {SelectionPicker} from '@/ui/form';
+import type {Field, Widget} from '@/ui/form';
 
-export function mapStudioTypes(field: any): string {
+export function mapStudioTypes(field: any): any {
   switch (field.type) {
     case 'decimal':
     case 'integer':
@@ -80,8 +81,8 @@ export function extractCustomData(
   modelField: string,
   customFields: any[],
 ): any {
-  let result = {};
-  let customData = {};
+  let result: any = {};
+  let customData: any = {};
 
   for (const [key, value] of Object.entries(formState)) {
     if (customFields.find(({name}) => name == key)) {

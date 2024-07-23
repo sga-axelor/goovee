@@ -2,20 +2,21 @@
 
 import React, {useCallback, useMemo} from 'react';
 import {MdAdd, MdOutlineDelete} from 'react-icons/md';
-import {Button} from '../components';
-import {Field} from './types';
-import {createDefaultValues, sortFields} from './display.helpers';
 
-const ArrayComponent = ({
+// ---- CORE IMPORTS ---- //
+import {Button} from '@/ui/components';
+import type {Field} from '@/ui/form';
+import {createDefaultValues, sortFields} from '@/ui/form';
+
+export const ArrayComponent = ({
   form,
   field,
   renderItem,
-  formKey,
   addTitle,
 }: {
   form: any;
   field: Field;
-  renderItem: (item: Field, idx: number) => React.JSX.Element;
+  renderItem: (item: any, idx: any) => React.JSX.Element;
   addTitle?: string;
 }) => {
   const childrenForm = useMemo(
@@ -47,29 +48,29 @@ const ArrayComponent = ({
   }, [childrenDefaultValue, field.name, form]);
 
   const removeItem = useCallback(
-    _valueId => {
+    (_valueId: any) => {
       const _current = form.getValues(field.name) ?? [];
 
       form.setValue(
         field.name,
-        _current.filter(({valueId}) => valueId !== _valueId),
+        _current.filter(({valueId}: any) => valueId !== _valueId),
       );
     },
     [field.name, form],
   );
 
   const renderArrayItem = useCallback(
-    (subField, idx) => {
+    (subField: any, idx: any) => {
       return (
         <div
           key={subField.valueId}
-          className="p-4 flex gap-x-6 border rounded-lg">
+          className="p-4 flex gap-6 border rounded-lg">
           <Button
             onClick={() => removeItem(subField.valueId)}
             type="button"
             size="icon"
-            className="size-10 shrink-0 ">
-            <MdOutlineDelete className="w-6 h-6" />
+            className={`bg-destructive-dark/20 hover:bg-destructive-dark/40 w-10 h-10 p-2`}>
+            <MdOutlineDelete className="w-6 h-6 text-destructive-dark" />
           </Button>
           <div className="space-y-6 w-full">
             {visibleChildrenFields.map(_i =>
@@ -86,10 +87,10 @@ const ArrayComponent = ({
     <div className="space-y-6">
       <Button
         type="button"
-        className="p-2 flex whitespace-normal items-center gap-x-[0.625rem] h-fit max-w-full "
+        className={`bg-success/20 hover:bg-success/40 p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full`}
         onClick={addItem}>
-        <MdAdd className="w-6 h-6" />
-        <p className="text-sm font-normal text-center">{addTitle}</p>
+        <MdAdd className="w-6 h-6 text-success" />
+        <p className="text-sm font-normal text-center text-black">{addTitle}</p>
       </Button>
       {(form.watch(field.name) ?? []).map(renderArrayItem)}
     </div>

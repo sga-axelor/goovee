@@ -1,10 +1,10 @@
 'use client';
 
 import React, {useCallback, useMemo} from 'react';
-import {MdAdd, MdOutlineDelete} from 'react-icons/md';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
+// ---- CORE IMPORTS ---- //
 import {
   Button,
   Checkbox,
@@ -15,12 +15,15 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from '../components';
-import {Field} from './types';
-import {createDefaultValues, sortFields, mapFieldType} from './display.helpers';
-import {createFormSchema} from './validation.helpers';
+} from '@/ui/components';
+import {
+  createDefaultValues,
+  sortFields,
+  mapFieldType,
+  createFormSchema,
+} from '@/ui/form';
 
-const FormView = ({
+export const FormView = ({
   fields: _fields,
   onSubmit,
   submitTitle,
@@ -48,7 +51,7 @@ const FormView = ({
   );
 
   const renderItem = useCallback(
-    (item: Field, key: string) => {
+    (item: any, key: any) => {
       const renderFieldContent = ({field}: any) => {
         if (item.widget === 'custom') {
           return React.createElement(item.customComponent, {
@@ -62,10 +65,9 @@ const FormView = ({
 
         if (item.type === 'boolean') {
           return (
-            <FormItem className="flex items-center gap-x-6">
+            <FormItem className="flex items-center gap-6">
               <FormControl>
                 <Checkbox
-                  className="rounded-[0.313rem] size-5 border-[0.078rem]"
                   checked={form.watch(item.name)}
                   onCheckedChange={() =>
                     form.setValue(item.name, !form.watch(item.name))
@@ -89,7 +91,7 @@ const FormView = ({
               </FormLabel>
               <FormControl>
                 <Input
-                  className="rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal  h-[2.875rem] py-[0.625rem] px-[0.875rem] border text-sm font-normal"
+                  className="py-3 px-4 rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal  h-[2.875rem] border text-sm font-normal"
                   type={mapFieldType(item)}
                   placeholder={item.helper}
                   {...field}

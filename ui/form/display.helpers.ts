@@ -1,4 +1,5 @@
-import {Field, Widget} from './types';
+// ---- LOCAL IMPORTS ---- //
+import type {Field} from '@/ui/form';
 
 export function mapFieldType(field: Field): string {
   if (field.widget != null) {
@@ -22,7 +23,7 @@ export function mapFieldType(field: Field): string {
   }
 }
 
-export function sortFields(items: Field[]): Field[] {
+export function sortFields(items: any): Field[] {
   if (!Array.isArray(items)) {
     return [];
   }
@@ -46,7 +47,7 @@ function getItemDefaultValue(item: Field): any {
 }
 
 export function createDefaultValues(items: Field[]) {
-  let result = {};
+  let result: any = {};
 
   items.forEach(_i => {
     result[_i.name] = getItemDefaultValue(_i);

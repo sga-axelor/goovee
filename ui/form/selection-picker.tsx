@@ -2,7 +2,9 @@
 
 import React, {useEffect, useMemo, useState} from 'react';
 import Select, {SingleValue, MultiValue} from 'react-select';
-import {Field} from './types';
+
+// ---- CORE IMPORTS ---- //
+import type {Field} from '@/ui/form';
 
 function formatValues(formValue: any) {
   if (Array.isArray(formValue)) {
@@ -14,7 +16,7 @@ function formatValues(formValue: any) {
   }
 }
 
-const SelectionPicker = ({
+export const SelectionPicker = ({
   form,
   field,
   formKey,
@@ -35,7 +37,7 @@ const SelectionPicker = ({
   );
 
   const handleChange = (
-    selected: MultiValue<OptionType> | SingleValue<OptionType> | null,
+    selected: MultiValue<any> | SingleValue<any> | null,
   ) => {
     if (Array.isArray(selected)) {
       form.setValue(

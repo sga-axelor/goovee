@@ -12,14 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/ui/components/card';
-import FormView from '@/ui/form/form-view';
-import ArrayComponent from '@/ui/form/array-component';
-import {
-  extractCustomData,
-  formatStudioFields,
-} from '@/ui/form/studio/display.helpers';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
+import {
+  FormView,
+  ArrayComponent,
+  extractCustomData,
+  formatStudioFields,
+} from '@/ui/form';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -182,7 +182,7 @@ export const RegistrationForm = ({
   };
 
   return (
-    <Card className="max-w-screen-lg  order-2 lg:order-1 p-4 shadow-nonemin-w-full lg:min-w-[50rem] xl:min-w-[57.75rem] xl:max-w-[57.75rem]  w-full rounded-2xl border-none shadow-none">
+    <Card className="order-2 lg:order-1 p-4 w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-0 space-y-4">
         <CardTitle>
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>

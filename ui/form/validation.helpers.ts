@@ -1,5 +1,7 @@
 import {z} from 'zod';
-import {Field} from './types';
+
+// ---- CORE IMPORTS ---- //
+import type {Field} from '@/ui/form';
 
 const getRequiredCondition = (schema: any, _field: Field): any => {
   if (!_field.required) {
@@ -88,7 +90,7 @@ const getFieldSchema = (field: Field) => {
 };
 
 export function createFormSchema(fields: Field[]): any {
-  let schemaConfig = {};
+  let schemaConfig: any = {};
 
   fields
     .filter(_field => !_field.readonly)
