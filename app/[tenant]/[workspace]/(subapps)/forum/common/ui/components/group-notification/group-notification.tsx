@@ -8,7 +8,7 @@ import {RadioGroup, RadioGroupItem, Separator} from '@/ui/components';
 // ---- LOCAL IMPORTS ---- //
 import {NOTIFICATIONS_OPTION} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 
-const GroupNotification = () => {
+export const GroupNotification = () => {
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleChange = (value: string) => {
@@ -19,9 +19,9 @@ const GroupNotification = () => {
     <div className="py-4">
       <div className="w-full grid grid-cols-[1fr_4fr] my-4 ">
         <div className="flex items-center gap-3">
-          {/* group imag */}
+          {/* Group Image */}
           <div className="w-6 h-6 rounded-md bg-gradient-to-r from-green-300/80 to-sky-800/20"></div>
-          <span>{i18n.get('Group name')}</span>
+          <span className="text-sm">{i18n.get('Group name')}</span>
         </div>
         <RadioGroup
           className="grid grid-cols-4 text-center"
