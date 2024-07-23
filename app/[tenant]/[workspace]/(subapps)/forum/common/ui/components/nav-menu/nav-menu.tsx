@@ -13,7 +13,7 @@ export const NavMenu = ({
   onClick: (link: string) => void;
 }) => {
   return (
-    <div className="flex items-center justify-center gap-5 px-6 py-4">
+    <div className="bg-white flex items-center justify-center gap-5 px-6 py-4">
       {items.map((item: any, index: number) => (
         <React.Fragment key={item.id}>
           <div
