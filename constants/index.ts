@@ -97,6 +97,7 @@ export const BANNER_TITLES = {
   resources: 'Resources',
   news: 'News',
   events: 'Events',
+  forum: 'Forum',
 };
 export const BANNER_DESCRIPTION =
   'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam';
