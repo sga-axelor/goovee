@@ -15,6 +15,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from '@/ui/components';
+import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -28,7 +29,9 @@ import {
 export const GroupActionList = ({title}: {title: string}) => {
   return (
     <div>
-      <h1 className="font-semibold text-base leading-6 mb-6">{title}</h1>
+      <h1 className="font-semibold text-base leading-6 mb-6">
+        {i18n.get(title)}
+      </h1>
       <div className="flex flex-col gap-4">
         {Array.from({length: 6}).map((_, i) => (
           <div key={i} className="flex flex-col gap-2">

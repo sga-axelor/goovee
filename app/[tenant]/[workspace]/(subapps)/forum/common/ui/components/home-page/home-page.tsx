@@ -57,7 +57,9 @@ export const HomePage = () => {
       <div className="flex gap-5 px-[100px] py-6 w-full">
         <div className="w-1/5 min-w-[281px] flex flex-col gap-6 bg-white p-4 rounded-lg">
           <div>
-            <h1 className="font-semibold text-xl leading-[30px]">{GROUPS}</h1>
+            <h1 className="font-semibold text-xl leading-[30px]">
+              {i18n.get(GROUPS)}
+            </h1>
           </div>
           <GroupSearch />
           <GroupActionList title={MEMBER} />
