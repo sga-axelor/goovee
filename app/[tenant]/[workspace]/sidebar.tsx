@@ -71,7 +71,7 @@ export function Sidebar({
       </div>
       <div className="flex flex-col gap-6">
         {subapps
-          ?.filter((app: any) => app.installed && app.showInMySpace)
+          ?.filter((app: any) => app.installed)
           .sort(
             (app1: any, app2: any) =>
               app1.orderForMySpaceMenu - app2.orderForMySpaceMenu,

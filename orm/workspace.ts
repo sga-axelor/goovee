@@ -221,6 +221,7 @@ export async function findWorkspace({
     url: workspace.url,
     config,
     apps,
+    navigationSelect: 'leftSide',
   };
 }
 

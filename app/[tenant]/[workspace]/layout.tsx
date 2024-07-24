@@ -14,6 +14,7 @@ import CartContext from './cart-context';
 import Header from './header';
 import Sidebar from './sidebar';
 import MobileMenu from './mobile-menu';
+import {NAVIGATION} from '@/constants';
 
 const defaultTheme = {
   id: -1,
@@ -55,6 +56,10 @@ export default async function Layout({
     url: workspaceURL,
   }).then(clone);
 
+  if (!$workspace) {
+    return notFound();
+  }
+
   let theme;
 
   try {
@@ -69,13 +74,23 @@ export default async function Layout({
     user,
   });
 
+  const navigationSelect = $workspace?.navigationSelect;
+  const isTopNavigation = navigationSelect === NAVIGATION.top;
+  const isLeftNavigation = navigationSelect === NAVIGATION.left;
+
   return (
     <Workspace workspace={workspace} tenant={tenant} theme={theme}>
       <CartContext>
         <div className="h-full w-full flex">
-          <Sidebar subapps={subapps} workspaces={workspaces} />
+          {isLeftNavigation && (
+            <Sidebar subapps={subapps} workspaces={workspaces} />
+          )}
           <div className="flex flex-col flex-1 max-h-full max-w-full min-w-0">
-            <Header subapps={subapps} user={user} />
+            <Header
+              subapps={subapps}
+              user={user}
+              hideTopNavigation={!isTopNavigation}
+            />
             {children}
           </div>
           <MobileMenu subapps={subapps} workspaces={workspaces} />

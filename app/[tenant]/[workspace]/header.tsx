@@ -61,7 +61,15 @@ function Cart() {
   );
 }
 
-export default function Header({subapps, user}: {subapps: any; user?: User}) {
+export default function Header({
+  subapps,
+  user,
+  hideTopNavigation,
+}: {
+  subapps: any;
+  user?: User;
+  hideTopNavigation?: boolean;
+}) {
   const {workspaceURI} = useWorkspace();
 
   return (
@@ -95,7 +103,7 @@ export default function Header({subapps, user}: {subapps: any; user?: User}) {
           <Account baseURL={workspaceURI} />
         </div>
       </div>
-      {!user && subapps?.length ? (
+      {!hideTopNavigation && subapps?.length ? (
         <div className="bg-background text-foreground px-6 py-4 hidden lg:flex items-center justify-end gap-10 border-b border-border border-solid max-w-full">
           {subapps
             ?.filter((app: any) => app.installed)
