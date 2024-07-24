@@ -13,6 +13,7 @@ import {
 } from '@/ui/components';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
+import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -32,6 +33,9 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 export const HomePage = () => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
+
+  const {searchParams} = useSearchParams();
+  const type = searchParams.get('type');
 
   const renderSearch = () => (
     <BannerSearch
@@ -79,7 +83,7 @@ export const HomePage = () => {
                 <MdOutlineImage className="h-6 w-6" />
               </Button>
             </div>
-            <Tabs tabs={TAB_TITLES} onClick={handleTabClick} />
+            <Tabs tabs={TAB_TITLES} onClick={handleTabClick} activeTab={type} />
           </div>
         </div>
       </div>

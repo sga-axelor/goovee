@@ -14,14 +14,16 @@ import {MediaContent, PostsContent} from '@/subapps/forum/common/ui/components';
 import styles from './style.module.scss';
 
 export const Tabs = ({
-  onClick,
+  activeTab,
   tabs,
+  onClick,
 }: {
-  onClick: (value: string) => void;
+  activeTab: string | null;
   tabs: any[];
+  onClick: (value: string) => void;
 }) => {
   return (
-    <ShadCnTabs defaultValue="posts" className="w-full">
+    <ShadCnTabs defaultValue={activeTab ?? 'posts'} className="w-full">
       <TabsList
         className={`bg-white px-4 rounded-b-lg grid w-full grid-cols-2 gap-2 border-none ${styles['custom-tabs']}`}>
         {tabs.map((tab: any) => {
