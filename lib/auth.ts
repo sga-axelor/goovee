@@ -3,39 +3,8 @@ import Google from 'next-auth/providers/google';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
 import {compare} from '@/utils/auth';
-import {registerPartner} from '@/orm/partner';
-import {clone} from '@/utils';
-
-async function findPartner(email: string) {
-  if (!email) return null;
-
-  const client = await getClient();
-
-  const partner = await client.aOSPartner
-    .findOne({
-      where: {
-        emailAddress: {
-          address: {
-            eq: email,
-          },
-        },
-      },
-      select: {
-        fullName: true,
-        isContact: true,
-        password: true,
-        emailAddress: true,
-        mainPartner: {
-          id: true,
-        },
-      },
-    })
-    .then(clone);
-
-  return partner;
-}
+import {findPartnerByEmail, registerPartner} from '@/orm/partner';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -48,7 +17,7 @@ export const authOptions: NextAuthOptions = {
       async authorize({email, password}: any, req) {
         if (!email) return null;
 
-        const user = await findPartner(email);
+        const user = await findPartnerByEmail(email);
 
         if (!user) {
           return null;
@@ -76,7 +45,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({session}) {
       const user =
-        session?.user?.email && (await findPartner(session.user.email));
+        session?.user?.email && (await findPartnerByEmail(session.user.email));
 
       if (user) {
         const {id, emailAddress, fullName: name, isContact, mainPartner} = user;
@@ -95,7 +64,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({account, profile}: any) {
       if (account.provider === 'google') {
         const {given_name, family_name, email} = profile;
-        const exists = await findPartner(email);
+        const exists = await findPartnerByEmail(email);
         if (!exists) {
           try {
             const user = await registerPartner({

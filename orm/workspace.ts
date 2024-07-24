@@ -125,6 +125,28 @@ export async function findPartnerWorkspaceConfig({
   };
 }
 
+export async function findDefaultPartnerWorkspaceConfig({url}: {url: string}) {
+  if (!url) return null;
+
+  const client = await getClient();
+
+  const workspace: any = await client.aOSPortalWorkspace.findOne({
+    where: {
+      url: {
+        like: url,
+      },
+    },
+    select: {
+      defaultPartnerWorkspace: {
+        apps: true,
+        portalAppConfig: portalAppConfigFields,
+      },
+    },
+  });
+
+  return workspace?.defaultPartnerWorkspace;
+}
+
 export async function findDefaultPartnerWorkspace({
   partnerId,
 }: {
@@ -304,6 +326,7 @@ export async function findPartnerWorkspaces({
           workspace: {
             id: true,
             url: true,
+            allowRegistrationSelect: true,
           },
         },
       },
@@ -352,6 +375,7 @@ export async function findContactWorkspaces({
           portalWorkspace: {
             url: true,
             id: true,
+            allowRegistrationSelect: true,
           },
         },
       },
@@ -423,7 +447,7 @@ export async function findWorkspaceApps({
 
   const contactApps = (contactWorkpaceConfig?.apps || []).filter(available);
 
-  return contactApps;
+  return [...defaultApps, ...contactApps];
 }
 
 export async function findSubapps({url, user}: {url: string; user?: User}) {

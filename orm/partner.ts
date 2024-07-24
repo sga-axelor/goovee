@@ -2,6 +2,35 @@ import {getClient} from '@/goovee';
 import {clone} from '@/utils';
 import {hash} from '@/utils/auth';
 
+export async function findPartnerByEmail(email: string) {
+  if (!email) return null;
+
+  const client = await getClient();
+
+  const partner = await client.aOSPartner
+    .findOne({
+      where: {
+        emailAddress: {
+          address: {
+            eq: email,
+          },
+        },
+      },
+      select: {
+        fullName: true,
+        isContact: true,
+        password: true,
+        emailAddress: true,
+        mainPartner: {
+          id: true,
+        },
+      },
+    })
+    .then(clone);
+
+  return partner;
+}
+
 export async function registerPartner({
   firstName,
   name,

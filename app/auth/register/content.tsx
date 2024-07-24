@@ -2,6 +2,7 @@
 
 import React, {useState} from 'react';
 import Link from 'next/link';
+import {useSession} from 'next-auth/react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {FaGoogle} from 'react-icons/fa';
 
@@ -13,10 +14,18 @@ import {
   TextField,
   StyledAlert,
   DatePicker,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from '@/ui/components';
+import {useToast} from '@/ui/hooks';
+import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {register} from './actions';
+import {register, subscribe} from './actions';
 
 interface UserValues {
   firstName: string;
@@ -28,7 +37,7 @@ interface UserValues {
   confirmPassword: string;
 }
 
-export default function Content() {
+export default function Content({workspace}: {workspace?: PortalWorkspace}) {
   const [values, setValues] = useState<UserValues>({
     firstName: '',
     name: '',
@@ -41,6 +50,10 @@ export default function Content() {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  const {data: session} = useSession();
+  const user = session?.user;
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
@@ -52,9 +65,42 @@ export default function Content() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const {toast} = useToast();
 
   const toggleShowPassword = () => setShowPassword(show => !show);
   const toggleShowConfirmPassword = () => setShowConfirmPassword(show => !show);
+
+  const handleCancel = () => {
+    router.replace('/');
+  };
+
+  const handleSubscription = async () => {
+    if (!workspace) return;
+    setSubmitting(true);
+    try {
+      const res = await subscribe({workspace});
+
+      if (res.error) {
+        toast({
+          variant: 'destructive',
+          title: res.message,
+        });
+      } else if (res.success) {
+        toast({
+          variant: 'success',
+          title: res.message,
+        });
+        router.replace(workspace.url);
+      }
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error subscribing, try again'),
+      });
+    }
+
+    setSubmitting(false);
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -69,17 +115,54 @@ export default function Content() {
 
     setSubmitting(true);
     try {
-      await register(values);
-      router.push(
-        `/auth/login?${searchQuery}&success=${encodeURIComponent(
-          'Registered Successfully',
-        )}`,
-      );
+      const res = await register(values);
+
+      if (res.success) {
+        toast({
+          variant: 'success',
+          title: res.message,
+        });
+        router.push(`/auth/login?${searchQuery}`);
+      } else if (res.error) {
+        toast({
+          variant: 'destructive',
+          title: res.message,
+        });
+      }
     } catch (err) {
-      setError('Error registering, try again.');
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error registering, try again'),
+      });
     }
     setSubmitting(false);
   };
+
+  if (user) {
+    return (
+      <Dialog open onOpenChange={handleCancel}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{i18n.get('Already an user')}</DialogTitle>
+            <DialogDescription>
+              {i18n.get(
+                `You are already a user, do you want to subscribe to ${workspace?.url} ?`,
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              {i18n.get('Cancel')}
+            </Button>
+            <Button type="button" onClick={handleSubscription}>
+              {i18n.get('Subscribe')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
       <h5 className="mb-3 font-medium text-xl">{i18n.get('Sign Up')}</h5>
@@ -189,7 +272,7 @@ export default function Content() {
         </div>
         {error && <StyledAlert variant="error" show={true} heading={error} />}
       </form>
-      <div className="flex items-center gap-4 mt-4">
+      <div className="hidden items-center gap-4 mt-4">
         <div className="grow">
           <Separator />
         </div>
