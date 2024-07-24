@@ -28,6 +28,8 @@ export function Sidebar({
   const [collapsed, setCollapsed] = useState(true);
   const {workspaceURI, workspaceURL} = useWorkspace();
 
+  const user = session?.user;
+
   const router = useRouter();
 
   const toggle = () => setCollapsed(c => !c);
@@ -36,7 +38,7 @@ export function Sidebar({
     router.push(value);
   };
 
-  if (!session?.user?.id) {
+  if (!user) {
     return null;
   }
 
