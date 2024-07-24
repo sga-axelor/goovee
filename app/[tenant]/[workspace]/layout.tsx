@@ -1,4 +1,5 @@
 import React from 'react';
+import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
@@ -27,14 +28,27 @@ export default async function Layout({
   params: {tenant: string; workspace: string};
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+  const user = session?.user;
+
   const workspaces = await findWorkspaces({
     url: process.env.NEXT_PUBLIC_HOST,
+    user,
   }).then(clone);
+
+  if (!workspaces?.length) {
+    return notFound();
+  }
 
   const {workspace, tenant, workspaceURL} = workspacePathname(params);
 
-  const session = await getSession();
-  const user = session?.user;
+  const hasWorkspaceAccess = workspaces.some(
+    (workspace: any) => workspace.url === workspaceURL,
+  );
+
+  if (!hasWorkspaceAccess) {
+    return notFound();
+  }
 
   const $workspace = await findWorkspace({
     user,

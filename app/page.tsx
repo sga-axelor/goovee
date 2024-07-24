@@ -17,9 +17,12 @@ export default async function Page({
 
   const workspaces = await findWorkspaces({
     url: process.env.NEXT_PUBLIC_HOST,
+    user,
   });
 
-  if (!workspaces?.length) return notFound();
+  if (!workspaces?.length) {
+    return notFound();
+  }
 
   const {workspaceURI} = searchParams;
 

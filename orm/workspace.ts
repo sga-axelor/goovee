@@ -125,35 +125,6 @@ export async function findPartnerWorkspaceConfig({
   };
 }
 
-export async function findDefaultPartnerWorkspaceConfig({url}: {url: string}) {
-  if (!url) return null;
-
-  const client = await getClient();
-
-  const workspace: any = await client.aOSPortalWorkspace.findOne({
-    where: {
-      url: {
-        like: url,
-      },
-    },
-    select: {
-      defaultPartnerWorkspace: {
-        apps: true,
-        portalAppConfig: portalAppConfigFields,
-      },
-    },
-  });
-
-  const defaultPartnerWorkspaceConfig = workspace?.defaultPartnerWorkspace;
-
-  if (!defaultPartnerWorkspaceConfig) return null;
-
-  return {
-    config: defaultPartnerWorkspaceConfig?.portalAppConfig,
-    apps: defaultPartnerWorkspaceConfig?.apps,
-  };
-}
-
 export async function findDefaultGuestWorkspaceConfig({url}: {url: string}) {
   if (!url) return null;
 
@@ -221,13 +192,6 @@ export async function findWorkspace({
 
     if (partnerWorkspaceConfig?.config) {
       workspaceConfig = partnerWorkspaceConfig;
-    } else {
-      const defaultPartnerWorkspaceConfig =
-        await findDefaultPartnerWorkspaceConfig({url});
-
-      if (defaultPartnerWorkspaceConfig?.config) {
-        workspaceConfig = defaultPartnerWorkspaceConfig;
-      }
     }
   } else {
     const defaultGuestWorkspaceConfig = await findDefaultGuestWorkspaceConfig({
@@ -260,25 +224,150 @@ export async function findWorkspace({
   };
 }
 
-export async function findWorkspaces({url}: {url?: string}) {
-  if (!url) return [];
+export async function findOpenWorkspaces({url}: {url?: string}) {
+  const client = await getClient();
+
+  const workspaces = await client.aOSPortalWorkspace
+    .find({
+      where: {
+        url: {
+          like: `${url}%`,
+        },
+      },
+      select: {
+        url: true,
+        allowRegistrationSelect: true,
+        defaultGuestWorkspace: {
+          apps: true,
+        },
+      },
+      orderBy: {updatedOn: 'DESC'},
+    })
+    .then(workspaces => {
+      return (workspaces || [])?.filter(
+        workspace => workspace?.defaultGuestWorkspace?.apps?.length,
+      );
+    });
+
+  return workspaces;
+}
+
+export async function findPartnerWorkspaces({
+  url,
+  partnerId,
+}: {
+  url: string;
+  partnerId: ID;
+}) {
+  if (!(url && partnerId)) return [];
 
   const client = await getClient();
 
-  const workspaces = await client.aOSPortalWorkspace.find({
+  const res: any = await client.aOSPartner.findOne({
     where: {
-      url: {
-        like: `${url}%`,
-      },
+      id: partnerId,
     },
     select: {
-      url: true,
-      allowRegistrationSelect: true,
+      partnerWorkspaceSet: {
+        where: {
+          workspace: {
+            url: {
+              like: `${url}%`,
+            },
+          },
+        },
+        select: {
+          workspace: {
+            id: true,
+            url: true,
+          },
+        },
+      },
     },
-    orderBy: {updatedOn: 'DESC'},
   });
 
-  return workspaces;
+  if (!res?.partnerWorkspaceSet?.length) {
+    return [];
+  }
+
+  return res?.partnerWorkspaceSet
+    .map((item: any) => item.workspace)
+    .filter(Boolean);
+}
+export async function findContactWorkspaces({
+  url,
+  partnerId,
+  contactId,
+}: {
+  url: string;
+  partnerId: ID;
+  contactId: ID;
+}) {
+  if (!(url && partnerId && contactId)) return [];
+
+  const client = await getClient();
+
+  const partnerWorkspaces = await findPartnerWorkspaces({url, partnerId});
+
+  if (!partnerWorkspaces?.length) return [];
+
+  const res: any = await client.aOSPartner.findOne({
+    where: {
+      id: contactId,
+    },
+    select: {
+      contactWorkspaceConfigSet: {
+        where: {
+          portalWorkspace: {
+            url: {
+              like: `${url}%`,
+            },
+          },
+        },
+        select: {
+          portalWorkspace: {
+            url: true,
+            id: true,
+          },
+        },
+      },
+    },
+  });
+
+  if (!res?.contactWorkspaceConfigSet?.length) {
+    return [];
+  }
+
+  const partnerWorkspaceAccess = (workspace: any) => {
+    return partnerWorkspaces.some((w: any) => w.id === workspace?.id);
+  };
+
+  return res?.contactWorkspaceConfigSet
+    .map((item: any) => item.portalWorkspace)
+    .filter(partnerWorkspaceAccess)
+    .filter(Boolean);
+}
+
+export async function findWorkspaces({url, user}: {url?: string; user?: User}) {
+  if (!url) return [];
+
+  if (!user) {
+    return findOpenWorkspaces({url});
+  }
+
+  if (!user.isContact) {
+    return findPartnerWorkspaces({url, partnerId: user.id});
+  }
+
+  if (user.isContact) {
+    return findContactWorkspaces({
+      url,
+      contactId: user.id,
+      partnerId: user.mainPartnerId!,
+    });
+  }
+
+  return [];
 }
 
 export async function findWorkspaceApps({
@@ -290,11 +379,11 @@ export async function findWorkspaceApps({
 }) {
   const workspace = await findWorkspace({url, user});
 
-  if (!workspace?.apps) {
+  const apps = workspace?.apps;
+
+  if (!apps) {
     return [];
   }
-
-  const {apps} = workspace;
 
   if (!user || !user.isContact) {
     return apps;
