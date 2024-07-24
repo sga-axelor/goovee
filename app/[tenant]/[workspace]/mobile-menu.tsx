@@ -3,6 +3,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import Link from 'next/link';
+import {useSession} from 'next-auth/react';
 import {MdApps, MdNotificationsNone} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -21,7 +22,10 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 function MobileSidebar({subapps, workspaces}: any) {
   const pathname = usePathname();
+  const {data: session} = useSession();
   const [open, setOpen] = useState(false);
+
+  const user = session?.user;
 
   const {workspaceURI, workspaceURL} = useWorkspace();
   const router = useRouter();
@@ -42,7 +46,7 @@ function MobileSidebar({subapps, workspaces}: any) {
       <MdApps onClick={openSidebar} className="cursor-pointer h-6 w-6" />
       <Sheet open={open} onOpenChange={closeSidebar}>
         <SheetContent side="left" className="bg-white divide-y divide-grey-1">
-          {Boolean(workspaces?.length) && (
+          {user && Boolean(workspaces?.length) && (
             <Select defaultValue={workspaceURL} onValueChange={redirect}>
               <SelectTrigger className="grow max-w-100 overflow-hidden px-6 py-2 mt-4 bg-none! h-[auto]">
                 <SelectValue placeholder="" />
