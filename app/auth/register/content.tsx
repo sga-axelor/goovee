@@ -115,7 +115,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
 
     setSubmitting(true);
     try {
-      const res = await register(values);
+      const res = await register({...values, workspaceURL: workspace?.url});
 
       if (res.success) {
         toast({

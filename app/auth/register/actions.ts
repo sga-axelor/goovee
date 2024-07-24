@@ -173,12 +173,14 @@ export async function register({
   email,
   password,
   confirmPassword,
+  workspaceURL,
 }: {
   firstName?: string;
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
+  workspaceURL?: string;
 }) {
   if (!(name && email && password && confirmPassword)) {
     throw new Error('Name, email and password is required.');
@@ -203,6 +205,7 @@ export async function register({
       name,
       email,
       password,
+      workspaceURL,
     });
 
     return {
