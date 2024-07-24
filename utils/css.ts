@@ -38,6 +38,7 @@ export function generateCSSVariableString(options: Theme) {
       --success: ${options?.colors?.success};
       --success-dark: ${options?.colors?.['success-dark']};
       --success-foreground: ${options?.colors?.['success-foreground']};
+      --success-light:${options?.colors?.['success-light']};
 
       --gray: ${options?.colors?.gray};
       --gray-light:${options?.colors?.['gray-light']};

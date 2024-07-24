@@ -29,6 +29,7 @@ export type Theme = {
     success?: string;
     'success-dark'?: string;
     'success-foreground'?: string;
+    'success-light'?: string;
 
     gray?: string;
     'gray-light'?: string;
