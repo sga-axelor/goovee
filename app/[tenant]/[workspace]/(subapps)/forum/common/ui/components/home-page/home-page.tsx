@@ -71,7 +71,7 @@ export const HomePage = () => {
         </div>
         <div className="w-4/5">
           <div className="flex flex-col">
-            <div className="bg-white px-4 py-2 rounded-t-lg flex items-center gap-[10px]">
+            <div className="bg-white px-4 pt-4 pb-2 rounded-t-lg flex items-center gap-[10px]">
               <Avatar className="rounded-full h-8 w-8 bg-red-400">
                 {/* <AvatarImage src="/images/user.png" /> */}
               </Avatar>

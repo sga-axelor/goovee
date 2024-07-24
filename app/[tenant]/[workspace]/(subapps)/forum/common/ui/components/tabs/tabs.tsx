@@ -39,10 +39,10 @@ export const Tabs = ({
           );
         })}
       </TabsList>
-      <TabsContent value="posts">
+      <TabsContent className="mt-0" value="posts">
         <PostsContent />
       </TabsContent>
-      <TabsContent value="media">
+      <TabsContent className="mt-0" value="media">
         <MediaContent />
       </TabsContent>
     </ShadCnTabs>
