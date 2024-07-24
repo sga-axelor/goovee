@@ -125,6 +125,29 @@ export async function findPartnerWorkspaceConfig({
   };
 }
 
+export async function findDefaultPartnerWorkspace({
+  partnerId,
+}: {
+  partnerId?: ID;
+}) {
+  if (!partnerId) return null;
+
+  const client = await getClient();
+
+  const res: any = await client.aOSPartner.findOne({
+    where: {
+      id: partnerId,
+    },
+    select: {
+      defaultWorkspace: {
+        url: true,
+      },
+    },
+  });
+
+  return res?.defaultWorkspace;
+}
+
 export async function findDefaultGuestWorkspaceConfig({url}: {url: string}) {
   if (!url) return null;
 

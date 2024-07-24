@@ -3,7 +3,11 @@ export const dynamic = 'force-dynamic';
 import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {findWorkspaces, findSubapps} from '@/orm/workspace';
+import {
+  findWorkspaces,
+  findSubapps,
+  findDefaultPartnerWorkspace,
+} from '@/orm/workspace';
 import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 
@@ -41,11 +45,26 @@ export default async function Page({
 
   let redirectURL;
 
-  for (const w of workspaces) {
-    const apps = await findSubapps({url: w.url!, user});
-    if (apps?.length) {
-      redirectURL = `${w.url}/${apps[0].code}`;
-      break;
+  if (user) {
+    const partnerId = user.isContact ? user.mainPartnerId : user.id;
+
+    const defaultWorkspace = await findDefaultPartnerWorkspace({partnerId});
+
+    if (defaultWorkspace?.url) {
+      const apps = await findSubapps({url: defaultWorkspace.url!, user});
+      if (apps?.length) {
+        redirectURL = `${defaultWorkspace.url}/${apps[0].code}`;
+      }
+    }
+  }
+
+  if (!redirectURL) {
+    for (const w of workspaces) {
+      const apps = await findSubapps({url: w.url!, user});
+      if (apps?.length) {
+        redirectURL = `${w.url}/${apps[0].code}`;
+        break;
+      }
     }
   }
 
