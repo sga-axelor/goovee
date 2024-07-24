@@ -6,3 +6,5 @@ export {HomePage} from './home-page';
 export {Tabs} from './tabs';
 export {PostsContent} from './posts-content';
 export {MediaContent} from './media-content';
+export {ThreadList} from './thread-list';
+export {DropdownToggle} from './dropdown-toggle';

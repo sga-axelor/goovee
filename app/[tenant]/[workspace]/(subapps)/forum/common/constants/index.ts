@@ -53,3 +53,21 @@ export const TAB_TITLES = [
     icon: MdOutlinePermMedia,
   },
 ];
+
+export const THREAD_SORT_BY_OPTIONS = [
+  {
+    id: 1,
+    key: 'new',
+    label: 'New',
+  },
+  {
+    id: 2,
+    key: 'old',
+    label: 'Old',
+  },
+  {
+    id: 3,
+    key: 'popular',
+    label: 'Popular',
+  },
+];
