@@ -19,7 +19,7 @@ export default async function Page({
     : '';
 
   if (session?.user) {
-    redirect(`${workspaceURI}/account`);
+    redirect('/');
   }
 
   const workspaceURL = workspaceURI
