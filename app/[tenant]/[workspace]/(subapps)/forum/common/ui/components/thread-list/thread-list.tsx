@@ -6,7 +6,7 @@ import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {THREAD_SORT_BY_OPTIONS} from '@/subapps/forum/common/constants';
-import {DropdownToggle} from '@/subapps/forum/common/ui/components';
+import {DropdownToggle, Thread} from '@/subapps/forum/common/ui/components';
 
 export const ThreadList = () => {
   return (
@@ -23,7 +23,7 @@ export const ThreadList = () => {
           <DropdownToggle options={THREAD_SORT_BY_OPTIONS} />
         </div>
       </div>
-      <div></div>
+      <Thread />
     </div>
   );
 };
