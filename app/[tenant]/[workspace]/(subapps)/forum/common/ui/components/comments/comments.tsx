@@ -84,7 +84,15 @@ const Comment = () => {
   );
 };
 
-export const Comments = ({toggleComments}: {toggleComments: () => void}) => {
+export const Comments = ({
+  hideCloseComments = false,
+  usePopUpStyles = false,
+  toggleComments,
+}: {
+  usePopUpStyles?: boolean;
+  hideCloseComments?: boolean;
+  toggleComments: () => void;
+}) => {
   return (
     <div className="border-t flex flex-col gap-4 p-4">
       <div className="w-full flex gap-4 items-center">
@@ -99,9 +107,10 @@ export const Comments = ({toggleComments}: {toggleComments: () => void}) => {
         />
       </div>
       <div className="flex flex-col gap-4">
-        {Array.from({length: 3}).map((_, index) => {
+        {Array.from({length: 1}).map((_, index) => {
           return (
-            <div className="flex flex-col gap-4">
+            <div
+              className={`flex flex-col gap-4 ${usePopUpStyles ? 'overflow-y-auto h-80' : ''}`}>
               <Comment />
               {index === 0 &&
                 Array.from({length: 2}).map(() => {
@@ -116,14 +125,16 @@ export const Comments = ({toggleComments}: {toggleComments: () => void}) => {
         })}
       </div>
       <div className="flex items-center justify-between">
-        <div
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={toggleComments}>
-          <MdClose className="w-4 h-4" />
-          <span className="text-xs font-semibold leading-[18px]">
-            {i18n.get('Close comments')}
-          </span>
-        </div>
+        {!hideCloseComments && (
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={toggleComments}>
+            <MdClose className="w-4 h-4" />
+            <span className="text-xs font-semibold leading-[18px]">
+              {i18n.get('Close comments')}
+            </span>
+          </div>
+        )}
         <div className="flex items-center gap-2 cursor-pointer">
           <MdAdd className="w-4 h-4" />
           <span className="text-xs font-semibold leading-[18px]">

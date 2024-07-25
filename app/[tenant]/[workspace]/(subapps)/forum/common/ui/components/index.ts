@@ -11,3 +11,4 @@ export {DropdownToggle} from './dropdown-toggle';
 export {Thread, ThreadHeader, ThreadBody, ThreadFooter} from './thread';
 export {Comments} from './comments';
 export {ImageGallery} from './image-gallery';
+export {ThreadPopup} from './thread-popup';

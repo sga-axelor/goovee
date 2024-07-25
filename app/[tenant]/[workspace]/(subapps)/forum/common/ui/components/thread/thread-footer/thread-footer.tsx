@@ -12,9 +12,13 @@ import {Comments} from '@/subapps/forum/common/ui/components';
 
 export const ThreadFooter = ({
   showComments,
+  hideCloseComments = false,
+  usePopUpStyles = false,
   toggleComments,
 }: {
   showComments: boolean;
+  hideCloseComments?: boolean;
+  usePopUpStyles?: boolean;
   toggleComments: () => void;
 }) => {
   return (
@@ -26,7 +30,13 @@ export const ThreadFooter = ({
           placeholder={i18n.get(COMMENT)}
         />
       </div>
-      {showComments && <Comments toggleComments={toggleComments} />}
+      {showComments && (
+        <Comments
+          usePopUpStyles={usePopUpStyles}
+          hideCloseComments={hideCloseComments}
+          toggleComments={toggleComments}
+        />
+      )}
     </div>
   );
 };
