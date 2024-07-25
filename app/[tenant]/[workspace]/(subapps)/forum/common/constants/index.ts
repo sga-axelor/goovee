@@ -4,6 +4,7 @@ export const GROUPS = 'Groups';
 export const MEMBER = 'Member';
 export const NOT_MEMBER = 'Not member';
 export const SEARCH_HERE = 'Search here';
+export const DISABLED_SEARCH_PLACEHOLDER = 'You must log in to be able to post';
 export const MARK_AS_READ = 'Mark as read';
 export const PIN = 'Pin';
 export const NOTIFICATIONS = 'Notifications';
@@ -12,6 +13,8 @@ export const GROUP_NAME = 'Group name';
 export const START_A_POST = 'Start a post';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
+export const DISABLED_COMMENT_PLACEHOLDER =
+  'You need to log in to comment posts';
 export const REPORT = 'Report';
 export const NOT_INTERESTED = 'Not interested';
 

@@ -22,6 +22,7 @@ import {
   Tabs,
 } from '@/subapps/forum/common/ui/components';
 import {
+  DISABLED_SEARCH_PLACEHOLDER,
   GROUPS,
   MEMBER,
   NOT_MEMBER,
@@ -36,6 +37,8 @@ export const HomePage = () => {
 
   const {searchParams} = useSearchParams();
   const type = searchParams.get('type');
+
+  const isLoggedIn = true;
 
   const renderSearch = () => (
     <BannerSearch
@@ -59,27 +62,36 @@ export const HomePage = () => {
         renderSearch={renderSearch}
       />
       <div className="flex gap-5 px-[100px] py-6 w-full">
-        <div className="w-1/5 min-w-[281px] flex flex-col gap-6 bg-white p-4 rounded-lg">
+        <div className="w-1/5 min-w-[281px] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
           <div>
             <h1 className="font-semibold text-xl leading-[30px]">
               {i18n.get(GROUPS)}
             </h1>
           </div>
           <GroupSearch />
-          <GroupActionList title={MEMBER} />
+          {isLoggedIn && <GroupActionList title={MEMBER} />}
           <GroupActionList title={NOT_MEMBER} />
         </div>
         <div className="w-4/5">
           <div className="flex flex-col">
             <div className="bg-white px-4 pt-4 pb-2 rounded-t-lg flex items-center gap-[10px]">
-              <Avatar className="rounded-full h-8 w-8 bg-red-400">
-                {/* <AvatarImage src="/images/user.png" /> */}
+              <Avatar
+                className={`rounded-full h-8 w-8 ${isLoggedIn ? 'bg-red-400' : 'bg-black/20'}`}>
+                {/*{isLoggedIn && <AvatarImage src="/images/user.png" />} */}
               </Avatar>
               <Input
-                className="placeholder:text-sm placeholder:text-palette-mediumGray border"
-                placeholder={i18n.get(START_A_POST)}
+                disabled={!isLoggedIn}
+                className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+                placeholder={
+                  isLoggedIn
+                    ? i18n.get(START_A_POST)
+                    : i18n.get(DISABLED_SEARCH_PLACEHOLDER)
+                }
               />
-              <Button className="bg-white hover:bg-white text-success hover:text-success-dark rounded-md border border-success hover:border-success-dark py-4 px-[11px]">
+              <Button
+                disabled={!isLoggedIn}
+                className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
+                disabled:bg-black/20 disabled:border-gray-700 disabled:text-gray-700">
                 <MdOutlineImage className="h-6 w-6" />
               </Button>
             </div>
