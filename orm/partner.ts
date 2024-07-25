@@ -54,6 +54,7 @@ export async function registerPartner({
     name,
     password: hashedPassword,
     isContact: false,
+    isCustomer: true,
     fullName: `${name} ${firstName || ''}`,
     emailAddress: {
       create: {

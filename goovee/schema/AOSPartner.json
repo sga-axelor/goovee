@@ -21,6 +21,10 @@
       "name": "isContact"
     },
     {
+      "type": "Boolean",
+      "name": "isCustomer"
+    },
+    {
       "type": "String",
       "name": "simpleFullName"
     },

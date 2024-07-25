@@ -50,10 +50,11 @@ export default async function Page({
 
     const defaultWorkspace = await findDefaultPartnerWorkspace({partnerId});
 
-    if (defaultWorkspace?.url) {
-      const apps = await findSubapps({url: defaultWorkspace.url!, user});
+    if (defaultWorkspace?.workspace?.url) {
+      const url = defaultWorkspace?.workspace?.url;
+      const apps = await findSubapps({url, user});
       if (apps?.length) {
-        redirectURL = `${defaultWorkspace.url}/${apps[0].code}`;
+        redirectURL = `${url}/${apps[0].code}`;
       }
     }
   }

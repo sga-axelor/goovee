@@ -162,7 +162,9 @@ export async function findDefaultPartnerWorkspace({
     },
     select: {
       defaultWorkspace: {
-        url: true,
+        workspace: {
+          url: true,
+        },
       },
     },
   });
