@@ -75,3 +75,22 @@ export const THREAD_SORT_BY_OPTIONS = [
     label: 'Popular',
   },
 ];
+
+export const NOTIFICATIONS_OPTIONS = [
+  {
+    id: 1,
+    title: 'All new posts and new comments',
+  },
+  {
+    id: 2,
+    title: 'All new posts and new comments on my posts',
+  },
+  {
+    id: 3,
+    title: 'Only new comments on my posts',
+  },
+  {
+    id: 4,
+    title: 'No notifications',
+  },
+];

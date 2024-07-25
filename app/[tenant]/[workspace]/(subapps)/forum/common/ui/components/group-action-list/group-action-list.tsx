@@ -9,7 +9,13 @@ import {
 } from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Avatar, AvatarImage} from '@/ui/components/avatar';
+import {
+  Avatar,
+  AvatarImage,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/ui/components';
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -23,6 +29,7 @@ import {
   LEAVE_THIS_GROUP,
   MARK_AS_READ,
   NOTIFICATIONS,
+  NOTIFICATIONS_OPTIONS,
   PIN,
 } from '@/subapps/forum/common/constants';
 
@@ -70,12 +77,26 @@ export const GroupActionList = ({title}: {title: string}) => {
                     {PIN}
                   </span>
                 </div>
-                <div className="flex items-center gap-[10px] px-2">
-                  <MdNotificationsNone className="w-4 h-4" />
-                  <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
-                    {NOTIFICATIONS}
-                  </span>
-                </div>
+
+                <Popover>
+                  <PopoverTrigger>
+                    <div className="flex items-center gap-[10px] px-2">
+                      <MdNotificationsNone className="w-4 h-4" />
+                      <span className="w-full text-left text-xs leading-[18px] font-normal cursor-pointer">
+                        {NOTIFICATIONS}
+                      </span>
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent side="right" className="p-0 w-fit">
+                    <div className="flex flex-col gap-[10px] p-4 bg-white rounded-lg text-xs leading-[18px]">
+                      {NOTIFICATIONS_OPTIONS.map(option => (
+                        <div key={option.id} className="cursor-pointer">
+                          {i18n.get(option.title)}
+                        </div>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
                 <div className="flex items-center gap-[10px] px-2">
                   <MdExitToApp className="w-4 h-4" />
                   <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
