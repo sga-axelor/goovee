@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 // ---- CORE IMPORTS ---- //
 import {Separator} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
@@ -23,7 +25,11 @@ export const ThreadList = () => {
           <DropdownToggle options={THREAD_SORT_BY_OPTIONS} />
         </div>
       </div>
-      <Thread />
+      {Array.from({length: 3}).map((_, index) => (
+        <React.Fragment>
+          <Thread index={index} />
+        </React.Fragment>
+      ))}
     </div>
   );
 };

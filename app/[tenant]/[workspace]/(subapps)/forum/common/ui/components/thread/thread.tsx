@@ -9,9 +9,8 @@ import {
   ThreadHeader,
 } from '@/subapps/forum/common/ui/components';
 
-export const Thread = () => {
+export const Thread = ({index}: {index?: any}) => {
   const [showComments, setShowComments] = useState(false);
-
   const toggleComments = () => {
     setShowComments(prevShowComments => !prevShowComments);
   };
@@ -19,7 +18,7 @@ export const Thread = () => {
   return (
     <div className="bg-white rounded-lg flex flex-col gap-4">
       <ThreadHeader />
-      <ThreadBody toggleComments={toggleComments} />
+      <ThreadBody index={index} toggleComments={toggleComments} />
       <ThreadFooter
         showComments={showComments}
         toggleComments={toggleComments}

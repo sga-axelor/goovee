@@ -18,10 +18,16 @@ import {
   NOT_INTERESTED,
   REPORT,
 } from '@/subapps/forum/common/constants';
+import {ImageGallery} from '@/subapps/forum/common/ui/components';
 
-export const ThreadBody = ({toggleComments}: {toggleComments: () => void}) => {
+export const ThreadBody = ({
+  index,
+  toggleComments,
+}: {
+  index?: any;
+  toggleComments: () => void;
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -78,6 +84,7 @@ export const ThreadBody = ({toggleComments}: {toggleComments: () => void}) => {
             </span>
           </div>
         </div>
+        {index === 1 && <ImageGallery />}
         <div className="flex justify-between">
           <div></div>
           <div
