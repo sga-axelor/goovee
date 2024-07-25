@@ -2,50 +2,65 @@
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {
-  Tabs as ShadCnTabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/ui/components';
 
-// ---- LOCAL IMPORTS ---- //
-import {MediaContent, PostsContent} from '@/subapps/forum/common/ui/components';
-import styles from './style.module.scss';
+export const Tab = ({
+  tab,
+  onClick,
+  isActive,
+}: {
+  tab: any;
+  isActive: boolean;
+  onClick: (value: string) => void;
+}) => {
+  const Icon = tab.icon;
+  const handleClick = () => {
+    onClick(tab.key);
+  };
+
+  return (
+    <div
+      key={tab.id}
+      className={`py-2 rounded cursor-pointer font-semibold text-base flex gap-2 items-center justify-center ${
+        isActive ? 'bg-success-light text-success' : 'bg-white'
+      }`}
+      onClick={handleClick}>
+      <Icon className="w-6 h-6" />
+      {i18n.get(tab.title)}
+    </div>
+  );
+};
 
 export const Tabs = ({
   activeTab,
   tabs,
   onClick,
 }: {
-  activeTab: string | null;
+  activeTab: string;
   tabs: any[];
   onClick: (value: string) => void;
 }) => {
+  const findTabComponent = (tabKey: string) => {
+    const tab = tabs.find(t => t.key === tabKey);
+    return tab ? tab.component : null;
+  };
+  const TabComponent = findTabComponent(activeTab);
+
   return (
-    <ShadCnTabs defaultValue={activeTab ?? 'posts'} className="w-full">
-      <TabsList
-        className={`bg-white px-4 rounded-b-lg grid w-full grid-cols-2 gap-2 border-none ${styles['custom-tabs']}`}>
-        {tabs.map((tab: any) => {
-          const Icon = tab.icon;
-          return (
-            <TabsTrigger
+    <>
+      <div className="bg-white px-4 pb-4 pt-1 rounded-b-lg border-none">
+        <div className="grid grid-cols-2 gap-2">
+          {tabs.map(tab => (
+            <Tab
               key={tab.id}
-              value={tab.key}
-              className={`py-2 rounded cursor-pointer font-semibold text-base flex gap-2 items-center justify-center`}
-              onClick={() => onClick(tab.key)}>
-              <Icon className="w-6 h-6" /> {i18n.get(tab.title)}
-            </TabsTrigger>
-          );
-        })}
-      </TabsList>
-      <TabsContent className="mt-0" value="posts">
-        <PostsContent />
-      </TabsContent>
-      <TabsContent className="mt-0" value="media">
-        <MediaContent />
-      </TabsContent>
-    </ShadCnTabs>
+              tab={tab}
+              onClick={onClick}
+              isActive={activeTab === tab.key}
+            />
+          ))}
+        </div>
+      </div>
+      {TabComponent && <TabComponent />}
+    </>
   );
 };
 

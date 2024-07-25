@@ -5,7 +5,7 @@ import {ThreadList} from '@/subapps/forum/common/ui/components';
 
 export const PostsContent = () => {
   return (
-    <div className="my-6">
+    <div className="w-full mt-6">
       <ThreadList />
     </div>
   );

@@ -12,7 +12,7 @@ import {DropdownToggle, Thread} from '@/subapps/forum/common/ui/components';
 
 export const ThreadList = () => {
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-6">
       <div className="w-full flex gap-4 items-center">
         <div>{i18n.get('Thread')}</div>
         <Separator
@@ -25,11 +25,13 @@ export const ThreadList = () => {
           <DropdownToggle options={THREAD_SORT_BY_OPTIONS} />
         </div>
       </div>
-      {Array.from({length: 3}).map((_, index) => (
-        <React.Fragment>
-          <Thread index={index} />
-        </React.Fragment>
-      ))}
+      <div className="flex flex-col gap-4">
+        {Array.from({length: 3}).map((_, index) => (
+          <React.Fragment>
+            <Thread index={index} />
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 };

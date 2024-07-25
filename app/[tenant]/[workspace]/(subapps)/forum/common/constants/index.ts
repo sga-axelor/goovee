@@ -1,5 +1,8 @@
 import {MdOutlineArticle, MdOutlinePermMedia} from 'react-icons/md';
 
+// ---- LOCAL IMPORTS ---- //
+import {MediaContent, PostsContent} from '@/subapps/forum/common/ui/components';
+
 export const GROUPS = 'Groups';
 export const MEMBER = 'Member';
 export const NOT_MEMBER = 'Not member';
@@ -52,12 +55,14 @@ export const TAB_TITLES = [
     key: 'posts',
     title: 'Posts',
     icon: MdOutlineArticle,
+    component: PostsContent,
   },
   {
     id: 2,
     key: 'media',
     title: 'Media',
     icon: MdOutlinePermMedia,
+    component: MediaContent,
   },
 ];
 

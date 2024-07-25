@@ -1,9 +1,0 @@
-.custom-tabs {
-  button[data-state='active'] {
-    background-color: hsl(var(--success-light));
-    color: hsl(var(--success));
-  }
-  button[data-state='inactive'] {
-    background-color: white;
-  }
-}

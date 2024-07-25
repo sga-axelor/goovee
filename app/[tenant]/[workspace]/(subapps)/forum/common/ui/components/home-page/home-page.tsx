@@ -36,7 +36,7 @@ export const HomePage = () => {
   const {workspaceURI} = useWorkspace();
 
   const {searchParams} = useSearchParams();
-  const type = searchParams.get('type');
+  const type = searchParams.get('type') ?? 'posts';
 
   const isLoggedIn = true;
 
@@ -73,30 +73,28 @@ export const HomePage = () => {
           <GroupActionList title={NOT_MEMBER} />
         </div>
         <div className="w-4/5">
-          <div className="flex flex-col">
-            <div className="bg-white px-4 pt-4 pb-2 rounded-t-lg flex items-center gap-[10px]">
-              <Avatar
-                className={`rounded-full h-8 w-8 ${isLoggedIn ? 'bg-red-400' : 'bg-black/20'}`}>
-                {/*{isLoggedIn && <AvatarImage src="/images/user.png" />} */}
-              </Avatar>
-              <Input
-                disabled={!isLoggedIn}
-                className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
-                placeholder={
-                  isLoggedIn
-                    ? i18n.get(START_A_POST)
-                    : i18n.get(DISABLED_SEARCH_PLACEHOLDER)
-                }
-              />
-              <Button
-                disabled={!isLoggedIn}
-                className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
+          <div className="bg-white px-4 pt-4 pb-1 rounded-t-lg flex items-center gap-[10px]">
+            <Avatar
+              className={`rounded-full h-8 w-8 ${isLoggedIn ? 'bg-red-400' : 'bg-black/20'}`}>
+              {/*{isLoggedIn && <AvatarImage src="/images/user.png" />} */}
+            </Avatar>
+            <Input
+              disabled={!isLoggedIn}
+              className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+              placeholder={
+                isLoggedIn
+                  ? i18n.get(START_A_POST)
+                  : i18n.get(DISABLED_SEARCH_PLACEHOLDER)
+              }
+            />
+            <Button
+              disabled={!isLoggedIn}
+              className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
                 disabled:bg-black/20 disabled:border-gray-700 disabled:text-gray-700">
-                <MdOutlineImage className="h-6 w-6" />
-              </Button>
-            </div>
-            <Tabs tabs={TAB_TITLES} onClick={handleTabClick} activeTab={type} />
+              <MdOutlineImage className="h-6 w-6" />
+            </Button>
           </div>
+          <Tabs tabs={TAB_TITLES} onClick={handleTabClick} activeTab={type} />
         </div>
       </div>
     </div>
