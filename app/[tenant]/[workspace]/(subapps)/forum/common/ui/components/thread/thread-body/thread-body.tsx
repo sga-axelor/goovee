@@ -19,7 +19,7 @@ import {
   REPORT,
 } from '@/subapps/forum/common/constants';
 
-export const ThreadBody = () => {
+export const ThreadBody = ({toggleComments}: {toggleComments: () => void}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpand = () => {
@@ -80,7 +80,9 @@ export const ThreadBody = () => {
         </div>
         <div className="flex justify-between">
           <div></div>
-          <div className="flex gap-2 items-center cursor-pointer">
+          <div
+            className="flex gap-2 items-center cursor-pointer"
+            onClick={toggleComments}>
             <MdOutlineModeComment className="w-6 h-6" />
             <span className="text-sm">
               56 {i18n.get(COMMENTS.toLowerCase())}

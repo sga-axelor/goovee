@@ -9,3 +9,4 @@ export {MediaContent} from './media-content';
 export {ThreadList} from './thread-list';
 export {DropdownToggle} from './dropdown-toggle';
 export {Thread, ThreadHeader, ThreadBody, ThreadFooter} from './thread';
+export {Comments} from './comments';

@@ -1,5 +1,7 @@
 'use client';
 
+import {useState} from 'react';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   ThreadBody,
@@ -8,11 +10,20 @@ import {
 } from '@/subapps/forum/common/ui/components';
 
 export const Thread = () => {
+  const [showComments, setShowComments] = useState(false);
+
+  const toggleComments = () => {
+    setShowComments(prevShowComments => !prevShowComments);
+  };
+
   return (
     <div className="bg-white rounded-lg flex flex-col gap-4">
       <ThreadHeader />
-      <ThreadBody />
-      <ThreadFooter />
+      <ThreadBody toggleComments={toggleComments} />
+      <ThreadFooter
+        showComments={showComments}
+        toggleComments={toggleComments}
+      />
     </div>
   );
 };
