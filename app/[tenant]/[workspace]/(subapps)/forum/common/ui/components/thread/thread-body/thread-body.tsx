@@ -75,13 +75,15 @@ export const ThreadBody = ({
             lacus maecenas. Lacus semper cras diam lobortis tellus aliquam et
             nulla ac. Viverra tristique eget tellus volutpat.
           </div>
-          <div
-            className="text-gray-500 cursor-pointer flex items-center gap-2 justify-end"
-            onClick={toggleExpand}>
-            <MdOutlineMoreHoriz className="w-4 h-4" />
-            <span className="text-xs font-semibold">
-              {!isExpanded ? i18n.get('See more') : i18n.get('See less')}
-            </span>
+          <div className="flex justify-end">
+            <div
+              className="text-gray-500 cursor-pointer flex items-center gap-2 justify-end w-fit"
+              onClick={toggleExpand}>
+              <MdOutlineMoreHoriz className="w-4 h-4" />
+              <span className="text-xs font-semibold">
+                {!isExpanded ? i18n.get('See more') : i18n.get('See less')}
+              </span>
+            </div>
           </div>
         </div>
         {index === 1 && <ImageGallery />}

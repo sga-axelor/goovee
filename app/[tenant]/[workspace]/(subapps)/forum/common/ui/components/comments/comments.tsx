@@ -124,7 +124,8 @@ export const Comments = ({
           );
         })}
       </div>
-      <div className="flex items-center justify-between">
+      <div
+        className={`flex items-center ${hideCloseComments ? 'justify-end' : 'justify-between'}`}>
         {!hideCloseComments && (
           <div
             className="flex items-center gap-2 cursor-pointer"
