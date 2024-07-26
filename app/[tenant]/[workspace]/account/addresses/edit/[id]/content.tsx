@@ -1,16 +1,17 @@
 'use client';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {AddressForm} from '@ui/components/index';
-import {useToast} from '@/ui/hooks';
+import {useSearchParams, useToast} from '@/ui/hooks';
 import type {PartnerAddress, Country, Address} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {updateAddress} from './actions';
-import {useState} from 'react';
-import {useRouter} from 'next/navigation';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+import {updateAddress} from './actions';
 
 export default function Content({
   id,
@@ -26,6 +27,10 @@ export default function Content({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
+
+  const {searchParams} = useSearchParams();
+  const {updateAddress: updateCartAddress} = useCart();
+  const checkout = searchParams.get('checkout') === 'true';
 
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
@@ -63,9 +68,25 @@ export default function Content({
         title: i18n.get('Address successfully edited'),
       });
 
+      if (checkout && _address?.isDeliveryAddr) {
+        updateCartAddress({
+          addressType: 'delivery',
+          address: _address?.id,
+        });
+      }
+
+      if (checkout && _address?.isInvoicingAddr) {
+        updateCartAddress({
+          addressType: 'invoicing',
+          address: _address?.id,
+        });
+      }
+
       router.refresh();
 
-      router.push(`${workspaceURI}/account/addresses`);
+      router.push(
+        `${workspaceURI}/account/addresses${checkout ? '?checkout=true' : ''}`,
+      );
     } catch (error) {
       toast({
         variant: 'destructive',

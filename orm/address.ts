@@ -1,6 +1,22 @@
 import {getClient} from '@/goovee';
 import {PartnerAddress, Partner} from '@/types';
 
+const addressFields = {
+  address: {
+    zip: true,
+    addressl2: true,
+    addressl4: true,
+    addressl6: true,
+    country: {
+      id: true,
+      name: true,
+    },
+  },
+  isDefaultAddr: true,
+  isDeliveryAddr: true,
+  isInvoicingAddr: true,
+};
+
 export async function findPartnerAddress(addressId: PartnerAddress['id']) {
   if (!addressId) return null;
 
@@ -10,21 +26,7 @@ export async function findPartnerAddress(addressId: PartnerAddress['id']) {
     where: {
       id: addressId,
     },
-    select: {
-      address: {
-        zip: true,
-        addressl2: true,
-        addressl4: true,
-        addressl6: true,
-        country: {
-          id: true,
-          name: true,
-        },
-      },
-      isDefaultAddr: true,
-      isDeliveryAddr: true,
-      isInvoicingAddr: true,
-    },
+    select: addressFields,
   });
 
   return address;
@@ -106,20 +108,7 @@ export async function findAddresses(partnerId: Partner['id']) {
         id: partnerId,
       },
     },
-    select: {
-      address: {
-        zip: true,
-        addressl2: true,
-        addressl4: true,
-        addressl6: true,
-        country: {
-          name: true,
-        },
-      },
-      isDefaultAddr: true,
-      isDeliveryAddr: true,
-      isInvoicingAddr: true,
-    },
+    select: addressFields,
   });
 
   return addresses;
@@ -137,20 +126,7 @@ export async function findDeliveryAddresses(partnerId: Partner['id']) {
       },
       isDeliveryAddr: true,
     },
-    select: {
-      address: {
-        zip: true,
-        addressl2: true,
-        addressl4: true,
-        addressl6: true,
-        country: {
-          name: true,
-        },
-      },
-      isDefaultAddr: true,
-      isDeliveryAddr: true,
-      isInvoicingAddr: true,
-    },
+    select: addressFields,
   });
 
   return addresses;
@@ -168,23 +144,66 @@ export async function findInvoicingAddresses(partnerId: Partner['id']) {
       },
       isInvoicingAddr: true,
     },
-    select: {
-      address: {
-        zip: true,
-        addressl2: true,
-        addressl4: true,
-        addressl6: true,
-        country: {
-          name: true,
-        },
-      },
-      isDefaultAddr: true,
-      isDeliveryAddr: true,
-      isInvoicingAddr: true,
-    },
+    select: addressFields,
   });
 
   return addresses;
+}
+
+export async function findDefaultAddress(partnerId: Partner['id']) {
+  if (!partnerId) return null;
+
+  const client = await getClient();
+
+  const addresses = await client.aOSPartnerAddress.findOne({
+    where: {
+      partner: {
+        id: partnerId,
+      },
+      isDefaultAddr: true,
+    },
+    select: addressFields,
+  });
+
+  return addresses;
+}
+
+export async function findDefaultDeliveryAddress(partnerId: Partner['id']) {
+  if (!partnerId) return null;
+
+  const client = await getClient();
+
+  const result = await client.aOSPartnerAddress.findOne({
+    where: {
+      partner: {
+        id: partnerId,
+      },
+      isDefaultAddr: true,
+      isDeliveryAddr: true,
+    },
+    select: addressFields,
+  });
+
+  return result;
+}
+
+export async function findDefaultInvoicingAddress(partnerId: Partner['id']) {
+  if (!partnerId) return null;
+
+  const client = await getClient();
+
+  const result = await client.aOSPartnerAddress.findOne({
+    where: {
+      partner: {
+        id: partnerId,
+      },
+      isDefaultAddr: true,
+      isInvoicingAddr: true,
+    },
+    select: addressFields,
+  });
+
+  return result;
 }
 
 export async function findCountries() {

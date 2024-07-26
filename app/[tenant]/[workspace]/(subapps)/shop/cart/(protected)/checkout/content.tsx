@@ -1,7 +1,8 @@
 'use client';
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useSession} from 'next-auth/react';
+import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -11,17 +12,20 @@ import {
   RadioGroupItem,
   Button,
   BackgroundImage,
+  Loader,
 } from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 import styles from './content.module.scss';
+import {findAddress, findDeliveryAddress, findInvoicingAddress} from './action';
 
 const SHIPPING_TYPE = {
   REGULAR: 'regular',
@@ -118,19 +122,126 @@ function Total({cart, shippingType, workspace}: any) {
   );
 }
 function Contact() {
+  const [loading, setLoading] = useState(false);
+  const [invoicingAddress, setInvoicingAddress] = useState<any>(null);
+  const [deliveryAddress, setDeliveryAddress] = useState<any>(null);
+
+  const {cart, updateAddress} = useCart();
+
+  const {
+    invoicingAddress: cartInvoicingAddress,
+    deliveryAddress: cartDeliveryAddress,
+  } = cart || {};
+
+  const {workspaceURI} = useWorkspace();
+
+  const handleFetchAddresses = useCallback(async () => {
+    const [deliveryAddress, invoicingAddress] = await Promise.all([
+      cartDeliveryAddress
+        ? findAddress(cartDeliveryAddress)
+        : findDeliveryAddress(),
+      cartInvoicingAddress
+        ? findAddress(cartInvoicingAddress)
+        : findInvoicingAddress(),
+    ]);
+
+    if (invoicingAddress) {
+      setInvoicingAddress(invoicingAddress);
+      if (!cartInvoicingAddress) {
+        updateAddress({addressType: 'invoicing', address: invoicingAddress.id});
+      }
+    }
+
+    if (deliveryAddress) {
+      setDeliveryAddress(deliveryAddress);
+      if (!cartDeliveryAddress) {
+        updateAddress({type: 'delivery', address: deliveryAddress.id});
+      }
+    }
+  }, [cartInvoicingAddress, cartDeliveryAddress, updateAddress]);
+
+  useEffect(() => {
+    setLoading(true);
+    handleFetchAddresses().finally(() => {
+      setLoading(false);
+    });
+  }, [handleFetchAddresses]);
+
+  const noaddress = !invoicingAddress && !deliveryAddress;
+
+  const sameDeliveryAndInvoicingAddress =
+    invoicingAddress &&
+    deliveryAddress &&
+    invoicingAddress.id === deliveryAddress.id;
+
+  const LinkButton = ({children, ...props}: any) => (
+    <Link href={`${workspaceURI}/account/addresses?checkout=true`}>
+      <Button className="rounded-full" variant="outline" {...props}>
+        {children}
+      </Button>
+    </Link>
+  );
+
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
       <Title className="text-xl font-medium" text={i18n.get('Contact')} />
       <Separator className="my-4" />
-      <div className="border p-4 rounded-lg">
-        <Title
-          className="text-lg font-semibold mb-4"
-          text={i18n.get('Invoicing and delivery address')}
-        />
-        <Button className="rounded-full">
-          {i18n.get('Create an address')}
-        </Button>
-      </div>
+      {loading ? (
+        <Loader />
+      ) : noaddress ? (
+        <div className="border p-4 rounded-lg space-y-2">
+          <Title
+            className="text-lg font-semibold mb-4"
+            text={i18n.get('Invoicing and delivery address')}
+          />
+          <LinkButton>{i18n.get('Create an address')}</LinkButton>
+        </div>
+      ) : sameDeliveryAndInvoicingAddress ? (
+        <div className="border p-4 rounded-lg space-y-2">
+          <Title
+            className="text-lg font-semibold mb-4"
+            text={i18n.get('Invoicing and delivery address')}
+          />
+          <div>
+            <h5 className="font-bold text-xl">
+              {deliveryAddress?.address?.addressl2}
+            </h5>
+            <h6>{deliveryAddress?.address?.addressl4}</h6>
+            <h6>{deliveryAddress?.address?.addressl6}</h6>
+            <h6>{deliveryAddress?.address?.country?.name}</h6>
+          </div>
+          <LinkButton>{i18n.get('Choose another address')}</LinkButton>
+        </div>
+      ) : (
+        <div className="space-y-2 divide-y">
+          {[
+            {title: 'Delivery Address', address: deliveryAddress?.address},
+            {title: 'Invoicing Address', address: invoicingAddress?.address},
+          ].map(({title, address}) => (
+            <div key={title} className="border p-4 rounded-lg space-y-2">
+              <Title
+                className="text-lg font-semibold mb-4"
+                text={i18n.get(title)}
+              />
+              {address ? (
+                <>
+                  <div>
+                    <h5 className="font-bold text-xl">{address.addressl2}</h5>
+                    <h6>{address.addressl4}</h6>
+                    <h6>{address.addressl6}</h6>
+                    <h6>{address.country?.name}</h6>
+                  </div>
+                  <LinkButton>{i18n.get('Choose another address')}</LinkButton>
+                </>
+              ) : (
+                <LinkButton variant="default">
+                  {i18n.get('Create an address')}
+                </LinkButton>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

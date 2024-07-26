@@ -50,14 +50,6 @@ export const ROLE = {
 };
 
 /**
- * SUBAPP PAGE
- */
-export const SUBAPP_PAGE = {
-  orders: '/ongoing',
-  invoices: '/unpaid',
-};
-
-/**
  * SUBAPP CODES
  */
 export const SUBAPP_CODES = {
@@ -68,6 +60,15 @@ export const SUBAPP_CODES = {
   resources: 'resources',
   news: 'news',
   events: 'events',
+};
+
+/**
+ * SUBAPP PAGE
+ */
+export const SUBAPP_PAGE = {
+  orders: '/ongoing',
+  invoices: '/unpaid',
+  checkout: `${SUBAPP_CODES.shop}/cart/checkout`,
 };
 
 /**

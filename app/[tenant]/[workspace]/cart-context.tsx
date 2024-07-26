@@ -11,8 +11,8 @@ import React, {
 // ---- CORE IMPORTS ---- //
 import {PREFIX_CART_KEY} from '@/constants';
 import {getitem, setitem} from '@/lib/storage';
-import type {ComputedProduct, Product} from '@/types';
 import {useWorkspace} from './workspace-context';
+import type {ComputedProduct, Product} from '@/types';
 
 const CartContext = React.createContext<any>({});
 
@@ -33,6 +33,8 @@ export default function CartContextProvider({
   const clearCart = useCallback(async () => {
     setCart({
       items: [],
+      invoicingAddress: null,
+      deliveryAddress: null,
     });
   }, []);
 
@@ -193,13 +195,29 @@ export default function CartContextProvider({
     [getProductQuantity],
   );
 
+  const updateAddress = useCallback(
+    ({
+      addressType,
+      address,
+    }: {
+      addressType: 'invoicing' | 'delivery';
+      address: any;
+    }) => {
+      setCart((cart: any) => ({
+        ...cart,
+        [`${addressType}Address`]: address,
+      }));
+    },
+    [],
+  );
+
   useEffect(() => {
     const init = async () => {
       try {
         let cart = await getitem(CART_KEY);
 
         if (!cart) {
-          cart = {items: []};
+          cart = {items: [], invoicingAddress: null, deliveryAddress: null};
         }
 
         setCart(cart);
@@ -230,6 +248,7 @@ export default function CartContextProvider({
       clearCart,
       getProductNote,
       setProductNote,
+      updateAddress,
     }),
     [
       cart,
@@ -240,6 +259,7 @@ export default function CartContextProvider({
       clearCart,
       getProductNote,
       setProductNote,
+      updateAddress,
     ],
   );
 

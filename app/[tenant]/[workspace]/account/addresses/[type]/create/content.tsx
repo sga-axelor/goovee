@@ -5,9 +5,10 @@ import {useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {capitalise} from '@/utils';
 import {AddressForm} from '@ui/components/index';
+import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
-import {useToast} from '@/ui/hooks';
+import {useSearchParams, useToast} from '@/ui/hooks';
 import type {Address, Country} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -25,6 +26,10 @@ export default function Content({
   const router = useRouter();
   const {toast} = useToast();
   const {workspaceURI} = useWorkspace();
+
+  const {updateAddress} = useCart();
+  const {searchParams} = useSearchParams();
+  const checkout = searchParams.get('checkout') === 'true';
 
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
@@ -60,6 +65,13 @@ export default function Content({
         isDeliveryAddr,
       });
 
+      if (checkout) {
+        updateAddress({
+          addressType: type,
+          address: _address,
+        });
+      }
+
       toast({
         variant: 'success',
         title: i18n.get('Address successfully created'),
@@ -67,7 +79,9 @@ export default function Content({
 
       router.refresh();
 
-      router.replace(`${workspaceURI}/account/addresses`);
+      router.replace(
+        `${workspaceURI}/account/addresses${checkout ? '?checkout=true' : ''}`,
+      );
     } catch (err) {
       toast({
         variant: 'destructive',
