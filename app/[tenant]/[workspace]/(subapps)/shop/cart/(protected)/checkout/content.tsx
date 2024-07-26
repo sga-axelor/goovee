@@ -3,6 +3,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useSession} from 'next-auth/react';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -13,6 +14,13 @@ import {
   Button,
   BackgroundImage,
   Loader,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
 } from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
@@ -313,9 +321,27 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
   const [shippingType, setShippingType] = useState<string>(
     SHIPPING_TYPE.REGULAR,
   );
+
+  const router = useRouter();
+  const {workspaceURI} = useWorkspace();
   const {cart} = useCart();
   const [computedProducts, setComputedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirmationDialog, setConfirmationDialog] = useState(false);
+
+  const openConfirmation = () => {
+    setConfirmationDialog(true);
+  };
+
+  const closeConfirmation = () => {
+    setConfirmationDialog(false);
+  };
+
+  const handleConfirmOrder = () => {
+    closeConfirmation();
+    router.replace(`${workspaceURI}/shop/cart/checkout/request-order`);
+  };
+
   const handleChangeShippingType = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -371,8 +397,8 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
               value={shippingType}
               onChange={handleChangeShippingType}
             />
-            <Button className="rounded-full">
-              {i18n.get('Continue to payment')}
+            <Button onClick={openConfirmation} className="w-full rounded-full">
+              {i18n.get('Confirm order')}
             </Button>
           </div>
         </div>
@@ -387,6 +413,23 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
           </div>
         </div>
       </div>
+      <AlertDialog open={Boolean(confirmationDialog)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {i18n.get('Do you want to confirm order?')}
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeConfirmation}>
+              {i18n.get('Cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmOrder}>
+              {i18n.get('Continue')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

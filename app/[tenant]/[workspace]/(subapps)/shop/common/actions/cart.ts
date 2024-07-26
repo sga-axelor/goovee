@@ -34,13 +34,29 @@ export async function requestQuotation({
   cart: any;
   workspace: PortalWorkspace;
 }) {
+  return requestOrder({
+    cart,
+    workspace,
+    type: 'quotation',
+  });
+}
+
+export async function requestOrder({
+  cart,
+  workspace,
+  type = 'order',
+}: {
+  cart: any;
+  workspace: PortalWorkspace;
+  type?: 'quotation' | 'order';
+}) {
   const aos = process.env.NEXT_PUBLIC_AOS_URL;
 
   if (!aos) return null;
 
   if (!cart?.items?.length) return null;
 
-  const ws = `${aos}/ws/portal/orders/quotation`;
+  const ws = `${aos}/ws/portal/orders/${type}`;
 
   const session = await getSession();
   const user = session?.user;

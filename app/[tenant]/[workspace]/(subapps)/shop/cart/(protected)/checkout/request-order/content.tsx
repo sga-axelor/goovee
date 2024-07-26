@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {MdOutlineRefresh} from 'react-icons/md';
 
@@ -9,19 +9,19 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 import {useToast} from '@/ui/hooks';
-import {SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {requestQuotation} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
+import {requestOrder} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
 
 export default function Content({
   workspace,
-  quotationSubapp,
+  orderSubapp,
 }: {
   workspace: PortalWorkspace;
-  quotationSubapp?: boolean;
+  orderSubapp?: boolean;
 }) {
   const {clearCart, cart} = useCart();
   const router = useRouter();
@@ -30,19 +30,19 @@ export default function Content({
 
   useEffect(() => {
     const request = async () => {
-      const res = await requestQuotation({cart, workspace});
+      const res = await requestOrder({cart, workspace});
 
       if (res?.data) {
         toast({
           variant: 'success',
-          title: i18n.get('Quotation requested successfully'),
+          title: i18n.get('Order requested successfully'),
         });
 
         clearCart();
 
-        if (quotationSubapp) {
+        if (orderSubapp) {
           router.replace(
-            `${workspaceURI}/${SUBAPP_CODES.quotations}/${res.data}`,
+            `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders}/${res.data}`,
           );
         } else {
           router.replace(`${workspaceURI}/shop`);
@@ -50,7 +50,7 @@ export default function Content({
       } else {
         toast({
           variant: 'destructive',
-          title: i18n.get('Error requesting quotation, try again !'),
+          title: i18n.get('Error requesting order, try again !'),
         });
         router.replace(`${workspaceURI}/shop/cart`);
       }
