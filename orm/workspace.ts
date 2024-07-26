@@ -30,6 +30,7 @@ const portalAppConfigFields = {
   displayTwoPrices: true,
   confirmOrder: true,
   requestQuotation: true,
+  priceAfterLogin: true,
 };
 
 export async function findContactWorkspaceConfig({
