@@ -223,6 +223,7 @@ export async function findWorkspace({
       defaultTheme: true,
       appConfig: portalAppConfigFields,
       url: true,
+      navigationSelect: true,
     },
   });
 
@@ -269,7 +270,7 @@ export async function findWorkspace({
     url: workspace.url,
     config,
     apps,
-    navigationSelect: 'leftSide',
+    navigationSelect: workspace.navigationSelect || 'leftSide',
   };
 }
 

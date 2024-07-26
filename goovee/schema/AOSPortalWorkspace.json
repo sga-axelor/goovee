@@ -34,6 +34,10 @@
       "name": "defaultGuestWorkspace",
       "target": "AOSPartnerPortalWorkspace",
       "column": "default_guest_workspace"
+    },
+    {
+      "type": "String",
+      "name": "navigationSelect"
     }
   ]
 }
