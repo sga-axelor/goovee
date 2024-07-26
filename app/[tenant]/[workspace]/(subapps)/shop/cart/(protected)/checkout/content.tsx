@@ -54,7 +54,9 @@ function Summary({cart}: any) {
                 className="rounded-lg w-[5rem] h-[5rem]"
               />
               <div>
-                <Title text={i18n.getValueAttribute(product?.name)}></Title>
+                <Title
+                  className="text-base font-medium line-clamp-1"
+                  text={i18n.getValueAttribute(product?.name)}></Title>
                 {note && (
                   <div>
                     {i18n.get('Note')} : {note}
@@ -184,6 +186,7 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
     </div>
   );
 }
+
 function Title({text, ...rest}: {text: string} & any) {
   return (
     <h3 className="font-bold text-3xl" {...rest}>
@@ -191,6 +194,7 @@ function Title({text, ...rest}: {text: string} & any) {
     </h3>
   );
 }
+
 export default function Content({workspace}: {workspace: PortalWorkspace}) {
   const {data: session} = useSession();
   const user = session?.user;
