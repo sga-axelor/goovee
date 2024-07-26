@@ -16,13 +16,9 @@ import {
 
 export default async function Shop({
   params,
-  searchParams,
 }: {
   params: {tenant: string; workspace: string};
-  searchParams: {[key: string]: string | undefined};
 }) {
-  const {search, sort, limit, page} = searchParams;
-
   const session = await getSession();
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
@@ -63,14 +59,6 @@ export default async function Shop({
 
     return breadcrumbs;
   };
-
-  const {products, pageInfo}: any = await findProducts({
-    search,
-    sort,
-    page,
-    limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    workspace,
-  });
 
   const parentcategories = categories?.filter((c: any) => !c.parent);
 
