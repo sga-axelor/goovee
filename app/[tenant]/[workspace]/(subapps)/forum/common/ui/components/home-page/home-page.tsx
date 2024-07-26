@@ -61,8 +61,8 @@ export const HomePage = () => {
         image={IMAGE_URL}
         renderSearch={renderSearch}
       />
-      <div className="flex gap-5 px-[100px] py-6 w-full">
-        <div className="w-1/5 min-w-[281px] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
+      <div className="flex flex-col md:flex-row gap-5 px-4 md:px-[50px] lg:px-[100px] py-6 w-full">
+        <div className="w-full md:w-1/5 min-w-[281px] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
           <div>
             <h1 className="font-semibold text-xl leading-[30px]">
               {i18n.get(GROUPS)}
@@ -72,7 +72,7 @@ export const HomePage = () => {
           {isLoggedIn && <GroupActionList title={MEMBER} />}
           <GroupActionList title={NOT_MEMBER} />
         </div>
-        <div className="w-4/5">
+        <div className="w-full md:w-4/5 mb-16 lg:mb-0">
           <div className="bg-white px-4 pt-4 pb-1 rounded-t-lg flex items-center gap-[10px]">
             <Avatar
               className={`rounded-full h-8 w-8 ${isLoggedIn ? 'bg-red-400' : 'bg-black/20'}`}>

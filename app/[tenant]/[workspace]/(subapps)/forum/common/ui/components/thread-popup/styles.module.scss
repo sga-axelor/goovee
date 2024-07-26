@@ -1,0 +1,8 @@
+.my-styles {
+  > button {
+    z-index: 1;
+    @media (min-width: 764px) {
+      color: black;
+    }
+  }
+}

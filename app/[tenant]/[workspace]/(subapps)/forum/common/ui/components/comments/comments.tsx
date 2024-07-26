@@ -94,7 +94,8 @@ export const Comments = ({
   toggleComments: () => void;
 }) => {
   return (
-    <div className="border-t flex flex-col gap-4 p-4">
+    <div
+      className={`border-t flex flex-col gap-4 ${usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4'}`}>
       <div className="w-full flex gap-4 items-center">
         <div className="flex gap-2 text-base flex-shrink-0">
           <div>{i18n.get('Sort by')}:</div>
@@ -106,11 +107,11 @@ export const Comments = ({
           }}
         />
       </div>
-      <div className="flex flex-col gap-4">
+      <div
+        className={`flex flex-col gap-4 ${usePopUpStyles ? 'h-full overflow-auto' : ''}`}>
         {Array.from({length: 1}).map((_, index) => {
           return (
-            <div
-              className={`flex flex-col gap-4 ${usePopUpStyles ? 'overflow-y-auto h-80' : ''}`}>
+            <div className={`flex flex-col gap-4`}>
               <Comment />
               {index === 0 &&
                 Array.from({length: 2}).map(() => {
