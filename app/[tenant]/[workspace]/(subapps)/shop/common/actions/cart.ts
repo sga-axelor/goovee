@@ -6,7 +6,7 @@ import axios from 'axios';
 import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 import {computeTotal} from '@/utils/cart';
-import type {PortalWorkspace, Product} from '@/types';
+import type {PortalWorkspace, Product, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct as $findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
@@ -14,13 +14,16 @@ import {findProduct as $findProduct} from '@/app/[tenant]/[workspace]/(subapps)/
 export async function findProduct({
   id,
   workspace,
+  user,
 }: {
   id: Product['id'];
   workspace?: PortalWorkspace;
+  user?: User;
 }) {
   return await $findProduct({
     id,
     workspace,
+    user,
   }).then(clone);
 }
 
@@ -40,12 +43,13 @@ export async function requestQuotation({
   const ws = `${aos}/ws/portal/orders/quotation`;
 
   const session = await getSession();
+  const user = session?.user;
 
   if (!(session && workspace && workspace.config)) return null;
 
   try {
     const computedProducts = await Promise.all(
-      cart.items.map((i: any) => findProduct({id: i.product, workspace})),
+      cart.items.map((i: any) => findProduct({id: i.product, workspace, user})),
     );
 
     const $cart = {
@@ -63,8 +67,6 @@ export async function requestQuotation({
     const {total} = computeTotal({cart: $cart, workspace});
 
     let partnerId, contactId;
-
-    const {user} = session;
 
     if (user) {
       const {id, isContact, mainPartnerId} = user;

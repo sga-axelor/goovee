@@ -3,7 +3,6 @@ import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {DEFAULT_LIMIT} from '@/constants';
 import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -20,11 +19,12 @@ export default async function Shop({
   params: {tenant: string; workspace: string};
 }) {
   const session = await getSession();
+  const user = session?.user;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   }).then(clone);
 
@@ -71,6 +71,7 @@ export default async function Shop({
       const res = await findProducts({
         ids: category.productList.map((p: any) => p.id),
         workspace,
+        user,
       }).then(clone);
 
       category.products = res?.products;

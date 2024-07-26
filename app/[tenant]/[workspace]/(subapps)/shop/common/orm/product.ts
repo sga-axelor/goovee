@@ -11,6 +11,7 @@ import type {
   Currency,
   ComputedProduct,
   PortalWorkspace,
+  User,
 } from '@/types';
 import {getClient} from '@/goovee';
 
@@ -43,6 +44,7 @@ export async function findProducts({
   page = 1,
   limit,
   workspace,
+  user,
 }: {
   ids?: Product['id'][];
   search?: string;
@@ -51,6 +53,7 @@ export async function findProducts({
   page?: string | number;
   limit?: string | number;
   workspace?: PortalWorkspace;
+  user?: User;
 }) {
   if (!(workspace && workspace.config)) return [];
 
@@ -314,13 +317,15 @@ export async function findProducts({
 export async function findProduct({
   id,
   workspace,
+  user,
 }: {
   id: Product['id'];
   workspace?: PortalWorkspace;
+  user?: User;
 }) {
   return (
     id &&
-    findProducts({ids: [id], workspace}).then(
+    findProducts({ids: [id], workspace, user}).then(
       ({products}: any = {}) => products && products[0],
     )
   );

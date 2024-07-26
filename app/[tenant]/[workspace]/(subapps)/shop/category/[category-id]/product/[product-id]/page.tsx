@@ -25,13 +25,14 @@ export default async function Page({
   const category = params['category-id']?.split('-')?.at(-1);
 
   const session = await getSession();
+  const user = session?.user;
 
   const id = params['product-id']?.split('-')?.at(-1);
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   }).then(clone);
 
@@ -40,6 +41,7 @@ export default async function Page({
   const computedProduct = await findProduct({
     id,
     workspace,
+    user,
   });
 
   if (!computedProduct) redirect(`${workspaceURI}/shop`);

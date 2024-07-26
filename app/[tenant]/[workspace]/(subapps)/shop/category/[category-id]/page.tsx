@@ -24,11 +24,12 @@ export default async function Shop({
   const category = params['category-id']?.split('-')?.at(-1);
 
   const session = await getSession();
+  const user = session?.user;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   }).then(clone);
 
@@ -83,6 +84,7 @@ export default async function Shop({
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     categoryids,
     workspace,
+    user,
   });
 
   const parentcategories = categories?.filter((c: any) => !c.parent);

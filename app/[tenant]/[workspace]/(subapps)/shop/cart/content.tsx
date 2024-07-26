@@ -265,6 +265,9 @@ function CartSummary({
 }
 
 export default function Content({workspace}: {workspace?: PortalWorkspace}) {
+  const {data: session} = useSession();
+  const user = session?.user;
+
   const {cart, removeItem} = useCart();
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
@@ -321,7 +324,9 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       );
       if (diff.length) {
         await Promise.all(
-          cart.items.map((i: any) => findProduct({id: i.product, workspace})),
+          cart.items.map((i: any) =>
+            findProduct({id: i.product, workspace, user}),
+          ),
         )
           .then(computedProducts => {
             setComputedProducts(computedProducts);

@@ -1,29 +1,38 @@
 'use client';
 
 import React, {useEffect, useMemo, useState} from 'react';
-import {Button} from '@ui/components/button';
-import {Separator} from '@ui/components/separator';
-import {Label} from '@ui/components/label';
-import {RadioGroup, RadioGroupItem} from '@ui/components/radio-group';
+import {useSession} from 'next-auth/react';
+
 // ---- CORE IMPORTS ---- //
-import {BackgroundImage} from '@ui/components/index';
+import {
+  Separator,
+  Label,
+  RadioGroup,
+  RadioGroupItem,
+  Button,
+  BackgroundImage,
+} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
 import type {PortalWorkspace} from '@/types';
+
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 import styles from './content.module.scss';
+
 const SHIPPING_TYPE = {
   REGULAR: 'regular',
   FAST: 'fast',
 };
+
 const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.REGULAR]: 2,
   [SHIPPING_TYPE.FAST]: 5,
 };
+
 function Summary({cart}: any) {
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
@@ -183,6 +192,9 @@ function Title({text, ...rest}: {text: string} & any) {
   );
 }
 export default function Content({workspace}: {workspace: PortalWorkspace}) {
+  const {data: session} = useSession();
+  const user = session?.user;
+
   const [shippingType, setShippingType] = useState<string>(
     SHIPPING_TYPE.REGULAR,
   );
@@ -200,7 +212,7 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
       if (!computedProducts?.length && cart) {
         await Promise.all(
           cart.items.map((i: any) =>
-            findProduct({id: i.product, workspace: workspace}),
+            findProduct({id: i.product, workspace: workspace, user}),
           ),
         )
           .then(computedProducts => {
@@ -212,7 +224,7 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
       }
     };
     init();
-  }, [cart, computedProducts, workspace]);
+  }, [cart, computedProducts, workspace, user]);
 
   const $cart = useMemo(
     () => ({
