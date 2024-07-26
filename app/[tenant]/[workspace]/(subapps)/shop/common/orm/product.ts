@@ -1,3 +1,7 @@
+'use server';
+
+import axios from 'axios';
+
 // ---- CORE IMPORTS ---- //
 import {clone, scale} from '@/utils';
 import {
@@ -84,7 +88,9 @@ export async function findProducts({
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
 
-  const $products = await client.aOSProduct
+  const fromWS = workspace?.config?.priceAfterLogin === 'fromWS';
+
+  let $products = await client.aOSProduct
     .find({
       where: {
         ...(ids?.length
@@ -139,42 +145,46 @@ export async function findProducts({
             },
           },
         },
-        productCompanyList: {
-          select: {
-            salePrice: true,
-            company: {
-              id: true,
-              name: true,
-              currency: {
-                code: true,
-                numberOfDecimals: true,
-                symbol: true,
-              },
-            },
-          },
-        },
-        productFamily: {
-          name: true,
-          accountManagementList: {
-            where: {
-              company: {
-                id: workspace?.config?.company?.id,
-              },
-            },
-            select: {
-              name: true,
-              saleTaxSet: {
+        ...(fromWS
+          ? {}
+          : {
+              productCompanyList: {
                 select: {
-                  name: true,
-                  activeTaxLine: {
+                  salePrice: true,
+                  company: {
+                    id: true,
                     name: true,
-                    value: true,
+                    currency: {
+                      code: true,
+                      numberOfDecimals: true,
+                      symbol: true,
+                    },
                   },
                 },
-              },
-            },
-          },
-        },
+              } as any,
+              productFamily: {
+                name: true,
+                accountManagementList: {
+                  where: {
+                    company: {
+                      id: workspace?.config?.company?.id,
+                    },
+                  },
+                  select: {
+                    name: true,
+                    saleTaxSet: {
+                      select: {
+                        name: true,
+                        activeTaxLine: {
+                          name: true,
+                          value: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              } as any,
+            }),
       },
     })
     .catch((err: any) => {
@@ -190,7 +200,7 @@ export async function findProducts({
     })
     .then(clone);
 
-  const compute = (product: any) => {
+  const compute = (product: any, ws?: boolean, wsProduct?: any) => {
     const productcompany =
       workspace?.config?.company?.id &&
       product?.productCompanyList?.find(
@@ -202,6 +212,12 @@ export async function findProducts({
     const account = product?.productFamily?.accountManagementList?.[0];
 
     const getTax = (): ComputedProduct['tax'] => {
+      if (ws) {
+        return {
+          value: Number(wsProduct?.tax?.value || DEFAULT_TAX_VALUE),
+        };
+      }
+
       const activeTax = account?.saleTaxSet?.find((t: any) => t.activeTaxLine);
 
       const activeTaxLineValue =
@@ -213,6 +229,15 @@ export async function findProducts({
     };
 
     const getScale = (): ComputedProduct['scale'] => {
+      if (ws) {
+        return (
+          wsProduct?.scale || {
+            unit: DEFAULT_UNIT_PRICE_SCALE,
+            currency: DEFAULT_CURRENCY_SCALE,
+          }
+        );
+      }
+
       return {
         unit: appbase?.nbDecimalDigitForUnitPrice || DEFAULT_UNIT_PRICE_SCALE,
         currency:
@@ -222,6 +247,14 @@ export async function findProducts({
     };
 
     const getCurrency = (): Currency => {
+      if (ws) {
+        return (
+          wsProduct?.currency || {
+            symbol: DEFAULT_CURRENCY_SYMBOL,
+          }
+        );
+      }
+
       return (
         product?.saleCurrency ||
         productcompany?.company?.currency || {
@@ -233,8 +266,6 @@ export async function findProducts({
     const getPrice = (): ComputedProduct['price'] => {
       const value = productcompany?.salePrice || product.salePrice || 0;
 
-      const inati = product.inAti;
-
       const taxrate = getTax()?.value || 0;
 
       let ati, wt, displayAti, displayWt;
@@ -245,16 +276,25 @@ export async function findProducts({
       const currencySymbol = getCurrency().symbol;
       const unitScale = getScale().unit;
 
-      if (inati) {
-        ati = Number(value);
-        wt = ati - (ati * taxrate) / 100;
+      if (ws) {
+        const $wt = wsProduct?.price?.wt;
+        const $ati = wsProduct?.price?.ati;
+        ati = Number($ati || 0);
+        wt = Number($wt || 0);
       } else {
-        wt = Number(value);
-        ati = wt + (wt * taxrate) / 100;
-      }
+        const inati = product.inAti;
 
-      ati = scale(ati, unitScale);
-      wt = scale(wt, unitScale);
+        if (inati) {
+          ati = Number(value);
+          wt = ati - (ati * taxrate) / 100;
+        } else {
+          wt = Number(value);
+          ati = wt + (wt * taxrate) / 100;
+        }
+
+        ati = scale(ati, unitScale);
+        wt = scale(wt, unitScale);
+      }
 
       displayAti = `${ati} ${currencySymbol}`;
       displayWt = `${wt} ${currencySymbol}`;
@@ -296,22 +336,46 @@ export async function findProducts({
     };
   };
 
-  return {
-    products: ($products || [])
-      .map((p: any) => ({
-        ...p,
-        images: [
-          p?.picture?.id,
-          ...(p?.portalImageList || [])?.map((i: any) => i?.picture?.id),
-        ].filter(Boolean),
-      }))
-      .map(compute),
-    pageInfo: getPageInfo({
-      count: $products?.[0]?._count,
-      page,
-      limit,
-    }),
-  };
+  $products = ($products || []).map((p: any) => ({
+    ...p,
+    images: [
+      p?.picture?.id,
+      ...(p?.portalImageList || [])?.map((i: any) => i?.picture?.id),
+    ].filter(Boolean),
+  }));
+
+  const pageInfo = getPageInfo({
+    count: $products?.[0]?._count,
+    page,
+    limit,
+  });
+
+  if (fromWS) {
+    const productsFromWS = await findProductsFromWS({
+      productIds: $products.map(p => p.id),
+      workspace,
+      user,
+    });
+
+    const originalProduct = (id: any) =>
+      $products.find(p => Number(p.id) === Number(id));
+
+    return {
+      products: productsFromWS
+        .map((wsProduct: any) => {
+          const product = originalProduct(wsProduct?.product?.id);
+          if (!product) return null;
+          return compute(product, true, wsProduct);
+        })
+        .filter(Boolean),
+      pageInfo,
+    };
+  } else {
+    return {
+      products: $products.map((product: any) => compute(product)),
+      pageInfo,
+    };
+  }
 }
 
 export async function findProduct({
@@ -329,4 +393,52 @@ export async function findProduct({
       ({products}: any = {}) => products && products[0],
     )
   );
+}
+
+export async function findProductsFromWS({
+  workspace,
+  user,
+  productIds,
+}: {
+  workspace: PortalWorkspace;
+  user?: User;
+  productIds: Array<Product['id']>;
+}) {
+  if (!workspace?.config?.company?.id && user && productIds) {
+    return [];
+  }
+
+  const aos = process.env.NEXT_PUBLIC_AOS_URL;
+
+  if (!aos) return [];
+
+  const ws = `${aos}/ws/portal/products/productPrices`;
+
+  try {
+    const res = await axios
+      .post(
+        ws,
+        {
+          partnerId: user?.id,
+          companyId: workspace?.config?.company?.id,
+          productIds,
+          taxSelect: 'both',
+        },
+        {
+          auth: {
+            username: process.env.BASIC_AUTH_USERNAME as string,
+            password: process.env.BASIC_AUTH_PASSWORD as string,
+          },
+        },
+      )
+      .then(({data}) => data);
+
+    if (res?.data?.status === -1) {
+      return [];
+    }
+
+    return res?.data || [];
+  } catch (err) {
+    return [];
+  }
 }
