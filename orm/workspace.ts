@@ -220,9 +220,10 @@ export async function findWorkspace({
       },
     },
     select: {
+      name: true,
+      url: true,
       defaultTheme: true,
       appConfig: portalAppConfigFields,
-      url: true,
       navigationSelect: true,
     },
   });
@@ -263,14 +264,23 @@ export async function findWorkspace({
 
   apps = user ? [...defaultApps, ...apps] : apps;
 
+  const {
+    id,
+    name,
+    version,
+    defaultTheme: theme,
+    navigationSelect = 'leftSide',
+  } = workspace;
+
   return {
-    id: workspace.id,
-    version: workspace.version,
-    theme: workspace.defaultTheme,
-    url: workspace.url,
+    id,
+    name,
+    version,
+    theme,
+    url,
     config,
     apps,
-    navigationSelect: workspace.navigationSelect || 'leftSide',
+    navigationSelect,
   };
 }
 
@@ -285,6 +295,7 @@ export async function findOpenWorkspaces({url}: {url?: string}) {
         },
       },
       select: {
+        name: true,
         url: true,
         allowRegistrationSelect: true,
         defaultGuestWorkspace: {
@@ -329,6 +340,7 @@ export async function findPartnerWorkspaces({
         select: {
           workspace: {
             id: true,
+            name: true,
             url: true,
             allowRegistrationSelect: true,
           },
@@ -377,8 +389,9 @@ export async function findContactWorkspaces({
         },
         select: {
           portalWorkspace: {
-            url: true,
             id: true,
+            name: true,
+            url: true,
             allowRegistrationSelect: true,
           },
         },

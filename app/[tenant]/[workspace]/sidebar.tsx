@@ -62,7 +62,7 @@ export function Sidebar({
             <SelectContent>
               {workspaces.map((workspace: any) => (
                 <SelectItem key={workspace.url} value={workspace.url}>
-                  {workspace.url}
+                  {workspace.name || workspace.url}
                 </SelectItem>
               ))}
             </SelectContent>
