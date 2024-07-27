@@ -3,15 +3,24 @@
 import {Fragment} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {MdOutlineShoppingCart} from 'react-icons/md';
-import {MdNotificationsNone} from 'react-icons/md';
+import {useRouter} from 'next/navigation';
+import {useSession} from 'next-auth/react';
+import {MdNotificationsNone, MdOutlineShoppingCart} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Account, Separator, Badge} from '@/ui/components';
+import {
+  Account,
+  Separator,
+  Badge,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/ui/components';
 import {SUBAPP_PAGE} from '@/constants';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {User} from '@/types';
 import Icons from '@/utils/Icons';
 
 // ---- LOCAL IMPORTS ---- //
@@ -63,14 +72,22 @@ function Cart() {
 
 export default function Header({
   subapps,
-  user,
   hideTopNavigation,
+  workspaces,
 }: {
   subapps: any;
-  user?: User;
   hideTopNavigation?: boolean;
+  workspaces?: any;
 }) {
-  const {workspaceURI} = useWorkspace();
+  const router = useRouter();
+  const {data: session} = useSession();
+  const user = session?.user;
+
+  const {workspaceURI, workspaceURL} = useWorkspace();
+
+  const redirect = (value: any) => {
+    router.push(value);
+  };
 
   return (
     <>
@@ -104,32 +121,51 @@ export default function Header({
         </div>
       </div>
       {!hideTopNavigation && subapps?.length ? (
-        <div className="bg-background text-foreground px-6 py-4 hidden lg:flex items-center justify-end gap-10 border-b border-border border-solid max-w-full">
-          {subapps
-            ?.filter((app: any) => app.installed)
-            .sort(
-              (app1: any, app2: any) =>
-                app1.orderForTopMenu - app2.orderForTopMenu,
-            )
-            .reverse()
-            .map(({code, name, icon, color, background}: any, i: any) => {
-              const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
-              return (
-                <Fragment key={code}>
-                  {i !== 0 && (
-                    <Separator
-                      className="bg-black w-[2px]"
-                      orientation="vertical"
-                    />
-                  )}
-                  <Link href={`${workspaceURI}/${code}${page}`}>
-                    <div key={code} className="font-medium">
-                      {name}
-                    </div>
-                  </Link>
-                </Fragment>
-              );
-            })}
+        <div className="bg-background text-foreground px-6 py-4 hidden lg:flex items-center justify-between border-b border-border border-solid max-w-full gap-10">
+          <div>
+            {Boolean(workspaces?.length) && user && (
+              <Select defaultValue={workspaceURL} onValueChange={redirect}>
+                <SelectTrigger className="grow max-w-100 overflow-hidden p-0 border-0 bg-none! h-[auto]">
+                  <SelectValue placeholder="" />
+                </SelectTrigger>
+                <SelectContent>
+                  {workspaces.map((workspace: any) => (
+                    <SelectItem key={workspace.url} value={workspace.url}>
+                      {workspace.name || workspace.url}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+          <div className="flex gap-10 w-100 max-w-full overflow-x-auto">
+            {subapps
+              ?.filter((app: any) => app.installed)
+              .sort(
+                (app1: any, app2: any) =>
+                  app1.orderForTopMenu - app2.orderForTopMenu,
+              )
+              .reverse()
+              .map(({code, name, icon, color, background}: any, i: any) => {
+                const page =
+                  SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
+                return (
+                  <Fragment key={code}>
+                    {i !== 0 && (
+                      <Separator
+                        className="bg-success w-[2px] shrink-0 h-auto"
+                        orientation="vertical"
+                      />
+                    )}
+                    <Link href={`${workspaceURI}/${code}${page}`}>
+                      <div key={code} className="font-medium">
+                        {name}
+                      </div>
+                    </Link>
+                  </Fragment>
+                );
+              })}
+          </div>
         </div>
       ) : null}
     </>
