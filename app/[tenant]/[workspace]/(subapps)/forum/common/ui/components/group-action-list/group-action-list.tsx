@@ -7,6 +7,7 @@ import {
   MdNotificationsNone,
   MdExitToApp,
 } from 'react-icons/md';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -22,16 +23,17 @@ import {
   CollapsibleContent,
 } from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  GROUP_NAME,
   LEAVE_THIS_GROUP,
   MARK_AS_READ,
   NOTIFICATIONS,
   NOTIFICATIONS_OPTIONS,
   PIN,
 } from '@/subapps/forum/common/constants';
+import {addPinnedGroup} from '@/subapps/forum/common/action/action';
 
 export const GroupActionList = ({
   title,
@@ -40,6 +42,14 @@ export const GroupActionList = ({
   title: string;
   groups: any;
 }) => {
+  const router = useRouter();
+  const {workspaceURI} = useWorkspace();
+
+  const handlePinGroup = async (id: number, isPin: boolean, group: any) => {
+    await addPinnedGroup({id, isPin: !isPin, group});
+    router.push(`${workspaceURI}/forum`);
+  };
+
   return (
     <div>
       <h1 className="font-semibold text-base leading-6 mb-6">
@@ -77,7 +87,9 @@ export const GroupActionList = ({
                     {MARK_AS_READ}
                   </span>
                 </div>
-                <div className="flex items-center gap-[10px] px-2">
+                <div
+                  className="flex items-center gap-[10px] px-2"
+                  onClick={() => handlePinGroup(group.id, group?.isPin, group)}>
                   <MdOutlinePushPin className="w-4 h-4" />
                   <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
                     {PIN}
@@ -93,7 +105,7 @@ export const GroupActionList = ({
                       </span>
                     </div>
                   </PopoverTrigger>
-                  <PopoverContent side="right" className="p-0 w-fit">
+                  <PopoverContent side="right" className="p-0">
                     <div className="flex flex-col gap-[10px] p-4 bg-white rounded-lg text-xs leading-[18px]">
                       {NOTIFICATIONS_OPTIONS.map(option => (
                         <div key={option.id} className="cursor-pointer">
