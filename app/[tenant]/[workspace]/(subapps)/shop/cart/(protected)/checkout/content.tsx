@@ -4,6 +4,7 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useSession} from 'next-auth/react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
+import {PayPalScriptProvider, PayPalButtons} from '@paypal/react-paypal-js';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -25,15 +26,23 @@ import {
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
+import {useToast} from '@/ui/hooks';
 import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 import styles from './content.module.scss';
-import {findAddress, findDeliveryAddress, findInvoicingAddress} from './action';
+import {
+  findAddress,
+  findDeliveryAddress,
+  findInvoicingAddress,
+  paypalCaptureOrder,
+  paypalCreateOrder,
+} from './action';
 
 const SHIPPING_TYPE = {
   REGULAR: 'regular',
@@ -45,6 +54,69 @@ const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.FAST]: 5,
 };
 
+function Paypal({onApprove}: {onApprove: any}) {
+  const {cart, clearCart} = useCart();
+  const {toast} = useToast();
+  const {workspaceURL} = useWorkspace();
+
+  const handleCreatePaypalOrder = async (data: any, actions: any) => {
+    const result: any = await paypalCreateOrder({cart, workspaceURL});
+
+    if (result.error) {
+      toast({
+        variant: 'destructive',
+        title: result.message,
+      });
+    } else {
+      return result?.order?.id;
+    }
+  };
+
+  const handleApprovePaypalOrder = async (data: any, actions: any) => {
+    const result = await paypalCaptureOrder({
+      orderId: data.orderID,
+      workspaceURL,
+      cart,
+    });
+
+    if (result?.error) {
+      toast({
+        variant: 'destructive',
+        title: result.message,
+      });
+    } else {
+      toast({
+        variant: 'success',
+        title: i18n.get('Order requested successfully'),
+      });
+
+      clearCart();
+
+      onApprove?.(result);
+    }
+  };
+
+  return (
+    <PayPalScriptProvider
+      options={{
+        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+        currency: 'EUR',
+        intent: 'capture',
+        disableFunding: 'card',
+      }}>
+      <PayPalButtons
+        style={{
+          color: 'blue',
+          shape: 'rect',
+          height: 50,
+        }}
+        createOrder={handleCreatePaypalOrder}
+        onApprove={handleApprovePaypalOrder}
+      />
+    </PayPalScriptProvider>
+  );
+}
+
 function Summary({cart}: any) {
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
@@ -55,7 +127,7 @@ function Summary({cart}: any) {
       <div className="flex flex-col gap-4 pt-4">
         {cart.items.map(
           ({
-            computedProduct: {product, price} = {},
+            computedProduct: {product, price} = {} as any,
             quantity,
             note,
             images,
@@ -314,7 +386,13 @@ function Title({text, ...rest}: {text: string} & any) {
   );
 }
 
-export default function Content({workspace}: {workspace: PortalWorkspace}) {
+export default function Content({
+  workspace,
+  orderSubapp,
+}: {
+  workspace: PortalWorkspace;
+  orderSubapp?: any;
+}) {
   const {data: session} = useSession();
   const user = session?.user;
 
@@ -346,6 +424,16 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setShippingType(event.target.value);
+  };
+
+  const handlePaypalOrder = (order: any) => {
+    if (orderSubapp) {
+      router.replace(
+        `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders}/${order.data}`,
+      );
+    } else {
+      router.replace(`${workspaceURI}/shop`);
+    }
   };
 
   useEffect(() => {
@@ -397,9 +485,6 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
               value={shippingType}
               onChange={handleChangeShippingType}
             />
-            <Button onClick={openConfirmation} className="w-full rounded-full">
-              {i18n.get('Confirm order')}
-            </Button>
           </div>
         </div>
         <div>
@@ -410,6 +495,7 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
               shippingType={shippingType}
               workspace={workspace}
             />
+            <Paypal onApprove={handlePaypalOrder} />
           </div>
         </div>
       </div>

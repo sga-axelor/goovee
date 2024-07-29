@@ -1,11 +1,15 @@
 import {scale} from '@/utils';
+import {
+  DEFAULT_CURRENCY_CODE,
+  DEFAULT_CURRENCY_SCALE,
+  DEFAULT_CURRENCY_SYMBOL,
+} from '@/constants';
 import type {
   Cart,
   ComputedProduct,
   PortalAppConfig,
   PortalWorkspace,
 } from '@/types';
-import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 
 export function computeTotal({
   cart,
@@ -53,12 +57,13 @@ export function computeTotal({
 
   const {
     scale: {currency: currencyScale},
-    currency: {symbol},
+    currency: {symbol, code},
   } = firstItem || {
     scale: {
       currency: DEFAULT_CURRENCY_SCALE,
     },
     currency: {
+      code: DEFAULT_CURRENCY_CODE,
       symbol: DEFAULT_CURRENCY_SYMBOL,
     },
   };
@@ -76,6 +81,7 @@ export function computeTotal({
     },
     currency: {
       symbol,
+      code,
     },
   };
 }

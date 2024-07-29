@@ -2,6 +2,7 @@
  * CURRENCY
  */
 export const DEFAULT_CURRENCY_SYMBOL = '€';
+export const DEFAULT_CURRENCY_CODE = 'EUR';
 
 /**
  * SCALE

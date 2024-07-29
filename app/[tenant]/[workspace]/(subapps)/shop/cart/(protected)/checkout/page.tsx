@@ -2,8 +2,9 @@ import {redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/orm/auth';
-import {findWorkspace} from '@/orm/workspace';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
+import {SUBAPP_CODES} from '@/constants';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -15,11 +16,12 @@ export default async function Page({
   params: {tenant: string; workspace: string};
 }) {
   const session = await getSession();
+  const user = session?.user;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
   }).then(clone);
 
@@ -27,5 +29,11 @@ export default async function Page({
     redirect(`${workspaceURI}/shop/cart`);
   }
 
-  return <Content workspace={workspace} />;
+  const orderSubapp = await findSubappAccess({
+    code: SUBAPP_CODES.orders,
+    user,
+    url: workspaceURL,
+  });
+
+  return <Content workspace={workspace} orderSubapp={orderSubapp} />;
 }
