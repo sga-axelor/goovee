@@ -31,7 +31,13 @@ import {
 } from '@/subapps/forum/common/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
-export const HomePage = () => {
+export const HomePage = ({
+  memberGroups,
+  nonMemberGroups,
+}: {
+  memberGroups: any;
+  nonMemberGroups: any;
+}) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
@@ -69,8 +75,10 @@ export const HomePage = () => {
             </h1>
           </div>
           <GroupSearch />
-          {isLoggedIn && <GroupActionList title={MEMBER} />}
-          <GroupActionList title={NOT_MEMBER} />
+          {isLoggedIn && (
+            <GroupActionList title={MEMBER} groups={memberGroups} />
+          )}
+          <GroupActionList title={NOT_MEMBER} groups={nonMemberGroups} />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
           <div className="bg-white px-4 pt-4 pb-1 rounded-t-lg flex items-center gap-[10px]">

@@ -1,0 +1,12 @@
+{
+  "name": "AOSPortalForum",
+  "table": "portal_forum_group",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    }
+  ]
+}

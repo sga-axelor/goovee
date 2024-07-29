@@ -10,7 +10,13 @@ import {
 import {MENU} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
-const Content = () => {
+const Content = ({
+  memberGroups,
+  nonMemberGroups,
+}: {
+  memberGroups: any;
+  nonMemberGroups: any;
+}) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
@@ -23,7 +29,7 @@ const Content = () => {
       <div className="hidden lg:block">
         <NavMenu items={MENU} onClick={handleMenuClick} />
       </div>
-      <HomePage />
+      <HomePage memberGroups={memberGroups} nonMemberGroups={nonMemberGroups} />
     </div>
   );
 };
