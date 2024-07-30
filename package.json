@@ -65,6 +65,7 @@
     "server-only": "^0.0.1",
     "shadcn-ui": "^0.8.0",
     "sheet": "^0.2.0",
+    "stripe": "^16.5.0",
     "swiper": "^11.1.4",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",

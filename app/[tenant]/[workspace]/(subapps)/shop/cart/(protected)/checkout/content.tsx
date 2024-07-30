@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useSession} from 'next-auth/react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
@@ -26,7 +26,7 @@ import {
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
-import {useToast} from '@/ui/hooks';
+import {useSearchParams, useToast} from '@/ui/hooks';
 import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -37,11 +37,13 @@ import type {PortalWorkspace} from '@/types';
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 import styles from './content.module.scss';
 import {
+  createStripeCheckoutSession,
   findAddress,
   findDeliveryAddress,
   findInvoicingAddress,
   paypalCaptureOrder,
   paypalCreateOrder,
+  validateStripePayment,
 } from './action';
 
 const SHIPPING_TYPE = {
@@ -53,6 +55,98 @@ const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.REGULAR]: 2,
   [SHIPPING_TYPE.FAST]: 5,
 };
+
+function Stripe({onApprove}: {onApprove: any}) {
+  const {cart, clearCart} = useCart();
+  const {toast} = useToast();
+  const {workspaceURL} = useWorkspace();
+  const {searchParams} = useSearchParams();
+  const validateRef = useRef(false);
+
+  const handleCreateCheckoutSession = async () => {
+    try {
+      const result = await createStripeCheckoutSession({cart, workspaceURL});
+
+      if (result.error) {
+        toast({
+          variant: 'destructive',
+          title: result.message,
+        });
+      }
+
+      const {url} = result;
+      window.location.assign(url as string);
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error processing stripe payment, try again.'),
+      });
+    }
+  };
+
+  const handleValidateStripePayment = useCallback(
+    async ({stripeSessionId}: {stripeSessionId: string}) => {
+      try {
+        if (!stripeSessionId) {
+          return;
+        }
+
+        const result = await validateStripePayment({
+          stripeSessionId,
+          cart,
+          workspaceURL,
+        });
+        if (result.error) {
+          toast({
+            variant: 'destructive',
+            title: result.message,
+          });
+        } else {
+          toast({
+            variant: 'success',
+            title: i18n.get('Order requested successfully'),
+          });
+
+          clearCart();
+          onApprove?.(result);
+        }
+      } catch (err) {
+        toast({
+          variant: 'destructive',
+          title: i18n.get('Error processing stripe payment, try again.'),
+        });
+      }
+    },
+    [toast, clearCart, onApprove, cart, workspaceURL],
+  );
+
+  useEffect(() => {
+    if (validateRef.current) {
+      return;
+    }
+
+    const stripeSessionId = searchParams.get('stripe_session_id');
+    const stripeError = searchParams.get('stripe_error');
+
+    if (stripeError) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error processing stripe payment, try again.'),
+      });
+    } else if (stripeSessionId) {
+      handleValidateStripePayment({stripeSessionId});
+    }
+    validateRef.current = true;
+  }, [searchParams, toast, handleValidateStripePayment]);
+
+  return (
+    <Button
+      className="h-[50px] bg-[#635bff] text-lg font-medium"
+      onClick={handleCreateCheckoutSession}>
+      Pay with Stripe
+    </Button>
+  );
+}
 
 function Paypal({onApprove}: {onApprove: any}) {
   const {cart, clearCart} = useCart();
@@ -426,15 +520,18 @@ export default function Content({
     setShippingType(event.target.value);
   };
 
-  const handlePaypalOrder = (order: any) => {
-    if (orderSubapp) {
-      router.replace(
-        `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders}/${order.data}`,
-      );
-    } else {
-      router.replace(`${workspaceURI}/shop`);
-    }
-  };
+  const redirectOrder = useCallback(
+    (order: any) => {
+      if (orderSubapp) {
+        router.replace(
+          `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders}/${order.data}`,
+        );
+      } else {
+        router.replace(`${workspaceURI}/shop`);
+      }
+    },
+    [workspaceURI, router, orderSubapp],
+  );
 
   useEffect(() => {
     const init = async () => {
@@ -495,7 +592,10 @@ export default function Content({
               shippingType={shippingType}
               workspace={workspace}
             />
-            <Paypal onApprove={handlePaypalOrder} />
+            <div className="flex flex-col gap-2">
+              <Paypal onApprove={redirectOrder} />
+              <Stripe onApprove={redirectOrder} />
+            </div>
           </div>
         </div>
       </div>

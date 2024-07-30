@@ -2,9 +2,9 @@
 
 import axios from 'axios';
 import paypal from '@paypal/checkout-server-sdk';
+import type {Stripe} from 'stripe';
 
 // ---- CORE IMPORTS ---- //
-import {findProduct} from '@/subapps/shop/common/orm/product';
 import {
   findDefaultDeliveryAddress,
   findDefaultInvoicingAddress,
@@ -14,9 +14,14 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 import paypalhttpclient from '@/lib/paypal';
-import {SUBAPP_CODES} from '@/constants';
+import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
+import {stripe} from '@/lib/stripe';
 import type {ID} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
+import {findProduct} from '@/subapps/shop/common/orm/product';
+import {formatAmountForStripe} from '@/subapps/shop/common/utils';
 
 export async function findInvoicingAddress() {
   const session = await getSession();
@@ -353,4 +358,215 @@ export async function paypalCreateOrder({
   }
 
   return {success: true, order: response?.result};
+}
+
+export async function createStripeCheckoutSession({
+  cart,
+  workspaceURL,
+}: {
+  cart: any;
+  workspaceURL: string;
+}) {
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      error: true,
+      message: 'Unauthorized',
+    };
+  }
+
+  if (!cart?.items?.length) {
+    return {
+      error: true,
+      message: 'Bad request',
+    };
+  }
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: 'Bad request',
+    };
+  }
+
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: 'Invalid workspace',
+    };
+  }
+
+  const hasShopAccess = await findSubappAccess({
+    code: SUBAPP_CODES.shop,
+    user,
+    url: workspace.url,
+  });
+
+  if (!hasShopAccess) {
+    return {
+      error: true,
+      message: 'Unauthorized',
+    };
+  }
+
+  const {total, currency} = computeTotal({
+    cart,
+    workspace,
+  });
+
+  const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
+
+  const checkoutSession: Stripe.Checkout.Session =
+    await stripe.checkout.sessions.create({
+      mode: 'payment',
+      submit_type: 'pay',
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: currencyCode,
+            product_data: {
+              name: 'Cart Checkout',
+            },
+            unit_amount: formatAmountForStripe(
+              Number(total || 0),
+              currencyCode,
+            ),
+          },
+        },
+      ],
+      success_url: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_error=true`,
+    });
+
+  return {
+    client_secret: checkoutSession.client_secret,
+    url: checkoutSession.url,
+  };
+}
+
+export async function validateStripePayment({
+  stripeSessionId,
+  cart,
+  workspaceURL,
+}: {
+  stripeSessionId: string;
+  cart: any;
+  workspaceURL: string;
+}) {
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      error: true,
+      message: 'Unauthorized',
+    };
+  }
+
+  if (!cart?.items?.length) {
+    return {
+      error: true,
+      message: 'Bad request',
+    };
+  }
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: 'Bad request',
+    };
+  }
+
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: 'Invalid workspace',
+    };
+  }
+
+  const hasShopAccess = await findSubappAccess({
+    code: SUBAPP_CODES.shop,
+    user,
+    url: workspace.url,
+  });
+
+  if (!hasShopAccess) {
+    return {
+      error: true,
+      message: 'Unauthorized',
+    };
+  }
+
+  if (!stripeSessionId) {
+    return {
+      error: true,
+      message: 'Bad Request',
+    };
+  }
+
+  const stripeSession =
+    await stripe.checkout.sessions.retrieve(stripeSessionId);
+
+  if (!stripeSession) {
+    return {
+      error: true,
+      message: 'Invalid stripe session',
+    };
+  }
+
+  if (
+    !(
+      (stripeSession.status as string) === 'complete' &&
+      stripeSession.payment_status === 'paid'
+    )
+  ) {
+    return {
+      error: true,
+      message: 'Payment not successfull',
+    };
+  }
+
+  const lineItems =
+    await stripe.checkout.sessions.listLineItems(stripeSessionId);
+
+  if (!lineItems) {
+    return {
+      error: true,
+      message: 'Payment not successfull',
+    };
+  }
+
+  const {total, currency} = computeTotal({
+    cart,
+    workspace,
+  });
+
+  const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
+
+  const stripeTotal = lineItems?.data?.[0]?.amount_total;
+  const cartTotal = formatAmountForStripe(Number(total || 0), currencyCode);
+
+  if (stripeTotal && cartTotal && stripeTotal !== cartTotal) {
+    return {
+      error: true,
+      message: 'Payment amount mistmatch',
+    };
+  }
+
+  return createOrder({cart, workspaceURL});
 }
