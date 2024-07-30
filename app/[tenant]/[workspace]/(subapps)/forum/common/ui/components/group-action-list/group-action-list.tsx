@@ -6,6 +6,7 @@ import {
   MdOutlineMarkChatRead,
   MdNotificationsNone,
   MdExitToApp,
+  MdOutlineGroupAdd,
 } from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
@@ -27,26 +28,59 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
+  ASK_TO_JOIN,
   LEAVE_THIS_GROUP,
   MARK_AS_READ,
   NOTIFICATIONS,
   NOTIFICATIONS_OPTIONS,
   PIN,
 } from '@/subapps/forum/common/constants';
-import {addPinnedGroup} from '@/subapps/forum/common/action/action';
+import {
+  addNotificationsToGroup,
+  addPinnedGroup,
+  exitGroup,
+  joinGroup,
+} from '@/subapps/forum/common/action/action';
 
 export const GroupActionList = ({
   title,
   groups,
+  isMember = true,
+  userId,
 }: {
   title: string;
   groups: any;
+  isMember?: boolean;
+  userId?: string;
 }) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
   const handlePinGroup = async (id: number, isPin: boolean, group: any) => {
     await addPinnedGroup({id, isPin: !isPin, group});
+    router.push(`${workspaceURI}/forum`);
+  };
+
+  const handleExit = async (id: string, version: number) => {
+    await exitGroup({id, version});
+    router.push(`${workspaceURI}/forum`);
+  };
+
+  const handleJoinGroup = async (
+    id: string,
+    version: number,
+    userId: string,
+  ) => {
+    await joinGroup({id, version, userId});
+    router.push(`${workspaceURI}/forum`);
+  };
+
+  const handleNotifications = async (
+    id: string,
+    version: number,
+    notificationType: string,
+  ) => {
+    await addNotificationsToGroup({id, version, notificationType});
     router.push(`${workspaceURI}/forum`);
   };
 
@@ -106,21 +140,45 @@ export const GroupActionList = ({
                     </div>
                   </PopoverTrigger>
                   <PopoverContent side="right" className="p-0">
-                    <div className="flex flex-col gap-[10px] p-4 bg-white rounded-lg text-xs leading-[18px]">
+                    <div className="flex flex-col gap-[10px] py-4 bg-white rounded-lg text-xs leading-[18px]">
                       {NOTIFICATIONS_OPTIONS.map(option => (
-                        <div key={option.id} className="cursor-pointer">
+                        <div
+                          key={option.id}
+                          className={`cursor-pointer px-4 ${option.value === group.notificationSelect ? 'bg-success-light' : ''}`}
+                          onClick={() =>
+                            handleNotifications(
+                              group.id,
+                              group.verion,
+                              option.value,
+                            )
+                          }>
                           {i18n.get(option.title)}
                         </div>
                       ))}
                     </div>
                   </PopoverContent>
                 </Popover>
-                <div className="flex items-center gap-[10px] px-2">
-                  <MdExitToApp className="w-4 h-4" />
-                  <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
-                    {LEAVE_THIS_GROUP}
-                  </span>
-                </div>
+                {isMember ? (
+                  <div
+                    className="flex items-center gap-[10px] px-2"
+                    onClick={() => handleExit(group.id, group.verion)}>
+                    <MdExitToApp className="w-4 h-4" />
+                    <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                      {LEAVE_THIS_GROUP}
+                    </span>
+                  </div>
+                ) : (
+                  <div
+                    className="flex items-center gap-[10px] px-2"
+                    onClick={() =>
+                      handleJoinGroup(group.id, group.version, userId)
+                    }>
+                    <MdOutlineGroupAdd className="w-4 h-4" />
+                    <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                      {ASK_TO_JOIN}
+                    </span>
+                  </div>
+                )}
               </div>
             </CollapsibleContent>
           </Collapsible>

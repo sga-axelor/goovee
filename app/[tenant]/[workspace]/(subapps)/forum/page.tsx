@@ -22,6 +22,10 @@ export default async function Page() {
   }).then(clone);
 
   return (
-    <Content memberGroups={memberGroups} nonMemberGroups={nonMemberGroups} />
+    <Content
+      memberGroups={memberGroups}
+      nonMemberGroups={nonMemberGroups}
+      userId={userId}
+    />
   );
 }

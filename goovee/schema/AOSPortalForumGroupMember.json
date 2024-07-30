@@ -17,6 +17,10 @@
     {
       "name": "isPin",
       "type": "Boolean"
+    },
+    {
+      "name": "notificationSelect",
+      "type": "String"
     }
   ]
 }

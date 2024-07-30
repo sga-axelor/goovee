@@ -31,6 +31,7 @@ export async function findGroupByMembers({
         name: true,
       },
       isPin: true,
+      notificationSelect: true,
     },
   });
   return groups;

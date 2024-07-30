@@ -13,9 +13,11 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 const Content = ({
   memberGroups,
   nonMemberGroups,
+  userId,
 }: {
   memberGroups: any;
   nonMemberGroups: any;
+  userId: any;
 }) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -29,7 +31,11 @@ const Content = ({
       <div className="hidden lg:block">
         <NavMenu items={MENU} onClick={handleMenuClick} />
       </div>
-      <HomePage memberGroups={memberGroups} nonMemberGroups={nonMemberGroups} />
+      <HomePage
+        memberGroups={memberGroups}
+        nonMemberGroups={nonMemberGroups}
+        userId={userId}
+      />
     </div>
   );
 };

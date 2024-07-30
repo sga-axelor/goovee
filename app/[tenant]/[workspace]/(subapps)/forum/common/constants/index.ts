@@ -12,6 +12,7 @@ export const MARK_AS_READ = 'Mark as read';
 export const PIN = 'Pin';
 export const NOTIFICATIONS = 'Notifications';
 export const LEAVE_THIS_GROUP = 'Leave this group';
+export const ASK_TO_JOIN = 'Ask to join the group';
 export const GROUP_NAME = 'Group name';
 export const START_A_POST = 'Start a post';
 export const COMMENT = 'Comment';
@@ -88,17 +89,21 @@ export const NOTIFICATIONS_OPTIONS = [
   {
     id: 1,
     title: 'All new posts and new comments',
+    value: 'all',
   },
   {
     id: 2,
     title: 'All new posts and new comments on my posts',
+    value: 'allOnMyPost',
   },
   {
     id: 3,
     title: 'Only new comments on my posts',
+    value: 'newCommentsOnMyPost',
   },
   {
     id: 4,
     title: 'No notifications',
+    value: 'none',
   },
 ];

@@ -29,3 +29,66 @@ export async function addPinnedGroup({
     })
     .then(clone);
 }
+
+export async function exitGroup({
+  id,
+  version,
+}: {
+  id: string | number;
+  version: number;
+}) {
+  const client = await getClient();
+
+  await client.aOSPortalForumGroupMember.delete({id, version}).then(clone);
+}
+
+export async function joinGroup({
+  id,
+  version,
+  userId,
+}: {
+  id: string;
+  version: number;
+  userId: string;
+}) {
+  const client = await getClient();
+
+  await client.aOSPortalForumGroupMember
+    .create({
+      data: {
+        id,
+        version,
+        forumGroup: {
+          select: {
+            id,
+          },
+        },
+        member: {
+          select: {id: userId},
+        },
+      },
+    })
+    .then(clone);
+}
+
+export async function addNotificationsToGroup({
+  id,
+  version,
+  notificationType,
+}: {
+  id: string;
+  version: number;
+  notificationType: string;
+}) {
+  const client = await getClient();
+
+  await client.aOSPortalForumGroupMember
+    .create({
+      data: {
+        id,
+        version,
+        notificationSelect: notificationType,
+      },
+    })
+    .then(clone);
+}
