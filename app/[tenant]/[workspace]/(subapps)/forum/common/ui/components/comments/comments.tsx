@@ -111,12 +111,12 @@ export const Comments = ({
         className={`flex flex-col gap-4 ${usePopUpStyles ? 'h-full overflow-auto' : ''}`}>
         {Array.from({length: 1}).map((_, index) => {
           return (
-            <div className={`flex flex-col gap-4`}>
+            <div key={index} className={`flex flex-col gap-4`}>
               <Comment />
               {index === 0 &&
-                Array.from({length: 2}).map(() => {
+                Array.from({length: 2}).map((_, index) => {
                   return (
-                    <div className="ml-6">
+                    <div key={index} className="ml-6">
                       <Comment />
                     </div>
                   );

@@ -27,7 +27,7 @@ export const ThreadList = () => {
       </div>
       <div className="flex flex-col gap-4">
         {Array.from({length: 3}).map((_, index) => (
-          <React.Fragment>
+          <React.Fragment key={index}>
             <Thread index={index} />
           </React.Fragment>
         ))}
