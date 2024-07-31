@@ -429,12 +429,16 @@ export async function createStripeCheckoutSession({
     workspace,
   });
 
+  const payer = await findPartnerByEmail(user.email);
+
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
 
   const checkoutSession: Stripe.Checkout.Session =
     await stripe.checkout.sessions.create({
       mode: 'payment',
       submit_type: 'pay',
+      client_reference_id: payer?.id,
+      customer_email: payer?.emailAddress?.address,
       line_items: [
         {
           quantity: 1,
