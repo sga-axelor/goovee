@@ -89,6 +89,16 @@ export default function Header({
     router.push(value);
   };
 
+  let showTopNavigation = false;
+
+  if (subapps?.length) {
+    if (user) {
+      showTopNavigation = !hideTopNavigation;
+    } else {
+      showTopNavigation = true;
+    }
+  }
+
   return (
     <>
       <div className="bg-background text-foreground px-6 py-2 flex items-center border-b border-border border-solid">
@@ -120,7 +130,7 @@ export default function Header({
           <Account baseURL={workspaceURI} />
         </div>
       </div>
-      {!hideTopNavigation && subapps?.length ? (
+      {showTopNavigation ? (
         <div className="bg-background text-foreground px-6 py-4 hidden lg:flex items-center justify-between border-b border-border border-solid max-w-full gap-10">
           <div>
             {Boolean(workspaces?.length) && user && (
@@ -153,7 +163,7 @@ export default function Header({
                   <Fragment key={code}>
                     {i !== 0 && (
                       <Separator
-                        className="bg-success w-[2px] shrink-0 h-auto"
+                        className="bg-black w-[2px] shrink-0 h-auto"
                         orientation="vertical"
                       />
                     )}
