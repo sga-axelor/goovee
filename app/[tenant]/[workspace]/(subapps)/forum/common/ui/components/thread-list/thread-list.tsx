@@ -10,7 +10,7 @@ import {i18n} from '@/lib/i18n';
 import {THREAD_SORT_BY_OPTIONS} from '@/subapps/forum/common/constants';
 import {DropdownToggle, Thread} from '@/subapps/forum/common/ui/components';
 
-export const ThreadList = () => {
+export const ThreadList = ({posts}: {posts: any[]}) => {
   return (
     <div className="w-full flex flex-col gap-6">
       <div className="w-full flex gap-4 items-center">
@@ -26,9 +26,9 @@ export const ThreadList = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        {Array.from({length: 3}).map((_, index) => (
-          <React.Fragment key={index}>
-            <Thread index={index} />
+        {posts?.map(post => (
+          <React.Fragment key={post.id}>
+            <Thread post={post} />
           </React.Fragment>
         ))}
       </div>

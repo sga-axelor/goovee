@@ -11,20 +11,42 @@ import {
   Avatar,
   AvatarImage,
 } from '@/ui/components';
+import {getImageURL} from '@/utils/image';
+import {DATE_FORMATS} from '@/constants';
+import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {
+  COMMENT,
   COMMENTS,
   NOT_INTERESTED,
   REPORT,
 } from '@/subapps/forum/common/constants';
 import {ImageGallery} from '@/subapps/forum/common/ui/components';
 
+interface MetaFile {
+  fileType: string;
+}
+
+interface Attachment {
+  metaFile?: MetaFile;
+}
+
 export const ThreadBody = ({
-  index,
+  title,
+  content,
+  attachmentList,
+  author,
+  date,
+  comments,
   toggleComments,
 }: {
-  index?: any;
+  title: string;
+  content: string;
+  attachmentList?: Attachment[];
+  author: any;
+  date: string;
+  comments: any;
   toggleComments: () => void;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -32,17 +54,28 @@ export const ThreadBody = ({
     setIsExpanded(!isExpanded);
   };
 
+  const images =
+    attachmentList?.filter(attachment =>
+      attachment?.metaFile?.fileType.startsWith('image'),
+    ) || [];
+
+  const commentsLength = comments?.length;
+
   return (
     <>
       <div className="flex flex-col gap-6 px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Avatar className="rounded-full h-10 w-10 bg-blue-200">
-              {/* <AvatarImage src="/images/user.png" /> */}
+            <Avatar className="rounded-full h-10 w-10">
+              <AvatarImage src={getImageURL(author.picture.id)} />
             </Avatar>
             <div className="flex flex-col gap-2">
-              <div className="text-base font-semibold">Calvin Nitzsche</div>
-              <div className="text-xs">May 5th 2024</div>
+              <div className="text-base font-semibold">
+                {author.simpleFullName}
+              </div>
+              <div className="text-xs">
+                {parseDate(date, DATE_FORMATS.full_date)}
+              </div>
             </div>
           </div>
           <div></div>
@@ -59,22 +92,12 @@ export const ThreadBody = ({
           </Popover>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="text-lg font-semibold line-clamp-1">
-            Cross-platform 24/7 algorithm
-          </div>
-          <div className={`text-sm line-clamp-${isExpanded ? 0 : 3}`}>
-            Lorem ipsum dolor sit amet consectetur. Neque purus adipiscing sit
-            consequat neque. Risus rhoncus tortor pellentesque mattis. Ac
-            ullamcorper a pretium malesuada. Eu etiam suspendisse rutrum aliquet
-            condimentum laoreet suspendisse. Dapibus eget vulputate nec nulla
-            egestas cursus facilisis orci accumsan. Rhoncus aenean viverra
-            condimentum facilisi in faucibus. Sed diam pellentesque tellus
-            integer mattis libero. Dolor eget nunc egestas quam. Diam dignissim
-            fames aliquam in amet. Tincidunt at sed nibh senectus facilisis.
-            Feugiat tortor et turpis diam aliquam. Massa commodo malesuada eu
-            lacus maecenas. Lacus semper cras diam lobortis tellus aliquam et
-            nulla ac. Viverra tristique eget tellus volutpat.
-          </div>
+          <div className="text-lg font-semibold line-clamp-1">{title}</div>
+          <div
+            className={`text-sm line-clamp-${isExpanded ? 0 : 3}`}
+            dangerouslySetInnerHTML={{
+              __html: content || '',
+            }}></div>
           <div className="flex justify-end">
             <div
               className="text-gray-500 cursor-pointer flex items-center gap-2 justify-end w-fit"
@@ -86,15 +109,18 @@ export const ThreadBody = ({
             </div>
           </div>
         </div>
-        {index === 1 && <ImageGallery />}
+        {images?.length > 0 && <ImageGallery images={images} />}
         <div className="flex justify-between">
           <div></div>
           <div
-            className="flex gap-2 items-center cursor-pointer"
+            className={`flex gap-2 items-center ${commentsLength ? 'cursor-pointer' : 'cursor-default'} `}
             onClick={toggleComments}>
             <MdOutlineModeComment className="w-6 h-6" />
             <span className="text-sm">
-              56 {i18n.get(COMMENTS.toLowerCase())}
+              {commentsLength}{' '}
+              {commentsLength > 1
+                ? i18n.get(COMMENTS.toLowerCase())
+                : i18n.get(COMMENT.toLowerCase())}
             </span>
           </div>
         </div>

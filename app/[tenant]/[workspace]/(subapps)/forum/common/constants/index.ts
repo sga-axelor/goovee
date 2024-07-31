@@ -13,7 +13,6 @@ export const PIN = 'Pin';
 export const NOTIFICATIONS = 'Notifications';
 export const LEAVE_THIS_GROUP = 'Leave this group';
 export const ASK_TO_JOIN = 'Ask to join the group';
-export const GROUP_NAME = 'Group name';
 export const START_A_POST = 'Start a post';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';

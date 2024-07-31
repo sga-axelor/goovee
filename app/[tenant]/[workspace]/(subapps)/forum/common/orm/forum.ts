@@ -36,3 +36,61 @@ export async function findGroupByMembers({
   });
   return groups;
 }
+
+export async function findPosts() {
+  const client = await getClient();
+
+  const posts = await client.aOSPortalForumPost.find({
+    select: {
+      title: true,
+      forumGroup: {
+        name: true,
+        image: true,
+      },
+      content: true,
+      attachmentList: {
+        select: {
+          metaFile: {
+            fileType: true,
+          },
+        },
+      },
+      author: {
+        simpleFullName: true,
+        picture: true,
+      },
+      createdOn: true,
+      commentList: {
+        select: {
+          id: true,
+          contentComment: true,
+          publicationDateTime: true,
+          author: {
+            id: true,
+            name: true,
+          },
+          image: {
+            id: true,
+          },
+          // TODO: Make it recursive. level 3
+          childCommentList: {
+            select: {
+              childCommentList: true,
+              contentComment: true,
+              publicationDateTime: true,
+              author: {
+                id: true,
+                name: true,
+              },
+              image: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return posts;
+}

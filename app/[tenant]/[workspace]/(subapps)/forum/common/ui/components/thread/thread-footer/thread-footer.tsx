@@ -14,11 +14,13 @@ import {
 import {Comments} from '@/subapps/forum/common/ui/components';
 
 export const ThreadFooter = ({
+  comments,
   showComments,
   hideCloseComments = false,
   usePopUpStyles = false,
   toggleComments,
 }: {
+  comments: any;
   showComments: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
@@ -45,6 +47,7 @@ export const ThreadFooter = ({
       </div>
       {showComments && (
         <Comments
+          comments={comments}
           usePopUpStyles={usePopUpStyles}
           hideCloseComments={hideCloseComments}
           toggleComments={toggleComments}

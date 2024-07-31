@@ -3,10 +3,10 @@
 // ---- LOCAL IMPORTS ---- //
 import {ThreadList} from '@/subapps/forum/common/ui/components';
 
-export const PostsContent = () => {
+export const PostsContent = ({posts}: {posts: any}) => {
   return (
     <div className="w-full mt-6">
-      <ThreadList />
+      <ThreadList posts={posts} />
     </div>
   );
 };

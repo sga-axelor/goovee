@@ -7,6 +7,11 @@
     {
       "name": "name",
       "type": "String"
+    },
+    {
+      "name": "image",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
     }
   ]
 }

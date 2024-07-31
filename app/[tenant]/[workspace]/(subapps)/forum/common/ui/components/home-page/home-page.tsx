@@ -35,10 +35,12 @@ export const HomePage = ({
   memberGroups,
   nonMemberGroups,
   userId,
+  posts,
 }: {
   memberGroups: any;
   nonMemberGroups: any;
   userId: string;
+  posts: any;
 }) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -109,7 +111,12 @@ export const HomePage = ({
               <MdOutlineImage className="h-6 w-6" />
             </Button>
           </div>
-          <Tabs tabs={TAB_TITLES} onClick={handleTabClick} activeTab={type} />
+          <Tabs
+            tabs={TAB_TITLES}
+            onClick={handleTabClick}
+            activeTab={type}
+            posts={posts}
+          />
         </div>
       </div>
     </div>

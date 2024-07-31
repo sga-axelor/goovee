@@ -3,7 +3,7 @@ import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import {findGroupByMembers} from '@/subapps/forum/common/orm/forum';
+import {findGroupByMembers, findPosts} from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 
 export default async function Page() {
@@ -21,11 +21,14 @@ export default async function Page() {
     isMember: false,
   }).then(clone);
 
+  const posts = await findPosts().then(clone);
+
   return (
     <Content
       memberGroups={memberGroups}
       nonMemberGroups={nonMemberGroups}
       userId={userId}
+      posts={posts}
     />
   );
 }
