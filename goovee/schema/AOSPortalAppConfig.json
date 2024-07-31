@@ -86,6 +86,16 @@
     {
       "type": "Boolean",
       "name": "requestQuotation"
+    },
+    {
+      "type": "Boolean",
+      "name": "allowOnlinePaymentForEcommerce"
+    },
+
+    {
+      "type": "ManyToMany",
+      "name": "paymentOptionSet",
+      "target": "AOSPortalPaymentConfig"
     }
   ]
 }

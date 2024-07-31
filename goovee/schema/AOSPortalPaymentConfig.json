@@ -1,0 +1,16 @@
+{
+  "name": "AOSPortalPaymentConfig",
+  "table": "portal_portal_payment_config",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "String",
+      "name": "typeSelect"
+    }
+  ]
+}

@@ -571,6 +571,16 @@ export default function Content({
     return <p>{i18n.get('Loading')}...</p>;
   }
 
+  const confirmOrder = workspace?.config?.confirmOrder;
+  const allowOnlinePayment = workspace?.config?.allowOnlinePaymentForEcommerce;
+  const paymentOptionSet = workspace?.config?.paymentOptionSet;
+
+  const allowPayment = (type: 'paypal' | 'stripe') =>
+    paymentOptionSet?.find((o: any) => o?.typeSelect === type);
+
+  const allowPaypal = allowPayment('paypal');
+  const allowStripe = allowPayment('stripe');
+
   return (
     <>
       <h4 className="mb-6 text-xl font-medium">{i18n.get('Confirm Cart')}</h4>
@@ -593,8 +603,12 @@ export default function Content({
               workspace={workspace}
             />
             <div className="flex flex-col gap-2">
-              <Paypal onApprove={redirectOrder} />
-              <Stripe onApprove={redirectOrder} />
+              {confirmOrder && allowOnlinePayment ? (
+                <>
+                  {allowPaypal && <Paypal onApprove={redirectOrder} />}
+                  {allowStripe && <Stripe onApprove={redirectOrder} />}
+                </>
+              ) : null}
             </div>
           </div>
         </div>

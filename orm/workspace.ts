@@ -31,6 +31,8 @@ const portalAppConfigFields = {
   confirmOrder: true,
   requestQuotation: true,
   priceAfterLogin: true,
+  paymentOptionSet: true,
+  allowOnlinePaymentForEcommerce: true,
 };
 
 export async function findContactWorkspaceConfig({

@@ -18,7 +18,7 @@ import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
 import {stripe} from '@/lib/stripe';
 import {i18n} from '@/lib/i18n';
-import type {ID} from '@/types';
+import {PaymentOption, type ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
@@ -236,6 +236,31 @@ export async function paypalCaptureOrder({
     };
   }
 
+  if (!workspace?.config?.confirmOrder) {
+    return {
+      error: true,
+      message: i18n.get('Not allowed'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return {
+      error: true,
+      message: i18n.get('Online payment is not available'),
+    };
+  }
+
+  const allowPaypal = workspace?.config?.paymentOptionSet?.find(
+    (o: any) => o?.typeSelect === PaymentOption.paypal,
+  );
+
+  if (!allowPaypal) {
+    return {
+      error: true,
+      message: i18n.get('Paypal is not available'),
+    };
+  }
+
   const PaypalClient = paypalhttpclient();
 
   const request = new paypal.orders.OrdersCaptureRequest(orderId);
@@ -324,6 +349,31 @@ export async function paypalCreateOrder({
     return {
       error: true,
       message: i18n.get('Unauthorized'),
+    };
+  }
+
+  if (!workspace?.config?.confirmOrder) {
+    return {
+      error: true,
+      message: i18n.get('Not allowed'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return {
+      error: true,
+      message: i18n.get('Online payment is not available'),
+    };
+  }
+
+  const allowPaypal = workspace?.config?.paymentOptionSet?.find(
+    (o: any) => o?.typeSelect === PaymentOption.paypal,
+  );
+
+  if (!allowPaypal) {
+    return {
+      error: true,
+      message: i18n.get('Paypal is not available'),
     };
   }
 
@@ -424,6 +474,31 @@ export async function createStripeCheckoutSession({
     };
   }
 
+  if (!workspace?.config?.confirmOrder) {
+    return {
+      error: true,
+      message: i18n.get('Not allowed'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return {
+      error: true,
+      message: i18n.get('Online payment is not available'),
+    };
+  }
+
+  const allowStripe = workspace?.config?.paymentOptionSet?.find(
+    (o: any) => o?.typeSelect === PaymentOption.stripe,
+  );
+
+  if (!allowStripe) {
+    return {
+      error: true,
+      message: i18n.get('Stripe is not available'),
+    };
+  }
+
   const {total, currency} = computeTotal({
     cart,
     workspace,
@@ -520,6 +595,31 @@ export async function validateStripePayment({
     return {
       error: true,
       message: i18n.get('Unauthorized'),
+    };
+  }
+
+  if (!workspace?.config?.confirmOrder) {
+    return {
+      error: true,
+      message: i18n.get('Not allowed'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return {
+      error: true,
+      message: i18n.get('Online payment is not available'),
+    };
+  }
+
+  const allowStripe = workspace?.config?.paymentOptionSet?.find(
+    (o: any) => o?.typeSelect === PaymentOption.stripe,
+  );
+
+  if (!allowStripe) {
+    return {
+      error: true,
+      message: i18n.get('Stripe is not available'),
     };
   }
 

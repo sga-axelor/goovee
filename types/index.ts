@@ -43,6 +43,7 @@ export interface PortalAppConfig extends Model {
   payInAdvance: boolean;
   priceAfterLogin: string;
   requestQuotation: boolean;
+  paymentOptionSet?: Array<{}>;
 }
 
 export interface PortalApp extends Model {
@@ -182,3 +183,8 @@ export type Comment = {
   contentComment: string;
   publicationDateTime: Date;
 };
+
+export enum PaymentOption {
+  paypal,
+  stripe,
+}
