@@ -17,6 +17,7 @@ import paypalhttpclient from '@/lib/paypal';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
 import {stripe} from '@/lib/stripe';
+import {i18n} from '@/lib/i18n';
 import type {ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -281,21 +282,21 @@ export async function paypalCreateOrder({
   if (!session) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: i18n.get('Unauthorized'),
     };
   }
 
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: 'Bad request',
+      message: i18n.get('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: 'Bad request',
+      message: i18n.get('Bad request'),
     };
   }
 
@@ -309,7 +310,7 @@ export async function paypalCreateOrder({
   if (!workspace) {
     return {
       error: true,
-      message: 'Invalid workspace',
+      message: i18n.get('Invalid workspace'),
     };
   }
 
@@ -322,7 +323,7 @@ export async function paypalCreateOrder({
   if (!hasShopAccess) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: i18n.get('Unauthorized'),
     };
   }
 
@@ -330,6 +331,8 @@ export async function paypalCreateOrder({
     cart,
     workspace,
   });
+
+  const payer = await findPartnerByEmail(user?.email);
 
   const PaypalClient = paypalhttpclient();
 
@@ -357,7 +360,7 @@ export async function paypalCreateOrder({
   if (response.statusCode !== 201) {
     return {
       error: true,
-      message: 'Error processing payment. Try again',
+      message: i18n.get('Error processing payment. Try again'),
     };
   }
 
@@ -376,21 +379,21 @@ export async function createStripeCheckoutSession({
   if (!session) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: i18n.get('Unauthorized'),
     };
   }
 
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: 'Bad request',
+      message: i18n.get('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: 'Bad request',
+      message: i18n.get('Bad request'),
     };
   }
 
@@ -404,7 +407,7 @@ export async function createStripeCheckoutSession({
   if (!workspace) {
     return {
       error: true,
-      message: 'Invalid workspace',
+      message: i18n.get('Invalid workspace'),
     };
   }
 
@@ -417,7 +420,7 @@ export async function createStripeCheckoutSession({
   if (!hasShopAccess) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: i18n.get('Unauthorized'),
     };
   }
 
@@ -471,21 +474,21 @@ export async function validateStripePayment({
   if (!session) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: i18n.get('Unauthorized'),
     };
   }
 
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: 'Bad request',
+      message: i18n.get('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: 'Bad request',
+      message: i18n.get('Bad request'),
     };
   }
 
@@ -499,7 +502,7 @@ export async function validateStripePayment({
   if (!workspace) {
     return {
       error: true,
-      message: 'Invalid workspace',
+      message: i18n.get('Invalid workspace'),
     };
   }
 
@@ -512,14 +515,14 @@ export async function validateStripePayment({
   if (!hasShopAccess) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: i18n.get('Unauthorized'),
     };
   }
 
   if (!stripeSessionId) {
     return {
       error: true,
-      message: 'Bad Request',
+      message: i18n.get('Bad Request'),
     };
   }
 
@@ -529,7 +532,7 @@ export async function validateStripePayment({
   if (!stripeSession) {
     return {
       error: true,
-      message: 'Invalid stripe session',
+      message: i18n.get('Invalid stripe session'),
     };
   }
 
@@ -541,7 +544,7 @@ export async function validateStripePayment({
   ) {
     return {
       error: true,
-      message: 'Payment not successfull',
+      message: i18n.get('Payment not successfull'),
     };
   }
 
@@ -551,7 +554,7 @@ export async function validateStripePayment({
   if (!lineItems) {
     return {
       error: true,
-      message: 'Payment not successfull',
+      message: i18n.get('Payment not successfull'),
     };
   }
 
@@ -568,7 +571,7 @@ export async function validateStripePayment({
   if (stripeTotal && cartTotal && stripeTotal !== cartTotal) {
     return {
       error: true,
-      message: 'Payment amount mistmatch',
+      message: i18n.get('Payment amount mistmatch'),
     };
   }
 
