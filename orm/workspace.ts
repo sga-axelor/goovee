@@ -31,7 +31,12 @@ const portalAppConfigFields = {
   confirmOrder: true,
   requestQuotation: true,
   priceAfterLogin: true,
-  paymentOptionSet: true,
+  paymentOptionSet: {
+    select: {
+      name: true,
+      typeSelect: true,
+    },
+  },
   allowOnlinePaymentForEcommerce: true,
 };
 

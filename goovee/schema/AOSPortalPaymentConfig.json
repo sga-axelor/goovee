@@ -11,6 +11,11 @@
     {
       "type": "String",
       "name": "typeSelect"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "portalAppConfigSet",
+      "target": "AOSPortalAppConfig"
     }
   ]
 }
