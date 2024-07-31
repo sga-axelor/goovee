@@ -22,6 +22,7 @@ import type {ID} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {formatAmountForStripe} from '@/subapps/shop/common/utils';
+import {findPartnerByEmail} from '@/orm/partner';
 
 export async function findInvoicingAddress() {
   const session = await getSession();
@@ -338,6 +339,9 @@ export async function paypalCreateOrder({
 
   request.requestBody({
     intent: 'CAPTURE',
+    payer: {
+      email_address: payer?.emailAddress?.address,
+    } as any,
     purchase_units: [
       {
         amount: {

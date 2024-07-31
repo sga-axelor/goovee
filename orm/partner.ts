@@ -18,6 +18,7 @@ export async function findPartnerByEmail(email: string) {
         },
       },
       select: {
+        firstName: true,
         fullName: true,
         isContact: true,
         password: true,
