@@ -1,5 +1,6 @@
 'use client';
 
+import {useState} from 'react';
 import {
   MdClose,
   MdAdd,
@@ -8,6 +9,7 @@ import {
   MdFavoriteBorder,
   MdOutlineMoreHoriz,
 } from 'react-icons/md';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -17,6 +19,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Input,
 } from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 import {parseDate} from '@/utils/date';
@@ -24,19 +27,31 @@ import {DATE_FORMATS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
+  COMMENT,
+  COMMENTS,
+  DISABLED_COMMENT_PLACEHOLDER,
   NOT_INTERESTED,
   REPORT,
   THREAD_SORT_BY_OPTIONS,
 } from '@/subapps/forum/common/constants';
 import {DropdownToggle} from '@/subapps/forum/common/ui/components';
-
-// ---- LOCAL IMPORTS ---- //
 import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
 
 const Comment = ({comment}: {comment?: any}) => {
   if (!comment) return null;
-
   const {author, publicationDateTime, contentComment} = comment;
+
+  const [showSubComments, setShowSubComments] = useState(false);
+
+  const {data: session} = useSession();
+  const isLoggedIn = session?.user?.id;
+
+  const commentsLength = comment.childCommentList?.length ?? 0;
+
+  const handleSubComments = () => {
+    setShowSubComments(prev => !prev);
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2 justify-between items-center">
@@ -75,12 +90,30 @@ const Comment = ({comment}: {comment?: any}) => {
               <MdFavoriteBorder className=" cursor-pointer" />
             </div>
           </div>
-          <div>
+          <div
+            className={`flex gap-2 items-center ${commentsLength ? 'cursor-pointer' : 'cursor-default'} `}
+            onClick={handleSubComments}>
             <MdOutlineModeComment className="w-4 h-4" />
+            <span className="text-sm">
+              {commentsLength}{' '}
+              {commentsLength > 1
+                ? i18n.get(COMMENTS.toLowerCase())
+                : i18n.get(COMMENT.toLowerCase())}
+            </span>
           </div>
         </div>
+        <Input
+          disabled={!isLoggedIn}
+          className={`my-2 placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+          placeholder={
+            isLoggedIn
+              ? i18n.get(COMMENT)
+              : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
+          }
+        />
       </div>
-      {comment.childCommentList?.length > 0 &&
+      {showSubComments &&
+        commentsLength > 0 &&
         comment.childCommentList.map((childComment: any) => (
           <div key={childComment.id} className="ml-6">
             <Comment comment={childComment} />

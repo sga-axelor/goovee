@@ -8,12 +8,14 @@ import {
   HeroSearch,
   Search as BannerSearch,
   Avatar,
+  AvatarImage,
   Input,
   Button,
 } from '@/ui/components';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
+import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -34,12 +36,12 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 export const HomePage = ({
   memberGroups,
   nonMemberGroups,
-  userId,
+  user,
   posts,
 }: {
   memberGroups: any;
   nonMemberGroups: any;
-  userId: string;
+  user: string;
   posts: any;
 }) => {
   const router = useRouter();
@@ -48,7 +50,8 @@ export const HomePage = ({
   const {searchParams} = useSearchParams();
   const type = searchParams.get('type') ?? 'posts';
 
-  const isLoggedIn = true;
+  const {id, picture}: any = user || {};
+  const isLoggedIn = id;
 
   const renderSearch = () => (
     <BannerSearch
@@ -86,14 +89,14 @@ export const HomePage = ({
             title={NOT_MEMBER}
             groups={nonMemberGroups}
             isMember={false}
-            userId={userId}
+            userId={id}
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
           <div className="bg-white px-4 pt-4 pb-1 rounded-t-lg flex items-center gap-[10px]">
             <Avatar
-              className={`rounded-full h-8 w-8 ${isLoggedIn ? 'bg-red-400' : 'bg-black/20'}`}>
-              {/*{isLoggedIn && <AvatarImage src="/images/user.png" />} */}
+              className={`rounded-full h-8 w-8 ${isLoggedIn ? '' : 'bg-black/20'}`}>
+              {isLoggedIn && <AvatarImage src={getImageURL(picture?.id)} />}
             </Avatar>
             <Input
               disabled={!isLoggedIn}

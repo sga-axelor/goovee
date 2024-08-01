@@ -13,12 +13,12 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 const Content = ({
   memberGroups,
   nonMemberGroups,
-  userId,
+  user,
   posts,
 }: {
   memberGroups: any;
   nonMemberGroups: any;
-  userId: any;
+  user: any;
   posts: any;
 }) => {
   const router = useRouter();
@@ -36,7 +36,7 @@ const Content = ({
       <HomePage
         memberGroups={memberGroups}
         nonMemberGroups={nonMemberGroups}
-        userId={userId}
+        user={user}
         posts={posts}
       />
     </div>

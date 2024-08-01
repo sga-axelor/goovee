@@ -1,6 +1,7 @@
 'use client';
 
 import {MdOutlineThumbUp} from 'react-icons/md';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
@@ -18,15 +19,19 @@ export const ThreadFooter = ({
   showComments,
   hideCloseComments = false,
   usePopUpStyles = false,
+
   toggleComments,
 }: {
   comments: any;
   showComments: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
+
   toggleComments: () => void;
 }) => {
-  const isLoggedIn = true;
+  const {data: session} = useSession();
+
+  const isLoggedIn = session?.user?.id;
 
   return (
     <div className="border-t">

@@ -37,6 +37,23 @@ export async function findGroupByMembers({
   return groups;
 }
 
+export async function findUser({userId}: {userId: any}) {
+  if (!userId) {
+    return {};
+  }
+  const client = await getClient();
+
+  const user = await client.aOSPartner.findOne({
+    where: {
+      id: userId,
+    },
+    select: {
+      picture: true,
+    },
+  });
+  return user;
+}
+
 export async function findPosts() {
   const client = await getClient();
 
