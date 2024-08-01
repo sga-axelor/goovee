@@ -185,6 +185,6 @@ export type Comment = {
 };
 
 export enum PaymentOption {
-  paypal,
-  stripe,
+  paypal = 'paypal',
+  stripe = 'stripe',
 }

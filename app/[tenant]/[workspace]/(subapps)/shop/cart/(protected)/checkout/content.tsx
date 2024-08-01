@@ -31,7 +31,7 @@ import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import type {PortalWorkspace} from '@/types';
+import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
@@ -578,8 +578,8 @@ export default function Content({
   const allowPayment = (type: 'paypal' | 'stripe') =>
     paymentOptionSet?.find((o: any) => o?.typeSelect === type);
 
-  const allowPaypal = allowPayment('paypal');
-  const allowStripe = allowPayment('stripe');
+  const allowPaypal = allowPayment(PaymentOption.paypal);
+  const allowStripe = allowPayment(PaymentOption.stripe);
 
   return (
     <>
