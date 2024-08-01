@@ -6,7 +6,7 @@ import {i18n} from '@/lib/i18n';
 import {RadioGroup, RadioGroupItem, Separator} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {NOTIFICATIONS_OPTION} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
+import {NOTIFICATIONS_OPTIONS} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 
 export const GroupNotification = () => {
   const [selectedOption, setSelectedOption] = useState('');
@@ -26,12 +26,12 @@ export const GroupNotification = () => {
         <RadioGroup
           className="grid grid-cols-4 text-center"
           onValueChange={handleChange}>
-          {NOTIFICATIONS_OPTION.map(item => (
+          {NOTIFICATIONS_OPTIONS.map(item => (
             <div key={item.id} className="flex items-center justify-center">
               <RadioGroupItem
                 value={item.title}
-                id={item.id}
-                className={`border-muted-foreground   ${selectedOption === item.title ? ' border-success text-success' : 'border text-white'}`}
+                id={item.title}
+                className={`border-muted-foreground ${selectedOption === item.title ? ' border-success text-success' : 'border text-white'}`}
               />
             </div>
           ))}

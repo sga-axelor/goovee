@@ -1,5 +1,6 @@
 'use client';
 
+import {useRouter} from 'next/navigation';
 import {
   MdOutlinePushPin,
   MdMoreVert,
@@ -8,7 +9,6 @@ import {
   MdExitToApp,
   MdOutlineGroupAdd,
 } from 'react-icons/md';
-import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -46,12 +46,14 @@ export const GroupActionList = ({
   title,
   groups,
   isMember = true,
-  userId,
+  userId = '',
+  groupId,
 }: {
   title: string;
   groups: any;
   isMember?: boolean;
   userId?: string;
+  groupId?: string;
 }) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -84,6 +86,9 @@ export const GroupActionList = ({
     router.push(`${workspaceURI}/forum`);
   };
 
+  const handlePath = (id: number) => {
+    router.push(`${workspaceURI}/forum/group/${id}`, {scroll: false});
+  };
   return (
     <div>
       <h1 className="font-semibold text-base leading-6 mb-6">
@@ -92,8 +97,11 @@ export const GroupActionList = ({
       <div className="flex flex-col gap-4">
         {groups?.map((group: any) => (
           <Collapsible key={group.id}>
-            <div className="w-full flex-shrink-0 flex justify-between items-center gap-2">
-              <div className="flex items-center gap-2">
+            <div
+              className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${group.id === groupId ? 'bg-success-light' : ' '}`}>
+              <div
+                onClick={() => handlePath(group.id)}
+                className="flex items-center gap-2">
                 <Avatar className="rounded-lg h-6 w-6 bg-red-400">
                   {/* <AvatarImage src="/images/user.png" /> */}
                 </Avatar>

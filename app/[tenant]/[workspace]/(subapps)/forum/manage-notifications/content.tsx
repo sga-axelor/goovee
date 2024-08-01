@@ -16,7 +16,7 @@ import {
 import {
   GROUP_SORT_BY,
   MENU,
-  NOTIFICATIONS_OPTION,
+  NOTIFICATIONS_OPTIONS,
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {
   Search,
@@ -75,7 +75,7 @@ const Content = () => {
           <div className="grid grid-cols-[1fr_4fr]  ">
             <h2 className="text-xl font-semibold">{i18n.get('Groups')}</h2>
             <div className="grid grid-cols-4 text-center text-sm font-normal">
-              {NOTIFICATIONS_OPTION.map(item => (
+              {NOTIFICATIONS_OPTIONS.map(item => (
                 <span key={item.id}>{item.title}</span>
               ))}
             </div>

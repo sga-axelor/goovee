@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React from 'react';
 import {cva, type VariantProps} from 'class-variance-authority';
 import {cn} from '@/utils/css';
@@ -61,6 +62,7 @@ const bannerVariants = cva(
 export type BannerVariants = typeof bannerVariants;
 
 export const Banner = ({
+  groupImg,
   title,
   description,
   image,
@@ -69,6 +71,7 @@ export const Banner = ({
   blendMode,
   background,
 }: {
+  groupImg?: string;
   title: string;
   description: string;
   image?: any;
@@ -80,11 +83,22 @@ export const Banner = ({
       className={cn(className, bannerVariants({blendMode, background}))}
       style={{backgroundImage: image}}>
       <div className="px-4 flex text-white items-center flex-col justify-center">
+        {groupImg && (
+          <div className="w-20 h-20 overflow-hidden rounded-lg relative mb-4">
+            <Image
+              fill
+              src={groupImg}
+              alt={'Group Image'}
+              className="rounded-lg"
+              objectFit="cover"
+            />
+          </div>
+        )}
         <h2 className="lg:text-[32px] text-2xl font-semibold mb-2">{title}</h2>
         <p className="lg:text-lg text-base font-medium mb-8 md:max-w-screen-sm lg:max-w-screen-md text-center">
           {description}
         </p>
-        {renderSearch()}
+        {renderSearch && renderSearch()}
       </div>
     </div>
   );

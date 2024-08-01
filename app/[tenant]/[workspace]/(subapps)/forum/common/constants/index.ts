@@ -36,13 +36,6 @@ export const GROUP_SORT_BY = [
   },
 ];
 
-export const NOTIFICATIONS_OPTION = [
-  {id: 'all', title: 'All new posts and new comments'},
-  {id: 'all-my-posts', title: 'All new posts and new comments on my posts'},
-  {id: 'comments-my-posts', title: 'Only new comments on my posts'},
-  {id: 'no-notifications', title: 'No notifications'},
-];
-
 export const MENU = [
   {id: 1, name: 'Homepage', link: ''},
   {id: 2, name: 'Forum notifications', link: '/manage-notifications'},
@@ -106,3 +99,9 @@ export const NOTIFICATIONS_OPTIONS = [
     value: 'none',
   },
 ];
+
+export const GROUP = {
+  name: 'Group name',
+  desc: 'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam',
+  image: '/images/group-img.png',
+};
