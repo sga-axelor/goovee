@@ -92,6 +92,12 @@
       "name": "paymentOptionSet",
       "target": "AOSPortalPaymentConfig",
       "mappedBy": "portalAppConfigSet"
+    },
+    {
+      "type": "OneToMany",
+      "name": "carouselList",
+      "target": "AOSPortalCarousel",
+      "mappedBy": "portalAppConfig"
     }
   ]
 }

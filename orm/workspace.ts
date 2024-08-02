@@ -38,6 +38,14 @@ const portalAppConfigFields = {
     },
   },
   allowOnlinePaymentForEcommerce: true,
+  carouselList: {
+    select: {
+      title: true,
+      subTitle: true,
+      href: true,
+      image: true,
+    },
+  },
 };
 
 export async function findContactWorkspaceConfig({

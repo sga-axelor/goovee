@@ -6,6 +6,8 @@ import {useRouter} from 'next/navigation';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 
+import {Button} from '@/ui/components';
+import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {Categories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components/categories';
@@ -66,44 +68,51 @@ export function FeaturedCategories({
     );
   };
 
+  const carouselList = workspace?.config?.carouselList;
+
   return (
     <div>
       <Categories items={categories} onClick={handleCategoryClick} />
-      <Swiper
-        modules={[Pagination]}
-        pagination={{
-          type: 'bullets',
-          clickable: true,
-          bulletActiveClass: '[&>div]:bg-black',
-          horizontalClass: '!bottom-[4.375rem]',
-          renderBullet: (index, className) =>
-            `<div class="${className} h-3 w-3 rounded-full bg-transparent border border-black inline-flex items-center justify-center">
+      {carouselList?.length ? (
+        <Swiper
+          modules={[Pagination]}
+          pagination={{
+            type: 'bullets',
+            clickable: true,
+            bulletActiveClass: '[&>div]:bg-black',
+            horizontalClass: '!bottom-[4.375rem]',
+            renderBullet: (index, className) =>
+              `<div class="${className} h-3 w-3 rounded-full bg-transparent border border-black inline-flex items-center justify-center">
               <div class="h-2 w-2 rounded-full"></div>
             </div>`,
-        }}>
-        {[{src: '/images/bg.jpg'}, {src: '/images/bg-2.jpeg'}].map(
-          (image, i) => {
+          }}>
+          {carouselList.map((item, i) => {
             return (
               <SwiperSlide key={i} className="max-w-full">
                 <div
                   className="flex items-center relative bg-center bg-no-repeat bg-cover h-[750px] p-4 md:p-20"
-                  style={{backgroundImage: `url(${image.src})`}}>
+                  style={{
+                    backgroundImage: `url("${getImageURL(item?.image?.id)}")`,
+                  }}>
                   <div className="absolute top-0 left-0 w-full h-full bg-black/[.15]" />
                   <div className="space-y-10 md:w-1/2">
-                    <h2 className="font-medium text-4xl">
-                      Lorem ipsum dolor sit amet
-                    </h2>
-                    <p className="text-xl">
-                      Lorem ipsum dolor sit amet consectetur. Fermentum aliquam
-                      ipsum neque cras non velit malesuada
-                    </p>
+                    <h2 className="font-medium text-4xl">{item.title}</h2>
+                    <p className="text-xl">{item.subTitle}</p>
+                    <Button className="relative z-10" asChild>
+                      <a
+                        href={item.href || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        {i18n.get(item?.buttonLabel || 'Shop products')}
+                      </a>
+                    </Button>
                   </div>
                 </div>
               </SwiperSlide>
             );
-          },
-        )}
-      </Swiper>
+          })}
+        </Swiper>
+      ) : null}
       <div className="container flex flex-col gap-6 mx-auto px-2 mb-4">
         {featuredCategories.map(category =>
           category?.products?.length ? (

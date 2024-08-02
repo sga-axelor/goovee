@@ -44,6 +44,13 @@ export interface PortalAppConfig extends Model {
   priceAfterLogin: string;
   requestQuotation: boolean;
   paymentOptionSet?: Array<{}>;
+  carouselList?: Array<{
+    title?: string;
+    subTitle?: string;
+    href?: string;
+    image?: {id: ID};
+    buttonLabel?: string;
+  }>;
 }
 
 export interface PortalApp extends Model {
