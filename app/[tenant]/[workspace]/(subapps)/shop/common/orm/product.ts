@@ -277,8 +277,8 @@ export async function findProducts({
       const unitScale = getScale().unit;
 
       if (ws) {
-        const $wt = wsProduct?.price?.wt;
-        const $ati = wsProduct?.price?.ati;
+        const $wt = wsProduct?.price?.discountedWT;
+        const $ati = wsProduct?.price?.discountedATI;
         ati = Number($ati || 0);
         wt = Number($wt || 0);
       } else {
