@@ -52,6 +52,7 @@ export const SELECT_A_GROUP = 'Select a group';
 export const ENTER_TITLE = 'Enter Title';
 export const MANAGE_NOTIFICATIONS = 'Manage notifications';
 export const SORT_BY = 'Sort By';
+
 export const GROUP_SORT_BY = [
   {
     id: 'ASC',

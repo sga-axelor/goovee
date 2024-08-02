@@ -26,6 +26,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   CHOOSE_GROUP,
   CONTENT,
+  FORUM_GROUP,
   PUBLISH,
   TITLE,
 } from '@/subapps/forum/common/constants';
