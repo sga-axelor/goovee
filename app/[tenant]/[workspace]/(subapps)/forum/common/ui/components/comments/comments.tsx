@@ -38,13 +38,13 @@ import {DropdownToggle} from '@/subapps/forum/common/ui/components';
 import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
 
 const Comment = ({comment}: {comment?: any}) => {
-  if (!comment) return null;
-  const {author, publicationDateTime, contentComment} = comment;
-
   const [showSubComments, setShowSubComments] = useState(false);
 
   const {data: session} = useSession();
   const isLoggedIn = session?.user?.id;
+
+  if (!comment) return null;
+  const {author, publicationDateTime, contentComment} = comment;
 
   const commentsLength = comment.childCommentList?.length ?? 0;
 
