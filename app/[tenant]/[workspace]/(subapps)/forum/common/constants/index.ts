@@ -1,7 +1,20 @@
 import {MdOutlineArticle, MdOutlinePermMedia} from 'react-icons/md';
+import {
+  CiTextAlignCenter,
+  CiTextAlignJustify,
+  CiTextAlignLeft,
+  CiTextAlignRight,
+} from 'react-icons/ci';
 
 // ---- LOCAL IMPORTS ---- //
-import {MediaContent, PostsContent} from '@/subapps/forum/common/ui/components';
+import type {
+  Level,
+  MediaContentProps,
+  PostsContentProps,
+  Tab,
+} from '@/subapps/forum/common/types/forum';
+import {PostsContent} from '@/subapps/forum/common/ui/components/posts-content/posts-content';
+import {MediaContent} from '@/subapps/forum/common/ui/components/media-content/media-content';
 
 export const GROUPS = 'Groups';
 export const MEMBER = 'Member';
@@ -14,12 +27,29 @@ export const NOTIFICATIONS = 'Notifications';
 export const LEAVE_THIS_GROUP = 'Leave this group';
 export const ASK_TO_JOIN = 'Ask to join the group';
 export const START_A_POST = 'Start a post';
+export const TITLE = 'Title';
+export const CHOOSE_GROUP = 'Chose in which group you want to post';
+export const CONTENT = 'Content';
+export const PUBLISH = 'Publish';
+export const MAKE_A_NEW_POST = 'Make a new post';
+export const CLICK_HERE_DRAG_DROP =
+  'Click here to select your image or drag & drop';
+export const CLICK_HERE_DRAG_DROP_FILE =
+  'Click here to select your file or drag & drop';
+export const SUPPORTED_FILE_JPG_PNG = 'Supported format: jpg,png..';
+export const SUPPORTED_FILE_PDF_DOC = 'Supported format: pdf, doc, xlsx';
+export const ALERTNATE_TEXT = 'Alternate Text';
+export const OUT_OF = 'out of';
+export const UPLOAD = 'Upload';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
 export const DISABLED_COMMENT_PLACEHOLDER =
   'You need to log in to comment posts';
 export const REPORT = 'Report';
 export const NOT_INTERESTED = 'Not interested';
+export const FILE_TITLE = 'File Title';
+export const SELECT_A_GROUP = 'Select a group';
+export const ENTER_TITLE = 'Enter Title';
 
 export const GROUP_SORT_BY = [
   {
@@ -42,7 +72,9 @@ export const MENU = [
   {id: 3, name: 'My profile', link: '/profile'},
 ];
 
-export const TAB_TITLES = [
+export const TAB_TITLES: Array<
+  Tab<PostsContentProps> | Tab<MediaContentProps>
+> = [
   {
     id: 1,
     key: 'posts',
@@ -57,6 +89,33 @@ export const TAB_TITLES = [
     icon: MdOutlinePermMedia,
     component: MediaContent,
   },
+];
+
+export const FORUM_GROUP = [
+  {
+    id: 1,
+    name: 'Group 1',
+    img: '/images/group-1.png',
+  },
+  {
+    id: 2,
+    name: 'Group 2',
+    img: '/images/group-1.png',
+  },
+  {
+    id: 3,
+    name: 'Group 3',
+    img: '/images/group-1.png',
+  },
+];
+
+export const HEADING_LEVEL: Level[] = [1, 2, 3, 4, 5, 6];
+
+export const TEXT_ALIGNMENT = [
+  {name: 'left', icon: CiTextAlignLeft},
+  {name: 'center', icon: CiTextAlignCenter},
+  {name: 'right', icon: CiTextAlignRight},
+  {name: 'justify', icon: CiTextAlignJustify},
 ];
 
 export const THREAD_SORT_BY_OPTIONS = [

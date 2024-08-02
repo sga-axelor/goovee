@@ -154,6 +154,7 @@ export {
   SheetTitle,
   SheetTrigger,
 } from './sheet';
+export {ScrollArea} from './scroll-area';
 export {
   Table,
   TableBody,

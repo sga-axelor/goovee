@@ -8,7 +8,7 @@ import {MdOutlineImage} from 'react-icons/md';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
-import {Avatar, Button, HeroSearch, Input} from '@/ui/components';
+import {Avatar, Button, HeroSearch} from '@/ui/components';
 import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
@@ -25,6 +25,7 @@ import {
   GroupActionList,
   Search as GroupSearch,
   Tabs,
+  UploadPost,
 } from '@/subapps/forum/common/ui/components';
 
 export const SingleGroup = ({
@@ -38,6 +39,9 @@ export const SingleGroup = ({
   memberGroups: any;
   nonMemberGroups: any;
 }) => {
+  const [open, setOpen] = useState(false);
+  const [initialType, setInitialType] = useState<string>('');
+
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
@@ -48,6 +52,14 @@ export const SingleGroup = ({
 
   const handleTabClick = (type: string) => {
     router.push(`${workspaceURI}/forum/group/${groupId}?type=${type}`);
+  };
+  const hanldeDialogOpen = (initialType: string = '') => {
+    setInitialType(initialType);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setInitialType('');
+    setOpen(false);
   };
 
   return (
@@ -86,19 +98,21 @@ export const SingleGroup = ({
               className={`rounded-full h-8 w-8 ${isLoggedIn ? 'bg-red-400' : 'bg-black/20'}`}>
               {/*{isLoggedIn && <AvatarImage src="/images/user.png" />} */}
             </Avatar>
-            <Input
-              disabled={!isLoggedIn}
-              className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
-              placeholder={
-                isLoggedIn
-                  ? i18n.get(START_A_POST)
-                  : i18n.get(DISABLED_SEARCH_PLACEHOLDER)
-              }
-            />
+
             <Button
               disabled={!isLoggedIn}
+              onClick={() => hanldeDialogOpen()}
+              variant="outline"
+              className={`flex-1 text-sm justify-start text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}>
+              {isLoggedIn
+                ? i18n.get(START_A_POST)
+                : i18n.get(DISABLED_SEARCH_PLACEHOLDER)}
+            </Button>
+            <Button
+              disabled={!isLoggedIn}
+              onClick={() => hanldeDialogOpen('image')}
               className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
-                disabled:bg-black/20 disabled:border-gray-700 disabled:text-gray-700">
+              disabled:bg-black/20 disabled:border-gray-700 disabled:text-gray-700">
               <MdOutlineImage className="h-6 w-6" />
             </Button>
           </div>
@@ -110,6 +124,7 @@ export const SingleGroup = ({
           />
         </div>
       </div>
+      <UploadPost open={open} onClose={handleClose} initialType={initialType} />
     </div>
   );
 };
