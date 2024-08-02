@@ -575,7 +575,7 @@ export default function Content({
   const allowOnlinePayment = workspace?.config?.allowOnlinePaymentForEcommerce;
   const paymentOptionSet = workspace?.config?.paymentOptionSet;
 
-  const allowPayment = (type: 'paypal' | 'stripe') =>
+  const allowPayment = (type: PaymentOption) =>
     paymentOptionSet?.find((o: any) => o?.typeSelect === type);
 
   const allowPaypal = allowPayment(PaymentOption.paypal);
