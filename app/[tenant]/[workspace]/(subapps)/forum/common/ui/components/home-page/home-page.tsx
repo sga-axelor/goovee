@@ -43,7 +43,7 @@ export const HomePage = ({
 }: {
   memberGroups: any;
   nonMemberGroups: any;
-  user: string;
+  user: any;
   posts: any;
 }) => {
   const [open, setOpen] = useState(false);
@@ -56,7 +56,8 @@ export const HomePage = ({
   const type = searchParams.get('type') ?? 'posts';
 
   const {id, picture}: any = user || {};
-  const isLoggedIn = id;
+
+  const isLoggedIn = id ? true : false;
 
   const hanldeDialogOpen = (initialType: string = '') => {
     setInitialType(initialType);
@@ -97,13 +98,17 @@ export const HomePage = ({
           </div>
           <GroupSearch />
           {isLoggedIn && (
-            <GroupActionList title={MEMBER} groups={memberGroups} />
+            <GroupActionList
+              title={MEMBER}
+              groups={memberGroups}
+              userId={user.id}
+            />
           )}
           <GroupActionList
             title={NOT_MEMBER}
             groups={nonMemberGroups}
             isMember={false}
-            userId={id}
+            userId={user.id}
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
