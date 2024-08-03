@@ -102,15 +102,17 @@ const Comment = ({comment}: {comment?: any}) => {
             </span>
           </div>
         </div>
-        <Input
-          disabled={!isLoggedIn}
-          className={`my-2 placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
-          placeholder={
-            isLoggedIn
-              ? i18n.get(COMMENT)
-              : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
-          }
-        />
+        {showSubComments && (
+          <Input
+            disabled={!isLoggedIn}
+            className={`my-2 placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+            placeholder={
+              isLoggedIn
+                ? i18n.get(COMMENT)
+                : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
+            }
+          />
+        )}
       </div>
       {showSubComments &&
         commentsLength > 0 &&
