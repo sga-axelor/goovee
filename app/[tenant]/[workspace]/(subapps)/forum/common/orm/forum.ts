@@ -3,32 +3,35 @@ import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 
 export async function findGroupByMembers({
-  id,
+  id = null,
   isMember,
 }: {
-  id: string;
+  id: any;
   isMember: boolean;
 }) {
-  if (!id) {
-    return [];
-  }
   const client = await getClient();
+
+  const whereClause = {
+    member: isMember
+      ? {
+          id,
+        }
+      : {
+          OR: [{id: {ne: id}}, {id: null}],
+        },
+  };
+
   const groups = await client.aOSPortalForumGroupMember.find({
-    where: {
-      member: isMember
-        ? {
-            id,
-          }
-        : {
-            id: {ne: id},
-          },
-    },
+    where: whereClause,
     orderBy: {
       isPin: ORDER_BY.DESC,
     },
     select: {
       forumGroup: {
         name: true,
+        image: {
+          id: true,
+        },
       },
       isPin: true,
       notificationSelect: true,

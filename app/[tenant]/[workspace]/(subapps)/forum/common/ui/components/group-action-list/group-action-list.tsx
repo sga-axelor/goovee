@@ -41,6 +41,7 @@ import {
   exitGroup,
   joinGroup,
 } from '@/subapps/forum/common/action/action';
+import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
 
 export const GroupActionList = ({
   title,
@@ -58,22 +59,18 @@ export const GroupActionList = ({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const handlePinGroup = async (id: number, isPin: boolean, group: any) => {
-    await addPinnedGroup({id, isPin: !isPin, group});
+  const handlePinGroup = async (isPin: boolean, group: any) => {
+    await addPinnedGroup({isPin: !isPin, group});
     router.push(`${workspaceURI}/forum`);
   };
 
-  const handleExit = async (id: string, version: number) => {
-    await exitGroup({id, version});
+  const handleExit = async (group: any) => {
+    await exitGroup({group});
     router.push(`${workspaceURI}/forum`);
   };
 
-  const handleJoinGroup = async (
-    id: string,
-    version: number,
-    userId: string,
-  ) => {
-    await joinGroup({id, version, userId});
+  const handleJoinGroup = async (group: any, userId: string) => {
+    await joinGroup({group, userId});
     router.push(`${workspaceURI}/forum`);
   };
 
@@ -89,6 +86,7 @@ export const GroupActionList = ({
   const handlePath = (id: number) => {
     router.push(`${workspaceURI}/forum/group/${id}`, {scroll: false});
   };
+
   return (
     <div>
       <h1 className="font-semibold text-base leading-6 mb-6">
@@ -102,8 +100,10 @@ export const GroupActionList = ({
               <div
                 onClick={() => handlePath(group.id)}
                 className="flex items-center gap-2">
-                <Avatar className="rounded-lg h-6 w-6 bg-red-400">
-                  {/* <AvatarImage src="/images/user.png" /> */}
+                <Avatar className="rounded-lg h-6 w-6">
+                  <AvatarImage
+                    src={getImageURL(group?.forumGroup?.image?.id)}
+                  />
                 </Avatar>
                 <p className="font-normal text-sm leading-5 line-clamp-1 cursor-pointer">
                   {group?.forumGroup?.name}
@@ -116,9 +116,11 @@ export const GroupActionList = ({
                 {group?.isPin && (
                   <MdOutlinePushPin className="cursor-pointer w-4 h-4" />
                 )}
-                <CollapsibleTrigger>
-                  <MdMoreVert className="cursor-pointer" />
-                </CollapsibleTrigger>
+                {userId && (
+                  <CollapsibleTrigger>
+                    <MdMoreVert className="cursor-pointer" />
+                  </CollapsibleTrigger>
+                )}
               </div>
             </div>
             <CollapsibleContent className="mt-2">
@@ -131,7 +133,7 @@ export const GroupActionList = ({
                 </div>
                 <div
                   className="flex items-center gap-[10px] px-2"
-                  onClick={() => handlePinGroup(group.id, group?.isPin, group)}>
+                  onClick={() => handlePinGroup(group?.isPin, group)}>
                   <MdOutlinePushPin className="w-4 h-4" />
                   <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
                     {PIN}
@@ -169,7 +171,7 @@ export const GroupActionList = ({
                 {isMember ? (
                   <div
                     className="flex items-center gap-[10px] px-2"
-                    onClick={() => handleExit(group.id, group.verion)}>
+                    onClick={() => handleExit(group)}>
                     <MdExitToApp className="w-4 h-4" />
                     <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
                       {LEAVE_THIS_GROUP}
@@ -178,9 +180,7 @@ export const GroupActionList = ({
                 ) : (
                   <div
                     className="flex items-center gap-[10px] px-2"
-                    onClick={() =>
-                      handleJoinGroup(group.id, group.version, userId)
-                    }>
+                    onClick={() => handleJoinGroup(group, userId)}>
                     <MdOutlineGroupAdd className="w-4 h-4" />
                     <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
                       {ASK_TO_JOIN}

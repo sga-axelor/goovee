@@ -5,11 +5,9 @@ import {getClient} from '@/goovee';
 import {clone} from '@/utils';
 
 export async function addPinnedGroup({
-  id,
   isPin,
   group,
 }: {
-  id: string | number;
   isPin: boolean;
   group: any;
 }) {
@@ -20,7 +18,7 @@ export async function addPinnedGroup({
       data: {
         forumGroup: {
           select: {
-            id,
+            id: group.id,
           },
         },
         ...group,
@@ -30,37 +28,34 @@ export async function addPinnedGroup({
     .then(clone);
 }
 
-export async function exitGroup({
-  id,
-  version,
-}: {
-  id: string | number;
-  version: number;
-}) {
+export async function exitGroup({group}: {group: any}) {
   const client = await getClient();
-
-  await client.aOSPortalForumGroupMember.delete({id, version}).then(clone);
+  await client.aOSPortalForumGroupMember
+    .update({
+      data: {
+        forumGroup: {
+          select: {
+            id: group.id,
+          },
+        },
+        member: null,
+        ...group,
+      },
+    })
+    .then(clone);
 }
 
-export async function joinGroup({
-  id,
-  version,
-  userId,
-}: {
-  id: string;
-  version: number;
-  userId: string;
-}) {
+export async function joinGroup({group, userId}: {group: any; userId: string}) {
   const client = await getClient();
 
   await client.aOSPortalForumGroupMember
     .create({
       data: {
-        id,
-        version,
+        id: group.id,
+        version: group.verion,
         forumGroup: {
           select: {
-            id,
+            id: group.id,
           },
         },
         member: {
