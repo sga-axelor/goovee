@@ -95,7 +95,7 @@ export function FeaturedCategories({
                     backgroundImage: `url("${getImageURL(item?.image?.id)}")`,
                   }}>
                   <div className="absolute top-0 left-0 w-full h-full bg-black/[.15]" />
-                  <div className="space-y-10 md:w-1/2">
+                  <div className="space-y-10 md:w-1/2 z-20">
                     <h2 className="font-medium text-4xl">{item.title}</h2>
                     <p className="text-xl">{item.subTitle}</p>
                     <Button className="relative z-10" asChild>
@@ -107,6 +107,7 @@ export function FeaturedCategories({
                       </a>
                     </Button>
                   </div>
+                  <div className="absolute left-0 top-0 right-0 bottom-0 z-10 bg-[linear-gradient(90deg,_#FFF_14.57%,_rgba(255,255,255,0.00)_98.91%)]"></div>
                 </div>
               </SwiperSlide>
             );
