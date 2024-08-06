@@ -60,7 +60,7 @@ export default async function Page({
         </h2>
         {/* <SortBy className="hidden sm:flex me-2" /> */}
         {user && (
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <Link href={`${workspaceURI}/resources/categories/create`}>
               <Button variant="success" className="flex items-center">
                 <MdAdd className="size-6" />

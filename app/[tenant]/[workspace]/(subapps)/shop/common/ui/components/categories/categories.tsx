@@ -12,7 +12,7 @@ import {
   NavigationMenuTrigger,
 } from '@ui/components/navigation-menu';
 import {Separator} from '@/ui/components';
-import { cn } from '@/utils/css';
+import {cn} from '@/utils/css';
 
 export const Categories = ({
   items = [],
@@ -83,9 +83,13 @@ const Category = ({
                   onClick={handleDropdownClick}
                   ref={setTarget}
                   className="flex items-center justify-center cursor-pointer text-foreground font-medium">
-                  <NavigationMenuTrigger className={cn("text-base h-auto px-0 bg-transparent hover:bg-transparent",{
-                    'py-0':level===0
-                  })}>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      'text-base h-auto px-0 bg-transparent hover:bg-transparent',
+                      {
+                        'py-0': level === 0,
+                      },
+                    )}>
                     <p className="px-2 text-foreground border-foreground font-medium">
                       {i18n.get(item.name)}
                     </p>
