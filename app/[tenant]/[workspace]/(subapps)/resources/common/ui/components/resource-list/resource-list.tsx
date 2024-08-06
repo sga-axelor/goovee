@@ -8,6 +8,7 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
@@ -33,17 +34,20 @@ export function ResourceList({resources}: any) {
   return (
     <div className="rounded-lg bg-white py-2">
       {resources?.length ? (
-        resources?.map((resource: any) => {
+        resources?.map((resource: any, index) => {
           const author = resource.createdBy?.name || '--';
           const date = parseDate(resource?.createdOn) || '--';
           const size = resource?.metaFile?.sizeText || '--';
 
           const icon = getFileTypeIcon(resource.metaFile?.fileType);
           const iconColor = getIconColor(icon);
+          const isLast = index === resources.length - 1;
 
           return (
             <div
-              className="py-2 px-4 border-b space-y-2 cursor-pointer"
+              className={cn('py-2 px-4 space-y-2 cursor-pointer', {
+                'border-b': !isLast,
+              })}
               key={resource.id}
               onClick={handleRedirection(resource)}>
               <div className="leading-5 text-sm space-y-2">
