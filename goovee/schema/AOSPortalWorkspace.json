@@ -18,12 +18,6 @@
     },
     {
       "type": "ManyToOne",
-      "name": "appConfig",
-      "target": "AOSPortalAppConfig",
-      "column": "default_portal_app_config"
-    },
-    {
-      "type": "ManyToOne",
       "name": "defaultTheme",
       "target": "AOSPortalTheme"
     },

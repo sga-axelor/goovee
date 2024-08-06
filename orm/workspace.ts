@@ -238,7 +238,6 @@ export async function findWorkspace({
       name: true,
       url: true,
       defaultTheme: true,
-      appConfig: portalAppConfigFields,
       navigationSelect: true,
     },
   });
@@ -272,7 +271,7 @@ export async function findWorkspace({
   let apps: any[] = workspaceConfig?.apps;
 
   if (!config) {
-    config = workspace?.appConfig;
+    config = null;
   }
 
   apps = apps || [];
