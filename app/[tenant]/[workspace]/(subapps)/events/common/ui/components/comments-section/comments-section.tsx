@@ -7,6 +7,8 @@ import {parseDate} from '@/utils/date';
 import {cn} from '@/utils/css';
 import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/lib/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks/use-toast';
 
 // ---- LOCAL IMPORTS ---- //
 import {CommentCard} from '@/subapps/events/common/ui/components';
@@ -17,33 +19,55 @@ import {
 } from '@/subapps/events/common/actions/actions';
 import styles from '@/subapps/events/common/ui/components/comments-section/comments-section.module.css';
 
-export const CommentsSection = ({
-  eventId,
-  comments,
-  userId,
-}: CommentSectionProps) => {
+export const CommentsSection = ({eventId, comments}: CommentSectionProps) => {
   const [allComments, setAllComments] = useState(comments);
   const [comment, setComment] = useState('');
+
+  const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
 
   const handleInputChange = (e: any) => {
     setComment(e.target.value);
   };
+
   const handleSubmit = async (e: any) => {
-    if (comment.length > 0) {
-      try {
-        e.preventDefault();
-        const pubDate = new Date();
-        const commentObject = {
-          contentComment: comment,
-          publicationDateTime: pubDate,
-        };
-        await addComment(eventId, userId, commentObject);
-        const updatedComments = await getCommentsByEvent(eventId);
+    e.preventDefault();
+
+    if (!comment.length) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Comment is required.'),
+      });
+      return;
+    }
+
+    try {
+      const pubDate = new Date();
+      const commentObject = {
+        contentComment: comment,
+        publicationDateTime: pubDate,
+      };
+      const result = await addComment(eventId, commentObject, workspaceURL);
+
+      if (result.success) {
+        toast({
+          variant: 'success',
+          title: i18n.get('Comment added successfully.'),
+        });
+        const updatedComments = await getCommentsByEvent(eventId, workspaceURL);
         setAllComments(updatedComments);
         setComment('');
-      } catch (err) {
-        console.log(err);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: i18n.get(result.message),
+        });
       }
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error while adding comment'),
+      });
     }
   };
 

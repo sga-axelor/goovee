@@ -1,6 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import type {ID, Participant} from '@/types';
+import {getSession} from '@/orm/auth';
+import {i18n} from '@/lib/i18n';
+import {SUBAPP_CODES} from '@/constants';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
 export async function findParticipant(participantId: ID) {
   if (!participantId) return null;
@@ -89,37 +93,45 @@ export async function findParticipants() {
   return participants;
 }
 
-export async function createParticipant(values: Participant) {
-  const c = await getClient();
+export async function registerParticipant(
+  eventId: ID,
+  workspaceURL: string,
+  values: any,
+) {
+  if (!eventId) return null;
 
-  const participant = await c.aOSPortalParticipant.create({
-    data: {
-      name: values.name,
-      surname: values.surname,
-      emailAddress: values.emailAddress,
-      phone: values.phone,
-      contact:
-        values.contact != null
-          ? !values.contact?.id
-            ? {
-                create: {
-                  ...values.contact,
-                },
-              }
-            : {
-                select: {
-                  id: values.contact?.id,
-                },
-              }
-          : {},
-    },
+  const session = await getSession();
+  if (!session?.user) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.events,
+    user: session?.user,
+    url: workspaceURL,
   });
 
-  return participant;
-}
+  if (!subapp) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
 
-export async function registerParticipant(eventId: ID, values: any) {
-  if (!eventId) return null;
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
 
   const c = await getClient();
 
@@ -136,13 +148,47 @@ export async function registerParticipant(eventId: ID, values: any) {
     },
   });
 
-  return registration;
+  return {success: true, data: registration};
 }
 
 export async function registerParticipants(
   eventId: ID,
+  workspaceURL: string,
   valuesList: Participant[],
 ) {
+  const session = await getSession();
+  if (!session?.user) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.events,
+    user: session?.user,
+    url: workspaceURL,
+  });
+
+  if (!subapp) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
+
   if (!eventId) return null;
 
   const c = await getClient();
@@ -168,5 +214,5 @@ export async function registerParticipants(
     },
   });
 
-  return registration;
+  return {success: true, data: registration};
 }

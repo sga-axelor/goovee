@@ -110,7 +110,7 @@ export async function findEvents({
 }) {
   const c = await getClient();
 
-  let date, predicate;
+  let date, predicate: any;
   if (day && month && year) {
     predicate = 'day';
     date = moment(`${day}-${month}-${year}`, 'DD-MM-YYYY');

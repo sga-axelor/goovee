@@ -7,12 +7,13 @@ import Select, {SingleValue, MultiValue} from 'react-select';
 import {i18n} from '@/lib/i18n';
 import {createDefaultValues} from '@/ui/form';
 import type {Field} from '@/ui/form';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {searchContacts} from '@/subapps/events/common/actions/actions';
 import type {OptionType} from '@/subapps/events/common/ui/components/custom-select/types';
 
-function formatItems(array: any[]) {
+function formatItems(array: any) {
   return (
     array.map((participant: any) => ({
       ...participant,
@@ -38,11 +39,13 @@ export const CustomSelect = ({
   const [inputValue, setInputValue] = useState('');
   const [filteredOptions, setFilteredOptions] = useState([]);
 
+  const {workspaceURL} = useWorkspace();
+
   const handleChange = (
     selected: MultiValue<OptionType> | SingleValue<OptionType> | null,
   ) => {
     const _current = form.getValues(arrayName) ?? [];
-    const selectedUsers = selected ?? [];
+    const selectedUsers: any = selected ?? [];
     const customParticipants = _current.filter(
       ({fromParticipant, valueId}: any) =>
         !fromParticipant ||
@@ -80,7 +83,7 @@ export const CustomSelect = ({
 
     if (input.length > 0) {
       try {
-        const data = await searchContacts(input);
+        const data: any = await searchContacts(input, workspaceURL);
         setFilteredOptions(formatItems(data));
       } catch (error) {
         console.error('Error fetching options:', error);
