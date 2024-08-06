@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {Fragment, useRef, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
@@ -11,6 +11,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@ui/components/navigation-menu';
+import {Separator} from '@/ui/components';
+import { cn } from '@/utils/css';
 
 export const Categories = ({
   items = [],
@@ -24,15 +26,18 @@ export const Categories = ({
   const large = ['lg', 'xl', 'xxl'].some(x => res[x]);
 
   return large ? (
-    <div className="mx-auto flex items-center gap-4 mb-0 px-6 py-4 bg-background text-foreground subcategory">
+    <div className="mx-auto flex items-center gap-5 mb-0 px-6 py-4 bg-background text-foreground">
       {items.map((category, index) => {
         return (
-          <Category
-            item={category}
-            key={index}
-            level={level}
-            onClick={onClick}
-          />
+          <Fragment key={index}>
+            {index !== 0 && (
+              <Separator
+                className="bg-black w-[2px] shrink-0 h-auto self-stretch"
+                orientation="vertical"
+              />
+            )}
+            <Category item={category} level={level} onClick={onClick} />
+          </Fragment>
         );
       })}
     </div>
@@ -78,8 +83,10 @@ const Category = ({
                   onClick={handleDropdownClick}
                   ref={setTarget}
                   className="flex items-center justify-center cursor-pointer text-foreground font-medium">
-                  <NavigationMenuTrigger className="px-0 bg-transparent hover:bg-transparent">
-                    <p className="px-2 text-foreground border-l-2 border-foreground border-solid font-medium">
+                  <NavigationMenuTrigger className={cn("text-base h-auto px-0 bg-transparent hover:bg-transparent",{
+                    'py-0':level===0
+                  })}>
+                    <p className="px-2 text-foreground border-foreground font-medium">
                       {i18n.get(item.name)}
                     </p>
                   </NavigationMenuTrigger>
@@ -98,7 +105,7 @@ const Category = ({
         </>
       ) : (
         <p
-          className="cursor-pointer pl-4 text-foreground border-l-2 border-foreground border-solid first-border font-medium"
+          className="cursor-pointer pl-4 text-foreground border-foreground border-solid first-border font-medium"
           onClick={handleClick}>
           {i18n.get(item.name)}
         </p>
