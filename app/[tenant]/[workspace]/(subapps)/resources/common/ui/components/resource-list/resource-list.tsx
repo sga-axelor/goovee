@@ -79,7 +79,7 @@ export function ResourceList({resources}: any) {
                       {size}
                     </p>
                     <MdOutlineFileDownload
-                      className="shrink-0 h-6 w-6 bg-success/20 text-success-dark cursor-pointer"
+                      className="shrink-0 h-6 w-6 bg-success-light text-success cursor-pointer"
                       onClick={handleDownload(resource)}
                     />
                   </div>

@@ -34,6 +34,7 @@ export function generateCSSVariableString(options: Theme) {
       --destructive-dark: ${options?.colors?.['destructive-dark']};
       --destructive-foreground: ${options?.colors?.['destructive-foreground']};
 
+      --success-light: ${options?.colors?.['success-light']};
       --success: ${options?.colors?.success};
       --success-dark: ${options?.colors?.['success-dark']};
       --success-foreground: ${options?.colors?.['success-foreground']};

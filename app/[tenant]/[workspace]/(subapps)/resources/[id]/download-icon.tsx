@@ -11,7 +11,7 @@ export default function DownloadIcon({record}: any) {
   return (
     <>
       <MdOutlineFileDownload
-        className="h-10 w-10 bg-success/20 text-success-dark cursor-pointer"
+        className="h-10 w-10 bg-success-light text-success cursor-pointer"
         onClick={handleDownload}
       />
     </>

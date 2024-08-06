@@ -87,7 +87,7 @@ export const ArrayComponent = ({
     <div className="space-y-6">
       <Button
         type="button"
-        className={`bg-success/20 hover:bg-success/40 p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full`}
+        className={`bg-success-light hover:bg-success p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full`}
         onClick={addItem}>
         <MdAdd className="w-6 h-6 text-success" />
         <p className="text-sm font-normal text-center text-black">{addTitle}</p>

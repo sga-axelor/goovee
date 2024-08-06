@@ -125,7 +125,7 @@ export default function ResourceForm({categories, colors, icons}: any) {
                     <SelectItem
                       value={category.id}
                       key={category.id}
-                      className="data-[highlighted]:text-success-dark data-[highlighted]:bg-success/20">
+                      className="data-[highlighted]:text-success data-[highlighted]:bg-success-light">
                       {category.fileName}
                     </SelectItem>
                   ))}

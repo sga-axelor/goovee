@@ -25,6 +25,7 @@ export type Theme = {
     'destructive-dark'?: string;
     'destructive-foreground'?: string;
 
+    'success-light'?: string;
     success?: string;
     'success-dark'?: string;
     'success-foreground'?: string;
