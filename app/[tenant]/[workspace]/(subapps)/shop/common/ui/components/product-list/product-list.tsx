@@ -9,7 +9,7 @@ import {MdGridView} from 'react-icons/md';
 import {MdOutlineList} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Pagination, TextField} from '@/ui/components';
+import {Breadcrumbs, Pagination, TextField} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
@@ -148,36 +148,11 @@ export function ProductList({
     <div>
       <Categories items={categories} onClick={handleCategoryClick} />
       <div className={'container portal-container'}>
-        <div className="mb-6 mt-3 text-foreground">
-          {breadcrumbs?.length > 1 ? (
-            <div className="flex items-center gap-4">
-              {breadcrumbs.map((crumb: any, i: number) => {
-                const islast = breadcrumbs.length - 1 === i;
-
-                return (
-                  <Fragment key={i}>
-                    <div className="flex items-center cursor-pointer">
-                      <div
-                        {...(islast
-                          ? {
-                              color: 'foreground',
-                              fontWeight: 'bold',
-                            }
-                          : {color: 'secondary'})}
-                        onClick={() => handleCategoryClick(crumb)}>
-                        {i18n.get(crumb.name)}
-                      </div>
-                      {!islast && (
-                        <div className="flex">
-                          <LuChevronRight className="text-xl" />
-                        </div>
-                      )}
-                    </div>
-                  </Fragment>
-                );
-              })}
-            </div>
-          ) : null}
+        <div className="my-10 text-foreground">
+          <Breadcrumbs
+            breadcrumbs={breadcrumbs}
+            onClick={handleCategoryClick}
+          />
         </div>
         <div className="mb-6">
           <h4 className="text-xl font-medium">{category && category?.name}</h4>

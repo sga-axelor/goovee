@@ -1,12 +1,17 @@
 'use client';
 
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {MdChevronRight} from 'react-icons/md';
 import {MdOutlineShoppingBasket} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Quantity, ThumbsCarousel, Label, Button} from '@/ui/components';
+import {
+  Quantity,
+  ThumbsCarousel,
+  Label,
+  Button,
+  Breadcrumbs,
+} from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
 import {getImageURL} from '@/utils/product';
@@ -77,38 +82,12 @@ export function ProductView({
   return (
     <div>
       <Categories items={categories} onClick={handleCategoryClick} />
-      <div className={'container py-2 md:py-4'}>
-        <div className="mb-6 pt-4">
-          {breadcrumbs?.length > 1 ? (
-            <div className="flex items-center gap-4">
-              {breadcrumbs.map((crumb: any, i: number) => {
-                const islast = breadcrumbs.length - 1 === i;
-                return (
-                  <Fragment key={i}>
-                    <div
-                      {...(islast
-                        ? {}
-                        : {className: 'cursor-pointer flex items-center'})}>
-                      <div
-                        onClick={() => {
-                          if (!islast) {
-                            handleCategoryClick(crumb);
-                          }
-                        }}
-                        className={`${islast ? 'text-forground font-bold' : 'text-forground'}`}>
-                        {i18n.get(crumb.name)}
-                      </div>
-                      {!islast && (
-                        <div className="flex">
-                          <MdChevronRight className="text-2xl" />
-                        </div>
-                      )}
-                    </div>
-                  </Fragment>
-                );
-              })}
-            </div>
-          ) : null}
+      <div className="container py-2">
+        <div className="my-10">
+          <Breadcrumbs
+            breadcrumbs={breadcrumbs}
+            onClick={handleCategoryClick}
+          />
         </div>
         <div className="grid md:grid-cols-[36%_1fr] grid-cols-1 gap-5">
           <div className="overflow-hidden rounded-lg">

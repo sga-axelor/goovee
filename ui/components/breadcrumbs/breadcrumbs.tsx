@@ -25,19 +25,21 @@ export const Breadcrumbs = ({breadcrumbs, onClick}: BreadcrumbsProps) => {
             <React.Fragment key={i}>
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage>{crumb.name}</BreadcrumbPage>
+                  <BreadcrumbPage className="font-medium">
+                    {crumb.name}
+                  </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink
                     asChild
                     onClick={() => onClick(crumb)}
-                    className="text-foreground cursor-pointer">
+                    className="text-foreground-muted cursor-pointer">
                     <span>{crumb.name}</span>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
               {!isLast && (
                 <BreadcrumbSeparator>
-                  <FaChevronRight />
+                  <FaChevronRight className="text-black" />
                 </BreadcrumbSeparator>
               )}
             </React.Fragment>
