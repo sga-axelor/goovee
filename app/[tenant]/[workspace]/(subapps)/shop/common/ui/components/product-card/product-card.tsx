@@ -7,6 +7,7 @@ import {MdAddShoppingCart} from 'react-icons/md';
 import {BackgroundImage, Button} from '@/ui/components';
 import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
+import {cn} from '@/utils/css';
 import {useToast} from '@/ui/hooks';
 import type {ComputedProduct, Product} from '@/types';
 
@@ -40,7 +41,13 @@ export function ProductCard({
   };
 
   return (
-    <div className="flex flex-col justify-start cursor-pointer rounded-2xl min-h-[25.625rem] bg-card text-card-foreground">
+    <div
+      className={cn(
+        'flex flex-col justify-start cursor-pointer rounded-2xl bg-card text-card-foreground',
+        {
+          'min-h-[25.625rem]': displayPrices,
+        },
+      )}>
       <div onClick={handleClick}>
         <BackgroundImage
           className="rounded-t-lg bg-cover relative h-[14.5rem]"
