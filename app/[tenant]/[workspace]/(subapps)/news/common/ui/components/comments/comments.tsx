@@ -2,6 +2,7 @@
 
 import React, {useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
@@ -9,7 +10,8 @@ import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
 import {Input} from '@/ui/components/input';
 import {i18n} from '@/lib/i18n';
-import {getCurrentDateTime} from '@/utils/date';
+import {useToast} from '@/ui/hooks/use-toast';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {createComment} from '@/subapps/news/common/actions/action';
@@ -33,25 +35,46 @@ export const Comments = ({
   const router = useRouter();
   const pathname = usePathname();
 
+  const {data: session} = useSession();
+  const isDisabled = !session ? true : false;
+
+  const {toast} = useToast();
+  const {workspaceURL} = useWorkspace();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
 
   const handleSubmit = async () => {
     if (!comment) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Comment is required.'),
+      });
       return;
     }
 
-    const publicationDateTime = getCurrentDateTime();
-
     try {
-      await createComment({
+      const result = await createComment({
         id: newsId,
         contentComment: comment,
-        publicationDateTime,
+        workspaceURL,
       });
-      router.push(`${pathname}`);
-      setComment('');
+
+      if (result.success) {
+        toast({
+          variant: 'success',
+          title: i18n.get('Comment added successfully.'),
+        });
+        router.refresh();
+        router.push(`${pathname}`);
+        setComment('');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: i18n.get('Error while adding comment'),
+        });
+      }
     } catch (error) {
       throw error;
     }
@@ -83,12 +106,14 @@ export const Comments = ({
       ))}
       <div className="flex ietms-center relative w-full">
         <Input
+          disabled={isDisabled}
           className="py-4 px-4 h-14 w-full placeholder:text-palette-mediumGray text-base font-medium"
           placeholder={i18n.get(WRITE_YOUR_COMMENT)}
           value={comment}
           onChange={handleChange}
         />
         <Button
+          disabled={isDisabled}
           className="w-40 absolute right-4 top-2 bg-success hover:bg-success-dark rounded-lg px-3 py-2 text-base font-medium"
           onClick={handleSubmit}>
           {i18n.get(SEND)}

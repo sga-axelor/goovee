@@ -2,6 +2,10 @@
 import {getClient} from '@/goovee';
 import {PortalWorkspace} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
+import {i18n} from '@/lib/i18n';
+import {getSession} from '@/orm/auth';
+import {SUBAPP_CODES} from '@/constants';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_PAGE} from '@/subapps/news/common/constants';
@@ -10,19 +14,23 @@ export async function findNews({
   id = '',
   orderBy,
   isFeaturedNews = false,
-  category,
   page = DEFAULT_PAGE,
   limit,
-  slug,
+  slug = null,
+  workspace,
+  categoryIds = [],
 }: {
   id?: string | number;
   orderBy?: any;
   isFeaturedNews?: boolean;
-  category?: string;
   page?: string | number;
   limit?: number;
-  slug?: string;
+  slug?: string | null;
+  workspace: any;
+  categoryIds?: any[];
 }) {
+  if (!workspace) return [];
+
   const c = await getClient();
 
   const skip = getSkipInfo(limit, page);
@@ -34,14 +42,20 @@ export async function findNews({
         }
       : {}),
     ...(isFeaturedNews ? {isFeaturedNews: true} : {}),
-    ...(category
-      ? {
-          categorySet: {
-            name: {like: `%${category}%`},
-          },
-        }
-      : {}),
     ...(slug ? {slug} : {}),
+
+    categorySet: {
+      workspace: {
+        id: workspace.id,
+      },
+      ...(categoryIds.length > 0
+        ? {
+            id: {
+              in: categoryIds,
+            },
+          }
+        : {}),
+    },
   };
 
   const news = await c.aOSPortalNews
@@ -155,7 +169,6 @@ export async function findCategories({
       workspace: true,
     },
   });
-
   return categories;
 }
 
@@ -186,7 +199,43 @@ export async function addComment({
   id,
   contentComment,
   publicationDateTime,
+  workspaceURL,
 }: any) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.news,
+    user,
+    url: workspaceURL,
+  });
+
+  if (!subapp) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
+
   const c = await getClient();
 
   const comment = await c.aOSPortalNews.create({
@@ -197,11 +246,69 @@ export async function addComment({
           {
             contentComment,
             publicationDateTime,
+            author: {
+              select: {
+                id: user.id,
+              },
+            },
           },
         ],
       },
     },
   });
+  return {
+    success: true,
+    data: comment,
+  };
+}
 
-  return comment;
+export async function findNewsByCategory({
+  orderBy,
+  page,
+  limit,
+  slug,
+  workspace,
+  isFeaturedNews,
+}: {
+  orderBy?: any;
+  isFeaturedNews?: boolean;
+  page?: string | number;
+  limit?: number;
+  slug?: string;
+  workspace: PortalWorkspace;
+}) {
+  const categories = await findCategories({showAllCategories: true, workspace});
+
+  const categoryMap = new Map(
+    categories.map(category => [Number(category.id), category]),
+  );
+
+  const topCategory = categories.find(category => category.slug === slug);
+
+  if (!topCategory) return {news: []};
+
+  const topCategoryId = Number(topCategory.id);
+
+  const gatherCategoryIds = (categoryId: number): number[] => {
+    const ids = [categoryId];
+
+    for (const [id, cat] of categoryMap.entries()) {
+      if (cat.parentCategory && Number(cat.parentCategory.id) === categoryId) {
+        ids.push(...gatherCategoryIds(id));
+      }
+    }
+
+    return ids;
+  };
+
+  const categoryIds: any = gatherCategoryIds(topCategoryId);
+
+  return findNews({
+    orderBy,
+    isFeaturedNews,
+    page,
+    limit,
+    workspace,
+    categoryIds,
+  });
 }
