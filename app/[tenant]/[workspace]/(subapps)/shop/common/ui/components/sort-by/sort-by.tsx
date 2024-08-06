@@ -45,6 +45,7 @@ export function SortBy({
   options: optionsProp,
   value: valueProp,
   workspace,
+  className,
 }: any) {
   const options =
     optionsProp ||
@@ -56,7 +57,8 @@ export function SortBy({
   const value = SORT_BY_OPTIONS.find(o => o.value === valueProp);
 
   return (
-    <div className={`${styles.sortby} hidden md:flex items-center grow gap-4`}>
+    <div
+      className={`${styles.sortby} hidden md:flex items-center gap-4 ${className}`}>
       <p className="mb-0 shrink-0 text-sm">Sort By</p>
 
       <Select

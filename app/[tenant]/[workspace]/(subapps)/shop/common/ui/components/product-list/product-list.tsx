@@ -146,7 +146,27 @@ export function ProductList({
 
   return (
     <div>
-      <Categories items={categories} onClick={handleCategoryClick} />
+      <div className="flex items-center bg-white">
+        <div className="grow w-100 max-w-full">
+          <Categories items={categories} onClick={handleCategoryClick} />
+        </div>
+        <div className="basis-full md:basis-[20%] px-4 py-2">
+          <form
+            onSubmit={handleChangeSearch}
+            className={`${styles.wrapper} w-full`}>
+            <TextField
+              name="search"
+              placeholder="Search"
+              value={searching}
+              onChange={e => setSearching(e.target.value)}
+              className="pl-12 rounded-full mb-0"
+            />
+            <div className={`${styles.icons} top-[0.625rem] !pt-0`}>
+              <BiSearch className="text-2xl" />
+            </div>
+          </form>
+        </div>
+      </div>
       <div className={'container portal-container'}>
         <div className="my-10 text-foreground">
           <Breadcrumbs
@@ -154,42 +174,25 @@ export function ProductList({
             onClick={handleCategoryClick}
           />
         </div>
-        <div className="mb-6">
-          <h4 className="text-xl font-medium">{category && category?.name}</h4>
-        </div>
-        <div className="flex items-center justify-end mb-2">
-          <div className="flex items-center gap-4">
-            <MdGridView
-              color={isGridView ? 'primary' : 'secondary'}
-              className="cursor-pointer text-2xl"
-              onClick={() => handleChangeView(VIEW.GRID)}
-            />
-            <MdOutlineList
-              color={isListView ? 'primary' : 'secondary'}
-              className="cursor-pointer text-2xl"
-              onClick={() => handleChangeView(VIEW.LIST)}
-            />
-          </div>
-        </div>
-        <div className="flex items-start gap-4 mb-4">
-          <form
-            onSubmit={handleChangeSearch}
-            className={`${styles.wrapper} basis-full md:basis-[70%]`}>
-            <TextField
-              name="search"
-              placeholder="Search"
-              value={searching}
-              onChange={e => setSearching(e.target.value)}
-              className="pl-12 rounded-full"
-            />
-            <div className={`${styles.icons} top-[0.625rem] !pt-0`}>
-              <BiSearch className="text-2xl" />
-            </div>
-          </form>
+        <div className="flex items-center gap-4 mb-2">
+          <h4 className="text-xl font-medium grow">
+            {category && category?.name}
+          </h4>
           <SortBy
             workspace={workspace}
             onChange={handleChangeSortBy}
             value={sort}
+            className="flex-grow-0! basis-[25%]"
+          />
+          <MdGridView
+            color={isGridView ? 'primary' : 'secondary'}
+            className="cursor-pointer text-2xl"
+            onClick={() => handleChangeView(VIEW.GRID)}
+          />
+          <MdOutlineList
+            color={isListView ? 'primary' : 'secondary'}
+            className="cursor-pointer text-2xl"
+            onClick={() => handleChangeView(VIEW.LIST)}
           />
         </div>
         <div className="bg-card text-card-foreground shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
