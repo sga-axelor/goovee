@@ -54,13 +54,13 @@ export default async function Page({
 
   return (
     <main className="container p-4 mx-auto space-y-6">
-      <div className="flex items-center justify-between gap-2">
+      <div className="grid md:grid-cols-[1fr_auto] gap-2">
         <h2 className="font-semibold text-xl leading-8 grow">
           {i18n.get('Resource Category')}
         </h2>
         {/* <SortBy className="hidden sm:flex me-2" /> */}
         {user && (
-          <>
+          <div className='flex items-center gap-2'>
             <Link href={`${workspaceURI}/resources/categories/create`}>
               <Button variant="success" className="flex items-center">
                 <MdAdd className="size-6" />
@@ -73,7 +73,7 @@ export default async function Page({
                 <span>{i18n.get('New Resource')}</span>
               </Button>
             </Link>
-          </>
+          </div>
         )}
       </div>
       <p className="leading-5 text-sm">
