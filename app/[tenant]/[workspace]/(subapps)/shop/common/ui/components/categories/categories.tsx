@@ -109,7 +109,12 @@ const Category = ({
         </>
       ) : (
         <p
-          className="cursor-pointer pl-4 text-foreground border-foreground border-solid first-border font-medium"
+          className={cn(
+            'cursor-pointer text-foreground border-foreground border-solid first-border font-medium pl-4',
+            {
+              'pl-0': level === 0,
+            },
+          )}
           onClick={handleClick}>
           {i18n.get(item.name)}
         </p>
