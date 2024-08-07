@@ -1,13 +1,21 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
+import {clone} from '@/utils';
+
+// ---- LOCAL IMPORTAS ----//
+import {ID} from '@/subapps/forum/common/types/forum';
 
 export async function findGroupByMembers({
   id = null,
   isMember,
+  searchKey,
+  sortGroupByName,
 }: {
   id: any;
   isMember: boolean;
+  searchKey?: string;
+  sortGroupByName: string;
 }) {
   const client = await getClient();
 
@@ -19,25 +27,38 @@ export async function findGroupByMembers({
       : {
           OR: [{id: {ne: id}}, {id: null}],
         },
+    ...(searchKey
+      ? {
+          forumGroup: {
+            name: {
+              like: `%${searchKey}%`,
+            },
+          },
+        }
+      : {}),
   };
 
-  const groups = await client.aOSPortalForumGroupMember.find({
-    where: whereClause,
-    orderBy: {
-      isPin: ORDER_BY.DESC,
-    },
-    select: {
-      forumGroup: {
-        name: true,
-        image: {
-          id: true,
+  return await client.aOSPortalForumGroupMember
+    .find({
+      where: whereClause,
+      orderBy: {
+        isPin: ORDER_BY.DESC,
+        forumGroup: {
+          name: sortGroupByName,
         },
       },
-      isPin: true,
-      notificationSelect: true,
-    },
-  });
-  return groups;
+      select: {
+        forumGroup: {
+          name: true,
+          image: {
+            id: true,
+          },
+        },
+        isPin: true,
+        notificationSelect: true,
+      },
+    })
+    .then(clone);
 }
 
 export async function findUser({userId}: {userId: any}) {

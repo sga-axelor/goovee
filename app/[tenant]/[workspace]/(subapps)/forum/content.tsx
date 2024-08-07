@@ -26,6 +26,7 @@ const Content = ({
 
   const handleMenuClick = (link: string) => {
     router.push(`${workspaceURI}/forum/${link}`);
+    router.refresh();
   };
 
   return (

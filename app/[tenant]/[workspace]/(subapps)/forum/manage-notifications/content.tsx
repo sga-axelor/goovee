@@ -15,22 +15,46 @@ import {
 // ---- LOCAL IMPORTS ---- //
 import {
   GROUP_SORT_BY,
+  GROUPS,
+  MANAGE_NOTIFICATIONS,
   MENU,
   NOTIFICATIONS_OPTIONS,
+  SORT_BY,
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {
-  Search,
   GroupNotification,
   NavMenu,
+  Search,
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {findGroups} from '@/subapps/forum/common/action/action';
+import {Group} from '@/subapps/forum/common/types/forum';
+import {useEffect, useState} from 'react';
 
-const Content = () => {
+const Content = ({userId}: {userId: string}) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
+  const [memberGroups, setMemberGroup] = useState<Group[]>([]);
+  const [searchKey, setSearchKey] = useState<string>('');
+  const [sortGroupByName, setSortGroupByName] = useState<string>('ASC');
 
   const handleMenuClick = (link: string) => {
     router.push(`${workspaceURI}/forum/${link}`);
+  };
+  const isLoggedIn = userId;
+
+  useEffect(() => {
+    isLoggedIn &&
+      findGroups({
+        id: userId,
+        isMember: true,
+        searchKey,
+        sortGroupByName,
+      }).then(setMemberGroup);
+  }, [searchKey, sortGroupByName]);
+
+  const handleSearchKeyChange = (value: string) => {
+    setSearchKey(value);
   };
 
   return (
@@ -41,17 +65,17 @@ const Content = () => {
       <section className="py-6 px-4 lg:px-[100px] w-full rounded-sm">
         <div>
           <h2 className="font-semibold text-xl mb-6">
-            {i18n.get('Manage notifications')}
+            {i18n.get(MANAGE_NOTIFICATIONS)}
           </h2>
           <div className="grid grid-cols-[2fr_1fr] gap-4 h-fit items-end">
             <div>
-              <Search />
+              <Search onChange={handleSearchKeyChange} />
             </div>
             <div>
               <span className="pl-2 mb-3 text-muted-foreground">
-                {i18n.get('Sort By')}:
+                {i18n.get(SORT_BY)}:
                 <div>
-                  <Select>
+                  <Select onValueChange={value => setSortGroupByName(value)}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="A-Z" />
                     </SelectTrigger>
@@ -73,7 +97,7 @@ const Content = () => {
         </div>
         <div className="bg-white px-4 py-4 mt-8 rounded-md">
           <div className="grid grid-cols-[1fr_4fr]  ">
-            <h2 className="text-xl font-semibold">{i18n.get('Groups')}</h2>
+            <h2 className="text-xl font-semibold">{i18n.get(GROUPS)}</h2>
             <div className="grid grid-cols-4 text-center text-sm font-normal">
               {NOTIFICATIONS_OPTIONS.map(item => (
                 <span key={item.id}>{item.title}</span>
@@ -81,13 +105,9 @@ const Content = () => {
             </div>
           </div>
           <div className="my-4">
-            <GroupNotification />
-            <GroupNotification />
-            <GroupNotification />
-            <GroupNotification />
-            <GroupNotification />
-            <GroupNotification />
-            <GroupNotification />
+            {memberGroups.map(item => (
+              <GroupNotification key={item.id} group={item} />
+            ))}
           </div>
         </div>
       </section>

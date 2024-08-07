@@ -3,10 +3,13 @@ import {getSession} from '@/orm/auth';
 
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
-import {clone} from '@/utils';
 import {i18n} from '@/lib/i18n';
+import {ORDER_BY} from '@/constants';
+import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+//----LOCAL IMPORTS -----//
+import {findGroupByMembers} from '@/subapps/forum/common/orm/forum';
 
 export async function addPinnedGroup({
   isPin,
@@ -90,6 +93,20 @@ export async function addNotificationsToGroup({
       },
     })
     .then(clone);
+}
+
+export async function findGroups({
+  id = null,
+  isMember = true,
+  searchKey = '',
+  sortGroupByName = ORDER_BY.ASC,
+}: {
+  id: string | null;
+  isMember: boolean;
+  searchKey?: string;
+  sortGroupByName?: string;
+}) {
+  return await findGroupByMembers({id, isMember, searchKey, sortGroupByName});
 }
 
 export async function addPost({

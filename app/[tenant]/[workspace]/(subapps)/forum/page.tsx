@@ -3,27 +3,24 @@ import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  findGroupByMembers,
-  findPosts,
-  findUser,
-} from '@/subapps/forum/common/orm/forum';
+import {findPosts, findUser} from '@/subapps/forum/common/orm/forum';
 import Content from './content';
+import {findGroups} from '@/subapps/forum/common/action/action';
 
 export default async function Page() {
   const session = await getSession();
 
   const userId = session?.user?.id as string;
 
-  const memberGroups = await findGroupByMembers({
+  const memberGroups = await findGroups({
     id: userId,
     isMember: true,
-  }).then(clone);
+  });
 
-  const nonMemberGroups = await findGroupByMembers({
+  const nonMemberGroups = await findGroups({
     id: userId,
     isMember: false,
-  }).then(clone);
+  });
 
   const posts = await findPosts().then(clone);
 

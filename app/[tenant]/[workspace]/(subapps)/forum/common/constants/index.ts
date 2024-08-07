@@ -50,18 +50,15 @@ export const NOT_INTERESTED = 'Not interested';
 export const FILE_TITLE = 'File Title';
 export const SELECT_A_GROUP = 'Select a group';
 export const ENTER_TITLE = 'Enter Title';
-
+export const MANAGE_NOTIFICATIONS = 'Manage notifications';
+export const SORT_BY = 'Sort By';
 export const GROUP_SORT_BY = [
   {
-    id: 'default',
-    title: 'Default',
-  },
-  {
-    id: 'asc',
+    id: 'ASC',
     title: 'A-Z',
   },
   {
-    id: 'dsc',
+    id: 'DESC',
     title: 'Z-A',
   },
 ];

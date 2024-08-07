@@ -1,12 +1,16 @@
-import React from 'react';
+// ---- CORE IMPORTS ---- //
+import {getSession} from '@/orm/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 
-export default function Page() {
+export default async function Page() {
+  const session = await getSession();
+  const userId = session?.user?.id as string;
+
   return (
     <div>
-      <Content />
+      <Content userId={userId} />
     </div>
   );
 }
