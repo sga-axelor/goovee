@@ -43,7 +43,7 @@ export const Thread = ({
   return (
     <div className="bg-white rounded-lg flex flex-col gap-4">
       {showHeader && (
-        <ThreadHeader title={forumGroup.name} image={forumGroup.image} />
+        <ThreadHeader title={forumGroup?.name} image={forumGroup?.image} />
       )}
       <ThreadBody
         title={title}

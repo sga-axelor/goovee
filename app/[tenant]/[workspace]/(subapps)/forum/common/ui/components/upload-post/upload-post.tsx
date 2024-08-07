@@ -16,10 +16,12 @@ import {
 interface uploadPostProps {
   initialType?: string;
   open?: boolean;
+  groups: any[];
   onClose: () => void;
 }
 export const UploadPost = ({
   open,
+  groups = [],
   onClose,
   initialType = '',
 }: uploadPostProps) => {
@@ -42,7 +44,13 @@ export const UploadPost = ({
           <DialogTitle className="hidden">
             {i18n.get(MAKE_A_NEW_POST)}
           </DialogTitle>
-          {type === '' && <CreatePost handleDialogOpen={handleDialogOpen} />}
+          {type === '' && (
+            <CreatePost
+              groups={groups}
+              handleDialogOpen={handleDialogOpen}
+              onClose={onClose}
+            />
+          )}
           {type === 'image' && <ImageUploader handleClose={handleClose} />}
           {type === 'file' && <FileUploader handleClose={handleClose} />}
         </DialogContent>

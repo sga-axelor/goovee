@@ -67,11 +67,11 @@ export const ThreadBody = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Avatar className="rounded-full h-10 w-10">
-              <AvatarImage src={getImageURL(author.picture.id)} />
+              <AvatarImage src={getImageURL(author?.picture?.id)} />
             </Avatar>
             <div className="flex flex-col gap-2">
               <div className="text-base font-semibold">
-                {author.simpleFullName}
+                {author?.simpleFullName}
               </div>
               <div className="text-xs">
                 {parseDate(date, DATE_FORMATS.full_date)}

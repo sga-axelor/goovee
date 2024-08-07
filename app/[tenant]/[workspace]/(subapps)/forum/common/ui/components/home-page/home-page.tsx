@@ -2,7 +2,7 @@
 
 import {useRouter} from 'next/navigation';
 import {MdOutlineImage} from 'react-icons/md';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -10,7 +10,6 @@ import {
   Search as BannerSearch,
   Avatar,
   AvatarImage,
-  Input,
   Button,
 } from '@/ui/components';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
@@ -58,6 +57,11 @@ export const HomePage = ({
   const {id, picture}: any = user || {};
 
   const isLoggedIn = id ? true : false;
+
+  const groups = useMemo(
+    () => memberGroups.map((group: any) => group.forumGroup),
+    [memberGroups],
+  );
 
   const hanldeDialogOpen = (initialType: string = '') => {
     setInitialType(initialType);
@@ -142,7 +146,12 @@ export const HomePage = ({
           />
         </div>
       </div>
-      <UploadPost open={open} onClose={handleClose} initialType={initialType} />
+      <UploadPost
+        open={open}
+        groups={groups}
+        onClose={handleClose}
+        initialType={initialType}
+      />
     </div>
   );
 };
