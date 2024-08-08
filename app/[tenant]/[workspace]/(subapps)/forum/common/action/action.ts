@@ -4,10 +4,10 @@ import {getSession} from '@/orm/auth';
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {i18n} from '@/lib/i18n';
-import {ORDER_BY} from '@/constants';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+
 //----LOCAL IMPORTS -----//
 import {findGroupByMembers} from '@/subapps/forum/common/orm/forum';
 
@@ -99,14 +99,14 @@ export async function findGroups({
   id = null,
   isMember = true,
   searchKey = '',
-  sortGroupByName = ORDER_BY.ASC,
+  orderBy,
 }: {
   id: string | null;
   isMember: boolean;
   searchKey?: string;
-  sortGroupByName?: string;
+  orderBy?: any;
 }) {
-  return await findGroupByMembers({id, isMember, searchKey, sortGroupByName});
+  return await findGroupByMembers({id, isMember, searchKey, orderBy});
 }
 
 export async function addPost({

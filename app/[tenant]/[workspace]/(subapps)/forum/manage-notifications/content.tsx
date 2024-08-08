@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components';
+import {ORDER_BY} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -36,7 +37,7 @@ const Content = ({userId}: {userId: string}) => {
   const {workspaceURI} = useWorkspace();
   const [memberGroups, setMemberGroup] = useState<Group[]>([]);
   const [searchKey, setSearchKey] = useState<string>('');
-  const [sortGroupByName, setSortGroupByName] = useState<string>('ASC');
+  const [sortBy, setSortBy] = useState<string>(ORDER_BY.ASC);
 
   const handleMenuClick = (link: string) => {
     router.push(`${workspaceURI}/forum/${link}`);
@@ -49,9 +50,13 @@ const Content = ({userId}: {userId: string}) => {
         id: userId,
         isMember: true,
         searchKey,
-        sortGroupByName,
+        orderBy: {
+          forumGroup: {
+            name: sortBy,
+          },
+        },
       }).then(setMemberGroup);
-  }, [searchKey, sortGroupByName]);
+  }, [searchKey, sortBy]);
 
   const handleSearchKeyChange = (value: string) => {
     setSearchKey(value);
@@ -75,7 +80,7 @@ const Content = ({userId}: {userId: string}) => {
               <span className="pl-2 mb-3 text-muted-foreground">
                 {i18n.get(SORT_BY)}:
                 <div>
-                  <Select onValueChange={value => setSortGroupByName(value)}>
+                  <Select onValueChange={value => setSortBy(value)}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="A-Z" />
                     </SelectTrigger>

@@ -3,19 +3,16 @@ import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import {clone} from '@/utils';
 
-// ---- LOCAL IMPORTAS ----//
-import {ID} from '@/subapps/forum/common/types/forum';
-
 export async function findGroupByMembers({
   id = null,
   isMember,
   searchKey,
-  sortGroupByName,
+  orderBy,
 }: {
   id: any;
   isMember: boolean;
   searchKey?: string;
-  sortGroupByName: string;
+  orderBy?: any;
 }) {
   const client = await getClient();
 
@@ -41,12 +38,7 @@ export async function findGroupByMembers({
   return await client.aOSPortalForumGroupMember
     .find({
       where: whereClause,
-      orderBy: {
-        isPin: ORDER_BY.DESC,
-        forumGroup: {
-          name: sortGroupByName,
-        },
-      },
+      orderBy,
       select: {
         forumGroup: {
           name: true,
