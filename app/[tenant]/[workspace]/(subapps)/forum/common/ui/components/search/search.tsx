@@ -10,7 +10,7 @@ import {SEARCH_HERE} from '@/subapps/forum/common/constants';
 export const Search = ({
   onChange = () => {},
 }: {
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
 }) => {
   const [searchValue, setSearchValue] = useState<string>('');
 

@@ -72,15 +72,6 @@ export const HomePage = ({
     setOpen(false);
   };
 
-  const hanldeDialogOpen = (initialType: string = '') => {
-    setInitialType(initialType);
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setInitialType('');
-    setOpen(false);
-  };
-
   const renderSearch = () => (
     <BannerSearch
       searchKey="title"
