@@ -23,6 +23,7 @@ export const SEARCH_HERE = 'Search here';
 export const DISABLED_SEARCH_PLACEHOLDER = 'You must log in to be able to post';
 export const MARK_AS_READ = 'Mark as read';
 export const PIN = 'Pin';
+export const REMOVE_PIN = 'Remove pin';
 export const NOTIFICATIONS = 'Notifications';
 export const LEAVE_THIS_GROUP = 'Leave this group';
 export const ASK_TO_JOIN = 'Ask to join the group';

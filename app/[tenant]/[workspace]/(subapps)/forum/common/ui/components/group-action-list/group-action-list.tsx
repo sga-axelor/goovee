@@ -34,6 +34,7 @@ import {
   NOTIFICATIONS,
   NOTIFICATIONS_OPTIONS,
   PIN,
+  REMOVE_PIN,
 } from '@/subapps/forum/common/constants';
 import {
   addNotificationsToGroup,
@@ -86,7 +87,7 @@ export const GroupActionList = ({
   const handlePath = (id: number) => {
     router.push(`${workspaceURI}/forum/group/${id}`, {scroll: false});
   };
-
+  console.log('groups >>>', groups);
   return (
     <div>
       <h1 className="font-semibold text-base leading-6 mb-6">
@@ -136,7 +137,7 @@ export const GroupActionList = ({
                   onClick={() => handlePinGroup(group?.isPin, group)}>
                   <MdOutlinePushPin className="w-4 h-4" />
                   <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
-                    {PIN}
+                    {!group?.isPin ? PIN : REMOVE_PIN}
                   </span>
                 </div>
 
