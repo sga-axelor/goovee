@@ -85,13 +85,14 @@ export const TAB_TITLES: Array<
     icon: MdOutlineArticle,
     component: PostsContent,
   },
-  {
-    id: 2,
-    key: 'media',
-    title: 'Media',
-    icon: MdOutlinePermMedia,
-    component: MediaContent,
-  },
+  // Commenting this cause it is not needed in V1
+  // {
+  //   id: 2,
+  //   key: 'media',
+  //   title: 'Media',
+  //   icon: MdOutlinePermMedia,
+  //   component: MediaContent,
+  // },
 ];
 
 export const FORUM_GROUP = [

@@ -141,34 +141,36 @@ export const GroupActionList = ({
                   </span>
                 </div>
 
-                <Popover>
-                  <PopoverTrigger>
-                    <div className="flex items-center gap-[10px] px-2">
-                      <MdNotificationsNone className="w-4 h-4" />
-                      <span className="w-full text-left text-xs leading-[18px] font-normal cursor-pointer">
-                        {NOTIFICATIONS}
-                      </span>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent side="right" className="p-0">
-                    <div className="flex flex-col gap-[10px] py-4 bg-white rounded-lg text-xs leading-[18px]">
-                      {NOTIFICATIONS_OPTIONS.map(option => (
-                        <div
-                          key={option.id}
-                          className={`cursor-pointer px-4 ${option.value === group.notificationSelect ? 'bg-success-light' : ''}`}
-                          onClick={() =>
-                            handleNotifications(
-                              group.id,
-                              group.verion,
-                              option.value,
-                            )
-                          }>
-                          {i18n.get(option.title)}
-                        </div>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                {false && (
+                  <Popover>
+                    <PopoverTrigger>
+                      <div className="flex items-center gap-[10px] px-2">
+                        <MdNotificationsNone className="w-4 h-4" />
+                        <span className="w-full text-left text-xs leading-[18px] font-normal cursor-pointer">
+                          {NOTIFICATIONS}
+                        </span>
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent side="right" className="p-0">
+                      <div className="flex flex-col gap-[10px] py-4 bg-white rounded-lg text-xs leading-[18px]">
+                        {NOTIFICATIONS_OPTIONS.map(option => (
+                          <div
+                            key={option.id}
+                            className={`cursor-pointer px-4 ${option.value === group.notificationSelect ? 'bg-success-light' : ''}`}
+                            onClick={() =>
+                              handleNotifications(
+                                group.id,
+                                group.verion,
+                                option.value,
+                              )
+                            }>
+                            {i18n.get(option.title)}
+                          </div>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
                 {isMember ? (
                   <div
                     className="flex items-center gap-[10px] px-2"

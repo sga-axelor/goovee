@@ -130,13 +130,15 @@ export const HomePage = ({
                 ? i18n.get(START_A_POST)
                 : i18n.get(DISABLED_SEARCH_PLACEHOLDER)}
             </Button>
-            <Button
-              disabled={!isLoggedIn}
-              onClick={() => hanldeDialogOpen('image')}
-              className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
+            {false && (
+              <Button
+                disabled={!isLoggedIn}
+                onClick={() => hanldeDialogOpen('image')}
+                className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
               disabled:bg-black/20 disabled:border-gray-700 disabled:text-gray-700">
-              <MdOutlineImage className="h-6 w-6" />
-            </Button>
+                <MdOutlineImage className="h-6 w-6" />
+              </Button>
+            )}
           </div>
           <Tabs
             tabs={TAB_TITLES}
