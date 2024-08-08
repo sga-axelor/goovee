@@ -41,7 +41,7 @@ const Comment = ({comment}: {comment?: any}) => {
   const [showSubComments, setShowSubComments] = useState(false);
 
   const {data: session} = useSession();
-  const isLoggedIn = session?.user?.id;
+  const isLoggedIn = session?.user?.id ? true : false;
 
   if (!comment) return null;
   const {author, publicationDateTime, contentComment} = comment;

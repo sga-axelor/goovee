@@ -84,7 +84,7 @@ export const GroupActionList = ({
     router.push(`${workspaceURI}/forum`);
   };
 
-  const handlePath = (id: number) => {
+  const handlePath = (id: string) => {
     router.push(`${workspaceURI}/forum/group/${id}`, {scroll: false});
   };
 
@@ -97,13 +97,16 @@ export const GroupActionList = ({
         {groups?.map((group: any) => (
           <Collapsible key={group.id}>
             <div
-              className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${group.id === groupId ? 'bg-success-light' : ' '}`}>
+              className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${group.forumGroup.id === groupId ? 'bg-success-light' : ' '}`}>
               <div
-                onClick={() => handlePath(group.id)}
+                onClick={() => handlePath(group.forumGroup.id)}
                 className="flex items-center gap-2">
                 <Avatar className="rounded-lg h-6 w-6">
                   <AvatarImage
-                    src={getImageURL(group?.forumGroup?.image?.id)}
+                    src={
+                      getImageURL(group?.forumGroup?.image?.id) ||
+                      '/images/no-image.png'
+                    }
                   />
                 </Avatar>
                 <p className="font-normal text-sm leading-5 line-clamp-1 cursor-pointer">

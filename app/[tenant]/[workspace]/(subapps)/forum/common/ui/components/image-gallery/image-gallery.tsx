@@ -7,8 +7,9 @@ import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
 import {ThreadPopup} from '@/subapps/forum/common/ui/components';
+import {Post} from '@/subapps/forum/common/types/forum';
 
-export const ImageGallery = ({images}: {images: any}) => {
+export const ImageGallery = ({images, post}: {images: any; post: Post}) => {
   const showOverlay = images.length > 3;
 
   const [openPopUp, setOpenPopUp] = useState(false);
@@ -45,6 +46,7 @@ export const ImageGallery = ({images}: {images: any}) => {
         images={images}
         open={openPopUp}
         onClose={closeThreadPopup}
+        post={post}
       />
     </>
   );

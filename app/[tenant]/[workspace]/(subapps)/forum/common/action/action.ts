@@ -7,6 +7,7 @@ import {i18n} from '@/lib/i18n';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {ID} from '@/types';
 
 //----LOCAL IMPORTS -----//
 import {findGroupByMembers} from '@/subapps/forum/common/orm/forum';
@@ -168,4 +169,33 @@ export async function addPost({
   });
 
   return {success: true, data: post};
+}
+
+export async function findMedia(id: ID) {
+  const client = await getClient();
+
+  return await client.aOSPortalForumPost
+    .find({
+      where: {
+        ...(id
+          ? {
+              forumGroup: {
+                id,
+              },
+            }
+          : {}),
+      },
+      select: {
+        attachmentList: {
+          select: {
+            title: true,
+            metaFile: {
+              fileName: true,
+              fileType: true,
+            },
+          },
+        },
+      },
+    })
+    .then(clone);
 }

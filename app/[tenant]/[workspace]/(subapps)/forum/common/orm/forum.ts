@@ -1,6 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
+import {ID} from '@/types';
 import {clone} from '@/utils';
 
 export async function findGroupByMembers({
@@ -70,7 +71,13 @@ export async function findUser({userId}: {userId: any}) {
   return user;
 }
 
-export async function findPosts({sort = null}: {sort: any}) {
+export async function findPosts({
+  sort = null,
+  whereClause = {},
+}: {
+  sort?: any;
+  whereClause?: any;
+}) {
   const client = await getClient();
 
   let orderBy: any = null;
@@ -84,6 +91,7 @@ export async function findPosts({sort = null}: {sort: any}) {
   }
 
   const posts = await client.aOSPortalForumPost.find({
+    where: whereClause,
     orderBy,
     select: {
       title: true,
@@ -137,4 +145,32 @@ export async function findPosts({sort = null}: {sort: any}) {
   });
 
   return posts;
+}
+
+export async function findPostsByGroupId(id: ID) {
+  const whereClause = {
+    forumGroup: {
+      id,
+    },
+  };
+
+  const posts = await findPosts({whereClause});
+  return posts;
+}
+
+export async function findGroupById(id: ID) {
+  const client = await getClient();
+  const groups = await client.aOSPortalForum.findOne({
+    where: {
+      id,
+    },
+    select: {
+      name: true,
+      description: true,
+      image: {
+        fileName: true,
+      },
+    },
+  });
+  return groups;
 }

@@ -8,6 +8,7 @@ import {
   ThreadFooter,
   ThreadHeader,
 } from '@/subapps/forum/common/ui/components';
+import {Post} from '@/subapps/forum/common/types/forum';
 
 export const Thread = ({
   post,
@@ -16,7 +17,7 @@ export const Thread = ({
   hideCloseComments = false,
   usePopUpStyles = false,
 }: {
-  post?: any;
+  post: Post;
   showHeader?: boolean;
   showCommentsByDefault?: boolean;
   hideCloseComments?: boolean;
@@ -53,6 +54,7 @@ export const Thread = ({
         date={createdOn}
         comments={commentList}
         toggleComments={toggleComments}
+        post={post}
       />
       <ThreadFooter
         comments={commentList}

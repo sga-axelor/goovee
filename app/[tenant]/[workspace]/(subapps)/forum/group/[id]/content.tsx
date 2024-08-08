@@ -5,19 +5,22 @@ import {useRouter} from 'next/navigation';
 import {NavMenu, SingleGroup} from '@/subapps/forum/common/ui/components';
 import {MENU} from '@/subapps/forum/common/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {ForumGroup, Group, Post} from '@/subapps/forum/common/types/forum';
 
 interface groupContentProps {
-  groupId: string;
-  userId: string;
-  memberGroups: any;
-  nonMemberGroups: any;
+  memberGroups: Group[];
+  nonMemberGroups: Group[];
+  user: any;
+  posts: Post[];
+  selectedGroup: ForumGroup;
 }
 
 const Content = ({
-  groupId,
-  userId,
   memberGroups,
   nonMemberGroups,
+  user,
+  posts,
+  selectedGroup,
 }: groupContentProps) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -32,10 +35,11 @@ const Content = ({
         <NavMenu items={MENU} onClick={handleMenuClick} />
       </div>
       <SingleGroup
-        groupId={groupId}
-        userId={userId}
         memberGroups={memberGroups}
         nonMemberGroups={nonMemberGroups}
+        user={user}
+        posts={posts}
+        selectedGroup={selectedGroup}
       />
     </div>
   );

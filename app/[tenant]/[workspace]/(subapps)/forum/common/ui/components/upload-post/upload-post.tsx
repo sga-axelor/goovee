@@ -16,7 +16,7 @@ import {
 interface uploadPostProps {
   initialType?: string;
   open?: boolean;
-  groups: any[];
+  groups?: any[];
   onClose: () => void;
 }
 export const UploadPost = ({

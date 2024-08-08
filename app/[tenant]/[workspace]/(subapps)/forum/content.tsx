@@ -9,6 +9,7 @@ import {
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
 import {MENU} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {Group} from '@/subapps/forum/common/types/forum';
 
 const Content = ({
   memberGroups,
@@ -16,8 +17,8 @@ const Content = ({
   user,
   posts,
 }: {
-  memberGroups: any;
-  nonMemberGroups: any;
+  memberGroups: Group[];
+  nonMemberGroups: Group[];
   user: any;
   posts: any;
 }) => {
@@ -26,7 +27,6 @@ const Content = ({
 
   const handleMenuClick = (link: string) => {
     router.push(`${workspaceURI}/forum/${link}`);
-    router.refresh();
   };
 
   return (

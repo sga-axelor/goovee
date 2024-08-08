@@ -8,15 +8,15 @@ import {BannerVariants} from '../banner';
 type HearoSerchTypes = {
   groupImg?: string;
   title: string;
-  description: string;
+  description?: string;
   image: any;
   renderSearch?: any;
 } & VariantProps<BannerVariants>;
 
 export const HeroSearch = ({
   groupImg,
-  title,
-  description,
+  title = '',
+  description = '',
   image,
   renderSearch,
   background,

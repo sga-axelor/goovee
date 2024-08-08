@@ -9,6 +9,10 @@
       "type": "String"
     },
     {
+      "name": "description",
+      "type": "String"
+    },
+    {
       "name": "image",
       "type": "ManyToOne",
       "target": "AOSMetaFile"

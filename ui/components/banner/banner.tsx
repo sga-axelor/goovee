@@ -1,8 +1,10 @@
 'use client';
-
-import Image from 'next/image';
 import React from 'react';
 import {cva, type VariantProps} from 'class-variance-authority';
+import Image from 'next/image';
+
+// ---- CORE IMPORTS ---- //
+import {getImageURL} from '@/utils/image';
 import {cn} from '@/utils/css';
 
 const bannerVariants = cva(
@@ -87,7 +89,7 @@ export const Banner = ({
           <div className="w-20 h-20 overflow-hidden rounded-lg relative mb-4">
             <Image
               fill
-              src={groupImg}
+              src={getImageURL(groupImg)}
               alt={'Group Image'}
               className="rounded-lg"
               objectFit="cover"

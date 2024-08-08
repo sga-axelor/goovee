@@ -2,7 +2,7 @@
 
 import {useRouter} from 'next/navigation';
 import {MdOutlineImage} from 'react-icons/md';
-import {useMemo, useState} from 'react';
+import {useMemo, useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -33,6 +33,8 @@ import {
   START_A_POST,
   TAB_TITLES,
 } from '@/subapps/forum/common/constants';
+import {Group} from '@/subapps/forum/common/types/forum';
+import {findGroups} from '@/subapps/forum/common/action/action';
 
 export const HomePage = ({
   memberGroups,
@@ -40,12 +42,15 @@ export const HomePage = ({
   user,
   posts,
 }: {
-  memberGroups: any;
-  nonMemberGroups: any;
+  memberGroups: Group[];
+  nonMemberGroups: Group[];
   user: any;
   posts: any;
 }) => {
   const [open, setOpen] = useState(false);
+  const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
+  const [nonMemeberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
+  const [searchKey, setSearchKey] = useState<string>('');
   const [initialType, setInitialType] = useState<string>('');
 
   const router = useRouter();
@@ -58,10 +63,39 @@ export const HomePage = ({
 
   const isLoggedIn = id ? true : false;
 
+  useEffect(() => {
+    setMemberGroupList(memberGroups);
+    setNonMemberGroupList(nonMemberGroups);
+  }, []);
+
   const groups = useMemo(
     () => memberGroups.map((group: any) => group.forumGroup),
     [memberGroups],
   );
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      findGroups({
+        id: user?.id as string,
+        isMember: true,
+        searchKey,
+      })
+        .then(setMemberGroupList)
+        .catch(err => console.log(err));
+    }
+
+    findGroups({
+      id: user?.id,
+      isMember: false,
+      searchKey,
+    })
+      .then(setNonMemberGroupList)
+      .catch(err => console.log(err));
+  }, [searchKey]);
+
+  const handleChangeSerachKey = (value: string) => {
+    setSearchKey(value);
+  };
 
   const hanldeDialogOpen = (initialType: string = '') => {
     setInitialType(initialType);
@@ -100,17 +134,17 @@ export const HomePage = ({
               {i18n.get(GROUPS)}
             </h1>
           </div>
-          <GroupSearch />
+          <GroupSearch onChange={handleChangeSerachKey} />
           {isLoggedIn && (
             <GroupActionList
               title={MEMBER}
-              groups={memberGroups}
+              groups={memberGroupList}
               userId={user.id}
             />
           )}
           <GroupActionList
             title={NOT_MEMBER}
-            groups={nonMemberGroups}
+            groups={nonMemeberGroupList}
             isMember={false}
             userId={user.id}
           />

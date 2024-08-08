@@ -161,6 +161,7 @@ export type ComputedProduct = {
 export type MetaFile = {
   id: ID;
   fileName: string;
+  fileType?: string;
 };
 
 export type Category = {

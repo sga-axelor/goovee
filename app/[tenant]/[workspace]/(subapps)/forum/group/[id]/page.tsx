@@ -1,10 +1,14 @@
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {findGroupByMembers} from '@/subapps/forum/common/orm/forum';
+import {
+  findGroupById,
+  findPostsByGroupId,
+} from '@/subapps/forum/common/orm/forum';
 import Content from './content';
+import {findGroups} from '@/subapps/forum/common/action/action';
 
 export default async function Page({
   params,
@@ -14,25 +18,28 @@ export default async function Page({
   };
 }) {
   const session = await getSession();
+  const user = session?.user;
+  const groupId = params.id as string;
+  const posts = await findPostsByGroupId(groupId).then(clone);
 
-  const userId = session?.user?.id as string;
-
-  const memberGroups = await findGroupByMembers({
-    id: userId,
+  const memberGroups = await findGroups({
+    id: user?.id as string,
     isMember: true,
-  }).then(clone);
-
-  const nonMemberGroups = await findGroupByMembers({
-    id: userId,
+  });
+  const nonMemberGroups = await findGroups({
+    id: user?.id as string,
     isMember: false,
-  }).then(clone);
+  });
+
+  const selectedGroup = await findGroupById(groupId).then(clone);
 
   return (
     <Content
-      groupId={params.id}
-      userId={userId}
       memberGroups={memberGroups}
       nonMemberGroups={nonMemberGroups}
+      user={user}
+      posts={posts}
+      selectedGroup={selectedGroup}
     />
   );
 }

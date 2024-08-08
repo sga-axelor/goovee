@@ -1,14 +1,14 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {MdOutlineImage} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
-import {Avatar, Button, HeroSearch} from '@/ui/components';
+import {Avatar, AvatarImage, Button, HeroSearch} from '@/ui/components';
 import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
@@ -27,19 +27,29 @@ import {
   Tabs,
   UploadPost,
 } from '@/subapps/forum/common/ui/components';
+import type {ForumGroup, Group, Post} from '@/subapps/forum/common/types/forum';
+import {findGroups} from '@/subapps/forum/common/action/action';
+import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
 
 export const SingleGroup = ({
-  groupId,
-  userId,
   memberGroups,
   nonMemberGroups,
+  user,
+  posts,
+  selectedGroup,
 }: {
-  groupId: string;
-  userId: string;
-  memberGroups: any;
-  nonMemberGroups: any;
+  memberGroups: Group[];
+  nonMemberGroups: Group[];
+  user: any;
+  posts: Post[];
+  selectedGroup: ForumGroup;
 }) => {
   const [open, setOpen] = useState(false);
+
+  const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
+  const [nonMemeberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
+  const [searchKey, setSearchKey] = useState<string>('');
+
   const [initialType, setInitialType] = useState<string>('');
 
   const router = useRouter();
@@ -47,11 +57,39 @@ export const SingleGroup = ({
 
   const {searchParams} = useSearchParams();
   const type = searchParams.get('type') ?? 'posts';
+  const isLoggedIn = user?.id ? true : false;
 
-  const isLoggedIn = true;
+  useEffect(() => {
+    setMemberGroupList(memberGroups);
+    setNonMemberGroupList(nonMemberGroups);
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      findGroups({
+        id: user?.id as string,
+        isMember: true,
+        searchKey,
+      })
+        .then(setMemberGroupList)
+        .catch(err => console.log(err));
+    }
+
+    findGroups({
+      id: user?.id,
+      isMember: false,
+      searchKey,
+    })
+      .then(setNonMemberGroupList)
+      .catch(err => console.log(err));
+  }, [searchKey]);
+
+  const handleChangeSerachKey = (value: string) => {
+    setSearchKey(value);
+  };
 
   const handleTabClick = (type: string) => {
-    router.push(`${workspaceURI}/forum/group/${groupId}?type=${type}`);
+    router.push(`${workspaceURI}/forum/group/${selectedGroup.id}?type=${type}`);
   };
   const hanldeDialogOpen = (initialType: string = '') => {
     setInitialType(initialType);
@@ -65,9 +103,9 @@ export const SingleGroup = ({
   return (
     <div>
       <HeroSearch
-        groupImg={GROUP.image}
-        title={GROUP.name}
-        description={GROUP.desc}
+        groupImg={selectedGroup?.image?.id}
+        title={selectedGroup?.name}
+        description={selectedGroup?.description}
         image={IMAGE_URL}
       />
       <div className="flex flex-col md:flex-row gap-5 px-4 md:px-[50px] lg:px-[100px] py-6 w-full">
@@ -77,28 +115,29 @@ export const SingleGroup = ({
               {i18n.get(GROUPS)}
             </h1>
           </div>
-          <GroupSearch />
+          <GroupSearch onChange={handleChangeSerachKey} />
           {isLoggedIn && (
             <GroupActionList
               title={MEMBER}
-              groups={memberGroups}
-              groupId={groupId}
+              groups={memberGroupList}
+              groupId={selectedGroup.id}
             />
           )}
           <GroupActionList
             title={NOT_MEMBER}
-            userId={userId}
-            groups={nonMemberGroups}
-            groupId={groupId}
+            userId={user?.id}
+            groups={nonMemeberGroupList}
+            groupId={selectedGroup.id}
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
           <div className="bg-white px-4 pt-4 pb-1 rounded-t-lg flex items-center gap-[10px]">
             <Avatar
-              className={`rounded-full h-8 w-8 ${isLoggedIn ? 'bg-red-400' : 'bg-black/20'}`}>
-              {/*{isLoggedIn && <AvatarImage src="/images/user.png" />} */}
+              className={`rounded-full h-8 w-8 ${isLoggedIn ? '' : 'bg-black/20'}`}>
+              {isLoggedIn && (
+                <AvatarImage src={getImageURL(user?.picture?.id)} />
+              )}
             </Avatar>
-
             <Button
               disabled={!isLoggedIn}
               onClick={() => hanldeDialogOpen()}
@@ -120,7 +159,8 @@ export const SingleGroup = ({
             tabs={TAB_TITLES}
             onClick={handleTabClick}
             activeTab={type}
-            posts={[]}
+            posts={posts}
+            groupId={selectedGroup.id}
           />
         </div>
       </div>

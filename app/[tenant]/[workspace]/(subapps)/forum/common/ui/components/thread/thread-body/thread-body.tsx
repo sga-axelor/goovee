@@ -23,6 +23,7 @@ import {
   REPORT,
 } from '@/subapps/forum/common/constants';
 import {ImageGallery} from '@/subapps/forum/common/ui/components';
+import {Post} from '@/subapps/forum/common/types/forum';
 
 interface MetaFile {
   fileType: string;
@@ -40,14 +41,16 @@ export const ThreadBody = ({
   date,
   comments,
   toggleComments,
+  post,
 }: {
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
   attachmentList?: Attachment[];
   author: any;
   date: string;
   comments: any;
   toggleComments: () => void;
+  post: Post;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => {
@@ -109,7 +112,7 @@ export const ThreadBody = ({
             </div>
           </div>
         </div>
-        {images?.length > 0 && <ImageGallery images={images} />}
+        {images?.length > 0 && <ImageGallery images={images} post={post} />}
         <div className="flex justify-between">
           <div></div>
           <div

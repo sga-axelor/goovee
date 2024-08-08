@@ -11,8 +11,9 @@ import {URL_PARAMS} from '@/constants';
 // ---- LOCAL IMPORTS ---- //
 import {THREAD_SORT_BY_OPTIONS} from '@/subapps/forum/common/constants';
 import {DropdownToggle, Thread} from '@/subapps/forum/common/ui/components';
+import {Post} from '@/subapps/forum/common/types/forum';
 
-export const ThreadList = ({posts}: {posts: any[]}) => {
+export const ThreadList = ({posts}: {posts: Post[]}) => {
   const {update} = useSearchParams();
 
   const handleSortBy = (value: any) => {

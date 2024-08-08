@@ -17,7 +17,9 @@ export type Level = 1 | 2 | 3 | 4 | 5 | 6;
 export type PostsContentProps = {
   posts: any;
 };
-export type MediaContentProps = {};
+export type MediaContentProps = {
+  groupId: string;
+};
 
 export type Tab<P = {}> = {
   id: number;
@@ -38,6 +40,7 @@ export interface Image extends Model {
 
 export interface ForumGroup extends Model {
   name: string;
+  description?: string;
   image?: Image;
 }
 

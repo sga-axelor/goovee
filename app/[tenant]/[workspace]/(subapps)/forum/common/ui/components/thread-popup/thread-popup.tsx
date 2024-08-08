@@ -5,19 +5,23 @@ import {Navigation} from 'swiper/modules';
 
 // ---- CORE IMPORTS ---- //
 import {Dialog, DialogContent} from '@/ui/components';
+import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
 import styles from './styles.module.scss';
+import {Image, Post} from '@/subapps/forum/common/types/forum';
 
 export const ThreadPopup = ({
   open,
   images,
   onClose,
+  post,
 }: {
   open: boolean;
   images: any;
   onClose: () => void;
+  post: Post;
 }) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -36,11 +40,13 @@ export const ThreadPopup = ({
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper h-full">
-                {images.map((imageUrl: string, index: number) => (
+                {images.map((imageUrl: Image, index: number) => (
                   <SwiperSlide key={index} className="flex items-center">
                     <div
                       className="w-full h-full bg-no-repeat bg-center bg-cover"
-                      style={{backgroundImage: `url(${imageUrl})`}}></div>
+                      style={{
+                        backgroundImage: `url(${getImageURL(imageUrl?.metaFile?.id)})`,
+                      }}></div>
                   </SwiperSlide>
                 ))}
               </Swiper>
@@ -52,6 +58,7 @@ export const ThreadPopup = ({
               showCommentsByDefault={true}
               hideCloseComments={true}
               usePopUpStyles={true}
+              post={post}
             />
           </div>
         </div>
