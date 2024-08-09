@@ -1,15 +1,17 @@
+import {MdAdd} from 'react-icons/md';
+
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
+import {i18n} from '@/lib/i18n';
+import {Button} from '@/ui/components';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {TicketList} from '@/subapps/ticketing/common/ui/components/ticket-list';
 import Hero from './hero';
-import {i18n} from '@/lib/i18n';
-import {Button} from '@/ui/components';
-import {MdAdd} from 'react-icons/md';
+import {TicketList} from '@/subapps/ticketing/common/ui/components/ticket-list';
+import {TicketTypes} from '@/subapps/ticketing/common/ui/components/ticket-types';
 
 export default async function Page({
   params,
@@ -41,7 +43,8 @@ export default async function Page({
   return (
     <>
       <Hero workspace={workspace} />
-      <div className="container mt-6">
+      <div className="container mt-6 space-y-6">
+        <TicketTypes />
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-xl">
             {i18n.get('Latest tickets')}
