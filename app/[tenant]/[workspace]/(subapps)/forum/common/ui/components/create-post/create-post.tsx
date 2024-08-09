@@ -30,7 +30,7 @@ import {
   PUBLISH,
   TITLE,
 } from '@/subapps/forum/common/constants';
-import {Tiptap} from '@/subapps/forum/common/ui/components';
+import {TextEditor} from '@/subapps/forum/common/ui/components';
 import {addPost} from '@/subapps/forum/common/action/action';
 
 interface CreatePostProps {
@@ -92,6 +92,10 @@ export const CreatePost = ({
     }
   };
 
+  const handleContentChange = (text: string) => {
+    setEditorContent(text);
+  };
+
   return (
     <ScrollArea className="h-screen lg:h-[80vh]">
       <div className="lg:h-[80vh] p-2 flex flex-col justify-between">
@@ -145,10 +149,7 @@ export const CreatePost = ({
             <span className="text-base font-medium text-foreground">
               {i18n.get(CONTENT)}
             </span>
-            <Tiptap
-              content={editorContent}
-              setEditorContent={setEditorContent}
-            />
+            <TextEditor handleContentChange={handleContentChange} />
           </div>
         </div>
         <div className="w-full mt-2">

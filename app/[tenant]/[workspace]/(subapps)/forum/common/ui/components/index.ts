@@ -5,7 +5,7 @@ export {NavMenu} from './nav-menu';
 export {HomePage} from './home-page';
 export {UploadPost} from './upload-post';
 export {CreatePost} from './create-post';
-export {Tiptap} from './tiptap';
+export {TextEditor} from './text-editor';
 export {ImageUploader} from './image-uploader';
 export {FileUploader} from './file-uploader';
 export {FileDesc} from './file-desc';

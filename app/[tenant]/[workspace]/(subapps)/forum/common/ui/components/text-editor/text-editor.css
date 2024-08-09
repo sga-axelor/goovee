@@ -1,4 +1,4 @@
-.tiptap {
+.DraftEditor-editorContainer .public-DraftEditor-content {
   > * + * {
     margin-top: 0.5em;
   }
@@ -87,12 +87,7 @@
     font-style: italic;
   }
 }
-
-.ProseMirror {
-  border: none;
-  min-height: 200px;
-}
-.ProseMirror:focus {
-  border: none !important;
-  outline: none !important;
+.rdw-editor-wrapper {
+  word-break: 'break-word';
+  overflow-wrap: 'break-word';
 }
