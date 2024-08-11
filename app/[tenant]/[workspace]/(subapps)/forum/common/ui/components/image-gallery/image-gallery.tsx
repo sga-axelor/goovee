@@ -43,10 +43,10 @@ export const ImageGallery = ({images, post}: {images: any; post: Post}) => {
         ))}
       </div>
       <ThreadPopup
+        post={post}
         images={images}
         open={openPopUp}
         onClose={closeThreadPopup}
-        post={post}
       />
     </>
   );

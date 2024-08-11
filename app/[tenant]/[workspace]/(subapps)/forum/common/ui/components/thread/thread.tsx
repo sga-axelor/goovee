@@ -23,15 +23,7 @@ export const Thread = ({
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
 }) => {
-  const {
-    forumGroup,
-    title,
-    content,
-    attachmentList,
-    author,
-    createdOn,
-    commentList,
-  } = post;
+  const {forumGroup, commentList} = post;
 
   const [showComments, setShowComments] = useState(
     showCommentsByDefault ?? false,
@@ -47,12 +39,8 @@ export const Thread = ({
         <ThreadHeader title={forumGroup?.name} image={forumGroup?.image} />
       )}
       <ThreadBody
-        title={title}
-        content={content}
-        attachmentList={attachmentList}
-        author={author}
-        date={createdOn}
-        comments={commentList}
+        post={post}
+        usePopUpStyles={usePopUpStyles}
         toggleComments={toggleComments}
         post={post}
       />

@@ -34,35 +34,27 @@ interface Attachment {
 }
 
 export const ThreadBody = ({
-  title,
-  content,
-  attachmentList,
-  author,
-  date,
-  comments,
-  toggleComments,
   post,
+  usePopUpStyles = false,
+  toggleComments,
 }: {
-  title?: string;
-  content?: string;
-  attachmentList?: Attachment[];
-  author: any;
-  date: string;
-  comments: any;
-  toggleComments: () => void;
   post: Post;
+  usePopUpStyles?: boolean;
+  toggleComments: () => void;
 }) => {
+  const {title, content, attachmentList, author, createdOn, commentList} = post;
+
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
   const images =
-    attachmentList?.filter(attachment =>
+    attachmentList?.filter((attachment: any) =>
       attachment?.metaFile?.fileType.startsWith('image'),
     ) || [];
 
-  const commentsLength = comments?.length;
+  const commentsLength = commentList?.length;
 
   return (
     <>
@@ -77,7 +69,7 @@ export const ThreadBody = ({
                 {author?.simpleFullName}
               </div>
               <div className="text-xs">
-                {parseDate(date, DATE_FORMATS.full_date)}
+                {parseDate(createdOn, DATE_FORMATS.full_date)}
               </div>
             </div>
           </div>
@@ -112,7 +104,9 @@ export const ThreadBody = ({
             </div>
           </div>
         </div>
-        {images?.length > 0 && <ImageGallery images={images} post={post} />}
+        {images?.length > 0 && !usePopUpStyles && (
+          <ImageGallery post={post} images={images} />
+        )}
         <div className="flex justify-between">
           <div></div>
           <div

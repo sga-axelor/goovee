@@ -52,7 +52,7 @@ export interface Group extends Model {
 
 export interface Author extends Model {
   simpleFullName?: string;
-  picture: string;
+  picture: {id: string};
 }
 
 export interface Comment extends Model {

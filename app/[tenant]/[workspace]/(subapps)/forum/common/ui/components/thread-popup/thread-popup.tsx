@@ -13,15 +13,15 @@ import styles from './styles.module.scss';
 import {Image, Post} from '@/subapps/forum/common/types/forum';
 
 export const ThreadPopup = ({
+  post,
   open,
   images,
   onClose,
-  post,
 }: {
+  post: Post;
   open: boolean;
   images: any;
   onClose: () => void;
-  post: Post;
 }) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -40,12 +40,12 @@ export const ThreadPopup = ({
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper h-full">
-                {images.map((imageUrl: Image, index: number) => (
+                {images.map((image: Image, index: number) => (
                   <SwiperSlide key={index} className="flex items-center">
                     <div
                       className="w-full h-full bg-no-repeat bg-center bg-cover"
                       style={{
-                        backgroundImage: `url(${getImageURL(imageUrl?.metaFile?.id)})`,
+                        backgroundImage: `url(${getImageURL(image?.metaFile?.id)})`,
                       }}></div>
                   </SwiperSlide>
                 ))}
@@ -54,11 +54,11 @@ export const ThreadPopup = ({
           </div>
           <div className=" md:pt-12 md:pr-4 pb-6 md:pb-0 w-full md:w-1/2 h-[450px] md:h-full overflow-auto">
             <Thread
+              post={post}
               showHeader={false}
               showCommentsByDefault={true}
               hideCloseComments={true}
               usePopUpStyles={true}
-              post={post}
             />
           </div>
         </div>
