@@ -10,20 +10,22 @@ interface Option {
 
 interface DropdownToggleProps {
   options: Option[];
+  handleDropdown?: (value: string) => void;
 }
 
-export const DropdownToggle = ({options}: DropdownToggleProps) => {
+export const DropdownToggle = ({
+  options,
+  handleDropdown,
+}: DropdownToggleProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentValue, setCurrentValue] = useState(options[0].label);
 
   const handleClick = (index: number) => {
     const newIndex = (index + 1) % options.length;
     setCurrentIndex(newIndex);
-    setCurrentValue(options[newIndex].label);
   };
 
   useEffect(() => {
-    setCurrentValue(options[currentIndex].label);
+    handleDropdown && handleDropdown(options[currentIndex].key);
   }, [currentIndex, options]);
 
   return (

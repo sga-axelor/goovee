@@ -133,11 +133,12 @@ export const THREAD_SORT_BY_OPTIONS = [
     key: 'old',
     label: 'Old',
   },
-  {
-    id: 3,
-    key: 'popular',
-    label: 'Popular',
-  },
+  // No support for popular at the moment from backend
+  // {
+  //   id: 3,
+  //   key: 'popular',
+  //   label: 'Popular',
+  // },
 ];
 
 export const NOTIFICATIONS_OPTIONS = [

@@ -8,10 +8,15 @@ import {findPosts, findUser} from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 import {findGroups} from '@/subapps/forum/common/action/action';
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: {[key: string]: string | undefined};
+}) {
   const session = await getSession();
-
   const userId = session?.user?.id as string;
+
+  const {sort} = searchParams;
 
   const orderBy = {
     isPin: ORDER_BY.DESC,
@@ -32,7 +37,7 @@ export default async function Page() {
     orderBy,
   });
 
-  const posts = await findPosts().then(clone);
+  const posts = await findPosts({sort}).then(clone);
 
   const user = await findUser({userId}).then(clone);
 

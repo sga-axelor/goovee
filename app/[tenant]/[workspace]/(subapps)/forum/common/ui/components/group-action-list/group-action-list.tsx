@@ -87,7 +87,7 @@ export const GroupActionList = ({
   const handlePath = (id: number) => {
     router.push(`${workspaceURI}/forum/group/${id}`, {scroll: false});
   };
-  console.log('groups >>>', groups);
+
   return (
     <div>
       <h1 className="font-semibold text-base leading-6 mb-6">

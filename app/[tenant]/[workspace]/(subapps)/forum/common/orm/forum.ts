@@ -70,10 +70,21 @@ export async function findUser({userId}: {userId: any}) {
   return user;
 }
 
-export async function findPosts() {
+export async function findPosts({sort = null}: {sort: any}) {
   const client = await getClient();
 
+  let orderBy: any = null;
+
+  switch (sort) {
+    case 'old':
+      orderBy = {createdOn: ORDER_BY.ASC};
+      break;
+    default:
+      orderBy = {createdOn: ORDER_BY.DESC};
+  }
+
   const posts = await client.aOSPortalForumPost.find({
+    orderBy,
     select: {
       title: true,
       forumGroup: {

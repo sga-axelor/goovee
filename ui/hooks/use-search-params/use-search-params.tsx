@@ -15,6 +15,7 @@ export const useSearchParams = () => {
   const update = useCallback(
     (values: any) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
+
       values.forEach(({key, value = ''}: any) => {
         if (Array.isArray(value)) {
           current.delete(key);
