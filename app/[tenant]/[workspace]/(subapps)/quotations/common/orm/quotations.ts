@@ -73,12 +73,13 @@ export const fetchQuotations = async ({
   };
 };
 
-export async function findQuotation(id: any) {
+export async function findQuotation(id: any, params?: any) {
   const client = await getClient();
 
   const quotation: any = await client.aOSOrder.findOne({
     where: {
       id,
+      ...params?.where,
     },
     select: {
       saleOrderSeq: true,

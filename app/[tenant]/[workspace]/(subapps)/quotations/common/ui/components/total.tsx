@@ -1,22 +1,57 @@
 'use client';
-import React from 'react';
-import {Separator} from '@ui/components/separator';
-import {Button} from '@ui/components/button';
-import {MdCheckCircleOutline} from 'react-icons/md';
-import {MdOutlineDisabledByDefault} from 'react-icons/md';
+
+import React, {useState} from 'react';
+import {MdCheckCircleOutline, MdOutlineDisabledByDefault} from 'react-icons/md';
 import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+import {
+  Separator,
+  Button,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/ui/components';
+
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {TotalProps} from '@/subapps/quotations/common/types/quotations';
-import styles from './styles.module.scss';
+
 export const Total = ({
   exTaxTotal,
   inTaxTotal,
   totalDiscount,
   statusSelect,
+  workspace,
+  onConfirmQuotation,
 }: TotalProps) => {
+  const [confirmationDialog, setConfirmationDialog] = useState(false);
+
+  const config = workspace?.config;
+  const canConfirmQuotation = true; //config?.canConfirmQuotation;
+  const payQuotationToConfirm = config?.payQuotationToConfirm;
+
+  const openConfirmation = () => {
+    setConfirmationDialog(true);
+  };
+
+  const closeConfirmation = () => {
+    setConfirmationDialog(false);
+  };
+
+  const handleConfirmQuotation = () => {
+    closeConfirmation();
+
+    if (onConfirmQuotation) {
+      onConfirmQuotation();
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col bg-card text-card-foreground px-6 py-4 rounded-lg border border-card-foreground">
@@ -43,32 +78,55 @@ export const Total = ({
             <h6 className="font-medium">{i18n.get('Total price')}:</h6>
             <h4 className="text-xl font-medium">{inTaxTotal}</h4>
           </div>
-          {statusSelect !== QUOTATION_STATUS.CANCELED_QUOTATION && (
-            <>
-              <div className="flex justify-center">
-                <Button className="text-success-foreground bg-success hover:bg-success-dark flex items-center justify-center gap-3 rounded-full w-full">
-                  <MdCheckCircleOutline className="text-2xl" />
-                  {i18n.get('Accept and sign')}
-                </Button>
-              </div>
-              <div className="flex justify-center">
-                <Button className="text-destructive-foreground bg-destructive hover:bg-error-dark flex items-center justify-center gap-3 rounded-full w-full font-normal">
-                  <MdOutlineDisabledByDefault className="text-2xl" />
-                  {i18n.get('Reject')}
-                </Button>
-              </div>
-            </>
-          )}
-          {false && (
-            <div className="flex justify-center">
-              <Button className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
-                {i18n.get('Pay')}{' '}
-                <LiaLongArrowAltRightSolid className="text-2xl" />
-              </Button>
-            </div>
-          )}
+          {statusSelect !== QUOTATION_STATUS.CANCELED_QUOTATION &&
+            canConfirmQuotation && (
+              <>
+                {payQuotationToConfirm ? (
+                  <div className="flex justify-center">
+                    <Button className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
+                      {i18n.get('Pay')}{' '}
+                      <LiaLongArrowAltRightSolid className="text-2xl" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex justify-center">
+                    <Button
+                      className="text-success-foreground bg-success hover:bg-success-dark flex items-center justify-center gap-3 rounded-full w-full"
+                      onClick={openConfirmation}>
+                      <MdCheckCircleOutline className="text-2xl" />
+                      {i18n.get('Accept and sign')}
+                    </Button>
+                  </div>
+                )}
+                {false && (
+                  <div className="flex justify-center">
+                    <Button className="text-destructive-foreground bg-destructive hover:bg-error-dark flex items-center justify-center gap-3 rounded-full w-full font-normal">
+                      <MdOutlineDisabledByDefault className="text-2xl" />
+                      {i18n.get('Reject')}
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
         </div>
       </div>
+      <AlertDialog open={Boolean(confirmationDialog)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {i18n.get('Do you want to confirm quotation?')}
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeConfirmation}>
+              {i18n.get('Cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmQuotation}>
+              {i18n.get('Continue')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

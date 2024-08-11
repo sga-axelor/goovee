@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import type {ID} from '@/types';
+import type {ID, PortalWorkspace} from '@/types';
 
 export type Quotations = {
   id: ID;
@@ -107,6 +107,8 @@ export type TotalProps = {
   exTaxTotal: number | string;
   totalDiscount: number | string;
   statusSelect: string | number;
+  workspace?: PortalWorkspace;
+  onConfirmQuotation?: () => any;
 };
 
 export type InfoProps = {
