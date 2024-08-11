@@ -6,6 +6,7 @@ import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
@@ -14,6 +15,7 @@ import {
   getComments,
 } from '@/subapps/quotations/common/orm/quotations';
 import {SUBAPP_CODES} from '@/constants';
+import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
 
 type PageProps = {
   params: {
@@ -24,8 +26,6 @@ type PageProps = {
 };
 export default async function Page({params}: PageProps) {
   const {id} = params;
-
-  const quotation = await findQuotation(id);
 
   const comments = await getComments(id);
 
@@ -41,12 +41,29 @@ export default async function Page({params}: PageProps) {
 
   if (!workspace) return notFound();
 
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.quotations,
+    user,
+    url: workspaceURL,
+  });
+
+  const {id: userId, isContact, mainPartnerId} = user as User;
+
+  const where = getWhereClause(
+    isContact as boolean,
+    subapp?.role,
+    userId,
+    mainPartnerId as string,
+  );
+
+  const quotation = await findQuotation(id, {where});
+
   const orderSubapp = await findSubappAccess({
     code: SUBAPP_CODES.orders,
     user,
     url: workspaceURL,
   });
-
+  
   return (
     <Content
       quotation={clone(quotation)}
