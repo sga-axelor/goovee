@@ -1,5 +1,4 @@
 'use client';
-
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {FreeMode, Pagination} from 'swiper/modules';
 import {

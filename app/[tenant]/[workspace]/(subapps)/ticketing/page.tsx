@@ -1,13 +1,16 @@
 import {MdAdd} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
+import {clone} from '@/utils';
 import {IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {Button, HeroSearch} from '@/ui/components';
 import {workspacePathname} from '@/utils/workspace';
-import {clone} from '@/utils';
+
+import {Button, HeroSearch} from '@/ui/components';
+import {Card} from './common/ui/components/card';
+import {TicketTypes} from './common/ui/components/ticket-types';
 
 export default async function Page({
   params,
@@ -29,6 +32,32 @@ export default async function Page({
    * Fetch projects per workspace
    */
 
+  const projectList = [
+    {
+      projectName: 'Project 1',
+      totalTickets: 156,
+    },
+    {
+      projectName: 'Project 2',
+      totalTickets: 43,
+    },
+    {
+      projectName: 'Project 3',
+      totalTickets: 20,
+    },
+    {
+      projectName: 'Project 4',
+      totalTickets: 123,
+    },
+    {
+      projectName: 'Project 5',
+      totalTickets: 8,
+    },
+    {
+      projectName: 'Project 6',
+      totalTickets: 18,
+    },
+  ];
   return (
     <>
       <HeroSearch
@@ -47,6 +76,21 @@ export default async function Page({
             <MdAdd className="size-6" />
             <span>{i18n.get('Create a new project')}</span>
           </Button>
+        </div>
+        <div className="flex flex-wrap gap-4 mt-5">
+          {projectList?.length > 1 ? (
+            projectList.map((item, i) => {
+              return (
+                <Card
+                  key={i}
+                  projectName={item?.projectName}
+                  totalTickets={item?.totalTickets}
+                />
+              );
+            })
+          ) : (
+            <TicketTypes />
+          )}
         </div>
       </div>
     </>
