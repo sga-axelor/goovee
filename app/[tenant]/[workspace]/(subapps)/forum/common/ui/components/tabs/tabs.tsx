@@ -38,11 +38,14 @@ export const Tabs = ({
   posts = [],
   groupId,
   onClick,
+  pageInfo,
 }: {
   activeTab: string;
   tabs: any[];
   posts: Post[];
   groupId?: string;
+  pageInfo: any;
+
   onClick: (value: string) => void;
 }) => {
   const findTabComponent = (tabKey: string) => {
@@ -65,7 +68,9 @@ export const Tabs = ({
           ))}
         </div>
       </div>
-      {TabComponent && <TabComponent posts={posts} groupId={groupId} />}
+      {TabComponent && (
+        <TabComponent posts={posts} groupId={groupId} pageInfo={pageInfo} />
+      )}
     </>
   );
 };

@@ -10,10 +10,19 @@ import {URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {THREAD_SORT_BY_OPTIONS} from '@/subapps/forum/common/constants';
-import {DropdownToggle, Thread} from '@/subapps/forum/common/ui/components';
 import {Post} from '@/subapps/forum/common/types/forum';
+import {
+  DropdownToggle,
+  InfiniteScroll,
+} from '@/subapps/forum/common/ui/components';
 
-export const ThreadList = ({posts}: {posts: Post[]}) => {
+export const ThreadList = ({
+  posts,
+  pageInfo,
+}: {
+  posts: Post[];
+  pageInfo: any;
+}) => {
   const {update} = useSearchParams();
 
   const handleSortBy = (value: any) => {
@@ -40,12 +49,9 @@ export const ThreadList = ({posts}: {posts: Post[]}) => {
           />
         </div>
       </div>
+
       <div className="flex flex-col gap-4">
-        {posts?.map(post => (
-          <React.Fragment key={post.id}>
-            <Thread post={post} />
-          </React.Fragment>
-        ))}
+        <InfiniteScroll initialPosts={posts} pageInfo={pageInfo} />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import {ID} from '@/types';
-import {clone} from '@/utils';
+import {clone, getPageInfo, getSkipInfo} from '@/utils';
 
 export async function findGroupByMembers({
   id = null,
@@ -73,9 +73,14 @@ export async function findUser({userId}: {userId: any}) {
 
 export async function findPosts({
   sort = null,
+  limit,
+  page = 1,
   whereClause = {},
 }: {
   sort?: any;
+  limit?: number;
+  page?: string | number;
+  search?: string | undefined;
   whereClause?: any;
 }) {
   const client = await getClient();
@@ -90,9 +95,13 @@ export async function findPosts({
       orderBy = {createdOn: ORDER_BY.DESC};
   }
 
+  const skip = getSkipInfo(limit, page);
+
   const posts = await client.aOSPortalForumPost.find({
     where: whereClause,
     orderBy,
+    take: limit,
+    ...(skip ? {skip} : {}),
     select: {
       title: true,
       forumGroup: {
@@ -143,8 +152,13 @@ export async function findPosts({
       },
     },
   });
+  const pageInfo = getPageInfo({
+    count: posts?.[0]?._count,
+    page,
+    limit,
+  });
 
-  return posts;
+  return {posts, pageInfo};
 }
 
 export async function findPostsByGroupId(id: ID) {
@@ -154,8 +168,7 @@ export async function findPostsByGroupId(id: ID) {
     },
   };
 
-  const posts = await findPosts({whereClause});
-  return posts;
+  return await findPosts({whereClause});
 }
 
 export async function findGroupById(id: ID) {

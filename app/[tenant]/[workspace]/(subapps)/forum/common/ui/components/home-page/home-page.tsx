@@ -41,11 +41,13 @@ export const HomePage = ({
   nonMemberGroups,
   user,
   posts,
+  pageInfo,
 }: {
   memberGroups: Group[];
   nonMemberGroups: Group[];
   user: any;
   posts: any;
+  pageInfo: any;
 }) => {
   const [open, setOpen] = useState(false);
   const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
@@ -179,6 +181,7 @@ export const HomePage = ({
             onClick={handleTabClick}
             activeTab={type}
             posts={posts}
+            pageInfo={pageInfo}
           />
         </div>
       </div>

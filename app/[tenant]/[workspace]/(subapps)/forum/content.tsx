@@ -16,11 +16,13 @@ const Content = ({
   nonMemberGroups,
   user,
   posts,
+  pageInfo,
 }: {
   memberGroups: Group[];
   nonMemberGroups: Group[];
   user: any;
   posts: any;
+  pageInfo: any;
 }) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -39,6 +41,7 @@ const Content = ({
         nonMemberGroups={nonMemberGroups}
         user={user}
         posts={posts}
+        pageInfo={pageInfo}
       />
     </div>
   );

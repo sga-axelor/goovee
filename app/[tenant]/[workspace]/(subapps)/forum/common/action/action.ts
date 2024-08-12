@@ -10,7 +10,7 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID} from '@/types';
 
 //----LOCAL IMPORTS -----//
-import {findGroupByMembers} from '@/subapps/forum/common/orm/forum';
+import {findGroupByMembers, findPosts} from '@/subapps/forum/common/orm/forum';
 
 export async function addPinnedGroup({
   isPin,
@@ -198,4 +198,17 @@ export async function findMedia(id: ID) {
       },
     })
     .then(clone);
+}
+
+export async function fetchPosts({
+  sort,
+  limit,
+  page,
+}: {
+  sort?: any;
+  limit?: number;
+  page?: string | number;
+  search?: string | undefined;
+}) {
+  return await findPosts({sort, limit, page}).then(clone);
 }

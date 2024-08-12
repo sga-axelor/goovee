@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
-import {ORDER_BY} from '@/constants';
+import {DEFAULT_LIMIT, ORDER_BY} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {findPosts, findUser} from '@/subapps/forum/common/orm/forum';
@@ -16,7 +16,7 @@ export default async function Page({
   const session = await getSession();
   const userId = session?.user?.id as string;
 
-  const {sort} = searchParams;
+  const {sort, limit} = searchParams;
 
   const orderBy = {
     isPin: ORDER_BY.DESC,
@@ -37,7 +37,10 @@ export default async function Page({
     orderBy,
   });
 
-  const posts = await findPosts({sort}).then(clone);
+  const {posts, pageInfo} = await findPosts({
+    sort,
+    limit: limit ? Number(limit) : DEFAULT_LIMIT,
+  }).then(clone);
 
   const user = await findUser({userId}).then(clone);
 
@@ -47,6 +50,7 @@ export default async function Page({
       nonMemberGroups={nonMemberGroups}
       user={user}
       posts={posts}
+      pageInfo={pageInfo}
     />
   );
 }
