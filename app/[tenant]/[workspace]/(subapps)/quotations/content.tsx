@@ -52,13 +52,13 @@ const Content = (props: Props) => {
     if (!hasPrev) return;
     updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
   };
-  
+
   const handleNextPage = () => {
     const {page, hasNext} = pageInfo;
     if (!hasNext) return;
     updateSearchParams([{key: 'page', value: Number(page) + 1}]);
   };
-  
+
   const handlePage = (page: string | number) => {
     updateSearchParams([{key: 'page', value: page}]);
   };

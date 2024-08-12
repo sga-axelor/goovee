@@ -1,13 +1,16 @@
 'use client';
+
 import React from 'react';
 import {MdEast} from 'react-icons/md';
-import {Button} from '@ui/components/button';
-import {Separator} from '@ui/components/separator';
+import {Button, Separator} from '@/ui/components';
+
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_CURRENCY_SCALE} from '@/constants';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {TotalProps} from '@/subapps/invoices/common/types/invoices';
+
 export function Total({
   exTaxTotal,
   inTaxTotal,

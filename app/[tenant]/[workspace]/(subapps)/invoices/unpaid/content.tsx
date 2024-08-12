@@ -1,4 +1,5 @@
 'use client';
+
 import React, {useMemo} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 
@@ -22,12 +23,15 @@ type ContentProps = {
 export default function Content({invoices = []}: ContentProps) {
   const router = useRouter();
   const pathname = usePathname();
+
   const handleTabChange = () => {
     router.push(`archived`);
   };
+
   const handleClick = (id: string) => {
     router.push(`${pathname}/${id}`);
   };
+
   const hasUpcomingInvoices = useMemo(() => {
     return invoices?.some(
       ({amountRemaining}: {amountRemaining: any}) =>

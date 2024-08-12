@@ -63,7 +63,7 @@ export default async function Page({params}: PageProps) {
     user,
     url: workspaceURL,
   });
-  
+
   return (
     <Content
       quotation={clone(quotation)}

@@ -1,10 +1,12 @@
 'use client';
+
 import React from 'react';
-import {Separator} from '@ui/components/separator';
+
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
-import {Tag} from '@ui/components/index';
+import {Tag, Separator} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
 import {

@@ -1,13 +1,16 @@
 'use client';
+
 import React from 'react';
 import {MdEast} from 'react-icons/md';
-import {Button} from '@ui/components/button';
+
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
-import {Tag} from '@ui/components/index';
+import {Button, Tag} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/invoices/common/utils/invoices';
+
 export const Card = ({
   invoices,
   handleRowClick,

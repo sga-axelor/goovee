@@ -1,10 +1,12 @@
 'use client';
+
 import React from 'react';
 import {MdOutlineFileDownload} from 'react-icons/md';
-import {Separator} from '@ui/components/separator';
-import {Button} from '@ui/components/button';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+import {Button, Separator} from '@/ui/components';
+
 // ---- LOCAL IMPORTS ---- //
 import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
 import {InvoiceContent} from '.';

@@ -1,20 +1,23 @@
 'use client';
+
 import React from 'react';
 import {MdEast} from 'react-icons/md';
-import {Button} from '@ui/components/button';
-import {TableCell, TableRow} from '@ui/components/table';
+
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
-import {StyledTable, Tag} from '@ui/components/index';
-import type {Item} from '@/types';
+import {StyledTable, Tag, TableCell, TableRow, Button} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+import type {Item} from '@/types';
+
 // ---- LOCAL IMPORTS ---- //
 import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
+
 type UnpaidTableProps = {
   columns: Item[];
   rows: [];
   handleRowClick: (id: string) => void;
 };
+
 export const UnpaidTable = ({
   columns,
   rows,

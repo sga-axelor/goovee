@@ -1,17 +1,21 @@
 'use client';
+
 import React from 'react';
-import {TableCell, TableRow} from '@ui/components/table';
+
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
-import {StyledTable, Tag} from '@ui/components/index';
+import {TableCell, TableRow, StyledTable, Tag} from '@/ui/components';
 import type {Item} from '@/types';
+
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/invoices/common/utils/invoices';
+
 type ArchivedTableProps = {
   columns: Item[];
   rows: [];
   handleRowClick: (id: string) => void;
 };
+
 export const ArchivedTable = ({
   columns,
   rows,

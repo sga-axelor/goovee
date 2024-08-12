@@ -1,7 +1,10 @@
 'use client';
+
 import React from 'react';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   InvoiceTable as Invoice_Table,
