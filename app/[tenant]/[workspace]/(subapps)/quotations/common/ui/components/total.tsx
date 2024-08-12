@@ -29,11 +29,16 @@ export const Total = ({
   statusSelect,
   workspace,
   onConfirmQuotation,
+  renderPaymentOptions,
 }: TotalProps) => {
   const [confirmationDialog, setConfirmationDialog] = useState(false);
+  const [paymentSelectionDialog, setPaymentSelectionDialog] = useState(false);
 
   const config = workspace?.config;
-  const canConfirmQuotation = true; //config?.canConfirmQuotation;
+
+  const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
+
+  const canConfirmQuotation = config?.canConfirmQuotation;
   const payQuotationToConfirm = config?.payQuotationToConfirm;
 
   const openConfirmation = () => {
@@ -42,6 +47,14 @@ export const Total = ({
 
   const closeConfirmation = () => {
     setConfirmationDialog(false);
+  };
+
+  const openPaymentSelectionDialog = () => {
+    setPaymentSelectionDialog(true);
+  };
+
+  const closePaymentSelectionDialog = () => {
+    setPaymentSelectionDialog(false);
   };
 
   const handleConfirmQuotation = () => {
@@ -81,9 +94,11 @@ export const Total = ({
           {statusSelect !== QUOTATION_STATUS.CANCELED_QUOTATION &&
             canConfirmQuotation && (
               <>
-                {payQuotationToConfirm ? (
+                {allowOnlinePayment && payQuotationToConfirm ? (
                   <div className="flex justify-center">
-                    <Button className="flex items-center justify-center gap-3 rounded-full w-full font-normal">
+                    <Button
+                      className="flex items-center justify-center gap-3 rounded-full w-full font-normal"
+                      onClick={openPaymentSelectionDialog}>
                       {i18n.get('Pay')}{' '}
                       <LiaLongArrowAltRightSolid className="text-2xl" />
                     </Button>
@@ -124,6 +139,23 @@ export const Total = ({
             <AlertDialogAction onClick={handleConfirmQuotation}>
               {i18n.get('Continue')}
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog
+        open={Boolean(paymentSelectionDialog)}
+        onOpenChange={closePaymentSelectionDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{i18n.get('Quotation Payment')}</AlertDialogTitle>
+          </AlertDialogHeader>
+          <div className="p-4 flex flex-col gap-2">
+            {renderPaymentOptions && renderPaymentOptions()}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeConfirmation}>
+              {i18n.get('Cancel')}
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

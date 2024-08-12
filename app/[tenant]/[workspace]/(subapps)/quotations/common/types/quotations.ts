@@ -84,8 +84,10 @@ export type Quotation = {
   };
   endOfValidityDate: string | null | undefined;
   exTaxTotal: string;
+  displayExTaxTotal: string;
   id: ID;
   inTaxTotal: string;
+  displayInTaxTotal: string;
   mainInvoicingAddress: {
     id: ID;
     addressl4: string;
@@ -109,6 +111,7 @@ export type TotalProps = {
   statusSelect: string | number;
   workspace?: PortalWorkspace;
   onConfirmQuotation?: () => any;
+  renderPaymentOptions?: () => any;
 };
 
 export type InfoProps = {

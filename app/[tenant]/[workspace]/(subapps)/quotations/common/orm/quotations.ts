@@ -151,8 +151,8 @@ export async function findQuotation(id: any, params?: any) {
 
   return {
     ...quotation,
-    exTaxTotal: getFormattedValue(exTaxTotal, unit, currencySymbol),
-    inTaxTotal: getFormattedValue(inTaxTotal, unit, currencySymbol),
+    displayExTaxTotal: getFormattedValue(exTaxTotal, unit, currencySymbol),
+    displayInTaxTotal: getFormattedValue(inTaxTotal, unit, currencySymbol),
     saleOrderLineList: saleOrderLineList.map((list: any) => {
       return {
         ...list,

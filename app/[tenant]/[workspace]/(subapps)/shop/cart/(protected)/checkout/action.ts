@@ -18,11 +18,11 @@ import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
 import {stripe} from '@/lib/stripe';
 import {i18n} from '@/lib/i18n';
+import {formatAmountForStripe} from '@/utils/stripe';
 import {PaymentOption, type ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
-import {formatAmountForStripe} from '@/subapps/shop/common/utils';
 import {findPartnerByEmail} from '@/orm/partner';
 
 export async function findInvoicingAddress() {
@@ -398,7 +398,7 @@ export async function paypalCreateOrder({
     purchase_units: [
       {
         amount: {
-          currency_code: currency?.code || 'EUR',
+          currency_code: currency?.code || DEFAULT_CURRENCY_CODE,
           value: total + '',
         },
       },
