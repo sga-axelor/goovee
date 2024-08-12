@@ -51,5 +51,5 @@ export default async function Invoices({
 
   const invoices = await findUnpaidInvoices({where});
 
-  return <Content invoices={clone(invoices)} />;
+  return <Content invoices={clone(invoices)} workspace={workspace} />;
 }

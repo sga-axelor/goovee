@@ -4,6 +4,7 @@ import React, {useMemo} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
+import {PaymentOption, type PortalWorkspace} from '@/types';
 import {Container, NavView, StyledAlert} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 
@@ -15,12 +16,14 @@ import {
 } from '@/subapps/invoices/common/constants/invoices';
 import {Card, UnpaidTable} from '@/subapps/invoices/common/ui/components';
 
-type ContentProps = {
+export default function Content({
+  invoices = [],
+  workspace,
+}: {
   invoices: [];
   pageInfo?: any;
-};
-
-export default function Content({invoices = []}: ContentProps) {
+  workspace: PortalWorkspace;
+}) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -39,6 +42,17 @@ export default function Content({invoices = []}: ContentProps) {
     );
   }, [invoices]);
 
+  const config = workspace?.config;
+
+  const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
+  const canPayInvoice = config?.canPayInvoice;
+  const paymentOptionSet = config?.paymentOptionSet;
+
+  const allowInvoicePayment =
+    allowOnlinePayment &&
+    canPayInvoice !== 'no' &&
+    Boolean(paymentOptionSet?.length);
+
   return (
     <>
       <Container title={i18n.get('Invoices')}>
@@ -53,6 +67,7 @@ export default function Content({invoices = []}: ContentProps) {
               columns={UNPAID_INVOICE_COLUMNS}
               rows={invoices}
               handleRowClick={handleClick}
+              allowInvoicePayment={allowInvoicePayment}
             />
           </div>
           <div className="md:hidden block">

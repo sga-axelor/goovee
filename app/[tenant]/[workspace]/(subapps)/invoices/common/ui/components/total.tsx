@@ -7,6 +7,7 @@ import {Button, Separator} from '@/ui/components';
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_CURRENCY_SCALE} from '@/constants';
 import {i18n} from '@/lib/i18n';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {TotalProps} from '@/subapps/invoices/common/types/invoices';
@@ -16,6 +17,7 @@ export function Total({
   inTaxTotal,
   invoiceLineList,
   numberOfDecimals,
+  allowInvoicePayment,
 }: TotalProps) {
   const sumOfDiscounts: number = invoiceLineList.reduce(
     (total, {discountAmount}) => {
@@ -23,6 +25,7 @@ export function Total({
     },
     0,
   );
+
   const discount =
     sumOfDiscounts === 0
       ? 0
@@ -60,7 +63,13 @@ export function Total({
           </div>
         </div>
         <div>
-          <Button className="flex items-center justify-center gap-3 w-full rounded-full">
+          <Button
+            className={cn(
+              'flex items-center justify-center gap-3 w-full rounded-full',
+              {
+                hidden: !allowInvoicePayment,
+              },
+            )}>
             {i18n.get('Pay')} <MdEast className="text-2xl" />
           </Button>
         </div>

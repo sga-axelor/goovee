@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
-import {findSubappAccess} from '@/orm/workspace';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {workspacePathname} from '@/utils/workspace';
 import type {User} from '@/types';
@@ -21,7 +21,19 @@ export default async function Page({
   const {id} = params;
 
   const session = await getSession();
-  const {id: userId, isContact, mainPartnerId} = session?.user as User;
+
+  if (!session) return notFound();
+
+  const user = session?.user as User;
+
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+  }).then(clone);
+
+  if (!workspace) return notFound();
 
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.invoices,
@@ -33,11 +45,12 @@ export default async function Page({
     return notFound();
   }
 
+  const {id: userId, isContact, mainPartnerId} = user;
   const {role} = subapp;
 
   const where = getWhereClause(isContact, role, userId, mainPartnerId);
 
   const invoice = await findInvoice(id, {where});
 
-  return <Content invoice={clone(invoice)} />;
+  return <Content invoice={clone(invoice)} workspace={workspace} />;
 }

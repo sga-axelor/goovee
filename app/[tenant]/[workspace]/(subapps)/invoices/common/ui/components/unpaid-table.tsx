@@ -4,6 +4,7 @@ import React from 'react';
 import {MdEast} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
+import {cn} from '@/utils/css';
 import {parseDate} from '@/utils/date';
 import {StyledTable, Tag, TableCell, TableRow, Button} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
@@ -12,17 +13,17 @@ import type {Item} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
 
-type UnpaidTableProps = {
-  columns: Item[];
-  rows: [];
-  handleRowClick: (id: string) => void;
-};
-
 export const UnpaidTable = ({
   columns,
   rows,
   handleRowClick,
-}: UnpaidTableProps) => {
+  allowInvoicePayment,
+}: {
+  columns: Item[];
+  rows: [];
+  handleRowClick: (id: string) => void;
+  allowInvoicePayment?: boolean;
+}) => {
   return (
     <>
       <StyledTable columns={columns}>
@@ -46,7 +47,13 @@ export const UnpaidTable = ({
                 {row.inTaxTotal}
               </TableCell>
               <TableCell className="px-6 py-4">
-                <Button className="flex items-center justify-center gap-3 w-full rounded-full">
+                <Button
+                  className={cn(
+                    'flex items-center justify-center gap-3 w-full rounded-full',
+                    {
+                      hidden: !allowInvoicePayment,
+                    },
+                  )}>
                   {i18n.get('Pay')} <MdEast className="text-2xl" />
                 </Button>
               </TableCell>
