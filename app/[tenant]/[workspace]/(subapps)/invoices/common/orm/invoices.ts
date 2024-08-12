@@ -73,12 +73,13 @@ export const findArchivedInvoices = async ({where}: {where: any}) => {
   return await fetchInvoices({where, type: 'archived'});
 };
 
-export const findInvoice = async (id: Invoice['id']) => {
+export const findInvoice = async (id: Invoice['id'], params?: any) => {
   const client = await getClient();
 
   const invoice: any = await client.aOSInvoice.findOne({
     where: {
       id,
+      ...params?.where,
     },
     select: {
       invoiceId: true,
