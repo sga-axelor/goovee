@@ -1,6 +1,7 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import {debounce} from 'lodash';
 
 // ---- CORE IMPORTS ---- //
 import {cn} from '@/utils/css';
@@ -19,22 +20,41 @@ export const Search = ({
   renderItem,
   searchKey = 'title',
   onItemClick,
+  onSearch,
 }: {
   findQuery: any;
   renderItem: any;
   searchKey?: string;
   onItemClick?: any;
+  onSearch?: any;
 }) => {
   const RenderItem = renderItem;
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+
+  const debouncedFindQuery = useCallback(
+    debounce(async (query: string) => {
+      if (query) {
+        const results = await findQuery();
+        setResults(results);
+      } else {
+        setResults([]);
+      }
+    }, 500),
+    [findQuery],
+  );
+
   useEffect(() => {
-    setOpen(search ? true : false);
-    if (search) {
-      findQuery().then(setResults);
+    setOpen(search.length > 0);
+    debouncedFindQuery(search);
+  }, [search, debouncedFindQuery]);
+
+  useEffect(() => {
+    if (onSearch) {
+      onSearch(search);
     }
-  }, [search]);
+  }, [search, onSearch]);
 
   return (
     <>

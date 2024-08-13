@@ -16,7 +16,7 @@ export default async function Page({
   const session = await getSession();
   const userId = session?.user?.id as string;
 
-  const {sort, limit} = searchParams;
+  const {sort, limit, search} = searchParams;
 
   const orderBy = {
     isPin: ORDER_BY.DESC,
@@ -40,6 +40,7 @@ export default async function Page({
   const {posts, pageInfo} = await findPosts({
     sort,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
+    search,
   }).then(clone);
 
   const user = await findUser({userId}).then(clone);

@@ -11,8 +11,14 @@ import {
   Avatar,
   AvatarImage,
   Button,
+  Search,
 } from '@/ui/components';
-import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
+import {
+  BANNER_DESCRIPTION,
+  BANNER_TITLES,
+  IMAGE_URL,
+  URL_PARAMS,
+} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {getImageURL} from '@/utils/image';
@@ -24,6 +30,7 @@ import {
   Search as GroupSearch,
   UploadPost,
   Tabs,
+  SearchItem,
 } from '@/subapps/forum/common/ui/components';
 import {
   DISABLED_SEARCH_PLACEHOLDER,
@@ -34,7 +41,7 @@ import {
   TAB_TITLES,
 } from '@/subapps/forum/common/constants';
 import {Group} from '@/subapps/forum/common/types/forum';
-import {findGroups} from '@/subapps/forum/common/action/action';
+import {fetchPosts, findGroups} from '@/subapps/forum/common/action/action';
 
 export const HomePage = ({
   memberGroups,
@@ -58,22 +65,43 @@ export const HomePage = ({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const {searchParams} = useSearchParams();
+  const {searchParams, update} = useSearchParams();
   const type = searchParams.get('type') ?? 'posts';
 
   const {id, picture}: any = user || {};
 
   const isLoggedIn = id ? true : false;
 
-  useEffect(() => {
-    setMemberGroupList(memberGroups);
-    setNonMemberGroupList(nonMemberGroups);
-  }, []);
-
   const groups = useMemo(
     () => memberGroups.map((group: any) => group.forumGroup),
     [memberGroups],
   );
+
+  const handleChangeSerachKey = (value: string) => {
+    setSearchKey(value);
+  };
+
+  const hanldeDialogOpen = (initialType: string = '') => {
+    setInitialType(initialType);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setInitialType('');
+    setOpen(false);
+  };
+
+  const handleSearch = (term: string) => {
+    if (!term) {
+      return;
+    }
+    update([{key: URL_PARAMS.search, value: term}]);
+  };
+
+  useEffect(() => {
+    setMemberGroupList(memberGroups);
+    setNonMemberGroupList(nonMemberGroups);
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -95,25 +123,19 @@ export const HomePage = ({
       .catch(err => console.log(err));
   }, [searchKey]);
 
-  const handleChangeSerachKey = (value: string) => {
-    setSearchKey(value);
-  };
-
-  const hanldeDialogOpen = (initialType: string = '') => {
-    setInitialType(initialType);
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setInitialType('');
-    setOpen(false);
-  };
-
   const renderSearch = () => (
-    <BannerSearch
+    <Search
       searchKey="title"
-      findQuery={() => null}
-      renderItem={<></>}
-      onItemClick={() => null}
+      findQuery={async () => {
+        const response = await fetchPosts({});
+        if (response) {
+          const {posts} = response;
+          return posts;
+        }
+        return [];
+      }}
+      renderItem={SearchItem}
+      onSearch={handleSearch}
     />
   );
 

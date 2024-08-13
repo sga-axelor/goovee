@@ -20,7 +20,7 @@ export default async function Page({
   const session = await getSession();
   const user = session?.user;
   const groupId = params.id as string;
-  const {posts} = await findPostsByGroupId(groupId).then(clone);
+  const {posts, pageInfo} = await findPostsByGroupId(groupId).then(clone);
 
   const memberGroups = await findGroups({
     id: user?.id as string,
@@ -40,6 +40,7 @@ export default async function Page({
       user={user}
       posts={posts}
       selectedGroup={selectedGroup}
+      pageInfo={pageInfo}
     />
   );
 }

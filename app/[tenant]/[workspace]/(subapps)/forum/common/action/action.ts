@@ -204,11 +204,17 @@ export async function fetchPosts({
   sort,
   limit,
   page,
+  search = '',
 }: {
   sort?: any;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
 }) {
-  return await findPosts({sort, limit, page}).then(clone);
+  return await findPosts({
+    sort,
+    limit,
+    page,
+    search,
+  }).then(clone);
 }

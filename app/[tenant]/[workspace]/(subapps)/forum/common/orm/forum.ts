@@ -75,6 +75,7 @@ export async function findPosts({
   sort = null,
   limit,
   page = 1,
+  search = '',
   whereClause = {},
 }: {
   sort?: any;
@@ -97,8 +98,19 @@ export async function findPosts({
 
   const skip = getSkipInfo(limit, page);
 
+  const combinedWhereClause = {
+    ...whereClause,
+    ...(search
+      ? {
+          title: {
+            like: `%${search.toLowerCase()}%`,
+          },
+        }
+      : {}),
+  };
+
   const posts = await client.aOSPortalForumPost.find({
-    where: whereClause,
+    where: combinedWhereClause,
     orderBy,
     take: limit,
     ...(skip ? {skip} : {}),
@@ -179,7 +191,7 @@ export async function findGroupById(id: ID) {
     },
     select: {
       name: true,
-      description: true,
+      // description: true,
       image: {
         fileName: true,
       },

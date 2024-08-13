@@ -116,6 +116,7 @@ export const NO_RESULTS_FOUND = 'No results found.';
 export const URL_PARAMS = {
   page: 'page',
   sort: 'sort',
+  search: 'search',
 };
 
 /**

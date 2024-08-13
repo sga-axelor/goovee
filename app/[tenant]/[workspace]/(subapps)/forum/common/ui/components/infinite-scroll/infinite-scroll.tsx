@@ -6,7 +6,6 @@ import {useInView} from 'react-intersection-observer';
 import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {DEFAULT_LIMIT} from '@/constants';
-import {toast} from '@/ui/hooks/use-toast';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
@@ -18,41 +17,37 @@ interface PageInfo {
 }
 
 interface InfiniteScrollProps {
-  search?: string;
   initialPosts: Post[];
   pageInfo: PageInfo;
 }
 
 export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
-  search,
   initialPosts,
   pageInfo,
 }) => {
   const {count} = pageInfo;
   const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
   const [ref, inView] = useInView();
 
   const {searchParams} = useSearchParams();
-  const sort = searchParams.get('sort');
-  const limit = searchParams.get('limit');
+  const sort = searchParams.get('sort') || '';
+  const limit = searchParams.get('limit') || DEFAULT_LIMIT;
 
   const loadMorePosts = async () => {
     if (posts.length >= count) {
       return;
     }
-
     setLoading(true);
     const nextPage = page + 1;
     try {
       const {posts: newPosts} = await fetchPosts({
         sort,
-        limit: limit ? Number(limit) : DEFAULT_LIMIT,
+        limit: Number(limit),
         page: nextPage,
       });
-
-      if (newPosts?.length) {
+      if (newPosts.length) {
         setPage(nextPage);
         setPosts(prevPosts => [...prevPosts, ...newPosts]);
       }
@@ -72,6 +67,10 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
 
     fetchData();
   }, [inView, page]);
+
+  useEffect(() => {
+    setPosts(initialPosts);
+  }, [initialPosts]);
 
   return (
     <>

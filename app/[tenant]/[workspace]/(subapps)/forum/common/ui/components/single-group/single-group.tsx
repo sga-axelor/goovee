@@ -37,12 +37,14 @@ export const SingleGroup = ({
   user,
   posts,
   selectedGroup,
+  pageInfo,
 }: {
   memberGroups: Group[];
   nonMemberGroups: Group[];
   user: any;
   posts: Post[];
   selectedGroup: ForumGroup;
+  pageInfo: any;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -161,6 +163,7 @@ export const SingleGroup = ({
             activeTab={type}
             posts={posts}
             groupId={selectedGroup.id}
+            pageInfo={pageInfo}
           />
         </div>
       </div>

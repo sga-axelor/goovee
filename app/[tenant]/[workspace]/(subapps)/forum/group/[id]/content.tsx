@@ -1,10 +1,12 @@
 'use client';
 import {useRouter} from 'next/navigation';
 
+// ---- CORE IMPORT ---- //
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+
 // ---- LOCAL IMPORTS ---- //
 import {NavMenu, SingleGroup} from '@/subapps/forum/common/ui/components';
 import {MENU} from '@/subapps/forum/common/constants';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {ForumGroup, Group, Post} from '@/subapps/forum/common/types/forum';
 
 interface groupContentProps {
@@ -13,6 +15,7 @@ interface groupContentProps {
   user: any;
   posts: Post[];
   selectedGroup: ForumGroup;
+  pageInfo: any;
 }
 
 const Content = ({
@@ -21,6 +24,7 @@ const Content = ({
   user,
   posts,
   selectedGroup,
+  pageInfo,
 }: groupContentProps) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -40,6 +44,7 @@ const Content = ({
         user={user}
         posts={posts}
         selectedGroup={selectedGroup}
+        pageInfo={pageInfo}
       />
     </div>
   );
