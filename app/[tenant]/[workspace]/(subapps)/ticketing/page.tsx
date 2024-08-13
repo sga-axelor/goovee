@@ -9,8 +9,10 @@ import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
 import {Button, HeroSearch} from '@/ui/components';
+
 import {Card} from './common/ui/components/card';
 import {TicketTypes} from './common/ui/components/ticket-types';
+import {TicketList} from './common/ui/components/ticket-list';
 
 export default async function Page({
   params,
@@ -58,6 +60,39 @@ export default async function Page({
       totalTickets: 18,
     },
   ];
+
+  const tickets: any = [
+    {
+      ticketId: '#00342AB',
+      requestedBy: 'User 1',
+      subject: 'Problem with creating a topic on the forum',
+      priority: 'Low',
+      status: 'New',
+      category: 'Technical Issues',
+      assignedTo: 'Client',
+      updatedOn: '22/11/23',
+    },
+    {
+      ticketId: '#00342AB',
+      requestedBy: 'User 2',
+      subject: 'Problem with creating a topic on the forum',
+      priority: 'Low',
+      status: 'New',
+      category: 'Technical Issues',
+      assignedTo: 'Client',
+      updatedOn: '22/11/23',
+    },
+    {
+      ticketId: '#00342AB',
+      requestedBy: 'User 3',
+      subject: 'Problem with creating a topic on the forum',
+      priority: 'Low',
+      status: 'New',
+      category: 'Technical Issues',
+      assignedTo: 'Client',
+      updatedOn: '22/11/23',
+    },
+  ];
   return (
     <>
       <HeroSearch
@@ -89,7 +124,10 @@ export default async function Page({
               );
             })
           ) : (
-            <TicketTypes />
+            <>
+              <TicketTypes />
+              <TicketList tickets={tickets} />
+            </>
           )}
         </div>
       </div>
