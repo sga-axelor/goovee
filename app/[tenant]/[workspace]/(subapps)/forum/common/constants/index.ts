@@ -1,4 +1,4 @@
-import {MdOutlineArticle, MdOutlinePermMedia} from 'react-icons/md';
+import {MdOutlineArticle} from 'react-icons/md';
 import {
   CiTextAlignCenter,
   CiTextAlignJustify,
@@ -14,7 +14,7 @@ import type {
   Tab,
 } from '@/subapps/forum/common/types/forum';
 import {PostsContent} from '@/subapps/forum/common/ui/components/posts-content/posts-content';
-import {MediaContent} from '@/subapps/forum/common/ui/components/media-content/media-content';
+import {ORDER_BY} from '@/constants';
 
 export const GROUPS = 'Groups';
 export const MEMBER = 'Member';
@@ -168,4 +168,11 @@ export const GROUP = {
   name: 'Group name',
   desc: 'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam',
   image: '/images/group-img.png',
+};
+
+export const GROUPS_ORDER_BY = {
+  isPin: ORDER_BY.DESC,
+  forumGroup: {
+    name: ORDER_BY.ASC,
+  },
 };

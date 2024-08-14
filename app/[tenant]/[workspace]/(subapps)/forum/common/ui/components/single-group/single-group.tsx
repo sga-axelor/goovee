@@ -14,8 +14,8 @@ import {useSearchParams} from '@/ui/hooks';
 // ---- LOCAL IMPORTS ---- //
 import {
   DISABLED_SEARCH_PLACEHOLDER,
-  GROUP,
   GROUPS,
+  GROUPS_ORDER_BY,
   MEMBER,
   NOT_MEMBER,
   START_A_POST,
@@ -49,7 +49,7 @@ export const SingleGroup = ({
   const [open, setOpen] = useState(false);
 
   const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
-  const [nonMemeberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
+  const [nonMemberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
   const [searchKey, setSearchKey] = useState<string>('');
 
   const [initialType, setInitialType] = useState<string>('');
@@ -67,28 +67,35 @@ export const SingleGroup = ({
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      findGroups({
-        id: user?.id as string,
-        isMember: true,
-        searchKey,
-        workspaceID,
-      })
-        .then(setMemberGroupList)
-        .catch(err => console.log(err));
-    }
+    const fetchGroups = async () => {
+      try {
+        if (isLoggedIn) {
+          const memberGroups = await findGroups({
+            id: user?.id as string,
+            isMember: true,
+            orderBy: GROUPS_ORDER_BY,
+            workspaceID,
+            searchKey,
+          });
+          setMemberGroupList(memberGroups);
+        }
 
-    findGroups({
-      id: user?.id,
-      isMember: false,
-      searchKey,
-      workspaceID,
-    })
-      .then(setNonMemberGroupList)
-      .catch(err => console.log(err));
-  }, [searchKey]);
+        const nonMemberGroups = await findGroups({
+          id: user?.id,
+          isMember: false,
+          orderBy: GROUPS_ORDER_BY,
+          workspaceID,
+          searchKey,
+        });
+        setNonMemberGroupList(nonMemberGroups);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchGroups();
+  }, [isLoggedIn, user?.id, searchKey, workspaceID]);
 
-  const handleChangeSerachKey = (value: string) => {
+  const handleGroupSearch = (value: string) => {
     setSearchKey(value);
   };
 
@@ -121,19 +128,21 @@ export const SingleGroup = ({
               {i18n.get(GROUPS)}
             </h1>
           </div>
-          <GroupSearch onChange={handleChangeSerachKey} />
+          <GroupSearch onChange={handleGroupSearch} />
           {isLoggedIn && (
             <GroupActionList
               title={MEMBER}
               groups={memberGroupList}
               groupId={selectedGroup?.id}
+              userId={user.id}
             />
           )}
           <GroupActionList
             title={NOT_MEMBER}
             userId={user?.id}
-            groups={nonMemeberGroupList}
+            groups={nonMemberGroupList}
             groupId={selectedGroup?.id}
+            isMember={false}
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">

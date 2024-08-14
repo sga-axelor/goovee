@@ -63,16 +63,19 @@ export const GroupActionList = ({
   const handlePinGroup = async (isPin: boolean, group: any) => {
     await addPinnedGroup({isPin: !isPin, group});
     router.push(`${workspaceURI}/forum`);
+    router.refresh();
   };
 
   const handleExit = async (group: any) => {
     await exitGroup({group});
     router.push(`${workspaceURI}/forum`);
+    router.refresh();
   };
 
   const handleJoinGroup = async (group: any, userId: string) => {
     await joinGroup({group, userId});
     router.push(`${workspaceURI}/forum`);
+    router.refresh();
   };
 
   const handleNotifications = async (

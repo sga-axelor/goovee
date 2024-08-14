@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
-import {DEFAULT_LIMIT, ORDER_BY} from '@/constants';
+import {DEFAULT_LIMIT} from '@/constants';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 
@@ -9,6 +9,7 @@ import {findWorkspace} from '@/orm/workspace';
 import {findPosts, findUser} from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 import {findGroups} from '@/subapps/forum/common/action/action';
+import {GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
 
 export default async function Page({
   params,
@@ -29,24 +30,19 @@ export default async function Page({
 
   const {sort, limit, search} = searchParams;
 
-  const orderBy = {
-    isPin: ORDER_BY.DESC,
-    forumGroup: {
-      name: ORDER_BY.ASC,
-    },
-  };
-
-  const memberGroups = await findGroups({
-    id: userId,
-    isMember: true,
-    orderBy,
-    workspaceID: workspace?.id,
-  });
+  const memberGroups = userId
+    ? await findGroups({
+        id: userId,
+        isMember: true,
+        orderBy: GROUPS_ORDER_BY,
+        workspaceID: workspace?.id,
+      })
+    : [];
 
   const nonMemberGroups = await findGroups({
     id: userId,
     isMember: false,
-    orderBy,
+    orderBy: GROUPS_ORDER_BY,
     workspaceID: workspace?.id,
   });
 

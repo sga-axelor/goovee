@@ -13,6 +13,7 @@ import {
 } from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 import {findGroups} from '@/subapps/forum/common/action/action';
+import {GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
 
 export default async function Page({
   params,
@@ -39,14 +40,19 @@ export default async function Page({
     workspace?.id,
   ).then(clone);
 
-  const memberGroups = await findGroups({
-    id: user?.id as string,
-    isMember: true,
-    workspaceID: workspace?.id,
-  });
+  const memberGroups = user
+    ? await findGroups({
+        id: user?.id as string,
+        isMember: true,
+        orderBy: GROUPS_ORDER_BY,
+        workspaceID: workspace?.id,
+      })
+    : [];
+
   const nonMemberGroups = await findGroups({
     id: user?.id as string,
     isMember: false,
+    orderBy: GROUPS_ORDER_BY,
     workspaceID: workspace?.id,
   });
 

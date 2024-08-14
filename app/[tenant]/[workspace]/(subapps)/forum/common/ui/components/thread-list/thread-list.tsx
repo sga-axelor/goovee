@@ -49,10 +49,13 @@ export const ThreadList = ({
           />
         </div>
       </div>
-
-      <div className="flex flex-col gap-4">
-        <InfiniteScroll initialPosts={posts} pageInfo={pageInfo} />
-      </div>
+      {!posts?.length ? (
+        <div>{i18n.get('No posts available.')}</div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          <InfiniteScroll initialPosts={posts} pageInfo={pageInfo} />
+        </div>
+      )}
     </div>
   );
 };

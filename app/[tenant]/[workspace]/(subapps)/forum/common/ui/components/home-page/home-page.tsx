@@ -32,6 +32,7 @@ import {
   NOT_MEMBER,
   START_A_POST,
   TAB_TITLES,
+  GROUPS_ORDER_BY,
 } from '@/subapps/forum/common/constants';
 import {Group} from '@/subapps/forum/common/types/forum';
 import {fetchPosts, findGroups} from '@/subapps/forum/common/action/action';
@@ -51,7 +52,7 @@ export const HomePage = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
-  const [nonMemeberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
+  const [nonMemberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
   const [searchKey, setSearchKey] = useState<string>('');
   const [initialType, setInitialType] = useState<string>('');
 
@@ -66,11 +67,11 @@ export const HomePage = ({
   const isLoggedIn = id ? true : false;
 
   const groups = useMemo(
-    () => memberGroups.map((group: any) => group.forumGroup),
+    () => memberGroups?.map((group: any) => group.forumGroup),
     [memberGroups],
   );
 
-  const handleChangeSerachKey = (value: string) => {
+  const handleGroupSearch = (value: string) => {
     setSearchKey(value);
   };
 
@@ -97,26 +98,33 @@ export const HomePage = ({
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      findGroups({
-        id: user?.id as string,
-        isMember: true,
-        searchKey,
-        workspaceID,
-      })
-        .then(setMemberGroupList)
-        .catch(err => console.log(err));
-    }
+    const fetchGroups = async () => {
+      try {
+        if (isLoggedIn) {
+          const memberGroups = await findGroups({
+            id: user?.id as string,
+            isMember: true,
+            orderBy: GROUPS_ORDER_BY,
+            workspaceID,
+            searchKey,
+          });
+          setMemberGroupList(memberGroups);
+        }
 
-    findGroups({
-      id: user?.id,
-      isMember: false,
-      searchKey,
-      workspaceID,
-    })
-      .then(setNonMemberGroupList)
-      .catch(err => console.log(err));
-  }, [searchKey]);
+        const nonMemberGroups = await findGroups({
+          id: user?.id,
+          isMember: false,
+          orderBy: GROUPS_ORDER_BY,
+          workspaceID,
+          searchKey,
+        });
+        setNonMemberGroupList(nonMemberGroups);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchGroups();
+  }, [isLoggedIn, user?.id, searchKey, workspaceID]);
 
   const renderSearch = () => (
     <Search
@@ -153,7 +161,7 @@ export const HomePage = ({
               {i18n.get(GROUPS)}
             </h1>
           </div>
-          <GroupSearch onChange={handleChangeSerachKey} />
+          <GroupSearch onChange={handleGroupSearch} />
           {isLoggedIn && (
             <GroupActionList
               title={MEMBER}
@@ -163,7 +171,7 @@ export const HomePage = ({
           )}
           <GroupActionList
             title={NOT_MEMBER}
-            groups={nonMemeberGroupList}
+            groups={nonMemberGroupList}
             isMember={false}
             userId={user.id}
           />
