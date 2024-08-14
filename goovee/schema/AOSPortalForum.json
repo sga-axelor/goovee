@@ -16,6 +16,11 @@
       "name": "image",
       "type": "ManyToOne",
       "target": "AOSMetaFile"
+    },
+    {
+      "name": "workspace",
+      "type": "ManyToOne",
+      "target": "AOSPortalWorkspace"
     }
   ]
 }

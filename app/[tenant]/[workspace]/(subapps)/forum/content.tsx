@@ -2,13 +2,15 @@
 
 import {useRouter} from 'next/navigation';
 
+// ---- CORE IMPORTS ---- //
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   NavMenu,
   HomePage,
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
 import {MENU} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Group} from '@/subapps/forum/common/types/forum';
 
 const Content = ({

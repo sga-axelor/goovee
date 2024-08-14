@@ -6,6 +6,7 @@ import {useInView} from 'react-intersection-observer';
 import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {DEFAULT_LIMIT} from '@/constants';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
@@ -31,6 +32,8 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [ref, inView] = useInView();
 
+  const {workspaceID} = useWorkspace();
+
   const {searchParams} = useSearchParams();
   const sort = searchParams.get('sort') || '';
   const limit = searchParams.get('limit') || DEFAULT_LIMIT;
@@ -46,6 +49,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
         sort,
         limit: Number(limit),
         page: nextPage,
+        workspaceID,
       });
       if (newPosts.length) {
         setPage(nextPage);

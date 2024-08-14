@@ -5,14 +5,7 @@ import {MdOutlineImage} from 'react-icons/md';
 import {useMemo, useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {
-  HeroSearch,
-  Search as BannerSearch,
-  Avatar,
-  AvatarImage,
-  Button,
-  Search,
-} from '@/ui/components';
+import {HeroSearch, Search, Avatar, AvatarImage, Button} from '@/ui/components';
 import {
   BANNER_DESCRIPTION,
   BANNER_TITLES,
@@ -63,7 +56,7 @@ export const HomePage = ({
   const [initialType, setInitialType] = useState<string>('');
 
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceID} = useWorkspace();
 
   const {searchParams, update} = useSearchParams();
   const type = searchParams.get('type') ?? 'posts';
@@ -109,6 +102,7 @@ export const HomePage = ({
         id: user?.id as string,
         isMember: true,
         searchKey,
+        workspaceID,
       })
         .then(setMemberGroupList)
         .catch(err => console.log(err));
@@ -118,6 +112,7 @@ export const HomePage = ({
       id: user?.id,
       isMember: false,
       searchKey,
+      workspaceID,
     })
       .then(setNonMemberGroupList)
       .catch(err => console.log(err));
@@ -127,7 +122,7 @@ export const HomePage = ({
     <Search
       searchKey="title"
       findQuery={async () => {
-        const response = await fetchPosts({});
+        const response = await fetchPosts({workspaceID});
         if (response) {
           const {posts} = response;
           return posts;

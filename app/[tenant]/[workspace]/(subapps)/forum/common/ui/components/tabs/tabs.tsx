@@ -2,6 +2,7 @@
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+
 // ----- LOCAL IMPORTS ------//
 import {Post} from '@/subapps/forum/common/types/forum';
 
@@ -37,15 +38,14 @@ export const Tabs = ({
   tabs,
   posts = [],
   groupId,
-  onClick,
   pageInfo,
+  onClick,
 }: {
   activeTab: string;
   tabs: any[];
   posts: Post[];
   groupId?: string;
   pageInfo: any;
-
   onClick: (value: string) => void;
 }) => {
   const findTabComponent = (tabKey: string) => {

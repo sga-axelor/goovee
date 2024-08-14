@@ -3,18 +3,22 @@ import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import {ID} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
+import {PortalWorkspace} from '@/types';
 
 export async function findGroupByMembers({
   id = null,
   isMember,
   searchKey,
   orderBy,
+  workspaceID,
 }: {
   id: any;
   isMember: boolean;
   searchKey?: string;
   orderBy?: any;
+  workspaceID: PortalWorkspace['id'];
 }) {
+  if (!workspaceID) return [];
   const client = await getClient();
 
   const whereClause = {
@@ -25,6 +29,11 @@ export async function findGroupByMembers({
       : {
           OR: [{id: {ne: id}}, {id: null}],
         },
+    forumGroup: {
+      workspace: {
+        id: workspaceID,
+      },
+    },
     ...(searchKey
       ? {
           forumGroup: {
@@ -77,13 +86,22 @@ export async function findPosts({
   page = 1,
   search = '',
   whereClause = {},
+  workspaceID,
 }: {
   sort?: any;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
   whereClause?: any;
+  workspaceID: PortalWorkspace['id'];
 }) {
+  if (!workspaceID) {
+    return {
+      posts: [],
+      pageInfo: {},
+    };
+  }
+
   const client = await getClient();
 
   let orderBy: any = null;
@@ -100,6 +118,12 @@ export async function findPosts({
 
   const combinedWhereClause = {
     ...whereClause,
+    forumGroup: {
+      workspace: {
+        id: workspaceID,
+      },
+      ...whereClause.forumGroup,
+    },
     ...(search
       ? {
           title: {
@@ -173,29 +197,35 @@ export async function findPosts({
   return {posts, pageInfo};
 }
 
-export async function findPostsByGroupId(id: ID) {
+export async function findPostsByGroupId(id: ID, workspaceID: string) {
   const whereClause = {
     forumGroup: {
       id,
     },
   };
 
-  return await findPosts({whereClause});
+  return await findPosts({whereClause, workspaceID});
 }
 
-export async function findGroupById(id: ID) {
+export async function findGroupById(id: ID, workspaceID: string) {
+  if (!workspaceID) {
+    return null;
+  }
   const client = await getClient();
-  const groups = await client.aOSPortalForum.findOne({
+  const group = await client.aOSPortalForum.findOne({
     where: {
       id,
+      workspace: {
+        id: workspaceID,
+      },
     },
     select: {
       name: true,
-      // description: true,
+      description: true,
       image: {
         fileName: true,
       },
     },
   });
-  return groups;
+  return group;
 }

@@ -55,7 +55,7 @@ export const SingleGroup = ({
   const [initialType, setInitialType] = useState<string>('');
 
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceID} = useWorkspace();
 
   const {searchParams} = useSearchParams();
   const type = searchParams.get('type') ?? 'posts';
@@ -72,6 +72,7 @@ export const SingleGroup = ({
         id: user?.id as string,
         isMember: true,
         searchKey,
+        workspaceID,
       })
         .then(setMemberGroupList)
         .catch(err => console.log(err));
@@ -81,6 +82,7 @@ export const SingleGroup = ({
       id: user?.id,
       isMember: false,
       searchKey,
+      workspaceID,
     })
       .then(setNonMemberGroupList)
       .catch(err => console.log(err));
@@ -91,7 +93,9 @@ export const SingleGroup = ({
   };
 
   const handleTabClick = (type: string) => {
-    router.push(`${workspaceURI}/forum/group/${selectedGroup.id}?type=${type}`);
+    router.push(
+      `${workspaceURI}/forum/group/${selectedGroup?.id}?type=${type}`,
+    );
   };
   const hanldeDialogOpen = (initialType: string = '') => {
     setInitialType(initialType);
@@ -122,14 +126,14 @@ export const SingleGroup = ({
             <GroupActionList
               title={MEMBER}
               groups={memberGroupList}
-              groupId={selectedGroup.id}
+              groupId={selectedGroup?.id}
             />
           )}
           <GroupActionList
             title={NOT_MEMBER}
             userId={user?.id}
             groups={nonMemeberGroupList}
-            groupId={selectedGroup.id}
+            groupId={selectedGroup?.id}
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">

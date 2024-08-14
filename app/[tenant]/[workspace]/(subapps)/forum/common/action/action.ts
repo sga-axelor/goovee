@@ -7,7 +7,7 @@ import {i18n} from '@/lib/i18n';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import {ID} from '@/types';
+import {ID, PortalWorkspace} from '@/types';
 
 //----LOCAL IMPORTS -----//
 import {findGroupByMembers, findPosts} from '@/subapps/forum/common/orm/forum';
@@ -101,13 +101,21 @@ export async function findGroups({
   isMember = true,
   searchKey = '',
   orderBy,
+  workspaceID,
 }: {
   id: string | null;
   isMember: boolean;
   searchKey?: string;
   orderBy?: any;
+  workspaceID: PortalWorkspace['id'];
 }) {
-  return await findGroupByMembers({id, isMember, searchKey, orderBy});
+  return await findGroupByMembers({
+    id,
+    isMember,
+    searchKey,
+    orderBy,
+    workspaceID,
+  });
 }
 
 export async function addPost({
@@ -205,16 +213,19 @@ export async function fetchPosts({
   limit,
   page,
   search = '',
+  workspaceID,
 }: {
   sort?: any;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
+  workspaceID: PortalWorkspace['id'];
 }) {
   return await findPosts({
     sort,
     limit,
     page,
     search,
+    workspaceID,
   }).then(clone);
 }
