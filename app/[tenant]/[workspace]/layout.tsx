@@ -79,7 +79,11 @@ export default async function Layout({
   const isLeftNavigation = navigationSelect === NAVIGATION.left;
 
   return (
-    <Workspace workspace={workspace} tenant={tenant} theme={theme}>
+    <Workspace
+      id={$workspace.id}
+      workspace={workspace}
+      tenant={tenant}
+      theme={theme}>
       <CartContext>
         <div className="h-full w-full flex">
           {isLeftNavigation && (

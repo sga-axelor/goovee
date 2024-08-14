@@ -17,19 +17,23 @@ export const WorkspaceContext = React.createContext<{
   workspace: string;
   workspaceURI: string;
   workspaceURL: string;
+  workspaceID: string;
 }>({
   tenant: DEFAULT_TENANT,
   workspace: DEFAULT_WORKSPACE,
   workspaceURI: DEFAULT_WORKSPACE_URI,
   workspaceURL: DEFAULT_WORKSPACE_URL,
+  workspaceID: '',
 });
 
 export function Workspace({
+  id,
   tenant,
   workspace,
   theme,
   children,
 }: {
+  id: string;
   tenant: string;
   workspace: string;
   theme?: {id: string; name: string; options: Theme};
@@ -40,10 +44,11 @@ export function Workspace({
 
   const workspaceURI = `/${tenant}/${workspace}`;
   const workspaceURL = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;
+  const workspaceID = id;
 
   const value = useMemo(
-    () => ({tenant, workspace, workspaceURI, workspaceURL}),
-    [tenant, workspace, workspaceURI, workspaceURL],
+    () => ({tenant, workspace, workspaceURI, workspaceURL, workspaceID}),
+    [tenant, workspace, workspaceURI, workspaceURL, workspaceID],
   );
 
   useEffect(() => {
