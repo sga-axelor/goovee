@@ -14,14 +14,14 @@ import {
 } from '@/constants';
 import paypalhttpclient from '@/lib/paypal';
 import {stripe} from '@/lib/stripe';
-
-// ---- LOCAL IMPORTS ---- //
-import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
-import {findQuotation} from '../common/orm/quotations';
 import {PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {scale} from '@/utils';
+
+// ---- LOCAL IMPORTS ---- //
+import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
+import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
 
 export async function confirmQuotation({
   workspaceURL,
