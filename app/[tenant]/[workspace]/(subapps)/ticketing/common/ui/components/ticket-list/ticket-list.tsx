@@ -1,5 +1,4 @@
-'use client';
-
+import {Maybe} from '@/types/util';
 import {
   AvatarImage,
   StyledTable,
@@ -10,16 +9,29 @@ import {
 } from '@/ui/components';
 
 import {Avatar} from '@radix-ui/react-avatar';
+import {formatDate} from '../../../utils';
 
-type Tickets = {
-  ticketId: string;
-  requestedBy: string;
-  subject: string;
-  priority: string;
-  status: string;
-  category: string;
-  assignedTo: string;
-  updatedOn: string;
+type Ticket = {
+  id: string;
+  version: number;
+  name?: string;
+  ticketNumber?: string;
+  updatedOn?: Date;
+  priority?: {
+    id: string;
+    name: string;
+    version: number;
+  };
+  status?: {
+    id: string;
+    name: string;
+    version: number;
+  };
+  projectTaskCategory?: {
+    id: string;
+    name: string;
+    version: number;
+  };
 };
 
 type Variant =
@@ -78,43 +90,45 @@ const statusMap: {[key: string]: Variant} = {
   Closed: 'destructive',
 };
 
-const getVariantName = (name: string) => {
+const getVariantName = (name: Maybe<string>) => {
+  if (!name) return 'default';
   return priorityMap[name] || 'default';
 };
 
-const getStatusName = (name: string) => {
+const getStatusName = (name: Maybe<string>) => {
+  if (!name) return 'default';
   return statusMap[name] || 'default';
 };
 
-export function TicketList({tickets}: {tickets: Tickets[]}) {
+export function TicketList({tickets}: {tickets: Ticket[]}) {
   return (
     <StyledTable columns={columns}>
-      {tickets?.map((ticket: any, i: number) => {
-        const priority = getVariantName(ticket?.priority);
-        const status = getStatusName(ticket?.status);
+      {tickets.map(ticket => {
+        const priority = getVariantName(ticket.priority?.name);
+        const status = getStatusName(ticket.status?.name);
         return (
-          <TableRow key={i}>
-            <TableCell className="px-5">{ticket?.ticketId}</TableCell>
+          <TableRow key={ticket.id}>
+            <TableCell className="px-5">{ticket.ticketNumber}</TableCell>
             <TableCell className="flex justify-center items-center">
               <Avatar className="h-12 w-16">
                 <AvatarImage src="/images/user.png" />
               </Avatar>
-              <p className="ms-1"> {ticket?.requestedBy}</p>
+              <p className="ms-1"> {ticket.requestedBy}</p>
             </TableCell>
-            <TableCell>{ticket?.subject}</TableCell>
+            <TableCell>{ticket.name}</TableCell>
             <TableCell>
-              <Tag variant={priority!} className="text-[12px]">
-                {ticket?.priority}
+              <Tag variant={priority} className="text-[12px]">
+                {ticket.priority?.name}
               </Tag>
             </TableCell>
             <TableCell>
               <Tag variant={status!} className="text-[12px]" outline>
-                {ticket?.status}
+                {ticket.status?.name}
               </Tag>
             </TableCell>
-            <TableCell>{ticket?.category}</TableCell>
-            <TableCell>{ticket?.assignedTo}</TableCell>
-            <Table>{ticket?.updatedOn}</Table>
+            <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
+            <TableCell>{ticket.assignedTo}</TableCell>
+            <Table>{formatDate(ticket.updatedOn)}</Table>
           </TableRow>
         );
       })}

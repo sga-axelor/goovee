@@ -8,6 +8,65 @@
       "type": "String",
       "name": "name",
       "required": true
+    },
+    {
+      "type": "String",
+      "name": "typeSelect"
+    },
+    {
+      "type": "Int",
+      "name": "sequence"
+    },
+    {
+      "type": "Date",
+      "name": "taskDeadline"
+    },
+    {
+      "type": "Date",
+      "name": "taskDate"
+    },
+    {
+      "type": "Date",
+      "name": "taskEndDate"
+    },
+    {
+      "type": "String",
+      "name": "ticketNumber"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "priority",
+      "target": "AOSProjectPriority"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "project",
+      "target": "AOSProject"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "parentTask",
+      "target": "AOSProjectTask"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "status",
+      "target": "AOSProjectTaskStatus"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskTagSet",
+      "target": "AOSProjectTaskTag"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "product",
+      "target": "AOSProduct"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "projectTaskCategory",
+      "target": "AOSProjectTaskCategory"
     }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "name": "AOSProjectStatus",
+  "table": "project_project_status",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    }
+  ]
+}

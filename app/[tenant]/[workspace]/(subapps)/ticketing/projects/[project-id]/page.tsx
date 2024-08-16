@@ -12,6 +12,9 @@ import {workspacePathname} from '@/utils/workspace';
 import Hero from './hero';
 import {TicketList} from '@/subapps/ticketing/common/ui/components/ticket-list';
 import {TicketTypes} from '@/subapps/ticketing/common/ui/components/ticket-types';
+import {findProjectTickets} from '../../common/orm/projects';
+import {ORDER_BY} from '@/constants';
+import {getSkip} from '../../common/utils';
 
 export default async function Page({
   params,
@@ -22,7 +25,7 @@ export default async function Page({
 }) {
   const projectId = params?.['project-id'];
 
-  const {limit, page} = searchParams;
+  const {limit = 7, page = 1} = searchParams;
 
   const session = await getSession();
 
@@ -33,17 +36,19 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
-  /**
-   * TODO
-   *
-   * Fetch project tickets using
-   * projectId, limit, page and other params, searchparams if required
-   */
+  const tickets = await findProjectTickets({
+    projectId,
+    take: Number(limit),
+    skip: getSkip(limit, page),
+    orderBy: {
+      updatedOn: ORDER_BY.ASC,
+    },
+  });
 
   return (
     <>
       <Hero workspace={workspace} />
-      <div className="container mt-6 space-y-6">
+      <div className="container my-6 space-y-6">
         <TicketTypes />
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-xl">
@@ -54,7 +59,7 @@ export default async function Page({
             <span>{i18n.get('Create a ticket')}</span>
           </Button>
         </div>
-        <TicketList tickets={[]} />
+        <TicketList tickets={tickets} />
       </div>
     </>
   );

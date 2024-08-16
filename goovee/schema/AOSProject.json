@@ -1,0 +1,52 @@
+{
+  "name": "AOSProject",
+  "table": "project_project",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "String",
+      "name": "code"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "contactPartner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "Decimal",
+      "name": "percentageOfProgress"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "projectStatus",
+      "target": "AOSProjectStatus"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "customerAddress",
+      "target": "AOSAddress"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "clientPartner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "membersUserSet",
+      "target": "AOSUser",
+      "column": "project_set"
+    },
+    {
+      "type": "OneToMany",
+      "name": "tasks",
+      "target": "AOSProjectTask",
+      "mappedBy": "project"
+    }
+  ]
+}

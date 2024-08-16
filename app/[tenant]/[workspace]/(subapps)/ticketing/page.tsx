@@ -10,89 +10,48 @@ import {workspacePathname} from '@/utils/workspace';
 
 import {Button, HeroSearch} from '@/ui/components';
 
-import {Card} from './common/ui/components/card';
-import {TicketTypes} from './common/ui/components/ticket-types';
-import {TicketList} from './common/ui/components/ticket-list';
+import Link from 'next/link';
+import {findProjectsWithTaskCount} from './common/orm/projects';
+import {redirect} from 'next/navigation';
+import {getPaginationButtons, getPages, getSkip} from './common/utils';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from './common/ui/components/pagination';
+import {cn} from '@/utils/css';
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: {tenant: string; workspace: string};
+  searchParams: {[key: string]: string | undefined};
 }) {
   const session = await getSession();
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
 
-  const {workspaceURL} = workspacePathname(params);
+  const {limit = 8, page = 1} = searchParams;
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
   }).then(clone);
 
-  /**
-   * TODO
-   *
-   * Fetch projects per workspace
-   */
+  const projects = await findProjectsWithTaskCount({
+    take: +limit,
+    skip: getSkip(limit, page),
+  });
 
-  const projectList = [
-    {
-      projectName: 'Project 1',
-      totalTickets: 156,
-    },
-    {
-      projectName: 'Project 2',
-      totalTickets: 43,
-    },
-    {
-      projectName: 'Project 3',
-      totalTickets: 20,
-    },
-    {
-      projectName: 'Project 4',
-      totalTickets: 123,
-    },
-    {
-      projectName: 'Project 5',
-      totalTickets: 8,
-    },
-    {
-      projectName: 'Project 6',
-      totalTickets: 18,
-    },
-  ];
+  const pages = getPages(projects, limit);
+  if (pages == 1 && projects.length === 1) {
+    redirect(`/${workspaceURI}/ticketing/projects/${projects[0].id}`);
+  }
 
-  const tickets: any = [
-    {
-      ticketId: '#00342AB',
-      requestedBy: 'User 1',
-      subject: 'Problem with creating a topic on the forum',
-      priority: 'Low',
-      status: 'New',
-      category: 'Technical Issues',
-      assignedTo: 'Client',
-      updatedOn: '22/11/23',
-    },
-    {
-      ticketId: '#00342AB',
-      requestedBy: 'User 2',
-      subject: 'Problem with creating a topic on the forum',
-      priority: 'Low',
-      status: 'New',
-      category: 'Technical Issues',
-      assignedTo: 'Client',
-      updatedOn: '22/11/23',
-    },
-    {
-      ticketId: '#00342AB',
-      requestedBy: 'User 3',
-      subject: 'Problem with creating a topic on the forum',
-      priority: 'Low',
-      status: 'New',
-      category: 'Technical Issues',
-      assignedTo: 'Client',
-      updatedOn: '22/11/23',
-    },
-  ];
   return (
     <>
       <HeroSearch
@@ -112,24 +71,60 @@ export default async function Page({
             <span>{i18n.get('Create a new project')}</span>
           </Button>
         </div>
-        <div className="flex flex-wrap gap-4 mt-5">
-          {projectList?.length > 1 ? (
-            projectList.map((item, i) => {
-              return (
-                <Card
-                  key={i}
-                  projectName={item?.projectName}
-                  totalTickets={item?.totalTickets}
-                />
-              );
-            })
-          ) : (
-            <>
-              <TicketTypes />
-              <TicketList tickets={tickets} />
-            </>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {projects.map(project => (
+            <Link
+              key={project.id}
+              href={`/${workspaceURI}/ticketing/projects/${project.id}`}>
+              <div className="bg-card p-6">
+                <p className="text-[1rem] font-semibold">{project.name}</p>
+                <p className="text-[12px] font-semibold">
+                  {project.taskCount} tickets
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
+        {pages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  className={cn({
+                    ['invisible']: +page <= 1,
+                  })}
+                  href={`${workspaceURI}/ticketing?page=${+page - 1}`}
+                />
+              </PaginationItem>
+              {getPaginationButtons(+page, pages).map((value, i) => {
+                if (typeof value == 'string') {
+                  return (
+                    <PaginationItem key={i}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  );
+                }
+                return (
+                  <PaginationItem key={value}>
+                    <PaginationLink
+                      isActive={+page === value}
+                      href={`${workspaceURI}/ticketing?page=${value}`}>
+                      {value}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+              <PaginationItem>
+                <PaginationNext
+                  className={cn({
+                    ['invisible']: +page >= pages,
+                  })}
+                  href={`${workspaceURI}/ticketing?page=${+page + 1}`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </>
   );
