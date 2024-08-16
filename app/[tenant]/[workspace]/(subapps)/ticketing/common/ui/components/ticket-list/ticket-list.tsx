@@ -94,12 +94,12 @@ export function TicketList({tickets}: {tickets: Tickets[]}) {
         const status = getStatusName(ticket?.status);
         return (
           <TableRow key={i}>
-            <TableCell className="px-5">{ticket.ticketId}</TableCell>
+            <TableCell className="px-5">{ticket?.ticketId}</TableCell>
             <TableCell className="flex justify-center items-center">
-              <Avatar className="h-[32px] w-[32px]">
+              <Avatar className="h-12 w-16">
                 <AvatarImage src="/images/user.png" />
               </Avatar>
-              {ticket?.requestedBy}
+              <p className="ms-1"> {ticket?.requestedBy}</p>
             </TableCell>
             <TableCell>{ticket?.subject}</TableCell>
             <TableCell>
@@ -108,7 +108,7 @@ export function TicketList({tickets}: {tickets: Tickets[]}) {
               </Tag>
             </TableCell>
             <TableCell>
-              <Tag variant={status!} className="text-[12px]">
+              <Tag variant={status!} className="text-[12px]" outline>
                 {ticket?.status}
               </Tag>
             </TableCell>

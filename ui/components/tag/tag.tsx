@@ -13,6 +13,7 @@ type Variant =
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   variant: Variant;
+  outline?: boolean;
 }
 
 const classes: Record<Variant, string> = {
@@ -23,16 +24,26 @@ const classes: Record<Variant, string> = {
   blue: 'bg-palette-blue text-palette-blue-dark',
   default: 'bg-primary/[.25] text-primary',
 };
+const outlineClasses: Record<Variant, string> = {
+  success: 'border-success text-success border',
+  destructive: 'border-destructive text-destructive border',
+  yellow: 'border-palette-yellow text-palette-yellow border',
+  purple: 'border-palette-purple text-palette-purple border',
+  blue: 'border-violet-400 text-violet-400 border',
+  default: 'border-primary text-primary border',
+};
 
 export const Tag: React.FC<TagProps> = ({
   children,
   variant = 'default',
   className,
+  outline,
   ...props
 }) => {
+  const variantClasses = outline ? outlineClasses[variant] : classes[variant];
   return (
     <Badge
-      className={cn(classes[variant], className)}
+      className={cn(variantClasses, className)}
       variant="tag_default"
       {...props}>
       {children}
