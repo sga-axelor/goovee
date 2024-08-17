@@ -9,13 +9,13 @@ import {getImageURL} from '@/utils/image';
 import {ThreadPopup} from '@/subapps/forum/common/ui/components';
 import {Post} from '@/subapps/forum/common/types/forum';
 
-export const ImageGallery = ({images, post}: {images: any; post: Post}) => {
+export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
   const showOverlay = images.length > 3;
 
   const [openPopUp, setOpenPopUp] = useState(false);
 
   const openThreadPopup = () => {
-    setOpenPopUp(true);
+    post && setOpenPopUp(true);
   };
 
   const closeThreadPopup = () => {
@@ -27,14 +27,14 @@ export const ImageGallery = ({images, post}: {images: any; post: Post}) => {
       <div
         className={`grid grid-cols-${images.length >= 3 ? '3' : images.length} gap-6`}
         onClick={openThreadPopup}>
-        {images.slice(0, 3).map((image: any) => (
+        {images.slice(0, 3).map((image: any, index: number) => (
           <div key={image.id} className="relative">
             <div
               className="w-full h-[205px] bg-no-repeat bg-center bg-cover cursor-pointer"
               style={{
                 backgroundImage: `url(${getImageURL(image?.metaFile?.id)})`,
               }}></div>
-            {showOverlay && (
+            {index === 2 && showOverlay && (
               <div className="absolute inset-0 flex items-center cursor-pointer justify-center bg-black bg-opacity-50 text-white text-5xl font-semibold">
                 +{images.length - 3}
               </div>
