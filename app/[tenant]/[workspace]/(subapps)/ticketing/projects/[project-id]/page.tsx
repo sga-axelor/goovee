@@ -1,3 +1,14 @@
+// ---- CORE IMPORTS ---- //
+import {ORDER_BY} from '@/constants';
+import {i18n} from '@/lib/i18n';
+import {getSession} from '@/orm/auth';
+import {findWorkspace} from '@/orm/workspace';
+import {Button} from '@/ui/components';
+import {Skeleton} from '@/ui/components/skeleton';
+import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
+import {Suspense} from 'react';
+import {IconType} from 'react-icons';
 import {
   MdAdd,
   MdAllInbox,
@@ -6,18 +17,7 @@ import {
   MdPending,
 } from 'react-icons/md';
 
-// ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
-import {findWorkspace} from '@/orm/workspace';
-import {Button} from '@/ui/components';
-import {clone} from '@/utils';
-import {workspacePathname} from '@/utils/workspace';
-
 // ---- LOCAL IMPORTS ---- //
-import {ORDER_BY} from '@/constants';
-import {TicketList} from '@/subapps/ticketing/common/ui/components/ticket-list';
-import {TicketTypes} from '@/subapps/ticketing/common/ui/components/ticket-types';
 import {
   findProjectTickets,
   getAllTicketCount,
@@ -26,8 +26,11 @@ import {
   getMyTicketCount,
   getResolvedTicketCount,
 } from '../../common/orm/projects';
-import {getSkip} from '../../common/utils';
+import {Swipe} from '../../common/ui/components/swipe';
+import {TicketList} from '../../common/ui/components/ticket-list';
+import {getSkip, parseSort} from '../../common/utils';
 import Hero from './hero';
+import {columns} from '../../common/constants';
 
 export default async function Page({
   params,
@@ -38,56 +41,95 @@ export default async function Page({
 }) {
   const projectId = params?.['project-id'];
 
-  const {limit = 7, page = 1} = searchParams;
+  const {limit = 7, page = 1, sort = 'updatedOn'} = searchParams;
 
   const session = await getSession();
   // const userId = session!.user.id;
   const userId = '1';
 
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
   }).then(clone);
 
-  const tickets = await findProjectTickets({
+  const tickets = findProjectTickets({
     projectId,
     take: Number(limit),
     skip: getSkip(limit, page),
-    orderBy: {
-      updatedOn: ORDER_BY.ASC,
-    },
+    orderBy: columns
+      .find(c => c.key === parseSort(sort).key)
+      ?.orderBy?.(parseSort(sort).direction),
   });
 
   const items = [
     {
       label: 'All',
-      count: await getAllTicketCount(projectId),
+      count: getAllTicketCount(projectId),
       icon: MdAllInbox,
     },
     {
       label: 'My tickets',
-      count: await getMyTicketCount(projectId, userId),
+      count: getMyTicketCount(projectId, userId),
       icon: MdAllInbox,
     },
     {
       label: 'Assigned tickets',
-      count: await getAssignedTicketCount(projectId, userId),
+      count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
     },
     {
       label: 'Created tickets',
-      count: await getCreatedTicketCount(projectId, userId),
+      count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
     },
     {
       label: 'Resolved tickets',
-      count: await getResolvedTicketCount(projectId),
+      count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
     },
-  ].map(({count, label, icon: Icon}) => (
-    <div key={label} className="flex items-center gap-6 px-6 h-[80px]">
+  ].map(props => (
+    <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
+      <TicketCard {...props} />
+    </Suspense>
+  ));
+
+  return (
+    <>
+      <Hero workspace={workspace} />
+      <div className="container my-6 space-y-6">
+        <Swipe items={items} />
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-xl">
+            {i18n.get('Latest tickets')}
+          </h2>
+          <Button variant="success" className="flex items-center">
+            <MdAdd className="size-6" />
+            <span>{i18n.get('Create a ticket')}</span>
+          </Button>
+        </div>
+        <TicketList
+          tickets={tickets}
+          url={`${workspaceURI}/ticketing/projects/${projectId}`}
+          searchParams={searchParams}
+        />
+      </div>
+    </>
+  );
+}
+
+type TicketCardProps = {
+  label: string;
+  count: Promise<number>;
+  icon?: IconType;
+};
+
+async function TicketCard(props: TicketCardProps) {
+  const {label, icon: Icon, count: countPromise} = props;
+  const count = await countPromise;
+  return (
+    <div className="flex items-center gap-6 px-6 h-[80px]">
       <div className="h-[56px] w-[56px] p-2 bg-muted rounded-full">
         {Icon && (
           <Icon className={`h-[40px] w-[40px] text-success bg-success-light`} />
@@ -98,24 +140,19 @@ export default async function Page({
         <p className="font-semibold">{label}</p>
       </div>
     </div>
-  ));
+  );
+}
 
+function TicketCardSkeleton() {
   return (
-    <>
-      <Hero workspace={workspace} />
-      <div className="container my-6 space-y-6">
-        <TicketTypes items={items} />
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-xl">
-            {i18n.get('Latest tickets')}
-          </h2>
-          <Button variant="success" className="flex items-center">
-            <MdAdd className="size-6" />
-            <span>{i18n.get('Create a ticket')}</span>
-          </Button>
-        </div>
-        <TicketList tickets={tickets} />
+    <div className="flex items-center gap-6 px-6 h-[80px]">
+      <div className="h-[56px] w-[56px] p-2 bg-muted rounded-full">
+        <Skeleton className={`h-[40px] w-[40px]`} />
       </div>
-    </>
+      <div className="grow flex flex-col gap-2">
+        <Skeleton className="w-[3rem] h-[2rem]" />
+        <Skeleton className="w-[7rem] h-[1.5rem]" />
+      </div>
+    </div>
   );
 }

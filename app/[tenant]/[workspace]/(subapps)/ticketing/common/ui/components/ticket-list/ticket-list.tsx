@@ -1,15 +1,26 @@
+// ---- CORE IMPORTS ---- //
 import {Maybe} from '@/types/util';
 import {
   AvatarImage,
-  StyledTable,
-  Table,
+  TableBody,
+  TableHead,
+  TableFooter,
   TableCell,
   TableRow,
   Tag,
+  TableHeader,
+  Table,
 } from '@/ui/components';
-
+import Link from 'next/link';
+import {ORDER_BY} from '@/constants';
+import {Skeleton} from '@/ui/components/skeleton';
 import {Avatar} from '@radix-ui/react-avatar';
-import {formatDate} from '../../../utils';
+import {Suspense} from 'react';
+import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
+
+// ---- LOCAL IMPORTS ---- //
+import {formatDate, parseSort} from '../../../utils';
+import {columns} from '../../../constants';
 
 type Ticket = {
   id: string;
@@ -32,6 +43,11 @@ type Ticket = {
     name: string;
     version: number;
   };
+  assignedTo?: {
+    id: string;
+    name: string;
+    version: number;
+  };
 };
 
 type Variant =
@@ -41,41 +57,6 @@ type Variant =
   | 'purple'
   | 'destructive'
   | 'default';
-
-const columns = [
-  {
-    field: 'ticketId',
-    label: 'Ticket ID',
-  },
-  {
-    field: 'requestedBy',
-    label: 'Requested by',
-  },
-  {
-    field: 'subject',
-    label: 'Subject',
-  },
-  {
-    field: 'priority',
-    label: 'Priority',
-  },
-  {
-    field: 'status',
-    label: 'Status',
-  },
-  {
-    field: 'category',
-    label: 'Category',
-  },
-  {
-    field: 'assignedTo',
-    label: 'Assigned to',
-  },
-  {
-    field: 'updatedOn',
-    label: 'Updated',
-  },
-];
 
 const priorityMap: {[key: string]: Variant} = {
   Low: 'success',
@@ -99,41 +80,96 @@ const getStatusName = (name: Maybe<string>) => {
   if (!name) return 'default';
   return statusMap[name] || 'default';
 };
+type TicketListProps = {
+  tickets: Promise<Ticket[]>;
+  url: string;
+  searchParams: Record<string, string | undefined>;
+};
 
-export function TicketList({tickets}: {tickets: Ticket[]}) {
+export async function TicketList(props: TicketListProps) {
+  const {tickets, url, searchParams} = props;
   return (
-    <StyledTable columns={columns}>
-      {tickets.map(ticket => {
-        const priority = getVariantName(ticket.priority?.name);
-        const status = getStatusName(ticket.status?.name);
-        return (
-          <TableRow key={ticket.id}>
-            <TableCell className="px-5">{ticket.ticketNumber}</TableCell>
-            <TableCell className="flex justify-center items-center">
-              <Avatar className="h-12 w-16">
-                <AvatarImage src="/images/user.png" />
-              </Avatar>
-              <p className="ms-1"> {ticket.requestedBy}</p>
-            </TableCell>
-            <TableCell>{ticket.name}</TableCell>
-            <TableCell>
-              <Tag variant={priority} className="text-[12px]">
-                {ticket.priority?.name}
-              </Tag>
-            </TableCell>
-            <TableCell>
-              <Tag variant={status!} className="text-[12px]" outline>
-                {ticket.status?.name}
-              </Tag>
-            </TableCell>
-            <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
-            <TableCell>{ticket.assignedTo}</TableCell>
-            <Table>{formatDate(ticket.updatedOn)}</Table>
-          </TableRow>
-        );
-      })}
-    </StyledTable>
+    <Table className="w-full rounded-lg bg-card text-card-foreground">
+      <TableHeader>
+        <TableRow>
+          {columns?.map(column => {
+            const sort = parseSort(searchParams.sort);
+            const isActive = sort.key === column.key;
+            const isASC = sort.direction === ORDER_BY.ASC;
+            return (
+              <TableHead
+                key={column.key}
+                className="text-card-foreground text-base font-semibold px-6 border-none">
+                {column.orderBy ? (
+                  <div className="flex gap-1 items-center">
+                    <Link
+                      scroll={false}
+                      href={`${url}?sort=${isASC ? '-' : ''}${column.key}`}>
+                      {column.label}
+                    </Link>
+                    {isActive &&
+                      (isASC ? <MdArrowDropDown /> : <MdArrowDropUp />)}
+                  </div>
+                ) : (
+                  column.label
+                )}
+              </TableHead>
+            );
+          })}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <Suspense fallback={<TicketRowsSkeleton />}>
+          <TicketRows tickets={tickets} />
+        </Suspense>
+      </TableBody>
+      <TableFooter></TableFooter>
+    </Table>
   );
 }
 
+async function TicketRows(props: {tickets: Promise<Ticket[]>}) {
+  const tickets = await props.tickets;
+  return tickets.map(ticket => {
+    const priority = getVariantName(ticket.priority?.name);
+    const status = getStatusName(ticket.status?.name);
+    return (
+      <TableRow key={ticket.id}>
+        <TableCell className="px-5">{ticket.ticketNumber}</TableCell>
+        <TableCell className="flex justify-center items-center">
+          <Avatar className="h-12 w-16">
+            <AvatarImage src="/images/user.png" />
+          </Avatar>
+          <p className="ms-1"> {ticket.requestedBy}</p>
+        </TableCell>
+        <TableCell>{ticket.name}</TableCell>
+        <TableCell>
+          <Tag variant={priority} className="text-[12px]">
+            {ticket.priority?.name}
+          </Tag>
+        </TableCell>
+        <TableCell>
+          <Tag variant={status!} className="text-[12px]" outline>
+            {ticket.status?.name}
+          </Tag>
+        </TableCell>
+        <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
+        <TableCell>{ticket.assignedTo?.name}</TableCell>
+        <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
+      </TableRow>
+    );
+  });
+}
+
+export function TicketRowsSkeleton() {
+  return [1, 2, 3].map(ticket => (
+    <TableRow key={ticket}>
+      {columns.map((c, i) => (
+        <TableCell key={i}>
+          <Skeleton className="w-24 h-6" />
+        </TableCell>
+      ))}
+    </TableRow>
+  ));
+}
 export default TicketList;

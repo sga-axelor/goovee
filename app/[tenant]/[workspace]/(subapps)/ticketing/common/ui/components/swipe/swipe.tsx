@@ -2,10 +2,10 @@
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {FreeMode, Pagination} from 'swiper/modules';
 import {ReactNode} from 'react';
-export function TicketTypes({items}: {items: ReactNode[]}) {
+export function Swipe({items}: {items: ReactNode[]}) {
   return (
     <Swiper
-      slidesPerView={'auto'}
+      slidesPerView="auto"
       spaceBetween={30}
       modules={[FreeMode, Pagination]}
       className="space-y-6"
@@ -27,4 +27,4 @@ export function TicketTypes({items}: {items: ReactNode[]}) {
   );
 }
 
-export default TicketTypes;
+export default Swipe;

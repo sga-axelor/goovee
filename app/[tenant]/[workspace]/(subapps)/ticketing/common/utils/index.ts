@@ -2,12 +2,30 @@
  * Tickets Utils
  */
 
+import {ORDER_BY} from '@/constants';
 import {Maybe} from '@/types/util';
 
 export const formatDate = (date: Maybe<Date | string>) => {
   if (!date) return '';
   return new Date(date).toLocaleDateString();
 };
+
+export function parseSort(sort: Maybe<string>): {
+  key: string | null;
+  direction: 'ASC' | 'DESC';
+} {
+  if (sort) {
+    const isDesc = sort.startsWith('-');
+    return {
+      key: isDesc ? sort.slice(1) : sort,
+      direction: isDesc ? ORDER_BY.DESC : ORDER_BY.ASC,
+    };
+  }
+  return {
+    key: null,
+    direction: ORDER_BY.ASC,
+  };
+}
 
 export const getSkip = (
   limit: string | number,

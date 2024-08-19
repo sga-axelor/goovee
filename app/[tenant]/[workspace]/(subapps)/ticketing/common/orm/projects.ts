@@ -190,6 +190,9 @@ export async function findProjectTickets(props: TicketProps<AOSProjectTask>) {
       project: {
         name: true,
       },
+      assignedTo: {
+        name: true,
+      },
     },
   });
   return tickets;
