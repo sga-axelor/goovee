@@ -35,6 +35,16 @@
     },
     {
       "type": "ManyToOne",
+      "name": "assignedTo",
+      "target": "AOSUser"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "createdBy",
+      "target": "AOSUser"
+    },
+    {
+      "type": "ManyToOne",
       "name": "priority",
       "target": "AOSProjectPriority"
     },

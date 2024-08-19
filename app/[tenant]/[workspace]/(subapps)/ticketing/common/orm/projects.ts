@@ -3,8 +3,7 @@
  */
 import {getClient} from '@/goovee';
 import {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
-import {Entity, WhereOptions} from '@goovee/orm';
-import {parseInt} from 'lodash';
+import {Entity, ID, WhereOptions} from '@goovee/orm';
 
 type QueryProps<T extends Entity> = {
   where?: WhereOptions<T>;
@@ -28,16 +27,111 @@ export async function findProjects(props?: QueryProps<AOSProject>) {
   });
   return projects;
 }
-export async function getTaskCount(projectId: string): Promise<number> {
+
+export async function getAllTicketCount(projectId: ID): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
       project: {
         id: projectId,
       },
+      status: {
+        isCompleted: false,
+      },
     },
   });
-  return typeof count === 'number' ? count : parseInt(count);
+  return Number(count);
+}
+
+export async function getMyTicketCount(
+  projectId: ID,
+  userId: ID,
+): Promise<number> {
+  const client = await getClient();
+  const count = await client.aOSProjectTask.count({
+    where: {
+      project: {
+        id: projectId,
+      },
+      status: {
+        isCompleted: false,
+      },
+      AND: [
+        {
+          OR: [
+            {
+              assignedTo: {
+                id: userId,
+              },
+            },
+            {
+              createdBy: {
+                id: userId,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  });
+  return Number(count);
+}
+
+export async function getAssignedTicketCount(
+  projectId: ID,
+  userId: ID,
+): Promise<number> {
+  const client = await getClient();
+  const count = await client.aOSProjectTask.count({
+    where: {
+      project: {
+        id: projectId,
+      },
+      status: {
+        isCompleted: false,
+      },
+      assignedTo: {
+        id: userId,
+      },
+    },
+  });
+  return Number(count);
+}
+
+export async function getCreatedTicketCount(
+  projectId: ID,
+  userId: ID,
+): Promise<number> {
+  const client = await getClient();
+  const count = await client.aOSProjectTask.count({
+    where: {
+      project: {
+        id: projectId,
+      },
+      status: {
+        isCompleted: false,
+      },
+      createdBy: {
+        id: userId,
+      },
+    },
+  });
+  return Number(count);
+}
+
+export async function getResolvedTicketCount(projectId: ID): Promise<number> {
+  const client = await getClient();
+  const count = await client.aOSProjectTask.count({
+    where: {
+      project: {
+        id: projectId,
+      },
+      status: {
+        isCompleted: true,
+      },
+    },
+  });
+  return Number(count);
 }
 
 export async function findProjectsWithTaskCount(
@@ -45,12 +139,12 @@ export async function findProjectsWithTaskCount(
 ) {
   const projects = await findProjects(props);
   const counts = await Promise.all(
-    projects.map(project => getTaskCount(project.id)),
+    projects.map(project => getAllTicketCount(project.id)),
   );
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
 
-export async function findProjectById(id: string) {
+export async function findProjectById(id: ID) {
   const client = await getClient();
   const projects = await client.aOSProject.find({
     where: {
@@ -64,7 +158,7 @@ export async function findProjectById(id: string) {
 }
 
 type TicketProps<T extends Entity> = QueryProps<T> & {
-  projectId: string;
+  projectId: ID;
 };
 
 export async function findProjectTickets(props: TicketProps<AOSProjectTask>) {
