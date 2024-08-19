@@ -49,7 +49,7 @@ export default async function Page({
 
   const pages = getPages(projects, limit);
   if (pages == 1 && projects.length === 1) {
-    redirect(`/${workspaceURI}/ticketing/projects/${projects[0].id}`);
+    redirect(`${workspaceURI}/ticketing/projects/${projects[0].id}`);
   }
 
   return (
@@ -75,7 +75,7 @@ export default async function Page({
           {projects.map(project => (
             <Link
               key={project.id}
-              href={`/${workspaceURI}/ticketing/projects/${project.id}`}>
+              href={`${workspaceURI}/ticketing/projects/${project.id}`}>
               <div className="bg-card p-6">
                 <p className="text-[1rem] font-semibold">{project.name}</p>
                 <p className="text-[12px] font-semibold">
