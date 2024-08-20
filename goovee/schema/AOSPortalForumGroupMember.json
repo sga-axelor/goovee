@@ -7,7 +7,7 @@
     {
       "name": "forumGroup",
       "type": "ManyToOne",
-      "target": "AOSPortalForum"
+      "target": "AOSPortalForumGroup"
     },
     {
       "name": "member",

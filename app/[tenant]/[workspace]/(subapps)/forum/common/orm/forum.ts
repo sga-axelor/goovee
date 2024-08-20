@@ -212,7 +212,7 @@ export async function findGroupById(id: ID, workspaceID: string) {
     return null;
   }
   const client = await getClient();
-  const group = await client.aOSPortalForum.findOne({
+  const group = await client.aOSPortalForumGroup.findOne({
     where: {
       id,
       workspace: {

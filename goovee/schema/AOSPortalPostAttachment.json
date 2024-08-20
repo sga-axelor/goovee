@@ -4,7 +4,7 @@
   "extends": "Model",
   "synchronize": false,
   "fields": [
-    {"name": "forumPost", "type": "ManyToOne", "target": "AOSPortalForum"},
+    {"name": "forumPost", "type": "ManyToOne", "target": "AOSPortalForumPost"},
     {
       "name": "title",
       "type": "String"

@@ -1,5 +1,5 @@
 {
-  "name": "AOSPortalForum",
+  "name": "AOSPortalForumGroup",
   "table": "portal_forum_group",
   "extends": "Model",
   "synchronize": false,
