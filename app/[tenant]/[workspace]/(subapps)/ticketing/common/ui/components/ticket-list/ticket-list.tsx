@@ -19,7 +19,7 @@ import {Suspense} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {formatDate, parseSort} from '../../../utils';
+import {formatDate, getSortDirection, getSortKey} from '../../../utils';
 import {columns} from '../../../constants';
 
 type Ticket = {
@@ -93,9 +93,9 @@ export async function TicketList(props: TicketListProps) {
       <TableHeader>
         <TableRow>
           {columns?.map(column => {
-            const sort = parseSort(searchParams.sort);
-            const isActive = sort.key === column.key;
-            const isASC = sort.direction === ORDER_BY.ASC;
+            const isActive = getSortKey(searchParams.sort) === column.key;
+            const isASC =
+              isActive && getSortDirection(searchParams.sort) === ORDER_BY.ASC;
             return (
               <TableHead
                 key={column.key}
@@ -144,12 +144,12 @@ async function TicketRows(props: {tickets: Promise<Ticket[]>}) {
         </TableCell>
         <TableCell>{ticket.name}</TableCell>
         <TableCell>
-          <Tag variant={priority} className="text-[12px]">
+          <Tag variant={priority} className="text-[12px] py-1">
             {ticket.priority?.name}
           </Tag>
         </TableCell>
         <TableCell>
-          <Tag variant={status!} className="text-[12px]" outline>
+          <Tag variant={status!} className="text-[12px] py-1" outline>
             {ticket.status?.name}
           </Tag>
         </TableCell>
@@ -161,15 +161,18 @@ async function TicketRows(props: {tickets: Promise<Ticket[]>}) {
   });
 }
 
-export function TicketRowsSkeleton() {
-  return [1, 2, 3].map(ticket => (
-    <TableRow key={ticket}>
-      {columns.map((c, i) => (
-        <TableCell key={i}>
-          <Skeleton className="w-24 h-6" />
-        </TableCell>
-      ))}
-    </TableRow>
-  ));
+function TicketRowsSkeleton() {
+  return Array(7)
+    .fill(null)
+    .map((t, i) => (
+      <TableRow key={i}>
+        {columns.map((c, i) => (
+          <TableCell key={i}>
+            <Skeleton className="w-24 h-6" />
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
 }
+
 export default TicketList;

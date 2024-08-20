@@ -10,21 +10,20 @@ export const formatDate = (date: Maybe<Date | string>) => {
   return new Date(date).toLocaleDateString();
 };
 
-export function parseSort(sort: Maybe<string>): {
-  key: string | null;
-  direction: 'ASC' | 'DESC';
-} {
+export function getSortKey(sort: Maybe<string>): string | null {
   if (sort) {
     const isDesc = sort.startsWith('-');
-    return {
-      key: isDesc ? sort.slice(1) : sort,
-      direction: isDesc ? ORDER_BY.DESC : ORDER_BY.ASC,
-    };
+    return isDesc ? sort.slice(1) : sort;
   }
-  return {
-    key: null,
-    direction: ORDER_BY.ASC,
-  };
+  return null;
+}
+
+export function getSortDirection(sort: Maybe<string>): 'ASC' | 'DESC' {
+  if (sort) {
+    const isDesc = sort.startsWith('-');
+    return isDesc ? ORDER_BY.DESC : ORDER_BY.ASC;
+  }
+  return ORDER_BY.ASC;
 }
 
 export const getSkip = (
