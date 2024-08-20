@@ -105,9 +105,12 @@ export default async function Page({
           <h2 className="font-semibold text-xl">
             {i18n.get('Latest tickets')}
           </h2>
-          <Button variant="success" className="flex items-center">
-            <MdAdd className="size-6" />
-            <span>{i18n.get('Create a ticket')}</span>
+          <Button variant="success" className="flex items-center" asChild>
+            <Link
+              href={`${workspaceURI}/ticketing/projects/${projectId}/tickets/edit`}>
+              <MdAdd className="size-6" />
+              <span>{i18n.get('Create a ticket')}</span>
+            </Link>
           </Button>
         </div>
         <TicketList

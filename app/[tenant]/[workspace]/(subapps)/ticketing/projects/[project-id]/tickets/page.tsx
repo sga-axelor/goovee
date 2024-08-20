@@ -7,6 +7,7 @@ import {TableCell, TableRow} from '@/ui/components/table';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {workspacePathname} from '@/utils/workspace';
+import Link from 'next/link';
 import {Suspense} from 'react';
 import {MdAdd} from 'react-icons/md';
 
@@ -69,9 +70,12 @@ export default async function Page({
     <div className="container my-6 space-y-6 mx-auto">
       <div className="flex items-center justify-between">
         <h2 className="font-semibold text-xl">{i18n.get('All tickets')}</h2>
-        <Button variant="success" className="flex items-center">
-          <MdAdd className="size-6" />
-          <span>{i18n.get('Create a ticket')}</span>
+        <Button variant="success" className="flex items-center" asChild>
+          <Link
+            href={`${workspaceURI}/ticketing/projects/${projectId}/tickets/edit`}>
+            <MdAdd className="size-6" />
+            <span>{i18n.get('Create a ticket')}</span>
+          </Link>
         </Button>
       </div>
       <div className="flex items-end justify-between gap-6">
