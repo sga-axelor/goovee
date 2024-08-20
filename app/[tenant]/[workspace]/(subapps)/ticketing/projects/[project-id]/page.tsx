@@ -1,9 +1,8 @@
 // ---- CORE IMPORTS ---- //
-import {ORDER_BY} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {Button} from '@/ui/components';
+import {Button, TableCell, TableRow} from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
@@ -12,6 +11,7 @@ import {IconType} from 'react-icons';
 import {
   MdAdd,
   MdAllInbox,
+  MdArrowForward,
   MdCheckCircleOutline,
   MdListAlt,
   MdPending,
@@ -28,14 +28,10 @@ import {
 } from '../../common/orm/projects';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
-import {
-  getSkip,
-  getSortDirection,
-  getSortKey,
-  parseSort,
-} from '../../common/utils';
+import {getSkip, getSortDirection, getSortKey} from '../../common/utils';
 import Hero from './hero';
 import {columns} from '../../common/constants';
+import Link from 'next/link';
 
 export default async function Page({
   params,
@@ -118,6 +114,18 @@ export default async function Page({
           tickets={tickets}
           url={`${workspaceURI}/ticketing/projects/${projectId}`}
           searchParams={searchParams}
+          footer={
+            <TableRow>
+              <TableCell colSpan={columns.length + 1} align="right">
+                <Link
+                  href={`${workspaceURI}/ticketing/projects/${projectId}/tickets`}
+                  className="inline-flex gap-1 items-center">
+                  {i18n.get('See all tickets')}
+                  <MdArrowForward />
+                </Link>
+              </TableCell>
+            </TableRow>
+          }
         />
       </div>
     </>

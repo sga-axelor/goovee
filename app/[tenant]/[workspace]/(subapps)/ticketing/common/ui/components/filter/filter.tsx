@@ -57,37 +57,33 @@ export function FilterForm() {
   });
   const [open, setOpen] = useState(false);
 
-  const onSubmit = () => {
+  const onSubmit = (value: z.infer<typeof filterSchema>) => {
     //to do
   };
   const handleFilterClick = () => {
     setOpen(!open);
   };
   return (
-    <div className="container">
-      <Form {...form}>
-        <form
-          ref={formRef}
-          onSubmit={form.handleSubmit(onSubmit)}
-          style={{width: '307px', height: '519px'}}>
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg">{i18n.get('Filter :')}</h3>
-          </div>
-          <Button
-            type="submit"
-            variant="outline"
-            onClick={handleFilterClick}
-            className="flex justify-between"
-            style={{width: '307px'}}>
-            <span className="flex items-center space-x-2">
-              <FaFilter />
-              <span> {i18n.get('Filter')}</span>
-            </span>
-            <span></span>
-          </Button>
-
-          {open && (
-            <div className="space-y-4 p-4 border rounded-md bg-white shadow-md mt-2">
+    <div className="relative">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg">{i18n.get('Filter :')}</h3>
+      </div>
+      <Button
+        variant="outline"
+        onClick={handleFilterClick}
+        className="flex justify-between w-[307px] h-[47px]">
+        <span className="flex items-center space-x-2">
+          <FaFilter />
+          <span> {i18n.get('Filter')}</span>
+        </span>
+      </Button>
+      {open && (
+        <Form {...form}>
+          <form
+            ref={formRef}
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="absolute z-10">
+            <div className="space-y-4 p-4 border rounded-md bg-white shadow-md mt-2 w-[307px]">
               <FormField
                 control={form.control}
                 name="requestedBy"
@@ -180,10 +176,13 @@ export function FilterForm() {
                   </FormItem>
                 )}
               />
+              <Button variant="success" type="submit" className="w-full">
+                {i18n.get('Apply')}
+              </Button>
             </div>
-          )}
-        </form>
-      </Form>
+          </form>
+        </Form>
+      )}
     </div>
   );
 }

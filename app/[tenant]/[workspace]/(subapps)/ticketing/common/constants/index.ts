@@ -2,6 +2,8 @@
  * Tickets Constants
  */
 
+import {Column} from '../types';
+
 export const columns: Column[] = [
   {
     key: 'ticketId',

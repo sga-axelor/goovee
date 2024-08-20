@@ -1,54 +1,28 @@
 // ---- CORE IMPORTS ---- //
+import {ORDER_BY} from '@/constants';
 import {Maybe} from '@/types/util';
 import {
   AvatarImage,
+  Table,
   TableBody,
-  TableHead,
-  TableFooter,
   TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
   TableRow,
   Tag,
-  TableHeader,
-  Table,
 } from '@/ui/components';
-import Link from 'next/link';
-import {ORDER_BY} from '@/constants';
 import {Skeleton} from '@/ui/components/skeleton';
 import {Avatar} from '@radix-ui/react-avatar';
-import {Suspense} from 'react';
-import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
+import Link from 'next/link';
+import {ReactNode, Suspense} from 'react';
+import {MdArrowDropDown, MdArrowDropUp, MdArrowForward} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {formatDate, getSortDirection, getSortKey} from '../../../utils';
+import {i18n} from '@/lib/i18n';
 import {columns} from '../../../constants';
-
-type Ticket = {
-  id: string;
-  version: number;
-  name?: string;
-  ticketNumber?: string;
-  updatedOn?: Date;
-  priority?: {
-    id: string;
-    name: string;
-    version: number;
-  };
-  status?: {
-    id: string;
-    name: string;
-    version: number;
-  };
-  projectTaskCategory?: {
-    id: string;
-    name: string;
-    version: number;
-  };
-  assignedTo?: {
-    id: string;
-    name: string;
-    version: number;
-  };
-};
+import {formatDate, getSortDirection, getSortKey} from '../../../utils';
+import type {Ticket} from '../../../types';
 
 type Variant =
   | 'success'
@@ -84,10 +58,11 @@ type TicketListProps = {
   tickets: Promise<Ticket[]>;
   url: string;
   searchParams: Record<string, string | undefined>;
+  footer?: ReactNode;
 };
 
 export async function TicketList(props: TicketListProps) {
-  const {tickets, url, searchParams} = props;
+  const {tickets, url, searchParams, footer} = props;
   return (
     <Table className="w-full rounded-lg bg-card text-card-foreground">
       <TableHeader>
@@ -96,6 +71,7 @@ export async function TicketList(props: TicketListProps) {
             const isActive = getSortKey(searchParams.sort) === column.key;
             const isASC =
               isActive && getSortDirection(searchParams.sort) === ORDER_BY.ASC;
+            const label = i18n.get(column.label);
             return (
               <TableHead
                 key={column.key}
@@ -105,13 +81,13 @@ export async function TicketList(props: TicketListProps) {
                     <Link
                       scroll={false}
                       href={`${url}?sort=${isASC ? '-' : ''}${column.key}`}>
-                      {column.label}
+                      {label}
                     </Link>
                     {isActive &&
                       (isASC ? <MdArrowDropDown /> : <MdArrowDropUp />)}
                   </div>
                 ) : (
-                  column.label
+                  label
                 )}
               </TableHead>
             );
@@ -123,13 +99,22 @@ export async function TicketList(props: TicketListProps) {
           <TicketRows tickets={tickets} />
         </Suspense>
       </TableBody>
-      <TableFooter></TableFooter>
+      <TableFooter>{footer}</TableFooter>
     </Table>
   );
 }
 
 async function TicketRows(props: {tickets: Promise<Ticket[]>}) {
   const tickets = await props.tickets;
+  if (!tickets.length) {
+    return (
+      <TableRow>
+        <TableCell colSpan={columns.length + 1} align="center">
+          {i18n.get('No records found')}
+        </TableCell>
+      </TableRow>
+    );
+  }
   return tickets.map(ticket => {
     const priority = getVariantName(ticket.priority?.name);
     const status = getStatusName(ticket.status?.name);

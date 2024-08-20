@@ -36,7 +36,7 @@ export function Search({workspace}: {workspace: PortalWorkspace}) {
       <Command className="p-0 bg-white">
         <CommandInput
           placeholder="Search here"
-          className="lg:placeholder:text-base placeholder:text-sm placeholder:font-normal lg:placeholder:font-medium pl-[10px] py-4 pr-[132px] h-14 lg:pl-4 border-none text-base font-medium rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black"
+          className="lg:placeholder:text-base placeholder:text-sm placeholder:font-normal lg:placeholder:font-medium pl-[10px] pr-[132px] h-12 lg:pl-4 border-none text-base font-medium rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black"
           value={search}
           onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearch(e.target.value)
