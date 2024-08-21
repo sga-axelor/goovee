@@ -45,6 +45,7 @@
     "date-fns": "^3.6.0",
     "dlx": "^0.2.1",
     "graphql": "^16.9.0",
+    "html-to-draftjs": "^1.5.0",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.379.0",
@@ -76,6 +77,9 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/draft-js": "^0.11.18",
+    "@types/draftjs-to-html": "^0.8.4",
+    "@types/html-to-draftjs": "^1.4.3",
     "@types/lodash": "^4.17.6",
     "@types/node": "^20.14.10",
     "@types/paypal__checkout-server-sdk": "^1.0.8",
