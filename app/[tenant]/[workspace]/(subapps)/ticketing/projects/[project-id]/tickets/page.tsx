@@ -3,10 +3,20 @@ import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {Button} from '@/ui/components/button';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/ui/components/pagination';
 import {TableCell, TableRow} from '@/ui/components/table';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {workspacePathname} from '@/utils/workspace';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {Suspense} from 'react';
 import {MdAdd} from 'react-icons/md';
@@ -20,15 +30,6 @@ import {
   findUsers,
 } from '../../../common/orm/projects';
 import {Filter} from '../../../common/ui/components/filter';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '../../../common/ui/components/pagination';
 import {TicketList} from '../../../common/ui/components/ticket-list';
 import {
   getPages,
@@ -139,18 +140,22 @@ async function AsyncPagination(props: {
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious
-            className={cn({
-              ['invisible']: +page <= 1,
-            })}
-            href={{
-              pathname: url,
-              query: {
-                page: +page - 1,
-                sort: sort,
-              },
-            }}
-          />
+          <PaginationPrevious asChild>
+            <Link
+              className={cn({
+                ['invisible']: +page <= 1,
+              })}
+              href={{
+                pathname: url,
+                query: {
+                  page: +page - 1,
+                  sort: sort,
+                },
+              }}>
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Previous</span>
+            </Link>
+          </PaginationPrevious>
         </PaginationItem>
         {getPaginationButtons(+page, pages).map((value, i) => {
           if (typeof value == 'string') {
@@ -162,33 +167,38 @@ async function AsyncPagination(props: {
           }
           return (
             <PaginationItem key={value}>
-              <PaginationLink
-                isActive={+page === value}
-                href={{
-                  pathname: url,
-                  query: {
-                    page: value,
-                    sort: sort,
-                  },
-                }}>
-                {value}
+              <PaginationLink isActive={+page === value} asChild>
+                <Link
+                  href={{
+                    pathname: url,
+                    query: {
+                      page: value,
+                      sort: sort,
+                    },
+                  }}>
+                  {value}
+                </Link>
               </PaginationLink>
             </PaginationItem>
           );
         })}
         <PaginationItem>
-          <PaginationNext
-            className={cn({
-              ['invisible']: +page >= pages,
-            })}
-            href={{
-              pathname: url,
-              query: {
-                page: +page + 1,
-                sort: sort,
-              },
-            }}
-          />
+          <PaginationNext asChild>
+            <Link
+              className={cn({
+                ['invisible']: +page >= pages,
+              })}
+              href={{
+                pathname: url,
+                query: {
+                  page: +page + 1,
+                  sort: sort,
+                },
+              }}>
+              <span className="sr-only">Next</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </PaginationNext>
         </PaginationItem>
       </PaginationContent>
     </Pagination>

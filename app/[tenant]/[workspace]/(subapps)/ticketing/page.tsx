@@ -1,19 +1,9 @@
-import {MdAdd} from 'react-icons/md';
-
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
 import {IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {workspacePathname} from '@/utils/workspace';
-
-import {Button, HeroSearch} from '@/ui/components';
-
-import Link from 'next/link';
-import {findProjectsWithTaskCount} from './common/orm/projects';
-import {redirect} from 'next/navigation';
-import {getPaginationButtons, getPages, getSkip} from './common/utils';
+import {HeroSearch} from '@/ui/components';
 import {
   Pagination,
   PaginationContent,
@@ -22,8 +12,17 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from './common/ui/components/pagination';
+} from '@/ui/components/pagination';
+import {clone} from '@/utils';
 import {cn} from '@/utils/css';
+import {workspacePathname} from '@/utils/workspace';
+import {ChevronLeft} from 'lucide-react';
+import Link from 'next/link';
+import {redirect} from 'next/navigation';
+
+// ---- LOCAL IMPORTS ---- //
+import {findProjectsWithTaskCount} from './common/orm/projects';
+import {getPages, getPaginationButtons, getSkip} from './common/utils';
 
 export default async function Page({
   params,
@@ -85,12 +84,16 @@ export default async function Page({
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious
-                  className={cn({
-                    ['invisible']: +page <= 1,
-                  })}
-                  href={`${workspaceURI}/ticketing?page=${+page - 1}`}
-                />
+                <PaginationPrevious asChild>
+                  <Link
+                    className={cn({
+                      ['invisible']: +page <= 1,
+                    })}
+                    href={`${workspaceURI}/ticketing?page=${+page - 1}`}>
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">Previous</span>
+                  </Link>
+                </PaginationPrevious>
               </PaginationItem>
               {getPaginationButtons(+page, pages).map((value, i) => {
                 if (typeof value == 'string') {
@@ -102,21 +105,22 @@ export default async function Page({
                 }
                 return (
                   <PaginationItem key={value}>
-                    <PaginationLink
-                      isActive={+page === value}
-                      href={`${workspaceURI}/ticketing?page=${value}`}>
-                      {value}
+                    <PaginationLink isActive={+page === value} asChild>
+                      <Link href={`${workspaceURI}/ticketing?page=${value}`}>
+                        {value}
+                      </Link>
                     </PaginationLink>
                   </PaginationItem>
                 );
               })}
               <PaginationItem>
-                <PaginationNext
-                  className={cn({
-                    ['invisible']: +page >= pages,
-                  })}
-                  href={`${workspaceURI}/ticketing?page=${+page + 1}`}
-                />
+                <PaginationNext asChild>
+                  <Link
+                    className={cn({
+                      ['invisible']: +page >= pages,
+                    })}
+                    href={`${workspaceURI}/ticketing?page=${+page + 1}`}></Link>
+                </PaginationNext>
               </PaginationItem>
             </PaginationContent>
           </Pagination>
