@@ -120,12 +120,12 @@ async function TicketRows(props: {tickets: Promise<Ticket[]>}) {
     const status = getStatusName(ticket.status?.name);
     return (
       <TableRow key={ticket.id}>
-        <TableCell className="px-5">{ticket.ticketNumber}</TableCell>
+        <TableCell className="px-5">#{ticket.id}</TableCell>
         <TableCell className="flex justify-center items-center">
           <Avatar className="h-12 w-16">
             <AvatarImage src="/images/user.png" />
           </Avatar>
-          <p className="ms-1"> {ticket.requestedBy}</p>
+          <p className="ms-1"> {ticket.contact?.name}</p>
         </TableCell>
         <TableCell>{ticket.name}</TableCell>
         <TableCell>

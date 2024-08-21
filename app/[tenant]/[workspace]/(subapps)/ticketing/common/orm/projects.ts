@@ -176,7 +176,6 @@ export async function findProjectTickets(props: TicketProps<AOSProjectTask>) {
     },
     select: {
       name: true,
-      ticketNumber: true,
       updatedOn: true,
       status: {
         name: true,

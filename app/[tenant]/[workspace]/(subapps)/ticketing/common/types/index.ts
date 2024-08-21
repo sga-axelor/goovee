@@ -8,8 +8,12 @@ export type Ticket = {
   id: string;
   version: number;
   name?: string;
-  ticketNumber?: string;
   updatedOn?: Date;
+  contact?: {
+    id: string;
+    name: string;
+    version: number;
+  };
   priority?: {
     id: string;
     name: string;
