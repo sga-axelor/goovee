@@ -21,9 +21,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components/select';
+import {
+  Checkbox,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/ui/components';
 
 import {i18n} from '@/lib/i18n';
-import {Checkbox, Label} from '@/ui/components';
 import {FaFilter} from 'react-icons/fa';
 
 const filterSchema = z.object({
@@ -55,134 +61,137 @@ export function FilterForm() {
       status: '',
     },
   });
-  const [open, setOpen] = useState(false);
 
   const onSubmit = (value: z.infer<typeof filterSchema>) => {
     //to do
-  };
-  const handleFilterClick = () => {
-    setOpen(!open);
   };
   return (
     <div className="relative">
       <div className="flex items-center justify-between">
         <h3 className="text-lg">{i18n.get('Filter :')}</h3>
       </div>
-      <Button
-        variant="outline"
-        onClick={handleFilterClick}
-        className="flex justify-between w-[307px] h-[47px]">
-        <span className="flex items-center space-x-2">
-          <FaFilter />
-          <span> {i18n.get('Filter')}</span>
-        </span>
-      </Button>
-      {open && (
-        <Form {...form}>
-          <form
-            ref={formRef}
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="absolute z-10">
-            <div className="space-y-4 p-4 border rounded-md bg-white shadow-md mt-2 w-[307px]">
-              <FormField
-                control={form.control}
-                name="requestedBy"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Requested by :')}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}>
+      <Popover>
+        <PopoverTrigger>
+          <Button
+            variant="outline"
+            className="flex justify-between w-[307px] h-[47px]">
+            <span className="flex items-center space-x-2">
+              <FaFilter />
+              <span> {i18n.get('Filter')}</span>
+            </span>
+          </Button>
+        </PopoverTrigger>
+
+        <PopoverContent>
+          <Form {...form}>
+            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="requestedBy"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Requested by :')}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={i18n.get('Select users')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {users.map((user: any) => (
+                            <SelectItem value={user.id} key={user.id}>
+                              {user.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Dates :')}</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={i18n.get('Select users')} />
-                        </SelectTrigger>
+                        <Input
+                          type="date"
+                          placeholder="JJ/MM/AAAA"
+                          {...field}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        {users.map((user: any) => (
-                          <SelectItem value={user.id} key={user.id}>
-                            {user.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="date"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Dates :')}</FormLabel>
-                    <FormControl>
-                      <Input type="date" placeholder="JJ/MM/AAAA" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="priority"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Priority :')}</FormLabel>
-                    <FormControl>
-                      <div className="space-y-2">
-                        {['High', 'Medium', 'Low'].map(priority => (
-                          <div
-                            key={priority}
-                            className="flex items-center space-x-2">
-                            <Checkbox />
-                            <Label className="ml-4 text-xs">{priority}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="status"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Status :')}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}>
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Priority :')}</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={i18n.get('Select statuses')}
-                          />
-                        </SelectTrigger>
+                        <div className="space-y-2">
+                          {['High', 'Medium', 'Low'].map(priority => (
+                            <div
+                              key={priority}
+                              className="flex items-center space-x-2">
+                              <Checkbox />
+                              <Label className="ml-4 text-xs">{priority}</Label>
+                            </div>
+                          ))}
+                        </div>
                       </FormControl>
-                      <SelectContent>
-                        {statuses.map((status: any) => (
-                          <SelectItem value={status.value} key={status.value}>
-                            {status.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button variant="success" type="submit" className="w-full">
-                {i18n.get('Apply')}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Status :')}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={i18n.get('Select statuses')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {statuses.map((status: any) => (
+                            <SelectItem value={status.value} key={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button variant="success" type="submit" className="w-full">
+                  {i18n.get('Apply')}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
