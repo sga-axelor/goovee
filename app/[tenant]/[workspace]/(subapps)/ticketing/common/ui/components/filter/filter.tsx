@@ -39,7 +39,8 @@ import {
 
 const filterSchema = z.object({
   requestedBy: z.string().optional(),
-  date: z.string().optional(),
+  toDate: z.string().optional(),
+  fromDate: z.string().optional(),
   priority: z.array(z.string()).optional(),
   status: z.string().optional(),
 });
@@ -57,7 +58,8 @@ export function Filter(props: FilterProps) {
     resolver: zodResolver(filterSchema),
     defaultValues: {
       requestedBy: '',
-      date: '',
+      toDate: '',
+      fromDate: '',
       priority: [],
       status: '',
     },
@@ -121,7 +123,7 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
             </FormControl>
             <SelectContent>
               {users.map(user => (
-                <SelectItem value={user.id} key={user.id}>
+                <SelectItem value={user.id!} key={user.id}>
                   {user.name}
                 </SelectItem>
               ))}
@@ -137,19 +139,34 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
 function DatesField(props: FieldProps) {
   const {form} = props;
   return (
-    <FormField
-      control={form.control}
-      name="date"
-      render={({field}) => (
-        <FormItem>
-          <FormLabel>{i18n.get('Dates :')}</FormLabel>
-          <FormControl>
-            <Input type="date" placeholder="JJ/MM/AAAA" {...field} />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <div className="flex gap-2">
+      <FormField
+        control={form.control}
+        name="fromDate"
+        render={({field}) => (
+          <FormItem>
+            <FormLabel>{i18n.get('From:')}</FormLabel>
+            <FormControl>
+              <Input type="" placeholder="DD/MM/YYYY" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="toDate"
+        render={({field}) => (
+          <FormItem>
+            <FormLabel>{i18n.get('To:')}</FormLabel>
+            <FormControl>
+              <Input type="" placeholder="DD/MM/YYYY" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
   );
 }
 
@@ -199,7 +216,7 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
             </FormControl>
             <SelectContent>
               {statuses.map(status => (
-                <SelectItem value={status.id} key={status.id}>
+                <SelectItem value={status.id!} key={status.id}>
                   {status.name}
                 </SelectItem>
               ))}

@@ -105,123 +105,135 @@ export default function TicketForm({ticket}: {ticket: any}) {
     },
   ];
   return (
-    <Form {...form}>
-      <form
-        ref={formRef}
-        onSubmit={handleSubmit}
-        className="space-y-8 container">
-        <FormField
-          control={form.control}
-          name="subject"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Subject')}*</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={i18n.get('Enter your subject')}
-                  {...field}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="category"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Category')}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={i18n.get('Select your category')}
+    <div className="container">
+      <div className="flex items-center justify-between mt-5 mb-5">
+        <h3 className="text-lg font-semibold">{i18n.get('Create a ticket')}</h3>
+      </div>
+      <Form {...form}>
+        <form ref={formRef} onSubmit={handleSubmit}>
+          <div className="space-y-4 rounded-md border bg-white p-4">
+            <FormField
+              control={form.control}
+              name="subject"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Subject')}*</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={i18n.get('Enter your subject')}
+                      {...field}
                     />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {category.map((category: any) => (
-                    <SelectItem value={category.value} key={category.value}>
-                      {category.value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="priority"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Priority')}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={i18n.get('Select your priority')}
-                    />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {priority.map((priority: any) => (
-                    <SelectItem value={priority.value} key={priority.value}>
-                      {priority.value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="contact"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Contact')}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={i18n.get('Select your contact')}
-                    />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {contact.map((contact: any) => (
-                    <SelectItem value={contact.id} key={contact.id}>
-                      {contact.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Category')}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={i18n.get('Select your category')}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {category.map((category: any) => (
+                        <SelectItem value={category.value} key={category.value}>
+                          {category.value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="priority"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Priority')}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={i18n.get('Select your priority')}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {priority.map((priority: any) => (
+                        <SelectItem value={priority.value} key={priority.value}>
+                          {priority.value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Ticket description')}</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder={i18n.get('Enter ticket description')}
-                  {...field}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-30 float-right" variant="success">
-          {i18n.get('Create a ticket')}
-        </Button>
-      </form>
-    </Form>
+            <FormField
+              control={form.control}
+              name="contact"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Contact')}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={i18n.get('Select your contact')}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {contact.map((contact: any) => (
+                        <SelectItem value={contact.id} key={contact.id}>
+                          {contact.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Ticket description')}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={i18n.get('Enter ticket description')}
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end">
+              <Button type="submit" className="w-30" variant="success">
+                {i18n.get('Create a ticket')}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 }
