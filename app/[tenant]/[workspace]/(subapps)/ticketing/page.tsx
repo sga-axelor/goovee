@@ -66,10 +66,6 @@ export default async function Page({
           <h2 className="font-semibold text-xl">
             {i18n.get('Choose your project')}
           </h2>
-          <Button variant="success" className="flex items-center">
-            <MdAdd className="size-6" />
-            <span>{i18n.get('Create a new project')}</span>
-          </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {projects.map(project => (
