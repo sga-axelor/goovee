@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, KeyboardEvent} from 'react';
 import {
   MdClose,
   MdAdd,
@@ -10,6 +10,7 @@ import {
   MdOutlineMoreHoriz,
 } from 'react-icons/md';
 import {useSession} from 'next-auth/react';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -24,6 +25,8 @@ import {
 import {i18n} from '@/lib/i18n';
 import {parseDate} from '@/utils/date';
 import {DATE_FORMATS} from '@/constants';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -36,20 +39,65 @@ import {
 } from '@/subapps/forum/common/constants';
 import {DropdownToggle} from '@/subapps/forum/common/ui/components';
 import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
+import {addComment} from '@/subapps/forum/common/action/action';
+import {CommentResponse} from '@/subapps/forum/common/types/forum';
 
-const Comment = ({comment}: {comment?: any}) => {
+const Comment = ({
+  parentCommentId,
+  comment,
+}: {
+  parentCommentId: string;
+  comment?: any;
+}) => {
+  if (!comment) return null;
+
   const [showSubComments, setShowSubComments] = useState(false);
+  const [commentValue, setCommentValue] = useState<any>('');
 
   const {data: session} = useSession();
-  const isLoggedIn = session?.user?.id ? true : false;
+  const {workspaceURL, workspaceURI} = useWorkspace();
+  const {toast} = useToast();
+  const router = useRouter();
 
-  if (!comment) return null;
-  const {author, publicationDateTime, contentComment} = comment;
-
-  const commentsLength = comment.childCommentList?.length ?? 0;
+  const isLoggedIn = Boolean(session?.user?.id);
+  const {
+    author,
+    publicationDateTime,
+    contentComment,
+    childCommentList = [],
+    id,
+    version,
+  } = comment;
 
   const handleSubComments = () => {
     setShowSubComments(prev => !prev);
+  };
+
+  const handleComment = async (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      const response: CommentResponse = await addComment({
+        workspaceURL,
+        version: version,
+        parentCommentId,
+        contentComment: commentValue,
+      });
+      if (response.success) {
+        toast({
+          variant: 'success',
+          title: i18n.get('Comment added successfully.'),
+        });
+        setCommentValue('');
+        router.refresh();
+        router.push(`${workspaceURI}/forum`, {scroll: false});
+      } else {
+        toast({
+          variant: 'destructive',
+          title: i18n.get(response.message || 'An error occurred'),
+        });
+      }
+    }
   };
 
   return (
@@ -86,41 +134,55 @@ const Comment = ({comment}: {comment?: any}) => {
           <div className="flex rounded-lg border h-8">
             <MdOutlineThumbUp className="w-8 h-full cursor-pointer p-2 border-r" />
             <div className="flex p-2">
-              <MdOutlineThumbUp className=" cursor-pointer" />
-              <MdFavoriteBorder className=" cursor-pointer" />
+              <MdOutlineThumbUp className="cursor-pointer" />
+              <MdFavoriteBorder className="cursor-pointer" />
             </div>
           </div>
           <div
-            className={`flex gap-2 items-center ${commentsLength ? 'cursor-pointer' : 'cursor-default'} `}
+            className={`flex gap-2 items-center ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
             onClick={handleSubComments}>
             <MdOutlineModeComment className="w-4 h-4" />
-            <span className="text-sm">
-              {commentsLength}{' '}
-              {commentsLength > 1
-                ? i18n.get(COMMENTS.toLowerCase())
-                : i18n.get(COMMENT.toLowerCase())}
-            </span>
+            {parentCommentId === id && (
+              <span className="text-sm">
+                {childCommentList.length}{' '}
+                {i18n.get(
+                  childCommentList.length > 1
+                    ? COMMENTS.toLowerCase()
+                    : COMMENT.toLowerCase(),
+                )}
+              </span>
+            )}
           </div>
         </div>
         {showSubComments && (
           <Input
-            disabled={!isLoggedIn}
+            id="comment"
+            name="comment"
             className={`my-2 placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
             placeholder={
               isLoggedIn
                 ? i18n.get(COMMENT)
                 : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
             }
+            disabled={!isLoggedIn}
+            onChange={event => setCommentValue(event.target.value)}
+            onKeyDown={e => handleComment(e)}
           />
         )}
       </div>
       {showSubComments &&
-        commentsLength > 0 &&
-        comment.childCommentList.map((childComment: any) => (
-          <div key={childComment.id} className="ml-6">
-            <Comment comment={childComment} />
+        parentCommentId === id &&
+        childCommentList.length > 0 && (
+          <div className="ml-6">
+            {childCommentList.map((childComment: any) => (
+              <Comment
+                key={childComment.id}
+                parentCommentId={parentCommentId}
+                comment={childComment}
+              />
+            ))}
           </div>
-        ))}
+        )}
     </div>
   );
 };
@@ -155,7 +217,7 @@ export const Comments = ({
         {comments.map((comment: any) => {
           return (
             <div key={comment.id} className={`flex flex-col gap-4`}>
-              <Comment comment={comment} />
+              <Comment parentCommentId={comment.id} comment={comment} />
             </div>
           );
         })}

@@ -44,6 +44,7 @@ export const Thread = ({
         toggleComments={toggleComments}
       />
       <ThreadFooter
+        post={post}
         comments={commentList}
         usePopUpStyles={usePopUpStyles}
         hideCloseComments={hideCloseComments}

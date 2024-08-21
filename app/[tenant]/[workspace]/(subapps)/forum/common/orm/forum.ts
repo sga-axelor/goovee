@@ -171,7 +171,6 @@ export async function findPosts({
           image: {
             id: true,
           },
-          // TODO: Make it recursive. level 3
           childCommentList: {
             select: {
               childCommentList: true,

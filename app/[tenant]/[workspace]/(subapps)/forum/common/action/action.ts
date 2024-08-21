@@ -13,10 +13,11 @@ import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/orm/auth';
+import {getCurrentDateTime} from '@/utils/date';
+import {getFileSizeText} from '@/utils/files';
 
 //----LOCAL IMPORTS -----//
 import {findGroupByMembers, findPosts} from '@/subapps/forum/common/orm/forum';
-import {getFileSizeText} from '@/subapps/resources/common/utils';
 
 interface FileMeta {
   fileName: string;
@@ -32,6 +33,8 @@ interface AttachmentResponse {
 const pump = promisify(pipeline);
 
 const storage = process.env.DATA_STORAGE as string;
+
+const timestamp: any = getCurrentDateTime();
 
 function extractFileValues(formData: FormData) {
   let values: any = [];
@@ -283,6 +286,96 @@ export async function findMedia(id: ID) {
     .then(clone);
 }
 
+export async function addComment({
+  workspaceURL,
+  postId,
+  contentComment,
+  parentCommentId,
+  version: parentCommentVersion,
+}: {
+  workspaceURL: string;
+  contentComment: string;
+  postId?: string;
+  parentCommentId?: string;
+  version?: any;
+}) {
+  if (!contentComment) {
+    return {
+      error: true,
+      message: 'Content cannot be an empty string!',
+    };
+  }
+
+  try {
+    const session = await getSession();
+    const user = session?.user;
+
+    const authResult = await authorizeAndValidate({
+      appCode: SUBAPP_CODES.forum,
+      workspaceURL,
+    });
+
+    if (authResult.error) {
+      return {
+        error: authResult.error,
+        message: authResult.message,
+      };
+    }
+
+    const client = await getClient();
+    let response;
+
+    if (postId) {
+      response = await client.aOSPortalComment.create({
+        data: {
+          forumPost: {
+            select: {
+              id: postId,
+            },
+          },
+          contentComment,
+          author: {
+            select: {
+              id: user?.id,
+            },
+          },
+          publicationDateTime: timestamp,
+        },
+      });
+    } else if (parentCommentId) {
+      response = await client.aOSPortalComment.update({
+        data: {
+          id: parentCommentId,
+          version: parentCommentVersion,
+          childCommentList: {
+            create: [
+              {
+                contentComment,
+                publicationDateTime: timestamp,
+                author: {
+                  select: {
+                    id: user?.id,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+    }
+
+    return {
+      success: true,
+      data: clone(response),
+    };
+  } catch (error) {
+    return {
+      error: true,
+      message: 'An unexpected error occurred.',
+    };
+  }
+}
+
 export async function fetchPosts({
   sort,
   limit,
@@ -361,4 +454,45 @@ async function uploadAttachment(formData: FormData): Promise<any> {
     console.error('Error processing files:', error);
     return [{error: 'Failed to upload attachments'}];
   }
+}
+
+async function authorizeAndValidate({appCode, workspaceURL}: any) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: appCode,
+    user,
+    url: workspaceURL,
+  });
+
+  if (!subapp) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
+
+  return {
+    error: false,
+  };
 }

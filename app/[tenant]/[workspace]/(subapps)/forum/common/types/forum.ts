@@ -72,3 +72,10 @@ export interface Post extends Model {
   author: Author;
   createdOn: string;
 }
+
+export interface CommentResponse {
+  success?: boolean;
+  error?: boolean;
+  message?: string;
+  data?: any;
+}
