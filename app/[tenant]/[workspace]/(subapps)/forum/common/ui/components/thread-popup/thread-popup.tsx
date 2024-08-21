@@ -52,7 +52,7 @@ export const ThreadPopup = ({
               </Swiper>
             </div>
           </div>
-          <div className=" md:pt-12 md:pr-4 pb-6 md:pb-0 w-full md:w-1/2 h-[450px] md:h-full overflow-auto">
+          <div className="md:pt-12 md:pr-4 pb-6 md:pb-0 w-full md:w-1/2 h-[450px] md:h-full overflow-auto">
             <Thread
               post={post}
               showHeader={false}

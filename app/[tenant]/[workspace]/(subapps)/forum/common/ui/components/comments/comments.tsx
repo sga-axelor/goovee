@@ -213,7 +213,7 @@ export const Comments = ({
         />
       </div>
       <div
-        className={`flex flex-col gap-4 ${usePopUpStyles ? 'h-full overflow-auto' : ''}`}>
+        className={`flex flex-col gap-4 ${usePopUpStyles ? 'h-full overflow-auto px-2' : ''}`}>
         {comments.map((comment: any) => {
           return (
             <div key={comment.id} className={`flex flex-col gap-4`}>
