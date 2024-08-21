@@ -1,8 +1,8 @@
 'use client';
 
-import {useRef, useState} from 'react';
+import {useRef} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm} from 'react-hook-form';
+import {useForm, UseFormReturn} from 'react-hook-form';
 import {z} from 'zod';
 import {Button} from '@/ui/components/button';
 import {
@@ -31,6 +31,11 @@ import {
 
 import {i18n} from '@/lib/i18n';
 import {FaFilter} from 'react-icons/fa';
+import {
+  AOSProjectPriority,
+  AOSProjectTaskStatus,
+  AOSUser,
+} from '@/goovee/.generated/models';
 
 const filterSchema = z.object({
   requestedBy: z.string().optional(),
@@ -38,20 +43,16 @@ const filterSchema = z.object({
   priority: z.array(z.string()).optional(),
   status: z.string().optional(),
 });
+type FilterProps = {
+  users: AOSUser[];
+  priorities: AOSProjectPriority[];
+  statuses: AOSProjectTaskStatus[];
+};
 
-export function FilterForm() {
+export function Filter(props: FilterProps) {
+  const {users, priorities, statuses} = props;
   const formRef = useRef<HTMLFormElement>(null);
-  const users = [
-    {id: '1', name: 'User One'},
-    {id: '2', name: 'User Two'},
-  ];
 
-  const statuses = [
-    {value: 'new', label: 'New'},
-    {value: 'in-progress', label: 'In Progress'},
-    {value: 'resolved', label: 'Resolved'},
-    {value: 'closed', label: 'Closed'},
-  ];
   const form = useForm<z.infer<typeof filterSchema>>({
     resolver: zodResolver(filterSchema),
     defaultValues: {
@@ -65,6 +66,7 @@ export function FilterForm() {
   const onSubmit = (value: z.infer<typeof filterSchema>) => {
     //to do
   };
+
   return (
     <div className="relative">
       <div className="flex items-center justify-between">
@@ -86,104 +88,10 @@ export function FilterForm() {
           <Form {...form}>
             <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="requestedBy"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>{i18n.get('Requested by :')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={i18n.get('Select users')}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {users.map((user: any) => (
-                            <SelectItem value={user.id} key={user.id}>
-                              {user.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>{i18n.get('Dates :')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          placeholder="JJ/MM/AAAA"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="priority"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>{i18n.get('Priority :')}</FormLabel>
-                      <FormControl>
-                        <div className="space-y-2">
-                          {['High', 'Medium', 'Low'].map(priority => (
-                            <div
-                              key={priority}
-                              className="flex items-center space-x-2">
-                              <Checkbox />
-                              <Label className="ml-4 text-xs">{priority}</Label>
-                            </div>
-                          ))}
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>{i18n.get('Status :')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={i18n.get('Select statuses')}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {statuses.map((status: any) => (
-                            <SelectItem value={status.value} key={status.value}>
-                              {status.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <RequestedByField form={form} users={users} />
+                <DatesField form={form} />
+                <PriorityField form={form} priorities={priorities} />
+                <StatusField form={form} statuses={statuses} />
                 <Button variant="success" type="submit" className="w-full">
                   {i18n.get('Apply')}
                 </Button>
@@ -193,5 +101,113 @@ export function FilterForm() {
         </PopoverContent>
       </Popover>
     </div>
+  );
+}
+
+function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
+  const {form, users} = props;
+  return (
+    <FormField
+      control={form.control}
+      name="requestedBy"
+      render={({field}) => (
+        <FormItem>
+          <FormLabel>{i18n.get('Requested by :')}</FormLabel>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={i18n.get('Select users')} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {users.map(user => (
+                <SelectItem value={user.id} key={user.id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function DatesField(props: FieldProps) {
+  const {form} = props;
+  return (
+    <FormField
+      control={form.control}
+      name="date"
+      render={({field}) => (
+        <FormItem>
+          <FormLabel>{i18n.get('Dates :')}</FormLabel>
+          <FormControl>
+            <Input type="date" placeholder="JJ/MM/AAAA" {...field} />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
+  const {form, priorities} = props;
+  return (
+    <FormField
+      control={form.control}
+      name="priority"
+      render={({field}) => (
+        <FormItem>
+          <FormLabel>{i18n.get('Priority :')}</FormLabel>
+          <FormControl>
+            <div className="space-y-2">
+              {priorities.map(priority => (
+                <div key={priority.id} className="flex items-center space-x-2">
+                  <Checkbox onCheckedChange={field.onChange} />
+                  <Label className="ml-4 text-xs">{priority.name}</Label>
+                </div>
+              ))}
+            </div>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+type FieldProps = {
+  form: UseFormReturn<z.infer<typeof filterSchema>>;
+};
+
+function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
+  const {form, statuses} = props;
+  return (
+    <FormField
+      control={form.control}
+      name="status"
+      render={({field}) => (
+        <FormItem>
+          <FormLabel>{i18n.get('Status :')}</FormLabel>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={i18n.get('Select statuses')} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {statuses.map(status => (
+                <SelectItem value={status.id} key={status.id}>
+                  {status.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 }

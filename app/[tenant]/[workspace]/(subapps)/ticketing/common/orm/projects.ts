@@ -197,3 +197,33 @@ export async function findProjectTickets(props: TicketProps<AOSProjectTask>) {
   });
   return tickets;
 }
+
+export async function findTicketPriorities() {
+  const client = await getClient();
+  const priorities = await client.aOSProjectPriority.find({
+    select: {
+      name: true,
+    },
+  });
+  return priorities;
+}
+
+export async function findTicketStatuses() {
+  const client = await getClient();
+  const statuses = await client.aOSProjectTaskStatus.find({
+    select: {
+      name: true,
+    },
+  });
+  return statuses;
+}
+
+export async function findUsers() {
+  const client = await getClient();
+  const users = await client.aOSUser.find({
+    select: {
+      name: true,
+    },
+  });
+  return users;
+}

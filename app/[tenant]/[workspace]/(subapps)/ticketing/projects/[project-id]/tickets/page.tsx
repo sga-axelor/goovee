@@ -13,8 +13,13 @@ import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
 import {columns} from '../../../common/constants';
-import {findProjectTickets} from '../../../common/orm/projects';
-import {FilterForm} from '../../../common/ui/components/filter';
+import {
+  findProjectTickets,
+  findTicketPriorities,
+  findTicketStatuses,
+  findUsers,
+} from '../../../common/orm/projects';
+import {Filter} from '../../../common/ui/components/filter';
 import {
   Pagination,
   PaginationContent,
@@ -80,7 +85,9 @@ export default async function Page({
       </div>
       <div className="flex items-end justify-between gap-6">
         <Search workspace={workspace} />
-        <FilterForm />
+        <Suspense>
+          <AsyncFilter />
+        </Suspense>
       </div>
       <TicketList
         tickets={tickets}
@@ -104,6 +111,16 @@ export default async function Page({
       />
     </div>
   );
+}
+
+async function AsyncFilter() {
+  const [users, statuses, priorities] = await Promise.all([
+    findUsers().then(clone),
+    findTicketStatuses().then(clone),
+    findTicketPriorities().then(clone),
+  ]);
+
+  return <Filter users={users} priorities={priorities} statuses={statuses} />;
 }
 
 async function AsyncPagination(props: {
