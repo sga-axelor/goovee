@@ -61,6 +61,8 @@ function getFilterQuery(searchParams: {[key: string]: string | undefined}) {
   return where;
 }
 
+const TICKETS_PER_PAGE = 7;
+const DEFAULT_SORT = 'updatedOn';
 export default async function Page({
   params,
   searchParams,
@@ -70,7 +72,11 @@ export default async function Page({
 }) {
   const projectId = params?.['project-id'];
 
-  const {limit = 7, page = 1, sort = 'updatedOn'} = searchParams;
+  const {
+    limit = TICKETS_PER_PAGE,
+    page = 1,
+    sort = DEFAULT_SORT,
+  } = searchParams;
 
   const session = await getSession();
   // const userId = session!.user.id;
@@ -123,9 +129,7 @@ export default async function Page({
                 <AsyncPagination
                   tickets={tickets}
                   url={url}
-                  limit={Number(limit)}
-                  page={Number(page)}
-                  sort={searchParams.sort}
+                  searchParams={searchParams}
                 />
               </Suspense>
             </TableCell>
@@ -162,14 +166,12 @@ async function AsyncFilter({
 
 async function AsyncPagination(props: {
   tickets: Promise<any[]>;
-  limit: number;
+  searchParams: Record<string, string | undefined>;
   url: string;
-  page: string | number;
-  sort: string | undefined;
 }) {
-  const {limit, url, page, sort} = props;
+  const {url, searchParams} = props;
+  const {page = 1, limit = TICKETS_PER_PAGE} = searchParams;
   const tickets = await props.tickets;
-
   const pages = getPages(tickets, limit);
 
   return (
@@ -184,8 +186,8 @@ async function AsyncPagination(props: {
               href={{
                 pathname: url,
                 query: {
+                  ...searchParams,
                   page: +page - 1,
-                  sort: sort,
                 },
               }}>
               <ChevronLeft className="h-4 w-4" />
@@ -208,8 +210,8 @@ async function AsyncPagination(props: {
                   href={{
                     pathname: url,
                     query: {
+                      ...searchParams,
                       page: value,
-                      sort: sort,
                     },
                   }}>
                   {value}
@@ -227,8 +229,8 @@ async function AsyncPagination(props: {
               href={{
                 pathname: url,
                 query: {
+                  ...searchParams,
                   page: +page + 1,
-                  sort: sort,
                 },
               }}>
               <span className="sr-only">Next</span>

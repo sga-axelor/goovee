@@ -89,7 +89,13 @@ export default async function Page({
                     className={cn({
                       ['invisible']: +page <= 1,
                     })}
-                    href={`${workspaceURI}/ticketing?page=${+page - 1}`}>
+                    href={{
+                      pathname: `${workspaceURI}/ticketing`,
+                      query: {
+                        ...searchParams,
+                        page: +page - 1,
+                      },
+                    }}>
                     <ChevronLeft className="h-4 w-4" />
                     <span className="sr-only">Previous</span>
                   </Link>
@@ -106,7 +112,14 @@ export default async function Page({
                 return (
                   <PaginationItem key={value}>
                     <PaginationLink isActive={+page === value} asChild>
-                      <Link href={`${workspaceURI}/ticketing?page=${value}`}>
+                      <Link
+                        href={{
+                          pathname: `${workspaceURI}/ticketing`,
+                          query: {
+                            ...searchParams,
+                            page: value,
+                          },
+                        }}>
                         {value}
                       </Link>
                     </PaginationLink>
@@ -119,7 +132,13 @@ export default async function Page({
                     className={cn({
                       ['invisible']: +page >= pages,
                     })}
-                    href={`${workspaceURI}/ticketing?page=${+page + 1}`}></Link>
+                    href={{
+                      pathname: `${workspaceURI}/ticketing`,
+                      query: {
+                        ...searchParams,
+                        page: +page + 1,
+                      },
+                    }}></Link>
                 </PaginationNext>
               </PaginationItem>
             </PaginationContent>

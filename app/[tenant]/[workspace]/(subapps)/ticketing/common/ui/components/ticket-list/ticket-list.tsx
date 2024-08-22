@@ -80,7 +80,14 @@ export async function TicketList(props: TicketListProps) {
                   <div className="flex gap-1 items-center">
                     <Link
                       scroll={false}
-                      href={`${url}?sort=${isASC ? '-' : ''}${column.key}`}>
+                      href={{
+                        pathname: url,
+                        query: {
+                          ...searchParams,
+                          page: 1,
+                          sort: `${isASC ? '-' : ''}${column.key}`,
+                        },
+                      }}>
                       {label}
                     </Link>
                     {isActive &&
