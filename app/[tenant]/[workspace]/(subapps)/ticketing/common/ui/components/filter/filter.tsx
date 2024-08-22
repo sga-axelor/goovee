@@ -78,7 +78,7 @@ export function Filter(props: FilterProps) {
         <PopoverTrigger>
           <Button
             variant="outline"
-            className="flex justify-between w-[307px] h-[47px]">
+            className="flex justify-between w-[354px] h-[47px]">
             <span className="flex items-center space-x-2">
               <FaFilter />
               <span> {i18n.get('Filter')}</span>
@@ -86,7 +86,7 @@ export function Filter(props: FilterProps) {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent>
+        <PopoverContent className="w-75">
           <Form {...form}>
             <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-4">
@@ -147,7 +147,7 @@ function DatesField(props: FieldProps) {
           <FormItem>
             <FormLabel>{i18n.get('From:')}</FormLabel>
             <FormControl>
-              <Input type="" placeholder="DD/MM/YYYY" {...field} />
+              <Input type="date" placeholder="DD/MM/YYYY" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -160,7 +160,7 @@ function DatesField(props: FieldProps) {
           <FormItem>
             <FormLabel>{i18n.get('To:')}</FormLabel>
             <FormControl>
-              <Input type="" placeholder="DD/MM/YYYY" {...field} />
+              <Input type="date" placeholder="DD/MM/YYYY" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
