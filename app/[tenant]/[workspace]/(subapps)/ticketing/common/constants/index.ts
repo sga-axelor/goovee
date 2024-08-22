@@ -2,6 +2,7 @@
  * Tickets Constants
  */
 
+import {Maybe} from '@/types/util';
 import {Column} from '../types';
 
 export const columns: Column[] = [
@@ -67,3 +68,54 @@ export const columns: Column[] = [
     }),
   },
 ];
+
+type QueryGenarator = (query: Maybe<string>) => Maybe<{}>;
+export const filterMap = new Map<string, QueryGenarator>();
+
+filterMap.set('priority', (query: Maybe<string>) => {
+  if (!query) return null;
+  const values = query.split(',');
+  return {
+    OR: values.map(v => ({priority: {name: v}})),
+  };
+});
+
+filterMap.set('requestedBy', (query: Maybe<string>) => {
+  if (!query) return null;
+  const values = query.split(',');
+  //TODO: change it to requestedBy later
+  return {
+    OR: values.map(v => ({assignedTo: {name: v}})),
+  };
+});
+
+filterMap.set('status', (query: Maybe<string>) => {
+  if (!query) return null;
+  const values = query.split(',');
+  return {
+    OR: values.map(v => ({status: {name: v}})),
+  };
+});
+
+filterMap.set('updatedOn', (query: Maybe<string>) => {
+  if (!query) return null;
+  const values = query.split(',');
+  return {
+    OR: values
+      .map(v => {
+        const [from, to] = v.split(' ');
+        const fromTime = new Date(from).getTime();
+        const toTime = new Date(to).getTime();
+        if (isNaN(fromTime)) return;
+
+        if (isNaN(toTime) || fromTime === toTime) {
+          return {updatedOn: from};
+        }
+        const between = [from, to];
+        if (fromTime > toTime) between.reverse();
+
+        return {updatedOn: {between}};
+      })
+      .filter(Boolean),
+  };
+});

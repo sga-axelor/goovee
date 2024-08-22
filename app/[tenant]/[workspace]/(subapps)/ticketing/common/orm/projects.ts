@@ -6,7 +6,7 @@ import {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
 import {Entity, ID, WhereOptions} from '@goovee/orm';
 
 type QueryProps<T extends Entity> = {
-  where?: WhereOptions<T>;
+  where?: WhereOptions<T> | null;
   take?: number;
   // orderBy?: OrderByArg<T>;
   orderBy?: any;

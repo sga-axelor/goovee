@@ -22,7 +22,7 @@ import {Suspense} from 'react';
 import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {columns} from '../../../common/constants';
+import {columns, filterMap} from '../../../common/constants';
 import {
   findProjectTickets,
   findTicketPriorities,
@@ -39,6 +39,27 @@ import {
   getSortKey,
 } from '../../../common/utils';
 import Search from '../search';
+import {Maybe} from 'graphql/jsutils/Maybe';
+
+function getFilterQuery(searchParams: {[key: string]: string | undefined}) {
+  const {limit, page, sort, ...filterParams} = searchParams;
+  const where = Object.entries(filterParams).reduce<Maybe<Record<any, any>>>(
+    (acc, [key, value]) => {
+      if (!value) return acc;
+      const clause = filterMap.get(key)?.(value);
+      if (!clause) return acc;
+      if (!acc) {
+        return {
+          AND: [clause],
+        };
+      }
+      acc.AND.push(clause);
+      return acc;
+    },
+    null,
+  );
+  return where;
+}
 
 export default async function Page({
   params,
@@ -66,6 +87,7 @@ export default async function Page({
     projectId,
     take: Number(limit),
     skip: getSkip(limit, page),
+    where: getFilterQuery(searchParams),
     orderBy: columns
       .find((c: {key: any}) => c.key === getSortKey(sort))
       ?.orderBy?.(getSortDirection(sort)),
@@ -87,7 +109,7 @@ export default async function Page({
       <div className="flex items-end justify-between gap-6">
         <Search workspace={workspace} />
         <Suspense>
-          <AsyncFilter />
+          <AsyncFilter url={url} searchParams={searchParams} />
         </Suspense>
       </div>
       <TicketList
@@ -114,14 +136,28 @@ export default async function Page({
   );
 }
 
-async function AsyncFilter() {
+async function AsyncFilter({
+  url,
+  searchParams,
+}: {
+  url: string;
+  searchParams: {[key: string]: string | undefined};
+}) {
   const [users, statuses, priorities] = await Promise.all([
     findUsers().then(clone),
     findTicketStatuses().then(clone),
     findTicketPriorities().then(clone),
   ]);
 
-  return <Filter users={users} priorities={priorities} statuses={statuses} />;
+  return (
+    <Filter
+      users={users}
+      priorities={priorities}
+      statuses={statuses}
+      url={url}
+      searchParams={searchParams}
+    />
+  );
 }
 
 async function AsyncPagination(props: {
