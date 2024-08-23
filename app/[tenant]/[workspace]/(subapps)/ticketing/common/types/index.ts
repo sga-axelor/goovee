@@ -1,7 +1,6 @@
-export type Column = {
-  key: string;
+export type Column<T extends string = string> = {
+  key: T | (string & {});
   label: string;
-  orderBy?: (dir: 'ASC' | 'DESC') => Record<string, any>;
 };
 
 export type Ticket = {
@@ -35,3 +34,14 @@ export type Ticket = {
     version: number;
   };
 };
+
+export type FilterKey = 'priority' | 'requestedBy' | 'status' | 'updatedOn';
+export type SortKey =
+  | 'ticketId'
+  | 'requestedBy'
+  | 'subject'
+  | 'priority'
+  | 'status'
+  | 'category'
+  | 'assignedTo'
+  | 'updatedOn';

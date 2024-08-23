@@ -23,3 +23,6 @@ export type Merge<A, B> = {
         ? A[K]
         : never;
 };
+
+export type KeyOf<T extends Iterable<any>> =
+  T extends Iterable<infer E> ? E : never;

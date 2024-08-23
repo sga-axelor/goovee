@@ -2,6 +2,8 @@
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
+import type {SearchParams} from '@/types/search-param';
+import type {Maybe} from '@/types/util';
 import {Button} from '@/ui/components/button';
 import {
   Pagination,
@@ -22,44 +24,19 @@ import {Suspense} from 'react';
 import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {columns, filterMap} from '../../../common/constants';
+import {columns, filterMap, sortMap} from '../../../common/constants';
 import {
   findProjectTickets,
   findTicketPriorities,
   findTicketStatuses,
   findUsers,
 } from '../../../common/orm/projects';
+import type {FilterKey} from '../../../common/types';
 import {Filter} from '../../../common/ui/components/filter';
 import {TicketList} from '../../../common/ui/components/ticket-list';
-import {
-  getPages,
-  getPaginationButtons,
-  getSkip,
-  getSortDirection,
-  getSortKey,
-} from '../../../common/utils';
+import {getPages, getPaginationButtons, getSkip} from '../../../common/utils';
 import Search from '../search';
-import {Maybe} from 'graphql/jsutils/Maybe';
-
-function getFilterQuery(searchParams: {[key: string]: string | undefined}) {
-  const {limit, page, sort, ...filterParams} = searchParams;
-  const where = Object.entries(filterParams).reduce<Maybe<Record<any, any>>>(
-    (acc, [key, value]) => {
-      if (!value) return acc;
-      const clause = filterMap.get(key)?.(value);
-      if (!clause) return acc;
-      if (!acc) {
-        return {
-          AND: [clause],
-        };
-      }
-      acc.AND.push(clause);
-      return acc;
-    },
-    null,
-  );
-  return where;
-}
+import {getWhere, getOrderBy} from '../../../common/utils/search-param';
 
 const TICKETS_PER_PAGE = 7;
 const DEFAULT_SORT = 'updatedOn';
@@ -68,7 +45,7 @@ export default async function Page({
   searchParams,
 }: {
   params: {tenant: string; workspace: string; 'project-id': string};
-  searchParams: {[key: string]: string | undefined};
+  searchParams: SearchParams<FilterKey>;
 }) {
   const projectId = params?.['project-id'];
 
@@ -76,6 +53,7 @@ export default async function Page({
     limit = TICKETS_PER_PAGE,
     page = 1,
     sort = DEFAULT_SORT,
+    ...filterParams
   } = searchParams;
 
   const session = await getSession();
@@ -93,10 +71,8 @@ export default async function Page({
     projectId,
     take: Number(limit),
     skip: getSkip(limit, page),
-    where: getFilterQuery(searchParams),
-    orderBy: columns
-      .find((c: {key: any}) => c.key === getSortKey(sort))
-      ?.orderBy?.(getSortDirection(sort)),
+    where: getWhere(filterParams, filterMap),
+    orderBy: getOrderBy(sort, sortMap),
   });
 
   const url = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
@@ -145,7 +121,7 @@ async function AsyncFilter({
   searchParams,
 }: {
   url: string;
-  searchParams: {[key: string]: string | undefined};
+  searchParams: SearchParams<FilterKey>;
 }) {
   const [users, statuses, priorities] = await Promise.all([
     findUsers().then(clone),
@@ -166,7 +142,7 @@ async function AsyncFilter({
 
 async function AsyncPagination(props: {
   tickets: Promise<any[]>;
-  searchParams: Record<string, string | undefined>;
+  searchParams: SearchParams<FilterKey>;
   url: string;
 }) {
   const {url, searchParams} = props;

@@ -16,13 +16,14 @@ import {Skeleton} from '@/ui/components/skeleton';
 import {Avatar} from '@radix-ui/react-avatar';
 import Link from 'next/link';
 import {ReactNode, Suspense} from 'react';
-import {MdArrowDropDown, MdArrowDropUp, MdArrowForward} from 'react-icons/md';
+import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {columns} from '../../../constants';
-import {formatDate, getSortDirection, getSortKey} from '../../../utils';
+import {columns, sortMap} from '../../../constants';
+import {formatDate} from '../../../utils';
 import type {Ticket} from '../../../types';
+import {decodeSortQuery, encodeSortQuery} from '../../../utils/search-param';
 
 type Variant =
   | 'success'
@@ -68,15 +69,15 @@ export async function TicketList(props: TicketListProps) {
       <TableHeader>
         <TableRow>
           {columns?.map(column => {
-            const isActive = getSortKey(searchParams.sort) === column.key;
-            const isASC =
-              isActive && getSortDirection(searchParams.sort) === ORDER_BY.ASC;
+            const [key, direction] = decodeSortQuery(searchParams.sort);
+            const isActive = key === column.key;
+            const isASC = isActive && direction === ORDER_BY.ASC;
             const label = i18n.get(column.label);
             return (
               <TableHead
                 key={column.key}
                 className="text-card-foreground text-base font-semibold px-6 border-none">
-                {column.orderBy ? (
+                {sortMap[column.key] ? (
                   <div className="flex gap-1 items-center">
                     <Link
                       scroll={false}
@@ -85,7 +86,10 @@ export async function TicketList(props: TicketListProps) {
                         query: {
                           ...searchParams,
                           page: 1,
-                          sort: `${isASC ? '-' : ''}${column.key}`,
+                          sort: encodeSortQuery(
+                            column.key,
+                            isASC ? ORDER_BY.DESC : ORDER_BY.ASC,
+                          ),
                         },
                       }}>
                       {label}

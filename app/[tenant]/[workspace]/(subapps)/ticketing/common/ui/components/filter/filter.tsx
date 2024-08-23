@@ -1,9 +1,19 @@
 'use client';
 
-import {useEffect, useRef} from 'react';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm, UseFormReturn} from 'react-hook-form';
-import {z} from 'zod';
+import {
+  AOSProjectPriority,
+  AOSProjectTaskStatus,
+  AOSUser,
+} from '@/goovee/.generated/models';
+import {i18n} from '@/lib/i18n';
+import {SearchParams} from '@/types/search-param';
+import {
+  Badge,
+  Checkbox,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/ui/components';
 import {Button} from '@/ui/components/button';
 import {
   Form,
@@ -15,23 +25,6 @@ import {
 } from '@/ui/components/form';
 import {Input} from '@/ui/components/input';
 import {
-  Badge,
-  Checkbox,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/ui/components';
-
-import {i18n} from '@/lib/i18n';
-import {FaFilter} from 'react-icons/fa';
-import {
-  AOSProjectPriority,
-  AOSProjectTaskStatus,
-  AOSUser,
-} from '@/goovee/.generated/models';
-import {useRouter} from 'next/navigation';
-import {Close} from '@radix-ui/react-popover';
-import {
   MultiSelector,
   MultiSelectorContent,
   MultiSelectorInput,
@@ -39,18 +32,30 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '../multi-select';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {Close} from '@radix-ui/react-popover';
+import {useRouter} from 'next/navigation';
+import {useEffect, useRef} from 'react';
+import {useForm, UseFormReturn} from 'react-hook-form';
+import {FaFilter} from 'react-icons/fa';
+import {z} from 'zod';
+
+import type {FilterKey} from '../../../types';
+import {
+  decodeFilterParams,
+  encodeFilterQuery,
+} from '../../../utils/search-param';
 
 const filterSchema = z.object({
-  requestedBy: z.array(z.string()).optional(),
+  requestedBy: z.array(z.string()),
   //TODO: validate such that if toDate is set, fromDate should also be set, and fromDate < toDate
-  toDate: z.string().optional(),
-  fromDate: z.string().optional(),
-  priority: z.array(z.string().optional()),
-  status: z.array(z.string()).optional(),
+  priority: z.array(z.string()),
+  status: z.array(z.string()),
+  updatedOn: z.array(z.string()),
 });
 type FilterProps = {
   url: string;
-  searchParams: Record<string, string | undefined>;
+  searchParams: SearchParams<FilterKey>;
   users: AOSUser[];
   priorities: AOSProjectPriority[];
   statuses: AOSProjectTaskStatus[];
@@ -58,8 +63,7 @@ type FilterProps = {
 
 const defaultValues = {
   requestedBy: [] as string[],
-  toDate: '',
-  fromDate: '',
+  updatedOn: [] as string[],
   priority: [] as string[],
   status: [] as string[],
 };
@@ -78,25 +82,23 @@ export function Filter(props: FilterProps) {
 
   const onSubmit = (value: z.infer<typeof filterSchema>) => {
     const params = new URLSearchParams();
-    const {requestedBy, priority, toDate, fromDate, status} = value;
+    const {requestedBy, priority, updatedOn, status} = value;
 
     if (sort) params.set('sort', sort);
     if (limit) params.set('sort', limit);
 
-    if (requestedBy && requestedBy.length) {
-      params.set('requestedBy', requestedBy.join(','));
+    if (requestedBy?.length) {
+      params.set('requestedBy', encodeFilterQuery('in', requestedBy));
     }
 
-    if (status && status.length) {
-      params.set('status', status.join(','));
+    if (status?.length) params.set('status', encodeFilterQuery('in', status));
+
+    if (priority?.length) {
+      params.set('priority', encodeFilterQuery('in', priority));
     }
 
-    if (priority.length) {
-      params.set('priority', priority.filter(Boolean).join());
-    }
-
-    if (toDate && fromDate) {
-      params.set('updatedOn', `${fromDate} ${toDate}`);
+    if (updatedOn?.length && updatedOn[0] && updatedOn[1]) {
+      params.set('updatedOn', encodeFilterQuery('between', updatedOn));
     }
 
     const route = `${url}?${params.toString()}`;
@@ -104,18 +106,14 @@ export function Filter(props: FilterProps) {
   };
 
   useEffect(() => {
-    const values: z.infer<typeof filterSchema> = structuredClone(defaultValues);
-
-    const {requestedBy, priority, updatedOn, status} = searchParams;
-    if (requestedBy) values.requestedBy = requestedBy.split(',');
-    if (priority) values.priority = priority.split(',');
-    if (status) values.status = status.split(',');
-    if (updatedOn) {
-      const [fromDate, toDate] = updatedOn.split(' ');
-      if (fromDate) values.fromDate = fromDate;
-      if (toDate) values.toDate = toDate;
-    }
-
+    const values = structuredClone(defaultValues);
+    const {sort, page, limit, ...filterParams} = searchParams;
+    const {requestedBy, status, updatedOn, priority} =
+      decodeFilterParams(filterParams);
+    if (requestedBy) values.requestedBy = requestedBy;
+    if (priority) values.priority = priority;
+    if (status) values.status = status;
+    if (updatedOn) values.updatedOn = updatedOn;
     form.reset(values);
   }, [searchParams, form]);
   return (
@@ -172,13 +170,16 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
         <FormItem>
           <FormLabel>{i18n.get('Requested by :')}</FormLabel>
           <MultiSelector onValuesChange={field.onChange} values={field.value}>
-            <MultiSelectorTrigger>
+            <MultiSelectorTrigger
+              renderLabel={value =>
+                users.find(user => user.id === value)?.name
+              }>
               <MultiSelectorInput placeholder="Select users" />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
                 {users.map(user => (
-                  <MultiSelectorItem key={user.name} value={user.name}>
+                  <MultiSelectorItem key={user.id} value={user.id}>
                     <div className="flex items-center space-x-2">
                       <span>{user.name}</span>
                     </div>
@@ -200,12 +201,24 @@ function DatesField(props: FieldProps) {
     <div className="flex gap-2">
       <FormField
         control={form.control}
-        name="fromDate"
+        name="updatedOn"
         render={({field}) => (
           <FormItem>
             <FormLabel>{i18n.get('From:')}</FormLabel>
             <FormControl>
-              <Input type="date" placeholder="DD/MM/YYYY" {...field} />
+              <Input
+                type="date"
+                placeholder="DD/MM/YYYY"
+                {...field}
+                value={field.value?.[0] ?? ''}
+                onChange={e => {
+                  const from = e.target.value;
+                  if (!from) return field.onChange([]);
+                  const to = field.value?.[1];
+                  if (to) return field.onChange([from, to]);
+                  return field.onChange([from]);
+                }}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -213,12 +226,24 @@ function DatesField(props: FieldProps) {
       />
       <FormField
         control={form.control}
-        name="toDate"
+        name="updatedOn"
         render={({field}) => (
           <FormItem>
             <FormLabel>{i18n.get('To:')}</FormLabel>
             <FormControl>
-              <Input type="date" placeholder="DD/MM/YYYY" {...field} />
+              <Input
+                type="date"
+                placeholder="DD/MM/YYYY"
+                {...field}
+                disabled={field.disabled || !Boolean(field.value?.[0])}
+                value={field.value?.[1] ?? ''}
+                onChange={e => {
+                  const to = e.target.value;
+                  const from = field.value?.[0];
+                  if (from && to) return field.onChange([from, to]);
+                  if (from) return field.onChange([from]);
+                }}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -246,14 +271,17 @@ function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
                 <FormItem>
                   <FormControl>
                     <Checkbox
-                      name={priority.name}
-                      checked={field.value?.includes(priority.name)}
+                      name={priority.id}
+                      checked={field.value?.includes(priority.id)}
                       onCheckedChange={checked =>
                         checked
-                          ? field.onChange([...field.value, priority.name])
+                          ? field.onChange([
+                              ...(field.value ?? []),
+                              priority.id,
+                            ])
                           : field.onChange(
                               field.value?.filter(
-                                value => value !== priority.name,
+                                value => value !== priority.id,
                               ),
                             )
                       }
@@ -287,13 +315,16 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
         <FormItem>
           <FormLabel>{i18n.get('Status :')}</FormLabel>
           <MultiSelector onValuesChange={field.onChange} values={field.value}>
-            <MultiSelectorTrigger>
+            <MultiSelectorTrigger
+              renderLabel={value =>
+                statuses.find(status => status.id === value)?.name
+              }>
               <MultiSelectorInput placeholder="Select statuses" />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
                 {statuses.map(status => (
-                  <MultiSelectorItem key={status.name} value={status.name}>
+                  <MultiSelectorItem key={status.id} value={status.id}>
                     <div className="flex items-center space-x-2">
                       <span>{status.name}</span>
                     </div>

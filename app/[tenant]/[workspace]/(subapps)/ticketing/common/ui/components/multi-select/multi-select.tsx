@@ -151,8 +151,10 @@ const MultiSelector = ({
 
 const MultiSelectorTrigger = forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({className, children, ...props}, ref) => {
+  React.HTMLAttributes<HTMLDivElement> & {
+    renderLabel?: (value: string) => React.ReactNode;
+  }
+>(({className, children, renderLabel, ...props}, ref) => {
   const {value, onValueChange, activeIndex} = useMultiSelect();
 
   const mousePreventDefault = useCallback((e: React.MouseEvent) => {
@@ -176,7 +178,7 @@ const MultiSelectorTrigger = forwardRef<
             activeIndex === index && 'ring-2 ring-muted-foreground ',
           )}
           variant={'outline'}>
-          <span className="text-xs">{item}</span>
+          <span className="text-xs">{renderLabel?.(item) ?? item}</span>
           <button
             aria-label={`Remove ${item} option`}
             aria-roledescription="button to remove option"

@@ -2,16 +2,13 @@
  * Tickets Constants
  */
 
-import {Maybe} from '@/types/util';
-import {Column} from '../types';
+import {Column, FilterKey, SortKey} from '../types';
+import {Path} from '../utils/search-param';
 
-export const columns: Column[] = [
+export const columns: Column<SortKey>[] = [
   {
     key: 'ticketId',
     label: 'Ticket ID',
-    orderBy: dir => ({
-      ticketNumber: dir,
-    }),
   },
   {
     key: 'requestedBy',
@@ -20,102 +17,67 @@ export const columns: Column[] = [
   {
     key: 'subject',
     label: 'Subject',
-    orderBy: dir => ({
-      name: dir,
-    }),
   },
   {
     key: 'priority',
     label: 'Priority',
-    orderBy: dir => ({
-      priority: {
-        name: dir,
-      },
-    }),
   },
   {
     key: 'status',
     label: 'Status',
-    orderBy: dir => ({
-      status: {
-        name: dir,
-      },
-    }),
   },
   {
     key: 'category',
     label: 'Category',
-    orderBy: dir => ({
-      projectTaskCategory: {
-        name: dir,
-      },
-    }),
   },
   {
     key: 'assignedTo',
     label: 'Assigned to',
-    orderBy: dir => ({
-      assignedTo: {
-        name: dir,
-      },
-    }),
   },
   {
     key: 'updatedOn',
     label: 'Updated',
-    orderBy: dir => ({
-      updatedOn: dir,
-    }),
   },
 ];
 
-type QueryGenarator = (query: Maybe<string>) => Maybe<{}>;
-export const filterMap = new Map<string, QueryGenarator>();
+export const filterMap: Record<string, Path> = {
+  priority: {
+    path: 'priority.id',
+  },
+  requestedBy: {
+    path: 'assignedTo.id',
+  },
+  status: {
+    path: 'status.id',
+  },
+  updatedOn: {
+    path: 'updatedOn',
+  },
+};
 
-filterMap.set('priority', (query: Maybe<string>) => {
-  if (!query) return null;
-  const values = query.split(',');
-  return {
-    OR: values.map(v => ({priority: {name: v}})),
-  };
-});
-
-filterMap.set('requestedBy', (query: Maybe<string>) => {
-  if (!query) return null;
-  const values = query.split(',');
-  //TODO: change it to requestedBy later
-  return {
-    OR: values.map(v => ({assignedTo: {name: v}})),
-  };
-});
-
-filterMap.set('status', (query: Maybe<string>) => {
-  if (!query) return null;
-  const values = query.split(',');
-  return {
-    OR: values.map(v => ({status: {name: v}})),
-  };
-});
-
-filterMap.set('updatedOn', (query: Maybe<string>) => {
-  if (!query) return null;
-  const values = query.split(',');
-  return {
-    OR: values
-      .map(v => {
-        const [from, to] = v.split(' ');
-        const fromTime = new Date(from).getTime();
-        const toTime = new Date(to).getTime();
-        if (isNaN(fromTime)) return;
-
-        if (isNaN(toTime) || fromTime === toTime) {
-          return {updatedOn: from};
-        }
-        const between = [from, to];
-        if (fromTime > toTime) between.reverse();
-
-        return {updatedOn: {between}};
-      })
-      .filter(Boolean),
-  };
-});
+export const sortMap: Record<string, Path> = {
+  ticketId: {
+    path: 'id',
+  },
+  // requestedBy: {
+  //   path: 'contact.name',
+  // },
+  subject: {
+    path: 'name',
+  },
+  priority: {
+    path: 'priority.name',
+  },
+  status: {
+    path: 'status.name',
+  },
+  category: {
+    path: 'projectTaskCategory.name',
+  },
+  assignedTo: {
+    path: 'assignedTo.name',
+  },
+  updatedOn: {
+    path: 'updatedOn',
+  },
+};

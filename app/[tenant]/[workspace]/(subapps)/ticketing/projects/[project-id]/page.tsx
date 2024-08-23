@@ -2,6 +2,7 @@
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
+import type {SearchParams} from '@/types/search-param';
 import {Button, TableCell, TableRow} from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
@@ -18,6 +19,8 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
+import Link from 'next/link';
+import {columns, sortMap} from '../../common/constants';
 import {
   findProjectTickets,
   getAllTicketCount,
@@ -28,17 +31,16 @@ import {
 } from '../../common/orm/projects';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
-import {getSkip, getSortDirection, getSortKey} from '../../common/utils';
+import {getSkip} from '../../common/utils';
 import Hero from './hero';
-import {columns} from '../../common/constants';
-import Link from 'next/link';
+import {getOrderBy} from '../../common/utils/search-param';
 
 export default async function Page({
   params,
   searchParams,
 }: {
   params: {tenant: string; workspace: string; 'project-id': string};
-  searchParams: {[key: string]: string | undefined};
+  searchParams: SearchParams;
 }) {
   const projectId = params?.['project-id'];
 
@@ -59,9 +61,7 @@ export default async function Page({
     projectId,
     take: Number(limit),
     skip: getSkip(limit, page),
-    orderBy: columns
-      .find(c => c.key === getSortKey(sort))
-      ?.orderBy?.(getSortDirection(sort)),
+    orderBy: getOrderBy(sort, sortMap),
   });
 
   const items = [
