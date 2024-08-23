@@ -15,13 +15,6 @@ import {
 } from '@/ui/components/form';
 import {Input} from '@/ui/components/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/ui/components/select';
-import {
   Badge,
   Checkbox,
   Popover,
@@ -38,14 +31,22 @@ import {
 } from '@/goovee/.generated/models';
 import {useRouter} from 'next/navigation';
 import {Close} from '@radix-ui/react-popover';
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from '../multi-select';
 
 const filterSchema = z.object({
-  requestedBy: z.string().optional(),
+  requestedBy: z.array(z.string()).optional(),
   //TODO: validate such that if toDate is set, fromDate should also be set, and fromDate < toDate
   toDate: z.string().optional(),
   fromDate: z.string().optional(),
   priority: z.array(z.string().optional()),
-  status: z.string().optional(),
+  status: z.array(z.string()).optional(),
 });
 type FilterProps = {
   url: string;
@@ -56,11 +57,11 @@ type FilterProps = {
 };
 
 const defaultValues = {
-  requestedBy: '',
+  requestedBy: [] as string[],
   toDate: '',
   fromDate: '',
-  priority: [],
-  status: '',
+  priority: [] as string[],
+  status: [] as string[],
 };
 
 export function Filter(props: FilterProps) {
@@ -82,9 +83,13 @@ export function Filter(props: FilterProps) {
     if (sort) params.set('sort', sort);
     if (limit) params.set('sort', limit);
 
-    if (requestedBy) params.set('requestedBy', requestedBy);
+    if (requestedBy && requestedBy.length) {
+      params.set('requestedBy', requestedBy.join(','));
+    }
 
-    if (status) params.set('status', status);
+    if (status && status.length) {
+      params.set('status', status.join(','));
+    }
 
     if (priority.length) {
       params.set('priority', priority.filter(Boolean).join());
@@ -102,9 +107,9 @@ export function Filter(props: FilterProps) {
     const values: z.infer<typeof filterSchema> = structuredClone(defaultValues);
 
     const {requestedBy, priority, updatedOn, status} = searchParams;
-    if (requestedBy) values.requestedBy = requestedBy;
+    if (requestedBy) values.requestedBy = requestedBy.split(',');
     if (priority) values.priority = priority.split(',');
-    if (status) values.status = status;
+    if (status) values.status = status.split(',');
     if (updatedOn) {
       const [fromDate, toDate] = updatedOn.split(' ');
       if (fromDate) values.fromDate = fromDate;
@@ -135,7 +140,7 @@ export function Filter(props: FilterProps) {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-75">
+        <PopoverContent className="max-w-[22.7rem] w-74 overflow-y-auto">
           <Form {...form}>
             <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-4">
@@ -166,20 +171,22 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
       render={({field}) => (
         <FormItem>
           <FormLabel>{i18n.get('Requested by :')}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder={i18n.get('Select users')} />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {users.map(user => (
-                <SelectItem value={user.name} key={user.id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelector onValuesChange={field.onChange} values={field.value}>
+            <MultiSelectorTrigger>
+              <MultiSelectorInput placeholder="Select users" />
+            </MultiSelectorTrigger>
+            <MultiSelectorContent>
+              <MultiSelectorList>
+                {users.map(user => (
+                  <MultiSelectorItem key={user.name} value={user.name}>
+                    <div className="flex items-center space-x-2">
+                      <span>{user.name}</span>
+                    </div>
+                  </MultiSelectorItem>
+                ))}
+              </MultiSelectorList>
+            </MultiSelectorContent>
+          </MultiSelector>
           <FormMessage />
         </FormItem>
       )}
@@ -279,20 +286,22 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
       render={({field}) => (
         <FormItem>
           <FormLabel>{i18n.get('Status :')}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder={i18n.get('Select statuses')} />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {statuses.map(status => (
-                <SelectItem value={status.name} key={status.id}>
-                  {status.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelector onValuesChange={field.onChange} values={field.value}>
+            <MultiSelectorTrigger>
+              <MultiSelectorInput placeholder="Select statuses" />
+            </MultiSelectorTrigger>
+            <MultiSelectorContent>
+              <MultiSelectorList>
+                {statuses.map(status => (
+                  <MultiSelectorItem key={status.name} value={status.name}>
+                    <div className="flex items-center space-x-2">
+                      <span>{status.name}</span>
+                    </div>
+                  </MultiSelectorItem>
+                ))}
+              </MultiSelectorList>
+            </MultiSelectorContent>
+          </MultiSelector>
           <FormMessage />
         </FormItem>
       )}
