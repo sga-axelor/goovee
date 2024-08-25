@@ -122,7 +122,7 @@ export function Filter(props: FilterProps) {
         <h3 className="text-lg">{i18n.get('Filter :')}</h3>
       </div>
       <Popover>
-        <PopoverTrigger>
+        <PopoverTrigger asChild>
           <Button
             variant={filterCount ? 'default' : 'outline'}
             className="flex justify-between w-[354px] h-[47px]">
