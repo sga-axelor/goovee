@@ -3,7 +3,6 @@
  */
 
 import {Column, FilterKey, SortKey} from '../types';
-import {Path} from '../utils/search-param';
 
 export const columns: Column<SortKey>[] = [
   {
@@ -40,44 +39,20 @@ export const columns: Column<SortKey>[] = [
   },
 ];
 
-export const filterMap: Record<string, Path> = {
-  priority: {
-    path: 'priority.id',
-  },
-  requestedBy: {
-    path: 'assignedTo.id',
-  },
-  status: {
-    path: 'status.id',
-  },
-  updatedOn: {
-    path: 'updatedOn',
-  },
+export const filterKeyPathMap: Record<string, string> = {
+  priority: 'priority.id',
+  requestedBy: 'assignedTo.id',
+  status: 'status.id',
+  updatedOn: 'updatedOn',
 };
 
-export const sortMap: Record<string, Path> = {
-  ticketId: {
-    path: 'id',
-  },
-  // requestedBy: {
-  //   path: 'contact.name',
-  // },
-  subject: {
-    path: 'name',
-  },
-  priority: {
-    path: 'priority.name',
-  },
-  status: {
-    path: 'status.name',
-  },
-  category: {
-    path: 'projectTaskCategory.name',
-  },
-  assignedTo: {
-    path: 'assignedTo.name',
-  },
-  updatedOn: {
-    path: 'updatedOn',
-  },
+export const sortKeyPathMap: Record<string, string> = {
+  ticketId: 'id',
+  requestedBy: 'contact.name',
+  subject: 'name',
+  priority: 'priority.name',
+  status: 'status.name',
+  category: 'projectTaskCategory.name',
+  assignedTo: 'assignedTo.name',
+  updatedOn: 'updatedOn',
 };

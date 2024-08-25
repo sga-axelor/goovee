@@ -20,7 +20,7 @@ import {
 
 // ---- LOCAL IMPORTS ---- //
 import Link from 'next/link';
-import {columns, sortMap} from '../../common/constants';
+import {columns, sortKeyPathMap} from '../../common/constants';
 import {
   findProjectTickets,
   getAllTicketCount,
@@ -57,12 +57,12 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
-  const tickets = findProjectTickets({
+  const tickets = await findProjectTickets({
     projectId,
     take: Number(limit),
     skip: getSkip(limit, page),
-    orderBy: getOrderBy(sort, sortMap),
-  });
+    orderBy: getOrderBy(sort, sortKeyPathMap),
+  }).then(clone);
 
   const items = [
     {
@@ -115,8 +115,6 @@ export default async function Page({
         </div>
         <TicketList
           tickets={tickets}
-          url={`${workspaceURI}/ticketing/projects/${projectId}`}
-          searchParams={searchParams}
           footer={
             <TableRow>
               <TableCell colSpan={columns.length + 1} align="right">

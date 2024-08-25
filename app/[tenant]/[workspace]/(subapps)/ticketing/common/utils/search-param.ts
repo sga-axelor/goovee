@@ -38,11 +38,14 @@ const SEPARATOR = {
   VALUE: ',',
 };
 
-export function getOrderBy(sort: Maybe<string>, sortMap: Record<string, Path>) {
+export function getOrderBy(
+  sort: Maybe<string>,
+  sortMap: Record<string, string>,
+) {
   if (!sort) return null;
   const [key, direction] = decodeSortQuery(sort);
   if (!key) return null;
-  const path = sortMap[key]?.path;
+  const path = sortMap[key];
   if (!path) return null;
   const query = set({}, path, direction);
   return query;
@@ -50,12 +53,12 @@ export function getOrderBy(sort: Maybe<string>, sortMap: Record<string, Path>) {
 
 export function getWhere(
   filterParams: Record<string, string | undefined>,
-  filterMap: Record<string, Path>,
+  filterMap: Record<string, string>,
 ) {
   const where = Object.entries(filterParams).reduce<Maybe<Record<any, any>>>(
     (acc, [key, value]) => {
       if (!value) return acc;
-      const path = filterMap[key]?.path;
+      const path = filterMap[key];
       if (!path) return acc;
       const [operator, query] = decodeFilterQuery(value);
       if (!operator || !query) return acc;
