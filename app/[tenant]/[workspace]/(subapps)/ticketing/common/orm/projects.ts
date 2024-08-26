@@ -56,20 +56,16 @@ export async function getMyTicketCount(
       status: {
         isCompleted: false,
       },
-      AND: [
+      OR: [
         {
-          OR: [
-            {
-              assignedTo: {
-                id: userId,
-              },
-            },
-            {
-              createdBy: {
-                id: userId,
-              },
-            },
-          ],
+          assignedTo: {
+            id: userId,
+          },
+        },
+        {
+          createdBy: {
+            id: userId,
+          },
         },
       ],
     },
