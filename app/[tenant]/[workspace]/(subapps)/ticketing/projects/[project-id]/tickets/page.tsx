@@ -2,8 +2,6 @@
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
-import type {SearchParams} from '@/types/search-param';
-import type {Maybe} from '@/types/util';
 import {Button} from '@/ui/components/button';
 import {
   Pagination,
@@ -38,9 +36,14 @@ import {
 import type {FilterKey} from '../../../common/types';
 import {Filter} from '../../../common/ui/components/filter';
 import {TicketList} from '../../../common/ui/components/ticket-list';
-import {getPages, getPaginationButtons, getSkip} from '../../../common/utils';
+import {getPaginationButtons, getPages} from '../../../common/utils';
+import {
+  getOrderBy,
+  getSkip,
+  getWhere,
+} from '../../../common/utils/search-param';
+import type {SearchParams} from '../../../common/types/search-param';
 import Search from '../search';
-import {getWhere, getOrderBy} from '../../../common/utils/search-param';
 
 const TICKETS_PER_PAGE = 7;
 const DEFAULT_SORT = 'updatedOn';
@@ -73,7 +76,7 @@ export default async function Page({
 
   const tickets = await findProjectTickets({
     projectId,
-    take: Number(limit),
+    take: +limit,
     skip: getSkip(limit, page),
     where: getWhere(filterParams, filterKeyPathMap),
     orderBy: getOrderBy(sort, sortKeyPathMap),

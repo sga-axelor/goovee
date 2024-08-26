@@ -6,7 +6,6 @@ import {
   AOSUser,
 } from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
-import {SearchParams} from '@/types/search-param';
 import {
   Badge,
   Checkbox,
@@ -24,14 +23,6 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {Input} from '@/ui/components/input';
-import {
-  MultiSelector,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorItem,
-  MultiSelectorList,
-  MultiSelectorTrigger,
-} from '../multi-select';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Close} from '@radix-ui/react-popover';
 import {useRouter} from 'next/navigation';
@@ -41,10 +32,19 @@ import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
 import type {FilterKey} from '../../../types';
+import {SearchParams} from '../../../types/search-param';
 import {
   decodeFilterParams,
   encodeFilterQuery,
 } from '../../../utils/search-param';
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from '../multi-select';
 
 const filterSchema = z.object({
   requestedBy: z.array(z.string()),

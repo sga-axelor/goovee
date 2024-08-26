@@ -22,7 +22,8 @@ import {redirect} from 'next/navigation';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProjectsWithTaskCount} from './common/orm/projects';
-import {getPages, getPaginationButtons, getSkip} from './common/utils';
+import {getPages, getPaginationButtons} from './common/utils';
+import {getSkip} from './common/utils/search-param';
 
 export default async function Page({
   params,

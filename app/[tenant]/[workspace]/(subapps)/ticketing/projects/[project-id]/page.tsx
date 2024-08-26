@@ -2,7 +2,6 @@
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
-import type {SearchParams} from '@/types/search-param';
 import {Button, TableCell, TableRow} from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
@@ -31,9 +30,9 @@ import {
 } from '../../common/orm/projects';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
-import {getSkip} from '../../common/utils';
 import Hero from './hero';
-import {getOrderBy} from '../../common/utils/search-param';
+import {getSkip, getOrderBy} from '../../common/utils/search-param';
+import type {SearchParams} from '../../common/types/search-param';
 
 export default async function Page({
   params,

@@ -2,10 +2,6 @@ import {ORDER_BY} from '@/constants';
 import {Maybe} from '@/types/util';
 import {set} from 'lodash';
 
-export type Path = {
-  path: string;
-};
-
 export type Operator =
   | 'eq'
   | 'ne'
@@ -69,6 +65,14 @@ export function getWhere(
   );
   return where;
 }
+
+export const getSkip = (
+  limit: string | number,
+  page: string | number,
+): number => {
+  page = +page || 1;
+  return (page - 1) * +limit;
+};
 
 export function decodeSortQuery(
   sort: Maybe<string>,

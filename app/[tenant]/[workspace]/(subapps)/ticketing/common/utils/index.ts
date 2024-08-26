@@ -9,14 +9,6 @@ export const formatDate = (date: Maybe<Date | string>) => {
   return new Date(date).toLocaleDateString();
 };
 
-export const getSkip = (
-  limit: string | number,
-  page: string | number,
-): number => {
-  page = +page || 1;
-  return (page - 1) * +limit;
-};
-
 export const getPages = (
   records: {_count?: string}[],
   limit: string | number,
