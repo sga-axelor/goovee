@@ -109,7 +109,11 @@ export function decodeFilterValue(
   valueString: Maybe<string>,
 ): [string | null, Maybe<string | string[]>] {
   if (!valueString) return [null, null];
-  const [operator, value] = valueString.split(SEPARATOR.OPERATOR);
+  const [operator] = valueString.split(SEPARATOR.OPERATOR, 1);
+  const value = valueString.substring(
+    operator.length + SEPARATOR.OPERATOR.length,
+  );
+
   if (!operator) return [null, null];
   if (!(OPERATORS as string[]).includes(operator) || value == null) {
     return [null, null];
