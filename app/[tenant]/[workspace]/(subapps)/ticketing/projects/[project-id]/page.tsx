@@ -107,7 +107,7 @@ export default async function Page({
 
   return (
     <>
-      <Hero workspace={workspace} />
+      <Hero workspace={workspace} projectId={projectId} />
       <div className="container my-6 space-y-6 mx-auto">
         <Swipe items={items} />
         <div className="flex items-center justify-between">

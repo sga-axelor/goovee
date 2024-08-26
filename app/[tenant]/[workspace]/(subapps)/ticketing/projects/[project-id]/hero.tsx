@@ -1,16 +1,25 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {HeroSearch} from '@/ui/components';
 import {IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import type {PortalWorkspace} from '@/types';
+import {HeroSearch} from '@/ui/components';
+import type {ID} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import Search from './search';
 
-export const Hero = ({workspace}: {workspace: PortalWorkspace}) => {
-  const renderSearch = () => <Search workspace={workspace} />;
+export const Hero = ({
+  workspace,
+  projectId,
+}: {
+  workspace: PortalWorkspace;
+  projectId: ID;
+}) => {
+  const renderSearch = () => (
+    <Search workspace={workspace} projectId={projectId} />
+  );
 
   return (
     <>

@@ -97,7 +97,7 @@ export default async function Page({
         </Button>
       </div>
       <div className="flex items-end justify-between gap-6">
-        <Search workspace={workspace} />
+        <Search workspace={workspace} projectId={projectId} />
         <Suspense>
           <AsyncFilter url={url} searchParams={searchParams} />
         </Suspense>
