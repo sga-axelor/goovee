@@ -43,7 +43,9 @@ export const filterKeyPathMap: Record<string, string> = {
   priority: 'priority.id',
   requestedBy: 'assignedTo.id',
   status: 'status.id',
+  statusCompleted: 'status.isCompleted',
   updatedOn: 'updatedOn',
+  updatedBy: 'updatedBy.id',
 };
 
 export const sortKeyPathMap: Record<string, string> = {

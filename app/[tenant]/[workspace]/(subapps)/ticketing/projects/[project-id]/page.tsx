@@ -31,7 +31,11 @@ import {
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import Hero from './hero';
-import {getSkip, getOrderBy} from '../../common/utils/search-param';
+import {
+  getSkip,
+  getOrderBy,
+  encodeFilterQuery,
+} from '../../common/utils/search-param';
 import type {SearchParams} from '../../common/types/search-param';
 
 export default async function Page({
@@ -63,11 +67,14 @@ export default async function Page({
     orderBy: getOrderBy(sort, sortKeyPathMap),
   }).then(clone);
 
+  const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
+
   const items = [
     {
-      label: 'All',
+      label: 'All Tickets',
       count: getAllTicketCount(projectId),
       icon: MdAllInbox,
+      href: `${ticketsURL}?${encodeFilterQuery('statusCompleted', 'eq', 'false')}`,
     },
     {
       label: 'My tickets',
@@ -78,16 +85,19 @@ export default async function Page({
       label: 'Assigned tickets',
       count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
+      href: `${ticketsURL}?${encodeFilterQuery('requestedBy', 'eq', userId)}`,
     },
     {
       label: 'Created tickets',
       count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
+      href: `${ticketsURL}?${encodeFilterQuery('updatedBy', 'eq', userId)}`,
     },
     {
       label: 'Resolved tickets',
       count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
+      href: `${ticketsURL}?${encodeFilterQuery('statusCompleted', 'eq', 'true')}`,
     },
   ].map(props => (
     <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
@@ -105,8 +115,7 @@ export default async function Page({
             {i18n.get('Latest tickets')}
           </h2>
           <Button variant="success" className="flex items-center" asChild>
-            <Link
-              href={`${workspaceURI}/ticketing/projects/${projectId}/tickets/edit`}>
+            <Link href={`${ticketsURL}/edit`}>
               <MdAdd className="size-6" />
               <span>{i18n.get('Create a ticket')}</span>
             </Link>
@@ -118,7 +127,7 @@ export default async function Page({
             <TableRow>
               <TableCell colSpan={columns.length + 1} align="right">
                 <Link
-                  href={`${workspaceURI}/ticketing/projects/${projectId}/tickets`}
+                  href={ticketsURL}
                   className="inline-flex gap-1 items-center">
                   {i18n.get('See all tickets')}
                   <MdArrowForward />
@@ -135,14 +144,16 @@ export default async function Page({
 type TicketCardProps = {
   label: string;
   count: Promise<number>;
+  href?: string;
   icon?: IconType;
 };
 
 async function TicketCard(props: TicketCardProps) {
-  const {label, icon: Icon, count: countPromise} = props;
+  const {label, icon: Icon, count: countPromise, href} = props;
   const count = await countPromise;
-  return (
-    <div className="flex items-center gap-6 px-6 h-[80px]">
+
+  const content = (
+    <>
       <div className="h-[56px] w-[56px] p-2 bg-muted rounded-full">
         {Icon && (
           <Icon className={`h-[40px] w-[40px] text-success bg-success-light`} />
@@ -152,8 +163,18 @@ async function TicketCard(props: TicketCardProps) {
         <h3 className="text-[2rem] font-semibold">{count}</h3>
         <p className="font-semibold">{label}</p>
       </div>
-    </div>
+    </>
   );
+
+  const className = 'flex items-center gap-6 px-6 h-[80px]';
+  if (href) {
+    return (
+      <Link href={href} className={className}>
+        {content}
+      </Link>
+    );
+  }
+  return <div className={className}>{content}</div>;
 }
 
 function TicketCardSkeleton() {
