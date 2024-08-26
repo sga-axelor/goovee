@@ -16,7 +16,7 @@ import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {columns, sortKeyPathMap} from '../../../constants';
 import type {Ticket} from '../../../types';
-import {decodeSortQuery, encodeSortQuery} from '../../../utils/search-param';
+import {decodeSortValue, encodeSortValue} from '../../../utils/search-param';
 import {TicketRows} from './ticket-rows';
 
 type TicketListProps = {
@@ -33,7 +33,7 @@ export async function TicketList(props: TicketListProps) {
       <TableHeader>
         <TableRow>
           {columns?.map(column => {
-            const [key, direction] = decodeSortQuery(searchParams.sort);
+            const [key, direction] = decodeSortValue(searchParams.sort);
             const isActive = key === column.key;
             const isASC = isActive && direction === ORDER_BY.ASC;
             const label = i18n.get(column.label);
@@ -50,7 +50,7 @@ export async function TicketList(props: TicketListProps) {
                         query: {
                           ...searchParams,
                           page: 1,
-                          sort: encodeSortQuery(
+                          sort: encodeSortValue(
                             column.key,
                             isASC ? ORDER_BY.DESC : ORDER_BY.ASC,
                           ),

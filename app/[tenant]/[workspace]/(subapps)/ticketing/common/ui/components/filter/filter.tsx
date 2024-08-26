@@ -35,7 +35,7 @@ import type {FilterKey} from '../../../types';
 import {SearchParams} from '../../../types/search-param';
 import {
   decodeFilterParams,
-  encodeFilterQuery,
+  encodeFilterValue,
 } from '../../../utils/search-param';
 import {
   MultiSelector,
@@ -88,17 +88,17 @@ export function Filter(props: FilterProps) {
     if (limit) params.set('sort', limit);
 
     if (requestedBy?.length) {
-      params.set('requestedBy', encodeFilterQuery('in', requestedBy));
+      params.set('requestedBy', encodeFilterValue('in', requestedBy));
     }
 
-    if (status?.length) params.set('status', encodeFilterQuery('in', status));
+    if (status?.length) params.set('status', encodeFilterValue('in', status));
 
     if (priority?.length) {
-      params.set('priority', encodeFilterQuery('in', priority));
+      params.set('priority', encodeFilterValue('in', priority));
     }
 
     if (updatedOn?.length && updatedOn[0] && updatedOn[1]) {
-      params.set('updatedOn', encodeFilterQuery('between', updatedOn));
+      params.set('updatedOn', encodeFilterValue('between', updatedOn));
     }
 
     const route = `${url}?${params.toString()}`;

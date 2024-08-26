@@ -39,7 +39,7 @@ export function getOrderBy(
   sortMap: Record<string, string>,
 ) {
   if (!sort) return null;
-  const [key, direction] = decodeSortQuery(sort);
+  const [key, direction] = decodeSortValue(sort);
   if (!key) return null;
   const path = sortMap[key];
   if (!path) return null;
@@ -56,7 +56,7 @@ export function getWhere(
       if (!value) return acc;
       const path = filterMap[key];
       if (!path) return acc;
-      const [operator, query] = decodeFilterQuery(value);
+      const [operator, query] = decodeFilterValue(value);
       if (!operator || !query) return acc;
       const clause = set(acc ?? {}, path, {[operator]: query});
       return clause;
@@ -74,7 +74,7 @@ export const getSkip = (
   return (page - 1) * +limit;
 };
 
-export function decodeSortQuery(
+export function decodeSortValue(
   sort: Maybe<string>,
 ): [string | null, 'ASC' | 'DESC'] {
   if (!sort) return [null, ORDER_BY.ASC];
@@ -83,7 +83,7 @@ export function decodeSortQuery(
   return [key, direction];
 }
 
-export function encodeSortQuery(
+export function encodeSortValue(
   key: string,
   direction: 'ASC' | 'DESC' = 'ASC',
 ): string {
@@ -95,7 +95,7 @@ export function decodeFilterParams<
 >(filterParams: T): Record<keyof T, any> {
   return Object.entries(filterParams).reduce<Record<keyof T, any>>(
     (acc, [key, value]: [keyof T, string | undefined]) => {
-      const [op, decodedValue] = decodeFilterQuery(value);
+      const [op, decodedValue] = decodeFilterValue(value);
       if (decodedValue) {
         acc[key] = decodedValue;
       }
@@ -105,7 +105,7 @@ export function decodeFilterParams<
   );
 }
 
-export function decodeFilterQuery(
+export function decodeFilterValue(
   valueString: Maybe<string>,
 ): [string | null, Maybe<string | string[]>] {
   if (!valueString) return [null, null];
@@ -159,7 +159,7 @@ function makeBetweenQuery(
   }
 }
 
-export function encodeFilterQuery<T extends Operator>(
+export function encodeFilterValue<T extends Operator>(
   operator: T,
   value: T extends 'between' | 'notBetween' | 'in' | 'notIn'
     ? Maybe<string | number>[]
@@ -178,4 +178,19 @@ export function encodeFilterQuery<T extends Operator>(
     return operator.concat(SEPARATOR.OPERATOR).concat(valueString);
   }
   return operator.concat(SEPARATOR.OPERATOR).concat(value.toString());
+}
+
+export function encodeFilterQuery<T extends Operator>(
+  key: string,
+  operator: T,
+  value: T extends 'between' | 'notBetween' | 'in' | 'notIn'
+    ? Maybe<string | number>[]
+    : Maybe<string | number>,
+) {
+  const params = new URLSearchParams();
+  const encodedValue = encodeFilterValue(operator, value);
+  if (encodedValue) {
+    params.set(key, encodedValue);
+  }
+  return params.toString();
 }
