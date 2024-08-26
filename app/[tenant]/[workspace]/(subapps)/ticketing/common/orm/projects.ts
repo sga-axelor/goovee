@@ -226,3 +226,76 @@ export async function findUsers() {
   });
   return users;
 }
+
+export async function findTicketsById(id: ID) {
+  const client = await getClient();
+  const tickets = await client.aOSProjectTask.findOne({
+    where: {
+      id: id,
+    },
+    select: {
+      name: true,
+      version: true,
+      progress: true,
+      description: true,
+      taskDate: true,
+      taskEndDate: true,
+      childTasks: {
+        select: {
+          name: true,
+          updatedOn: true,
+          status: {
+            name: true,
+          },
+          projectTaskCategory: {
+            name: true,
+          },
+          priority: {
+            name: true,
+          },
+          project: {
+            name: true,
+          },
+          assignedTo: {
+            name: true,
+          },
+        },
+      },
+      parentTask: {
+        name: true,
+        updatedOn: true,
+        status: {
+          name: true,
+        },
+        projectTaskCategory: {
+          name: true,
+        },
+        priority: {
+          name: true,
+        },
+        project: {
+          name: true,
+        },
+        assignedTo: {
+          name: true,
+        },
+      },
+      project: {
+        name: true,
+      },
+      projectTaskCategory: {
+        name: true,
+      },
+      priority: {
+        name: true,
+      },
+      assignedTo: {
+        name: true,
+      },
+      status: {
+        name: true,
+      },
+    },
+  });
+  return tickets;
+}
