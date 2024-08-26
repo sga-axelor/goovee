@@ -169,7 +169,10 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
       render={({field}) => (
         <FormItem>
           <FormLabel>{i18n.get('Requested by :')}</FormLabel>
-          <MultiSelector onValuesChange={field.onChange} values={field.value}>
+          <MultiSelector
+            onValuesChange={field.onChange}
+            values={field.value}
+            className="space-y-0">
             <MultiSelectorTrigger
               renderLabel={value =>
                 users.find(user => user.id === value)?.name
@@ -314,7 +317,10 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
       render={({field}) => (
         <FormItem>
           <FormLabel>{i18n.get('Status :')}</FormLabel>
-          <MultiSelector onValuesChange={field.onChange} values={field.value}>
+          <MultiSelector
+            onValuesChange={field.onChange}
+            className="space-y-0"
+            values={field.value}>
             <MultiSelectorTrigger
               renderLabel={value =>
                 statuses.find(status => status.id === value)?.name
