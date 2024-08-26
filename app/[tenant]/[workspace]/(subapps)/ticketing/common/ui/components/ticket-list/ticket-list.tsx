@@ -3,7 +3,6 @@
 import {ORDER_BY} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import {
-  Button,
   Table,
   TableBody,
   TableFooter,
@@ -30,27 +29,23 @@ export function TicketList(props: TicketListProps) {
   const [sortedTickets, sort, toggleSort] = useSortBy(tickets);
 
   return (
-    <Table className="w-full rounded-lg bg-card text-card-foreground">
+    <Table className="rounded-lg bg-card text-card-foreground">
       <TableHeader>
         <TableRow>
           {columns?.map(column => {
-            const sortKey = sortKeyPathMap[sort.key];
-            const isActive = sortKey === column.key;
+            const isActive = sort.key === column.key;
             const isASC = isActive && sort.direction === ORDER_BY.ASC;
             const label = i18n.get(column.label);
             return (
               <TableHead
                 key={column.key}
-                className="text-card-foreground text-base font-semibold px-6 border-none">
+                onClick={() => {
+                  const path = sortKeyPathMap[column.key];
+                  path && toggleSort({key: column.key, path});
+                }}
+                className="text-card-foreground cursor-pointer text-base font-semibold px-6 border-none">
                 <div className="flex gap-1 items-center">
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      const path = sortKeyPathMap[column.key];
-                      path && toggleSort({key: column.key, path});
-                    }}>
-                    {label}
-                  </Button>
+                  <div className="line-clamp-1">{label}</div>
                   {isActive &&
                     (isASC ? <MdArrowDropDown /> : <MdArrowDropUp />)}
                 </div>
