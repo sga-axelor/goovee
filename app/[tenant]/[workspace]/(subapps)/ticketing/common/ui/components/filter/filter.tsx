@@ -102,7 +102,7 @@ export function Filter(props: FilterProps) {
     }
 
     const route = `${url}?${params.toString()}`;
-    router.push(route);
+    router.replace(route);
   };
 
   useEffect(() => {
