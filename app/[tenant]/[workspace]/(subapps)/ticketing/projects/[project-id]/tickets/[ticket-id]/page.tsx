@@ -141,17 +141,21 @@ function TicketDetails({ticket, workspaceURI}: any) {
           {ticket?.taskDate}
         </p>
         <hr />
-        <div className="flex justify-between">
-          <p>
-            <span className="font-medium pe-2">Assigned to:</span>
-            {ticket?.assignedTo?.name}
-          </p>
-          <Button variant="success">Assign to supplier</Button>
+        <div className="flex items-start">
+          <div className="flex flex-col space-y-2">
+            <p>
+              <span className="font-medium pe-2">Assigned to:</span>
+              {ticket?.assignedTo?.name}
+            </p>
+            <p>
+              <span className="font-medium pe-2">Expected on:</span>
+              {ticket?.taskEndDate}
+            </p>
+          </div>
+          <div className="ml-auto">
+            <Button variant="success">Assign to supplier</Button>
+          </div>
         </div>
-        <p>
-          <span className="font-medium pe-2"> Expected on:</span>
-          {ticket?.taskEndDate}
-        </p>
         <hr />
         <div className="font-medium flex items-center">
           <span>Progress: {ticket?.progress}%</span>
@@ -162,14 +166,14 @@ function TicketDetails({ticket, workspaceURI}: any) {
         </div>
         <p className="font-medium">Version: {ticket?.version}</p>
         <hr />
-        <div className="flex justify-start">
-          <p className="pe-[10rem] ">
+        <div className="flex justify-start space-x-20">
+          <p>
             <span className="font-medium">Quantity: </span>3
           </p>
-          <p className="pe-[10rem]">
+          <p>
             <span className="font-medium">Price WT: </span>10.00$
           </p>
-          <p className="pe-[10rem]">
+          <p>
             <span className="font-medium">Invoicing unit:</span> dollar($)
           </p>
         </div>
