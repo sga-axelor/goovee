@@ -1,0 +1,30 @@
+{
+  "name": "AOSComment",
+  "table": "base_comment",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {"name": "id", "type": "String"},
+    {
+      "name": "portalNews",
+      "type": "ManyToOne",
+      "target": "AOSPortalNews"
+    },
+    {
+      "name": "portalEvent",
+      "type": "ManyToOne",
+      "target": "AOSPortalEvent"
+    },
+    {
+      "name": "mailMessage",
+      "type": "ManyToOne",
+      "target": "AOSMailMessage"
+    },
+    {
+      "name": "commentFileList",
+      "type": "OneToMany",
+      "mappedBy": "relatedComment",
+      "target": "AOSCommentFile"
+    }
+  ]
+}

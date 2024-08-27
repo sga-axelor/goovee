@@ -1,0 +1,22 @@
+{
+  "name": "AOSCommentFile",
+  "table": "base_comment_file",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "relatedComment",
+      "type": "ManyToOne",
+      "target": "AOSComment"
+    },
+    {
+      "name": "attachmentFile",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
+    },
+    {
+      "name": "description",
+      "type": "String"
+    }
+  ]
+}

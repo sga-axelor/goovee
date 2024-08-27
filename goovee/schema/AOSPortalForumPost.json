@@ -1,0 +1,32 @@
+{
+  "name": "AOSPortalForumPost",
+  "table": "portal_forum_post",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "title",
+      "type": "String"
+    },
+    {
+      "name": "author",
+      "type": "ManyToOne",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "content",
+      "type": "String"
+    },
+    {
+      "name": "commentList",
+      "type": "OneToMany",
+      "target": "AOSPortalComment",
+      "mappedBy": "forumPost"
+    },
+    {
+      "name": "createdOn",
+      "type": "Date"
+    },
+    {"name": "postDateT", "type": "Date", "column": "post_datet"}
+  ]
+}
