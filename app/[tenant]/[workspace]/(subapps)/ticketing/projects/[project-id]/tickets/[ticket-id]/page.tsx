@@ -6,7 +6,15 @@ import {
   findTicketStatuses,
 } from '../../../../common/orm/projects';
 
-import {AvatarImage, Button, Tag, TableCell, TableRow} from '@/ui/components';
+import {
+  AvatarImage,
+  Button,
+  Tag,
+  TableCell,
+  TableRow,
+  Table,
+  TableBody,
+} from '@/ui/components';
 import {Avatar} from '@radix-ui/react-avatar';
 import {MdOutlineModeEditOutline} from 'react-icons/md';
 import Link from 'next/link';
@@ -232,71 +240,82 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
     <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
       {/* ----parent ticket----- */}
       {parentTicket && (
-        <div>
+        <>
           <h4 className="text-[1.5rem] font-semibold">Parent ticket</h4>
           <hr className="mt-5" />
-          <TableRow>
-            <TableCell className="px-5">
-              <Link href="">#{parentTicket.id}</Link>
-            </TableCell>
-            <TableCell className="flex justify-center items-center">
-              <Avatar className="h-12 w-16">
-                <AvatarImage src="/images/user.png" />
-              </Avatar>
-              <p className="ms-1">{parentTicket.user?.name}</p>
-            </TableCell>
-            <TableCell>{parentTicket.name}</TableCell>
-            <TableCell>
-              <Tag variant="blue" className="text-[12px] py-1">
-                {parentTicket.priority?.name}
-              </Tag>
-            </TableCell>
-            <TableCell>
-              <Tag variant="default" className="text-[12px] py-1" outline>
-                {parentTicket.status?.name}
-              </Tag>
-            </TableCell>
-            <TableCell>{parentTicket.projectTaskCategory?.name}</TableCell>
-            <TableCell>{parentTicket.assignedTo?.name}</TableCell>
-            <TableCell>{formatDate(parentTicket.updatedOn)}</TableCell>
-          </TableRow>
-        </div>
-      )}
-      {/* ----child tickets---  */}
-      {childTickets && (childTickets.length ?? 0) > 0 && (
-        <div>
-          <h4 className="text-[1.5rem] font-semibold">Child ticket</h4>
-          <hr className="mt-5" />
-          {childTickets.map(ticket => {
-            return (
-              <TableRow key={ticket?.id}>
+          <Table>
+            <TableBody>
+              <TableRow>
                 <TableCell className="px-5">
-                  <Link href="">#{ticket.id}</Link>
+                  <Link href="">#{parentTicket.id}</Link>
                 </TableCell>
                 <TableCell className="flex justify-center items-center">
                   <Avatar className="h-12 w-16">
                     <AvatarImage src="/images/user.png" />
                   </Avatar>
-                  <p className="ms-1">{ticket.user}</p>
+                  <p className="ms-1">{parentTicket.user?.name}</p>
                 </TableCell>
-                <TableCell>{ticket.name}</TableCell>
+                <TableCell>{parentTicket.name}</TableCell>
                 <TableCell>
                   <Tag variant="blue" className="text-[12px] py-1">
-                    {ticket.priority?.name}
+                    {parentTicket.priority?.name}
                   </Tag>
                 </TableCell>
                 <TableCell>
                   <Tag variant="default" className="text-[12px] py-1" outline>
-                    {ticket.status?.name}
+                    {parentTicket.status?.name}
                   </Tag>
                 </TableCell>
-                <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
-                <TableCell>{ticket.assignedTo?.name}</TableCell>
-                <TableCell>{formatDate(ticket?.updatedOn)}</TableCell>
+                <TableCell>{parentTicket.projectTaskCategory?.name}</TableCell>
+                <TableCell>{parentTicket.assignedTo?.name}</TableCell>
+                <TableCell>{formatDate(parentTicket.updatedOn)}</TableCell>
               </TableRow>
-            );
-          })}
-        </div>
+            </TableBody>
+          </Table>
+        </>
+      )}
+      {/* ----child tickets---  */}
+      {childTickets && (childTickets.length ?? 0) > 0 && (
+        <>
+          <h4 className="text-[1.5rem] font-semibold">Child ticket</h4>
+          <hr className="mt-5" />
+          <Table>
+            <TableBody>
+              {childTickets.map(ticket => {
+                return (
+                  <TableRow key={ticket?.id}>
+                    <TableCell className="px-5">
+                      <Link href="">#{ticket.id}</Link>
+                    </TableCell>
+                    <TableCell className="flex justify-center items-center">
+                      <Avatar className="h-12 w-16">
+                        <AvatarImage src="/images/user.png" />
+                      </Avatar>
+                      <p className="ms-1">{ticket.user}</p>
+                    </TableCell>
+                    <TableCell>{ticket.name}</TableCell>
+                    <TableCell>
+                      <Tag variant="blue" className="text-[12px] py-1">
+                        {ticket.priority?.name}
+                      </Tag>
+                    </TableCell>
+                    <TableCell>
+                      <Tag
+                        variant="default"
+                        className="text-[12px] py-1"
+                        outline>
+                        {ticket.status?.name}
+                      </Tag>
+                    </TableCell>
+                    <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
+                    <TableCell>{ticket.assignedTo?.name}</TableCell>
+                    <TableCell>{formatDate(ticket?.updatedOn)}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </>
       )}
     </div>
   );
