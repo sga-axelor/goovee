@@ -34,6 +34,10 @@
       "name": "ticketNumber"
     },
     {
+      "type": "Text",
+      "name": "description"
+    },
+    {
       "type": "ManyToOne",
       "name": "assignedTo",
       "target": "AOSUser"

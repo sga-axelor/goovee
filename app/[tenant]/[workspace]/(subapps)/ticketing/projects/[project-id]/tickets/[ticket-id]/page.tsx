@@ -1,7 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import {findTicketsById} from '../../../../common/orm/projects';
+import {
+  findTicketById,
+  findTicketStatuses,
+} from '../../../../common/orm/projects';
 
 import {AvatarImage, Button, Tag, TableCell, TableRow} from '@/ui/components';
 import {Avatar} from '@radix-ui/react-avatar';
@@ -10,6 +13,9 @@ import Link from 'next/link';
 import {formatDate} from '../../../../common/utils';
 import {Progress} from '@/ui/components/progress';
 import {i18n} from '@/lib/i18n';
+import {AOSProjectTask, AOSProjectTaskStatus} from '@/goovee/.generated/models';
+import {notFound} from 'next/navigation';
+import {Maybe} from '@/types/util';
 
 interface User {
   id: number;
@@ -39,8 +45,8 @@ interface Ticket {
 }
 
 interface SubTicketsProps {
-  parentTicket: Ticket;
-  childTickets: Ticket[];
+  parentTicket?: AOSProjectTask;
+  childTickets?: AOSProjectTask[];
 }
 export default async function Page({
   params,
@@ -53,43 +59,53 @@ export default async function Page({
   };
 }) {
   const {workspaceURI} = workspacePathname(params);
+  const projectId = params['project-id'];
+  const ticketId = params['ticket-id'];
 
-  const ticket = await findTicketsById(params?.['ticket-id']).then(clone);
-
+  const [ticket, statuses] = await Promise.all([
+    findTicketById(ticketId),
+    findTicketStatuses(),
+  ]);
+  if (!ticket) notFound();
   return (
     <div className="container mt-5">
-      <TicketDetails ticket={ticket} workspaceURI={workspaceURI} />
-      {(ticket?.parentTask || ticket?.childTasks?.length > 0) && (
+      <TicketDetails
+        ticket={ticket}
+        workspaceURI={workspaceURI}
+        statuses={statuses}
+      />
+      {(ticket.parentTask || (ticket.childTasks?.length ?? 0) > 0) && (
         <SubTickets
-          parentTicket={ticket?.parentTask}
-          childTickets={ticket?.childTasks}
+          parentTicket={ticket.parentTask}
+          childTickets={ticket.childTasks}
         />
       )}
     </div>
   );
 }
 
-function TicketDetails({ticket, workspaceURI}: any) {
-  const status = [
-    {id: 0, name: 'New'},
-    {id: 1, name: 'In progress'},
-    {id: 2, name: 'Done'},
-    {id: 3, name: 'Canceled'},
-  ];
-
+function TicketDetails({
+  ticket,
+  workspaceURI,
+  statuses,
+}: {
+  ticket: AOSProjectTask;
+  workspaceURI: string;
+  statuses: AOSProjectTaskStatus[];
+}) {
   return (
     <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
       <div className="flex items-center gap-2 w-full">
-        {status?.map((s, i) => {
+        {statuses.map((s, i) => {
           const isCompleted =
-            status.findIndex(s => s.name === ticket?.status?.name) >= i;
+            statuses.findIndex(s => s.name === ticket.status?.name) >= i;
 
           const dotColor = isCompleted ? 'green' : 'lightgray';
           let lineColor = 'lightgray';
 
-          if (i < status.length - 1) {
+          if (i < statuses.length - 1) {
             const nextIsCompleted =
-              status.findIndex(s => s.name === ticket?.status?.name) >= i + 1;
+              statuses.findIndex(s => s.name === ticket.status?.name) >= i + 1;
             lineColor = isCompleted && nextIsCompleted ? 'green' : 'lightgray';
           }
 
@@ -99,7 +115,7 @@ function TicketDetails({ticket, workspaceURI}: any) {
                 <div
                   className="p-1.5 rounded-full"
                   style={{backgroundColor: dotColor}}></div>
-                {i < status?.length - 1 && (
+                {i < statuses?.length - 1 && (
                   <div
                     className="h-[1px] flex-grow ms-2"
                     style={{backgroundColor: lineColor}}></div>
@@ -123,10 +139,10 @@ function TicketDetails({ticket, workspaceURI}: any) {
         <p className="text-xl font-semibold">{ticket?.name}</p>
         <p className="text-sm font-medium">{ticket?.projectTaskCategory}</p>
         <Tag variant="success" className="text-[12px] py-1 me-5">
-          {ticket?.priority?.name}
+          {ticket.priority?.name}
         </Tag>
         <Tag variant="yellow" className="text-[12px] py-1">
-          {ticket?.status?.name}
+          {ticket.status?.name}
         </Tag>
         <hr />
         <p className="flex !mt-3.5 items-center">
@@ -141,7 +157,7 @@ function TicketDetails({ticket, workspaceURI}: any) {
         </p>
         <p>
           <span className="font-medium pe-2">{i18n.get('Created on')}:</span>
-          {ticket?.taskDate}
+          {formatDate(ticket.taskDate)}
         </p>
         <hr />
         <div className="flex items-start">
@@ -150,13 +166,13 @@ function TicketDetails({ticket, workspaceURI}: any) {
               <span className="font-medium pe-2">
                 {i18n.get('Assigned to')}:
               </span>
-              {ticket?.assignedTo?.name}
+              {ticket.assignedTo?.name}
             </p>
             <p>
               <span className="font-medium pe-2">
                 {i18n.get('Expected on')}:
               </span>
-              {ticket?.taskEndDate}
+              {formatDate(ticket.taskEndDate)}
             </p>
           </div>
           <div className="ml-auto">
@@ -166,9 +182,9 @@ function TicketDetails({ticket, workspaceURI}: any) {
         <hr />
         <div className="flex items-center !mt-4">
           <p className="font-medium pe-2"> {i18n.get('Progress')}: </p>
-          {ticket?.progress}%
+          {getProgress(ticket.progress)}%
           <Progress
-            value={ticket?.progress}
+            value={getProgress(ticket.progress)}
             className="h-3 basis-3/4 ms-5 rounded"
           />
         </div>
@@ -191,7 +207,7 @@ function TicketDetails({ticket, workspaceURI}: any) {
         </div>
         {/* --ticket--description--- */}
         <div>
-          <p>{ticket?.description}</p>
+          <p dangerouslySetInnerHTML={{__html: ticket.description ?? ''}}></p>
         </div>
       </div>
     </div>
@@ -208,61 +224,61 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
           <hr className="mt-5" />
           <TableRow>
             <TableCell className="px-5">
-              <Link href="">#{parentTicket?.id}</Link>
+              <Link href="">#{parentTicket.id}</Link>
             </TableCell>
             <TableCell className="flex justify-center items-center">
               <Avatar className="h-12 w-16">
                 <AvatarImage src="/images/user.png" />
               </Avatar>
-              <p className="ms-1">{parentTicket?.user?.name}</p>
+              <p className="ms-1">{parentTicket.user?.name}</p>
             </TableCell>
-            <TableCell>{parentTicket?.name}</TableCell>
+            <TableCell>{parentTicket.name}</TableCell>
             <TableCell>
               <Tag variant="blue" className="text-[12px] py-1">
-                {parentTicket?.priority?.name}
+                {parentTicket.priority?.name}
               </Tag>
             </TableCell>
             <TableCell>
               <Tag variant="default" className="text-[12px] py-1" outline>
-                {parentTicket?.status?.name}
+                {parentTicket.status?.name}
               </Tag>
             </TableCell>
-            <TableCell>{parentTicket?.category}</TableCell>
-            <TableCell>{parentTicket?.assignedTo?.name}</TableCell>
-            <TableCell>{formatDate(parentTicket?.updatedOn)}</TableCell>
+            <TableCell>{parentTicket.projectTaskCategory?.name}</TableCell>
+            <TableCell>{parentTicket.assignedTo?.name}</TableCell>
+            <TableCell>{formatDate(parentTicket.updatedOn)}</TableCell>
           </TableRow>
         </div>
       )}
       {/* ----child tickets---  */}
-      {childTickets?.length > 0 && (
+      {childTickets && (childTickets.length ?? 0) > 0 && (
         <div>
           <h4 className="text-[1.5rem] font-semibold">Child ticket</h4>
           <hr className="mt-5" />
-          {childTickets?.map((ticket: any) => {
+          {childTickets.map(ticket => {
             return (
               <TableRow key={ticket?.id}>
                 <TableCell className="px-5">
-                  <Link href="">#{ticket?.id}</Link>
+                  <Link href="">#{ticket.id}</Link>
                 </TableCell>
                 <TableCell className="flex justify-center items-center">
                   <Avatar className="h-12 w-16">
                     <AvatarImage src="/images/user.png" />
                   </Avatar>
-                  <p className="ms-1">{ticket?.user}</p>
+                  <p className="ms-1">{ticket.user}</p>
                 </TableCell>
-                <TableCell>{ticket?.name}</TableCell>
+                <TableCell>{ticket.name}</TableCell>
                 <TableCell>
                   <Tag variant="blue" className="text-[12px] py-1">
-                    {ticket?.priority?.name}
+                    {ticket.priority?.name}
                   </Tag>
                 </TableCell>
                 <TableCell>
                   <Tag variant="default" className="text-[12px] py-1" outline>
-                    {ticket?.status?.name}
+                    {ticket.status?.name}
                   </Tag>
                 </TableCell>
-                <TableCell>{ticket?.category}</TableCell>
-                <TableCell>{ticket?.assignedTo?.name}</TableCell>
+                <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
+                <TableCell>{ticket.assignedTo?.name}</TableCell>
                 <TableCell>{formatDate(ticket?.updatedOn)}</TableCell>
               </TableRow>
             );
@@ -271,4 +287,14 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
       )}
     </div>
   );
+}
+
+function getProgress(p: Maybe<string>): number {
+  if (p) {
+    const progress = Number(p);
+    if (!isNaN(progress)) {
+      return progress;
+    }
+  }
+  return 0;
 }

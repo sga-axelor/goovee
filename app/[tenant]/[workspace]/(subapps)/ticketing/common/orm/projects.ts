@@ -233,7 +233,7 @@ export async function findUsers() {
   return users;
 }
 
-export async function findTicketsById(id: ID) {
+export async function findTicketById(id: ID) {
   const client = await getClient();
   const tickets = await client.aOSProjectTask.findOne({
     where: {
