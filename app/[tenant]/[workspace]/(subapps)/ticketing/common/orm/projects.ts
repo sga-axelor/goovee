@@ -193,6 +193,16 @@ export async function findProjectTickets(props: TicketProps<AOSProjectTask>) {
   return tickets;
 }
 
+export async function findTicketCategories() {
+  const client = await getClient();
+  const categories = await client.aOSProjectTaskCategory.find({
+    select: {
+      name: true,
+    },
+  });
+  return categories;
+}
+
 export async function findTicketPriorities() {
   const client = await getClient();
   const priorities = await client.aOSProjectPriority.find({

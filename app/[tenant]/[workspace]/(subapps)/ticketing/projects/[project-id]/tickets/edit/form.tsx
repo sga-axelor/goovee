@@ -28,6 +28,8 @@ import {
 } from '@/ui/components/select';
 import {i18n} from '@/lib/i18n';
 import {Textarea} from '@/ui/components';
+import {ID} from '@goovee/orm';
+import {AOSProjectTask} from '@/goovee/.generated/models';
 
 const formSchema = z.object({
   subject: z.string().min(1, {message: 'Subject is required'}),
@@ -37,7 +39,27 @@ const formSchema = z.object({
   description: z.string(),
 });
 
-export default function TicketForm({ticket}: {ticket: any}) {
+type TicketFormProps = {
+  ticket: AOSProjectTask;
+  categories: {
+    id: string;
+    name: string;
+  }[];
+  priorities: {
+    id: string;
+    name: string;
+  }[];
+  statuses: {
+    id: string;
+    name: string;
+  }[];
+  contacts: {
+    id: string;
+    name: string;
+  }[];
+};
+export default function TicketForm(props: TicketFormProps) {
+  const {ticket, contacts, categories, priorities, statuses} = props;
   const {workspaceURL} = useWorkspace();
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -60,50 +82,7 @@ export default function TicketForm({ticket}: {ticket: any}) {
      * Call create action with formdata and workspaceURL
      */
   };
-  const category = [
-    {
-      name: 'category',
-      value: 'category1',
-    },
-    {
-      name: 'category',
-      value: 'category2',
-    },
-    {
-      name: 'category',
-      value: 'category3',
-    },
-  ];
 
-  const priority = [
-    {
-      name: 'category',
-      value: 'Low',
-    },
-    {
-      name: 'category',
-      value: 'Medium',
-    },
-    {
-      name: 'category',
-      value: 'High',
-    },
-  ];
-
-  const contact = [
-    {
-      id: '1',
-      name: 'Contact 1',
-    },
-    {
-      id: '2',
-      name: 'Contact 2',
-    },
-    {
-      id: '3',
-      name: 'Contact 3',
-    },
-  ];
   return (
     <div className="container">
       <div className="flex items-center justify-between mt-5 mb-5">
@@ -145,9 +124,9 @@ export default function TicketForm({ticket}: {ticket: any}) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {category.map((category: any) => (
-                        <SelectItem value={category.value} key={category.value}>
-                          {category.value}
+                      {categories.map(category => (
+                        <SelectItem value={category.id} key={category.id}>
+                          {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -172,9 +151,9 @@ export default function TicketForm({ticket}: {ticket: any}) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {priority.map((priority: any) => (
-                        <SelectItem value={priority.value} key={priority.value}>
-                          {priority.value}
+                      {priorities.map(priority => (
+                        <SelectItem value={priority.id} key={priority.id}>
+                          {priority.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -200,7 +179,7 @@ export default function TicketForm({ticket}: {ticket: any}) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {contact.map((contact: any) => (
+                      {contacts.map(contact => (
                         <SelectItem value={contact.id} key={contact.id}>
                           {contact.name}
                         </SelectItem>
