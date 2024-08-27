@@ -68,13 +68,14 @@ export default async function Page({
   }).then(clone);
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
+  const allTicketsUrl = `${ticketsURL}?${encodeFilterQuery('statusCompleted', 'eq', 'false')}`;
 
   const items = [
     {
       label: 'All Tickets',
       count: getAllTicketCount(projectId),
       icon: MdAllInbox,
-      href: `${ticketsURL}?${encodeFilterQuery('statusCompleted', 'eq', 'false')}`,
+      href: allTicketsUrl,
     },
     {
       label: 'My tickets',
@@ -85,19 +86,19 @@ export default async function Page({
       label: 'Assigned tickets',
       count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
-      href: `${ticketsURL}?${encodeFilterQuery('requestedBy', 'eq', userId)}`,
+      href: `${allTicketsUrl}&${encodeFilterQuery('requestedBy', 'in', [userId])}`,
     },
     {
       label: 'Created tickets',
       count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
-      href: `${ticketsURL}?${encodeFilterQuery('updatedBy', 'eq', userId)}`,
+      href: `${allTicketsUrl}&${encodeFilterQuery('updatedBy', 'eq', userId)}`,
     },
     {
       label: 'Resolved tickets',
       count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
-      href: `${ticketsURL}?${encodeFilterQuery('statusCompleted', 'eq', 'true')}`,
+      href: `${ticketsURL}&${encodeFilterQuery('statusCompleted', 'eq', 'true')}`,
     },
   ].map(props => (
     <Suspense key={props.label} fallback={<TicketCardSkeleton />}>

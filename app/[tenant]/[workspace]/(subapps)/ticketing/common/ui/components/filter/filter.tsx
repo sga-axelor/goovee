@@ -53,6 +53,7 @@ const filterSchema = z.object({
   status: z.array(z.string()),
   updatedOn: z.array(z.string()),
 });
+
 type FilterProps = {
   url: string;
   searchParams: SearchParams<FilterKey>;
@@ -108,8 +109,11 @@ export function Filter(props: FilterProps) {
   useEffect(() => {
     const values = structuredClone(defaultValues);
     const {sort, page, limit, ...filterParams} = searchParams;
-    const {requestedBy, status, updatedOn, priority} =
-      decodeFilterParams(filterParams);
+    const {success, data} = filterSchema
+      .partial()
+      .safeParse(decodeFilterParams(filterParams));
+
+    const {requestedBy, status, updatedOn, priority} = data || {};
     if (requestedBy) values.requestedBy = requestedBy;
     if (priority) values.priority = priority;
     if (status) values.status = status;
