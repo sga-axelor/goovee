@@ -24,7 +24,10 @@ import {i18n} from '@/lib/i18n';
 import {AOSProjectTask, AOSProjectTaskStatus} from '@/goovee/.generated/models';
 import {notFound} from 'next/navigation';
 import {Maybe} from '@/types/util';
-import {Suspense} from 'react';
+import {Fragment, Suspense} from 'react';
+import {ID} from '@goovee/orm';
+import {cn} from '@/utils/css';
+import {Stepper} from '../../../../common/ui/components/stepper';
 
 interface User {
   id: number;
@@ -100,43 +103,12 @@ function TicketDetails({
 }: {
   ticket: AOSProjectTask;
   workspaceURI: string;
-  statuses: AOSProjectTaskStatus[];
+  statuses: {id: ID; name?: string}[];
 }) {
   return (
     <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
-      <div className="flex items-center gap-2 w-full">
-        {statuses.map((s, i) => {
-          const isCompleted =
-            statuses.findIndex(s => s.name === ticket.status?.name) >= i;
-
-          const dotColor = isCompleted ? 'green' : 'lightgray';
-          let lineColor = 'lightgray';
-
-          if (i < statuses.length - 1) {
-            const nextIsCompleted =
-              statuses.findIndex(s => s.name === ticket.status?.name) >= i + 1;
-            lineColor = isCompleted && nextIsCompleted ? 'green' : 'lightgray';
-          }
-
-          return (
-            <div className="flex flex-col w-full" key={i}>
-              <div className="flex items-center w-full">
-                <div
-                  className="p-1.5 rounded-full"
-                  style={{backgroundColor: dotColor}}></div>
-                {i < statuses?.length - 1 && (
-                  <div
-                    className="h-[1px] flex-grow ms-2"
-                    style={{backgroundColor: lineColor}}></div>
-                )}
-              </div>
-              <p className="mt-1 text-sm">{s.name}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-20 space-y-2">
+      <Stepper steps={statuses} current={ticket.status?.id} className="mb-12" />
+      <div className="space-y-2">
         <div className="flex justify-between">
           <p className="text-base font-medium">#{ticket?.id}</p>
 
