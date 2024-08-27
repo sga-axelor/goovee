@@ -147,8 +147,10 @@ export async function findPosts({
       content: true,
       attachmentList: {
         select: {
+          title: true,
           metaFile: {
             fileType: true,
+            fileName: true,
           },
         },
       },

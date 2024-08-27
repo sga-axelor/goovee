@@ -18,7 +18,7 @@ export const ThreadPopup = ({
   images,
   onClose,
 }: {
-  post: Post;
+  post?: Post;
   open: boolean;
   images: any;
   onClose: () => void;

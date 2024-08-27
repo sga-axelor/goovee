@@ -1,5 +1,5 @@
 'use client';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {MdOutlineMoreHoriz, MdOutlineModeComment} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -22,15 +22,14 @@ import {
   NOT_INTERESTED,
   REPORT,
 } from '@/subapps/forum/common/constants';
-import {ImageGallery} from '@/subapps/forum/common/ui/components';
+import {
+  FilePreviewer,
+  ImageGallery,
+} from '@/subapps/forum/common/ui/components';
 import {Post} from '@/subapps/forum/common/types/forum';
 
 interface MetaFile {
   fileType: string;
-}
-
-interface Attachment {
-  metaFile?: MetaFile;
 }
 
 export const ThreadBody = ({
@@ -38,21 +37,32 @@ export const ThreadBody = ({
   usePopUpStyles = false,
   toggleComments,
 }: {
-  post: Post;
+  post?: Post;
   usePopUpStyles?: boolean;
   toggleComments: () => void;
 }) => {
-  const {title, content, attachmentList, author, createdOn, commentList} = post;
+  const {title, content, attachmentList, author, createdOn, commentList}: any =
+    post || {};
 
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const images =
-    attachmentList?.filter((attachment: any) =>
-      attachment?.metaFile?.fileType.startsWith('image'),
-    ) || [];
+  const {images, files} = attachmentList?.reduce(
+    (acc: any, attachment: any) => {
+      if (attachment?.metaFile?.fileType.startsWith('image')) {
+        acc.images.push(attachment);
+      } else {
+        acc.files.push({
+          type: attachment.metaFile.fileType,
+          name: attachment.metaFile.fileName,
+        });
+      }
+      return acc;
+    },
+    {images: [], files: []},
+  ) || {images: [], files: []};
 
   const commentsLength = commentList?.length;
 
@@ -107,6 +117,15 @@ export const ThreadBody = ({
         {images?.length > 0 && !usePopUpStyles && (
           <ImageGallery post={post} images={images} />
         )}
+
+        {files?.length > 0 &&
+          !usePopUpStyles &&
+          files.map((file: any) => (
+            <React.Fragment key={file.id}>
+              <FilePreviewer file={file} hidePDFPreview={true} />
+            </React.Fragment>
+          ))}
+
         <div className="flex justify-between">
           <div></div>
           <div

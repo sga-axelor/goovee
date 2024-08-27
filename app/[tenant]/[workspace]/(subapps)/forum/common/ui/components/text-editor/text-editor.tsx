@@ -13,6 +13,7 @@ interface TextEditorProps {
 
 export function TextEditor({handleContentChange}: TextEditorProps) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
   const onEditorStateChange = function (editorState: any) {
     setEditorState(editorState);
     handleContentChange(
@@ -24,9 +25,9 @@ export function TextEditor({handleContentChange}: TextEditorProps) {
     <>
       <Editor
         editorState={editorState}
-        toolbarClassName="bg-gray-700 "
-        wrapperClassName="rounded-sm overflow-hidden max-h-fit overflow-x-hidden break-words resize-y"
-        editorClassName="min-h-[300px] xl:min-h-[200px] "
+        toolbarClassName="bg-gray-700 mt-2"
+        wrapperClassName="rounded-sm overflow-hidden max-h-fit overflow-x-hidden break-words resize-y border-gray-100 border rounded-md"
+        editorClassName="min-h-[300px] xl:min-h-[200px]"
         onEditorStateChange={onEditorStateChange}
         editorStyle={{
           wordBreak: 'break-word',

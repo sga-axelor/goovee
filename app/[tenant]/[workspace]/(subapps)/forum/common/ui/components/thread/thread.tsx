@@ -17,19 +17,19 @@ export const Thread = ({
   hideCloseComments = false,
   usePopUpStyles = false,
 }: {
-  post: Post;
+  post?: Post;
   showHeader?: boolean;
   showCommentsByDefault?: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
 }) => {
-  const {forumGroup, commentList} = post;
+  const {forumGroup, commentList}: any = post || {};
 
   const [showComments, setShowComments] = useState(
     showCommentsByDefault ?? false,
   );
   const toggleComments = () => {
-    commentList.length >= 1 &&
+    commentList?.length >= 1 &&
       setShowComments(prevShowComments => !prevShowComments);
   };
 
@@ -42,7 +42,6 @@ export const Thread = ({
         post={post}
         usePopUpStyles={usePopUpStyles}
         toggleComments={toggleComments}
-        post={post}
       />
       <ThreadFooter
         comments={commentList}

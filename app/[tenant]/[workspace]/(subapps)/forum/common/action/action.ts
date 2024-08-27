@@ -1,5 +1,9 @@
 'use server';
-import {getSession} from '@/orm/auth';
+
+import fs from 'fs';
+import path from 'path';
+import {pipeline} from 'stream';
+import {promisify} from 'util';
 
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
@@ -8,9 +12,55 @@ import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
+import {getSession} from '@/orm/auth';
 
 //----LOCAL IMPORTS -----//
 import {findGroupByMembers, findPosts} from '@/subapps/forum/common/orm/forum';
+import {getFileSizeText} from '@/subapps/resources/common/utils';
+
+interface FileMeta {
+  fileName: string;
+  filePath: string;
+  id: number;
+}
+
+interface AttachmentResponse {
+  title: string;
+  metaFile: FileMeta;
+}
+
+const pump = promisify(pipeline);
+
+const storage = process.env.DATA_STORAGE as string;
+
+function extractFileValues(formData: FormData) {
+  let values: any = [];
+
+  for (let pair of formData.entries()) {
+    let key = pair[0];
+    let value = pair[1];
+
+    let index: any = Number(key.match(/\[(\d+)\]/)?.[1]);
+
+    if (Number.isNaN(index)) {
+      continue;
+    }
+
+    if (!values[index]) {
+      values[index] = {};
+    }
+
+    let field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
+
+    if (field === 'title' || field === 'description') {
+      values[index][field] = value;
+    } else if (field === 'file') {
+      values[index][field] =
+        value instanceof File ? value : new File([value], 'filename');
+    }
+  }
+  return values;
+}
 
 export async function addPinnedGroup({
   isPin,
@@ -122,21 +172,15 @@ export async function addPost({
   postDateT,
   group,
   title,
+  content,
   workspaceURL,
-}: {
-  postDateT: any;
-  title: string;
-  group: {id: string};
-  workspaceURL: string;
-}) {
+  formData,
+}: any) {
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+    return {error: true, message: i18n.get('Unauthorized')};
   }
 
   const subapp = await findSubappAccess({
@@ -144,39 +188,70 @@ export async function addPost({
     user,
     url: workspaceURL,
   });
-
   if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+    return {error: true, message: i18n.get('Unauthorized')};
   }
 
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-  });
-
+  const workspace = await findWorkspace({user, url: workspaceURL});
   if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
+    return {error: true, message: i18n.get('Invalid workspace')};
   }
 
   const client = await getClient();
 
-  const post = client.aOSPortalForumPost.create({
-    data: {
-      postDateT,
-      createdOn: postDateT,
-      forumGroup: {select: {id: group?.id}},
-      title,
-      author: {select: {id: user?.id}},
-    },
-  });
+  let attachmentListArray: {id: number; fileName: string; title: string}[] = [];
 
-  return {success: true, data: post};
+  if (formData) {
+    if (!fs.existsSync(storage)) {
+      fs.mkdirSync(storage, {recursive: true});
+    }
+
+    const attachmentResponse = await uploadAttachment(formData);
+
+    if (attachmentResponse.some((item: any) => item.error)) {
+      return {
+        error: true,
+        message: i18n.get('Something went wrong while attachment upload!'),
+      };
+    }
+
+    attachmentListArray = attachmentResponse.map(
+      ({title, metaFile}: AttachmentResponse) => ({
+        id: metaFile.id,
+        fileName: metaFile.fileName,
+        title,
+      }),
+    );
+  }
+
+  try {
+    const post = await client.aOSPortalForumPost.create({
+      select: {
+        attachmentList: {select: {metaFile: true}},
+      },
+      data: {
+        postDateT,
+        createdOn: postDateT,
+        forumGroup: {select: {id: group.id}},
+        title,
+        content,
+        author: {select: {id: user.id}},
+        attachmentList:
+          attachmentListArray.length > 0
+            ? {
+                create: attachmentListArray.map(item => ({
+                  title: item.title,
+                  metaFile: {select: {id: item.id}},
+                })),
+              }
+            : [],
+      },
+    });
+
+    return {success: true, data: clone(post)};
+  } catch (error) {
+    return {error: true, message: i18n.get('Failed to create post')};
+  }
 }
 
 export async function findMedia(id: ID) {
@@ -228,4 +303,62 @@ export async function fetchPosts({
     search,
     workspaceID,
   }).then(clone);
+}
+
+async function uploadAttachment(formData: FormData): Promise<any> {
+  const client = await getClient();
+  const values = extractFileValues(formData);
+
+  const getTimestampFilename = (name: string) =>
+    `${new Date().getTime()}-${name}`;
+
+  const create = async ({
+    file,
+    title,
+  }: {
+    file: any;
+    title: string;
+  }): Promise<AttachmentResponse> => {
+    const name = file.name;
+    const timestampFilename = getTimestampFilename(name);
+
+    try {
+      await pump(
+        file.stream(),
+        fs.createWriteStream(path.resolve(storage, timestampFilename)),
+      );
+
+      const metaFile: any = await client.aOSMetaFile.create({
+        data: {
+          fileName: name,
+          filePath: timestampFilename,
+          fileType: file.type,
+          fileSize: file.size,
+          sizeText: getFileSizeText(file.size),
+        },
+      });
+
+      return {
+        title,
+        metaFile: {
+          fileName: metaFile.fileName,
+          filePath: metaFile.filePath,
+          id: Number(metaFile.id),
+        },
+      };
+    } catch (error) {
+      throw new Error('Failed to create meta file');
+    }
+  };
+
+  try {
+    const responses = await Promise.all(
+      values.map(({title, file}: any) => create({title, file})),
+    );
+
+    return responses;
+  } catch (error) {
+    console.error('Error processing files:', error);
+    return [{error: 'Failed to upload attachments'}];
+  }
 }

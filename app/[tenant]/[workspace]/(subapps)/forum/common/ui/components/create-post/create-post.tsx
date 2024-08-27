@@ -1,7 +1,11 @@
 'use client';
 import React, {useState} from 'react';
 import Image from 'next/image';
-import {MdOutlineImage, MdOutlineUploadFile} from 'react-icons/md';
+import {
+  MdOutlineEdit,
+  MdOutlineImage,
+  MdOutlineUploadFile,
+} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -21,37 +25,52 @@ import {useToast} from '@/ui/hooks/use-toast';
 import {getImageURL} from '@/utils/image';
 import {getCurrentDateTime} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   CHOOSE_GROUP,
   CONTENT,
-  FORUM_GROUP,
   PUBLISH,
   TITLE,
 } from '@/subapps/forum/common/constants';
-import {TextEditor} from '@/subapps/forum/common/ui/components';
+import {
+  FilePreviewer,
+  ImagePreviewer,
+  TextEditor,
+} from '@/subapps/forum/common/ui/components';
 import {addPost} from '@/subapps/forum/common/action/action';
+import {
+  FileUploader,
+  ImageUploader,
+} from '@/subapps/forum/common/ui/components';
+
+interface ImageItem {
+  file: File;
+  altText: string;
+}
 
 interface CreatePostProps {
   groups: any[];
-  handleDialogOpen: (type: string) => void;
   onClose: () => void;
 }
 
-export const CreatePost = ({
-  groups,
-  handleDialogOpen,
-  onClose,
-}: CreatePostProps) => {
+type ModalType = 'none' | 'image' | 'file';
+
+export const CreatePost = ({groups, onClose}: CreatePostProps) => {
   const {toast} = useToast();
   const {workspaceURI, workspaceURL} = useWorkspace();
   const router = useRouter();
 
   const [editorContent, setEditorContent] = useState<string>('');
-
   const [post, setPost] = useState<any>({title: ''});
   const [group, setGroup] = useState<any>();
+
+  const [attachments, setAttachments] = useState<{
+    images: ImageItem[];
+    file?: any;
+  }>({images: []});
+  const [modalOpen, setModalOpen] = useState<ModalType>('none');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target;
@@ -66,34 +85,82 @@ export const CreatePost = ({
     setGroup(group);
   };
 
-  const handlePost = async () => {
-    const publicationDateTime = getCurrentDateTime();
-
-    const result: any = await addPost({
-      postDateT: publicationDateTime,
-      group: {id: group?.id},
-      title: post.title,
-      workspaceURL,
-    });
-
-    if (result.success) {
-      toast({
-        variant: 'success',
-        title: i18n.get('Post added successfully.'),
-      });
-      onClose();
-      router.refresh();
-      router.push(`${workspaceURI}/forum`);
-    } else {
-      toast({
-        variant: 'destructive',
-        title: i18n.get(result.message),
-      });
-    }
-  };
+  const handleOpen = (type: ModalType) => setModalOpen(type);
+  const handleClose = () => setModalOpen('none');
 
   const handleContentChange = (text: string) => {
     setEditorContent(text);
+  };
+
+  const handleImageUpload = (files: any) => {
+    const newImages: ImageItem[] = files.map((file: any) => ({
+      file,
+      altText: file?.altText || file?.name,
+    }));
+
+    setAttachments(prev => ({
+      ...prev,
+      images: [...prev.images, ...newImages],
+    }));
+  };
+
+  const handleFileUpload = (newFile: any) => {
+    setAttachments(prev => ({
+      ...prev,
+      title: newFile?.fileTitle || newFile?.file.name,
+      file: newFile,
+    }));
+  };
+
+  const handlePost = async () => {
+    const publicationDateTime = getCurrentDateTime();
+
+    const formData = new FormData();
+    if (attachments.images.length) {
+      attachments.images.forEach((element: any, index) => {
+        formData.append(
+          `attachmentList[${index}][title]`,
+          element?.altText || '',
+        );
+        formData.append(`attachmentList[${index}][file]`, element.file.file);
+      });
+    } else if (attachments.file) {
+      formData.append(
+        `attachmentList[0][title]`,
+        attachments.file?.fileTitle || '',
+      );
+      formData.append(`attachmentList[0][file]`, attachments.file?.file);
+    }
+    try {
+      const result: any = await addPost({
+        postDateT: publicationDateTime,
+        group: {id: group?.id},
+        title: post.title,
+        content: editorContent,
+        workspaceURL,
+        formData,
+      }).then(clone);
+
+      if (result.success) {
+        toast({
+          variant: 'success',
+          title: i18n.get('Post added successfully.'),
+        });
+        onClose();
+        router.push(`${workspaceURI}/forum`);
+        router.refresh();
+      } else {
+        toast({
+          variant: 'destructive',
+          title: i18n.get(result.message ?? i18n.get('Something went wrong!')),
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('An error occurred!'),
+      });
+    }
   };
 
   return (
@@ -153,13 +220,40 @@ export const CreatePost = ({
           </div>
         </div>
         <div className="w-full mt-2">
-          <div className="flex gap-2 lg:gap-4 p-2">
-            <div className="w-6 h-6" onClick={() => handleDialogOpen('image')}>
-              <MdOutlineImage className="w-full h-full cursor-pointer" />
-            </div>
-            <div className="w-6 h-6" onClick={() => handleDialogOpen('file')}>
-              <MdOutlineUploadFile className="w-full h-full cursor-pointer " />
-            </div>
+          <div className="flex gap-2 lg:gap-4 p-2 w-full">
+            {attachments.images.length > 0 ? (
+              <div className="w-full flex flex-col gap-6">
+                <div className="flex justify-end">
+                  <MdOutlineEdit
+                    className="w-6 h-6"
+                    onClick={() => handleOpen('image')}
+                  />
+                </div>
+                <ImagePreviewer images={attachments.images} />
+              </div>
+            ) : attachments?.file?.file ? (
+              <div className="w-full flex flex-col gap-6">
+                <div className="flex justify-end">
+                  <MdOutlineEdit
+                    className="w-6 h-6"
+                    onClick={() => handleOpen('file')}
+                  />
+                </div>
+                <FilePreviewer
+                  file={attachments.file.file}
+                  hidePDFPreview={true}
+                />
+              </div>
+            ) : (
+              <>
+                <div className="w-6 h-6" onClick={() => handleOpen('image')}>
+                  <MdOutlineImage className="w-full h-full cursor-pointer" />
+                </div>
+                <div className="w-6 h-6" onClick={() => handleOpen('file')}>
+                  <MdOutlineUploadFile className="w-full h-full cursor-pointer " />
+                </div>
+              </>
+            )}
           </div>
           <Button
             className="bg-success w-full mt-1 lg:mt-4"
@@ -168,6 +262,24 @@ export const CreatePost = ({
           </Button>
         </div>
       </div>
+
+      {modalOpen === 'image' && (
+        <ImageUploader
+          initialValue={attachments.images}
+          open={modalOpen === 'image'}
+          onUpload={handleImageUpload}
+          handleClose={handleClose}
+        />
+      )}
+
+      {modalOpen === 'file' && (
+        <FileUploader
+          open={modalOpen === 'file'}
+          initialValue={attachments.file}
+          onUpload={handleFileUpload}
+          handleClose={handleClose}
+        />
+      )}
     </ScrollArea>
   );
 };

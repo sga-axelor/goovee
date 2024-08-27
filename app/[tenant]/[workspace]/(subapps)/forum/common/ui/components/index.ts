@@ -22,3 +22,5 @@ export {PdfViewer} from './pdf-viewer';
 export {SingleGroup} from './single-group';
 export {InfiniteScroll} from './infinite-scroll';
 export {SearchItem} from './search-item';
+export {FilePreviewer} from './file-previewer';
+export {ImagePreviewer} from './image-previewer';
