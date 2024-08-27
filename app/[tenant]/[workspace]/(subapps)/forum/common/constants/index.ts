@@ -1,3 +1,4 @@
+import {lazy} from 'react';
 import {MdOutlineArticle} from 'react-icons/md';
 import {
   CiTextAlignCenter,
@@ -13,7 +14,12 @@ import type {
   PostsContentProps,
   Tab,
 } from '@/subapps/forum/common/types/forum';
-import {PostsContent} from '@/subapps/forum/common/ui/components/posts-content/posts-content';
+
+const PostsContent = lazy(
+  () =>
+    import('@/subapps/forum/common/ui/components/posts-content/posts-content'),
+);
+
 import {ORDER_BY} from '@/constants';
 
 export const GROUPS = 'Groups';
