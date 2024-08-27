@@ -117,9 +117,11 @@ export const GroupActionList = ({
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <div className="px-1 bg-success/10 cursor-pointer rounded-sm leading-[15px]">
-                  <span className="text-success text-[10px]">2</span>
-                </div>
+                {false && (
+                  <div className="px-1 bg-success/10 cursor-pointer rounded-sm leading-[15px]">
+                    <span className="text-success text-[10px]">2</span>
+                  </div>
+                )}
                 {group?.isPin && (
                   <MdOutlinePushPin className="cursor-pointer w-4 h-4" />
                 )}
