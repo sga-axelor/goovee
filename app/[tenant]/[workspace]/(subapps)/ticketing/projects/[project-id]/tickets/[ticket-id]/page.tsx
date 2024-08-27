@@ -16,6 +16,7 @@ import {i18n} from '@/lib/i18n';
 import {AOSProjectTask, AOSProjectTaskStatus} from '@/goovee/.generated/models';
 import {notFound} from 'next/navigation';
 import {Maybe} from '@/types/util';
+import {Suspense} from 'react';
 
 interface User {
   id: number;
@@ -207,11 +208,23 @@ function TicketDetails({
         </div>
         {/* --ticket--description--- */}
         <div>
-          <p dangerouslySetInnerHTML={{__html: ticket.description ?? ''}}></p>
+          <Suspense>
+            <Description description={ticket.description} />
+          </Suspense>
         </div>
       </div>
     </div>
   );
+}
+
+async function Description({
+  description,
+}: {
+  description: Maybe<Promise<string>>;
+}) {
+  if (!description) return null;
+  const html = await description;
+  return <p dangerouslySetInnerHTML={{__html: html}} />;
 }
 
 function SubTickets({parentTicket, childTickets}: SubTicketsProps) {

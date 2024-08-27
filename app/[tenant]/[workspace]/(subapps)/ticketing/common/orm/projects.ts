@@ -235,7 +235,7 @@ export async function findUsers() {
 
 export async function findTicketById(id: ID) {
   const client = await getClient();
-  const tickets = await client.aOSProjectTask.findOne({
+  const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: id,
     },
@@ -303,5 +303,6 @@ export async function findTicketById(id: ID) {
       },
     },
   });
-  return tickets;
+
+  return ticket;
 }
