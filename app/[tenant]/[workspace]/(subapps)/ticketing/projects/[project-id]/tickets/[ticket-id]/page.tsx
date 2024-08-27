@@ -9,6 +9,7 @@ import {MdOutlineModeEditOutline} from 'react-icons/md';
 import Link from 'next/link';
 import {formatDate} from '../../../../common/utils';
 import {Progress} from '@/ui/components/progress';
+import {i18n} from '@/lib/i18n';
 
 interface User {
   id: number;
@@ -58,10 +59,12 @@ export default async function Page({
   return (
     <div className="container mt-5">
       <TicketDetails ticket={ticket} workspaceURI={workspaceURI} />
-      <SubTickets
-        parentTicket={ticket?.parentTask}
-        childTickets={ticket?.childTasks}
-      />
+      {(ticket?.parentTask || ticket?.childTask?.length > 0) && (
+        <SubTickets
+          parentTicket={ticket?.parentTask}
+          childTickets={ticket?.childTasks}
+        />
+      )}
     </div>
   );
 }
@@ -117,7 +120,7 @@ function TicketDetails({ticket, workspaceURI}: any) {
             <MdOutlineModeEditOutline className="size-6" />
           </Link>
         </div>
-        <p className="text-lg font-semibold">{ticket?.name}</p>
+        <p className="text-xl font-semibold">{ticket?.name}</p>
         <p className="text-sm font-medium">{ticket?.projectTaskCategory}</p>
         <Tag variant="success" className="text-[12px] py-1 me-5">
           {ticket?.priority?.name}
@@ -126,8 +129,8 @@ function TicketDetails({ticket, workspaceURI}: any) {
           {ticket?.status?.name}
         </Tag>
         <hr />
-        <p className="flex">
-          <span className="font-medium pe-2">Requested by:</span>
+        <p className="flex !mt-3.5 items-center">
+          <span className="font-medium pe-2">{i18n.get('Request by')}: </span>
           <Avatar className="h-8 w-10">
             <AvatarImage
               src="/images/user.png"
@@ -137,18 +140,22 @@ function TicketDetails({ticket, workspaceURI}: any) {
           <span>Orville Bartoletti</span>
         </p>
         <p>
-          <span className="font-medium pe-2">Created on:</span>
+          <span className="font-medium pe-2">{i18n.get('Created on')}:</span>
           {ticket?.taskDate}
         </p>
         <hr />
         <div className="flex items-start">
           <div className="flex flex-col space-y-2">
             <p>
-              <span className="font-medium pe-2">Assigned to:</span>
+              <span className="font-medium pe-2">
+                {i18n.get('Assigned to')}:
+              </span>
               {ticket?.assignedTo?.name}
             </p>
             <p>
-              <span className="font-medium pe-2">Expected on:</span>
+              <span className="font-medium pe-2">
+                {i18n.get('Expected on')}:
+              </span>
               {ticket?.taskEndDate}
             </p>
           </div>
@@ -157,24 +164,29 @@ function TicketDetails({ticket, workspaceURI}: any) {
           </div>
         </div>
         <hr />
-        <div className="font-medium flex items-center">
-          <span>Progress: {ticket?.progress}%</span>
+        <div className="flex items-center !mt-4">
+          <p className="font-medium pe-2"> {i18n.get('Progress')}: </p>
+          {ticket?.progress}%
           <Progress
             value={ticket?.progress}
             className="h-3 basis-3/4 ms-5 rounded"
           />
         </div>
-        <p className="font-medium">Version: {ticket?.version}</p>
+        <p>
+          <span className="font-medium pe-2"> {i18n.get('Version')}:</span>
+          {ticket?.version}
+        </p>
         <hr />
-        <div className="flex justify-start space-x-20">
+        <div className="flex justify-start space-x-20 !mt-4">
           <p>
-            <span className="font-medium">Quantity: </span>3
+            <span className="font-medium"> {i18n.get('Quantity')}: </span>3
           </p>
           <p>
-            <span className="font-medium">Price WT: </span>10.00$
+            <span className="font-medium"> {i18n.get('Price WT')}: </span>10.00$
           </p>
           <p>
-            <span className="font-medium">Invoicing unit:</span> dollar($)
+            <span className="font-medium">{i18n.get('Invoicing unit')}:</span>
+            dollar($)
           </p>
         </div>
         {/* --ticket--description--- */}
@@ -222,39 +234,41 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
         </div>
       )}
       {/* ----child tickets---  */}
-      <div>
-        <h4 className="text-[1.5rem] font-semibold">Child ticket</h4>
-        <hr className="mt-5" />
-        {childTickets?.map((ticket: any) => {
-          return (
-            <TableRow key={ticket?.id}>
-              <TableCell className="px-5">
-                <Link href="">#{ticket?.id}</Link>
-              </TableCell>
-              <TableCell className="flex justify-center items-center">
-                <Avatar className="h-12 w-16">
-                  <AvatarImage src="/images/user.png" />
-                </Avatar>
-                <p className="ms-1">{ticket?.user}</p>
-              </TableCell>
-              <TableCell>{ticket?.name}</TableCell>
-              <TableCell>
-                <Tag variant="blue" className="text-[12px] py-1">
-                  {ticket?.priority?.name}
-                </Tag>
-              </TableCell>
-              <TableCell>
-                <Tag variant="default" className="text-[12px] py-1" outline>
-                  {ticket?.status?.name}
-                </Tag>
-              </TableCell>
-              <TableCell>{ticket?.category}</TableCell>
-              <TableCell>{ticket?.assignedTo?.name}</TableCell>
-              <TableCell>{formatDate(ticket?.updatedOn)}</TableCell>
-            </TableRow>
-          );
-        })}
-      </div>
+      {childTickets?.length > 0 && (
+        <div>
+          <h4 className="text-[1.5rem] font-semibold">Child ticket</h4>
+          <hr className="mt-5" />
+          {childTickets?.map((ticket: any) => {
+            return (
+              <TableRow key={ticket?.id}>
+                <TableCell className="px-5">
+                  <Link href="">#{ticket?.id}</Link>
+                </TableCell>
+                <TableCell className="flex justify-center items-center">
+                  <Avatar className="h-12 w-16">
+                    <AvatarImage src="/images/user.png" />
+                  </Avatar>
+                  <p className="ms-1">{ticket?.user}</p>
+                </TableCell>
+                <TableCell>{ticket?.name}</TableCell>
+                <TableCell>
+                  <Tag variant="blue" className="text-[12px] py-1">
+                    {ticket?.priority?.name}
+                  </Tag>
+                </TableCell>
+                <TableCell>
+                  <Tag variant="default" className="text-[12px] py-1" outline>
+                    {ticket?.status?.name}
+                  </Tag>
+                </TableCell>
+                <TableCell>{ticket?.category}</TableCell>
+                <TableCell>{ticket?.assignedTo?.name}</TableCell>
+                <TableCell>{formatDate(ticket?.updatedOn)}</TableCell>
+              </TableRow>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
