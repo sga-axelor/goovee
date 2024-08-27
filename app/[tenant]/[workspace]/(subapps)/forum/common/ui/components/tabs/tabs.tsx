@@ -57,7 +57,7 @@ export const Tabs = ({
   return (
     <>
       <div className="bg-white px-4 pb-4 pt-1 rounded-b-lg border-none">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 hidden">
           {tabs.map(tab => (
             <Tab
               key={tab.id}
