@@ -49,8 +49,6 @@ const Comment = ({
   parentCommentId: string;
   comment?: any;
 }) => {
-  if (!comment) return null;
-
   const [showSubComments, setShowSubComments] = useState(false);
   const [commentValue, setCommentValue] = useState<any>('');
 
@@ -99,6 +97,8 @@ const Comment = ({
       }
     }
   };
+
+  if (!comment) return null;
 
   return (
     <div className="flex flex-col gap-2">
