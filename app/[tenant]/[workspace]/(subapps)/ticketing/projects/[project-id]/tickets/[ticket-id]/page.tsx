@@ -59,7 +59,7 @@ export default async function Page({
   return (
     <div className="container mt-5">
       <TicketDetails ticket={ticket} workspaceURI={workspaceURI} />
-      {(ticket?.parentTask || ticket?.childTask?.length > 0) && (
+      {(ticket?.parentTask || ticket?.childTasks?.length > 0) && (
         <SubTickets
           parentTicket={ticket?.parentTask}
           childTickets={ticket?.childTasks}

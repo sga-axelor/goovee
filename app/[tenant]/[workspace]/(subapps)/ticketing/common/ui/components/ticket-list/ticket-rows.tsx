@@ -7,6 +7,8 @@ import {Maybe} from '@/types/util';
 import {Ticket} from '../../../types';
 import {columns} from '../../../constants';
 import {formatDate} from '../../../utils';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import Link from 'next/link';
 
 type Variant =
   | 'success'
@@ -39,8 +41,9 @@ const getStatusName = (name: Maybe<string>) => {
   return statusMap[name] || 'default';
 };
 
-export function TicketRows(props: {tickets: Ticket[]}) {
-  const {tickets} = props;
+export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
+  const {workspaceURL} = useWorkspace();
+  const {tickets, projectId} = props;
   if (!tickets.length) {
     return (
       <TableRow>
@@ -55,7 +58,12 @@ export function TicketRows(props: {tickets: Ticket[]}) {
     const status = getStatusName(ticket.status?.name);
     return (
       <TableRow key={ticket.id}>
-        <TableCell className="px-5">#{ticket.id}</TableCell>
+        <TableCell className="px-5">
+          <Link
+            href={`${workspaceURL}/ticketing/projects/${projectId}/tickets/${ticket?.id}`}>
+            #{ticket.id}
+          </Link>
+        </TableCell>
         <TableCell className="flex justify-center items-center">
           <Avatar className="h-12 w-16">
             <AvatarImage src="/images/user.png" />
