@@ -1,9 +1,4 @@
-import moment from 'moment';
-import {
-  DATE_FORMATS,
-  DEFAULT_CURRENCY_SYMBOL,
-  DEFAULT_SCALE,
-} from '@/constants';
+import {DEFAULT_CURRENCY_SYMBOL, DEFAULT_SCALE} from '@/constants';
 
 export function clone(obj: any) {
   return obj && JSON.parse(JSON.stringify(obj));
@@ -69,4 +64,34 @@ export function getPageInfo({
 
 export function getSkipInfo(limit?: string | number, page?: string | number) {
   return Number(limit) * Math.max(Number(page) - 1, 0);
+}
+
+export function extractAttachments(formData: FormData) {
+  let values: any = [];
+
+  for (let pair of formData.entries()) {
+    let key = pair[0];
+    let value = pair[1];
+
+    let index: any = Number(key.match(/\[(\d+)\]/)?.[1]);
+
+    if (Number.isNaN(index)) {
+      continue;
+    }
+
+    if (!values[index]) {
+      values[index] = {};
+    }
+
+    let field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
+
+    if (field === 'title' || field === 'description') {
+      values[index][field] = value;
+    } else if (field === 'file') {
+      values[index][field] =
+        value instanceof File ? value : new File([value], 'filename');
+    }
+  }
+
+  return values;
 }

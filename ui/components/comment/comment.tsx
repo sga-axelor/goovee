@@ -1,15 +1,14 @@
 'use client';
 
 import {useRef} from 'react';
-import {useRouter} from 'next/navigation';
 import {useDropzone} from 'react-dropzone';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {MdAttachment, MdDelete} from 'react-icons/md';
+import {MdAttachFile, MdDelete} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Button, Input, Textarea} from '@/ui/components';
+import {Button, Input} from '@/ui/components';
 import {
   Form,
   FormControl,
@@ -21,7 +20,17 @@ import {useToast} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getFileSizeText} from '@/utils/files';
-import {upload} from '@/orm/comment';
+import {addComment, upload} from '@/orm/comment';
+
+type CommentProps = {
+  folder: string;
+  placeholderText: string;
+  showAttachmentIcon?: boolean;
+  onSubmit: (
+    values: z.infer<typeof formSchema>,
+    attachmentIDs: any,
+  ) => Promise<void>;
+};
 
 const MAX_FILE_SIZE = 20000000; // 20 MB
 
@@ -40,12 +49,17 @@ const formSchema = z.object({
     }),
   ),
   content: z.string(),
-  text: z.string().min(1, {message: i18n.get('Comment text is required')}),
+  text: z.string().min(1, {message: i18n.get('Comment is required')}),
 });
 
-export function Comment({folder}: {folder: string}) {
+export function Comment({
+  folder,
+  placeholderText = 'Enter text here*',
+  showAttachmentIcon = true,
+  onSubmit,
+}: CommentProps) {
   const {toast} = useToast();
-  const router = useRouter();
+
   const {workspaceURL} = useWorkspace();
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -59,30 +73,41 @@ export function Comment({folder}: {folder: string}) {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
 
     formData.append('text', values.text);
     formData.append('content', values.content);
     formData.append('folder', folder);
 
-    values.attachments.forEach((value: any, index: number) => {
-      formData.append(`attachements[${index}][title]`, value.title);
-      formData.append(`attachements[${index}][description]`, value.description);
-      formData.append(`attachements[${index}][file]`, value.file);
+    values.attachments.forEach((attachment, index) => {
+      formData.append(`attachments[${index}][title]`, attachment.title);
+      formData.append(
+        `attachments[${index}][description]`,
+        attachment.description,
+      );
+      formData.append(`attachments[${index}][file]`, attachment.file);
     });
 
-    const result = await upload(formData, workspaceURL);
+    try {
+      const response = await upload(formData, workspaceURL);
+      if (response.error) {
+        toast({
+          variant: 'destructive',
+          title: i18n.get(
+            response.message || 'Error while uploading attachment.',
+          ),
+        });
+      }
 
-    if (result.success) {
-      toast({
-        title: i18n.get('Comment created successfully.'),
-      });
-      router.refresh();
-    } else {
+      const {data: attachmentIDs} = response;
+
+      await onSubmit(values, attachmentIDs);
+    } catch (error: any) {
+      console.error('Submission error:', error);
       toast({
         variant: 'destructive',
-        title: i18n.get('Error creating comment'),
+        title: i18n.get(error?.message || 'An unexpected error occurred.'),
       });
     }
   };
@@ -107,23 +132,46 @@ export function Comment({folder}: {folder: string}) {
     <Form {...form}>
       <form
         ref={formRef}
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6">
-        <FormField
-          control={form.control}
-          name="text"
-          render={({field}) => (
-            <FormItem>
-              <FormControl>
-                <Textarea placeholder="Enter text here*" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-6 w-full">
+        <div className="flex items-center relative">
+          <FormField
+            control={form.control}
+            name="text"
+            render={({field}) => (
+              <FormItem className=" w-full">
+                <FormControl>
+                  <Input
+                    className="h-12 w-full placeholder:text-sm placeholder:text-slate-400"
+                    placeholder={placeholderText}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex items-center gap-2 absolute right-3 top-1.5">
+            {showAttachmentIcon && (
+              <div {...getRootProps({className: 'dropzone'})}>
+                <input {...getInputProps()} />
+                <MdAttachFile className="size-6 text-black" />
+              </div>
+            )}
+            <Button
+              type="submit"
+              className="px-6 py-1.5 h-9 text-base"
+              variant="success">
+              {i18n.get('Send')}
+            </Button>
+          </div>
+        </div>
         {fields?.length ? (
           <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-semibold">{i18n.get('Attachments')}</h4>
+            <h4 className="text-base font-semibold">
+              {i18n.get('Attachments')}
+            </h4>
             {fields.map((field, index) => (
               <div
                 key={`${field.file?.name}-${index}`}
@@ -169,20 +217,6 @@ export function Comment({folder}: {folder: string}) {
             ))}
           </div>
         ) : null}
-        <div className="flex items-center gap-2">
-          <div {...getRootProps({className: 'dropzone'})}>
-            <Button
-              type="button"
-              variant="success"
-              className="border border-success bg-white text-success hover:bg-success hover:text-white transition-all ease-in-out">
-              <input {...getInputProps()} />
-              <MdAttachment className="size-6" />
-            </Button>
-          </div>
-          <Button type="submit" variant="success">
-            {i18n.get('Submit')}
-          </Button>
-        </div>
       </form>
     </Form>
   );
