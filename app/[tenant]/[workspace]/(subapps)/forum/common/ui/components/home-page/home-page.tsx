@@ -54,7 +54,6 @@ export const HomePage = ({
   const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
   const [nonMemberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
   const [searchKey, setSearchKey] = useState<string>('');
-  const [initialType, setInitialType] = useState<string>('');
 
   const router = useRouter();
   const {workspaceURI, workspaceID} = useWorkspace();
@@ -75,13 +74,11 @@ export const HomePage = ({
     setSearchKey(value);
   };
 
-  const hanldeDialogOpen = (initialType: string = '') => {
-    setInitialType(initialType);
+  const hanldeDialogOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
-    setInitialType('');
     setOpen(false);
   };
 
@@ -194,7 +191,6 @@ export const HomePage = ({
             {false && (
               <Button
                 disabled={!isLoggedIn}
-                onClick={() => hanldeDialogOpen('image')}
                 className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
               disabled:bg-black/20 disabled:border-gray-700 disabled:text-gray-700">
                 <MdOutlineImage className="h-6 w-6" />
@@ -210,12 +206,7 @@ export const HomePage = ({
           />
         </div>
       </div>
-      <UploadPost
-        open={open}
-        groups={groups}
-        onClose={handleClose}
-        initialType={initialType}
-      />
+      <UploadPost open={open} groups={groups} onClose={handleClose} />
     </div>
   );
 };
