@@ -19,7 +19,6 @@ export {Comments} from './comments';
 export {ImageGallery} from './image-gallery';
 export {ThreadPopup} from './thread-popup';
 export {PdfViewer} from './pdf-viewer';
-export {SingleGroup} from './single-group';
 export {InfiniteScroll} from './infinite-scroll';
 export {SearchItem} from './search-item';
 export {FilePreviewer} from './file-previewer';
