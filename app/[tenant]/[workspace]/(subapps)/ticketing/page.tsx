@@ -67,14 +67,16 @@ export default async function Page({
             {i18n.get('Choose your project')}
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 !mb-20">
           {projects.map(project => (
             <Link
               key={project.id}
               href={`${workspaceURI}/ticketing/projects/${project.id}`}>
-              <div className="bg-card p-6">
-                <p className="text-[1rem] font-semibold">{project.name}</p>
-                <p className="text-[12px] font-semibold">
+              <div className="bg-card p-6 rounded-lg">
+                <p className="text-[1rem] font-semibold text-ellipsis whitespace-nowrap overflow-hidden">
+                  {project.name}
+                </p>
+                <p className="text-[12px] font-medium mt-2">
                   {project.taskCount} tickets
                 </p>
               </div>
