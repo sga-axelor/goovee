@@ -80,7 +80,7 @@ export default async function Page({
   ]);
   if (!ticket) notFound();
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-20">
       <TicketDetails
         ticket={ticket}
         workspaceURI={workspaceURI}
@@ -107,7 +107,11 @@ function TicketDetails({
 }) {
   return (
     <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
-      <Stepper steps={statuses} current={ticket.status?.id} className="mb-12" />
+      <Stepper
+        steps={statuses}
+        current={ticket.status?.id}
+        className="mb-12 mx-20"
+      />
       <div className="space-y-2">
         <div className="flex justify-between">
           <p className="text-base font-medium">#{ticket?.id}</p>
@@ -119,12 +123,18 @@ function TicketDetails({
         </div>
         <p className="text-xl font-semibold">{ticket?.name}</p>
         <p className="text-sm font-medium">{ticket?.projectTaskCategory}</p>
-        <Tag variant="success" className="text-[12px] py-1 me-5">
-          {ticket.priority?.name}
-        </Tag>
-        <Tag variant="yellow" className="text-[12px] py-1">
-          {ticket.status?.name}
-        </Tag>
+        {ticket.priority && (
+          <Tag variant="success" className="text-[12px] py-1 me-5">
+            {ticket.priority?.name}
+          </Tag>
+        )}
+
+        {ticket.status && (
+          <Tag variant="yellow" className="text-[12px] py-1">
+            {ticket.status?.name}
+          </Tag>
+        )}
+
         <hr />
         <p className="flex !mt-3.5 items-center">
           <span className="font-medium pe-2">{i18n.get('Request by')}: </span>
@@ -157,7 +167,7 @@ function TicketDetails({
             </p>
           </div>
           <div className="ml-auto">
-            <Button variant="success">Assign to supplier</Button>
+            <Button variant="success">{i18n.get('Assign to supplier')}</Button>
           </div>
         </div>
         <hr />
@@ -229,14 +239,18 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
                 </TableCell>
                 <TableCell>{parentTicket.name}</TableCell>
                 <TableCell>
-                  <Tag variant="blue" className="text-[12px] py-1">
-                    {parentTicket.priority?.name}
-                  </Tag>
+                  {parentTicket.priority && (
+                    <Tag variant="blue" className="text-[12px] py-1">
+                      {parentTicket.priority?.name}
+                    </Tag>
+                  )}
                 </TableCell>
                 <TableCell>
-                  <Tag variant="default" className="text-[12px] py-1" outline>
-                    {parentTicket.status?.name}
-                  </Tag>
+                  {parentTicket.status && (
+                    <Tag variant="default" className="text-[12px] py-1" outline>
+                      {parentTicket.status?.name}
+                    </Tag>
+                  )}
                 </TableCell>
                 <TableCell>{parentTicket.projectTaskCategory?.name}</TableCell>
                 <TableCell>{parentTicket.assignedTo?.name}</TableCell>
@@ -267,17 +281,21 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
                     </TableCell>
                     <TableCell>{ticket.name}</TableCell>
                     <TableCell>
-                      <Tag variant="blue" className="text-[12px] py-1">
-                        {ticket.priority?.name}
-                      </Tag>
+                      {ticket.priority && (
+                        <Tag variant="blue" className="text-[12px] py-1">
+                          {ticket.priority?.name}
+                        </Tag>
+                      )}
                     </TableCell>
                     <TableCell>
-                      <Tag
-                        variant="default"
-                        className="text-[12px] py-1"
-                        outline>
-                        {ticket.status?.name}
-                      </Tag>
+                      {ticket.status && (
+                        <Tag
+                          variant="default"
+                          className="text-[12px] py-1"
+                          outline>
+                          {ticket.status?.name}
+                        </Tag>
+                      )}
                     </TableCell>
                     <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
                     <TableCell>{ticket.assignedTo?.name}</TableCell>

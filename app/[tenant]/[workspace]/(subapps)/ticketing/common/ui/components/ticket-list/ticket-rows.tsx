@@ -72,14 +72,18 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
         </TableCell>
         <TableCell>{ticket.name}</TableCell>
         <TableCell>
-          <Tag variant={priority} className="text-[12px] py-1">
-            {ticket.priority?.name}
-          </Tag>
+          {ticket.priority && (
+            <Tag variant={priority} className="text-[12px] py-1">
+              {ticket.priority?.name}
+            </Tag>
+          )}
         </TableCell>
         <TableCell>
-          <Tag variant={status!} className="text-[12px] py-1" outline>
-            {ticket.status?.name}
-          </Tag>
+          {ticket.status && (
+            <Tag variant={status!} className="text-[12px] py-1" outline>
+              {ticket.status?.name}
+            </Tag>
+          )}
         </TableCell>
         <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
         <TableCell>{ticket.assignedTo?.name}</TableCell>

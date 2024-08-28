@@ -14,11 +14,7 @@ export function Stepper(props: StepperProps) {
   const {steps, current, className} = props;
   const progress = current ? steps.findIndex(s => s.id === current) : 0;
   return (
-    <div
-      className={cn(
-        'flex items-center pt-4 pb-8 px-8 gap-2 w-full',
-        className,
-      )}>
+    <div className={cn('flex items-center pt-4 pb-8 px-8 gap-2', className)}>
       {steps.map((step, i, steps) => {
         return (
           <Fragment key={step.id}>
