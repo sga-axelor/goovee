@@ -34,7 +34,7 @@ import {
   TAB_TITLES,
   GROUPS_ORDER_BY,
 } from '@/subapps/forum/common/constants';
-import {Group} from '@/subapps/forum/common/types/forum';
+import {ForumGroup, Group} from '@/subapps/forum/common/types/forum';
 import {fetchPosts, findGroups} from '@/subapps/forum/common/action/action';
 
 export const HomePage = ({
@@ -43,12 +43,14 @@ export const HomePage = ({
   user,
   posts,
   pageInfo,
+  selectedGroup = null,
 }: {
   memberGroups: Group[];
   nonMemberGroups: Group[];
   user: any;
   posts: any;
   pageInfo: any;
+  selectedGroup?: ForumGroup | null;
 }) => {
   const [open, setOpen] = useState(false);
   const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
@@ -146,10 +148,13 @@ export const HomePage = ({
   return (
     <div>
       <HeroSearch
-        title={BANNER_TITLES.forum}
-        description={BANNER_DESCRIPTION}
+        title={selectedGroup?.name ?? BANNER_TITLES.forum}
+        description={
+          selectedGroup ? selectedGroup?.description : BANNER_DESCRIPTION
+        }
         image={IMAGE_URL}
-        renderSearch={renderSearch}
+        groupImg={selectedGroup?.image?.id}
+        renderSearch={!selectedGroup && renderSearch}
       />
       <div className="flex flex-col md:flex-row gap-5 px-4 md:px-[50px] lg:px-[100px] py-6 w-full">
         <div className="w-full md:w-1/5 min-w-[281px] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
@@ -170,7 +175,7 @@ export const HomePage = ({
             title={NOT_MEMBER}
             groups={nonMemberGroupList}
             isMember={false}
-            userId={user.id}
+            userId={user?.id}
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
@@ -206,7 +211,12 @@ export const HomePage = ({
           />
         </div>
       </div>
-      <UploadPost open={open} groups={groups} onClose={handleClose} />
+      <UploadPost
+        open={open}
+        groups={groups}
+        selectedGroup={selectedGroup}
+        onClose={handleClose}
+      />
     </div>
   );
 };

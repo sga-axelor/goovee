@@ -52,12 +52,17 @@ interface ImageItem {
 
 interface CreatePostProps {
   groups: any[];
+  selectedGroup: any;
   onClose: () => void;
 }
 
 type ModalType = 'none' | 'image' | 'file';
 
-export const CreatePost = ({groups, onClose}: CreatePostProps) => {
+export const CreatePost = ({
+  groups,
+  selectedGroup = null,
+  onClose,
+}: CreatePostProps) => {
   const {toast} = useToast();
   const {workspaceURI, workspaceURL} = useWorkspace();
   const router = useRouter();
@@ -134,7 +139,7 @@ export const CreatePost = ({groups, onClose}: CreatePostProps) => {
     try {
       const result: any = await addPost({
         postDateT: publicationDateTime,
-        group: {id: group?.id},
+        group: {id: selectedGroup ? selectedGroup.id : group?.id},
         title: post.title,
         content: editorContent,
         workspaceURL,
@@ -187,7 +192,10 @@ export const CreatePost = ({groups, onClose}: CreatePostProps) => {
               className="text-base font-medium text-foreground">
               {i18n.get(CHOOSE_GROUP)}
             </Label>
-            <Select onValueChange={handleSelect}>
+            <Select
+              onValueChange={handleSelect}
+              disabled={selectedGroup}
+              value={selectedGroup?.name}>
               <SelectTrigger className="w-full h-11 shadow-none">
                 <SelectValue placeholder="Select a group" />
               </SelectTrigger>

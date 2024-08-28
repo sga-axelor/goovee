@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {NavMenu, SingleGroup} from '@/subapps/forum/common/ui/components';
+import {HomePage, NavMenu} from '@/subapps/forum/common/ui/components';
 import {MENU} from '@/subapps/forum/common/constants';
 import type {ForumGroup, Group, Post} from '@/subapps/forum/common/types/forum';
 
@@ -38,7 +38,7 @@ const Content = ({
       <div className="hidden lg:block">
         <NavMenu items={MENU} onClick={handleMenuClick} />
       </div>
-      <SingleGroup
+      <HomePage
         memberGroups={memberGroups}
         nonMemberGroups={nonMemberGroups}
         user={user}

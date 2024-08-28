@@ -10,6 +10,7 @@ import {findWorkspace} from '@/orm/workspace';
 import {
   findGroupById,
   findPostsByGroupId,
+  findUser,
 } from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 import {findGroups} from '@/subapps/forum/common/action/action';
@@ -25,7 +26,7 @@ export default async function Page({
   };
 }) {
   const session = await getSession();
-  const user = session?.user;
+  const userId = session?.user?.id as string;
 
   const {workspaceURL} = workspacePathname(params);
 
@@ -40,9 +41,9 @@ export default async function Page({
     workspace?.id,
   ).then(clone);
 
-  const memberGroups = user
+  const memberGroups = userId
     ? await findGroups({
-        id: user?.id as string,
+        id: userId as string,
         isMember: true,
         orderBy: GROUPS_ORDER_BY,
         workspaceID: workspace?.id,
@@ -50,13 +51,14 @@ export default async function Page({
     : [];
 
   const nonMemberGroups = await findGroups({
-    id: user?.id as string,
+    id: userId as string,
     isMember: false,
     orderBy: GROUPS_ORDER_BY,
     workspaceID: workspace?.id,
   });
 
   const selectedGroup = await findGroupById(groupId, workspace?.id).then(clone);
+  const user = await findUser({userId}).then(clone);
 
   if (!selectedGroup) {
     return notFound();
