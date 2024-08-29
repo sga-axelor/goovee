@@ -5,10 +5,26 @@ import type {ID, Comment} from '@/types';
 import {getSession} from '@/orm/auth';
 import {i18n} from '@/lib/i18n';
 import {SUBAPP_CODES} from '@/constants';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
-export async function findCommentsForEvent(id: ID) {
-  if (!id) return null;
+// ---- LOCAL IMPORTS ---- //
+import {error} from '@/subapps/events/common/utils';
+import {
+  validate,
+  withSubapp,
+  withWorkspace,
+} from '@/subapps/events/common/actions/validation';
+
+export async function findCommentsByEventID(id: ID, workspaceURL: string) {
+  if (!id) return error(i18n.get('Event ID is not present.'));
+
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
 
   const c = await getClient();
 
@@ -56,7 +72,6 @@ export async function findCommentsForEvent(id: ID) {
   return comments;
 }
 
-//
 export async function createComment(
   id: ID,
   workspaceURL: string,
@@ -65,36 +80,14 @@ export async function createComment(
   if (!id) return null;
 
   const session = await getSession();
-  if (!session?.user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
 
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user: session?.user,
-    url: workspaceURL,
-  });
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
 
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
+  if (result.error) {
+    return result;
   }
 
   const c = await getClient();

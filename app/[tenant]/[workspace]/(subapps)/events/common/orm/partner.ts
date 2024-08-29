@@ -1,45 +1,33 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
-export async function findContactByName(name: string, workspaceURL: string) {
-  const session = await getSession();
-  if (!session?.user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+// ---- LOCAL IMPORTS ---- //
+import {
+  validate,
+  withSubapp,
+  withWorkspace,
+} from '@/subapps/events/common/actions/validation';
+import {error} from '@/subapps/events/common/utils';
+
+export async function findContact({
+  search,
+  workspaceURL,
+}: {
+  search: string;
+  workspaceURL: string;
+}) {
+  if (!search) return error(i18n.get('Search value is missing.'));
+
+  const response = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (response.error) {
+    return response;
   }
-
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
-  }
-
-  if (!name) return null;
 
   const c = await getClient();
 
@@ -48,7 +36,7 @@ export async function findContactByName(name: string, workspaceURL: string) {
       AND: [
         {
           simpleFullName: {
-            like: `%${name.toLowerCase()}%`,
+            like: `%${search.toLowerCase()}%`,
           },
         },
         {

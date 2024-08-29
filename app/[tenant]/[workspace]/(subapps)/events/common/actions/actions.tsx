@@ -4,21 +4,22 @@
 import {clone} from '@/utils';
 import {Comment, Participant} from '@/types';
 import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEvent, findEvents} from '@/subapps/events/common/orm/event';
-import {findContactByName} from '@/subapps/events/common/orm/partner';
+import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
+import {findContact} from '@/subapps/events/common/orm/partner';
 import {
   createComment,
-  findCommentsForEvent,
+  findCommentsByEventID,
 } from '@/subapps/events/common/orm/comment';
+import {registerParticipants} from '@/subapps/events/common/orm/registration';
+import {error} from '@/subapps/events/common/utils';
 import {
-  registerParticipant,
-  registerParticipants,
-} from '@/subapps/events/common/orm/registration';
+  validate,
+  withSubapp,
+  withWorkspace,
+} from '@/subapps/events/common/actions/validation';
 
 export async function getAllEvents({
   limit,
@@ -30,6 +31,7 @@ export async function getAllEvents({
   year,
   dates,
   workspace,
+  workspaceURL,
 }: {
   limit?: number;
   page?: number;
@@ -41,9 +43,18 @@ export async function getAllEvents({
   year?: number;
   dates?: [Date | undefined];
   workspace?: any;
+  workspaceURL?: any;
 }) {
   if (!workspace) {
     return {events: [], pageInfo: null};
+  }
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
   }
 
   try {
@@ -69,42 +80,20 @@ export async function addComment(
   comment: Comment,
   workspaceURL: string,
 ) {
-  const session = await getSession();
-  if (!session?.user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+  if (!eventId || !comment)
+    return error(i18n.get('Event ID or comment is missing!'));
+
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
   }
 
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
-  }
-
-  if (!eventId || !comment) return undefined;
-  const event = await findEvent(eventId);
-  if (!event) return undefined;
+  const event = await findEventByID(eventId);
+  if (!event) return error(i18n.get('Event not found!'));
 
   try {
     return await createComment(eventId, workspaceURL, comment).then(clone);
@@ -113,102 +102,68 @@ export async function addComment(
   }
 }
 
-export async function getCommentsByEvent(
+export async function getCommentsByEventID(
   eventId: string,
   workspaceURL: string,
 ) {
-  const session = await getSession();
-  if (!session?.user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+  if (!eventId) return error(i18n.get('Event ID is missing!'));
+
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
   }
 
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user: session?.user,
-    url: workspaceURL,
-  });
+  const event = await findEventByID(eventId);
+  if (!event) return error(i18n.get('Event not found!'));
 
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
-  }
-
-  if (!eventId) return undefined;
-  const event = await findEvent(eventId);
-  if (!event) return undefined;
   try {
-    const comments = findCommentsForEvent(eventId).then(clone);
+    const comments = await findCommentsByEventID(eventId, workspaceURL).then(
+      clone,
+    );
     return comments;
   } catch (err) {
     console.log(err);
   }
 }
 
-export async function eventRegistration(
-  eventId: any,
-  form: any,
-  workspaceURL: string,
-) {
-  const session = await getSession();
-  if (!session?.user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+export async function register({
+  eventId,
+  values,
+  workspaceURL,
+}: {
+  eventId: any;
+  values: any;
+  workspaceURL: string;
+}) {
+  if (!eventId || !values)
+    return error(i18n.get('Event ID or values are missing!'));
+
+  if (!workspaceURL) return error(i18n.get('workspaceURL is missing!'));
+
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
   }
 
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user: session?.user,
-    url: workspaceURL,
-  });
+  const event = await findEventByID(eventId);
+  if (!event) return error(i18n.get('Event not found!'));
 
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
-  }
-
-  if (!eventId || !form) return undefined;
-  const event = await findEvent(eventId);
-
-  if (!event) return undefined;
   try {
-    const {otherPeople, ...rest} = form;
+    const {otherPeople, ...rest} = values;
 
     if (otherPeople.length === 0) {
       rest.emailAddress = rest.emailAddress.toLowerCase();
-      return await registerParticipant(eventId, workspaceURL, rest).then(clone);
+      return await registerParticipants(eventId, workspaceURL, rest).then(
+        clone,
+      );
     }
     otherPeople.push(rest);
     otherPeople.forEach((element: Participant) => {
@@ -221,48 +176,31 @@ export async function eventRegistration(
     );
   } catch (err) {
     console.log(err);
-    return undefined;
+    return error(i18n.get('Something went wrong!'));
   }
 }
 
-export async function searchContacts(input: string, workspaceURL: string) {
-  const session = await getSession();
-  if (!session?.user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
+export async function fetchContacts({
+  search,
+  workspaceURL,
+}: {
+  search: string;
+  workspaceURL: string;
+}) {
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
 
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
+  if (result.error) {
+    return result;
   }
 
   try {
-    const result = await findContactByName(input, workspaceURL).then(clone);
+    const result = await findContact({search, workspaceURL}).then(clone);
     return result;
   } catch (err) {
     console.log(err);
+    return error(i18n.get('Something went wrong!'));
   }
 }

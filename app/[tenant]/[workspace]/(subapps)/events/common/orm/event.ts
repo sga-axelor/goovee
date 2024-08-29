@@ -7,7 +7,7 @@ import {formatDateToISOString} from '@/utils/date';
 import {DATE_FORMATS, ORDER_BY} from '@/constants';
 import {getPageInfo} from '@/utils';
 
-export async function findEvent(id: ID) {
+export async function findEventByID(id: ID) {
   if (!id) return null;
 
   const c = await getClient();
@@ -249,54 +249,4 @@ export async function findEvents({
     limit,
   });
   return {events, pageInfo};
-}
-
-export async function findEventsByCategory(categoryIds: ID[]) {
-  if (!categoryIds) return null;
-
-  const c = await getClient();
-
-  const events = await c.aOSPortalEvent.find({
-    where: {
-      ...(categoryIds?.length
-        ? {
-            AND: [
-              {
-                eventCategorySet: {
-                  id: {
-                    in: categoryIds,
-                  },
-                },
-              },
-              {eventVisibility: true},
-            ],
-          }
-        : {}),
-    },
-    orderBy: {eventStartDateTime: ORDER_BY.ASC},
-    select: {
-      id: true,
-      eventTitle: true,
-      eventCategorySet: {
-        select: {
-          id: true,
-          name: true,
-          color: true,
-        },
-      },
-      eventImage: {
-        id: true,
-      },
-      eventDescription: true,
-      eventStartDateTime: true,
-      eventEndDateTime: true,
-      eventAllDay: true,
-      eventDegressiveNumberPartcipant: true,
-      eventAllowRegistration: true,
-      eventAllowMultipleRegistrations: true,
-      eventVisibility: true,
-    },
-  });
-
-  return events;
 }

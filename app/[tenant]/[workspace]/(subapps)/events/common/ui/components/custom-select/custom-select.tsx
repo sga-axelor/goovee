@@ -8,9 +8,10 @@ import {i18n} from '@/lib/i18n';
 import {createDefaultValues} from '@/ui/form';
 import type {Field} from '@/ui/form';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks/use-toast';
 
 // ---- LOCAL IMPORTS ---- //
-import {searchContacts} from '@/subapps/events/common/actions/actions';
+import {fetchContacts} from '@/subapps/events/common/actions/actions';
 import type {OptionType} from '@/subapps/events/common/ui/components/custom-select/types';
 
 function formatItems(array: any) {
@@ -40,6 +41,7 @@ export const CustomSelect = ({
   const [filteredOptions, setFilteredOptions] = useState([]);
 
   const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
 
   const handleChange = (
     selected: MultiValue<OptionType> | SingleValue<OptionType> | null,
@@ -83,8 +85,18 @@ export const CustomSelect = ({
 
     if (input.length > 0) {
       try {
-        const data: any = await searchContacts(input, workspaceURL);
-        setFilteredOptions(formatItems(data));
+        const data: any = await fetchContacts({search: input, workspaceURL});
+
+        if (data && !data.error) {
+          setFilteredOptions(formatItems(data));
+        } else {
+          toast({
+            variant: 'destructive',
+            title: i18n.get(
+              data?.message || 'Error while fetching updated comments.',
+            ),
+          });
+        }
       } catch (error) {
         console.error('Error fetching options:', error);
       }

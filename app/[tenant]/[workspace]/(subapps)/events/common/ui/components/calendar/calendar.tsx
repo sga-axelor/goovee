@@ -208,6 +208,7 @@ export function Calendar({
   const handleDateChange = (newDate: Date) => {
     setMonth(newDate);
   };
+
   React.useEffect(() => {
     const fetchEventDates = async () => {
       try {

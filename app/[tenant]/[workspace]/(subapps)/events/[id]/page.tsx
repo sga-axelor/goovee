@@ -1,5 +1,7 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
-import {findEvent} from '@/subapps/events/common/orm/event';
+import {findEventByID} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
@@ -17,7 +19,11 @@ export default async function Page({
   params: {id: string};
   searchParams: {success?: string};
 }) {
-  const eventDetails = await findEvent(params.id).then(clone);
+  const eventDetails = await findEventByID(params.id).then(clone);
+
+  if (!eventDetails) {
+    return notFound();
+  }
   const successMessage = searchParams.success === 'true';
 
   return (

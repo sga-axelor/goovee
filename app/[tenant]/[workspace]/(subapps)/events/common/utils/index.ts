@@ -28,3 +28,10 @@ export const datesBetweenTwoDates = (data: Event[]): Date[] => {
 
   return uniqueDates;
 };
+
+export function error(message: string) {
+  return {
+    error: true,
+    message,
+  };
+}

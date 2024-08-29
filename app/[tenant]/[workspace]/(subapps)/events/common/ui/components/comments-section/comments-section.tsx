@@ -15,7 +15,7 @@ import {CommentCard} from '@/subapps/events/common/ui/components';
 import type {CommentSectionProps} from '@/subapps/events/common/ui/components';
 import {
   addComment,
-  getCommentsByEvent,
+  getCommentsByEventID,
 } from '@/subapps/events/common/actions/actions';
 import styles from '@/subapps/events/common/ui/components/comments-section/comments-section.module.css';
 
@@ -54,9 +54,18 @@ export const CommentsSection = ({eventId, comments}: CommentSectionProps) => {
           variant: 'success',
           title: i18n.get('Comment added successfully.'),
         });
-        const updatedComments = await getCommentsByEvent(eventId, workspaceURL);
-        setAllComments(updatedComments);
-        setComment('');
+        const response = await getCommentsByEventID(eventId, workspaceURL);
+        if (response && !response.error) {
+          setAllComments(response);
+          setComment('');
+        } else {
+          toast({
+            variant: 'destructive',
+            title: i18n.get(
+              response.message || 'Error while fetching updated comments.',
+            ),
+          });
+        }
       } else {
         toast({
           variant: 'destructive',
