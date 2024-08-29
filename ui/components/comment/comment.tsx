@@ -6,6 +6,7 @@ import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {MdAttachFile, MdDelete} from 'react-icons/md';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Input} from '@/ui/components';
@@ -48,7 +49,8 @@ const formSchema = z.object({
 export function Comment({
   placeholderText = 'Enter text here*',
   showAttachmentIcon = true,
-  onSubmit,
+  record,
+  type,
 }: CommentProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -60,6 +62,8 @@ export function Comment({
       attachments: [],
     },
   });
+
+  const router = useRouter();
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
