@@ -30,10 +30,10 @@ import {Textarea} from '@/ui/components/textarea';
 import {useToast} from '@/ui/hooks/use-toast';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {getFileSizeText} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {upload} from './action';
-import {getFileSizeText} from '@/subapps/resources/common/utils';
 
 const MAX_FILE_SIZE = 20000000;
 

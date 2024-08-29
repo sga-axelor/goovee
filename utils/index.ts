@@ -66,14 +66,11 @@ export function getSkipInfo(limit?: string | number, page?: string | number) {
   return Number(limit) * Math.max(Number(page) - 1, 0);
 }
 
-export function extractAttachments(formData: FormData) {
-  let values: any = [];
+export function parseFormData(formData: FormData) {
+  const values: any = [];
 
-  for (let pair of formData.entries()) {
-    let key = pair[0];
-    let value = pair[1];
-
-    let index: any = Number(key.match(/\[(\d+)\]/)?.[1]);
+  for (const [key, value] of formData.entries()) {
+    const index = Number(key.match(/\[(\d+)\]/)?.[1]);
 
     if (Number.isNaN(index)) {
       continue;
@@ -83,14 +80,9 @@ export function extractAttachments(formData: FormData) {
       values[index] = {};
     }
 
-    let field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
+    const field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
 
-    if (field === 'title' || field === 'description') {
-      values[index][field] = value;
-    } else if (field === 'file') {
-      values[index][field] =
-        value instanceof File ? value : new File([value], 'filename');
-    }
+    values[index][field] = value instanceof File ? value : value.toString();
   }
 
   return values;

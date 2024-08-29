@@ -213,3 +213,4 @@ export type Tenant = {
     };
   };
 };
+export type ModelType = 'forum' | 'news' | 'event';

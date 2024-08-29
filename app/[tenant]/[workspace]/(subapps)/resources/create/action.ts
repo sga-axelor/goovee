@@ -14,9 +14,9 @@ import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {TENANT_HEADER} from '@/middleware';
+import {getFileSizeText} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
-import {getFileSizeText} from '@/subapps/resources/common/utils';
 import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';
 
 const pump = promisify(pipeline);
