@@ -123,7 +123,7 @@ export function Filter(props: FilterProps) {
   return (
     <div className="relative">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg">{i18n.get('Filter :')}</h3>
+        <h3 className="text-base mb-2">{i18n.get('Filter :')}</h3>
       </div>
       <Popover>
         <PopoverTrigger asChild>
@@ -131,14 +131,16 @@ export function Filter(props: FilterProps) {
             variant={filterCount ? 'default' : 'outline'}
             className="flex justify-between w-[354px] h-[47px]">
             <div className="flex items-center space-x-2">
-              <FaFilter />
-              <span> {i18n.get('Filter')}</span>
+              <FaFilter className="size-4" />
+              <span> {i18n.get('Filters')}</span>
             </div>
-            <Badge
-              className="ms-auto"
-              variant={filterCount ? 'destructive' : 'default'}>
-              {filterCount}
-            </Badge>
+            {filterCount > 0 && (
+              <Badge
+                className="ms-auto ps-[0.45rem] pe-2"
+                variant={filterCount ? 'destructive' : 'default'}>
+                {filterCount}
+              </Badge>
+            )}
           </Button>
         </PopoverTrigger>
 
@@ -275,7 +277,7 @@ function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
               control={form.control}
               name="priority"
               render={({field}) => (
-                <FormItem>
+                <FormItem className="flex items-end">
                   <FormControl>
                     <Checkbox
                       name={priority.id}
