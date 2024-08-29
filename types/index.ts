@@ -198,3 +198,5 @@ export enum PaymentOption {
   paypal = 'paypal',
   stripe = 'stripe',
 }
+
+export type ModelType = 'forum' | 'news' | 'event';

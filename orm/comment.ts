@@ -12,13 +12,24 @@ import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText} from '@/utils/files';
-import {clone, extractAttachments} from '@/utils';
+import {clone, parseFormData} from '@/utils';
+import {ModelType} from '@/types';
 
 const pump = promisify(pipeline);
 
 const storage = process.env.DATA_STORAGE as string;
 
+if (!fs.existsSync(storage)) {
+  fs.mkdirSync(storage, {recursive: true});
+}
+
 const timestamp = getCurrentDateTime();
+
+const ModelMap: Record<ModelType, String> = {
+  forum: 'forumPost',
+  news: 'portalNews',
+  event: 'portalEvent',
+};
 
 export async function upload(formData: FormData, workspaceURL: string) {
   if (!workspaceURL) {
@@ -70,11 +81,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
     };
   }
 
-  if (!fs.existsSync(storage)) {
-    fs.mkdirSync(storage, {recursive: true});
-  }
-
-  const attachments = extractAttachments(formData);
+  const parsedFormData = parseFormData(formData);
 
   const getTimestampFilename = (name: string) => {
     return `${new Date().getTime()}-${name}`;
@@ -112,7 +119,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
 
   try {
     const response = await Promise.all(
-      attachments.map(({title, description, file}: any) =>
+      parsedFormData.map(({title, description, file}: any) =>
         create({
           title: title ? `${title}${path.extname(file.name)}` : file.name,
           description,
@@ -134,7 +141,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   }
 }
 
-export async function addComment({
+export async function addComment1({
   forumPost = null,
   portalNews = null,
   portalEvent = null,
@@ -198,6 +205,97 @@ export async function addComment({
               portalEvent: {
                 select: {
                   id: portalEvent.id,
+                },
+              },
+            }
+          : {}),
+        mailMessage: {
+          create: {
+            subject,
+            author: {
+              select: {
+                id: user?.id,
+              },
+            },
+            authorID: user?.id,
+          },
+        },
+        commentFileList:
+          attachments?.length > 0
+            ? {
+                create: attachments.map((attachment: any) => ({
+                  description: attachments?.description || '',
+                  attachmentFile: {
+                    select: {
+                      id: attachment.id,
+                    },
+                  },
+                })),
+              }
+            : [],
+        createdOn: timestamp as unknown as Date,
+        updatedOn: timestamp as unknown as Date,
+      },
+    });
+    return {
+      success: true,
+      data: clone(response),
+    };
+  } catch (error) {
+    console.log('error >>>', error);
+    return {
+      error: true,
+      message: 'An unexpected error occurred.',
+    };
+  }
+}
+
+export async function addComment({
+  type,
+  model = null,
+  subject,
+  workspaceURL,
+  attachments = [],
+}: {
+  type: ModelType;
+  model: any;
+  workspaceURL: string;
+  subject: any;
+  attachments?: any;
+}) {
+  try {
+    const session = await getSession();
+    const user = session?.user;
+    if (!user) {
+      return {
+        error: true,
+        message: i18n.get('Unauthorized'),
+      };
+    }
+
+    const workspace = await findWorkspace({
+      user,
+      url: workspaceURL,
+    });
+
+    if (!workspace) {
+      return {
+        error: true,
+        message: i18n.get('Invalid workspace'),
+      };
+    }
+
+    const client = await getClient();
+
+    const modelName = ModelMap[type];
+
+    const response = await client.aOSComment.create({
+      data: {
+        ...(model && modelName
+          ? {
+              [modelName as string]: {
+                select: {
+                  id: model.id,
                 },
               },
             }
