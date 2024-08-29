@@ -219,9 +219,3 @@ export enum ModelType {
   event = 'event',
   forum = 'forum',
 }
-export type Tenant = {
-  id: string;
-  db: {
-    url: string;
-  };
-};
