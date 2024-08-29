@@ -110,7 +110,7 @@ function TicketDetails({
       <Stepper
         steps={statuses}
         current={ticket.status?.id}
-        className="mb-12 mx-20"
+        className="mb-12 md:mx-20"
       />
       <div className="space-y-2">
         <div className="flex justify-between">
@@ -122,7 +122,9 @@ function TicketDetails({
           </Link>
         </div>
         <p className="text-xl font-semibold">{ticket?.name}</p>
-        <p className="text-sm font-medium">{ticket?.projectTaskCategory}</p>
+        <p className="text-sm font-medium">
+          {ticket?.projectTaskCategory?.name}
+        </p>
         {ticket.priority && (
           <Tag variant="success" className="text-[12px] py-1 me-5">
             {ticket.priority?.name}
@@ -151,32 +153,25 @@ function TicketDetails({
           {formatDate(ticket.taskDate)}
         </p>
         <hr />
-        <div className="flex items-start">
-          <div className="flex flex-col space-y-2">
-            <p>
-              <span className="font-medium pe-2">
-                {i18n.get('Assigned to')}:
-              </span>
-              {ticket.assignedTo?.name}
-            </p>
-            <p>
-              <span className="font-medium pe-2">
-                {i18n.get('Expected on')}:
-              </span>
-              {formatDate(ticket.taskEndDate)}
-            </p>
-          </div>
-          <div className="ml-auto">
-            <Button variant="success">{i18n.get('Assign to supplier')}</Button>
-          </div>
+
+        <div className="flex flex-col space-y-2 !mt-3.5">
+          <p>
+            <span className="font-medium pe-2">{i18n.get('Assigned to')}:</span>
+            {ticket.assignedTo?.name}
+          </p>
+          <p>
+            <span className="font-medium pe-2">{i18n.get('Expected on')}:</span>
+            {formatDate(ticket.taskEndDate)}
+          </p>
         </div>
+
         <hr />
-        <div className="flex items-center !mt-4">
+        <div className="sm:flex items-center !mt-3.5">
           <p className="font-medium pe-2"> {i18n.get('Progress')}: </p>
           {getProgress(ticket.progress)}%
           <Progress
             value={getProgress(ticket.progress)}
-            className="h-3 basis-3/4 ms-5 rounded"
+            className="h-3 basis-3/4 sm:ms-5 rounded-none"
           />
         </div>
         <p>
@@ -184,7 +179,7 @@ function TicketDetails({
           {ticket?.version}
         </p>
         <hr />
-        <div className="flex justify-start space-x-20 !mt-4">
+        <div className="sm:flex sm:justify-start !mt-4 sm:space-x-20 max-[640px]:space-y-5">
           <p>
             <span className="font-medium"> {i18n.get('Quantity')}: </span>3
           </p>
@@ -192,12 +187,12 @@ function TicketDetails({
             <span className="font-medium"> {i18n.get('Price WT')}: </span>10.00$
           </p>
           <p>
-            <span className="font-medium">{i18n.get('Invoicing unit')}:</span>
+            <span className="font-medium">{i18n.get('Invoicing unit')}: </span>
             dollar($)
           </p>
         </div>
         {/* --ticket--description--- */}
-        <div>
+        <div className="!mt-10">
           <Suspense>
             <Description description={ticket.description} />
           </Suspense>
