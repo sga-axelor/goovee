@@ -45,6 +45,14 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '../multi-select';
+import {useResponsive} from '@/ui/hooks';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from '@/ui/components/drawer';
+import {cn} from '@/utils/css';
 
 const filterSchema = z.object({
   requestedBy: z.array(z.string()),
@@ -75,6 +83,8 @@ export function Filter(props: FilterProps) {
   const filterCount = Object.keys(filterParams).reduce((acc, v) => ++acc, 0);
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
+  const res = useResponsive();
+  const small = (['xs', 'sm'] as const).some(x => res[x]);
 
   const form = useForm<z.infer<typeof filterSchema>>({
     resolver: zodResolver(filterSchema),
@@ -120,48 +130,95 @@ export function Filter(props: FilterProps) {
     if (updatedOn) values.updatedOn = updatedOn;
     form.reset(values);
   }, [searchParams, form]);
+
   return (
-    <div className="relative">
+    <div className={cn('relative', {'mt-5': small})}>
       <div className="flex items-center justify-between">
         <h3 className="text-base mb-2">{i18n.get('Filter :')}</h3>
       </div>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={filterCount ? 'default' : 'outline'}
-            className="flex justify-between w-[354px] h-[47px]">
-            <div className="flex items-center space-x-2">
-              <FaFilter className="size-4" />
-              <span> {i18n.get('Filters')}</span>
-            </div>
-            {filterCount > 0 && (
-              <Badge
-                className="ms-auto ps-[0.45rem] pe-2"
-                variant={filterCount ? 'destructive' : 'default'}>
-                {filterCount}
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
-
-        <PopoverContent className="max-w-[22.7rem] w-74 overflow-y-auto">
-          <Form {...form}>
-            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="space-y-4">
-                <RequestedByField form={form} users={users} />
-                <DatesField form={form} />
-                <PriorityField form={form} priorities={priorities} />
-                <StatusField form={form} statuses={statuses} />
-                <Close asChild>
-                  <Button variant="success" type="submit" className="w-full">
-                    {i18n.get('Apply')}
-                  </Button>
-                </Close>
+      {!small ? (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={filterCount ? 'default' : 'outline'}
+              className="flex justify-between w-[354px] h-[47px]">
+              <div className="flex items-center space-x-2">
+                <FaFilter className="size-4" />
+                <span> {i18n.get('Filters')}</span>
               </div>
-            </form>
-          </Form>
-        </PopoverContent>
-      </Popover>
+              {filterCount > 0 && (
+                <Badge
+                  className="ms-auto ps-[0.45rem] pe-2"
+                  variant={filterCount ? 'destructive' : 'default'}>
+                  {filterCount}
+                </Badge>
+              )}
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent className="max-w-[22.7rem] w-74 overflow-y-auto">
+            <Form {...form}>
+              <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="space-y-4">
+                  <RequestedByField form={form} users={users} />
+                  <DatesField form={form} />
+                  <PriorityField form={form} priorities={priorities} />
+                  <StatusField form={form} statuses={statuses} />
+                  <Close asChild>
+                    <Button variant="success" type="submit" className="w-full">
+                      {i18n.get('Apply')}
+                    </Button>
+                  </Close>
+                </div>
+              </form>
+            </Form>
+          </PopoverContent>
+        </Popover>
+      ) : (
+        <Drawer>
+          <DrawerTrigger>
+            <Button
+              variant={filterCount ? 'default' : 'outline'}
+              className="flex justify-between w-[354px] h-[47px]">
+              <div className="flex items-center space-x-2">
+                <FaFilter className="size-4" />
+                <span> {i18n.get('Filters')}</span>
+              </div>
+              {filterCount > 0 && (
+                <Badge
+                  className="ms-auto ps-[0.45rem] pe-2"
+                  variant={filterCount ? 'destructive' : 'default'}>
+                  {filterCount}
+                </Badge>
+              )}
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="px-5 pb-5">
+            <h3 className="text-xl font-semibold mb-2">
+              {i18n.get('Filters')}
+            </h3>
+            <hr className="mb-2" />
+            <Form {...form}>
+              <form
+                ref={formRef}
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="overflow-y-auto">
+                <div className="space-y-4">
+                  <RequestedByField form={form} users={users} />
+                  <DatesField form={form} />
+                  <PriorityField form={form} priorities={priorities} />
+                  <StatusField form={form} statuses={statuses} />
+                  <DrawerClose className="w-full">
+                    <Button variant="success" type="submit" className="w-full">
+                      {i18n.get('Apply')}
+                    </Button>
+                  </DrawerClose>
+                </div>
+              </form>
+            </Form>
+          </DrawerContent>
+        </Drawer>
+      )}
     </div>
   );
 }
@@ -212,7 +269,7 @@ function DatesField(props: FieldProps) {
         control={form.control}
         name="updatedOn"
         render={({field}) => (
-          <FormItem>
+          <FormItem className="grow">
             <FormLabel>{i18n.get('From:')}</FormLabel>
             <FormControl>
               <Input
@@ -237,7 +294,7 @@ function DatesField(props: FieldProps) {
         control={form.control}
         name="updatedOn"
         render={({field}) => (
-          <FormItem>
+          <FormItem className="grow">
             <FormLabel>{i18n.get('To:')}</FormLabel>
             <FormControl>
               <Input

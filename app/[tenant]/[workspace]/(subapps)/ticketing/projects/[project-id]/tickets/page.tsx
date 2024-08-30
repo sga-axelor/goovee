@@ -45,6 +45,8 @@ import {
   getWhere,
 } from '../../../common/utils/search-param';
 import Search from '../search';
+import {useResponsive} from '@/ui/hooks';
+import {Drawer} from '@/ui/components/drawer';
 
 const TICKETS_PER_PAGE = 7;
 const DEFAULT_SORT = 'updatedOn';
@@ -98,7 +100,7 @@ export default async function Page({
           </Link>
         </Button>
       </div>
-      <div className="flex items-end justify-between gap-6">
+      <div className="md:flex items-end justify-between gap-6">
         <Search workspace={workspace} projectId={projectId} />
         <Suspense>
           <AsyncFilter
