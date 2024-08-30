@@ -116,7 +116,7 @@ export default async function Page({
             {i18n.get('Latest tickets')}
           </h2>
           <Button variant="success" className="flex items-center" asChild>
-            <Link href={`${ticketsURL}/edit`}>
+            <Link href={`${ticketsURL}/create`}>
               <MdAdd className="size-6" />
               <span>{i18n.get('Create a ticket')}</span>
             </Link>

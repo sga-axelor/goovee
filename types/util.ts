@@ -26,3 +26,9 @@ export type Merge<A, B> = {
 
 export type KeyOf<T extends Iterable<any>> =
   T extends Iterable<infer E> ? E : never;
+
+export type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;

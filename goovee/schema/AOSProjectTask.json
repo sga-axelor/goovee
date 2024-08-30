@@ -34,7 +34,7 @@
       "name": "ticketNumber"
     },
     {
-      "type": "Text",
+      "type": "String",
       "name": "description"
     },
     {
@@ -91,6 +91,11 @@
       "name": "childTasks",
       "mappedBy": "parentTask",
       "target": "AOSProjectTask"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "updatedBy",
+      "target": "AOSUser"
     }
   ]
 }

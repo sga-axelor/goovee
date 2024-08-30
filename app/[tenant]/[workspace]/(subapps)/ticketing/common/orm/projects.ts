@@ -1,8 +1,13 @@
 /**
  * Projects ORM API
  */
+import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
-import {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
+import {
+  AOSProject,
+  AOSProjectTask,
+  AOSProjectTaskCategory,
+} from '@/goovee/.generated/models';
 import {Entity, ID, WhereOptions} from '@goovee/orm';
 
 type QueryProps<T extends Entity> = {
@@ -193,34 +198,62 @@ export async function findProjectTickets(props: TicketProps<AOSProjectTask>) {
   return tickets;
 }
 
-export async function findTicketCategories() {
+export async function findTicketCategories(projectId: ID) {
   const client = await getClient();
-  const categories = await client.aOSProjectTaskCategory.find({
+  const project = await client.aOSProject.findOne({
+    where: {
+      id: projectId,
+    },
     select: {
-      name: true,
+      projectTaskCategorySet: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
-  return categories;
+  return project?.projectTaskCategorySet ?? [];
 }
 
-export async function findTicketPriorities() {
+export async function findTicketPriorities(projectId: ID) {
   const client = await getClient();
-  const priorities = await client.aOSProjectPriority.find({
+  const project = await client.aOSProject.findOne({
+    where: {
+      id: projectId,
+    },
     select: {
-      name: true,
+      projectTaskPrioritySet: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
-  return priorities;
+  return project?.projectTaskPrioritySet ?? [];
 }
 
-export async function findTicketStatuses() {
+export async function findTicketStatuses(projectId: ID) {
   const client = await getClient();
-  const statuses = await client.aOSProjectTaskStatus.find({
+  const project = await client.aOSProject.findOne({
+    where: {
+      id: projectId,
+    },
     select: {
-      name: true,
+      projectTaskStatusSet: {
+        orderBy: {
+          sequence: ORDER_BY.ASC,
+        },
+        select: {
+          id: true,
+          name: true,
+          sequence: true,
+        },
+      },
     },
   });
-  return statuses;
+  return project?.projectTaskStatusSet ?? [];
 }
 
 export async function findUsers() {
@@ -233,11 +266,12 @@ export async function findUsers() {
   return users;
 }
 
-export async function findTicketById(id: ID) {
+export async function findTicket(ticketId: ID, projectId?: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
-      id: id,
+      id: ticketId,
+      ...(projectId ? {project: {id: projectId}} : {}),
     },
     select: {
       name: true,

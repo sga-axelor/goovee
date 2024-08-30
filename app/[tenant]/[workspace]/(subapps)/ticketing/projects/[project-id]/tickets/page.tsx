@@ -16,6 +16,7 @@ import {TableCell, TableRow} from '@/ui/components/table';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {workspacePathname} from '@/utils/workspace';
+import {ID} from '@goovee/orm';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {Suspense} from 'react';
@@ -34,15 +35,15 @@ import {
   findUsers,
 } from '../../../common/orm/projects';
 import type {FilterKey} from '../../../common/types';
+import type {SearchParams} from '../../../common/types/search-param';
 import {Filter} from '../../../common/ui/components/filter';
 import {TicketList} from '../../../common/ui/components/ticket-list';
-import {getPaginationButtons, getPages} from '../../../common/utils';
+import {getPages, getPaginationButtons} from '../../../common/utils';
 import {
   getOrderBy,
   getSkip,
   getWhere,
 } from '../../../common/utils/search-param';
-import type {SearchParams} from '../../../common/types/search-param';
 import Search from '../search';
 
 const TICKETS_PER_PAGE = 7;
@@ -65,6 +66,7 @@ export default async function Page({
 
   const session = await getSession();
   // const userId = session!.user.id;
+  //TODO: use actual user
   const userId = '1';
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
@@ -90,7 +92,7 @@ export default async function Page({
         <h2 className="font-semibold text-xl">{i18n.get('All tickets')}</h2>
         <Button variant="success" className="flex items-center" asChild>
           <Link
-            href={`${workspaceURI}/ticketing/projects/${projectId}/tickets/edit`}>
+            href={`${workspaceURI}/ticketing/projects/${projectId}/tickets/create`}>
             <MdAdd className="size-6" />
             <span>{i18n.get('Create a ticket')}</span>
           </Link>
@@ -99,7 +101,11 @@ export default async function Page({
       <div className="flex items-end justify-between gap-6">
         <Search workspace={workspace} projectId={projectId} />
         <Suspense>
-          <AsyncFilter url={url} searchParams={searchParams} />
+          <AsyncFilter
+            url={url}
+            searchParams={searchParams}
+            projectId={projectId}
+          />
         </Suspense>
       </div>
       <TicketList
@@ -201,14 +207,16 @@ function Footer(props: FooterProps) {
 async function AsyncFilter({
   url,
   searchParams,
+  projectId,
 }: {
   url: string;
   searchParams: SearchParams<FilterKey>;
+  projectId: ID;
 }) {
   const [users, statuses, priorities] = await Promise.all([
     findUsers().then(clone),
-    findTicketStatuses().then(clone),
-    findTicketPriorities().then(clone),
+    findTicketStatuses(projectId).then(clone),
+    findTicketPriorities(projectId).then(clone),
   ]);
 
   return (

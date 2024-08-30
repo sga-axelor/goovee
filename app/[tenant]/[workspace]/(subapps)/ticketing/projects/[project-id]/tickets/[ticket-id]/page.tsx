@@ -1,10 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import {
-  findTicketById,
-  findTicketStatuses,
-} from '../../../../common/orm/projects';
+import {findTicket, findTicketStatuses} from '../../../../common/orm/projects';
 
 import {
   AvatarImage,
@@ -22,7 +19,7 @@ import {formatDate} from '../../../../common/utils';
 import {Progress} from '@/ui/components/progress';
 import {i18n} from '@/lib/i18n';
 import {AOSProjectTask, AOSProjectTaskStatus} from '@/goovee/.generated/models';
-import {notFound} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import {Maybe} from '@/types/util';
 import {Fragment, Suspense} from 'react';
 import {ID} from '@goovee/orm';
@@ -75,8 +72,8 @@ export default async function Page({
   const ticketId = params['ticket-id'];
 
   const [ticket, statuses] = await Promise.all([
-    findTicketById(ticketId),
-    findTicketStatuses(),
+    findTicket(ticketId, projectId),
+    findTicketStatuses(projectId),
   ]);
   if (!ticket) notFound();
   return (
@@ -117,7 +114,7 @@ function TicketDetails({
           <p className="text-base font-medium">#{ticket?.id}</p>
 
           <Link
-            href={`${workspaceURI}/ticketing/projects/${ticket?.project?.id}/tickets/edit`}>
+            href={`${workspaceURI}/ticketing/projects/${ticket.project?.id}/tickets/${ticket.id}/edit`}>
             <MdOutlineModeEditOutline className="size-6" />
           </Link>
         </div>
@@ -193,23 +190,18 @@ function TicketDetails({
         </div>
         {/* --ticket--description--- */}
         <div className="!mt-10">
-          <Suspense>
-            <Description description={ticket.description} />
-          </Suspense>
+          <Description description={ticket.description} />
         </div>
       </div>
     </div>
   );
 }
 
-async function Description({
-  description,
-}: {
-  description: Maybe<Promise<string>>;
-}) {
+function Description({description}: {description: Maybe<string>}) {
   if (!description) return null;
-  const html = await description;
-  return <p dangerouslySetInnerHTML={{__html: html}} />;
+  //TODO: sanitize with DOMPurify
+  const html = description;
+  return <div dangerouslySetInnerHTML={{__html: html}} />;
 }
 
 function SubTickets({parentTicket, childTickets}: SubTicketsProps) {

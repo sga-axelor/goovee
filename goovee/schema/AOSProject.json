@@ -37,10 +37,33 @@
       "target": "AOSPartner"
     },
     {
+      "type": "ManyToOne",
+      "name": "assignedTo",
+      "target": "AOSPartner"
+    },
+    {
       "type": "ManyToMany",
       "name": "membersUserSet",
       "target": "AOSUser",
       "column": "project_set"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskStatusSet",
+      "target": "AOSProjectTaskStatus",
+      "column": "project_project"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskPrioritySet",
+      "target": "AOSProjectPriority",
+      "column": "project_project"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskCategorySet",
+      "target": "AOSProjectTaskCategory",
+      "column": "project_project"
     },
     {
       "type": "OneToMany",
