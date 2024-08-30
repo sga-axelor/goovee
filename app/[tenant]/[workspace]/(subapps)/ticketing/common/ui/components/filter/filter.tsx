@@ -176,10 +176,10 @@ export function Filter(props: FilterProps) {
         </Popover>
       ) : (
         <Drawer>
-          <DrawerTrigger>
+          <DrawerTrigger className="w-full">
             <Button
               variant={filterCount ? 'default' : 'outline'}
-              className="flex justify-between w-[354px] h-[47px]">
+              className="flex justify-between w-full h-[47px]">
               <div className="flex items-center space-x-2">
                 <FaFilter className="size-4" />
                 <span> {i18n.get('Filters')}</span>
