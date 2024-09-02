@@ -125,7 +125,7 @@ export function Filter(props: FilterProps) {
         <Trigger asChild>
           <Button
             variant={filterCount ? 'default' : 'outline'}
-            className={cn('flex justify-between w-[354px] h-[ :47px]', {
+            className={cn('flex justify-between w-[354px]', {
               ['w-full']: small,
             })}>
             <div className="flex items-center space-x-2">

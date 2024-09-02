@@ -24,9 +24,13 @@ import {ID} from '@goovee/orm';
 export function Search({
   workspace,
   projectId,
+  className,
+  inputClassName,
 }: {
   workspace: PortalWorkspace;
   projectId: ID;
+  inputClassName?: string;
+  className?: string;
 }) {
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
@@ -55,11 +59,14 @@ export function Search({
   );
 
   return (
-    <div className="w-full relative">
+    <div className={cn('w-full relative', className)}>
       <Command className="p-0 bg-white">
         <CommandInput
           placeholder="Search here"
-          className="lg:placeholder:text-base placeholder:text-sm placeholder:font-normal lg:placeholder:font-medium pl-[10px] py-4 pr-[132px] h-14 lg:pl-4 border-none text-base font-medium rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black"
+          className={cn(
+            'lg:placeholder:text-base placeholder:text-sm placeholder:font-normal lg:placeholder:font-medium pl-[10px] pr-[132px] h-12 lg:pl-4 border-none text-base font-medium rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black',
+            inputClassName,
+          )}
           value={search}
           onChangeCapture={handleSearch}
         />

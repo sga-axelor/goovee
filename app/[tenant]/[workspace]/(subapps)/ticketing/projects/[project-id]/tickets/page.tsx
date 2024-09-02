@@ -95,7 +95,7 @@ export default async function Page({
   const pages = getPages(tickets, limit);
   return (
     <div className="container my-6 space-y-6 mx-auto">
-      <div className="flex flex-col justify-between md:flex-row gap-4">
+      <div className="flex flex-col items-center justify-between md:flex-row gap-4">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -140,7 +140,11 @@ export default async function Page({
         </Button>
       </div>
       <div className="md:flex items-end justify-between gap-6">
-        <Search workspace={workspace} projectId={projectId} />
+        <Search
+          workspace={workspace}
+          projectId={projectId}
+          inputClassName="h-[39px]"
+        />
         <Suspense>
           <AsyncFilter
             url={url}
