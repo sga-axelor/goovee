@@ -176,6 +176,7 @@ function Footer(props: FooterProps) {
               <PaginationItem>
                 <PaginationPrevious asChild>
                   <Link
+                    replace
                     scroll={false}
                     className={cn({
                       ['invisible']: +page <= 1,
@@ -204,6 +205,7 @@ function Footer(props: FooterProps) {
                   <PaginationItem key={value}>
                     <PaginationLink isActive={+page === value} asChild>
                       <Link
+                        replace
                         scroll={false}
                         href={{
                           pathname: url,
@@ -221,6 +223,7 @@ function Footer(props: FooterProps) {
               <PaginationItem>
                 <PaginationNext asChild>
                   <Link
+                    replace
                     scroll={false}
                     className={cn({
                       ['invisible']: +page >= pages,

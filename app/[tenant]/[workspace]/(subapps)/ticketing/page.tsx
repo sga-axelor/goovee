@@ -89,9 +89,11 @@ export default async function Page({
               <PaginationItem>
                 <PaginationPrevious asChild>
                   <Link
+                    scroll={false}
                     className={cn({
                       ['invisible']: +page <= 1,
                     })}
+                    replace
                     href={{
                       pathname: `${workspaceURI}/ticketing`,
                       query: {
@@ -116,6 +118,8 @@ export default async function Page({
                   <PaginationItem key={value}>
                     <PaginationLink isActive={+page === value} asChild>
                       <Link
+                        scroll={false}
+                        replace
                         href={{
                           pathname: `${workspaceURI}/ticketing`,
                           query: {
@@ -132,6 +136,8 @@ export default async function Page({
               <PaginationItem>
                 <PaginationNext asChild>
                   <Link
+                    scroll={false}
+                    replace
                     className={cn({
                       ['invisible']: +page >= pages,
                     })}
