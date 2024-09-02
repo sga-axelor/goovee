@@ -115,16 +115,17 @@ export function Filter(props: FilterProps) {
   const [Controller, Trigger, Content] = small
     ? ([Drawer, DrawerTrigger, DrawerContent] as const)
     : ([Popover, PopoverTrigger, PopoverContent] as const);
+
   return (
     <div className={cn('relative', {'mt-5': small})}>
       <div className="flex items-center justify-between">
-        <h3 className="text-base mb-2">{i18n.get('Filter :')}</h3>
+        <h3 className="text-base mb-2">{i18n.get('Filter')} :</h3>
       </div>
       <Controller open={open} onOpenChange={setOpen}>
         <Trigger asChild>
           <Button
             variant={filterCount ? 'default' : 'outline'}
-            className={cn('flex justify-between w-[354px] h-[47px]', {
+            className={cn('flex justify-between w-[354px] h-[ :47px]', {
               ['w-full']: small,
             })}>
             <div className="flex items-center space-x-2">
@@ -180,7 +181,7 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
       name="requestedBy"
       render={({field}) => (
         <FormItem className="grow">
-          <FormLabel>{i18n.get('Requested by :')}</FormLabel>
+          <FormLabel>{i18n.get('Requested by')} :</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             values={field.value ?? []}
@@ -220,7 +221,7 @@ function DatesField(props: FieldProps) {
           name="updatedOn.0"
           render={({field}) => (
             <FormItem className="grow">
-              <FormLabel>{i18n.get('From:')}</FormLabel>
+              <FormLabel>{i18n.get('From')}:</FormLabel>
               <FormControl>
                 <Input type="date" placeholder="DD/MM/YYYY" {...field} />
               </FormControl>
@@ -233,7 +234,7 @@ function DatesField(props: FieldProps) {
           name="updatedOn.1"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('To:')}</FormLabel>
+              <FormLabel>{i18n.get('To')}:</FormLabel>
               <FormControl>
                 <Input type="date" placeholder="DD/MM/YYYY" {...field} />
               </FormControl>
@@ -259,7 +260,7 @@ function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
       name="priority"
       render={({field}) => (
         <FormItem>
-          <FormLabel>{i18n.get('Priority :')}</FormLabel>
+          <FormLabel>{i18n.get('Priority')} :</FormLabel>
           {priorities.map(priority => (
             <FormField
               key={priority.id}
@@ -311,7 +312,7 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
       name="status"
       render={({field}) => (
         <FormItem>
-          <FormLabel>{i18n.get('Status :')}</FormLabel>
+          <FormLabel>{i18n.get('Status')} :</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             className="space-y-0"
