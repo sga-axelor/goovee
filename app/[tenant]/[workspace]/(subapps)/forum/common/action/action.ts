@@ -18,6 +18,7 @@ import {getFileSizeText} from '@/utils/files';
 
 //----LOCAL IMPORTS -----//
 import {
+  findGroupById,
   findGroupsByMembers,
   findMemberGroupById,
   findPosts,
@@ -217,8 +218,8 @@ export async function joinGroup({
     return {error: true, message: i18n.get('Invalid workspace')};
   }
 
-  const memberGroup = await findMemberGroupById(groupID, workspace.id);
-  if (!memberGroup) {
+  const group = await findGroupById(groupID, workspace.id);
+  if (!group) {
     return {error: true, message: i18n.get('Member not part of the group')};
   }
 
@@ -226,13 +227,11 @@ export async function joinGroup({
 
   try {
     const result = await client.aOSPortalForumGroupMember
-      .update({
+      .create({
         data: {
-          id: memberGroup.id,
-          version: memberGroup.version,
           forumGroup: {
             select: {
-              id: memberGroup.id,
+              id: group.id,
             },
           },
           member: {
