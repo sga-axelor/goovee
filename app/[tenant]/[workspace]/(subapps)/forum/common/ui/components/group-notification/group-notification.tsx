@@ -11,11 +11,13 @@ import {
   Separator,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/image';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {NOTIFICATIONS_OPTIONS} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {Group} from '@/subapps/forum/common/types/forum';
-import {addNotificationsToGroup} from '@/subapps/forum/common/action/action';
+import {addGroupNotification} from '@/subapps/forum/common/action/action';
 
 interface groupNotificationPros {
   group: Group;
@@ -25,14 +27,29 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
   const [selectedOption, setSelectedOption] = useState<string | null>('');
   const {forumGroup, id, notificationSelect, isPin} = group;
 
+  const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
+
   useEffect(() => {
     setSelectedOption(notificationSelect);
   }, []);
 
   const handleChange = async (notificationType: string) => {
-    const {id, version} = group;
-    await addNotificationsToGroup({id, version, notificationType});
-    setSelectedOption(notificationType);
+    const {id} = group;
+    const response = await addGroupNotification({
+      id,
+      notificationType,
+      workspaceURL,
+    });
+
+    if (response?.success) {
+      setSelectedOption(notificationType);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: i18n.get(response?.message || 'An error occurred'),
+      });
+    }
   };
 
   return (

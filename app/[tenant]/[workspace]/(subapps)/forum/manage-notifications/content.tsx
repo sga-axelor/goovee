@@ -1,6 +1,7 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
+import {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
@@ -12,6 +13,7 @@ import {
   SelectValue,
 } from '@/ui/components';
 import {ORDER_BY} from '@/constants';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -27,36 +29,44 @@ import {
   NavMenu,
   Search,
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {findGroups} from '@/subapps/forum/common/action/action';
 import {Group} from '@/subapps/forum/common/types/forum';
-import {useEffect, useState} from 'react';
+import {fetchGroupsByMembers} from '@/subapps/forum/common/action/action';
 
 const Content = ({userId}: {userId: string}) => {
-  const router = useRouter();
-  const {workspaceURI} = useWorkspace();
   const [memberGroups, setMemberGroup] = useState<Group[]>([]);
   const [searchKey, setSearchKey] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>(ORDER_BY.ASC);
 
+  const router = useRouter();
+  const {workspaceURI, workspaceID} = useWorkspace();
   const handleMenuClick = (link: string) => {
     router.push(`${workspaceURI}/forum/${link}`);
   };
   const isLoggedIn = userId;
 
   useEffect(() => {
-    isLoggedIn &&
-      findGroups({
-        id: userId,
-        isMember: true,
-        searchKey,
-        orderBy: {
-          forumGroup: {
-            name: sortBy,
+    if (!isLoggedIn) return;
+
+    const fetchGroups = async () => {
+      try {
+        const result = await fetchGroupsByMembers({
+          id: userId,
+          searchKey,
+          orderBy: {
+            forumGroup: {
+              name: sortBy,
+            },
           },
-        },
-      }).then(setMemberGroup);
-  }, [searchKey, sortBy]);
+          workspaceID,
+        });
+        setMemberGroup(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchGroups();
+  }, [isLoggedIn, userId, searchKey, sortBy, workspaceID]);
 
   const handleSearchKeyChange = (value: string) => {
     setSearchKey(value);

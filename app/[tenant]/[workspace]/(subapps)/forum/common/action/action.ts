@@ -17,7 +17,11 @@ import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText} from '@/utils/files';
 
 //----LOCAL IMPORTS -----//
-import {findGroupByMembers, findPosts} from '@/subapps/forum/common/orm/forum';
+import {
+  findGroupsByMembers,
+  findMemberGroupById,
+  findPosts,
+} from '@/subapps/forum/common/orm/forum';
 
 interface FileMeta {
   fileName: string;
@@ -65,110 +69,245 @@ function extractFileValues(formData: FormData) {
   return values;
 }
 
-export async function addPinnedGroup({
+export async function pinGroup({
   isPin,
-  group,
+  groupID,
+  workspaceURL,
 }: {
   isPin: boolean;
-  group: any;
+  groupID: string;
+  workspaceURL: string;
 }) {
-  const client = await getClient();
+  const session = await getSession();
+  const user = session?.user;
 
-  await client.aOSPortalForumGroupMember
-    .update({
-      data: {
-        forumGroup: {
-          select: {
-            id: group.id,
+  if (!user) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+  });
+  if (!subapp) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL});
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
+  const memberGroup = await findMemberGroupById(groupID, workspace.id);
+  if (!memberGroup) {
+    return {error: true, message: i18n.get('Member not part of the group')};
+  }
+
+  const client = await getClient();
+  try {
+    const result = await client.aOSPortalForumGroupMember
+      .update({
+        data: {
+          id: memberGroup.id,
+          version: memberGroup.version,
+          forumGroup: {
+            select: {
+              id: memberGroup.id,
+            },
           },
+          isPin,
         },
-        ...group,
-        isPin,
-      },
-    })
-    .then(clone);
+      })
+      .then(clone);
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      message: 'Some error occurred',
+    };
+  }
 }
 
-export async function exitGroup({group}: {group: any}) {
+export async function exitGroup({
+  groupID,
+  workspaceURL,
+}: {
+  groupID: string;
+  workspaceURL: string;
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+  });
+  if (!subapp) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL});
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
+  const memberGroup = await findMemberGroupById(groupID, workspace.id);
+  if (!memberGroup) {
+    return {error: true, message: i18n.get('Member not part of the group')};
+  }
+
   const client = await getClient();
-  await client.aOSPortalForumGroupMember
-    .update({
-      data: {
-        forumGroup: {
-          select: {
-            id: group.id,
-          },
-        },
-        member: null,
-        ...group,
-      },
-    })
-    .then(clone);
+
+  try {
+    const result = await client.aOSPortalForumGroupMember
+      .delete({
+        id: memberGroup.id,
+        version: memberGroup.version,
+      })
+      .then(clone);
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      message: 'Some error occurred',
+    };
+  }
 }
 
-export async function joinGroup({group, userId}: {group: any; userId: string}) {
+export async function joinGroup({
+  groupID,
+  userId,
+  workspaceURL,
+}: {
+  groupID: any;
+  userId: string;
+  workspaceURL: string;
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+  });
+  if (!subapp) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL});
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
+  const memberGroup = await findMemberGroupById(groupID, workspace.id);
+  if (!memberGroup) {
+    return {error: true, message: i18n.get('Member not part of the group')};
+  }
+
   const client = await getClient();
 
-  await client.aOSPortalForumGroupMember
-    .create({
-      data: {
-        id: group.id,
-        version: group.verion,
-        forumGroup: {
-          select: {
-            id: group.id,
+  try {
+    const result = await client.aOSPortalForumGroupMember
+      .update({
+        data: {
+          id: memberGroup.id,
+          version: memberGroup.version,
+          forumGroup: {
+            select: {
+              id: memberGroup.id,
+            },
+          },
+          member: {
+            select: {id: userId},
           },
         },
-        member: {
-          select: {id: userId},
-        },
-      },
-    })
-    .then(clone);
+      })
+      .then(clone);
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      message: 'Some error occurred',
+    };
+  }
 }
 
-export async function addNotificationsToGroup({
+export async function addGroupNotification({
   id,
-  version,
   notificationType,
+  workspaceURL,
 }: {
   id: string;
-  version: number;
   notificationType: string;
+  workspaceURL: string;
 }) {
-  const client = await getClient();
+  const session = await getSession();
+  const user = session?.user;
 
-  await client.aOSPortalForumGroupMember
-    .create({
-      data: {
-        id,
-        version,
-        notificationSelect: notificationType,
-      },
-    })
-    .then(clone);
-}
+  if (!user) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
 
-export async function findGroups({
-  id = null,
-  isMember = true,
-  searchKey = '',
-  orderBy,
-  workspaceID,
-}: {
-  id: string | null;
-  isMember: boolean;
-  searchKey?: string;
-  orderBy?: any;
-  workspaceID: PortalWorkspace['id'];
-}) {
-  return await findGroupByMembers({
-    id,
-    isMember,
-    searchKey,
-    orderBy,
-    workspaceID,
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
   });
+  if (!subapp) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL});
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
+  const memberGroup = await findMemberGroupById(id, workspace.id);
+  if (!memberGroup) {
+    return {error: true, message: i18n.get('Member not part of the group')};
+  }
+
+  const client = await getClient();
+  try {
+    const response = await client.aOSPortalForumGroupMember
+      .update({
+        data: {
+          id: memberGroup.id,
+          version: memberGroup.version,
+          notificationSelect: notificationType,
+        },
+      })
+      .then(clone);
+
+    return {success: true, data: response};
+  } catch (error) {
+    return {
+      error: true,
+      message: 'Some error occurred',
+    };
+  }
 }
 
 export async function addPost({
@@ -381,20 +520,41 @@ export async function fetchPosts({
   limit,
   page,
   search = '',
-  workspaceID,
+  workspaceURL,
 }: {
   sort?: any;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
-  workspaceID: PortalWorkspace['id'];
+  workspaceURL: string;
 }) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+  });
+  if (!subapp) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL});
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
   return await findPosts({
     sort,
     limit,
     page,
     search,
-    workspaceID,
+    workspaceID: workspace.id,
   }).then(clone);
 }
 
@@ -495,4 +655,23 @@ async function authorizeAndValidate({appCode, workspaceURL}: any) {
   return {
     error: false,
   };
+}
+
+export async function fetchGroupsByMembers({
+  id,
+  searchKey,
+  orderBy,
+  workspaceID,
+}: {
+  id: any;
+  searchKey?: string;
+  orderBy?: any;
+  workspaceID: PortalWorkspace['id'];
+}) {
+  return await findGroupsByMembers({
+    id,
+    searchKey,
+    orderBy,
+    workspaceID,
+  });
 }

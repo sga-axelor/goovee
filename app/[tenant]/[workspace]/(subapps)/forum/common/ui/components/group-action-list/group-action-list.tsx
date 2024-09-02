@@ -25,6 +25,7 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -37,10 +38,10 @@ import {
   REMOVE_PIN,
 } from '@/subapps/forum/common/constants';
 import {
-  addNotificationsToGroup,
-  pinGroup,
+  addGroupNotification,
   exitGroup,
   joinGroup,
+  pinGroup,
 } from '@/subapps/forum/common/action/action';
 import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
 
@@ -58,33 +59,73 @@ export const GroupActionList = ({
   groupId?: string;
 }) => {
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {toast} = useToast();
 
   const handlePinGroup = async (isPin: boolean, group: any) => {
-    await pinGroup({isPin: !isPin, group});
-    router.push(`${workspaceURI}/forum`);
-    router.refresh();
+    const response = await pinGroup({
+      groupID: group.id,
+      isPin: !isPin,
+      workspaceURL,
+    });
+
+    if (response.success) {
+      router.push(`${workspaceURI}/forum`);
+      router.refresh();
+    } else {
+      toast({
+        variant: 'destructive',
+        title: i18n.get(response.message || 'An error occurred'),
+      });
+    }
   };
 
   const handleExit = async (group: any) => {
-    await exitGroup({group});
-    router.push(`${workspaceURI}/forum`);
-    router.refresh();
+    const response = await exitGroup({
+      groupID: group.forumGroup.id,
+      workspaceURL,
+    });
+    if (response.success) {
+      router.push(`${workspaceURI}/forum`);
+      router.refresh();
+    } else {
+      toast({
+        variant: 'destructive',
+        title: i18n.get(response.message || 'An error occurred'),
+      });
+    }
   };
 
   const handleJoinGroup = async (group: any, userId: string) => {
-    await joinGroup({group, userId});
-    router.push(`${workspaceURI}/forum`);
-    router.refresh();
+    const response = await joinGroup({groupID: group.id, userId, workspaceURL});
+
+    if (response.success) {
+      router.push(`${workspaceURI}/forum`);
+      router.refresh();
+    } else {
+      toast({
+        variant: 'destructive',
+        title: i18n.get(response.message || 'An error occurred'),
+      });
+    }
   };
 
-  const handleNotifications = async (
-    id: string,
-    version: number,
-    notificationType: string,
-  ) => {
-    await addNotificationsToGroup({id, version, notificationType});
-    router.push(`${workspaceURI}/forum`);
+  const handleNotifications = async (id: string, notificationType: string) => {
+    const response = await addGroupNotification({
+      id,
+      notificationType,
+      workspaceURL,
+    });
+
+    if (response.success) {
+      router.push(`${workspaceURI}/forum`);
+      router.refresh();
+    } else {
+      toast({
+        variant: 'destructive',
+        title: i18n.get(response.message || 'An error occurred'),
+      });
+    }
   };
 
   const handlePath = (id: string) => {
@@ -170,11 +211,7 @@ export const GroupActionList = ({
                               key={option.id}
                               className={`cursor-pointer px-4 ${option.value === group?.notificationSelect ? 'bg-success-light' : ''}`}
                               onClick={() =>
-                                handleNotifications(
-                                  group?.id,
-                                  group?.verion,
-                                  option.value,
-                                )
+                                handleNotifications(group?.id, option.value)
                               }>
                               {i18n.get(option.title)}
                             </div>

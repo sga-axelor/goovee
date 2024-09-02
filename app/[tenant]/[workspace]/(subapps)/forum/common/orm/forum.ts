@@ -251,3 +251,24 @@ export async function findGroupById(id: ID, workspaceID: string) {
   });
   return group;
 }
+
+export async function findMemberGroupById(id: ID, workspaceID: string) {
+  if (!workspaceID) {
+    return null;
+  }
+  const client = await getClient();
+  const group = await client.aOSPortalForumGroupMember.findOne({
+    where: {
+      id,
+      forumGroup: {
+        workspace: {
+          id: workspaceID,
+        },
+        id,
+      },
+    },
+    select: {},
+  });
+
+  return group;
+}

@@ -64,7 +64,7 @@ export const HomePage = ({
   const [searchKey, setSearchKey] = useState<string>('');
 
   const router = useRouter();
-  const {workspaceURI, workspaceID} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   const {searchParams, update} = useSearchParams();
   const type = searchParams.get('type') ?? 'posts';
@@ -129,7 +129,7 @@ export const HomePage = ({
     <Search
       searchKey="title"
       findQuery={async () => {
-        const response = await fetchPosts({workspaceID});
+        const response = await fetchPosts({workspaceURL});
         if (response) {
           const {posts} = response;
           return posts;
