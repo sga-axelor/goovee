@@ -15,6 +15,7 @@ import {
 import {TableCell, TableRow} from '@/ui/components/table';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
+import {decodeFilter} from '@/utils/filter';
 import {workspacePathname} from '@/utils/workspace';
 import {ID} from '@goovee/orm';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
@@ -23,18 +24,13 @@ import {Suspense} from 'react';
 import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  columns,
-  filterKeyPathMap,
-  sortKeyPathMap,
-} from '../../../common/constants';
+import {columns, sortKeyPathMap} from '../../../common/constants';
 import {
   findProjectTickets,
   findTicketPriorities,
   findTicketStatuses,
   findUsers,
 } from '../../../common/orm/projects';
-import type {FilterKey} from '../../../common/types';
 import type {SearchParams} from '../../../common/types/search-param';
 import {Filter} from '../../../common/ui/components/filter';
 import {TicketList} from '../../../common/ui/components/ticket-list';
@@ -55,7 +51,7 @@ export default async function Page({
   searchParams,
 }: {
   params: {tenant: string; workspace: string; 'project-id': string};
-  searchParams: SearchParams<FilterKey>;
+  searchParams: SearchParams;
 }) {
   const projectId = params?.['project-id'];
 
@@ -63,7 +59,7 @@ export default async function Page({
     limit = TICKETS_PER_PAGE,
     page = 1,
     sort = DEFAULT_SORT,
-    ...filterParams
+    filter,
   } = searchParams;
 
   const session = await getSession();
@@ -82,7 +78,7 @@ export default async function Page({
     projectId,
     take: +limit,
     skip: getSkip(limit, page),
-    where: getWhere(filterParams, filterKeyPathMap),
+    where: getWhere(decodeFilter(filter), userId),
     orderBy: getOrderBy(sort, sortKeyPathMap),
   }).then(clone);
 
@@ -121,7 +117,7 @@ export default async function Page({
 
 type FooterProps = {
   url: string;
-  searchParams: SearchParams<FilterKey>;
+  searchParams: SearchParams;
   pages: number;
 };
 
@@ -212,7 +208,7 @@ async function AsyncFilter({
   projectId,
 }: {
   url: string;
-  searchParams: SearchParams<FilterKey>;
+  searchParams: SearchParams;
   projectId: ID;
 }) {
   const [users, statuses, priorities] = await Promise.all([

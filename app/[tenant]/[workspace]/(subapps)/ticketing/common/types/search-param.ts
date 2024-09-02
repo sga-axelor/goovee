@@ -9,8 +9,8 @@ export type PageParams = {
   limit?: string | undefined;
 };
 
-export type FilterParams<T extends string> = Partial<Record<T, string>>;
+export type FilterParams = {
+  filter?: string | undefined;
+};
 
-export type SearchParams<T extends string = string> = Expand<
-  SortParams & PageParams & FilterParams<T>
->;
+export type SearchParams = Expand<SortParams & PageParams & FilterParams>;

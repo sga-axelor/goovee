@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from '@/ui/components';
 import {Button} from '@/ui/components/button';
+import {Drawer, DrawerContent, DrawerTrigger} from '@/ui/components/drawer';
 import {
   Form,
   FormControl,
@@ -23,20 +24,19 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {Input} from '@/ui/components/input';
+import {useResponsive} from '@/ui/hooks';
+import {cn} from '@/utils/css';
+import {decodeFilter, encodeFilter} from '@/utils/filter';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {Close} from '@radix-ui/react-popover';
+import {pick} from 'lodash';
 import {useRouter} from 'next/navigation';
-import {useEffect, useRef} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
 import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
-import type {FilterKey} from '../../../types';
 import {SearchParams} from '../../../types/search-param';
-import {
-  decodeFilterParams,
-  encodeFilterValue,
-} from '../../../utils/search-param';
+import {EncodedFilterSchema, FilterSchema} from '../../../utils/search-param';
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -45,26 +45,10 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '../multi-select';
-import {useResponsive} from '@/ui/hooks';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from '@/ui/components/drawer';
-import {cn} from '@/utils/css';
-
-const filterSchema = z.object({
-  requestedBy: z.array(z.string()),
-  //TODO: validate such that if toDate is set, fromDate should also be set, and fromDate < toDate
-  priority: z.array(z.string()),
-  status: z.array(z.string()),
-  updatedOn: z.array(z.string()),
-});
 
 type FilterProps = {
   url: string;
-  searchParams: SearchParams<FilterKey>;
+  searchParams: SearchParams;
   users: AOSUser[];
   priorities: AOSProjectPriority[];
   statuses: AOSProjectTaskStatus[];
@@ -72,153 +56,118 @@ type FilterProps = {
 
 const defaultValues = {
   requestedBy: [] as string[],
-  updatedOn: [] as string[],
+  updatedOn: ['', ''] as [string, string],
   priority: [] as string[],
   status: [] as string[],
 };
 
 export function Filter(props: FilterProps) {
   const {users, priorities, statuses, url, searchParams} = props;
-  const {sort, page, limit, ...filterParams} = searchParams;
-  const filterCount = Object.keys(filterParams).reduce((acc, v) => ++acc, 0);
+  const [open, setOpen] = useState(false);
+  const filter = useMemo(
+    () => searchParams.filter && decodeFilter(searchParams.filter),
+    [searchParams.filter],
+  );
+  const filterCount = useMemo(
+    () => (filter ? Object.keys(filter).length : 0),
+    [filter],
+  );
+
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const res = useResponsive();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
 
-  const form = useForm<z.infer<typeof filterSchema>>({
-    resolver: zodResolver(filterSchema),
+  const form = useForm<z.infer<typeof FilterSchema>>({
+    resolver: zodResolver(FilterSchema),
     defaultValues,
   });
 
-  const onSubmit = (value: z.infer<typeof filterSchema>) => {
-    const params = new URLSearchParams();
-    const {requestedBy, priority, updatedOn, status} = value;
+  const onSubmit = (value: z.infer<typeof FilterSchema>) => {
+    const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
 
-    if (sort) params.set('sort', sort);
-    if (limit) params.set('sort', limit);
+    if (!dirtyFieldKeys.length) return setOpen(false);
+    const dirtyValues = pick(value, dirtyFieldKeys);
 
-    if (requestedBy?.length) {
-      params.set('requestedBy', encodeFilterValue('in', requestedBy));
-    }
+    const filter = EncodedFilterSchema.parse(dirtyValues);
+    const params = new URLSearchParams(searchParams);
+    params.delete('page');
 
-    if (status?.length) params.set('status', encodeFilterValue('in', status));
-
-    if (priority?.length) {
-      params.set('priority', encodeFilterValue('in', priority));
-    }
-
-    if (updatedOn?.length && updatedOn[0] && updatedOn[1]) {
-      params.set('updatedOn', encodeFilterValue('between', updatedOn));
+    if (filter) {
+      params.set('filter', encodeFilter(filter));
+    } else {
+      params.delete('filter');
     }
 
     const route = `${url}?${params.toString()}`;
     router.replace(route);
+    setOpen(false);
   };
 
   useEffect(() => {
-    const values = structuredClone(defaultValues);
-    const {sort, page, limit, ...filterParams} = searchParams;
-    const {success, data} = filterSchema
-      .partial()
-      .safeParse(decodeFilterParams(filterParams));
-
-    const {requestedBy, status, updatedOn, priority} = data || {};
-    if (requestedBy) values.requestedBy = requestedBy;
-    if (priority) values.priority = priority;
-    if (status) values.status = status;
-    if (updatedOn) values.updatedOn = updatedOn;
-    form.reset(values);
-  }, [searchParams, form]);
-
+    const {success, data} = EncodedFilterSchema.safeParse(filter);
+    if (!success || !data) {
+      form.reset(defaultValues);
+    } else {
+      form.reset({...defaultValues, ...data});
+    }
+  }, [filter, form]);
+  const [Controller, Trigger, Content] = small
+    ? ([Drawer, DrawerTrigger, DrawerContent] as const)
+    : ([Popover, PopoverTrigger, PopoverContent] as const);
   return (
     <div className={cn('relative', {'mt-5': small})}>
       <div className="flex items-center justify-between">
         <h3 className="text-base mb-2">{i18n.get('Filter :')}</h3>
       </div>
-      {!small ? (
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={filterCount ? 'default' : 'outline'}
-              className="flex justify-between w-[354px] h-[47px]">
-              <div className="flex items-center space-x-2">
-                <FaFilter className="size-4" />
-                <span> {i18n.get('Filters')}</span>
-              </div>
-              {filterCount > 0 && (
-                <Badge
-                  className="ms-auto ps-[0.45rem] pe-2"
-                  variant={filterCount ? 'destructive' : 'default'}>
-                  {filterCount}
-                </Badge>
-              )}
-            </Button>
-          </PopoverTrigger>
+      <Controller open={open} onOpenChange={setOpen}>
+        <Trigger asChild>
+          <Button
+            variant={filterCount ? 'default' : 'outline'}
+            className={cn('flex justify-between w-[354px] h-[47px]', {
+              ['w-full']: small,
+            })}>
+            <div className="flex items-center space-x-2">
+              <FaFilter className="size-4" />
+              <span> {i18n.get('Filters')}</span>
+            </div>
+            {filterCount > 0 && (
+              <Badge
+                className="ms-auto ps-[0.45rem] pe-2"
+                variant={filterCount ? 'destructive' : 'default'}>
+                {filterCount}
+              </Badge>
+            )}
+          </Button>
+        </Trigger>
 
-          <PopoverContent className="max-w-[22.7rem] w-74 overflow-y-auto">
-            <Form {...form}>
-              <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="space-y-4">
-                  <RequestedByField form={form} users={users} />
-                  <DatesField form={form} />
-                  <PriorityField form={form} priorities={priorities} />
-                  <StatusField form={form} statuses={statuses} />
-                  <Close asChild>
-                    <Button variant="success" type="submit" className="w-full">
-                      {i18n.get('Apply')}
-                    </Button>
-                  </Close>
-                </div>
-              </form>
-            </Form>
-          </PopoverContent>
-        </Popover>
-      ) : (
-        <Drawer>
-          <DrawerTrigger className="w-full">
-            <Button
-              variant={filterCount ? 'default' : 'outline'}
-              className="flex justify-between w-full h-[47px]">
-              <div className="flex items-center space-x-2">
-                <FaFilter className="size-4" />
-                <span> {i18n.get('Filters')}</span>
+        <Content
+          className={
+            small ? 'px-5 pb-5' : 'max-w-[22.7rem] w-74 overflow-y-auto'
+          }>
+          {small && (
+            <>
+              <h3 className="text-xl font-semibold mb-2">
+                {i18n.get('Filters')}
+              </h3>
+              <hr className="mb-2" />
+            </>
+          )}
+          <Form {...form}>
+            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="space-y-4">
+                <RequestedByField form={form} users={users} />
+                <DatesField form={form} />
+                <PriorityField form={form} priorities={priorities} />
+                <StatusField form={form} statuses={statuses} />
+                <Button variant="success" type="submit" className="w-full">
+                  {i18n.get('Apply')}
+                </Button>
               </div>
-              {filterCount > 0 && (
-                <Badge
-                  className="ms-auto ps-[0.45rem] pe-2"
-                  variant={filterCount ? 'destructive' : 'default'}>
-                  {filterCount}
-                </Badge>
-              )}
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent className="px-5 pb-5">
-            <h3 className="text-xl font-semibold mb-2">
-              {i18n.get('Filters')}
-            </h3>
-            <hr className="mb-2" />
-            <Form {...form}>
-              <form
-                ref={formRef}
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="overflow-y-auto">
-                <div className="space-y-4">
-                  <RequestedByField form={form} users={users} />
-                  <DatesField form={form} />
-                  <PriorityField form={form} priorities={priorities} />
-                  <StatusField form={form} statuses={statuses} />
-                  <DrawerClose className="w-full">
-                    <Button variant="success" type="submit" className="w-full">
-                      {i18n.get('Apply')}
-                    </Button>
-                  </DrawerClose>
-                </div>
-              </form>
-            </Form>
-          </DrawerContent>
-        </Drawer>
-      )}
+            </form>
+          </Form>
+        </Content>
+      </Controller>
     </div>
   );
 }
@@ -230,11 +179,11 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
       control={form.control}
       name="requestedBy"
       render={({field}) => (
-        <FormItem>
+        <FormItem className="grow">
           <FormLabel>{i18n.get('Requested by :')}</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
-            values={field.value}
+            values={field.value ?? []}
             className="space-y-0">
             <MultiSelectorTrigger
               renderLabel={value =>
@@ -264,57 +213,40 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
 function DatesField(props: FieldProps) {
   const {form} = props;
   return (
-    <div className="flex gap-2">
-      <FormField
-        control={form.control}
-        name="updatedOn"
-        render={({field}) => (
-          <FormItem className="grow">
-            <FormLabel>{i18n.get('From:')}</FormLabel>
-            <FormControl>
-              <Input
-                type="date"
-                placeholder="DD/MM/YYYY"
-                {...field}
-                value={field.value?.[0] ?? ''}
-                onChange={e => {
-                  const from = e.target.value;
-                  if (!from) return field.onChange([]);
-                  const to = field.value?.[1];
-                  if (to) return field.onChange([from, to]);
-                  return field.onChange([from]);
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="updatedOn"
-        render={({field}) => (
-          <FormItem className="grow">
-            <FormLabel>{i18n.get('To:')}</FormLabel>
-            <FormControl>
-              <Input
-                type="date"
-                placeholder="DD/MM/YYYY"
-                {...field}
-                disabled={field.disabled || !Boolean(field.value?.[0])}
-                value={field.value?.[1] ?? ''}
-                onChange={e => {
-                  const to = e.target.value;
-                  const from = field.value?.[0];
-                  if (from && to) return field.onChange([from, to]);
-                  if (from) return field.onChange([from]);
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+    <div>
+      <div className="flex gap-2">
+        <FormField
+          control={form.control}
+          name="updatedOn.0"
+          render={({field}) => (
+            <FormItem className="grow">
+              <FormLabel>{i18n.get('From:')}</FormLabel>
+              <FormControl>
+                <Input type="date" placeholder="DD/MM/YYYY" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="updatedOn.1"
+          render={({field}) => (
+            <FormItem>
+              <FormLabel>{i18n.get('To:')}</FormLabel>
+              <FormControl>
+                <Input type="date" placeholder="DD/MM/YYYY" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      {form.formState.errors.updatedOn?.root && (
+        <FormMessage>
+          {form.formState.errors.updatedOn.root.message}
+        </FormMessage>
+      )}
     </div>
   );
 }
@@ -368,7 +300,7 @@ function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
 }
 
 type FieldProps = {
-  form: UseFormReturn<z.infer<typeof filterSchema>>;
+  form: UseFormReturn<z.infer<typeof FilterSchema>>;
 };
 
 function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
@@ -383,7 +315,7 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
           <MultiSelector
             onValuesChange={field.onChange}
             className="space-y-0"
-            values={field.value}>
+            values={field.value ?? []}>
             <MultiSelectorTrigger
               renderLabel={value =>
                 statuses.find(status => status.id === value)?.name

@@ -1,11 +1,9 @@
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findTicket, findTicketStatuses} from '../../../../common/orm/projects';
 
 import {
   AvatarImage,
-  Button,
   Tag,
   TableCell,
   TableRow,
@@ -18,40 +16,11 @@ import Link from 'next/link';
 import {formatDate} from '../../../../common/utils';
 import {Progress} from '@/ui/components/progress';
 import {i18n} from '@/lib/i18n';
-import {AOSProjectTask, AOSProjectTaskStatus} from '@/goovee/.generated/models';
-import {notFound, redirect} from 'next/navigation';
+import {AOSProjectTask} from '@/goovee/.generated/models';
+import {notFound} from 'next/navigation';
 import {Maybe} from '@/types/util';
-import {Fragment, Suspense} from 'react';
 import {ID} from '@goovee/orm';
-import {cn} from '@/utils/css';
 import {Stepper} from '../../../../common/ui/components/stepper';
-
-interface User {
-  id: number;
-  name: string;
-  avatarUrl: string;
-}
-
-interface Priority {
-  name: string;
-}
-
-interface Status {
-  name: string;
-}
-interface Assigned {
-  name: string;
-}
-interface Ticket {
-  id: number;
-  user: User;
-  name: string;
-  priority: Priority;
-  status: Status;
-  category: string;
-  assignedTo: Assigned;
-  updatedOn: Date;
-}
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;

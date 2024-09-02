@@ -5,6 +5,7 @@ import {findWorkspace} from '@/orm/workspace';
 import {Button, TableCell, TableRow} from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
+import {encodeFilter} from '@/utils/filter';
 import {workspacePathname} from '@/utils/workspace';
 import {Suspense} from 'react';
 import {IconType} from 'react-icons';
@@ -31,11 +32,7 @@ import {
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import Hero from './hero';
-import {
-  getSkip,
-  getOrderBy,
-  encodeFilterQuery,
-} from '../../common/utils/search-param';
+import {getSkip, getOrderBy} from '../../common/utils/search-param';
 import type {SearchParams} from '../../common/types/search-param';
 
 export default async function Page({
@@ -68,37 +65,37 @@ export default async function Page({
   }).then(clone);
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
-  const allTicketsUrl = `${ticketsURL}?${encodeFilterQuery('statusCompleted', 'eq', 'false')}`;
 
   const items = [
     {
       label: 'All Tickets',
       count: getAllTicketCount(projectId),
       icon: MdAllInbox,
-      href: allTicketsUrl,
+      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false})}`,
     },
     {
       label: 'My tickets',
       count: getMyTicketCount(projectId, userId),
+      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false, myTickets: true})}`,
       icon: MdAllInbox,
     },
     {
       label: 'Assigned tickets',
       count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
-      href: `${allTicketsUrl}&${encodeFilterQuery('requestedBy', 'in', [userId])}`,
+      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false, assignedTo: [userId]})}`,
     },
     {
       label: 'Created tickets',
       count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
-      href: `${allTicketsUrl}&${encodeFilterQuery('updatedBy', 'eq', userId)}`,
+      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false, requestedBy: [userId]})}`,
     },
     {
       label: 'Resolved tickets',
       count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
-      href: `${ticketsURL}&${encodeFilterQuery('statusCompleted', 'eq', 'true')}`,
+      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: true})}`,
     },
   ].map(props => (
     <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
