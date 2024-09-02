@@ -145,17 +145,17 @@ export async function findProjectsWithTaskCount(
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
 
-export async function findProjectById(id: ID) {
+export async function findProject(id: ID) {
   const client = await getClient();
-  const projects = await client.aOSProject.find({
+  const project = await client.aOSProject.findOne({
     where: {
       id: id,
     },
     select: {
-      name: true,
+      id: true,
     },
   });
-  return projects;
+  return project;
 }
 
 type TicketProps<T extends Entity> = QueryProps<T> & {
