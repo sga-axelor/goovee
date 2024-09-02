@@ -1,7 +1,8 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {MdOutlineSearch} from 'react-icons/md';
+import debounce from 'lodash/debounce';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Input} from '@/ui/components';
@@ -14,11 +15,19 @@ export const Search = ({
 }) => {
   const [searchValue, setSearchValue] = useState<string>('');
 
+  const debouncedOnChange = useCallback(
+    debounce((value: string) => {
+      onChange(value);
+    }, 300),
+    [onChange],
+  );
+
   useEffect(() => {
-    setTimeout(() => {
-      onChange(searchValue);
-    }, 2000);
-  }, [searchValue]);
+    debouncedOnChange(searchValue);
+    return () => {
+      debouncedOnChange.cancel();
+    };
+  }, [searchValue, debouncedOnChange]);
 
   return (
     <div className="relative">
