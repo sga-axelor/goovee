@@ -11,10 +11,12 @@ import {
   findGroupById,
   findPostsByGroupId,
   findUser,
+  findGroupsByMembers,
+  findGroups,
 } from '@/subapps/forum/common/orm/forum';
 import Content from './content';
-import {findGroups} from '@/subapps/forum/common/action/action';
 import {GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
+import {ForumGroup} from '../../common/types/forum';
 
 export default async function Page({
   params,
@@ -36,28 +38,33 @@ export default async function Page({
   }).then(clone);
 
   const groupId = params.id as string;
-  const {posts, pageInfo} = await findPostsByGroupId(
-    groupId,
-    workspace?.id,
-  ).then(clone);
+
+  const groups = await findGroups({workspace}).then(clone);
 
   const memberGroups = userId
-    ? await findGroups({
-        id: userId as string,
-        isMember: true,
+    ? await findGroupsByMembers({
+        id: userId,
         orderBy: GROUPS_ORDER_BY,
         workspaceID: workspace?.id,
       })
     : [];
 
-  const nonMemberGroups = await findGroups({
-    id: userId as string,
-    isMember: false,
-    orderBy: GROUPS_ORDER_BY,
-    workspaceID: workspace?.id,
+  const memberGroupIDs = memberGroups.map(
+    (group: any) => group?.forumGroup?.id,
+  );
+  const isMember = memberGroupIDs.includes(groupId);
+
+  const nonMemberGroups = groups.filter((group: ForumGroup) => {
+    return !memberGroupIDs.includes(group.id);
   });
 
   const selectedGroup = await findGroupById(groupId, workspace?.id).then(clone);
+
+  const {posts, pageInfo} = await findPostsByGroupId(
+    groupId,
+    workspace?.id,
+  ).then(clone);
+
   const user = await findUser({userId}).then(clone);
 
   if (!selectedGroup) {
@@ -72,6 +79,7 @@ export default async function Page({
       posts={posts}
       selectedGroup={selectedGroup}
       pageInfo={pageInfo}
+      isMember={isMember}
     />
   );
 }

@@ -49,6 +49,7 @@ export interface Group extends Model {
   isPin?: boolean;
   notificationSelect: string | null;
   forumGroup: ForumGroup;
+  name?: string | null;
 }
 
 export interface Author extends Model {

@@ -28,14 +28,14 @@ import {
 import {
   DISABLED_SEARCH_PLACEHOLDER,
   GROUPS,
+  JOIN_GROUP_TO_POST,
   MEMBER,
   NOT_MEMBER,
   START_A_POST,
   TAB_TITLES,
-  GROUPS_ORDER_BY,
 } from '@/subapps/forum/common/constants';
 import {ForumGroup, Group} from '@/subapps/forum/common/types/forum';
-import {fetchPosts, findGroups} from '@/subapps/forum/common/action/action';
+import {fetchPosts} from '@/subapps/forum/common/action/action';
 
 export const HomePage = ({
   memberGroups,
@@ -44,6 +44,7 @@ export const HomePage = ({
   posts,
   pageInfo,
   selectedGroup = null,
+  isMember = true,
 }: {
   memberGroups: Group[];
   nonMemberGroups: Group[];
@@ -51,10 +52,15 @@ export const HomePage = ({
   posts: any;
   pageInfo: any;
   selectedGroup?: ForumGroup | null;
+  isMember?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
-  const [memberGroupList, setMemberGroupList] = useState<Group[]>([]);
-  const [nonMemberGroupList, setNonMemberGroupList] = useState<Group[]>([]);
+  const [memberGroupList, setMemberGroupList] = useState<Group[]>(
+    memberGroups || [],
+  );
+  const [nonMemberGroupList, setNonMemberGroupList] = useState<Group[]>(
+    nonMemberGroups || [],
+  );
   const [searchKey, setSearchKey] = useState<string>('');
 
   const router = useRouter();
@@ -92,38 +98,32 @@ export const HomePage = ({
   };
 
   useEffect(() => {
-    setMemberGroupList(memberGroups);
-    setNonMemberGroupList(nonMemberGroups);
-  }, []);
-
-  useEffect(() => {
-    const fetchGroups = async () => {
+    const getGroups = async () => {
       try {
-        if (isLoggedIn) {
-          const memberGroups = await findGroups({
-            id: user?.id as string,
-            isMember: true,
-            orderBy: GROUPS_ORDER_BY,
-            workspaceID,
-            searchKey,
-          });
-          setMemberGroupList(memberGroups);
-        }
+        if (searchKey) {
+          const searchKeyLower = searchKey.toLowerCase();
 
-        const nonMemberGroups = await findGroups({
-          id: user?.id,
-          isMember: false,
-          orderBy: GROUPS_ORDER_BY,
-          workspaceID,
-          searchKey,
-        });
-        setNonMemberGroupList(nonMemberGroups);
+          if (isLoggedIn) {
+            const filteredMemberGroups = memberGroups.filter(group =>
+              group?.forumGroup?.name?.toLowerCase().includes(searchKeyLower),
+            );
+            setMemberGroupList(filteredMemberGroups);
+          }
+          const filteredNonMemberGroups = nonMemberGroups.filter(group =>
+            group?.name?.toLowerCase().includes(searchKeyLower),
+          );
+          setNonMemberGroupList(filteredNonMemberGroups);
+        } else {
+          setMemberGroupList(memberGroups);
+          setNonMemberGroupList(nonMemberGroups);
+        }
       } catch (err) {
         console.log(err);
       }
     };
-    fetchGroups();
-  }, [isLoggedIn, user?.id, searchKey, workspaceID]);
+
+    getGroups();
+  }, [isLoggedIn, searchKey, memberGroups, nonMemberGroups]);
 
   const renderSearch = () => (
     <Search
@@ -181,16 +181,24 @@ export const HomePage = ({
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
           <div className="bg-white px-4 pt-4 pb-1 rounded-t-lg flex items-center gap-[10px]">
             <Avatar
-              className={`rounded-full h-8 w-8 ${isLoggedIn ? '' : 'bg-black/20'}`}>
-              {isLoggedIn && <AvatarImage src={getImageURL(picture?.id)} />}
+              className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-black/20' : ''}`}>
+              {<AvatarImage src={getImageURL(picture?.id)} />}
             </Avatar>
             <Button
-              disabled={!isLoggedIn}
+              disabled={!isLoggedIn || !isMember}
               onClick={() => hanldeDialogOpen()}
               variant="outline"
-              className={`flex-1 text-sm justify-start text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}>
+              className={`flex-1 text-sm justify-start text-palette-mediumGray disabled:placeholder:text-gray-700 border ${
+                !isLoggedIn
+                  ? 'bg-black/20'
+                  : !isMember
+                    ? 'bg-black/20'
+                    : 'bg-white'
+              }`}>
               {isLoggedIn
-                ? i18n.get(START_A_POST)
+                ? isMember
+                  ? i18n.get(START_A_POST)
+                  : i18n.get(JOIN_GROUP_TO_POST)
                 : i18n.get(DISABLED_SEARCH_PLACEHOLDER)}
             </Button>
             {false && (

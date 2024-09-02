@@ -34,6 +34,7 @@ export const NOTIFICATIONS = 'Notifications';
 export const LEAVE_THIS_GROUP = 'Leave this group';
 export const ASK_TO_JOIN = 'Ask to join the group';
 export const START_A_POST = 'Start a post';
+export const JOIN_GROUP_TO_POST = 'Join group to start posting.';
 export const TITLE = 'Title';
 export const CHOOSE_GROUP = 'Chose in which group you want to post';
 export const CONTENT = 'Content';

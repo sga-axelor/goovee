@@ -16,6 +16,7 @@ interface groupContentProps {
   posts: Post[];
   selectedGroup: ForumGroup;
   pageInfo: any;
+  isMember: boolean;
 }
 
 const Content = ({
@@ -25,6 +26,7 @@ const Content = ({
   posts,
   selectedGroup,
   pageInfo,
+  isMember,
 }: groupContentProps) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -39,6 +41,7 @@ const Content = ({
         <NavMenu items={MENU} onClick={handleMenuClick} />
       </div>
       <HomePage
+        isMember={isMember}
         memberGroups={memberGroups}
         nonMemberGroups={nonMemberGroups}
         user={user}
