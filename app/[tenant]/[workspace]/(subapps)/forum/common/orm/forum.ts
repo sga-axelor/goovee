@@ -5,30 +5,48 @@ import {ID} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {PortalWorkspace} from '@/types';
 
-export async function findGroupByMembers({
+export async function findGroups({
+  workspace,
+}: {
+  workspace: PortalWorkspace;
+  memberGroupIDs?: any;
+}) {
+  if (!workspace) return [];
+
+  const client = await getClient();
+
+  const groups = await client.aOSPortalForumGroup.find({
+    where: {
+      workspace: {
+        id: workspace.id,
+      },
+    },
+    select: {
+      name: true,
+      image: {id: true},
+    },
+  });
+
+  return groups;
+}
+
+export async function findGroupsByMembers({
   id = null,
-  isMember,
   searchKey,
   orderBy,
   workspaceID,
 }: {
   id: any;
-  isMember: boolean;
   searchKey?: string;
   orderBy?: any;
   workspaceID: PortalWorkspace['id'];
 }) {
   if (!workspaceID) return [];
   const client = await getClient();
-
   const whereClause = {
-    member: isMember
-      ? {
-          id,
-        }
-      : {
-          OR: [{id: {ne: id}}, {id: null}],
-        },
+    member: {
+      AND: [{id: id}, {id: {ne: null}}],
+    },
     forumGroup: {
       workspace: {
         id: workspaceID,
@@ -87,6 +105,7 @@ export async function findPosts({
   search = '',
   whereClause = {},
   workspaceID,
+  groupIDs = [],
 }: {
   sort?: any;
   limit?: number;
@@ -94,6 +113,7 @@ export async function findPosts({
   search?: string | undefined;
   whereClause?: any;
   workspaceID: PortalWorkspace['id'];
+  groupIDs?: any[];
 }) {
   if (!workspaceID) {
     return {
@@ -122,6 +142,7 @@ export async function findPosts({
       workspace: {
         id: workspaceID,
       },
+      ...(groupIDs ? {id: {in: groupIDs}} : {}),
       ...whereClause.forumGroup,
     },
     ...(search
