@@ -2,6 +2,14 @@
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/ui/components';
 import {Button} from '@/ui/components/button';
 import {
   Pagination,
@@ -21,11 +29,13 @@ import {ID} from '@goovee/orm';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {Suspense} from 'react';
+import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
 import {columns, sortKeyPathMap} from '../../../common/constants';
 import {
+  findProject,
   findProjectTickets,
   findTicketPriorities,
   findTicketStatuses,
@@ -41,8 +51,6 @@ import {
   getWhere,
 } from '../../../common/utils/search-param';
 import Search from '../search';
-import {useResponsive} from '@/ui/hooks';
-import {Drawer} from '@/ui/components/drawer';
 
 const TICKETS_PER_PAGE = 7;
 const DEFAULT_SORT = 'updatedOn';
@@ -74,6 +82,7 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
+  const project = (await findProject(projectId))!;
   const tickets = await findProjectTickets({
     projectId,
     take: +limit,
@@ -86,8 +95,42 @@ export default async function Page({
   const pages = getPages(tickets, limit);
   return (
     <div className="container my-6 space-y-6 mx-auto">
-      <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-xl">{i18n.get('All tickets')}</h2>
+      <div className="flex flex-col justify-between md:flex-row gap-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                asChild
+                className="text-foreground-muted cursor-pointer truncate text-md">
+                <Link href={`${workspaceURI}/ticketing`}>
+                  {i18n.get('Projects')}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <FaChevronRight className="text-black" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                asChild
+                className="cursor-pointer max-w-[8ch] md:max-w-[15ch] truncate text-md">
+                <Link href={`${workspaceURI}/ticketing/projects/${projectId}`}>
+                  {project.name}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <FaChevronRight className="text-black" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbPage className="truncate text-lg font-semibold">
+                <h2 className="font-semibold text-xl">
+                  {i18n.get('All tickets')}
+                </h2>
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <Button variant="success" className="flex items-center" asChild>
           <Link
             href={`${workspaceURI}/ticketing/projects/${projectId}/tickets/create`}>

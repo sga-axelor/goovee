@@ -2,13 +2,24 @@
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {Button, TableCell, TableRow} from '@/ui/components';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  Button,
+  TableCell,
+  TableRow,
+} from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
 import {encodeFilter} from '@/utils/filter';
 import {workspacePathname} from '@/utils/workspace';
 import {Suspense} from 'react';
 import {IconType} from 'react-icons';
+import {FaChevronRight} from 'react-icons/fa';
 import {
   MdAdd,
   MdAllInbox,
@@ -22,6 +33,7 @@ import {
 import Link from 'next/link';
 import {columns, sortKeyPathMap} from '../../common/constants';
 import {
+  findProject,
   findProjectTickets,
   getAllTicketCount,
   getAssignedTicketCount,
@@ -29,11 +41,11 @@ import {
   getMyTicketCount,
   getResolvedTicketCount,
 } from '../../common/orm/projects';
+import type {SearchParams} from '../../common/types/search-param';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
+import {getOrderBy, getSkip} from '../../common/utils/search-param';
 import Hero from './hero';
-import {getSkip, getOrderBy} from '../../common/utils/search-param';
-import type {SearchParams} from '../../common/types/search-param';
 
 export default async function Page({
   params,
@@ -57,6 +69,7 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
+  const project = (await findProject(projectId))!;
   const tickets = await findProjectTickets({
     projectId,
     take: Number(limit),
@@ -107,6 +120,27 @@ export default async function Page({
     <>
       <Hero workspace={workspace} projectId={projectId} />
       <div className="container my-6 space-y-6 mx-auto">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                asChild
+                className="text-foreground-muted cursor-pointer truncate text-md">
+                <Link href={`${workspaceURI}/ticketing`}>
+                  {i18n.get('Projects')}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <FaChevronRight className="text-black" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbPage className="truncate text-lg font-semibold">
+                {project.name}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <Swipe items={items} />
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-xl">

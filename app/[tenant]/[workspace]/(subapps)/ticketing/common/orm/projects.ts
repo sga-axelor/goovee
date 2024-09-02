@@ -153,6 +153,7 @@ export async function findProject(id: ID) {
     },
     select: {
       id: true,
+      name: true,
     },
   });
   return project;

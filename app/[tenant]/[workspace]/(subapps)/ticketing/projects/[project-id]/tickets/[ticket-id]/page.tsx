@@ -1,26 +1,38 @@
 // ---- CORE IMPORTS ---- //
-import {workspacePathname} from '@/utils/workspace';
-import {findTicket, findTicketStatuses} from '../../../../common/orm/projects';
-
+import {AOSProjectTask} from '@/goovee/.generated/models';
+import {i18n} from '@/lib/i18n';
+import {Maybe} from '@/types/util';
 import {
   AvatarImage,
-  Tag,
-  TableCell,
-  TableRow,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
   Table,
   TableBody,
+  TableCell,
+  TableRow,
+  Tag,
 } from '@/ui/components';
-import {Avatar} from '@radix-ui/react-avatar';
-import {MdOutlineModeEditOutline} from 'react-icons/md';
-import Link from 'next/link';
-import {formatDate} from '../../../../common/utils';
 import {Progress} from '@/ui/components/progress';
-import {i18n} from '@/lib/i18n';
-import {AOSProjectTask} from '@/goovee/.generated/models';
-import {notFound} from 'next/navigation';
-import {Maybe} from '@/types/util';
+import {workspacePathname} from '@/utils/workspace';
 import {ID} from '@goovee/orm';
+import {Avatar} from '@radix-ui/react-avatar';
+import Link from 'next/link';
+import {notFound} from 'next/navigation';
+import {FaChevronRight} from 'react-icons/fa';
+import {MdOutlineModeEditOutline} from 'react-icons/md';
+
+// ---- LOCAL IMPORTS ---- //
+import {
+  findProject,
+  findTicket,
+  findTicketStatuses,
+} from '../../../../common/orm/projects';
 import {Stepper} from '../../../../common/ui/components/stepper';
+import {formatDate} from '../../../../common/utils';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -40,13 +52,58 @@ export default async function Page({
   const projectId = params['project-id'];
   const ticketId = params['ticket-id'];
 
-  const [ticket, statuses] = await Promise.all([
+  const [ticket, statuses, project] = await Promise.all([
     findTicket(ticketId, projectId),
     findTicketStatuses(projectId),
+    findProject(projectId),
   ]);
   if (!ticket) notFound();
   return (
     <div className="container mt-5 mb-20">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              asChild
+              className="text-foreground-muted cursor-pointer truncate text-md">
+              <Link href={`${workspaceURI}/ticketing`}>
+                {i18n.get('Projects')}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <FaChevronRight className="text-black" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              asChild
+              className="cursor-pointer max-w-[8ch] md:max-w-[15ch] truncate text-md">
+              <Link href={`${workspaceURI}/ticketing/projects/${projectId}`}>
+                {project!.name}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <FaChevronRight className="text-black" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild className="cursor-pointer text-md">
+              <Link
+                href={`${workspaceURI}/ticketing/projects/${projectId}/tickets`}>
+                {i18n.get('All tickets')}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <FaChevronRight className="text-black" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbPage className="truncate text-lg font-semibold">
+              <h2 className="font-semibold text-xl">{ticket.name}</h2>
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <TicketDetails
         ticket={ticket}
         workspaceURI={workspaceURI}
