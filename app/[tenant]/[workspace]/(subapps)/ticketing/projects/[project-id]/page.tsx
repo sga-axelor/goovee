@@ -32,15 +32,15 @@ import {
 // ---- LOCAL IMPORTS ---- //
 import Link from 'next/link';
 import {columns, sortKeyPathMap} from '../../common/constants';
+import {findProject} from '../../common/orm/projects';
 import {
-  findProject,
-  findProjectTickets,
+  findTickets,
   getAllTicketCount,
   getAssignedTicketCount,
   getCreatedTicketCount,
   getMyTicketCount,
   getResolvedTicketCount,
-} from '../../common/orm/projects';
+} from '../../common/orm/tickets';
 import type {SearchParams} from '../../common/types/search-param';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
@@ -70,7 +70,7 @@ export default async function Page({
   }).then(clone);
 
   const project = (await findProject(projectId))!;
-  const tickets = await findProjectTickets({
+  const tickets = await findTickets({
     projectId,
     take: Number(limit),
     skip: getSkip(limit, page),

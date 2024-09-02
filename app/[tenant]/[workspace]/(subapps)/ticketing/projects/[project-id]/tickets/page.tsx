@@ -36,11 +36,11 @@ import {MdAdd} from 'react-icons/md';
 import {columns, sortKeyPathMap} from '../../../common/constants';
 import {
   findProject,
-  findProjectTickets,
   findTicketPriorities,
   findTicketStatuses,
   findUsers,
 } from '../../../common/orm/projects';
+import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
 import {Filter} from '../../../common/ui/components/filter';
 import {TicketList} from '../../../common/ui/components/ticket-list';
@@ -83,7 +83,7 @@ export default async function Page({
   }).then(clone);
 
   const project = (await findProject(projectId))!;
-  const tickets = await findProjectTickets({
+  const tickets = await findTickets({
     projectId,
     take: +limit,
     skip: getSkip(limit, page),

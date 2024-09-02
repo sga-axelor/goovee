@@ -49,6 +49,11 @@
     },
     {
       "type": "ManyToOne",
+      "name": "contact",
+      "target": "AOSUser"
+    },
+    {
+      "type": "ManyToOne",
       "name": "priority",
       "target": "AOSProjectPriority"
     },

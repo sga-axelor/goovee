@@ -4,10 +4,10 @@ import {notFound} from 'next/navigation';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  findTicket,
   findTicketCategories,
   findTicketPriorities,
 } from '../../../../../common/orm/projects';
+import {findTicket} from '../../../../../common/orm/tickets';
 import {TicketForm} from '../../../../../common/ui/components/ticket-form';
 
 export default async function Page({

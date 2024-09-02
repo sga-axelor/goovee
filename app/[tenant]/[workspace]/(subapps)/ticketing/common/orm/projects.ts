@@ -3,20 +3,10 @@
  */
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
-import {
-  AOSProject,
-  AOSProjectTask,
-  AOSProjectTaskCategory,
-} from '@/goovee/.generated/models';
-import {Entity, ID, WhereOptions} from '@goovee/orm';
-
-type QueryProps<T extends Entity> = {
-  where?: WhereOptions<T> | null;
-  take?: number;
-  // orderBy?: OrderByArg<T>;
-  orderBy?: any;
-  skip?: number;
-};
+import {AOSProject} from '@/goovee/.generated/models';
+import {ID} from '@goovee/orm';
+import {getAllTicketCount} from './tickets';
+import {QueryProps} from '../types';
 
 export async function findProjects(props?: QueryProps<AOSProject>) {
   const {where, take, orderBy, skip} = props ?? {};
@@ -31,108 +21,6 @@ export async function findProjects(props?: QueryProps<AOSProject>) {
     },
   });
   return projects;
-}
-
-export async function getAllTicketCount(projectId: ID): Promise<number> {
-  const client = await getClient();
-  const count = await client.aOSProjectTask.count({
-    where: {
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
-    },
-  });
-  return Number(count);
-}
-
-export async function getMyTicketCount(
-  projectId: ID,
-  userId: ID,
-): Promise<number> {
-  const client = await getClient();
-  const count = await client.aOSProjectTask.count({
-    where: {
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
-      OR: [
-        {
-          assignedTo: {
-            id: userId,
-          },
-        },
-        {
-          createdBy: {
-            id: userId,
-          },
-        },
-      ],
-    },
-  });
-  return Number(count);
-}
-
-export async function getAssignedTicketCount(
-  projectId: ID,
-  userId: ID,
-): Promise<number> {
-  const client = await getClient();
-  const count = await client.aOSProjectTask.count({
-    where: {
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
-      assignedTo: {
-        id: userId,
-      },
-    },
-  });
-  return Number(count);
-}
-
-export async function getCreatedTicketCount(
-  projectId: ID,
-  userId: ID,
-): Promise<number> {
-  const client = await getClient();
-  const count = await client.aOSProjectTask.count({
-    where: {
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
-      createdBy: {
-        id: userId,
-      },
-    },
-  });
-  return Number(count);
-}
-
-export async function getResolvedTicketCount(projectId: ID): Promise<number> {
-  const client = await getClient();
-  const count = await client.aOSProjectTask.count({
-    where: {
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: true,
-      },
-    },
-  });
-  return Number(count);
 }
 
 export async function findProjectsWithTaskCount(
@@ -157,46 +45,6 @@ export async function findProject(id: ID) {
     },
   });
   return project;
-}
-
-type TicketProps<T extends Entity> = QueryProps<T> & {
-  projectId: ID;
-};
-
-export async function findProjectTickets(props: TicketProps<AOSProjectTask>) {
-  const {projectId, take, skip, where, orderBy} = props;
-  const client = await getClient();
-  const tickets = await client.aOSProjectTask.find({
-    ...(take ? {take} : {}),
-    ...(skip ? {skip} : {}),
-    ...(orderBy ? {orderBy} : {}),
-    where: {
-      project: {
-        id: projectId,
-      },
-      ...where,
-    },
-    select: {
-      name: true,
-      updatedOn: true,
-      status: {
-        name: true,
-      },
-      projectTaskCategory: {
-        name: true,
-      },
-      priority: {
-        name: true,
-      },
-      project: {
-        name: true,
-      },
-      assignedTo: {
-        name: true,
-      },
-    },
-  });
-  return tickets;
 }
 
 export async function findTicketCategories(projectId: ID) {
@@ -265,79 +113,4 @@ export async function findUsers() {
     },
   });
   return users;
-}
-
-export async function findTicket(ticketId: ID, projectId?: ID) {
-  const client = await getClient();
-  const ticket = await client.aOSProjectTask.findOne({
-    where: {
-      id: ticketId,
-      ...(projectId ? {project: {id: projectId}} : {}),
-    },
-    select: {
-      name: true,
-      version: true,
-      progress: true,
-      description: true,
-      taskDate: true,
-      taskEndDate: true,
-      childTasks: {
-        select: {
-          name: true,
-          updatedOn: true,
-          status: {
-            name: true,
-          },
-          projectTaskCategory: {
-            name: true,
-          },
-          priority: {
-            name: true,
-          },
-          project: {
-            name: true,
-          },
-          assignedTo: {
-            name: true,
-          },
-        },
-      },
-      parentTask: {
-        name: true,
-        updatedOn: true,
-        status: {
-          name: true,
-        },
-        projectTaskCategory: {
-          name: true,
-        },
-        priority: {
-          name: true,
-        },
-        project: {
-          name: true,
-        },
-        assignedTo: {
-          name: true,
-        },
-      },
-      project: {
-        name: true,
-      },
-      projectTaskCategory: {
-        name: true,
-      },
-      priority: {
-        name: true,
-      },
-      assignedTo: {
-        name: true,
-      },
-      status: {
-        name: true,
-      },
-    },
-  });
-
-  return ticket;
 }

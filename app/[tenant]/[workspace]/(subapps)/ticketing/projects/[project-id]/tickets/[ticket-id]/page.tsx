@@ -26,11 +26,8 @@ import {FaChevronRight} from 'react-icons/fa';
 import {MdOutlineModeEditOutline} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  findProject,
-  findTicket,
-  findTicketStatuses,
-} from '../../../../common/orm/projects';
+import {findProject, findTicketStatuses} from '../../../../common/orm/projects';
+import {findTicket} from '../../../../common/orm/tickets';
 import {Stepper} from '../../../../common/ui/components/stepper';
 import {formatDate} from '../../../../common/utils';
 
