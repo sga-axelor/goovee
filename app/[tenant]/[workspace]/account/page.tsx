@@ -14,6 +14,7 @@ export default async function Account({
 }: {
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
   const session = await getSession();
 
   if (!session) return notFound();
@@ -23,11 +24,16 @@ export default async function Account({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) return notFound();
 
-  const subapps = await findSubapps({url: workspace.url, user: session?.user});
+  const subapps = await findSubapps({
+    url: workspace.url,
+    user: session?.user,
+    tenantId: tenant,
+  });
 
   return <Content subapps={subapps} />;
 }

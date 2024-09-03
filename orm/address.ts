@@ -1,5 +1,5 @@
 import {getClient} from '@/goovee';
-import {PartnerAddress, Partner} from '@/types';
+import {PartnerAddress, Partner, ID} from '@/types';
 
 const addressFields = {
   address: {
@@ -17,10 +17,13 @@ const addressFields = {
   isInvoicingAddr: true,
 };
 
-export async function findPartnerAddress(addressId: PartnerAddress['id']) {
-  if (!addressId) return null;
+export async function findPartnerAddress(
+  addressId: PartnerAddress['id'],
+  tenantId: ID,
+) {
+  if (!(addressId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const address = await client.aOSPartnerAddress.findOne({
     where: {
@@ -35,10 +38,11 @@ export async function findPartnerAddress(addressId: PartnerAddress['id']) {
 export async function createPartnerAddress(
   partnerId: Partner['id'],
   values: Partial<PartnerAddress>,
+  tenantId: ID,
 ) {
-  if (!partnerId) return null;
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const address = await client.aOSPartnerAddress.create({
     data: {
@@ -69,10 +73,11 @@ export async function createPartnerAddress(
 export async function updatePartnerAddress(
   partnerId: Partner['id'],
   values: Partial<PartnerAddress>,
+  tenantId: ID,
 ) {
-  if (!partnerId) return null;
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const address = await client.aOSPartnerAddress.update({
     data: {
@@ -97,10 +102,10 @@ export async function updatePartnerAddress(
   return address;
 }
 
-export async function findAddresses(partnerId: Partner['id']) {
-  if (!partnerId) return null;
+export async function findAddresses(partnerId: Partner['id'], tenantId: ID) {
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const addresses = await client.aOSPartnerAddress.find({
     where: {
@@ -114,10 +119,13 @@ export async function findAddresses(partnerId: Partner['id']) {
   return addresses;
 }
 
-export async function findDeliveryAddresses(partnerId: Partner['id']) {
-  if (!partnerId) return null;
+export async function findDeliveryAddresses(
+  partnerId: Partner['id'],
+  tenantId: ID,
+) {
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const addresses = await client.aOSPartnerAddress.find({
     where: {
@@ -132,10 +140,13 @@ export async function findDeliveryAddresses(partnerId: Partner['id']) {
   return addresses;
 }
 
-export async function findInvoicingAddresses(partnerId: Partner['id']) {
-  if (!partnerId) return null;
+export async function findInvoicingAddresses(
+  partnerId: Partner['id'],
+  tenantId: ID,
+) {
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const addresses = await client.aOSPartnerAddress.find({
     where: {
@@ -150,10 +161,13 @@ export async function findInvoicingAddresses(partnerId: Partner['id']) {
   return addresses;
 }
 
-export async function findDefaultAddress(partnerId: Partner['id']) {
-  if (!partnerId) return null;
+export async function findDefaultAddress(
+  partnerId: Partner['id'],
+  tenantId: ID,
+) {
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const addresses = await client.aOSPartnerAddress.findOne({
     where: {
@@ -168,10 +182,13 @@ export async function findDefaultAddress(partnerId: Partner['id']) {
   return addresses;
 }
 
-export async function findDefaultDeliveryAddress(partnerId: Partner['id']) {
-  if (!partnerId) return null;
+export async function findDefaultDeliveryAddress(
+  partnerId: Partner['id'],
+  tenantId: ID,
+) {
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const result = await client.aOSPartnerAddress.findOne({
     where: {
@@ -187,10 +204,13 @@ export async function findDefaultDeliveryAddress(partnerId: Partner['id']) {
   return result;
 }
 
-export async function findDefaultInvoicingAddress(partnerId: Partner['id']) {
-  if (!partnerId) return null;
+export async function findDefaultInvoicingAddress(
+  partnerId: Partner['id'],
+  tenantId: ID,
+) {
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const result = await client.aOSPartnerAddress.findOne({
     where: {
@@ -206,8 +226,10 @@ export async function findDefaultInvoicingAddress(partnerId: Partner['id']) {
   return result;
 }
 
-export async function findCountries() {
-  const client = await getClient();
+export async function findCountries(tenantId: ID) {
+  if (!tenantId) return [];
+
+  const client = await getClient(tenantId);
 
   const countries = await client.aOSCountry.find();
 

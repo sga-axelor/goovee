@@ -10,13 +10,13 @@ export default async function Page({
 }) {
   const {tenant, workspace, id} = params;
 
-  let partnerAddress = await findPartnerAddress(id).then(clone);
+  let partnerAddress = await findPartnerAddress(id, tenant).then(clone);
 
   if (!partnerAddress) {
     redirect(`${tenant}/${workspace}/account/addresses`);
   }
 
-  const countries = await findCountries().then(clone);
+  const countries = await findCountries(tenant).then(clone);
 
   return (
     <Content

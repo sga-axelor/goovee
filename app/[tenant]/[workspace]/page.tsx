@@ -10,6 +10,7 @@ export default async function Page({
 }: {
   params: {workspace: string; tenant: string};
 }) {
+  const {tenant} = params;
   const session = await getSession();
 
   const {workspaceURL} = workspacePathname(params);
@@ -21,6 +22,7 @@ export default async function Page({
   const apps = await findSubapps({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   });
 
   if (!apps?.length) {

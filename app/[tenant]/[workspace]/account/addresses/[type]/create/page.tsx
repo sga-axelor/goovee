@@ -6,13 +6,15 @@ import Content from './content';
 export default async function Page({
   params,
 }: {
-  params: {type: 'invoicing' | 'delivery'};
+  params: {tenant: string; type: 'invoicing' | 'delivery'};
 }) {
+  const {tenant} = params;
+
   if (!['invoicing', 'delivery'].includes(params?.type)) {
     redirect('/account/addresses');
   }
 
-  const countries = await findCountries().then(clone);
+  const countries = await findCountries(tenant).then(clone);
 
   return <Content type={params?.type} countries={countries} />;
 }

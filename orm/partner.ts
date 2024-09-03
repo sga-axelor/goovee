@@ -1,12 +1,13 @@
 import {getClient} from '@/goovee';
 import {clone} from '@/utils';
+import {ID} from '@/types';
 import {hash} from '@/utils/auth';
 import {findDefaultPartnerWorkspaceConfig} from './workspace';
 
-export async function findPartnerByEmail(email: string) {
+export async function findPartnerByEmail(email: string, tenantId: ID) {
   if (!email) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const partner = await client.aOSPartner
     .findOne({
@@ -39,14 +40,16 @@ export async function registerPartner({
   password = '',
   email,
   workspaceURL,
+  tenantId,
 }: {
   firstName?: string;
   name: string;
   password?: string;
   email: string;
   workspaceURL?: string;
+  tenantId: ID;
 }) {
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const hashedPassword = await hash(password);
 
@@ -67,7 +70,7 @@ export async function registerPartner({
 
   if (workspaceURL) {
     const defaultPartnerWorkspaceConfig =
-      await findDefaultPartnerWorkspaceConfig({url: workspaceURL});
+      await findDefaultPartnerWorkspaceConfig({url: workspaceURL, tenantId});
 
     const id = defaultPartnerWorkspaceConfig?.id;
 

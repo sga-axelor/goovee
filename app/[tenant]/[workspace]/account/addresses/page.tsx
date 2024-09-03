@@ -7,15 +7,18 @@ import {clone} from '@/utils';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 
-export default async function Addresses() {
+export default async function Addresses({params}: {params: {tenant: string}}) {
+  const {tenant} = params;
   const session = await getSession();
 
   const deliveryAddresses = await findDeliveryAddresses(
     session?.user?.id as Partner['id'],
+    tenant,
   ).then(clone);
 
   const invoicingAddresses = await findInvoicingAddresses(
     session?.user?.id as Partner['id'],
+    tenant,
   ).then(clone);
 
   return (

@@ -29,19 +29,21 @@ export default async function Layout({
   params: {tenant: string; workspace: string};
   children: React.ReactNode;
 }) {
+  const {tenant} = params;
   const session = await getSession();
   const user = session?.user;
 
   const workspaces = await findWorkspaces({
     url: process.env.NEXT_PUBLIC_HOST,
     user,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspaces?.length) {
     return notFound();
   }
 
-  const {workspace, tenant, workspaceURL} = workspacePathname(params);
+  const {workspace, workspaceURL} = workspacePathname(params);
 
   const hasWorkspaceAccess = workspaces.some(
     (workspace: any) => workspace.url === workspaceURL,
@@ -54,6 +56,7 @@ export default async function Layout({
   const $workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!$workspace) {
@@ -72,6 +75,7 @@ export default async function Layout({
   const subapps = await findSubapps({
     url: $workspace?.url,
     user,
+    tenantId: tenant,
   });
 
   const navigationSelect = $workspace?.navigationSelect;
