@@ -184,3 +184,5 @@ export const GROUPS_ORDER_BY = {
     name: ORDER_BY.ASC,
   },
 };
+
+export const DEFAULT_COMMENT_LIMIT = 3;

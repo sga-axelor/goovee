@@ -8,8 +8,8 @@ import {promisify} from 'util';
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {i18n} from '@/lib/i18n';
-import {clone} from '@/utils';
-import {SUBAPP_CODES} from '@/constants';
+import {clone, getSkipInfo} from '@/utils';
+import {ORDER_BY, SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/orm/auth';
@@ -660,4 +660,57 @@ export async function fetchGroupsByMembers({
     orderBy,
     workspaceID,
   });
+}
+
+export async function fetchComments({
+  postId,
+  limit,
+  page,
+}: {
+  postId: string;
+  limit: number;
+  page: number;
+}) {
+  const skip = getSkipInfo(limit, page);
+  const client = await getClient();
+  try {
+    const comments = await client.aOSPortalComment.find({
+      where: {
+        forumPost: {
+          id: postId,
+        },
+      },
+      orderBy: {publicationDateTime: ORDER_BY.DESC},
+      take: limit,
+      ...(skip ? {skip} : {}),
+      select: {
+        id: true,
+        contentComment: true,
+        publicationDateTime: true,
+        author: {
+          id: true,
+          name: true,
+        },
+        image: {
+          id: true,
+        },
+        childCommentList: {
+          select: {
+            contentComment: true,
+            publicationDateTime: true,
+            author: {
+              id: true,
+              name: true,
+            },
+            image: {
+              id: true,
+            },
+          },
+        },
+      },
+    });
+    return {success: true, data: clone(comments), total: comments?.[0]?._count};
+  } catch (error) {
+    return {error: true, message: i18n.get('Something went wromng')};
+  }
 }

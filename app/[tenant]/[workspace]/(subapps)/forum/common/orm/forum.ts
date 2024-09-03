@@ -196,7 +196,7 @@ export async function findPosts({
         },
         createdOn: true,
         commentList: {
-          ...(commentOrderBy ? {orderBy: commentOrderBy} : {}),
+          orderBy: {publicationDateTime: ORDER_BY.DESC},
           select: {
             id: true,
             contentComment: true,
@@ -210,7 +210,6 @@ export async function findPosts({
             },
             childCommentList: {
               select: {
-                childCommentList: true,
                 contentComment: true,
                 publicationDateTime: true,
                 author: {

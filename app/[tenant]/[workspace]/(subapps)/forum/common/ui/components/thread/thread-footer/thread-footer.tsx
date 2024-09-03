@@ -94,9 +94,9 @@ export const ThreadFooter = ({
           onKeyDown={e => handleComment(e)}
         />
       </div>
-
       {showComments && (
         <Comments
+          post={post}
           comments={comments}
           usePopUpStyles={usePopUpStyles}
           hideCloseComments={hideCloseComments}
