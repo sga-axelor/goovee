@@ -16,14 +16,18 @@ export const fetchQuotations = async ({
   limit,
   partnerId,
   where,
+  tenantId,
 }: {
   archived?: boolean;
   limit?: string | number;
   page?: string | number;
   partnerId?: ID;
   where?: any;
+  tenantId: ID;
 }) => {
-  const client = await getClient();
+  if (!(partnerId && tenantId)) return {quotations: [], pageInfo: {}};
+
+  const client = await getClient(tenantId);
   const skip = getSkipInfo(limit, page);
 
   const whereClause: any = {
@@ -46,7 +50,7 @@ export const fetchQuotations = async ({
   const quotations = await client.aOSOrder
     .find({
       where: whereClause,
-      take: limit,
+      take: limit as any,
       ...(skip ? {skip} : {}),
       select: {
         saleOrderSeq: true,
@@ -65,7 +69,6 @@ export const fetchQuotations = async ({
     page,
     limit,
   });
-  if (!partnerId) return {quotations: [], pageInfo};
 
   return {
     quotations,
@@ -73,8 +76,18 @@ export const fetchQuotations = async ({
   };
 };
 
-export async function findQuotation(id: any, params?: any) {
-  const client = await getClient();
+export async function findQuotation({
+  id,
+  tenantId,
+  params,
+}: {
+  id: any;
+  tenantId: ID;
+  params?: any;
+}) {
+  if (!tenantId) return null;
+
+  const client = await getClient(tenantId);
 
   const quotation: any = await client.aOSOrder.findOne({
     where: {
@@ -167,12 +180,14 @@ export async function findQuotation(id: any, params?: any) {
   };
 }
 
-export async function getComments(id: string | number) {
-  const client = await getClient();
+export async function getComments({id, tenantId}: {id: ID; tenantId: ID}) {
+  if (!tenantId) return [];
+
+  const client = await getClient(tenantId);
 
   const comments = await client.aOSMailMessage.find({
     where: {
-      relatedId: id,
+      relatedId: id as any,
       relatedModel: RELATED_MODELS.SALE_ORDER_MODEL as string,
     },
     select: {

@@ -1,5 +1,6 @@
 'use server';
 
+import {headers} from 'next/headers';
 import paypal from '@paypal/checkout-server-sdk';
 import type {Stripe} from 'stripe';
 
@@ -18,6 +19,7 @@ import {PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {scale} from '@/utils';
+import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
 import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
@@ -30,7 +32,9 @@ export async function confirmQuotation({
   workspaceURL: string;
   quotationId: string;
 }) {
-  if (!(workspaceURL && quotationId)) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(workspaceURL && quotationId && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad request'),
@@ -52,6 +56,7 @@ export async function confirmQuotation({
     code: SUBAPP_CODES.quotations,
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!subapp) {
@@ -64,6 +69,7 @@ export async function confirmQuotation({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -79,7 +85,11 @@ export async function confirmQuotation({
 
   const where = getWhereClause(isContact, role, id, mainPartnerId);
 
-  const quotation = await findQuotation(quotationId, {where});
+  const quotation = await findQuotation({
+    id: quotationId,
+    tenantId,
+    params: {where},
+  });
 
   if (!quotation) {
     return {
@@ -118,7 +128,9 @@ export async function paypalCaptureOrder({
     };
   }
 
-  if (!(orderId && workspaceURL && quotation)) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(orderId && workspaceURL && quotation && tenantId)) {
     return {
       error: true,
       message: 'Bad request',
@@ -130,6 +142,7 @@ export async function paypalCaptureOrder({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -143,6 +156,7 @@ export async function paypalCaptureOrder({
     code: SUBAPP_CODES.quotations,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasQuotationAccess) {
@@ -244,7 +258,9 @@ export async function paypalCreateOrder({
     };
   }
 
-  if (!workspaceURL) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(workspaceURL && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad request'),
@@ -256,6 +272,7 @@ export async function paypalCreateOrder({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -269,6 +286,7 @@ export async function paypalCreateOrder({
     code: SUBAPP_CODES.quotations,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasQuotationAccess) {
@@ -303,7 +321,7 @@ export async function paypalCreateOrder({
     };
   }
 
-  const payer = await findPartnerByEmail(user?.email);
+  const payer = await findPartnerByEmail(user?.email, tenantId);
 
   const PaypalClient = paypalhttpclient();
 
@@ -364,7 +382,9 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  if (!(quotation && workspaceURL)) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(quotation && workspaceURL && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad request'),
@@ -376,6 +396,7 @@ export async function createStripeCheckoutSession({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -389,6 +410,7 @@ export async function createStripeCheckoutSession({
     code: SUBAPP_CODES.quotations,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasQuotationAccess) {
@@ -423,7 +445,7 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  const payer = await findPartnerByEmail(user.email);
+  const payer = await findPartnerByEmail(user.email, tenantId);
 
   const currencyCode = quotation?.currency?.code || DEFAULT_CURRENCY_CODE;
 
@@ -476,7 +498,9 @@ export async function validateStripePayment({
     };
   }
 
-  if (!(quotation && workspaceURL)) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(quotation && workspaceURL && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad request'),
@@ -488,6 +512,7 @@ export async function validateStripePayment({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -501,6 +526,7 @@ export async function validateStripePayment({
     code: SUBAPP_CODES.shop,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasQuotationAccess) {

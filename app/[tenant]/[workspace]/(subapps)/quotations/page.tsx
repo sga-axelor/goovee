@@ -20,6 +20,7 @@ export default async function Page({
   params: {tenant: string; workspace: string};
   searchParams: {[key: string]: string | undefined};
 }) {
+  const {tenant} = params;
   const session = await getSession();
   const {limit, page} = searchParams;
 
@@ -28,6 +29,7 @@ export default async function Page({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) return notFound();
@@ -36,6 +38,7 @@ export default async function Page({
     code: SUBAPP_CODES.quotations,
     url: workspace.url,
     user: session?.user,
+    tenantId: tenant,
   });
 
   if (!app?.installed) {
@@ -52,6 +55,8 @@ export default async function Page({
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     partnerId: id,
     where,
+    tenantId: tenant,
   });
+
   return <Content quotations={clone(quotations)} pageInfo={pageInfo} />;
 }

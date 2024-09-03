@@ -25,9 +25,9 @@ type PageProps = {
   };
 };
 export default async function Page({params}: PageProps) {
-  const {id} = params;
+  const {id, tenant} = params;
 
-  const comments = await getComments(id);
+  const comments = await getComments({id, tenantId: tenant});
 
   const session = await getSession();
   const user = session?.user;
@@ -37,6 +37,7 @@ export default async function Page({params}: PageProps) {
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) return notFound();
@@ -45,6 +46,7 @@ export default async function Page({params}: PageProps) {
     code: SUBAPP_CODES.quotations,
     user,
     url: workspaceURL,
+    tenantId: tenant,
   });
 
   const {id: userId, isContact, mainPartnerId} = user as User;
@@ -56,12 +58,17 @@ export default async function Page({params}: PageProps) {
     mainPartnerId as string,
   );
 
-  const quotation = await findQuotation(id, {where});
+  const quotation = await findQuotation({
+    id,
+    tenantId: tenant,
+    params: {where},
+  });
 
   const orderSubapp = await findSubappAccess({
     code: SUBAPP_CODES.orders,
     user,
     url: workspaceURL,
+    tenantId: tenant,
   });
 
   return (
