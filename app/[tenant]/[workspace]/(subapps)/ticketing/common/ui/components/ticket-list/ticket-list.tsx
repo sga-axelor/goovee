@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/ui/components';
-import {useSortBy} from '@/ui/hooks';
+import {useResponsive, useSortBy} from '@/ui/hooks';
 import {ReactNode} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
@@ -18,6 +18,7 @@ import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 import {columns, sortKeyPathMap} from '../../../constants';
 import type {Ticket} from '../../../types';
 import {TicketRows} from './ticket-rows';
+import {cn} from '@/utils/css';
 
 type TicketListProps = {
   tickets: Ticket[];
@@ -28,12 +29,15 @@ type TicketListProps = {
 export function TicketList(props: TicketListProps) {
   const {tickets, footer, projectId} = props;
   const [sortedTickets, sort, toggleSort] = useSortBy(tickets);
+  const res = useResponsive();
+  const small = (['xs', 'sm'] as const).some(x => res[x]);
+  const mainColumns = small ? [columns[0], columns[1]] : columns;
 
   return (
     <Table className="rounded-lg bg-card text-card-foreground">
       <TableHeader>
         <TableRow>
-          {columns?.map(column => {
+          {mainColumns?.map(column => {
             const isActive = sort.key === column.key;
             const isASC = isActive && sort.direction === ORDER_BY.ASC;
             const label = i18n.get(column.label);
@@ -44,7 +48,10 @@ export function TicketList(props: TicketListProps) {
                   const path = sortKeyPathMap[column.key];
                   path && toggleSort({key: column.key, path});
                 }}
-                className="text-card-foreground cursor-pointer text-base font-semibold px-6 border-none">
+                className={cn(
+                  'text-card-foreground cursor-pointer text-base font-semibold px-6 border-none',
+                  {'flex justify-end': column.key === 'requestedBy'},
+                )}>
                 <div className="flex gap-1 items-center">
                   <div className="line-clamp-1">{label}</div>
                   {isActive &&
