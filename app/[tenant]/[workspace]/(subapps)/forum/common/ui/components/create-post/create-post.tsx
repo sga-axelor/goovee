@@ -206,7 +206,7 @@ export const CreatePost = ({
                       <div className="w-6 h-6 rounded-lg overflow-hidden relative">
                         <Image
                           fill
-                          src={getImageURL(group.image.id)}
+                          src={getImageURL(group?.image?.id)}
                           alt={group.name}
                           objectFit="cover"
                         />
