@@ -198,3 +198,10 @@ export enum PaymentOption {
   paypal = 'paypal',
   stripe = 'stripe',
 }
+
+export type Tenant = {
+  id: string;
+  db: {
+    url: string;
+  };
+};
