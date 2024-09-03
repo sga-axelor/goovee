@@ -7,6 +7,7 @@ import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {DEFAULT_LIMIT} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
@@ -32,31 +33,41 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [ref, inView] = useInView();
 
-  const {workspaceID} = useWorkspace();
+  const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
 
   const {searchParams} = useSearchParams();
   const sort = searchParams.get('sort') || '';
   const limit = searchParams.get('limit') || DEFAULT_LIMIT;
 
   const loadMorePosts = async () => {
-    if (posts.length >= count) {
-      return;
-    }
+    if (posts.length >= count) return;
+
     setLoading(true);
-    const nextPage = page + 1;
+
     try {
-      const {posts: newPosts} = await fetchPosts({
+      const nextPage = page + 1;
+      const response = await fetchPosts({
         sort,
         limit: Number(limit),
         page: nextPage,
-        workspaceID,
+        workspaceURL,
       });
-      if (newPosts.length) {
+
+      if (response.error) {
+        toast({
+          variant: 'destructive',
+          title: i18n.get(response.message || 'An error occurred'),
+        });
+        return;
+      }
+
+      if (response.posts?.length > 0) {
         setPage(nextPage);
-        setPosts(prevPosts => [...prevPosts, ...newPosts]);
+        setPosts(prevPosts => [...prevPosts, ...response.posts]);
       }
     } catch (error) {
-      console.error('error:', error);
+      console.error('Error occurred while loading posts:', error);
     } finally {
       setLoading(false);
     }

@@ -156,7 +156,7 @@ export async function findPosts({
       workspace: {
         id: workspaceID,
       },
-      ...(groupIDs ? {id: {in: groupIDs}} : {}),
+      ...(groupIDs.length ? {id: {in: groupIDs}} : {}),
       ...whereClause.forumGroup,
     },
     ...(search
@@ -168,63 +168,66 @@ export async function findPosts({
       : {}),
   };
 
-  const posts = await client.aOSPortalForumPost.find({
-    where: combinedWhereClause,
-    orderBy,
-    take: limit,
-    ...(skip ? {skip} : {}),
-    select: {
-      title: true,
-      forumGroup: {
-        name: true,
-        image: true,
-      },
-      content: true,
-      attachmentList: {
-        select: {
-          title: true,
-          metaFile: {
-            fileType: true,
-            fileName: true,
+  const posts = await client.aOSPortalForumPost
+    .find({
+      where: combinedWhereClause,
+      orderBy,
+      take: limit,
+      ...(skip ? {skip} : {}),
+      select: {
+        title: true,
+        forumGroup: {
+          name: true,
+          image: true,
+        },
+        content: true,
+        attachmentList: {
+          select: {
+            title: true,
+            metaFile: {
+              fileType: true,
+              fileName: true,
+            },
           },
         },
-      },
-      author: {
-        simpleFullName: true,
-        picture: true,
-      },
-      createdOn: true,
-      commentList: {
-        ...(commentOrderBy ? {orderBy: commentOrderBy} : {}),
-        select: {
-          id: true,
-          contentComment: true,
-          publicationDateTime: true,
-          author: {
+        author: {
+          simpleFullName: true,
+          picture: true,
+        },
+        createdOn: true,
+        commentList: {
+          ...(commentOrderBy ? {orderBy: commentOrderBy} : {}),
+          select: {
             id: true,
-            name: true,
-          },
-          image: {
-            id: true,
-          },
-          childCommentList: {
-            select: {
-              childCommentList: true,
-              contentComment: true,
-              publicationDateTime: true,
-              author: {
-                id: true,
-                name: true,
-              },
-              image: {
-                id: true,
+            contentComment: true,
+            publicationDateTime: true,
+            author: {
+              id: true,
+              name: true,
+            },
+            image: {
+              id: true,
+            },
+            childCommentList: {
+              select: {
+                childCommentList: true,
+                contentComment: true,
+                publicationDateTime: true,
+                author: {
+                  id: true,
+                  name: true,
+                },
+                image: {
+                  id: true,
+                },
               },
             },
           },
         },
       },
-    },
-  });
+    })
+    .then(clone)
+    .catch(error => console.log('error >>>', error));
   const pageInfo = getPageInfo({
     count: posts?.[0]?._count,
     page,

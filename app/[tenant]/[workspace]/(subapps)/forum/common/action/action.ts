@@ -529,21 +529,8 @@ export async function fetchPosts({
 }) {
   const session = await getSession();
   const user = session?.user;
-
-  if (!user) {
-    return {error: true, message: i18n.get('Unauthorized')};
-  }
-
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.forum,
-    user,
-    url: workspaceURL,
-  });
-  if (!subapp) {
-    return {error: true, message: i18n.get('Unauthorized')};
-  }
-
   const workspace = await findWorkspace({user, url: workspaceURL});
+
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
