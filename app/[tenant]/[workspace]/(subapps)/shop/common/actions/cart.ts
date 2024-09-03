@@ -1,12 +1,14 @@
 'use server';
 
 import axios from 'axios';
+import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 import {computeTotal} from '@/utils/cart';
-import type {PortalWorkspace, Product, User} from '@/types';
+import {TENANT_HEADER} from '@/middleware';
+import type {ID, PortalWorkspace, Product, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct as $findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
@@ -20,10 +22,17 @@ export async function findProduct({
   workspace?: PortalWorkspace;
   user?: User;
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return null;
+  }
+
   return await $findProduct({
     id,
     workspace,
     user,
+    tenantId,
   }).then(clone);
 }
 
@@ -50,6 +59,12 @@ export async function requestOrder({
   workspace: PortalWorkspace;
   type?: 'quotation' | 'order';
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return null;
+  }
+
   const aos = process.env.NEXT_PUBLIC_AOS_URL;
 
   if (!aos) return null;

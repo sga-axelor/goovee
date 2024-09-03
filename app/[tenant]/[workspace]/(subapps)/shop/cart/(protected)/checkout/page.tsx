@@ -15,6 +15,8 @@ export default async function Page({
 }: {
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
+
   const session = await getSession();
   const user = session?.user;
 
@@ -23,6 +25,7 @@ export default async function Page({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace?.config?.confirmOrder) {
@@ -33,7 +36,10 @@ export default async function Page({
     code: SUBAPP_CODES.orders,
     user,
     url: workspaceURL,
+    tenantId: tenant,
   });
 
-  return <Content workspace={workspace} orderSubapp={orderSubapp} />;
+  return (
+    <Content workspace={workspace} orderSubapp={orderSubapp} tenant={tenant} />
+  );
 }

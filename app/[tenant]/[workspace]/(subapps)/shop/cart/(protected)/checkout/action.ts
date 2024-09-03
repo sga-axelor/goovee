@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import paypal from '@paypal/checkout-server-sdk';
+import {headers} from 'next/headers';
 import type {Stripe} from 'stripe';
 
 // ---- CORE IMPORTS ---- //
@@ -19,6 +20,7 @@ import {computeTotal} from '@/utils/cart';
 import {stripe} from '@/lib/stripe';
 import {i18n} from '@/lib/i18n';
 import {formatAmountForStripe} from '@/utils/stripe';
+import {TENANT_HEADER} from '@/middleware';
 import {PaymentOption, type ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -29,35 +31,43 @@ export async function findInvoicingAddress() {
   const session = await getSession();
   const user = session?.user;
 
-  if (!user) return null;
+  const tenantId = headers().get(TENANT_HEADER);
 
-  return findDefaultInvoicingAddress(user.id).then(clone);
+  if (!(user && tenantId)) return null;
+
+  return findDefaultInvoicingAddress(user.id, tenantId).then(clone);
 }
 
 export async function findDeliveryAddress() {
   const session = await getSession();
   const user = session?.user;
 
-  if (!user) return null;
+  const tenantId = headers().get(TENANT_HEADER);
 
-  return findDefaultDeliveryAddress(user.id).then(clone);
+  if (!(user && tenantId)) return null;
+
+  return findDefaultDeliveryAddress(user.id, tenantId).then(clone);
 }
 
 export async function findAddress(id: ID) {
   const session = await getSession();
   const user = session?.user;
 
-  if (!user) return null;
+  const tenantId = headers().get(TENANT_HEADER);
 
-  return findPartnerAddress(id).then(clone);
+  if (!(user && tenantId)) return null;
+
+  return findPartnerAddress(id, tenantId).then(clone);
 }
 
 export async function createOrder({
   cart,
   workspaceURL,
+  tenantId,
 }: {
   cart: any;
   workspaceURL: string;
+  tenantId: ID;
 }) {
   const aos = process.env.NEXT_PUBLIC_AOS_URL;
 
@@ -88,6 +98,7 @@ export async function createOrder({
   const workspace = await findWorkspace({
     url: workspaceURL,
     user,
+    tenantId,
   });
 
   if (!workspace) {
@@ -99,7 +110,9 @@ export async function createOrder({
 
   try {
     const computedProducts = await Promise.all(
-      cart.items.map((i: any) => findProduct({id: i.product, workspace, user})),
+      cart.items.map((i: any) =>
+        findProduct({id: i.product, workspace, user, tenantId}),
+      ),
     );
 
     const $cart = {
@@ -204,9 +217,19 @@ export async function paypalCaptureOrder({
 
   const user = session?.user;
 
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Invalid tenant'),
+    };
+  }
+
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!cart?.items?.length) {
@@ -227,6 +250,7 @@ export async function paypalCaptureOrder({
     code: SUBAPP_CODES.shop,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasShopAccess) {
@@ -292,7 +316,7 @@ export async function paypalCaptureOrder({
     };
   }
 
-  return createOrder({cart, workspaceURL});
+  return createOrder({cart, workspaceURL, tenantId});
 }
 
 export async function paypalCreateOrder({
@@ -325,11 +349,21 @@ export async function paypalCreateOrder({
     };
   }
 
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Invalid tenant'),
+    };
+  }
+
   const user = session?.user;
 
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -343,6 +377,7 @@ export async function paypalCreateOrder({
     code: SUBAPP_CODES.shop,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasShopAccess) {
@@ -382,7 +417,7 @@ export async function paypalCreateOrder({
     workspace,
   });
 
-  const payer = await findPartnerByEmail(user?.email);
+  const payer = await findPartnerByEmail(user?.email, tenantId);
 
   const PaypalClient = paypalhttpclient();
 
@@ -447,11 +482,21 @@ export async function createStripeCheckoutSession({
     };
   }
 
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Invalid tenant'),
+    };
+  }
+
   const user = session?.user;
 
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -465,6 +510,7 @@ export async function createStripeCheckoutSession({
     code: SUBAPP_CODES.shop,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasShopAccess) {
@@ -504,7 +550,7 @@ export async function createStripeCheckoutSession({
     workspace,
   });
 
-  const payer = await findPartnerByEmail(user.email);
+  const payer = await findPartnerByEmail(user.email, tenantId);
 
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
 
@@ -573,9 +619,19 @@ export async function validateStripePayment({
 
   const user = session?.user;
 
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Invalid tenant'),
+    };
+  }
+
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -589,6 +645,7 @@ export async function validateStripePayment({
     code: SUBAPP_CODES.shop,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!hasShopAccess) {
@@ -679,5 +736,5 @@ export async function validateStripePayment({
     };
   }
 
-  return createOrder({cart, workspaceURL});
+  return createOrder({cart, workspaceURL, tenantId});
 }

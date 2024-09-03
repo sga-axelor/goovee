@@ -20,6 +20,7 @@ export default async function Shop({
   params: {tenant: string; workspace: string; 'category-id': string};
   searchParams: {[key: string]: string | undefined};
 }) {
+  const {tenant} = params;
   const {search, sort, limit, page} = searchParams;
   const category = params['category-id']?.split('-')?.at(-1);
 
@@ -31,9 +32,12 @@ export default async function Shop({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
-  const categories = await findCategories({workspace}).then(clone);
+  const categories = await findCategories({workspace, tenantId: tenant}).then(
+    clone,
+  );
 
   const getcategoryids = (category: Category) => {
     if (!category) return [];
@@ -85,6 +89,7 @@ export default async function Shop({
     categoryids,
     workspace,
     user,
+    tenantId: tenant,
   });
 
   const parentcategories = categories?.filter((c: any) => !c.parent);

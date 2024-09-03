@@ -13,6 +13,7 @@ export default async function Cart({
 }: {
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
   const session = await getSession();
 
   const {workspaceURL} = workspacePathname(params);
@@ -20,7 +21,8 @@ export default async function Cart({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
-  return <Content workspace={workspace} />;
+  return <Content workspace={workspace} tenant={tenant} />;
 }

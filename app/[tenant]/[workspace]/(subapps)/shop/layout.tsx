@@ -28,6 +28,7 @@ export default async function Layout({
   };
   children: React.ReactNode;
 }) {
+  const {tenant} = params;
   const session = await getSession();
 
   const {workspaceURL} = workspacePathname(params);
@@ -35,6 +36,7 @@ export default async function Layout({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) return notFound();
@@ -43,13 +45,17 @@ export default async function Layout({
     code: SUBAPP_CODES.shop,
     url: workspace.url,
     user: session?.user,
+    tenantId: tenant,
   });
 
   if (!app?.installed) {
     return notFound();
   }
 
-  const categories = await findCategories({workspace}).then(clone);
+  const categories = await findCategories({workspace, tenantId: tenant}).then(
+    clone,
+  );
+
   const parentcategories = categories?.filter((c: any) => !c.parent);
 
   return (

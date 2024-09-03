@@ -264,7 +264,13 @@ function CartSummary({
   );
 }
 
-export default function Content({workspace}: {workspace?: PortalWorkspace}) {
+export default function Content({
+  workspace,
+  tenant,
+}: {
+  workspace?: PortalWorkspace;
+  tenant: string;
+}) {
   const {data: session} = useSession();
   const user = session?.user;
 
@@ -339,7 +345,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
       }
     };
     init();
-  }, [cart, computedProducts, workspace, user]);
+  }, [cart, computedProducts, workspace, user, tenant]);
 
   const $cart = useMemo(
     () => ({

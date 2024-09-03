@@ -31,7 +31,7 @@ import {getImageURL} from '@/utils/product';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import {PaymentOption, type PortalWorkspace} from '@/types';
+import {ID, PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
@@ -65,7 +65,10 @@ function Stripe({onApprove}: {onApprove: any}) {
 
   const handleCreateCheckoutSession = async () => {
     try {
-      const result = await createStripeCheckoutSession({cart, workspaceURL});
+      const result = await createStripeCheckoutSession({
+        cart,
+        workspaceURL,
+      });
 
       if (result.error) {
         toast({
@@ -483,9 +486,11 @@ function Title({text, ...rest}: {text: string} & any) {
 export default function Content({
   workspace,
   orderSubapp,
+  tenant,
 }: {
   workspace: PortalWorkspace;
   orderSubapp?: any;
+  tenant: string;
 }) {
   const {data: session} = useSession();
   const user = session?.user;
@@ -538,7 +543,11 @@ export default function Content({
       if (!computedProducts?.length && cart) {
         await Promise.all(
           cart.items.map((i: any) =>
-            findProduct({id: i.product, workspace: workspace, user}),
+            findProduct({
+              id: i.product,
+              workspace: workspace,
+              user,
+            }),
           ),
         )
           .then(computedProducts => {
@@ -550,7 +559,7 @@ export default function Content({
       }
     };
     init();
-  }, [cart, computedProducts, workspace, user]);
+  }, [cart, computedProducts, workspace, user, tenant]);
 
   const $cart = useMemo(
     () => ({

@@ -18,6 +18,8 @@ export default async function Shop({
 }: {
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
+
   const session = await getSession();
   const user = session?.user;
 
@@ -26,9 +28,12 @@ export default async function Shop({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
-  const categories = await findCategories({workspace}).then(clone);
+  const categories = await findCategories({workspace, tenantId: tenant}).then(
+    clone,
+  );
 
   const getcategoryids = (category: Category) => {
     if (!category) return [];
@@ -64,6 +69,7 @@ export default async function Shop({
 
   const featuredCategories: any = await findFeaturedCategories({
     workspace,
+    tenantId: tenant,
   }).then(clone);
 
   for (const category of featuredCategories) {
@@ -72,6 +78,7 @@ export default async function Shop({
         ids: category.productList.map((p: any) => p.id),
         workspace,
         user,
+        tenantId: tenant,
       }).then(clone);
 
       category.products = res?.products;

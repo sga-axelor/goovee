@@ -22,6 +22,8 @@ export default async function Page({
   };
   searchParams: {[key: string]: string};
 }) {
+  const {tenant} = params;
+
   const category = params['category-id']?.split('-')?.at(-1);
 
   const session = await getSession();
@@ -34,6 +36,7 @@ export default async function Page({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!(id && isNumeric(id))) redirect(`${workspaceURI}/shop`);
@@ -42,6 +45,7 @@ export default async function Page({
     id,
     workspace,
     user,
+    tenantId: tenant,
   });
 
   if (!computedProduct) redirect(`${workspaceURI}/shop`);
@@ -49,7 +53,9 @@ export default async function Page({
   let breadcrumbs: any = [];
 
   if (category) {
-    const categories = await findCategories({workspace}).then(clone);
+    const categories = await findCategories({workspace, tenantId: tenant}).then(
+      clone,
+    );
 
     const $category = category
       ? categories.find((c: any) => Number(c.id) === Number(category))
@@ -82,7 +88,9 @@ export default async function Page({
     breadcrumbs.push({id: product.id, name: product.name});
   }
 
-  const categories = await findCategories({workspace}).then(clone);
+  const categories = await findCategories({workspace, tenantId: tenant}).then(
+    clone,
+  );
 
   const parentcategories = categories?.filter((c: any) => !c.parent);
 

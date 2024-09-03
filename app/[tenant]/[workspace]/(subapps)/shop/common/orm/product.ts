@@ -16,6 +16,7 @@ import type {
   ComputedProduct,
   PortalWorkspace,
   User,
+  ID,
 } from '@/types';
 import {getClient} from '@/goovee';
 
@@ -49,6 +50,7 @@ export async function findProducts({
   limit,
   workspace,
   user,
+  tenantId,
 }: {
   ids?: Product['id'][];
   search?: string;
@@ -58,10 +60,11 @@ export async function findProducts({
   limit?: string | number;
   workspace?: PortalWorkspace;
   user?: User;
+  tenantId: ID;
 }) {
-  if (!(workspace && workspace.config)) return [];
+  if (!(workspace && workspace.config && tenantId)) return [];
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   let orderBy;
 
@@ -120,8 +123,8 @@ export async function findProducts({
           id: workspace.id,
         },
       },
-      orderBy,
-      take: limit,
+      orderBy: orderBy as any,
+      take: limit as any,
       ...(skip ? {skip} : {}),
       select: {
         name: true,
@@ -382,14 +385,16 @@ export async function findProduct({
   id,
   workspace,
   user,
+  tenantId,
 }: {
   id: Product['id'];
   workspace?: PortalWorkspace;
   user?: User;
+  tenantId: ID;
 }) {
   return (
     id &&
-    findProducts({ids: [id], workspace, user}).then(
+    findProducts({ids: [id], workspace, user, tenantId}).then(
       ({products}: any = {}) => products && products[0],
     )
   );

@@ -19,9 +19,11 @@ import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
 export default function Content({
   workspace,
   quotationSubapp,
+  tenant,
 }: {
   workspace: PortalWorkspace;
   quotationSubapp?: boolean;
+  tenant: string;
 }) {
   const {clearCart, cart} = useCart();
   const router = useRouter();
@@ -30,7 +32,7 @@ export default function Content({
 
   useEffect(() => {
     const request = async () => {
-      const res = await requestQuotation({cart, workspace});
+      const res = await requestQuotation({cart, workspace, tenantId: tenant});
 
       if (res?.data) {
         toast({

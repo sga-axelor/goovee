@@ -17,6 +17,7 @@ export default async function Page({
   params: {tenant: string; workspace: string; 'product-id': string};
   searchParams: {[key: string]: string};
 }) {
+  const {tenant} = params;
   const session = await getSession();
   const user = session?.user;
 
@@ -26,6 +27,7 @@ export default async function Page({
   const workspace = await findWorkspace({
     user: user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!(id && isNumeric(id))) redirect(`${workspaceURI}/shop`);
@@ -34,6 +36,7 @@ export default async function Page({
     id,
     workspace,
     user,
+    tenantId: tenant,
   });
 
   if (!computedProduct) redirect(`${workspaceURI}/shop`);
@@ -45,7 +48,9 @@ export default async function Page({
     breadcrumbs.push({id: product.id, name: product.name});
   }
 
-  const categories = await findCategories({workspace}).then(clone);
+  const categories = await findCategories({workspace, tenantId: tenant}).then(
+    clone,
+  );
   const parentcategories = categories?.filter((c: any) => !c.parent);
 
   return (

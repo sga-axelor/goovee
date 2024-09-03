@@ -15,6 +15,7 @@ export default async function Page({
 }: {
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
   const session = await getSession();
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
@@ -22,6 +23,7 @@ export default async function Page({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace?.config?.requestQuotation) {
@@ -32,9 +34,14 @@ export default async function Page({
     code: SUBAPP_CODES.quotations,
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   });
 
   return (
-    <Content workspace={workspace} quotationSubapp={Boolean(quotationSubapp)} />
+    <Content
+      workspace={workspace}
+      quotationSubapp={Boolean(quotationSubapp)}
+      tenant={tenant}
+    />
   );
 }
