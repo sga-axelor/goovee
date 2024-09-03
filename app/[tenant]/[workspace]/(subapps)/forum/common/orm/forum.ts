@@ -106,6 +106,7 @@ export async function findPosts({
   whereClause = {},
   workspaceID,
   groupIDs = [],
+  commentSort = '',
 }: {
   sort?: any;
   limit?: number;
@@ -114,6 +115,7 @@ export async function findPosts({
   whereClause?: any;
   workspaceID: PortalWorkspace['id'];
   groupIDs?: any[];
+  commentSort?: string;
 }) {
   if (!workspaceID) {
     return {
@@ -134,6 +136,18 @@ export async function findPosts({
       orderBy = {createdOn: ORDER_BY.DESC};
   }
 
+  let commentOrderBy: any = null;
+  switch (commentSort) {
+    case 'old':
+      commentOrderBy = {
+        publicationDateTime: ORDER_BY.ASC,
+      };
+      break;
+    default:
+      commentOrderBy = {
+        publicationDateTime: ORDER_BY.DESC,
+      };
+  }
   const skip = getSkipInfo(limit, page);
 
   const combinedWhereClause = {
@@ -181,6 +195,7 @@ export async function findPosts({
       },
       createdOn: true,
       commentList: {
+        ...(commentOrderBy ? {orderBy: commentOrderBy} : {}),
         select: {
           id: true,
           contentComment: true,
@@ -219,14 +234,35 @@ export async function findPosts({
   return {posts, pageInfo};
 }
 
-export async function findPostsByGroupId(id: ID, workspaceID: string) {
+export async function findPostsByGroupId({
+  id,
+  workspaceID,
+  sort = null,
+  limit,
+  search = '',
+  commentSort = '',
+}: {
+  id: ID;
+  workspaceID: string;
+  sort?: any;
+  limit?: number;
+  search?: string | undefined;
+  commentSort?: string;
+}) {
   const whereClause = {
     forumGroup: {
       id,
     },
   };
 
-  return await findPosts({whereClause, workspaceID});
+  return await findPosts({
+    whereClause,
+    workspaceID,
+    sort,
+    limit,
+    search,
+    commentSort,
+  });
 }
 
 export async function findGroupById(id: ID, workspaceID: string) {

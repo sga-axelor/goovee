@@ -33,7 +33,7 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
-  const {sort, limit, search} = searchParams;
+  const {sort, limit, search, comment} = searchParams;
 
   const groups = await findGroups({workspace}).then(clone);
   const groupIDs = groups.map((group: any) => group.id);
@@ -60,6 +60,7 @@ export default async function Page({
     search,
     workspaceID: workspace?.id,
     groupIDs,
+    commentSort: comment,
   }).then(clone);
 
   const user = await findUser({userId}).then(clone);

@@ -141,6 +141,7 @@ export const THREAD_SORT_BY_OPTIONS = [
     label: 'Old',
   },
   // No support for popular at the moment from backend
+  //  popularity = comments + reactions;
   // {
   //   id: 3,
   //   key: 'popular',

@@ -24,9 +24,10 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 import {parseDate} from '@/utils/date';
-import {DATE_FORMATS} from '@/constants';
+import {DATE_FORMATS, URL_PARAMS} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
+import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -198,13 +199,26 @@ export const Comments = ({
   hideCloseComments?: boolean;
   toggleComments: () => void;
 }) => {
+  const {update} = useSearchParams();
+
+  const handleSortBy = (value: any) => {
+    if (!value) {
+      return;
+    }
+
+    update([{key: URL_PARAMS.comment, value}]);
+  };
+
   return (
     <div
       className={`border-t flex flex-col gap-4 ${usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4'}`}>
       <div className="w-full flex gap-4 items-center">
         <div className="flex gap-2 text-base flex-shrink-0">
           <div>{i18n.get('Sort by')}:</div>
-          <DropdownToggle options={THREAD_SORT_BY_OPTIONS} />
+          <DropdownToggle
+            options={THREAD_SORT_BY_OPTIONS}
+            handleDropdown={handleSortBy}
+          />
         </div>
         <Separator
           style={{

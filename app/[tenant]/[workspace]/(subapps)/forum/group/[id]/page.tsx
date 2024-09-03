@@ -5,6 +5,7 @@ import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
+import {DEFAULT_LIMIT} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -16,16 +17,18 @@ import {
 } from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 import {GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
-import {ForumGroup} from '../../common/types/forum';
+import {ForumGroup} from '@/subapps/forum/common/types/forum';
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: {
     id: string;
     tenant: string;
     workspace: string;
   };
+  searchParams: {[key: string]: string | undefined};
 }) {
   const session = await getSession();
   const userId = session?.user?.id as string;
@@ -36,6 +39,8 @@ export default async function Page({
     user: session?.user,
     url: workspaceURL,
   }).then(clone);
+
+  const {sort, limit, search, comment} = searchParams;
 
   const groupId = params.id as string;
 
@@ -60,10 +65,14 @@ export default async function Page({
 
   const selectedGroup = await findGroupById(groupId, workspace?.id).then(clone);
 
-  const {posts, pageInfo} = await findPostsByGroupId(
-    groupId,
-    workspace?.id,
-  ).then(clone);
+  const {posts, pageInfo} = await findPostsByGroupId({
+    id: groupId,
+    workspaceID: workspace?.id,
+    sort,
+    limit: limit ? Number(limit) : DEFAULT_LIMIT,
+    search,
+    commentSort: comment,
+  }).then(clone);
 
   const user = await findUser({userId}).then(clone);
 
