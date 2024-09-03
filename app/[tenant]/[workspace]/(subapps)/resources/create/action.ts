@@ -17,6 +17,7 @@ import {TENANT_HEADER} from '@/middleware';
 import {getFileSizeText} from '@/utils/files';
 import {TENANT_HEADER} from '@/middleware';
 import {getFileSizeText} from '@/utils/files';
+import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
 import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';
