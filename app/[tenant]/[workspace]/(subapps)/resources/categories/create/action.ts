@@ -1,5 +1,7 @@
 'use server';
 
+import {headers} from 'next/headers';
+
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {i18n} from '@/lib/i18n';
@@ -7,6 +9,7 @@ import {getSession} from '@/orm/auth';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
+import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
 import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';
@@ -39,6 +42,15 @@ export async function create(formData: FormData, workspaceURL: string) {
     };
   }
 
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Invalid Tenant'),
+    };
+  }
+
   const session = await getSession();
 
   const user = session?.user;
@@ -54,6 +66,7 @@ export async function create(formData: FormData, workspaceURL: string) {
     code: SUBAPP_CODES.resources,
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!subapp) {
@@ -66,6 +79,7 @@ export async function create(formData: FormData, workspaceURL: string) {
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -78,6 +92,7 @@ export async function create(formData: FormData, workspaceURL: string) {
   const isSharedParent = (
     await fetchSharedFolders({
       workspace,
+      tenantId,
       params: {
         where: {
           id: parent,
@@ -93,7 +108,7 @@ export async function create(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   try {
     const category = await client.aOSDMSFile

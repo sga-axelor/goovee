@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
+import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
@@ -12,6 +13,7 @@ import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
+import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFileSizeText} from '@/subapps/resources/common/utils';
@@ -63,7 +65,16 @@ export async function upload(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const client = await getClient();
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Invalid Tenant'),
+    };
+  }
+
+  const client = await getClient(tenantId);
 
   const category = formData.get('category');
 
@@ -89,6 +100,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
     code: SUBAPP_CODES.resources,
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!subapp) {
@@ -101,6 +113,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -113,6 +126,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   const isSharedCategory = (
     await fetchSharedFolders({
       workspace,
+      tenantId,
       params: {
         where: {
           id: category,

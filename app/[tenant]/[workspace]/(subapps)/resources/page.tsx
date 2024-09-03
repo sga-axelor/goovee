@@ -19,6 +19,7 @@ export default async function Page({
 }: {
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
   const session = await getSession();
 
   const {workspaceURL} = workspacePathname(params);
@@ -26,10 +27,18 @@ export default async function Page({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
-  const files = await fetchLatestFiles({workspace}).then(clone);
-  const folders = await fetchLatestFolders({workspace}).then(clone);
+  const files = await fetchLatestFiles({
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
+
+  const folders = await fetchLatestFolders({
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
   return (
     <>

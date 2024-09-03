@@ -15,7 +15,6 @@ import {findWorkspace} from '@/orm/workspace';
 import {
   CategoryExplorer,
   ResourceList,
-  SortBy,
 } from '@/subapps/resources/common/ui/components';
 import {
   fetchExplorerCategories,
@@ -30,6 +29,7 @@ export default async function Page({
   searchParams: {id: string};
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
   const {id} = searchParams;
 
   const session = await getSession();
@@ -41,16 +41,27 @@ export default async function Page({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   let files;
 
   if (id) {
-    files = await fetchFiles({id, workspace}).then(clone);
+    files = await fetchFiles({
+      id,
+      workspace,
+      tenantId: tenant,
+    }).then(clone);
   } else {
-    files = await fetchLatestFiles({workspace}).then(clone);
+    files = await fetchLatestFiles({
+      workspace,
+      tenantId: tenant,
+    }).then(clone);
   }
-  const categories = await fetchExplorerCategories({workspace}).then(clone);
+  const categories = await fetchExplorerCategories({
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
   return (
     <main className="container p-4 mx-auto space-y-6">

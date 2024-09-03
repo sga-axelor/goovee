@@ -16,6 +16,7 @@ export default async function Page({
 }: {
   params: {tenant: string; workspace: string};
 }) {
+  const {tenant} = params;
   const session = await getSession();
 
   const user = session?.user;
@@ -29,9 +30,13 @@ export default async function Page({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
-  const folders = await fetchSharedFolders({workspace}).then(clone);
+  const folders = await fetchSharedFolders({
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
   return (
     <main className="container mx-auto mt-4 p-4 md:p-8 bg-white rounded space-y-2">

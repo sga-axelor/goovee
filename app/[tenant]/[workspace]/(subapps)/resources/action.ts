@@ -1,9 +1,12 @@
 'use server';
 
+import {headers} from 'next/headers';
+
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {clone} from '@/utils';
 import type {PortalWorkspace} from '@/types';
+import {TENANT_HEADER} from '@/middleware';
 
 export async function findDmsFiles({
   search = '',
@@ -14,7 +17,11 @@ export async function findDmsFiles({
 }) {
   if (!workspace) return [];
 
-  const client = await getClient();
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) return [];
+
+  const client = await getClient(tenantId);
 
   return client.aOSDMSFile
     .find({

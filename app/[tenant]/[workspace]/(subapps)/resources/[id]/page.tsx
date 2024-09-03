@@ -24,10 +24,14 @@ const viewer: Record<string, React.JSXElementConstructor<any>> = {
   html: HTMLViewer,
 };
 
-export default async function Page({params}: {params: {id: string}}) {
-  const {id} = params;
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; id: string};
+}) {
+  const {id, tenant} = params;
 
-  const file = await fetchFile(id).then(clone);
+  const file = await fetchFile({id, tenantId: tenant}).then(clone);
 
   if (!file) {
     return notFound();
