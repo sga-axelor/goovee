@@ -17,7 +17,7 @@ export type TotalProps = {
   exTaxTotal: number | string;
   invoiceLineList: [];
   numberOfDecimals: number;
-  allowInvoicePayment?:boolean;
+  allowInvoicePayment?: boolean;
 };
 
 export type InvoiceTable = {

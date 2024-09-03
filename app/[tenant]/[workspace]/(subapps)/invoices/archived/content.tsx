@@ -24,7 +24,7 @@ export default function Content({
   const handleTabChange = () => {
     router.push(`unpaid`);
   };
-  
+
   const handleClick = (id: string) => {
     router.push(`${pathname}/${id}`);
   };
