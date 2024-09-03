@@ -142,10 +142,7 @@ export function Filter(props: FilterProps) {
           </Button>
         </Trigger>
 
-        <Content
-          className={
-            small ? 'px-5 pb-5' : 'max-w-[22.7rem] w-74 overflow-y-auto'
-          }>
+        <Content className={small ? 'px-5 pb-5' : 'max-w-[22.7rem] w-74'}>
           {small && (
             <>
               <h3 className="text-xl font-semibold mb-2">
@@ -155,7 +152,10 @@ export function Filter(props: FilterProps) {
             </>
           )}
           <Form {...form}>
-            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              ref={formRef}
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="overflow-y-auto">
               <div className="space-y-4">
                 <RequestedByField form={form} users={users} />
                 <DatesField form={form} />
