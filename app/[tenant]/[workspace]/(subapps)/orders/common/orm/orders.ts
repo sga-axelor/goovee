@@ -1,12 +1,12 @@
 // ---- CORE IMPORTS ---- //
+import {getClient} from '@/goovee';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
-import type {Partner} from '@/types';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
+import type {ID, Partner} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_STATUS} from '@/subapps/orders/common/constants/orders';
 import type {Order} from '@/subapps/orders/common/types/orders';
-import {getClient} from '@/goovee';
 
 const fetchOrders = async ({
   partnerId,
@@ -15,6 +15,7 @@ const fetchOrders = async ({
   limit,
   skip,
   where,
+  tenantId,
 }: {
   partnerId?: Partner['id'];
   archived?: boolean;
@@ -22,10 +23,11 @@ const fetchOrders = async ({
   page?: string | number;
   skip?: boolean | number;
   where?: any;
+  tenantId: ID;
 }) => {
-  if (!partnerId) return null;
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const whereClause: any = {
     ...where,
@@ -52,8 +54,8 @@ const fetchOrders = async ({
   const $orders = await client.aOSOrder
     .find({
       where: whereClause,
-      take: limit,
-      ...(skip ? {skip} : {}),
+      take: limit as any,
+      ...(skip ? {skip: skip as any} : {}),
       select: {
         saleOrderSeq: true,
         statusSelect: true,
@@ -96,15 +98,17 @@ export async function findOngoingOrders({
   where,
   page = 1,
   limit,
+  tenantId,
 }: {
   partnerId?: string | number;
   page?: string | number;
   limit?: string | number;
   where?: any;
+  tenantId: ID;
 }): Promise<any> {
   const skip = getSkipInfo(limit, page);
 
-  return await fetchOrders({partnerId, page, limit, skip, where});
+  return await fetchOrders({partnerId, page, limit, skip, where, tenantId});
 }
 
 export async function findArchivedOrders({
@@ -112,11 +116,13 @@ export async function findArchivedOrders({
   page = 1,
   limit,
   where,
+  tenantId,
 }: {
   partnerId?: string | number;
   page?: string | number;
   limit?: string | number;
   where?: any;
+  tenantId: ID;
 }): Promise<any> {
   const skip = getSkipInfo(limit, page);
 
@@ -127,11 +133,21 @@ export async function findArchivedOrders({
     limit,
     skip,
     where,
+    tenantId,
   });
 }
 
-export async function findOrder(id: Order['id']) {
-  const client = await getClient();
+export async function findOrder({
+  id,
+  tenantId,
+}: {
+  id: Order['id'];
+  tenantId: ID;
+}) {
+  if (!tenantId) return null;
+
+  const client = await getClient(tenantId);
+
   const order: any = await client.aOSOrder.findOne({
     where: {
       id,

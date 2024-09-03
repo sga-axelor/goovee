@@ -1,8 +1,11 @@
 'use client';
+
 import React from 'react';
+
 // ---- CORE IMPORTS ---- //
-import {Container} from '@ui/components/index';
+import {Container} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   Contact,
@@ -13,6 +16,7 @@ import {
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
+
 const Content = ({order}: {order: any}) => {
   const {
     saleOrderSeq,

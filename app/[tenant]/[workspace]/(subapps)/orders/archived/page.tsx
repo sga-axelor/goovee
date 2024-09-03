@@ -20,6 +20,8 @@ export default async function Page({
   params: {tenant: string; workspace: string};
   searchParams: {[key: string]: string | undefined};
 }) {
+  const {tenant} = params;
+
   const {limit, page} = searchParams;
   const session = await getSession();
   const {workspaceURL} = workspacePathname(params);
@@ -27,6 +29,7 @@ export default async function Page({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) return notFound();
@@ -35,6 +38,7 @@ export default async function Page({
     code: SUBAPP_CODES.orders,
     url: workspace.url,
     user: session?.user,
+    tenantId: tenant,
   });
 
   if (!app?.installed) {
@@ -52,6 +56,7 @@ export default async function Page({
     page,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     where,
+    tenantId: tenant,
   });
 
   return <Content orders={clone(orders)} pageInfo={pageInfo} />;

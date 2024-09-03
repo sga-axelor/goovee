@@ -1,18 +1,21 @@
 'use client';
+
 import React from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {Container, NavView, Pagination} from '@ui/components/index';
+import {Container, NavView, Pagination} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {OrdersTable, Card} from '@/subapps/orders/common/ui/components';
 import {ORDERS_COLUMNS, ITEMS} from '@/subapps/orders/common/constants/orders';
+
 type ContentProps = {
   orders: [];
   pageInfo?: any;
 };
+
 const Content = ({orders, pageInfo}: ContentProps) => {
   const {page, pages} = pageInfo || {};
   const router = useRouter();
