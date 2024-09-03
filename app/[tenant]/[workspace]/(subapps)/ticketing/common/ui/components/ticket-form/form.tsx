@@ -193,18 +193,24 @@ export function TicketForm(props: TicketFormProps) {
             <FormField
               control={form.control}
               name="description"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Ticket description')}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={i18n.get('Enter ticket description')}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({field}) => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(field.value!, 'text/html');
+                const sanitizedText = doc.body.textContent || '';
+                return (
+                  <FormItem>
+                    <FormLabel>{i18n.get('Ticket description')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={i18n.get('Enter ticket description')}
+                        {...field}
+                        value={sanitizedText}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
             <div className="flex justify-end">
               <Button type="submit" className="w-30" variant="success">
