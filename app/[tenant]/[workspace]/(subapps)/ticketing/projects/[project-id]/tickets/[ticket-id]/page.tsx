@@ -199,7 +199,7 @@ function TicketDetails({
           {ticket?.version}
         </p>
         <hr />
-        <div className="sm:flex sm:justify-start !mt-4 sm:space-x-20 max-[640px]:space-y-5">
+        <div className="sm:flex sm:justify-start !mt-4 sm:space-x-20 max-[639px]:space-y-5">
           <p>
             <span className="font-medium"> {i18n.get('Quantity')}: </span>3
           </p>
@@ -250,14 +250,17 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
                 <TableCell>{parentTicket.name}</TableCell>
                 <TableCell>
                   {parentTicket.priority && (
-                    <Tag variant="blue" className="text-[12px] py-1">
+                    <Tag variant="blue" className="text-[12px] py-1 w-max">
                       {parentTicket.priority?.name}
                     </Tag>
                   )}
                 </TableCell>
                 <TableCell>
                   {parentTicket.status && (
-                    <Tag variant="default" className="text-[12px] py-1" outline>
+                    <Tag
+                      variant="default"
+                      className="text-[12px] py-1 w-max"
+                      outline>
                       {parentTicket.status?.name}
                     </Tag>
                   )}
@@ -292,7 +295,7 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
                     <TableCell>{ticket.name}</TableCell>
                     <TableCell>
                       {ticket.priority && (
-                        <Tag variant="blue" className="text-[12px] py-1">
+                        <Tag variant="blue" className="text-[12px] py-1 w-max">
                           {ticket.priority?.name}
                         </Tag>
                       )}
@@ -301,7 +304,7 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
                       {ticket.status && (
                         <Tag
                           variant="default"
-                          className="text-[12px] py-1"
+                          className="text-[12px] py-1 w-max"
                           outline>
                           {ticket.status?.name}
                         </Tag>
