@@ -36,23 +36,27 @@ export default async function Page({
 
   if (!workspace) return notFound();
 
-  const subapp = await findSubappAccess({
+  const app = await findSubappAccess({
     code: SUBAPP_CODES.invoices,
-    user: (await getSession())?.user,
+    user,
     url: workspacePathname(params)?.workspaceURL,
     tenantId: tenant,
   });
 
-  if (!subapp?.installed) {
+  if (!app?.installed) {
     return notFound();
   }
 
   const {id: userId, isContact, mainPartnerId} = user;
-  const {role} = subapp;
+  const {role} = app;
 
-  const where = getWhereClause(isContact, role, userId, mainPartnerId);
-
-  const invoice = await findInvoice({id, params: {where}, tenantId: tenant});
+  const invoice = await findInvoice({
+    id,
+    params: {
+      where: getWhereClause(isContact, role, userId, mainPartnerId),
+    },
+    tenantId: tenant,
+  });
 
   return <Content invoice={clone(invoice)} workspace={workspace} />;
 }

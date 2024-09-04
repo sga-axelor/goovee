@@ -8,26 +8,28 @@ import type {ID, Partner} from '@/types';
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
 
 const fetchInvoices = async ({
-  where,
+  params,
   type,
   tenantId,
 }: {
-  where: {
-    partner: {
-      id: Partner['id'];
+  params?: {
+    where: object & {
+      partner: {
+        id: Partner['id'];
+      };
     };
   };
   type?: string;
   tenantId: ID;
 }) => {
-  const {id: partnerId} = where?.partner;
+  const {id: partnerId} = params?.where?.partner || {};
 
   if (!(partnerId && tenantId)) return null;
 
   const client = await getClient(tenantId);
 
   const whereClause: any = {
-    ...where,
+    ...params?.where,
   };
 
   if (type === 'archived') {
@@ -68,23 +70,23 @@ const fetchInvoices = async ({
 };
 
 export const findUnpaidInvoices = async ({
-  where,
+  params,
   tenantId,
 }: {
-  where: any;
+  params?: any;
   tenantId: ID;
 }) => {
-  return await fetchInvoices({where, tenantId});
+  return await fetchInvoices({params, tenantId});
 };
 
 export const findArchivedInvoices = async ({
-  where,
+  params,
   tenantId,
 }: {
-  where: any;
+  params?: any;
   tenantId: ID;
 }) => {
-  return await fetchInvoices({where, type: 'archived', tenantId});
+  return await fetchInvoices({params, type: 'archived', tenantId});
 };
 
 export const findInvoice = async ({

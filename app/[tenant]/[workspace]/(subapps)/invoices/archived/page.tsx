@@ -26,6 +26,8 @@ export default async function Invoices({
 
   if (!session) return notFound();
 
+  const user = session?.user;
+
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
@@ -39,21 +41,24 @@ export default async function Invoices({
   const app = await findSubapp({
     code: SUBAPP_CODES.invoices,
     url: workspace.url,
-    user: session?.user,
+    user,
     tenantId: tenant,
   });
-
-  const {id, isContact, mainPartnerId} = session?.user;
 
   if (!app?.installed) {
     return notFound();
   }
 
+  const {id, isContact, mainPartnerId} = user;
+
   const {role} = app;
 
-  const where = getWhereClause(isContact, role, id, mainPartnerId);
-
-  const invoices = await findArchivedInvoices({where, tenantId: tenant});
+  const invoices = await findArchivedInvoices({
+    params: {
+      where: getWhereClause(isContact, role, id, mainPartnerId),
+    },
+    tenantId: tenant,
+  });
 
   return <Content invoices={clone(invoices)} />;
 }
