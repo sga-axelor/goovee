@@ -10,6 +10,7 @@ import {Entity, ID} from '@goovee/orm';
 
 import {QueryProps} from '../types';
 import {CreateTicketInfo, UpdateTicketInfo} from '../ui/components/ticket-form';
+import {ASSIGNMENT, INVOICING_TYPE, TYPE_SELECT} from '../constants';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
