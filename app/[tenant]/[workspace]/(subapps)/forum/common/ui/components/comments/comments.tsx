@@ -194,6 +194,8 @@ export const Comment = memo(
   },
 );
 
+Comment.displayName = 'Comment';
+
 export const Comments = memo(
   ({
     post,
@@ -315,5 +317,7 @@ export const Comments = memo(
     );
   },
 );
+
+Comments.displayName = 'Comments';
 
 export default Comments;
