@@ -134,7 +134,7 @@ export async function findPosts({
       orderBy = {createdOn: ORDER_BY.ASC};
       break;
     default:
-      orderBy = {createdOn: ORDER_BY.ASC};
+      orderBy = {createdOn: ORDER_BY.DESC};
   }
 
   const skip = getSkipInfo(limit, page);
