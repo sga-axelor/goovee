@@ -31,5 +31,5 @@ export default async function Layout({
 
   // if (!subapp) return notFound();
 
-  return <div className="md:mb-0 mb-[72px]">{children}</div>;
+  return <div className="lg:mb-0 mb-[72px]">{children}</div>;
 }

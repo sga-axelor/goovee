@@ -233,7 +233,7 @@ function DatesField(props: FieldProps) {
           control={form.control}
           name="updatedOn.1"
           render={({field}) => (
-            <FormItem>
+            <FormItem className="grow">
               <FormLabel>{i18n.get('To')}:</FormLabel>
               <FormControl>
                 <Input type="date" placeholder="DD/MM/YYYY" {...field} />
