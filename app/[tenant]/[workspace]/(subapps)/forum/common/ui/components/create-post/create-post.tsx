@@ -152,7 +152,6 @@ export const CreatePost = ({
           title: i18n.get('Post added successfully.'),
         });
         onClose();
-        router.push(`${workspaceURI}/forum`);
         router.refresh();
       } else {
         toast({
