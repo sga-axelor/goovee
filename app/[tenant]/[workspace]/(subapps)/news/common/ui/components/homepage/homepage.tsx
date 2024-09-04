@@ -7,6 +7,7 @@ import {useRouter} from 'next/navigation';
 import {i18n} from '@/lib/i18n';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {HeroSearch, Search} from '@/ui/components';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -37,7 +38,7 @@ export const Homepage = ({
   categories: any;
 }) => {
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   const handleClick = (slug: string) => {
     router.push(`${workspaceURI}/news/article/${slug}`);
@@ -46,7 +47,7 @@ export const Homepage = ({
   const renderSearch = () => (
     <Search
       searchKey="title"
-      findQuery={findSearchNews}
+      findQuery={() => findSearchNews({workspaceURL})}
       renderItem={SearchItem}
       onItemClick={handleClick}
     />
@@ -77,7 +78,7 @@ export const Homepage = ({
               categories={categories}
             />
             <div className="flex flex-col lg:flex-row gap-6">
-              {featuredNews.length > 0 ? (
+              {featuredNews?.length > 0 ? (
                 <FeedList
                   title={i18n.get(FEATURED_NEWS)}
                   items={featuredNews}

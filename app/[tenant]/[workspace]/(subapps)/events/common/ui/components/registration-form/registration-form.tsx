@@ -20,6 +20,7 @@ import {
   extractCustomData,
   formatStudioFields,
 } from '@/ui/form';
+import {useToast} from '@/ui/hooks/use-toast';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -27,7 +28,7 @@ import {
   CustomSelect,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
-import {eventRegistration} from '@/subapps/events/common/actions/actions';
+import {register} from '@/subapps/events/common/actions/actions';
 
 const basicPerson = [
   {
@@ -82,7 +83,8 @@ export const RegistrationForm = ({
 }: EventPageCardProps) => {
   const [tempError, setTempError] = useState<boolean>(false);
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {toast} = useToast();
 
   const participantForm = useMemo(
     () => [...basicPerson, ...formatStudioFields(metaFields)],
@@ -169,14 +171,30 @@ export const RegistrationForm = ({
       if (!result.addOtherPeople) {
         result.otherPeople = [];
       } else {
-        result.otherPeople = result.otherPeople.map(_i =>
+        result.otherPeople = result.otherPeople.map((_i: any) =>
           extractCustomData(_i, 'contactAttrs', metaFields),
         );
       }
 
-      await eventRegistration(eventDetails?.id, result);
-      router.push(`${workspaceURI}/events/${eventDetails?.id}?success=true`);
+      const response = await register({
+        eventId: eventDetails?.id,
+        values: result,
+        workspaceURL,
+      });
+
+      if (response.success) {
+        router.push(`${workspaceURI}/events/${eventDetails?.id}?success=true`);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: i18n.get(response.message),
+        });
+      }
     } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error while adding comment'),
+      });
       setTempError(true);
     }
   };

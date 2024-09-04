@@ -14,6 +14,7 @@ import {
   findCategories,
   findCategoryTitleBySlugName,
   findNews,
+  findNewsByCategory,
 } from '@/subapps/news/common/orm/news';
 import {
   Article,
@@ -50,15 +51,17 @@ export default async function Page({
     showAllCategories: true,
     workspace,
   }).then(clone);
-
   if (homepage) {
     const {news: latestNews} = await findNews({
       orderBy: {publicationDateTime: ORDER_BY.DESC},
+      workspace,
     }).then(clone);
 
     const {news: homePageFeaturedNews} = await findNews({
       isFeaturedNews: true,
+      workspace,
     }).then(clone);
+
     const parentCategories = await findCategories({
       category: null,
       workspace,
@@ -108,7 +111,7 @@ async function CategoryPage({
   const articlepage = segments.includes('article');
 
   if (articlepage) {
-    const {news} = await findNews({slug}).then(clone);
+    const {news} = await findNews({slug, workspace}).then(clone);
     const [newsObject] = news;
 
     if (!newsObject) {
@@ -151,16 +154,18 @@ async function CategoryPage({
     return notFound();
   }
 
-  const {news: categoryNews, pageInfo} = await findNews({
+  const {news: categoryNews, pageInfo}: any = await findNewsByCategory({
     orderBy: {publicationDateTime: ORDER_BY.DESC},
     page,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    category: categoryTitle,
+    slug,
+    workspace,
   }).then(clone);
 
-  const {news: categoryFeaturedNews} = await findNews({
+  const {news: categoryFeaturedNews} = await findNewsByCategory({
     isFeaturedNews: true,
-    category: categoryTitle,
+    slug,
+    workspace,
   }).then(clone);
 
   const subCategories = await findCategories({

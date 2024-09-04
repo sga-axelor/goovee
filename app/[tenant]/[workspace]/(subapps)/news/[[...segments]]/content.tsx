@@ -78,7 +78,7 @@ const Content = ({
     <>
       <div
         className={`${styles['news-container']} flex-auto py-6 px-4 lg:px-[100px] flex flex-col gap-6`}>
-        {news.length > 0 ? (
+        {news?.length > 0 ? (
           <>
             <CategorySlider
               title={category}
@@ -91,7 +91,7 @@ const Content = ({
               <LeadStories news={news} onClick={handleClick} />
             )}
             <div className="flex flex-col lg:flex-row gap-6">
-              {featuredNews.length > 0 && (
+              {featuredNews?.length > 0 && (
                 <FeedList
                   title={i18n.get(FEATURED_NEWS)}
                   items={featuredNews}
@@ -100,7 +100,7 @@ const Content = ({
               )}
               <div
                 className={`${
-                  featuredNews.length ? 'lg:w-3/5' : 'w-full'
+                  featuredNews?.length ? 'lg:w-3/5' : 'w-full'
                 } flex flex-col gap-4`}>
                 {renderNewsItems(
                   Number(page) !== 1 ? 0 : 3,

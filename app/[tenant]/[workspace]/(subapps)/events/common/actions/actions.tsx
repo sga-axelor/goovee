@@ -2,21 +2,24 @@
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {Comment, Participant, PortalWorkspace} from '@/types';
+import {Comment, Participant} from '@/types';
+import {i18n} from '@/lib/i18n';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEvent, findEvents} from '@/subapps/events/common/orm/event';
-import {findContactByName} from '@/subapps/events/common/orm/partner';
+import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
+import {findContact} from '@/subapps/events/common/orm/partner';
 import {
   createComment,
-  findCommentsForEvent,
+  findCommentsByEventID,
 } from '@/subapps/events/common/orm/comment';
+import {registerParticipants} from '@/subapps/events/common/orm/registration';
+import {error} from '@/subapps/events/common/utils';
 import {
-  findParticipant,
-  findParticipantByName,
-  registerParticipant,
-  registerParticipants,
-} from '@/subapps/events/common/orm/registration';
+  validate,
+  withSubapp,
+  withWorkspace,
+} from '@/subapps/events/common/actions/validation';
 
 export async function getAllEvents({
   limit,
@@ -28,6 +31,7 @@ export async function getAllEvents({
   year,
   dates,
   workspace,
+  workspaceURL,
 }: {
   limit?: number;
   page?: number;
@@ -38,8 +42,21 @@ export async function getAllEvents({
   month?: number;
   year?: number;
   dates?: [Date | undefined];
-  workspace?: PortalWorkspace;
+  workspace?: any;
+  workspaceURL?: any;
 }) {
+  if (!workspace) {
+    return {events: [], pageInfo: null};
+  }
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+
   try {
     const {events, pageInfo} = await findEvents({
       limit: limit,
@@ -57,43 +74,96 @@ export async function getAllEvents({
     console.log(err);
   }
 }
+
 export async function addComment(
   eventId: string,
-  authorId: string,
   comment: Comment,
+  workspaceURL: string,
 ) {
-  if (!eventId || !authorId || !comment) return undefined;
-  const event = await findEvent(eventId);
-  if (!event) return undefined;
+  if (!eventId || !comment)
+    return error(i18n.get('Event ID or comment is missing!'));
+
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+
+  const event = await findEventByID(eventId);
+  if (!event) return error(i18n.get('Event not found!'));
 
   try {
-    const record = await createComment(eventId, authorId, comment).then(clone);
-    return record;
+    return await createComment(eventId, workspaceURL, comment).then(clone);
   } catch (err) {
     console.log(err);
   }
 }
-export async function getCommentsByEvent(eventId: string) {
-  if (!eventId) return undefined;
-  const event = await findEvent(eventId);
-  if (!event) return undefined;
+
+export async function getCommentsByEventID(
+  eventId: string,
+  workspaceURL: string,
+) {
+  if (!eventId) return error(i18n.get('Event ID is missing!'));
+
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+
+  const event = await findEventByID(eventId);
+  if (!event) return error(i18n.get('Event not found!'));
+
   try {
-    const comments = findCommentsForEvent(eventId).then(clone);
+    const comments = await findCommentsByEventID(eventId, workspaceURL).then(
+      clone,
+    );
     return comments;
   } catch (err) {
     console.log(err);
   }
 }
-export async function eventRegistration(eventId: any, form: any) {
-  if (!eventId || !form) return undefined;
-  const event = await findEvent(eventId);
-  if (!event) return undefined;
+
+export async function register({
+  eventId,
+  values,
+  workspaceURL,
+}: {
+  eventId: any;
+  values: any;
+  workspaceURL: string;
+}) {
+  if (!eventId || !values)
+    return error(i18n.get('Event ID or values are missing!'));
+
+  if (!workspaceURL) return error(i18n.get('workspaceURL is missing!'));
+
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+
+  const event = await findEventByID(eventId);
+  if (!event) return error(i18n.get('Event not found!'));
+
   try {
-    const {otherPeople, ...rest} = form;
+    const {otherPeople, ...rest} = values;
+
     if (otherPeople.length === 0) {
       rest.emailAddress = rest.emailAddress.toLowerCase();
-      const record = await registerParticipant(eventId, rest).then(clone);
-      return record;
+      return await registerParticipants(eventId, workspaceURL, rest).then(
+        clone,
+      );
     }
     otherPeople.push(rest);
     otherPeople.forEach((element: Participant) => {
@@ -101,40 +171,36 @@ export async function eventRegistration(eventId: any, form: any) {
         element.emailAddress = element.emailAddress.toLowerCase();
       }
     });
-    const record = await registerParticipants(eventId, otherPeople).then(clone);
-
-    return record;
+    return await registerParticipants(eventId, workspaceURL, otherPeople).then(
+      clone,
+    );
   } catch (err) {
     console.log(err);
-    return undefined;
-  }
-}
-export async function searchParticipant(input: string) {
-  if (!input) return undefined;
-  try {
-    const participants = await findParticipantByName(input).then(clone);
-    return participants;
-  } catch (err) {
-    console.log(err);
+    return error(i18n.get('Something went wrong!'));
   }
 }
 
-export async function searchContacts(input: string) {
+export async function fetchContacts({
+  search,
+  workspaceURL,
+}: {
+  search: string;
+  workspaceURL: string;
+}) {
+  const result = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+
   try {
-    const result = await findContactByName(input).then(clone);
+    const result = await findContact({search, workspaceURL}).then(clone);
     return result;
   } catch (err) {
     console.log(err);
-  }
-}
-
-export async function getParticipantById(id: string | number) {
-  if (!id) return undefined;
-  try {
-    const participant = await findParticipant(id).then(clone);
-
-    return participant;
-  } catch (err) {
-    console.log(err);
+    return error(i18n.get('Something went wrong!'));
   }
 }

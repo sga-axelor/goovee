@@ -39,6 +39,7 @@ export default async function Page(context: any) {
     month: new Date(date).getMonth() + 1 || undefined,
     year: new Date(date).getFullYear() || undefined,
     workspace,
+    workspaceURL,
   });
 
   const categories: Category[] = await findEventCategories({workspace}).then(
