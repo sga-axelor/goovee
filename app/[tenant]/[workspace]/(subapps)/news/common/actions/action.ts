@@ -1,5 +1,7 @@
 'use server';
 
+import {headers} from 'next/headers';
+
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {getCurrentDateTime} from '@/utils/date';
@@ -7,6 +9,7 @@ import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
 import {addComment, findNews} from '@/subapps/news/common/orm/news';
@@ -14,11 +17,21 @@ import {addComment, findNews} from '@/subapps/news/common/orm/news';
 export async function createComment({id, contentComment, workspaceURL}: any) {
   const publicationDateTime = getCurrentDateTime();
 
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Bad Request'),
+    };
+  }
+
   return await addComment({
     id,
     contentComment,
     publicationDateTime,
     workspaceURL,
+    tenantId,
   }).then(clone);
 }
 
@@ -33,10 +46,20 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
     };
   }
 
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Bad Request'),
+    };
+  }
+
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.news,
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!subapp) {
@@ -49,6 +72,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -58,6 +82,6 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
     };
   }
 
-  const {news} = await findNews({workspace}).then(clone);
+  const {news} = await findNews({workspace, tenantId}).then(clone);
   return news;
 }

@@ -1,11 +1,11 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
-import {PortalWorkspace} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import type {ID, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_PAGE} from '@/subapps/news/common/constants';
@@ -19,6 +19,7 @@ export async function findNews({
   slug = null,
   workspace,
   categoryIds = [],
+  tenantId,
 }: {
   id?: string | number;
   orderBy?: any;
@@ -28,10 +29,11 @@ export async function findNews({
   slug?: string | null;
   workspace: any;
   categoryIds?: any[];
+  tenantId: ID;
 }) {
-  if (!workspace) return [];
+  if (!(workspace && tenantId)) return [];
 
-  const c = await getClient();
+  const c = await getClient(tenantId);
 
   const skip = getSkipInfo(limit, page);
 
@@ -121,15 +123,17 @@ export async function findCategories({
   showAllCategories = false,
   slug = null,
   workspace,
+  tenantId,
 }: {
   category?: any;
   showAllCategories?: boolean;
   slug?: string | null;
   workspace: PortalWorkspace;
+  tenantId: ID;
 }) {
-  if (!workspace) return [];
+  if (!(workspace && tenantId)) return [];
 
-  const c = await getClient();
+  const c = await getClient(tenantId);
 
   const categories = await c.aOSPortalNewsCategory.find({
     where: {
@@ -175,11 +179,18 @@ export async function findCategories({
 export async function findCategoryTitleBySlugName({
   slug,
   workspace,
+  tenantId,
 }: {
   slug: any;
   workspace: PortalWorkspace;
+  tenantId: ID;
 }) {
-  const c = await getClient();
+  if (!tenantId) {
+    return null;
+  }
+
+  const c = await getClient(tenantId);
+
   const title = await c.aOSPortalNewsCategory.findOne({
     where: {
       slug,
@@ -200,7 +211,15 @@ export async function addComment({
   contentComment,
   publicationDateTime,
   workspaceURL,
+  tenantId,
 }: any) {
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('Bad Request'),
+    };
+  }
+
   const session = await getSession();
   const user = session?.user;
 
@@ -215,6 +234,7 @@ export async function addComment({
     code: SUBAPP_CODES.news,
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!subapp) {
@@ -227,6 +247,7 @@ export async function addComment({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -236,7 +257,7 @@ export async function addComment({
     };
   }
 
-  const c = await getClient();
+  const c = await getClient(tenantId);
 
   const comment = await c.aOSPortalNews.create({
     data: {
@@ -269,6 +290,7 @@ export async function findNewsByCategory({
   slug,
   workspace,
   isFeaturedNews,
+  tenantId,
 }: {
   orderBy?: any;
   isFeaturedNews?: boolean;
@@ -276,8 +298,17 @@ export async function findNewsByCategory({
   limit?: number;
   slug?: string;
   workspace: PortalWorkspace;
+  tenantId: ID;
 }) {
-  const categories = await findCategories({showAllCategories: true, workspace});
+  if (!tenantId) {
+    return [];
+  }
+
+  const categories = await findCategories({
+    showAllCategories: true,
+    workspace,
+    tenantId,
+  });
 
   const categoryMap = new Map(
     categories.map(category => [Number(category.id), category]),
@@ -310,5 +341,6 @@ export async function findNewsByCategory({
     limit,
     workspace,
     categoryIds,
+    tenantId,
   });
 }

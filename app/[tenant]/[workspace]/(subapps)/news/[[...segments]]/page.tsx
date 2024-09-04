@@ -5,7 +5,7 @@ import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {PortalWorkspace} from '@/types';
+import {ID, PortalWorkspace} from '@/types';
 import {ORDER_BY} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
@@ -34,12 +34,15 @@ export default async function Page({
   params: any;
   searchParams: {[key: string]: string | undefined};
 }) {
+  const {tenant} = params;
+
   const session = await getSession();
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   const {segments} = params;
@@ -50,21 +53,25 @@ export default async function Page({
   const allCategories = await findCategories({
     showAllCategories: true,
     workspace,
+    tenantId: tenant,
   }).then(clone);
   if (homepage) {
     const {news: latestNews} = await findNews({
       orderBy: {publicationDateTime: ORDER_BY.DESC},
       workspace,
+      tenantId: tenant,
     }).then(clone);
 
     const {news: homePageFeaturedNews} = await findNews({
       isFeaturedNews: true,
       workspace,
+      tenantId: tenant,
     }).then(clone);
 
     const parentCategories = await findCategories({
       category: null,
       workspace,
+      tenantId: tenant,
     }).then(clone);
 
     return (
@@ -91,6 +98,7 @@ export default async function Page({
         page={page}
         limit={limit}
         workspace={workspace}
+        tenantId={tenant}
       />
     </div>
   );
@@ -101,17 +109,23 @@ async function CategoryPage({
   page,
   limit,
   workspace,
+  tenantId,
 }: {
   segments: string[];
   page?: string;
   limit?: string | number;
   workspace: PortalWorkspace;
+  tenantId: ID;
 }) {
+  if (!tenantId) {
+    return null;
+  }
+
   const slug = segments?.at(-1) || '';
   const articlepage = segments.includes('article');
 
   if (articlepage) {
-    const {news} = await findNews({slug, workspace}).then(clone);
+    const {news} = await findNews({slug, workspace, tenantId}).then(clone);
     const [newsObject] = news;
 
     if (!newsObject) {
@@ -127,6 +141,7 @@ async function CategoryPage({
           const categoryTitle = await findCategoryTitleBySlugName({
             slug: categorySegment,
             workspace,
+            tenantId,
           });
           if (!categoryTitle) {
             return notFound();
@@ -148,6 +163,7 @@ async function CategoryPage({
   const categoryTitle = await findCategoryTitleBySlugName({
     slug,
     workspace,
+    tenantId,
   });
 
   if (!categoryTitle) {
@@ -160,17 +176,20 @@ async function CategoryPage({
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     slug,
     workspace,
+    tenantId,
   }).then(clone);
 
   const {news: categoryFeaturedNews} = await findNewsByCategory({
     isFeaturedNews: true,
     slug,
     workspace,
+    tenantId,
   }).then(clone);
 
   const subCategories = await findCategories({
     slug,
     workspace,
+    tenantId,
   }).then(clone);
 
   return (
