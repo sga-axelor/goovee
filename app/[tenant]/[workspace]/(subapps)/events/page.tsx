@@ -15,12 +15,15 @@ export default async function Page(context: any) {
   const params = context?.params;
   const page = context?.searchParams?.page || 1;
 
+  const {tenant} = params;
+
   const session = await getSession();
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   const category = context?.searchParams?.category
@@ -40,11 +43,13 @@ export default async function Page(context: any) {
     year: new Date(date).getFullYear() || undefined,
     workspace,
     workspaceURL,
+    tenantId: tenant,
   });
 
-  const categories: Category[] = await findEventCategories({workspace}).then(
-    clone,
-  );
+  const categories: Category[] = await findEventCategories({
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
   return (
     <Content

@@ -1,15 +1,18 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {ORDER_BY} from '@/constants';
-import {PortalWorkspace} from '@/types';
+import type {ID, PortalWorkspace} from '@/types';
 
 export async function findEventCategories({
   workspace,
+  tenantId,
 }: {
   workspace: PortalWorkspace;
+  tenantId: ID;
 }) {
-  if (!workspace) return [];
-  const c = await getClient();
+  if (!(workspace && tenantId)) return [];
+
+  const c = await getClient(tenantId);
 
   const eventCategories = await c.aOSPortalEventCategory.find({
     where: {

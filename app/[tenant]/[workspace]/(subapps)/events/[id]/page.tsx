@@ -16,14 +16,17 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: {id: string};
+  params: {tenant: string; workspace: string; id: string};
   searchParams: {success?: string};
 }) {
-  const eventDetails = await findEventByID(params.id).then(clone);
+  const {id, tenant} = params;
+
+  const eventDetails = await findEventByID({id, tenantId: tenant}).then(clone);
 
   if (!eventDetails) {
     return notFound();
   }
+  
   const successMessage = searchParams.success === 'true';
 
   return (

@@ -12,23 +12,29 @@ import {
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
 
-export async function registerParticipants(
-  eventId: ID,
-  workspaceURL: string,
-  values: Participant | Participant[],
-) {
-  if (!eventId) return error(i18n.get('Event ID is missing!'));
+export async function registerParticipants({
+  eventId,
+  workspaceURL,
+  values,
+  tenantId,
+}: {
+  eventId: ID;
+  workspaceURL: string;
+  values: Participant | Participant[];
+  tenantId: ID;
+}) {
+  if (!(eventId && tenantId)) return error(i18n.get('Event ID is missing!'));
 
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
   }
 
-  const c = await getClient();
+  const c = await getClient(tenantId);
 
   const participants = Array.isArray(values) ? values : [values];
 

@@ -1,9 +1,22 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {clone} from '@/utils';
+import type {ID} from '@/types';
 
-export async function findModelFields(modelName: string, modelField: string) {
-  const c = await getClient();
+export async function findModelFields({
+  modelName,
+  modelField,
+  tenantId,
+}: {
+  modelName: string;
+  modelField: string;
+  tenantId: ID;
+}) {
+  if (!tenantId) {
+    return [];
+  }
+
+  const c = await getClient(tenantId);
 
   const fields = await c.aOSMetaJsonField
     .find({
@@ -25,8 +38,18 @@ export async function findModelFields(modelName: string, modelField: string) {
   return result;
 }
 
-export async function findSelectionItems(selectionName: string) {
-  const c = await getClient();
+export async function findSelectionItems({
+  selectionName,
+  tenantId,
+}: {
+  selectionName: string;
+  tenantId: ID;
+}) {
+  if (!tenantId) {
+    return [];
+  }
+
+  const c = await getClient(tenantId);
 
   const options = await c.aOSMetaSelectItem.find({
     where: {

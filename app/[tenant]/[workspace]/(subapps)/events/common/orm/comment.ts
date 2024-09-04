@@ -1,10 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
-import type {ID, Comment} from '@/types';
 import {getSession} from '@/orm/auth';
 import {i18n} from '@/lib/i18n';
 import {SUBAPP_CODES} from '@/constants';
+import type {ID, Comment} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
@@ -14,19 +14,27 @@ import {
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
 
-export async function findCommentsByEventID(id: ID, workspaceURL: string) {
-  if (!id) return error(i18n.get('Event ID is not present.'));
+export async function findCommentsByEventID({
+  id,
+  workspaceURL,
+  tenantId,
+}: {
+  id: ID;
+  workspaceURL: string;
+  tenantId: ID;
+}) {
+  if (!(id && tenantId)) return error(i18n.get('Event ID is not present.'));
 
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
   }
 
-  const c = await getClient();
+  const c = await getClient(tenantId);
 
   const comments = await c.aOSPortalComment.find({
     where: {
@@ -72,25 +80,31 @@ export async function findCommentsByEventID(id: ID, workspaceURL: string) {
   return comments;
 }
 
-export async function createComment(
-  id: ID,
-  workspaceURL: string,
-  values: Comment,
-) {
-  if (!id) return null;
+export async function createComment({
+  id,
+  workspaceURL,
+  values,
+  tenantId,
+}: {
+  id: ID;
+  workspaceURL: string;
+  values: Comment;
+  tenantId: ID;
+}) {
+  if (!(id && tenantId)) return null;
 
   const session = await getSession();
 
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
   }
 
-  const c = await getClient();
+  const c = await getClient(tenantId);
 
   const comment = await c.aOSPortalComment.create({
     data: {

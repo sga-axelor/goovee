@@ -1,10 +1,13 @@
 'use server';
 
+import {headers} from 'next/headers';
+
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {Comment, Participant} from '@/types';
 import {i18n} from '@/lib/i18n';
 import {SUBAPP_CODES} from '@/constants';
+import {TENANT_HEADER} from '@/middleware';
+import type {Comment, ID, Participant} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
@@ -32,6 +35,7 @@ export async function getAllEvents({
   dates,
   workspace,
   workspaceURL,
+  tenantId,
 }: {
   limit?: number;
   page?: number;
@@ -44,13 +48,16 @@ export async function getAllEvents({
   dates?: [Date | undefined];
   workspace?: any;
   workspaceURL?: any;
+  tenantId?: ID | null;
 }) {
-  if (!workspace) {
+  tenantId = headers().get(TENANT_HEADER) || tenantId;
+
+  if (!(workspace && tenantId)) {
     return {events: [], pageInfo: null};
   }
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
@@ -68,6 +75,7 @@ export async function getAllEvents({
       year: year,
       selectedDates: dates,
       workspace,
+      tenantId,
     }).then(clone);
     return {events, pageInfo};
   } catch (err) {
@@ -80,23 +88,29 @@ export async function addComment(
   comment: Comment,
   workspaceURL: string,
 ) {
-  if (!eventId || !comment)
-    return error(i18n.get('Event ID or comment is missing!'));
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(eventId && comment && tenantId)) return error(i18n.get('Bad Request'));
 
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
   }
 
-  const event = await findEventByID(eventId);
+  const event = await findEventByID({id: eventId, tenantId});
   if (!event) return error(i18n.get('Event not found!'));
 
   try {
-    return await createComment(eventId, workspaceURL, comment).then(clone);
+    return await createComment({
+      id: eventId,
+      workspaceURL,
+      values: comment,
+      tenantId,
+    }).then(clone);
   } catch (err) {
     console.log(err);
   }
@@ -106,24 +120,28 @@ export async function getCommentsByEventID(
   eventId: string,
   workspaceURL: string,
 ) {
-  if (!eventId) return error(i18n.get('Event ID is missing!'));
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(eventId && tenantId)) return error(i18n.get('Bad Request'));
 
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
   }
 
-  const event = await findEventByID(eventId);
+  const event = await findEventByID({id: eventId, tenantId});
   if (!event) return error(i18n.get('Event not found!'));
 
   try {
-    const comments = await findCommentsByEventID(eventId, workspaceURL).then(
-      clone,
-    );
+    const comments = await findCommentsByEventID({
+      id: eventId,
+      workspaceURL,
+      tenantId,
+    }).then(clone);
     return comments;
   } catch (err) {
     console.log(err);
@@ -139,14 +157,16 @@ export async function register({
   values: any;
   workspaceURL: string;
 }) {
-  if (!eventId || !values)
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(eventId && values && tenantId))
     return error(i18n.get('Event ID or values are missing!'));
 
   if (!workspaceURL) return error(i18n.get('workspaceURL is missing!'));
 
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
@@ -161,9 +181,12 @@ export async function register({
 
     if (otherPeople.length === 0) {
       rest.emailAddress = rest.emailAddress.toLowerCase();
-      return await registerParticipants(eventId, workspaceURL, rest).then(
-        clone,
-      );
+      return await registerParticipants({
+        eventId,
+        workspaceURL,
+        values: rest,
+        tenantId,
+      }).then(clone);
     }
     otherPeople.push(rest);
     otherPeople.forEach((element: Participant) => {
@@ -171,9 +194,12 @@ export async function register({
         element.emailAddress = element.emailAddress.toLowerCase();
       }
     });
-    return await registerParticipants(eventId, workspaceURL, otherPeople).then(
-      clone,
-    );
+    return await registerParticipants({
+      eventId,
+      workspaceURL,
+      values: otherPeople,
+      tenantId,
+    }).then(clone);
   } catch (err) {
     console.log(err);
     return error(i18n.get('Something went wrong!'));
@@ -187,17 +213,29 @@ export async function fetchContacts({
   search: string;
   workspaceURL: string;
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(i18n.get('Bad Request'));
+  }
+
   const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
   }
 
+  if (!tenantId) {
+    return error(i18n.get('Bad Request'));
+  }
+
   try {
-    const result = await findContact({search, workspaceURL}).then(clone);
+    const result = await findContact({search, workspaceURL, tenantId}).then(
+      clone,
+    );
     return result;
   } catch (err) {
     console.log(err);

@@ -12,16 +12,23 @@ import {
   CONTACT_ATTRS,
 } from '@/subapps/events/common/constants';
 
-export default async function Page({params}: {params: {id: string}}) {
-  const eventDetails = await findEventByID(params.id).then(clone);
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string; id: string};
+}) {
+  const {id, tenant} = params;
+
+  const eventDetails = await findEventByID({id, tenantId: tenant}).then(clone);
 
   if (!eventDetails) {
     return notFound();
   }
-  const metaFields = await findModelFields(
-    PORTAL_PARTICIPANT_MODEL,
-    CONTACT_ATTRS,
-  ).then(clone);
+  const metaFields = await findModelFields({
+    modelName: PORTAL_PARTICIPANT_MODEL,
+    modelField: CONTACT_ATTRS,
+    tenantId: tenant,
+  }).then(clone);
 
   return (
     <>

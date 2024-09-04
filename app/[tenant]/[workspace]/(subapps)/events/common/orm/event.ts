@@ -7,10 +7,10 @@ import {formatDateToISOString} from '@/utils/date';
 import {DATE_FORMATS, ORDER_BY} from '@/constants';
 import {getPageInfo} from '@/utils';
 
-export async function findEventByID(id: ID) {
-  if (!id) return null;
+export async function findEventByID({id, tenantId}: {id: ID; tenantId: ID}) {
+  if (!(id && tenantId)) return null;
 
-  const c = await getClient();
+  const c = await getClient(tenantId);
 
   const event = await c.aOSPortalEvent.findOne({
     where: {id, eventVisibility: true},
@@ -96,6 +96,7 @@ export async function findEvents({
   year,
   selectedDates,
   workspace,
+  tenantId,
 }: {
   ids?: ID[];
   search?: string;
@@ -107,8 +108,13 @@ export async function findEvents({
   year?: string | number;
   selectedDates?: any[];
   workspace?: PortalWorkspace;
+  tenantId: ID;
 }) {
-  const c = await getClient();
+  if (!tenantId) {
+    return {events: [], pageInfo: {}};
+  }
+
+  const c = await getClient(tenantId);
 
   let date, predicate: any;
   if (day && month && year) {
