@@ -60,7 +60,6 @@ export default async function Page({
     search,
     workspaceID: workspace?.id,
     groupIDs,
-    commentSort: comment,
   }).then(clone);
 
   const user = await findUser({userId}).then(clone);

@@ -40,7 +40,7 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
-  const {sort, limit, search, comment} = searchParams;
+  const {sort, limit, search} = searchParams;
 
   const groupId = params.id as string;
 
@@ -71,7 +71,6 @@ export default async function Page({
     sort,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     search,
-    commentSort: comment,
   }).then(clone);
 
   const user = await findUser({userId}).then(clone);

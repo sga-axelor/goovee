@@ -23,6 +23,7 @@ import {
   findMemberGroupById,
   findPosts,
 } from '@/subapps/forum/common/orm/forum';
+import {SORT_TYPE} from '@/subapps/forum/common/constants';
 
 interface FileMeta {
   fileName: string;
@@ -667,21 +668,36 @@ export async function fetchComments({
   postId,
   limit,
   page,
+  sort,
 }: {
   postId: string;
-  limit: number;
-  page: number;
+  limit?: number;
+  page?: number;
+  sort?: any;
 }) {
   const skip = getSkipInfo(limit, page);
   const client = await getClient();
   try {
+    let orderBy: any = null;
+    switch (sort) {
+      case SORT_TYPE.old:
+        orderBy = {
+          publicationDateTime: ORDER_BY.ASC,
+        };
+        break;
+      default:
+        orderBy = {
+          publicationDateTime: ORDER_BY.DESC,
+        };
+    }
+
     const comments = await client.aOSPortalComment.find({
       where: {
         forumPost: {
           id: postId,
         },
       },
-      orderBy: {publicationDateTime: ORDER_BY.DESC},
+      orderBy,
       take: limit,
       ...(skip ? {skip} : {}),
       select: {

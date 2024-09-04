@@ -129,16 +129,21 @@ export const TEXT_ALIGNMENT = [
   {name: 'justify', icon: CiTextAlignJustify},
 ];
 
+export const SORT_TYPE = {
+  new: 'New',
+  old: 'Old',
+};
+
 export const THREAD_SORT_BY_OPTIONS = [
   {
     id: 1,
     key: 'new',
-    label: 'New',
+    label: SORT_TYPE.new,
   },
   {
     id: 2,
     key: 'old',
-    label: 'Old',
+    label: SORT_TYPE.old,
   },
   // No support for popular at the moment from backend
   //  popularity = comments + reactions;

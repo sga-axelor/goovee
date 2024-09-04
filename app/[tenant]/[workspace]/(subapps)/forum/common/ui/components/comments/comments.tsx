@@ -24,10 +24,9 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 import {parseDate} from '@/utils/date';
-import {DATE_FORMATS, URL_PARAMS} from '@/constants';
+import {DATE_FORMATS, DEFAULT_PAGE} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
-import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -212,19 +211,41 @@ export const Comments = memo(
   }) => {
     const [loading, setLoading] = useState(false);
     const [commentsList, setCommentsList] = useState<any[]>([]);
+    const [sortBy, setSortBy] = useState('new');
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
 
-    const {update} = useSearchParams();
     const {toast} = useToast();
 
     const handleSortBy = useCallback(
-      (value: any) => {
-        if (value) {
-          update([{key: URL_PARAMS.comment, value}]);
+      async (value: string) => {
+        if (!value) return;
+
+        try {
+          const response = await fetchComments({
+            postId: post.id,
+            sort: value,
+            limit: commentsList.length,
+            page: DEFAULT_PAGE,
+          });
+
+          if (response.success) {
+            setCommentsList(response.data);
+            setSortBy(value);
+          } else {
+            toast({
+              variant: 'destructive',
+              title: i18n.get(response.message ?? 'Something went wrong!'),
+            });
+          }
+        } catch (error) {
+          toast({
+            variant: 'destructive',
+            title: i18n.get('An error occurred while fetching comments.'),
+          });
         }
       },
-      [update],
+      [post.id, commentsList.length],
     );
 
     const handleSeeMore = async () => {
@@ -235,6 +256,7 @@ export const Comments = memo(
         const nextPage = page + 1;
 
         const response: any = await fetchComments({
+          sort: sortBy,
           postId: post.id,
           limit: DEFAULT_COMMENT_LIMIT,
           page: nextPage,
@@ -280,7 +302,6 @@ export const Comments = memo(
           </div>
           <Separator style={{flexShrink: 1}} />
         </div>
-
         <div
           className={`flex flex-col gap-4 ${usePopUpStyles ? 'h-full overflow-auto px-2' : ''}`}>
           {commentsList.map((comment: any) => (

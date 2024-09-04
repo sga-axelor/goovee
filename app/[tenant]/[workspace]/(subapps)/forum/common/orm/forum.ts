@@ -5,6 +5,9 @@ import {ID} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {PortalWorkspace} from '@/types';
 
+// ---- LOCAL IMPORTS ---- //
+import {SORT_TYPE} from '@/subapps/forum/common/constants';
+
 export async function findGroups({
   workspace,
 }: {
@@ -106,7 +109,6 @@ export async function findPosts({
   whereClause = {},
   workspaceID,
   groupIDs = [],
-  commentSort = '',
 }: {
   sort?: any;
   limit?: number;
@@ -115,7 +117,6 @@ export async function findPosts({
   whereClause?: any;
   workspaceID: PortalWorkspace['id'];
   groupIDs?: any[];
-  commentSort?: string;
 }) {
   if (!workspaceID) {
     return {
@@ -129,25 +130,13 @@ export async function findPosts({
   let orderBy: any = null;
 
   switch (sort) {
-    case 'old':
+    case SORT_TYPE.old:
       orderBy = {createdOn: ORDER_BY.ASC};
       break;
     default:
-      orderBy = {createdOn: ORDER_BY.DESC};
+      orderBy = {createdOn: ORDER_BY.ASC};
   }
 
-  let commentOrderBy: any = null;
-  switch (commentSort) {
-    case 'old':
-      commentOrderBy = {
-        publicationDateTime: ORDER_BY.ASC,
-      };
-      break;
-    default:
-      commentOrderBy = {
-        publicationDateTime: ORDER_BY.DESC,
-      };
-  }
   const skip = getSkipInfo(limit, page);
 
   const combinedWhereClause = {
@@ -242,14 +231,12 @@ export async function findPostsByGroupId({
   sort = null,
   limit,
   search = '',
-  commentSort = '',
 }: {
   id: ID;
   workspaceID: string;
   sort?: any;
   limit?: number;
   search?: string | undefined;
-  commentSort?: string;
 }) {
   const whereClause = {
     forumGroup: {
@@ -263,7 +250,6 @@ export async function findPostsByGroupId({
     sort,
     limit,
     search,
-    commentSort,
   });
 }
 
