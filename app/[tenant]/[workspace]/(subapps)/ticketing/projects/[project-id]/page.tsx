@@ -75,6 +75,11 @@ export default async function Page({
     take: Number(limit),
     skip: getSkip(limit, page),
     orderBy: getOrderBy(sort, sortKeyPathMap),
+    where: {
+      status: {
+        isCompleted: false,
+      },
+    },
   }).then(clone);
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
