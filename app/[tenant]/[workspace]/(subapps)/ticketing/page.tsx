@@ -67,7 +67,7 @@ export default async function Page({
             {i18n.get('Choose your project')}
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 !mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {projects.map(project => (
             <Link
               key={project.id}
@@ -84,7 +84,7 @@ export default async function Page({
           ))}
         </div>
         {pages > 1 && (
-          <Pagination>
+          <Pagination className="!mb-4">
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious asChild>
