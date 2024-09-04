@@ -201,14 +201,16 @@ function TicketDetails({
         <hr />
         <div className="sm:flex sm:justify-start !mt-4 sm:space-x-20 max-[639px]:space-y-5">
           <p>
-            <span className="font-medium"> {i18n.get('Quantity')}: </span>3
+            <span className="font-medium"> {i18n.get('Quantity')}: </span>
+            {ticket.quantity}
           </p>
           <p>
-            <span className="font-medium"> {i18n.get('Price WT')}: </span>10.00$
+            <span className="font-medium"> {i18n.get('Price WT')}: </span>
+            {ticket.unitPrice}$
           </p>
           <p>
             <span className="font-medium">{i18n.get('Invoicing unit')}: </span>
-            dollar($)
+            {ticket.invoicingUnit?.name}
           </p>
         </div>
         {/* --ticket--description--- */}
@@ -245,7 +247,7 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
                   <Avatar className="h-12 w-16">
                     <AvatarImage src="/images/user.png" />
                   </Avatar>
-                  <p className="ms-1">{parentTicket.user?.name}</p>
+                  <p className="ms-1">{parentTicket.contact?.name}</p>
                 </TableCell>
                 <TableCell>{parentTicket.name}</TableCell>
                 <TableCell>
@@ -290,7 +292,7 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
                       <Avatar className="h-12 w-16">
                         <AvatarImage src="/images/user.png" />
                       </Avatar>
-                      <p className="ms-1">{ticket.user}</p>
+                      <p className="ms-1">{ticket.contact?.name}</p>
                     </TableCell>
                     <TableCell>{ticket.name}</TableCell>
                     <TableCell>

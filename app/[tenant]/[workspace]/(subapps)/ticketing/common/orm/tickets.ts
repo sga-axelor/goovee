@@ -4,10 +4,10 @@
 
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
+import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {Entity, ID} from '@goovee/orm';
 
-import {AOSProjectTask} from '@/goovee/.generated/models';
 import {QueryProps} from '../types';
 import {CreateTicketInfo, UpdateTicketInfo} from '../ui/components/ticket-form';
 
@@ -49,6 +49,12 @@ export async function createTicket(data: CreateTicketInfo, user: ID) {
     data: {
       createdOn: new Date(),
       updatedOn: new Date(),
+      taskDate: new Date(),
+      assignment: ASSIGNMENT.PROVIDER,
+      typeSelect: TYPE_SELECT.TICKET,
+      invoicingType: INVOICING_TYPE.NO_INVOICING,
+      isPrivate: false,
+      progress: '0.00',
       createdBy: {select: {id: user}},
       updatedBy: {select: {id: user}},
       contact: {select: {id: user}},

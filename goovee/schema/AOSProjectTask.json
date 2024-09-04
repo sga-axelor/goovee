@@ -11,11 +11,24 @@
     },
     {
       "type": "String",
+      "name": "fullName"
+    },
+    {
+      "type": "String",
       "name": "typeSelect"
     },
     {
       "type": "Int",
       "name": "sequence"
+    },
+    {
+      "type": "Int",
+      "name": "invoicingType"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "invoicingUnit",
+      "target": "AOSUnit"
     },
     {
       "type": "Date",
@@ -34,8 +47,32 @@
       "name": "ticketNumber"
     },
     {
+      "type": "Boolean",
+      "name": "isPrivate",
+      "default": false
+    },
+    {
+      "type": "Boolean",
+      "name": "isOrderAccepted",
+      "default": false
+    },
+    {
       "type": "String",
       "name": "description"
+    },
+    {
+      "type": "Int",
+      "name": "assignment"
+    },
+    {
+      "type": "Decimal",
+      "name": "unitPrice",
+      "default": "0.00"
+    },
+    {
+      "type": "Decimal",
+      "name": "exTaxTotal",
+      "default": "0.00"
     },
     {
       "type": "ManyToOne",
@@ -89,8 +126,19 @@
     },
     {
       "type": "Decimal",
-      "name": "progress"
+      "name": "progress",
+      "default": "0.00"
     },
+    {
+      "type": "Decimal",
+      "name": "quantity",
+      "default": "0.00"
+    },
+    {
+      "type": "JSON",
+      "name": "attrs"
+    },
+
     {
       "type": "OneToMany",
       "name": "childTasks",

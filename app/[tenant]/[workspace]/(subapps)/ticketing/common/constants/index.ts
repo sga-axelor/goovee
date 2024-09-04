@@ -58,3 +58,20 @@ export const sortKeyPathMap: Record<string, string> = {
   assignedTo: 'assignedTo.name',
   updatedOn: 'updatedOn',
 };
+
+export const TYPE_SELECT = {
+  TASK: 'task',
+  TICKET: 'ticket',
+};
+
+export const ASSIGNMENT = {
+  CUSTOMER: 1,
+  PROVIDER: 2,
+};
+
+export const INVOICING_TYPE = {
+  TIME_SPENT: 1,
+  PACKAGE: 2,
+  NO_INVOICING: 3,
+  ON_PROGRESS: 4,
+};
