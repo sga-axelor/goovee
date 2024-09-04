@@ -237,6 +237,7 @@ export async function joinGroup({
           member: {
             select: {id: userId},
           },
+          isPin: false,
         },
       })
       .then(clone);
