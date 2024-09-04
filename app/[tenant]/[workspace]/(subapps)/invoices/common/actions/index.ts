@@ -18,10 +18,12 @@ import {PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {scale} from '@/utils';
+import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
 import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
+import {headers} from 'next/headers';
 
 export async function paypalCaptureOrder({
   orderId,
@@ -41,7 +43,9 @@ export async function paypalCaptureOrder({
     };
   }
 
-  if (!(orderId && workspaceURL && invoice)) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(orderId && workspaceURL && invoice && tenantId)) {
     return {
       error: true,
       message: 'Bad request',
@@ -53,6 +57,7 @@ export async function paypalCaptureOrder({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -66,6 +71,7 @@ export async function paypalCaptureOrder({
     code: SUBAPP_CODES.invoices,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!subapp) {
@@ -78,8 +84,12 @@ export async function paypalCaptureOrder({
   const {id, isContact, mainPartnerId} = user;
   const {role} = subapp;
 
-  const $invoice = await findInvoice(id, {
-    where: getWhereClause(isContact, role, id, mainPartnerId),
+  const $invoice = await findInvoice({
+    id,
+    params: {
+      where: getWhereClause(isContact, role, id, mainPartnerId),
+    },
+    tenantId,
   });
 
   if (!$invoice) {
@@ -189,7 +199,9 @@ export async function paypalCreateOrder({
     };
   }
 
-  if (!invoice) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(invoice && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad request'),
@@ -208,6 +220,7 @@ export async function paypalCreateOrder({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -221,6 +234,7 @@ export async function paypalCreateOrder({
     code: SUBAPP_CODES.invoices,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!subapp) {
@@ -233,8 +247,12 @@ export async function paypalCreateOrder({
   const {id, isContact, mainPartnerId} = user;
   const {role} = subapp;
 
-  const $invoice = await findInvoice(id, {
-    where: getWhereClause(isContact, role, id, mainPartnerId),
+  const $invoice = await findInvoice({
+    id,
+    params: {
+      where: getWhereClause(isContact, role, id, mainPartnerId),
+    },
+    tenantId,
   });
 
   if (!$invoice) {
@@ -279,7 +297,7 @@ export async function paypalCreateOrder({
     };
   }
 
-  const payer = await findPartnerByEmail(user?.email);
+  const payer = await findPartnerByEmail(user?.email, tenantId);
 
   const PaypalClient = paypalhttpclient();
 
@@ -342,7 +360,9 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  if (!(invoice && workspaceURL)) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(invoice && workspaceURL && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad request'),
@@ -354,6 +374,7 @@ export async function createStripeCheckoutSession({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -367,6 +388,7 @@ export async function createStripeCheckoutSession({
     code: SUBAPP_CODES.invoices,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!subapp) {
@@ -379,8 +401,12 @@ export async function createStripeCheckoutSession({
   const {id, isContact, mainPartnerId} = user;
   const {role} = subapp;
 
-  const $invoice = await findInvoice(id, {
-    where: getWhereClause(isContact, role, id, mainPartnerId),
+  const $invoice = await findInvoice({
+    id,
+    params: {
+      where: getWhereClause(isContact, role, id, mainPartnerId),
+    },
+    tenantId,
   });
 
   if (!$invoice) {
@@ -433,7 +459,7 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  const payer = await findPartnerByEmail(user.email);
+  const payer = await findPartnerByEmail(user.email, tenantId);
 
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
 
@@ -486,7 +512,9 @@ export async function validateStripePayment({
     };
   }
 
-  if (!(invoice && workspaceURL)) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(invoice && workspaceURL && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad request'),
@@ -498,6 +526,7 @@ export async function validateStripePayment({
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -511,6 +540,7 @@ export async function validateStripePayment({
     code: SUBAPP_CODES.shop,
     user,
     url: workspace.url,
+    tenantId,
   });
 
   if (!subapp) {
@@ -523,8 +553,12 @@ export async function validateStripePayment({
   const {id, isContact, mainPartnerId} = user;
   const {role} = subapp;
 
-  const $invoice = await findInvoice(id, {
-    where: getWhereClause(isContact, role, id, mainPartnerId),
+  const $invoice = await findInvoice({
+    id,
+    params: {
+      where: getWhereClause(isContact, role, id, mainPartnerId),
+    },
+    tenantId,
   });
 
   if (!$invoice) {

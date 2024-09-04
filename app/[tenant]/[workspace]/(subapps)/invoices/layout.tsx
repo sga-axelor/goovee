@@ -23,10 +23,13 @@ export default async function Layout({
   };
   children: React.ReactNode;
 }) {
+  const {tenant} = params;
+
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.invoices,
     user: (await getSession())?.user,
     url: workspacePathname(params)?.workspaceURL,
+    tenantId: tenant,
   });
 
   if (!subapp) return notFound();

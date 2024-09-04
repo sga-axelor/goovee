@@ -20,6 +20,8 @@ export default async function Invoices({
     workspace: string;
   };
 }) {
+  const {tenant} = params;
+
   const session = await getSession();
 
   if (!session) return notFound();
@@ -29,6 +31,7 @@ export default async function Invoices({
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) return notFound();
@@ -37,6 +40,7 @@ export default async function Invoices({
     code: SUBAPP_CODES.invoices,
     url: workspace.url,
     user: session?.user,
+    tenantId: tenant,
   });
 
   const {id, isContact, mainPartnerId} = session?.user;
@@ -49,7 +53,7 @@ export default async function Invoices({
 
   const where = getWhereClause(isContact, role, id, mainPartnerId);
 
-  const invoices = await findArchivedInvoices({where});
+  const invoices = await findArchivedInvoices({where, tenantId: tenant});
 
   return <Content invoices={clone(invoices)} />;
 }

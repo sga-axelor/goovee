@@ -18,7 +18,7 @@ export default async function Page({
 }: {
   params: {id: string; tenant: string; workspace: string};
 }) {
-  const {id} = params;
+  const {id, tenant} = params;
 
   const session = await getSession();
   const {id: userId, isContact, mainPartnerId} = session?.user as User;
@@ -27,6 +27,7 @@ export default async function Page({
     code: SUBAPP_CODES.invoices,
     user: (await getSession())?.user,
     url: workspacePathname(params)?.workspaceURL,
+    tenantId: tenant,
   });
 
   if (!subapp?.installed) {
@@ -37,7 +38,7 @@ export default async function Page({
 
   const where = getWhereClause(isContact, role, userId, mainPartnerId);
 
-  const invoice = await findInvoice(id, {where});
+  const invoice = await findInvoice({id, params: {where}, tenantId: tenant});
 
   return <Content invoice={clone(invoice)} />;
 }
