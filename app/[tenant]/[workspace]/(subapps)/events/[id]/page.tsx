@@ -26,7 +26,7 @@ export default async function Page({
   if (!eventDetails) {
     return notFound();
   }
-  
+
   const successMessage = searchParams.success === 'true';
 
   return (
