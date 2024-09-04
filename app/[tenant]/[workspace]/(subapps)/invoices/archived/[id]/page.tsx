@@ -21,7 +21,7 @@ export default async function Page({
   const {id, tenant} = params;
 
   const session = await getSession();
-  
+
   const user = session?.user;
 
   const app = await findSubappAccess({

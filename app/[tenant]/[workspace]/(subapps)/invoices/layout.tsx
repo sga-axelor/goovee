@@ -24,7 +24,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const {tenant} = params;
-  
+
   const session = await getSession();
 
   const {workspaceURL} = workspacePathname(params);
