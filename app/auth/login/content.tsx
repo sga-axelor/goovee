@@ -109,9 +109,6 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
             variant="error"
             show={true}
             heading={i18n.get('The email or the password is wrong.')}
-            description={i18n.get(
-              'The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.',
-            )}
           />
         )}
 
