@@ -87,7 +87,7 @@ export function getWhere(
 
   const where: WhereOptions<AOSProjectTask> = {
     ...(requestedBy && {
-      createdBy: {
+      contact: {
         id: {
           in: requestedBy,
         },

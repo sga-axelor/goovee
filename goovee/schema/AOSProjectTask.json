@@ -87,7 +87,7 @@
     {
       "type": "ManyToOne",
       "name": "contact",
-      "target": "AOSUser"
+      "target": "AOSPartner"
     },
     {
       "type": "ManyToOne",

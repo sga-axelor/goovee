@@ -26,7 +26,7 @@ export default async function Page({
   const [categories, priorities, ticket] = await Promise.all([
     findTicketCategories(projectId).then(clone),
     findTicketPriorities(projectId).then(clone),
-    findTicketInfo(ticketId).then(clone),
+    findTicketInfo(ticketId, projectId).then(clone),
   ]);
 
   if (!ticket) {

@@ -1,9 +1,9 @@
 'use client';
 
 import {
+  AOSPartner,
   AOSProjectPriority,
   AOSProjectTaskStatus,
-  AOSUser,
 } from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {
@@ -49,7 +49,7 @@ import {
 type FilterProps = {
   url: string;
   searchParams: SearchParams;
-  users: AOSUser[];
+  contacts: AOSPartner[];
   priorities: AOSProjectPriority[];
   statuses: AOSProjectTaskStatus[];
 };
@@ -62,7 +62,7 @@ const defaultValues = {
 };
 
 export function Filter(props: FilterProps) {
-  const {users, priorities, statuses, url, searchParams} = props;
+  const {contacts, priorities, statuses, url, searchParams} = props;
   const [open, setOpen] = useState(false);
   const filter = useMemo(
     () => searchParams.filter && decodeFilter(searchParams.filter),
@@ -157,7 +157,7 @@ export function Filter(props: FilterProps) {
               onSubmit={form.handleSubmit(onSubmit)}
               className="overflow-y-auto">
               <div className="space-y-4">
-                <RequestedByField form={form} users={users} />
+                <RequestedByField form={form} contacts={contacts} />
                 <DatesField form={form} />
                 <PriorityField form={form} priorities={priorities} />
                 <StatusField form={form} statuses={statuses} />
@@ -173,8 +173,8 @@ export function Filter(props: FilterProps) {
   );
 }
 
-function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
-  const {form, users} = props;
+function RequestedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
+  const {form, contacts} = props;
   return (
     <FormField
       control={form.control}
@@ -188,16 +188,16 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'users'>) {
             className="space-y-0">
             <MultiSelectorTrigger
               renderLabel={value =>
-                users.find(user => user.id === value)?.name
+                contacts.find(contact => contact.id === value)?.name
               }>
               <MultiSelectorInput placeholder="Select users" />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
-                {users.map(user => (
-                  <MultiSelectorItem key={user.id} value={user.id}>
+                {contacts.map(contact => (
+                  <MultiSelectorItem key={contact.id} value={contact.id}>
                     <div className="flex items-center space-x-2">
-                      <span>{user.name}</span>
+                      <span>{contact.name}</span>
                     </div>
                   </MultiSelectorItem>
                 ))}

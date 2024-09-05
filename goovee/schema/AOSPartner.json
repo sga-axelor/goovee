@@ -60,6 +60,11 @@
     },
     {
       "type": "ManyToMany",
+      "name": "contactPartnerSet",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToMany",
       "name": "contactWorkspaceConfigSet",
       "target": "AOSPortalContactWorkspaceConfig"
     },

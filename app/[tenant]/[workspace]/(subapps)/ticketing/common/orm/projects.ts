@@ -115,12 +115,21 @@ export async function findTicketStatuses(projectId: ID) {
   return project?.projectTaskStatusSet ?? [];
 }
 
-export async function findUsers() {
+export async function findContactPartners(projectId: ID) {
   const client = await getClient();
-  const users = await client.aOSUser.find({
+  const project = await client.aOSProject.findOne({
+    where: {
+      id: projectId,
+    },
     select: {
-      name: true,
+      clientPartner: {
+        contactPartnerSet: {
+          select: {
+            name: true,
+          },
+        },
+      },
     },
   });
-  return users;
+  return project?.clientPartner?.contactPartnerSet ?? [];
 }

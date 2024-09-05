@@ -38,7 +38,7 @@ import {
   findProject,
   findTicketPriorities,
   findTicketStatuses,
-  findUsers,
+  findContactPartners,
 } from '../../../common/orm/projects';
 import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
@@ -261,15 +261,15 @@ async function AsyncFilter({
   searchParams: SearchParams;
   projectId: ID;
 }) {
-  const [users, statuses, priorities] = await Promise.all([
-    findUsers().then(clone),
+  const [contacts, statuses, priorities] = await Promise.all([
+    findContactPartners(projectId).then(clone),
     findTicketStatuses(projectId).then(clone),
     findTicketPriorities(projectId).then(clone),
   ]);
 
   return (
     <Filter
-      users={users}
+      contacts={contacts}
       priorities={priorities}
       statuses={statuses}
       url={url}
