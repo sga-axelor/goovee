@@ -33,6 +33,7 @@ import {Stepper} from '../../../../common/ui/components/stepper';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
 import {formatDate} from '../../../../common/utils';
 import {AssignToSupplier} from './assign-to-supplier';
+import {ASSIGNMENT} from '../../../../common/constants';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -179,7 +180,7 @@ function TicketDetails({
               className="h-8 w-10 rounded-full"
             />
           </Avatar>
-          <span>{ticket.contact?.name}</span>
+          <span>{ticket.requestedByContact?.name}</span>
         </p>
         <p>
           <span className="font-medium pe-2">{i18n.get('Created on')}:</span>
@@ -191,7 +192,9 @@ function TicketDetails({
           <div className="flex flex-col space-y-2">
             <p>
               <span className="font-medium pe-2">Assigned to:</span>
-              {ticket.assignment === 2 ? 'Supplier' : 'Customer'}
+              {ticket.assignment === ASSIGNMENT.PROVIDER
+                ? 'Supplier'
+                : ticket.assignedToContact?.name}
             </p>
             <p>
               <span className="font-medium pe-2">Expected on:</span>

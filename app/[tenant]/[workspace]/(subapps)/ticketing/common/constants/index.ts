@@ -50,28 +50,28 @@ export const filterKeyPathMap: Record<string, string> = {
 
 export const sortKeyPathMap: Record<string, string> = {
   ticketId: 'id',
-  requestedBy: 'contact.name',
+  requestedBy: 'requestedByContact.name',
   subject: 'name',
   priority: 'priority.name',
   status: 'status.name',
   category: 'projectTaskCategory.name',
-  assignedTo: 'assignedTo.name',
+  assignedTo: 'assignment',
   updatedOn: 'updatedOn',
 };
 
 export const TYPE_SELECT = {
   TASK: 'task',
   TICKET: 'ticket',
-};
+} as const;
 
 export const ASSIGNMENT = {
   CUSTOMER: 1,
   PROVIDER: 2,
-};
+} as const;
 
 export const INVOICING_TYPE = {
   TIME_SPENT: 1,
   PACKAGE: 2,
   NO_INVOICING: 3,
   ON_PROGRESS: 4,
-};
+} as const;

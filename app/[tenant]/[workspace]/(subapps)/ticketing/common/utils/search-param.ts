@@ -1,6 +1,6 @@
 import {ORDER_BY} from '@/constants';
 import {Maybe} from '@/types/util';
-import {WhereOptions} from '@goovee/orm';
+import {ID, WhereOptions} from '@goovee/orm';
 import {set} from 'lodash';
 import {AOSProjectTask} from '@/goovee/.generated/models';
 import {z} from 'zod';
@@ -70,7 +70,7 @@ export function getOrderBy(
 
 export function getWhere(
   filter: unknown,
-  userId: string,
+  userId: ID,
 ): WhereOptions<AOSProjectTask> | null {
   if (!filter) return null;
   const {success, data} = EncodedFilterSchema.safeParse(filter);
@@ -87,7 +87,7 @@ export function getWhere(
 
   const where: WhereOptions<AOSProjectTask> = {
     ...(requestedBy && {
-      contact: {
+      requestedByContact: {
         id: {
           in: requestedBy,
         },
@@ -113,7 +113,7 @@ export function getWhere(
       },
     }),
     ...(assignedTo && {
-      assignedTo: {
+      assignedToContact: {
         id: {
           in: assignedTo,
         },
@@ -127,12 +127,12 @@ export function getWhere(
     ...(myTickets && {
       OR: [
         {
-          assignedTo: {
+          assignedToContact: {
             id: userId,
           },
         },
         {
-          createdBy: {
+          requestedByContact: {
             id: userId,
           },
         },

@@ -86,7 +86,12 @@
     },
     {
       "type": "ManyToOne",
-      "name": "contact",
+      "name": "assignedToContact",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "requestedByContact",
       "target": "AOSPartner"
     },
     {

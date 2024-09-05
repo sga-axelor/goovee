@@ -67,9 +67,8 @@ export async function createTicket(
       invoicingType: INVOICING_TYPE.NO_INVOICING,
       isPrivate: false,
       progress: '0.00',
-      // createdBy: {select: {id: user}},
-      // updatedBy: {select: {id: user}},
-      contact: {select: {id: user}},
+      requestedByContact: {select: {id: user}},
+      assignedToContact: {select: {id: user}},
       project: {
         select: {
           id: projectId,
@@ -321,7 +320,10 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
       name: true,
       updatedOn: true,
       assignment: true,
-      contact: {
+      assignedToContact: {
+        name: true,
+      },
+      requestedByContact: {
         name: true,
       },
       status: {
@@ -358,6 +360,12 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       description: true,
       taskDate: true,
       taskEndDate: true,
+      assignedToContact: {
+        name: true,
+      },
+      requestedByContact: {
+        name: true,
+      },
       childTasks: {
         select: {
           name: true,
@@ -375,6 +383,12 @@ export async function findTicket(ticketId: ID, projectId: ID) {
             name: true,
           },
           assignedTo: {
+            name: true,
+          },
+          assignedToContact: {
+            name: true,
+          },
+          requestedByContact: {
             name: true,
           },
         },
@@ -395,6 +409,12 @@ export async function findTicket(ticketId: ID, projectId: ID) {
           name: true,
         },
         assignedTo: {
+          name: true,
+        },
+        assignedToContact: {
+          name: true,
+        },
+        requestedByContact: {
           name: true,
         },
       },

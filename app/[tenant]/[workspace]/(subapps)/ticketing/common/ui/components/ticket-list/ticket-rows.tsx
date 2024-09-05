@@ -119,7 +119,7 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
             <Avatar className="h-12 w-16">
               <AvatarImage src="/images/user.png" />
             </Avatar>
-            <p className="ms-1"> {ticket.contact?.name}</p>
+            <p className="ms-1"> {ticket.requestedByContact?.name}</p>
             {small &&
               (show && ticket?.id === id ? (
                 <MdArrowDropUp
@@ -141,7 +141,7 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
               <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
-                  ? i18n.get('Customer')
+                  ? ticket.assignedToContact?.name
                   : i18n.get('Supplier')}
               </TableCell>
               <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
@@ -164,7 +164,7 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
                     label="Assigned to"
                     value={
                       ticket.assignment === ASSIGNMENT.CUSTOMER
-                        ? i18n.get('Customer')
+                        ? ticket.assignedToContact?.name
                         : i18n.get('Supplier')
                     }
                   />

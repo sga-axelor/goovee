@@ -71,9 +71,7 @@ export default async function Page({
   } = searchParams;
 
   const session = await getSession();
-  // const userId = session!.user.id;
-  //TODO: use actual user
-  const userId = '1';
+  const userId = session!.user.id;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 

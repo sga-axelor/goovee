@@ -59,8 +59,7 @@ export default async function Page({
   const {limit = 7, page = 1, sort = 'updatedOn'} = searchParams;
 
   const session = await getSession();
-  // const userId = session!.user.id;
-  const userId = '1';
+  const userId = session!.user.id;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 

@@ -11,7 +11,12 @@ export type Ticket = {
   name?: string;
   updatedOn?: Date;
   assignment: number;
-  contact?: {
+  assignedToContact?: {
+    id: string;
+    name: string;
+    version: number;
+  };
+  requestedByContact?: {
     id: string;
     name: string;
     version: number;
