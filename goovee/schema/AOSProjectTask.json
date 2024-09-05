@@ -115,6 +115,11 @@
       "target": "AOSProjectTaskStatus"
     },
     {
+      "type": "ManyToOne",
+      "name": "projectVersion",
+      "target": "AOSProjectVersion"
+    },
+    {
       "type": "ManyToMany",
       "name": "projectTaskTagSet",
       "target": "AOSProjectTaskTag"

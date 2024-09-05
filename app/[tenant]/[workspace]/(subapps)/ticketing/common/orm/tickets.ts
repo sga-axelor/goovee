@@ -355,7 +355,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
     },
     select: {
       name: true,
-      version: true,
+      projectVersion: {
+        title: true,
+      },
       progress: true,
       description: true,
       taskDate: true,

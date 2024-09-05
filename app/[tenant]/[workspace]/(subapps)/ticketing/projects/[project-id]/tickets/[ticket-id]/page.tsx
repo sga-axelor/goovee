@@ -219,7 +219,7 @@ function TicketDetails({
         </div>
         <p>
           <span className="font-medium pe-2"> {i18n.get('Version')}:</span>
-          {ticket?.version}
+          {ticket.projectVersion?.title}
         </p>
         <hr />
         <div className="sm:flex sm:justify-start !mt-4 sm:space-x-20 max-[639px]:space-y-5">
