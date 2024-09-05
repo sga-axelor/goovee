@@ -7,7 +7,7 @@ import {
   findTicketCategories,
   findTicketPriorities,
 } from '../../../../../common/orm/projects';
-import {findTicket} from '../../../../../common/orm/tickets';
+import {findTicketInfo} from '../../../../../common/orm/tickets';
 import {TicketForm} from '../../../../../common/ui/components/ticket-form';
 
 export default async function Page({
@@ -26,7 +26,7 @@ export default async function Page({
   const [categories, priorities, ticket] = await Promise.all([
     findTicketCategories(projectId).then(clone),
     findTicketPriorities(projectId).then(clone),
-    findTicket(ticketId).then(clone),
+    findTicketInfo(ticketId).then(clone),
   ]);
 
   if (!ticket) {

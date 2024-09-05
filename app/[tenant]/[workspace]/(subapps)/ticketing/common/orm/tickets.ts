@@ -352,3 +352,26 @@ export async function findTicket(ticketId: ID, projectId?: ID) {
 
   return ticket;
 }
+
+export async function findTicketInfo(ticketId: ID, projectId?: ID) {
+  const client = await getClient();
+  const ticket = await client.aOSProjectTask.findOne({
+    where: {
+      id: ticketId,
+      ...(projectId ? {project: {id: projectId}} : {}),
+    },
+    select: {
+      name: true,
+      version: true,
+      description: true,
+      projectTaskCategory: {
+        name: true,
+      },
+      priority: {
+        name: true,
+      },
+    },
+  });
+
+  return ticket;
+}
