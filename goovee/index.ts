@@ -8,10 +8,10 @@ const cache = new LRUCache<ID, GooveeClient>(10);
 
 async function getTenant(tenantId: ID): Promise<Tenant | null> {
   const tenant = await axios
-    .get(`http://localhost:3000/api/tenant/${tenantId}`, {
+    .get(`${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}`, {
       auth: {
-        username: process.env.BASIC_AUTH_USER as string,
-        password: process.env.BASIC_AUTH_PASS as string,
+        username: process.env.TENANT_MANAGER_BASIC_USERNAME as string,
+        password: process.env.TENANT_MANAGER_BASIC_PASSWORD as string,
       },
     })
     .then(({data}) => data);

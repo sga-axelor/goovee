@@ -64,7 +64,7 @@ function isValidAuthHeader(authHeader: string): boolean {
   const [username, password] = credentials.split(':');
 
   return (
-    username === process.env.BASIC_AUTH_USER &&
-    password === process.env.BASIC_AUTH_PASS
+    username === process.env.TENANT_MANAGER_BASIC_USERNAME &&
+    password === process.env.TENANT_MANAGER_BASIC_PASSWORD
   );
 }
