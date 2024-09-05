@@ -96,14 +96,23 @@ export async function createTicket(data: CreateTicketInfo, user: ID) {
       }),
     },
     select: {
-      id: true,
+      name: true,
+    },
+  });
+
+  const ticketWithFullName = client.aOSProjectTask.update({
+    data: {
+      id: ticket.id,
+      version: ticket.version,
+      fullName: `#${ticket.id} ${ticket.name}`,
+    },
+    select: {
       project: {
         id: true,
       },
     },
   });
-
-  return ticket;
+  return ticketWithFullName;
 }
 
 export async function updateTicket(data: UpdateTicketInfo, user: ID) {
