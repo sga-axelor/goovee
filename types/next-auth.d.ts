@@ -1,7 +1,7 @@
 import NextAuth, {DefaultSession} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import {User} from '.';
+import {ID, User} from '.';
 
 declare module 'next-auth' {
   /**

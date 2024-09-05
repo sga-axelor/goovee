@@ -9,6 +9,7 @@ import {MdDeleteOutline} from 'react-icons/md';
 import {Label} from '@ui/components/label';
 import {Button} from '@ui/components/button';
 import {Separator} from '@ui/components/separator';
+
 // ---- CORE IMPORTS ---- //
 import {
   AlertDialog,
@@ -27,7 +28,9 @@ import {computeTotal} from '@/utils/cart';
 import {getImageURL} from '@/utils/product';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
+import {SEARCH_PARAM} from '@/constants';
 import type {Cart, Product, PortalWorkspace} from '@/types';
+
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 
@@ -192,7 +195,7 @@ function CartSummary({
   const pathname = usePathname();
   const noitem = !cart?.items?.length;
   const {displayTotal} = computeTotal({cart, workspace});
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
   const {data: session} = useSession();
   const authenticated = session?.user?.id;
 
@@ -243,7 +246,7 @@ function CartSummary({
           className="no-underline text-inherit"
           href={`/auth/login?callbackurl=${encodeURIComponent(
             pathname,
-          )}&workspaceURI=${encodeURIComponent(workspaceURI)}`}>
+          )}&workspaceURI=${encodeURIComponent(workspaceURI)}&${SEARCH_PARAM.TENANT_ID}=${encodeURIComponent(tenant)}`}>
           <Button className="mb-4 w-full rounded-full">
             {i18n.get('Login for checkout')}
           </Button>

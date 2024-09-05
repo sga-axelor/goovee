@@ -22,6 +22,7 @@ import {
   DialogFooter,
 } from '@/ui/components';
 import {useToast} from '@/ui/hooks';
+import {SEARCH_PARAM} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -57,6 +58,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
+  const tenantId = searchParams.get(SEARCH_PARAM.TENANT_ID);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target;
@@ -78,7 +80,10 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
     if (!workspace) return;
     setSubmitting(true);
     try {
-      const res = await subscribe({workspace});
+      const res = await subscribe({
+        workspace,
+        tenantId,
+      });
 
       if (res.error) {
         toast({
@@ -115,7 +120,11 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
 
     setSubmitting(true);
     try {
-      const res = await register({...values, workspaceURL: workspace?.url});
+      const res = await register({
+        ...values,
+        workspaceURL: workspace?.url,
+        tenantId,
+      });
 
       if (res.success) {
         toast({

@@ -19,7 +19,7 @@ async function getTenant(tenantId: ID): Promise<Tenant | null> {
   return tenant;
 }
 
-export async function getClient(tenantId: ID = DEFAULT_TENANT) {
+export async function getClient(tenantId: ID) {
   if (!tenantId) {
     throw new Error('No tenant.');
   }

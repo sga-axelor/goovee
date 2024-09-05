@@ -83,7 +83,7 @@ export default function Header({
   const {data: session} = useSession();
   const user = session?.user;
 
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
 
   const redirect = (value: any) => {
     router.push(value);
@@ -127,7 +127,7 @@ export default function Header({
             })}
           <Notification />
           <Cart />
-          <Account baseURL={workspaceURI} />
+          <Account baseURL={workspaceURI} tenant={tenant} />
         </div>
       </div>
       {showTopNavigation ? (

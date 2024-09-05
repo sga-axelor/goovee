@@ -14,6 +14,7 @@ export type User = {
   email: string;
   isContact?: boolean;
   mainPartnerId?: string;
+  tenantId: ID;
 };
 
 export interface PortalWorkspace extends Model {

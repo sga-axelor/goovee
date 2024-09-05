@@ -16,6 +16,7 @@ export default async function Page({
 }: {
   searchParams: {
     workspaceURI?: string;
+    tenant: string;
   };
 }) {
   const session = await getSession();
@@ -24,7 +25,10 @@ export default async function Page({
   const workspaceURI =
     searchParams?.workspaceURI && decodeURIComponent(searchParams.workspaceURI);
 
-  if (!workspaceURI) {
+  const tenantId =
+    searchParams?.tenant && decodeURIComponent(searchParams.tenant);
+
+  if (!(workspaceURI && tenantId)) {
     return notFound();
   }
 
@@ -32,9 +36,11 @@ export default async function Page({
 
   let userWorkspaces = [];
   if (user) {
-    userWorkspaces = await findWorkspaces({url: workspaceURL, user}).then(
-      clone,
-    );
+    userWorkspaces = await findWorkspaces({
+      url: workspaceURL,
+      user,
+      tenantId,
+    }).then(clone);
   }
 
   const existing = userWorkspaces.some((w: any) => w.url === workspaceURL);
@@ -57,7 +63,9 @@ export default async function Page({
     );
   }
 
-  const workspaces = await findWorkspaces({url: workspaceURL}).then(clone);
+  const workspaces = await findWorkspaces({url: workspaceURL, tenantId}).then(
+    clone,
+  );
 
   const workspace = workspaces.find((w: any) => w.url === workspaceURL);
 

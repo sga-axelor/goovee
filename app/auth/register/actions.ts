@@ -9,14 +9,20 @@ import {
 } from '@/orm/workspace';
 import {i18n} from '@/lib/i18n';
 import {getClient} from '@/goovee';
-import type {PortalWorkspace} from '@/types';
+import type {ID, PortalWorkspace} from '@/types';
 import {revalidatePath} from 'next/cache';
 
-export async function subscribe({workspace}: {workspace: PortalWorkspace}) {
+export async function subscribe({
+  workspace,
+  tenantId,
+}: {
+  workspace: PortalWorkspace;
+  tenantId?: ID | null;
+}) {
   const session = await getSession();
   const user = session?.user;
 
-  if (!workspace) {
+  if (!(workspace && tenantId)) {
     return {
       error: true,
       message: i18n.get('Bad Request'),
@@ -32,7 +38,7 @@ export async function subscribe({workspace}: {workspace: PortalWorkspace}) {
 
   const url = workspace?.url;
 
-  const userWorkspaces = await findWorkspaces({url, user});
+  const userWorkspaces = await findWorkspaces({url, user, tenantId});
 
   const existing = userWorkspaces?.find((w: any) => w.id === workspace?.id);
 
@@ -44,7 +50,7 @@ export async function subscribe({workspace}: {workspace: PortalWorkspace}) {
   }
 
   const defaultPartnerWorkspaceConfig = await findDefaultPartnerWorkspaceConfig(
-    {url},
+    {url, tenantId},
   );
 
   if (!defaultPartnerWorkspaceConfig) {
@@ -115,6 +121,7 @@ export async function subscribe({workspace}: {workspace: PortalWorkspace}) {
         id: $user.mainPartner.id!,
         isContact: false,
       } as any,
+      tenantId,
     });
 
     const existsInPartner = partnerWorkspaces.find((w: any) => w.url === url);
@@ -174,6 +181,7 @@ export async function register({
   password,
   confirmPassword,
   workspaceURL,
+  tenantId,
 }: {
   firstName?: string;
   name: string;
@@ -181,16 +189,21 @@ export async function register({
   password: string;
   confirmPassword: string;
   workspaceURL?: string;
+  tenantId?: ID | null;
 }) {
   if (!(name && email && password && confirmPassword)) {
     throw new Error('Name, email and password is required.');
   }
 
   if (password !== confirmPassword) {
-    throw new Error('Password and confirm password mismatch');
+    throw new Error('Password and confirm password mismatch.');
   }
 
-  const existing = await findPartnerByEmail(email);
+  if (!tenantId) {
+    throw new Error('Tenant is required.');
+  }
+
+  const existing = await findPartnerByEmail(email, tenantId);
 
   if (existing) {
     return {
@@ -206,6 +219,7 @@ export async function register({
       email,
       password,
       workspaceURL,
+      tenantId,
     });
 
     return {

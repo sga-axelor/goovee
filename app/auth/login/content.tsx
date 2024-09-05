@@ -16,6 +16,7 @@ import {
   Separator,
   StyledAlert,
 } from '@/ui/components';
+import {SEARCH_PARAM} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {revalidate} from './actions';
@@ -28,6 +29,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
+  const tenantId = searchParams.get(SEARCH_PARAM.TENANT_ID);
 
   const toggleShowPassword = () => setShowPassword(show => !show);
 
@@ -51,6 +53,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
     const login = await signIn('credentials', {
       email,
       password,
+      tenantId,
       redirect: false,
     });
 

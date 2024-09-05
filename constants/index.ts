@@ -117,3 +117,11 @@ export const NAVIGATION = {
   top: 'topSide',
   left: 'leftSide',
 };
+
+/**
+ * SEARCH PARAMS
+ */
+
+export const SEARCH_PARAM = {
+  TENANT_ID: 'tenant',
+};

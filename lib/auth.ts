@@ -5,6 +5,7 @@ import type {NextAuthOptions} from 'next-auth';
 // ---- CORE IMPORTS ---- //
 import {compare} from '@/utils/auth';
 import {findPartnerByEmail, registerPartner} from '@/orm/partner';
+import type {ID} from '@/types';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,10 +15,10 @@ export const authOptions: NextAuthOptions = {
         email: {label: 'Email', type: 'text'},
         password: {label: 'Password', type: 'password'},
       },
-      async authorize({email, password}: any, req) {
+      async authorize({email, password, tenantId}: any, req) {
         if (!email) return null;
 
-        const user = await findPartnerByEmail(email);
+        const user = await findPartnerByEmail(email, tenantId);
 
         if (!user) {
           return null;
@@ -34,6 +35,7 @@ export const authOptions: NextAuthOptions = {
           id,
           name,
           email,
+          tenantId,
         };
       },
     }),
@@ -43,9 +45,10 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({session}) {
+    async session({session, token}) {
       const user =
-        session?.user?.email && (await findPartnerByEmail(session.user.email));
+        session?.user?.email &&
+        (await findPartnerByEmail(session.user.email, token?.tenantId as ID));
 
       if (user) {
         const {id, emailAddress, fullName: name, isContact, mainPartner} = user;
@@ -56,13 +59,20 @@ export const authOptions: NextAuthOptions = {
           email: emailAddress?.address,
           isContact,
           mainPartnerId: isContact ? mainPartner?.id : undefined,
+          tenantId: token?.tenantId as ID,
         };
       }
 
       return session;
     },
-    async signIn({account, profile}: any) {
-      if (account.provider === 'google') {
+    async jwt({user, token}: any) {
+      if (user?.tenantId) {
+        token.tenantId = user.tenantId;
+      }
+      return token;
+    },
+    async signIn({account, profile, ...rest}: any) {
+      if (false && account.provider === 'google') {
         const {given_name, family_name, email} = profile;
         const exists = await findPartnerByEmail(email);
         if (!exists) {

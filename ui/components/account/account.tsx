@@ -22,8 +22,16 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@ui/components/alert-dialog';
+import type {ID} from '@/types';
+import {SEARCH_PARAM} from '@/constants';
 
-export function Account({baseURL = ''}: {baseURL?: string}) {
+export function Account({
+  baseURL = '',
+  tenant,
+}: {
+  baseURL?: string;
+  tenant?: ID | null;
+}) {
   const pathname = usePathname();
   const encodedPathname = encodeURIComponent(pathname);
   const {data: session} = useSession();
@@ -43,7 +51,7 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
     signOut({
       callbackUrl: `/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
         baseURL,
-      )}`,
+      )}${tenant ? `&${SEARCH_PARAM.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`,
     });
   };
 
@@ -74,7 +82,7 @@ export function Account({baseURL = ''}: {baseURL?: string}) {
               <Link
                 href={`/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
                   baseURL,
-                )}`}>
+                )}${tenant ? `&${SEARCH_PARAM.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`}>
                 <DropdownMenuItem>Log In</DropdownMenuItem>
               </Link>
             </>
