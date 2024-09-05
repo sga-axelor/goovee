@@ -17,6 +17,13 @@ const tenants: {[key: string]: Tenant} = [DEFAULT_TENANT].reduce(
       db: {
         url: process.env.DATABASE_URL,
       },
+      aos: {
+        url: process.env.NEXT_PUBLIC_AOS_URL,
+        auth: {
+          username: process.env.BASIC_AUTH_USERNAME,
+          password: process.env.BASIC_AUTH_PASSWORD,
+        },
+      },
     },
   }),
   {},

@@ -204,4 +204,11 @@ export type Tenant = {
   db: {
     url: string;
   };
+  aos: {
+    url: string;
+    auth: {
+      username: string;
+      password: string;
+    };
+  };
 };
