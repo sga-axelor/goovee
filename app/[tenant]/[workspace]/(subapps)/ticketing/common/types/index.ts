@@ -10,6 +10,7 @@ export type Ticket = {
   version: number;
   name?: string;
   updatedOn?: Date;
+  assignment: number;
   contact?: {
     id: string;
     name: string;

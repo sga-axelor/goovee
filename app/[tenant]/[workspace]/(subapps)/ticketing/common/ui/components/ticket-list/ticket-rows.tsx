@@ -17,7 +17,7 @@ import Link from 'next/link';
 
 // ---- LOCAL IMPORTS ---- //
 import {Ticket} from '../../../types';
-import {columns} from '../../../constants';
+import {ASSIGNMENT, columns} from '../../../constants';
 import {formatDate} from '../../../utils';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useResponsive} from '@/ui/hooks';
@@ -139,7 +139,11 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
               <TableCell>{priority}</TableCell>
               <TableCell>{status}</TableCell>
               <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
-              <TableCell>{ticket.assignedTo?.name}</TableCell>
+              <TableCell>
+                {ticket.assignment === ASSIGNMENT.CUSTOMER
+                  ? i18n.get('Customer')
+                  : i18n.get('Supplier')}
+              </TableCell>
               <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
             </>
           )}
@@ -158,7 +162,11 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
                   />
                   <TicketDetailRow
                     label="Assigned to"
-                    value={ticket.assignedTo?.name}
+                    value={
+                      ticket.assignment === ASSIGNMENT.CUSTOMER
+                        ? i18n.get('Customer')
+                        : i18n.get('Supplier')
+                    }
                   />
                   <TicketDetailRow
                     label="Updated On"

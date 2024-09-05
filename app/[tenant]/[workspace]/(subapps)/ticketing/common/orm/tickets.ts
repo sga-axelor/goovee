@@ -314,6 +314,7 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
     select: {
       name: true,
       updatedOn: true,
+      assignment: true,
       contact: {
         name: true,
       },
