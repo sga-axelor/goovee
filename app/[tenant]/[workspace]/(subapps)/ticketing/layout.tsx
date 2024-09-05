@@ -29,7 +29,7 @@ export default async function Layout({
     url: workspacePathname(params)?.workspaceURL,
   });
 
-  // if (!subapp) return notFound();
+  if (!subapp) return notFound();
 
   return <div className="lg:mb-0 mb-[72px]">{children}</div>;
 }

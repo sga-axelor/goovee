@@ -20,12 +20,19 @@ export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
 };
 
-export async function createTicket(data: CreateTicketInfo, user: ID) {
+export async function createTicket(
+  data: CreateTicketInfo,
+  user: ID,
+  workspaceId: ID,
+) {
   const {priority, subject, description, category, project: projectId} = data;
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {
       id: projectId,
+      portalWorkspace: {
+        id: workspaceId,
+      },
     },
     select: {
       assignedTo: {
@@ -60,8 +67,8 @@ export async function createTicket(data: CreateTicketInfo, user: ID) {
       invoicingType: INVOICING_TYPE.NO_INVOICING,
       isPrivate: false,
       progress: '0.00',
-      createdBy: {select: {id: user}},
-      updatedBy: {select: {id: user}},
+      // createdBy: {select: {id: user}},
+      // updatedBy: {select: {id: user}},
       contact: {select: {id: user}},
       project: {
         select: {
@@ -119,10 +126,48 @@ export async function createTicket(data: CreateTicketInfo, user: ID) {
   return ticketWithFullName;
 }
 
-export async function updateTicket(data: UpdateTicketInfo, user: ID) {
-  const {priority, subject, description, category, id, version} = data;
+export async function updateTicket(
+  data: UpdateTicketInfo,
+  user: ID,
+  workspaceId: ID,
+) {
+  const {
+    priority,
+    subject,
+    description,
+    category,
+    id,
+    version,
+    project: projectId,
+  } = data;
   const client = await getClient();
 
+  const project = await client.aOSProject.findOne({
+    where: {
+      id: projectId,
+      portalWorkspace: {
+        id: workspaceId,
+      },
+    },
+    select: {
+      assignedTo: {
+        id: true,
+      },
+      projectTaskStatusSet: {
+        select: {
+          id: true,
+        },
+        take: 1,
+        orderBy: {
+          sequence: ORDER_BY.ASC,
+        },
+      } as unknown as {select: {id: true}}, // type cast to prevent orm type error
+    },
+  });
+
+  if (!project) {
+    throw new Error(i18n.get('Project not found'));
+  }
   const ticket = await client.aOSProjectTask.update({
     data: {
       id,

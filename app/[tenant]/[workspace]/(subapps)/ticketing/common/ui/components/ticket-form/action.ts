@@ -60,8 +60,7 @@ export async function mutate(
 
   const session = await getSession();
 
-  // const user = session?.user;
-  const user = {id: '1'};
+  const user = session?.user;
 
   if (!user) {
     return {
@@ -72,38 +71,38 @@ export async function mutate(
 
   //TODO: use actual validation
 
-  // const subapp = await findSubappAccess({
-  //   code: SUBAPP_CODES.resources,
-  //   user,
-  //   url: workspaceURL,
-  // });
-  //
-  // if (!subapp) {
-  //   return {
-  //     error: true,
-  //     message: i18n.get('Unauthorized'),
-  //   };
-  // }
-  //
-  // const workspace = await findWorkspace({
-  //   user,
-  //   url: workspaceURL,
-  // });
-  //
-  // if (!workspace) {
-  //   return {
-  //     error: true,
-  //     message: i18n.get('Invalid workspace'),
-  //   };
-  // }
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.resources,
+    user,
+    url: workspaceURL,
+  });
+
+  if (!subapp) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
   try {
     let ticket;
     if (action.type === 'create') {
       const createData = CreateTicketSchema.parse(action.data);
-      ticket = await createTicket(createData, user.id);
+      ticket = await createTicket(createData, user.id, workspace.id);
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
-      ticket = await updateTicket(updateData, user.id);
+      ticket = await updateTicket(updateData, user.id, workspace.id);
     }
 
     if (ticket.project?.id) {

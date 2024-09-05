@@ -54,3 +54,7 @@ export type QueryProps<T extends Entity> = {
   orderBy?: any;
   skip?: number;
 };
+
+export type WorkspaceProps = {
+  workspaceId: string;
+};

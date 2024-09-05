@@ -1,6 +1,8 @@
 // ---- CORE IMPORTS ---- //
 import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
+import {getSession} from '@/orm/auth';
+import {findWorkspace} from '@/orm/workspace';
 import {Maybe} from '@/types/util';
 import {
   AvatarImage,
@@ -15,6 +17,7 @@ import {
   Tag,
 } from '@/ui/components';
 import {Progress} from '@/ui/components/progress';
+import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {ID} from '@goovee/orm';
 import {Avatar} from '@radix-ui/react-avatar';
@@ -22,14 +25,13 @@ import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {FaChevronRight} from 'react-icons/fa';
 import {MdOutlineModeEditOutline} from 'react-icons/md';
-import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProject, findTicketStatuses} from '../../../../common/orm/projects';
 import {findTicket} from '../../../../common/orm/tickets';
 import {Stepper} from '../../../../common/ui/components/stepper';
-import {formatDate} from '../../../../common/utils';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
+import {formatDate} from '../../../../common/utils';
 import AssignButton from './button';
 
 interface SubTicketsProps {
@@ -47,14 +49,22 @@ export default async function Page({
     'ticket-id': string;
   };
 }) {
-  const {workspaceURI} = workspacePathname(params);
+  const session = await getSession();
+  const {workspaceURI, workspaceURL} = workspacePathname(params);
   const projectId = params['project-id'];
   const ticketId = params['ticket-id'];
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) notFound();
 
   const [ticket, statuses, project] = await Promise.all([
     findTicket(ticketId, projectId),
     findTicketStatuses(projectId),
-    findProject(projectId),
+    findProject(projectId, workspace.id),
   ]);
   if (!ticket) notFound();
   return (

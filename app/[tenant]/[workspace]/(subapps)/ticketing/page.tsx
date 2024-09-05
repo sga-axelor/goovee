@@ -43,6 +43,7 @@ export default async function Page({
   }).then(clone);
 
   const projects = await findProjectsWithTaskCount({
+    workspaceId: workspace.id,
     take: +limit,
     skip: getSkip(limit, page),
   });
@@ -51,7 +52,9 @@ export default async function Page({
   if (pages == 1 && projects.length === 1) {
     redirect(`${workspaceURI}/ticketing/projects/${projects[0].id}`);
   }
-
+  if (!projects.length) {
+    <h3>{i18n.get('No projects found')}</h3>;
+  }
   return (
     <>
       <HeroSearch
@@ -62,11 +65,16 @@ export default async function Page({
         image={IMAGE_URL}
       />
       <div className="container mt-6 space-y-6">
-        <div className="flex items-center justify-between">
+        {projects.length === 0 ? (
+          <h2 className="font-semibold text-xl text-center">
+            {i18n.get('No projects found')}
+          </h2>
+        ) : (
           <h2 className="font-semibold text-xl">
             {i18n.get('Choose your project')}
           </h2>
-        </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {projects.map(project => (
             <Link

@@ -15,6 +15,7 @@ export const UpdateTicketSchema = TicketFormSchema.extend({
   id: z.string(),
   version: z.number(),
   subject: z.string().optional(),
+  project: z.string(),
 });
 
 export const CreateTicketSchema = TicketFormSchema.extend({

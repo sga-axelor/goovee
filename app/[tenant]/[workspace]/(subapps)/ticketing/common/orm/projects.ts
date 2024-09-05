@@ -6,16 +6,23 @@ import {getClient} from '@/goovee';
 import {AOSProject} from '@/goovee/.generated/models';
 import {ID} from '@goovee/orm';
 import {getAllTicketCount} from './tickets';
-import {QueryProps} from '../types';
+import {QueryProps, WorkspaceProps} from '../types';
 
-export async function findProjects(props?: QueryProps<AOSProject>) {
-  const {where, take, orderBy, skip} = props ?? {};
+export async function findProjects(
+  props?: QueryProps<AOSProject> & WorkspaceProps,
+) {
+  const {workspaceId, where, take, orderBy, skip} = props ?? {};
   const client = await getClient();
   const projects = await client.aOSProject.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
-    ...(where ? {where} : {}),
+    where: {
+      portalWorkspace: {
+        id: workspaceId,
+      },
+      ...where,
+    },
     select: {
       name: true,
     },
@@ -24,7 +31,7 @@ export async function findProjects(props?: QueryProps<AOSProject>) {
 }
 
 export async function findProjectsWithTaskCount(
-  props?: QueryProps<AOSProject>,
+  props?: QueryProps<AOSProject> & WorkspaceProps,
 ) {
   const projects = await findProjects(props);
   const counts = await Promise.all(
@@ -33,11 +40,14 @@ export async function findProjectsWithTaskCount(
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
 
-export async function findProject(id: ID) {
+export async function findProject(id: ID, workspaceId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {
       id: id,
+      portalWorkspace: {
+        id: workspaceId,
+      },
     },
     select: {
       id: true,
