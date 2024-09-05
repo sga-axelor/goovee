@@ -205,6 +205,7 @@ export async function getAllTicketCount(projectId: ID): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
+      typeSelect: TYPE_SELECT.TICKET,
       project: {
         id: projectId,
       },
@@ -222,6 +223,7 @@ export async function getMyTicketCount(
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
+      typeSelect: TYPE_SELECT.TICKET,
       project: {
         id: projectId,
       },
@@ -251,6 +253,7 @@ export async function getAssignedTicketCount(
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
+      typeSelect: TYPE_SELECT.TICKET,
       project: {
         id: projectId,
       },
@@ -271,6 +274,7 @@ export async function getCreatedTicketCount(
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
+      typeSelect: TYPE_SELECT.TICKET,
       project: {
         id: projectId,
       },
@@ -288,6 +292,7 @@ export async function getResolvedTicketCount(projectId: ID): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
+      typeSelect: TYPE_SELECT.TICKET,
       project: {
         id: projectId,
       },
@@ -309,6 +314,7 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
       project: {
         id: projectId,
       },
+      typeSelect: TYPE_SELECT.TICKET,
       ...where,
     },
     select: {
@@ -337,12 +343,13 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
   });
   return tickets;
 }
-export async function findTicket(ticketId: ID, projectId?: ID) {
+export async function findTicket(ticketId: ID, projectId: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: ticketId,
-      ...(projectId ? {project: {id: projectId}} : {}),
+      typeSelect: TYPE_SELECT.TICKET,
+      project: {id: projectId},
     },
     select: {
       name: true,
@@ -413,12 +420,13 @@ export async function findTicket(ticketId: ID, projectId?: ID) {
   return ticket;
 }
 
-export async function findTicketInfo(ticketId: ID, projectId?: ID) {
+export async function findTicketInfo(ticketId: ID, projectId: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
+      typeSelect: TYPE_SELECT.TICKET,
       id: ticketId,
-      ...(projectId ? {project: {id: projectId}} : {}),
+      project: {id: projectId},
     },
     select: {
       name: true,
