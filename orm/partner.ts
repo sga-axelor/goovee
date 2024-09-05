@@ -34,29 +34,6 @@ export async function findPartnerByEmail(email: string, tenantId: ID) {
   return partner;
 }
 
-export async function findPosts() {
-  const client = await getClient();
-
-  const id = 1;
-  const take = 25;
-  const skip = 0;
-
-  return client.$raw(
-    `
-      SELECT post.id, post.title,
-      COUNT(comment.id) AS comment_count,
-      COUNT(subcomment.id) AS subcomment_count 
-      FROM post 
-      LEFT JOIN comment ON comment.post_id = $1
-      LEFT JOIN comment subcomment ON subcomment.parent_id = $comment.id
-      GROUP BY post.id, post.title
-      ORDER BY COUNT(comment.id) + COUNT(subcomment.id) DESC
-      LIMIT $2
-      OFFSET $3`,
-    [id, take, skip],
-  );
-}
-
 export async function registerPartner({
   firstName,
   name,
