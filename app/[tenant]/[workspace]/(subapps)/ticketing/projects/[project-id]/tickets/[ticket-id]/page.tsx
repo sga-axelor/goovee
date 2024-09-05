@@ -24,16 +24,19 @@ import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {FaChevronRight} from 'react-icons/fa';
 import {MdOutlineModeEditOutline} from 'react-icons/md';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProject, findTicketStatuses} from '../../../../common/orm/projects';
 import {findTicket} from '../../../../common/orm/tickets';
 import {Stepper} from '../../../../common/ui/components/stepper';
 import {formatDate} from '../../../../common/utils';
+import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
   childTickets?: AOSProjectTask[];
+  projectId?: string;
 }
 export default async function Page({
   params,
@@ -110,6 +113,7 @@ export default async function Page({
         <SubTickets
           parentTicket={ticket.parentTask}
           childTickets={ticket.childTasks}
+          projectId={projectId}
         />
       )}
     </div>
@@ -229,7 +233,7 @@ function Description({description}: {description: Maybe<string>}) {
   return <div dangerouslySetInnerHTML={{__html: html}} />;
 }
 
-function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
+function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
   return (
     <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
       {/* ----parent ticket----- */}
@@ -239,38 +243,10 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
           <hr className="mt-5" />
           <Table>
             <TableBody>
-              <TableRow>
-                <TableCell className="px-5">
-                  <Link href="">#{parentTicket.id}</Link>
-                </TableCell>
-                <TableCell className="flex justify-center items-center">
-                  <Avatar className="h-12 w-16">
-                    <AvatarImage src="/images/user.png" />
-                  </Avatar>
-                  <p className="ms-1">{parentTicket.contact?.name}</p>
-                </TableCell>
-                <TableCell>{parentTicket.name}</TableCell>
-                <TableCell>
-                  {parentTicket.priority && (
-                    <Tag variant="blue" className="text-[12px] py-1 w-max">
-                      {parentTicket.priority?.name}
-                    </Tag>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {parentTicket.status && (
-                    <Tag
-                      variant="default"
-                      className="text-[12px] py-1 w-max"
-                      outline>
-                      {parentTicket.status?.name}
-                    </Tag>
-                  )}
-                </TableCell>
-                <TableCell>{parentTicket.projectTaskCategory?.name}</TableCell>
-                <TableCell>{parentTicket.assignedTo?.name}</TableCell>
-                <TableCell>{formatDate(parentTicket.updatedOn)}</TableCell>
-              </TableRow>
+              <TicketRows
+                tickets={[clone(parentTicket)]}
+                projectId={projectId}
+              />
             </TableBody>
           </Table>
         </>
@@ -284,38 +260,7 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
             <TableBody>
               {childTickets.map(ticket => {
                 return (
-                  <TableRow key={ticket?.id}>
-                    <TableCell className="px-5">
-                      <Link href="">#{ticket.id}</Link>
-                    </TableCell>
-                    <TableCell className="flex justify-center items-center">
-                      <Avatar className="h-12 w-16">
-                        <AvatarImage src="/images/user.png" />
-                      </Avatar>
-                      <p className="ms-1">{ticket.contact?.name}</p>
-                    </TableCell>
-                    <TableCell>{ticket.name}</TableCell>
-                    <TableCell>
-                      {ticket.priority && (
-                        <Tag variant="blue" className="text-[12px] py-1 w-max">
-                          {ticket.priority?.name}
-                        </Tag>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {ticket.status && (
-                        <Tag
-                          variant="default"
-                          className="text-[12px] py-1 w-max"
-                          outline>
-                          {ticket.status?.name}
-                        </Tag>
-                      )}
-                    </TableCell>
-                    <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
-                    <TableCell>{ticket.assignedTo?.name}</TableCell>
-                    <TableCell>{formatDate(ticket?.updatedOn)}</TableCell>
-                  </TableRow>
+                  <TicketRows tickets={[clone(ticket)]} projectId={projectId} />
                 );
               })}
             </TableBody>

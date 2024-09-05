@@ -1,3 +1,4 @@
+'use client';
 // ---- CORE IMPORTS ---- //
 import {
   Avatar,
