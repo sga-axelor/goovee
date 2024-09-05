@@ -32,7 +32,7 @@ import {findTicket} from '../../../../common/orm/tickets';
 import {Stepper} from '../../../../common/ui/components/stepper';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
 import {formatDate} from '../../../../common/utils';
-import AssignButton from './button';
+import {AssignToSupplier} from './assign-to-supplier';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -200,7 +200,7 @@ function TicketDetails({
           </div>
           {ticket.assignment !== 2 && (
             <div className="ml-auto">
-              <AssignButton id={ticket.id!} version={ticket.version!} />
+              <AssignToSupplier id={ticket.id!} version={ticket.version!} />
             </div>
           )}
         </div>

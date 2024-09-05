@@ -436,8 +436,7 @@ export async function findTicketInfo(ticketId: ID, projectId?: ID) {
   return ticket;
 }
 
-export async function updateTicketAssign(data: UpdateAssignTicket) {
-  const {id, version} = data;
+export async function assignTicketToSupplier(id: string, version: number) {
   const client = await getClient();
 
   const ticket = await client.aOSProjectTask.update({

@@ -12,7 +12,7 @@ import {revalidatePath} from 'next/cache';
 import {
   createTicket,
   updateTicket,
-  updateTicketAssign,
+  assignTicketToSupplier,
 } from '../../../orm/tickets';
 import {
   UpdateTicketSchema,
@@ -35,12 +35,10 @@ type mutateProps = {
         data: UpdateTicketInfo;
       };
 };
-type assignProp = {
+
+type AssignToSupplierProps = {
   workspaceURL: string;
-  workspaceURI: string;
-  action: {
-    data: UpdateAssignTicket;
-  };
+  data: UpdateAssignTicket;
 };
 
 export async function mutate(
@@ -68,8 +66,6 @@ export async function mutate(
       message: i18n.get('Unauthorized'),
     };
   }
-
-  //TODO: use actual validation
 
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.resources,
@@ -123,13 +119,13 @@ export async function mutate(
   }
 }
 
-export async function assign(
-  props: assignProp,
+export async function assignToSupplier(
+  props: AssignToSupplierProps,
 ): Promise<
   | {error: true; message: string; data?: never}
   | {error: false; data: any; message?: never}
 > {
-  const {workspaceURL, workspaceURI, action} = props;
+  const {workspaceURL, data} = props;
 
   if (!workspaceURL) {
     return {
@@ -140,8 +136,7 @@ export async function assign(
 
   const session = await getSession();
 
-  // const user = session?.user;
-  const user = {id: '1'};
+  const user = session?.user;
 
   if (!user) {
     return {
@@ -150,34 +145,32 @@ export async function assign(
     };
   }
 
-  //TODO: use actual validation
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.resources,
+    user,
+    url: workspaceURL,
+  });
 
-  // const subapp = await findSubappAccess({
-  //   code: SUBAPP_CODES.resources,
-  //   user,
-  //   url: workspaceURL,
-  // });
-  //
-  // if (!subapp) {
-  //   return {
-  //     error: true,
-  //     message: i18n.get('Unauthorized'),
-  //   };
-  // }
-  //
-  // const workspace = await findWorkspace({
-  //   user,
-  //   url: workspaceURL,
-  // });
-  //
-  // if (!workspace) {
-  //   return {
-  //     error: true,
-  //     message: i18n.get('Invalid workspace'),
-  //   };
-  // }
+  if (!subapp) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
   try {
-    const ticket = await updateTicketAssign(action.data);
+    const ticket = await assignTicketToSupplier(data.id, data.version);
 
     return {
       error: false,
