@@ -12,8 +12,6 @@ import {
   BreadcrumbSeparator,
   Table,
   TableBody,
-  TableCell,
-  TableRow,
   Tag,
 } from '@/ui/components';
 import {Progress} from '@/ui/components/progress';
@@ -32,6 +30,7 @@ import {findTicket} from '../../../../common/orm/tickets';
 import {Stepper} from '../../../../common/ui/components/stepper';
 import {formatDate} from '../../../../common/utils';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
+import AssignButton from './button';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -178,15 +177,22 @@ function TicketDetails({
         </p>
         <hr />
 
-        <div className="flex flex-col space-y-2 !mt-3.5">
-          <p>
-            <span className="font-medium pe-2">{i18n.get('Assigned to')}:</span>
-            {ticket.assignedTo?.name}
-          </p>
-          <p>
-            <span className="font-medium pe-2">{i18n.get('Expected on')}:</span>
-            {formatDate(ticket.taskEndDate)}
-          </p>
+        <div className="flex items-start">
+          <div className="flex flex-col space-y-2">
+            <p>
+              <span className="font-medium pe-2">Assigned to:</span>
+              {ticket.assignment === 2 ? 'Supplier' : 'Customer'}
+            </p>
+            <p>
+              <span className="font-medium pe-2">Expected on:</span>
+              {formatDate(ticket.taskEndDate)}
+            </p>
+          </div>
+          {ticket.assignment !== 2 && (
+            <div className="ml-auto">
+              <AssignButton id={ticket.id!} version={ticket.version!} />
+            </div>
+          )}
         </div>
 
         <hr />
@@ -260,7 +266,11 @@ function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
             <TableBody>
               {childTickets.map(ticket => {
                 return (
-                  <TicketRows tickets={[clone(ticket)]} projectId={projectId} />
+                  <TicketRows
+                    tickets={[clone(ticket)]}
+                    projectId={projectId}
+                    key={ticket.id}
+                  />
                 );
               })}
             </TableBody>

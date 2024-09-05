@@ -9,12 +9,17 @@ import {clone} from '@/utils';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {createTicket, updateTicket} from '../../../orm/tickets';
+import {
+  createTicket,
+  updateTicket,
+  updateTicketAssign,
+} from '../../../orm/tickets';
 import {
   UpdateTicketSchema,
   CreateTicketSchema,
   CreateTicketInfo,
   UpdateTicketInfo,
+  UpdateAssignTicket,
 } from './schema';
 
 type mutateProps = {
@@ -29,6 +34,13 @@ type mutateProps = {
         type: 'update';
         data: UpdateTicketInfo;
       };
+};
+type assignProp = {
+  workspaceURL: string;
+  workspaceURI: string;
+  action: {
+    data: UpdateAssignTicket;
+  };
 };
 
 export async function mutate(
@@ -99,6 +111,74 @@ export async function mutate(
         `${workspaceURI}/ticketing/projects/${ticket.project.id}/tickets`,
       );
     }
+
+    return {
+      error: false,
+      data: clone(ticket),
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
+export async function assign(
+  props: assignProp,
+): Promise<
+  | {error: true; message: string; data?: never}
+  | {error: false; data: any; message?: never}
+> {
+  const {workspaceURL, workspaceURI, action} = props;
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: i18n.get('Workspace not provided.'),
+    };
+  }
+
+  const session = await getSession();
+
+  // const user = session?.user;
+  const user = {id: '1'};
+
+  if (!user) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  //TODO: use actual validation
+
+  // const subapp = await findSubappAccess({
+  //   code: SUBAPP_CODES.resources,
+  //   user,
+  //   url: workspaceURL,
+  // });
+  //
+  // if (!subapp) {
+  //   return {
+  //     error: true,
+  //     message: i18n.get('Unauthorized'),
+  //   };
+  // }
+  //
+  // const workspace = await findWorkspace({
+  //   user,
+  //   url: workspaceURL,
+  // });
+  //
+  // if (!workspace) {
+  //   return {
+  //     error: true,
+  //     message: i18n.get('Invalid workspace'),
+  //   };
+  // }
+  try {
+    const ticket = await updateTicketAssign(action.data);
 
     return {
       error: false,

@@ -20,7 +20,12 @@ export const UpdateTicketSchema = TicketFormSchema.extend({
 export const CreateTicketSchema = TicketFormSchema.extend({
   project: z.string(),
 });
+export const UpdateAssignTicketSchema = z.object({
+  id: z.string(),
+  version: z.number(),
+});
 
 export type TicketInfo = z.infer<typeof TicketFormSchema>;
 export type CreateTicketInfo = z.infer<typeof CreateTicketSchema>;
 export type UpdateTicketInfo = z.infer<typeof UpdateTicketSchema>;
+export type UpdateAssignTicket = z.infer<typeof UpdateAssignTicketSchema>;

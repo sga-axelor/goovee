@@ -9,7 +9,11 @@ import {i18n} from '@/lib/i18n';
 import {Entity, ID} from '@goovee/orm';
 
 import {QueryProps} from '../types';
-import {CreateTicketInfo, UpdateTicketInfo} from '../ui/components/ticket-form';
+import {
+  CreateTicketInfo,
+  UpdateAssignTicket,
+  UpdateTicketInfo,
+} from '../ui/components/ticket-form';
 import {ASSIGNMENT, INVOICING_TYPE, TYPE_SELECT} from '../constants';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
@@ -356,6 +360,7 @@ export async function findTicket(ticketId: ID, projectId?: ID) {
       status: {
         name: true,
       },
+      assignment: true,
     },
   });
 
@@ -379,6 +384,21 @@ export async function findTicketInfo(ticketId: ID, projectId?: ID) {
       priority: {
         name: true,
       },
+    },
+  });
+
+  return ticket;
+}
+
+export async function updateTicketAssign(data: UpdateAssignTicket) {
+  const {id, version} = data;
+  const client = await getClient();
+
+  const ticket = await client.aOSProjectTask.update({
+    data: {
+      id,
+      version,
+      assignment: ASSIGNMENT.PROVIDER,
     },
   });
 
