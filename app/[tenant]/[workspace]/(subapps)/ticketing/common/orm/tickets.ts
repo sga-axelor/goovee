@@ -51,7 +51,7 @@ export async function createTicket(data: CreateTicketInfo, user: ID) {
       createdOn: new Date(),
       updatedOn: new Date(),
       taskDate: new Date(),
-      assignment: ASSIGNMENT.PROVIDER,
+      assignment: ASSIGNMENT.CUSTOMER,
       typeSelect: TYPE_SELECT.TICKET,
       invoicingType: INVOICING_TYPE.NO_INVOICING,
       isPrivate: false,
