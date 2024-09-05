@@ -264,15 +264,7 @@ function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
           <hr className="mt-5" />
           <Table>
             <TableBody>
-              {childTickets.map(ticket => {
-                return (
-                  <TicketRows
-                    tickets={[clone(ticket)]}
-                    projectId={projectId}
-                    key={ticket.id}
-                  />
-                );
-              })}
+              <TicketRows tickets={clone(childTickets)} projectId={projectId} />
             </TableBody>
           </Table>
         </>
