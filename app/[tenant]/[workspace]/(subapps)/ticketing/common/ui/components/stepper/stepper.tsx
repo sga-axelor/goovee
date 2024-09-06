@@ -22,7 +22,7 @@ export function Stepper(props: StepperProps) {
               className={cn(
                 'w-[10px] h-[10px] rounded-full bg-gray-400 relative',
                 {
-                  ['bg-primary']: i <= progress,
+                  ['bg-success']: i <= progress,
                 },
               )}>
               <p className="mt-1 text-sm absolute top-4 w-max right-1/2 translate-x-1/2">
@@ -32,7 +32,7 @@ export function Stepper(props: StepperProps) {
             {steps.length - 1 !== i && (
               <div
                 className={cn('h-[1px] flex-grow bg-gray-400', {
-                  ['bg-primary']: i < progress,
+                  ['bg-success']: i < progress,
                 })}
               />
             )}
