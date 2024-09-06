@@ -18,7 +18,7 @@ export function Swipe({items}: {items: ReactNode[]}) {
       {items.map((item, i) => (
         <SwiperSlide
           key={i}
-          className="bg-white py-6 rounded-lg shrink-0 !mr-0 !w-[278px] cursor-pointer">
+          className="bg-white py-6 rounded-lg shrink-0 !mr-0 !w-[217px] cursor-pointer">
           {item}
         </SwiperSlide>
       ))}
