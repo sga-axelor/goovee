@@ -247,12 +247,12 @@ export async function getMyTicketCount(
       },
       OR: [
         {
-          assignedTo: {
+          assignedToContact: {
             id: userId,
           },
         },
         {
-          createdBy: {
+          requestedByContact: {
             id: userId,
           },
         },
@@ -276,7 +276,7 @@ export async function getAssignedTicketCount(
       status: {
         isCompleted: false,
       },
-      assignedTo: {
+      assignedToContact: {
         id: userId,
       },
     },
@@ -298,7 +298,7 @@ export async function getCreatedTicketCount(
       status: {
         isCompleted: false,
       },
-      createdBy: {
+      requestedByContact: {
         id: userId,
       },
     },
