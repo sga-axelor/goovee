@@ -43,6 +43,7 @@ export default async function Page({
   }).then(clone);
 
   const projects = await findProjectsWithTaskCount({
+    userId: session?.user.id!,
     workspaceId: workspace.id,
     take: +limit,
     skip: getSkip(limit, page),

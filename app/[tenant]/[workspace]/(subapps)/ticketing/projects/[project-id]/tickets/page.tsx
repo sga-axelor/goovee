@@ -80,7 +80,7 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
-  const project = (await findProject(projectId, workspace.id))!;
+  const project = (await findProject(projectId, workspace.id, userId))!;
   const tickets = await findTickets({
     projectId,
     take: +limit,
