@@ -118,6 +118,8 @@ export async function findContactPartners(projectId: ID) {
     },
     select: {
       clientPartner: {
+        id: true,
+        name: true,
         contactPartnerSet: {
           select: {
             name: true,
@@ -126,5 +128,13 @@ export async function findContactPartners(projectId: ID) {
       },
     },
   });
-  return project?.clientPartner?.contactPartnerSet ?? [];
+  if (!project?.clientPartner) return [];
+
+  const partners = project.clientPartner.contactPartnerSet ?? [];
+  partners.push({
+    id: project.clientPartner.id,
+    version: project.clientPartner.version,
+    name: project.clientPartner.name,
+  });
+  return partners;
 }
