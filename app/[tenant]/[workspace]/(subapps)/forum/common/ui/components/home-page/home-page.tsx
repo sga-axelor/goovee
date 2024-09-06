@@ -91,9 +91,6 @@ export const HomePage = ({
   };
 
   const handleSearch = (term: string) => {
-    if (!term) {
-      return;
-    }
     update([{key: URL_PARAMS.search, value: term}]);
   };
 
@@ -129,6 +126,7 @@ export const HomePage = ({
     <Search
       searchKey="title"
       findQuery={async () => {
+        //
         const response = await fetchPosts({workspaceURL});
         if (response) {
           const {posts} = response;
