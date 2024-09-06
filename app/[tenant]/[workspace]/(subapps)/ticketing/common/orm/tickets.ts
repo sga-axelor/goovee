@@ -373,7 +373,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
     },
     select: {
       name: true,
-      projectVersion: {
+      targetVersion: {
         title: true,
       },
       progress: true,

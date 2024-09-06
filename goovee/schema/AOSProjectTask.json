@@ -116,7 +116,7 @@
     },
     {
       "type": "ManyToOne",
-      "name": "projectVersion",
+      "name": "targetVersion",
       "target": "AOSProjectVersion"
     },
     {
