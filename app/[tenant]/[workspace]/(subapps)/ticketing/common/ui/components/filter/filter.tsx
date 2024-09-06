@@ -153,6 +153,7 @@ export function Filter(props: FilterProps) {
               className="overflow-y-auto">
               <div className="space-y-4">
                 <RequestedByField form={form} contacts={contacts} />
+                <AssignedToField form={form} contacts={contacts} />
                 <DatesField form={form} />
                 <PriorityField form={form} priorities={priorities} />
                 <StatusField form={form} statuses={statuses} />
@@ -168,6 +169,43 @@ export function Filter(props: FilterProps) {
   );
 }
 
+function AssignedToField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
+  const {form, contacts} = props;
+  return (
+    <FormField
+      control={form.control}
+      name="assignedTo"
+      render={({field}) => (
+        <FormItem className="grow">
+          <FormLabel>{i18n.get('Assigned to')} :</FormLabel>
+          <MultiSelector
+            onValuesChange={field.onChange}
+            values={field.value ?? []}
+            className="space-y-0">
+            <MultiSelectorTrigger
+              renderLabel={value =>
+                contacts.find(contact => contact.id === value)?.name
+              }>
+              <MultiSelectorInput placeholder="Select users" />
+            </MultiSelectorTrigger>
+            <MultiSelectorContent>
+              <MultiSelectorList>
+                {contacts.map(contact => (
+                  <MultiSelectorItem key={contact.id} value={contact.id}>
+                    <div className="flex items-center space-x-2">
+                      <span>{contact.name}</span>
+                    </div>
+                  </MultiSelectorItem>
+                ))}
+              </MultiSelectorList>
+            </MultiSelectorContent>
+          </MultiSelector>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
 function RequestedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
   const {form, contacts} = props;
   return (
