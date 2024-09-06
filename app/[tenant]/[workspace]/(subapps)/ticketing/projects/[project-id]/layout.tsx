@@ -24,7 +24,7 @@ export default async function Layout({
   });
   if (!workspace) notFound();
 
-  const project = findProject(projectId, workspace.id);
+  const project = findProject(projectId, workspace.id, session!.user.id);
   if (!project) notFound();
   return children;
 }

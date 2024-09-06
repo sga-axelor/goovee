@@ -65,7 +65,7 @@ export default async function Page({
   const [ticket, statuses, project] = await Promise.all([
     findTicket(ticketId, projectId),
     findTicketStatuses(projectId),
-    findProject(projectId, workspace.id),
+    findProject(projectId, workspace.id, session!.user.id),
   ]);
   if (!ticket) notFound();
   return (

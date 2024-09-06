@@ -8,21 +8,35 @@ import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {Entity, ID} from '@goovee/orm';
 
-import {QueryProps} from '../types';
-import {
-  CreateTicketInfo,
-  UpdateAssignTicket,
-  UpdateTicketInfo,
-} from '../ui/components/ticket-form';
 import {ASSIGNMENT, INVOICING_TYPE, TYPE_SELECT} from '../constants';
+import {CreateTicketInfo, UpdateTicketInfo} from '../ui/components/ticket-form';
+import {
+  getProjectAccessFilter,
+  getTicketAccessFilter,
+  QueryProps,
+} from './helpers';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
 };
 
+async function hasTicketAccess(id: ID): Promise<boolean> {
+  const client = await getClient();
+  const ticket = await client.aOSProjectTask.findOne({
+    where: {
+      id,
+      ...getTicketAccessFilter(),
+    },
+    select: {
+      id: true,
+    },
+  });
+  return !!ticket;
+}
+
 export async function createTicket(
   data: CreateTicketInfo,
-  user: ID,
+  userId: ID,
   workspaceId: ID,
 ) {
   const {priority, subject, description, category, project: projectId} = data;
@@ -30,9 +44,7 @@ export async function createTicket(
   const project = await client.aOSProject.findOne({
     where: {
       id: projectId,
-      portalWorkspace: {
-        id: workspaceId,
-      },
+      ...getProjectAccessFilter({userId, workspaceId}),
     },
     select: {
       assignedTo: {
@@ -67,8 +79,8 @@ export async function createTicket(
       invoicingType: INVOICING_TYPE.NO_INVOICING,
       isPrivate: false,
       progress: '0.00',
-      requestedByContact: {select: {id: user}},
-      assignedToContact: {select: {id: user}},
+      requestedByContact: {select: {id: userId}},
+      assignedToContact: {select: {id: userId}},
       project: {
         select: {
           id: projectId,
@@ -127,7 +139,7 @@ export async function createTicket(
 
 export async function updateTicket(
   data: UpdateTicketInfo,
-  user: ID,
+  userId: ID,
   workspaceId: ID,
 ) {
   const {
@@ -144,9 +156,7 @@ export async function updateTicket(
   const project = await client.aOSProject.findOne({
     where: {
       id: projectId,
-      portalWorkspace: {
-        id: workspaceId,
-      },
+      ...getProjectAccessFilter({userId, workspaceId}),
     },
     select: {
       assignedTo: {
@@ -165,14 +175,20 @@ export async function updateTicket(
   });
 
   if (!project) {
+    // To make sure the user has access to the project.
     throw new Error(i18n.get('Project not found'));
+  }
+
+  if (!(await hasTicketAccess(id))) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
   }
   const ticket = await client.aOSProjectTask.update({
     data: {
       id,
       version,
       updatedOn: new Date(),
-      updatedBy: {select: {id: user}},
+      updatedBy: {select: {id: userId}},
       name: subject,
       description: description,
       ...(category && {
@@ -204,7 +220,7 @@ export async function getAllTicketCount(projectId: ID): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
-      typeSelect: TYPE_SELECT.TICKET,
+      ...getTicketAccessFilter(),
       project: {
         id: projectId,
       },
@@ -222,7 +238,7 @@ export async function getMyTicketCount(
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
-      typeSelect: TYPE_SELECT.TICKET,
+      ...getTicketAccessFilter(),
       project: {
         id: projectId,
       },
@@ -245,6 +261,7 @@ export async function getMyTicketCount(
   });
   return Number(count);
 }
+
 export async function getAssignedTicketCount(
   projectId: ID,
   userId: ID,
@@ -252,7 +269,7 @@ export async function getAssignedTicketCount(
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
-      typeSelect: TYPE_SELECT.TICKET,
+      ...getTicketAccessFilter(),
       project: {
         id: projectId,
       },
@@ -266,6 +283,7 @@ export async function getAssignedTicketCount(
   });
   return Number(count);
 }
+
 export async function getCreatedTicketCount(
   projectId: ID,
   userId: ID,
@@ -273,7 +291,7 @@ export async function getCreatedTicketCount(
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
-      typeSelect: TYPE_SELECT.TICKET,
+      ...getTicketAccessFilter(),
       project: {
         id: projectId,
       },
@@ -291,7 +309,7 @@ export async function getResolvedTicketCount(projectId: ID): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
-      typeSelect: TYPE_SELECT.TICKET,
+      ...getTicketAccessFilter(),
       project: {
         id: projectId,
       },
@@ -310,10 +328,10 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
     where: {
+      ...getTicketAccessFilter(),
       project: {
         id: projectId,
       },
-      typeSelect: TYPE_SELECT.TICKET,
       ...where,
     },
     select: {
@@ -350,8 +368,8 @@ export async function findTicket(ticketId: ID, projectId: ID) {
   const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: ticketId,
-      typeSelect: TYPE_SELECT.TICKET,
       project: {id: projectId},
+      ...getTicketAccessFilter(),
     },
     select: {
       name: true,
@@ -362,6 +380,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       description: true,
       taskDate: true,
       taskEndDate: true,
+      attrs: true,
       assignedToContact: {
         name: true,
       },
@@ -446,7 +465,7 @@ export async function findTicketInfo(ticketId: ID, projectId: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
-      typeSelect: TYPE_SELECT.TICKET,
+      ...getTicketAccessFilter(),
       id: ticketId,
       project: {id: projectId},
     },
@@ -467,6 +486,10 @@ export async function findTicketInfo(ticketId: ID, projectId: ID) {
 }
 
 export async function assignTicketToSupplier(id: string, version: number) {
+  //TODO: check if the user hass access to the project or  not
+  if (!(await hasTicketAccess(id))) {
+    throw new Error(i18n.get('Ticket not found'));
+  }
   const client = await getClient();
 
   const ticket = await client.aOSProjectTask.update({

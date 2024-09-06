@@ -5,22 +5,19 @@ import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import {AOSProject} from '@/goovee/.generated/models';
 import {ID} from '@goovee/orm';
-import {getAllTicketCount} from './tickets';
-import {QueryProps, WorkspaceProps} from '../types';
 
-export async function findProjects(
-  props?: QueryProps<AOSProject> & WorkspaceProps,
-) {
-  const {workspaceId, where, take, orderBy, skip} = props ?? {};
+import {AuthProps, getProjectAccessFilter, QueryProps} from './helpers';
+import {getAllTicketCount} from './tickets';
+
+export async function findProjects(props: QueryProps<AOSProject> & AuthProps) {
+  const {workspaceId, userId, where, take, orderBy, skip} = props;
   const client = await getClient();
   const projects = await client.aOSProject.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
     where: {
-      portalWorkspace: {
-        id: workspaceId,
-      },
+      ...getProjectAccessFilter({workspaceId, userId}),
       ...where,
     },
     select: {
@@ -31,7 +28,7 @@ export async function findProjects(
 }
 
 export async function findProjectsWithTaskCount(
-  props?: QueryProps<AOSProject> & WorkspaceProps,
+  props: QueryProps<AOSProject> & AuthProps,
 ) {
   const projects = await findProjects(props);
   const counts = await Promise.all(
@@ -40,14 +37,12 @@ export async function findProjectsWithTaskCount(
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
 
-export async function findProject(id: ID, workspaceId: ID) {
+export async function findProject(id: ID, workspaceId: ID, userId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {
       id: id,
-      portalWorkspace: {
-        id: workspaceId,
-      },
+      ...getProjectAccessFilter({workspaceId, userId}),
     },
     select: {
       id: true,

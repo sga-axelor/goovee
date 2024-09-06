@@ -1,5 +1,3 @@
-import {Entity, WhereOptions} from '@goovee/orm';
-
 export type Column<T extends string = string> = {
   key: T | (string & {});
   label: string;
@@ -53,14 +51,3 @@ export type SortKey =
   | 'category'
   | 'assignedTo'
   | 'updatedOn';
-export type QueryProps<T extends Entity> = {
-  where?: WhereOptions<T> | null;
-  take?: number;
-  // orderBy?: OrderByArg<T>;
-  orderBy?: any;
-  skip?: number;
-};
-
-export type WorkspaceProps = {
-  workspaceId: string;
-};
