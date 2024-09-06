@@ -84,12 +84,7 @@ export function Filter(props: FilterProps) {
   });
 
   const onSubmit = (value: z.infer<typeof FilterSchema>) => {
-    const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
-
-    if (!dirtyFieldKeys.length) return setOpen(false);
-    const dirtyValues = pick(value, dirtyFieldKeys);
-
-    const filter = EncodedFilterSchema.parse(dirtyValues);
+    const filter = EncodedFilterSchema.parse(value);
     const params = new URLSearchParams(searchParams);
     params.delete('page');
 

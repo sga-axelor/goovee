@@ -116,10 +116,16 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
             </Link>
           </TableCell>
           <TableCell className="flex md:justify-center items-center justify-end">
-            <Avatar className="h-12 w-16">
-              <AvatarImage src="/images/user.png" />
-            </Avatar>
-            <p className="ms-1"> {ticket.requestedByContact?.name}</p>
+            {ticket.requestedByContact?.name ? (
+              <>
+                <Avatar className="h-12 w-16">
+                  <AvatarImage src="/images/user.png" />
+                </Avatar>
+                <p className="ms-1"> {ticket.requestedByContact?.name}</p>
+              </>
+            ) : (
+              i18n.get('Supplier')
+            )}
             {small &&
               (show && ticket?.id === id ? (
                 <MdArrowDropUp

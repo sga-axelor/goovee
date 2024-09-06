@@ -32,7 +32,7 @@ import {
 // ---- LOCAL IMPORTS ---- //
 import Link from 'next/link';
 import {columns, sortKeyPathMap} from '../../common/constants';
-import {findProject} from '../../common/orm/projects';
+import {findProject, findTicketStatuses} from '../../common/orm/projects';
 import {
   findTickets,
   getAllTicketCount,
@@ -83,36 +83,41 @@ export default async function Page({
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
 
+  const statuses = await findTicketStatuses(projectId);
+
+  const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
+  const statusCompleted = statuses.filter(s => s.isCompleted).map(s => s.id);
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;
   const items = [
     {
       label: 'All Tickets',
       count: getAllTicketCount(projectId),
       icon: MdAllInbox,
-      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false})}`,
+      href: allTicketsURL,
     },
     {
       label: 'My tickets',
       count: getMyTicketCount(projectId, userId),
-      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false, myTickets: true})}`,
+      href: `${ticketsURL}?filter=${encodeFilter({status, myTickets: true})}`,
       icon: MdAllInbox,
     },
     {
       label: 'Assigned tickets',
       count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
-      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false, assignedTo: [userId]})}`,
+      href: `${ticketsURL}?filter=${encodeFilter({status, assignedTo: [userId]})}`,
     },
     {
       label: 'Created tickets',
       count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
-      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: false, requestedBy: [userId]})}`,
+      href: `${ticketsURL}?filter=${encodeFilter({status, requestedBy: [userId]})}`,
     },
     {
       label: 'Resolved tickets',
       count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
-      href: `${ticketsURL}?filter=${encodeFilter({statusCompleted: true})}`,
+      href: `${ticketsURL}?filter=${encodeFilter({status: statusCompleted})}`,
     },
   ].map(props => (
     <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
@@ -164,7 +169,7 @@ export default async function Page({
             <TableRow>
               <TableCell colSpan={columns.length + 1} align="right">
                 <Link
-                  href={`${ticketsURL}?filter=${encodeFilter({statusCompleted: false})}`}
+                  href={allTicketsURL}
                   className="inline-flex gap-1 items-center">
                   {i18n.get('See all tickets')}
                   <MdArrowForward />

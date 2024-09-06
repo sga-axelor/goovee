@@ -2,7 +2,7 @@
  * Tickets Constants
  */
 
-import {Column, FilterKey, SortKey} from '../types';
+import {Column, SortKey} from '../types';
 
 export const columns: Column<SortKey>[] = [
   {
@@ -38,15 +38,6 @@ export const columns: Column<SortKey>[] = [
     label: 'Updated',
   },
 ];
-
-export const filterKeyPathMap: Record<string, string> = {
-  priority: 'priority.id',
-  requestedBy: 'assignedTo.id',
-  status: 'status.id',
-  statusCompleted: 'status.isCompleted',
-  updatedOn: 'updatedOn',
-  updatedBy: 'updatedBy.id',
-};
 
 export const sortKeyPathMap: Record<string, string> = {
   ticketId: 'id',

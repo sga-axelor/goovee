@@ -3,8 +3,8 @@
  */
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
-import {AOSProject} from '@/goovee/.generated/models';
-import {ID} from '@goovee/orm';
+import {AOSProject, AOSProjectTaskStatus} from '@/goovee/.generated/models';
+import {ID, WhereOptions} from '@goovee/orm';
 
 import {AuthProps, getProjectAccessFilter, QueryProps} from './helpers';
 import {getAllTicketCount} from './tickets';
@@ -103,7 +103,15 @@ export async function findTicketStatuses(projectId: ID) {
           id: true,
           name: true,
           sequence: true,
+          isCompleted: true,
         },
+      } as unknown as {
+        select: {
+          id: true;
+          name: true;
+          sequence: true;
+          isCompleted: true;
+        };
       },
     },
   });
