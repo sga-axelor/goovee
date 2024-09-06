@@ -164,7 +164,7 @@ export default async function Page({
             <TableRow>
               <TableCell colSpan={columns.length + 1} align="right">
                 <Link
-                  href={ticketsURL}
+                  href={`${ticketsURL}?filter=${encodeFilter({statusCompleted: false})}`}
                   className="inline-flex gap-1 items-center">
                   {i18n.get('See all tickets')}
                   <MdArrowForward />
