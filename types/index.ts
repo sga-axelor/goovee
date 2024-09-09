@@ -213,7 +213,6 @@ export type Tenant = {
     };
   };
 };
-
 export enum ModelType {
   news = 'news',
   event = 'event',

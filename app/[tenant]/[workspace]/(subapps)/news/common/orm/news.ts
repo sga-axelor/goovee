@@ -96,18 +96,16 @@ export async function findNews({
           },
         },
         slug: true,
-        // This has been removed
-        // commentPanel -> new field
-        //   portalCommentList: {
-        //     select: {
-        //       contentComment: true,
-        //       author: {
-        //         simpleFullName: true,
-        //         picture: true,
-        //       },
-        //       publicationDateTime: true,
-        //     },
-        //   },
+        portalCommentList: {
+          select: {
+            contentComment: true,
+            author: {
+              simpleFullName: true,
+              picture: true,
+            },
+            publicationDateTime: true,
+          },
+        },
       },
     })
     .catch(() => []);
