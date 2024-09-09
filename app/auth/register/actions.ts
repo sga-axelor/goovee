@@ -62,7 +62,7 @@ export async function subscribe({
     };
   }
 
-  const client = await getClient();
+  const client = await getClient(tenantId);
 
   const $user = await client.aOSPartner.findOne({
     where: {
