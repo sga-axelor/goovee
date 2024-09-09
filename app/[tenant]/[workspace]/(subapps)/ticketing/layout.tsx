@@ -23,9 +23,12 @@ export default async function Layout({
   };
   children: React.ReactNode;
 }) {
+  const user = (await getSession())?.user;
+  if (!user) return notFound();
+
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.ticketing,
-    user: (await getSession())?.user,
+    user,
     url: workspacePathname(params)?.workspaceURL,
   });
 

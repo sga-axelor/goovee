@@ -14,6 +14,7 @@ export default async function Layout({
   children: ReactNode;
 }) {
   const session = await getSession();
+  if (!session?.user) notFound();
   const projectId = params?.['project-id'];
 
   const {workspaceURL} = workspacePathname(params);

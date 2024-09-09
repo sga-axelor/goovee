@@ -17,6 +17,8 @@ import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
 import {encodeFilter} from '@/utils/filter';
 import {workspacePathname} from '@/utils/workspace';
+import Link from 'next/link';
+import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 import {IconType} from 'react-icons';
 import {FaChevronRight} from 'react-icons/fa';
@@ -30,7 +32,6 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import Link from 'next/link';
 import {columns, sortKeyPathMap} from '../../common/constants';
 import {findProject, findTicketStatuses} from '../../common/orm/projects';
 import {
@@ -59,6 +60,7 @@ export default async function Page({
   const {limit = 7, page = 1, sort = 'updatedOn'} = searchParams;
 
   const session = await getSession();
+  if (!session?.user) notFound();
   const userId = session!.user.id;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);

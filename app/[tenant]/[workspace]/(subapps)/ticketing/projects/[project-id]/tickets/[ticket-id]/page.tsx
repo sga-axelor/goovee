@@ -51,6 +51,7 @@ export default async function Page({
   };
 }) {
   const session = await getSession();
+  if (!session?.user) notFound();
   const {workspaceURI, workspaceURL} = workspacePathname(params);
   const projectId = params['project-id'];
   const ticketId = params['ticket-id'];

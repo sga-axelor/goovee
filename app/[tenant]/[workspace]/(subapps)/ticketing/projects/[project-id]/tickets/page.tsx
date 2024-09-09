@@ -28,6 +28,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {ID} from '@goovee/orm';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
+import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
@@ -35,10 +36,10 @@ import {MdAdd} from 'react-icons/md';
 // ---- LOCAL IMPORTS ---- //
 import {columns, sortKeyPathMap} from '../../../common/constants';
 import {
+  findContactPartners,
   findProject,
   findTicketPriorities,
   findTicketStatuses,
-  findContactPartners,
 } from '../../../common/orm/projects';
 import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
@@ -71,6 +72,7 @@ export default async function Page({
   } = searchParams;
 
   const session = await getSession();
+  if (!session?.user) notFound();
   const userId = session!.user.id;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);

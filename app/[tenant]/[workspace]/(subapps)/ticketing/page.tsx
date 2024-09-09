@@ -18,7 +18,7 @@ import {cn} from '@/utils/css';
 import {workspacePathname} from '@/utils/workspace';
 import {ChevronLeft} from 'lucide-react';
 import Link from 'next/link';
-import {redirect} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProjectsWithTaskCount} from './common/orm/projects';
@@ -33,17 +33,19 @@ export default async function Page({
   searchParams: {[key: string]: string | undefined};
 }) {
   const session = await getSession();
+  if (!session?.user) notFound();
+
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const {limit = 8, page = 1} = searchParams;
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user: session.user,
     url: workspaceURL,
   }).then(clone);
 
   const projects = await findProjectsWithTaskCount({
-    userId: session?.user.id!,
+    userId: session.user.id,
     workspaceId: workspace.id,
     take: +limit,
     skip: getSkip(limit, page),
