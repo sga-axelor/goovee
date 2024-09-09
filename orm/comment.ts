@@ -11,9 +11,11 @@ import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
-import {getFileSizeText} from '@/utils/files';
-import {clone, parseFormData} from '@/utils';
-import {ModelType} from '@/types';
+import {getFileSizeText, parseFormData} from '@/utils/files';
+import {clone} from '@/utils';
+import {ModelType, PortalWorkspace} from '@/types';
+import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
+import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
 
 const pump = promisify(pipeline);
 
@@ -26,9 +28,9 @@ if (!fs.existsSync(storage)) {
 const timestamp = getCurrentDateTime();
 
 const ModelMap: Record<ModelType, String> = {
-  forum: 'forumPost',
-  news: 'portalNews',
-  event: 'portalEvent',
+  [ModelType.forum]: 'forumPost',
+  [ModelType.news]: 'portalNews',
+  [ModelType.event]: 'portalEvent',
 };
 
 export async function upload(formData: FormData, workspaceURL: string) {
@@ -47,15 +49,6 @@ export async function upload(formData: FormData, workspaceURL: string) {
     return {
       error: true,
       message: i18n.get('Text is required'),
-    };
-  }
-
-  const folder = formData.get('folder');
-
-  if (!folder) {
-    return {
-      error: true,
-      message: i18n.get('Folder is required'),
     };
   }
 
@@ -141,17 +134,15 @@ export async function upload(formData: FormData, workspaceURL: string) {
   }
 }
 
-export async function addComment1({
-  forumPost = null,
-  portalNews = null,
-  portalEvent = null,
-  workspaceURL,
+export async function addComment({
+  type,
+  model = null,
   subject,
+  workspaceURL,
   attachments = [],
 }: {
-  forumPost?: any;
-  portalNews?: any;
-  portalEvent?: any;
+  type: ModelType;
+  model: {id: string | number} | null;
   workspaceURL: string;
   subject: any;
   attachments?: any;
@@ -178,33 +169,37 @@ export async function addComment1({
       };
     }
 
+    if (!model) {
+      return {
+        error: true,
+        message: i18n.get('Model is missing'),
+      };
+    }
+
+    const modelRecord: any = await findByID({
+      type,
+      id: model?.id,
+      workspace,
+    });
+
+    if (!modelRecord) {
+      return {
+        error: true,
+        message: i18n.get(modelRecord?.message || 'Record not found.'),
+      };
+    }
+
     const client = await getClient();
+
+    const modelName = ModelMap[type];
 
     const response = await client.aOSComment.create({
       data: {
-        ...(forumPost
+        ...(modelRecord && modelName
           ? {
-              forumPost: {
+              [modelName as string]: {
                 select: {
-                  id: forumPost.id,
-                },
-              },
-            }
-          : {}),
-        ...(portalNews
-          ? {
-              portalNews: {
-                select: {
-                  id: portalNews.id,
-                },
-              },
-            }
-          : {}),
-        ...(portalEvent
-          ? {
-              portalEvent: {
-                select: {
-                  id: portalEvent.id,
+                  id: modelRecord.id,
                 },
               },
             }
@@ -250,93 +245,57 @@ export async function addComment1({
   }
 }
 
-export async function addComment({
+export async function findByID({
   type,
-  model = null,
-  subject,
-  workspaceURL,
-  attachments = [],
+  id,
+  workspace,
 }: {
   type: ModelType;
-  model: any;
-  workspaceURL: string;
-  subject: any;
-  attachments?: any;
+  id: string | number;
+  workspace: PortalWorkspace;
 }) {
-  try {
-    const session = await getSession();
-    const user = session?.user;
-    if (!user) {
-      return {
-        error: true,
-        message: i18n.get('Unauthorized'),
-      };
-    }
-
-    const workspace = await findWorkspace({
-      user,
-      url: workspaceURL,
-    });
-
-    if (!workspace) {
-      return {
-        error: true,
-        message: i18n.get('Invalid workspace'),
-      };
-    }
-
-    const client = await getClient();
-
-    const modelName = ModelMap[type];
-
-    const response = await client.aOSComment.create({
-      data: {
-        ...(model && modelName
-          ? {
-              [modelName as string]: {
-                select: {
-                  id: model.id,
-                },
-              },
-            }
-          : {}),
-        mailMessage: {
-          create: {
-            subject,
-            author: {
-              select: {
-                id: user?.id,
-              },
-            },
-            authorID: user?.id,
-          },
-        },
-        commentFileList:
-          attachments?.length > 0
-            ? {
-                create: attachments.map((attachment: any) => ({
-                  description: attachments?.description || '',
-                  attachmentFile: {
-                    select: {
-                      id: attachment.id,
-                    },
-                  },
-                })),
-              }
-            : [],
-        createdOn: timestamp as unknown as Date,
-        updatedOn: timestamp as unknown as Date,
-      },
-    });
-    return {
-      success: true,
-      data: clone(response),
-    };
-  } catch (error) {
-    console.log('error >>>', error);
+  if (!type || !id) {
     return {
       error: true,
-      message: 'An unexpected error occurred.',
+      message: i18n.get('Missing type or ID'),
     };
   }
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+  if (!user) {
+    return {
+      error: true,
+      message: i18n.get('Unauthorized'),
+    };
+  }
+
+  let response: any;
+
+  switch (type) {
+    case ModelType.event:
+      response = await findEventByID(id);
+      break;
+    case ModelType.news:
+      const {news}: any = await findNews({id, workspace});
+      response = news;
+      break;
+    case ModelType.forum:
+      response = {};
+      break;
+    default:
+      return {
+        error: true,
+        message: i18n.get('Unknown type'),
+      };
+  }
+
+  return response;
 }

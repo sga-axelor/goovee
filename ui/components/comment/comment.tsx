@@ -25,7 +25,6 @@ import {addComment, upload} from '@/orm/comment';
 import {ModelType} from '@/types';
 
 type CommentProps = {
-  folder: string;
   placeholderText: string;
   showAttachmentIcon?: boolean;
   record: {id: string | number} & object;
@@ -53,7 +52,6 @@ const formSchema = z.object({
 });
 
 export function Comment({
-  folder,
   placeholderText = 'Enter text here*',
   showAttachmentIcon = true,
   record,
@@ -81,7 +79,6 @@ export function Comment({
 
     formData.append('text', values.text);
     formData.append('content', values.content);
-    formData.append('folder', folder);
 
     let attachmentIDs: string[] = [];
 

@@ -65,25 +65,3 @@ export function getPageInfo({
 export function getSkipInfo(limit?: string | number, page?: string | number) {
   return Number(limit) * Math.max(Number(page) - 1, 0);
 }
-
-export function parseFormData(formData: FormData) {
-  const values: any = [];
-
-  for (const [key, value] of formData.entries()) {
-    const index = Number(key.match(/\[(\d+)\]/)?.[1]);
-
-    if (Number.isNaN(index)) {
-      continue;
-    }
-
-    if (!values[index]) {
-      values[index] = {};
-    }
-
-    const field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
-
-    values[index][field] = value instanceof File ? value : value.toString();
-  }
-
-  return values;
-}
