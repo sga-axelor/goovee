@@ -3,11 +3,15 @@ import axios from 'axios';
 let bundle: Record<string, string> = {};
 
 export namespace i18n {
-  export async function load(code: string) {
+  export async function load(code: string, tenantId: string) {
     // load the translation catalog
-    bundle = await axios
-      .get(`${process.env.NEXT_PUBLIC_HOST}/api/locale/${code}`)
-      .then(({data}) => data);
+    await axios
+      .get(
+        `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/locale/${code}`,
+      )
+      .then(({data}) => {
+        bundle = data;
+      });
   }
 
   export function get(text: string, ...args: any[]): string {
