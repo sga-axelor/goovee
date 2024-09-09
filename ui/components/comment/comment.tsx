@@ -49,8 +49,7 @@ const formSchema = z.object({
 export function Comment({
   placeholderText = 'Enter text here*',
   showAttachmentIcon = true,
-  record,
-  type,
+ onSubmit
 }: CommentProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
