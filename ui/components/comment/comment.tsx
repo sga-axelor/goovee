@@ -18,7 +18,6 @@ import {
 } from '@/ui/components/form';
 import {i18n} from '@/lib/i18n';
 import {getFileSizeText} from '@/utils/files';
-import {ModelType} from '@/types';
 
 type CommentProps = {
   placeholderText: string;
