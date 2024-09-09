@@ -31,7 +31,7 @@ export default async function Page({
   const {workspaceURI} = searchParams;
 
   if (workspaceURI) {
-    const url = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${decodeURIComponent(workspaceURI)}`;
 
     const workspaceApps = await findSubapps({
       user,
