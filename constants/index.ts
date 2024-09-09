@@ -122,6 +122,6 @@ export const NAVIGATION = {
  * SEARCH PARAMS
  */
 
-export const SEARCH_PARAM = {
+export const SEARCH_PARAMS = {
   TENANT_ID: 'tenant',
 };

@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from '@/ui/components';
 import {useToast} from '@/ui/hooks';
-import {SEARCH_PARAM} from '@/constants';
+import {SEARCH_PARAMS} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -58,7 +58,7 @@ export default function Content({workspace}: {workspace?: PortalWorkspace}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
-  const tenantId = searchParams.get(SEARCH_PARAM.TENANT_ID);
+  const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target;

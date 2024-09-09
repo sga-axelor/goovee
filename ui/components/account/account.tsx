@@ -23,7 +23,7 @@ import {
   AlertDialogAction,
 } from '@ui/components/alert-dialog';
 import type {ID} from '@/types';
-import {SEARCH_PARAM} from '@/constants';
+import {SEARCH_PARAMS} from '@/constants';
 
 export function Account({
   baseURL = '',
@@ -51,7 +51,7 @@ export function Account({
     signOut({
       callbackUrl: `/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
         baseURL,
-      )}${tenant ? `&${SEARCH_PARAM.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`,
+      )}${tenant ? `&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`,
     });
   };
 
@@ -82,7 +82,7 @@ export function Account({
               <Link
                 href={`/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
                   baseURL,
-                )}${tenant ? `&${SEARCH_PARAM.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`}>
+                )}${tenant ? `&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`}>
                 <DropdownMenuItem>Log In</DropdownMenuItem>
               </Link>
             </>

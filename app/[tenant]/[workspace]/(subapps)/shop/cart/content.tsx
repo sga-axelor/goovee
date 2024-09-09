@@ -28,7 +28,7 @@ import {computeTotal} from '@/utils/cart';
 import {getImageURL} from '@/utils/product';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
-import {SEARCH_PARAM} from '@/constants';
+import {SEARCH_PARAMS} from '@/constants';
 import type {Cart, Product, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -246,7 +246,7 @@ function CartSummary({
           className="no-underline text-inherit"
           href={`/auth/login?callbackurl=${encodeURIComponent(
             pathname,
-          )}&workspaceURI=${encodeURIComponent(workspaceURI)}&${SEARCH_PARAM.TENANT_ID}=${encodeURIComponent(tenant)}`}>
+          )}&workspaceURI=${encodeURIComponent(workspaceURI)}&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}`}>
           <Button className="mb-4 w-full rounded-full">
             {i18n.get('Login for checkout')}
           </Button>

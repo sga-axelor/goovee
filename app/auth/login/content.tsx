@@ -16,7 +16,7 @@ import {
   Separator,
   StyledAlert,
 } from '@/ui/components';
-import {SEARCH_PARAM} from '@/constants';
+import {SEARCH_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {revalidate} from './actions';
@@ -29,7 +29,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
-  const tenantId = searchParams.get(SEARCH_PARAM.TENANT_ID);
+  const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
 
   const toggleShowPassword = () => setShowPassword(show => !show);
 

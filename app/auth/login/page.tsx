@@ -6,7 +6,7 @@ import {getSession} from '@/orm/auth';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findWorkspaces} from '@/orm/workspace';
-import {SEARCH_PARAM} from '@/constants';
+import {SEARCH_PARAMS} from '@/constants';
 
 export default async function Page({
   searchParams,
@@ -21,7 +21,7 @@ export default async function Page({
     ? decodeURIComponent(workspaceURISearchParam)
     : '';
 
-  const tenantIdSearchParam = searchParams?.[SEARCH_PARAM.TENANT_ID];
+  const tenantIdSearchParam = searchParams?.[SEARCH_PARAMS.TENANT_ID];
 
   const tenantId = tenantIdSearchParam
     ? decodeURIComponent(tenantIdSearchParam)

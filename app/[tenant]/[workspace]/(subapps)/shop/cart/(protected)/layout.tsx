@@ -4,7 +4,7 @@ import {redirect} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {SEARCH_PARAM} from '@/constants';
+import {SEARCH_PARAMS} from '@/constants';
 
 export default async function Layout({
   children,
@@ -20,7 +20,7 @@ export default async function Layout({
 
   if (!session?.user) {
     redirect(
-      `/auth/login?workspaceURI=${encodeURIComponent(workspaceURI)}&${SEARCH_PARAM.TENANT_ID}=${encodeURIComponent(tenant)}`,
+      `/auth/login?workspaceURI=${encodeURIComponent(workspaceURI)}&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}`,
     );
   }
 
