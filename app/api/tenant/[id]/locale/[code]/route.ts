@@ -3,11 +3,11 @@ import {NextResponse} from 'next/server';
 
 export async function GET(
   request: Request,
-  {params}: {params: {code: string}},
+  {params}: {params: {id: string; code: string}},
 ) {
-  const {code} = params;
+  const {code, id} = params;
 
-  const client = await getClient();
+  const client = await getClient(id);
 
   try {
     let translations = await client.aOSMetaTranslation.find({

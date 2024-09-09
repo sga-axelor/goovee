@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect} from 'react';
-import {useRouter} from 'next/navigation';
+import {useParams, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {useAppLang} from '@/ui/hooks';
@@ -10,11 +10,16 @@ import {i18n} from '@/lib/i18n';
 export default function Locale({children}: {children: React.ReactNode}) {
   const {dir, lang} = useAppLang();
   const router = useRouter();
+  const params = useParams<{tenant: string}>();
+
+  const tenant = params?.tenant;
 
   useEffect(() => {
+    if (!tenant) return;
+
     const load = async () => {
       try {
-        await i18n.load(lang);
+        await i18n.load(lang, tenant);
         document.documentElement.lang = lang;
         document.documentElement.dir = dir;
         router.refresh();
@@ -23,7 +28,7 @@ export default function Locale({children}: {children: React.ReactNode}) {
       }
     };
     load();
-  }, [dir, lang, router]);
+  }, [dir, lang, tenant, router]);
 
   return <>{children}</>;
 }
