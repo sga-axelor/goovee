@@ -5,7 +5,7 @@ import {GooveeClient, createClient} from './.generated/client';
 
 const cache = new LRUCache<ID, {tenant: Tenant; client: GooveeClient}>(10);
 
-async function getTenant(
+export async function getTenant(
   tenantId: ID,
 ): Promise<{tenant: Tenant; client: GooveeClient} | null> {
   const result = cache.get(tenantId);
