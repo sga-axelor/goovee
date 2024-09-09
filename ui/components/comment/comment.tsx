@@ -6,7 +6,6 @@ import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {MdAttachFile, MdDelete} from 'react-icons/md';
-import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Input} from '@/ui/components';
@@ -17,18 +16,14 @@ import {
   FormItem,
   FormMessage,
 } from '@/ui/components/form';
-import {useToast} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getFileSizeText} from '@/utils/files';
-import {addComment, upload} from '@/orm/comment';
 import {ModelType} from '@/types';
 
 type CommentProps = {
   placeholderText: string;
   showAttachmentIcon?: boolean;
-  record: {id: string | number} & object;
-  type: ModelType;
+  onSubmit: any;
 };
 
 const MAX_FILE_SIZE = 20000000; // 20 MB
@@ -54,13 +49,8 @@ const formSchema = z.object({
 export function Comment({
   placeholderText = 'Enter text here*',
   showAttachmentIcon = true,
-  record,
-  type,
+  onSubmit,
 }: CommentProps) {
-  const {toast} = useToast();
-
-  const {workspaceURL} = useWorkspace();
-
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -72,15 +62,11 @@ export function Comment({
     },
   });
 
-  const router = useRouter();
-
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
 
     formData.append('text', values.text);
     formData.append('content', values.content);
-
-    let attachmentIDs: string[] = [];
 
     if (values.attachments && values.attachments.length > 0) {
       values.attachments.forEach((attachment, index) => {
@@ -97,64 +83,9 @@ export function Comment({
           formData.append(`attachments[${index}][file]`, attachment.file);
         }
       });
-
-      try {
-        const response = await upload(formData, workspaceURL);
-        if (response.error) {
-          toast({
-            variant: 'destructive',
-            title: i18n.get(
-              response.message || 'Error while uploading attachment.',
-            ),
-          });
-          return;
-        }
-
-        attachmentIDs = response.data;
-      } catch (error: any) {
-        console.error('Submission error:', error);
-        toast({
-          variant: 'destructive',
-          title: i18n.get(error?.message || 'An unexpected error occurred.'),
-        });
-        return;
-      }
     }
 
-    await handleComment(values, attachmentIDs);
-  };
-
-  const handleComment = async (values: any, attachmentIDs: any) => {
-    try {
-      const result: any = await addComment({
-        workspaceURL,
-        type,
-        model: {id: record.id},
-        subject: values.text,
-        attachments: attachmentIDs,
-      });
-
-      if (result.success) {
-        toast({
-          variant: 'success',
-          title: i18n.get('Comment created successfully.'),
-        });
-        router.refresh();
-      } else {
-        toast({
-          variant: 'destructive',
-          title: i18n.get(result.message || 'Error creating comment'),
-        });
-      }
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-      toast({
-        variant: 'destructive',
-        title: i18n.get(
-          'An unexpected error occurred while creating the comment.',
-        ),
-      });
-    }
+    await onSubmit({formData, values});
   };
 
   const {fields, append, remove} = useFieldArray({

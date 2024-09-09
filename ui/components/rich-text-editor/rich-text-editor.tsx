@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {convertToRaw, ContentState, EditorState} from 'draft-js';
 import {Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -41,8 +41,6 @@ export const RichTextEditor = ({content, onChange}: RichTextEditorProps) => {
     editor.toState(content) || EditorState.createEmpty(),
   );
 
-  const initiated = useRef(false);
-
   const handleChange = useCallback(
     (editorState: EditorState) => {
       setEditorState(editorState);
@@ -50,13 +48,6 @@ export const RichTextEditor = ({content, onChange}: RichTextEditorProps) => {
     },
     [onChange],
   );
-
-  useEffect(() => {
-    if (initiated.current) {
-    }
-
-    initiated.current = true;
-  }, [content]);
 
   return (
     <Editor
