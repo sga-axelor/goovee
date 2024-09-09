@@ -6,16 +6,25 @@ import {getSession} from '@/orm/auth';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findWorkspaces} from '@/orm/workspace';
+import {SEARCH_PARAM} from '@/constants';
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: {workspaceURI?: string};
+  searchParams: {[key: string]: string};
 }) {
   const session = await getSession();
 
-  const workspaceURI = searchParams?.workspaceURI
-    ? decodeURIComponent(searchParams.workspaceURI)
+  const workspaceURISearchParam = searchParams?.workspaceURI;
+
+  const workspaceURI = workspaceURISearchParam
+    ? decodeURIComponent(workspaceURISearchParam)
+    : '';
+
+  const tenantIdSearchParam = searchParams?.[SEARCH_PARAM.TENANT_ID];
+
+  const tenantId = tenantIdSearchParam
+    ? decodeURIComponent(tenantIdSearchParam)
     : '';
 
   if (session?.user) {
@@ -29,7 +38,7 @@ export default async function Page({
   let canRegister;
 
   if (workspaceURL) {
-    const workspaces = await findWorkspaces({url: workspaceURL});
+    const workspaces = await findWorkspaces({url: workspaceURL, tenantId});
     const workspace = workspaces.find((w: any) => w.url === workspaceURL);
     canRegister = workspace?.allowRegistrationSelect === 'yes';
   }
