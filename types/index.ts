@@ -214,3 +214,8 @@ export type Tenant = {
   };
 };
 export type ModelType = 'forum' | 'news' | 'event';
+export enum ModelType {
+  news = 'news',
+  event = 'event',
+  forum = 'forum',
+}
