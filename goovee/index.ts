@@ -5,7 +5,15 @@ import {GooveeClient, createClient} from './.generated/client';
 
 const cache = new LRUCache<ID, {tenant: Tenant; client: GooveeClient}>(10);
 
-async function getTenant(tenantId: ID): Promise<Tenant | null> {
+async function getTenant(
+  tenantId: ID,
+): Promise<{tenant: Tenant; client: GooveeClient} | null> {
+  const result = cache.get(tenantId);
+
+  if (result) {
+    return result;
+  }
+
   const tenant = await axios
     .get(`${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}`, {
       auth: {
@@ -14,22 +22,6 @@ async function getTenant(tenantId: ID): Promise<Tenant | null> {
       },
     })
     .then(({data}) => data);
-
-  return tenant;
-}
-
-export async function getClient(tenantId: ID) {
-  if (!tenantId) {
-    throw new Error('No tenant.');
-  }
-
-  let result = cache.get(tenantId);
-
-  if (result?.client) {
-    return result.client;
-  }
-
-  const tenant = await getTenant(tenantId);
 
   if (!tenant) {
     throw new Error('Tenant not found');
@@ -48,5 +40,22 @@ export async function getClient(tenantId: ID) {
 
   cache.put(tenantId, {tenant, client});
 
-  return client;
+  return {
+    tenant,
+    client,
+  };
+}
+
+export async function getClient(tenantId: ID) {
+  if (!tenantId) {
+    throw new Error('No tenant.');
+  }
+
+  let result = await getTenant(tenantId);
+
+  if (result?.client) {
+    return result.client;
+  } else {
+    throw new Error('Client not found');
+  }
 }
