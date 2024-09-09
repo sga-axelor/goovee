@@ -129,7 +129,7 @@ export const GroupActionList = ({
   };
 
   const handlePath = (id: string) => {
-    router.push(`${workspaceURI}/forum/group/${id}`, {scroll: false});
+    router.push(`${workspaceURI}/forum/group/${id}`);
   };
 
   return (
