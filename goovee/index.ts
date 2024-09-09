@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {LRUCache} from '@/lib/cache';
 import type {ID, Tenant} from '@/types';
-import {DEFAULT_TENANT} from '@/constants';
 import {GooveeClient, createClient} from './.generated/client';
 
 const cache = new LRUCache<ID, {tenant: Tenant; client: GooveeClient}>(10);
