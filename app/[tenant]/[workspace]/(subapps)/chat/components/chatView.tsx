@@ -1,17 +1,17 @@
 'use client';
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ChannelList} from './channelList';
 import {ChannelView} from './channelView';
 import {getChannelsTeam, getPostsChannel} from '../api/api';
 import {Socket} from './Socket';
 import {getChannelInfosByChannelId} from '../services/services';
-import {ActivitySquare} from 'lucide-react';
 
 const ChatView = ({token, userId}: {token: any; userId: any}) => {
   const [activeChannel, setActiveChannel] = useState<any>();
   const [_channels, setChannels] = useState<any>(null);
   const [_currentChannel, setCurrentChannel] = useState<any>();
+  const activeChannelRef = useRef(activeChannel);
   const teamId: any = '7efg3j4y3pgfpyjkjtmhnoxrcc';
 
   useEffect(() => {
@@ -30,6 +30,7 @@ const ChatView = ({token, userId}: {token: any; userId: any}) => {
 
   useEffect(() => {
     console.log('active channel ', activeChannel);
+    activeChannelRef.current = activeChannel;
     const fetchCurrentChannel = async () => {
       const currentChannel = await getChannelInfosByChannelId(
         activeChannel,
@@ -44,9 +45,32 @@ const ChatView = ({token, userId}: {token: any; userId: any}) => {
 
   const handleNewPost = useCallback(
     async (channelId: string, rootId: string, post: any) => {
-      console.log('voici le post reçu : ', post);
+      console.log('on passe dans handlenewpost');
+      console.log('channelId', channelId);
+      console.log('activeChannel ref', activeChannelRef.current);
+      if (channelId == activeChannelRef.current) {
+        console.log('on est bien dans la bonne channel');
+        setCurrentChannel((prevChannel: any) => {
+          const updatedGroupsPosts = [...prevChannel.groupsPosts];
+          const lastGroup = updatedGroupsPosts[updatedGroupsPosts.length - 1];
+
+          if (lastGroup && lastGroup[0].displayName === post.displayName) {
+            updatedGroupsPosts[updatedGroupsPosts.length - 1] = [
+              ...lastGroup,
+              post,
+            ];
+          } else {
+            updatedGroupsPosts.push([post]);
+          }
+
+          return {
+            ...prevChannel,
+            groupsPosts: updatedGroupsPosts,
+          };
+        });
+      }
     },
-    [activeChannel],
+    [activeChannel, setCurrentChannel],
   );
 
   return (
@@ -57,7 +81,7 @@ const ChatView = ({token, userId}: {token: any; userId: any}) => {
         setActiveChannel={setActiveChannel}
         token={token}
       />
-      <ChannelView channel={_currentChannel} />
+      <ChannelView channel={_currentChannel} token={token} />
       <Socket
         token={token}
         connectedUserId={userId}

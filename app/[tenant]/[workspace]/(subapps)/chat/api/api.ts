@@ -2,7 +2,7 @@ import axios, {AxiosResponse} from 'axios';
 
 // Configuration de base pour l'API Mattermost
 const MATTERMOST_URL = 'http://localhost:8065'; // Remplacez par l'URL de votre instance Mattermost
-const API_URL = `${MATTERMOST_URL}/api/v4`;
+export const API_URL = `${MATTERMOST_URL}/api/v4`;
 
 interface AuthResponse {
   token: string;
@@ -123,4 +123,15 @@ export const getFileInfoById = async (fileId: string, token: string) => {
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;
+};
+
+export const getUserProfileImage = async (userId: string, token: string) => {
+  const {data} = await axios({
+    responseType: 'blob',
+    method: 'get',
+    url: `${API_URL}/users/${userId}/image`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  const blob = new Blob([data], {type: 'image/png'});
+  return URL.createObjectURL(blob);
 };

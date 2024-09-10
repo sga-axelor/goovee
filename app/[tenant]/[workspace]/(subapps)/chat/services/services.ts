@@ -86,8 +86,20 @@ export const getChannelInfosByChannelId = async (
     return a.create_at - b.create_at;
   });
 
+  const groups = posts.reduce((groups, post) => {
+    const lastGroup = groups[groups.length - 1];
+
+    if (lastGroup && lastGroup[0].displayName === post.displayName) {
+      lastGroup.push(post);
+    } else {
+      groups.push([post]);
+    }
+
+    return groups;
+  }, []);
+
   return {
-    posts: posts,
+    groupsPosts: groups,
     name: channel.displayName,
     users: channelUsers,
     channel,

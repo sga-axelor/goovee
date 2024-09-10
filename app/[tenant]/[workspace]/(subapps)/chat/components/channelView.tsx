@@ -1,13 +1,21 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Send} from 'lucide-react';
-import PostView from './postView';
+import GroupPost from './groupPost';
 
-export const ChannelView = ({channel}: {channel: any}) => {
+export const ChannelView = ({
+  channel,
+  token,
+}: {
+  channel: any;
+  token: string;
+}) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
   }
 
-  const posts = Object.values(channel.posts);
+  console.log('test test channel : ', channel);
+
+  const groupsPosts = Object.values(channel.groupsPosts);
   const messagesRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = useCallback(
@@ -36,13 +44,13 @@ export const ChannelView = ({channel}: {channel: any}) => {
         </h2>
       </div>
       <div className="flex-grow overflow-y-auto p-4" ref={messagesRef}>
-        {posts.map((post: any) => (
+        {groupsPosts.map((group: any, i) => (
           // <div key={post.id} className="mb-4">
           //   <div className="font-semibold">{post.displayName}</div>
           //   <div>{post.message}</div>
           //   <div className="text-xs text-gray-500">{post.create_at}</div>
           // </div>
-          <PostView post={post} />
+          <GroupPost key={i} group={group} token={token} />
         ))}
       </div>
       <div className="p-4 border-t">
