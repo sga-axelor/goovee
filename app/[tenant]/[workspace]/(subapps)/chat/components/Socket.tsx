@@ -26,6 +26,7 @@ export const Socket = memo(function Socket({
     channelId: string,
     postId: string,
     reaction: Reaction,
+    senderName: string,
     add: boolean,
   ) => void;
   handleNewPost?: (channelId: string, rootId: string, post: Post) => void;
@@ -44,11 +45,14 @@ export const Socket = memo(function Socket({
   const handleSocketReaction = useCallback(
     (msg: SocketMsg, add: boolean) => {
       const {data, broadcast} = msg;
+      const {sender_name} = data;
+      console.log('msg du sicket reaction : ', msg);
       const reaction = JSON.parse(data.reaction);
       const {post_id} = reaction;
       const {channel_id, omit_users} = broadcast;
       if (!omit_users || !omit_users[connectedUserId]) {
-        handleReaction && handleReaction(channel_id, post_id, reaction, add);
+        handleReaction &&
+          handleReaction(channel_id, post_id, reaction, sender_name, add);
       }
     },
     [connectedUserId, handleReaction],

@@ -10,5 +10,9 @@ export default async function Chat({
     'r.paux@kp1.fr',
     'R.paux@kp1.fr',
   );
-  return <ChatView token={token} userId={user.id} />;
+
+  console.log('user', user);
+  return (
+    <ChatView token={token} userId={user.id} username={`@${user.username}`} />
+  );
 }

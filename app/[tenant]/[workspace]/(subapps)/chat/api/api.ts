@@ -156,3 +156,17 @@ export const createReaction = async (
   });
   return reaction;
 };
+
+export const removeReactionFromAPost = async (
+  userId: string,
+  postId: string,
+  emojiName: string,
+  token: string,
+) => {
+  const {data} = await axios({
+    method: 'delete',
+    url: `${API_URL}/users/${userId}/posts/${postId}/reactions/${emojiName}`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return data.status;
+};

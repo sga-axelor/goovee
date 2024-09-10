@@ -6,10 +6,12 @@ export const ChannelView = ({
   channel,
   token,
   onEmojiClick,
+  channelId,
 }: {
   channel: any;
   token: string;
   onEmojiClick: (name: string, postId: string) => void;
+  channelId: string;
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
