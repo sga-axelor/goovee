@@ -32,7 +32,7 @@ export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const pathname = url.pathname;
 
-  if (pathname.startsWith('/auth')) {
+  if (pathname.startsWith('/auth') || pathname === '/') {
     return NextResponse.next();
   }
 

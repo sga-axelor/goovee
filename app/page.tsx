@@ -14,21 +14,28 @@ import {clone} from '@/utils';
 export default async function Page({
   searchParams,
 }: {
-  searchParams: {workspaceURI?: string};
+  searchParams: {workspaceURI?: string; tenant?: string};
 }) {
   const session = await getSession();
   const user = session?.user;
 
+  const tenantId = decodeURIComponent(searchParams.tenant || '');
+
+  if (!tenantId) {
+    return notFound();
+  }
+
   const workspaces = await findWorkspaces({
     url: process.env.NEXT_PUBLIC_HOST,
     user,
+    tenantId,
   });
 
   if (!workspaces?.length) {
     return notFound();
   }
 
-  const {workspaceURI} = searchParams;
+  const workspaceURI = decodeURIComponent(searchParams.workspaceURI || '');
 
   if (workspaceURI) {
     const url = `${process.env.NEXT_PUBLIC_HOST}${decodeURIComponent(workspaceURI)}`;
@@ -36,6 +43,7 @@ export default async function Page({
     const workspaceApps = await findSubapps({
       user,
       url,
+      tenantId,
     }).then(clone);
 
     if (workspaceApps?.length) {
@@ -48,11 +56,14 @@ export default async function Page({
   if (user) {
     const partnerId = user.isContact ? user.mainPartnerId : user.id;
 
-    const defaultWorkspace = await findDefaultPartnerWorkspace({partnerId});
+    const defaultWorkspace = await findDefaultPartnerWorkspace({
+      partnerId,
+      tenantId,
+    });
 
     if (defaultWorkspace?.workspace?.url) {
       const url = defaultWorkspace?.workspace?.url;
-      const apps = await findSubapps({url, user});
+      const apps = await findSubapps({url, user, tenantId});
       if (apps?.length) {
         redirectURL = `${url}/${apps[0].code}`;
       }
@@ -61,7 +72,7 @@ export default async function Page({
 
   if (!redirectURL) {
     for (const w of workspaces) {
-      const apps = await findSubapps({url: w.url!, user});
+      const apps = await findSubapps({url: w.url!, user, tenantId});
       if (apps?.length) {
         redirectURL = `${w.url}/${apps[0].code}`;
         break;
