@@ -1,50 +1,39 @@
 'use client';
 
 import {useCallback, useState} from 'react';
-import {convertToRaw, ContentState, EditorState} from 'draft-js';
-import {Editor} from 'react-draft-wysiwyg';
+import {EditorState} from 'draft-js';
+import dynamic from 'next/dynamic';
+import {stateToHTML} from 'draft-js-export-html';
+import {stateFromHTML} from 'draft-js-import-html';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs';
-
 import './rich-text-editor.css';
+
+const Editor = dynamic(
+  () => import('react-draft-wysiwyg').then(module => module.Editor),
+  {
+    ssr: false,
+  },
+);
 
 interface RichTextEditorProps {
   content?: string | any;
   onChange?: (content: string) => void;
 }
 
-const editor = {
-  toState(text: string) {
-    if (!text) return EditorState.createEmpty();
-
-    const draft = htmlToDraft(text);
-
-    if (!draft) return EditorState.createEmpty();
-
-    const content = ContentState.createFromBlockArray(
-      draft.contentBlocks,
-      draft.entityMap,
-    );
-
-    return EditorState.createWithContent(content);
-  },
-  toString(editorState: EditorState) {
-    return (
-      editorState && draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    );
-  },
-};
-
 export const RichTextEditor = ({content, onChange}: RichTextEditorProps) => {
   const [editorState, setEditorState] = useState<EditorState>(
-    editor.toState(content) || EditorState.createEmpty(),
+    content
+      ? EditorState.createWithContent(stateFromHTML(content)) ||
+          EditorState.createEmpty()
+      : EditorState.createEmpty(),
   );
 
   const handleChange = useCallback(
     (editorState: EditorState) => {
       setEditorState(editorState);
-      onChange?.(editor.toString(editorState));
+      const contentState = editorState.getCurrentContent();
+      const htmlVersion = stateToHTML(contentState);
+      onChange?.(htmlVersion);
     },
     [onChange],
   );
