@@ -15,7 +15,7 @@ export async function getTenant(
   }
 
   const tenant = await axios
-    .get(`${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}`, {
+    .get(`${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/config`, {
       auth: {
         username: process.env.TENANT_MANAGER_BASIC_USERNAME as string,
         password: process.env.TENANT_MANAGER_BASIC_PASSWORD as string,
