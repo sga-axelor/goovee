@@ -34,7 +34,7 @@ export async function GET(
   {
     params,
   }: {
-    params: {id: string};
+    params: {tenant: string};
   },
 ) {
   const authHeader = req.headers.get('authorization');
@@ -53,9 +53,7 @@ export async function GET(
     return response;
   }
 
-  const {id} = params;
-
-  const tenant = tenants[id];
+  const tenant = tenants[params.tenant];
 
   return NextResponse.json(tenant);
 }
