@@ -13,8 +13,18 @@ interface GroupedReactions {
   [emojiName: string]: Reaction;
 }
 
-const Post = ({post}: {post: any}) => {
+const Post = ({
+  post,
+  onEmojiClick,
+}: {
+  post: any;
+  onEmojiClick: (name: string, postId: string) => void;
+}) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const onClick = (name: string) => {
+    onEmojiClick && onEmojiClick(name, post.id);
+  };
 
   const groupedReactions: GroupedReactions = post.metadata?.reactions
     ? post.metadata.reactions.reduce((acc: GroupedReactions, reaction: any) => {
@@ -26,11 +36,6 @@ const Post = ({post}: {post: any}) => {
         return acc;
       }, {})
     : {};
-
-  const handleEmojiClick = (emojiName: string) => {
-    // Implémentez la logique pour ajouter/retirer une réaction
-    console.log(`Emoji ${emojiName} clicked`);
-  };
 
   return (
     <div
@@ -49,7 +54,7 @@ const Post = ({post}: {post: any}) => {
         </div>
       )}
 
-      {isHovered && <MenuReaction />}
+      {isHovered && <MenuReaction onEmojiClick={onClick} />}
 
       {Object.keys(groupedReactions).length > 0 && (
         <div className="flex flex-wrap mt-2">
@@ -58,7 +63,7 @@ const Post = ({post}: {post: any}) => {
               key={emojiName}
               name={emojiName}
               count={data.count}
-              onClick={handleEmojiClick}
+              onEmojiClick={onClick}
             />
           ))}
         </div>

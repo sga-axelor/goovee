@@ -135,3 +135,24 @@ export const getUserProfileImage = async (userId: string, token: string) => {
   const blob = new Blob([data], {type: 'image/png'});
   return URL.createObjectURL(blob);
 };
+
+export const createReaction = async (
+  userId: string,
+  postId: string,
+  emojiName: string,
+  createAt: number,
+  token: string,
+) => {
+  const {data: reaction} = await axios({
+    method: 'post',
+    url: `${API_URL}/reactions`,
+    headers: {Authorization: `Bearer ${token}`},
+    data: {
+      user_id: userId,
+      post_id: postId,
+      emoji_name: emojiName,
+      create_at: createAt,
+    },
+  });
+  return reaction;
+};

@@ -5,9 +5,11 @@ import GroupPost from './groupPost';
 export const ChannelView = ({
   channel,
   token,
+  onEmojiClick,
 }: {
   channel: any;
   token: string;
+  onEmojiClick: (name: string, postId: string) => void;
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
@@ -45,12 +47,12 @@ export const ChannelView = ({
       </div>
       <div className="flex-grow overflow-y-auto p-4" ref={messagesRef}>
         {groupsPosts.map((group: any, i) => (
-          // <div key={post.id} className="mb-4">
-          //   <div className="font-semibold">{post.displayName}</div>
-          //   <div>{post.message}</div>
-          //   <div className="text-xs text-gray-500">{post.create_at}</div>
-          // </div>
-          <GroupPost key={i} group={group} token={token} />
+          <GroupPost
+            key={i}
+            group={group}
+            token={token}
+            onEmojiClick={onEmojiClick}
+          />
         ))}
       </div>
       <div className="p-4 border-t">

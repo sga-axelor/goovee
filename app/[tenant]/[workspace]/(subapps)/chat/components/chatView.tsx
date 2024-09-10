@@ -3,7 +3,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ChannelList} from './channelList';
 import {ChannelView} from './channelView';
-import {getChannelsTeam, getPostsChannel} from '../api/api';
+import {getChannelsTeam, createReaction} from '../api/api';
 import {Socket} from './Socket';
 import {getChannelInfosByChannelId} from '../services/services';
 
@@ -45,11 +45,7 @@ const ChatView = ({token, userId}: {token: any; userId: any}) => {
 
   const handleNewPost = useCallback(
     async (channelId: string, rootId: string, post: any) => {
-      console.log('on passe dans handlenewpost');
-      console.log('channelId', channelId);
-      console.log('activeChannel ref', activeChannelRef.current);
       if (channelId == activeChannelRef.current) {
-        console.log('on est bien dans la bonne channel');
         setCurrentChannel((prevChannel: any) => {
           const updatedGroupsPosts = [...prevChannel.groupsPosts];
           const lastGroup = updatedGroupsPosts[updatedGroupsPosts.length - 1];
@@ -73,6 +69,64 @@ const ChatView = ({token, userId}: {token: any; userId: any}) => {
     [activeChannel, setCurrentChannel],
   );
 
+  const handleEmojiClick = useCallback(
+    (name: string, postId: string) => {
+      setCurrentChannel((prevChannel: any) => {
+        const updatedGroupsPosts = prevChannel.groupsPosts.map(group => {
+          const updatedGroup = group.map(post => {
+            if (post.id === postId) {
+              const updatedPost = {...post};
+              if (!updatedPost.metadata) {
+                updatedPost.metadata = {};
+              }
+              if (!updatedPost.metadata.reactions) {
+                updatedPost.metadata.reactions = [];
+              }
+
+              const existingReactionIndex =
+                updatedPost.metadata.reactions.findIndex(
+                  (reaction: any) =>
+                    reaction.emoji_name === name && reaction.user_id === userId,
+                );
+
+              if (existingReactionIndex !== -1) {
+                updatedPost.metadata.reactions =
+                  updatedPost.metadata.reactions.filter(
+                    (_: any, index: number) => index !== existingReactionIndex,
+                  );
+              } else {
+                updatedPost.metadata.reactions.push({
+                  user_id: userId,
+                  post_id: postId,
+                  emoji_name: name,
+                  create_at: Date.now(),
+                  update_at: Date.now(),
+                  delete_at: 0,
+                  remote_id: '',
+                  channel_id: prevChannel.channel.id,
+                });
+              }
+
+              updatedPost.has_reactions =
+                updatedPost.metadata.reactions.length > 0;
+
+              return updatedPost;
+            }
+            return post;
+          });
+
+          return updatedGroup;
+        });
+
+        return {
+          ...prevChannel,
+          groupsPosts: updatedGroupsPosts,
+        };
+      });
+    },
+    [userId, setCurrentChannel],
+  );
+
   return (
     <div className="flex h-screen">
       <ChannelList
@@ -81,7 +135,11 @@ const ChatView = ({token, userId}: {token: any; userId: any}) => {
         setActiveChannel={setActiveChannel}
         token={token}
       />
-      <ChannelView channel={_currentChannel} token={token} />
+      <ChannelView
+        channel={_currentChannel}
+        token={token}
+        onEmojiClick={handleEmojiClick}
+      />
       <Socket
         token={token}
         connectedUserId={userId}

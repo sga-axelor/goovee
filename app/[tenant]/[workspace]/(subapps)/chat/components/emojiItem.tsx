@@ -3,19 +3,19 @@ import styles from '../css/index.module.css';
 import {emojis, HOST} from '../constants';
 
 export const EmojiItem = ({
-  onClick,
+  onEmojiClick,
   name,
   count,
   small = false,
 }: {
-  onClick?: (name: string) => void;
+  onEmojiClick: (name: string) => void;
   name: string;
   count?: number;
   small?: boolean;
 }) => {
   const filename = emojis[name];
   const handleClick = () => {
-    onClick && onClick(name);
+    onEmojiClick && onEmojiClick(name);
   };
 
   if (filename) {
@@ -25,7 +25,7 @@ export const EmojiItem = ({
     return (
       <div
         onClick={handleClick}
-        className={`${className} inline-flex items-center`}>
+        className={`${className} inline-flex cursor-pointer items-center`}>
         <div className="bg-gray-200 rounded px-2 py-1 text-xs mr-1 mb-1 flex items-center">
           <img
             src={`${HOST}/static/emoji/${filename}`}

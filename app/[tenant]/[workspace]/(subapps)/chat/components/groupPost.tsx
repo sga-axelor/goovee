@@ -2,7 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {getUserProfileImage} from '../api/api';
 import Post from './Post';
 
-const GroupPost = ({group, token}: {group: any[]; token: string}) => {
+const GroupPost = ({
+  group,
+  token,
+  onEmojiClick,
+}: {
+  group: any[];
+  token: string;
+  onEmojiClick: (name: string, postId: string) => void;
+}) => {
   const [profileImage, setProfileImage] = useState<any>(null);
 
   useEffect(() => {
@@ -26,7 +34,7 @@ const GroupPost = ({group, token}: {group: any[]; token: string}) => {
           </span>
         </div>
         {group.map((post: any) => (
-          <Post post={post} />
+          <Post post={post} onEmojiClick={onEmojiClick} />
         ))}
       </div>
     </div>
