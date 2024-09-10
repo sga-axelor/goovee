@@ -1,7 +1,9 @@
-export function getImageURL(id?: string | number) {
-  if (!id) {
+import type {ID} from '@/types';
+
+export function getImageURL(id: ID, tenantId: string) {
+  if (!(id && tenantId)) {
     return undefined;
   }
 
-  return `${process.env.NEXT_PUBLIC_HOST}/api/download/${id}?meta=true`;
+  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${id}?meta=true`;
 }

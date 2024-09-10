@@ -16,6 +16,7 @@ import {useToast} from '@/ui/hooks';
 import type {
   Category,
   ComputedProduct,
+  ID,
   PortalWorkspace,
   Product,
 } from '@/types';
@@ -35,7 +36,7 @@ export function FeaturedCategories({
 }) {
   const router = useRouter();
 
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
   const {cart, addItem} = useCart();
   const {toast} = useToast();
 
@@ -92,7 +93,7 @@ export function FeaturedCategories({
                 <div
                   className="flex items-center relative bg-center bg-no-repeat bg-cover h-[750px] p-4 md:p-20"
                   style={{
-                    backgroundImage: `url("${getImageURL(item?.image?.id)}")`,
+                    backgroundImage: `url("${getImageURL(item?.image?.id as ID, tenant)}")`,
                   }}>
                   <div className="absolute top-0 left-0 w-full h-full bg-black/[.15]" />
                   <div className="space-y-10 md:w-1/2 z-20">

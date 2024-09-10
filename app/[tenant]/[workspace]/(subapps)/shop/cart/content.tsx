@@ -37,7 +37,7 @@ import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/acti
 function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   const [updating, setUpdating] = useState(false);
   const {updateQuantity, getProductNote, setProductNote} = useCart();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
   const [note, setNote] = useState('');
 
   // Hooks should always be called unconditionally
@@ -96,7 +96,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
       <BackgroundImage
         className="rounded-lg h-[12.5rem] md:w-[12.5rem] w-full min-w-[12.5rem]"
         style={{backgroundSize: 'cover'}}
-        src={getImageURL(product?.images?.[0])}
+        src={getImageURL(product?.images?.[0], tenant)}
       />
       <div className="flex-col md:flex-row flex items-start justify-between w-full h-full">
         <div className="flex flex-col items-start justify-between py-2 h-full">

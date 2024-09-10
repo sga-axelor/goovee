@@ -215,6 +215,7 @@ function Paypal({onApprove}: {onApprove: any}) {
 }
 
 function Summary({cart}: any) {
+  const {tenant} = useWorkspace();
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
       <Title
@@ -231,7 +232,7 @@ function Summary({cart}: any) {
           }: any = {}) => (
             <div key={product?.id} className="flex gap-4">
               <BackgroundImage
-                src={getImageURL(images?.[0] ? images?.[0] : null)}
+                src={getImageURL(images?.[0] ? images?.[0] : null, tenant)}
                 className="rounded-lg w-[5rem] h-[5rem]"
               />
               <div>

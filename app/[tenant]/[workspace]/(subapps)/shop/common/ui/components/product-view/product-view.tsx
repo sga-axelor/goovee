@@ -34,7 +34,7 @@ export function ProductView({
   breadcrumbs: any;
 }) {
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
   const {product, price} = computedProduct;
   const [updating, setUpdating] = useState(false);
   const {quantity, increment, decrement} = useQuantity();
@@ -94,7 +94,7 @@ export function ProductView({
             <ThumbsCarousel
               images={product.images?.map(i => ({
                 id: i as string,
-                url: getImageURL(i) as string,
+                url: getImageURL(i, tenant) as string,
               }))}
             />
           </div>
