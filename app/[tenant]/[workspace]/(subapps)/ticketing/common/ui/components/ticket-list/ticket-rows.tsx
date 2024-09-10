@@ -60,7 +60,15 @@ interface TicketDetailRowProps {
 const TicketDetailRow: React.FC<TicketDetailRowProps> = ({label, value}) => (
   <>
     <p className="text-base font-semibold mb-0">{i18n.get(label)}</p>
-    <p className="justify-self-end">{value}</p>
+    <p className="flex justify-self-end items-center">
+      {label === 'Requested by' && (
+        <Avatar className="h-12 w-16">
+          <AvatarImage src="/images/user.png" />
+        </Avatar>
+      )}
+
+      {value}
+    </p>
   </>
 );
 
@@ -115,40 +123,61 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
               #{ticket.id}
             </Link>
           </TableCell>
-          <TableCell className="flex md:justify-center items-center justify-end">
-            {ticket.requestedByContact?.name ? (
-              <>
-                <Avatar className="h-12 w-16">
-                  <AvatarImage src="/images/user.png" />
-                </Avatar>
-                <p className="ms-1"> {ticket.requestedByContact?.name}</p>
-              </>
-            ) : (
-              i18n.get('Supplier')
-            )}
-            {small &&
-              (show && ticket?.id === id ? (
-                <MdArrowDropUp
-                  onClick={() => handleCollapse(ticket.id)}
-                  className="cursor-pointer ms-1"
-                />
-              ) : (
-                <MdArrowDropDown
-                  onClick={() => handleCollapse(ticket.id)}
-                  className="cursor-pointer ms-1"
-                />
-              ))}
-          </TableCell>
+          {!small ? (
+            <TableCell className="flex md:justify-center items-center justify-end">
+              <Avatar className="h-12 w-16">
+                <AvatarImage src="/images/user.png" />
+              </Avatar>
+              <p className="ms-1">
+                {ticket.requestedByContact?.name
+                  ? ticket.requestedByContact?.name
+                  : ticket.project?.company?.name}
+              </p>
+
+              {small &&
+                (show && ticket?.id === id ? (
+                  <MdArrowDropUp
+                    onClick={() => handleCollapse(ticket.id)}
+                    className="cursor-pointer ms-1"
+                  />
+                ) : (
+                  <MdArrowDropDown
+                    onClick={() => handleCollapse(ticket.id)}
+                    className="cursor-pointer ms-1"
+                  />
+                ))}
+            </TableCell>
+          ) : (
+            <TableCell className="truncate max-w-40 line-clamp-1 table-cell">
+              {ticket.name}
+
+              {small &&
+                (show && ticket?.id === id ? (
+                  <MdArrowDropUp
+                    onClick={() => handleCollapse(ticket.id)}
+                    className="cursor-pointer ms-1"
+                  />
+                ) : (
+                  <MdArrowDropDown
+                    onClick={() => handleCollapse(ticket.id)}
+                    className="cursor-pointer ms-1"
+                  />
+                ))}
+            </TableCell>
+          )}
+
           {!small && (
             <>
-              <TableCell>{ticket.name}</TableCell>
+              <TableCell className="truncate max-w-40 line-clamp-1 table-cell">
+                {ticket.name}
+              </TableCell>
               <TableCell>{priority}</TableCell>
               <TableCell>{status}</TableCell>
               <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
                   ? ticket.assignedToContact?.name
-                  : i18n.get('Supplier')}
+                  : ticket?.project?.company?.name}
               </TableCell>
               <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
             </>
@@ -159,7 +188,15 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
             <TableCell colSpan={2}>
               <Collapsible open={show}>
                 <CollapsibleContent className="grid grid-cols-2 gap-y-2">
-                  <TicketDetailRow label="Subject" value={ticket.name} />
+                  <TicketDetailRow
+                    label="Requested by"
+                    value={
+                      ticket.requestedByContact?.name
+                        ? ticket.requestedByContact?.name
+                        : ticket.project?.company?.name
+                    }
+                  />
+
                   <TicketDetailRow label="Priority" value={priority} />
                   <TicketDetailRow label="Status" value={status} />
                   <TicketDetailRow
@@ -171,7 +208,7 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
                     value={
                       ticket.assignment === ASSIGNMENT.CUSTOMER
                         ? ticket.assignedToContact?.name
-                        : i18n.get('Supplier')
+                        : ticket.project?.company?.name
                     }
                   />
                   <TicketDetailRow

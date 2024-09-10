@@ -355,6 +355,9 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
       },
       project: {
         name: true,
+        company: {
+          name: true,
+        },
       },
       assignedTo: {
         name: true,
@@ -407,6 +410,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
           },
           project: {
             name: true,
+            company: {
+              name: true,
+            },
           },
           assignedTo: {
             name: true,
@@ -433,6 +439,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
         },
         project: {
           name: true,
+          company: {
+            name: true,
+          },
         },
         assignedTo: {
           name: true,
@@ -446,6 +455,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       },
       project: {
         name: true,
+        company: {
+          name: true,
+        },
       },
       projectTaskCategory: {
         name: true,

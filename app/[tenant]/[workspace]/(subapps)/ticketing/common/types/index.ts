@@ -39,6 +39,15 @@ export type Ticket = {
     name: string;
     version: number;
   };
+  project?: {
+    id: string;
+    name: string;
+    company: {
+      id: string;
+      name: string;
+      version: number;
+    };
+  };
 };
 
 export type FilterKey = 'priority' | 'requestedBy' | 'status' | 'updatedOn';

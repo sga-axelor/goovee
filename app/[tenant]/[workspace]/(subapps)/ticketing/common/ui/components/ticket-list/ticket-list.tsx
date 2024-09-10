@@ -31,7 +31,7 @@ export function TicketList(props: TicketListProps) {
   const [sortedTickets, sort, toggleSort] = useSortBy(tickets);
   const res = useResponsive();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
-  const mainColumns = small ? [columns[0], columns[1]] : columns;
+  const mainColumns = small ? [columns[0], columns[2]] : columns;
 
   return (
     <Table className="rounded-lg bg-card text-card-foreground">
