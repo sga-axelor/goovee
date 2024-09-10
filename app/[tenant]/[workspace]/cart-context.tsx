@@ -23,11 +23,11 @@ export default function CartContextProvider({
 }) {
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURL, workspaceURI} = useWorkspace();
 
   const CART_KEY = useMemo(
-    () => PREFIX_CART_KEY + workspaceURI,
-    [workspaceURI],
+    () => PREFIX_CART_KEY + '-' + workspaceURL,
+    [workspaceURL],
   );
 
   const clearCart = useCallback(async () => {
