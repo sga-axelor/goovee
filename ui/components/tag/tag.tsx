@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Badge} from '@ui/components/badge';
 import {cn} from '@/utils/css';
 
-type Variant =
+export type Variant =
   | 'success'
   | 'destructive'
   | 'yellow'
