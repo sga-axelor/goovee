@@ -44,6 +44,8 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "dlx": "^0.2.1",
+    "draft-js-export-html": "^1.4.1",
+    "draft-js-import-html": "^1.4.1",
     "draftjs-to-html": "^0.9.1",
     "graphql": "^16.9.0",
     "html-to-draftjs": "^1.5.0",
