@@ -2,7 +2,6 @@
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
-import {Maybe} from '@/types/util';
 import {
   Avatar,
   AvatarImage,
@@ -10,7 +9,6 @@ import {
   CollapsibleContent,
   TableCell,
   TableRow,
-  Tag,
 } from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
 import Link from 'next/link';
@@ -21,54 +19,17 @@ import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 import {ASSIGNMENT, columns} from '../../../constants';
 import {Ticket} from '../../../types';
 import {formatDate} from '../../../utils';
+import {Category, Priority, Status} from '../pills';
 
-type Variant =
-  | 'success'
-  | 'blue'
-  | 'yellow'
-  | 'purple'
-  | 'destructive'
-  | 'default';
-
-const priorityMap: {[key: string]: Variant} = {
-  Low: 'success',
-  Medium: 'blue',
-  High: 'yellow',
-};
-
-const statusMap: {[key: string]: Variant} = {
-  New: 'blue',
-  'In Progress': 'yellow',
-  Resolved: 'success',
-  Closed: 'destructive',
-};
-
-const getVariantName = (name: Maybe<string>) => {
-  if (!name) return 'default';
-  return priorityMap[name] || 'default';
-};
-
-const getStatusName = (name: Maybe<string>) => {
-  if (!name) return 'default';
-  return statusMap[name] || 'default';
-};
 interface TicketDetailRowProps {
   label: string;
-  value: React.ReactNode;
+  children: React.ReactNode;
 }
 
-const TicketDetailRow: React.FC<TicketDetailRowProps> = ({label, value}) => (
+const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
   <>
     <p className="text-base font-semibold mb-0">{i18n.get(label)}</p>
-    <p className="flex justify-self-end items-center">
-      {label === 'Requested by' && (
-        <Avatar className="h-12 w-16">
-          <AvatarImage src="/images/user.png" />
-        </Avatar>
-      )}
-
-      {value}
-    </p>
+    <p className="flex justify-self-end items-center">{children}</p>
   </>
 );
 
@@ -98,21 +59,6 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
     );
   }
   return tickets.map(ticket => {
-    const priorityVariant = getVariantName(ticket.priority?.name);
-    const statusVariant = getStatusName(ticket.status?.name);
-
-    const priority = ticket.priority && (
-      <Tag variant={priorityVariant} className="text-[12px] py-1 w-max">
-        {ticket.priority.name}
-      </Tag>
-    );
-
-    const status = ticket.status && (
-      <Tag variant={statusVariant!} className="text-[12px] py-1 w-max" outline>
-        {ticket.status.name}
-      </Tag>
-    );
-
     return (
       <>
         <TableRow key={ticket.id}>
@@ -171,9 +117,15 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
               <TableCell className="truncate max-w-40 line-clamp-1 table-cell">
                 {ticket.name}
               </TableCell>
-              <TableCell>{priority}</TableCell>
-              <TableCell>{status}</TableCell>
-              <TableCell>{ticket.projectTaskCategory?.name}</TableCell>
+              <TableCell>
+                <Priority name={ticket.priority?.name} />
+              </TableCell>
+              <TableCell>
+                <Status name={ticket.status?.name} />
+              </TableCell>
+              <TableCell>
+                <Category name={ticket.projectTaskCategory?.name} />
+              </TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
                   ? ticket.assignedToContact?.name
@@ -188,33 +140,34 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
             <TableCell colSpan={2}>
               <Collapsible open={show}>
                 <CollapsibleContent className="grid grid-cols-2 gap-y-2">
-                  <TicketDetailRow
-                    label="Requested by"
-                    value={
-                      ticket.requestedByContact?.name
-                        ? ticket.requestedByContact?.name
-                        : ticket.project?.company?.name
-                    }
-                  />
+                  <Item label="Requested by">
+                    {ticket.requestedByContact?.name ? (
+                      <>
+                        <Avatar className="h-12 w-16">
+                          <AvatarImage src="/images/user.png" />
+                        </Avatar>
+                        {ticket.requestedByContact?.name}
+                      </>
+                    ) : (
+                      ticket.project?.company?.name
+                    )}
+                  </Item>
 
-                  <TicketDetailRow label="Priority" value={priority} />
-                  <TicketDetailRow label="Status" value={status} />
-                  <TicketDetailRow
-                    label="Category"
-                    value={ticket.projectTaskCategory?.name}
-                  />
-                  <TicketDetailRow
-                    label="Assigned to"
-                    value={
-                      ticket.assignment === ASSIGNMENT.CUSTOMER
-                        ? ticket.assignedToContact?.name
-                        : ticket.project?.company?.name
-                    }
-                  />
-                  <TicketDetailRow
-                    label="Updated On"
-                    value={formatDate(ticket.updatedOn)}
-                  />
+                  <Item label="Priority">
+                    <Priority name={ticket.priority?.name} />
+                  </Item>
+                  <Item label="Status">
+                    <Priority name={ticket.status?.name} />
+                  </Item>
+                  <Item label="Status">
+                    <Category name={ticket.status?.name} />
+                  </Item>
+                  <Item label="Assigned to">
+                    {ticket.assignment === ASSIGNMENT.CUSTOMER
+                      ? ticket.assignedToContact?.name
+                      : ticket.project?.company?.name}
+                  </Item>
+                  <Item label="Updated On">{formatDate(ticket.updatedOn)}</Item>
                 </CollapsibleContent>
               </Collapsible>
             </TableCell>

@@ -1,0 +1,51 @@
+import {Maybe} from '@/types/util';
+import {Tag} from '@/ui/components';
+import type {Variant} from '@/ui/components/tag';
+
+const statusMap = new Map<string, Variant>();
+statusMap.set('New', 'default');
+statusMap.set('In progress', 'yellow');
+statusMap.set('Done', 'success');
+statusMap.set('Cancelled', 'destructive');
+
+type PillProps = {
+  name: Maybe<string>;
+};
+
+export function Status({name}: PillProps) {
+  if (!name) return null;
+  return (
+    <Tag
+      variant={statusMap.get(name) ?? 'default'}
+      className="text-[12px] py-1 w-max"
+      outline>
+      {name}
+    </Tag>
+  );
+}
+
+const priorityMap = new Map<string, Variant>();
+priorityMap.set('High', 'purple');
+priorityMap.set('Low', 'yellow');
+priorityMap.set('Normal', 'success');
+priorityMap.set('Urgent', 'destructive');
+
+export function Priority({name}: PillProps) {
+  if (!name) return null;
+  return (
+    <Tag
+      variant={priorityMap.get(name) ?? 'default'}
+      className="text-[12px] py-1 w-max">
+      {name}
+    </Tag>
+  );
+}
+
+export function Category({name}: PillProps) {
+  if (!name) return null;
+  return (
+    <Tag variant="purple" className="text-[12px] py-1 me-5 rounded">
+      {name}
+    </Tag>
+  );
+}

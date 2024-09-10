@@ -14,7 +14,6 @@ import {
   BreadcrumbSeparator,
   Table,
   TableBody,
-  Tag,
 } from '@/ui/components';
 import {Progress} from '@/ui/components/progress';
 import {clone} from '@/utils';
@@ -27,18 +26,19 @@ import {FaChevronRight} from 'react-icons/fa';
 import {MdOutlineModeEditOutline} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
+import {encodeFilter} from '@/utils/filter';
 import {ASSIGNMENT} from '../../../../common/constants';
 import {findProject, findTicketStatuses} from '../../../../common/orm/projects';
 import {findTicket} from '../../../../common/orm/tickets';
+import {Category, Priority} from '../../../../common/ui/components/pills';
 import {Stepper} from '../../../../common/ui/components/stepper';
-import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
-import {formatDate} from '../../../../common/utils';
-import {encodeFilter} from '@/utils/filter';
 import {
   AssignToSupplier,
   CancelTicket,
   CloseTicket,
 } from '../../../../common/ui/components/ticket-form/ticket-actions';
+import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
+import {formatDate} from '../../../../common/utils';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -171,15 +171,15 @@ function TicketDetails({
           </Link>
         </div>
         <p className="text-xl font-semibold">{ticket?.name}</p>
-        <p className="text-sm font-medium">
-          {ticket?.projectTaskCategory?.name}
+        <hr />
+        <p>
+          <span className="font-medium pe-2">{i18n.get('Category')}: </span>
+          <Category name={ticket.projectTaskCategory?.name} />
         </p>
-        {ticket.priority && (
-          <Tag variant="success" className="text-[12px] py-1 me-5">
-            {ticket.priority?.name}
-          </Tag>
-        )}
-
+        <p>
+          <span className="font-medium pe-2">{i18n.get('Priority')}: </span>
+          <Priority name={ticket.priority?.name} />
+        </p>
         <hr />
         <p className="flex !mt-3.5 items-center">
           <span className="font-medium pe-2">{i18n.get('Request by')}: </span>
