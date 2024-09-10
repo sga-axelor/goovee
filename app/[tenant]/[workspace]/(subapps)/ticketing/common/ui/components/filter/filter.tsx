@@ -119,7 +119,7 @@ export function Filter(props: FilterProps) {
       <Controller open={open} onOpenChange={setOpen}>
         <Trigger asChild>
           <Button
-            variant={filterCount ? 'default' : 'outline'}
+            variant={filterCount ? 'success' : 'outline'}
             className={cn('flex justify-between w-[354px]', {
               ['w-full']: small,
             })}>
@@ -130,7 +130,7 @@ export function Filter(props: FilterProps) {
             {filterCount > 0 && (
               <Badge
                 className="ms-auto ps-[0.45rem] pe-2"
-                variant={filterCount ? 'destructive' : 'default'}>
+                variant="success-inverse">
                 {filterCount}
               </Badge>
             )}
