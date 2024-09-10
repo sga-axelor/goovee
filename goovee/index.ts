@@ -1,3 +1,5 @@
+'server only';
+
 import axios from 'axios';
 import {LRUCache} from '@/lib/cache';
 import type {ID, Tenant} from '@/types';
