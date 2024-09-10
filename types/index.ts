@@ -207,6 +207,7 @@ export type Tenant = {
   };
   aos: {
     url: string;
+    storage: string;
     auth: {
       username: string;
       password: string;
