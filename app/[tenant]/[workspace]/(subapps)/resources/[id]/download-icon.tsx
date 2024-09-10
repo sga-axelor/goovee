@@ -6,7 +6,7 @@ import {download} from '@/subapps/resources/common/utils';
 
 export default function DownloadIcon({record}: any) {
   const {tenant} = useWorkspace();
-  
+
   const handleDownload = () => {
     download(record, tenant);
   };

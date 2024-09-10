@@ -14,7 +14,7 @@ export function getFilename(disposition: string | null) {
 
 export function getDownloadURL(record: any, tenantId: string) {
   if (!tenantId) return '';
-  
+
   return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${record.id}`;
 }
 
