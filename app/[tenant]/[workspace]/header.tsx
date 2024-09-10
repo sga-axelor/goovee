@@ -27,10 +27,11 @@ import Icons from '@/utils/Icons';
 import styles from './styles.module.scss';
 
 function Logo() {
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
 
   return (
-    <Link href={`/?workspaceURI=${workspaceURI}`}>
+    <Link
+      href={`/?workspaceURI=${encodeURIComponent(workspaceURI || '')}&tenant=${encodeURIComponent(tenant || '')}`}>
       <Image
         src="/images/logo.png"
         alt="Axelor Logo"
