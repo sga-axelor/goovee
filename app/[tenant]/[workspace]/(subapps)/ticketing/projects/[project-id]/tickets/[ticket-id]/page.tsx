@@ -34,6 +34,7 @@ import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-ro
 import {formatDate} from '../../../../common/utils';
 import {AssignToSupplier} from './assign-to-supplier';
 import {ASSIGNMENT} from '../../../../common/constants';
+import {encodeFilter} from '@/utils/filter';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -69,6 +70,10 @@ export default async function Page({
     findProject(projectId, workspace.id, session!.user.id),
   ]);
   if (!ticket) notFound();
+  const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
+  const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;
+
   return (
     <div className="container mt-5 mb-20">
       <Breadcrumb>
@@ -99,10 +104,7 @@ export default async function Page({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild className="cursor-pointer text-md">
-              <Link
-                href={`${workspaceURI}/ticketing/projects/${projectId}/tickets`}>
-                {i18n.get('All tickets')}
-              </Link>
+              <Link href={allTicketsURL}>{i18n.get('All tickets')}</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator>
@@ -163,12 +165,6 @@ function TicketDetails({
         {ticket.priority && (
           <Tag variant="success" className="text-[12px] py-1 me-5">
             {ticket.priority?.name}
-          </Tag>
-        )}
-
-        {ticket.status && (
-          <Tag variant="yellow" className="text-[12px] py-1">
-            {ticket.status?.name}
           </Tag>
         )}
 
