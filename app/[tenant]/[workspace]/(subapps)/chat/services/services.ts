@@ -1,88 +1,95 @@
-import { getChannelById, getChannelUsers, getFileInfoById, getPostsChannel } from "../api/api";
+import {
+  getChannelById,
+  getChannelUsers,
+  getFileInfoById,
+  getPostsChannel,
+} from '../api/api';
 
 export const getDisplayName = (user: any | undefined): string => {
-    if (!user) {
-      return '';
+  if (!user) {
+    return '';
+  }
+  if (!user.first_name || !user.last_name) {
+    if (!user.nickname) {
+      return user.username || '';
     }
-    if (!user.first_name || !user.last_name) {
-      if (!user.nickname) {
-        return user.username || '';
-      }
-      return user.nickname;
-    }
-    return `${user.first_name} ${user.last_name}`;
-  };
+    return user.nickname;
+  }
+  return `${user.first_name} ${user.last_name}`;
+};
 
 export async function asyncForEach(array: any, callback: any) {
-    for (let index = 0; index < array.length; index++) {
-      await callback(array[index], index, array);
-    }
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
   }
+}
 
+export const getFiles = async (fileIds: File[], token: string) => {
+  let files: File[] = [];
+  await asyncForEach(fileIds, async (fileId: string) => {
+    const fileInfo = await getFileInfoById(fileId, token);
+    if ('status_code' in fileInfo) {
+      return;
+    }
+    if (fileInfo) {
+      files.push(fileInfo);
+    }
+  });
 
-  export const getFiles = async (fileIds: File[], token: string) => {
-    let files: File[] = [];
-    await asyncForEach(fileIds, async (fileId: string) => {
-      const fileInfo = await getFileInfoById(fileId, token);
-      if ('status_code' in fileInfo) {
-        return;
-      }
-      if (fileInfo) {
-        files.push(fileInfo);
-      }
+  return files;
+};
+
+export const getFormattedPosts = async (
+  channelId: string,
+  users: any[],
+  token: string,
+) => {
+  const data = await getPostsChannel(token, channelId);
+  if ('status_code' in data) {
+    return [];
+  }
+  const {posts} = data;
+  let postList: any[] = [];
+  await asyncForEach(Object.keys(posts), async (key: string) => {
+    let post = posts[key];
+    let root = {author: '', text: '', postId: ''};
+    let files: any = [];
+    if (post.file_ids) {
+      files = await getFiles(post.file_ids, token);
+    }
+    let postUser = users.find((u: any) => u.id === post.user_id);
+    let displayName = getDisplayName(postUser);
+    postList.push({
+      ...post,
+      displayName,
+      root: root,
+      files: files,
     });
+  });
+  return postList;
+};
 
-    return files;
+export const getChannelInfosByChannelId = async (
+  channelId: string,
+  token: string,
+) => {
+  const channel = await getChannelById(channelId, token);
+  if ('status_code' in channel) {
+    return {posts: [], name: '', users: [], channel: {id: undefined}};
   }
-
-export const getFormattedPosts = async (channelId: string, users: any[], token: string) => {
-    const data = await getPostsChannel(token, channelId);
-    if ('status_code' in data) {
-      return [];
-    }
-    const {posts} = data;
-    let postList: any[] = [];
-    await asyncForEach(Object.keys(posts), async (key: string) => {
-      let post = posts[key];
-      let root = {author: '', text: '', postId: ''};
-      let files: any = [];
-      if (post.file_ids) {
-        files = await getFiles(post.file_ids, token);
-      }
-      let postUser = users.find((u: any) => u.id === post.user_id);
-      let displayName = getDisplayName(postUser);
-      postList.push({
-        ...post,
-        displayName,
-        root: root,
-        files: files,
-      });
-    });
-    return postList;
+  const channelUsers: any[] = await getChannelUsers(channelId, token);
+  if ('status_code' in channelUsers) {
+    return {posts: [], name: '', users: [], channel};
   }
+  let posts: any[] = await getFormattedPosts(channelId, channelUsers, token);
+  posts.sort((a: any, b: any) => {
+    return a.create_at - b.create_at;
+  });
 
-export const getChannelInfosByChannelId = async (channelId: string, token: string) => {
-    const channel = await getChannelById(channelId, token);
-    if ('status_code' in channel) {
-      return {posts: [], name: '', users: [], channel: {id: undefined}};
-    }
-    const channelUsers: any [] = await getChannelUsers(channelId, token);
-    if ('status_code' in channelUsers) {
-      return {posts: [], name: '', users: [], channel};
-    }
-    let posts: any [] = await getFormattedPosts(
-      channelId,
-      channelUsers,
-      token
-    );
-    posts.sort((a: any, b: any) => {
-      return a.create_at - b.create_at;
-    });
-
-    return {
-      posts: posts,
-      name: channel.displayName,
-      users: channelUsers,
-      channel,
-    };
-  }
+  return {
+    posts: posts,
+    name: channel.displayName,
+    users: channelUsers,
+    channel,
+  };
+};

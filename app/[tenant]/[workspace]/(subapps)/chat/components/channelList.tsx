@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Hash, ChevronDown, Plus, Search, Send } from "lucide-react";
+import React, {useEffect, useState} from 'react';
+import {Hash, ChevronDown, Plus, Search, Send} from 'lucide-react';
 
 export const ChannelList = ({
   channels,
@@ -39,10 +39,9 @@ export const ChannelList = ({
           <div
             key={channel.id}
             className={`flex items-center p-2 hover:bg-gray-700 cursor-pointer ${
-              channel.id === activeChannel ? "bg-blue-600" : ""
-            } ${channel.unread ? "font-semibold" : ""}`}
-            onClick={() => setActiveChannel(channel.id)}
-          >
+              channel.id === activeChannel ? 'bg-blue-600' : ''
+            } ${channel.unread ? 'font-semibold' : ''}`}
+            onClick={() => setActiveChannel(channel.id)}>
             <Hash size={16} className="mr-2 text-gray-400" />
             <span>{channel.display_name}</span>
             {channel.unread > 0 && (

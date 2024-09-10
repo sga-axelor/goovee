@@ -1,7 +1,7 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
-import { SocketEvents, WEBSOCKET_URL } from "../constants";
-import { WebSocketClient } from "../api/websocket";
-import { Post, Reaction, SocketMsg } from "../types/types";
+import React, {memo, useCallback, useEffect, useState} from 'react';
+import {SocketEvents, WEBSOCKET_URL} from '../constants';
+import {WebSocketClient} from '../api/websocket';
+import {Post, Reaction, SocketMsg} from '../types/types';
 
 let socket: WebSocketClient;
 
@@ -26,7 +26,7 @@ export const Socket = memo(function Socket({
     channelId: string,
     postId: string,
     reaction: Reaction,
-    add: boolean
+    add: boolean,
   ) => void;
   handleNewPost?: (channelId: string, rootId: string, post: Post) => void;
   channelId?: string;
@@ -43,15 +43,15 @@ export const Socket = memo(function Socket({
    */
   const handleSocketReaction = useCallback(
     (msg: SocketMsg, add: boolean) => {
-      const { data, broadcast } = msg;
+      const {data, broadcast} = msg;
       const reaction = JSON.parse(data.reaction);
-      const { post_id } = reaction;
-      const { channel_id, omit_users } = broadcast;
+      const {post_id} = reaction;
+      const {channel_id, omit_users} = broadcast;
       if (!omit_users || !omit_users[connectedUserId]) {
         handleReaction && handleReaction(channel_id, post_id, reaction, add);
       }
     },
-    [connectedUserId, handleReaction]
+    [connectedUserId, handleReaction],
   );
 
   /**
@@ -76,11 +76,11 @@ export const Socket = memo(function Socket({
         handleSocketReaction(msg, true);
       };
       const handleSocketNewPost = async (msg: any) => {
-        console.debug("msg", msg);
-        const { data, broadcast } = msg;
+        console.debug('msg', msg);
+        const {data, broadcast} = msg;
         let post = JSON.parse(data.post);
-        const { channel_id, root_id, user_id } = post;
-        const { omit_users } = broadcast;
+        const {channel_id, root_id, user_id} = post;
+        const {omit_users} = broadcast;
         if (
           // (!omit_users || (omit_users && !omit_users[connectedUserId])) &&
           // user_id !== connectedUserId
@@ -96,9 +96,9 @@ export const Socket = memo(function Socket({
        * @param msg Socket msg event
        */
       const handleSocketTyping = (msg: any) => {
-        const { data, broadcast } = msg;
-        const { user_id } = data;
-        const { channel_id, omit_users } = broadcast;
+        const {data, broadcast} = msg;
+        const {user_id} = data;
+        const {channel_id, omit_users} = broadcast;
         if (!omit_users[connectedUserId]) {
           handleUserTyping && handleUserTyping(channel_id, user_id);
         }
@@ -124,11 +124,11 @@ export const Socket = memo(function Socket({
         default:
       }
     },
-    [connectedUserId, handleSocketReaction, handleNewPost, handleUserTyping]
+    [connectedUserId, handleSocketReaction, handleNewPost, handleUserTyping],
   );
 
   const initializeSocket = useCallback(() => {
-    console.debug("init socket");
+    console.debug('init socket');
     if (!window.WebSocket) {
       return;
     }
@@ -147,7 +147,7 @@ export const Socket = memo(function Socket({
 
   useEffect(() => {
     if (!sendingMessage && message) {
-      socket.sendMessage("user_typing", {
+      socket.sendMessage('user_typing', {
         user_id: connectedUserId,
         channel_id: channelId,
       });
@@ -158,5 +158,4 @@ export const Socket = memo(function Socket({
     }
   }, [message, channelId, connectedUserId, sendingMessage]);
   return <div></div>;
-},
-isSocketEqual);
+}, isSocketEqual);

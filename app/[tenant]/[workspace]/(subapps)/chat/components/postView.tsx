@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 //import { Avatar } from '@/components/ui/avatar';
 
-const PostView = ({ post }: { post: any }) => {
+const PostView = ({post}: {post: any}) => {
   return (
     <div className="flex items-start space-x-4 p-4 border-b border-gray-200">
       {/* <Avatar>

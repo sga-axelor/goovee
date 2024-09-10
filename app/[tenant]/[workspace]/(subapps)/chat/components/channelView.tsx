@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Send } from "lucide-react";
-import PostView from "./postView";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Send} from 'lucide-react';
+import PostView from './postView';
 
-export const ChannelView = ({ channel }: { channel: any }) => {
+export const ChannelView = ({channel}: {channel: any}) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
   }
@@ -15,14 +15,14 @@ export const ChannelView = ({ channel }: { channel: any }) => {
       if (messagesRef && messagesRef.current) {
         messagesRef.current.scrollTo({
           top: messagesRef.current.scrollHeight,
-          behavior: "instant",
+          behavior: 'instant',
         });
       }
     },
-    [messagesRef]
+    [messagesRef],
   );
 
-  console.log("voici les posts : ", channel);
+  console.log('voici les posts : ', channel);
 
   useEffect(() => {
     scrollToBottom();

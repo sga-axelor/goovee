@@ -1,20 +1,19 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
 // Configuration de base pour l'API Mattermost
 const MATTERMOST_URL = 'http://localhost:8065'; // Remplacez par l'URL de votre instance Mattermost
 const API_URL = `${MATTERMOST_URL}/api/v4`;
 
-
 interface AuthResponse {
-    token: string;
-    user_id: string;
-  }
-  
-  // Interface pour les identifiants de l'utilisateur
-  interface Credentials {
-    login_id: string; // Peut être un email ou un nom d'utilisateur
-    password: string;
-  }
+  token: string;
+  user_id: string;
+}
+
+// Interface pour les identifiants de l'utilisateur
+interface Credentials {
+  login_id: string; // Peut être un email ou un nom d'utilisateur
+  password: string;
+}
 
 // Interface pour définir la structure d'un canal
 interface Channel {
@@ -36,25 +35,28 @@ interface Channel {
 
 export const getChannelsTeam = async (token: any, teamId: any, userId: any) => {
   try {
-    const {data} = await axios.get(`${API_URL}/users/${userId}/teams/${teamId}/channels`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
+    const {data} = await axios.get(
+      `${API_URL}/users/${userId}/teams/${teamId}/channels`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
 
     return data;
   } catch (error) {
     console.error('Erreur lors de la récupération des canaux:', error);
     throw error;
   }
-}
+};
 
 export const getPostsChannel = async (token: any, channelId: any) => {
   try {
     const {data} = await axios.get(`${API_URL}/channels/${channelId}/posts`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });
@@ -64,7 +66,7 @@ export const getPostsChannel = async (token: any, channelId: any) => {
     console.error('Erreur lors de la récupération des canaux:', error);
     throw error;
   }
-}
+};
 
 export const getAuthToken = async (login: string, password: string) => {
   try {
@@ -72,28 +74,27 @@ export const getAuthToken = async (login: string, password: string) => {
       `${API_URL}/users/login`,
       {
         login_id: login,
-        password: password
+        password: password,
       },
       {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
 
     const token = headers.token;
 
-    if(!token) {
-      throw new Error('Token not found')
+    if (!token) {
+      throw new Error('Token not found');
     }
 
     return {data, token};
-          
   } catch (error) {
-    console.error('Erreur lors de l\'authentification: ', error)
+    console.error("Erreur lors de l'authentification: ", error);
     throw error;
   }
-}
+};
 
 export const getChannelById = async (channelId: string, token: string) => {
   const {data} = await axios({
