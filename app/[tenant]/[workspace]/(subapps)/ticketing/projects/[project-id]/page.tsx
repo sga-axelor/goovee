@@ -146,7 +146,7 @@ export default async function Page({
               <FaChevronRight className="text-black" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
-              <BreadcrumbPage className="truncate text-lg font-semibold">
+              <BreadcrumbPage className="sm:truncate text-lg font-semibold">
                 {project.name}
               </BreadcrumbPage>
             </BreadcrumbItem>

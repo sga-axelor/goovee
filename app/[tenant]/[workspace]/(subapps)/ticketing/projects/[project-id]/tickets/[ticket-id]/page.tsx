@@ -189,7 +189,11 @@ function TicketDetails({
               className="h-8 w-10 rounded-full"
             />
           </Avatar>
-          <span>{ticket.requestedByContact?.name}</span>
+          <span>
+            {ticket.requestedByContact?.name
+              ? ticket.requestedByContact?.name
+              : ticket.project?.company?.name}
+          </span>
         </p>
         <p>
           <span className="font-medium pe-2">{i18n.get('Created on')}:</span>
@@ -202,7 +206,7 @@ function TicketDetails({
             <p>
               <span className="font-medium pe-2">Assigned to:</span>
               {ticket.assignment === ASSIGNMENT.PROVIDER
-                ? 'Supplier'
+                ? ticket.project?.company?.name
                 : ticket.assignedToContact?.name}
             </p>
             <p>

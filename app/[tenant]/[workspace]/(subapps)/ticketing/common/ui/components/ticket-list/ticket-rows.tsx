@@ -155,12 +155,12 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
                 (show && ticket?.id === id ? (
                   <MdArrowDropUp
                     onClick={() => handleCollapse(ticket.id)}
-                    className="cursor-pointer ms-1"
+                    className="cursor-pointer ms-1 inline"
                   />
                 ) : (
                   <MdArrowDropDown
                     onClick={() => handleCollapse(ticket.id)}
-                    className="cursor-pointer ms-1"
+                    className="cursor-pointer ms-1 inline"
                   />
                 ))}
             </TableCell>
