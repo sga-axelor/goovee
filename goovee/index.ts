@@ -23,7 +23,10 @@ export async function getTenant(
         password: process.env.TENANT_MANAGER_BASIC_PASSWORD as string,
       },
     })
-    .then(({data}) => data);
+    .then(({data}) => data)
+    .catch(err => {
+      throw new Error('Invalid tenant configuration');
+    });
 
   if (!tenant) {
     throw new Error('Tenant not found');
