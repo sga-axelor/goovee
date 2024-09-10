@@ -12,8 +12,10 @@ export function getFilename(disposition: string | null) {
   return null;
 }
 
-export function getDownloadURL(record: any) {
-  return `${process.env.NEXT_PUBLIC_HOST}/api/download/${record.id}`;
+export function getDownloadURL(record: any, tenantId: string) {
+  if (!tenantId) return '';
+  
+  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${record.id}`;
 }
 
 export function getHTMLURL(record: any) {
@@ -39,8 +41,8 @@ export function getHTMLURL(record: any) {
   return url;
 }
 
-export function download(record: any) {
-  if (!record) return null;
+export function download(record: any, tenantId: string) {
+  if (!(record && tenantId)) return null;
 
   const html =
     record.contentType === 'html' || record?.metaFile?.fileType === 'text/html';
@@ -50,7 +52,7 @@ export function download(record: any) {
 
   link.innerHTML = name || 'File';
   link.download = name || 'download';
-  link.href = html ? getHTMLURL(record) : getDownloadURL(record);
+  link.href = html ? getHTMLURL(record) : getDownloadURL(record, tenantId);
 
   Object.assign(link.style, {
     position: 'absolute',

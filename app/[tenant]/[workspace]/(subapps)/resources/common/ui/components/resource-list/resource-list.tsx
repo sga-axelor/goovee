@@ -20,7 +20,7 @@ import {
 
 export function ResourceList({resources}: any) {
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
 
   const handleRedirection = (resource: any) => () => {
     router.push(`${workspaceURI}/resources/${resource.id}`);
@@ -28,13 +28,13 @@ export function ResourceList({resources}: any) {
 
   const handleDownload = (record: any) => (event: React.MouseEvent) => {
     event.stopPropagation();
-    download(record);
+    download(record, tenant);
   };
 
   return (
     <div className="rounded-lg bg-white py-2">
       {resources?.length ? (
-        resources?.map((resource: any, index) => {
+        resources?.map((resource: any, index: number) => {
           const author = resource.createdBy?.name || '--';
           const date = parseDate(resource?.createdOn) || '--';
           const size = resource?.metaFile?.sizeText || '--';

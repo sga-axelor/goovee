@@ -2,13 +2,15 @@
 
 import CyntlerDocViewer, {DocViewerRenderers} from '@cyntler/react-doc-viewer';
 
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getDownloadURL} from '@/subapps/resources/common/utils';
 
 import styles from './doc-viewer.module.scss';
 import '@cyntler/react-doc-viewer/dist/index.css';
 
 export default function DocViewer({record}: any) {
-  const docs = [{uri: getDownloadURL(record)}];
+  const {tenant} = useWorkspace();
+  const docs = [{uri: getDownloadURL(record, tenant)}];
 
   return (
     <div className="overflow-auto">
