@@ -1,5 +1,5 @@
 import fs, {Stats} from 'fs';
-import {getClient} from '@/goovee';
+import {getTenant} from '@/goovee';
 import {NextRequest, NextResponse} from 'next/server';
 import type {ReadableOptions} from 'stream';
 
@@ -27,9 +27,23 @@ function streamFile(
 
 export async function GET(
   request: NextRequest,
-  {params}: {params: {id: string}},
+  {params}: {params: {tenant: string; id: string}},
 ) {
-  const client = await getClient();
+  const {id} = params;
+
+  let tenant, client;
+
+  try {
+    const result = await getTenant(params.tenant);
+    tenant = result?.tenant;
+    client = result?.client;
+  } catch (err) {}
+
+  if (!(client && tenant && tenant?.aos?.storage)) {
+    return new NextResponse('Bad Request', {status: 400});
+  }
+
+  const storage = tenant?.aos?.storage;
 
   const searchParams = request.nextUrl.searchParams;
   const meta = searchParams.get('meta') === 'true';
@@ -38,19 +52,19 @@ export async function GET(
 
   if (meta) {
     record = await client.aOSMetaFile.findOne({
-      where: {id: params?.id},
+      where: {id},
     });
 
     if (!record) {
       return new NextResponse('File not found', {status: 404});
     }
 
-    filePath = `${process.env.DATA_STORAGE}/${record?.filePath}`;
+    filePath = `${storage}/${record?.filePath}`;
     fileName = record?.fileName;
     fileType = record?.fileType;
   } else {
     record = await client.aOSDMSFile.findOne({
-      where: {id: params?.id},
+      where: {id},
       select: {
         metaFile: true,
       },
@@ -60,7 +74,7 @@ export async function GET(
       return new NextResponse('File not found', {status: 404});
     }
 
-    filePath = `${process.env.DATA_STORAGE}/${record?.metaFile?.filePath}`;
+    filePath = `${storage}/${record?.metaFile?.filePath}`;
     fileName = record?.metaFile?.fileName;
     fileType = record?.metaFile?.fileType;
   }
