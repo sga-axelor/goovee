@@ -3,8 +3,8 @@
  */
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
-import {AOSProject, AOSProjectTaskStatus} from '@/goovee/.generated/models';
-import {ID, WhereOptions} from '@goovee/orm';
+import {AOSProject} from '@/goovee/.generated/models';
+import {ID} from '@goovee/orm';
 
 import {AuthProps, getProjectAccessFilter, QueryProps} from './helpers';
 import {getAllTicketCount} from './tickets';
@@ -116,6 +116,33 @@ export async function findTicketStatuses(projectId: ID) {
     },
   });
   return project?.projectTaskStatusSet ?? [];
+}
+
+export async function findTicketDoneStatus() {
+  const client = await getClient();
+  const projectAppConfig = await client.aOSAppProject.findOne({
+    select: {
+      completedTaskStatus: {
+        id: true,
+      },
+    },
+  });
+
+  return projectAppConfig?.completedTaskStatus?.id;
+}
+export async function findTicketCancelledStatus() {
+  //TODO: To be implemented
+  return;
+  const client = await getClient();
+  const projectAppConfig = await client.aOSAppProject.findOne({
+    select: {
+      completedTaskStatus: {
+        id: true,
+      },
+    },
+  });
+
+  return projectAppConfig?.completedTaskStatus?.id;
 }
 
 export async function findContactPartners(projectId: ID) {

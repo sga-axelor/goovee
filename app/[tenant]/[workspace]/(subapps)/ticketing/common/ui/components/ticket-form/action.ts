@@ -1,26 +1,24 @@
 'use server';
 
 // ---- CORE IMPORTS ---- //
-import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  createTicket,
-  updateTicket,
-  assignTicketToSupplier,
-} from '../../../orm/tickets';
+import {createTicket, updateTicket} from '../../../orm/tickets';
 import {
   UpdateTicketSchema,
   CreateTicketSchema,
   CreateTicketInfo,
   UpdateTicketInfo,
-  UpdateAssignTicket,
 } from './schema';
+import {ensureAuth} from '../../../utils/auth-helper';
+import {ASSIGNMENT} from '../../../constants';
+import {
+  findTicketCancelledStatus,
+  findTicketDoneStatus,
+} from '../../../orm/projects';
 
 type mutateProps = {
   workspaceURL: string;
@@ -36,11 +34,6 @@ type mutateProps = {
       };
 };
 
-type AssignToSupplierProps = {
-  workspaceURL: string;
-  data: UpdateAssignTicket;
-};
-
 export async function mutate(
   props: mutateProps,
 ): Promise<
@@ -48,49 +41,10 @@ export async function mutate(
   | {error: false; data: any; message?: never}
 > {
   const {workspaceURL, workspaceURI, action} = props;
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
 
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: i18n.get('Workspace not provided.'),
-    };
-  }
-
-  const session = await getSession();
-
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.resources,
-    user,
-    url: workspaceURL,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
-  }
   try {
     let ticket;
     if (action.type === 'create') {
@@ -119,58 +73,105 @@ export async function mutate(
   }
 }
 
+type TicketActionProps = {
+  workspaceURL: string;
+  data: {id: string; version: number};
+};
+
 export async function assignToSupplier(
-  props: AssignToSupplierProps,
+  props: TicketActionProps,
 ): Promise<
   | {error: true; message: string; data?: never}
   | {error: false; data: any; message?: never}
 > {
   const {workspaceURL, data} = props;
 
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: i18n.get('Workspace not provided.'),
-    };
-  }
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
 
-  const session = await getSession();
-
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.resources,
-    user,
-    url: workspaceURL,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
-  }
   try {
-    const ticket = await assignTicketToSupplier(data.id, data.version);
+    const updateData = UpdateTicketSchema.parse({
+      ...data,
+      assignment: ASSIGNMENT.PROVIDER,
+    });
+    const ticket = await updateTicket(updateData, user.id, workspace.id);
+    return {
+      error: false,
+      data: clone(ticket),
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
+export async function closeTicket(
+  props: TicketActionProps,
+): Promise<
+  | {error: true; message: string; data?: never}
+  | {error: false; data: any; message?: never}
+> {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    const status = await findTicketDoneStatus();
+    if (!status) {
+      return {
+        error: true,
+        message: i18n.get('Done status not configured'),
+      };
+    }
+    const updateData = UpdateTicketSchema.parse({
+      ...data,
+      status,
+    });
+
+    const ticket = await updateTicket(updateData, user.id, workspace.id);
+
+    return {
+      error: false,
+      data: clone(ticket),
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
+export async function cancelTicket(
+  props: TicketActionProps,
+): Promise<
+  | {error: true; message: string; data?: never}
+  | {error: false; data: any; message?: never}
+> {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    const status = await findTicketCancelledStatus();
+    if (!status) {
+      return {
+        error: true,
+        message: i18n.get('Cancelled status not configured'),
+      };
+    }
+    const updateData = UpdateTicketSchema.parse({
+      ...data,
+      status,
+    });
+    const ticket = await updateTicket(updateData, user.id, workspace.id);
 
     return {
       error: false,

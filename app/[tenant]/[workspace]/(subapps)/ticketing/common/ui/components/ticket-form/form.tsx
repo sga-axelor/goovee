@@ -75,7 +75,6 @@ export function TicketForm(props: TicketFormProps) {
           ? {
               type: 'update',
               data: {
-                project: projectId,
                 id: ticket.id,
                 version: ticket.version,
                 ...dirtyValues,

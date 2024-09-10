@@ -20,11 +20,18 @@ export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
 };
 
-async function hasTicketAccess(id: ID): Promise<boolean> {
+async function hasTicketAccess(
+  ticketId: ID,
+  userId: ID,
+  workspaceId: ID,
+): Promise<boolean> {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
-      id,
+      id: ticketId,
+      project: {
+        ...getProjectAccessFilter({userId, workspaceId}),
+      },
       ...getTicketAccessFilter(),
     },
     select: {
@@ -147,48 +154,23 @@ export async function updateTicket(
     subject,
     description,
     category,
+    status,
+    assignment,
     id,
     version,
-    project: projectId,
   } = data;
   const client = await getClient();
 
-  const project = await client.aOSProject.findOne({
-    where: {
-      id: projectId,
-      ...getProjectAccessFilter({userId, workspaceId}),
-    },
-    select: {
-      assignedTo: {
-        id: true,
-      },
-      projectTaskStatusSet: {
-        select: {
-          id: true,
-        },
-        take: 1,
-        orderBy: {
-          sequence: ORDER_BY.ASC,
-        },
-      } as unknown as {select: {id: true}}, // type cast to prevent orm type error
-    },
-  });
-
-  if (!project) {
-    // To make sure the user has access to the project.
-    throw new Error(i18n.get('Project not found'));
-  }
-
-  if (!(await hasTicketAccess(id))) {
+  if (!(await hasTicketAccess(id, userId, workspaceId))) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
   }
+
   const ticket = await client.aOSProjectTask.update({
     data: {
       id,
       version,
       updatedOn: new Date(),
-      updatedBy: {select: {id: userId}},
       name: subject,
       description: description,
       ...(category && {
@@ -204,6 +186,16 @@ export async function updateTicket(
             id: priority,
           },
         },
+      }),
+      ...(status && {
+        status: {
+          select: {
+            id: status,
+          },
+        },
+      }),
+      ...(assignment && {
+        assignment: assignment,
       }),
     },
     select: {
@@ -470,6 +462,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       },
       status: {
         name: true,
+        isCompleted: true,
       },
       assignment: true,
     },
@@ -496,24 +489,6 @@ export async function findTicketInfo(ticketId: ID, projectId: ID) {
       priority: {
         name: true,
       },
-    },
-  });
-
-  return ticket;
-}
-
-export async function assignTicketToSupplier(id: string, version: number) {
-  //TODO: check if the user hass access to the project or  not
-  if (!(await hasTicketAccess(id))) {
-    throw new Error(i18n.get('Ticket not found'));
-  }
-  const client = await getClient();
-
-  const ticket = await client.aOSProjectTask.update({
-    data: {
-      id,
-      version,
-      assignment: ASSIGNMENT.PROVIDER,
     },
   });
 

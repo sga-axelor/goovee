@@ -1,5 +1,8 @@
 'use client';
 // ---- CORE IMPORTS ---- //
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/lib/i18n';
+import {Maybe} from '@/types/util';
 import {
   Avatar,
   AvatarImage,
@@ -9,18 +12,15 @@ import {
   TableRow,
   Tag,
 } from '@/ui/components';
-import {i18n} from '@/lib/i18n';
-import {Maybe} from '@/types/util';
+import {useResponsive} from '@/ui/hooks';
+import Link from 'next/link';
 import {useState} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
-import Link from 'next/link';
 
 // ---- LOCAL IMPORTS ---- //
-import {Ticket} from '../../../types';
 import {ASSIGNMENT, columns} from '../../../constants';
+import {Ticket} from '../../../types';
 import {formatDate} from '../../../utils';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {useResponsive} from '@/ui/hooks';
 
 type Variant =
   | 'success'

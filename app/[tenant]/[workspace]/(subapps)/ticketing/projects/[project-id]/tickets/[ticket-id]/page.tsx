@@ -27,14 +27,18 @@ import {FaChevronRight} from 'react-icons/fa';
 import {MdOutlineModeEditOutline} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
+import {ASSIGNMENT} from '../../../../common/constants';
 import {findProject, findTicketStatuses} from '../../../../common/orm/projects';
 import {findTicket} from '../../../../common/orm/tickets';
 import {Stepper} from '../../../../common/ui/components/stepper';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
 import {formatDate} from '../../../../common/utils';
-import {AssignToSupplier} from './assign-to-supplier';
-import {ASSIGNMENT} from '../../../../common/constants';
 import {encodeFilter} from '@/utils/filter';
+import {
+  AssignToSupplier,
+  CancelTicket,
+  CloseTicket,
+} from '../../../../common/ui/components/ticket-form/ticket-actions';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -76,47 +80,55 @@ export default async function Page({
 
   return (
     <div className="container mt-5 mb-20">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink
-              asChild
-              className="text-foreground-muted cursor-pointer truncate text-md">
-              <Link href={`${workspaceURI}/ticketing`}>
-                {i18n.get('Projects')}
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <FaChevronRight className="text-black" />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbLink
-              asChild
-              className="cursor-pointer max-w-[8ch] md:max-w-[15ch] truncate text-md">
-              <Link href={`${workspaceURI}/ticketing/projects/${projectId}`}>
-                {project!.name}
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <FaChevronRight className="text-black" />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild className="cursor-pointer text-md">
-              <Link href={allTicketsURL}>{i18n.get('All tickets')}</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <FaChevronRight className="text-black" />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbPage className="truncate text-lg font-semibold">
-              <h2 className="font-semibold text-xl">{ticket.name}</h2>
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <div className="flex gap-4 justify-between min-h-9 items-center">
+        <Breadcrumb className="flex-shrink">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                asChild
+                className="text-foreground-muted cursor-pointer truncate text-md">
+                <Link href={`${workspaceURI}/ticketing`}>
+                  {i18n.get('Projects')}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <FaChevronRight className="text-black" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                asChild
+                className="cursor-pointer max-w-[8ch] md:max-w-[15ch] truncate text-md">
+                <Link href={`${workspaceURI}/ticketing/projects/${projectId}`}>
+                  {project!.name}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <FaChevronRight className="text-black" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild className="cursor-pointer text-md">
+                <Link href={allTicketsURL}>{i18n.get('All tickets')}</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <FaChevronRight className="text-black" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbPage className="truncate text-lg font-semibold">
+                <h2 className="font-semibold text-xl">{ticket.name}</h2>
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        {!ticket.status?.isCompleted && (
+          <div className="flex gap-4">
+            <CancelTicket id={ticketId} version={ticket.version} />
+            <CloseTicket id={ticketId} version={ticket.version} />
+          </div>
+        )}
+      </div>
       <TicketDetails
         ticket={ticket}
         workspaceURI={workspaceURI}
