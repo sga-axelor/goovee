@@ -46,7 +46,7 @@ export async function ensureAuth(workspaceURL: Maybe<string>): Promise<
   }
 
   const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.resources,
+    code: SUBAPP_CODES.ticketing,
     user,
     url: workspaceURL,
   });
