@@ -38,10 +38,6 @@ export default async function Page({
   });
 
   return (
-    <Content
-      workspace={workspace}
-      quotationSubapp={Boolean(quotationSubapp)}
-      tenant={tenant}
-    />
+    <Content workspace={workspace} quotationSubapp={Boolean(quotationSubapp)} />
   );
 }
