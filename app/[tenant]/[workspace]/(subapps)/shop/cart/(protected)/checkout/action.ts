@@ -26,6 +26,7 @@ import {PaymentOption, type ID} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findPartnerByEmail} from '@/orm/partner';
+import {getTenant} from '@/goovee';
 
 export async function findInvoicingAddress() {
   const session = await getSession();
@@ -69,21 +70,25 @@ export async function createOrder({
   workspaceURL: string;
   tenantId: ID;
 }) {
-  const aos = process.env.NEXT_PUBLIC_AOS_URL;
-
-  if (!aos)
-    return {
-      error: true,
-      message: 'Order creation failed. Webservice not available',
-    };
-
   if (!cart?.items?.length) {
     return {
       error: true,
       message: 'Bad request',
     };
   }
-  const ws = `${aos}/ws/portal/orders/order`;
+
+  const result = await getTenant(tenantId);
+
+  if (!result?.tenant?.aos?.url) {
+    return {
+      error: true,
+      message: 'Order creation failed. Webservice not available',
+    };
+  }
+
+  const {aos} = result.tenant;
+
+  const ws = `${aos.url}/ws/portal/orders/order`;
 
   const session = await getSession();
   const user = session?.user;
@@ -162,8 +167,8 @@ export async function createOrder({
 
     const res = await axios.post(ws, payload, {
       auth: {
-        username: process.env.BASIC_AUTH_USERNAME as string,
-        password: process.env.BASIC_AUTH_PASSWORD as string,
+        username: aos.auth.username,
+        password: aos.auth.password,
       },
     });
 
