@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Send} from 'lucide-react';
+import {X, Send, Paperclip} from 'lucide-react';
 import GroupPost from './groupPost';
 
 export const ChannelView = ({
@@ -21,18 +21,17 @@ export const ChannelView = ({
   setChannelJustSelected: (value: boolean) => void;
   newMessage: boolean;
   setNewMessage: (value: boolean) => void;
-  sendMessage: (messageText: string, channelId: string) => void;
+  sendMessage: (messageText: string, channelId: string, files?: File[]) => void;
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
   }
-
   const [messageText, setMessageText] = useState<string>('');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const groupsPosts = Object.values(channel.groupsPosts);
-  const messagesRef = useRef<HTMLInputElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  console.log('test test channel : ', channel);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior, timer = 0) => {
@@ -45,8 +44,6 @@ export const ChannelView = ({
     },
     [messagesRef],
   );
-
-  console.log('voici les posts : ', channel);
 
   const isBottom = () => {
     if (messagesRef.current) {
@@ -63,14 +60,14 @@ export const ChannelView = ({
       scrollToBottom('instant');
       setChannelJustSelected(false);
     }
-  }, [channelJustSelected, setChannelJustSelected]);
+  }, [channelJustSelected, setChannelJustSelected, scrollToBottom]);
 
   useEffect(() => {
     if (isBottom()) {
       scrollToBottom('smooth');
     }
     setNewMessage(false);
-  }, [newMessage, setNewMessage]);
+  }, [newMessage, setNewMessage, scrollToBottom]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -80,12 +77,33 @@ export const ChannelView = ({
   };
 
   const handleMessageSend = () => {
-    if (messageText.trim() !== '') {
-      sendMessage(messageText, channelId);
+    if (messageText.trim() !== '' || selectedFiles.length > 0) {
+      sendMessage(messageText, channelId, selectedFiles);
       setMessageText('');
+      setSelectedFiles([]);
       if (inputRef.current) {
         inputRef.current.focus();
       }
+    }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const newFiles = Array.from(event.target.files);
+      setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
+    }
+  };
+
+  const removeFile = (fileToRemove: File) => {
+    setSelectedFiles(prevFiles =>
+      prevFiles.filter(file => file !== fileToRemove),
+    );
+  };
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+      fileInputRef.current.click();
     }
   };
 
@@ -117,12 +135,45 @@ export const ChannelView = ({
             onChange={e => setMessageText(e.target.value)}
             onKeyPress={handleKeyPress}
           />
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFileSelect}
+            multiple
+          />
+          <Paperclip
+            size={20}
+            className="text-gray-400 cursor-pointer mr-2"
+            onClick={triggerFileInput}
+          />
           <Send
             size={20}
             className="text-gray-400 cursor-pointer"
             onClick={handleMessageSend}
           />
         </div>
+        {selectedFiles.length > 0 && (
+          <div className="mt-2">
+            <h4 className="text-sm font-semibold text-gray-700">
+              Fichiers sélectionnés:
+            </h4>
+            <ul className="list-disc pl-5">
+              {selectedFiles.map((file, index) => (
+                <li
+                  key={index}
+                  className="text-sm text-gray-600 flex items-center justify-between">
+                  <span>{file.name}</span>
+                  <X
+                    size={16}
+                    className="text-red-500 cursor-pointer"
+                    onClick={() => removeFile(file)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

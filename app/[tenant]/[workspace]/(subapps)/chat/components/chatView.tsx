@@ -70,8 +70,8 @@ const ChatView = ({
     [activeChannel, setCurrentChannel],
   );
 
-  const sendMessage = (postText: string, channelId: string) => {
-    addPost(setCurrentChannel, channelId, token, true, postText);
+  const sendMessage = (postText: string, channelId: string, files?: File[]) => {
+    addPost(setCurrentChannel, channelId, token, true, postText, files);
   };
 
   const handleNewReaction = useCallback(

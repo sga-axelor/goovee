@@ -199,7 +199,7 @@ export const createPost = async (
     let fileIds: any = [];
     await asyncForEach(files, async (file: any) => {
       if (!file.id) {
-        const fileInfo = await uploadFile(channelId, file.completeFile, token);
+        const fileInfo = await uploadFile(channelId, file, token);
         const {file_infos} = fileInfo;
         if (file_infos && file_infos[0]) {
           fileIds.push(file_infos[0].id);

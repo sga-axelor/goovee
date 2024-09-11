@@ -6,11 +6,11 @@ export const addPost = async (
   token: string,
   byMe: boolean,
   post?: any,
+  files?: File[],
 ) => {
-  console.log('test10 voici le post qui est arrivé', post);
   if (byMe) {
     let postCreated;
-    postCreated = await createPost(channelId, post, null, null, token);
+    postCreated = await createPost(channelId, post, null, files, token);
     updateLocalState(setCurrentChannel, postCreated);
   } else {
     updateLocalState(setCurrentChannel, post);
@@ -27,8 +27,6 @@ const updateLocalState = (setCurrentChannel: any, post: any) => {
     } else {
       updatedGroupsPosts.push([post]);
     }
-
-    console.log('test10 : ', updatedGroupsPosts);
 
     return {
       ...prevChannel,
