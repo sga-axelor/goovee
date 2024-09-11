@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {X, Send, Paperclip} from 'lucide-react';
+import {X, Send, Paperclip, Loader} from 'lucide-react';
 import GroupPost from './groupPost';
 
 export const ChannelView = ({
@@ -12,6 +12,7 @@ export const ChannelView = ({
   newMessage,
   setNewMessage,
   sendMessage,
+  loadMoreMessages,
 }: {
   channel: any;
   token: string;
@@ -22,6 +23,7 @@ export const ChannelView = ({
   newMessage: boolean;
   setNewMessage: (value: boolean) => void;
   sendMessage: (messageText: string, channelId: string, files?: File[]) => void;
+  loadMoreMessages: () => Promise<void>;
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
@@ -32,6 +34,7 @@ export const ChannelView = ({
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior, timer = 0) => {
@@ -47,13 +50,38 @@ export const ChannelView = ({
 
   const isBottom = () => {
     if (messagesRef.current) {
-      const scrollThreshold = 100;
+      const scrollThreshold = 150;
       return (
         messagesRef.current.scrollHeight - messagesRef.current.scrollTop <=
         messagesRef.current.clientHeight + scrollThreshold
       );
     }
   };
+
+  const handleScroll = useCallback(() => {
+    if (
+      messagesRef.current &&
+      messagesRef.current.scrollTop === 0 &&
+      !isLoading
+    ) {
+      setIsLoading(true);
+      loadMoreMessages().then(() => {
+        //setIsLoading(false);
+      });
+    }
+  }, [loadMoreMessages, isLoading]);
+
+  useEffect(() => {
+    const currentMessagesRef = messagesRef.current;
+    if (currentMessagesRef) {
+      currentMessagesRef.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      if (currentMessagesRef) {
+        currentMessagesRef.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [handleScroll]);
 
   useEffect(() => {
     if (channelJustSelected) {
@@ -84,6 +112,7 @@ export const ChannelView = ({
       if (inputRef.current) {
         inputRef.current.focus();
       }
+      scrollToBottom('smooth');
     }
   };
 
@@ -107,14 +136,21 @@ export const ChannelView = ({
     }
   };
 
+  const isSendEnabled = messageText.trim() !== '' || selectedFiles.length > 0;
+
   return (
-    <div className="flex flex-col h-screen bg-white flex-grow">
+    <div className="flex flex-col h-h-[calc(100vh-120px) bg-white flex-grow">
       <div className="bg-gray-100 p-4 border-b">
         <h2 className="font-semibold text-xl">
           #{channel.channel.display_name}
         </h2>
       </div>
       <div className="flex-grow overflow-y-auto p-4" ref={messagesRef}>
+        {true && (
+          <div className="flex justify-center items-center py-2">
+            <Loader className="animate-spin" />
+          </div>
+        )}
         {groupsPosts.map((group: any, i) => (
           <GroupPost
             key={i}
@@ -149,7 +185,9 @@ export const ChannelView = ({
           />
           <Send
             size={20}
-            className="text-gray-400 cursor-pointer"
+            className={`cursor-pointer transition-colors duration-200 ${
+              isSendEnabled ? 'text-blue-500' : 'text-gray-400'
+            }`}
             onClick={handleMessageSend}
           />
         </div>

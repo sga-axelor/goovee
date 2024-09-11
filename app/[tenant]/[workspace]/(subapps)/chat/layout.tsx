@@ -10,7 +10,5 @@ export default async function Layout({
   };
   children: React.ReactNode;
 }) {
-  //await login("r.paux@kp1.fr", "R.paux@kp1.fr");
-
   return <>{children}</>;
 }

@@ -1,31 +1,35 @@
 import {createPost} from '../api/api';
+import {getDisplayName} from '../services/services';
 
 export const addPost = async (
   setCurrentChannel: any,
   channelId: string,
   token: string,
   byMe: boolean,
+  user: any,
   post?: any,
   files?: File[],
 ) => {
   if (byMe) {
     let postCreated;
     postCreated = await createPost(channelId, post, null, files, token);
-    updateLocalState(setCurrentChannel, postCreated);
+    updateLocalState(setCurrentChannel, postCreated, user);
   } else {
-    updateLocalState(setCurrentChannel, post);
+    updateLocalState(setCurrentChannel, post, user);
   }
 };
 
-const updateLocalState = (setCurrentChannel: any, post: any) => {
+const updateLocalState = (setCurrentChannel: any, post: any, user: any) => {
   setCurrentChannel((prevChannel: any) => {
     const updatedGroupsPosts = [...prevChannel.groupsPosts];
     const lastGroup = updatedGroupsPosts[updatedGroupsPosts.length - 1];
 
+    let displayName = getDisplayName(user);
+
     if (lastGroup && lastGroup[0].user_id === post.user_id) {
       updatedGroupsPosts[updatedGroupsPosts.length - 1] = [...lastGroup, post];
     } else {
-      updatedGroupsPosts.push([post]);
+      updatedGroupsPosts.push([{...post, displayName}]);
     }
 
     return {

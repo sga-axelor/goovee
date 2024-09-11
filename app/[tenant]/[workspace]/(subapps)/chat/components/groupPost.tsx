@@ -21,6 +21,8 @@ const GroupPost = ({
     void retrieveImage();
   }, [group[0].user_id, token]);
 
+  console.log('test group : ', group);
+
   return (
     <div className="flex items-start space-x-4 p-4 border-b border-gray-200">
       {profileImage && (

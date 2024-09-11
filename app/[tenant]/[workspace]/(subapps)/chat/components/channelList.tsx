@@ -19,7 +19,7 @@ export const ChannelList = ({
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-800 text-gray-100 w-64">
+    <div className="flex flex-col h-h-[calc(100vh-120px) bg-gray-800 text-gray-100 w-64">
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-lg">Canaux</h2>

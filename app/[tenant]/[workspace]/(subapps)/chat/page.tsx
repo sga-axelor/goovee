@@ -12,7 +12,5 @@ export default async function Chat({
   );
 
   console.log('user', user);
-  return (
-    <ChatView token={token} userId={user.id} username={`@${user.username}`} />
-  );
+  return <ChatView token={token} user={user} />;
 }

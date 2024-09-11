@@ -13,15 +13,7 @@ import {getChannelInfosByChannelId} from '../services/services';
 import {addReaction} from '../utils/AddReaction';
 import {addPost} from '../utils/addPost';
 
-const ChatView = ({
-  token,
-  userId,
-  username,
-}: {
-  token: any;
-  userId: any;
-  username: string;
-}) => {
+const ChatView = ({token, user}: {token: any; user: any}) => {
   const [activeChannel, setActiveChannel] = useState<any>();
   const [_channels, setChannels] = useState<any>(null);
   const [_currentChannel, setCurrentChannel] = useState<any>();
@@ -32,7 +24,7 @@ const ChatView = ({
 
   useEffect(() => {
     const fetchChannels = async () => {
-      const channels = await getChannelsTeam(token, teamId, userId);
+      const channels = await getChannelsTeam(token, teamId, user.id);
       const filteredChannels = channels.filter((channel: any) => {
         return (
           channel.display_name != null && channel.display_name.trim() !== ''
@@ -62,8 +54,8 @@ const ChatView = ({
 
   const handleNewPost = useCallback(
     async (channelId: string, rootId: string, post: any) => {
-      if (channelId == activeChannelRef.current && userId !== post.user_id) {
-        addPost(setCurrentChannel, channelId, token, false, post);
+      if (channelId == activeChannelRef.current && user.id !== post.user_id) {
+        addPost(setCurrentChannel, channelId, token, false, user, post);
       }
       setNewMessage(true);
     },
@@ -71,14 +63,14 @@ const ChatView = ({
   );
 
   const sendMessage = (postText: string, channelId: string, files?: File[]) => {
-    addPost(setCurrentChannel, channelId, token, true, postText, files);
+    addPost(setCurrentChannel, channelId, token, true, user, postText, files);
   };
 
   const handleNewReaction = useCallback(
     async (channelId: string, postId: string, reaction: any) => {
       if (
         channelId === activeChannelRef.current &&
-        userId !== reaction.user_id
+        user.id !== reaction.user_id
       ) {
         addReaction(
           setCurrentChannel,
@@ -95,13 +87,15 @@ const ChatView = ({
 
   const handleEmojiClick = useCallback(
     (name: string, postId: string) => {
-      addReaction(setCurrentChannel, name, postId, userId, token, true);
+      addReaction(setCurrentChannel, name, postId, user.id, token, true);
     },
-    [userId, setCurrentChannel],
+    [user, setCurrentChannel],
   );
 
+  const loadMoreMessages = async () => {};
+
   return (
-    <div className="flex h-screen">
+    <div className="flex h-[calc(100vh-120px)]">
       <ChannelList
         channels={_channels}
         activeChannel={activeChannel}
@@ -118,10 +112,11 @@ const ChatView = ({
         newMessage={newMessage}
         setNewMessage={setNewMessage}
         sendMessage={sendMessage}
+        loadMoreMessages={loadMoreMessages}
       />
       <Socket
         token={token}
-        connectedUserId={userId}
+        connectedUserId={user.id}
         handleNewPost={handleNewPost}
         handleReaction={handleNewReaction}
       />
