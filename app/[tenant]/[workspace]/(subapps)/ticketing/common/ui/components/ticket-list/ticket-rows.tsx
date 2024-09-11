@@ -20,6 +20,7 @@ import {ASSIGNMENT, columns} from '../../../constants';
 import {Ticket} from '../../../types';
 import {formatDate} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
+import {useRouter} from 'next/navigation';
 
 interface TicketDetailRowProps {
   label: string;
@@ -39,6 +40,7 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
   const [show, setShow] = useState(false);
   const [id, setId] = useState('');
   const res = useResponsive();
+  const router = useRouter();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
 
   const handleCollapse = (Id: string) => {
@@ -59,15 +61,20 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
     );
   }
   return tickets.map(ticket => {
+    const handleClick = () => {
+      router.push(
+        `${workspaceURL}/ticketing/projects/${projectId}/tickets/${ticket?.id}`,
+      );
+    };
+
     return (
       <>
-        <TableRow key={ticket.id}>
+        <TableRow
+          key={ticket.id}
+          onClick={handleClick}
+          className="cursor-pointer">
           <TableCell className="px-5">
-            <Link
-              href={`${workspaceURL}/ticketing/projects/${projectId}/tickets/${ticket?.id}`}
-              className="font-medium">
-              #{ticket.id}
-            </Link>
+            <p className="font-medium">#{ticket.id}</p>
           </TableCell>
           {!small ? (
             <TableCell className="flex md:justify-center items-center justify-end">

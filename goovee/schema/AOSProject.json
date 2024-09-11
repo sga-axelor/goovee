@@ -79,6 +79,11 @@
       "type": "ManyToOne",
       "name": "portalWorkspace",
       "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "company",
+      "target": "AOSCompany"
     }
   ]
 }
