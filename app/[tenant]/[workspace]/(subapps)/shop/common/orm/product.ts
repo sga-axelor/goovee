@@ -18,7 +18,7 @@ import type {
   User,
   ID,
 } from '@/types';
-import {getClient} from '@/goovee';
+import {getClient, getTenant} from '@/goovee';
 
 function getPageInfo({
   count = 0,
@@ -358,6 +358,7 @@ export async function findProducts({
       productIds: $products.map(p => p.id),
       workspace,
       user,
+      tenantId,
     });
 
     const originalProduct = (id: any) =>
@@ -404,20 +405,26 @@ export async function findProductsFromWS({
   workspace,
   user,
   productIds,
+  tenantId,
 }: {
   workspace: PortalWorkspace;
   user?: User;
   productIds: Array<Product['id']>;
+  tenantId: ID;
 }) {
-  if (!workspace?.config?.company?.id && user && productIds) {
+  if (!workspace?.config?.company?.id && user && productIds && tenantId) {
     return [];
   }
 
-  const aos = process.env.NEXT_PUBLIC_AOS_URL;
+  const result = await getTenant(tenantId);
 
-  if (!aos) return [];
+  if (!result?.tenant?.aos?.url) {
+    return [];
+  }
 
-  const ws = `${aos}/ws/portal/products/productPrices`;
+  const {aos} = result.tenant;
+
+  const ws = `${aos.url}/ws/portal/products/productPrices`;
 
   try {
     const res = await axios
@@ -431,8 +438,8 @@ export async function findProductsFromWS({
         },
         {
           auth: {
-            username: process.env.BASIC_AUTH_USERNAME as string,
-            password: process.env.BASIC_AUTH_PASSWORD as string,
+            username: aos.auth.username,
+            password: aos.auth.password,
           },
         },
       )
