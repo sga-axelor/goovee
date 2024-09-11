@@ -8,6 +8,7 @@ import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {TENANT_HEADER} from '@/middleware';
+import {getTenant} from '@/goovee';
 import type {ID, PortalWorkspace, Product, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -65,13 +66,15 @@ export async function requestOrder({
     return null;
   }
 
-  const aos = process.env.NEXT_PUBLIC_AOS_URL;
-
-  if (!aos) return null;
-
   if (!cart?.items?.length) return null;
 
-  const ws = `${aos}/ws/portal/orders/${type}`;
+  const result = await getTenant(tenantId);
+
+  if (!result?.tenant?.aos?.url) return null;
+
+  const {aos} = result.tenant;
+
+  const ws = `${aos.url}/ws/portal/orders/${type}`;
 
   const session = await getSession();
   const user = session?.user;
@@ -130,8 +133,8 @@ export async function requestOrder({
 
     const res = await axios.post(ws, payload, {
       auth: {
-        username: process.env.BASIC_AUTH_USERNAME as string,
-        password: process.env.BASIC_AUTH_PASSWORD as string,
+        username: aos.auth.username,
+        password: aos.auth.password,
       },
     });
 
