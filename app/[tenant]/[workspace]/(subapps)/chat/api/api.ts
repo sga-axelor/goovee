@@ -1,4 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
+import {asyncForEach, generateUniqueId} from '../services/services';
 
 // Configuration de base pour l'API Mattermost
 const MATTERMOST_URL = 'http://localhost:8065'; // Remplacez par l'URL de votre instance Mattermost
@@ -176,6 +177,64 @@ export const getPostReactions = async (postId: string, token: string) => {
     method: 'get',
     url: `${API_URL}/posts/${postId}/reactions`,
     headers: {Authorization: `Bearer ${token}`},
+  });
+  return data;
+};
+
+export const createPost = async (
+  channelId: string,
+  message: string,
+  rootId: string | null,
+  files: any,
+  token: string,
+) => {
+  let data: any = {
+    channel_id: channelId,
+    message,
+  };
+  if (rootId) {
+    data = {...data, root_id: rootId};
+  }
+  if (files) {
+    let fileIds: any = [];
+    await asyncForEach(files, async (file: any) => {
+      if (!file.id) {
+        const fileInfo = await uploadFile(channelId, file.completeFile, token);
+        const {file_infos} = fileInfo;
+        if (file_infos && file_infos[0]) {
+          fileIds.push(file_infos[0].id);
+        }
+      } else {
+        fileIds.push(file.id);
+      }
+    });
+    data = {...data, file_ids: fileIds};
+  }
+  const {data: post} = await axios({
+    method: 'post',
+    url: `${API_URL}/posts`,
+    headers: {Authorization: `Bearer ${token}`},
+    data: data,
+  });
+  return post;
+};
+
+export const uploadFile = async (
+  channelId: string,
+  file: File,
+  token: string,
+) => {
+  const formData = new FormData();
+  const uniqueId = generateUniqueId();
+  formData.append('channel_id', channelId);
+  formData.append('client_ids', uniqueId);
+  formData.append('files', file);
+  const {data} = await axios.post(`${API_URL}/files`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token}`,
+    },
+    transformRequest: formData => formData,
   });
   return data;
 };

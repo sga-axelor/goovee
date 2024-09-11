@@ -11,6 +11,7 @@ import {
 import {Socket} from './Socket';
 import {getChannelInfosByChannelId} from '../services/services';
 import {addReaction} from '../utils/AddReaction';
+import {addPost} from '../utils/addPost';
 
 const ChatView = ({
   token,
@@ -25,6 +26,7 @@ const ChatView = ({
   const [_channels, setChannels] = useState<any>(null);
   const [_currentChannel, setCurrentChannel] = useState<any>();
   const [channelJustSelected, setChannelJustSelected] = useState(false);
+  const [newMessage, setNewMessage] = useState<boolean>(false);
   const activeChannelRef = useRef(activeChannel);
   const teamId: any = '7efg3j4y3pgfpyjkjtmhnoxrcc';
 
@@ -60,29 +62,17 @@ const ChatView = ({
 
   const handleNewPost = useCallback(
     async (channelId: string, rootId: string, post: any) => {
-      if (channelId == activeChannelRef.current) {
-        setCurrentChannel((prevChannel: any) => {
-          const updatedGroupsPosts = [...prevChannel.groupsPosts];
-          const lastGroup = updatedGroupsPosts[updatedGroupsPosts.length - 1];
-
-          if (lastGroup && lastGroup[0].displayName === post.displayName) {
-            updatedGroupsPosts[updatedGroupsPosts.length - 1] = [
-              ...lastGroup,
-              post,
-            ];
-          } else {
-            updatedGroupsPosts.push([post]);
-          }
-
-          return {
-            ...prevChannel,
-            groupsPosts: updatedGroupsPosts,
-          };
-        });
+      if (channelId == activeChannelRef.current && userId !== post.user_id) {
+        addPost(setCurrentChannel, channelId, token, false, post);
       }
+      setNewMessage(true);
     },
     [activeChannel, setCurrentChannel],
   );
+
+  const sendMessage = (postText: string, channelId: string) => {
+    addPost(setCurrentChannel, channelId, token, true, postText);
+  };
 
   const handleNewReaction = useCallback(
     async (channelId: string, postId: string, reaction: any) => {
@@ -125,6 +115,9 @@ const ChatView = ({
         channelId={activeChannel}
         channelJustSelected={channelJustSelected}
         setChannelJustSelected={setChannelJustSelected}
+        newMessage={newMessage}
+        setNewMessage={setNewMessage}
+        sendMessage={sendMessage}
       />
       <Socket
         token={token}

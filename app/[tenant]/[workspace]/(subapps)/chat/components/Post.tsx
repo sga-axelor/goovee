@@ -46,9 +46,9 @@ const Post = ({
       onMouseLeave={() => setIsHovered(false)}>
       <p className="mt-1">{post.message}</p>
 
-      {post.files && post.files.length > 0 && (
+      {post.metadata.files && post.metadata.files.length > 0 && (
         <div className="mt-2 flex flex-wrap">
-          {post.files.map((file: any) => (
+          {post.metadata.files.map((file: any) => (
             <FilePreview key={file.id} file={file} />
           ))}
         </div>

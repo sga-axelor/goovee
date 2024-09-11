@@ -9,29 +9,37 @@ export const ChannelView = ({
   channelId,
   channelJustSelected,
   setChannelJustSelected,
+  newMessage,
+  setNewMessage,
+  sendMessage,
 }: {
   channel: any;
   token: string;
   onEmojiClick: (name: string, postId: string) => void;
   channelId: string;
   channelJustSelected: boolean;
-  setChannelJustSelected: (vakue: boolean) => void;
+  setChannelJustSelected: (value: boolean) => void;
+  newMessage: boolean;
+  setNewMessage: (value: boolean) => void;
+  sendMessage: (messageText: string, channelId: string) => void;
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
   }
 
-  console.log('test test channel : ', channel);
-
+  const [messageText, setMessageText] = useState<string>('');
   const groupsPosts = Object.values(channel.groupsPosts);
   const messagesRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  console.log('test test channel : ', channel);
 
   const scrollToBottom = useCallback(
-    (timer = 0) => {
+    (behavior: ScrollBehavior, timer = 0) => {
       if (messagesRef && messagesRef.current) {
         messagesRef.current.scrollTo({
           top: messagesRef.current.scrollHeight,
-          behavior: 'instant',
+          behavior: behavior,
         });
       }
     },
@@ -40,12 +48,46 @@ export const ChannelView = ({
 
   console.log('voici les posts : ', channel);
 
+  const isBottom = () => {
+    if (messagesRef.current) {
+      const scrollThreshold = 100;
+      return (
+        messagesRef.current.scrollHeight - messagesRef.current.scrollTop <=
+        messagesRef.current.clientHeight + scrollThreshold
+      );
+    }
+  };
+
   useEffect(() => {
     if (channelJustSelected) {
-      scrollToBottom();
+      scrollToBottom('instant');
       setChannelJustSelected(false);
     }
   }, [channelJustSelected, setChannelJustSelected]);
+
+  useEffect(() => {
+    if (isBottom()) {
+      scrollToBottom('smooth');
+    }
+    setNewMessage(false);
+  }, [newMessage, setNewMessage]);
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleMessageSend();
+    }
+  };
+
+  const handleMessageSend = () => {
+    if (messageText.trim() !== '') {
+      sendMessage(messageText, channelId);
+      setMessageText('');
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-white flex-grow">
@@ -67,11 +109,19 @@ export const ChannelView = ({
       <div className="p-4 border-t">
         <div className="flex items-center bg-gray-100 rounded-lg p-2">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Écrire un message..."
             className="flex-grow bg-transparent focus:outline-none"
+            value={messageText}
+            onChange={e => setMessageText(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
-          <Send size={20} className="text-gray-400 cursor-pointer" />
+          <Send
+            size={20}
+            className="text-gray-400 cursor-pointer"
+            onClick={handleMessageSend}
+          />
         </div>
       </div>
     </div>

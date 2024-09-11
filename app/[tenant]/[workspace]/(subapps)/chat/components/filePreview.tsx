@@ -7,7 +7,6 @@ interface FileProps {
     name: string;
     extension: string;
     mime_type: string;
-    // Ajoutez d'autres propriétés selon votre structure de fichier
   };
 }
 
