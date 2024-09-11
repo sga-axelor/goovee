@@ -7,11 +7,15 @@ export const ChannelView = ({
   token,
   onEmojiClick,
   channelId,
+  channelJustSelected,
+  setChannelJustSelected,
 }: {
   channel: any;
   token: string;
   onEmojiClick: (name: string, postId: string) => void;
   channelId: string;
+  channelJustSelected: boolean;
+  setChannelJustSelected: (vakue: boolean) => void;
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
@@ -37,8 +41,11 @@ export const ChannelView = ({
   console.log('voici les posts : ', channel);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [channel]);
+    if (channelJustSelected) {
+      scrollToBottom();
+      setChannelJustSelected(false);
+    }
+  }, [channelJustSelected, setChannelJustSelected]);
 
   return (
     <div className="flex flex-col h-screen bg-white flex-grow">

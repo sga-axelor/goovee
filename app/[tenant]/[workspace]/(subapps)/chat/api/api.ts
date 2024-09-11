@@ -170,3 +170,12 @@ export const removeReactionFromAPost = async (
   });
   return data.status;
 };
+
+export const getPostReactions = async (postId: string, token: string) => {
+  const {data} = await axios({
+    method: 'get',
+    url: `${API_URL}/posts/${postId}/reactions`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return data;
+};

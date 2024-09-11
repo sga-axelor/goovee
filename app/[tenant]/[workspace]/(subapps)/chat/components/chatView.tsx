@@ -24,6 +24,7 @@ const ChatView = ({
   const [activeChannel, setActiveChannel] = useState<any>();
   const [_channels, setChannels] = useState<any>(null);
   const [_currentChannel, setCurrentChannel] = useState<any>();
+  const [channelJustSelected, setChannelJustSelected] = useState(false);
   const activeChannelRef = useRef(activeChannel);
   const teamId: any = '7efg3j4y3pgfpyjkjtmhnoxrcc';
 
@@ -50,6 +51,7 @@ const ChatView = ({
         token,
       );
       setCurrentChannel(currentChannel);
+      setChannelJustSelected(true);
     };
     if (activeChannel) {
       fetchCurrentChannel();
@@ -83,23 +85,18 @@ const ChatView = ({
   );
 
   const handleNewReaction = useCallback(
-    async (
-      channelId: string,
-      postId: string,
-      reaction: any,
-      senderName: string,
-    ) => {
-      console.log('on rentre bien dans le handlereaction');
-      console.log('voici le userName', username);
-      console.log('voici le senderName', senderName);
-      if (channelId === activeChannelRef.current && username !== senderName) {
-        console.log('voici la réaction : ', reaction);
+    async (channelId: string, postId: string, reaction: any) => {
+      if (
+        channelId === activeChannelRef.current &&
+        userId !== reaction.user_id
+      ) {
         addReaction(
           setCurrentChannel,
           reaction.emoji_name,
           postId,
-          userId,
+          reaction.user_id,
           token,
+          false,
         );
       }
     },
@@ -108,7 +105,7 @@ const ChatView = ({
 
   const handleEmojiClick = useCallback(
     (name: string, postId: string) => {
-      addReaction(setCurrentChannel, name, postId, userId, token);
+      addReaction(setCurrentChannel, name, postId, userId, token, true);
     },
     [userId, setCurrentChannel],
   );
@@ -126,6 +123,8 @@ const ChatView = ({
         token={token}
         onEmojiClick={handleEmojiClick}
         channelId={activeChannel}
+        channelJustSelected={channelJustSelected}
+        setChannelJustSelected={setChannelJustSelected}
       />
       <Socket
         token={token}

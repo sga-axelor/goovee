@@ -1,4 +1,31 @@
-import {createReaction, removeReactionFromAPost} from '../api/api';
+//
+
+import {
+  createReaction,
+  removeReactionFromAPost,
+  getPostReactions,
+} from '../api/api';
+
+const checkIfReactionExists = async (
+  postId: string,
+  userId: string,
+  emojiName: string,
+  token: string,
+): Promise<boolean> => {
+  try {
+    const reactions = await getPostReactions(postId, token);
+
+    const reactionExists = reactions.some(
+      (reaction: any) =>
+        reaction.user_id === userId && reaction.emoji_name === emojiName,
+    );
+
+    return reactionExists;
+  } catch (error) {
+    console.error('Erreur lors de la vérification de la réaction:', error);
+    return false;
+  }
+};
 
 export const addReaction = async (
   setCurrentChannel: any,
@@ -6,8 +33,56 @@ export const addReaction = async (
   postId: string,
   userId: string,
   token: string,
+  byMe: boolean,
 ) => {
-  let created: boolean = true;
+  if (byMe) {
+    let created: boolean;
+    let serverResponse;
+    try {
+      const reactionExists = await checkIfReactionExists(
+        postId,
+        userId,
+        name,
+        token,
+      );
+
+      if (reactionExists) {
+        serverResponse = await removeReactionFromAPost(
+          userId,
+          postId,
+          name,
+          token,
+        );
+        created = false;
+      } else {
+        serverResponse = await createReaction(
+          userId,
+          postId,
+          name,
+          Date.now(),
+          token,
+        );
+        created = true;
+      }
+
+      updateLocalState(setCurrentChannel, postId, userId, name);
+    } catch (error) {
+      console.error(
+        'Erreur lors de la mise à jour de la réaction sur le serveur:',
+        error,
+      );
+    }
+  } else {
+    updateLocalState(setCurrentChannel, postId, userId, name);
+  }
+};
+
+const updateLocalState = (
+  setCurrentChannel: any,
+  postId: string,
+  userId: string,
+  name: string,
+) => {
   setCurrentChannel((prevChannel: any) => {
     const updatedGroupsPosts = prevChannel.groupsPosts.map((group: any) => {
       const updatedGroup = group.map((post: any) => {
@@ -26,14 +101,7 @@ export const addReaction = async (
                 reaction.emoji_name === name && reaction.user_id === userId,
             );
 
-          if (existingReactionIndex !== -1) {
-            created = false;
-            updatedPost.metadata.reactions =
-              updatedPost.metadata.reactions.filter(
-                (_: any, index: number) => index !== existingReactionIndex,
-              );
-          } else {
-            created = true;
+          if (existingReactionIndex === -1) {
             updatedPost.metadata.reactions.push({
               user_id: userId,
               post_id: postId,
@@ -45,14 +113,15 @@ export const addReaction = async (
               channel_id: prevChannel.channel.id,
             });
           }
+          if (existingReactionIndex !== -1) {
+            updatedPost.metadata.reactions.splice(existingReactionIndex, 1);
+          }
 
           updatedPost.has_reactions = updatedPost.metadata.reactions.length > 0;
-
           return updatedPost;
         }
         return post;
       });
-
       return updatedGroup;
     });
 
@@ -61,9 +130,4 @@ export const addReaction = async (
       groupsPosts: updatedGroupsPosts,
     };
   });
-  if (created) {
-    await createReaction(userId, postId, name, 1717413805209, token);
-  } else {
-    await removeReactionFromAPost(userId, postId, name, token);
-  }
 };
