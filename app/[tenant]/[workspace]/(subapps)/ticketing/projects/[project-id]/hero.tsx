@@ -3,23 +3,14 @@
 // ---- CORE IMPORTS ---- //
 import {IMAGE_URL} from '@/constants';
 import {i18n} from '@/lib/i18n';
-import type {PortalWorkspace} from '@/types';
 import {HeroSearch} from '@/ui/components';
 import type {ID} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import Search from './search';
 
-export const Hero = ({
-  workspace,
-  projectId,
-}: {
-  workspace: PortalWorkspace;
-  projectId: ID;
-}) => {
-  const renderSearch = () => (
-    <Search workspace={workspace} projectId={projectId} />
-  );
+export const Hero = ({projectId}: {projectId?: ID}) => {
+  const renderSearch = () => <Search projectId={projectId} />;
 
   return (
     <>

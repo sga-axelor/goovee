@@ -129,7 +129,7 @@ export default async function Page({
 
   return (
     <>
-      <Hero workspace={workspace} projectId={projectId} />
+      <Hero projectId={projectId} />
       <div className="container my-6 space-y-6 mx-auto">
         <Breadcrumb>
           <BreadcrumbList>

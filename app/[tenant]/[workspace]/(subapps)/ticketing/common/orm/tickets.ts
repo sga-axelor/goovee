@@ -511,3 +511,38 @@ export async function findTicketVersion(ticketId: ID) {
   }
   return ticket.version;
 }
+
+export async function findTicketsBySearch(
+  search: string,
+  userId: ID,
+  workspaceId: ID,
+  projectId?: ID,
+) {
+  const client = await getClient();
+  const tickets = await client.aOSProjectTask.find({
+    where: {
+      project: {
+        ...(projectId && {id: projectId}),
+        ...getProjectAccessFilter({userId, workspaceId}),
+      },
+      ...getTicketAccessFilter(),
+      OR: [
+        {
+          name: {
+            like: `%${search}%`,
+          },
+        },
+        {
+          description: {
+            like: `%${search}%`,
+          },
+        },
+      ],
+    },
+    take: 10,
+    select: {
+      name: true,
+    },
+  });
+  return tickets;
+}

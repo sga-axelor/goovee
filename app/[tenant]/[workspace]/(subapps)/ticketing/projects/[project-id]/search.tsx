@@ -16,36 +16,47 @@ import {
 import {cn} from '@/utils/css';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {PortalWorkspace} from '@/types';
-import {findTickets} from './action';
+import {searchTickets} from '../../common/ui/components/ticket-form/action';
 import {debounce} from 'lodash';
 import {ID} from '@goovee/orm';
+import {useToast} from '@/ui/hooks';
 
 export function Search({
-  workspace,
   projectId,
   className,
   inputClassName,
 }: {
-  workspace: PortalWorkspace;
-  projectId: ID;
+  projectId?: ID;
   inputClassName?: string;
   className?: string;
 }) {
+  const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [tickets, setTickets] = useState<any[]>([]);
 
+  //TODO:  Need to handle loading state and race conditions
   const fetchTickets = useMemo(
     () =>
-      debounce((search: string) => {
-        if (search) {
-          findTickets({search: search, workspace, projectId}).then(setTickets);
-        } else {
+      debounce(async (search: string) => {
+        if (!search) return setTickets([]);
+        const {error, message, data} = await searchTickets({
+          search: search,
+          workspaceURL,
+          projectId,
+        });
+        if (error) {
           setTickets([]);
+          toast({
+            variant: 'destructive',
+            title: message,
+          });
+          return;
         }
+        setTickets(data);
       }, 500),
-    [workspace, projectId],
+    [workspaceURL, projectId, toast],
   );
 
   const handleSearch = useCallback(
@@ -58,9 +69,17 @@ export function Search({
     [fetchTickets],
   );
 
+  const router = useRouter();
+  const {workspaceURI} = useWorkspace();
+
+  const handleRedirection = (ticket: any) => () => {
+    router.push(
+      `${workspaceURI}/ticketing/projects/${projectId}/tickets/${ticket.id}`,
+    );
+  };
   return (
     <div className={cn('w-full relative', className)}>
-      <Command className="p-0 bg-white">
+      <Command className="p-0 bg-white" shouldFilter={false}>
         <CommandInput
           placeholder="Search here"
           className={cn(
@@ -82,8 +101,9 @@ export function Search({
               ? tickets.map(ticket => (
                   <CommandItem
                     key={ticket.id}
-                    value={ticket.name}
-                    className="block py-2 sm:px-6">
+                    value={ticket.id}
+                    onClick={handleRedirection(ticket)}
+                    className="block py-2 sm:px-6 cursor-pointer">
                     <ResourceItem ticket={ticket} projectId={projectId} />
                   </CommandItem>
                 ))
@@ -95,24 +115,10 @@ export function Search({
   );
 }
 
-function ResourceItem({ticket, projectId}: any) {
-  const router = useRouter();
-  const {workspaceURI} = useWorkspace();
-
-  const handleRedirection = (ticket: any) => () => {
-    router.push(
-      `${workspaceURI}/ticketing/projects/${projectId}/tickets/${ticket.id}`,
-    );
-  };
-
+function ResourceItem({ticket}: any) {
   return (
-    <div
-      className="border-b cursor-pointer"
-      key={ticket.id}
-      onClick={handleRedirection(ticket)}>
-      <div className="leading-5 text-sm space-y-2 p-3">
-        <h3 className="font-semibold line-clamp-1">{ticket.name}</h3>
-      </div>
+    <div className="leading-5 text-sm space-y-2 p-3">
+      <h3 className="font-semibold line-clamp-1">{ticket.name}</h3>
     </div>
   );
 }

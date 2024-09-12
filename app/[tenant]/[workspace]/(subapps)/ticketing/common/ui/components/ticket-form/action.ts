@@ -3,26 +3,28 @@
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {clone} from '@/utils';
+import {ID} from '@goovee/orm';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  createTicket,
-  findTicketVersion,
-  updateTicket,
-} from '../../../orm/tickets';
-import {
-  UpdateTicketSchema,
-  CreateTicketSchema,
-  CreateTicketInfo,
-  UpdateTicketInfo,
-} from './schema';
-import {ensureAuth} from '../../../utils/auth-helper';
 import {ASSIGNMENT, VERSION_MISMATCH_ERROR} from '../../../constants';
 import {
   findTicketCancelledStatus,
   findTicketDoneStatus,
 } from '../../../orm/projects';
+import {
+  createTicket,
+  findTicketsBySearch,
+  findTicketVersion,
+  updateTicket,
+} from '../../../orm/tickets';
+import {ensureAuth} from '../../../utils/auth-helper';
+import {
+  CreateTicketInfo,
+  CreateTicketSchema,
+  UpdateTicketInfo,
+  UpdateTicketSchema,
+} from './schema';
 
 export type MutateProps = {
   workspaceURL: string;
@@ -204,4 +206,30 @@ export async function cancelTicket(
     }
     throw e;
   }
+}
+
+export async function searchTickets({
+  search = '',
+  workspaceURL,
+  projectId,
+}: {
+  search: string;
+  workspaceURL: string;
+  projectId?: ID;
+}): Promise<
+  | {error: true; message: string; data?: never}
+  | {error: false; data: any; message?: never}
+> {
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) {
+    return {error: true, message};
+  }
+  const {user, workspace} = auth;
+  const tickets = await findTicketsBySearch(
+    search,
+    user.id,
+    workspace.id,
+    projectId,
+  );
+  return {error: false, data: clone(tickets)};
 }

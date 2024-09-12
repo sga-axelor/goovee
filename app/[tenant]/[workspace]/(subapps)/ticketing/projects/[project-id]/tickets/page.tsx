@@ -140,11 +140,7 @@ export default async function Page({
         </Button>
       </div>
       <div className="md:flex items-end justify-between gap-6">
-        <Search
-          workspace={workspace}
-          projectId={projectId}
-          inputClassName="h-[39px]"
-        />
+        <Search projectId={projectId} inputClassName="h-[39px]" />
         <Suspense>
           <AsyncFilter
             url={url}
