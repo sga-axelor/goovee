@@ -37,7 +37,7 @@ export function TicketList(props: TicketListProps) {
     <Table className="rounded-lg bg-card text-card-foreground">
       <TableHeader>
         <TableRow>
-          {mainColumns?.map(column => {
+          {mainColumns?.map((column, i, arr) => {
             const isActive = sort.key === column.key;
             const isASC = isActive && sort.direction === ORDER_BY.ASC;
             const label = i18n.get(column.label);
@@ -50,7 +50,7 @@ export function TicketList(props: TicketListProps) {
                 }}
                 className={cn(
                   'text-card-foreground cursor-pointer text-base font-semibold px-6 border-none',
-                  {'flex justify-end': column.key === 'subject' && small},
+                  {'flex justify-end': i === arr.length - 1 && small},
                 )}>
                 <div className="flex gap-1 items-center">
                   <div className="line-clamp-1">{label}</div>
