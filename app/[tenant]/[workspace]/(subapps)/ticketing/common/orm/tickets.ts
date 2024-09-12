@@ -358,6 +358,7 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
   });
   return tickets;
 }
+
 export async function findTicket(ticketId: ID, projectId: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
@@ -493,4 +494,20 @@ export async function findTicketInfo(ticketId: ID, projectId: ID) {
   });
 
   return ticket;
+}
+
+export async function findTicketVersion(ticketId: ID) {
+  const client = await getClient();
+  const ticket = await client.aOSProjectTask.findOne({
+    where: {
+      id: ticketId,
+    },
+    select: {
+      version: true,
+    },
+  });
+  if (!ticket) {
+    throw new Error('Ticket not found');
+  }
+  return ticket.version;
 }

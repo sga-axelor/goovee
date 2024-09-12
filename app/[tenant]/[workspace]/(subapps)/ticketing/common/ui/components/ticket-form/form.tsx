@@ -4,7 +4,8 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
-import {Textarea} from '@/ui/components';
+import {Maybe} from '@/types/util';
+import {RichTextEditor, ToastAction} from '@/ui/components';
 import {Button} from '@/ui/components/button';
 import {
   Form,
@@ -22,15 +23,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components/select';
+import {useToast} from '@/ui/hooks';
 import {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
 import {useRouter} from 'next/navigation';
-import {useRef} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 // ---- LOCAL IMPORT ---- //
-import {mutate} from './action';
+import {VERSION_MISMATCH_ERROR} from '../../../constants';
+import {mutate, MutateProps} from './action';
 import {TicketFormSchema, TicketInfo} from './schema';
 
 type TicketFormProps = {
@@ -46,37 +49,92 @@ type TicketFormProps = {
   }[];
 };
 
+const getDefaultValues = (ticket: Maybe<AOSProjectTask>) => {
+  return {
+    subject: ticket?.name ?? '',
+    category: ticket?.projectTaskCategory?.id,
+    priority: ticket?.priority?.id,
+    description: ticket?.description ?? '',
+  };
+};
+
 export function TicketForm(props: TicketFormProps) {
   const {ticket, categories, priorities, projectId} = props;
   const router = useRouter();
+  const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
-
+  const [success, setSuccess] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<TicketInfo>({
     resolver: zodResolver(TicketFormSchema),
-    defaultValues: {
-      subject: ticket?.name ?? '',
-      category: ticket?.projectTaskCategory?.id,
-      priority: ticket?.priority?.id,
-      description: ticket?.description ?? '',
-    },
+    defaultValues: getDefaultValues(ticket),
   });
 
-  const handleSubmit = async (value: TicketInfo) => {
-    const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
-    const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
+  const handleSuccess = useCallback(
+    (ticketId: string) => {
+      setSuccess(true);
+      router.replace(
+        `${workspaceURI}/ticketing/projects/${projectId}/tickets/${ticketId}`,
+      );
+    },
+    [router, workspaceURI, projectId],
+  );
 
-    if (!dirtyFieldKeys.length) return router.back();
+  const handleError = useCallback(
+    (message: string, retryProps: MutateProps) => {
+      if (message === VERSION_MISMATCH_ERROR) {
+        const handleOverwrite = async () => {
+          const {error, message, data} = await mutate(retryProps, true);
+          if (error) {
+            handleError(message, retryProps);
+            return;
+          }
+          handleSuccess(data.id);
+        };
+        const handleDiscard = () => {
+          router.refresh();
+        };
+        return toast({
+          variant: 'destructive',
+          title: i18n.get('Record has been modified by someone else'),
+          className: 'flex gap-4 flex-col',
+          duration: 100000,
+          action: (
+            <div className="flex gap-4">
+              <ToastAction altText="Overwrite" onClick={handleOverwrite}>
+                {i18n.get('Overwrite')}
+              </ToastAction>
+              <ToastAction altText="Discard" onClick={handleDiscard}>
+                {i18n.get('Discard')}
+              </ToastAction>
+            </div>
+          ),
+        });
+      }
+      return toast({
+        variant: 'destructive',
+        title: message,
+        duration: 5000,
+      });
+    },
+    [toast, handleSuccess, router],
+  );
 
-    const {error, message, data} = await mutate({
-      action:
-        ticket?.id && ticket?.version
+  const handleSubmit = useCallback(
+    async (value: TicketInfo) => {
+      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
+      const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
+
+      if (!dirtyFieldKeys.length) return router.back();
+      const isUpdate = ticket?.id && ticket?.version;
+      const mutateProps: MutateProps = {
+        action: isUpdate
           ? {
               type: 'update',
               data: {
-                id: ticket.id,
-                version: ticket.version,
+                id: ticket.id!,
+                version: ticket.version!,
                 ...dirtyValues,
               },
             }
@@ -87,18 +145,35 @@ export function TicketForm(props: TicketFormProps) {
                 ...dirtyValues,
               },
             },
-      workspaceURL,
+        workspaceURL,
+        workspaceURI,
+      };
+
+      const {error, message, data} = await mutate(mutateProps);
+
+      if (error) {
+        handleError(message, mutateProps);
+        return;
+      }
+
+      handleSuccess(data.id);
+    },
+    [
+      form.formState.dirtyFields,
+      handleError,
+      handleSuccess,
+      projectId,
+      router,
+      ticket?.id,
+      ticket?.version,
       workspaceURI,
-    });
+      workspaceURL,
+    ],
+  );
 
-    if (error) {
-      return console.error(message);
-    }
-
-    router.replace(
-      `${workspaceURI}/ticketing/projects/${projectId}/tickets/${data.id}`,
-    );
-  };
+  useEffect(() => {
+    form.reset(getDefaultValues(ticket));
+  }, [ticket, form]);
 
   return (
     <div className="container">
@@ -194,17 +269,13 @@ export function TicketForm(props: TicketFormProps) {
               control={form.control}
               name="description"
               render={({field}) => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(field.value!, 'text/html');
-                const sanitizedText = doc.body.textContent || '';
                 return (
                   <FormItem>
                     <FormLabel>{i18n.get('Ticket description')}</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder={i18n.get('Enter ticket description')}
-                        {...field}
-                        value={sanitizedText}
+                      <RichTextEditor
+                        onChange={field.onChange}
+                        content={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -213,7 +284,11 @@ export function TicketForm(props: TicketFormProps) {
               }}
             />
             <div className="flex justify-end">
-              <Button type="submit" className="w-30" variant="success">
+              <Button
+                type="submit"
+                className="w-30"
+                variant="success"
+                disabled={success}>
                 {ticket?.id ? i18n.get('Update') : i18n.get('Create a ticket')}
               </Button>
             </div>

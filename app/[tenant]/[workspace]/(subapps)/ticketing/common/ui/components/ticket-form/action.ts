@@ -6,7 +6,11 @@ import {clone} from '@/utils';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {createTicket, updateTicket} from '../../../orm/tickets';
+import {
+  createTicket,
+  findTicketVersion,
+  updateTicket,
+} from '../../../orm/tickets';
 import {
   UpdateTicketSchema,
   CreateTicketSchema,
@@ -14,13 +18,13 @@ import {
   UpdateTicketInfo,
 } from './schema';
 import {ensureAuth} from '../../../utils/auth-helper';
-import {ASSIGNMENT} from '../../../constants';
+import {ASSIGNMENT, VERSION_MISMATCH_ERROR} from '../../../constants';
 import {
   findTicketCancelledStatus,
   findTicketDoneStatus,
 } from '../../../orm/projects';
 
-type mutateProps = {
+export type MutateProps = {
   workspaceURL: string;
   workspaceURI: string;
   action:
@@ -35,7 +39,8 @@ type mutateProps = {
 };
 
 export async function mutate(
-  props: mutateProps,
+  props: MutateProps,
+  force?: true,
 ): Promise<
   | {error: true; message: string; data?: never}
   | {error: false; data: any; message?: never}
@@ -52,6 +57,10 @@ export async function mutate(
       ticket = await createTicket(createData, user.id, workspace.id);
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
+      if (force) {
+        const version = await findTicketVersion(updateData.id);
+        updateData.version = version;
+      }
       ticket = await updateTicket(updateData, user.id, workspace.id);
     }
 
@@ -67,6 +76,9 @@ export async function mutate(
     };
   } catch (e) {
     if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
       return {error: true, message: e.message};
     }
     throw e;
@@ -102,6 +114,9 @@ export async function assignToSupplier(
     };
   } catch (e) {
     if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
       return {error: true, message: e.message};
     }
     throw e;
@@ -141,6 +156,9 @@ export async function closeTicket(
     };
   } catch (e) {
     if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
       return {error: true, message: e.message};
     }
     throw e;
@@ -179,6 +197,9 @@ export async function cancelTicket(
     };
   } catch (e) {
     if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
       return {error: true, message: e.message};
     }
     throw e;

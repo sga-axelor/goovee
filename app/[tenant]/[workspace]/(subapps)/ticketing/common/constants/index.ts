@@ -66,3 +66,5 @@ export const INVOICING_TYPE = {
   NO_INVOICING: 3,
   ON_PROGRESS: 4,
 } as const;
+
+export const VERSION_MISMATCH_ERROR = 'OptimisticLockVersionMismatchError';
