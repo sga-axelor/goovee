@@ -43,7 +43,8 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
   const router = useRouter();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
 
-  const handleCollapse = (Id: string) => {
+  const handleCollapse = (Id: string, e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     setId(Id);
     setShow(!show);
     if (Id !== id) {
@@ -86,35 +87,19 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
                   ? ticket.requestedByContact?.name
                   : ticket.project?.company?.name}
               </p>
-
-              {small &&
-                (show && ticket?.id === id ? (
-                  <MdArrowDropUp
-                    onClick={() => handleCollapse(ticket.id)}
-                    className="cursor-pointer ms-1"
-                  />
-                ) : (
-                  <MdArrowDropDown
-                    onClick={() => handleCollapse(ticket.id)}
-                    className="cursor-pointer ms-1"
-                  />
-                ))}
             </TableCell>
           ) : (
-            <TableCell className="truncate max-w-40 line-clamp-1 table-cell">
-              {ticket.name}
-
+            <TableCell
+              className="flex float-end"
+              onClick={e => handleCollapse(ticket.id, e)}>
+              <p className="truncate max-w-40 line-clamp-1 table-cell">
+                {ticket.name}
+              </p>
               {small &&
                 (show && ticket?.id === id ? (
-                  <MdArrowDropUp
-                    onClick={() => handleCollapse(ticket.id)}
-                    className="cursor-pointer ms-1 inline"
-                  />
+                  <MdArrowDropUp className="cursor-pointer ms-1 inline" />
                 ) : (
-                  <MdArrowDropDown
-                    onClick={() => handleCollapse(ticket.id)}
-                    className="cursor-pointer ms-1 inline"
-                  />
+                  <MdArrowDropDown className="cursor-pointer ms-1 inline" />
                 ))}
             </TableCell>
           )}
@@ -165,9 +150,6 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
                   </Item>
                   <Item label="Status">
                     <Priority name={ticket.status?.name} />
-                  </Item>
-                  <Item label="Status">
-                    <Category name={ticket.status?.name} />
                   </Item>
                   <Item label="Assigned to">
                     {ticket.assignment === ASSIGNMENT.CUSTOMER

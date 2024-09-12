@@ -50,7 +50,7 @@ export function TicketList(props: TicketListProps) {
                 }}
                 className={cn(
                   'text-card-foreground cursor-pointer text-base font-semibold px-6 border-none',
-                  {'flex justify-end': column.key === 'requestedBy'},
+                  {'flex justify-end': column.key === 'subject' && small},
                 )}>
                 <div className="flex gap-1 items-center">
                   <div className="line-clamp-1">{label}</div>
