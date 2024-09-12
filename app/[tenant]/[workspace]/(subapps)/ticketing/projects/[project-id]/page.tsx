@@ -198,19 +198,17 @@ async function TicketCard(props: TicketCardProps) {
 
   const content = (
     <>
-      <div className="h-[56px] w-[56px] p-2 bg-muted rounded-full">
-        {Icon && (
-          <Icon className={`h-[40px] w-[40px] text-success bg-success-light`} />
-        )}
+      <div className="flex items-center justify-center h-10 w-10 bg-muted rounded-full">
+        {Icon && <Icon className="h-6 w-6 text-success bg-success-light" />}
       </div>
       <div className="grow flex flex-col justify-between">
-        <h3 className="text-[2rem] font-semibold">{count}</h3>
-        <p className="font-semibold">{label}</p>
+        <h3 className="text-[28px] font-semibold">{count}</h3>
+        <p className="text-sm font-semibold">{label}</p>
       </div>
     </>
   );
 
-  const className = 'flex items-center gap-6 px-6 h-[80px]';
+  const className = 'flex items-center gap-6 px-4 h-full';
   if (href) {
     return (
       <Link href={href} className={className}>
