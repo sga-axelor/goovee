@@ -80,7 +80,7 @@ export default async function Page({
 
   return (
     <div className="container mt-5 mb-20">
-      <div className="flex gap-4 justify-between min-h-9 items-center">
+      <div className="flex flex-col lg:flex-row gap-4 justify-between min-h-9 items-center">
         <Breadcrumb className="flex-shrink">
           <BreadcrumbList>
             <BreadcrumbItem>
