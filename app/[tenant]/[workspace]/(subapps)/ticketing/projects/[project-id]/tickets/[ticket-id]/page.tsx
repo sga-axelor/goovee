@@ -93,7 +93,7 @@ export default async function Page({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator>
-              <FaChevronRight className="text-black" />
+              <FaChevronRight className="text-primary" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               <BreadcrumbLink
@@ -105,7 +105,7 @@ export default async function Page({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator>
-              <FaChevronRight className="text-black" />
+              <FaChevronRight className="text-primary" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               <BreadcrumbLink asChild className="cursor-pointer text-md">
@@ -113,7 +113,7 @@ export default async function Page({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator>
-              <FaChevronRight className="text-black" />
+              <FaChevronRight className="text-primary" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               <BreadcrumbPage className="truncate text-lg font-semibold">
@@ -155,7 +155,7 @@ function TicketDetails({
   statuses: {id: ID; name?: string}[];
 }) {
   return (
-    <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
+    <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
       <Stepper
         steps={statuses}
         current={ticket.status?.id}
