@@ -28,7 +28,6 @@ import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
 import {decodeFilter, encodeFilter} from '@/utils/filter';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {pick} from 'lodash';
 import {useRouter} from 'next/navigation';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
@@ -56,10 +55,18 @@ type FilterProps = {
 
 const defaultValues = {
   requestedBy: [] as string[],
+  assignedTo: [] as string[],
   updatedOn: ['', ''] as [string, string],
   priority: [] as string[],
   status: [] as string[],
+  myTickets: false,
 };
+
+// NOTE: Steps to add more filters
+// 1. Define the field in filter schema
+// 2. Add a defualt value
+// 3. Connect the form field
+// 4. Add the where clause in getWhere function
 
 export function Filter(props: FilterProps) {
   const {contacts, priorities, statuses, url, searchParams} = props;
@@ -87,7 +94,6 @@ export function Filter(props: FilterProps) {
     const filter = EncodedFilterSchema.parse(value);
     const params = new URLSearchParams(searchParams);
     params.delete('page');
-
     if (filter) {
       params.set('filter', encodeFilter(filter));
     } else {
@@ -120,7 +126,7 @@ export function Filter(props: FilterProps) {
         <Trigger asChild>
           <Button
             variant={filterCount ? 'success' : 'outline'}
-            className={cn('flex justify-between w-[354px]', {
+            className={cn('flex justify-between w-[364px]', {
               ['w-full']: small,
             })}>
             <div className="flex items-center space-x-2">
@@ -137,7 +143,7 @@ export function Filter(props: FilterProps) {
           </Button>
         </Trigger>
 
-        <Content className={small ? 'px-5 pb-5' : 'max-w-[22.7rem] w-74'}>
+        <Content className={small ? 'px-5 pb-5' : 'w-[364px]'}>
           {small && (
             <>
               <h3 className="text-xl font-semibold mb-2">
@@ -152,8 +158,13 @@ export function Filter(props: FilterProps) {
               onSubmit={form.handleSubmit(onSubmit)}
               className="overflow-y-auto">
               <div className="space-y-4">
-                <RequestedByField form={form} contacts={contacts} />
-                <AssignedToField form={form} contacts={contacts} />
+                <MyTicketsField form={form} />
+                {!form.watch('myTickets') && (
+                  <>
+                    <RequestedByField form={form} contacts={contacts} />
+                    <AssignedToField form={form} contacts={contacts} />
+                  </>
+                )}
                 <DatesField form={form} />
                 <PriorityField form={form} priorities={priorities} />
                 <StatusField form={form} statuses={statuses} />
@@ -244,6 +255,34 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
   );
 }
 
+function MyTicketsField(props: FieldProps) {
+  const {form} = props;
+  return (
+    <FormField
+      control={form.control}
+      name="myTickets"
+      render={({field}) => (
+        <FormItem className="flex items-center space-y-0">
+          <FormControl>
+            <Checkbox
+              checked={!!field.value}
+              onCheckedChange={v => {
+                if (v) {
+                  form.unregister(['assignedTo', 'requestedBy']);
+                }
+                field.onChange(v);
+              }}
+            />
+          </FormControl>
+          <FormLabel className="ms-4 text-xs">
+            {i18n.get('My Tickets')}
+          </FormLabel>
+        </FormItem>
+      )}
+    />
+  );
+}
+
 function DatesField(props: FieldProps) {
   const {form} = props;
   return (
@@ -300,7 +339,7 @@ function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
               control={form.control}
               name="priority"
               render={({field}) => (
-                <FormItem className="flex items-end">
+                <FormItem className="flex items-center space-y-0">
                   <FormControl>
                     <Checkbox
                       name={priority.id}

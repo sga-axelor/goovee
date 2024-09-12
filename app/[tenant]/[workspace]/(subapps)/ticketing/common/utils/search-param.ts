@@ -45,12 +45,17 @@ export const FilterSchema = z.object({
 
 export const EncodedFilterSchema = FilterSchema.partial().transform(arg => {
   const filter = Object.fromEntries(
-    Object.entries(arg).filter(([_, value]) =>
-      Array.isArray(value)
-        ? value.length && value.every(v => v != undefined && v != '')
-        : true,
-    ),
-  ) as Partial<z.infer<typeof FilterSchema>>; /// remove empty arrays and arrays with empty values
+    Object.entries(arg).filter(([_, value]) => {
+      if (Array.isArray(value)) {
+        return value.length && value.every(v => v != undefined && v != ''); // remove empty arrays and arrays with empty values
+      }
+      if (typeof value === 'boolean') {
+        return value; // remove false
+      }
+      if (value == null) return false; // remove null and undefined
+      return true;
+    }),
+  ) as Partial<z.infer<typeof FilterSchema>>;
   if (!Object.keys(filter).length) return null; // remove empty object
   return filter;
 });
@@ -86,13 +91,6 @@ export function getWhere(
   } = data;
 
   const where: WhereOptions<AOSProjectTask> = {
-    ...(requestedBy && {
-      requestedByContact: {
-        id: {
-          in: requestedBy,
-        },
-      },
-    }),
     ...((status || statusCompleted != null) && {
       status: {
         ...(status && {
@@ -112,32 +110,43 @@ export function getWhere(
         },
       },
     }),
-    ...(assignedTo && {
-      assignedToContact: {
-        id: {
-          in: assignedTo,
-        },
-      },
-    }),
     ...(updatedOn && {
       updatedOn: {
         between: updatedOn,
       },
     }),
-    ...(myTickets && {
-      OR: [
-        {
-          assignedToContact: {
-            id: userId,
-          },
-        },
-        {
-          requestedByContact: {
-            id: userId,
-          },
-        },
-      ],
-    }),
+    ...(myTickets
+      ? {
+          OR: [
+            {
+              assignedToContact: {
+                id: userId,
+              },
+            },
+            {
+              requestedByContact: {
+                id: userId,
+              },
+            },
+          ],
+        }
+      : {
+          ...(assignedTo && {
+            assignedToContact: {
+              id: {
+                in: assignedTo,
+              },
+            },
+          }),
+
+          ...(requestedBy && {
+            requestedByContact: {
+              id: {
+                in: requestedBy,
+              },
+            },
+          }),
+        }),
   };
   return where;
 }
