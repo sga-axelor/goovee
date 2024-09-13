@@ -1,7 +1,7 @@
 import {getClient} from '@/goovee';
 import {clone} from '@/utils';
 import {ID} from '@/types';
-import {hash} from '@/utils/auth';
+import {hash} from '@/lib/auth/utils';
 import {findDefaultPartnerWorkspaceConfig} from './workspace';
 
 export async function findPartnerByEmail(email: string, tenantId: ID) {

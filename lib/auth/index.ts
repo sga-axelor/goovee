@@ -3,9 +3,11 @@ import Google from 'next-auth/providers/google';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import {compare} from '@/utils/auth';
 import {findPartnerByEmail, registerPartner} from '@/orm/partner';
 import type {ID} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
+import {compare} from './utils';
 
 export const authOptions: NextAuthOptions = {
   providers: [
