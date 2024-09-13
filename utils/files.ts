@@ -1,3 +1,5 @@
+import type {ID} from '@/types';
+
 export function getFileSizeText(fileSize: number) {
   if (!fileSize) return '';
 
@@ -31,4 +33,22 @@ export function parseFormData(formData: FormData) {
   }
 
   return values;
+}
+
+export function getImageURL(
+  id: ID,
+  tenant: string,
+  options?: {noimage?: boolean},
+) {
+  if (!(id && tenant)) {
+    return options?.noimage ? '/images/no-image.png' : '';
+  }
+
+  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/download/image/${id}`;
+}
+
+export function getDownloadURL(id: ID, tenantId: string) {
+  if (!(id && tenantId)) return '';
+
+  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${id}`;
 }
