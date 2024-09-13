@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
+// ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {getDownloadURL} from '@/subapps/resources/common/utils';
+import {getDownloadURL} from '@/utils/files';
 
 export default function ImageViewer({record}: any) {
   const {tenant} = useWorkspace();
@@ -10,7 +12,8 @@ export default function ImageViewer({record}: any) {
     <div className="container">
       <img
         className="object-cover max-w-100"
-        src={getDownloadURL(record, tenant)}></img>
+        src={getDownloadURL(record?.id, tenant)}
+        alt="Viewer"></img>
     </div>
   );
 }

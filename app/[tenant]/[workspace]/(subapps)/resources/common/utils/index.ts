@@ -1,3 +1,6 @@
+// ---- CORE IMPORTS ---- //
+import {getDownloadURL} from '@/utils/files';
+
 export function getFilename(disposition: string | null) {
   if (disposition === null) return null;
   var results = /filename\*=UTF-8''(.*)/i.exec(disposition);
@@ -10,12 +13,6 @@ export function getFilename(disposition: string | null) {
     return results[1].replace(/^"(.+(?="$))"$/, '$1');
   }
   return null;
-}
-
-export function getDownloadURL(record: any, tenantId: string) {
-  if (!tenantId) return '';
-
-  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${record.id}`;
 }
 
 export function getHTMLURL(record: any) {
@@ -52,7 +49,7 @@ export function download(record: any, tenantId: string) {
 
   link.innerHTML = name || 'File';
   link.download = name || 'download';
-  link.href = html ? getHTMLURL(record) : getDownloadURL(record, tenantId);
+  link.href = html ? getHTMLURL(record) : getDownloadURL(record?.id, tenantId);
 
   Object.assign(link.style, {
     position: 'absolute',
