@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {Hash, ChevronDown, Plus, Search, GripVertical} from 'lucide-react';
+import {Hash, Search, GripVertical} from 'lucide-react';
 
 export const ChannelList = ({
   channels,
@@ -15,6 +15,7 @@ export const ChannelList = ({
   const [width, setWidth] = useState(256);
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -43,6 +44,10 @@ export const ChannelList = ({
     return <div className="text-gray-400 p-4">Chargement des canaux...</div>;
   }
 
+  const filteredChannels = channels.filter((channel: any) =>
+    channel.display_name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   return (
     <div
       ref={sidebarRef}
@@ -58,23 +63,25 @@ export const ChannelList = ({
             type="text"
             placeholder="Rechercher des canaux"
             className="bg-transparent text-sm w-full focus:outline-none"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
       <div className="overflow-y-auto flex-grow">
-        {channels.map((channel: any) => (
+        {filteredChannels.map((channel: any) => (
           <div
             key={channel.id}
             className={`flex items-center justify-between p-2 hover:bg-gray-700 cursor-pointer ${
               channel.id === activeChannel ? 'bg-blue-600' : ''
             } ${channel.unread ? 'font-semibold' : ''}`}
             onClick={() => setActiveChannel(channel.id)}>
-            <div className="flex items-center">
-              <Hash size={16} className="mr-2 text-gray-400" />
-              <span>{channel.display_name}</span>
+            <div className="flex items-center min-w-0 flex-1">
+              <Hash size={16} className="mr-2 text-gray-400 flex-shrink-0" />
+              <span className="truncate">{channel.display_name}</span>
             </div>
             {channel.unread > 0 && (
-              <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full min-w-[20px] text-center font-bold">
+              <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full min-w-[20px] text-center font-bold ml-2 flex-shrink-0">
                 {channel.unread}
               </span>
             )}

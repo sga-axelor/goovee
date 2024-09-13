@@ -34,7 +34,6 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
   useEffect(() => {
     const fetchChannels = async () => {
       const channels = await getChannelsWithUnreadCount(token, teamId, user.id);
-      console.log('channels : ', channels);
       const filteredChannels = channels.filter((channel: any) => {
         return (
           channel.display_name != null && channel.display_name.trim() !== ''
@@ -54,6 +53,7 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
         activeChannel,
         token,
       );
+      console.log('curretnchannel : ', currentChannel);
       setCurrentChannel(currentChannel);
       setChannelJustSelected(true);
       const data = await viewChannel(user.id, activeChannel, token);
@@ -115,8 +115,6 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
       console.log('Pas de messages à charger');
       return;
     }
-
-    console.log('currentChannel : ', _currentChannel);
 
     const oldestPostId = _currentChannel.groupsPosts[0][0].id;
 

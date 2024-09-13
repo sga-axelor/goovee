@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import ReactMarkdown from 'react-markdown';
 import EmojiItem from './emojiItem';
 import MenuReaction from './menuReaction';
 import FilePreview from './filePreview';
@@ -44,7 +45,7 @@ const Post = ({
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
-      <p className="mt-1">{post.message}</p>
+      <ReactMarkdown className="mt-1">{post.message}</ReactMarkdown>
 
       {post.metadata.files && post.metadata.files.length > 0 && (
         <div className="mt-2 flex flex-wrap">

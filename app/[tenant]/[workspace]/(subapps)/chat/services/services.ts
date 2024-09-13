@@ -140,7 +140,6 @@ export const getChannelsWithUnreadCount = async (
       channels.map(async (channel: any) => {
         try {
           const {data} = await getUnreadChannel(channel.id, userId, token);
-          console.log('voici la data pour le message :', data);
 
           return {
             ...channel,

@@ -76,7 +76,6 @@ export const Socket = memo(function Socket({
         handleSocketReaction(msg, true);
       };
       const handleSocketNewPost = async (msg: any) => {
-        console.debug('msg', msg);
         const {data, broadcast} = msg;
         let post = JSON.parse(data.post);
         const {channel_id, root_id, user_id} = post;
