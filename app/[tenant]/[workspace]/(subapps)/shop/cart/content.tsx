@@ -25,7 +25,7 @@ import {
 import {useQuantity} from '@/ui/hooks';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {computeTotal} from '@/utils/cart';
-import {getImageURL} from '@/utils/product';
+import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 import {SEARCH_PARAMS} from '@/constants';

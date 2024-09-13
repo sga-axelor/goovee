@@ -5,7 +5,7 @@ import {MdAddShoppingCart} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {BackgroundImage, Button} from '@/ui/components';
-import {getImageURL} from '@/utils/product';
+import {getImageURL} from '@/utils/files';
 import {i18n} from '@/lib/i18n';
 import {cn} from '@/utils/css';
 import {useToast} from '@/ui/hooks';

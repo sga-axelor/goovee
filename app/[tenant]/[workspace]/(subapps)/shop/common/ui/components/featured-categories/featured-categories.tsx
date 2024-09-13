@@ -7,7 +7,7 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 
 import {Button} from '@/ui/components';
-import {getImageURL} from '@/utils/product';
+import {getImageURL} from '@/utils/files';
 import {i18n} from '@/lib/i18n';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {Categories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components/categories';

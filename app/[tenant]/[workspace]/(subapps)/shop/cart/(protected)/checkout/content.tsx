@@ -27,7 +27,7 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {useSearchParams, useToast} from '@/ui/hooks';
-import {getImageURL} from '@/utils/product';
+import {getImageURL} from '@/utils/files';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
