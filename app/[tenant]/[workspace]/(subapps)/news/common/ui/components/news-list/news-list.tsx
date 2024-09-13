@@ -4,9 +4,11 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Badge} from '@/ui/components/badge';
+import {getImageURL} from '@/utils/files';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {getImageURL, getPublishedLabel} from '@/subapps/news/common/utils';
+import {getPublishedLabel} from '@/subapps/news/common/utils';
 
 export const NewsList = ({
   news,
@@ -18,6 +20,7 @@ export const NewsList = ({
   onClick: (slug: string) => void;
 }) => {
   const {publicationDateTime, title, image, categorySet, slug} = news;
+  const {tenant} = useWorkspace();
   return (
     <div
       key={id}
@@ -26,7 +29,7 @@ export const NewsList = ({
       <div
         className="flex-shrink-0 w-[150px] h-[93px] bg-no-repeat bg-center bg-cover rounded-lg"
         style={{
-          backgroundImage: `url(${getImageURL(image?.id)})`,
+          backgroundImage: `url(${getImageURL(image?.id, tenant, {noimage: true})})`,
         }}></div>
       <div className="w-full flex flex-col gap-1 justify-between">
         <div>

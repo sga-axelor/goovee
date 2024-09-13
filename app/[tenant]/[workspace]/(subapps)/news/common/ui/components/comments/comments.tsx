@@ -12,6 +12,7 @@ import {Input} from '@/ui/components/input';
 import {i18n} from '@/lib/i18n';
 import {useToast} from '@/ui/hooks/use-toast';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {createComment} from '@/subapps/news/common/actions/action';
@@ -21,7 +22,7 @@ import {
   SEND,
   WRITE_YOUR_COMMENT,
 } from '@/subapps/news/common/constants';
-import {getImageURL, parseDate} from '@/subapps/news/common/utils';
+import {parseDate} from '@/subapps/news/common/utils';
 
 export const Comments = ({
   newsId,
@@ -39,7 +40,7 @@ export const Comments = ({
   const isDisabled = !session ? true : false;
 
   const {toast} = useToast();
-  const {workspaceURL} = useWorkspace();
+  const {workspaceURL, tenant} = useWorkspace();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
@@ -89,7 +90,11 @@ export const Comments = ({
       {comments?.map((comment: any) => (
         <div className="p-4 flex gap-4" key={comment.id}>
           <Avatar className="rounded-full h-8 w-8">
-            <AvatarImage src={getImageURL(comment?.author?.picture?.id)} />
+            <AvatarImage
+              src={getImageURL(comment?.author?.picture?.id, tenant, {
+                noimage: true,
+              })}
+            />
           </Avatar>
           <div className="flex flex-col gap-2">
             <div className="">

@@ -9,10 +9,11 @@ import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
+import {getImageURL} from '@/utils/files';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 //---- LOCAL IMPORTS ---- //
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
-import {getImageURL} from '@/subapps/news/common/utils';
 
 export const CategorySlider = ({
   title = '',
@@ -31,6 +32,7 @@ export const CategorySlider = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const {tenant} = useWorkspace();
 
   const handleClick = (slug: string) => {
     router.push(`${pathname}/${slug}`);
@@ -103,7 +105,7 @@ export const CategorySlider = ({
                     <div
                       className="h-[120px] w-full bg-no-repeat bg-center bg-cover rounded-md flex items-end justify-center"
                       style={{
-                        backgroundImage: `url(${getImageURL(image?.id)})`,
+                        backgroundImage: `url(${getImageURL(image?.id, tenant, {noimage: true})})`,
                       }}>
                       <div className="pb-4 text-center text-white font-semibold text-xs z-10">
                         {name}

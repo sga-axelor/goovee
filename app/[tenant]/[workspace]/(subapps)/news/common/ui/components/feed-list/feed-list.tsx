@@ -4,11 +4,12 @@ import React from 'react';
 import {MdChevronRight} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Badge} from '@/ui/components/badge';
-import {Separator} from '@/ui/components/separator';
+import {Badge, Separator} from '@/ui/components';
+import {getImageURL} from '@/utils/files';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {getImageURL, getPublishedLabel} from '@/subapps/news/common/utils';
+import {getPublishedLabel} from '@/subapps/news/common/utils';
 
 export const FeedList = ({
   title,
@@ -21,6 +22,7 @@ export const FeedList = ({
   width?: string;
   onClick: (slug: string) => void;
 }) => {
+  const {tenant} = useWorkspace();
   return (
     <div
       className={`bg-white h-max p-4 rounded-lg ${
@@ -33,7 +35,7 @@ export const FeedList = ({
             {id, title, publicationDateTime, categorySet, image, slug},
             index,
           ) => {
-            const imageUrl = getImageURL(image?.id);
+            const imageUrl = getImageURL(image?.id, tenant, {noimage: true});
 
             return (
               <React.Fragment key={id}>
