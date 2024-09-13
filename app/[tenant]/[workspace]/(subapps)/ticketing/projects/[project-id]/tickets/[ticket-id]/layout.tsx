@@ -1,9 +1,10 @@
+import {getClient} from '@/goovee';
 import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
 
-import {getClient} from '@/goovee';
+import {getTicketAccessFilter} from '../../../../common/orm/helpers';
 
-export default async function Page({
+export default async function Layout({
   params,
   children,
 }: {
@@ -23,6 +24,7 @@ export default async function Page({
     where: {
       id: ticketId,
       project: {id: projectId},
+      ...getTicketAccessFilter(),
     },
     select: {
       id: true,
