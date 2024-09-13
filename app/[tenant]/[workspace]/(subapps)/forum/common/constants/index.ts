@@ -79,7 +79,7 @@ export const MENU = [
     name: 'Forum notifications',
     link: '/manage-notifications',
   },
-  {id: 3, name: 'My profile', link: '/profile'},
+  // {id: 3, name: 'My profile', link: '/profile'},
 ];
 
 export const TAB_TITLES: Array<

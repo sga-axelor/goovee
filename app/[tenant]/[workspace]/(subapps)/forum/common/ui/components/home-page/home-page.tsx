@@ -166,7 +166,9 @@ export const HomePage = ({
             <GroupActionList
               title={MEMBER}
               groups={memberGroupList}
+              isMember={true}
               userId={user.id}
+              groupId={selectedGroup?.id}
             />
           )}
           <GroupActionList
@@ -174,6 +176,7 @@ export const HomePage = ({
             groups={nonMemberGroupList}
             isMember={false}
             userId={user?.id}
+            groupId={selectedGroup?.id}
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">

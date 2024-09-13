@@ -146,7 +146,7 @@ export const GroupActionList = ({
           return (
             <Collapsible key={group?.id}>
               <div
-                className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${groupId && groupId === group?.forumGroup?.id ? 'bg-success-light' : ' '}`}>
+                className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${groupId && groupId === (isMember ? group.forumGroup.id : group.id) ? 'bg-success-light' : ' '}`}>
                 <div
                   onClick={() => handlePath(group?.forumGroup?.id || group?.id)}
                   className="flex items-center gap-2">
@@ -177,12 +177,17 @@ export const GroupActionList = ({
                 <div className="flex flex-col gap-2">
                   {isMember && (
                     <>
-                      <div className="flex items-center gap-[10px] px-2">
-                        <MdOutlineMarkChatRead className="w-4 h-4" />
-                        <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
-                          {MARK_AS_READ}
-                        </span>
-                      </div>
+                      {
+                        // implement it later
+                        false && (
+                          <div className="flex items-center gap-[10px] px-2">
+                            <MdOutlineMarkChatRead className="w-4 h-4" />
+                            <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                              {MARK_AS_READ}
+                            </span>
+                          </div>
+                        )
+                      }
                       <div
                         className="flex items-center gap-[10px] px-2"
                         onClick={() => handlePinGroup(group?.isPin, group)}>
