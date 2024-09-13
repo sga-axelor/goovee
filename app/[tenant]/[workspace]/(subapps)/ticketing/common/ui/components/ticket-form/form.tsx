@@ -38,7 +38,6 @@ import {mutate} from '../../../actions';
 import {TicketFormSchema, TicketInfo} from './schema';
 
 type TicketFormProps = {
-  ticket?: AOSProjectTask;
   projectId: string;
   categories: {
     id: ID;
@@ -50,17 +49,8 @@ type TicketFormProps = {
   }[];
 };
 
-const getDefaultValues = (ticket: Maybe<AOSProjectTask>) => {
-  return {
-    subject: ticket?.name ?? '',
-    category: ticket?.projectTaskCategory?.id,
-    priority: ticket?.priority?.id,
-    description: ticket?.description ?? '',
-  };
-};
-
 export function TicketForm(props: TicketFormProps) {
-  const {ticket, categories, priorities, projectId} = props;
+  const {categories, priorities, projectId} = props;
   const router = useRouter();
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
@@ -69,7 +59,6 @@ export function TicketForm(props: TicketFormProps) {
 
   const form = useForm<TicketInfo>({
     resolver: zodResolver(TicketFormSchema),
-    defaultValues: getDefaultValues(ticket),
   });
 
   const handleSuccess = useCallback(
@@ -83,43 +72,14 @@ export function TicketForm(props: TicketFormProps) {
   );
 
   const handleError = useCallback(
-    (message: string, retryProps: MutateProps) => {
-      if (message === VERSION_MISMATCH_ERROR) {
-        const handleOverwrite = async () => {
-          const {error, message, data} = await mutate(retryProps, true);
-          if (error) {
-            handleError(message, retryProps);
-            return;
-          }
-          handleSuccess(data.id);
-        };
-        const handleDiscard = () => {
-          router.refresh();
-        };
-        return toast({
-          variant: 'destructive',
-          title: i18n.get('Record has been modified by someone else'),
-          className: 'flex gap-4 flex-col',
-          duration: 100000,
-          action: (
-            <div className="flex gap-4">
-              <ToastAction altText="Overwrite" onClick={handleOverwrite}>
-                {i18n.get('Overwrite')}
-              </ToastAction>
-              <ToastAction altText="Discard" onClick={handleDiscard}>
-                {i18n.get('Discard')}
-              </ToastAction>
-            </div>
-          ),
-        });
-      }
+    (message: string) => {
       return toast({
         variant: 'destructive',
         title: message,
         duration: 5000,
       });
     },
-    [toast, handleSuccess, router],
+    [toast],
   );
 
   const handleSubmit = useCallback(
@@ -128,24 +88,14 @@ export function TicketForm(props: TicketFormProps) {
       const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
 
       if (!dirtyFieldKeys.length) return router.back();
-      const isUpdate = ticket?.id && ticket?.version;
       const mutateProps: MutateProps = {
-        action: isUpdate
-          ? {
-              type: 'update',
-              data: {
-                id: ticket.id!,
-                version: ticket.version!,
-                ...dirtyValues,
-              },
-            }
-          : {
-              type: 'create',
-              data: {
-                project: projectId,
-                ...dirtyValues,
-              },
-            },
+        action: {
+          type: 'create',
+          data: {
+            project: projectId,
+            ...dirtyValues,
+          },
+        },
         workspaceURL,
         workspaceURI,
       };
@@ -153,7 +103,7 @@ export function TicketForm(props: TicketFormProps) {
       const {error, message, data} = await mutate(mutateProps);
 
       if (error) {
-        handleError(message, mutateProps);
+        handleError(message);
         return;
       }
 
@@ -165,29 +115,19 @@ export function TicketForm(props: TicketFormProps) {
       handleSuccess,
       projectId,
       router,
-      ticket?.id,
-      ticket?.version,
       workspaceURI,
       workspaceURL,
     ],
   );
 
-  useEffect(() => {
-    form.reset(getDefaultValues(ticket));
-  }, [ticket, form]);
-
   return (
     <div className="container">
       <div className="flex items-center justify-between mt-5 mb-5">
-        <h3 className="text-lg font-semibold">
-          {ticket?.id
-            ? i18n.get('Update a ticket')
-            : i18n.get('Create a ticket')}
-        </h3>
+        <h3 className="text-lg font-semibold">{i18n.get('Create a ticket')}</h3>
       </div>
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="space-y-4 rounded-md border bg-white p-4">
+          <div className="space-y-4 rounded-md border bg-card p-4">
             <FormField
               control={form.control}
               name="subject"
@@ -276,7 +216,7 @@ export function TicketForm(props: TicketFormProps) {
                     <FormControl>
                       <RichTextEditor
                         onChange={field.onChange}
-                        content={field.value}
+                        content={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -290,7 +230,7 @@ export function TicketForm(props: TicketFormProps) {
                 className="w-30"
                 variant="success"
                 disabled={success}>
-                {ticket?.id ? i18n.get('Update') : i18n.get('Create a ticket')}
+                {i18n.get('Create a ticket')}
               </Button>
             </div>
           </div>

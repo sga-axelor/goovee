@@ -98,6 +98,7 @@ export function AssignToSupplier({id, version}: {id: string; version: number}) {
   return (
     <Button
       size="sm"
+      type="button"
       variant="success"
       disabled={loading}
       onClick={handleAssignTo}>

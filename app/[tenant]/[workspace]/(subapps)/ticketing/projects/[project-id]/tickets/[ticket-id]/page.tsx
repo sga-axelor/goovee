@@ -3,9 +3,7 @@ import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {Maybe} from '@/types/util';
 import {
-  AvatarImage,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -15,30 +13,26 @@ import {
   Table,
   TableBody,
 } from '@/ui/components';
-import {Progress} from '@/ui/components/progress';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import {ID} from '@goovee/orm';
-import {Avatar} from '@radix-ui/react-avatar';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {FaChevronRight} from 'react-icons/fa';
-import {MdOutlineModeEditOutline} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
 import {encodeFilter} from '@/utils/filter';
-import {ASSIGNMENT} from '../../../../common/constants';
-import {findProject, findTicketStatuses} from '../../../../common/orm/projects';
-import {findTicket} from '../../../../common/orm/tickets';
-import {Category, Priority} from '../../../../common/ui/components/pills';
-import {Stepper} from '../../../../common/ui/components/stepper';
 import {
-  AssignToSupplier,
+  findTicketCategories,
+  findTicketPriorities,
+  findTicketStatuses,
+} from '../../../../common/orm/projects';
+import {findTicket} from '../../../../common/orm/tickets';
+import {TicketDetails} from '../../../../common/ui/components/ticket-details';
+import {
   CancelTicket,
   CloseTicket,
 } from '../../../../common/ui/components/ticket-form/ticket-actions';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
-import {formatDate} from '../../../../common/utils';
 
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
@@ -68,10 +62,11 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const [ticket, statuses, project] = await Promise.all([
+  const [ticket, statuses, categories, priorities] = await Promise.all([
     findTicket(ticketId, projectId),
     findTicketStatuses(projectId),
-    findProject(projectId, workspace.id, session!.user.id),
+    findTicketCategories(projectId),
+    findTicketPriorities(projectId),
   ]);
   if (!ticket) notFound();
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
@@ -100,7 +95,7 @@ export default async function Page({
                 asChild
                 className="cursor-pointer max-w-[8ch] md:max-w-[15ch] truncate text-md">
                 <Link href={`${workspaceURI}/ticketing/projects/${projectId}`}>
-                  {project!.name}
+                  {ticket.project?.name}
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -130,9 +125,10 @@ export default async function Page({
         )}
       </div>
       <TicketDetails
-        ticket={ticket}
-        workspaceURI={workspaceURI}
-        statuses={statuses}
+        ticket={clone(ticket)}
+        statuses={clone(statuses)}
+        categories={clone(categories)}
+        priorities={clone(priorities)}
       />
       {(ticket.parentTask || (ticket.childTasks?.length ?? 0) > 0) && (
         <SubTickets
@@ -143,126 +139,6 @@ export default async function Page({
       )}
     </div>
   );
-}
-
-function TicketDetails({
-  ticket,
-  workspaceURI,
-  statuses,
-}: {
-  ticket: AOSProjectTask;
-  workspaceURI: string;
-  statuses: {id: ID; name?: string}[];
-}) {
-  return (
-    <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-      <Stepper
-        steps={statuses}
-        current={ticket.status?.id}
-        className="mb-12 md:mx-20"
-      />
-      <div className="space-y-2">
-        <div className="flex justify-between">
-          <p className="text-base font-medium">#{ticket?.id}</p>
-
-          <Link
-            href={`${workspaceURI}/ticketing/projects/${ticket.project?.id}/tickets/${ticket.id}/edit`}>
-            <MdOutlineModeEditOutline className="size-6" />
-          </Link>
-        </div>
-        <p className="text-xl font-semibold">{ticket?.name}</p>
-        <hr />
-        <p>
-          <span className="font-medium pe-2">{i18n.get('Category')}: </span>
-          <Category name={ticket.projectTaskCategory?.name} />
-        </p>
-        <p>
-          <span className="font-medium pe-2">{i18n.get('Priority')}: </span>
-          <Priority name={ticket.priority?.name} />
-        </p>
-        <hr />
-        <p className="flex !mt-3.5 items-center">
-          <span className="font-medium pe-2">{i18n.get('Request by')}: </span>
-          <Avatar className="h-8 w-10">
-            <AvatarImage
-              src="/images/user.png"
-              className="h-8 w-10 rounded-full"
-            />
-          </Avatar>
-          <span>
-            {ticket.requestedByContact?.name
-              ? ticket.requestedByContact?.name
-              : ticket.project?.company?.name}
-          </span>
-        </p>
-        <p>
-          <span className="font-medium pe-2">{i18n.get('Created on')}:</span>
-          {formatDate(ticket.taskDate)}
-        </p>
-        <hr />
-
-        <div className="flex items-start">
-          <div className="flex flex-col space-y-2">
-            <p>
-              <span className="font-medium pe-2">Assigned to:</span>
-              {ticket.assignment === ASSIGNMENT.PROVIDER
-                ? ticket.project?.company?.name
-                : ticket.assignedToContact?.name}
-            </p>
-            <p>
-              <span className="font-medium pe-2">Expected on:</span>
-              {formatDate(ticket.taskEndDate)}
-            </p>
-          </div>
-          {ticket.assignment !== 2 && (
-            <div className="ml-auto">
-              <AssignToSupplier id={ticket.id!} version={ticket.version!} />
-            </div>
-          )}
-        </div>
-
-        <hr />
-        <div className="sm:flex items-center !mt-3.5">
-          <p className="font-medium pe-2"> {i18n.get('Progress')}: </p>
-          {getProgress(ticket.progress)}%
-          <Progress
-            value={getProgress(ticket.progress)}
-            className="h-3 basis-3/4 sm:ms-5 rounded-none"
-          />
-        </div>
-        <p>
-          <span className="font-medium pe-2"> {i18n.get('Version')}:</span>
-          {ticket.targetVersion?.title}
-        </p>
-        <hr />
-        <div className="sm:flex sm:justify-start !mt-4 sm:space-x-20 max-[639px]:space-y-5">
-          <p>
-            <span className="font-medium"> {i18n.get('Quantity')}: </span>
-            {ticket.quantity}
-          </p>
-          <p>
-            <span className="font-medium"> {i18n.get('Price WT')}: </span>
-            {ticket.unitPrice}$
-          </p>
-          <p>
-            <span className="font-medium">{i18n.get('Invoicing unit')}: </span>
-            {ticket.invoicingUnit?.name}
-          </p>
-        </div>
-        {/* --ticket--description--- */}
-        <div className="!mt-10">
-          <Description description={ticket.description} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Description({description}: {description: Maybe<string>}) {
-  if (!description) return null;
-  //TODO: sanitize with DOMPurify
-  const html = description;
-  return <div dangerouslySetInnerHTML={{__html: html}} />;
 }
 
 function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
@@ -297,14 +173,4 @@ function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
       )}
     </div>
   );
-}
-
-function getProgress(p: Maybe<string>): number {
-  if (p) {
-    const progress = Number(p);
-    if (!isNaN(progress)) {
-      return progress;
-    }
-  }
-  return 0;
 }
