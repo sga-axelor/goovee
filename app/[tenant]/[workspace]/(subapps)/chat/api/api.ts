@@ -248,3 +248,32 @@ export const uploadFile = async (
   });
   return data;
 };
+
+export const getUnreadChannel = async (
+  channelId: string,
+  userId: string,
+  token: string,
+) => {
+  const data = await axios({
+    method: 'get',
+    url: `${API_URL}/users/${userId}/channels/${channelId}/unread`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return data;
+};
+
+export const viewChannel = async (
+  userId: string,
+  channelId: string,
+  token: string,
+) => {
+  const data = await axios({
+    method: 'post',
+    url: `${API_URL}/channels/members/${userId}/view`,
+    headers: {Authorization: `Bearer ${token}`},
+    data: {
+      channel_id: channelId,
+    },
+  });
+  return data;
+};

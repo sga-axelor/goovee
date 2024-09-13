@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Hash, ChevronDown, Plus, Search, Send} from 'lucide-react';
+import React, {useEffect, useState, useRef} from 'react';
+import {Hash, ChevronDown, Plus, Search, GripVertical} from 'lucide-react';
 
 export const ChannelList = ({
   channels,
@@ -12,18 +12,45 @@ export const ChannelList = ({
   setActiveChannel: any;
   token: any;
 }) => {
-  const [_channels, setChannels] = useState<any>(null);
+  const [width, setWidth] = useState(256);
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      const newWidth =
+        e.clientX - (sidebarRef.current?.getBoundingClientRect().left || 0);
+      if (newWidth > 150 && newWidth < 500) {
+        setWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   if (!channels) {
-    return <div>Chargement</div>;
+    return <div className="text-gray-400 p-4">Chargement des canaux...</div>;
   }
 
   return (
-    <div className="flex flex-col h-h-[calc(100vh-120px) bg-gray-800 text-gray-100 w-64">
+    <div
+      ref={sidebarRef}
+      className="flex flex-col h-[calc(100vh-120px)] bg-gray-800 text-gray-100 relative flex-shrink-0"
+      style={{width: `${width}px`}}>
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-lg">Canaux</h2>
-          <ChevronDown size={20} className="text-gray-400" />
         </div>
         <div className="flex items-center bg-gray-900 rounded p-1">
           <Search size={16} className="text-gray-400 mr-2" />
@@ -38,25 +65,26 @@ export const ChannelList = ({
         {channels.map((channel: any) => (
           <div
             key={channel.id}
-            className={`flex items-center p-2 hover:bg-gray-700 cursor-pointer ${
+            className={`flex items-center justify-between p-2 hover:bg-gray-700 cursor-pointer ${
               channel.id === activeChannel ? 'bg-blue-600' : ''
             } ${channel.unread ? 'font-semibold' : ''}`}
             onClick={() => setActiveChannel(channel.id)}>
-            <Hash size={16} className="mr-2 text-gray-400" />
-            <span>{channel.display_name}</span>
+            <div className="flex items-center">
+              <Hash size={16} className="mr-2 text-gray-400" />
+              <span>{channel.display_name}</span>
+            </div>
             {channel.unread > 0 && (
-              <span className="ml-auto bg-blue-500 text-xs px-2 py-1 rounded-full">
+              <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full min-w-[20px] text-center font-bold">
                 {channel.unread}
               </span>
             )}
           </div>
         ))}
       </div>
-      <div className="p-4 border-t border-gray-700">
-        <button className="flex items-center text-gray-400 hover:text-gray-100">
-          <Plus size={16} className="mr-2" />
-          Ajouter un canal
-        </button>
+      <div
+        className="absolute top-0 right-0 w-1 h-full cursor-ew-resize bg-gray-700 hover:bg-gray-600 flex items-center justify-center"
+        onMouseDown={() => setIsResizing(true)}>
+        <GripVertical size={20} className="text-gray-400" />
       </div>
     </div>
   );

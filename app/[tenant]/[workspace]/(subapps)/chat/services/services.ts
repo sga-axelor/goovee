@@ -1,8 +1,10 @@
 import {
   getChannelById,
+  getChannelsTeam,
   getChannelUsers,
   getFileInfoById,
   getPostsChannel,
+  getUnreadChannel,
 } from '../api/api';
 
 const characters =
@@ -124,4 +126,45 @@ export const generateUniqueId = () => {
   }
 
   return result;
+};
+
+export const getChannelsWithUnreadCount = async (
+  token: any,
+  teamId: any,
+  userId: any,
+) => {
+  try {
+    const channels = await getChannelsTeam(token, teamId, userId);
+
+    const channelsWithUnread = await Promise.all(
+      channels.map(async (channel: any) => {
+        try {
+          const {data} = await getUnreadChannel(channel.id, userId, token);
+          console.log('voici la data pour le message :', data);
+
+          return {
+            ...channel,
+            unread: data.msg_count,
+          };
+        } catch (error) {
+          console.error(
+            `Erreur lors de la récupération des messages non lus pour le canal ${channel.id}:`,
+            error,
+          );
+          return {
+            ...channel,
+            unread: 0,
+          };
+        }
+      }),
+    );
+
+    return channelsWithUnread;
+  } catch (error) {
+    console.error(
+      'Erreur lors de la récupération des canaux avec les messages non lus:',
+      error,
+    );
+    throw error;
+  }
 };

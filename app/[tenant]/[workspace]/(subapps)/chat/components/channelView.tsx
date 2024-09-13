@@ -1,6 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {X, Send, Paperclip, Loader} from 'lucide-react';
+import {X, Send, Paperclip, Loader, ChevronDown} from 'lucide-react';
 import GroupPost from './groupPost';
+import InputMessage from './InputMessage';
+import DocumentList from './documentList';
 
 export const ChannelView = ({
   channel,
@@ -36,6 +38,8 @@ export const ChannelView = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const prevHeightRef = useRef<number>(0);
+  const [showNewMessageIndicator, setShowNewMessageIndicator] =
+    useState<boolean>(false);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior, timer = 0) => {
@@ -104,6 +108,8 @@ export const ChannelView = ({
   useEffect(() => {
     if (isBottom()) {
       scrollToBottom('smooth');
+    } else if (newMessage) {
+      setShowNewMessageIndicator(true);
     }
     setNewMessage(false);
   }, [newMessage, setNewMessage, scrollToBottom, isBottom]);
@@ -147,6 +153,11 @@ export const ChannelView = ({
     }
   };
 
+  const handleScrollToBottom = () => {
+    scrollToBottom('smooth');
+    setShowNewMessageIndicator(false);
+  };
+
   const isSendEnabled = messageText.trim() !== '' || selectedFiles.length > 0;
 
   return (
@@ -171,57 +182,28 @@ export const ChannelView = ({
           />
         ))}
       </div>
-      <div className="p-4 border-t">
-        <div className="flex items-center bg-gray-100 rounded-lg p-2">
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Écrire un message..."
-            className="flex-grow bg-transparent focus:outline-none"
-            value={messageText}
-            onChange={e => setMessageText(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleFileSelect}
-            multiple
-          />
-          <Paperclip
-            size={20}
-            className="text-gray-400 cursor-pointer mr-2"
-            onClick={triggerFileInput}
-          />
-          <Send
-            size={20}
-            className={`cursor-pointer transition-colors duration-200 ${
-              isSendEnabled ? 'text-blue-500' : 'text-gray-400'
-            }`}
-            onClick={handleMessageSend}
-          />
+      {showNewMessageIndicator && (
+        <div
+          className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-full cursor-pointer flex items-center shadow-lg"
+          onClick={handleScrollToBottom}>
+          <ChevronDown size={20} className="mr-2" />
+          Nouveau message
         </div>
+      )}
+      <div className="p-4 border-t">
+        <InputMessage
+          inputRef={inputRef}
+          fileInputRef={fileInputRef}
+          handleKeyPress={handleKeyPress}
+          setMessageText={setMessageText}
+          messageText={messageText}
+          handleFileSelect={handleFileSelect}
+          triggerFileInput={triggerFileInput}
+          isSendEnabled={isSendEnabled}
+          handleMessageSend={handleMessageSend}
+        />
         {selectedFiles.length > 0 && (
-          <div className="mt-2">
-            <h4 className="text-sm font-semibold text-gray-700">
-              Fichiers sélectionnés:
-            </h4>
-            <ul className="list-disc pl-5">
-              {selectedFiles.map((file, index) => (
-                <li
-                  key={index}
-                  className="text-sm text-gray-600 flex items-center justify-between">
-                  <span>{file.name}</span>
-                  <X
-                    size={16}
-                    className="text-red-500 cursor-pointer"
-                    onClick={() => removeFile(file)}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
+          <DocumentList selectedFiles={selectedFiles} removeFile={removeFile} />
         )}
       </div>
     </div>

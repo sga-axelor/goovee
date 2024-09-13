@@ -3,13 +3,12 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ChannelList} from './channelList';
 import {ChannelView} from './channelView';
-import {
-  getChannelsTeam,
-  createReaction,
-  removeReactionFromAPost,
-} from '../api/api';
+import {viewChannel} from '../api/api';
 import {Socket} from './Socket';
-import {getChannelInfosByChannelId} from '../services/services';
+import {
+  getChannelInfosByChannelId,
+  getChannelsWithUnreadCount,
+} from '../services/services';
 import {addReaction} from '../utils/AddReaction';
 import {addPost} from '../utils/addPost';
 
@@ -22,9 +21,20 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
   const activeChannelRef = useRef(activeChannel);
   const teamId: any = '7efg3j4y3pgfpyjkjtmhnoxrcc';
 
+  const updateChannelUnread = (channelId: string, newMessage: boolean) => {
+    setChannels((prevChannels: any) =>
+      prevChannels.map((channel: any) =>
+        channel.id === channelId
+          ? {...channel, unread: newMessage ? channel.unread + 1 : 0}
+          : channel,
+      ),
+    );
+  };
+
   useEffect(() => {
     const fetchChannels = async () => {
-      const channels = await getChannelsTeam(token, teamId, user.id);
+      const channels = await getChannelsWithUnreadCount(token, teamId, user.id);
+      console.log('channels : ', channels);
       const filteredChannels = channels.filter((channel: any) => {
         return (
           channel.display_name != null && channel.display_name.trim() !== ''
@@ -46,6 +56,8 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
       );
       setCurrentChannel(currentChannel);
       setChannelJustSelected(true);
+      const data = await viewChannel(user.id, activeChannel, token);
+      updateChannelUnread(activeChannel, false);
     };
     if (activeChannel) {
       fetchCurrentChannel();
@@ -56,10 +68,12 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
     async (channelId: string, rootId: string, post: any) => {
       if (channelId == activeChannelRef.current && user.id !== post.user_id) {
         addPost(setCurrentChannel, channelId, token, false, user, post);
+      } else if (channelId !== activeChannelRef.current) {
+        updateChannelUnread(channelId, true);
       }
       setNewMessage(true);
     },
-    [activeChannel, setCurrentChannel],
+    [activeChannelRef.current, setCurrentChannel],
   );
 
   const sendMessage = (postText: string, channelId: string, files?: File[]) => {
@@ -106,8 +120,6 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
 
     const oldestPostId = _currentChannel.groupsPosts[0][0].id;
 
-    console.log('voici le oldest postid : ', oldestPostId);
-
     try {
       const oldCurrentCHannel = await getChannelInfosByChannelId(
         activeChannel,
@@ -117,23 +129,16 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
           per_page: 60,
         },
       );
-      // const olderMessages = await getChannelMessages(activeChannel, token, {
-      //   before: oldestPostId,
-      //   per_page: 60,
-      // });
 
       const olderMessages = oldCurrentCHannel.groupsPosts;
 
-      console.log('older messages recup : ', olderMessages);
-
       if (olderMessages && olderMessages.length > 0) {
-        setCurrentChannel(prevChannel => {
+        setCurrentChannel((prevChannel: any) => {
           const updatedGroupsPosts = [
             ...olderMessages,
             ...prevChannel.groupsPosts,
           ];
 
-          console.log('voici le updated grou post : ', updatedGroupsPosts);
           return {
             ...prevChannel,
             groupsPosts: updatedGroupsPosts,
