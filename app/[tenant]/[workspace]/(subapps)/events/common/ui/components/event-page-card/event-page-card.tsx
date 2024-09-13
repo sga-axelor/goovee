@@ -12,7 +12,7 @@ import {
   CardTitle,
   Button,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 
@@ -20,7 +20,7 @@ import {i18n} from '@/lib/i18n';
 import {EventCardBadges} from '@/subapps/events/common/ui/components';
 
 export const EventPageCard = ({eventDetails}: any & any) => {
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
 
   return (
     <Card className="min-w-full lg:min-w-[50rem] xl:min-w-[57.75rem] xl:max-w-[57.75rem]  w-full rounded-2xl border-none shadow-none">
@@ -32,7 +32,7 @@ export const EventPageCard = ({eventDetails}: any & any) => {
 
         <div className="relative mx-auto w-full max-w-[55.75rem] min-h-[15.625rem] xs:min-w-[22.875rem] flex items-center justify-center">
           <Image
-            src={getImageURL(eventDetails?.eventImage?.id)}
+            src={getImageURL(eventDetails?.eventImage?.id, tenant)}
             alt={`${eventDetails.eventTitle} image`}
             fill
             className="rounded-lg mx-auto object-cover"

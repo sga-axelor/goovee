@@ -14,8 +14,9 @@ import {
   Badge,
 } from '@/ui/components';
 import {parseDate} from '@/utils/date';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {DATE_FORMATS} from '@/constants';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 
 // ---- LOCAL IMPORTS ---- //
@@ -23,11 +24,12 @@ import {EventCardBadges} from '@/subapps/events/common/ui/components';
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
 
 export const EventCard = ({event}: EventCardProps) => {
+  const {tenant} = useWorkspace();
   return (
     <Card className="px-4  overflow-hidden cursor-pointer  rounded-2xl flex h-fit border-none shadow-none ">
       <div className=" relative my-auto lg:min-h-[10.625rem] lg:min-w-[9.375rem] min-h-[8.75rem] max-h-[9.375rem] min-w-[7.5rem] flex items-center justify-center">
         <Image
-          src={getImageURL(event?.eventImage?.id)}
+          src={getImageURL(event?.eventImage?.id, tenant)}
           alt={`${event.eventTitle} image`}
           width={150}
           height={150}

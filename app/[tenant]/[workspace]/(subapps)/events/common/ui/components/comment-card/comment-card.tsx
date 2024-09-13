@@ -7,8 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {i18n} from '@/lib/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Comment} from '@/subapps/events/common/ui/components';
@@ -20,10 +21,12 @@ export const CommentCard = ({
   image,
   contentComment,
 }: Comment) => {
+  const {tenant} = useWorkspace();
+
   return (
     <Card className="shadow-none border-none flex p-4">
       <Avatar className="w-8 h-8">
-        <AvatarImage src={getImageURL(image?.id)} />
+        <AvatarImage src={getImageURL(image?.id, tenant)} />
         <AvatarFallback>{author?.name}</AvatarFallback>
       </Avatar>
       <div>
