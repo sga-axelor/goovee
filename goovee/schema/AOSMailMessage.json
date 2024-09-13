@@ -42,6 +42,11 @@
       "target": "AOSUser"
     },
     {
+      "type": "ManyToOne",
+      "name": "createdBy",
+      "target": "AOSUser"
+    },
+    {
       "name": "messageContentHtml",
       "type": "String"
     }
