@@ -33,7 +33,8 @@ import {useForm} from 'react-hook-form';
 
 // ---- LOCAL IMPORT ---- //
 import {VERSION_MISMATCH_ERROR} from '../../../constants';
-import {mutate, MutateProps} from './action';
+import {MutateProps} from '../../../actions';
+import {mutate} from '../../../actions';
 import {TicketFormSchema, TicketInfo} from './schema';
 
 type TicketFormProps = {

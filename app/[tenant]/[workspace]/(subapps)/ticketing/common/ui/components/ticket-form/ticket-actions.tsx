@@ -5,7 +5,7 @@ import {Button} from '@/ui/components';
 import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
 
-import {assignToSupplier, cancelTicket, closeTicket} from './action';
+import {assignToSupplier, cancelTicket, closeTicket} from '../../../actions';
 
 export function CancelTicket({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();

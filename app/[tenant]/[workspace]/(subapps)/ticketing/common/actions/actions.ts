@@ -7,38 +7,20 @@ import {ID} from '@goovee/orm';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {ASSIGNMENT, VERSION_MISMATCH_ERROR} from '../../../constants';
-import {
-  findTicketCancelledStatus,
-  findTicketDoneStatus,
-} from '../../../orm/projects';
+import {VERSION_MISMATCH_ERROR, ASSIGNMENT} from '../constants';
+import {findTicketDoneStatus, findTicketCancelledStatus} from '../orm/projects';
 import {
   createTicket,
-  findTicketsBySearch,
   findTicketVersion,
   updateTicket,
-} from '../../../orm/tickets';
-import {ensureAuth} from '../../../utils/auth-helper';
+  findTicketsBySearch,
+} from '../orm/tickets';
 import {
-  CreateTicketInfo,
   CreateTicketSchema,
-  UpdateTicketInfo,
   UpdateTicketSchema,
-} from './schema';
-
-export type MutateProps = {
-  workspaceURL: string;
-  workspaceURI: string;
-  action:
-    | {
-        type: 'create';
-        data: CreateTicketInfo;
-      }
-    | {
-        type: 'update';
-        data: UpdateTicketInfo;
-      };
-};
+} from '../ui/components/ticket-form';
+import {ensureAuth} from '../utils/auth-helper';
+import type {MutateProps} from './types';
 
 export async function mutate(
   props: MutateProps,
@@ -86,7 +68,6 @@ export async function mutate(
     throw e;
   }
 }
-
 type TicketActionProps = {
   workspaceURL: string;
   data: {id: string; version: number};

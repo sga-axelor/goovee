@@ -16,7 +16,7 @@ import {
 import {cn} from '@/utils/css';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {searchTickets} from '../../common/ui/components/ticket-form/action';
+import {searchTickets} from '../../common/actions';
 import {debounce} from 'lodash';
 import {ID} from '@goovee/orm';
 import {useToast} from '@/ui/hooks';
