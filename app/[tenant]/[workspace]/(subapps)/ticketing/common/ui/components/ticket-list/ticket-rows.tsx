@@ -73,7 +73,7 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
         <TableRow
           key={ticket.id}
           onClick={handleClick}
-          className="cursor-pointer">
+          className="cursor-pointer hover:bg-slate-100">
           <TableCell className="px-5">
             <p className="font-medium">#{ticket.id}</p>
           </TableCell>
@@ -90,11 +90,9 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
             </TableCell>
           ) : (
             <TableCell
-              className="flex float-end"
+              className="flex float-end items-center"
               onClick={e => handleCollapse(ticket.id, e)}>
-              <p className="truncate max-w-40 line-clamp-1 table-cell">
-                {ticket.name}
-              </p>
+              <p className="max-w-48 line-clamp-2">{ticket.name}</p>
               {small &&
                 (show && ticket?.id === id ? (
                   <MdArrowDropUp className="cursor-pointer ms-1 inline" />
@@ -106,8 +104,8 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
 
           {!small && (
             <>
-              <TableCell className="truncate max-w-40 line-clamp-1 table-cell">
-                {ticket.name}
+              <TableCell className="max-w-40 ">
+                <div className="line-clamp-2">{ticket.name}</div>
               </TableCell>
               <TableCell>
                 <Priority name={ticket.priority?.name} />

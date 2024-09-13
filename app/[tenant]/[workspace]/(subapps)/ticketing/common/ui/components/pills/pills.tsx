@@ -26,8 +26,8 @@ export function Status({name}: PillProps) {
 
 const priorityMap = new Map<string, Variant>();
 priorityMap.set('High', 'purple');
-priorityMap.set('Low', 'yellow');
-priorityMap.set('Normal', 'success');
+priorityMap.set('Low', 'success');
+priorityMap.set('Normal', 'yellow');
 priorityMap.set('Urgent', 'destructive');
 
 export function Priority({name}: PillProps) {
