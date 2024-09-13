@@ -22,6 +22,7 @@ import {findUserForPartner} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
+import {findPosts} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/orm/forum';
 import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
 import {SelectOptions} from '@goovee/orm';
 import {AOSMailMessage} from '@/goovee/.generated/models';
@@ -338,7 +339,11 @@ export async function findByID({
       response = news?.[0] || {};
       break;
     case ModelType.forum:
-      response = {};
+      const {posts = []}: any = await findPosts({
+        whereClause: {id},
+        workspaceID: workspace.id,
+      });
+      response = posts[0];
       break;
     default:
       return {

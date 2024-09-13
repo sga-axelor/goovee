@@ -185,29 +185,36 @@ export async function findPosts({
         },
         createdOn: true,
         commentList: {
-          orderBy: {publicationDateTime: ORDER_BY.DESC},
+          orderBy: {createdOn: ORDER_BY.DESC},
           select: {
             id: true,
-            contentComment: true,
-            publicationDateTime: true,
-            author: {
-              id: true,
-              name: true,
+            mailMessage: {
+              messageContentHtml: true,
+              author: {
+                id: true,
+                name: true,
+                partner: {
+                  picture: true,
+                  simpleFullName: true,
+                },
+              },
             },
-            image: {
-              id: true,
-            },
+            createdOn: true,
             childCommentList: {
               select: {
-                contentComment: true,
-                publicationDateTime: true,
-                author: {
-                  id: true,
-                  name: true,
+                id: true,
+                mailMessage: {
+                  messageContentHtml: true,
+                  author: {
+                    id: true,
+                    name: true,
+                    partner: {
+                      picture: true,
+                      simpleFullName: true,
+                    },
+                  },
                 },
-                image: {
-                  id: true,
-                },
+                createdOn: true,
               },
             },
           },

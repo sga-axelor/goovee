@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, KeyboardEvent, useCallback, useEffect, memo} from 'react';
+import {useState, useCallback, useEffect, memo} from 'react';
 import {
   MdClose,
   MdAdd,
@@ -20,13 +20,15 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Input,
 } from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 import {parseDate} from '@/utils/date';
 import {DATE_FORMATS, DEFAULT_PAGE} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
+import {createComment} from '@/app/actions/comment';
+import {Comment} from '@/ui/components/comment';
+import {ModelType} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -40,13 +42,20 @@ import {
 } from '@/subapps/forum/common/constants';
 import {DropdownToggle} from '@/subapps/forum/common/ui/components';
 import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
-import {addComment, fetchComments} from '@/subapps/forum/common/action/action';
 import {CommentResponse} from '@/subapps/forum/common/types/forum';
+import {fetchComments} from '@/subapps/forum/common/action/action';
 
-export const Comment = memo(
-  ({parentCommentId, comment}: {parentCommentId: string; comment?: any}) => {
+export const CommentContent = memo(
+  ({
+    postId,
+    parentCommentId,
+    comment,
+  }: {
+    postId?: any;
+    parentCommentId: string;
+    comment?: any;
+  }) => {
     const [showSubComments, setShowSubComments] = useState(false);
-    const [commentValue, setCommentValue] = useState('');
 
     const {data: session} = useSession();
     const {workspaceURL, workspaceURI} = useWorkspace();
@@ -54,48 +63,51 @@ export const Comment = memo(
     const router = useRouter();
 
     const isLoggedIn = Boolean(session?.user?.id);
-    const {
-      author,
-      publicationDateTime,
-      contentComment,
-      childCommentList = [],
-      id,
-      version,
-    } = comment;
+    const {createdOn, mailMessage, childCommentList = [], id} = comment;
+
+    const {messageContentHtml, author} = mailMessage;
 
     const handleSubComments = () => setShowSubComments(prev => !prev);
 
-    const handleComment = async (event: KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
+    const handleComment = async ({
+      formData,
+      values,
+    }: {
+      formData: any;
+      values: any;
+    }) => {
+      try {
+        const response = await createComment({
+          formData,
+          values,
+          workspaceURL,
+          modelID: postId,
+          parentId: parentCommentId,
+          type: ModelType.forum,
+        });
 
-        try {
-          const response: CommentResponse = await addComment({
-            workspaceURL,
-            version,
-            parentCommentId,
-            contentComment: commentValue,
+        const {success, message}: CommentResponse = response;
+
+        if (success) {
+          toast({
+            variant: 'success',
+            title: i18n.get('Comment added successfully.'),
           });
-          if (response.success) {
-            toast({
-              variant: 'success',
-              title: i18n.get('Comment added successfully.'),
-            });
-            setCommentValue('');
-            router.refresh();
-            router.push(`${workspaceURI}/forum`, {scroll: false});
-          } else {
-            toast({
-              variant: 'destructive',
-              title: i18n.get(response.message || 'An error occurred'),
-            });
-          }
-        } catch (error) {
+          router.refresh();
+        } else {
           toast({
             variant: 'destructive',
-            title: i18n.get('An error occurred while adding comment.'),
+            title: i18n.get(
+              message || 'An error occurred while creating comment',
+            ),
           });
         }
+      } catch (error: any) {
+        console.error('Submission error:', error);
+        toast({
+          variant: 'destructive',
+          title: i18n.get(error?.message || 'An unexpected error occurred.'),
+        });
       }
     };
 
@@ -107,16 +119,19 @@ export const Comment = memo(
           <div className="flex gap-2">
             <Avatar className="rounded-full h-6 w-6">
               <AvatarImage
-                src={getImageURL(author?.id) ?? '/images/no-image.png'}
+                src={
+                  getImageURL(author?.partner?.picture?.id) ??
+                  '/images/no-image.png'
+                }
               />
             </Avatar>
             <span className="font-semibold text-base">
-              {author?.name ?? ''}
+              {author?.partner?.simpleFullName ?? ''}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="text-xs">
-              {parseDate(publicationDateTime, DATE_FORMATS.full_date)}
+              {parseDate(createdOn, DATE_FORMATS.full_date)}
             </div>
             <Popover>
               <PopoverTrigger>
@@ -134,8 +149,12 @@ export const Comment = memo(
           </div>
         </div>
         <div>
-          <div className="text-sm">{contentComment}</div>
-          <div className="flex justify-end items-center gap-6 mt-1">
+          <div
+            className="text-sm"
+            dangerouslySetInnerHTML={{
+              __html: messageContentHtml || '',
+            }}></div>
+          <div className="flex justify-end items-center gap-6 mt-1 mb-4">
             <div className="flex rounded-lg border h-8">
               <MdOutlineThumbUp className="w-8 h-full cursor-pointer p-2 border-r" />
               <div className="flex p-2">
@@ -160,27 +179,23 @@ export const Comment = memo(
             </div>
           </div>
           {showSubComments && (
-            <Input
-              id="comment"
-              name="comment"
-              className={`my-2 placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
-              placeholder={
+            <Comment
+              className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+              placeholderText={
                 isLoggedIn
                   ? i18n.get(COMMENT)
                   : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
               }
-              disabled={!isLoggedIn}
-              onChange={e => setCommentValue(e.target.value)}
-              onKeyDown={handleComment}
+              onSubmit={handleComment}
             />
           )}
         </div>
         {showSubComments &&
           parentCommentId === id &&
           childCommentList.length > 0 && (
-            <div className="ml-6">
+            <div className="ml-6 mt-2">
               {childCommentList.map((childComment: any) => (
-                <Comment
+                <CommentContent
                   key={childComment.id}
                   parentCommentId={parentCommentId}
                   comment={childComment}
@@ -193,7 +208,7 @@ export const Comment = memo(
   },
 );
 
-Comment.displayName = 'Comment';
+CommentContent.displayName = 'Comment';
 
 export const Comments = memo(
   ({
@@ -209,6 +224,7 @@ export const Comments = memo(
     hideCloseComments?: boolean;
     toggleComments?: () => void;
   }) => {
+    console.log('comments >>>', comments);
     const [loading, setLoading] = useState(false);
     const [commentsList, setCommentsList] = useState<any[]>([]);
     const [sortBy, setSortBy] = useState('new');
@@ -283,7 +299,7 @@ export const Comments = memo(
     };
 
     useEffect(() => {
-      if (comments.length) {
+      if (comments?.length) {
         setCommentsList(comments.slice(0, DEFAULT_COMMENT_LIMIT));
         setTotal(comments.length);
       }
@@ -306,7 +322,11 @@ export const Comments = memo(
           className={`flex flex-col gap-4 ${usePopUpStyles ? 'h-full overflow-auto px-2' : ''}`}>
           {commentsList.map((comment: any) => (
             <div key={comment.id} className="flex flex-col gap-4">
-              <Comment parentCommentId={comment.id} comment={comment} />
+              <CommentContent
+                postId={post.id}
+                parentCommentId={comment.id}
+                comment={comment}
+              />
             </div>
           ))}
         </div>
