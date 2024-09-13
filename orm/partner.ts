@@ -2,6 +2,7 @@ import {getClient} from '@/goovee';
 import {clone} from '@/utils';
 import {hash} from '@/utils/auth';
 import {findDefaultPartnerWorkspaceConfig} from './workspace';
+import {ID} from '@/types';
 
 export async function findPartnerByEmail(email: string) {
   if (!email) return null;
@@ -80,4 +81,20 @@ export async function registerPartner({
   const partner = await client.aOSPartner.create({data}).then(clone);
 
   return partner;
+}
+
+export async function findUserForPartner({partnerId}: {partnerId: ID}) {
+  if (!partnerId) return null;
+
+  const client = await getClient();
+
+  const user = await client.aOSUser.findOne({
+    where: {
+      partner: {
+        id: partnerId,
+      },
+    },
+  });
+
+  return user;
 }

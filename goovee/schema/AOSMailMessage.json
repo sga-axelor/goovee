@@ -49,6 +49,11 @@
     {
       "name": "messageContentHtml",
       "type": "String"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "createdBy",
+      "target": "AOSUser"
     }
   ]
 }

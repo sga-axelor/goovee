@@ -15,6 +15,7 @@ import {getFileSizeText, parseFormData} from '@/utils/files';
 import {clone} from '@/utils';
 import {ModelType, PortalWorkspace} from '@/types';
 import {COMMENT_TRACKING} from '@/constants';
+import {findUserForPartner} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
@@ -162,6 +163,14 @@ export async function addComment({
       };
     }
 
+    const aosUser = await findUserForPartner({partnerId: user.id});
+    if (!aosUser) {
+      return {
+        error: true,
+        message: i18n.get('Cannot create comment. Configuration Error.'),
+      };
+    }
+
     const workspace = await findWorkspace({
       user,
       url: workspaceURL,
@@ -234,7 +243,12 @@ export async function addComment({
             messageContentHtml: content,
             author: {
               select: {
-                id: user?.id,
+                id: aosUser.id,
+              },
+            },
+            createdBy: {
+              select: {
+                id: aosUser.id,
               },
             },
           },
