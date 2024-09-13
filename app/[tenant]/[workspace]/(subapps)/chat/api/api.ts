@@ -53,12 +53,22 @@ export const getChannelsTeam = async (token: any, teamId: any, userId: any) => {
   }
 };
 
-export const getPostsChannel = async (token: any, channelId: any) => {
+export const getPostsChannel = async (
+  token: string,
+  channelId: string,
+  options: any = {},
+) => {
+  const {before, per_page = 60, after} = options;
   try {
     const {data} = await axios.get(`${API_URL}/channels/${channelId}/posts`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
+      },
+      params: {
+        before,
+        after,
+        per_page,
       },
     });
 

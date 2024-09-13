@@ -14,7 +14,7 @@ const checkIfReactionExists = async (
 ): Promise<boolean> => {
   try {
     const reactions = await getPostReactions(postId, token);
-    const reactionExists = reactions.some(
+    const reactionExists = reactions?.some(
       (reaction: any) =>
         reaction.user_id === userId && reaction.emoji_name === emojiName,
     );

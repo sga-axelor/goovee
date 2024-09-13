@@ -46,8 +46,9 @@ export const getFormattedPosts = async (
   channelId: string,
   users: any[],
   token: string,
+  options: any = {},
 ) => {
-  const data = await getPostsChannel(token, channelId);
+  const data = await getPostsChannel(token, channelId, options);
   if ('status_code' in data) {
     return [];
   }
@@ -75,6 +76,7 @@ export const getFormattedPosts = async (
 export const getChannelInfosByChannelId = async (
   channelId: string,
   token: string,
+  options: any = {},
 ) => {
   const channel = await getChannelById(channelId, token);
   if ('status_code' in channel) {
@@ -84,7 +86,12 @@ export const getChannelInfosByChannelId = async (
   if ('status_code' in channelUsers) {
     return {posts: [], name: '', users: [], channel};
   }
-  let posts: any[] = await getFormattedPosts(channelId, channelUsers, token);
+  let posts: any[] = await getFormattedPosts(
+    channelId,
+    channelUsers,
+    token,
+    options,
+  );
   posts.sort((a: any, b: any) => {
     return a.create_at - b.create_at;
   });

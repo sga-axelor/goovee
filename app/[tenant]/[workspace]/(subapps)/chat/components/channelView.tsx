@@ -35,6 +35,7 @@ export const ChannelView = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const prevHeightRef = useRef<number>(0);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior, timer = 0) => {
@@ -65,11 +66,21 @@ export const ChannelView = ({
       !isLoading
     ) {
       setIsLoading(true);
+      prevHeightRef.current = messagesRef.current.scrollHeight;
       loadMoreMessages().then(() => {
-        //setIsLoading(false);
+        setIsLoading(false);
       });
     }
   }, [loadMoreMessages, isLoading]);
+
+  useEffect(() => {
+    if (messagesRef.current && prevHeightRef.current > 0) {
+      const newScrollTop =
+        messagesRef.current.scrollHeight - prevHeightRef.current;
+      messagesRef.current.scrollTop = newScrollTop;
+      prevHeightRef.current = 0;
+    }
+  }, [channel.groupsPosts]);
 
   useEffect(() => {
     const currentMessagesRef = messagesRef.current;
@@ -95,7 +106,7 @@ export const ChannelView = ({
       scrollToBottom('smooth');
     }
     setNewMessage(false);
-  }, [newMessage, setNewMessage, scrollToBottom]);
+  }, [newMessage, setNewMessage, scrollToBottom, isBottom]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -146,7 +157,7 @@ export const ChannelView = ({
         </h2>
       </div>
       <div className="flex-grow overflow-y-auto p-4" ref={messagesRef}>
-        {true && (
+        {isLoading && (
           <div className="flex justify-center items-center py-2">
             <Loader className="animate-spin" />
           </div>

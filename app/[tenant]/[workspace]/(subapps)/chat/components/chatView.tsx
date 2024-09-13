@@ -92,7 +92,63 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
     [user, setCurrentChannel],
   );
 
-  const loadMoreMessages = async () => {};
+  const loadMoreMessages = async () => {
+    if (
+      !_currentChannel ||
+      !_currentChannel.groupsPosts ||
+      _currentChannel.groupsPosts.length === 0
+    ) {
+      console.log('Pas de messages à charger');
+      return;
+    }
+
+    console.log('currentChannel : ', _currentChannel);
+
+    const oldestPostId = _currentChannel.groupsPosts[0][0].id;
+
+    console.log('voici le oldest postid : ', oldestPostId);
+
+    try {
+      const oldCurrentCHannel = await getChannelInfosByChannelId(
+        activeChannel,
+        token,
+        {
+          before: oldestPostId,
+          per_page: 60,
+        },
+      );
+      // const olderMessages = await getChannelMessages(activeChannel, token, {
+      //   before: oldestPostId,
+      //   per_page: 60,
+      // });
+
+      const olderMessages = oldCurrentCHannel.groupsPosts;
+
+      console.log('older messages recup : ', olderMessages);
+
+      if (olderMessages && olderMessages.length > 0) {
+        setCurrentChannel(prevChannel => {
+          const updatedGroupsPosts = [
+            ...olderMessages,
+            ...prevChannel.groupsPosts,
+          ];
+
+          console.log('voici le updated grou post : ', updatedGroupsPosts);
+          return {
+            ...prevChannel,
+            groupsPosts: updatedGroupsPosts,
+          };
+        });
+      } else {
+        console.log('Pas de messages plus anciens à charger');
+      }
+    } catch (error) {
+      console.error(
+        'Erreur lors du chargement des messages plus anciens:',
+        error,
+      );
+    }
+  };
 
   return (
     <div className="flex h-[calc(100vh-120px)]">

@@ -21,8 +21,6 @@ const GroupPost = ({
     void retrieveImage();
   }, [group[0].user_id, token]);
 
-  console.log('test group : ', group);
-
   return (
     <div className="flex items-start space-x-4 p-4 border-b border-gray-200">
       {profileImage && (
@@ -35,8 +33,8 @@ const GroupPost = ({
             {new Date(group[0].create_at).toLocaleString()}
           </span>
         </div>
-        {group.map((post: any) => (
-          <Post post={post} onEmojiClick={onEmojiClick} />
+        {group.map((post: any, index) => (
+          <Post key={index} post={post} onEmojiClick={onEmojiClick} />
         ))}
       </div>
     </div>
