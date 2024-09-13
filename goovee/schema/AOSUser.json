@@ -11,6 +11,12 @@
     {
       "type": "String",
       "name": "name"
+    },
+    {
+      "name": "partner",
+      "type": "OneToOne",
+      "target": "AOSPartner",
+      "mappedBy": "emailAddress"
     }
   ]
 }

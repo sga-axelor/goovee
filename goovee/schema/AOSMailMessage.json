@@ -40,6 +40,10 @@
       "type": "ManyToOne",
       "name": "author",
       "target": "AOSUser"
+    },
+    {
+      "name": "messageContentHtml",
+      "type": "String"
     }
   ]
 }

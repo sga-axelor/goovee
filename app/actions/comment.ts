@@ -10,12 +10,14 @@ export async function createComment({
   workspaceURL,
   modelID,
   type,
+  parentId,
 }: {
   formData: any;
   values: any;
   workspaceURL: string;
   type: ModelType;
   modelID: string | number;
+  parentId: any;
 }) {
   let attachmentIDs: string[] = [];
 
@@ -43,10 +45,12 @@ export async function createComment({
       type,
       workspaceURL,
       model: {id: modelID},
-      subject: values.text,
+      content: values.text,
       attachments: attachmentIDs,
+      parentId,
     });
-    if (!response) {
+
+    if (response.error) {
       return {
         error: true,
         message: 'Error creating comment.',

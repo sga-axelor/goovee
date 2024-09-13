@@ -117,3 +117,8 @@ export const NAVIGATION = {
   top: 'topSide',
   left: 'leftSide',
 };
+
+/**
+ * COMMENT
+ */
+export const COMMENT_TRACKING = 'User created a comment';
