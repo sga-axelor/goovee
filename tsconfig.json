@@ -22,7 +22,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/subapps/*": ["./app/[tenant]/[workspace]/(subapps)/*"]
+      "@/subapps/*": ["./app/[tenant]/[workspace]/(subapps)/*"],
+      "@/core/*": ["./lib/core"],
+      "@/auth": ["./lib/core/auth/index"],
+      "@/auth/*": ["./lib/core/auth/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
