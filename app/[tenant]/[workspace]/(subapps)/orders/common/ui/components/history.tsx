@@ -1,8 +1,11 @@
 'use client';
+
 import React from 'react';
-import {Separator} from '@ui/components/separator';
+import {Separator} from '@/ui/components';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+
 export const History = () => {
   return (
     <>

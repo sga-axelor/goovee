@@ -1,15 +1,16 @@
 'use client';
 
 import React from 'react';
-import {Separator} from '@ui/components/separator';
-import {Button} from '@ui/components/button';
 import {MdOutlineFileDownload} from 'react-icons/md';
+
 // ---- CORE IMPORTS ---- //
-import {Tag} from '@ui/components/index';
+import {Separator, Button, Tag} from '@/ui/components';
 import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
+
 export const Informations = ({
   createdOn,
   shipmentMode,

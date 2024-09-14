@@ -1,8 +1,11 @@
 'use client';
+
 import React from 'react';
-import {Separator} from '@ui/components/separator';
+
 // ---- CORE IMPORTS ---- //
+import {Separator} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+
 export type TotalProps = {
   inTaxTotal: string;
   exTaxTotal: number | string;

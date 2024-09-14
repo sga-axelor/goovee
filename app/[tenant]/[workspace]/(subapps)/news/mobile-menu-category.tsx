@@ -10,12 +10,13 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@ui/components/accordion';
-import {Sheet, SheetContent} from '@/ui/components/sheet';
-import {Portal} from '@/ui/components';
-import {Category} from '@/types';
+  Sheet,
+  SheetContent,
+  Portal,
+} from '@/ui/components';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';

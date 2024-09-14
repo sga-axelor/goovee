@@ -1,17 +1,18 @@
 'use client';
+
 import React from 'react';
-import {Separator} from '@ui/components/separator';
-import {TableCell, TableRow} from '@ui/components/table';
+
 // ---- CORE IMPORTS ---- //
-import {StyledTable} from '@ui/components/index';
+import {Separator, TableCell, TableRow, StyledTable} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {ProductCard} from './product-card';
 import {
   PRODUCT_COLUMNS,
   PRODUCT_CARD_COLUMNS,
 } from '@/subapps/orders/common/constants/orders';
-import styles from './styles.module.scss';
+
 export const Products = ({saleOrderLineList}: any) => {
   return (
     <>

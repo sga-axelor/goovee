@@ -1,10 +1,13 @@
 'use client';
+
 import {useState} from 'react';
 import Swiper from 'swiper';
 import {FreeMode, Navigation, Thumbs} from 'swiper/modules';
 import {Swiper as SwiperCarousel, SwiperSlide} from 'swiper/react';
-import {Button} from '@ui/components/button';
 import {FaChevronLeft, FaChevronRight} from 'react-icons/fa';
+
+// ---- CORE IMPORTS ---- //
+import {Button} from '@/ui/components';
 
 export const ThumbsCarousel = ({
   images = [],

@@ -1,4 +1,7 @@
 import React from 'react';
+import {FaChevronRight} from 'react-icons/fa';
+
+// ---- CORE IMPORTS ---- //
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -6,8 +9,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@ui/components/breadcrumb';
-import {FaChevronRight} from 'react-icons/fa';
+} from '@/ui/components';
 
 export type BreadcrumbsProps = {
   breadcrumbs: {name: string; onClick?: () => void}[];

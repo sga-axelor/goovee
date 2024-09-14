@@ -1,11 +1,13 @@
 'use client';
+
 import React from 'react';
-import {Button} from '@ui/components/button';
 import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
+
 // ---- CORE IMPORTS ---- //
-import {Tag} from '@ui/components/index';
+import {Button, Tag} from '@/ui/components';
 import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';

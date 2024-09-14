@@ -1,10 +1,12 @@
 'use client';
+
 import React from 'react';
-import {TableCell, TableRow} from '@ui/components/table';
-import {Separator} from '@ui/components/separator';
+import Image from 'next/image';
+
 // ---- CORE IMPORTS ---- //
-import {StyledTable} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
+import {TableCell, TableRow, StyledTable, Separator} from '@/ui/components';
+
 // ---- LOCAL IMPORTS ---- //
 import {ProductCard} from './product-card';
 import {
@@ -13,10 +15,11 @@ import {
 } from '@/subapps/quotations/common/constants/quotations';
 import type {Product} from '@/subapps/quotations/common/types/quotations';
 import styles from './styles.module.scss';
-import Image from 'next/image';
+
 type Props = {
   saleOrderLineList: Product[];
 };
+
 export const Products = ({saleOrderLineList}: Props) => {
   return (
     <>

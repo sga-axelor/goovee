@@ -2,18 +2,17 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
-import {signOut, useSession} from 'next-auth/react';
 import {usePathname} from 'next/navigation';
+import {signOut, useSession} from 'next-auth/react';
 import {MdOutlineAccountCircle} from 'react-icons/md';
 
+// ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@ui/components/dropdown-menu';
-import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
@@ -21,7 +20,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from '@ui/components/alert-dialog';
+} from '@/ui/components';
 import type {ID} from '@/types';
 import {SEARCH_PARAMS} from '@/constants';
 

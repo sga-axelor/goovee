@@ -1,14 +1,16 @@
 'use client';
+
 import React from 'react';
-import {TableCell, TableRow} from '@ui/components/table';
+
 // ---- CORE IMPORTS ---- //
-import {StyledTable, Tag} from '@ui/components/index';
+import {TableCell, TableRow, StyledTable, Tag} from '@/ui/components';
 import {parseDate} from '@/utils/date';
 import type {Item} from '@/types';
-import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import styles from './styles.module.scss';
+
 export const OrdersTable = ({
   columns,
   orders,

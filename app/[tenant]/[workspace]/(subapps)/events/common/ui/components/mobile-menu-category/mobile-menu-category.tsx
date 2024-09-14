@@ -9,11 +9,12 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@ui/components/accordion';
-import {Sheet, SheetContent} from '@/ui/components/sheet';
-import {Portal} from '@/ui/components';
-import {Category} from '@/types';
+  Sheet,
+  SheetContent,
+  Portal,
+} from '@/ui/components';
 import {cn} from '@/utils/css';
+import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from '@/subapps/events/common/ui/components/mobile-menu-category/index.module.scss';

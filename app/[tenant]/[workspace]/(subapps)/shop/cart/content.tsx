@@ -6,12 +6,12 @@ import {usePathname, useRouter} from 'next/navigation';
 import {useSession} from 'next-auth/react';
 import {LuChevronLeft} from 'react-icons/lu';
 import {MdDeleteOutline} from 'react-icons/md';
-import {Label} from '@ui/components/label';
-import {Button} from '@ui/components/button';
-import {Separator} from '@ui/components/separator';
 
 // ---- CORE IMPORTS ---- //
 import {
+  Label,
+  Button,
+  Separator,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
   BackgroundImage,
   Quantity,
-} from '@ui/components/index';
+} from '@/ui/components';
 import {useQuantity} from '@/ui/hooks';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {computeTotal} from '@/utils/cart';

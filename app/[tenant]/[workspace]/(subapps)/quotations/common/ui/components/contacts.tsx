@@ -1,13 +1,16 @@
 'use client';
+
 import React from 'react';
-import {Separator} from '@ui/components/separator';
-import {Button} from '@ui/components/button';
+
 // ---- CORE IMPORTS ---- //
+import {Separator, Button} from '@/ui/components';
 import {getCityName} from '@/utils';
 import {i18n} from '@/lib/i18n';
+
 // ---- LOCAL IMPORTS ---- //
 import Products from './products';
 import type {ContactProps} from '@/subapps/quotations/common/types/quotations';
+
 export const Contacts = ({
   clientPartner,
   company,

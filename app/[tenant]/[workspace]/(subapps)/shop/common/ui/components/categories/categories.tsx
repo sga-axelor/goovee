@@ -3,16 +3,16 @@ import {Fragment, useRef, useState} from 'react';
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
-import type {Category} from '@/types';
 import {
+  Separator,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@ui/components/navigation-menu';
-import {Separator} from '@/ui/components';
+} from '@/ui/components';
 import {cn} from '@/utils/css';
+import type {Category} from '@/types';
 
 export const Categories = ({
   items = [],

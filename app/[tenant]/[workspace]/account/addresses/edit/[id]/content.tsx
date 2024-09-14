@@ -4,13 +4,13 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {AddressForm} from '@ui/components/index';
+import {AddressForm} from '@/ui/components';
 import {useSearchParams, useToast} from '@/ui/hooks';
 import type {PartnerAddress, Country, Address} from '@/types';
-
-// ---- LOCAL IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
+
+// ---- LOCAL IMPORTS ---- //
 import {updateAddress} from './actions';
 
 export default function Content({

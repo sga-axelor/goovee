@@ -1,11 +1,8 @@
+import {useState} from 'react';
 import {MdSort} from 'react-icons/md';
-import {Popover, PopoverContent, PopoverTrigger} from '@ui/components/popover';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import type {PortalAppConfig, PortalWorkspace} from '@/types';
-// ---- LOCAL IMPORTS ---- //
-import styles from './sort-by.module.scss';
-import {useState} from 'react';
 import {
   Select,
   SelectContent,
@@ -13,7 +10,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@ui/components/select';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/ui/components';
+import type {PortalAppConfig, PortalWorkspace} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
+import styles from './sort-by.module.scss';
+
 const SORT_BY_OPTIONS = [
   {
     value: 'byNewest',
@@ -40,6 +45,7 @@ const SORT_BY_OPTIONS = [
     label: i18n.get('Price: High-Low'),
   },
 ];
+
 export function SortBy({
   onChange,
   options: optionsProp,

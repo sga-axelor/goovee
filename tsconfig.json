@@ -22,8 +22,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/subapps/*": ["./app/[tenant]/[workspace]/(subapps)/*"],
-      "@ui/components/*": ["./ui/components/*"]
+      "@/subapps/*": ["./app/[tenant]/[workspace]/(subapps)/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

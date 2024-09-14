@@ -1,16 +1,19 @@
 'use client';
 
 import React from 'react';
-import {TableHeadProps, TableProps} from './types';
+
+// ---- CORE IMPORTS ---- //
 import {
   Table,
   TableBody,
-  TableCell,
   TableRow,
   TableHead,
   TableFooter,
   TableHeader,
-} from '@ui/components/table';
+} from '@/ui/components';
+
+// ---- LOCAL IMPORTS ---- //
+import type {TableHeadProps, TableProps} from './types';
 
 export const StyledHead = ({columns, className}: TableHeadProps) => {
   return (

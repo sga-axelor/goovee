@@ -1,11 +1,14 @@
 'use client';
 import React from 'react';
+
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils/date';
-import {Tag} from '@ui/components/index';
 import {i18n} from '@/lib/i18n';
+import {parseDate} from '@/utils/date';
+import {Tag} from '@/ui/components';
+
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/orders/common/utils/orders';
+
 export const Card = ({
   orders,
   handleRowClick,

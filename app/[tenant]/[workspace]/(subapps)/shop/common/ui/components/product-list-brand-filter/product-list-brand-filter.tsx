@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
-import {Label} from '@ui/components/label';
-import {Checkbox} from '@ui/components/checkbox';
+
 // ---- CORE IMPORTS ---- //
+import {Label, Checkbox} from '@/ui/components';
+
 export function ProductListBrandFilter() {
   return (
     <div className="flex flex-col gap-2">

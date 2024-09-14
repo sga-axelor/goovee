@@ -4,8 +4,7 @@ import React from 'react';
 import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Separator} from '@ui/components/separator';
-import {Button} from '@ui/components/button';
+import {Separator, Button} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 
 export const History = () => {
