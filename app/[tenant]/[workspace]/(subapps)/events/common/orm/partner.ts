@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 import type {ID} from '@/types';
 

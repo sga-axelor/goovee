@@ -4,7 +4,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
 import type {Comment, ID, Participant} from '@/types';

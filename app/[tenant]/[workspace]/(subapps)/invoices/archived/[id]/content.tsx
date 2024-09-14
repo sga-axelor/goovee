@@ -5,7 +5,7 @@ import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
 import {Tag, Separator} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';

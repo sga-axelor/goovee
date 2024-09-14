@@ -8,7 +8,7 @@ import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import MobileMenuCategory from '@/subapps/news/mobile-menu-category';

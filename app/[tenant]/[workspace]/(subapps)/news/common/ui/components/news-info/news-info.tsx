@@ -6,7 +6,7 @@ import React from 'react';
 import {Badge} from '@/ui/components/badge';
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 

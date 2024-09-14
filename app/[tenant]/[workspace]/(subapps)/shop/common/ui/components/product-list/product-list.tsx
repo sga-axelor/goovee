@@ -12,7 +12,7 @@ import {MdOutlineList} from 'react-icons/md';
 import {Breadcrumbs, Pagination, TextField} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useToast} from '@/ui/hooks';
 import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
 

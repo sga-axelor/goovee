@@ -6,7 +6,7 @@ import {MdHistory, MdWeb} from 'react-icons/md';
 import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {clone} from '@/utils';
 import {parseDate} from '@/utils/date';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import DownloadIcon from './download-icon';

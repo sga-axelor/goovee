@@ -6,7 +6,7 @@ import {usePathname, useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {PaymentOption, type PortalWorkspace} from '@/types';
 import {Container, NavView, StyledAlert} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {

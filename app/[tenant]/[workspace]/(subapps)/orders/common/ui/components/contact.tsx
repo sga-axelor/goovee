@@ -5,7 +5,7 @@ import {Separator, Button} from '@/ui/components';
 
 // ---- CORE IMPORTS ---- //
 import {getCityName} from '@/utils';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {PaymentMethod, Products} from '@/subapps/orders/common/ui/components';

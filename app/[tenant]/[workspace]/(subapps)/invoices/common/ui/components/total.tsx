@@ -6,7 +6,7 @@ import {Button, Separator} from '@/ui/components';
 
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_CURRENCY_SCALE} from '@/constants';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //

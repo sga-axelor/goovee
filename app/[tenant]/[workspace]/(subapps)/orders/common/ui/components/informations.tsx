@@ -6,7 +6,7 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {Separator, Button, Tag} from '@/ui/components';
 import {parseDate} from '@/utils/date';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';

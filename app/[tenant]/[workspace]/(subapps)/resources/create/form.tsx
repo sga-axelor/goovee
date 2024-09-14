@@ -28,7 +28,7 @@ import {
 } from '@/ui/components/select';
 import {Textarea} from '@/ui/components/textarea';
 import {useToast} from '@/ui/hooks/use-toast';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getFileSizeText} from '@/utils/files';
 

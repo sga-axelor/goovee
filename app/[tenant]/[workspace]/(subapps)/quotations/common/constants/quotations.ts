@@ -1,4 +1,4 @@
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 export const QUOTATIONS_COLUMNS = [
   {key: 'saleOrderSeq', label: i18n.get('Quotation number')},

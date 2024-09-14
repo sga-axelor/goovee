@@ -17,7 +17,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/ui/components/form';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {getFileSizeText} from '@/utils/files';
 
 type CommentProps = {

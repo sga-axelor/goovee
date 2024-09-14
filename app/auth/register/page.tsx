@@ -7,7 +7,7 @@ import {getSession} from '@/orm/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {Button} from '@/ui/components';
 import Link from 'next/link';
 

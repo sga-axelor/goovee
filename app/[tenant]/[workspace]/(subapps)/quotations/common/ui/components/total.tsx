@@ -5,7 +5,7 @@ import {MdCheckCircleOutline, MdOutlineDisabledByDefault} from 'react-icons/md';
 import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   Separator,
   Button,

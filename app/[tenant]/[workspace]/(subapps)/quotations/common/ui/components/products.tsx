@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {TableCell, TableRow, StyledTable, Separator} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //

@@ -1,4 +1,4 @@
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {getSession} from '@/orm/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import type {ID} from '@/types';

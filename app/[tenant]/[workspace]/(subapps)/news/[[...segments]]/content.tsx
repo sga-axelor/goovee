@@ -5,7 +5,7 @@ import {MdOutlineNotificationAdd} from 'react-icons/md';
 import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {Pagination} from '@/ui/components';
 import {URL_PARAMS} from '@/constants';

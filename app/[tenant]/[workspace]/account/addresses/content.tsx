@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {LuPlus, LuPencil} from 'react-icons/lu';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {Button, Separator} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';

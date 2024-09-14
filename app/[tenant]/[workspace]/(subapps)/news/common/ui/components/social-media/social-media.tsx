@@ -4,7 +4,7 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {

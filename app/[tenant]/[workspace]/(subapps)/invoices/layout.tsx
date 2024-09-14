@@ -7,7 +7,7 @@ import {getSession} from '@/orm/auth';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 export const metadata: Metadata = {
   title: i18n.get('Invoices'),

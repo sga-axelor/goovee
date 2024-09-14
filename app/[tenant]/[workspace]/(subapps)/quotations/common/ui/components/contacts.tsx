@@ -5,7 +5,7 @@ import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {Separator, Button} from '@/ui/components';
 import {getCityName} from '@/utils';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import Products from './products';

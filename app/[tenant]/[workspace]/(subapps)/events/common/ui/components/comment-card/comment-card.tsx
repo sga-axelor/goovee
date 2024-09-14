@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //

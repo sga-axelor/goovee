@@ -7,7 +7,7 @@ import {useRouter, useSearchParams} from 'next/navigation';
 import {FaGoogle} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   Button,
   Separator,

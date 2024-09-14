@@ -7,7 +7,7 @@ import {capitalise} from '@/utils';
 import {AddressForm} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useSearchParams, useToast} from '@/ui/hooks';
 import type {Address, Country} from '@/types';
 

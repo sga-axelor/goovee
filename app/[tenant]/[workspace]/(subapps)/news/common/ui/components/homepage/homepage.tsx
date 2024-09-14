@@ -4,7 +4,7 @@ import React from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {HeroSearch, Search} from '@/ui/components';
 import {PortalWorkspace} from '@/types';

@@ -14,7 +14,7 @@ import {
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardBadges} from '@/subapps/events/common/ui/components';

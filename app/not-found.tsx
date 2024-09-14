@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {Button} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 export default function NotFound() {
   return (

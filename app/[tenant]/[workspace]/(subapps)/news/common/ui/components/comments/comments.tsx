@@ -9,7 +9,7 @@ import {Button} from '@/ui/components/button';
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
 import {Input} from '@/ui/components/input';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useToast} from '@/ui/hooks/use-toast';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getImageURL} from '@/utils/files';

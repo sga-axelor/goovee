@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_PAGE} from '@/constants';
 import Icons from '@/utils/Icons';

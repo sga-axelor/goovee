@@ -4,7 +4,7 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Separator} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 export const PaymentMethod = () => {
   return (

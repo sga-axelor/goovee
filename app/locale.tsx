@@ -5,7 +5,7 @@ import {useParams, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {useAppLang} from '@/ui/hooks';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 export default function Locale({children}: {children: React.ReactNode}) {
   const {dir, lang} = useAppLang();

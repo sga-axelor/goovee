@@ -5,7 +5,7 @@ import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Container, NavView, Pagination} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {OrdersTable, Card} from '@/subapps/orders/common/ui/components';

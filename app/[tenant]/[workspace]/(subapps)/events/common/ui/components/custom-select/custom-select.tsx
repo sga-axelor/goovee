@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import Select, {SingleValue, MultiValue} from 'react-select';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {createDefaultValues} from '@/ui/form';
 import type {Field} from '@/ui/form';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';

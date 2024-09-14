@@ -6,7 +6,7 @@ import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 // ---- CORE IMPORTS ---- //
 import {Button, Tag} from '@/ui/components';
 import {parseDate} from '@/utils/date';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';

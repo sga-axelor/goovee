@@ -2,7 +2,7 @@ import {Fragment, useRef, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   Separator,
   NavigationMenu,

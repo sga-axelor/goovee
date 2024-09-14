@@ -4,7 +4,7 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Separator, TableCell, TableRow, StyledTable} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {ProductCard} from './product-card';

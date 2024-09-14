@@ -7,7 +7,7 @@ import {MdAdd} from 'react-icons/md';
 import {Button} from '@/ui/components/button';
 import {workspacePathname} from '@/utils/workspace';
 import {clone} from '@/utils';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 

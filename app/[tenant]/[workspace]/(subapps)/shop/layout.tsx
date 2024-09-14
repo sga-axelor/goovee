@@ -7,7 +7,7 @@ import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //

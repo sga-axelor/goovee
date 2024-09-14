@@ -18,7 +18,7 @@ import paypalhttpclient from '@/payment/paypal';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
 import {stripe} from '@/payment/stripe';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {TENANT_HEADER} from '@/middleware';
 import {PaymentOption, type ID} from '@/types';

@@ -3,7 +3,7 @@ import React from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {Container, Pagination} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //

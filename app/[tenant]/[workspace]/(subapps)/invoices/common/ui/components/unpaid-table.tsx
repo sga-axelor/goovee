@@ -7,7 +7,7 @@ import {MdEast} from 'react-icons/md';
 import {cn} from '@/utils/css';
 import {parseDate} from '@/utils/date';
 import {StyledTable, Tag, TableCell, TableRow, Button} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import type {Item} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //

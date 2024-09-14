@@ -7,7 +7,7 @@ import {Button, BackgroundImage} from '@/ui/components';
 import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import {useResponsive} from '@/ui/hooks';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {ComputedProduct, ID, Product} from '@/types';
 

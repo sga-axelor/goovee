@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {AddressForm} from '@/ui/components';
 import {useSearchParams, useToast} from '@/ui/hooks';
 import type {PartnerAddress, Country, Address} from '@/types';

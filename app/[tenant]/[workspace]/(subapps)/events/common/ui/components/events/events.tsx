@@ -15,7 +15,7 @@ import {
   URL_PARAMS,
 } from '@/constants';
 import {useSearchParams} from '@/ui/hooks';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //

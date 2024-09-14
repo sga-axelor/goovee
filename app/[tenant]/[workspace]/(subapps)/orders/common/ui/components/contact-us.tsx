@@ -5,7 +5,7 @@ import {MdKeyboardReturn, MdHelpOutline} from 'react-icons/md';
 import {Separator, Button} from '@/ui/components';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 export const ContactUs = () => {
   return (

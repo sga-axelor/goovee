@@ -4,7 +4,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 import {clone} from '@/utils';

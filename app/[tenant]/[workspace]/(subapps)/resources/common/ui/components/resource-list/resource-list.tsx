@@ -6,7 +6,7 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {cn} from '@/utils/css';
 

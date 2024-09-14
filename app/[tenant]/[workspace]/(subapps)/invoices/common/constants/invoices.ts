@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 const HEADING = i18n.get(
   'You have unpaid invoices arriving soon to their limit date.',

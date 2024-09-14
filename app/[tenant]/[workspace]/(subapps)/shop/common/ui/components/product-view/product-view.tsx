@@ -13,7 +13,7 @@ import {
   Breadcrumbs,
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';

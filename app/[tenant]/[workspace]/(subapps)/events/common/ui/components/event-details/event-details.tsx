@@ -7,7 +7,7 @@ import {useRouter} from 'next/navigation';
 import {parseDate} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {DATE_FORMATS} from '@/constants';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {

@@ -14,7 +14,7 @@ import {
   CommandList,
 } from '@/ui/components/command';
 import {cn} from '@/utils/css';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {PortalWorkspace} from '@/types';
 

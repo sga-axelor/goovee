@@ -7,7 +7,7 @@ import {
   findDefaultPartnerWorkspaceConfig,
   findWorkspaces,
 } from '@/orm/workspace';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {getClient} from '@/goovee';
 import type {ID, PortalWorkspace} from '@/types';
 import {revalidatePath} from 'next/cache';

@@ -14,7 +14,7 @@ import {
   DialogContent,
   Button,
 } from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {PaymentOption, type PortalWorkspace} from '@/types';

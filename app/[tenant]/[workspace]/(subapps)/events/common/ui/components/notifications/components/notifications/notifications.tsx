@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {NotificationCard} from '@/subapps/events/common/ui/components/notifications/components';

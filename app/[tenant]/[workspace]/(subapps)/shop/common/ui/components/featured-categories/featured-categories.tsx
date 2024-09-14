@@ -8,7 +8,7 @@ import {Pagination} from 'swiper/modules';
 
 import {Button} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {Categories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components/categories';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';

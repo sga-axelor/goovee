@@ -4,7 +4,7 @@ import {MdOutlineCalendarMonth} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Badge, Card} from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
