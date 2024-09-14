@@ -1,56 +1,22 @@
-import Credentials from 'next-auth/providers/credentials';
-import Google from 'next-auth/providers/google';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
 import {findPartnerByEmail, registerPartner} from '@/orm/partner';
-import type {ID} from '@/types';
+import {type Tenant} from '@/tenant';
 
-// ---- LOCAL IMPORTS ---- //
-import {compare} from './utils';
+import google from './google';
+import credentials from './credentials';
 
 export const authOptions: NextAuthOptions = {
-  providers: [
-    Credentials({
-      name: 'Credentials',
-      credentials: {
-        email: {label: 'Email', type: 'text'},
-        password: {label: 'Password', type: 'password'},
-      },
-      async authorize({email, password, tenantId}: any, req) {
-        if (!email) return null;
-
-        const user = await findPartnerByEmail(email, tenantId);
-
-        if (!user) {
-          return null;
-        }
-
-        const {id, fullName: name, password: hashedpassword} = user;
-
-        if (password && hashedpassword) {
-          const isvalid = await compare(password, hashedpassword);
-          if (!isvalid) return null;
-        }
-
-        return {
-          id,
-          name,
-          email,
-          tenantId,
-        };
-      },
-    }),
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
-  ],
+  providers: [credentials, google],
   callbacks: {
     async session({session, token}) {
       const user =
         session?.user?.email &&
-        (await findPartnerByEmail(session.user.email, token?.tenantId as ID));
+        (await findPartnerByEmail(
+          session.user.email,
+          token?.tenantId as Tenant['id'],
+        ));
 
       if (user) {
         const {id, emailAddress, fullName: name, isContact, mainPartner} = user;
@@ -61,7 +27,7 @@ export const authOptions: NextAuthOptions = {
           email: emailAddress?.address,
           isContact,
           mainPartnerId: isContact ? mainPartner?.id : undefined,
-          tenantId: token?.tenantId as ID,
+          tenantId: token?.tenantId as Tenant['id'],
         };
       }
 
