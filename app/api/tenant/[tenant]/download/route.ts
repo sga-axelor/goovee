@@ -1,4 +1,4 @@
-import {getTenant} from '@/goovee';
+import {manager} from '@/tenant';
 import axios from 'axios';
 import {NextResponse} from 'next/server';
 
@@ -9,17 +9,18 @@ export async function POST(
   let tenant;
 
   try {
-    const result = await getTenant(params.tenant);
-    tenant = result?.tenant;
+    tenant = await manager.getTenant(params.tenant);
   } catch (err) {}
 
-  if (!(tenant && tenant?.aos?.url && tenant?.aos?.auth)) {
+  if (
+    !(tenant?.config && tenant?.config?.aos?.url && tenant?.config?.aos?.auth)
+  ) {
     return new NextResponse('Bad Request', {status: 400});
   }
 
   const {model = 'com.axelor.dms.db.DMSFile', record} = await request.json();
 
-  const {aos} = tenant;
+  const {aos} = tenant.config;
 
   const res = await axios.post(
     `${aos.url}/ws/dms/download/batch`,

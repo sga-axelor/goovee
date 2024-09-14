@@ -1,8 +1,7 @@
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
 import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
-import type {ID} from '@/types';
+import {manager, type Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -19,7 +18,7 @@ export async function findContact({
 }: {
   search: string;
   workspaceURL: string;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(search && tenantId)) return error(i18n.get('Search value is missing.'));
 
@@ -32,7 +31,7 @@ export async function findContact({
     return response;
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const result = await c.aOSPartner.find({
     where: {

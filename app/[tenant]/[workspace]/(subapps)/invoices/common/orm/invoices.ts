@@ -1,8 +1,8 @@
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 import {getFormattedValue, scale} from '@/utils';
-import type {ID, Partner} from '@/types';
+import type {Partner} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
@@ -20,13 +20,13 @@ const fetchInvoices = async ({
     };
   };
   type?: string;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) => {
   const {id: partnerId} = params?.where?.partner || {};
 
   if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const whereClause: any = {
     ...params?.where,
@@ -74,7 +74,7 @@ export const findUnpaidInvoices = async ({
   tenantId,
 }: {
   params?: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) => {
   return await fetchInvoices({params, tenantId});
 };
@@ -84,7 +84,7 @@ export const findArchivedInvoices = async ({
   tenantId,
 }: {
   params?: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) => {
   return await fetchInvoices({params, type: 'archived', tenantId});
 };
@@ -96,11 +96,11 @@ export const findInvoice = async ({
 }: {
   id: Invoice['id'];
   params?: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) => {
   if (!tenantId) return null;
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const invoice: any = await client.aOSInvoice.findOne({
     where: {

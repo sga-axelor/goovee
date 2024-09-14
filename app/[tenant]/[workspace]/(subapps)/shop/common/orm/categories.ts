@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
-import {ID, PortalWorkspace} from '@/types';
+import {manager, type Tenant} from '@/tenant';
+import {PortalWorkspace} from '@/types';
 
 function transform($categories: any[]) {
   const categories: any = {};
@@ -28,11 +28,11 @@ export async function findCategories({
   tenantId,
 }: {
   workspace: PortalWorkspace;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(workspace && tenantId)) return [];
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const categories = await client.aOSProductCategory.find({
     where: {
@@ -54,11 +54,11 @@ export async function findFeaturedCategories({
   tenantId,
 }: {
   workspace: PortalWorkspace;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(workspace && tenantId)) return [];
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const categories = await client.aOSProductCategory.find({
     where: {

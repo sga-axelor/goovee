@@ -1,5 +1,5 @@
 import fs, {Stats} from 'fs';
-import {getTenant} from '@/goovee';
+import {manager} from '@/tenant';
 import {NextResponse} from 'next/server';
 import type {ReadableOptions} from 'stream';
 
@@ -16,22 +16,20 @@ export async function findFile({
     return null;
   }
 
-  let tenant, client;
+  let tenant;
 
   try {
-    const result = await getTenant(tenantId);
-
-    tenant = result?.tenant;
-    client = result?.client;
+    tenant = await manager.getTenant(tenantId);
   } catch (err) {
     return null;
   }
 
-  if (!(client && tenant && tenant?.aos?.storage)) {
+  if (!(tenant?.client && tenant?.config && tenant?.config?.aos?.storage)) {
     return null;
   }
 
-  const storage = tenant?.aos?.storage;
+  const storage = tenant?.config?.aos?.storage;
+  const {client} = tenant;
 
   let record, filePath, fileName, fileType;
 

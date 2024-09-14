@@ -1,11 +1,11 @@
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 import {getPageInfo, getSkipInfo} from '@/utils';
 import {i18n} from '@/i18n';
 import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import type {ID, PortalWorkspace} from '@/types';
+import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_PAGE} from '@/subapps/news/common/constants';
@@ -29,11 +29,11 @@ export async function findNews({
   slug?: string | null;
   workspace: any;
   categoryIds?: any[];
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(workspace && tenantId)) return [];
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const skip = getSkipInfo(limit, page);
 
@@ -129,11 +129,11 @@ export async function findCategories({
   showAllCategories?: boolean;
   slug?: string | null;
   workspace: PortalWorkspace;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(workspace && tenantId)) return [];
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const categories = await c.aOSPortalNewsCategory.find({
     where: {
@@ -183,13 +183,13 @@ export async function findCategoryTitleBySlugName({
 }: {
   slug: any;
   workspace: PortalWorkspace;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
     return null;
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const title = await c.aOSPortalNewsCategory.findOne({
     where: {
@@ -257,7 +257,7 @@ export async function addComment({
     };
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const comment = await c.aOSPortalNews.create({
     data: {
@@ -298,7 +298,7 @@ export async function findNewsByCategory({
   limit?: number;
   slug?: string;
   workspace: PortalWorkspace;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
     return [];

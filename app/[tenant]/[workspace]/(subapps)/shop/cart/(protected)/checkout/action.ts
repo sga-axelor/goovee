@@ -21,12 +21,12 @@ import {stripe} from '@/payment/stripe';
 import {i18n} from '@/i18n';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {TENANT_HEADER} from '@/middleware';
+import {manager, type Tenant} from '@/tenant';
 import {PaymentOption, type ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findPartnerByEmail} from '@/orm/partner';
-import {getTenant} from '@/goovee';
 
 export async function findInvoicingAddress() {
   const session = await getSession();
@@ -68,7 +68,7 @@ export async function createOrder({
 }: {
   cart: any;
   workspaceURL: string;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!cart?.items?.length) {
     return {
@@ -77,16 +77,16 @@ export async function createOrder({
     };
   }
 
-  const result = await getTenant(tenantId);
+  const tenant = await manager.getTenant(tenantId);
 
-  if (!result?.tenant?.aos?.url) {
+  if (!tenant?.config?.aos?.url) {
     return {
       error: true,
       message: 'Order creation failed. Webservice not available',
     };
   }
 
-  const {aos} = result.tenant;
+  const {aos} = tenant.config;
 
   const ws = `${aos.url}/ws/portal/orders/order`;
 

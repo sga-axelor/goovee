@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 import type {ID, Participant} from '@/types';
 import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
@@ -21,7 +21,7 @@ export async function registerParticipants({
   eventId: ID;
   workspaceURL: string;
   values: Participant | Participant[];
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(eventId && tenantId)) return error(i18n.get('Event ID is missing!'));
 
@@ -34,7 +34,7 @@ export async function registerParticipants({
     return result;
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const participants = Array.isArray(values) ? values : [values];
 

@@ -28,7 +28,9 @@
       "@/auth/*": ["./lib/core/auth/*"],
       "@/payment/*": ["./lib/core/payment/*"],
       "@/i18n": ["./lib/core/i18n/index"],
-      "@/i18n/*": ["./lib/core/i18n/*"]
+      "@/i18n/*": ["./lib/core/i18n/*"],
+      "@/tenant": ["./lib/core/tenant/index"],
+      "@/tenant/*": ["./lib/core/tenant/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

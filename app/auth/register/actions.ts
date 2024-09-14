@@ -8,8 +8,8 @@ import {
   findWorkspaces,
 } from '@/orm/workspace';
 import {i18n} from '@/i18n';
-import {getClient} from '@/goovee';
-import type {ID, PortalWorkspace} from '@/types';
+import {manager, type Tenant} from '@/tenant';
+import type {PortalWorkspace} from '@/types';
 import {revalidatePath} from 'next/cache';
 
 export async function subscribe({
@@ -17,7 +17,7 @@ export async function subscribe({
   tenantId,
 }: {
   workspace: PortalWorkspace;
-  tenantId?: ID | null;
+  tenantId?: Tenant['id'] | null;
 }) {
   const session = await getSession();
   const user = session?.user;
@@ -62,7 +62,7 @@ export async function subscribe({
     };
   }
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const $user = await client.aOSPartner.findOne({
     where: {
@@ -189,7 +189,7 @@ export async function register({
   password: string;
   confirmPassword: string;
   workspaceURL?: string;
-  tenantId?: ID | null;
+  tenantId?: Tenant['id'] | null;
 }) {
   if (!(name && email && password && confirmPassword)) {
     throw new Error('Name, email and password is required.');

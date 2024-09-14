@@ -7,7 +7,7 @@ import {promisify} from 'util';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager} from '@/tenant';
 import {i18n} from '@/i18n';
 import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
@@ -74,7 +74,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const category = formData.get('category');
 

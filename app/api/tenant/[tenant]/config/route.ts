@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {Tenant} from '@/types';
 import {DEFAULT_TENANT} from '@/constants';
+import type {TenantConfig} from '@/tenant';
 
 const CHECK_AUTH = false;
 
@@ -9,11 +9,10 @@ const CHECK_AUTH = false;
  * GET configuration from tenant manager application
  */
 
-const tenants: {[key: string]: Tenant} = [DEFAULT_TENANT].reduce(
+const tenants: {[key: string]: TenantConfig} = [DEFAULT_TENANT].reduce(
   (tenants, id) => ({
     ...tenants,
     [id]: {
-      id,
       db: {
         url: process.env.DATABASE_URL,
       },

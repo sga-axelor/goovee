@@ -5,8 +5,9 @@ import {clone} from '@/utils';
 import {getSession} from '@/orm/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {ID, PortalWorkspace} from '@/types';
 import {ORDER_BY} from '@/constants';
+import {type Tenant} from '@/tenant';
+import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/news/[[...segments]]/content';
@@ -115,7 +116,7 @@ async function CategoryPage({
   page?: string;
   limit?: string | number;
   workspace: PortalWorkspace;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
     return null;

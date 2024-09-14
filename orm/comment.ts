@@ -6,7 +6,7 @@ import {pipeline} from 'stream';
 import {promisify} from 'util';
 
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager} from '@/tenant';
 import {i18n} from '@/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
@@ -41,7 +41,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const client = await getClient();
+  const client = await manager.getClient();
 
   const text = formData.get('text');
 
@@ -189,7 +189,7 @@ export async function addComment({
       };
     }
 
-    const client = await getClient();
+    const client = await manager.getClient();
 
     const modelName = ModelMap[type];
 

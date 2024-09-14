@@ -16,9 +16,8 @@ import type {
   ComputedProduct,
   PortalWorkspace,
   User,
-  ID,
 } from '@/types';
-import {getClient, getTenant} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 
 function getPageInfo({
   count = 0,
@@ -60,11 +59,11 @@ export async function findProducts({
   limit?: string | number;
   workspace?: PortalWorkspace;
   user?: User;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(workspace && workspace.config && tenantId)) return [];
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   let orderBy;
 
@@ -391,7 +390,7 @@ export async function findProduct({
   id: Product['id'];
   workspace?: PortalWorkspace;
   user?: User;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   return (
     id &&
@@ -410,19 +409,19 @@ export async function findProductsFromWS({
   workspace: PortalWorkspace;
   user?: User;
   productIds: Array<Product['id']>;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!workspace?.config?.company?.id && user && productIds && tenantId) {
     return [];
   }
 
-  const result = await getTenant(tenantId);
+  const tenant = await manager.getTenant(tenantId);
 
-  if (!result?.tenant?.aos?.url) {
+  if (!tenant?.config?.aos?.url) {
     return [];
   }
 
-  const {aos} = result.tenant;
+  const {aos} = tenant.config;
 
   const ws = `${aos.url}/ws/portal/products/productPrices`;
 

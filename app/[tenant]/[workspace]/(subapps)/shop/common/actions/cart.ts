@@ -8,7 +8,7 @@ import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {TENANT_HEADER} from '@/middleware';
-import {getTenant} from '@/goovee';
+import {manager} from '@/tenant';
 import type {ID, PortalWorkspace, Product, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -68,11 +68,11 @@ export async function requestOrder({
 
   if (!cart?.items?.length) return null;
 
-  const result = await getTenant(tenantId);
+  const tenant = await manager.getTenant(tenantId);
 
-  if (!result?.tenant?.aos?.url) return null;
+  if (!tenant?.config?.aos?.url) return null;
 
-  const {aos} = result.tenant;
+  const {aos} = tenant.config;
 
   const ws = `${aos.url}/ws/portal/orders/${type}`;
 

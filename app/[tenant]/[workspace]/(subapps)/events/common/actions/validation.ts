@@ -1,7 +1,7 @@
 import {i18n} from '@/i18n';
 import {getSession} from '@/orm/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import type {ID} from '@/types';
+import type {Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
@@ -33,7 +33,7 @@ export async function withAuth(): Promise<ValidationResult> {
   return {error: null};
 }
 
-export function withSubapp(code: string, url: string, tenantId: ID) {
+export function withSubapp(code: string, url: string, tenantId: Tenant['id']) {
   return async function () {
     const session = await getSession();
     const user = session?.user;
@@ -50,7 +50,7 @@ export function withSubapp(code: string, url: string, tenantId: ID) {
 
 export function withWorkspace(
   url: string,
-  tenantId: ID,
+  tenantId: Tenant['id'],
   config?: {checkAuth?: boolean},
 ) {
   return async function (): Promise<ValidationResult> {

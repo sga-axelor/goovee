@@ -1,7 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
-import type {ID} from '@/types';
 
 export async function findModelFields({
   modelName,
@@ -10,13 +9,13 @@ export async function findModelFields({
 }: {
   modelName: string;
   modelField: string;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
     return [];
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const fields = await c.aOSMetaJsonField
     .find({
@@ -43,13 +42,13 @@ export async function findSelectionItems({
   tenantId,
 }: {
   selectionName: string;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
     return [];
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const options = await c.aOSMetaSelectItem.find({
     where: {

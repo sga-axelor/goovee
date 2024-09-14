@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager} from '@/tenant';
 import {clone} from '@/utils';
 import type {PortalWorkspace} from '@/types';
 import {TENANT_HEADER} from '@/middleware';
@@ -21,7 +21,7 @@ export async function findDmsFiles({
 
   if (!tenantId) return [];
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   return client.aOSDMSFile
     .find({

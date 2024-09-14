@@ -1,8 +1,8 @@
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
-import type {ID, Partner} from '@/types';
+import type {Partner} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_STATUS} from '@/subapps/orders/common/constants/orders';
@@ -23,11 +23,11 @@ const fetchOrders = async ({
   page?: string | number;
   skip?: boolean | number;
   where?: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) => {
   if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const whereClause: any = {
     ...where,
@@ -104,7 +104,7 @@ export async function findOngoingOrders({
   page?: string | number;
   limit?: string | number;
   where?: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }): Promise<any> {
   const skip = getSkipInfo(limit, page);
 
@@ -122,7 +122,7 @@ export async function findArchivedOrders({
   page?: string | number;
   limit?: string | number;
   where?: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }): Promise<any> {
   const skip = getSkipInfo(limit, page);
 
@@ -142,11 +142,11 @@ export async function findOrder({
   tenantId,
 }: {
   id: Order['id'];
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!tenantId) return null;
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const order: any = await client.aOSOrder.findOne({
     where: {

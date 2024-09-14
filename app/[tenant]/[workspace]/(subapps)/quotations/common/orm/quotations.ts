@@ -1,11 +1,12 @@
 // ---- CORE IMPORTS ---- //
+import {type Tenant} from '@/tenant';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
 import type {ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
-import {getClient} from '@/goovee';
+import {manager} from '@/tenant';
 
 export const RELATED_MODELS = {
   SALE_ORDER_MODEL: 'com.axelor.apps.sale.db.SaleOrder',
@@ -23,11 +24,11 @@ export const fetchQuotations = async ({
   page?: string | number;
   partnerId?: ID;
   where?: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) => {
   if (!(partnerId && tenantId)) return {quotations: [], pageInfo: {}};
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
   const skip = getSkipInfo(limit, page);
 
   const whereClause: any = {
@@ -82,12 +83,12 @@ export async function findQuotation({
   params,
 }: {
   id: any;
-  tenantId: ID;
+  tenantId: Tenant['id'];
   params?: any;
 }) {
   if (!tenantId) return null;
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const quotation: any = await client.aOSOrder.findOne({
     where: {
@@ -180,10 +181,16 @@ export async function findQuotation({
   };
 }
 
-export async function getComments({id, tenantId}: {id: ID; tenantId: ID}) {
+export async function getComments({
+  id,
+  tenantId,
+}: {
+  id: ID;
+  tenantId: Tenant['id'];
+}) {
   if (!tenantId) return [];
 
-  const client = await getClient(tenantId);
+  const client = await manager.getClient(tenantId);
 
   const comments = await client.aOSMailMessage.find({
     where: {

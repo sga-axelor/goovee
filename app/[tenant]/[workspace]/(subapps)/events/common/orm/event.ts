@@ -1,16 +1,22 @@
 import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
-import type {ID, PortalWorkspace} from '@/types';
 import {formatDateToISOString} from '@/utils/date';
 import {DATE_FORMATS, ORDER_BY} from '@/constants';
 import {getPageInfo} from '@/utils';
+import {type Tenant, manager} from '@/tenant';
+import type {ID, PortalWorkspace} from '@/types';
 
-export async function findEventByID({id, tenantId}: {id: ID; tenantId: ID}) {
+export async function findEventByID({
+  id,
+  tenantId,
+}: {
+  id: ID;
+  tenantId: Tenant['id'];
+}) {
   if (!(id && tenantId)) return null;
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const event = await c.aOSPortalEvent.findOne({
     where: {id, eventVisibility: true},
@@ -108,13 +114,13 @@ export async function findEvents({
   year?: string | number;
   selectedDates?: any[];
   workspace?: PortalWorkspace;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
     return {events: [], pageInfo: {}};
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   let date, predicate: any;
   if (day && month && year) {

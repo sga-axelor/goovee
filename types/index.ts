@@ -1,4 +1,5 @@
-import {Theme} from '@/types/theme';
+import type {Tenant} from '@/tenant';
+import type {Theme} from '@/types/theme';
 
 export type ID = string | number;
 export type Version = number;
@@ -14,7 +15,7 @@ export type User = {
   email: string;
   isContact?: boolean;
   mainPartnerId?: string;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 };
 
 export interface PortalWorkspace extends Model {
@@ -200,20 +201,6 @@ export enum PaymentOption {
   stripe = 'stripe',
 }
 
-export type Tenant = {
-  id: string;
-  db: {
-    url: string;
-  };
-  aos: {
-    url: string;
-    storage: string;
-    auth: {
-      username: string;
-      password: string;
-    };
-  };
-};
 export enum ModelType {
   news = 'news',
   event = 'event',

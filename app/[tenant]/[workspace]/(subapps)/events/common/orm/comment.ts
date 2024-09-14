@@ -1,10 +1,11 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
-import {getClient} from '@/goovee';
+import {manager} from '@/tenant';
 import {getSession} from '@/orm/auth';
 import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 import type {ID, Comment} from '@/types';
+import type {Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
@@ -21,7 +22,7 @@ export async function findCommentsByEventID({
 }: {
   id: ID;
   workspaceURL: string;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(id && tenantId)) return error(i18n.get('Event ID is not present.'));
 
@@ -34,7 +35,7 @@ export async function findCommentsByEventID({
     return result;
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const comments = await c.aOSPortalComment.find({
     where: {
@@ -89,7 +90,7 @@ export async function createComment({
   id: ID;
   workspaceURL: string;
   values: Comment;
-  tenantId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!(id && tenantId)) return null;
 
@@ -104,7 +105,7 @@ export async function createComment({
     return result;
   }
 
-  const c = await getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
   const comment = await c.aOSPortalComment.create({
     data: {
