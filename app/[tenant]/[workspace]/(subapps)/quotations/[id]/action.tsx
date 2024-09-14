@@ -13,8 +13,8 @@ import {
   DEFAULT_CURRENCY_SCALE,
   SUBAPP_CODES,
 } from '@/constants';
-import paypalhttpclient from '@/lib/paypal';
-import {stripe} from '@/lib/stripe';
+import paypalhttpclient from '@/payment/paypal';
+import {stripe} from '@/payment/stripe';
 import {PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';

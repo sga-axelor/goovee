@@ -25,7 +25,8 @@
       "@/subapps/*": ["./app/[tenant]/[workspace]/(subapps)/*"],
       "@/core/*": ["./lib/core"],
       "@/auth": ["./lib/core/auth/index"],
-      "@/auth/*": ["./lib/core/auth/*"]
+      "@/auth/*": ["./lib/core/auth/*"],
+      "@/payment/*": ["./lib/core/payment/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

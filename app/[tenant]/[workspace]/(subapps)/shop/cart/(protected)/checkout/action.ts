@@ -14,10 +14,10 @@ import {
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
-import paypalhttpclient from '@/lib/paypal';
+import paypalhttpclient from '@/payment/paypal';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
-import {stripe} from '@/lib/stripe';
+import {stripe} from '@/payment/stripe';
 import {i18n} from '@/lib/i18n';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {TENANT_HEADER} from '@/middleware';
