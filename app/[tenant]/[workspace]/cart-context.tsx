@@ -10,7 +10,7 @@ import React, {
 
 // ---- CORE IMPORTS ---- //
 import {PREFIX_CART_KEY} from '@/constants';
-import {getitem, setitem} from '@/lib/storage';
+import {getitem, setitem} from '@/storage/local';
 import {useWorkspace} from './workspace-context';
 import type {ComputedProduct, Product} from '@/types';
 
