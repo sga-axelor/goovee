@@ -54,6 +54,10 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
         default: '37 100% 87%',
         dark: '36 100% 54%',
       },
+      orange: {
+        default: '24.6 95% 53.1%',
+        dark: '17.5 88.3% 40.4%',
+      },
     },
   },
   radius: '0.5rem',

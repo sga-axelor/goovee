@@ -58,6 +58,9 @@ export function generateCSSVariableString(options: Theme) {
 
       --palette-yellow: ${options?.colors?.palette?.yellow?.default};
       --palette-yellow-dark: ${options?.colors?.palette?.yellow?.dark};
+
+      --palette-orange: ${options?.colors?.palette?.orange?.default};
+      --palette-orange-dark: ${options?.colors?.palette?.orange?.dark};
     }
     `;
 }
