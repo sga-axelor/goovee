@@ -37,3 +37,5 @@ next-env.d.ts
 
 # goovee
 goovee/.generated
+
+portal/
