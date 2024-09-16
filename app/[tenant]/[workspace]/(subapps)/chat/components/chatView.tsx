@@ -68,10 +68,11 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
     async (channelId: string, rootId: string, post: any) => {
       if (channelId == activeChannelRef.current && user.id !== post.user_id) {
         addPost(setCurrentChannel, channelId, token, false, user, post);
+        setNewMessage(true);
       } else if (channelId !== activeChannelRef.current) {
         updateChannelUnread(channelId, true);
       }
-      setNewMessage(true);
+      // setNewMessage(true);
     },
     [activeChannelRef.current, setCurrentChannel],
   );

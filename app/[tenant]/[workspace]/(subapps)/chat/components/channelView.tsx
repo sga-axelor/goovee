@@ -34,7 +34,7 @@ export const ChannelView = ({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const groupsPosts = Object.values(channel.groupsPosts);
   const messagesRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const prevHeightRef = useRef<number>(0);
@@ -114,7 +114,7 @@ export const ChannelView = ({
     setNewMessage(false);
   }, [newMessage, setNewMessage, scrollToBottom, isBottom]);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleMessageSend();
@@ -173,12 +173,13 @@ export const ChannelView = ({
             <Loader className="animate-spin" />
           </div>
         )}
-        {groupsPosts.map((group: any, i) => (
+        {groupsPosts.map((group: any, index: number) => (
           <GroupPost
-            key={i}
+            key={group[0].id || index}
             group={group}
             token={token}
             onEmojiClick={onEmojiClick}
+            isLast={index === groupsPosts.length - 1}
           />
         ))}
       </div>
@@ -201,6 +202,7 @@ export const ChannelView = ({
           triggerFileInput={triggerFileInput}
           isSendEnabled={isSendEnabled}
           handleMessageSend={handleMessageSend}
+          chatContainerRef={messagesRef}
         />
         {selectedFiles.length > 0 && (
           <DocumentList selectedFiles={selectedFiles} removeFile={removeFile} />

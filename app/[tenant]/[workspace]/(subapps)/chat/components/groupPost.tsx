@@ -6,10 +6,12 @@ const GroupPost = ({
   group,
   token,
   onEmojiClick,
+  isLast,
 }: {
   group: any[];
   token: string;
   onEmojiClick: (name: string, postId: string) => void;
+  isLast?: boolean;
 }) => {
   const [profileImage, setProfileImage] = useState<any>(null);
 
@@ -22,7 +24,10 @@ const GroupPost = ({
   }, [group[0].user_id, token]);
 
   return (
-    <div className="flex items-start space-x-4 p-4 border-b border-gray-200">
+    <div
+      className={`flex items-start space-x-4 p-4 ${
+        !isLast ? 'border-b border-gray-200' : ''
+      }`}>
       {profileImage && (
         <img src={profileImage} alt="" className="w-10 h-10 rounded-full" />
       )}
