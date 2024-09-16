@@ -1,5 +1,6 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {Send, Paperclip} from 'lucide-react';
+import {Send, Paperclip, Type} from 'lucide-react';
+import FormattingToolbar from './formatBar';
 
 const InputMessage = ({
   messageText,
@@ -18,11 +19,11 @@ const InputMessage = ({
   triggerFileInput: () => void;
   isSendEnabled: boolean;
   handleMessageSend: () => void;
-  chatContainerRef: React.RefObject<HTMLDivElement>; // Nouvelle prop
+  chatContainerRef: React.RefObject<HTMLDivElement>;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [textareaHeight, setTextareaHeight] = useState<number>(20);
-
+  const [textareaHeight, setTextareaHeight] = useState(20);
+  const [showFormatting, setShowFormatting] = useState(false);
   const MIN_HEIGHT = 20;
   const MAX_HEIGHT = 150;
 
@@ -31,9 +32,7 @@ const InputMessage = ({
     if (chatContainer) {
       const {scrollTop, scrollHeight, clientHeight} = chatContainer;
       const isScrolledToBottom = scrollHeight - scrollTop === clientHeight;
-
       adjustTextareaHeight();
-
       if (isScrolledToBottom) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
@@ -50,9 +49,7 @@ const InputMessage = ({
         MIN_HEIGHT,
         Math.min(scrollHeight, MAX_HEIGHT),
       );
-
       textarea.style.height = `${newHeight}px`;
-
       if (newHeight !== parseInt(currentHeight)) {
         setTextareaHeight(newHeight);
       }
@@ -66,45 +63,65 @@ const InputMessage = ({
     }
   };
 
-  const handleSendMessage = () => {
-    handleMessageSend();
-    setTextareaHeight(MIN_HEIGHT);
+  const toggleFormatting = () => {
+    setShowFormatting(!showFormatting);
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 0);
   };
 
   return (
-    <div className="flex items-end bg-gray-100 rounded-lg p-2">
-      <textarea
-        ref={textareaRef}
-        placeholder="Écrire un message..."
-        className="flex-grow bg-transparent focus:outline-none resize-none overflow-y-auto"
-        value={messageText}
-        onChange={e => setMessageText(e.target.value)}
-        onKeyPress={handleKeyPress}
-        style={{
-          height: `${textareaHeight}px`,
-          minHeight: `${MIN_HEIGHT}px`,
-          maxHeight: `${MAX_HEIGHT}px`,
-        }}
-      />
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        onChange={handleFileSelect}
-        multiple
-      />
-      <Paperclip
-        size={20}
-        className="text-gray-400 cursor-pointer mr-2"
-        onClick={triggerFileInput}
-      />
-      <Send
-        size={20}
-        className={`cursor-pointer transition-colors duration-200 ${
-          isSendEnabled ? 'text-blue-500' : 'text-gray-400'
-        }`}
-        onClick={handleSendMessage}
-      />
+    <div className="p-4 border-t">
+      <div className="flex flex-col bg-gray-100 rounded-lg p-2">
+        <div className="flex items-end">
+          <textarea
+            ref={textareaRef}
+            placeholder="Écrire un message..."
+            className="flex-grow bg-transparent focus:outline-none resize-none overflow-y-auto"
+            value={messageText}
+            onChange={e => setMessageText(e.target.value)}
+            onKeyPress={handleKeyPress}
+            style={{
+              height: `${textareaHeight}px`,
+              minHeight: `${MIN_HEIGHT}px`,
+              maxHeight: `${MAX_HEIGHT}px`,
+            }}
+          />
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFileSelect}
+            multiple
+          />
+          <Paperclip
+            size={20}
+            className="text-gray-400 cursor-pointer mr-2"
+            onClick={triggerFileInput}
+          />
+          <Type
+            size={20}
+            className="text-gray-400 cursor-pointer mr-2"
+            onClick={toggleFormatting}
+          />
+          <Send
+            size={20}
+            className={`cursor-pointer transition-colors duration-200 ${
+              isSendEnabled ? 'text-blue-500' : 'text-gray-400'
+            }`}
+            onClick={handleMessageSend}
+          />
+        </div>
+        {showFormatting && (
+          <FormattingToolbar
+            textareaRef={textareaRef}
+            messageText={messageText}
+            setMessageText={setMessageText}
+          />
+        )}
+      </div>
     </div>
   );
 };

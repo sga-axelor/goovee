@@ -191,23 +191,19 @@ export const ChannelView = ({
           Nouveau message
         </div>
       )}
-      <div className="p-4 border-t">
-        <InputMessage
-          inputRef={inputRef}
-          fileInputRef={fileInputRef}
-          handleKeyPress={handleKeyPress}
-          setMessageText={setMessageText}
-          messageText={messageText}
-          handleFileSelect={handleFileSelect}
-          triggerFileInput={triggerFileInput}
-          isSendEnabled={isSendEnabled}
-          handleMessageSend={handleMessageSend}
-          chatContainerRef={messagesRef}
-        />
-        {selectedFiles.length > 0 && (
-          <DocumentList selectedFiles={selectedFiles} removeFile={removeFile} />
-        )}
-      </div>
+      <InputMessage
+        fileInputRef={fileInputRef}
+        setMessageText={setMessageText}
+        messageText={messageText}
+        handleFileSelect={handleFileSelect}
+        triggerFileInput={triggerFileInput}
+        isSendEnabled={isSendEnabled}
+        handleMessageSend={handleMessageSend}
+        chatContainerRef={messagesRef}
+      />
+      {selectedFiles.length > 0 && (
+        <DocumentList selectedFiles={selectedFiles} removeFile={removeFile} />
+      )}
     </div>
   );
 };
