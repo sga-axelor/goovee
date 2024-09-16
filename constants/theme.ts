@@ -55,7 +55,7 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
         dark: '36 100% 54%',
       },
       orange: {
-        default: '24.6 95% 53.1%',
+        default: '25 82% 67%',
         dark: '17.5 88.3% 40.4%',
       },
       pink: {

@@ -129,7 +129,7 @@ export default async function Page({
       icon: MdCheckCircleOutline,
       href: `${ticketsURL}?filter=${encodeFilter({status: statusCompleted})}`,
       iconColor: 'success',
-      iconBgcolor: 'success-light',
+      iconBgColor: 'success-light',
     },
   ].map(props => (
     <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
