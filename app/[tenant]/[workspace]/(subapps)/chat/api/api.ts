@@ -277,3 +277,12 @@ export const viewChannel = async (
   });
   return data;
 };
+
+export const getPostById = async (postId: string, token: string) => {
+  const {data} = await axios({
+    method: 'get',
+    url: `${API_URL}/posts/${postId}`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return data;
+};

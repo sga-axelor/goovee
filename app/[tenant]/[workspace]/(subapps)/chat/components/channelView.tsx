@@ -15,6 +15,7 @@ export const ChannelView = ({
   setNewMessage,
   sendMessage,
   loadMoreMessages,
+  getPost,
 }: {
   channel: any;
   token: string;
@@ -24,8 +25,14 @@ export const ChannelView = ({
   setChannelJustSelected: (value: boolean) => void;
   newMessage: boolean;
   setNewMessage: (value: boolean) => void;
-  sendMessage: (messageText: string, channelId: string, files?: File[]) => void;
+  sendMessage: (
+    messageText: string,
+    channelId: string,
+    files?: File[],
+    postReply?: any,
+  ) => void;
   loadMoreMessages: () => Promise<void>;
+  getPost: (rootId: string) => void;
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
@@ -40,6 +47,7 @@ export const ChannelView = ({
   const prevHeightRef = useRef<number>(0);
   const [showNewMessageIndicator, setShowNewMessageIndicator] =
     useState<boolean>(false);
+  const [postReply, setPostReply] = useState<any>(null);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior, timer = 0) => {
@@ -114,22 +122,16 @@ export const ChannelView = ({
     setNewMessage(false);
   }, [newMessage, setNewMessage, scrollToBottom, isBottom]);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleMessageSend();
-    }
-  };
-
   const handleMessageSend = () => {
     if (messageText.trim() !== '' || selectedFiles.length > 0) {
-      sendMessage(messageText, channelId, selectedFiles);
+      sendMessage(messageText, channelId, selectedFiles, postReply);
       setMessageText('');
       setSelectedFiles([]);
       if (inputRef.current) {
         inputRef.current.focus();
       }
       scrollToBottom('smooth');
+      setPostReply(null);
     }
   };
 
@@ -180,6 +182,8 @@ export const ChannelView = ({
             token={token}
             onEmojiClick={onEmojiClick}
             isLast={index === groupsPosts.length - 1}
+            getPost={getPost}
+            setPostReply={setPostReply}
           />
         ))}
       </div>
@@ -200,6 +204,8 @@ export const ChannelView = ({
         isSendEnabled={isSendEnabled}
         handleMessageSend={handleMessageSend}
         chatContainerRef={messagesRef}
+        postReply={postReply}
+        setPostReply={setPostReply}
       />
       {selectedFiles.length > 0 && (
         <DocumentList selectedFiles={selectedFiles} removeFile={removeFile} />

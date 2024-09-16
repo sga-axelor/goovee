@@ -3,7 +3,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ChannelList} from './channelList';
 import {ChannelView} from './channelView';
-import {viewChannel} from '../api/api';
+import {getPostById, viewChannel} from '../api/api';
 import {Socket} from './Socket';
 import {
   getChannelInfosByChannelId,
@@ -72,13 +72,26 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
       } else if (channelId !== activeChannelRef.current) {
         updateChannelUnread(channelId, true);
       }
-      // setNewMessage(true);
     },
     [activeChannelRef.current, setCurrentChannel],
   );
 
-  const sendMessage = (postText: string, channelId: string, files?: File[]) => {
-    addPost(setCurrentChannel, channelId, token, true, user, postText, files);
+  const sendMessage = (
+    postText: string,
+    channelId: string,
+    files?: File[],
+    postReply?: any,
+  ) => {
+    addPost(
+      setCurrentChannel,
+      channelId,
+      token,
+      true,
+      user,
+      postText,
+      files,
+      postReply,
+    );
   };
 
   const handleNewReaction = useCallback(
@@ -154,6 +167,11 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
     }
   };
 
+  const getPost = async (root_id: string) => {
+    const previousPost = await getPostById(root_id, token);
+    return previousPost;
+  };
+
   return (
     <div className="flex h-[calc(100vh-120px)]">
       <ChannelList
@@ -173,6 +191,7 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
         setNewMessage={setNewMessage}
         sendMessage={sendMessage}
         loadMoreMessages={loadMoreMessages}
+        getPost={getPost}
       />
       <Socket
         token={token}

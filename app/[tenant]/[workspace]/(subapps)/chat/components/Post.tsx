@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactMarkdown from 'react-markdown';
 import EmojiItem from './emojiItem';
 import MenuReaction from './menuReaction';
@@ -17,14 +17,19 @@ interface GroupedReactions {
 const Post = ({
   post,
   onEmojiClick,
+  getPost,
+  setPostReply,
 }: {
   post: any;
   onEmojiClick: (name: string, postId: string) => void;
+  getPost: (rootId: string) => any;
+  setPostReply: (post: any) => void;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [_previousPost, setPreviousPost] = useState<any>();
 
   const onClick = (name: string) => {
-    onEmojiClick && onEmojiClick(name, post.id);
+    onEmojiClick(name, post.id);
   };
 
   const groupedReactions: GroupedReactions = post.metadata?.reactions
@@ -38,6 +43,20 @@ const Post = ({
       }, {})
     : {};
 
+  const onReplyClick = () => {
+    setPostReply(post);
+  };
+
+  useEffect(() => {
+    const fetParentPost = async () => {
+      const previousPost = await getPost(post.root_id);
+      setPreviousPost(previousPost);
+    };
+    if (post.root_id) {
+      fetParentPost();
+    }
+  }, [post.root_id, getPost]);
+
   return (
     <div
       className={`p-2 rounded-md transition-colors duration-200 relative ${
@@ -45,8 +64,13 @@ const Post = ({
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
+      {post.root_id && _previousPost && (
+        <div className="mb-2 p-2 bg-gray-200 rounded-md text-sm">
+          <p className="font-semibold">En réponse à :</p>
+          <MarkdownRenderer content={_previousPost.message} />
+        </div>
+      )}
       <MarkdownRenderer content={post.message} />
-
       {post.metadata.files && post.metadata.files.length > 0 && (
         <div className="mt-2 flex flex-wrap">
           {post.metadata.files.map((file: any) => (
@@ -54,9 +78,9 @@ const Post = ({
           ))}
         </div>
       )}
-
-      {isHovered && <MenuReaction onEmojiClick={onClick} />}
-
+      {isHovered && (
+        <MenuReaction onEmojiClick={onClick} onReplyClick={onReplyClick} />
+      )}
       {Object.keys(groupedReactions).length > 0 && (
         <div className="flex flex-wrap mt-2">
           {Object.entries(groupedReactions).map(([emojiName, data]) => (

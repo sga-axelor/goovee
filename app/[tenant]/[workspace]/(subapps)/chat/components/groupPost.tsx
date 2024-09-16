@@ -7,11 +7,15 @@ const GroupPost = ({
   token,
   onEmojiClick,
   isLast,
+  getPost,
+  setPostReply,
 }: {
   group: any[];
   token: string;
   onEmojiClick: (name: string, postId: string) => void;
   isLast?: boolean;
+  getPost: (rootId: string) => any;
+  setPostReply: (post: any) => void;
 }) => {
   const [profileImage, setProfileImage] = useState<any>(null);
 
@@ -39,7 +43,13 @@ const GroupPost = ({
           </span>
         </div>
         {group.map((post: any, index) => (
-          <Post key={index} post={post} onEmojiClick={onEmojiClick} />
+          <Post
+            key={index}
+            post={post}
+            onEmojiClick={onEmojiClick}
+            getPost={getPost}
+            setPostReply={setPostReply}
+          />
         ))}
       </div>
     </div>

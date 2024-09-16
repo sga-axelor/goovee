@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {Send, Paperclip, Type} from 'lucide-react';
+import {Send, Paperclip, Type, X} from 'lucide-react';
 import FormattingToolbar from './formatBar';
 
 const InputMessage = ({
@@ -11,6 +11,8 @@ const InputMessage = ({
   isSendEnabled,
   handleMessageSend,
   chatContainerRef,
+  postReply,
+  setPostReply,
 }: {
   messageText: string;
   setMessageText: (value: string) => void;
@@ -20,6 +22,8 @@ const InputMessage = ({
   isSendEnabled: boolean;
   handleMessageSend: () => void;
   chatContainerRef: React.RefObject<HTMLDivElement>;
+  postReply: any;
+  setPostReply: (post: any) => void;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [textareaHeight, setTextareaHeight] = useState(20);
@@ -72,8 +76,22 @@ const InputMessage = ({
     }, 0);
   };
 
+  const handleCancelReply = () => {
+    setPostReply(null);
+  };
+
   return (
     <div className="p-4 border-t">
+      {postReply && (
+        <div className="mb-2 p-2 bg-gray-200 rounded-lg flex justify-between items-center">
+          <div className="truncate">Réponse à : {postReply.message}</div>
+          <X
+            size={16}
+            className="text-gray-500 cursor-pointer"
+            onClick={handleCancelReply}
+          />
+        </div>
+      )}
       <div className="flex flex-col bg-gray-100 rounded-lg p-2">
         <div className="flex items-end">
           <textarea
