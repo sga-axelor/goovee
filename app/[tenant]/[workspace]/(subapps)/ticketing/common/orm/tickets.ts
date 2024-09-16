@@ -7,8 +7,15 @@ import {getClient} from '@/goovee';
 import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {Entity, ID} from '@goovee/orm';
+import axios from 'axios';
 
-import {ASSIGNMENT, INVOICING_TYPE, TYPE_SELECT} from '../constants';
+import {
+  ASSIGNMENT,
+  INVOICING_TYPE,
+  TYPE_SELECT,
+  VERSION_MISMATCH_CAUSE_CLASS,
+  VERSION_MISMATCH_ERROR,
+} from '../constants';
 import {CreateTicketInfo, UpdateTicketInfo} from '../ui/components/ticket-form';
 import {
   getProjectAccessFilter,
@@ -142,6 +149,84 @@ export async function createTicket(
     },
   });
   return ticketWithFullName;
+}
+
+export async function updateTicketViaWS(
+  data: UpdateTicketInfo,
+  userId: ID,
+  workspaceId: ID,
+) {
+  const {
+    priority,
+    subject,
+    description,
+    category,
+    status,
+    assignment,
+    id,
+    version,
+  } = data;
+
+  if (!(await hasTicketAccess(id, userId, workspaceId))) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
+  }
+
+  const aos = process.env.NEXT_PUBLIC_AOS_URL;
+
+  if (!aos) throw new Error(i18n.get('Rest API URL not set'));
+
+  const ws = `${aos}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
+
+  const res = await axios
+    .post(
+      ws,
+      {
+        data: {
+          id,
+          version,
+          name: subject,
+          description: description,
+          ...(category && {
+            projectTaskCategory: {
+              id: category,
+            },
+          }),
+          ...(priority && {
+            priority: {
+              id: priority,
+            },
+          }),
+          ...(status && {
+            status: {
+              id: status,
+            },
+          }),
+          ...(assignment && {
+            assignment: assignment,
+          }),
+        },
+        fields: ['project'],
+      },
+      {
+        auth: {
+          username: process.env.BASIC_AUTH_USERNAME as string,
+          password: process.env.BASIC_AUTH_PASSWORD as string,
+        },
+      },
+    )
+    .then(({data}) => data);
+
+  if (res?.status === -1) {
+    if (res.data?.causeClass === VERSION_MISMATCH_CAUSE_CLASS) {
+      const e = new Error(res.data.message);
+      e.name = VERSION_MISMATCH_ERROR;
+      throw e;
+    }
+    throw new Error(i18n.get('Failed to update ticket'));
+  }
+
+  return res.data;
 }
 
 export async function updateTicket(

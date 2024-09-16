@@ -7,28 +7,30 @@ import {ID} from '@goovee/orm';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {VERSION_MISMATCH_ERROR, ASSIGNMENT} from '../constants';
+import {
+  VERSION_MISMATCH_ERROR,
+  ASSIGNMENT,
+  STATUS_CHANGE_METHOD,
+} from '../constants';
 import {findTicketDoneStatus, findTicketCancelledStatus} from '../orm/projects';
 import {
   createTicket,
   findTicketVersion,
   updateTicket,
   findTicketsBySearch,
+  updateTicketViaWS,
 } from '../orm/tickets';
 import {
   CreateTicketSchema,
   UpdateTicketSchema,
 } from '../ui/components/ticket-form';
 import {ensureAuth} from '../utils/auth-helper';
-import type {MutateProps} from './types';
+import type {ActionResponse, MutateProps} from './types';
 
 export async function mutate(
   props: MutateProps,
-  force?: true,
-): Promise<
-  | {error: true; message: string; data?: never}
-  | {error: false; data: any; message?: never}
-> {
+  force?: boolean,
+): ActionResponse {
   const {workspaceURL, workspaceURI, action} = props;
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
@@ -75,10 +77,8 @@ type TicketActionProps = {
 
 export async function assignToSupplier(
   props: TicketActionProps,
-): Promise<
-  | {error: true; message: string; data?: never}
-  | {error: false; data: any; message?: never}
-> {
+  force?: boolean,
+): ActionResponse {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -90,7 +90,18 @@ export async function assignToSupplier(
       ...data,
       assignment: ASSIGNMENT.PROVIDER,
     });
-    const ticket = await updateTicket(updateData, user.id, workspace.id);
+
+    if (force) {
+      const version = await findTicketVersion(updateData.id);
+      updateData.version = version;
+    }
+
+    const update =
+      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
+        ? updateTicketViaWS
+        : updateTicket;
+
+    const ticket = await update(updateData, user.id, workspace.id);
     return {
       error: false,
       data: clone(ticket),
@@ -108,10 +119,8 @@ export async function assignToSupplier(
 
 export async function closeTicket(
   props: TicketActionProps,
-): Promise<
-  | {error: true; message: string; data?: never}
-  | {error: false; data: any; message?: never}
-> {
+  force?: boolean,
+): ActionResponse {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -126,13 +135,25 @@ export async function closeTicket(
         message: i18n.get('Done status not configured'),
       };
     }
+
     const updateData = UpdateTicketSchema.parse({
       ...data,
       status,
     });
 
-    const ticket = await updateTicket(updateData, user.id, workspace.id);
+    if (force) {
+      const version = await findTicketVersion(updateData.id);
+      updateData.version = version;
+    }
 
+    const update =
+      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
+        ? updateTicketViaWS
+        : updateTicket;
+
+    const ticket = await update(updateData, user.id, workspace.id);
+
+    //TODO: tickets path needs to be revalidated
     return {
       error: false,
       data: clone(ticket),
@@ -150,10 +171,8 @@ export async function closeTicket(
 
 export async function cancelTicket(
   props: TicketActionProps,
-): Promise<
-  | {error: true; message: string; data?: never}
-  | {error: false; data: any; message?: never}
-> {
+  force?: boolean,
+): ActionResponse {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -168,12 +187,25 @@ export async function cancelTicket(
         message: i18n.get('Cancelled status not configured'),
       };
     }
+
     const updateData = UpdateTicketSchema.parse({
       ...data,
       status,
     });
-    const ticket = await updateTicket(updateData, user.id, workspace.id);
 
+    if (force) {
+      const version = await findTicketVersion(updateData.id);
+      updateData.version = version;
+    }
+
+    const update =
+      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
+        ? updateTicketViaWS
+        : updateTicket;
+
+    const ticket = await update(updateData, user.id, workspace.id);
+
+    //TODO: tickets path needs to be revalidated
     return {
       error: false,
       data: clone(ticket),
@@ -197,10 +229,7 @@ export async function searchTickets({
   search: string;
   workspaceURL: string;
   projectId?: ID;
-}): Promise<
-  | {error: true; message: string; data?: never}
-  | {error: false; data: any; message?: never}
-> {
+}): ActionResponse {
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) {
     return {error: true, message};

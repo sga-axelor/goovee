@@ -13,3 +13,8 @@ export type MutateProps = {
         data: UpdateTicketInfo;
       };
 };
+
+export type ActionResponse = Promise<
+  | {error: true; message: string; data?: never}
+  | {error: false; data: any; message?: never}
+>;

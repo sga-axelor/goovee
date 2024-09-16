@@ -68,3 +68,10 @@ export const INVOICING_TYPE = {
 } as const;
 
 export const VERSION_MISMATCH_ERROR = 'OptimisticLockVersionMismatchError';
+export const VERSION_MISMATCH_CAUSE_CLASS =
+  'javax.persistence.OptimisticLockException';
+
+export const STATUS_CHANGE_METHOD = {
+  DB: 'fromDB',
+  WS: 'fromWS',
+};

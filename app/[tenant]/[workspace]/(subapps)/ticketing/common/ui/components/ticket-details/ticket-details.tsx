@@ -15,7 +15,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  ToastAction,
 } from '@/ui/components';
 import {
   Form,
@@ -26,21 +25,20 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {Progress} from '@/ui/components/progress';
-import {useToast} from '@/ui/hooks';
 import {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
-import {useRouter} from 'next/navigation';
 import {useCallback, useEffect, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 
 import {mutate, MutateProps} from '../../../actions';
-import {ASSIGNMENT, VERSION_MISMATCH_ERROR} from '../../../constants';
+import {ASSIGNMENT} from '../../../constants';
 import {formatDate} from '../../../utils';
 import {Category, Priority} from '../pills';
 import {Stepper} from '../stepper';
 import {TicketFormSchema, TicketInfo} from '../ticket-form';
 import {AssignToSupplier} from '../ticket-form/ticket-actions';
+import {useRetryAction} from '../../../hooks';
 
 type Props = {
   ticket: AOSProjectTask;
@@ -60,8 +58,9 @@ const getDefaultValues = (ticket: Maybe<AOSProjectTask>) => {
 
 export function TicketDetails(props: Props) {
   const {ticket, categories, priorities, statuses} = props;
-  const router = useRouter();
-  const {toast} = useToast();
+
+  const {action} = useRetryAction(mutate);
+
   const {workspaceURL, workspaceURI} = useWorkspace();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -70,60 +69,12 @@ export function TicketDetails(props: Props) {
     defaultValues: getDefaultValues(ticket),
   });
 
-  const handleSuccess = useCallback(() => {
-    router.refresh();
-    toast({
-      variant: 'success',
-      title: i18n.get('Saved successfully'),
-    });
-  }, [router, toast]);
-
-  const handleError = useCallback(
-    (message: string, retryProps: MutateProps) => {
-      if (message === VERSION_MISMATCH_ERROR) {
-        const handleOverwrite = async () => {
-          const {error, message, data} = await mutate(retryProps, true);
-          if (error) {
-            handleError(message, retryProps);
-            return;
-          }
-          handleSuccess();
-        };
-        const handleDiscard = () => {
-          router.refresh();
-        };
-        return toast({
-          variant: 'destructive',
-          title: i18n.get('Record has been modified by someone else'),
-          className: 'flex gap-4 flex-col',
-          duration: 10000,
-          action: (
-            <div className="flex gap-4">
-              <ToastAction altText="Overwrite" onClick={handleOverwrite}>
-                {i18n.get('Overwrite')}
-              </ToastAction>
-              <ToastAction altText="Discard" onClick={handleDiscard}>
-                {i18n.get('Discard')}
-              </ToastAction>
-            </div>
-          ),
-        });
-      }
-      return toast({
-        variant: 'destructive',
-        title: message,
-        duration: 5000,
-      });
-    },
-    [toast, handleSuccess, router],
-  );
-
   const handleSubmit = useCallback(
     async (value: TicketInfo) => {
       const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
       const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
 
-      if (!dirtyFieldKeys.length) return router.back();
+      if (!dirtyFieldKeys.length) return;
       const mutateProps: MutateProps = {
         action: {
           type: 'update',
@@ -137,20 +88,11 @@ export function TicketDetails(props: Props) {
         workspaceURI,
       };
 
-      const {error, message, data} = await mutate(mutateProps);
-
-      if (error) {
-        handleError(message, mutateProps);
-        return;
-      }
-
-      handleSuccess();
+      await action(mutateProps);
     },
     [
       form.formState.dirtyFields,
-      handleError,
-      handleSuccess,
-      router,
+      action,
       ticket?.id,
       ticket?.version,
       workspaceURI,

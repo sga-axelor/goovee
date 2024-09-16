@@ -2,43 +2,25 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 import {Button} from '@/ui/components';
-import {useRouter} from 'next/navigation';
-import {useCallback, useState} from 'react';
+import {useCallback} from 'react';
 
 import {assignToSupplier, cancelTicket, closeTicket} from '../../../actions';
-import {useToast} from '@/ui/hooks';
+import {useRetryAction} from '../../../hooks';
 
 export function CancelTicket({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const {toast} = useToast();
+  const {action, loading} = useRetryAction(
+    cancelTicket,
+    i18n.get('Ticket canceled'),
+  );
 
   const handleClick = useCallback(async () => {
-    try {
-      setLoading(true);
-      const {data, error, message} = await cancelTicket({
-        data: {id: id, version: version},
-        workspaceURL,
-      });
-      if (error) {
-        console.error(message);
-        return toast({
-          variant: 'destructive',
-          title: message,
-        });
-      }
-      return toast({
-        variant: 'success',
-        title: i18n.get('Ticket canceled'),
-      });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      router.refresh();
-      setLoading(false);
-    }
-  }, [id, version, router, workspaceURL, toast]);
+    await action({
+      data: {id: id, version: version},
+      workspaceURL,
+    });
+  }, [id, version, workspaceURL, action]);
+
   return (
     <Button
       size="sm"
@@ -52,35 +34,17 @@ export function CancelTicket({id, version}: {id: string; version: number}) {
 
 export function CloseTicket({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const {toast} = useToast();
+  const {action, loading} = useRetryAction(
+    closeTicket,
+    i18n.get('Ticket closed'),
+  );
 
   const handleClick = useCallback(async () => {
-    try {
-      setLoading(true);
-      const {data, error, message} = await closeTicket({
-        data: {id: id, version: version},
-        workspaceURL,
-      });
-      if (error) {
-        console.error(message);
-        return toast({
-          variant: 'destructive',
-          title: message,
-        });
-      }
-      return toast({
-        variant: 'success',
-        title: i18n.get('Ticket closed'),
-      });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      router.refresh();
-      setLoading(false);
-    }
-  }, [id, version, workspaceURL, router, toast]);
+    await action({
+      data: {id: id, version: version},
+      workspaceURL,
+    });
+  }, [id, version, workspaceURL, action]);
 
   return (
     <Button
@@ -95,42 +59,25 @@ export function CloseTicket({id, version}: {id: string; version: number}) {
 
 export function AssignToSupplier({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const {toast} = useToast();
+  const {action, loading} = useRetryAction(
+    assignToSupplier,
+    i18n.get('Ticket assinged to supplier'),
+  );
 
-  const handleAssignTo = async () => {
-    try {
-      setLoading(true);
-      const {data, error, message} = await assignToSupplier({
-        data: {id: id, version: version},
-        workspaceURL,
-      });
-      if (error) {
-        console.error(message);
-        return toast({
-          variant: 'destructive',
-          title: message,
-        });
-      }
-      return toast({
-        variant: 'success',
-        title: i18n.get('Ticket assigned to supplier'),
-      });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      router.refresh();
-      setLoading(false);
-    }
-  };
+  const handleClick = useCallback(async () => {
+    await action({
+      data: {id: id, version: version},
+      workspaceURL,
+    });
+  }, [id, version, workspaceURL, action]);
+
   return (
     <Button
       size="sm"
       type="button"
       variant="success"
       disabled={loading}
-      onClick={handleAssignTo}>
+      onClick={handleClick}>
       {i18n.get('Assign to supplier')}
     </Button>
   );
