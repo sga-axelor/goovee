@@ -3,8 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import EmojiItem from './emojiItem';
 import MenuReaction from './menuReaction';
 import FilePreview from './filePreview';
+import MarkdownRenderer from './markdownRenderer';
 
-// Définissez une interface pour la structure de vos réactions
 interface Reaction {
   count: number;
   users: string[];
@@ -45,7 +45,7 @@ const Post = ({
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
-      <ReactMarkdown className="mt-1">{post.message}</ReactMarkdown>
+      <MarkdownRenderer content={post.message} />
 
       {post.metadata.files && post.metadata.files.length > 0 && (
         <div className="mt-2 flex flex-wrap">

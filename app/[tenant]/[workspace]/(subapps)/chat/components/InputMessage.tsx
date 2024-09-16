@@ -43,16 +43,17 @@ const InputMessage = ({
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      const previousHeight = textarea.style.height;
-      textarea.style.height = 'auto';
+      const currentHeight = textarea.style.height;
+      textarea.style.height = `${MIN_HEIGHT}px`;
       const scrollHeight = textarea.scrollHeight;
       const newHeight = Math.max(
         MIN_HEIGHT,
         Math.min(scrollHeight, MAX_HEIGHT),
       );
+
       textarea.style.height = `${newHeight}px`;
 
-      if (newHeight !== parseInt(previousHeight)) {
+      if (newHeight !== parseInt(currentHeight)) {
         setTextareaHeight(newHeight);
       }
     }

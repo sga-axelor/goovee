@@ -15,16 +15,22 @@ export const addPost = async (
     postCreated = await createPost(channelId, post, null, files, token);
     updateLocalState(setCurrentChannel, postCreated, user);
   } else {
-    updateLocalState(setCurrentChannel, post, user);
+    updateLocalState(setCurrentChannel, post);
   }
 };
 
-const updateLocalState = (setCurrentChannel: any, post: any, user: any) => {
+const updateLocalState = (setCurrentChannel: any, post: any, user?: any) => {
   setCurrentChannel((prevChannel: any) => {
     const updatedGroupsPosts = [...prevChannel.groupsPosts];
     const lastGroup = updatedGroupsPosts[updatedGroupsPosts.length - 1];
 
-    let displayName = getDisplayName(user);
+    let displayName;
+    if (user) {
+      displayName = getDisplayName(user);
+    } else {
+      let user = findUserById(prevChannel.users, post.user_id);
+      displayName = getDisplayName(user);
+    }
 
     if (lastGroup && lastGroup[0].user_id === post.user_id) {
       updatedGroupsPosts[updatedGroupsPosts.length - 1] = [...lastGroup, post];
@@ -37,4 +43,8 @@ const updateLocalState = (setCurrentChannel: any, post: any, user: any) => {
       groupsPosts: updatedGroupsPosts,
     };
   });
+};
+
+const findUserById = (users: any[], userId: string) => {
+  return users.find(user => user.id === userId) || null;
 };
