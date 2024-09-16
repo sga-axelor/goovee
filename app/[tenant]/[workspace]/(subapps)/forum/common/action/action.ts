@@ -40,8 +40,6 @@ const pump = promisify(pipeline);
 
 const storage = process.env.DATA_STORAGE as string;
 
-const timestamp: any = getCurrentDateTime();
-
 function extractFileValues(formData: FormData) {
   let values: any = [];
 
@@ -73,10 +71,12 @@ function extractFileValues(formData: FormData) {
 
 export async function pinGroup({
   isPin,
+  id,
   groupID,
   workspaceURL,
 }: {
   isPin: boolean;
+  id: string;
   groupID: string;
   workspaceURL: string;
 }) {
@@ -101,9 +101,16 @@ export async function pinGroup({
     return {error: true, message: i18n.get('Invalid workspace')};
   }
 
-  const memberGroup = await findMemberGroupById(groupID, workspace.id);
+  const memberGroup: any = await findMemberGroupById({
+    id,
+    groupID,
+    workspaceID: workspace.id,
+  });
   if (!memberGroup) {
-    return {error: true, message: i18n.get('Member not part of the group')};
+    return {
+      error: true,
+      message: i18n.get(memberGroup.message || 'Member group not found.'),
+    };
   }
 
   const client = await getClient();
@@ -115,7 +122,7 @@ export async function pinGroup({
           version: memberGroup.version,
           forumGroup: {
             select: {
-              id: memberGroup.id,
+              id: memberGroup?.forumGroup?.id,
             },
           },
           isPin,
@@ -128,6 +135,7 @@ export async function pinGroup({
       data: result,
     };
   } catch (error) {
+    console.log('error >>>', error);
     return {
       error: true,
       message: 'Some error occurred',
@@ -136,15 +144,16 @@ export async function pinGroup({
 }
 
 export async function exitGroup({
+  id,
   groupID,
   workspaceURL,
 }: {
+  id: string;
   groupID: string;
   workspaceURL: string;
 }) {
   const session = await getSession();
   const user = session?.user;
-
   if (!user) {
     return {error: true, message: i18n.get('Unauthorized')};
   }
@@ -162,10 +171,17 @@ export async function exitGroup({
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
+  const memberGroup: any = await findMemberGroupById({
+    id,
+    groupID,
+    workspaceID: workspace.id,
+  });
 
-  const memberGroup = await findMemberGroupById(groupID, workspace.id);
   if (!memberGroup) {
-    return {error: true, message: i18n.get('Member not part of the group')};
+    return {
+      error: true,
+      message: i18n.get(memberGroup.message || 'Member not part of the group'),
+    };
   }
 
   const client = await getClient();
@@ -182,6 +198,7 @@ export async function exitGroup({
       data: result,
     };
   } catch (error) {
+    console.log('error >>>', error);
     return {
       error: true,
       message: 'Some error occurred',
@@ -221,7 +238,10 @@ export async function joinGroup({
 
   const group = await findGroupById(groupID, workspace.id);
   if (!group) {
-    return {error: true, message: i18n.get('Member not part of the group')};
+    return {
+      error: true,
+      message: i18n.get('Member not part of the group'),
+    };
   }
 
   const client = await getClient();
@@ -248,6 +268,7 @@ export async function joinGroup({
       data: result,
     };
   } catch (error) {
+    console.log('error >>>', error);
     return {
       error: true,
       message: 'Some error occurred',
@@ -257,10 +278,12 @@ export async function joinGroup({
 
 export async function addGroupNotification({
   id,
+  groupID,
   notificationType,
   workspaceURL,
 }: {
   id: string;
+  groupID: string;
   notificationType: string;
   workspaceURL: string;
 }) {
@@ -284,10 +307,16 @@ export async function addGroupNotification({
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
-
-  const memberGroup = await findMemberGroupById(id, workspace.id);
+  const memberGroup: any = await findMemberGroupById({
+    id,
+    groupID,
+    workspaceID: workspace.id,
+  });
   if (!memberGroup) {
-    return {error: true, message: i18n.get('Member not part of the group')};
+    return {
+      error: true,
+      message: i18n.get(memberGroup.messgae || 'Member not part of the group'),
+    };
   }
 
   const client = await getClient();
@@ -304,6 +333,7 @@ export async function addGroupNotification({
 
     return {success: true, data: response};
   } catch (error) {
+    console.log('error >>>', error);
     return {
       error: true,
       message: 'Some error occurred',

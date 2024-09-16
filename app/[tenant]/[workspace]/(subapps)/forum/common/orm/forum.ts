@@ -283,9 +283,21 @@ export async function findGroupById(id: ID, workspaceID: string) {
   return group;
 }
 
-export async function findMemberGroupById(id: ID, workspaceID: string) {
+export async function findMemberGroupById({
+  id,
+  groupID,
+  workspaceID,
+}: {
+  id: ID;
+  groupID: ID;
+  workspaceID: string;
+}) {
   if (!workspaceID) {
-    return null;
+    return {error: true, message: ''};
+  }
+
+  if (!(id || groupID)) {
+    return {error: true, message: 'Reccord ID not found'};
   }
   const client = await getClient();
   const group = await client.aOSPortalForumGroupMember.findOne({
@@ -295,10 +307,12 @@ export async function findMemberGroupById(id: ID, workspaceID: string) {
         workspace: {
           id: workspaceID,
         },
-        id,
+        id: groupID,
       },
     },
-    select: {},
+    select: {
+      forumGroup: true,
+    },
   });
 
   return group;

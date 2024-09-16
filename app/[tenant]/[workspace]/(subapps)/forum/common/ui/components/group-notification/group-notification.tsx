@@ -35,9 +35,10 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
   }, []);
 
   const handleChange = async (notificationType: string) => {
-    const {id} = group;
+    const {id, forumGroup} = group;
     const response = await addGroupNotification({
       id,
+      groupID: forumGroup.id,
       notificationType,
       workspaceURL,
     });

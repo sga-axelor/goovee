@@ -44,6 +44,7 @@ import {
   pinGroup,
 } from '@/subapps/forum/common/action/action';
 import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
+import {Group} from '@/subapps/forum/common/types/forum';
 
 export const GroupActionList = ({
   title,
@@ -63,8 +64,10 @@ export const GroupActionList = ({
   const {toast} = useToast();
 
   const handlePinGroup = async (isPin: boolean, group: any) => {
+    const {id, forumGroup} = group;
     const response = await pinGroup({
-      groupID: group.id,
+      id,
+      groupID: forumGroup.id,
       isPin: !isPin,
       workspaceURL,
     });
@@ -80,9 +83,11 @@ export const GroupActionList = ({
     }
   };
 
-  const handleExit = async (group: any) => {
+  const handleExit = async (group: Group) => {
+    const {id, forumGroup} = group;
     const response = await exitGroup({
-      groupID: group.forumGroup.id,
+      id,
+      groupID: forumGroup.id,
       workspaceURL,
     });
     if (response.success) {
@@ -96,8 +101,9 @@ export const GroupActionList = ({
     }
   };
 
-  const handleJoinGroup = async (group: any, userId: string) => {
-    const response = await joinGroup({groupID: group.id, userId, workspaceURL});
+  const handleJoinGroup = async (group: Group, userId: string) => {
+    const {id} = group;
+    const response = await joinGroup({groupID: id, userId, workspaceURL});
 
     if (response.success) {
       router.push(`${workspaceURI}/forum`);
@@ -110,9 +116,14 @@ export const GroupActionList = ({
     }
   };
 
-  const handleNotifications = async (id: string, notificationType: string) => {
+  const handleNotifications = async (
+    group: Group,
+    notificationType: string,
+  ) => {
+    const {id, forumGroup} = group;
     const response = await addGroupNotification({
       id,
+      groupID: forumGroup.id,
       notificationType,
       workspaceURL,
     });
@@ -177,17 +188,14 @@ export const GroupActionList = ({
                 <div className="flex flex-col gap-2">
                   {isMember && (
                     <>
-                      {
-                        // implement it later
-                        false && (
-                          <div className="flex items-center gap-[10px] px-2">
-                            <MdOutlineMarkChatRead className="w-4 h-4" />
-                            <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
-                              {MARK_AS_READ}
-                            </span>
-                          </div>
-                        )
-                      }
+                      {false && (
+                        <div className="flex items-center gap-[10px] px-2">
+                          <MdOutlineMarkChatRead className="w-4 h-4" />
+                          <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                            {MARK_AS_READ}
+                          </span>
+                        </div>
+                      )}
                       <div
                         className="flex items-center gap-[10px] px-2"
                         onClick={() => handlePinGroup(group?.isPin, group)}>
@@ -216,7 +224,7 @@ export const GroupActionList = ({
                               key={option.id}
                               className={`cursor-pointer px-4 ${option.value === group?.notificationSelect ? 'bg-success-light' : ''}`}
                               onClick={() =>
-                                handleNotifications(group?.id, option.value)
+                                handleNotifications(group, option.value)
                               }>
                               {i18n.get(option.title)}
                             </div>
