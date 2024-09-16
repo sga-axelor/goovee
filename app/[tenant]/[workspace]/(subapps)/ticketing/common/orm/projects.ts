@@ -130,19 +130,18 @@ export async function findTicketDoneStatus() {
 
   return projectAppConfig?.completedTaskStatus?.id;
 }
+
 export async function findTicketCancelledStatus() {
-  //TODO: To be implemented
-  return;
   const client = await getClient();
   const projectAppConfig = await client.aOSAppProject.findOne({
     select: {
-      completedTaskStatus: {
+      cancelledTaskStatus: {
         id: true,
       },
     },
   });
 
-  return projectAppConfig?.completedTaskStatus?.id;
+  return projectAppConfig?.cancelledTaskStatus?.id;
 }
 
 export async function findContactPartners(projectId: ID) {

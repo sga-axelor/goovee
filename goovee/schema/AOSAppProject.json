@@ -8,6 +8,11 @@
       "type": "ManyToOne",
       "name": "completedTaskStatus",
       "target": "AOSProjectTaskStatus"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "cancelledTaskStatus",
+      "target": "AOSProjectTaskStatus"
     }
   ]
 }
