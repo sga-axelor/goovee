@@ -266,6 +266,11 @@ export async function addComment({
                 })),
               }
             : [],
+        createdBy: {
+          select: {
+            id: aosUser.id,
+          },
+        },
         createdOn: timestamp as unknown as Date,
         updatedOn: timestamp as unknown as Date,
       },
