@@ -89,7 +89,7 @@ export default async function Page({
                 </p>
                 <p className="text-[12px] font-medium mt-2">
                   {project.taskCount +
-                    ' ticket' +
+                    i18n.get(' ticket') +
                     (project.taskCount === 1 ? '' : 's')}
                 </p>
               </div>

@@ -181,7 +181,7 @@ export default async function Page({
               <TableCell colSpan={columns.length + 1} align="right">
                 <Link
                   href={allTicketsURL}
-                  className="inline-flex gap-1 items-center">
+                  className="inline-flex gap-1 items-center text-success">
                   {i18n.get('See all tickets')}
                   <MdArrowForward />
                 </Link>
