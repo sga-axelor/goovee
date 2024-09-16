@@ -251,6 +251,7 @@ export async function addComment({
                 id: aosUser.id,
               },
             },
+            createdOn: timestamp as unknown as Date,
           },
         },
         commentFileList:
