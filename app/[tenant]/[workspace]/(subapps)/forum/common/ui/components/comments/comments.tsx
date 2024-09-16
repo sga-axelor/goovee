@@ -224,7 +224,6 @@ export const Comments = memo(
     hideCloseComments?: boolean;
     toggleComments?: () => void;
   }) => {
-    console.log('comments >>>', comments);
     const [loading, setLoading] = useState(false);
     const [commentsList, setCommentsList] = useState<any[]>([]);
     const [sortBy, setSortBy] = useState('new');
