@@ -389,6 +389,38 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       requestedByContact: {
         name: true,
       },
+      projectTaskLinkList: {
+        select: {
+          relatedTask: {
+            name: true,
+            updatedOn: true,
+            status: {
+              name: true,
+            },
+            projectTaskCategory: {
+              name: true,
+            },
+            priority: {
+              name: true,
+            },
+            project: {
+              name: true,
+              company: {
+                name: true,
+              },
+            },
+            assignedTo: {
+              name: true,
+            },
+            assignedToContact: {
+              name: true,
+            },
+            requestedByContact: {
+              name: true,
+            },
+          },
+        },
+      },
       childTasks: {
         select: {
           name: true,

@@ -37,6 +37,7 @@ import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-ro
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
   childTickets?: AOSProjectTask[];
+  relatedTickets?: AOSProjectTask[];
 }
 export default async function Page({
   params,
@@ -71,6 +72,9 @@ export default async function Page({
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;
+  const relatedTickets = ticket.projectTaskLinkList
+    ?.map(l => l.relatedTask!)
+    .filter(Boolean);
 
   return (
     <div className="container mt-5 mb-20">
@@ -129,23 +133,30 @@ export default async function Page({
         categories={clone(categories)}
         priorities={clone(priorities)}
       />
-      {(ticket.parentTask || (ticket.childTasks?.length ?? 0) > 0) && (
+      {(ticket.parentTask ||
+        Boolean(ticket.childTasks?.length) ||
+        Boolean(relatedTickets?.length)) && (
         <SubTickets
           parentTicket={ticket.parentTask}
           childTickets={ticket.childTasks}
+          relatedTickets={relatedTickets}
         />
       )}
     </div>
   );
 }
 
-function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
+function SubTickets({
+  parentTicket,
+  childTickets,
+  relatedTickets,
+}: SubTicketsProps) {
   return (
     <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
       {/* ----parent ticket----- */}
       {parentTicket && (
         <>
-          <h4 className="text-[1.5rem] font-semibold">Parent ticket</h4>
+          <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
           <hr className="mt-5" />
           <Table>
             <TableBody>
@@ -155,13 +166,28 @@ function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
         </>
       )}
       {/* ----child tickets---  */}
-      {childTickets && (childTickets.length ?? 0) > 0 && (
+      {childTickets && Boolean(childTickets.length) && (
         <>
-          <h4 className="text-[1.5rem] font-semibold">Child ticket</h4>
+          <h4 className="text-xl font-semibold">{i18n.get('Child tickets')}</h4>
           <hr className="mt-5" />
           <Table>
             <TableBody>
               <TicketRows tickets={clone(childTickets)} />
+            </TableBody>
+          </Table>
+        </>
+      )}
+
+      {/* ----related tickets---  */}
+      {relatedTickets && Boolean(relatedTickets.length) && (
+        <>
+          <h4 className="text-xl font-semibold">
+            {i18n.get('Related tickets')}
+          </h4>
+          <hr className="mt-5" />
+          <Table>
+            <TableBody>
+              <TicketRows tickets={clone(relatedTickets)} />
             </TableBody>
           </Table>
         </>

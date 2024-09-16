@@ -1,0 +1,17 @@
+{
+  "name": "AOSProjectTaskLinkType",
+  "table": "project_project_task_link_type",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "oppositeLinkType",
+      "target": "AOSProjectTaskLinkType"
+    }
+  ]
+}

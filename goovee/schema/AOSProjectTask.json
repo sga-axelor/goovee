@@ -140,6 +140,12 @@
       "target": "AOSProjectTaskCategory"
     },
     {
+      "type": "OneToMany",
+      "name": "projectTaskLinkList",
+      "mappedBy": "projectTask",
+      "target": "AOSProjectTaskLink"
+    },
+    {
       "type": "Decimal",
       "name": "progress",
       "default": "0.00"

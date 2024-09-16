@@ -1,0 +1,32 @@
+{
+  "name": "AOSProjectTaskLink",
+  "table": "project_project_task_link",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "projectTask",
+      "target": "AOSProjectTask"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "projectTaskLink",
+      "target": "AOSProjectTaskLink"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "projectTaskLinkType",
+      "target": "AOSProjectTaskLinkType"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "relatedTask",
+      "target": "AOSProjectTask"
+    }
+  ]
+}
