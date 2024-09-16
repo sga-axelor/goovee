@@ -23,11 +23,10 @@ import {cn} from '@/utils/css';
 type TicketListProps = {
   tickets: Ticket[];
   footer?: ReactNode;
-  projectId?: string;
 };
 
 export function TicketList(props: TicketListProps) {
-  const {tickets, footer, projectId} = props;
+  const {tickets, footer} = props;
   const [sortedTickets, sort, toggleSort] = useSortBy(tickets);
   const res = useResponsive();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
@@ -63,7 +62,7 @@ export function TicketList(props: TicketListProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TicketRows tickets={sortedTickets} projectId={projectId} />
+        <TicketRows tickets={sortedTickets} />
       </TableBody>
       <TableFooter>{footer}</TableFooter>
     </Table>

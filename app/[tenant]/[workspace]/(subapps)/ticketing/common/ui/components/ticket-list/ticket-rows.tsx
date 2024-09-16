@@ -34,9 +34,9 @@ const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
   </>
 );
 
-export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
+export function TicketRows(props: {tickets: Ticket[]}) {
   const {workspaceURL} = useWorkspace();
-  const {tickets, projectId} = props;
+  const {tickets} = props;
   const [show, setShow] = useState(false);
   const [id, setId] = useState('');
   const res = useResponsive();
@@ -63,9 +63,10 @@ export function TicketRows(props: {tickets: Ticket[]; projectId: any}) {
   }
   return tickets.map(ticket => {
     const handleClick = () => {
-      router.push(
-        `${workspaceURL}/ticketing/projects/${projectId}/tickets/${ticket?.id}`,
-      );
+      ticket.project?.id &&
+        router.push(
+          `${workspaceURL}/ticketing/projects/${ticket.project.id}/tickets/${ticket.id}`,
+        );
     };
 
     return (

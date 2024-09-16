@@ -37,7 +37,6 @@ import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-ro
 interface SubTicketsProps {
   parentTicket?: AOSProjectTask;
   childTickets?: AOSProjectTask[];
-  projectId?: string;
 }
 export default async function Page({
   params,
@@ -134,14 +133,13 @@ export default async function Page({
         <SubTickets
           parentTicket={ticket.parentTask}
           childTickets={ticket.childTasks}
-          projectId={projectId}
         />
       )}
     </div>
   );
 }
 
-function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
+function SubTickets({parentTicket, childTickets}: SubTicketsProps) {
   return (
     <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
       {/* ----parent ticket----- */}
@@ -151,10 +149,7 @@ function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
           <hr className="mt-5" />
           <Table>
             <TableBody>
-              <TicketRows
-                tickets={[clone(parentTicket)]}
-                projectId={projectId}
-              />
+              <TicketRows tickets={[clone(parentTicket)]} />
             </TableBody>
           </Table>
         </>
@@ -166,7 +161,7 @@ function SubTickets({parentTicket, childTickets, projectId}: SubTicketsProps) {
           <hr className="mt-5" />
           <Table>
             <TableBody>
-              <TicketRows tickets={clone(childTickets)} projectId={projectId} />
+              <TicketRows tickets={clone(childTickets)} />
             </TableBody>
           </Table>
         </>

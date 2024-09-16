@@ -166,7 +166,6 @@ export default async function Page({
         </div>
         <TicketList
           tickets={tickets}
-          projectId={projectId}
           footer={
             <TableRow>
               <TableCell colSpan={columns.length + 1} align="right">

@@ -151,7 +151,6 @@ export default async function Page({
       </div>
       <TicketList
         tickets={tickets}
-        projectId={projectId}
         footer={<Footer url={url} pages={pages} searchParams={searchParams} />}
       />
     </div>
