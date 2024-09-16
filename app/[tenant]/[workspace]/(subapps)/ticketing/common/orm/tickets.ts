@@ -381,6 +381,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       description: true,
       taskDate: true,
       taskEndDate: true,
+      displayFinancialData: true,
       attrs: true,
       assignedToContact: {
         name: true,

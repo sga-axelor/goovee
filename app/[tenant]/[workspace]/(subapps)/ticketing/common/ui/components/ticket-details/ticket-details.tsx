@@ -326,10 +326,12 @@ export function TicketDetails(props: Props) {
               {ticket.targetVersion?.title}
             </p>
             <hr />
-            <p>
-              <span className="font-medium"> {i18n.get('Billing')}: </span>
-              {ticket.quantity} {ticket.invoicingUnit?.name}
-            </p>
+            {ticket.displayFinancialData && (
+              <p>
+                <span className="font-medium"> {i18n.get('Billing')}: </span>
+                {ticket.quantity} {ticket.invoicingUnit?.name}
+              </p>
+            )}
             <div className="!mt-10">
               <FormField
                 control={form.control}
