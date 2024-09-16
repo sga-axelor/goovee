@@ -14,6 +14,10 @@ import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
 import {clone} from '@/utils';
 import {ModelType, PortalWorkspace} from '@/types';
+import {COMMENT_TRACKING} from '@/constants';
+import {findUserForPartner} from '@/orm/partner';
+
+// ---- LOCAL IMPORTS ---- //
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
 import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
 
@@ -137,15 +141,17 @@ export async function upload(formData: FormData, workspaceURL: string) {
 export async function addComment({
   type,
   model = null,
-  subject,
+  content,
   workspaceURL,
   attachments = [],
+  parentId = null,
 }: {
   type: ModelType;
   model: {id: string | number} | null;
   workspaceURL: string;
-  subject: any;
+  content: any;
   attachments?: any;
+  parentId?: any;
 }) {
   try {
     const session = await getSession();
@@ -154,6 +160,14 @@ export async function addComment({
       return {
         error: true,
         message: i18n.get('Unauthorized'),
+      };
+    }
+
+    const aosUser = await findUserForPartner({partnerId: user.id});
+    if (!aosUser) {
+      return {
+        error: true,
+        message: i18n.get('Cannot create comment. Configuration Error.'),
       };
     }
 
@@ -191,11 +205,27 @@ export async function addComment({
 
     const client = await manager.getClient();
 
+    let parentComment: any;
+    if (parentId) {
+      parentComment = await client.aOSComment.findOne({
+        where: {
+          id: {eq: parentId},
+        },
+        select: {id: true},
+      });
+      if (!parentComment) {
+        return {
+          error: true,
+          message: i18n.get('Invalid parent comment Id.'),
+        };
+      }
+    }
+
     const modelName = ModelMap[type];
 
     const response = await client.aOSComment.create({
       data: {
-        ...(modelRecord && modelName
+        ...(modelRecord && modelName && !parentId
           ? {
               [modelName as string]: {
                 select: {
@@ -204,15 +234,24 @@ export async function addComment({
               },
             }
           : {}),
+        ...(parentComment
+          ? {parentComment: {select: {id: parentComment.id}}}
+          : {}),
         mailMessage: {
           create: {
-            subject,
+            subject: COMMENT_TRACKING,
+            messageContentHtml: content,
             author: {
               select: {
-                id: user?.id,
+                id: aosUser.id,
               },
             },
-            authorID: user?.id,
+            createdBy: {
+              select: {
+                id: aosUser.id,
+              },
+            },
+            createdOn: timestamp as unknown as Date,
           },
         },
         commentFileList:
@@ -228,6 +267,11 @@ export async function addComment({
                 })),
               }
             : [],
+        createdBy: {
+          select: {
+            id: aosUser.id,
+          },
+        },
         createdOn: timestamp as unknown as Date,
         updatedOn: timestamp as unknown as Date,
       },

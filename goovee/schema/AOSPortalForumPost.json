@@ -20,7 +20,7 @@
     {
       "name": "commentList",
       "type": "OneToMany",
-      "target": "AOSPortalComment",
+      "target": "AOSComment",
       "mappedBy": "forumPost"
     },
     {

@@ -16,6 +16,11 @@
       "target": "AOSPortalEvent"
     },
     {
+      "name": "forumPost",
+      "type": "ManyToOne",
+      "target": "AOSPortalForumPost"
+    },
+    {
       "name": "mailMessage",
       "type": "ManyToOne",
       "target": "AOSMailMessage"
@@ -25,6 +30,26 @@
       "type": "OneToMany",
       "mappedBy": "relatedComment",
       "target": "AOSCommentFile"
+    },
+    {
+      "name": "createdOn",
+      "type": "Date"
+    },
+    {
+      "name": "createdBy",
+      "type": "ManyToOne",
+      "target": "AOSUser"
+    },
+    {
+      "name": "childCommentList",
+      "type": "OneToMany",
+      "mappedBy": "parentComment",
+      "target": "AOSComment"
+    },
+    {
+      "name": "parentComment",
+      "type": "ManyToOne",
+      "target": "AOSComment"
     }
   ]
 }

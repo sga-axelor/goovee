@@ -19,10 +19,13 @@ import {
 } from '@/ui/components/form';
 import {i18n} from '@/i18n';
 import {getFileSizeText} from '@/utils/files';
+import {cn} from '@/utils/css';
 
 type CommentProps = {
-  placeholderText: string;
+  disabled?: boolean;
+  placeholderText?: string;
   showAttachmentIcon?: boolean;
+  className?: string;
   onSubmit: any;
 };
 
@@ -47,6 +50,8 @@ const formSchema = z.object({
 });
 
 export function Comment({
+  disabled = false,
+  className = '',
   placeholderText = 'Enter text here*',
   showAttachmentIcon = true,
   onSubmit,
@@ -112,7 +117,8 @@ export function Comment({
         ref={formRef}
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6 w-full">
-        <div className="flex items-center relative">
+        <div
+          className={`flex items-center relative ${disabled ? 'opacity-70 pointer-events-none' : ''}`}>
           <FormField
             control={form.control}
             name="text"
@@ -120,8 +126,11 @@ export function Comment({
               <FormItem className=" w-full">
                 <FormControl>
                   <Input
-                    className="h-12 w-full placeholder:text-sm placeholder:text-slate-400"
-                    placeholder={placeholderText}
+                    className={cn(
+                      'h-12 w-full placeholder:text-sm placeholder:text-slate-400 pr-36',
+                      className,
+                    )}
+                    placeholder={i18n.get(placeholderText)}
                     {...field}
                   />
                 </FormControl>
@@ -134,7 +143,7 @@ export function Comment({
             {showAttachmentIcon && (
               <div {...getRootProps({className: 'dropzone'})}>
                 <input {...getInputProps()} />
-                <MdAttachFile className="size-6 text-black" />
+                <MdAttachFile className="size-6 text-black cursor-pointer" />
               </div>
             )}
             <Button

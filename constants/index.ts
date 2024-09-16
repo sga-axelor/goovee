@@ -125,3 +125,8 @@ export const NAVIGATION = {
 export const SEARCH_PARAMS = {
   TENANT_ID: 'tenant',
 };
+
+/**
+ * COMMENT
+ */
+export const COMMENT_TRACKING = 'User created a comment';

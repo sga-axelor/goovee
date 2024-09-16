@@ -40,6 +40,20 @@
       "type": "ManyToOne",
       "name": "author",
       "target": "AOSUser"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "createdBy",
+      "target": "AOSUser"
+    },
+    {
+      "name": "messageContentHtml",
+      "type": "String"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "createdBy",
+      "target": "AOSUser"
     }
   ]
 }
