@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {EditorState} from 'draft-js';
 import dynamic from 'next/dynamic';
 import {stateToHTML} from 'draft-js-export-html';
@@ -39,6 +39,9 @@ export const RichTextEditor = ({
     wrapperClassName = '',
     editorClassName = '',
   } = className || {};
+
+  const initiated = useRef(false);
+
   const [editorState, setEditorState] = useState<EditorState>(
     content
       ? EditorState.createWithContent(stateFromHTML(content)) ||
@@ -55,6 +58,17 @@ export const RichTextEditor = ({
     },
     [onChange],
   );
+
+  useEffect(() => {
+    if (initiated.current) {
+      setEditorState(
+        EditorState.createWithContent(stateFromHTML(content)) ||
+          EditorState.createEmpty(),
+      );
+    }
+
+    initiated.current = true;
+  }, [content]);
 
   return (
     <Editor
