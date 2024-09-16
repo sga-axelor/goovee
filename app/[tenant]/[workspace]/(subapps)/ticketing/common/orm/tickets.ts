@@ -217,7 +217,7 @@ export async function updateTicketViaWS(
     )
     .then(({data}) => data);
 
-  if (res?.status === -1) {
+  if (!res.data || res?.status === -1) {
     if (res.data?.causeClass === VERSION_MISMATCH_CAUSE_CLASS) {
       const e = new Error(res.data.message);
       e.name = VERSION_MISMATCH_ERROR;
