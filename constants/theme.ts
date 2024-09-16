@@ -58,6 +58,10 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
         default: '24.6 95% 53.1%',
         dark: '17.5 88.3% 40.4%',
       },
+      pink: {
+        default: '337 74% 91%',
+        dark: '335 100% 54%',
+      },
     },
   },
   radius: '0.5rem',

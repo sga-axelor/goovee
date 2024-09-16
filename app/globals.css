@@ -56,6 +56,9 @@
 
     --palette-orange: 24.6 95% 53.1%;
     --palette-orange-dark: 17.5 88.3% 40.4%;
+
+    --palette-pink: 337 74% 91%;
+    --palette-pink-dark: 335 100% 54%;
   }
 
   .dark {

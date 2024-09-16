@@ -8,7 +8,8 @@ export type Variant =
   | 'yellow'
   | 'purple'
   | 'blue'
-  | 'default';
+  | 'default'
+  | 'orange';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ const classes: Record<Variant, string> = {
   purple: 'bg-palette-purple text-palette-purple-dark',
   blue: 'bg-palette-blue text-palette-blue-dark',
   default: 'bg-primary/[.25] text-primary',
+  orange: 'bg-palette-orange text-palette-orange-dark',
 };
 const outlineClasses: Record<Variant, string> = {
   success: 'border-success text-success border',
@@ -31,6 +33,7 @@ const outlineClasses: Record<Variant, string> = {
   purple: 'border-palette-purple text-palette-purple border',
   blue: 'border-violet-400 text-violet-400 border',
   default: 'border-primary text-primary border',
+  orange: 'border-palette-orange text-palette-orange border',
 };
 
 export const Tag: React.FC<TagProps> = ({

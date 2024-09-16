@@ -96,30 +96,40 @@ export default async function Page({
       count: getAllTicketCount(projectId),
       icon: MdAllInbox,
       href: allTicketsURL,
+      iconColor: 'palette-pink-dark',
+      iconBgColor: 'palette-pink',
     },
     {
       label: 'My tickets',
       count: getMyTicketCount(projectId, userId),
       href: `${ticketsURL}?filter=${encodeFilter({status, myTickets: true})}`,
       icon: MdAllInbox,
+      iconColor: 'palette-blue-dark',
+      iconBgColor: 'palette-blue',
     },
     {
       label: 'Assigned tickets',
       count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
       href: `${ticketsURL}?filter=${encodeFilter({status, assignedTo: [userId]})}`,
+      iconColor: 'palette-purple-dark',
+      iconBgColor: 'palette-purple',
     },
     {
       label: 'Created tickets',
       count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
       href: `${ticketsURL}?filter=${encodeFilter({status, requestedBy: [userId]})}`,
+      iconColor: 'palette-yellow-dark',
+      iconBgColor: 'palette-yellow',
     },
     {
       label: 'Resolved tickets',
       count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
       href: `${ticketsURL}?filter=${encodeFilter({status: statusCompleted})}`,
+      iconColor: 'success',
+      iconBgcolor: 'success-light',
     },
   ].map(props => (
     <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
@@ -189,16 +199,26 @@ type TicketCardProps = {
   count: Promise<number>;
   href?: string;
   icon?: IconType;
+  iconColor: string;
+  iconBgColor: string;
 };
 
 async function TicketCard(props: TicketCardProps) {
-  const {label, icon: Icon, count: countPromise, href} = props;
+  const {
+    label,
+    icon: Icon,
+    count: countPromise,
+    href,
+    iconColor,
+    iconBgColor,
+  } = props;
   const count = await countPromise;
 
   const content = (
     <>
-      <div className="flex items-center justify-center h-10 w-10 bg-muted rounded-full">
-        {Icon && <Icon className="h-6 w-6 text-success bg-success-light" />}
+      <div
+        className={`flex items-center justify-center h-10 w-10 bg-${iconBgColor} rounded-full`}>
+        {Icon && <Icon className={`h-6 w-6 text-${iconColor}`} />}
       </div>
       <div className="grow flex flex-col justify-between">
         <h3 className="text-[28px] font-semibold">{count}</h3>

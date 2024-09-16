@@ -77,6 +77,10 @@ module.exports = {
             DEFAULT: 'hsl(var(--palette-orange))',
             dark: 'hsl(var(--palette-orange-dark))',
           },
+          pink: {
+            DEFAULT: 'hsl(var(--palette-pink))',
+            dark: 'hsl(var(--palette-pink-dark))',
+          },
         },
       },
       fontFamily: {
