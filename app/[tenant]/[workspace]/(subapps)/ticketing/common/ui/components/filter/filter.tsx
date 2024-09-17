@@ -287,7 +287,7 @@ function DatesField(props: FieldProps) {
   const {form} = props;
   return (
     <div>
-      <div className="flex gap-2">
+      <div className="min-[382px]:flex gap-2 block">
         <FormField
           control={form.control}
           name="updatedOn.0"

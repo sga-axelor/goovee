@@ -88,9 +88,10 @@ export default async function Page({
                   {project.name}
                 </p>
                 <p className="text-[12px] font-medium mt-2">
-                  {project.taskCount +
-                    i18n.get(' ticket') +
-                    (project.taskCount === 1 ? '' : 's')}
+                  {project.taskCount}
+                  {project.taskCount === 1
+                    ? i18n.get(' ticket')
+                    : i18n.get(' tickets')}
                 </p>
               </div>
             </Link>
