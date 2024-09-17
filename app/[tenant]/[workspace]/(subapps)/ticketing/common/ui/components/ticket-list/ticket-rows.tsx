@@ -11,8 +11,9 @@ import {
   TableRow,
 } from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
-import Link from 'next/link';
-import {useState} from 'react';
+import {getImageURL} from '@/utils/image';
+import {useRouter} from 'next/navigation';
+import {Fragment, useState} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
@@ -20,8 +21,6 @@ import {ASSIGNMENT, columns} from '../../../constants';
 import {Ticket} from '../../../types';
 import {formatDate} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
-import {useRouter} from 'next/navigation';
-import {getImageURL} from '@/utils/image';
 
 interface TicketDetailRowProps {
   label: string;
@@ -71,48 +70,33 @@ export function TicketRows(props: {tickets: Ticket[]}) {
     };
 
     return (
-      <>
+      <Fragment key={ticket.id}>
         <TableRow
-          key={ticket.id}
           onClick={handleClick}
           className="cursor-pointer hover:bg-slate-100">
           <TableCell className="px-5">
             <p className="font-medium">#{ticket.id}</p>
           </TableCell>
           {!small ? (
-            <TableCell className="flex md:justify-start items-center justify-end">
-              <Avatar className="h-12 w-12">
-                <AvatarImage
-                  className="object-cover"
-                  src={getImageURL(
-                    ticket.requestedByContact?.id
-                      ? ticket.requestedByContact.picture?.id
-                      : ticket.project?.company?.logo?.id,
-                  )}
-                />
-              </Avatar>
-              <p className="ms-2">
-                {ticket.requestedByContact?.id
-                  ? ticket.requestedByContact.name
-                  : ticket.project?.company?.name}
-              </p>
-            </TableCell>
-          ) : (
-            <TableCell
-              className="flex float-end items-center"
-              onClick={e => handleCollapse(ticket.id, e)}>
-              <p className="max-w-48 line-clamp-2">{ticket.name}</p>
-              {small &&
-                (show && ticket?.id === id ? (
-                  <MdArrowDropUp className="cursor-pointer ms-1 inline" />
-                ) : (
-                  <MdArrowDropDown className="cursor-pointer ms-1 inline" />
-                ))}
-            </TableCell>
-          )}
-
-          {!small && (
             <>
+              <TableCell className="flex md:justify-start items-center justify-end">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage
+                    className="object-cover"
+                    src={getImageURL(
+                      ticket.requestedByContact?.id
+                        ? ticket.requestedByContact.picture?.id
+                        : ticket.project?.company?.logo?.id,
+                    )}
+                  />
+                </Avatar>
+                <p className="ms-2">
+                  {ticket.requestedByContact?.id
+                    ? ticket.requestedByContact.name
+                    : ticket.project?.company?.name}
+                </p>
+              </TableCell>
+
               <TableCell className="max-w-40 ">
                 <div className="line-clamp-2">{ticket.name}</div>
               </TableCell>
@@ -132,49 +116,64 @@ export function TicketRows(props: {tickets: Ticket[]}) {
               </TableCell>
               <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
             </>
+          ) : (
+            <TableCell
+              className="flex float-end items-center"
+              onClick={e => handleCollapse(ticket.id, e)}>
+              <p className="max-w-48 line-clamp-2">{ticket.name}</p>
+              {show && ticket?.id === id ? (
+                <MdArrowDropUp className="cursor-pointer ms-1 inline" />
+              ) : (
+                <MdArrowDropDown className="cursor-pointer ms-1 inline" />
+              )}
+            </TableCell>
           )}
         </TableRow>
-        {small && ticket.id === id && show && (
-          <TableRow>
-            <TableCell colSpan={2}>
-              <Collapsible open={show}>
-                <CollapsibleContent className="grid grid-cols-2 gap-y-2">
-                  <Item label="Requested by">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        className="object-cover"
-                        src={getImageURL(
-                          ticket.requestedByContact?.id
-                            ? ticket.requestedByContact.picture?.id
-                            : ticket.project?.company?.logo?.id,
-                        )}
-                      />
-                    </Avatar>
-                    <span className="ms-2">
-                      {ticket.requestedByContact?.id
-                        ? ticket.requestedByContact?.name
-                        : ticket.project?.company?.name}
-                    </span>
-                  </Item>
+        {small && (
+          <Collapsible open={ticket.id === id && show} asChild>
+            <TableRow>
+              <CollapsibleContent asChild>
+                <TableCell colSpan={2}>
+                  <div className="grid grid-cols-2 gap-y-2">
+                    <Item label="Requested by">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          className="object-cover"
+                          src={getImageURL(
+                            ticket.requestedByContact?.id
+                              ? ticket.requestedByContact.picture?.id
+                              : ticket.project?.company?.logo?.id,
+                          )}
+                        />
+                      </Avatar>
+                      <span className="ms-2">
+                        {ticket.requestedByContact?.id
+                          ? ticket.requestedByContact?.name
+                          : ticket.project?.company?.name}
+                      </span>
+                    </Item>
 
-                  <Item label="Priority">
-                    <Priority name={ticket.priority?.name} />
-                  </Item>
-                  <Item label="Status">
-                    <Priority name={ticket.status?.name} />
-                  </Item>
-                  <Item label="Assigned to">
-                    {ticket.assignment === ASSIGNMENT.CUSTOMER
-                      ? ticket.assignedToContact?.name
-                      : ticket.project?.company?.name}
-                  </Item>
-                  <Item label="Updated On">{formatDate(ticket.updatedOn)}</Item>
-                </CollapsibleContent>
-              </Collapsible>
-            </TableCell>
-          </TableRow>
+                    <Item label="Priority">
+                      <Priority name={ticket.priority?.name} />
+                    </Item>
+                    <Item label="Status">
+                      <Priority name={ticket.status?.name} />
+                    </Item>
+                    <Item label="Assigned to">
+                      {ticket.assignment === ASSIGNMENT.CUSTOMER
+                        ? ticket.assignedToContact?.name
+                        : ticket.project?.company?.name}
+                    </Item>
+                    <Item label="Updated On">
+                      {formatDate(ticket.updatedOn)}
+                    </Item>
+                  </div>
+                </TableCell>
+              </CollapsibleContent>
+            </TableRow>
+          </Collapsible>
         )}
-      </>
+      </Fragment>
     );
   });
 }
