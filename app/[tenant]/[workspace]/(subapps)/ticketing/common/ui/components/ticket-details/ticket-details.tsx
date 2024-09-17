@@ -39,6 +39,7 @@ import {Stepper} from '../stepper';
 import {TicketFormSchema, TicketInfo} from '../ticket-form';
 import {AssignToSupplier} from '../ticket-form/ticket-actions';
 import {useRetryAction} from '../../../hooks';
+import {getImageURL} from '@/utils/image';
 
 type Props = {
   ticket: AOSProjectTask;
@@ -213,15 +214,19 @@ export function TicketDetails(props: Props) {
             <hr />
             <p className="flex !mt-3.5 items-center">
               <span className="font-medium pe-2">
-                {i18n.get('Request by')}:
+                {i18n.get('Requested by')}:
               </span>
-              <Avatar className="h-8 w-10">
+              <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src="/images/user.png"
-                  className="h-8 w-10 rounded-full"
+                  className="object-cover"
+                  src={getImageURL(
+                    ticket.requestedByContact?.id
+                      ? ticket.requestedByContact.picture?.id
+                      : ticket.project?.company?.logo?.id,
+                  )}
                 />
               </Avatar>
-              <span>
+              <span className="ms-2">
                 {ticket.requestedByContact?.name
                   ? ticket.requestedByContact?.name
                   : ticket.project?.company?.name}

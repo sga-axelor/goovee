@@ -417,9 +417,15 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
       assignment: true,
       assignedToContact: {
         name: true,
+        picture: {
+          id: true,
+        },
       },
       requestedByContact: {
         name: true,
+        picture: {
+          id: true,
+        },
       },
       status: {
         name: true,
@@ -434,6 +440,9 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
         name: true,
         company: {
           name: true,
+          logo: {
+            id: true,
+          },
         },
       },
       assignedTo: {
@@ -470,9 +479,15 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       attrs: true,
       assignedToContact: {
         name: true,
+        picture: {
+          id: true,
+        },
       },
       requestedByContact: {
         name: true,
+        picture: {
+          id: true,
+        },
       },
       projectTaskLinkList: {
         select: {
@@ -492,6 +507,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
               name: true,
               company: {
                 name: true,
+                logo: {
+                  id: true,
+                },
               },
             },
             assignedTo: {
@@ -499,9 +517,15 @@ export async function findTicket(ticketId: ID, projectId: ID) {
             },
             assignedToContact: {
               name: true,
+              picture: {
+                id: true,
+              },
             },
             requestedByContact: {
               name: true,
+              picture: {
+                id: true,
+              },
             },
           },
         },
@@ -523,6 +547,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
             name: true,
             company: {
               name: true,
+              logo: {
+                id: true,
+              },
             },
           },
           assignedTo: {
@@ -530,9 +557,15 @@ export async function findTicket(ticketId: ID, projectId: ID) {
           },
           assignedToContact: {
             name: true,
+            picture: {
+              id: true,
+            },
           },
           requestedByContact: {
             name: true,
+            picture: {
+              id: true,
+            },
           },
         },
       },
@@ -552,6 +585,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
           name: true,
           company: {
             name: true,
+            logo: {
+              id: true,
+            },
           },
         },
         assignedTo: {
@@ -559,15 +595,24 @@ export async function findTicket(ticketId: ID, projectId: ID) {
         },
         assignedToContact: {
           name: true,
+          picture: {
+            id: true,
+          },
         },
         requestedByContact: {
           name: true,
+          picture: {
+            id: true,
+          },
         },
       },
       project: {
         name: true,
         company: {
           name: true,
+          logo: {
+            id: true,
+          },
         },
       },
       projectTaskCategory: {

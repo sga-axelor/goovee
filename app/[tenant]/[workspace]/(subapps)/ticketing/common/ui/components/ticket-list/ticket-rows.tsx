@@ -21,6 +21,7 @@ import {Ticket} from '../../../types';
 import {formatDate} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 import {useRouter} from 'next/navigation';
+import {getImageURL} from '@/utils/image';
 
 interface TicketDetailRowProps {
   label: string;
@@ -79,13 +80,20 @@ export function TicketRows(props: {tickets: Ticket[]}) {
             <p className="font-medium">#{ticket.id}</p>
           </TableCell>
           {!small ? (
-            <TableCell className="flex md:justify-center items-center justify-end">
-              <Avatar className="h-12 w-16">
-                <AvatarImage src="/images/user.png" />
+            <TableCell className="flex md:justify-start items-center justify-end">
+              <Avatar className="h-12 w-12">
+                <AvatarImage
+                  className="object-cover"
+                  src={getImageURL(
+                    ticket.requestedByContact?.id
+                      ? ticket.requestedByContact.picture?.id
+                      : ticket.project?.company?.logo?.id,
+                  )}
+                />
               </Avatar>
-              <p className="ms-1">
-                {ticket.requestedByContact?.name
-                  ? ticket.requestedByContact?.name
+              <p className="ms-2">
+                {ticket.requestedByContact?.id
+                  ? ticket.requestedByContact.name
                   : ticket.project?.company?.name}
               </p>
             </TableCell>
@@ -132,16 +140,21 @@ export function TicketRows(props: {tickets: Ticket[]}) {
               <Collapsible open={show}>
                 <CollapsibleContent className="grid grid-cols-2 gap-y-2">
                   <Item label="Requested by">
-                    {ticket.requestedByContact?.name ? (
-                      <>
-                        <Avatar className="h-12 w-16">
-                          <AvatarImage src="/images/user.png" />
-                        </Avatar>
-                        {ticket.requestedByContact?.name}
-                      </>
-                    ) : (
-                      ticket.project?.company?.name
-                    )}
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        className="object-cover"
+                        src={getImageURL(
+                          ticket.requestedByContact?.id
+                            ? ticket.requestedByContact.picture?.id
+                            : ticket.project?.company?.logo?.id,
+                        )}
+                      />
+                    </Avatar>
+                    <span className="ms-2">
+                      {ticket.requestedByContact?.id
+                        ? ticket.requestedByContact?.name
+                        : ticket.project?.company?.name}
+                    </span>
                   </Item>
 
                   <Item label="Priority">

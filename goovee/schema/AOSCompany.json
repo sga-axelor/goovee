@@ -8,6 +8,7 @@
       "type": "String",
       "name": "name"
     },
+    {"name": "logo", "type": "ManyToOne", "target": "AOSMetaFile"},
     {
       "type": "ManyToOne",
       "name": "currency",

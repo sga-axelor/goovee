@@ -13,11 +13,19 @@ export type Ticket = {
     id: string;
     name: string;
     version: number;
+    picture?: {
+      id: string;
+      version: number;
+    };
   };
   requestedByContact?: {
     id: string;
     name: string;
     version: number;
+    picture?: {
+      id: string;
+      version: number;
+    };
   };
   priority?: {
     id: string;
@@ -46,6 +54,10 @@ export type Ticket = {
       id: string;
       name: string;
       version: number;
+      logo?: {
+        id: string;
+        version: string;
+      };
     };
   };
 };
