@@ -47,6 +47,7 @@ import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
 import Hero from './hero';
+import {cn} from '@/utils/css';
 
 export default async function Page({
   params,
@@ -96,40 +97,35 @@ export default async function Page({
       count: getAllTicketCount(projectId),
       icon: MdAllInbox,
       href: allTicketsURL,
-      iconColor: 'palette-pink-dark',
-      iconBgColor: 'palette-pink',
+      iconClassName: 'bg-palette-pink text-palette-pink-dark',
     },
     {
       label: 'My tickets',
       count: getMyTicketCount(projectId, userId),
       href: `${ticketsURL}?filter=${encodeFilter({status, myTickets: true})}`,
       icon: MdAllInbox,
-      iconColor: 'palette-blue-dark',
-      iconBgColor: 'palette-blue',
+      iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
     {
       label: 'Assigned tickets',
       count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
       href: `${ticketsURL}?filter=${encodeFilter({status, assignedTo: [userId]})}`,
-      iconColor: 'palette-purple-dark',
-      iconBgColor: 'palette-purple',
+      iconClassName: 'bg-palette-purple text-palette-purple-dark',
     },
     {
       label: 'Created tickets',
       count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
       href: `${ticketsURL}?filter=${encodeFilter({status, requestedBy: [userId]})}`,
-      iconColor: 'palette-yellow-dark',
-      iconBgColor: 'palette-yellow',
+      iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
     {
       label: 'Resolved tickets',
       count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
       href: `${ticketsURL}?filter=${encodeFilter({status: statusCompleted})}`,
-      iconColor: 'success',
-      iconBgColor: 'success-light',
+      iconClassName: 'text-success bg-success-light',
     },
   ].map(props => (
     <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
@@ -199,26 +195,21 @@ type TicketCardProps = {
   count: Promise<number>;
   href?: string;
   icon?: IconType;
-  iconColor: string;
-  iconBgColor: string;
+  iconClassName?: string;
 };
 
 async function TicketCard(props: TicketCardProps) {
-  const {
-    label,
-    icon: Icon,
-    count: countPromise,
-    href,
-    iconColor,
-    iconBgColor,
-  } = props;
+  const {label, icon: Icon, count: countPromise, href, iconClassName} = props;
   const count = await countPromise;
 
   const content = (
     <>
       <div
-        className={`flex items-center justify-center h-10 w-10 bg-${iconBgColor} rounded-full`}>
-        {Icon && <Icon className={`h-6 w-6 text-${iconColor}`} />}
+        className={cn(
+          'flex items-center justify-center h-10 w-10 rounded-full',
+          iconClassName,
+        )}>
+        {Icon && <Icon className="h-6 w-6" />}
       </div>
       <div className="grow flex flex-col justify-between">
         <h3 className="text-[28px] font-semibold">{count}</h3>
