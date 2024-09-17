@@ -24,11 +24,27 @@ async function fetchConfig(id: Tenant['id']) {
     });
 }
 
-export class TenantManager {
+export enum TenancyType {
+  single = 'single',
+  multi = 'multi',
+}
+
+interface TenantManager {
+  getType(): TenancyType;
+  getTenant(id?: Tenant['id']): Promise<Tenant>;
+  getConfig(id?: Tenant['id']): Promise<Tenant['config']>;
+  getClient(id?: Tenant['id']): Promise<Tenant['client']>;
+}
+
+export class MultiTenantManager implements TenantManager {
   private cache: LRUCache<Tenant['id'], Tenant>;
 
   constructor() {
     this.cache = new LRUCache<Tenant['id'], Tenant>(CACHE_CAPACITY);
+  }
+
+  getType() {
+    return TenancyType.multi;
   }
 
   async getTenant(id: Tenant['id']) {
@@ -89,6 +105,6 @@ export class TenantManager {
   }
 }
 
-export const manager = new TenantManager();
+export const manager = new MultiTenantManager();
 
 export default manager;
