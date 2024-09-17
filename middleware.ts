@@ -29,7 +29,13 @@ function notFound(req: NextRequest) {
   return NextResponse.rewrite(new URL('/not-found', req.url));
 }
 
+const isMultiTenancy = process.env.MULTI_TENANCY === 'true';
+
 export default async function middleware(req: NextRequest) {
+  if (!isMultiTenancy) {
+    return NextResponse.next();
+  }
+
   const url = req.nextUrl;
   const pathname = url.pathname;
 
