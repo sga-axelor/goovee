@@ -216,7 +216,11 @@ export function TicketForm(props: TicketFormProps) {
                     <FormControl>
                       <RichTextEditor
                         onChange={field.onChange}
-                        content={field.value ?? ''}
+                        classNames={{
+                          wrapperClassName: 'overflow-visible',
+                          toolbarClassName: 'mt-0',
+                          editorClassName: 'px-4',
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
