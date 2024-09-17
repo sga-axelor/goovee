@@ -10,6 +10,8 @@ import {
 } from '@/orm/workspace';
 import {getSession} from '@/orm/auth';
 import {clone} from '@/utils';
+import {TenancyType, manager} from '@/lib/core/tenant';
+import {DEFAULT_TENANT} from '@/constants';
 
 export default async function Page({
   searchParams,
@@ -19,7 +21,11 @@ export default async function Page({
   const session = await getSession();
   const user = session?.user;
 
-  const tenantId = decodeURIComponent(searchParams.tenant || '');
+  let tenantId = decodeURIComponent(searchParams.tenant || '');
+
+  if (!tenantId && manager.getType() === TenancyType.single) {
+    tenantId = DEFAULT_TENANT;
+  }
 
   if (!tenantId) {
     return notFound();

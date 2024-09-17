@@ -6,7 +6,8 @@ import {getSession} from '@/orm/auth';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findWorkspaces} from '@/orm/workspace';
-import {SEARCH_PARAMS} from '@/constants';
+import {DEFAULT_TENANT, SEARCH_PARAMS} from '@/constants';
+import {TenancyType, manager} from '@/lib/core/tenant';
 
 export default async function Page({
   searchParams,
@@ -23,9 +24,13 @@ export default async function Page({
 
   const tenantIdSearchParam = searchParams?.[SEARCH_PARAMS.TENANT_ID];
 
-  const tenantId = tenantIdSearchParam
+  let tenantId = tenantIdSearchParam
     ? decodeURIComponent(tenantIdSearchParam)
     : '';
+
+  if (!tenantId && manager.getType() === TenancyType.single) {
+    tenantId = DEFAULT_TENANT;
+  }
 
   if (session?.user) {
     redirect('/');
