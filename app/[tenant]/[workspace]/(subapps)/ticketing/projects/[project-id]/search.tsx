@@ -1,7 +1,7 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 
@@ -72,14 +72,15 @@ export function Search({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const handleRedirection = (ticket: any) => () => {
+  const handleRedirection = (ticketId: string) => {
     router.push(
-      `${workspaceURI}/ticketing/projects/${projectId}/tickets/${ticket.id}`,
+      `${workspaceURI}/ticketing/projects/${projectId}/tickets/${ticketId}`,
     );
   };
+
   return (
     <div className={cn('w-full relative', className)}>
-      <Command className="p-0 bg-white" shouldFilter={false}>
+      <Command className="p-0 bg-card" shouldFilter={false}>
         <CommandInput
           placeholder="Search here"
           className={cn(
@@ -92,7 +93,7 @@ export function Search({
 
         <CommandList
           className={cn(
-            'absolute bg-white top-[60px] right-0 border border-grey-1 rounded-lg no-scrollbar text-main-black z-50 w-full p-0',
+            'absolute bg-card top-[60px] right-0 border border-grey-1 rounded-lg no-scrollbar text-main-black z-50 w-full p-0',
             open ? 'block' : 'hidden',
           )}>
           <CommandEmpty>{i18n.get('No results found.')}</CommandEmpty>
@@ -102,23 +103,19 @@ export function Search({
                   <CommandItem
                     key={ticket.id}
                     value={ticket.id}
-                    onClick={handleRedirection(ticket)}
+                    onSelect={handleRedirection}
                     className="block py-2 sm:px-6 cursor-pointer">
-                    <ResourceItem ticket={ticket} projectId={projectId} />
+                    <div className="leading-5 text-sm space-y-2 p-3">
+                      <h3 className="font-semibold line-clamp-1">
+                        {ticket.name}
+                      </h3>
+                    </div>
                   </CommandItem>
                 ))
               : null}
           </CommandGroup>
         </CommandList>
       </Command>
-    </div>
-  );
-}
-
-function ResourceItem({ticket}: any) {
-  return (
-    <div className="leading-5 text-sm space-y-2 p-3">
-      <h3 className="font-semibold line-clamp-1">{ticket.name}</h3>
     </div>
   );
 }
