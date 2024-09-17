@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 
+import {DEFAULT_TENANT} from '@/constants';
 import {createClient} from '@/goovee/.generated/client';
 import {LRUCache} from './lru';
 import type {Tenant, TenantConfig} from './types';
@@ -34,6 +35,55 @@ interface TenantManager {
   getTenant(id?: Tenant['id']): Promise<Tenant>;
   getConfig(id?: Tenant['id']): Promise<Tenant['config']>;
   getClient(id?: Tenant['id']): Promise<Tenant['client']>;
+}
+
+export class SingleTenantManager implements TenantManager {
+  getType() {
+    return TenancyType.single;
+  }
+
+  async getTenant() {
+    const config: Tenant['config'] = {
+      db: {
+        url: process.env.DATABASE_URL!,
+      },
+      aos: {
+        url: process.env.NEXT_PUBLIC_AOS_URL!,
+        storage: process.env.DATA_STORAGE!,
+        auth: {
+          username: process.env.BASIC_AUTH_USERNAME!,
+          password: process.env.BASIC_AUTH_PASSWORD!,
+        },
+      },
+    };
+
+    const client = createClient({
+      url: process.env.DATABASE_URL!,
+    });
+
+    if (!client) {
+      throw new Error('Invalid configuration');
+    }
+
+    await client.$connect();
+    await client.$sync();
+
+    const tenant = {
+      id: DEFAULT_TENANT,
+      config,
+      client,
+    };
+
+    return tenant;
+  }
+
+  async getConfig() {
+    return this.getTenant().then(tenant => tenant?.config);
+  }
+
+  async getClient() {
+    return this.getTenant().then(tenant => tenant?.client);
+  }
 }
 
 export class MultiTenantManager implements TenantManager {
@@ -105,6 +155,10 @@ export class MultiTenantManager implements TenantManager {
   }
 }
 
-export const manager = new MultiTenantManager();
+export const isMultiTenancy = process.env.MULTI_TENANT === 'true';
+
+export const manager: TenantManager = isMultiTenancy
+  ? new MultiTenantManager()
+  : new SingleTenantManager();
 
 export default manager;
