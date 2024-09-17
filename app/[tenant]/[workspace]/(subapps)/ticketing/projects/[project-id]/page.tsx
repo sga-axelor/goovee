@@ -198,18 +198,18 @@ type TicketCardProps = {
   iconClassName: string;
 };
 
+const wrapperClassName = 'flex items-center gap-6 px-4 h-full';
+const iconWrapperClassName =
+  'flex items-center justify-center h-10 w-10 rounded-full';
+
 async function TicketCard(props: TicketCardProps) {
   const {label, icon: Icon, count: countPromise, href, iconClassName} = props;
   const count = await countPromise;
 
   return (
-    <Link href={href} className="flex items-center gap-6 px-4 h-full">
-      <div
-        className={cn(
-          'flex items-center justify-center h-10 w-10 rounded-full',
-          iconClassName,
-        )}>
-        {Icon && <Icon className="h-6 w-6" />}
+    <Link href={href} className={wrapperClassName}>
+      <div className={cn(iconWrapperClassName, iconClassName)}>
+        <Icon className="h-6 w-6" />
       </div>
       <div className="grow flex flex-col justify-between">
         <h3 className="text-[28px] font-semibold">{count}</h3>
@@ -221,10 +221,8 @@ async function TicketCard(props: TicketCardProps) {
 
 function TicketCardSkeleton() {
   return (
-    <div className="flex items-center gap-6 px-6 h-[80px]">
-      <div className="h-[56px] w-[56px] p-2 bg-muted rounded-full">
-        <Skeleton className={`h-[40px] w-[40px]`} />
-      </div>
+    <div className={wrapperClassName}>
+      <Skeleton className={iconWrapperClassName} />
       <div className="grow flex flex-col gap-2">
         <Skeleton className="w-[3rem] h-[2rem]" />
         <Skeleton className="w-[7rem] h-[1.5rem]" />
