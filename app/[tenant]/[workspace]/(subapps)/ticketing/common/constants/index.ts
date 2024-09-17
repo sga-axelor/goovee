@@ -75,3 +75,5 @@ export const STATUS_CHANGE_METHOD = {
   DB: 'fromDB',
   WS: 'fromWS',
 };
+
+export const DEFAULT_SORT = 'updatedOn DESC';

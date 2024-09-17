@@ -32,7 +32,7 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {columns, sortKeyPathMap} from '../../common/constants';
+import {columns, DEFAULT_SORT, sortKeyPathMap} from '../../common/constants';
 import {findProject, findTicketStatuses} from '../../common/orm/projects';
 import {
   findTickets,
@@ -58,7 +58,7 @@ export default async function Page({
 }) {
   const projectId = params?.['project-id'];
 
-  const {limit = 7, page = 1, sort = 'updatedOn'} = searchParams;
+  const {limit = 7, page = 1, sort = DEFAULT_SORT} = searchParams;
 
   const session = await getSession();
   if (!session?.user) notFound();

@@ -34,7 +34,7 @@ import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {columns, sortKeyPathMap} from '../../../common/constants';
+import {columns, DEFAULT_SORT, sortKeyPathMap} from '../../../common/constants';
 import {
   findContactPartners,
   findProject,
@@ -54,7 +54,6 @@ import {
 import Search from '../search';
 
 const TICKETS_PER_PAGE = 7;
-const DEFAULT_SORT = 'updatedOn';
 export default async function Page({
   params,
   searchParams,
