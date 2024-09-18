@@ -13,9 +13,17 @@ export const addPost = async (
 ) => {
   if (byMe) {
     let postCreated;
-    postCreated = await createPost(channelId, post, null, files, token);
     if (postReply) {
+      postCreated = await createPost(
+        channelId,
+        post,
+        postReply.id,
+        files,
+        token,
+      );
       postCreated.root_id = postReply.id;
+    } else {
+      postCreated = await createPost(channelId, post, null, files, token);
     }
     updateLocalState(setCurrentChannel, postCreated, user);
   } else {

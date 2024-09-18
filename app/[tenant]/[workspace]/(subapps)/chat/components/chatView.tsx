@@ -12,7 +12,15 @@ import {
 import {addReaction} from '../utils/AddReaction';
 import {addPost} from '../utils/addPost';
 
-const ChatView = ({token, user}: {token: any; user: any}) => {
+const ChatView = ({
+  token,
+  user,
+  userStatus,
+}: {
+  token: any;
+  user: any;
+  userStatus: any;
+}) => {
   const [activeChannel, setActiveChannel] = useState<any>();
   const [_channels, setChannels] = useState<any>(null);
   const [_currentChannel, setCurrentChannel] = useState<any>();
@@ -40,7 +48,11 @@ const ChatView = ({token, user}: {token: any; user: any}) => {
         );
       });
       setChannels(filteredChannels);
-      setActiveChannel(filteredChannels[0].id);
+      if (userStatus && userStatus !== '') {
+        setActiveChannel(userStatus.active_channel);
+      } else {
+        setActiveChannel(filteredChannels[0].id);
+      }
     };
     fetchChannels();
   }, []);

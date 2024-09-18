@@ -1,4 +1,4 @@
-import {getAuthToken} from './api/api';
+import {getAuthToken, getUserStatus} from './api/api';
 import ChatView from './components/chatView';
 
 export default async function Chat({
@@ -11,6 +11,8 @@ export default async function Chat({
     'R.paux@kp1.fr',
   );
 
+  const userStatus = await getUserStatus(user.id, token);
+
   console.log('user', user);
-  return <ChatView token={token} user={user} />;
+  return <ChatView token={token} user={user} userStatus={userStatus} />;
 }
