@@ -38,11 +38,17 @@ interface TenantManager {
 }
 
 export class SingleTenantManager implements TenantManager {
+  private tenant: Tenant | undefined = undefined;
+
   getType() {
     return TenancyType.single;
   }
 
   async getTenant() {
+    if (this.tenant) {
+      return this.tenant;
+    }
+
     const config: Tenant['config'] = {
       db: {
         url: process.env.DATABASE_URL!,
@@ -73,6 +79,8 @@ export class SingleTenantManager implements TenantManager {
       config,
       client,
     };
+
+    this.tenant = tenant;
 
     return tenant;
   }
@@ -155,7 +163,7 @@ export class MultiTenantManager implements TenantManager {
   }
 }
 
-export const isMultiTenancy = process.env.MULTI_TENANT === 'true';
+export const isMultiTenancy = process.env.MULTI_TENANCY === 'true';
 
 export const manager: TenantManager = isMultiTenancy
   ? new MultiTenantManager()
