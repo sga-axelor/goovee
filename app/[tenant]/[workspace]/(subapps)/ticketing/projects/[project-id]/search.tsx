@@ -37,7 +37,6 @@ export function Search({
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  //TODO:  Need to handle loading state and race conditions
   const fetchTickets = useMemo(
     () =>
       debounce(async (search: string) => {

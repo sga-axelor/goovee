@@ -19,6 +19,7 @@ import {
   updateTicket,
   findTicketsBySearch,
   updateTicketViaWS,
+  createTicketLink,
 } from '../orm/tickets';
 import {
   CreateTicketSchema,
@@ -221,12 +222,41 @@ export async function cancelTicket(
   }
 }
 
+type CreateLinkProps = {
+  workspaceURL: string;
+  data: {ticketId: string; linkType: string};
+};
+
+export async function createLink(props: CreateLinkProps): ActionResponse {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    const res = await createTicketLink(data, user.id, workspace.id);
+    return {
+      error: false,
+      data: clone(res),
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
 export async function searchTickets({
-  search = '',
+  search,
   workspaceURL,
   projectId,
 }: {
-  search: string;
+  search?: string;
   workspaceURL: string;
   projectId?: ID;
 }): ActionResponse {
@@ -235,11 +265,11 @@ export async function searchTickets({
     return {error: true, message};
   }
   const {user, workspace} = auth;
-  const tickets = await findTicketsBySearch(
+  const tickets = await findTicketsBySearch({
     search,
-    user.id,
-    workspace.id,
+    userId: user.id,
+    workspaceId: workspace.id,
     projectId,
-  );
+  });
   return {error: false, data: clone(tickets)};
 }

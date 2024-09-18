@@ -26,19 +26,20 @@ import {
   findTicketPriorities,
   findTicketStatuses,
 } from '../../../../common/orm/projects';
-import {findTicket} from '../../../../common/orm/tickets';
+import {
+  findTicket,
+  findTicketLinkTypes,
+  findTicketsBySearch,
+} from '../../../../common/orm/tickets';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
   CancelTicket,
   CloseTicket,
+  RelatedTicketsHeader,
 } from '../../../../common/ui/components/ticket-form/ticket-actions';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
+import {Suspense} from 'react';
 
-interface SubTicketsProps {
-  parentTicket?: AOSProjectTask;
-  childTickets?: AOSProjectTask[];
-  relatedTickets?: AOSProjectTask[];
-}
 export default async function Page({
   params,
 }: {
@@ -133,65 +134,62 @@ export default async function Page({
         categories={clone(categories)}
         priorities={clone(priorities)}
       />
-      {(ticket.parentTask ||
-        Boolean(ticket.childTasks?.length) ||
-        Boolean(relatedTickets?.length)) && (
-        <SubTickets
-          parentTicket={ticket.parentTask}
-          childTickets={ticket.childTasks}
-          relatedTickets={relatedTickets}
-        />
-      )}
+      <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
+        {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}
+        {ticket.childTasks && Boolean(ticket.childTasks.length) && (
+          <ChildTickets tickets={ticket.childTasks} />
+        )}
+        <Suspense>
+          <RelatedTickets relatedTickets={relatedTickets} />
+        </Suspense>
+      </div>
     </div>
   );
 }
 
-function SubTickets({
-  parentTicket,
-  childTickets,
-  relatedTickets,
-}: SubTicketsProps) {
+async function ChildTickets({tickets}: {tickets: AOSProjectTask[]}) {
   return (
-    <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
-      {/* ----parent ticket----- */}
-      {parentTicket && (
-        <>
-          <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
-          <hr className="mt-5" />
-          <Table>
-            <TableBody>
-              <TicketRows tickets={[clone(parentTicket)]} />
-            </TableBody>
-          </Table>
-        </>
-      )}
-      {/* ----child tickets---  */}
-      {childTickets && Boolean(childTickets.length) && (
-        <>
-          <h4 className="text-xl font-semibold">{i18n.get('Child tickets')}</h4>
-          <hr className="mt-5" />
-          <Table>
-            <TableBody>
-              <TicketRows tickets={clone(childTickets)} />
-            </TableBody>
-          </Table>
-        </>
-      )}
+    <>
+      <h4 className="text-xl font-semibold">{i18n.get('Child tickets')}</h4>
+      <hr className="mt-5" />
+      <Table>
+        <TableBody>
+          <TicketRows tickets={clone(tickets)} />
+        </TableBody>
+      </Table>
+    </>
+  );
+}
 
-      {/* ----related tickets---  */}
-      {relatedTickets && Boolean(relatedTickets.length) && (
-        <>
-          <h4 className="text-xl font-semibold">
-            {i18n.get('Related tickets')}
-          </h4>
-          <hr className="mt-5" />
-          <Table>
-            <TableBody>
-              <TicketRows tickets={clone(relatedTickets)} />
-            </TableBody>
-          </Table>
-        </>
-      )}
-    </div>
+async function ParentTicket({ticket}: {ticket: AOSProjectTask}) {
+  return (
+    <>
+      <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
+      <hr className="mt-5" />
+      <Table>
+        <TableBody>
+          <TicketRows tickets={[clone(ticket)]} />
+        </TableBody>
+      </Table>
+    </>
+  );
+}
+
+async function RelatedTickets({
+  relatedTickets,
+}: {
+  relatedTickets?: AOSProjectTask[];
+}) {
+  const linkTypes = await findTicketLinkTypes();
+  return (
+    <>
+      <RelatedTicketsHeader linkTypes={clone(linkTypes)} />
+      <hr className="mt-5" />
+      <Table>
+        <TableBody>
+          <TicketRows tickets={clone(relatedTickets ?? [])} />
+        </TableBody>
+      </Table>
+    </>
   );
 }

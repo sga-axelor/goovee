@@ -675,12 +675,13 @@ export async function findTicketVersion(ticketId: ID) {
   return ticket.version;
 }
 
-export async function findTicketsBySearch(
-  search: string,
-  userId: ID,
-  workspaceId: ID,
-  projectId?: ID,
-) {
+export async function findTicketsBySearch(props: {
+  search?: string;
+  userId: ID;
+  workspaceId: ID;
+  projectId?: ID;
+}) {
+  const {search, userId, workspaceId, projectId} = props;
   const client = await getClient();
   const tickets = await client.aOSProjectTask.find({
     where: {
@@ -689,18 +690,20 @@ export async function findTicketsBySearch(
         ...getProjectAccessFilter({userId, workspaceId}),
       },
       ...getTicketAccessFilter(),
-      OR: [
-        {
-          name: {
-            like: `%${search}%`,
+      ...(search && {
+        OR: [
+          {
+            name: {
+              like: `%${search}%`,
+            },
           },
-        },
-        {
-          description: {
-            like: `%${search}%`,
+          {
+            description: {
+              like: `%${search}%`,
+            },
           },
-        },
-      ],
+        ],
+      }),
     },
     take: 10,
     select: {
@@ -708,4 +711,34 @@ export async function findTicketsBySearch(
     },
   });
   return tickets;
+}
+
+export async function findTicketLinkTypes() {
+  const client = await getClient();
+  const links = await client.aOSProjectTaskLinkType.find({
+    select: {
+      name: true,
+    },
+  });
+  return links;
+}
+
+export async function createTicketLink(
+  data: {ticketId: string; linkType: string},
+  userId: ID,
+  workspaceId: ID,
+) {
+  const client = await getClient();
+  //TODO: To be implemented
+  return true;
+}
+
+export async function removeTicketLink(
+  data: {ticketId: string; linkType: string},
+  userId: ID,
+  workspaceId: ID,
+) {
+  const client = await getClient();
+  //TODO: To be implemented
+  return true;
 }

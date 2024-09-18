@@ -319,13 +319,6 @@ export function TicketDetails(props: Props) {
   );
 }
 
-function Description({description}: {description: Maybe<string>}) {
-  if (!description) return null;
-  //TODO: sanitize with DOMPurify
-  const html = description;
-  return <div dangerouslySetInnerHTML={{__html: html}} />;
-}
-
 function getProgress(p: Maybe<string>): number {
   if (p) {
     const progress = Number(p);
