@@ -1,8 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {X, Send, Paperclip, Loader, ChevronDown} from 'lucide-react';
+import {X, Send, Paperclip, Loader, ChevronDown, Users} from 'lucide-react';
 import GroupPost from './groupPost';
 import InputMessage from './InputMessage';
 import DocumentList from './documentList';
+import {getChannelMembers} from '../api/api';
 
 export const ChannelView = ({
   channel,
@@ -16,6 +17,7 @@ export const ChannelView = ({
   sendMessage,
   loadMoreMessages,
   getPost,
+  users,
 }: {
   channel: any;
   token: string;
@@ -33,6 +35,7 @@ export const ChannelView = ({
   ) => void;
   loadMoreMessages: () => Promise<void>;
   getPost: (rootId: string) => void;
+  users: any[];
 }) => {
   if (!channel) {
     return <div>Chargement du canal</div>;
@@ -48,6 +51,10 @@ export const ChannelView = ({
   const [showNewMessageIndicator, setShowNewMessageIndicator] =
     useState<boolean>(false);
   const [postReply, setPostReply] = useState<any>(null);
+  const [_users, setUsers] = useState<any[]>();
+  const [showUserPopup, setShowUserPopup] = useState(false);
+  const userPopupRef = useRef<HTMLDivElement>(null);
+  const userButtonRef = useRef<HTMLButtonElement>(null);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior) => {
@@ -87,6 +94,36 @@ export const ChannelView = ({
       });
     }
   }, [loadMoreMessages, isLoading]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showUserPopup &&
+        userPopupRef.current &&
+        userButtonRef.current &&
+        !userPopupRef.current.contains(event.target as Node) &&
+        !userButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowUserPopup(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserPopup]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      const members = await getChannelMembers(channelId, token);
+      const filteredUsers = users.filter(user =>
+        members.some((member: any) => member.user_id === user.id),
+      );
+      setUsers(filteredUsers);
+    };
+    fetchMembers();
+  }, []);
 
   useEffect(() => {
     if (messagesRef.current && prevHeightRef.current > 0) {
@@ -169,14 +206,46 @@ export const ChannelView = ({
     setShowNewMessageIndicator(false);
   };
 
+  const toggleUserPopup = () => {
+    setShowUserPopup(!showUserPopup);
+  };
+
   const isSendEnabled = messageText.trim() !== '' || selectedFiles.length > 0;
 
   return (
     <div className="flex flex-col h-h-[calc(100vh-120px) bg-white flex-grow">
       <div className="bg-gray-100 p-4 border-b">
-        <h2 className="font-semibold text-xl">
-          #{channel.channel.display_name}
-        </h2>
+        <div className="flex flex-col items-start">
+          <h2 className="font-semibold text-xl mb-2">
+            #{channel.channel.display_name}
+          </h2>
+          <div className="relative">
+            <button
+              ref={userButtonRef}
+              onClick={toggleUserPopup}
+              className="flex items-center text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200">
+              <Users size={16} className="mr-1" />
+              <span>{_users ? _users.length : 0}</span>
+            </button>
+            {showUserPopup && (
+              <div
+                ref={userPopupRef}
+                className="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-10">
+                <div className="p-2 border-b border-gray-200">
+                  <h3 className="font-semibold">Membres du channel</h3>
+                </div>
+                <ul className="max-h-60 overflow-y-auto">
+                  {_users &&
+                    _users.map(user => (
+                      <li key={user.id} className="p-2">
+                        {user.nickname}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       <div className="flex-grow overflow-y-auto p-4" ref={messagesRef}>
         {isLoading && (

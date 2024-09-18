@@ -16,10 +16,12 @@ const ChatView = ({
   token,
   user,
   userStatus,
+  users,
 }: {
   token: any;
   user: any;
   userStatus: any;
+  users: any[];
 }) => {
   const [activeChannel, setActiveChannel] = useState<any>();
   const [_channels, setChannels] = useState<any>(null);
@@ -203,6 +205,7 @@ const ChatView = ({
         sendMessage={sendMessage}
         loadMoreMessages={loadMoreMessages}
         getPost={getPost}
+        users={users}
       />
       <Socket
         token={token}

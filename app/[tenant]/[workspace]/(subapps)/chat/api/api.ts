@@ -295,3 +295,21 @@ export const getUserStatus = async (userId: string, token: string) => {
   });
   return data;
 };
+
+export const getChannelMembers = async (channelId: string, token: string) => {
+  const {data} = await axios({
+    method: 'get',
+    url: `${API_URL}/channels/${channelId}/members`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return data;
+};
+
+export const getUsers = async (token: string) => {
+  const {data} = await axios({
+    method: 'get',
+    url: `${API_URL}/users`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return data;
+};
