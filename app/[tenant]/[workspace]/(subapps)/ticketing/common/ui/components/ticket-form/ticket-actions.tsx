@@ -200,6 +200,7 @@ export function RelatedTicketsHeader({
             <ComboBoxResponsive
               selectedTicket={selectedTicket}
               setSelectedTicket={setSelectedTicket}
+              ticketId={ticketId}
             />
 
             <Button size="sm" variant="success" onClick={handleCreateLink}>
@@ -215,9 +216,11 @@ export function RelatedTicketsHeader({
 function ComboBoxResponsive({
   selectedTicket,
   setSelectedTicket,
+  ticketId,
 }: {
   selectedTicket: Maybe<AOSProjectTask>;
   setSelectedTicket: (ticket: AOSProjectTask) => void;
+  ticketId: ID;
 }) {
   const [open, setOpen] = useState(false);
   const res = useResponsive();
@@ -228,7 +231,11 @@ function ComboBoxResponsive({
     : ([Popover, PopoverTrigger, PopoverContent] as const);
 
   const ticketList = (
-    <TicketList setOpen={setOpen} setSelectedTicket={setSelectedTicket} />
+    <TicketList
+      ticketId={ticketId}
+      setOpen={setOpen}
+      setSelectedTicket={setSelectedTicket}
+    />
   );
 
   return (
@@ -248,9 +255,11 @@ function ComboBoxResponsive({
 function TicketList({
   setOpen,
   setSelectedTicket,
+  ticketId,
 }: {
   setOpen: (open: boolean) => void;
   setSelectedTicket: (ticket: AOSProjectTask) => void;
+  ticketId: ID;
 }) {
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
@@ -262,6 +271,7 @@ function TicketList({
       const {error, message, data} = await searchTickets({
         search: search,
         workspaceURL,
+        excludeList: [ticketId],
       });
       if (error) {
         setTickets([]);
@@ -274,7 +284,7 @@ function TicketList({
       setTickets(data);
       setLoading(false);
     },
-    [workspaceURL, toast],
+    [workspaceURL, toast, ticketId],
   );
 
   const debouncedFetchTickets = useMemo(

@@ -680,8 +680,9 @@ export async function findTicketsBySearch(props: {
   userId: ID;
   workspaceId: ID;
   projectId?: ID;
+  excludeList?: ID[];
 }) {
-  const {search, userId, workspaceId, projectId} = props;
+  const {search, userId, workspaceId, projectId, excludeList} = props;
   const client = await getClient();
   const tickets = await client.aOSProjectTask.find({
     where: {
@@ -703,6 +704,11 @@ export async function findTicketsBySearch(props: {
             },
           },
         ],
+      }),
+      ...(Boolean(excludeList?.length) && {
+        id: {
+          notIn: excludeList,
+        },
       }),
     },
     take: 10,

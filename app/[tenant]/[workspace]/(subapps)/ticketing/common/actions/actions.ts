@@ -255,10 +255,12 @@ export async function searchTickets({
   search,
   workspaceURL,
   projectId,
+  excludeList,
 }: {
   search?: string;
   workspaceURL: string;
   projectId?: ID;
+  excludeList?: ID[];
 }): ActionResponse {
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) {
@@ -271,6 +273,7 @@ export async function searchTickets({
     userId: user.id,
     workspaceId: workspace.id,
     projectId,
+    excludeList,
   });
   return {error: false, data: clone(tickets)};
 }
