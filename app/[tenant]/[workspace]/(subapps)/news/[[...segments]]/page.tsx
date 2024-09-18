@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {ORDER_BY} from '@/constants';

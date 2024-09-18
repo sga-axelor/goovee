@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
 import {User} from '@/types';
 import {findWorkspace, findSubapp} from '@/orm/workspace';

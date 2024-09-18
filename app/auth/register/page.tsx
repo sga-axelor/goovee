@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {findWorkspaces} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';

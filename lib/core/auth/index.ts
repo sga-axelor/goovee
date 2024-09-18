@@ -1,3 +1,4 @@
+import {getServerSession} from 'next-auth';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
@@ -64,3 +65,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
+
+export async function getSession(...args: any[]) {
+  return getServerSession(...([...args, authOptions] as any));
+}

@@ -9,7 +9,7 @@ import {headers} from 'next/headers';
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
 import {i18n} from '@/i18n';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';

@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
 import {manager} from '@/tenant';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 import type {ID, Comment} from '@/types';

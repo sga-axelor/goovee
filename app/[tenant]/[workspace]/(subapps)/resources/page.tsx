@@ -2,7 +2,7 @@
 import {clone} from '@/utils';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //

@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';

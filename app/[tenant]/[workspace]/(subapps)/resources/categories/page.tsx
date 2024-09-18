@@ -8,7 +8,7 @@ import {Button} from '@/ui/components/button';
 import {workspacePathname} from '@/utils/workspace';
 import {clone} from '@/utils';
 import {i18n} from '@/i18n';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //

@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findDeliveryAddresses, findInvoicingAddresses} from '@/orm/address';
 import type {Partner} from '@/types';
 import {clone} from '@/utils';

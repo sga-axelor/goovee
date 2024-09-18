@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ----//
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 

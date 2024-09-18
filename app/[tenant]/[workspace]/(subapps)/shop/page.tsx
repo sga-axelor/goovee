@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';

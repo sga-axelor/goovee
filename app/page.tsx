@@ -8,7 +8,7 @@ import {
   findSubapps,
   findDefaultPartnerWorkspace,
 } from '@/orm/workspace';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {clone} from '@/utils';
 import {TenancyType, manager} from '@/lib/core/tenant';
 import {DEFAULT_TENANT} from '@/constants';

@@ -1,7 +1,7 @@
 'use server';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findPartnerByEmail, registerPartner} from '@/orm/partner';
 import {
   findDefaultPartnerWorkspaceConfig,

@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {updatePartnerAddress} from '@/orm/address';
 import {PartnerAddress} from '@/types';
 import {clone} from '@/utils';

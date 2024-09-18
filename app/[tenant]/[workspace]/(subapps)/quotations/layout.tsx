@@ -4,7 +4,7 @@ import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {findSubappAccess} from '@/orm/workspace';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/i18n';

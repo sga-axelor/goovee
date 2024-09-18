@@ -1,7 +1,7 @@
 import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findSubapps} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 

@@ -3,7 +3,7 @@ import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';

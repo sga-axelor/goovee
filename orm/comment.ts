@@ -8,7 +8,7 @@ import {promisify} from 'util';
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
 import {i18n} from '@/i18n';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';

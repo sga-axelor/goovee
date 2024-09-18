@@ -4,7 +4,7 @@ import axios from 'axios';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {clone} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {TENANT_HEADER} from '@/middleware';

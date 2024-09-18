@@ -1,7 +1,7 @@
 import {redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone, isNumeric} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';

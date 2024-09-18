@@ -4,7 +4,7 @@ import {redirect} from 'next/navigation';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import type {Category} from '@/types';
 import {DEFAULT_LIMIT} from '@/constants';
 

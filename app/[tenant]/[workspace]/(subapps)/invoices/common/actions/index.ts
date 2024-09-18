@@ -5,7 +5,7 @@ import type {Stripe} from 'stripe';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {
   DEFAULT_CURRENCY_CODE,

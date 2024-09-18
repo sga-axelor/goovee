@@ -1,5 +1,5 @@
 import {i18n} from '@/i18n';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import type {Tenant} from '@/tenant';
 

@@ -5,7 +5,7 @@ import {clone} from '@/utils';
 import {i18n} from '@/i18n';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';

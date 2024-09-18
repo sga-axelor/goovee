@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {i18n} from '@/i18n';
 
 export const metadata: Metadata = {
