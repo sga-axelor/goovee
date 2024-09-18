@@ -50,10 +50,13 @@ export const ChannelView = ({
   const [postReply, setPostReply] = useState<any>(null);
 
   const scrollToBottom = useCallback(
-    (behavior: ScrollBehavior, timer = 0) => {
-      if (messagesRef && messagesRef.current) {
+    (behavior: ScrollBehavior) => {
+      if (messagesRef.current) {
+        const scrollHeight = messagesRef.current.scrollHeight;
+        const height = messagesRef.current.clientHeight;
+        const maxScrollTop = scrollHeight - height;
         messagesRef.current.scrollTo({
-          top: messagesRef.current.scrollHeight,
+          top: maxScrollTop > 0 ? maxScrollTop : 0,
           behavior: behavior,
         });
       }
@@ -114,10 +117,14 @@ export const ChannelView = ({
   }, [channelJustSelected, setChannelJustSelected, scrollToBottom]);
 
   useEffect(() => {
-    if (isBottom()) {
-      scrollToBottom('smooth');
-    } else if (newMessage) {
-      setShowNewMessageIndicator(true);
+    if (newMessage) {
+      setTimeout(() => {
+        if (isBottom()) {
+          scrollToBottom('smooth');
+        } else {
+          setShowNewMessageIndicator(true);
+        }
+      }, 100);
     }
     setNewMessage(false);
   }, [newMessage, setNewMessage, scrollToBottom, isBottom]);
@@ -130,7 +137,9 @@ export const ChannelView = ({
       if (inputRef.current) {
         inputRef.current.focus();
       }
-      scrollToBottom('smooth');
+      setTimeout(() => {
+        scrollToBottom('smooth');
+      }, 100);
       setPostReply(null);
     }
   };

@@ -58,7 +58,6 @@ const ChatView = ({
   }, []);
 
   useEffect(() => {
-    console.log('active channel ', activeChannel);
     activeChannelRef.current = activeChannel;
     const fetchCurrentChannel = async () => {
       const currentChannel = await getChannelInfosByChannelId(

@@ -1,6 +1,7 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {Send, Paperclip, Type, X} from 'lucide-react';
+import {Send, Paperclip, Type, X, Eye, EyeOff} from 'lucide-react';
 import FormattingToolbar from './formatBar';
+import MarkdownRenderer from './markdownRenderer';
 
 const InputMessage = ({
   messageText,
@@ -28,6 +29,8 @@ const InputMessage = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [textareaHeight, setTextareaHeight] = useState(20);
   const [showFormatting, setShowFormatting] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
   const MIN_HEIGHT = 20;
   const MAX_HEIGHT = 150;
 
@@ -60,18 +63,38 @@ const InputMessage = ({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onClickSend = () => {
+    handleMessageSend();
+    setShowPreview(false);
+  };
+
+  const handleKeyPress = (
+    e: React.KeyboardEvent<HTMLTextAreaElement | HTMLDivElement>,
+  ) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleMessageSend();
+      setShowPreview(false);
     }
   };
 
   const toggleFormatting = () => {
     setShowFormatting(!showFormatting);
+    setShowPreview(false);
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
+      }
+    }, 0);
+  };
+
+  const togglePreview = () => {
+    setShowPreview(!showPreview);
+    setTimeout(() => {
+      if (showPreview) {
+        textareaRef.current?.focus();
+      } else {
+        previewRef.current?.focus();
       }
     }, 0);
   };
@@ -94,19 +117,30 @@ const InputMessage = ({
       )}
       <div className="flex flex-col bg-gray-100 rounded-lg p-2">
         <div className="flex items-end">
-          <textarea
-            ref={textareaRef}
-            placeholder="Écrire un message..."
-            className="flex-grow bg-transparent focus:outline-none resize-none overflow-y-auto"
-            value={messageText}
-            onChange={e => setMessageText(e.target.value)}
-            onKeyPress={handleKeyPress}
-            style={{
-              height: `${textareaHeight}px`,
-              minHeight: `${MIN_HEIGHT}px`,
-              maxHeight: `${MAX_HEIGHT}px`,
-            }}
-          />
+          {!showPreview ? (
+            <textarea
+              ref={textareaRef}
+              placeholder="Écrire un message..."
+              className="flex-grow bg-transparent focus:outline-none resize-none overflow-y-auto"
+              value={messageText}
+              onChange={e => setMessageText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              style={{
+                height: `${textareaHeight}px`,
+                minHeight: `${MIN_HEIGHT}px`,
+                maxHeight: `${MAX_HEIGHT}px`,
+              }}
+            />
+          ) : (
+            <div
+              ref={previewRef}
+              className="flex-grow bg-transparent focus:outline-none resize-none overflow-y-auto"
+              style={{maxHeight: `${MAX_HEIGHT}px`}}
+              tabIndex={0}
+              onKeyPress={handleKeyPress}>
+              <MarkdownRenderer content={messageText} />
+            </div>
+          )}
           <input
             type="file"
             ref={fileInputRef}
@@ -121,15 +155,34 @@ const InputMessage = ({
           />
           <Type
             size={20}
-            className="text-gray-400 cursor-pointer mr-2"
+            className={`text-gray-400 cursor-pointer mr-2 ${
+              showFormatting ? 'text-blue-500' : ''
+            }`}
             onClick={toggleFormatting}
           />
+          {showPreview ? (
+            <EyeOff
+              size={20}
+              className={`text-gray-400 cursor-pointer mr-2 ${
+                showPreview ? 'text-blue-500' : ''
+              }`}
+              onClick={togglePreview}
+            />
+          ) : (
+            <Eye
+              size={20}
+              className={`text-gray-400 cursor-pointer mr-2 ${
+                showPreview ? 'text-blue-500' : ''
+              }`}
+              onClick={togglePreview}
+            />
+          )}
           <Send
             size={20}
             className={`cursor-pointer transition-colors duration-200 ${
               isSendEnabled ? 'text-blue-500' : 'text-gray-400'
             }`}
-            onClick={handleMessageSend}
+            onClick={onClickSend}
           />
         </div>
         {showFormatting && (
