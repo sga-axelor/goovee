@@ -10,7 +10,7 @@ import {
 } from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {clone} from '@/utils';
-import {TenancyType, manager} from '@/lib/core/tenant';
+import {TenancyType, manager} from '@/tenant';
 import {DEFAULT_TENANT} from '@/constants';
 
 export default async function Page({

@@ -7,7 +7,7 @@ import {getSession} from '@/auth';
 import Content from './content';
 import {findWorkspaces} from '@/orm/workspace';
 import {DEFAULT_TENANT, SEARCH_PARAMS} from '@/constants';
-import {TenancyType, manager} from '@/lib/core/tenant';
+import {TenancyType, manager} from '@/tenant';
 
 export default async function Page({
   searchParams,
