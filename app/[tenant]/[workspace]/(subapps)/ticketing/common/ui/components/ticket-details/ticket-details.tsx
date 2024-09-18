@@ -33,13 +33,12 @@ import {useForm} from 'react-hook-form';
 
 import {mutate, MutateProps} from '../../../actions';
 import {ASSIGNMENT} from '../../../constants';
-import {formatDate} from '../../../utils';
+import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority} from '../pills';
 import {Stepper} from '../stepper';
 import {TicketFormSchema, TicketInfo} from '../ticket-form';
 import {AssignToSupplier} from '../ticket-form/ticket-actions';
 import {useRetryAction} from '../../../hooks';
-import {getImageURL} from '@/utils/image';
 
 type Props = {
   ticket: AOSProjectTask;
@@ -219,7 +218,7 @@ export function TicketDetails(props: Props) {
               <Avatar className="h-8 w-8">
                 <AvatarImage
                   className="object-cover"
-                  src={getImageURL(
+                  src={getProfilePic(
                     ticket.requestedByContact?.id
                       ? ticket.requestedByContact.picture?.id
                       : ticket.project?.company?.logo?.id,
@@ -253,7 +252,7 @@ export function TicketDetails(props: Props) {
                   {formatDate(ticket.taskEndDate)}
                 </p>
               </div>
-              {ticket.assignment !== 2 && (
+              {ticket.assignment !== ASSIGNMENT.PROVIDER && (
                 <div className="ml-auto">
                   <AssignToSupplier id={ticket.id!} version={ticket.version!} />
                 </div>

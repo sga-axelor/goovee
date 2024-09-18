@@ -11,7 +11,6 @@ import {
   TableRow,
 } from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
-import {getImageURL} from '@/utils/image';
 import {useRouter} from 'next/navigation';
 import {Fragment, useState} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
@@ -19,7 +18,7 @@ import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 // ---- LOCAL IMPORTS ---- //
 import {ASSIGNMENT, columns} from '../../../constants';
 import {Ticket} from '../../../types';
-import {formatDate} from '../../../utils';
+import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 
 interface TicketDetailRowProps {
@@ -83,7 +82,7 @@ export function TicketRows(props: {tickets: Ticket[]}) {
                 <Avatar className="h-12 w-12">
                   <AvatarImage
                     className="object-cover"
-                    src={getImageURL(
+                    src={getProfilePic(
                       ticket.requestedByContact?.id
                         ? ticket.requestedByContact.picture?.id
                         : ticket.project?.company?.logo?.id,
@@ -139,7 +138,7 @@ export function TicketRows(props: {tickets: Ticket[]}) {
                       <Avatar className="h-8 w-8">
                         <AvatarImage
                           className="object-cover"
-                          src={getImageURL(
+                          src={getProfilePic(
                             ticket.requestedByContact?.id
                               ? ticket.requestedByContact.picture?.id
                               : ticket.project?.company?.logo?.id,

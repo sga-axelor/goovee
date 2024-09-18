@@ -3,11 +3,19 @@
  */
 
 import {Maybe} from '@/types/util';
+import {getImageURL} from '@/utils/image';
 
-export const formatDate = (date: Maybe<Date | string>) => {
+export const formatDate = (date: Maybe<Date | string>): string => {
   if (!date) return '';
   return new Date(date).toLocaleDateString();
 };
+
+export function getProfilePic(id: Maybe<string>): string {
+  if (!id) {
+    return '/images/user';
+  }
+  return getImageURL(id);
+}
 
 export const getPages = (
   records: {_count?: string}[],
