@@ -26,6 +26,8 @@ export const Status = forwardRef<HTMLDivElement, PillProps>(({name}, ref) => {
   );
 });
 
+Status.displayName = 'Status';
+
 const priorityMap = new Map<string, Variant>();
 priorityMap.set('High', 'orange');
 priorityMap.set('Low', 'success');
@@ -44,6 +46,8 @@ export const Priority = forwardRef<HTMLDivElement, PillProps>(({name}, ref) => {
   );
 });
 
+Priority.displayName = 'Priority';
+
 export const Category = forwardRef<HTMLDivElement, PillProps>(({name}, ref) => {
   if (!name) return null;
   return (
@@ -52,3 +56,5 @@ export const Category = forwardRef<HTMLDivElement, PillProps>(({name}, ref) => {
     </Tag>
   );
 });
+
+Category.displayName = 'Category';
