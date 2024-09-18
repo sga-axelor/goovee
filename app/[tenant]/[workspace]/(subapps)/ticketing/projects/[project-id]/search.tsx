@@ -35,6 +35,7 @@ export function Search({
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [tickets, setTickets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   //TODO:  Need to handle loading state and race conditions
   const fetchTickets = useMemo(
@@ -55,6 +56,7 @@ export function Search({
           return;
         }
         setTickets(data);
+        setLoading(false);
       }, 500),
     [workspaceURL, projectId, toast],
   );
@@ -62,6 +64,7 @@ export function Search({
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const query = e.target.value;
+      setLoading(true);
       setOpen(!!query);
       setSearch(query);
       fetchTickets(query);
@@ -96,7 +99,9 @@ export function Search({
             'absolute bg-card top-[60px] right-0 border border-grey-1 rounded-lg no-scrollbar text-main-black z-50 w-full p-0',
             open ? 'block' : 'hidden',
           )}>
-          <CommandEmpty>{i18n.get('No results found.')}</CommandEmpty>
+          <CommandEmpty>
+            {loading ? i18n.get('Searching...') : i18n.get('No results found.')}
+          </CommandEmpty>
           <CommandGroup className="p-2">
             {Boolean(tickets?.length)
               ? tickets.map(ticket => (
