@@ -1,3 +1,4 @@
+import {forwardRef} from 'react';
 import {Maybe} from '@/types/util';
 import {Tag} from '@/ui/components';
 import type {Variant} from '@/ui/components/tag';
@@ -12,8 +13,9 @@ type PillProps = {
   name: Maybe<string>;
 };
 
-export function Status({name}: PillProps) {
+export const Status = forwardRef<HTMLDivElement, PillProps>(({name}, ref) => {
   if (!name) return null;
+
   return (
     <Tag
       variant={statusMap.get(name) ?? 'default'}
@@ -22,7 +24,7 @@ export function Status({name}: PillProps) {
       {name}
     </Tag>
   );
-}
+});
 
 const priorityMap = new Map<string, Variant>();
 priorityMap.set('High', 'orange');
@@ -30,8 +32,9 @@ priorityMap.set('Low', 'success');
 priorityMap.set('Normal', 'yellow');
 priorityMap.set('Urgent', 'destructive');
 
-export function Priority({name}: PillProps) {
+export const Priority = forwardRef<HTMLDivElement, PillProps>(({name}, ref) => {
   if (!name) return null;
+
   return (
     <Tag
       variant={priorityMap.get(name) ?? 'default'}
@@ -39,13 +42,13 @@ export function Priority({name}: PillProps) {
       {name}
     </Tag>
   );
-}
+});
 
-export function Category({name}: PillProps) {
+export const Category = forwardRef<HTMLDivElement, PillProps>(({name}, ref) => {
   if (!name) return null;
   return (
     <Tag variant="purple" className="text-[12px] py-1 me-5 rounded">
       {name}
     </Tag>
   );
-}
+});

@@ -32,7 +32,7 @@ import {useCallback, useEffect, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 
 import {mutate, MutateProps} from '../../../actions';
-import {ASSIGNMENT} from '../../../constants';
+import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
 import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority} from '../pills';
 import {Stepper} from '../stepper';
@@ -272,12 +272,13 @@ export function TicketDetails(props: Props) {
               {ticket.targetVersion?.title}
             </p>
             <hr />
-            {ticket.displayFinancialData && (
-              <p>
-                <span className="font-medium"> {i18n.get('Billing')}: </span>
-                {ticket.quantity} {ticket.invoicingUnit?.name}
-              </p>
-            )}
+            {ticket.displayFinancialData &&
+              ticket.invoicingType === INVOICING_TYPE.PACKAGE && (
+                <p>
+                  <span className="font-medium"> {i18n.get('Billing')}: </span>
+                  {ticket.quantity} {ticket.invoicingUnit?.name}
+                </p>
+              )}
             <div className="!mt-10">
               <FormField
                 control={form.control}
