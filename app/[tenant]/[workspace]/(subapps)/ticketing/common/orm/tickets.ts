@@ -724,13 +724,101 @@ export async function findTicketLinkTypes() {
 }
 
 export async function createTicketLink(
-  data: {ticketId: string; linkType: string},
+  data: {currentTicketId: ID; linkTicketId: ID; linkType: ID},
   userId: ID,
   workspaceId: ID,
 ) {
+  const {currentTicketId, linkTicketId, linkType} = data;
   const client = await getClient();
-  //TODO: To be implemented
-  return true;
+  const [hasCurrentTicketAccess, hasLinkToTicketAccess] = await Promise.all([
+    hasTicketAccess(currentTicketId, userId, workspaceId),
+    hasTicketAccess(linkTicketId, userId, workspaceId),
+  ]);
+  if (!hasCurrentTicketAccess || !hasLinkToTicketAccess) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
+  }
+
+  const type = await client.aOSProjectTaskLinkType.findOne({
+    where: {id: linkType},
+    select: {
+      oppositeLinkType: {
+        id: true,
+      },
+    },
+  });
+
+  if (!type) {
+    throw new Error(i18n.get('Invalid link type'));
+  }
+
+  const oppositeType = type?.oppositeLinkType;
+
+  let link1 = await client.aOSProjectTaskLink.create({
+    data: {
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      projectTask: {
+        select: {
+          id: currentTicketId,
+        },
+      },
+      relatedTask: {
+        select: {
+          id: linkTicketId,
+        },
+      },
+      projectTaskLinkType: {
+        select: {
+          id: type.id,
+        },
+      },
+    },
+    select: {id: true},
+  });
+
+  const link2 = await client.aOSProjectTaskLink.create({
+    data: {
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      projectTask: {
+        select: {
+          id: linkTicketId,
+        },
+      },
+      relatedTask: {
+        select: {
+          id: currentTicketId,
+        },
+      },
+      projectTaskLinkType: {
+        select: {
+          id: oppositeType ? oppositeType.id : type.id,
+        },
+      },
+      projectTaskLink: {
+        select: {
+          id: link1.id,
+        },
+      },
+    },
+    select: {id: true},
+  });
+
+  link1 = await client.aOSProjectTaskLink.update({
+    data: {
+      id: link1.id,
+      version: link1.version,
+      projectTaskLink: {
+        select: {
+          id: link2.id,
+        },
+      },
+    },
+    select: {id: true},
+  });
+
+  return [link1, link2];
 }
 
 export async function removeTicketLink(

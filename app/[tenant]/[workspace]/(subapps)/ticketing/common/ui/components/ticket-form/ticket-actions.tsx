@@ -43,6 +43,7 @@ import {debounce} from 'lodash';
 import {Maybe} from '@/types/util';
 import {cn} from '@/utils/css';
 import {useRouter} from 'next/navigation';
+import {ID} from '@goovee/orm';
 
 export function CancelTicket({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();
@@ -122,28 +123,38 @@ export function AssignToSupplier({id, version}: {id: string; version: number}) {
 
 export function RelatedTicketsHeader({
   linkTypes,
+  ticketId,
 }: {
   linkTypes: {
     id: string;
     name: string;
   }[];
+  ticketId: ID;
 }) {
   const {workspaceURL} = useWorkspace();
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
+  const {toast} = useToast();
   const [selectedTicket, setSelectedTicket] =
     useState<Maybe<AOSProjectTask>>(null);
   const [selectedLinkType, setSelectedLinkType] = useState(linkTypes[0].id);
 
   const handleCreateLink = async () => {
     if (selectedTicket?.id && selectedLinkType) {
-      await createLink({
+      const {error, message, data} = await createLink({
         workspaceURL,
         data: {
           linkType: selectedLinkType,
-          ticketId: selectedTicket.id,
+          linkTicketId: selectedTicket.id,
+          currentTicketId: ticketId,
         },
       });
+      if (error) {
+        return toast({
+          variant: 'destructive',
+          title: message,
+        });
+      }
       router.refresh();
     }
   };

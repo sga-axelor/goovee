@@ -39,6 +39,7 @@ import {
 } from '../../../../common/ui/components/ticket-form/ticket-actions';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
 import {Suspense} from 'react';
+import {ID} from '@goovee/orm';
 
 export default async function Page({
   params,
@@ -140,7 +141,10 @@ export default async function Page({
           <ChildTickets tickets={ticket.childTasks} />
         )}
         <Suspense>
-          <RelatedTickets relatedTickets={relatedTickets} />
+          <RelatedTickets
+            relatedTickets={relatedTickets}
+            ticketId={ticket.id}
+          />
         </Suspense>
       </div>
     </div>
@@ -177,13 +181,15 @@ async function ParentTicket({ticket}: {ticket: AOSProjectTask}) {
 
 async function RelatedTickets({
   relatedTickets,
+  ticketId,
 }: {
   relatedTickets?: AOSProjectTask[];
+  ticketId: ID;
 }) {
   const linkTypes = await findTicketLinkTypes();
   return (
     <>
-      <RelatedTicketsHeader linkTypes={clone(linkTypes)} />
+      <RelatedTicketsHeader linkTypes={clone(linkTypes)} ticketId={ticketId} />
       <hr className="mt-5" />
       <Table>
         <TableBody>

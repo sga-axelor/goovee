@@ -224,7 +224,7 @@ export async function cancelTicket(
 
 type CreateLinkProps = {
   workspaceURL: string;
-  data: {ticketId: string; linkType: string};
+  data: {currentTicketId: ID; linkTicketId: ID; linkType: ID};
 };
 
 export async function createLink(props: CreateLinkProps): ActionResponse {
@@ -265,6 +265,7 @@ export async function searchTickets({
     return {error: true, message};
   }
   const {user, workspace} = auth;
+
   const tickets = await findTicketsBySearch({
     search,
     userId: user.id,
