@@ -16,6 +16,7 @@ export const Socket = memo(function Socket({
   handleUserTyping,
   handleReaction,
   handleNewPost,
+  handleDeletedPost,
   channelId,
   message,
   token,
@@ -29,6 +30,7 @@ export const Socket = memo(function Socket({
     add: boolean,
   ) => void;
   handleNewPost?: (channelId: string, rootId: string, post: Post) => void;
+  handleDeletedPost?: (channelId: string, rootId: string, post: Post) => void;
   channelId?: string;
   message?: string;
   token: string;
@@ -90,6 +92,21 @@ export const Socket = memo(function Socket({
         }
       };
 
+      const handleSocketPostDeleted = async (msg: any) => {
+        const {data, broadcast} = msg;
+        let post = JSON.parse(data.post);
+        const {channel_id, root_id, user_id} = post;
+        const {omit_users} = broadcast;
+        if (
+          // (!omit_users || (omit_users && !omit_users[connectedUserId])) &&
+          // user_id !== connectedUserId
+          !omit_users ||
+          (omit_users && !omit_users[connectedUserId])
+        ) {
+          handleDeletedPost && handleDeletedPost(channel_id, root_id, post);
+        }
+      };
+
       /**
        * Handle the socket typing event
        * @param msg Socket msg event
@@ -119,6 +136,9 @@ export const Socket = memo(function Socket({
         case SocketEvents.REACTION_REMOVED:
           handleReactionRemoved(msg);
           break;
+
+        case SocketEvents.POST_DELETED:
+          handleSocketPostDeleted(msg);
 
         default:
       }

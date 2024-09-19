@@ -107,6 +107,15 @@ const ChatView = ({
     );
   };
 
+  const handleDeletedPost = useCallback(
+    async (channelId: string, rootId: string, post: any) => {
+      if (channelId == activeChannelRef.current) {
+        console.log('ce post a été effecé : ', post);
+      }
+    },
+    [activeChannelRef.current, setCurrentChannel],
+  );
+
   const handleNewReaction = useCallback(
     async (channelId: string, postId: string, reaction: any) => {
       if (
@@ -212,6 +221,7 @@ const ChatView = ({
         connectedUserId={user.id}
         handleNewPost={handleNewPost}
         handleReaction={handleNewReaction}
+        handleDeletedPost={handleDeletedPost}
       />
     </div>
   );
