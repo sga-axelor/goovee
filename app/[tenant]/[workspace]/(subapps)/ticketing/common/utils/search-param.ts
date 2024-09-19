@@ -7,11 +7,14 @@ import {z} from 'zod';
 import {i18n} from '@/lib/i18n';
 
 export const RelatedTicketSchema = z.object({
-  linkType: z.string(),
-  ticket: z.object({
-    id: z.string(),
-    name: z.string(),
-  }),
+  linkType: z.string({message: i18n.get('Link type is required')}),
+  ticket: z.object(
+    {
+      id: z.string(),
+      name: z.string(),
+    },
+    {message: i18n.get('Ticket is required')},
+  ),
 });
 
 export const FilterSchema = z.object({
