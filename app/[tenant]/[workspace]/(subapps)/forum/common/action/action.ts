@@ -610,7 +610,7 @@ export async function fetchComments({
   page,
   sort,
 }: {
-  postId: string;
+  postId: ID;
   limit?: number;
   page?: number;
   sort?: any;

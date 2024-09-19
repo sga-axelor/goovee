@@ -128,8 +128,7 @@ export const ThreadFooter = ({
         </div>
         {showComments && (
           <Comments
-            post={post}
-            comments={comments}
+            model={post}
             usePopUpStyles={usePopUpStyles}
             hideCloseComments={hideCloseComments}
             toggleComments={toggleComments}
