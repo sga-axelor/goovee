@@ -142,16 +142,20 @@ export function RelatedTicketsHeader(props: {
 }) {
   const [showAlert, setShowAlert] = useState(false);
 
+  const closeAlert = useCallback(() => {
+    setShowAlert(false);
+  }, []);
+
+  const openAlert = useCallback(() => {
+    setShowAlert(true);
+  }, []);
+
   return (
     <>
       <div className="flex justify-between">
         <h4 className="text-xl font-semibold">{i18n.get('Related tickets')}</h4>
         {!showAlert && (
-          <Button
-            size="sm"
-            type="button"
-            variant="success"
-            onClick={() => setShowAlert(true)}>
+          <Button size="sm" type="button" variant="success" onClick={openAlert}>
             <MdAdd className="size-6 lg:me-1" />
             <span className="hidden lg:inline">
               {i18n.get('Add related ticket')}
@@ -168,7 +172,7 @@ export function RelatedTicketsHeader(props: {
           </button>
           <AlertTitle>{i18n.get('Add related ticket')}</AlertTitle>
           <AlertDescription className="flex flex-wrap gap-4 p-2">
-            <RelatedTicketsForm {...props} />
+            <RelatedTicketsForm {...props} onSubmit={closeAlert} />
           </AlertDescription>
         </Alert>
       )}
@@ -179,12 +183,14 @@ export function RelatedTicketsHeader(props: {
 function RelatedTicketsForm({
   linkTypes,
   ticketId,
+  onSubmit,
 }: {
   linkTypes: {
     id: string;
     name: string;
   }[];
   ticketId: ID;
+  onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
   const router = useRouter();
@@ -198,7 +204,7 @@ function RelatedTicketsForm({
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
+  const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
     const {error, message, data} = await createLink({
       workspaceURL,
       data: {
@@ -213,6 +219,7 @@ function RelatedTicketsForm({
         title: message,
       });
     }
+    onSubmit();
     router.refresh();
   };
 
@@ -220,7 +227,7 @@ function RelatedTicketsForm({
     <Form {...form}>
       <form
         ref={formRef}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="overflow-y-auto">
         <div className="flex items-center justify-start space-x-5">
           <FormField
@@ -269,6 +276,7 @@ function RelatedTicketsForm({
     </Form>
   );
 }
+
 function ComboBoxResponsive({
   value,
   onChange,
