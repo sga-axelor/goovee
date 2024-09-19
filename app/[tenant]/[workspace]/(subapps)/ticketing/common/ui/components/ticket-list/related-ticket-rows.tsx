@@ -84,7 +84,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
     };
 
     return (
-      <Fragment key={ticket.id}>
+      <Fragment key={link.id}>
         <TableRow
           onClick={handleClick}
           className="cursor-pointer hover:bg-slate-100">
