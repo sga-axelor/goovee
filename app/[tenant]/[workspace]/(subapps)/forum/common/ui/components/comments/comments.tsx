@@ -260,7 +260,7 @@ export const Comments = memo(
           });
         }
       },
-      [post.id, commentsList.length],
+      [post.id, commentsList.length, toast],
     );
 
     const handleSeeMore = async () => {

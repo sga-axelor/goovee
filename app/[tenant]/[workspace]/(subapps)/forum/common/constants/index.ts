@@ -130,28 +130,27 @@ export const TEXT_ALIGNMENT = [
 ];
 
 export const SORT_TYPE = {
-  new: 'New',
-  old: 'Old',
+  new: 'new',
+  old: 'old',
+  popular: 'popular',
 };
 
 export const THREAD_SORT_BY_OPTIONS = [
   {
     id: 1,
-    key: 'new',
-    label: SORT_TYPE.new,
+    key: SORT_TYPE.new,
+    label: 'New',
   },
   {
     id: 2,
-    key: 'old',
-    label: SORT_TYPE.old,
+    key: SORT_TYPE.old,
+    label: 'Old',
   },
-  // No support for popular at the moment from backend
-  //  popularity = comments + reactions;
-  // {
-  //   id: 3,
-  //   key: 'popular',
-  //   label: 'Popular',
-  // },
+  {
+    id: 3,
+    key: SORT_TYPE.popular,
+    label: 'Popular',
+  },
 ];
 
 export const NOTIFICATIONS_OPTIONS = [

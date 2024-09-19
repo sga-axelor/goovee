@@ -7,6 +7,7 @@ import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {SORT_TYPE} from '@/subapps/forum/common/constants';
+import {getPopularQuery} from '@/subapps/forum/common/utils';
 
 export async function findGroups({
   workspace,
@@ -133,6 +134,16 @@ export async function findPosts({
     case SORT_TYPE.old:
       orderBy = {createdOn: ORDER_BY.ASC};
       break;
+    case SORT_TYPE.popular:
+      const query: any = await getPopularQuery({
+        page,
+        limit,
+        workspaceID,
+        groupIDs,
+        search,
+      });
+      const {posts = [], pageInfo = {}} = query;
+      return {posts, pageInfo};
     default:
       orderBy = {createdOn: ORDER_BY.DESC};
   }
