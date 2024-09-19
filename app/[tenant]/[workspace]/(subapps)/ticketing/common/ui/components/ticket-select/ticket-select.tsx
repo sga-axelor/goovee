@@ -22,6 +22,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {searchTickets} from '../../../actions';
 
+const INIT_SEARCH_VALUE = undefined;
 export function TicketSelect({
   className,
   value,
@@ -37,6 +38,8 @@ export function TicketSelect({
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const res = useResponsive();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
+  const searchRef = useRef<string | undefined>(INIT_SEARCH_VALUE);
+  const [loading, setLoading] = useState(true);
 
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
@@ -58,6 +61,9 @@ export function TicketSelect({
         return;
       }
       setTickets(data);
+      if (searchRef.current === search) {
+        setLoading(false);
+      }
     },
     [workspaceURL, toast, ticketId],
   );
@@ -65,6 +71,15 @@ export function TicketSelect({
   const debouncedFetchTickets = useMemo(
     () => debounce(fetchTickets, 500),
     [fetchTickets],
+  );
+
+  const handleSearch = useCallback(
+    (search?: string) => {
+      setLoading(true);
+      searchRef.current = search;
+      debouncedFetchTickets(search);
+    },
+    [debouncedFetchTickets],
   );
 
   const handleSelect = useCallback(
@@ -76,7 +91,7 @@ export function TicketSelect({
   );
 
   useEffect(() => {
-    fetchTickets();
+    fetchTickets(INIT_SEARCH_VALUE);
   }, [fetchTickets]);
 
   const [Controller, Trigger, Content] = small
@@ -87,10 +102,13 @@ export function TicketSelect({
     <Command shouldFilter={false}>
       <CommandInput
         placeholder={i18n.get('Search tickets')}
-        onValueChange={debouncedFetchTickets}
+        onValueChange={handleSearch}
+        loading={loading}
       />
       <CommandList>
-        <CommandEmpty>{i18n.get('No results found.')}</CommandEmpty>
+        <CommandEmpty>
+          {loading ? i18n.get('Searching...') : i18n.get('No results found.')}
+        </CommandEmpty>
         <CommandGroup>
           {tickets.map(option => (
             <CommandItem

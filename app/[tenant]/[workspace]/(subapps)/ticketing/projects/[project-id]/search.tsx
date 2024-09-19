@@ -1,7 +1,7 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 
@@ -36,6 +36,7 @@ export function Search({
   const [open, setOpen] = useState<boolean>(false);
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const searchRef = useRef<string | undefined>();
 
   const fetchTickets = useMemo(
     () =>
@@ -55,7 +56,9 @@ export function Search({
           return;
         }
         setTickets(data);
-        setLoading(false);
+        if (searchRef.current === search) {
+          setLoading(false);
+        }
       }, 500),
     [workspaceURL, projectId, toast],
   );
@@ -65,6 +68,7 @@ export function Search({
       const query = e.target.value;
       setLoading(true);
       setOpen(!!query);
+      searchRef.current = query;
       setSearch(query);
       fetchTickets(query);
     },
@@ -91,6 +95,7 @@ export function Search({
           )}
           value={search}
           onChangeCapture={handleSearch}
+          loading={loading}
         />
 
         <CommandList
