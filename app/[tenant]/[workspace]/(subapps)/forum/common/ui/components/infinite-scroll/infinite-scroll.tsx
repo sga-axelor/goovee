@@ -84,6 +84,10 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   }, [inView, page]);
 
   useEffect(() => {
+    setPage(1);
+  }, [sort, limit]);
+
+  useEffect(() => {
     setPosts(initialPosts);
   }, [initialPosts]);
 
