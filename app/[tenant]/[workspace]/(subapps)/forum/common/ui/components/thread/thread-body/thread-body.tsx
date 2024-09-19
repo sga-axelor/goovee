@@ -43,8 +43,8 @@ export const ThreadBody = ({
         acc.images.push(attachment);
       } else {
         acc.files.push({
-          type: attachment.metaFile.fileType,
-          name: attachment.metaFile.fileName,
+          type: attachment?.metaFile?.fileType,
+          name: attachment?.metaFile?.fileName,
         });
       }
       return acc;
