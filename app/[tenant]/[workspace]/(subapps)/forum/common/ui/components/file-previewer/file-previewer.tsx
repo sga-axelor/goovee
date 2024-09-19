@@ -1,12 +1,13 @@
 'use client';
 import Image from 'next/image';
+import React from 'react';
 
 // ---- LOCAL IMPORTS ---- //
 import {PdfViewer} from '@/subapps/forum/common/ui/components';
 
-export const FilePreviewer = ({
-  file,
-  hidePDFPreview = false,
+export const FilePreviewer = React.memo(({
+    file, 
+    hidePDFPreview = false,
 }: {
   file: any;
   hidePDFPreview?: boolean;
@@ -40,6 +41,6 @@ export const FilePreviewer = ({
       )}
     </div>
   );
-};
-
+});
+FilePreviewer.displayName = 'FilePreviewer';
 export default FilePreviewer;
