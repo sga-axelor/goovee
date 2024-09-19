@@ -12,7 +12,7 @@ export const formatDate = (date: Maybe<Date | string>): string => {
 
 export function getProfilePic(id: Maybe<string>): string {
   if (!id) {
-    return '/images/user';
+    return '/images/user.png';
   }
   return getImageURL(id);
 }
