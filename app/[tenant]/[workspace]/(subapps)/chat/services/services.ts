@@ -18,9 +18,17 @@ export const getDisplayName = (user: any | undefined): string => {
     if (!user.nickname) {
       return user.username || '';
     }
-    return user.nickname;
+    return getDisplayNickName(user.nickname);
   }
   return `${user.first_name} ${user.last_name}`;
+};
+
+export const getDisplayNickName = (name: string) => {
+  const words = name.toLowerCase().split(' ');
+  const capitalizedWords = words.map(
+    word => word.charAt(0).toUpperCase() + word.slice(1),
+  );
+  return capitalizedWords.join(' ');
 };
 
 export async function asyncForEach(array: any, callback: any) {

@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {X, Send, Paperclip, Loader, ChevronDown, Users} from 'lucide-react';
+import {Loader, ChevronDown, Users, LoaderCircle} from 'lucide-react';
 import GroupPost from './groupPost';
 import InputMessage from './InputMessage';
 import DocumentList from './documentList';
 import {getChannelMembers} from '../api/api';
+import ChannelHeader from './channelHeader';
 
 export const ChannelView = ({
   channel,
@@ -46,7 +47,7 @@ export const ChannelView = ({
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingOld, setIsLoadingOld] = useState<boolean>(false);
   const prevHeightRef = useRef<number>(0);
   const [showNewMessageIndicator, setShowNewMessageIndicator] =
     useState<boolean>(false);
@@ -55,17 +56,20 @@ export const ChannelView = ({
   const [showUserPopup, setShowUserPopup] = useState(false);
   const userPopupRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
+  const [isChannelReady, setIsChannelReady] = useState(false);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior) => {
-      if (messagesRef.current) {
-        const scrollHeight = messagesRef.current.scrollHeight;
-        const height = messagesRef.current.clientHeight;
-        const maxScrollTop = scrollHeight - height;
-        messagesRef.current.scrollTo({
-          top: maxScrollTop > 0 ? maxScrollTop : 0,
-          behavior: behavior,
-        });
+      if (messagesRef && messagesRef.current) {
+        setTimeout(() => {
+          const scrollHeight = messagesRef.current.scrollHeight;
+          const height = messagesRef.current.clientHeight;
+          const maxScrollTop = scrollHeight - height;
+          messagesRef.current.scrollTo({
+            top: maxScrollTop > 0 ? maxScrollTop : 0,
+            behavior: behavior,
+          });
+        }, 100);
       }
     },
     [messagesRef],
@@ -85,15 +89,15 @@ export const ChannelView = ({
     if (
       messagesRef.current &&
       messagesRef.current.scrollTop === 0 &&
-      !isLoading
+      !isLoadingOld
     ) {
-      setIsLoading(true);
+      setIsLoadingOld(true);
       prevHeightRef.current = messagesRef.current.scrollHeight;
       loadMoreMessages().then(() => {
-        setIsLoading(false);
+        setIsLoadingOld(false);
       });
     }
-  }, [loadMoreMessages, isLoading]);
+  }, [loadMoreMessages, isLoadingOld]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -113,17 +117,6 @@ export const ChannelView = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showUserPopup]);
-
-  useEffect(() => {
-    const fetchMembers = async () => {
-      const members = await getChannelMembers(channelId, token);
-      const filteredUsers = users.filter(user =>
-        members.some((member: any) => member.user_id === user.id),
-      );
-      setUsers(filteredUsers);
-    };
-    fetchMembers();
-  }, []);
 
   useEffect(() => {
     if (messagesRef.current && prevHeightRef.current > 0) {
@@ -148,7 +141,24 @@ export const ChannelView = ({
 
   useEffect(() => {
     if (channelJustSelected) {
-      scrollToBottom('instant');
+      setIsChannelReady(false);
+      const fetchMembers = async () => {
+        const members = await getChannelMembers(channelId, token);
+        const filteredUsers: any[] = users.filter(user =>
+          members.some((member: any) => member.user_id === user.id),
+        );
+        setUsers(filteredUsers);
+      };
+      fetchMembers();
+      setTimeout(() => {
+        scrollToBottom('instant');
+        setTimeout(() => {
+          scrollToBottom('instant');
+        }, 50);
+      }, 0);
+      setTimeout(() => {
+        setIsChannelReady(true);
+      }, 300);
       setChannelJustSelected(false);
     }
   }, [channelJustSelected, setChannelJustSelected, scrollToBottom]);
@@ -213,58 +223,43 @@ export const ChannelView = ({
   const isSendEnabled = messageText.trim() !== '' || selectedFiles.length > 0;
 
   return (
-    <div className="flex flex-col h-h-[calc(100vh-120px) bg-white flex-grow">
-      <div className="bg-gray-100 p-4 border-b">
-        <div className="flex flex-col items-start">
-          <h2 className="font-semibold text-xl mb-2">
-            #{channel.channel.display_name}
-          </h2>
-          <div className="relative">
-            <button
-              ref={userButtonRef}
-              onClick={toggleUserPopup}
-              className="flex items-center text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200">
-              <Users size={16} className="mr-1" />
-              <span>{_users ? _users.length : 0}</span>
-            </button>
-            {showUserPopup && (
-              <div
-                ref={userPopupRef}
-                className="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-10">
-                <div className="p-2 border-b border-gray-200">
-                  <h3 className="font-semibold">Membres du channel</h3>
-                </div>
-                <ul className="max-h-60 overflow-y-auto">
-                  {_users &&
-                    _users.map(user => (
-                      <li key={user.id} className="p-2">
-                        {user.nickname}
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            )}
-          </div>
+    <div className="flex flex-col h-[calc(100vh-120px)] bg-white flex-grow relative">
+      <ChannelHeader
+        users={_users}
+        channelName={channel.channel.display_name}
+      />
+
+      <div className="flex-grow overflow-hidden relative">
+        <div
+          className={`h-full overflow-y-auto p-4 ${
+            isChannelReady ? '' : 'invisible'
+          }`}
+          ref={messagesRef}>
+          {isLoadingOld && (
+            <div className="flex justify-center items-center py-2">
+              <Loader className="animate-spin" />
+            </div>
+          )}
+          {groupsPosts.map((group: any, index: number) => (
+            <GroupPost
+              key={group[0].id || index}
+              group={group}
+              token={token}
+              onEmojiClick={onEmojiClick}
+              isLast={index === groupsPosts.length - 1}
+              getPost={getPost}
+              setPostReply={setPostReply}
+            />
+          ))}
         </div>
-      </div>
-      <div className="flex-grow overflow-y-auto p-4" ref={messagesRef}>
-        {isLoading && (
-          <div className="flex justify-center items-center py-2">
-            <Loader className="animate-spin" />
+
+        {!isChannelReady && (
+          <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-80">
+            <LoaderCircle className="animate-spin" size={48} />
           </div>
         )}
-        {groupsPosts.map((group: any, index: number) => (
-          <GroupPost
-            key={group[0].id || index}
-            group={group}
-            token={token}
-            onEmojiClick={onEmojiClick}
-            isLast={index === groupsPosts.length - 1}
-            getPost={getPost}
-            setPostReply={setPostReply}
-          />
-        ))}
       </div>
+
       {showNewMessageIndicator && (
         <div
           className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-full cursor-pointer flex items-center shadow-lg"
@@ -273,6 +268,7 @@ export const ChannelView = ({
           Nouveau message
         </div>
       )}
+
       <InputMessage
         fileInputRef={fileInputRef}
         setMessageText={setMessageText}
@@ -285,6 +281,7 @@ export const ChannelView = ({
         postReply={postReply}
         setPostReply={setPostReply}
       />
+
       {selectedFiles.length > 0 && (
         <DocumentList selectedFiles={selectedFiles} removeFile={removeFile} />
       )}
