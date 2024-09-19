@@ -8,13 +8,12 @@ import {i18n} from '@/lib/i18n';
 
 export const RelatedTicketSchema = z.object({
   linkType: z.string(),
-  tickets: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-    })
-    .optional(),
+  ticket: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
 });
+
 export const FilterSchema = z.object({
   requestedBy: z.array(z.string()).optional(),
   priority: z.array(z.string()).optional(),

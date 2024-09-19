@@ -133,53 +133,17 @@ export function AssignToSupplier({id, version}: {id: string; version: number}) {
   );
 }
 
-export function RelatedTicketsHeader({
-  linkTypes,
-  ticketId,
-}: {
+export function RelatedTicketsHeader(props: {
   linkTypes: {
     id: string;
     name: string;
   }[];
   ticketId: ID;
 }) {
-  const {workspaceURL} = useWorkspace();
   const [showAlert, setShowAlert] = useState(false);
-  const router = useRouter();
-  const {toast} = useToast();
-  const [selectedTicket, setSelectedTicket] =
-    useState<Maybe<AOSProjectTask>>(null);
-  const [selectedLinkType, setSelectedLinkType] = useState(linkTypes[0]?.id);
-  const formRef = useRef<HTMLFormElement>(null);
-  const form = useForm<z.infer<typeof RelatedTicketSchema>>({
-    resolver: zodResolver(RelatedTicketSchema),
-    defaultValues: {
-      linkType: '',
-      tickets: {id: '', name: ''},
-    },
-  });
-  const onSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
-    if (values.linkType && values.tickets) {
-      const {error, message, data} = await createLink({
-        workspaceURL,
-        data: {
-          linkType: values.linkType,
-          linkTicketId: values.tickets.id,
-          currentTicketId: ticketId,
-        },
-      });
-      if (error) {
-        return toast({
-          variant: 'destructive',
-          title: message,
-        });
-      }
-      router.refresh();
-    }
-  };
 
   return (
-    <Form {...form}>
+    <>
       <div className="flex justify-between">
         <h4 className="text-xl font-semibold">{i18n.get('Related tickets')}</h4>
         {!showAlert && (
@@ -196,66 +160,122 @@ export function RelatedTicketsHeader({
         )}
       </div>
       {showAlert && (
-        <form
-          ref={formRef}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="overflow-y-auto">
-          <div className="flex items-center justify-start space-x-5">
-            <FormField
-              control={form.control}
-              name="linkType"
-              render={({field}) => (
-                <FormItem>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}>
-                    <SelectTrigger className="w-fit">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {linkTypes.map(linkType => (
-                        <SelectItem value={linkType.id} key={linkType.id}>
-                          {linkType.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="tickets"
-              render={({field}) => (
-                <FormItem>
-                  <ComboBoxResponsive
-                    selectedTicket={selectedTicket}
-                    setSelectedTicket={field.onChange}
-                    ticketId={ticketId}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button size="sm" variant="success">
-              {i18n.get('Create Link')}
-            </Button>
-          </div>
-        </form>
+        <Alert variant="success" className="group">
+          <button
+            className="ring-0 absolute right-2 top-2 rounded-md cursor-pointer p-1 text-foreground/50 lg:opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none group-hover:opacity-100"
+            onClick={() => setShowAlert(false)}>
+            <X className="h-4 w-4" />
+          </button>
+          <AlertTitle>{i18n.get('Add related ticket')}</AlertTitle>
+          <AlertDescription className="flex flex-wrap gap-4 p-2">
+            <RelatedTicketsForm {...props} />
+          </AlertDescription>
+        </Alert>
       )}
-    </Form>
+    </>
   );
 }
 
-function ComboBoxResponsive({
-  selectedTicket,
-  setSelectedTicket,
+function RelatedTicketsForm({
+  linkTypes,
   ticketId,
 }: {
-  selectedTicket: Maybe<AOSProjectTask>;
-  setSelectedTicket: (ticket: AOSProjectTask) => void;
+  linkTypes: {
+    id: string;
+    name: string;
+  }[];
+  ticketId: ID;
+}) {
+  const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const {toast} = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+  const form = useForm<z.infer<typeof RelatedTicketSchema>>({
+    resolver: zodResolver(RelatedTicketSchema),
+    defaultValues: {
+      linkType: linkTypes[0]?.id,
+      ticket: undefined,
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
+    const {error, message, data} = await createLink({
+      workspaceURL,
+      data: {
+        linkType: values.linkType,
+        linkTicketId: values.ticket.id,
+        currentTicketId: ticketId,
+      },
+    });
+    if (error) {
+      return toast({
+        variant: 'destructive',
+        title: message,
+      });
+    }
+    router.refresh();
+  };
+
+  return (
+    <Form {...form}>
+      <form
+        ref={formRef}
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="overflow-y-auto">
+        <div className="flex items-center justify-start space-x-5">
+          <FormField
+            control={form.control}
+            name="linkType"
+            render={({field}) => (
+              <FormItem>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}>
+                  <SelectTrigger className="w-fit">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {linkTypes.map(linkType => (
+                      <SelectItem value={linkType.id} key={linkType.id}>
+                        {linkType.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="ticket"
+            render={({field}) => (
+              <FormItem>
+                <ComboBoxResponsive
+                  value={field.value}
+                  onChange={field.onChange}
+                  ticketId={ticketId}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button size="sm" variant="success">
+            {i18n.get('Create Link')}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
+function ComboBoxResponsive({
+  value,
+  onChange,
+  ticketId,
+}: {
+  value: Maybe<AOSProjectTask>;
+  onChange: (ticket: AOSProjectTask) => void;
   ticketId: ID;
 }) {
   const [open, setOpen] = useState(false);
@@ -267,18 +287,14 @@ function ComboBoxResponsive({
     : ([Popover, PopoverTrigger, PopoverContent] as const);
 
   const ticketList = (
-    <TicketList
-      ticketId={ticketId}
-      setOpen={setOpen}
-      setSelectedTicket={setSelectedTicket}
-    />
+    <TicketList ticketId={ticketId} setOpen={setOpen} onChange={onChange} />
   );
 
   return (
     <Controller open={open} onOpenChange={setOpen}>
       <Trigger asChild>
         <Button variant="outline" className="w-[150px] justify-start">
-          {selectedTicket ? selectedTicket.name : i18n.get('Select ticket')}
+          {value ? value.name : i18n.get('Select ticket')}
         </Button>
       </Trigger>
       <Content className={cn({['w-[200px] p-0']: !small})} align="start">
@@ -290,11 +306,11 @@ function ComboBoxResponsive({
 
 function TicketList({
   setOpen,
-  setSelectedTicket,
+  onChange: onChange,
   ticketId,
 }: {
   setOpen: (open: boolean) => void;
-  setSelectedTicket: (ticket: AOSProjectTask) => void;
+  onChange: (ticket: AOSProjectTask) => void;
   ticketId: ID;
 }) {
   const {workspaceURL} = useWorkspace();
@@ -357,7 +373,7 @@ function TicketList({
               value={ticket.id}
               onSelect={value => {
                 setOpen(false);
-                setSelectedTicket(tickets.find(ticket => ticket.id === value));
+                onChange(tickets.find(ticket => ticket.id === value));
               }}>
               {ticket.name}
             </CommandItem>
