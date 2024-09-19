@@ -161,7 +161,7 @@ export function RelatedTicketsHeader({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <h4 className="text-xl font-semibold">{i18n.get('Related tickets')}</h4>
         {!showAlert && (
           <Button
@@ -169,15 +169,17 @@ export function RelatedTicketsHeader({
             type="button"
             variant="success"
             onClick={() => setShowAlert(true)}>
-            <MdAdd className="size-6 me-1" />
-            {i18n.get('Add related ticket')}
+            <MdAdd className="size-6 lg:me-1" />
+            <span className="hidden lg:inline">
+              {i18n.get('Add related ticket')}
+            </span>
           </Button>
         )}
       </div>
       {showAlert && (
         <Alert variant="success" className="group">
           <button
-            className="ring-0 absolute right-2 top-2 rounded-md cursor-pointer p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none group-hover:opacity-100"
+            className="ring-0 absolute right-2 top-2 rounded-md cursor-pointer p-1 text-foreground/50 lg:opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none group-hover:opacity-100"
             onClick={() => setShowAlert(false)}>
             <X className="h-4 w-4" />
           </button>
