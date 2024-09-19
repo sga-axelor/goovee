@@ -866,13 +866,12 @@ export async function deleteTicketLink(
   if (link.projectTaskLink?.id) {
     linksToDelete.push(link.projectTaskLink.id);
   }
-  const links = await client.aOSProjectTaskLink.deleteAll({
+  const deleteCount = await client.aOSProjectTaskLink.deleteAll({
     where: {
       id: {
         in: linksToDelete,
       },
     },
   });
-  console.dir({links}, {depth: null});
-  return links;
+  return deleteCount;
 }
