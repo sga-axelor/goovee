@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {Send, Paperclip, Type, X, Eye, EyeOff} from 'lucide-react';
+import {SendHorizontal, Paperclip, Type, X, Eye, EyeOff} from 'lucide-react';
 import FormattingToolbar from './formatBar';
 import MarkdownRenderer from './markdownRenderer';
 
@@ -33,6 +33,25 @@ const InputMessage = ({
   const previewRef = useRef<HTMLDivElement>(null);
   const MIN_HEIGHT = 20;
   const MAX_HEIGHT = 150;
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    const focusInterval = setInterval(() => {
+      if (
+        textareaRef.current &&
+        document.activeElement !== textareaRef.current
+      ) {
+        textareaRef.current.focus();
+      }
+    }, 100);
+
+    return () => clearInterval(focusInterval);
+  }, []);
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -177,7 +196,7 @@ const InputMessage = ({
               onClick={togglePreview}
             />
           )}
-          <Send
+          <SendHorizontal
             size={20}
             className={`cursor-pointer transition-colors duration-200 ${
               isSendEnabled ? 'text-blue-500' : 'text-gray-400'

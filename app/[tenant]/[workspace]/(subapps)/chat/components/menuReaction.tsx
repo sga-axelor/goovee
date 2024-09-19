@@ -6,9 +6,11 @@ import {SmilePlus, Reply} from 'lucide-react';
 const MenuReaction = ({
   onEmojiClick,
   onReplyClick,
+  isReply,
 }: {
   onEmojiClick: (name: string) => void;
   onReplyClick: () => void;
+  isReply: boolean;
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const firstThreeEmojis = Object.entries(emojis).slice(0, 3);
@@ -33,11 +35,13 @@ const MenuReaction = ({
           onClick={() => setShowPopup(!showPopup)}>
           <SmilePlus />
         </button>
-        <button
-          className="hover:bg-gray-200 rounded-full p-1 text-gray-600"
-          onClick={onReplyClick}>
-          <Reply size={24} />
-        </button>
+        {!isReply && (
+          <button
+            className="hover:bg-gray-200 rounded-full p-1 text-gray-600"
+            onClick={onReplyClick}>
+            <Reply size={24} />
+          </button>
+        )}
       </div>
       {showPopup && (
         <EmojiPopup

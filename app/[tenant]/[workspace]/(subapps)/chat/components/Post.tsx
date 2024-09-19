@@ -32,6 +32,8 @@ const Post = ({
     onEmojiClick(name, post.id);
   };
 
+  const isReply: boolean = post.root_id !== '';
+
   const groupedReactions: GroupedReactions = post.metadata?.reactions
     ? post.metadata.reactions.reduce((acc: GroupedReactions, reaction: any) => {
         if (!acc[reaction.emoji_name]) {
@@ -79,7 +81,11 @@ const Post = ({
         </div>
       )}
       {isHovered && (
-        <MenuReaction onEmojiClick={onClick} onReplyClick={onReplyClick} />
+        <MenuReaction
+          onEmojiClick={onClick}
+          onReplyClick={onReplyClick}
+          isReply={isReply}
+        />
       )}
       {Object.keys(groupedReactions).length > 0 && (
         <div className="flex flex-wrap mt-2">
