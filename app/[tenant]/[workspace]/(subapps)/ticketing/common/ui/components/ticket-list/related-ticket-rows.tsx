@@ -10,16 +10,18 @@ import {
   TableCell,
   TableRow,
 } from '@/ui/components';
-import {useResponsive} from '@/ui/hooks';
+import {useResponsive, useToast} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
 import {Fragment, useState} from 'react';
-import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
+import {MdArrowDropDown, MdArrowDropUp, MdDeleteForever} from 'react-icons/md';
+import {ID} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {ASSIGNMENT, columns} from '../../../constants';
 import {Ticket} from '../../../types';
-import {formatDate, getProfilePic} from '../../../utils';
+import {getProfilePic} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
+import {deleteLink} from '../../../actions';
 
 interface TicketDetailRowProps {
   label: string;
@@ -33,25 +35,29 @@ const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
   </>
 );
 
-export function TicketRows(props: {tickets: Ticket[]}) {
+type RelatedTicketRowProps = {
+  ticketId: ID;
+  links: {
+    id: ID;
+    version: number;
+    projectTaskLinkType: {
+      id: ID;
+      version: number;
+      name: string;
+    };
+    relatedTask: Ticket;
+  }[];
+};
+
+export function RelatedTicketRows(props: RelatedTicketRowProps) {
+  const {links, ticketId} = props;
   const {workspaceURI} = useWorkspace();
-  const {tickets} = props;
-  const [show, setShow] = useState(false);
-  const [id, setId] = useState('');
+  const [openId, setOpenId] = useState<string | null>(null);
   const res = useResponsive();
   const router = useRouter();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
 
-  const handleCollapse = (Id: string, e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    setId(Id);
-    setShow(!show);
-    if (Id !== id) {
-      setShow(true);
-    }
-  };
-
-  if (!tickets.length) {
+  if (!links.length) {
     return (
       <TableRow>
         <TableCell colSpan={columns.length + 1} align="center">
@@ -60,7 +66,11 @@ export function TicketRows(props: {tickets: Ticket[]}) {
       </TableRow>
     );
   }
-  return tickets.map(ticket => {
+
+  return links.map(link => {
+    const ticket = link.relatedTask;
+    if (!ticket) return;
+
     const handleClick = () => {
       ticket.project?.id &&
         router.push(
@@ -68,32 +78,23 @@ export function TicketRows(props: {tickets: Ticket[]}) {
         );
     };
 
+    const handleCollapse = (e: React.MouseEvent<HTMLTableCellElement>) => {
+      e.stopPropagation();
+      setOpenId(id => (id === ticket.id ? null : ticket.id));
+    };
+
     return (
       <Fragment key={ticket.id}>
         <TableRow
           onClick={handleClick}
           className="cursor-pointer hover:bg-slate-100">
-          <TableCell className="px-5">
-            <p className="font-medium">#{ticket.id}</p>
+          <TableCell>
+            <p className="font-medium">{link.projectTaskLinkType.name}</p>
           </TableCell>
           {!small ? (
             <>
-              <TableCell className="flex md:justify-start items-center justify-end">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage
-                    className="object-cover"
-                    src={getProfilePic(
-                      ticket.requestedByContact?.id
-                        ? ticket.requestedByContact.picture?.id
-                        : ticket.project?.company?.logo?.id,
-                    )}
-                  />
-                </Avatar>
-                <p className="ms-2">
-                  {ticket.requestedByContact?.id
-                    ? ticket.requestedByContact.name
-                    : ticket.project?.company?.name}
-                </p>
+              <TableCell className="px-5">
+                <p className="font-medium">#{ticket.id}</p>
               </TableCell>
 
               <TableCell className="max-w-40 ">
@@ -113,27 +114,34 @@ export function TicketRows(props: {tickets: Ticket[]}) {
                   ? ticket.assignedToContact?.name
                   : ticket?.project?.company?.name}
               </TableCell>
-              <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
             </>
           ) : (
             <TableCell
               className="flex float-end items-center"
-              onClick={e => handleCollapse(ticket.id, e)}>
-              <p className="max-w-48 line-clamp-2">{ticket.name}</p>
-              {show && ticket?.id === id ? (
+              onClick={handleCollapse}>
+              <p className="font-medium px-5">#{ticket.id}</p>
+              {ticket?.id === openId ? (
                 <MdArrowDropUp className="cursor-pointer ms-1 inline" />
               ) : (
                 <MdArrowDropDown className="cursor-pointer ms-1 inline" />
               )}
             </TableCell>
           )}
+          <DeleteCell
+            ticketId={ticketId}
+            relatedTicketId={ticket.id}
+            linkId={link.id}
+          />
         </TableRow>
         {small && (
-          <Collapsible open={ticket.id === id && show} asChild>
+          <Collapsible open={ticket.id === openId} asChild>
             <TableRow>
               <CollapsibleContent asChild>
-                <TableCell colSpan={2}>
+                <TableCell colSpan={3}>
                   <div className="grid grid-cols-2 gap-y-2">
+                    <Item label="Subject">
+                      <p className="max-w-48 line-clamp-2">{ticket.name}</p>
+                    </Item>
                     <Item label="Requested by">
                       <Avatar className="h-8 w-8">
                         <AvatarImage
@@ -163,9 +171,6 @@ export function TicketRows(props: {tickets: Ticket[]}) {
                         ? ticket.assignedToContact?.name
                         : ticket.project?.company?.name}
                     </Item>
-                    <Item label="Updated On">
-                      {formatDate(ticket.updatedOn)}
-                    </Item>
                   </div>
                 </TableCell>
               </CollapsibleContent>
@@ -175,4 +180,64 @@ export function TicketRows(props: {tickets: Ticket[]}) {
       </Fragment>
     );
   });
+}
+
+function DeleteCell({
+  ticketId,
+  linkId,
+  relatedTicketId,
+}: {
+  ticketId: ID;
+  linkId: ID;
+  relatedTicketId: ID;
+}) {
+  const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const {toast} = useToast();
+  const [loading, setLoading] = useState(false);
+
+  const handleDelete = async (e: React.MouseEvent<HTMLTableCellElement>) => {
+    e.stopPropagation();
+    if (!loading) {
+      try {
+        const {error, message} = await deleteLink({
+          workspaceURL,
+          data: {
+            currentTicketId: ticketId,
+            linkTicketId: relatedTicketId,
+            linkId,
+          },
+        });
+
+        if (error) {
+          return toast({
+            variant: 'destructive',
+            title: message,
+          });
+        }
+        router.refresh();
+      } catch (e) {
+        if (e instanceof Error) {
+          return toast({
+            variant: 'destructive',
+            title: e.message,
+          });
+        }
+        toast({
+          variant: 'destructive',
+          title: i18n.get('An error occurred'),
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  return (
+    <TableCell
+      className="text-center text-destructive cursor-pointer"
+      onClick={handleDelete}>
+      <MdDeleteForever className="w-5 h-5" />
+    </TableCell>
+  );
 }

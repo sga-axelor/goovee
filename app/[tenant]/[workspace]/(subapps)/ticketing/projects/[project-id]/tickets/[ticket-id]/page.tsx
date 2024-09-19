@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {AOSProjectTask} from '@/goovee/.generated/models';
+import {AOSProjectTask, AOSProjectTaskLink} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
@@ -15,8 +15,10 @@ import {
 } from '@/ui/components';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
+import {ID} from '@goovee/orm';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
+import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
@@ -26,20 +28,15 @@ import {
   findTicketPriorities,
   findTicketStatuses,
 } from '../../../../common/orm/projects';
-import {
-  findTicket,
-  findTicketLinkTypes,
-  findTicketsBySearch,
-} from '../../../../common/orm/tickets';
+import {findTicket, findTicketLinkTypes} from '../../../../common/orm/tickets';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
   CancelTicket,
   CloseTicket,
   RelatedTicketsHeader,
 } from '../../../../common/ui/components/ticket-form/ticket-actions';
+import {RelatedTicketRows} from '../../../../common/ui/components/ticket-list/related-ticket-rows';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
-import {Suspense} from 'react';
-import {ID} from '@goovee/orm';
 
 export default async function Page({
   params,
@@ -74,9 +71,6 @@ export default async function Page({
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;
-  const relatedTickets = ticket.projectTaskLinkList
-    ?.map(l => l.relatedTask!)
-    .filter(Boolean);
 
   return (
     <div className="container mt-5 mb-20">
@@ -142,7 +136,7 @@ export default async function Page({
         )}
         <Suspense>
           <RelatedTickets
-            relatedTickets={relatedTickets}
+            links={ticket.projectTaskLinkList}
             ticketId={ticket.id}
           />
         </Suspense>
@@ -180,10 +174,10 @@ async function ParentTicket({ticket}: {ticket: AOSProjectTask}) {
 }
 
 async function RelatedTickets({
-  relatedTickets,
+  links,
   ticketId,
 }: {
-  relatedTickets?: AOSProjectTask[];
+  links?: AOSProjectTaskLink[];
   ticketId: ID;
 }) {
   const linkTypes = await findTicketLinkTypes();
@@ -193,7 +187,7 @@ async function RelatedTickets({
       <hr className="mt-5" />
       <Table>
         <TableBody>
-          <TicketRows tickets={clone(relatedTickets ?? [])} />
+          <RelatedTicketRows links={clone(links ?? [])} ticketId={ticketId} />
         </TableBody>
       </Table>
     </>

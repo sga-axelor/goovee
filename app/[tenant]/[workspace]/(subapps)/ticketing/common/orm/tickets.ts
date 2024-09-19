@@ -491,6 +491,9 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       },
       projectTaskLinkList: {
         select: {
+          projectTaskLinkType: {
+            name: true,
+          },
           relatedTask: {
             name: true,
             updatedOn: true,
@@ -736,11 +739,11 @@ export async function createTicketLink(
 ) {
   const {currentTicketId, linkTicketId, linkType} = data;
   const client = await getClient();
-  const [hasCurrentTicketAccess, hasLinkToTicketAccess] = await Promise.all([
+  const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
     hasTicketAccess(currentTicketId, userId, workspaceId),
     hasTicketAccess(linkTicketId, userId, workspaceId),
   ]);
-  if (!hasCurrentTicketAccess || !hasLinkToTicketAccess) {
+  if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
   }
@@ -815,6 +818,7 @@ export async function createTicketLink(
     data: {
       id: link1.id,
       version: link1.version,
+      updatedOn: new Date(),
       projectTaskLink: {
         select: {
           id: link2.id,
@@ -827,12 +831,48 @@ export async function createTicketLink(
   return [link1, link2];
 }
 
-export async function removeTicketLink(
-  data: {ticketId: string; linkType: string},
+export async function deleteTicketLink(
+  data: {currentTicketId: ID; linkTicketId: ID; linkId: ID},
   userId: ID,
   workspaceId: ID,
 ) {
+  const {currentTicketId, linkTicketId, linkId} = data;
   const client = await getClient();
-  //TODO: To be implemented
-  return true;
+  const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
+    hasTicketAccess(currentTicketId, userId, workspaceId),
+    hasTicketAccess(linkTicketId, userId, workspaceId),
+  ]);
+  if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
+  }
+
+  const link = await client.aOSProjectTaskLink.findOne({
+    where: {
+      id: linkId,
+    },
+    select: {
+      projectTaskLink: {
+        id: true,
+      },
+    },
+  });
+
+  if (!link) {
+    throw new Error(i18n.get('Link does not exist'));
+  }
+
+  const linksToDelete = [linkId];
+  if (link.projectTaskLink?.id) {
+    linksToDelete.push(link.projectTaskLink.id);
+  }
+  const links = await client.aOSProjectTaskLink.deleteAll({
+    where: {
+      id: {
+        in: linksToDelete,
+      },
+    },
+  });
+  console.dir({links}, {depth: null});
+  return links;
 }

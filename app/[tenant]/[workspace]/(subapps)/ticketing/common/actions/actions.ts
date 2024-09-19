@@ -20,6 +20,7 @@ import {
   findTicketsBySearch,
   updateTicketViaWS,
   createTicketLink,
+  deleteTicketLink,
 } from '../orm/tickets';
 import {
   CreateTicketSchema,
@@ -236,6 +237,35 @@ export async function createLink(props: CreateLinkProps): ActionResponse {
 
   try {
     const res = await createTicketLink(data, user.id, workspace.id);
+    return {
+      error: false,
+      data: clone(res),
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
+type DeleteLinkProps = {
+  workspaceURL: string;
+  data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
+};
+
+export async function deleteLink(props: DeleteLinkProps): ActionResponse {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    const res = await deleteTicketLink(data, user.id, workspace.id);
     return {
       error: false,
       data: clone(res),
