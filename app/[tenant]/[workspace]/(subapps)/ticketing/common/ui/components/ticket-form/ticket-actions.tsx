@@ -160,7 +160,7 @@ export function RelatedTicketsHeader(props: {
         )}
       </div>
       {showAlert && (
-        <Alert variant="success" className="group">
+        <Alert variant="warning" className="group">
           <button
             className="ring-0 absolute right-2 top-2 rounded-md cursor-pointer p-1 text-foreground/50 lg:opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none group-hover:opacity-100"
             onClick={() => setShowAlert(false)}>
