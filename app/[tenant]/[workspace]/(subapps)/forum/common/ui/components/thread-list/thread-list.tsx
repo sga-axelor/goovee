@@ -23,7 +23,9 @@ export const ThreadList = ({
   posts: Post[];
   pageInfo: any;
 }) => {
-  const {update} = useSearchParams();
+  const {update, searchParams} = useSearchParams();
+
+  const sort = searchParams.get('sort') ?? 'new';
 
   const handleSortBy = (value: any) => {
     if (!value) {
@@ -44,6 +46,7 @@ export const ThreadList = ({
         <div className="flex gap-2 text-base flex-shrink-0">
           <div>{i18n.get('Sort by')}:</div>
           <DropdownToggle
+            value={sort}
             options={THREAD_SORT_BY_OPTIONS}
             handleDropdown={handleSortBy}
           />

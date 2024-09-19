@@ -9,13 +9,16 @@ interface Option {
 }
 
 interface DropdownToggleProps {
+  value: string;
   options: Option[];
   handleDropdown?: (value: string) => void;
 }
 
 export const DropdownToggle = memo(
-  ({options, handleDropdown}: DropdownToggleProps) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+  ({value, options, handleDropdown}: DropdownToggleProps) => {
+    const [currentIndex, setCurrentIndex] = useState(
+      options.findIndex(option => option.key === value) || 0,
+    );
 
     const handleClick = () => {
       const newIndex = (currentIndex + 1) % options.length;
@@ -23,14 +26,13 @@ export const DropdownToggle = memo(
       handleDropdown?.(options[newIndex].key);
     };
 
+    const {label} = options[currentIndex];
+
     return (
       <div className="flex flex-col gap-3">
         {options.length > 0 && (
-          <div
-            key={options[currentIndex].key}
-            className="flex gap-2 cursor-pointer"
-            onClick={handleClick}>
-            <div className="font-semibold">{options[currentIndex].label}</div>
+          <div className="flex gap-2 cursor-pointer" onClick={handleClick}>
+            <div className="font-semibold">{label}</div>
             <MdOutlineExpandMore className="w-6 h-6" />
           </div>
         )}
