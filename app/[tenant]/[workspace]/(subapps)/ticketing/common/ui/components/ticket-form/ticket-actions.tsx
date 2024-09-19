@@ -171,7 +171,7 @@ export function RelatedTicketsHeader(props: {
             <X className="h-4 w-4" />
           </button>
           <AlertTitle>{i18n.get('Add related ticket')}</AlertTitle>
-          <AlertDescription className="flex flex-wrap gap-4 p-2">
+          <AlertDescription>
             <RelatedTicketsForm {...props} onSubmit={closeAlert} />
           </AlertDescription>
         </Alert>
@@ -228,56 +228,61 @@ function RelatedTicketsForm({
       <form
         ref={formRef}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="overflow-y-auto">
-        <div className="flex items-center justify-start space-x-5">
+        className="flex flex-col gap-4">
+        <div className="flex gap-4 p-2 flex-col lg:items-center lg:flex-row">
           <FormField
             control={form.control}
             name="linkType"
             render={({field}) => (
-              <FormItem>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}>
-                  <SelectTrigger className="w-fit">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {linkTypes.map(linkType => (
-                      <SelectItem value={linkType.id} key={linkType.id}>
-                        {linkType.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <FormItem className="lg:grow-[1]">
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {linkTypes.map(linkType => (
+                        <SelectItem value={linkType.id} key={linkType.id}>
+                          {linkType.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="ticket"
             render={({field}) => (
-              <FormItem>
-                <ComboBoxResponsive
-                  value={field.value}
-                  onChange={field.onChange}
-                  ticketId={ticketId}
-                />
+              <FormItem className="lg:grow-[2]">
+                <FormControl>
+                  <ComboBoxResponsive
+                    className="w-full"
+                    value={field.value}
+                    onChange={field.onChange}
+                    ticketId={ticketId}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button size="sm" variant="success">
-            {i18n.get('Create Link')}
-          </Button>
         </div>
+        <Button size="sm" variant="success" className="ms-auto">
+          {i18n.get('Create Link')}
+        </Button>
       </form>
     </Form>
   );
 }
 
 function ComboBoxResponsive({
+  className,
   value,
   onChange,
   ticketId,
@@ -285,8 +290,10 @@ function ComboBoxResponsive({
   value: Maybe<AOSProjectTask>;
   onChange: (ticket: AOSProjectTask) => void;
   ticketId: ID;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const res = useResponsive();
   const small = (['xs', 'sm'] as const).some(x => res[x]);
 
@@ -298,14 +305,23 @@ function ComboBoxResponsive({
     <TicketList ticketId={ticketId} setOpen={setOpen} onChange={onChange} />
   );
 
+  const buttonWidth = buttonRef.current?.offsetWidth;
   return (
     <Controller open={open} onOpenChange={setOpen}>
       <Trigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
+        <Button variant="outline" className={className} ref={buttonRef}>
           {value ? value.name : i18n.get('Select ticket')}
         </Button>
       </Trigger>
-      <Content className={cn({['w-[200px] p-0']: !small})} align="start">
+      <Content
+        align="start"
+        style={
+          small
+            ? undefined
+            : {
+                width: buttonWidth ? `${buttonWidth}px` : '300px',
+              }
+        }>
         {small ? <div className="mt-4 border-t">{ticketList}</div> : ticketList}
       </Content>
     </Controller>
