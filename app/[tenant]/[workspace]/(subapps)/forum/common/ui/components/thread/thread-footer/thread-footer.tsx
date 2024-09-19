@@ -1,6 +1,6 @@
 'use client';
 
-import {MdOutlineThumbUp} from 'react-icons/md';
+import {MdOutlineModeComment, MdOutlineThumbUp} from 'react-icons/md';
 import {useSession} from 'next-auth/react';
 import {useRouter} from 'next/navigation';
 
@@ -15,29 +15,38 @@ import {ModelType} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {
   COMMENT,
+  COMMENTS,
   DISABLED_COMMENT_PLACEHOLDER,
 } from '@/subapps/forum/common/constants';
 import {Comments} from '@/subapps/forum/common/ui/components';
 import {CommentResponse} from '@/subapps/forum/common/types/forum';
+import {useState} from 'react';
 
 export const ThreadFooter = ({
   post,
   comments,
-  showComments,
+  showCommentsByDefault,
   hideCloseComments = false,
   usePopUpStyles = false,
-  toggleComments,
 }: {
   post: any;
   comments: any;
-  showComments: boolean;
+  showCommentsByDefault: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
-
-  toggleComments: () => void;
 }) => {
+  const [showComments, setShowComments] = useState(
+    showCommentsByDefault ?? false,
+  );
+  const toggleComments = () => {
+    comments.length >= 1 &&
+      setShowComments(prevShowComments => !prevShowComments);
+  };
+
   const {data: session} = useSession();
   const isLoggedIn = session?.user?.id;
+
+  const commentsLength = comments?.length;
 
   const {workspaceURL} = useWorkspace();
 
@@ -85,32 +94,48 @@ export const ThreadFooter = ({
   };
 
   return (
-    <div className="border-t">
-      <div className="flex items-center gap-6 px-4 py-2">
+    <div className="flex flex-col">
+      <div className="flex justify-between px-4 pb-4">
+        <div></div>
         <div
-          className={`${isLoggedIn ? 'cursor-pointer' : 'bg-black/20 text-gray-700 p-2 rounded-lg cursor-not-allowed'}`}>
-          <MdOutlineThumbUp className="w-6 h-6 " />
+          className={`flex gap-2 items-center ${commentsLength ? 'cursor-pointer' : 'cursor-default'} `}
+          onClick={toggleComments}>
+          <MdOutlineModeComment className="w-6 h-6" />
+          <span className="text-sm">
+            {commentsLength}{' '}
+            {commentsLength > 1
+              ? i18n.get(COMMENTS.toLowerCase())
+              : i18n.get(COMMENT.toLowerCase())}
+          </span>
         </div>
-        <Comment
-          disabled={!isLoggedIn}
-          className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
-          placeholderText={
-            isLoggedIn
-              ? i18n.get(COMMENT)
-              : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
-          }
-          onSubmit={handleComment}
-        />
       </div>
-      {showComments && (
-        <Comments
-          post={post}
-          comments={comments}
-          usePopUpStyles={usePopUpStyles}
-          hideCloseComments={hideCloseComments}
-          toggleComments={toggleComments}
-        />
-      )}
+      <div className="border-t">
+        <div className="flex items-center gap-6 px-4 py-2">
+          <div
+            className={`${isLoggedIn ? 'cursor-pointer' : 'bg-black/20 text-gray-700 p-2 rounded-lg cursor-not-allowed'}`}>
+            <MdOutlineThumbUp className="w-6 h-6 " />
+          </div>
+          <Comment
+            disabled={!isLoggedIn}
+            className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+            placeholderText={
+              isLoggedIn
+                ? i18n.get(COMMENT)
+                : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
+            }
+            onSubmit={handleComment}
+          />
+        </div>
+        {showComments && (
+          <Comments
+            post={post}
+            comments={comments}
+            usePopUpStyles={usePopUpStyles}
+            hideCloseComments={hideCloseComments}
+            toggleComments={toggleComments}
+          />
+        )}
+      </div>
     </div>
   );
 };

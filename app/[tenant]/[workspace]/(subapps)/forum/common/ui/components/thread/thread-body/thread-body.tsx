@@ -1,6 +1,6 @@
 'use client';
 import React, {useState} from 'react';
-import {MdOutlineMoreHoriz, MdOutlineModeComment} from 'react-icons/md';
+import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
@@ -16,33 +16,21 @@ import {DATE_FORMATS} from '@/constants';
 import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  COMMENT,
-  COMMENTS,
-  NOT_INTERESTED,
-  REPORT,
-} from '@/subapps/forum/common/constants';
+import {NOT_INTERESTED, REPORT} from '@/subapps/forum/common/constants';
 import {
   FilePreviewer,
   ImageGallery,
 } from '@/subapps/forum/common/ui/components';
 import {Post} from '@/subapps/forum/common/types/forum';
 
-interface MetaFile {
-  fileType: string;
-}
-
 export const ThreadBody = ({
   post,
   usePopUpStyles = false,
-  toggleComments,
 }: {
   post?: Post;
   usePopUpStyles?: boolean;
-  toggleComments: () => void;
 }) => {
-  const {title, content, attachmentList, author, createdOn, commentList}: any =
-    post || {};
+  const {title, content, attachmentList, author, createdOn}: any = post || {};
 
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => {
@@ -63,8 +51,6 @@ export const ThreadBody = ({
     },
     {images: [], files: []},
   ) || {images: [], files: []};
-
-  const commentsLength = commentList?.length;
 
   return (
     <>
@@ -125,21 +111,6 @@ export const ThreadBody = ({
               <FilePreviewer file={file} hidePDFPreview={true} />
             </React.Fragment>
           ))}
-
-        <div className="flex justify-between">
-          <div></div>
-          <div
-            className={`flex gap-2 items-center ${commentsLength ? 'cursor-pointer' : 'cursor-default'} `}
-            onClick={toggleComments}>
-            <MdOutlineModeComment className="w-6 h-6" />
-            <span className="text-sm">
-              {commentsLength}{' '}
-              {commentsLength > 1
-                ? i18n.get(COMMENTS.toLowerCase())
-                : i18n.get(COMMENT.toLowerCase())}
-            </span>
-          </div>
-        </div>
       </div>
     </>
   );

@@ -58,7 +58,7 @@ export const CommentContent = memo(
     const [showSubComments, setShowSubComments] = useState(false);
 
     const {data: session} = useSession();
-    const {workspaceURL, workspaceURI} = useWorkspace();
+    const {workspaceURL} = useWorkspace();
     const {toast} = useToast();
     const router = useRouter();
 
@@ -166,7 +166,7 @@ export const CommentContent = memo(
               className={`flex gap-2 items-center ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
               onClick={handleSubComments}>
               <MdOutlineModeComment className="w-4 h-4" />
-              {parentCommentId === id && (
+              {parentCommentId === id && childCommentList.length > 0 ? (
                 <span className="text-sm">
                   {childCommentList.length}{' '}
                   {i18n.get(
@@ -175,7 +175,7 @@ export const CommentContent = memo(
                       : COMMENT.toLowerCase(),
                   )}
                 </span>
-              )}
+              ) : null}
             </div>
           </div>
           {showSubComments && (
@@ -311,6 +311,7 @@ export const Comments = memo(
           <div className="flex gap-2 text-base flex-shrink-0">
             <div>{i18n.get('Sort by')}:</div>
             <DropdownToggle
+              value={sortBy}
               options={THREAD_SORT_BY_OPTIONS}
               handleDropdown={handleSortBy}
             />

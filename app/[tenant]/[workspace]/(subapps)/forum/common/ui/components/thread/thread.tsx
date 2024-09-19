@@ -25,31 +25,18 @@ export const Thread = ({
 }) => {
   const {forumGroup, commentList}: any = post || {};
 
-  const [showComments, setShowComments] = useState(
-    showCommentsByDefault ?? false,
-  );
-  const toggleComments = () => {
-    commentList?.length >= 1 &&
-      setShowComments(prevShowComments => !prevShowComments);
-  };
-
   return (
     <div className="bg-white rounded-lg flex flex-col gap-4">
       {showHeader && (
         <ThreadHeader title={forumGroup?.name} image={forumGroup?.image} />
       )}
-      <ThreadBody
-        post={post}
-        usePopUpStyles={usePopUpStyles}
-        toggleComments={toggleComments}
-      />
+      <ThreadBody post={post} usePopUpStyles={usePopUpStyles} />
       <ThreadFooter
         post={post}
         comments={commentList}
         usePopUpStyles={usePopUpStyles}
         hideCloseComments={hideCloseComments}
-        showComments={showComments}
-        toggleComments={toggleComments}
+        showCommentsByDefault={showCommentsByDefault}
       />
     </div>
   );
