@@ -234,7 +234,7 @@ function RelatedTicketsForm({
             control={form.control}
             name="linkType"
             render={({field}) => (
-              <FormItem className="lg:grow-[1]">
+              <FormItem className="lg:grow-[1] text-primary">
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}

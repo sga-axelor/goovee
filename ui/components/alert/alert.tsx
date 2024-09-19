@@ -16,7 +16,7 @@ const alertVariants = cva(
         error:
           'border-error-dark text-error-dark bg-error-light dark:border-destructive [&>svg]:text-error-dark',
         warning:
-          'bg-warning-light border-warning-dark text-warning-dark [&>svg]:text-warning-dark',
+          'border-palette-yellow-dark text-palette-yellow-dark bg-palette-yellow [&>svg]:text-yellow-dark',
         primary:
           'bg-primary-light border-primary-dark text-primary-dark [&>svg]:text-primary-dark',
       },
