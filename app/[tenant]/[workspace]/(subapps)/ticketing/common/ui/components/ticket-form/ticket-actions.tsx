@@ -1,6 +1,8 @@
 'use client';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
 import {
   Alert,
   AlertDescription,
@@ -23,7 +25,15 @@ import {
 } from '@/ui/components';
 import {useMediaQuery, useResponsive, useToast} from '@/ui/hooks';
 import {Drawer, DrawerContent, DrawerTrigger} from '@ui/components/drawer';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/ui/components/form';
 
 import {
   assignToSupplier,
@@ -44,6 +54,8 @@ import {Maybe} from '@/types/util';
 import {cn} from '@/utils/css';
 import {useRouter} from 'next/navigation';
 import {ID} from '@goovee/orm';
+import {useForm} from 'react-hook-form';
+import {RelatedTicketSchema} from '../../../utils/search-param';
 
 export function CancelTicket({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();
@@ -137,15 +149,22 @@ export function RelatedTicketsHeader({
   const {toast} = useToast();
   const [selectedTicket, setSelectedTicket] =
     useState<Maybe<AOSProjectTask>>(null);
-  const [selectedLinkType, setSelectedLinkType] = useState(linkTypes[0].id);
-
-  const handleCreateLink = async () => {
-    if (selectedTicket?.id && selectedLinkType) {
+  const [selectedLinkType, setSelectedLinkType] = useState(linkTypes[0]?.id);
+  const formRef = useRef<HTMLFormElement>(null);
+  const form = useForm<z.infer<typeof RelatedTicketSchema>>({
+    resolver: zodResolver(RelatedTicketSchema),
+    defaultValues: {
+      linkType: '',
+      tickets: {id: '', name: ''},
+    },
+  });
+  const onSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
+    if (values.linkType && values.tickets) {
       const {error, message, data} = await createLink({
         workspaceURL,
         data: {
-          linkType: selectedLinkType,
-          linkTicketId: selectedTicket.id,
+          linkType: values.linkType,
+          linkTicketId: values.tickets.id,
           currentTicketId: ticketId,
         },
       });
@@ -160,8 +179,8 @@ export function RelatedTicketsHeader({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
+    <Form {...form}>
+      <div className="flex justify-between">
         <h4 className="text-xl font-semibold">{i18n.get('Related tickets')}</h4>
         {!showAlert && (
           <Button
@@ -177,41 +196,56 @@ export function RelatedTicketsHeader({
         )}
       </div>
       {showAlert && (
-        <Alert variant="success" className="group">
-          <button
-            className="ring-0 absolute right-2 top-2 rounded-md cursor-pointer p-1 text-foreground/50 lg:opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none group-hover:opacity-100"
-            onClick={() => setShowAlert(false)}>
-            <X className="h-4 w-4" />
-          </button>
-          <AlertTitle>{i18n.get('Add related ticket')}</AlertTitle>
-          <AlertDescription className="flex flex-wrap gap-4 p-2">
-            <Select
-              onValueChange={setSelectedLinkType}
-              value={selectedLinkType}>
-              <SelectTrigger className="w-fit">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {linkTypes.map(linkType => (
-                  <SelectItem value={linkType.id} key={linkType.id}>
-                    {linkType.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <ComboBoxResponsive
-              selectedTicket={selectedTicket}
-              setSelectedTicket={setSelectedTicket}
-              ticketId={ticketId}
+        <form
+          ref={formRef}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="overflow-y-auto">
+          <div className="flex items-center justify-start space-x-5">
+            <FormField
+              control={form.control}
+              name="linkType"
+              render={({field}) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <SelectTrigger className="w-fit">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {linkTypes.map(linkType => (
+                        <SelectItem value={linkType.id} key={linkType.id}>
+                          {linkType.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
-            <Button size="sm" variant="success" onClick={handleCreateLink}>
+            <FormField
+              control={form.control}
+              name="tickets"
+              render={({field}) => (
+                <FormItem>
+                  <ComboBoxResponsive
+                    selectedTicket={selectedTicket}
+                    setSelectedTicket={field.onChange}
+                    ticketId={ticketId}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button size="sm" variant="success">
               {i18n.get('Create Link')}
             </Button>
-          </AlertDescription>
-        </Alert>
+          </div>
+        </form>
       )}
-    </div>
+    </Form>
   );
 }
 
