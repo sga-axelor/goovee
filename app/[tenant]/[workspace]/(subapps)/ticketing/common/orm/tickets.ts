@@ -469,6 +469,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       progress: true,
       quantity: true,
       unitPrice: true,
+      invoicingType: true,
       invoicingUnit: {
         name: true,
       },

@@ -274,10 +274,21 @@ export function TicketDetails(props: Props) {
             <hr />
             {ticket.displayFinancialData &&
               ticket.invoicingType === INVOICING_TYPE.PACKAGE && (
-                <p>
-                  <span className="font-medium"> {i18n.get('Billing')}: </span>
-                  {ticket.quantity} {ticket.invoicingUnit?.name}
-                </p>
+                <div className="flex gap-4">
+                  <span className="font-medium">
+                    {i18n.get('Financial data')}:
+                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{i18n.get('Qty')}</span>
+                    <span>{ticket.quantity}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-medium">
+                      {i18n.get('Invoicing unit')}
+                    </span>
+                    <span>{ticket.invoicingUnit?.name}</span>
+                  </div>
+                </div>
               )}
             <div className="!mt-10">
               <FormField
