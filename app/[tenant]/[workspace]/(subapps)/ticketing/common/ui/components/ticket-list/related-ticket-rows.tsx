@@ -148,7 +148,9 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                 <TableCell colSpan={3}>
                   <div className="grid grid-cols-2 gap-y-2">
                     <Item label="Subject">
-                      <p className="max-w-48 line-clamp-2">{ticket.name}</p>
+                      <span className="max-w-48 line-clamp-2">
+                        {ticket.name}
+                      </span>
                     </Item>
                     <Item label="Requested by">
                       <Avatar className="h-8 w-8">
