@@ -45,6 +45,7 @@ type Props = {
   statuses: {id: ID; name: string}[];
   categories: {id: ID; name: string}[];
   priorities: {id: ID; name: string}[];
+  contacts: {id: ID; name: string}[];
 };
 
 const getDefaultValues = (ticket: Maybe<AOSProjectTask>) => {
@@ -53,11 +54,12 @@ const getDefaultValues = (ticket: Maybe<AOSProjectTask>) => {
     category: ticket?.projectTaskCategory?.id,
     priority: ticket?.priority?.id,
     description: ticket?.description ?? '',
+    assignedTo: ticket?.assignedToContact?.id,
   };
 };
 
 export function TicketDetails(props: Props) {
-  const {ticket, categories, priorities, statuses} = props;
+  const {ticket, categories, priorities, statuses, contacts} = props;
 
   const {action} = useRetryAction(mutate);
 
@@ -241,12 +243,49 @@ export function TicketDetails(props: Props) {
 
             <div className="flex items-start">
               <div className="flex flex-col space-y-2">
-                <p>
-                  <span className="font-medium pe-2">Assigned to:</span>
-                  {ticket.assignment === ASSIGNMENT.PROVIDER
-                    ? ticket.project?.company?.name
-                    : ticket.assignedToContact?.name}
-                </p>
+                <div>
+                  {ticket.assignment === ASSIGNMENT.PROVIDER ? (
+                    <div className="flex items-center gap-2 space-y-0">
+                      <span className="font-medium pe-2">
+                        {i18n.get('Assigned to')}:
+                      </span>
+                      <div className="h-10 flex items-center">
+                        {ticket.project?.company?.name}
+                      </div>
+                    </div>
+                  ) : (
+                    <FormField
+                      control={form.control}
+                      name="assignedTo"
+                      render={({field}) => (
+                        <FormItem className="flex items-center gap-2 space-y-0">
+                          <FormLabel className="font-medium text-md">
+                            {i18n.get('Assigned to')}:
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value?.toString()}>
+                            <FormControl>
+                              <SelectTrigger className="w-fit">
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {contacts.map(contact => (
+                                <SelectItem
+                                  value={contact.id.toString()}
+                                  key={contact.id}>
+                                  {contact.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                </div>
                 <p>
                   <span className="font-medium pe-2">Expected on:</span>
                   {formatDate(ticket.taskEndDate)}

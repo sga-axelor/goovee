@@ -241,6 +241,7 @@ export async function updateTicket(
     category,
     status,
     assignment,
+    assignedTo,
     id,
     version,
   } = data;
@@ -281,6 +282,13 @@ export async function updateTicket(
       }),
       ...(assignment && {
         assignment: assignment,
+      }),
+      ...(assignedTo && {
+        assignedToContact: {
+          select: {
+            id: assignedTo,
+          },
+        },
       }),
     },
     select: {

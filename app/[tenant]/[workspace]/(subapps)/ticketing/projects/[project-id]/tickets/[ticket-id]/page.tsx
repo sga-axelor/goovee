@@ -24,6 +24,7 @@ import {FaChevronRight} from 'react-icons/fa';
 // ---- LOCAL IMPORTS ---- //
 import {encodeFilter} from '@/utils/filter';
 import {
+  findContactPartners,
   findTicketCategories,
   findTicketPriorities,
   findTicketStatuses,
@@ -61,12 +62,14 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const [ticket, statuses, categories, priorities] = await Promise.all([
-    findTicket(ticketId, projectId),
-    findTicketStatuses(projectId),
-    findTicketCategories(projectId),
-    findTicketPriorities(projectId),
-  ]);
+  const [ticket, statuses, categories, priorities, contacts] =
+    await Promise.all([
+      findTicket(ticketId, projectId),
+      findTicketStatuses(projectId),
+      findTicketCategories(projectId),
+      findTicketPriorities(projectId),
+      findContactPartners(projectId),
+    ]);
   if (!ticket) notFound();
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
@@ -128,6 +131,7 @@ export default async function Page({
         statuses={clone(statuses)}
         categories={clone(categories)}
         priorities={clone(priorities)}
+        contacts={clone(contacts)}
       />
       <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
         {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}

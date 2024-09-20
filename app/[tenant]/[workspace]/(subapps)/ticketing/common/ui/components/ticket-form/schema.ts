@@ -9,6 +9,7 @@ export const TicketFormSchema = z.object({
   category: z.string({required_error: i18n.get('Category is required')}),
   priority: z.string({required_error: i18n.get('Priority is required')}),
   description: z.string().optional(),
+  assignedTo: z.string().optional(),
 });
 
 export const UpdateTicketSchema = z.object({
@@ -20,9 +21,12 @@ export const UpdateTicketSchema = z.object({
   status: z.string().optional(),
   assignment: z.number().optional(),
   description: z.string().optional(),
+  assignedTo: z.string().optional(),
 });
 
-export const CreateTicketSchema = TicketFormSchema.extend({
+export const CreateTicketSchema = TicketFormSchema.omit({
+  assignedTo: true,
+}).extend({
   project: z.string(),
 });
 
