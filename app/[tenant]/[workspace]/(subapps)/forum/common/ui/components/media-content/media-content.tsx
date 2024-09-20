@@ -9,12 +9,8 @@ import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
 import {findMedia} from '@/subapps/forum/common/action/action';
-import {DynamicIcon} from '@/app/[tenant]/[workspace]/(subapps)/resources/common/ui/components';
-import {
-  getFileTypeIcon,
-  getIconColor,
-} from '@/app/[tenant]/[workspace]/(subapps)/resources/common/utils';
-
+import { getFileTypeIcon, getIconColor } from '@/subapps/forum/common/utils/file';
+import { DynamicIcon } from '@/subapps/forum/common/ui/components';
 export const MediaContent = ({groupId = ''}: {groupId: string}) => {
   const [media, setMedia] = useState([]);
   const [attachmentList, setAttachmentList] = useState<{metaFile: MetaFile}[]>(
