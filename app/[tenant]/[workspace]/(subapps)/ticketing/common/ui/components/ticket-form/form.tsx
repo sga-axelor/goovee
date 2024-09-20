@@ -121,10 +121,7 @@ export function TicketForm(props: TicketFormProps) {
   );
 
   return (
-    <div className="container">
-      <div className="flex items-center justify-between mt-5 mb-5">
-        <h3 className="text-lg font-semibold">{i18n.get('Create a ticket')}</h3>
-      </div>
+    <div className="mt-10">
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
           <div className="space-y-4 rounded-md border bg-card p-4">
