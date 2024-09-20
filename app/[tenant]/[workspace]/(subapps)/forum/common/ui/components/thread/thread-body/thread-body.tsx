@@ -1,5 +1,5 @@
 'use client';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -36,21 +36,25 @@ export const ThreadBody = ({
     setIsExpanded(!isExpanded);
   };
 
-  const {images, files} = attachmentList?.reduce(
-    (acc: any, attachment: any) => {
-      if (attachment?.metaFile?.fileType.startsWith('image')) {
-        acc.images.push(attachment);
-      } else {
-        acc.files.push({
-          id: attachment.metaFile.id,
-          type: attachment?.metaFile?.fileType,
-          name: attachment?.metaFile?.fileName,
-        });
-      }
-      return acc;
-    },
-    {images: [], files: []},
-  ) || {images: [], files: []};
+  const {images, files} = useMemo(() => {
+    return (
+      attachmentList?.reduce(
+        (acc: any, attachment: any) => {
+          if (attachment?.metaFile?.fileType.startsWith('image')) {
+            acc.images.push(attachment);
+          } else {
+            acc.files.push({
+              id: attachment?.metaFile?.id,
+              type: attachment?.metaFile?.fileType,
+              name: attachment?.metaFile?.fileName,
+            });
+          }
+          return acc;
+        },
+        {images: [], files: []},
+      ) || {images: [], files: []}
+    );
+  }, [attachmentList]);
 
   return (
     <>
