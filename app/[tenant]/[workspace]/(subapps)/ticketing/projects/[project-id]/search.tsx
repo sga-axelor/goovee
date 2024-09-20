@@ -41,23 +41,32 @@ export function Search({
   const fetchTickets = useMemo(
     () =>
       debounce(async (search: string) => {
-        if (!search) return setTickets([]);
-        const {error, message, data} = await searchTickets({
-          search: search,
-          workspaceURL,
-          projectId,
-        });
-        if (error) {
-          setTickets([]);
+        try {
+          if (!search) return setTickets([]);
+          const {error, message, data} = await searchTickets({
+            search: search,
+            workspaceURL,
+            projectId,
+          });
+          if (searchRef.current !== search) return;
+          if (error) {
+            setTickets([]);
+            toast({
+              variant: 'destructive',
+              title: message,
+            });
+            return;
+          }
+          setTickets(data);
+        } catch (e) {
           toast({
             variant: 'destructive',
-            title: message,
+            title: i18n.get('Something went wrong'),
           });
-          return;
-        }
-        setTickets(data);
-        if (searchRef.current === search) {
-          setLoading(false);
+        } finally {
+          if (searchRef.current === search) {
+            setLoading(false);
+          }
         }
       }, 500),
     [workspaceURL, projectId, toast],
