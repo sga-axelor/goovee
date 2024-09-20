@@ -11,17 +11,22 @@ import {
   TableRow,
 } from '@/ui/components';
 import {useResponsive, useToast} from '@/ui/hooks';
+import {ID} from '@goovee/orm';
 import {useRouter} from 'next/navigation';
 import {Fragment, useState} from 'react';
-import {MdArrowDropDown, MdArrowDropUp, MdDeleteForever} from 'react-icons/md';
-import {ID} from '@goovee/orm';
+import {
+  MdArrowDropDown,
+  MdArrowDropUp,
+  MdRemoveCircleOutline,
+} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
+import {cn} from '@/utils/css';
+import {deleteLink} from '../../../actions';
 import {ASSIGNMENT, columns} from '../../../constants';
 import {Ticket} from '../../../types';
 import {getProfilePic} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
-import {deleteLink} from '../../../actions';
 
 interface TicketDetailRowProps {
   label: string;
@@ -87,7 +92,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
       <Fragment key={link.id}>
         <TableRow
           onClick={handleClick}
-          className="cursor-pointer hover:bg-slate-100">
+          className="[&:not(:has(.action:hover))]:cursor-pointer  [&:not(:has(.action:hover)):hover]:bg-slate-100">
           <TableCell>
             <p className="font-medium">{link.projectTaskLinkType.name}</p>
           </TableCell>
@@ -117,7 +122,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
             </>
           ) : (
             <TableCell
-              className="flex float-end items-center"
+              className="flex float-end items-center action"
               onClick={handleCollapse}>
               <p className="font-medium px-5">#{ticket.id}</p>
               {ticket?.id === openId ? (
@@ -127,11 +132,14 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
               )}
             </TableCell>
           )}
-          <DeleteCell
-            ticketId={ticketId}
-            relatedTicketId={ticket.id}
-            linkId={link.id}
-          />
+
+          <TableCell className="text-center action pointer-events-none">
+            <DeleteCell
+              ticketId={ticketId}
+              relatedTicketId={ticket.id}
+              linkId={link.id}
+            />
+          </TableCell>
         </TableRow>
         {small && (
           <Collapsible open={ticket.id === openId} asChild>
@@ -196,7 +204,7 @@ function DeleteCell({
   const {toast} = useToast();
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = async (e: React.MouseEvent<HTMLTableCellElement>) => {
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!loading) {
       try {
@@ -215,6 +223,12 @@ function DeleteCell({
             title: message,
           });
         }
+
+        toast({
+          variant: 'success',
+          title: i18n.get('Link removed'),
+        });
+
         router.refresh();
       } catch (e) {
         if (e instanceof Error) {
@@ -234,10 +248,12 @@ function DeleteCell({
   };
 
   return (
-    <TableCell
-      className="text-center text-destructive cursor-pointer"
-      onClick={handleDelete}>
-      <MdDeleteForever className="w-5 h-5" />
-    </TableCell>
+    <button
+      onClick={handleDelete}
+      className={cn(
+        'inline-flex items-center justify-center whitespace-nowrap p-1 text-destructive hover:scale-110 active:scale-95 rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pointer-events-auto disabled:pointer-events-none disabled:opacity-50',
+      )}>
+      <MdRemoveCircleOutline className="w-5 h-5" />
+    </button>
   );
 }

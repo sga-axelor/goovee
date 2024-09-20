@@ -40,6 +40,7 @@ export function TicketList(props: TicketListProps) {
             const isActive = sort.key === column.key;
             const isASC = isActive && sort.direction === ORDER_BY.ASC;
             const label = i18n.get(column.label);
+            const Arrow = isASC ? MdArrowDropDown : MdArrowDropUp;
             return (
               <TableHead
                 key={column.key}
@@ -48,13 +49,15 @@ export function TicketList(props: TicketListProps) {
                   path && toggleSort({key: column.key, path});
                 }}
                 className={cn(
-                  'text-card-foreground cursor-pointer text-base font-semibold px-6 border-none',
-                  {'flex justify-end': i === arr.length - 1 && small},
+                  'text-card-foreground cursor-pointer text-base font-semibold border-none',
                 )}>
                 <div className="flex gap-1 items-center">
                   <div className="line-clamp-1">{label}</div>
-                  {isActive &&
-                    (isASC ? <MdArrowDropDown /> : <MdArrowDropUp />)}
+                  {isActive ? (
+                    <Arrow className="ms-auto" />
+                  ) : (
+                    <span className="h-[1em] w-[1em]" />
+                  )}
                 </div>
               </TableHead>
             );

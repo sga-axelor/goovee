@@ -72,7 +72,7 @@ export function TicketRows(props: {tickets: Ticket[]}) {
       <Fragment key={ticket.id}>
         <TableRow
           onClick={handleClick}
-          className="cursor-pointer hover:bg-slate-100">
+          className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100">
           <TableCell className="px-5">
             <p className="font-medium">#{ticket.id}</p>
           </TableCell>
@@ -117,13 +117,13 @@ export function TicketRows(props: {tickets: Ticket[]}) {
             </>
           ) : (
             <TableCell
-              className="flex float-end items-center"
+              className="flex items-center cursor-pointer gap-1 action"
               onClick={e => handleCollapse(ticket.id, e)}>
               <p className="max-w-48 line-clamp-2">{ticket.name}</p>
               {show && ticket?.id === id ? (
-                <MdArrowDropUp className="cursor-pointer ms-1 inline" />
+                <MdArrowDropUp className="ms-auto inline" />
               ) : (
-                <MdArrowDropDown className="cursor-pointer ms-1 inline" />
+                <MdArrowDropDown className="ms-auto inline" />
               )}
             </TableCell>
           )}

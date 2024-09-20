@@ -111,9 +111,7 @@ export function RelatedTicketsHeader(props: {
         {!showAlert && (
           <Button size="sm" type="button" variant="success" onClick={openAlert}>
             <MdAdd className="size-6 lg:me-1" />
-            <span className="hidden lg:inline">
-              {i18n.get('Add related ticket')}
-            </span>
+            <span className="hidden lg:inline">{i18n.get('Add')}</span>
           </Button>
         )}
       </div>
