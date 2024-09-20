@@ -4,9 +4,23 @@ import '@cyntler/react-doc-viewer/dist/index.css';
 // ---- LOCAL IMPORTS ---- //
 
 import styles from './pdf-viewer.module.scss';
+import {getImageURL} from '@/utils/product';
 
-export function PdfViewer({file}: {file: File}) {
-  const docs = [{uri: URL.createObjectURL(file)}];
+export function PdfViewer({
+  file,
+}: {
+  file:
+    | File
+    | {
+        id: string | number;
+        name: string;
+        type: string;
+      };
+}) {
+  const docs =
+    file instanceof File
+      ? [{uri: URL.createObjectURL(file)}]
+      : [{uri: getImageURL(file?.id) || ''}];
 
   return (
     <div className="overflow-x-hidden">

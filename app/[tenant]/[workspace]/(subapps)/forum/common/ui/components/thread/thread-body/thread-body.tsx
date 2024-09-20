@@ -42,6 +42,7 @@ export const ThreadBody = ({
         acc.images.push(attachment);
       } else {
         acc.files.push({
+          id: attachment.metaFile.id,
           type: attachment?.metaFile?.fileType,
           name: attachment?.metaFile?.fileName,
         });
@@ -107,7 +108,7 @@ export const ThreadBody = ({
           !usePopUpStyles &&
           files.map((file: any) => (
             <React.Fragment key={file.id}>
-              <FilePreviewer file={file} hidePDFPreview={true} />
+              <FilePreviewer file={file} />
             </React.Fragment>
           ))}
       </div>

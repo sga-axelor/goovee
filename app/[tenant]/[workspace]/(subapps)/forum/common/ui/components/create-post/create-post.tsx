@@ -246,10 +246,7 @@ export const CreatePost = ({
                     onClick={() => handleOpen('file')}
                   />
                 </div>
-                <FilePreviewer
-                  file={attachments.file.file}
-                  hidePDFPreview={true}
-                />
+                <FilePreviewer file={attachments.file.file} />
               </div>
             ) : (
               <>

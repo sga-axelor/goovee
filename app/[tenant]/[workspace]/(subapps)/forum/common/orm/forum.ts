@@ -184,6 +184,7 @@ export async function findPosts({
           select: {
             title: true,
             metaFile: {
+              id: true,
               fileType: true,
               fileName: true,
             },
