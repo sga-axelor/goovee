@@ -151,7 +151,7 @@ export function TicketForm(props: TicketFormProps) {
               name="category"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Category')}</FormLabel>
+                  <FormLabel>{i18n.get('Category')}*</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>
@@ -181,7 +181,7 @@ export function TicketForm(props: TicketFormProps) {
               name="priority"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Priority')}</FormLabel>
+                  <FormLabel>{i18n.get('Priority')}*</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>

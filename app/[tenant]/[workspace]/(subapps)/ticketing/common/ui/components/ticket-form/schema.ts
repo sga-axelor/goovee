@@ -6,17 +6,20 @@ export const TicketFormSchema = z.object({
     .string({required_error: i18n.get('Subject is required')})
     .trim()
     .min(1, {message: i18n.get('Subject is required')}),
-  category: z.string().optional(),
-  priority: z.string().optional(),
+  category: z.string({required_error: i18n.get('Category is required')}),
+  priority: z.string({required_error: i18n.get('Priority is required')}),
   description: z.string().optional(),
 });
 
-export const UpdateTicketSchema = TicketFormSchema.extend({
+export const UpdateTicketSchema = z.object({
   id: z.string(),
   version: z.number(),
+  category: z.string().optional(),
+  priority: z.string().optional(),
   subject: z.string().optional(),
   status: z.string().optional(),
   assignment: z.number().optional(),
+  description: z.string().optional(),
 });
 
 export const CreateTicketSchema = TicketFormSchema.extend({
