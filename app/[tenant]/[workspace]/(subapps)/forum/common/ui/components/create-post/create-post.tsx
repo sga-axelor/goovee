@@ -112,7 +112,7 @@ export const CreatePost = ({
   const handleFileUpload = (newFile: any) => {
     setAttachments(prev => ({
       ...prev,
-      title: newFile?.fileTitle || newFile?.file.name,
+      title: newFile?.fileTitle || newFile?.file?.name,
       file: newFile,
     }));
   };
