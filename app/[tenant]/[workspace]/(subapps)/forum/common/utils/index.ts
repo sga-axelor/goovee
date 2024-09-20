@@ -59,7 +59,6 @@ export async function getPopularQuery({
     commentData AS (
         SELECT 
             commentList.forum_post AS postId,
-            COUNT(commentList.id) AS commentCount,
             JSON_AGG(
                 JSON_BUILD_OBJECT(
                     'id', commentList.id,
@@ -141,7 +140,26 @@ export async function getPopularQuery({
         LEFT JOIN meta_file AS metaFile 
             ON author.picture = metaFile.id
         ${whereClause}
-    )
+    ),
+
+   totalCommentCount AS (
+    SELECT 
+       post.id AS postId,
+       COALESCE(commentCounts.commentCount, 0) AS commentCount
+  FROM portal_forum_post AS post
+  LEFT JOIN (
+  SELECT 
+        COALESCE(comment.forum_post, 
+            (SELECT pc.forum_post 
+             FROM base_comment AS pc 
+             WHERE pc.id = comment.parent_comment)
+        ) AS postId,
+        COUNT(comment.id) AS commentCount
+    FROM base_comment AS comment
+    GROUP BY postId
+  ) AS commentCounts ON post.id = commentCounts.postId 
+   
+  )
 
     SELECT 
         pd.postId AS "id",
@@ -152,7 +170,7 @@ export async function getPopularQuery({
         COALESCE(authorD.authorJson, '{}') AS author,
         COALESCE(ad.attachmentListJson, '[]') AS "attachmentList", 
         COALESCE(cd.commentListJson, '[]') AS "commentList", 
-        COALESCE(cd.commentCount, 0) AS "commentCount",
+        COALESCE(tc.commentCount, 0) AS "commentCount",
         (SELECT _count FROM totalCount) AS "_count"
     FROM postData AS pd
     LEFT JOIN commentData AS cd 
@@ -161,7 +179,9 @@ export async function getPopularQuery({
         ON pd.postId = ad.postId
     LEFT JOIN authorData AS authorD 
         ON pd.author = authorD.id
-    ORDER BY commentCount ASC 
+    LEFT JOIN totalCommentCount  AS tc
+        ON pd.postId = tc.postId  
+    ORDER BY commentCount DESC 
     LIMIT $1
     OFFSET $2`,
     limit,
