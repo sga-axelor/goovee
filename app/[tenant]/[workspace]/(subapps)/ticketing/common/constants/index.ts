@@ -2,7 +2,7 @@
  * Tickets Constants
  */
 
-import {Column, SortKey} from '../types';
+import {Column, SortKey, Ticket} from '../types';
 
 export const columns: Column<SortKey>[] = [
   {
@@ -39,6 +39,7 @@ export const columns: Column<SortKey>[] = [
   },
 ];
 
+// NOTE: This is used for serverside sorting
 export const sortKeyPathMap: Record<string, string> = {
   ticketId: 'id',
   requestedBy: 'requestedByContact.name',
@@ -46,7 +47,23 @@ export const sortKeyPathMap: Record<string, string> = {
   priority: 'priority.name',
   status: 'status.name',
   category: 'projectTaskCategory.name',
-  assignedTo: 'assignment',
+  assignedTo: 'assignedToContact.name',
+  updatedOn: 'updatedOn',
+};
+
+type Getter = (t: Ticket) => unknown;
+// NOTE: This is used for clientside sorting
+export const sortValueGetterMap: Record<string, string | Getter> = {
+  ticketId: 'id',
+  requestedBy: t => t.requestedByContact?.name ?? t.project?.company?.name,
+  subject: 'name',
+  priority: 'priority.name',
+  status: 'status.name',
+  category: 'projectTaskCategory.name',
+  assignedTo: t =>
+    t.assignment === ASSIGNMENT.PROVIDER
+      ? t.project?.company?.name
+      : t.assignedToContact?.name,
   updatedOn: 'updatedOn',
 };
 

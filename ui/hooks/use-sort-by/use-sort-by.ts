@@ -45,24 +45,27 @@ function genericSort<T extends string | number | Date>(a: T, b: T) {
   return 0;
 }
 
-type ToggleSortProps = {
-  key: string;
-  path?: string;
+type ToggleSortProps<T extends Record<string, any>> = {
+  key: string | null;
+  getter?: string | ((record: T) => unknown);
   type?: 'number' | 'string' | 'string-date' | 'string-number' | 'date';
 };
 
-type Sort = ToggleSortProps & {
+type Sort<T extends Record<string, any>> = ToggleSortProps<T> & {
   direction: 'ASC' | 'DESC';
 };
 
 export function useSortBy<T extends Record<string, any>>(items: T[]) {
-  const [sort, setSort] = useState<Sort>({key: '', direction: ORDER_BY.ASC});
+  const [sort, setSort] = useState<Sort<T>>({
+    key: null,
+    direction: ORDER_BY.ASC,
+  });
 
-  const toggleSort = useCallback(({key, path, type}: ToggleSortProps) => {
+  const toggleSort = useCallback(({key, getter, type}: ToggleSortProps<T>) => {
     setSort(sort => {
       return {
         key,
-        path,
+        getter,
         type,
         direction:
           sort.key !== key
@@ -79,9 +82,15 @@ export function useSortBy<T extends Record<string, any>>(items: T[]) {
     const isDesc = sort.direction === ORDER_BY.DESC;
     const sortedItems = items.toSorted((a: any, b: any): number => {
       if (isDesc) [a, b] = [b, a];
-      if (sort.path) {
-        a = get(a, sort.path);
-        b = get(b, sort.path);
+
+      if (typeof sort.getter === 'function') {
+        a = sort.getter(a);
+        b = sort.getter(b);
+      }
+
+      if (typeof sort.getter === 'string') {
+        a = get(a, sort.getter);
+        b = get(a, sort.getter);
       }
 
       // handle null | undefined

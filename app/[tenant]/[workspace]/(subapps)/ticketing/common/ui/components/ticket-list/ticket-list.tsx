@@ -15,7 +15,7 @@ import {ReactNode} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {columns, sortKeyPathMap} from '../../../constants';
+import {columns, sortValueGetterMap} from '../../../constants';
 import type {Ticket} from '../../../types';
 import {TicketRows} from './ticket-rows';
 import {cn} from '@/utils/css';
@@ -45,8 +45,8 @@ export function TicketList(props: TicketListProps) {
               <TableHead
                 key={column.key}
                 onClick={() => {
-                  const path = sortKeyPathMap[column.key];
-                  path && toggleSort({key: column.key, path});
+                  const getter = sortValueGetterMap[column.key];
+                  getter && toggleSort({key: column.key, getter});
                 }}
                 className={cn(
                   'text-card-foreground cursor-pointer text-base font-semibold border-none',
