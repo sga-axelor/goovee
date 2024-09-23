@@ -1,6 +1,6 @@
 'use client';
 
-import {useRef} from 'react';
+import React, {useRef} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
@@ -107,6 +107,16 @@ export function Comment({
     maxSize: MAX_FILE_SIZE,
     onDrop,
   });
+
+  React.useEffect(() => {
+    if (form.formState.isSubmitSuccessful) {
+      form.reset({
+        text: '',
+        content: '',
+        attachments: [],
+      });
+    }
+  }, [form, form.formState, form.reset]);
 
   return (
     <Form {...form}>
