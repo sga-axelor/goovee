@@ -3,6 +3,7 @@ import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {
+  findContactPartners,
   findProject,
   findTicketCategories,
   findTicketPriorities,
@@ -47,12 +48,14 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const [project, statuses, categories, priorities] = await Promise.all([
-    findProject(projectId, workspace.id, userId),
-    findTicketStatuses(projectId),
-    findTicketCategories(projectId).then(clone),
-    findTicketPriorities(projectId).then(clone),
-  ]);
+  const [project, statuses, categories, priorities, contacts] =
+    await Promise.all([
+      findProject(projectId, workspace.id, userId),
+      findTicketStatuses(projectId),
+      findTicketCategories(projectId).then(clone),
+      findTicketPriorities(projectId).then(clone),
+      findContactPartners(projectId).then(clone),
+    ]);
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
@@ -107,6 +110,8 @@ export default async function Page({
         projectId={projectId}
         categories={categories}
         priorities={priorities}
+        contacts={contacts}
+        userId={userId}
       />
     </div>
   );

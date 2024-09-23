@@ -2,10 +2,8 @@
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
-import {Maybe} from '@/types/util';
-import {RichTextEditor, ToastAction} from '@/ui/components';
+import {RichTextEditor} from '@/ui/components';
 import {Button} from '@/ui/components/button';
 import {
   Form,
@@ -28,17 +26,16 @@ import {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
 import {useRouter} from 'next/navigation';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 // ---- LOCAL IMPORT ---- //
-import {VERSION_MISMATCH_ERROR} from '../../../constants';
-import {MutateProps} from '../../../actions';
-import {mutate} from '../../../actions';
+import {mutate, MutateProps} from '../../../actions';
 import {TicketFormSchema, TicketInfo} from './schema';
 
 type TicketFormProps = {
   projectId: string;
+  userId: ID;
   categories: {
     id: ID;
     name: string;
@@ -47,10 +44,14 @@ type TicketFormProps = {
     id: ID;
     name: string;
   }[];
+  contacts: {
+    id: ID;
+    name: string;
+  }[];
 };
 
 export function TicketForm(props: TicketFormProps) {
-  const {categories, priorities, projectId} = props;
+  const {categories, priorities, projectId, contacts, userId} = props;
   const router = useRouter();
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
@@ -59,6 +60,9 @@ export function TicketForm(props: TicketFormProps) {
 
   const form = useForm<TicketInfo>({
     resolver: zodResolver(TicketFormSchema),
+    defaultValues: {
+      assignedTo: userId.toString(),
+    },
   });
 
   const handleSuccess = useCallback(
@@ -195,6 +199,34 @@ export function TicketForm(props: TicketFormProps) {
                           value={priority.id.toString()}
                           key={priority.id}>
                           {priority.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="assignedTo"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Assigned to')}*</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value?.toString()}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {contacts.map(contact => (
+                        <SelectItem
+                          value={contact.id.toString()}
+                          key={contact.id}>
+                          {contact.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

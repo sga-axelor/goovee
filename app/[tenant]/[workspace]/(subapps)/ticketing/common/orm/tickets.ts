@@ -53,7 +53,15 @@ export async function createTicket(
   userId: ID,
   workspaceId: ID,
 ) {
-  const {priority, subject, description, category, project: projectId} = data;
+  const {
+    priority,
+    subject,
+    description,
+    category,
+    project: projectId,
+    assignedTo,
+  } = data;
+
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {
@@ -94,7 +102,7 @@ export async function createTicket(
       isPrivate: false,
       progress: '0.00',
       requestedByContact: {select: {id: userId}},
-      assignedToContact: {select: {id: userId}},
+      assignedToContact: {select: {id: assignedTo}},
       project: {
         select: {
           id: projectId,
