@@ -118,6 +118,22 @@ export async function findTicketStatuses(projectId: ID) {
   return project?.projectTaskStatusSet ?? [];
 }
 
+export async function findCompany(projectId: ID) {
+  const client = await getClient();
+  const project = await client.aOSProject.findOne({
+    where: {
+      id: projectId,
+    },
+    select: {
+      company: {
+        id: true,
+        name: true,
+      },
+    },
+  });
+  return project?.company;
+}
+
 export async function findTicketDoneStatus() {
   const client = await getClient();
   const projectAppConfig = await client.aOSAppProject.findOne({

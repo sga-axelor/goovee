@@ -1,10 +1,11 @@
 import {ORDER_BY} from '@/constants';
 import {Maybe} from '@/types/util';
-import {ID, WhereOptions} from '@goovee/orm';
+import {Entity, ID, IdFilter, WhereArg, WhereOptions} from '@goovee/orm';
 import {set} from 'lodash';
 import {AOSProjectTask} from '@/goovee/.generated/models';
 import {z} from 'zod';
 import {i18n} from '@/lib/i18n';
+import {ASSIGNMENT} from '../constants';
 
 export const RelatedTicketSchema = z.object({
   linkType: z.string({required_error: i18n.get('Link type is required')}),
@@ -52,6 +53,7 @@ export const FilterSchema = z.object({
   statusCompleted: z.boolean().optional(),
   myTickets: z.boolean().optional(),
   assignedTo: z.array(z.string()).optional(),
+  assignment: z.literal(ASSIGNMENT.PROVIDER).nullable().optional(),
 });
 
 export const EncodedFilterSchema = FilterSchema.partial().transform(arg => {
@@ -84,6 +86,14 @@ export function getOrderBy(
   return query;
 }
 
+type Where<T extends Entity> = {
+  -readonly [K in keyof T]?: K extends 'id' ? IdFilter : WhereArg<T[K]>;
+} & {
+  OR?: WhereOptions<T>[];
+  AND?: WhereOptions<T>[];
+  NOT?: WhereOptions<T>[];
+};
+
 export function getWhere(
   filter: unknown,
   userId: ID,
@@ -99,9 +109,10 @@ export function getWhere(
     updatedOn,
     statusCompleted,
     myTickets,
+    assignment,
   } = data;
 
-  const where: WhereOptions<AOSProjectTask> = {
+  const where: Where<AOSProjectTask> = {
     ...((status || statusCompleted != null) && {
       status: {
         ...(status && {
@@ -126,39 +137,37 @@ export function getWhere(
         between: updatedOn,
       },
     }),
-    ...(myTickets
-      ? {
-          OR: [
-            {
-              assignedToContact: {
-                id: userId,
-              },
-            },
-            {
-              requestedByContact: {
-                id: userId,
-              },
-            },
-          ],
-        }
-      : {
-          ...(assignedTo && {
-            assignedToContact: {
-              id: {
-                in: assignedTo,
-              },
-            },
-          }),
-
-          ...(requestedBy && {
-            requestedByContact: {
-              id: {
-                in: requestedBy,
-              },
-            },
-          }),
-        }),
   };
+
+  if (myTickets) {
+    where.OR = [
+      {assignedToContact: {id: userId}, assignment: ASSIGNMENT.CUSTOMER},
+      {requestedByContact: {id: userId}},
+    ];
+    return where;
+  }
+
+  if (requestedBy) {
+    where.requestedByContact = {
+      id: {
+        in: requestedBy,
+      },
+    };
+  }
+
+  if (assignment && assignedTo) {
+    where.OR = [{assignedToContact: {id: {in: assignedTo}}}, {assignment}];
+    return where;
+  }
+
+  if (assignment) {
+    where.assignment = assignment;
+  }
+  if (assignedTo) {
+    where.assignedToContact = {id: {in: assignedTo}};
+    where.assignment = ASSIGNMENT.CUSTOMER;
+  }
+
   return where;
 }
 

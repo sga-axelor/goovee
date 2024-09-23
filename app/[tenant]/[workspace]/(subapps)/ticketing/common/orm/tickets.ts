@@ -335,6 +335,7 @@ export async function getMyTicketCount(
           assignedToContact: {
             id: userId,
           },
+          assignment: ASSIGNMENT.CUSTOMER,
         },
         {
           requestedByContact: {
@@ -364,6 +365,7 @@ export async function getAssignedTicketCount(
       assignedToContact: {
         id: userId,
       },
+      assignment: ASSIGNMENT.CUSTOMER,
     },
   });
   return Number(count);

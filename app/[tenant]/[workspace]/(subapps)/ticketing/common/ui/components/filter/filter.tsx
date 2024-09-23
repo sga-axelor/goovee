@@ -1,10 +1,5 @@
 'use client';
 
-import {
-  AOSPartner,
-  AOSProjectPriority,
-  AOSProjectTaskStatus,
-} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {
   Badge,
@@ -34,6 +29,7 @@ import {useForm, UseFormReturn} from 'react-hook-form';
 import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
+import {ASSIGNMENT} from '../../../constants';
 import {SearchParams} from '../../../types/search-param';
 import {EncodedFilterSchema, FilterSchema} from '../../../utils/search-param';
 import {
@@ -45,13 +41,22 @@ import {
   MultiSelectorTrigger,
 } from '../multi-select';
 
+type Relational = {
+  id: string;
+  name: string;
+  version: string;
+};
+
 type FilterProps = {
   url: string;
   searchParams: SearchParams;
-  contacts: AOSPartner[];
-  priorities: AOSProjectPriority[];
-  statuses: AOSProjectTaskStatus[];
+  contacts: Relational[];
+  priorities: Relational[];
+  statuses: Relational[];
+  company?: Relational;
 };
+
+const COMPANY = 'company';
 
 const defaultValues = {
   requestedBy: [] as string[],
@@ -60,6 +65,7 @@ const defaultValues = {
   priority: [] as string[],
   status: [] as string[],
   myTickets: false,
+  assignment: null,
 };
 
 // NOTE: Steps to add more filters
@@ -69,7 +75,7 @@ const defaultValues = {
 // 4. Add the where clause in getWhere function
 
 export function Filter(props: FilterProps) {
-  const {contacts, priorities, statuses, url, searchParams} = props;
+  const {contacts, priorities, statuses, url, searchParams, company} = props;
   const [open, setOpen] = useState(false);
   const filter = useMemo(
     () => searchParams.filter && decodeFilter(searchParams.filter),
@@ -162,7 +168,11 @@ export function Filter(props: FilterProps) {
                 {!form.watch('myTickets') && (
                   <>
                     <RequestedByField form={form} contacts={contacts} />
-                    <AssignedToField form={form} contacts={contacts} />
+                    <AssignedToField
+                      form={form}
+                      contacts={contacts}
+                      company={company}
+                    />
                   </>
                 )}
                 <DatesField form={form} />
@@ -180,8 +190,11 @@ export function Filter(props: FilterProps) {
   );
 }
 
-function AssignedToField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
-  const {form, contacts} = props;
+function AssignedToField(
+  props: FieldProps & Pick<FilterProps, 'contacts' | 'company'>,
+) {
+  const {form, contacts, company} = props;
+  const assignment = form.watch('assignment');
   return (
     <FormField
       control={form.control}
@@ -190,17 +203,37 @@ function AssignedToField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
         <FormItem className="grow">
           <FormLabel>{i18n.get('Assigned to')} :</FormLabel>
           <MultiSelector
-            onValuesChange={field.onChange}
-            values={field.value ?? []}
+            onValuesChange={values => {
+              if (values.includes(COMPANY)) {
+                form.setValue('assignment', ASSIGNMENT.PROVIDER);
+              } else {
+                form.setValue('assignment', null);
+              }
+              field.onChange(values.filter(id => id !== COMPANY));
+            }}
+            values={
+              assignment === ASSIGNMENT.PROVIDER
+                ? (field.value ?? []).concat(COMPANY)
+                : field.value ?? []
+            }
             className="space-y-0">
             <MultiSelectorTrigger
               renderLabel={value =>
-                contacts.find(contact => contact.id === value)?.name
+                value === COMPANY
+                  ? company?.name
+                  : contacts.find(contact => contact.id === value)?.name
               }>
               <MultiSelectorInput placeholder="Select users" />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
+                {company?.id && (
+                  <MultiSelectorItem value={COMPANY}>
+                    <div className="flex items-center space-x-2">
+                      <span>{company.name}</span>
+                    </div>
+                  </MultiSelectorItem>
+                )}
                 {contacts.map(contact => (
                   <MultiSelectorItem key={contact.id} value={contact.id}>
                     <div className="flex items-center space-x-2">
