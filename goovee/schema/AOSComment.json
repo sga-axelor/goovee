@@ -50,6 +50,10 @@
       "name": "parentComment",
       "type": "ManyToOne",
       "target": "AOSComment"
+    },
+    {
+      "name": "note",
+      "type": "String"
     }
   ]
 }
