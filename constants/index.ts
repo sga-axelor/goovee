@@ -121,4 +121,17 @@ export const NAVIGATION = {
 /**
  * COMMENT
  */
+export const DEFAULT_COMMENTS_LIMIT = 3;
 export const COMMENT_TRACKING = 'User created a comment';
+export const COMMENT = 'Comment';
+export const COMMENTS = 'Comments';
+export const DISABLED_COMMENT_PLACEHOLDER =
+  'You need to log in to comment posts';
+export const SORT_TYPE = {
+  new: 'new',
+  old: 'old',
+  popular: 'popular',
+};
+
+export const REPORT = 'Report';
+export const NOT_INTERESTED = 'Not interested';
