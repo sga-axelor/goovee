@@ -204,3 +204,10 @@ export enum ModelType {
   event = 'event',
   forum = 'forum',
 }
+
+export interface CommentResponse {
+  success?: boolean;
+  error?: boolean;
+  message?: string;
+  data?: any;
+}
