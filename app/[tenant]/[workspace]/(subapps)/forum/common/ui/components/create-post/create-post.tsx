@@ -14,6 +14,7 @@ import {
   Button,
   Input,
   Label,
+  RichTextEditor,
   ScrollArea,
   Select,
   SelectContent,
@@ -37,7 +38,6 @@ import {
 import {
   FilePreviewer,
   ImagePreviewer,
-  TextEditor,
 } from '@/subapps/forum/common/ui/components';
 import {addPost} from '@/subapps/forum/common/action/action';
 import {
@@ -218,7 +218,7 @@ export const CreatePost = ({
             <span className="text-base font-medium text-foreground">
               {i18n.get(CONTENT)}
             </span>
-            <TextEditor handleContentChange={handleContentChange} />
+            <RichTextEditor onChange={handleContentChange}  />
           </div>
         </div>
         <div className="w-full mt-2">
