@@ -11,6 +11,8 @@ export async function createComment({
   modelID,
   type,
   parentId,
+  tracks = [],
+  relatedModel,
 }: {
   formData: any;
   values: any;
@@ -18,6 +20,8 @@ export async function createComment({
   type: ModelType;
   modelID: string | number;
   parentId: any;
+  tracks?: any[];
+  relatedModel?: string;
 }) {
   let attachmentIDs: string[] = [];
 
@@ -45,9 +49,11 @@ export async function createComment({
       type,
       workspaceURL,
       model: {id: modelID},
-      content: values.text,
+      note: values.text,
       attachments: attachmentIDs,
       parentId,
+      tracks,
+      relatedModel,
     });
 
     if (response.error) {
