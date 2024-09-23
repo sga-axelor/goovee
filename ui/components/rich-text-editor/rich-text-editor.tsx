@@ -18,7 +18,7 @@ const Editor = dynamic(
 
 interface RichTextEditorProps {
   content?: string | any;
-  className?: {
+  classNames?: {
     toolbarClassName?: string;
     wrapperClassName?: string;
     editorClassName?: string;
@@ -31,14 +31,14 @@ interface RichTextEditorProps {
 export const RichTextEditor = ({
   content,
   onChange,
-  className,
+  classNames,
   ...rest
 }: RichTextEditorProps) => {
   const {
     toolbarClassName = '',
     wrapperClassName = '',
     editorClassName = '',
-  } = className || {};
+  } = classNames || {};
 
   const initiated = useRef(false);
 
