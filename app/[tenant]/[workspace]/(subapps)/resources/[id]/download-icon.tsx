@@ -1,7 +1,9 @@
 'use client';
 
 import {MdOutlineFileDownload} from 'react-icons/md';
-import {download} from '@/subapps/resources/common/utils';
+
+// ---- CORE IMPORTS ---- //
+import {download} from '@/utils/files';
 
 export default function DownloadIcon({record}: any) {
   const handleDownload = () => {

@@ -9,14 +9,11 @@ import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {cn} from '@/utils/css';
+import {download} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
-import {
-  download,
-  getFileTypeIcon,
-  getIconColor,
-} from '@/subapps/resources/common/utils';
+import {getFileTypeIcon, getIconColor} from '@/subapps/resources/common/utils';
 
 export function ResourceList({resources}: any) {
   const router = useRouter();
@@ -34,7 +31,7 @@ export function ResourceList({resources}: any) {
   return (
     <div className="rounded-lg bg-white py-2">
       {resources?.length ? (
-        resources?.map((resource: any, index) => {
+        resources?.map((resource: any, index: number) => {
           const author = resource.createdBy?.name || '--';
           const date = parseDate(resource?.createdOn) || '--';
           const size = resource?.metaFile?.sizeText || '--';
