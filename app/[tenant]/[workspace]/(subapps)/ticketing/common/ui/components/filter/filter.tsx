@@ -89,7 +89,7 @@ export function Filter(props: FilterProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const res = useResponsive();
-  const small = (['xs', 'sm'] as const).some(x => res[x]);
+  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
 
   const form = useForm<z.infer<typeof FilterSchema>>({
     resolver: zodResolver(FilterSchema),

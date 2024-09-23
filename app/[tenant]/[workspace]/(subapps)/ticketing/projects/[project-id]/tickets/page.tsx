@@ -139,7 +139,7 @@ export default async function Page({
           </Link>
         </Button>
       </div>
-      <div className="md:flex items-end justify-between gap-6">
+      <div className="lg:flex items-end justify-between gap-6">
         <Search projectId={projectId} inputClassName="h-[39px]" />
         <Suspense>
           <AsyncFilter

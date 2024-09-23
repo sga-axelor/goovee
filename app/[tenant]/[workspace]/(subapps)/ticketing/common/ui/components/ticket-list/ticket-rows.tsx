@@ -40,7 +40,7 @@ export function TicketRows(props: {tickets: Ticket[]}) {
   const [id, setId] = useState('');
   const res = useResponsive();
   const router = useRouter();
-  const small = (['xs', 'sm'] as const).some(x => res[x]);
+  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
 
   const handleCollapse = (Id: string, e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

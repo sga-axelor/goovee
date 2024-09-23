@@ -37,7 +37,7 @@ export function TicketSelect({
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const res = useResponsive();
-  const small = (['xs', 'sm'] as const).some(x => res[x]);
+  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
   const searchRef = useRef<string | undefined>(INIT_SEARCH_VALUE);
   const [loading, setLoading] = useState(true);
 

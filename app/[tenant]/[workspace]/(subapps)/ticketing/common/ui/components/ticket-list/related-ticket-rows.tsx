@@ -60,7 +60,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const res = useResponsive();
   const router = useRouter();
-  const small = (['xs', 'sm'] as const).some(x => res[x]);
+  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
 
   if (!links.length) {
     return (
