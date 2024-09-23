@@ -2,7 +2,7 @@
 
 // ---- CORE IMPORTS ---- //
 import {ModelType} from '@/types';
-import {addComment, upload} from '@/orm/comment';
+import {addComment, findComments, upload} from '@/orm/comment';
 
 export async function createComment({
   formData,
@@ -66,6 +66,40 @@ export async function createComment({
     return {
       error: true,
       message: 'An unexpected error occurred while creating the comment.',
+    };
+  }
+}
+
+export async function fetchComments({
+  model,
+  sort,
+  limit,
+  page,
+  type,
+  workspaceURL,
+}: any) {
+  try {
+    const response = await findComments({
+      model,
+      sort,
+      limit,
+      page,
+      type,
+      workspaceURL,
+    });
+    if (response.error) {
+      return {
+        error: true,
+        message: 'Error while fetching comments.',
+      };
+    } else {
+      return response;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return {
+      error: true,
+      message: 'An unexpected error occurred while fetching the comments.',
     };
   }
 }
