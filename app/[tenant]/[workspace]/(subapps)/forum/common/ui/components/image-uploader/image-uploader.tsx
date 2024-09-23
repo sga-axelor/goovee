@@ -27,6 +27,7 @@ import {
   SUPPORTED_FILE_JPG_PNG,
   UPLOAD,
 } from '@/subapps/forum/common/constants';
+import ImageViewer from '../image-viewer/image-viewer';
 
 interface ImageItem {
   file: File;
@@ -121,7 +122,6 @@ export const ImageUploader = ({
             <Button
               className="w-6 h-6 flex items-center justify-center rounded-full p-px absolute top-0 right-1 cursor-pointer bg-white hover:bg-white"
               onClick={() => {
-                onUpload([]);
                 handleClose();
               }}>
               <MdClose className="h-full w-full text-muted-foreground" />
@@ -157,17 +157,7 @@ export const ImageUploader = ({
                     <div className="flex-1 flex flex-col justify-between h-full m-4 gap-4">
                       <div className="w-full h-full min-h-[250px] max-h-[450px] shadow-sm relative overflow-hidden">
                         {images[selectedIndex] && (
-                          <Image
-                            fill
-                            className="object-cover mx-auto"
-                            src={URL.createObjectURL(
-                              images[selectedIndex].file,
-                            )}
-                            alt={
-                              images[selectedIndex].altText ||
-                              images[selectedIndex].file.name
-                            }
-                          />
+                          <ImageViewer file={images[selectedIndex].file} />
                         )}
                       </div>
                       <div>
@@ -197,12 +187,7 @@ export const ImageUploader = ({
                                 <div
                                   onClick={() => setSelectedIndex(i)}
                                   className={`w-[150px] h-[150px] relative border overflow-hidden cursor-pointer`}>
-                                  <Image
-                                    fill
-                                    className="object-cover"
-                                    src={URL.createObjectURL(item.file)}
-                                    alt={item.file.name}
-                                  />
+                                  <ImageViewer file={item.file} />
                                 </div>
                               </div>
                             ))}

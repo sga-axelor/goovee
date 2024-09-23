@@ -15,8 +15,8 @@ export const ImagePreviewer: React.FC<ImagePreviewerProps> = ({images}) => {
 
   useEffect(() => {
     const urls = images.map((image: any) => {
-      if (image.file.file instanceof File) {
-        const url = URL.createObjectURL(image.file.file);
+      if (image.file instanceof File) {
+        const url = URL.createObjectURL(image.file);
         return url;
       }
       return '';

@@ -97,15 +97,10 @@ export const CreatePost = ({
     setEditorContent(text);
   };
 
-  const handleImageUpload = (files: any) => {
-    const newImages: ImageItem[] = files.map((file: any) => ({
-      file,
-      altText: file?.altText || file?.name,
-    }));
-
+  const handleImageUpload = (images: ImageItem[]) => {
     setAttachments(prev => ({
       ...prev,
-      images: [...prev.images, ...newImages],
+      images: images,
     }));
   };
 
@@ -127,7 +122,7 @@ export const CreatePost = ({
           `attachmentList[${index}][title]`,
           element?.altText || '',
         );
-        formData.append(`attachmentList[${index}][file]`, element.file.file);
+        formData.append(`attachmentList[${index}][file]`, element.file);
       });
     } else if (attachments.file) {
       formData.append(
