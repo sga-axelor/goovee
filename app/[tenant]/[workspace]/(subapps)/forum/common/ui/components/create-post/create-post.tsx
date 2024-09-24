@@ -1,5 +1,5 @@
 'use client';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import Image from 'next/image';
 import {
   MdOutlineEdit,
@@ -7,13 +7,21 @@ import {
   MdOutlineUploadFile,
 } from 'react-icons/md';
 import {useRouter} from 'next/navigation';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {useForm} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
 import {
+  Form,
   Button,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   Input,
-  Label,
   RichTextEditor,
   ScrollArea,
   Select,
@@ -32,6 +40,7 @@ import {clone} from '@/utils';
 import {
   CHOOSE_GROUP,
   CONTENT,
+  ENTER_TITLE,
   PUBLISH,
   TITLE,
 } from '@/subapps/forum/common/constants';
@@ -66,10 +75,8 @@ export const CreatePost = ({
   const {toast} = useToast();
   const {workspaceURI, workspaceURL} = useWorkspace();
   const router = useRouter();
-
+  const formRef = useRef<HTMLFormElement>(null);
   const [editorContent, setEditorContent] = useState<string>('');
-  const [post, setPost] = useState<any>({title: ''});
-  const [group, setGroup] = useState<any>();
 
   const [attachments, setAttachments] = useState<{
     images: ImageItem[];
@@ -77,18 +84,18 @@ export const CreatePost = ({
   }>({images: []});
   const [modalOpen, setModalOpen] = useState<ModalType>('none');
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = event.target;
-    const post = {
-      [name]: value,
-    };
-    setPost(post);
-  };
+  const formSchema = z.object({
+    title: z.string().min(1, {message: 'Title is required'}),
+    groupId: z.string().min(1, {message: 'Group is required'}),
+  });
 
-  const handleSelect = (value: any) => {
-    const group = groups.find((group: any) => group.name === value);
-    setGroup(group);
-  };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: '',
+      groupId: selectedGroup?.id|| '',
+    },
+  });
 
   const handleOpen = (type: ModalType) => setModalOpen(type);
   const handleClose = () => setModalOpen('none');
@@ -112,9 +119,8 @@ export const CreatePost = ({
     }));
   };
 
-  const handlePost = async () => {
+  const handlePost = async (values: z.infer<typeof formSchema>) => {
     const publicationDateTime = getCurrentDateTime();
-
     const formData = new FormData();
     if (attachments.images.length) {
       attachments.images.forEach((element: any, index) => {
@@ -134,8 +140,8 @@ export const CreatePost = ({
     try {
       const result: any = await addPost({
         postDateT: publicationDateTime,
-        group: {id: selectedGroup ? selectedGroup.id : group?.id},
-        title: post.title,
+        group: {id: selectedGroup ? selectedGroup.id : values.groupId},
+        title: values.title,
         content: editorContent,
         workspaceURL,
         formData,
@@ -164,103 +170,125 @@ export const CreatePost = ({
 
   return (
     <ScrollArea className="h-screen lg:h-[80vh]">
-      <div className="lg:h-[80vh] p-2 flex flex-col justify-between">
-        <div className="flex flex-col mt-0 xl:mt-2 relative p-2 gap-4">
-          <div className="mt-2 flex flex-col gap-1.5">
-            <Label
-              htmlFor="title"
-              className="text-base font-medium text-foreground">
-              {i18n.get(TITLE)}
-            </Label>
-            <Input
-              id="title"
-              name="title"
-              placeholder="Enter title"
-              className="shadow-none h-11 text-black placeholder:text-muted-foreground"
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5 mt-3">
-            <Label
-              htmlFor="name"
-              className="text-base font-medium text-foreground">
-              {i18n.get(CHOOSE_GROUP)}
-            </Label>
-            <Select
-              onValueChange={handleSelect}
-              disabled={selectedGroup}
-              value={selectedGroup?.name}>
-              <SelectTrigger className="w-full h-11 shadow-none">
-                <SelectValue placeholder="Select a group" />
-              </SelectTrigger>
-              <SelectContent>
-                {groups?.map(group => (
-                  <SelectItem value={group.name} key={group.id}>
-                    <div className="flex items-center center justify-center gap-3 ">
-                      <div className="w-6 h-6 rounded-lg overflow-hidden relative">
-                        <Image
-                          fill
-                          src={getImageURL(group?.image?.id)}
-                          alt={group.name}
-                          objectFit="cover"
+      <Form {...form}>
+        <form ref={formRef} onSubmit={form.handleSubmit(handlePost)}>
+          <div className="lg:h-[80vh] p-2 flex flex-col justify-between">
+            <div className="flex flex-col mt-0 xl:mt-2 relative p-2 gap-4">
+              <div className="mt-2 flex flex-col gap-1.5">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel className="text-base font-medium text-foreground">
+                        {i18n.get(TITLE)}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={i18n.get(ENTER_TITLE)}
+                          className="shadow-none h-11 text-black placeholder:text-muted-foreground"
+                          {...field}
                         />
-                      </div>
-                      <div className="font-normal text-sm text-muted-foreground">
-                        {group.name}
-                      </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5 mt-3">
+                <FormField
+                  control={form.control}
+                  name="groupId"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel className="text-base font-medium text-foreground">
+                        {i18n.get(CHOOSE_GROUP)}
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={selectedGroup}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={i18n.get('Select a group')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {groups?.map(group => (
+                            <SelectItem value={group.id} key={group.id}>
+                              <div className="flex items-center center justify-center gap-3 ">
+                                <div className="w-6 h-6 rounded-lg overflow-hidden relative">
+                                  <Image
+                                    fill
+                                    src={getImageURL(group?.image?.id)}
+                                    alt={group.name}
+                                    objectFit="cover"
+                                  />
+                                </div>
+                                <div className="font-normal text-sm text-muted-foreground">
+                                  {group.name}
+                                </div>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="mt-2">
+                <span className="text-base font-medium text-foreground">
+                  {i18n.get(CONTENT)}
+                </span>
+                <RichTextEditor onChange={handleContentChange} />
+              </div>
+            </div>
+            <div className="w-full mt-2">
+              <div className="flex gap-2 lg:gap-4 p-2 w-full">
+                {attachments.images.length > 0 ? (
+                  <div className="w-full flex flex-col gap-6">
+                    <div className="flex justify-end">
+                      <MdOutlineEdit
+                        className="w-6 h-6"
+                        onClick={() => handleOpen('image')}
+                      />
                     </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="mt-2">
-            <span className="text-base font-medium text-foreground">
-              {i18n.get(CONTENT)}
-            </span>
-            <RichTextEditor onChange={handleContentChange}  />
-          </div>
-        </div>
-        <div className="w-full mt-2">
-          <div className="flex gap-2 lg:gap-4 p-2 w-full">
-            {attachments.images.length > 0 ? (
-              <div className="w-full flex flex-col gap-6">
-                <div className="flex justify-end">
-                  <MdOutlineEdit
-                    className="w-6 h-6"
-                    onClick={() => handleOpen('image')}
-                  />
-                </div>
-                <ImagePreviewer images={attachments.images} />
+                    <ImagePreviewer images={attachments.images} />
+                  </div>
+                ) : attachments?.file?.file ? (
+                  <div className="w-full flex flex-col gap-6">
+                    <div className="flex justify-end">
+                      <MdOutlineEdit
+                        className="w-6 h-6"
+                        onClick={() => handleOpen('file')}
+                      />
+                    </div>
+                    <FilePreviewer file={attachments.file.file} />
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="w-6 h-6"
+                      onClick={() => handleOpen('image')}>
+                      <MdOutlineImage className="w-full h-full cursor-pointer" />
+                    </div>
+                    <div className="w-6 h-6" onClick={() => handleOpen('file')}>
+                      <MdOutlineUploadFile className="w-full h-full cursor-pointer " />
+                    </div>
+                  </>
+                )}
               </div>
-            ) : attachments?.file?.file ? (
-              <div className="w-full flex flex-col gap-6">
-                <div className="flex justify-end">
-                  <MdOutlineEdit
-                    className="w-6 h-6"
-                    onClick={() => handleOpen('file')}
-                  />
-                </div>
-                <FilePreviewer file={attachments.file.file} />
-              </div>
-            ) : (
-              <>
-                <div className="w-6 h-6" onClick={() => handleOpen('image')}>
-                  <MdOutlineImage className="w-full h-full cursor-pointer" />
-                </div>
-                <div className="w-6 h-6" onClick={() => handleOpen('file')}>
-                  <MdOutlineUploadFile className="w-full h-full cursor-pointer " />
-                </div>
-              </>
-            )}
+              <Button type="submit" className="bg-success w-full mt-1 lg:mt-4">
+                {i18n.get(PUBLISH)}
+              </Button>
+            </div>
           </div>
-          <Button
-            className="bg-success w-full mt-1 lg:mt-4"
-            onClick={handlePost}>
-            {i18n.get(PUBLISH)}
-          </Button>
-        </div>
-      </div>
+        </form>
+      </Form>
 
       {modalOpen === 'image' && (
         <ImageUploader
