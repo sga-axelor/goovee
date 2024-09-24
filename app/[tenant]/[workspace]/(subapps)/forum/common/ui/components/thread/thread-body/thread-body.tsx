@@ -20,7 +20,16 @@ import {
   FilePreviewer,
   ImageGallery,
 } from '@/subapps/forum/common/ui/components';
-import type {Post} from '@/subapps/forum/common/types/forum';
+import {
+  SEE_MORE,
+  SEE_LESS,
+} from '@/subapps/forum/common/constants';
+import  type {Post} from '@/subapps/forum/common/types/forum';
+import {useTruncatedElement} from '@/subapps/forum/common/ui/hooks/use-truncatedElement';
+
+interface MetaFile {
+  fileType: string;
+}
 
 export const ThreadBody = ({
   post,
@@ -31,10 +40,10 @@ export const ThreadBody = ({
 }) => {
   const {title, content, attachmentList, author, createdOn}: any = post || {};
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  const ref = React.useRef(null);
+  const {isTruncated, isShowingMore, toggleIsShowingMore} = useTruncatedElement(
+    {ref},
+  );
 
   const {images, files} = useMemo(() => {
     return (
@@ -89,19 +98,22 @@ export const ThreadBody = ({
         <div className="flex flex-col gap-2">
           <div className="text-lg font-semibold line-clamp-1">{title}</div>
           <div
-            className={`text-sm line-clamp-${isExpanded ? 0 : 3}`}
+            ref={ref}
+            className={`break-words text-xl ${!isShowingMore && 'line-clamp-3'} postContent`}
             dangerouslySetInnerHTML={{
               __html: content || '',
             }}></div>
           <div className="flex justify-end">
-            <div
-              className="text-gray-500 cursor-pointer flex items-center gap-2 justify-end w-fit"
-              onClick={toggleExpand}>
-              <MdOutlineMoreHoriz className="w-4 h-4" />
-              <span className="text-xs font-semibold">
-                {!isExpanded ? i18n.get('See more') : i18n.get('See less')}
-              </span>
-            </div>
+            <span className="text-xs font-semibold">
+              {isTruncated && (
+                <button
+                  onClick={toggleIsShowingMore}
+                  className="text-gray-500 cursor-pointer flex items-center gap-2 justify-end w-fit">
+                  <MdOutlineMoreHoriz className="w-4 h-4" />
+                  {isShowingMore ? i18n.get(SEE_LESS) : i18n.get(SEE_MORE)}
+                </button>
+              )}
+            </span>
           </div>
         </div>
         {images?.length > 0 && !usePopUpStyles && (

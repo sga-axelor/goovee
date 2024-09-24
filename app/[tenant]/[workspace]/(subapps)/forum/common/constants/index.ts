@@ -55,6 +55,8 @@ export const SELECT_A_GROUP = 'Select a group';
 export const ENTER_TITLE = 'Enter Title';
 export const MANAGE_NOTIFICATIONS = 'Manage notifications';
 export const SORT_BY = 'Sort By';
+export const SEE_MORE = 'See more';
+export const SEE_LESS = 'See less';
 
 export const GROUP_SORT_BY = [
   {
@@ -156,6 +158,6 @@ export const GROUP = {
 export const GROUPS_ORDER_BY = {
   isPin: ORDER_BY.DESC,
   forumGroup: {
-    name: ORDER_BY.ASC,
+    name: ORDER_BY.ASC.toLowerCase(),
   },
 };
