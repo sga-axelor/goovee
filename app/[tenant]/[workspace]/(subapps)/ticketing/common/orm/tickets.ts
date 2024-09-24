@@ -6,7 +6,7 @@ import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
-import {Entity, ID} from '@goovee/orm';
+import {Entity, ID, SelectOptions} from '@goovee/orm';
 import axios from 'axios';
 
 import {
@@ -27,11 +27,19 @@ export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
 };
 
-async function hasTicketAccess(
+type Track = {
+  name: string;
+  title: string;
+  value: string | number | boolean;
+  oldValue?: string | number | boolean;
+};
+
+async function findTicketAccess(
   ticketId: ID,
   userId: ID,
   workspaceId: ID,
-): Promise<boolean> {
+  select?: SelectOptions<AOSProjectTask>,
+) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
@@ -43,9 +51,10 @@ async function hasTicketAccess(
     },
     select: {
       id: true,
+      ...select,
     },
   });
-  return !!ticket;
+  return ticket;
 }
 
 export async function createTicket(
@@ -69,17 +78,11 @@ export async function createTicket(
       ...getProjectAccessFilter({userId, workspaceId}),
     },
     select: {
-      assignedTo: {
-        id: true,
-      },
+      assignedTo: {id: true},
       projectTaskStatusSet: {
-        select: {
-          id: true,
-        },
+        select: {id: true},
         take: 1,
-        orderBy: {
-          sequence: ORDER_BY.ASC,
-        },
+        orderBy: {sequence: ORDER_BY.ASC},
       } as unknown as {select: {id: true}}, // type cast to prevent orm type error
     },
   });
@@ -91,7 +94,7 @@ export async function createTicket(
   const manager = project.assignedTo?.id;
   const defaultStatus = project?.projectTaskStatusSet?.[0]?.id;
 
-  const ticket = await client.aOSProjectTask.create({
+  let ticketWithoutFullName = await client.aOSProjectTask.create({
     data: {
       createdOn: new Date(),
       updatedOn: new Date(),
@@ -102,61 +105,100 @@ export async function createTicket(
       isPrivate: false,
       progress: '0.00',
       requestedByContact: {select: {id: userId}},
-      assignedToContact: {select: {id: assignedTo}},
-      project: {
-        select: {
-          id: projectId,
-        },
-      },
+      project: {select: {id: projectId}},
       name: subject,
       description: description,
-      ...(defaultStatus && {
-        status: {
-          select: {
-            id: defaultStatus,
-          },
-        },
-      }),
-      ...(category && {
-        projectTaskCategory: {
-          select: {
-            id: category,
-          },
-        },
-      }),
-      ...(manager && {
-        assignedTo: {
-          select: {
-            id: manager,
-          },
-        },
-      }),
-      ...(priority && {
-        priority: {
-          select: {
-            id: priority,
-          },
-        },
-      }),
+      ...(assignedTo && {assignedToContact: {select: {id: assignedTo}}}),
+      ...(defaultStatus && {status: {select: {id: defaultStatus}}}),
+      ...(category && {projectTaskCategory: {select: {id: category}}}),
+      ...(manager && {assignedTo: {select: {id: manager}}}),
+      ...(priority && {priority: {select: {id: priority}}}),
+    },
+    select: {name: true},
+  });
+
+  const ticket = await client.aOSProjectTask.update({
+    data: {
+      id: ticketWithoutFullName.id,
+      version: ticketWithoutFullName.version,
+      fullName: `#${ticketWithoutFullName.id} ${ticketWithoutFullName.name}`,
+      updatedOn: new Date(),
     },
     select: {
       name: true,
+      taskDate: true,
+      assignment: true,
+      typeSelect: true,
+      invoicingType: true,
+      isPrivate: true,
+      progress: true,
+      requestedByContact: {name: true},
+      project: {name: true},
+      ...(assignedTo && {assignedToContact: {name: true}}),
+      ...(category && {projectTaskCategory: {name: true}}),
+      ...(priority && {priority: {name: true}}),
+      ...(defaultStatus && {status: {name: true}}),
+      ...(assignedTo && {assignedToContact: {name: true}}),
+      ...(manager && {assignedTo: {name: true}}),
     },
   });
 
-  const ticketWithFullName = client.aOSProjectTask.update({
-    data: {
-      id: ticket.id,
-      version: ticket.version,
-      fullName: `#${ticket.id} ${ticket.name}`,
+  const tracks: Track[] = [
+    {name: 'name', title: 'Subject', value: ticket.name},
+    {name: 'assignment', title: 'Assignment', value: ticket.assignment ?? ''},
+    {name: 'typeSelect', title: 'Type', value: ticket.typeSelect ?? ''},
+    {name: 'isPrivate', title: 'Private', value: ticket.isPrivate ?? ''},
+    {name: 'progress', title: 'Progress', value: ticket.progress ?? ''},
+    {name: 'project', title: 'Project', value: ticket.project?.name ?? ''},
+    {
+      name: 'taskDate',
+      title: 'Task Date',
+      value: ticket.taskDate?.toISOString() ?? '',
     },
-    select: {
-      project: {
-        id: true,
-      },
+    {
+      name: 'invoicingType',
+      title: 'Invoicing Type',
+      value: ticket.invoicingType ?? '',
     },
-  });
-  return ticketWithFullName;
+    {
+      name: 'requestedByContact',
+      title: 'Requested By',
+      value: ticket.requestedByContact?.name ?? '',
+    },
+  ];
+
+  if (category) {
+    tracks.push({
+      name: 'projectTaskCategory',
+      title: 'Category',
+      value: ticket.projectTaskCategory?.name ?? '',
+    });
+  }
+
+  if (priority) {
+    tracks.push({
+      name: 'priority',
+      title: 'Priority',
+      value: ticket.priority?.name ?? '',
+    });
+  }
+
+  if (defaultStatus) {
+    tracks.push({
+      name: 'status',
+      title: 'Status',
+      value: ticket.status?.name ?? '',
+    });
+  }
+
+  if (assignedTo) {
+    tracks.push({
+      name: 'assignedToContact',
+      title: 'AssignedToContact',
+      value: ticket.assignedToContact?.name ?? '',
+    });
+  }
+  return ticket;
 }
 
 export async function updateTicketViaWS(
@@ -175,7 +217,7 @@ export async function updateTicketViaWS(
     version,
   } = data;
 
-  if (!(await hasTicketAccess(id, userId, workspaceId))) {
+  if (!(await findTicketAccess(id, userId, workspaceId))) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
   }
@@ -195,24 +237,10 @@ export async function updateTicketViaWS(
           version,
           name: subject,
           description: description,
-          ...(category && {
-            projectTaskCategory: {
-              id: category,
-            },
-          }),
-          ...(priority && {
-            priority: {
-              id: priority,
-            },
-          }),
-          ...(status && {
-            status: {
-              id: status,
-            },
-          }),
-          ...(assignment && {
-            assignment: assignment,
-          }),
+          ...(category && {projectTaskCategory: {id: category}}),
+          ...(priority && {priority: {id: priority}}),
+          ...(status && {status: {id: status}}),
+          ...(assignment && {assignment: assignment}),
         },
         fields: ['project'],
       },
@@ -255,7 +283,17 @@ export async function updateTicket(
   } = data;
   const client = await getClient();
 
-  if (!(await hasTicketAccess(id, userId, workspaceId))) {
+  const select: SelectOptions<AOSProjectTask> = {
+    ...(subject != null && {name: true}),
+    ...(category && {projectTaskCategory: {name: true}}),
+    ...(priority && {priority: {name: true}}),
+    ...(status && {status: {name: true}}),
+    ...(assignment && {assignment: true}),
+    ...(assignedTo && {assignedToContact: {name: true}}),
+  };
+
+  const oldTicket = await findTicketAccess(id, userId, workspaceId, select);
+  if (!oldTicket) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
   }
@@ -267,48 +305,88 @@ export async function updateTicket(
       updatedOn: new Date(),
       name: subject,
       description: description,
-      ...(category && {
-        projectTaskCategory: {
-          select: {
-            id: category,
-          },
-        },
-      }),
-      ...(priority && {
-        priority: {
-          select: {
-            id: priority,
-          },
-        },
-      }),
-      ...(status && {
-        status: {
-          select: {
-            id: status,
-          },
-        },
-      }),
-      ...(assignment && {
-        assignment: assignment,
-      }),
-      ...(assignedTo && {
-        assignedToContact: {
-          select: {
-            id: assignedTo,
-          },
-        },
-      }),
+      ...(category && {projectTaskCategory: {select: {id: category}}}),
+      ...(priority && {priority: {select: {id: priority}}}),
+      ...(status && {status: {select: {id: status}}}),
+      ...(assignment && {assignment: assignment}),
+      ...(assignedTo && {assignedToContact: {select: {id: assignedTo}}}),
     },
     select: {
       id: true,
       project: {
         id: true,
       },
+      ...select,
     },
   });
 
+  const tracks: Track[] = [];
+
+  if (subject != null && oldTicket.name !== ticket.name) {
+    tracks.push({
+      name: 'name',
+      title: 'Subject',
+      value: ticket.name,
+      ...(oldTicket.name && {oldValue: oldTicket.name}),
+    });
+  }
+  if (
+    category &&
+    oldTicket.projectTaskCategory?.name !== ticket.projectTaskCategory?.name
+  ) {
+    tracks.push({
+      name: 'projectTaskCategory',
+      title: 'Category',
+      value: ticket.projectTaskCategory?.name ?? '',
+      ...(oldTicket.projectTaskCategory?.name && {
+        oldValue: oldTicket.projectTaskCategory.name,
+      }),
+    });
+  }
+  if (priority && oldTicket.priority?.name !== ticket.priority?.name) {
+    tracks.push({
+      name: 'priority',
+      title: 'Priority',
+      value: ticket.priority?.name ?? '',
+      ...(oldTicket.priority?.name && {oldValue: oldTicket.priority.name}),
+    });
+  }
+
+  if (status && oldTicket.status?.name !== ticket.status?.name) {
+    tracks.push({
+      name: 'status',
+      title: 'Status',
+      value: ticket.status?.name ?? '',
+      ...(oldTicket.status?.name && {oldValue: oldTicket.status.name}),
+    });
+  }
+
+  if (assignment && oldTicket.assignment !== ticket.assignment) {
+    tracks.push({
+      name: 'assignment',
+      title: 'Assignment',
+      value: ticket.assignment ?? '',
+      ...(oldTicket.assignment && {oldValue: oldTicket.assignment}),
+    });
+  }
+
+  if (
+    assignedTo &&
+    oldTicket.assignedToContact?.name !== ticket.assignedToContact?.name
+  ) {
+    tracks.push({
+      name: 'assignedToContact',
+      title: 'AssignedToContact',
+      value: ticket.assignedToContact?.name ?? '',
+      ...(oldTicket.assignedToContact?.name && {
+        oldValue: oldTicket.assignedToContact.name,
+      }),
+    });
+  }
+
   return ticket;
 }
+
 export async function getAllTicketCount(projectId: ID): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
@@ -759,8 +837,8 @@ export async function createTicketLink(
   const {currentTicketId, linkTicketId, linkType} = data;
   const client = await getClient();
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
-    hasTicketAccess(currentTicketId, userId, workspaceId),
-    hasTicketAccess(linkTicketId, userId, workspaceId),
+    findTicketAccess(currentTicketId, userId, workspaceId),
+    findTicketAccess(linkTicketId, userId, workspaceId),
   ]);
   if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
     // To make sure the user has access to the ticket.
@@ -858,8 +936,8 @@ export async function deleteTicketLink(
   const {currentTicketId, linkTicketId, linkId} = data;
   const client = await getClient();
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
-    hasTicketAccess(currentTicketId, userId, workspaceId),
-    hasTicketAccess(linkTicketId, userId, workspaceId),
+    findTicketAccess(currentTicketId, userId, workspaceId),
+    findTicketAccess(linkTicketId, userId, workspaceId),
   ]);
   if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
     // To make sure the user has access to the ticket.
