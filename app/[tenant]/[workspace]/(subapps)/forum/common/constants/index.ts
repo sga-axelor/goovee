@@ -7,6 +7,9 @@ import {
   CiTextAlignRight,
 } from 'react-icons/ci';
 
+// ---- CORE IMPORTS ---- //
+import {ORDER_BY} from '@/constants';
+
 // ---- LOCAL IMPORTS ---- //
 import type {
   Level,
@@ -19,8 +22,6 @@ const PostsContent = lazy(
   () =>
     import('@/subapps/forum/common/ui/components/posts-content/posts-content'),
 );
-
-import {ORDER_BY} from '@/constants';
 
 export const GROUPS = 'Groups';
 export const MEMBER = 'Member';
@@ -49,12 +50,6 @@ export const SUPPORTED_FILE_PDF_DOC = 'Supported format: pdf, doc, xlsx';
 export const ALERTNATE_TEXT = 'Alternate Text';
 export const OUT_OF = 'out of';
 export const UPLOAD = 'Upload';
-export const COMMENT = 'Comment';
-export const COMMENTS = 'Comments';
-export const DISABLED_COMMENT_PLACEHOLDER =
-  'You need to log in to comment posts';
-export const REPORT = 'Report';
-export const NOT_INTERESTED = 'Not interested';
 export const FILE_TITLE = 'File Title';
 export const SELECT_A_GROUP = 'Select a group';
 export const ENTER_TITLE = 'Enter Title';
@@ -129,30 +124,6 @@ export const TEXT_ALIGNMENT = [
   {name: 'justify', icon: CiTextAlignJustify},
 ];
 
-export const SORT_TYPE = {
-  new: 'new',
-  old: 'old',
-  popular: 'popular',
-};
-
-export const THREAD_SORT_BY_OPTIONS = [
-  {
-    id: 1,
-    key: SORT_TYPE.new,
-    label: 'New',
-  },
-  {
-    id: 2,
-    key: SORT_TYPE.old,
-    label: 'Old',
-  },
-  {
-    id: 3,
-    key: SORT_TYPE.popular,
-    label: 'Popular',
-  },
-];
-
 export const NOTIFICATIONS_OPTIONS = [
   {
     id: 1,
@@ -188,5 +159,3 @@ export const GROUPS_ORDER_BY = {
     name: ORDER_BY.ASC,
   },
 };
-
-export const DEFAULT_COMMENT_LIMIT = 3;

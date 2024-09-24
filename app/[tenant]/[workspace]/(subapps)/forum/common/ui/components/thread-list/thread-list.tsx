@@ -3,18 +3,14 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {Separator} from '@/ui/components';
+import {DropdownToggle, Separator} from '@/ui/components';
 import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
-import {URL_PARAMS} from '@/constants';
+import {SORT_BY_OPTIONS, URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {THREAD_SORT_BY_OPTIONS} from '@/subapps/forum/common/constants';
 import {Post} from '@/subapps/forum/common/types/forum';
-import {
-  DropdownToggle,
-  InfiniteScroll,
-} from '@/subapps/forum/common/ui/components';
+import {InfiniteScroll} from '@/subapps/forum/common/ui/components';
 
 export const ThreadList = ({
   posts,
@@ -47,7 +43,7 @@ export const ThreadList = ({
           <div>{i18n.get('Sort by')}:</div>
           <DropdownToggle
             value={sort}
-            options={THREAD_SORT_BY_OPTIONS}
+            options={SORT_BY_OPTIONS}
             handleDropdown={handleSortBy}
           />
         </div>

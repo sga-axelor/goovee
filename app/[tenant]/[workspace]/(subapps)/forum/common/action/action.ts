@@ -8,12 +8,11 @@ import {promisify} from 'util';
 // ---- CORE IMPORTS ---- //
 import {getClient} from '@/goovee';
 import {i18n} from '@/lib/i18n';
-import {clone, getSkipInfo} from '@/utils';
-import {ORDER_BY, SUBAPP_CODES} from '@/constants';
+import {clone} from '@/utils';
+import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/orm/auth';
-import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText} from '@/utils/files';
 
 //----LOCAL IMPORTS -----//
@@ -23,7 +22,6 @@ import {
   findMemberGroupById,
   findPosts,
 } from '@/subapps/forum/common/orm/forum';
-import {SORT_TYPE} from '@/subapps/forum/common/constants';
 
 interface FileMeta {
   fileName: string;
@@ -602,72 +600,4 @@ export async function fetchGroupsByMembers({
     orderBy,
     workspaceID,
   });
-}
-
-export async function fetchComments({
-  postId,
-  limit,
-  page,
-  sort,
-}: {
-  postId: ID;
-  limit?: number;
-  page?: number;
-  sort?: any;
-}) {
-  const skip = getSkipInfo(limit, page);
-  const client = await getClient();
-  try {
-    let orderBy: any = null;
-    switch (sort) {
-      case SORT_TYPE.old:
-        orderBy = {
-          publicationDateTime: ORDER_BY.ASC,
-        };
-        break;
-      default:
-        orderBy = {
-          publicationDateTime: ORDER_BY.DESC,
-        };
-    }
-
-    const comments = await client.aOSPortalComment.find({
-      where: {
-        forumPost: {
-          id: postId,
-        },
-      },
-      orderBy,
-      take: limit,
-      ...(skip ? {skip} : {}),
-      select: {
-        id: true,
-        contentComment: true,
-        publicationDateTime: true,
-        author: {
-          id: true,
-          name: true,
-        },
-        image: {
-          id: true,
-        },
-        childCommentList: {
-          select: {
-            contentComment: true,
-            publicationDateTime: true,
-            author: {
-              id: true,
-              name: true,
-            },
-            image: {
-              id: true,
-            },
-          },
-        },
-      },
-    });
-    return {success: true, data: clone(comments), total: comments?.[0]?._count};
-  } catch (error) {
-    return {error: true, message: i18n.get('Something went wromng')};
-  }
 }

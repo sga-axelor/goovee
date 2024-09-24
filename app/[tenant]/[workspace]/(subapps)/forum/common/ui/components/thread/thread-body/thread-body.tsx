@@ -12,16 +12,15 @@ import {
   AvatarImage,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/image';
-import {DATE_FORMATS} from '@/constants';
+import {DATE_FORMATS, NOT_INTERESTED, REPORT} from '@/constants';
 import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import {NOT_INTERESTED, REPORT} from '@/subapps/forum/common/constants';
 import {
   FilePreviewer,
   ImageGallery,
 } from '@/subapps/forum/common/ui/components';
-import {Post} from '@/subapps/forum/common/types/forum';
+import type {Post} from '@/subapps/forum/common/types/forum';
 
 export const ThreadBody = ({
   post,

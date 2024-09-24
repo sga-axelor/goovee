@@ -1,12 +1,11 @@
 // ---- CORE IMPORTS ---- //
-import {ORDER_BY} from '@/constants';
+import {ORDER_BY, SORT_TYPE} from '@/constants';
 import {getClient} from '@/goovee';
 import {ID} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {SORT_TYPE} from '@/subapps/forum/common/constants';
 import {getPopularQuery} from '@/subapps/forum/common/utils';
 
 export async function findGroups({
@@ -199,7 +198,11 @@ export async function findPosts({
           orderBy: {createdOn: ORDER_BY.DESC},
           select: {
             id: true,
+            note: true,
             mailMessage: {
+              body: true,
+              relatedId: true,
+              relatedModel: true,
               messageContentHtml: true,
               author: {
                 id: true,
@@ -212,9 +215,13 @@ export async function findPosts({
             },
             createdOn: true,
             childCommentList: {
+              note: true,
               select: {
                 id: true,
                 mailMessage: {
+                  body: true,
+                  relatedId: true,
+                  relatedModel: true,
                   messageContentHtml: true,
                   author: {
                     id: true,

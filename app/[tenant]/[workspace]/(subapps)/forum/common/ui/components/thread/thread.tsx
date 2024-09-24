@@ -23,7 +23,7 @@ export const Thread = ({
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
 }) => {
-  const {forumGroup, commentList}: any = post || {};
+  const {forumGroup}: any = post || {};
 
   return (
     <div className="bg-white rounded-lg flex flex-col gap-4">
@@ -33,7 +33,6 @@ export const Thread = ({
       <ThreadBody post={post} usePopUpStyles={usePopUpStyles} />
       <ThreadFooter
         post={post}
-        comments={commentList}
         usePopUpStyles={usePopUpStyles}
         hideCloseComments={hideCloseComments}
         showCommentsByDefault={showCommentsByDefault}
