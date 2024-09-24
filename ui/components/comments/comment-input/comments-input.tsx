@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
@@ -48,7 +48,7 @@ const formSchema = z.object({
   text: z.string().min(1, {message: i18n.get('Comment is required')}),
 });
 
-export function Comment({
+export function CommentInput({
   disabled = false,
   className = '',
   placeholderText = 'Enter text here*',
@@ -56,6 +56,7 @@ export function Comment({
   onSubmit,
 }: CommentProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission status
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,8 +68,9 @@ export function Comment({
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData();
+    setIsSubmitting(true);
 
+    const formData = new FormData();
     formData.append('text', values.text);
     formData.append('content', values.content);
 
@@ -90,6 +92,7 @@ export function Comment({
     }
 
     await onSubmit({formData, values});
+    setIsSubmitting(false);
   };
 
   const {fields, append, remove} = useFieldArray({
@@ -116,7 +119,7 @@ export function Comment({
         attachments: [],
       });
     }
-  }, [form, form.formState, form.reset]);
+  }, [form]);
 
   return (
     <Form {...form}>
@@ -130,7 +133,7 @@ export function Comment({
             control={form.control}
             name="text"
             render={({field}) => (
-              <FormItem className=" w-full">
+              <FormItem className="w-full">
                 <FormControl>
                   <Input
                     className={cn(
@@ -156,7 +159,8 @@ export function Comment({
             <Button
               type="submit"
               className="px-6 py-1.5 h-9 text-base"
-              variant="success">
+              variant="success"
+              disabled={isSubmitting || disabled}>
               {i18n.get('Send')}
             </Button>
           </div>
@@ -171,7 +175,7 @@ export function Comment({
                 key={`${field.file?.name}-${index}`}
                 className="p-2 border rounded-lg grid grid-cols-[20%_1fr_2fr_auto] items-center gap-2">
                 <p className="font-semibold line-clamp-1">
-                  {index + 1} {field.file?.name}-
+                  {index + 1} {field.file?.name} -{' '}
                   {getFileSizeText(field.file?.size)}
                 </p>
                 <FormField
@@ -216,4 +220,4 @@ export function Comment({
   );
 }
 
-export default Comment;
+export default CommentInput;

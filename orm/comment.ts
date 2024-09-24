@@ -12,9 +12,9 @@ import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
-import {clone} from '@/utils';
-import {ModelType, PortalWorkspace} from '@/types';
-import {COMMENT_TRACKING} from '@/constants';
+import {clone, getSkipInfo} from '@/utils';
+import {ID, ModelType, PortalWorkspace} from '@/types';
+import {COMMENT_TRACKING, ORDER_BY, SORT_TYPE} from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
@@ -141,17 +141,25 @@ export async function upload(formData: FormData, workspaceURL: string) {
 export async function addComment({
   type,
   model = null,
-  content,
+  note,
   workspaceURL,
   attachments = [],
   parentId = null,
+  relatedModel,
+  messageBody,
 }: {
   type: ModelType;
   model: {id: string | number} | null;
   workspaceURL: string;
-  content: any;
+  note: string;
   attachments?: any;
   parentId?: any;
+  relatedModel?: string;
+  messageBody?: {
+    title: string;
+    tracks: any[];
+    tags: any[];
+  };
 }) {
   try {
     const session = await getSession();
@@ -162,7 +170,6 @@ export async function addComment({
         message: i18n.get('Unauthorized'),
       };
     }
-
     const aosUser = await findUserForPartner({partnerId: user.id});
     if (!aosUser) {
       return {
@@ -237,10 +244,13 @@ export async function addComment({
         ...(parentComment
           ? {parentComment: {select: {id: parentComment.id}}}
           : {}),
+        note,
         mailMessage: {
           create: {
-            subject: COMMENT_TRACKING,
-            messageContentHtml: content,
+            subject: messageBody?.title ?? COMMENT_TRACKING,
+            relatedId: modelRecord.id,
+            relatedModel,
+            ...(messageBody ? {body: JSON.stringify(messageBody)} : {}),
             author: {
               select: {
                 id: aosUser.id,
@@ -276,6 +286,7 @@ export async function addComment({
         updatedOn: timestamp as unknown as Date,
       },
     });
+
     return {
       success: true,
       data: clone(response),
@@ -293,10 +304,12 @@ export async function findByID({
   type,
   id,
   workspace,
+  withAuth = true,
 }: {
   type: ModelType;
   id: string | number;
   workspace: PortalWorkspace;
+  withAuth?: boolean;
 }) {
   if (!type || !id) {
     return {
@@ -312,13 +325,15 @@ export async function findByID({
     };
   }
 
-  const session = await getSession();
-  const user = session?.user;
-  if (!user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+  if (withAuth) {
+    const session = await getSession();
+    const user = session?.user;
+    if (!user) {
+      return {
+        error: true,
+        message: i18n.get('Unauthorized'),
+      };
+    }
   }
 
   let response: any;
@@ -342,4 +357,167 @@ export async function findByID({
   }
 
   return response;
+}
+
+export async function findComments({
+  model,
+  limit,
+  page,
+  sort,
+  workspaceURL,
+  type,
+}: {
+  model: {id: ID} | null;
+  limit?: number;
+  page?: number;
+  sort?: any;
+  workspaceURL: string;
+  type: ModelType;
+}) {
+  const session = await getSession();
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
+
+  if (!model) {
+    return {
+      error: true,
+      message: i18n.get('Model is missing'),
+    };
+  }
+
+  const modelRecord: any = await findByID({
+    type,
+    id: model?.id,
+    workspace,
+    withAuth: false,
+  });
+  if (!modelRecord) {
+    return {
+      error: true,
+      message: i18n.get(modelRecord?.message || 'Record not found.'),
+    };
+  }
+
+  const skip = getSkipInfo(limit, page);
+  const client = await getClient();
+  try {
+    let orderBy: any = null;
+    switch (sort) {
+      case SORT_TYPE.old:
+        orderBy = {
+          createdOn: ORDER_BY.ASC,
+        };
+        break;
+      default:
+        orderBy = {
+          createdOn: ORDER_BY.DESC,
+        };
+    }
+    const modelName = ModelMap[type];
+
+    const comments = await client.aOSComment.find({
+      where: {
+        ...(modelRecord && modelName
+          ? {
+              [modelName as string]: {
+                id: modelRecord.id,
+              },
+            }
+          : {}),
+      },
+      orderBy,
+      take: limit,
+      ...(skip ? {skip} : {}),
+      select: {
+        id: true,
+        note: true,
+        mailMessage: {
+          body: true,
+          relatedId: true,
+          relatedModel: true,
+          createdOn: true,
+          messageContentHtml: true,
+          author: {
+            id: true,
+            name: true,
+            partner: {
+              picture: true,
+              simpleFullName: true,
+            },
+          },
+        },
+        childCommentList: {
+          select: {
+            id: true,
+            note: true,
+            mailMessage: {
+              body: true,
+              relatedId: true,
+              relatedModel: true,
+              messageContentHtml: true,
+              author: {
+                id: true,
+                name: true,
+                partner: {
+                  picture: true,
+                  simpleFullName: true,
+                },
+              },
+            },
+            createdOn: true,
+            createdBy: {
+              id: true,
+              name: true,
+              partner: {
+                picture: true,
+                simpleFullName: true,
+              },
+            },
+            commentFileList: {
+              select: {
+                attachmentFile: {
+                  id: true,
+                  fileName: true,
+                },
+              },
+            },
+          },
+        },
+        commentFileList: {
+          select: {
+            attachmentFile: {
+              id: true,
+              fileName: true,
+            },
+          },
+        },
+        createdBy: {
+          id: true,
+          name: true,
+          partner: {
+            picture: true,
+            simpleFullName: true,
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      data: clone(comments),
+      total: comments?.[0]?._count || comments?.length,
+    };
+  } catch (error) {
+    return {error: true, message: i18n.get('Something went wromng')};
+  }
 }
