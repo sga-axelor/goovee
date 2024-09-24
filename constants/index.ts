@@ -1,3 +1,6 @@
+// ---- CORE IMPORTS ---- //
+import {i18n} from '@/lib/i18n';
+
 /**
  * CURRENCY
  */
@@ -135,3 +138,20 @@ export const SORT_TYPE = {
 
 export const REPORT = 'Report';
 export const NOT_INTERESTED = 'Not interested';
+export const SORT_BY_OPTIONS = [
+  {
+    id: 1,
+    key: SORT_TYPE.new,
+    label: i18n.get('New'),
+  },
+  {
+    id: 2,
+    key: SORT_TYPE.old,
+    label: i18n.get('Old'),
+  },
+  {
+    id: 3,
+    key: SORT_TYPE.popular,
+    label: i18n.get('Popular'),
+  },
+];
