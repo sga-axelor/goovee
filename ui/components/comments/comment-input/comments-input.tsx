@@ -56,7 +56,7 @@ export function CommentInput({
   onSubmit,
 }: CommentProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission status
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,6 +93,8 @@ export function CommentInput({
 
     await onSubmit({formData, values});
     setIsSubmitting(false);
+
+    form.reset();
   };
 
   const {fields, append, remove} = useFieldArray({
@@ -110,16 +112,6 @@ export function CommentInput({
     maxSize: MAX_FILE_SIZE,
     onDrop,
   });
-
-  React.useEffect(() => {
-    if (form.formState.isSubmitSuccessful) {
-      form.reset({
-        text: '',
-        content: '',
-        attachments: [],
-      });
-    }
-  }, [form]);
 
   return (
     <Form {...form}>
