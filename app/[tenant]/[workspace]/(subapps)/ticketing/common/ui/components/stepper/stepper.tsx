@@ -20,7 +20,7 @@ export function Stepper(props: StepperProps) {
           <Fragment key={step.id}>
             <div
               className={cn(
-                'w-[10px] h-[10px] rounded-full bg-gray-400 relative',
+                'w-[10px] h-[10px] rounded-full bg-muted-foreground relative',
                 {
                   ['bg-success']: i <= progress,
                 },
@@ -31,7 +31,7 @@ export function Stepper(props: StepperProps) {
             </div>
             {steps.length - 1 !== i && (
               <div
-                className={cn('h-[1px] flex-grow bg-gray-400', {
+                className={cn('h-[1px] flex-grow bg-muted-foreground', {
                   ['bg-success']: i < progress,
                 })}
               />

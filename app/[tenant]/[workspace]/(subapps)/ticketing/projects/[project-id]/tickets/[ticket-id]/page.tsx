@@ -133,7 +133,7 @@ export default async function Page({
         priorities={clone(priorities)}
         contacts={clone(contacts)}
       />
-      <div className="space-y-4 rounded-md border bg-white p-4 mt-5">
+      <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}
         {ticket.childTasks && Boolean(ticket.childTasks.length) && (
           <ChildTickets tickets={ticket.childTasks} />

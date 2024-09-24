@@ -108,7 +108,7 @@ export default async function Page({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator>
-              <FaChevronRight className="text-primay" />
+              <FaChevronRight className="text-primary" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               <BreadcrumbLink

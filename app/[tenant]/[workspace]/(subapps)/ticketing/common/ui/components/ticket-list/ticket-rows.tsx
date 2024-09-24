@@ -156,7 +156,7 @@ export function TicketRows(props: {tickets: Ticket[]}) {
                       <Priority name={ticket.priority?.name} />
                     </Item>
                     <Item label="Status">
-                      <Priority name={ticket.status?.name} />
+                      <Status name={ticket.status?.name} />
                     </Item>
                     <Item label="Assigned to">
                       {ticket.assignment === ASSIGNMENT.CUSTOMER

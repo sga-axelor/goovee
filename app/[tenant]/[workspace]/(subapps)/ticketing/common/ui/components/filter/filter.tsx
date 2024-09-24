@@ -132,7 +132,7 @@ export function Filter(props: FilterProps) {
         <Trigger asChild>
           <Button
             variant={filterCount ? 'success' : 'outline'}
-            className={cn('flex justify-between w-[364px]', {
+            className={cn('flex justify-between w-[400px]', {
               ['w-full']: small,
             })}>
             <div className="flex items-center space-x-2">
@@ -149,7 +149,7 @@ export function Filter(props: FilterProps) {
           </Button>
         </Trigger>
 
-        <Content className={small ? 'px-5 pb-5' : 'w-[364px]'}>
+        <Content className={small ? 'px-5 pb-5' : 'w-[400px]'}>
           {small && (
             <>
               <h3 className="text-xl font-semibold mb-2">
@@ -163,7 +163,7 @@ export function Filter(props: FilterProps) {
               ref={formRef}
               onSubmit={form.handleSubmit(onSubmit)}
               className="overflow-y-auto">
-              <div className="space-y-4">
+              <div className="space-y-4 pr-2 pl-2">
                 <MyTicketsField form={form} />
                 {!form.watch('myTickets') && (
                   <>
@@ -320,13 +320,13 @@ function DatesField(props: FieldProps) {
   const {form} = props;
   return (
     <div>
-      <div className="min-[382px]:flex gap-2 block">
+      <div className="md:flex gap-2 block">
         <FormField
           control={form.control}
           name="updatedOn.0"
           render={({field}) => (
             <FormItem className="grow">
-              <FormLabel>{i18n.get('From')}:</FormLabel>
+              <FormLabel>{i18n.get('From')} :</FormLabel>
               <FormControl>
                 <Input type="date" placeholder="DD/MM/YYYY" {...field} />
               </FormControl>
@@ -339,7 +339,7 @@ function DatesField(props: FieldProps) {
           name="updatedOn.1"
           render={({field}) => (
             <FormItem className="grow">
-              <FormLabel>{i18n.get('To')}:</FormLabel>
+              <FormLabel>{i18n.get('To')} :</FormLabel>
               <FormControl>
                 <Input type="date" placeholder="DD/MM/YYYY" {...field} />
               </FormControl>

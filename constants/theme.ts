@@ -23,6 +23,7 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
     accent: '210 40% 96.1%',
     'accent-foreground': '222.2 47.4% 11.2%',
 
+    'destructive-light': '0 58% 90%',
     destructive: '0 84.2% 60.2%',
     'destructive-foreground': '210 40% 98%',
     'destructive-dark': '3 86% 61%',
