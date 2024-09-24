@@ -44,15 +44,10 @@ async function findTicketAccess(
   const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: ticketId,
-      project: {
-        ...getProjectAccessFilter({userId, workspaceId}),
-      },
+      project: {...getProjectAccessFilter({userId, workspaceId})},
       ...getTicketAccessFilter(),
     },
-    select: {
-      id: true,
-      ...select,
-    },
+    select: {id: true, ...select},
   });
   return ticket;
 }
@@ -313,9 +308,7 @@ export async function updateTicket(
     },
     select: {
       id: true,
-      project: {
-        id: true,
-      },
+      project: {id: true},
       ...select,
     },
   });
@@ -392,12 +385,8 @@ export async function getAllTicketCount(projectId: ID): Promise<number> {
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
+      project: {id: projectId},
+      status: {isCompleted: false},
     },
   });
   return Number(count);
@@ -410,12 +399,8 @@ export async function getMyTicketCount(
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
+      project: {id: projectId},
+      status: {isCompleted: false},
       OR: [
         {
           assignedToContact: {
@@ -442,15 +427,9 @@ export async function getAssignedTicketCount(
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
-      assignedToContact: {
-        id: userId,
-      },
+      project: {id: projectId},
+      status: {isCompleted: false},
+      assignedToContact: {id: userId},
       assignment: ASSIGNMENT.CUSTOMER,
     },
   });
@@ -465,15 +444,9 @@ export async function getCreatedTicketCount(
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: false,
-      },
-      requestedByContact: {
-        id: userId,
-      },
+      project: {id: projectId},
+      status: {isCompleted: false},
+      requestedByContact: {id: userId},
     },
   });
   return Number(count);
@@ -483,12 +456,8 @@ export async function getResolvedTicketCount(projectId: ID): Promise<number> {
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
-      project: {
-        id: projectId,
-      },
-      status: {
-        isCompleted: true,
-      },
+      project: {id: projectId},
+      status: {isCompleted: true},
     },
   });
   return Number(count);
@@ -502,48 +471,20 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
     ...(orderBy ? {orderBy} : {}),
     where: {
       ...getTicketAccessFilter(),
-      project: {
-        id: projectId,
-      },
+      project: {id: projectId},
       ...where,
     },
     select: {
       name: true,
       updatedOn: true,
       assignment: true,
-      assignedToContact: {
-        name: true,
-        picture: {
-          id: true,
-        },
-      },
-      requestedByContact: {
-        name: true,
-        picture: {
-          id: true,
-        },
-      },
-      status: {
-        name: true,
-      },
-      projectTaskCategory: {
-        name: true,
-      },
-      priority: {
-        name: true,
-      },
-      project: {
-        name: true,
-        company: {
-          name: true,
-          logo: {
-            id: true,
-          },
-        },
-      },
-      assignedTo: {
-        name: true,
-      },
+      assignedToContact: {name: true, picture: {id: true}},
+      requestedByContact: {name: true, picture: {id: true}},
+      status: {name: true},
+      projectTaskCategory: {name: true},
+      priority: {name: true},
+      project: {name: true, company: {name: true, logo: {id: true}}},
+      assignedTo: {name: true},
     },
   });
   return tickets;
@@ -559,74 +500,32 @@ export async function findTicket(ticketId: ID, projectId: ID) {
     },
     select: {
       name: true,
-      targetVersion: {
-        title: true,
-      },
+      targetVersion: {title: true},
       progress: true,
       quantity: true,
       unitPrice: true,
       invoicingType: true,
-      invoicingUnit: {
-        name: true,
-      },
+      invoicingUnit: {name: true},
       description: true,
       taskDate: true,
       taskEndDate: true,
       displayFinancialData: true,
       attrs: true,
-      assignedToContact: {
-        name: true,
-        picture: {
-          id: true,
-        },
-      },
-      requestedByContact: {
-        name: true,
-        picture: {
-          id: true,
-        },
-      },
+      assignedToContact: {name: true, picture: {id: true}},
+      requestedByContact: {name: true, picture: {id: true}},
       projectTaskLinkList: {
         select: {
-          projectTaskLinkType: {
-            name: true,
-          },
+          projectTaskLinkType: {name: true},
           relatedTask: {
             name: true,
             updatedOn: true,
-            status: {
-              name: true,
-            },
-            projectTaskCategory: {
-              name: true,
-            },
-            priority: {
-              name: true,
-            },
-            project: {
-              name: true,
-              company: {
-                name: true,
-                logo: {
-                  id: true,
-                },
-              },
-            },
-            assignedTo: {
-              name: true,
-            },
-            assignedToContact: {
-              name: true,
-              picture: {
-                id: true,
-              },
-            },
-            requestedByContact: {
-              name: true,
-              picture: {
-                id: true,
-              },
-            },
+            status: {name: true},
+            projectTaskCategory: {name: true},
+            priority: {name: true},
+            project: {name: true, company: {name: true, logo: {id: true}}},
+            assignedTo: {name: true},
+            assignedToContact: {name: true, picture: {id: true}},
+            requestedByContact: {name: true, picture: {id: true}},
           },
         },
       },
@@ -634,100 +533,31 @@ export async function findTicket(ticketId: ID, projectId: ID) {
         select: {
           name: true,
           updatedOn: true,
-          status: {
-            name: true,
-          },
-          projectTaskCategory: {
-            name: true,
-          },
-          priority: {
-            name: true,
-          },
-          project: {
-            name: true,
-            company: {
-              name: true,
-              logo: {
-                id: true,
-              },
-            },
-          },
-          assignedTo: {
-            name: true,
-          },
-          assignedToContact: {
-            name: true,
-            picture: {
-              id: true,
-            },
-          },
-          requestedByContact: {
-            name: true,
-            picture: {
-              id: true,
-            },
-          },
+          status: {name: true},
+          projectTaskCategory: {name: true},
+          priority: {name: true},
+          project: {name: true, company: {name: true, logo: {id: true}}},
+          assignedTo: {name: true},
+          assignedToContact: {name: true, picture: {id: true}},
+          requestedByContact: {name: true, picture: {id: true}},
         },
       },
       parentTask: {
         name: true,
         updatedOn: true,
-        status: {
-          name: true,
-        },
-        projectTaskCategory: {
-          name: true,
-        },
-        priority: {
-          name: true,
-        },
-        project: {
-          name: true,
-          company: {
-            name: true,
-            logo: {
-              id: true,
-            },
-          },
-        },
-        assignedTo: {
-          name: true,
-        },
-        assignedToContact: {
-          name: true,
-          picture: {
-            id: true,
-          },
-        },
-        requestedByContact: {
-          name: true,
-          picture: {
-            id: true,
-          },
-        },
+        status: {name: true},
+        projectTaskCategory: {name: true},
+        priority: {name: true},
+        project: {name: true, company: {name: true, logo: {id: true}}},
+        assignedTo: {name: true},
+        assignedToContact: {name: true, picture: {id: true}},
+        requestedByContact: {name: true, picture: {id: true}},
       },
-      project: {
-        name: true,
-        company: {
-          name: true,
-          logo: {
-            id: true,
-          },
-        },
-      },
-      projectTaskCategory: {
-        name: true,
-      },
-      priority: {
-        name: true,
-      },
-      assignedTo: {
-        name: true,
-      },
-      status: {
-        name: true,
-        isCompleted: true,
-      },
+      project: {name: true, company: {name: true, logo: {id: true}}},
+      projectTaskCategory: {name: true},
+      priority: {name: true},
+      assignedTo: {name: true},
+      status: {name: true, isCompleted: true},
       assignment: true,
     },
   });
@@ -747,12 +577,8 @@ export async function findTicketInfo(ticketId: ID, projectId: ID) {
       name: true,
       version: true,
       description: true,
-      projectTaskCategory: {
-        name: true,
-      },
-      priority: {
-        name: true,
-      },
+      projectTaskCategory: {name: true},
+      priority: {name: true},
     },
   });
 
@@ -762,12 +588,8 @@ export async function findTicketInfo(ticketId: ID, projectId: ID) {
 export async function findTicketVersion(ticketId: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
-    where: {
-      id: ticketId,
-    },
-    select: {
-      version: true,
-    },
+    where: {id: ticketId},
+    select: {version: true},
   });
   if (!ticket) {
     throw new Error('Ticket not found');
@@ -793,28 +615,16 @@ export async function findTicketsBySearch(props: {
       ...getTicketAccessFilter(),
       ...(search && {
         OR: [
-          {
-            name: {
-              like: `%${search}%`,
-            },
-          },
-          {
-            description: {
-              like: `%${search}%`,
-            },
-          },
+          {name: {like: `%${search}%`}},
+          {description: {like: `%${search}%`}},
         ],
       }),
       ...(Boolean(excludeList?.length) && {
-        id: {
-          notIn: excludeList,
-        },
+        id: {notIn: excludeList},
       }),
     },
     take: 10,
-    select: {
-      name: true,
-    },
+    select: {name: true},
   });
   return tickets;
 }
@@ -822,9 +632,7 @@ export async function findTicketsBySearch(props: {
 export async function findTicketLinkTypes() {
   const client = await getClient();
   const links = await client.aOSProjectTaskLinkType.find({
-    select: {
-      name: true,
-    },
+    select: {name: true},
   });
   return links;
 }
@@ -847,11 +655,7 @@ export async function createTicketLink(
 
   const type = await client.aOSProjectTaskLinkType.findOne({
     where: {id: linkType},
-    select: {
-      oppositeLinkType: {
-        id: true,
-      },
-    },
+    select: {oppositeLinkType: {id: true}},
   });
 
   if (!type) {
@@ -864,21 +668,9 @@ export async function createTicketLink(
     data: {
       createdOn: new Date(),
       updatedOn: new Date(),
-      projectTask: {
-        select: {
-          id: currentTicketId,
-        },
-      },
-      relatedTask: {
-        select: {
-          id: linkTicketId,
-        },
-      },
-      projectTaskLinkType: {
-        select: {
-          id: type.id,
-        },
-      },
+      projectTask: {select: {id: currentTicketId}},
+      relatedTask: {select: {id: linkTicketId}},
+      projectTaskLinkType: {select: {id: type.id}},
     },
     select: {id: true},
   });
@@ -887,26 +679,12 @@ export async function createTicketLink(
     data: {
       createdOn: new Date(),
       updatedOn: new Date(),
-      projectTask: {
-        select: {
-          id: linkTicketId,
-        },
-      },
-      relatedTask: {
-        select: {
-          id: currentTicketId,
-        },
-      },
+      projectTask: {select: {id: linkTicketId}},
+      relatedTask: {select: {id: currentTicketId}},
       projectTaskLinkType: {
-        select: {
-          id: oppositeType ? oppositeType.id : type.id,
-        },
+        select: {id: oppositeType ? oppositeType.id : type.id},
       },
-      projectTaskLink: {
-        select: {
-          id: link1.id,
-        },
-      },
+      projectTaskLink: {select: {id: link1.id}},
     },
     select: {id: true},
   });
@@ -916,11 +694,7 @@ export async function createTicketLink(
       id: link1.id,
       version: link1.version,
       updatedOn: new Date(),
-      projectTaskLink: {
-        select: {
-          id: link2.id,
-        },
-      },
+      projectTaskLink: {select: {id: link2.id}},
     },
     select: {id: true},
   });
@@ -945,14 +719,8 @@ export async function deleteTicketLink(
   }
 
   const link = await client.aOSProjectTaskLink.findOne({
-    where: {
-      id: linkId,
-    },
-    select: {
-      projectTaskLink: {
-        id: true,
-      },
-    },
+    where: {id: linkId},
+    select: {projectTaskLink: {id: true}},
   });
 
   if (!link) {
@@ -964,11 +732,7 @@ export async function deleteTicketLink(
     linksToDelete.push(link.projectTaskLink.id);
   }
   const deleteCount = await client.aOSProjectTaskLink.deleteAll({
-    where: {
-      id: {
-        in: linksToDelete,
-      },
-    },
+    where: {id: {in: linksToDelete}},
   });
   return deleteCount;
 }

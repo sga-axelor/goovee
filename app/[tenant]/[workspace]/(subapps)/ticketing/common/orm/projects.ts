@@ -20,9 +20,7 @@ export async function findProjects(props: QueryProps<AOSProject> & AuthProps) {
       ...getProjectAccessFilter({workspaceId, userId}),
       ...where,
     },
-    select: {
-      name: true,
-    },
+    select: {name: true},
   });
   return projects;
 }
@@ -44,10 +42,7 @@ export async function findProject(id: ID, workspaceId: ID, userId: ID) {
       id: id,
       ...getProjectAccessFilter({workspaceId, userId}),
     },
-    select: {
-      id: true,
-      name: true,
-    },
+    select: {id: true, name: true},
   });
   return project;
 }
@@ -55,16 +50,9 @@ export async function findProject(id: ID, workspaceId: ID, userId: ID) {
 export async function findTicketCategories(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
-    where: {
-      id: projectId,
-    },
+    where: {id: projectId},
     select: {
-      projectTaskCategorySet: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
+      projectTaskCategorySet: {select: {id: true, name: true}},
     },
   });
   return project?.projectTaskCategorySet ?? [];
@@ -73,16 +61,9 @@ export async function findTicketCategories(projectId: ID) {
 export async function findTicketPriorities(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
-    where: {
-      id: projectId,
-    },
+    where: {id: projectId},
     select: {
-      projectTaskPrioritySet: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
+      projectTaskPrioritySet: {select: {id: true, name: true}},
     },
   });
   return project?.projectTaskPrioritySet ?? [];
@@ -91,14 +72,10 @@ export async function findTicketPriorities(projectId: ID) {
 export async function findTicketStatuses(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
-    where: {
-      id: projectId,
-    },
+    where: {id: projectId},
     select: {
       projectTaskStatusSet: {
-        orderBy: {
-          sequence: ORDER_BY.ASC,
-        },
+        orderBy: {sequence: ORDER_BY.ASC},
         select: {
           id: true,
           name: true,
@@ -121,15 +98,8 @@ export async function findTicketStatuses(projectId: ID) {
 export async function findCompany(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
-    where: {
-      id: projectId,
-    },
-    select: {
-      company: {
-        id: true,
-        name: true,
-      },
-    },
+    where: {id: projectId},
+    select: {company: {id: true, name: true}},
   });
   return project?.company;
 }
@@ -137,11 +107,7 @@ export async function findCompany(projectId: ID) {
 export async function findTicketDoneStatus() {
   const client = await getClient();
   const projectAppConfig = await client.aOSAppProject.findOne({
-    select: {
-      completedTaskStatus: {
-        id: true,
-      },
-    },
+    select: {completedTaskStatus: {id: true}},
   });
 
   return projectAppConfig?.completedTaskStatus?.id;
@@ -150,11 +116,7 @@ export async function findTicketDoneStatus() {
 export async function findTicketCancelledStatus() {
   const client = await getClient();
   const projectAppConfig = await client.aOSAppProject.findOne({
-    select: {
-      cancelledTaskStatus: {
-        id: true,
-      },
-    },
+    select: {cancelledTaskStatus: {id: true}},
   });
 
   return projectAppConfig?.cancelledTaskStatus?.id;
@@ -163,18 +125,12 @@ export async function findTicketCancelledStatus() {
 export async function findContactPartners(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
-    where: {
-      id: projectId,
-    },
+    where: {id: projectId},
     select: {
       clientPartner: {
         id: true,
         name: true,
-        contactPartnerSet: {
-          select: {
-            name: true,
-          },
-        },
+        contactPartnerSet: {select: {name: true}},
       },
     },
   });
