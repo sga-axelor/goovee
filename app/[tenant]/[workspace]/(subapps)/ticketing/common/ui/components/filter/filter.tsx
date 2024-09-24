@@ -30,8 +30,8 @@ import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
 import {ASSIGNMENT} from '../../../constants';
+import {EncodedFilterSchema, FilterSchema} from '../../../schema';
 import {SearchParams} from '../../../types/search-param';
-import {EncodedFilterSchema, FilterSchema} from '../../../utils/search-param';
 import {
   MultiSelector,
   MultiSelectorContent,

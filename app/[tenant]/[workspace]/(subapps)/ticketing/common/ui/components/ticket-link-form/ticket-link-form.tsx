@@ -24,7 +24,7 @@ import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
 import {createLink} from '../../../actions';
-import {RelatedTicketSchema} from '../../../utils/search-param';
+import {RelatedTicketSchema} from '../../../schema';
 import {TicketSelect} from '../ticket-select';
 
 export function TicketLinkForm({

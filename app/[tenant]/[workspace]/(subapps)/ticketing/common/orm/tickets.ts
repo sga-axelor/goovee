@@ -16,7 +16,7 @@ import {
   VERSION_MISMATCH_CAUSE_CLASS,
   VERSION_MISMATCH_ERROR,
 } from '../constants';
-import {CreateTicketInfo, UpdateTicketInfo} from '../ui/components/ticket-form';
+import {CreateTicketInfo, UpdateTicketInfo} from '../schema';
 import {
   getProjectAccessFilter,
   getTicketAccessFilter,

@@ -33,12 +33,12 @@ import {useForm} from 'react-hook-form';
 
 import {mutate, MutateProps} from '../../../actions';
 import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
+import {useRetryAction} from '../../../hooks';
+import {TicketFormSchema, TicketInfo} from '../../../schema';
 import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority} from '../pills';
 import {Stepper} from '../stepper';
-import {TicketFormSchema, TicketInfo} from '../ticket-form';
 import {AssignToSupplier} from '../ticket-form/ticket-actions';
-import {useRetryAction} from '../../../hooks';
 
 type Props = {
   ticket: AOSProjectTask;

@@ -31,7 +31,7 @@ import {useForm} from 'react-hook-form';
 
 // ---- LOCAL IMPORT ---- //
 import {mutate, MutateProps} from '../../../actions';
-import {TicketFormSchema, TicketInfo} from './schema';
+import {TicketFormSchema, TicketInfo} from '../../../schema';
 
 type TicketFormProps = {
   projectId: string;

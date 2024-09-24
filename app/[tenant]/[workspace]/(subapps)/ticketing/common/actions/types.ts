@@ -1,4 +1,4 @@
-import {CreateTicketInfo, UpdateTicketInfo} from '../ui/components/ticket-form';
+import {CreateTicketInfo, UpdateTicketInfo} from '../schema';
 
 export type MutateProps = {
   workspaceURL: string;
