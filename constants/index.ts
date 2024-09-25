@@ -28,6 +28,7 @@ export const PREFIX_CART_KEY = 'ct';
  * QUERY
  */
 export const DEFAULT_LIMIT = 12;
+export const DEFAULT_PAGE = 1;
 export const ORDER_BY = {
   ASC: 'ASC' as const,
   DESC: 'DESC' as const,
@@ -126,6 +127,7 @@ export const NAVIGATION = {
  */
 export const DEFAULT_COMMENTS_LIMIT = 3;
 export const COMMENT_TRACKING = 'User created a comment';
+export const MAIL_MESSAGE_TYPE = 'notification';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
 export const DISABLED_COMMENT_PLACEHOLDER =
