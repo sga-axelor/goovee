@@ -328,7 +328,12 @@ function DatesField(props: FieldProps) {
             <FormItem className="grow">
               <FormLabel>{i18n.get('From')} :</FormLabel>
               <FormControl>
-                <Input type="date" placeholder="DD/MM/YYYY" {...field} />
+                <Input
+                  type="date"
+                  placeholder="DD/MM/YYYY"
+                  {...field}
+                  className="block"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -341,7 +346,12 @@ function DatesField(props: FieldProps) {
             <FormItem className="grow">
               <FormLabel>{i18n.get('To')} :</FormLabel>
               <FormControl>
-                <Input type="date" placeholder="DD/MM/YYYY" {...field} />
+                <Input
+                  type="date"
+                  placeholder="DD/MM/YYYY"
+                  {...field}
+                  className="block"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

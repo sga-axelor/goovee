@@ -241,8 +241,8 @@ export function TicketDetails(props: Props) {
             </p>
             <hr />
 
-            <div className="flex items-start">
-              <div className="flex flex-col space-y-2">
+            <div>
+              <div className="sm:flex space-y-2 mb-3">
                 <div>
                   {ticket.assignment === ASSIGNMENT.PROVIDER ? (
                     <div className="flex items-center gap-2 space-y-0">
@@ -286,21 +286,25 @@ export function TicketDetails(props: Props) {
                     />
                   )}
                 </div>
-                <p>
-                  <span className="font-medium pe-2">Expected on:</span>
-                  {formatDate(ticket.taskEndDate)}
-                </p>
+                {ticket.assignment !== ASSIGNMENT.PROVIDER && (
+                  <div className="sm:ml-auto ml-[6.5rem]">
+                    <AssignToSupplier
+                      id={ticket.id!}
+                      version={ticket.version!}
+                    />
+                  </div>
+                )}
               </div>
-              {ticket.assignment !== ASSIGNMENT.PROVIDER && (
-                <div className="ml-auto">
-                  <AssignToSupplier id={ticket.id!} version={ticket.version!} />
-                </div>
-              )}
+              <p>
+                <span className="font-medium pe-2">Expected on:</span>
+                {formatDate(ticket.taskEndDate)}
+              </p>
             </div>
             <hr />
             <div className="sm:flex items-center !mt-3.5">
-              <p className="font-medium pe-2"> {i18n.get('Progress')}: </p>
-              {getProgress(ticket.progress)}%
+              <p className="font-medium pe-2 mb-3 sm:mb-0">
+                {i18n.get('Progress')}: {getProgress(ticket.progress)}%
+              </p>
               <Progress
                 value={getProgress(ticket.progress)}
                 className="h-3 basis-3/4 sm:ms-5 rounded-none"
