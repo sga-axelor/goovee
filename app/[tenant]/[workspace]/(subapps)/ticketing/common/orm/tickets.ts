@@ -6,6 +6,8 @@ import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
+import {addComment} from '@/orm/comment';
+import {ModelType} from '@/types';
 import {Entity, ID, SelectOptions} from '@goovee/orm';
 import axios from 'axios';
 
@@ -30,11 +32,11 @@ export type TicketProps<T extends Entity> = QueryProps<T> & {
 type Track = {
   name: string;
   title: string;
-  value: string | number | boolean;
-  oldValue?: string | number | boolean;
+  value: string;
+  oldValue?: string;
 };
 
-async function findTicketAccess(
+export async function findTicketAccess(
   ticketId: ID,
   userId: ID,
   workspaceId: ID,
@@ -56,6 +58,7 @@ export async function createTicket(
   data: CreateTicketInfo,
   userId: ID,
   workspaceId: ID,
+  workspaceURL: string,
 ) {
   const {
     priority,
@@ -140,9 +143,13 @@ export async function createTicket(
 
   const tracks: Track[] = [
     {name: 'name', title: 'Subject', value: ticket.name},
-    {name: 'assignment', title: 'Assignment', value: ticket.assignment ?? ''},
+    {
+      name: 'assignment',
+      title: 'Assignment',
+      value: ticket.assignment?.toString() ?? '',
+    },
     {name: 'typeSelect', title: 'Type', value: ticket.typeSelect ?? ''},
-    {name: 'isPrivate', title: 'Private', value: ticket.isPrivate ?? ''},
+    {name: 'isPrivate', title: 'Private', value: String(ticket.isPrivate)},
     {name: 'progress', title: 'Progress', value: ticket.progress ?? ''},
     {name: 'project', title: 'Project', value: ticket.project?.name ?? ''},
     {
@@ -153,7 +160,7 @@ export async function createTicket(
     {
       name: 'invoicingType',
       title: 'Invoicing Type',
-      value: ticket.invoicingType ?? '',
+      value: String(ticket.invoicingType),
     },
     {
       name: 'requestedByContact',
@@ -192,6 +199,21 @@ export async function createTicket(
       title: 'AssignedToContact',
       value: ticket.assignedToContact?.name ?? '',
     });
+  }
+  try {
+    await addComment({
+      workspaceURL,
+      type: ModelType.ticketing,
+      model: {id: ticket.id},
+      messageBody: {
+        title: 'Record Created',
+        tracks: tracks,
+        tags: [],
+      },
+    });
+  } catch (e) {
+    console.log('Error adding comment');
+    console.error(e);
   }
   return ticket;
 }
@@ -264,6 +286,7 @@ export async function updateTicket(
   data: UpdateTicketInfo,
   userId: ID,
   workspaceId: ID,
+  workspaceURL: string,
 ) {
   const {
     priority,
@@ -358,8 +381,8 @@ export async function updateTicket(
     tracks.push({
       name: 'assignment',
       title: 'Assignment',
-      value: ticket.assignment ?? '',
-      ...(oldTicket.assignment && {oldValue: oldTicket.assignment}),
+      value: ticket.assignment?.toString() ?? '',
+      ...(oldTicket.assignment && {oldValue: oldTicket.assignment.toString()}),
     });
   }
 
@@ -375,6 +398,22 @@ export async function updateTicket(
         oldValue: oldTicket.assignedToContact.name,
       }),
     });
+  }
+
+  try {
+    await addComment({
+      workspaceURL,
+      type: ModelType.ticketing,
+      model: {id: ticket.id},
+      messageBody: {
+        title: 'Record Updated',
+        tracks: tracks,
+        tags: [],
+      },
+    });
+  } catch (e) {
+    console.log('Error adding comment');
+    console.error(e);
   }
 
   return ticket;

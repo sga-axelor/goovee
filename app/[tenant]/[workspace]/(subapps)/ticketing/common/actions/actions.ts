@@ -41,14 +41,24 @@ export async function mutate(
     let ticket;
     if (action.type === 'create') {
       const createData = CreateTicketSchema.parse(action.data);
-      ticket = await createTicket(createData, user.id, workspace.id);
+      ticket = await createTicket(
+        createData,
+        user.id,
+        workspace.id,
+        workspaceURL,
+      );
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
       if (force) {
         const version = await findTicketVersion(updateData.id);
         updateData.version = version;
       }
-      ticket = await updateTicket(updateData, user.id, workspace.id);
+      ticket = await updateTicket(
+        updateData,
+        user.id,
+        workspace.id,
+        workspaceURL,
+      );
     }
 
     if (ticket.project?.id) {
@@ -102,7 +112,7 @@ export async function assignToSupplier(
         ? updateTicketViaWS
         : updateTicket;
 
-    await update(updateData, user.id, workspace.id);
+    await update(updateData, user.id, workspace.id, workspaceURL);
     return {
       error: false,
       data: true,
@@ -152,7 +162,7 @@ export async function closeTicket(
         ? updateTicketViaWS
         : updateTicket;
 
-    await update(updateData, user.id, workspace.id);
+    await update(updateData, user.id, workspace.id, workspaceURL);
 
     //TODO: tickets path needs to be revalidated
     return {
@@ -204,7 +214,7 @@ export async function cancelTicket(
         ? updateTicketViaWS
         : updateTicket;
 
-    await update(updateData, user.id, workspace.id);
+    await update(updateData, user.id, workspace.id, workspaceURL);
     return {
       error: false,
       data: true,

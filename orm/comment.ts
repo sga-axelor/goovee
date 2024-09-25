@@ -26,6 +26,7 @@ import {findPosts} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/orm/f
 import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
 import {SelectOptions} from '@goovee/orm';
 import {AOSMailMessage} from '@/goovee/.generated/models';
+import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/common/orm/tickets';
 
 const pump = promisify(pipeline);
 
@@ -344,6 +345,9 @@ export async function findByID({
         workspaceID: workspace.id,
       });
       response = posts[0];
+      break;
+    case ModelType.ticketing:
+      response = user ? await findTicketAccess(id, user.id, workspace.id) : {};
       break;
     default:
       return {

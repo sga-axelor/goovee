@@ -2,6 +2,7 @@
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
+import {ModelType} from '@/types';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,6 +10,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  Comments,
   Table,
   TableBody,
 } from '@/ui/components';
@@ -137,6 +139,14 @@ export default async function Page({
         priorities={clone(priorities)}
         contacts={clone(contacts)}
       />
+      <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
+        <Comments
+          record={clone(ticket)}
+          modelType={ModelType.ticketing}
+          showCommentsByDefault
+          key={Math.random()}
+        />
+      </div>
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}
         {ticket.childTasks && Boolean(ticket.childTasks.length) && (
