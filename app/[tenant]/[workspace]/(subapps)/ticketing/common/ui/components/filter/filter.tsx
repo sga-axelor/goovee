@@ -163,7 +163,7 @@ export function Filter(props: FilterProps) {
             <form
               ref={formRef}
               onSubmit={form.handleSubmit(onSubmit)}
-              className="overflow-y-auto">
+              className="overflow-y-auto overflow-x-hidden">
               <div className="space-y-4 pr-2 pl-2">
                 <MyTicketsField form={form} />
                 {!form.watch('myTickets') && (
