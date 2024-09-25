@@ -203,6 +203,7 @@ export enum ModelType {
   news = 'news',
   event = 'event',
   forum = 'forum',
+  ticketing = 'ticketing',
 }
 
 export interface CommentResponse {
