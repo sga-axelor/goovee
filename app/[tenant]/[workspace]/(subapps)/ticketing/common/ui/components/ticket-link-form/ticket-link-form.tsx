@@ -52,22 +52,29 @@ export function TicketLinkForm({
   });
 
   const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
-    const {error, message, data} = await createLink({
-      workspaceURL,
-      data: {
-        linkType: values.linkType,
-        linkTicketId: values.ticket.id,
-        currentTicketId: ticketId,
-      },
-    });
-    if (error) {
-      return toast({
+    try {
+      const {error, message} = await createLink({
+        workspaceURL,
+        data: {
+          linkType: values.linkType,
+          linkTicketId: values.ticket.id,
+          currentTicketId: ticketId,
+        },
+      });
+      if (error) {
+        return toast({
+          variant: 'destructive',
+          title: message,
+        });
+      }
+      onSubmit();
+      router.refresh();
+    } catch (e) {
+      toast({
         variant: 'destructive',
-        title: message,
+        title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
       });
     }
-    onSubmit();
-    router.refresh();
   };
 
   return (

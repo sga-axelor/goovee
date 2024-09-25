@@ -2,37 +2,36 @@
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
+import {Cloned} from '@/types/util';
 import {clone} from '@/utils';
 import {ID} from '@goovee/orm';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  VERSION_MISMATCH_ERROR,
   ASSIGNMENT,
   STATUS_CHANGE_METHOD,
+  VERSION_MISMATCH_ERROR,
 } from '../constants';
-import {findTicketDoneStatus, findTicketCancelledStatus} from '../orm/projects';
+import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
 import {
   createTicket,
-  findTicketVersion,
-  updateTicket,
-  findTicketsBySearch,
-  updateTicketViaWS,
   createTicketLink,
   deleteTicketLink,
+  findTicketsBySearch,
+  findTicketVersion,
+  TicketSearch,
+  updateTicket,
+  updateTicketViaWS,
 } from '../orm/tickets';
-import {
-  CreateTicketSchema,
-  UpdateTicketSchema,
-} from '../ui/components/ticket-form';
+import {CreateTicketSchema, UpdateTicketSchema} from '../schema';
 import {ensureAuth} from '../utils/auth-helper';
 import type {ActionResponse, MutateProps} from './types';
 
 export async function mutate(
   props: MutateProps,
   force?: boolean,
-): ActionResponse {
+): ActionResponse<{id: string}> {
   const {workspaceURL, workspaceURI, action} = props;
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
@@ -60,7 +59,7 @@ export async function mutate(
 
     return {
       error: false,
-      data: clone(ticket),
+      data: {id: ticket.id},
     };
   } catch (e) {
     if (e instanceof Error) {
@@ -80,7 +79,7 @@ type TicketActionProps = {
 export async function assignToSupplier(
   props: TicketActionProps,
   force?: boolean,
-): ActionResponse {
+): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -103,10 +102,10 @@ export async function assignToSupplier(
         ? updateTicketViaWS
         : updateTicket;
 
-    const ticket = await update(updateData, user.id, workspace.id);
+    await update(updateData, user.id, workspace.id);
     return {
       error: false,
-      data: clone(ticket),
+      data: true,
     };
   } catch (e) {
     if (e instanceof Error) {
@@ -122,7 +121,7 @@ export async function assignToSupplier(
 export async function closeTicket(
   props: TicketActionProps,
   force?: boolean,
-): ActionResponse {
+): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -153,12 +152,12 @@ export async function closeTicket(
         ? updateTicketViaWS
         : updateTicket;
 
-    const ticket = await update(updateData, user.id, workspace.id);
+    await update(updateData, user.id, workspace.id);
 
     //TODO: tickets path needs to be revalidated
     return {
       error: false,
-      data: clone(ticket),
+      data: true,
     };
   } catch (e) {
     if (e instanceof Error) {
@@ -174,7 +173,7 @@ export async function closeTicket(
 export async function cancelTicket(
   props: TicketActionProps,
   force?: boolean,
-): ActionResponse {
+): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -205,12 +204,10 @@ export async function cancelTicket(
         ? updateTicketViaWS
         : updateTicket;
 
-    const ticket = await update(updateData, user.id, workspace.id);
-
-    //TODO: tickets path needs to be revalidated
+    await update(updateData, user.id, workspace.id);
     return {
       error: false,
-      data: clone(ticket),
+      data: true,
     };
   } catch (e) {
     if (e instanceof Error) {
@@ -228,7 +225,7 @@ type CreateLinkProps = {
   data: {currentTicketId: ID; linkTicketId: ID; linkType: ID};
 };
 
-export async function createLink(props: CreateLinkProps): ActionResponse {
+export async function createLink(props: CreateLinkProps): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -236,10 +233,10 @@ export async function createLink(props: CreateLinkProps): ActionResponse {
   const {user, workspace} = auth;
 
   try {
-    const res = await createTicketLink(data, user.id, workspace.id);
+    await createTicketLink(data, user.id, workspace.id);
     return {
       error: false,
-      data: clone(res),
+      data: true,
     };
   } catch (e) {
     if (e instanceof Error) {
@@ -257,7 +254,7 @@ type DeleteLinkProps = {
   data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
 };
 
-export async function deleteLink(props: DeleteLinkProps): ActionResponse {
+export async function deleteLink(props: DeleteLinkProps): ActionResponse<ID> {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -265,10 +262,10 @@ export async function deleteLink(props: DeleteLinkProps): ActionResponse {
   const {user, workspace} = auth;
 
   try {
-    const res = await deleteTicketLink(data, user.id, workspace.id);
+    const count = await deleteTicketLink(data, user.id, workspace.id);
     return {
       error: false,
-      data: clone(res),
+      data: count,
     };
   } catch (e) {
     if (e instanceof Error) {
@@ -291,7 +288,7 @@ export async function searchTickets({
   workspaceURL: string;
   projectId?: ID;
   excludeList?: ID[];
-}): ActionResponse {
+}): ActionResponse<Cloned<TicketSearch>[]> {
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) {
     return {error: true, message};

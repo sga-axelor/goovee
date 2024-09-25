@@ -32,3 +32,24 @@ export type DeepPartial<T> = T extends object
       [P in keyof T]?: DeepPartial<T[P]>;
     }
   : T;
+
+export type JSONPrimitive = string | number | boolean | null | undefined;
+
+export type JSONValue =
+  | JSONPrimitive
+  | JSONValue[]
+  | {
+      [key: string]: JSONValue;
+    };
+
+export type NotAssignableToJson = bigint | symbol | Function;
+
+export type Cloned<T> = T extends JSONValue
+  ? T
+  : T extends Date
+    ? string
+    : T extends NotAssignableToJson
+      ? never
+      : T extends object
+        ? {[K in keyof T]: Cloned<T[K]>}
+        : never;

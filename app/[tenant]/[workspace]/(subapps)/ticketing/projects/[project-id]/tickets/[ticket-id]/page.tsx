@@ -1,5 +1,4 @@
 // ---- CORE IMPORTS ---- //
-import {AOSProjectTask, AOSProjectTaskLink} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
@@ -14,6 +13,7 @@ import {
   TableBody,
 } from '@/ui/components';
 import {clone} from '@/utils';
+import {encodeFilter} from '@/utils/filter';
 import {workspacePathname} from '@/utils/workspace';
 import {ID} from '@goovee/orm';
 import Link from 'next/link';
@@ -22,14 +22,18 @@ import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
-import {encodeFilter} from '@/utils/filter';
 import {
   findContactPartners,
   findTicketCategories,
   findTicketPriorities,
   findTicketStatuses,
 } from '../../../../common/orm/projects';
-import {findTicket, findTicketLinkTypes} from '../../../../common/orm/tickets';
+import {
+  findTicket,
+  findTicketLinkTypes,
+  Ticket,
+  TicketListTicket,
+} from '../../../../common/orm/tickets';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
   CancelTicket,
@@ -149,7 +153,7 @@ export default async function Page({
   );
 }
 
-async function ChildTickets({tickets}: {tickets: AOSProjectTask[]}) {
+async function ChildTickets({tickets}: {tickets: TicketListTicket[]}) {
   return (
     <>
       <h4 className="text-xl font-semibold">{i18n.get('Child tickets')}</h4>
@@ -163,7 +167,7 @@ async function ChildTickets({tickets}: {tickets: AOSProjectTask[]}) {
   );
 }
 
-async function ParentTicket({ticket}: {ticket: AOSProjectTask}) {
+async function ParentTicket({ticket}: {ticket: TicketListTicket}) {
   return (
     <>
       <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
@@ -181,7 +185,7 @@ async function RelatedTickets({
   links,
   ticketId,
 }: {
-  links?: AOSProjectTaskLink[];
+  links?: Ticket['projectTaskLinkList'];
   ticketId: ID;
 }) {
   const linkTypes = await findTicketLinkTypes();

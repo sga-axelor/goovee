@@ -2,7 +2,9 @@
  * Tickets Constants
  */
 
-import {Column, SortKey, Ticket} from '../types';
+import {Column, SortKey} from '../types';
+import {TicketListTicket} from '../orm/tickets';
+import {Cloned} from '@/types/util';
 
 export const columns: Column<SortKey>[] = [
   {
@@ -51,7 +53,7 @@ export const sortKeyPathMap: Record<string, string> = {
   updatedOn: 'updatedOn',
 };
 
-type Getter = (t: Ticket) => unknown;
+type Getter = (t: Cloned<TicketListTicket>) => unknown;
 // NOTE: This is used for clientside sorting
 export const sortValueGetterMap: Record<string, string | Getter> = {
   ticketId: 'id',

@@ -462,6 +462,8 @@ export async function getResolvedTicketCount(projectId: ID): Promise<number> {
   });
   return Number(count);
 }
+
+export type TicketListTicket = Awaited<ReturnType<typeof findTickets>>[number];
 export async function findTickets(props: TicketProps<AOSProjectTask>) {
   const {projectId, take, skip, where, orderBy} = props;
   const client = await getClient();
@@ -490,6 +492,7 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
   return tickets;
 }
 
+export type Ticket = NonNullable<Awaited<ReturnType<typeof findTicket>>>;
 export async function findTicket(ticketId: ID, projectId: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
@@ -526,6 +529,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
             assignedTo: {name: true},
             assignedToContact: {name: true, picture: {id: true}},
             requestedByContact: {name: true, picture: {id: true}},
+            assignment: true,
           },
         },
       },
@@ -565,6 +569,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
   return ticket;
 }
 
+export type TicketInfo = Awaited<ReturnType<typeof findTicketInfo>>;
 export async function findTicketInfo(ticketId: ID, projectId: ID) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
@@ -585,7 +590,7 @@ export async function findTicketInfo(ticketId: ID, projectId: ID) {
   return ticket;
 }
 
-export async function findTicketVersion(ticketId: ID) {
+export async function findTicketVersion(ticketId: ID): Promise<number> {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {id: ticketId},
@@ -596,6 +601,10 @@ export async function findTicketVersion(ticketId: ID) {
   }
   return ticket.version;
 }
+
+export type TicketSearch = Awaited<
+  ReturnType<typeof findTicketsBySearch>
+>[number];
 
 export async function findTicketsBySearch(props: {
   search?: string;
@@ -629,6 +638,7 @@ export async function findTicketsBySearch(props: {
   return tickets;
 }
 
+export type LinkType = Awaited<ReturnType<typeof findTicketLinkTypes>>[number];
 export async function findTicketLinkTypes() {
   const client = await getClient();
   const links = await client.aOSProjectTaskLinkType.find({
@@ -641,7 +651,7 @@ export async function createTicketLink(
   data: {currentTicketId: ID; linkTicketId: ID; linkType: ID},
   userId: ID,
   workspaceId: ID,
-) {
+): Promise<[string, string]> {
   const {currentTicketId, linkTicketId, linkType} = data;
   const client = await getClient();
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
@@ -699,14 +709,14 @@ export async function createTicketLink(
     select: {id: true},
   });
 
-  return [link1, link2];
+  return [link1.id, link2.id];
 }
 
 export async function deleteTicketLink(
   data: {currentTicketId: ID; linkTicketId: ID; linkId: ID},
   userId: ID,
   workspaceId: ID,
-) {
+): Promise<ID> {
   const {currentTicketId, linkTicketId, linkId} = data;
   const client = await getClient();
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([

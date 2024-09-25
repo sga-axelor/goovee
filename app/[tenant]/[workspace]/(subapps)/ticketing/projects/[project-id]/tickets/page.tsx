@@ -82,6 +82,8 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
+  if (!workspace) notFound();
+
   const project = (await findProject(projectId, workspace.id, userId))!;
   const tickets = await findTickets({
     projectId,

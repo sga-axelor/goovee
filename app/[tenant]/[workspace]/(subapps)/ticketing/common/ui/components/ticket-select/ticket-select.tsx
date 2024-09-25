@@ -19,8 +19,10 @@ import {ID} from '@goovee/orm';
 import {Drawer, DrawerContent, DrawerTrigger} from '@ui/components/drawer';
 import {debounce} from 'lodash';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import type {Cloned} from '@/types/util';
 
 import {searchTickets} from '../../../actions';
+import {TicketSearch} from '../../../orm/tickets';
 
 const INIT_SEARCH_VALUE = undefined;
 export function TicketSelect({
@@ -43,7 +45,7 @@ export function TicketSelect({
 
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
-  const [tickets, setTickets] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<Cloned<TicketSearch>[]>([]);
 
   const fetchTickets = useCallback(
     async (search?: string) => {

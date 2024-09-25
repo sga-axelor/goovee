@@ -1,6 +1,7 @@
 import {i18n} from '@/lib/i18n';
 import {z} from 'zod';
 import {ASSIGNMENT} from '../constants';
+import {Expand} from '@/types/util';
 
 export const TicketFormSchema = z.object({
   subject: z
@@ -93,7 +94,11 @@ export const EncodedFilterSchema = FilterSchema.partial().transform(arg => {
       if (value == null) return false; // remove null and undefined
       return true;
     }),
-  ) as Partial<z.infer<typeof FilterSchema>>;
+  ) as Omit<Partial<z.infer<typeof FilterSchema>>, 'updatedOn'> & {
+    updatedOn: [string, string];
+  };
   if (!Object.keys(filter).length) return null; // remove empty object
   return filter;
 });
+
+export type EncodedFilter = Expand<z.infer<typeof EncodedFilterSchema>>;

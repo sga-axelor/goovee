@@ -32,22 +32,14 @@ import {useForm} from 'react-hook-form';
 // ---- LOCAL IMPORT ---- //
 import {mutate, MutateProps} from '../../../actions';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
+import type {Category, ContactPartner, Priority} from '../../../orm/projects';
 
 type TicketFormProps = {
   projectId: string;
   userId: ID;
-  categories: {
-    id: ID;
-    name: string;
-  }[];
-  priorities: {
-    id: ID;
-    name: string;
-  }[];
-  contacts: {
-    id: ID;
-    name: string;
-  }[];
+  categories: Category[];
+  priorities: Priority[];
+  contacts: ContactPartner[];
 };
 
 export function TicketForm(props: TicketFormProps) {

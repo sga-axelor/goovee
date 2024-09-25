@@ -1,15 +1,16 @@
 import {i18n} from '@/lib/i18n';
+import {ToastAction} from '@/ui/components';
 import {useToast} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
-import {VERSION_MISMATCH_ERROR} from '../constants';
-import {ActionResponse} from '../actions';
-import {ToastAction} from '@/ui/components';
 
-export function useRetryAction<T extends Record<string, any>>(
+import {ActionResponse} from '../actions';
+import {VERSION_MISMATCH_ERROR} from '../constants';
+
+export function useRetryAction<T extends Record<string, unknown>>(
   action: (actionProps: T, force?: boolean) => ActionResponse,
   successMessage?: string,
-) {
+): {action: (actionProps: T) => Promise<void>; loading: boolean} {
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
   const router = useRouter();
@@ -27,7 +28,7 @@ export function useRetryAction<T extends Record<string, any>>(
         const handleOverwrite = async () => {
           setLoading(true);
           try {
-            const {error, message, data} = await action(retryProps, true);
+            const {error, message} = await action(retryProps, true);
             if (error) {
               handleError(message, retryProps);
               return;
@@ -72,10 +73,10 @@ export function useRetryAction<T extends Record<string, any>>(
   );
 
   const actionHandler = useCallback(
-    async (actionProps: T) => {
+    async (actionProps: T): Promise<void> => {
       try {
         setLoading(true);
-        const {error, message, data} = await action(actionProps);
+        const {error, message} = await action(actionProps);
         if (error) {
           handleError(message, actionProps);
           return;

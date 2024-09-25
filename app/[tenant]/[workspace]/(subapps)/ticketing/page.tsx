@@ -44,6 +44,8 @@ export default async function Page({
     url: workspaceURL,
   }).then(clone);
 
+  if (!workspace) notFound();
+
   const projects = await findProjectsWithTaskCount({
     userId: session.user.id,
     workspaceId: workspace.id,

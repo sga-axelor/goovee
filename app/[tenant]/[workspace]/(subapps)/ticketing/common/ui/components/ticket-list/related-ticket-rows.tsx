@@ -2,6 +2,7 @@
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
+import type {Cloned} from '@/types/util';
 import {
   Avatar,
   AvatarImage,
@@ -11,6 +12,7 @@ import {
   TableRow,
 } from '@/ui/components';
 import {useResponsive, useToast} from '@/ui/hooks';
+import {cn} from '@/utils/css';
 import {ID} from '@goovee/orm';
 import {useRouter} from 'next/navigation';
 import {Fragment, useState} from 'react';
@@ -21,10 +23,9 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {cn} from '@/utils/css';
 import {deleteLink} from '../../../actions';
 import {ASSIGNMENT, columns} from '../../../constants';
-import {Ticket} from '../../../types';
+import type {Ticket} from '../../../orm/tickets';
 import {getProfilePic} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 
@@ -42,16 +43,7 @@ const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
 
 type RelatedTicketRowProps = {
   ticketId: ID;
-  links: {
-    id: ID;
-    version: number;
-    projectTaskLinkType: {
-      id: ID;
-      version: number;
-      name: string;
-    };
-    relatedTask: Ticket;
-  }[];
+  links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
 };
 
 export function RelatedTicketRows(props: RelatedTicketRowProps) {
@@ -94,7 +86,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
           onClick={handleClick}
           className="[&:not(:has(.action:hover))]:cursor-pointer  [&:not(:has(.action:hover)):hover]:bg-slate-100">
           <TableCell>
-            <p className="font-medium">{link.projectTaskLinkType.name}</p>
+            <p className="font-medium">{link.projectTaskLinkType?.name}</p>
           </TableCell>
           {!small ? (
             <>
@@ -252,6 +244,7 @@ function DeleteCell({
   return (
     <button
       onClick={handleDelete}
+      disabled={loading}
       className={cn(
         'inline-flex items-center justify-center whitespace-nowrap p-1 text-destructive hover:scale-110 active:scale-95 rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pointer-events-auto disabled:pointer-events-none disabled:opacity-50',
       )}>

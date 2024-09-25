@@ -1,9 +1,8 @@
 'use client';
 
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
-import {Maybe} from '@/types/util';
+import {Cloned, Maybe} from '@/types/util';
 import {
   Avatar,
   AvatarImage,
@@ -25,7 +24,6 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {Progress} from '@/ui/components/progress';
-import {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
 import {useCallback, useEffect, useRef} from 'react';
@@ -39,16 +37,23 @@ import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority} from '../pills';
 import {Stepper} from '../stepper';
 import {AssignToSupplier} from '../ticket-form/ticket-actions';
+import type {Ticket} from '../../../orm/tickets';
+import type {
+  Priority as TPriority,
+  Category as TCategory,
+  Status as TStatus,
+  ContactPartner,
+} from '../../../orm/projects';
 
 type Props = {
-  ticket: AOSProjectTask;
-  statuses: {id: ID; name: string}[];
-  categories: {id: ID; name: string}[];
-  priorities: {id: ID; name: string}[];
-  contacts: {id: ID; name: string}[];
+  ticket: Cloned<Ticket>;
+  statuses: TStatus[];
+  categories: TCategory[];
+  priorities: TPriority[];
+  contacts: ContactPartner[];
 };
 
-const getDefaultValues = (ticket: Maybe<AOSProjectTask>) => {
+const getDefaultValues = (ticket: Cloned<Ticket>) => {
   return {
     subject: ticket?.name ?? '',
     category: ticket?.projectTaskCategory?.id,

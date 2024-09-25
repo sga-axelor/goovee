@@ -11,17 +11,18 @@ import {
   TableRow,
 } from '@/ui/components';
 import {useResponsive, useSortBy} from '@/ui/hooks';
+import {cn} from '@/utils/css';
 import {ReactNode} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
+import type {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {columns, sortValueGetterMap} from '../../../constants';
-import type {Ticket} from '../../../types';
+import type {TicketListTicket} from '../../../orm/tickets';
 import {TicketRows} from './ticket-rows';
-import {cn} from '@/utils/css';
 
 type TicketListProps = {
-  tickets: Ticket[];
+  tickets: Cloned<TicketListTicket>[];
   footer?: ReactNode;
 };
 
@@ -36,7 +37,7 @@ export function TicketList(props: TicketListProps) {
     <Table className="rounded-lg bg-card text-card-foreground">
       <TableHeader>
         <TableRow>
-          {mainColumns?.map((column, i, arr) => {
+          {mainColumns?.map(column => {
             const isActive = sort.key === column.key;
             const isASC = isActive && sort.direction === ORDER_BY.ASC;
             const label = i18n.get(column.label);

@@ -1,6 +1,7 @@
 'use client';
 
 import {i18n} from '@/lib/i18n';
+import type {Cloned} from '@/types/util';
 import {
   Badge,
   Checkbox,
@@ -30,6 +31,12 @@ import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
 import {ASSIGNMENT} from '../../../constants';
+import type {
+  Company,
+  ContactPartner,
+  Priority,
+  Status,
+} from '../../../orm/projects';
 import {EncodedFilterSchema, FilterSchema} from '../../../schema';
 import {SearchParams} from '../../../types/search-param';
 import {
@@ -41,19 +48,13 @@ import {
   MultiSelectorTrigger,
 } from '../multi-select';
 
-type Relational = {
-  id: string;
-  name: string;
-  version: string;
-};
-
 type FilterProps = {
   url: string;
   searchParams: SearchParams;
-  contacts: Relational[];
-  priorities: Relational[];
-  statuses: Relational[];
-  company?: Relational;
+  contacts: Cloned<ContactPartner>[];
+  priorities: Cloned<Priority>[];
+  statuses: Cloned<Status>[];
+  company?: Cloned<Company>;
 };
 
 const COMPANY = 'company';

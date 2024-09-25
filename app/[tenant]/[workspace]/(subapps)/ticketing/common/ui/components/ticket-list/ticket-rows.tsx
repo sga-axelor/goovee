@@ -14,10 +14,11 @@ import {useResponsive} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
 import {Fragment, useState} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
+import {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {ASSIGNMENT, columns} from '../../../constants';
-import {Ticket} from '../../../types';
+import type {TicketListTicket} from '../../../orm/tickets';
 import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 
@@ -33,7 +34,7 @@ const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
   </>
 );
 
-export function TicketRows(props: {tickets: Ticket[]}) {
+export function TicketRows(props: {tickets: Cloned<TicketListTicket>[]}) {
   const {workspaceURI} = useWorkspace();
   const {tickets} = props;
   const [show, setShow] = useState(false);

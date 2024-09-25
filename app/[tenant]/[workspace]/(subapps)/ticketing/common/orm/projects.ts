@@ -47,6 +47,7 @@ export async function findProject(id: ID, workspaceId: ID, userId: ID) {
   return project;
 }
 
+export type Category = Awaited<ReturnType<typeof findTicketCategories>>[number];
 export async function findTicketCategories(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
@@ -58,6 +59,7 @@ export async function findTicketCategories(projectId: ID) {
   return project?.projectTaskCategorySet ?? [];
 }
 
+export type Priority = Awaited<ReturnType<typeof findTicketPriorities>>[number];
 export async function findTicketPriorities(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
@@ -69,6 +71,7 @@ export async function findTicketPriorities(projectId: ID) {
   return project?.projectTaskPrioritySet ?? [];
 }
 
+export type Status = Awaited<ReturnType<typeof findTicketStatuses>>[number];
 export async function findTicketStatuses(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
@@ -95,6 +98,7 @@ export async function findTicketStatuses(projectId: ID) {
   return project?.projectTaskStatusSet ?? [];
 }
 
+export type Company = NonNullable<Awaited<ReturnType<typeof findCompany>>>;
 export async function findCompany(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
@@ -104,7 +108,7 @@ export async function findCompany(projectId: ID) {
   return project?.company;
 }
 
-export async function findTicketDoneStatus() {
+export async function findTicketDoneStatus(): Promise<string | undefined> {
   const client = await getClient();
   const projectAppConfig = await client.aOSAppProject.findOne({
     select: {completedTaskStatus: {id: true}},
@@ -113,7 +117,7 @@ export async function findTicketDoneStatus() {
   return projectAppConfig?.completedTaskStatus?.id;
 }
 
-export async function findTicketCancelledStatus() {
+export async function findTicketCancelledStatus(): Promise<string | undefined> {
   const client = await getClient();
   const projectAppConfig = await client.aOSAppProject.findOne({
     select: {cancelledTaskStatus: {id: true}},
@@ -121,6 +125,10 @@ export async function findTicketCancelledStatus() {
 
   return projectAppConfig?.cancelledTaskStatus?.id;
 }
+
+export type ContactPartner = Awaited<
+  ReturnType<typeof findContactPartners>
+>[number];
 
 export async function findContactPartners(projectId: ID) {
   const client = await getClient();
@@ -136,11 +144,18 @@ export async function findContactPartners(projectId: ID) {
   });
   if (!project?.clientPartner) return [];
 
-  const partners = project.clientPartner.contactPartnerSet ?? [];
+  const partners =
+    project.clientPartner.contactPartnerSet?.map(p => ({
+      id: p.id,
+      version: p.version,
+      name: p.name,
+    })) ?? [];
+
   partners.push({
     id: project.clientPartner.id,
     version: project.clientPartner.version,
     name: project.clientPartner.name,
   });
+
   return partners;
 }
