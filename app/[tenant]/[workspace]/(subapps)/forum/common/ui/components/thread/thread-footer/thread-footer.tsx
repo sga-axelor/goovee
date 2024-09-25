@@ -24,7 +24,7 @@ export const ThreadFooter = ({
       hideCloseComments={hideCloseComments}
       inputPosition="top"
       usePopUpStyles={usePopUpStyles}
-      seeMore={false}
+      seeMore={true}
     />
   );
 };
