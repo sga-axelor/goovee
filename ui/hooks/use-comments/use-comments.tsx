@@ -96,7 +96,6 @@ export function useComments({
           modelID: model.id,
           parentId: parent,
           type: ModelType.forum,
-          tracks: [],
         });
 
         if (response.success) {
@@ -132,7 +131,7 @@ export function useComments({
 
   const loadMore = useCallback(() => {
     if (hasMore) {
-      setPage(prevPage => prevPage + 1);
+      setPage((prevPage: number) => prevPage + 1);
     }
   }, [hasMore]);
 

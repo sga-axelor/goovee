@@ -14,7 +14,12 @@ import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
 import {clone, getSkipInfo} from '@/utils';
 import {ID, ModelType, PortalWorkspace} from '@/types';
-import {COMMENT_TRACKING, ORDER_BY, SORT_TYPE} from '@/constants';
+import {
+  COMMENT_TRACKING,
+  MAIL_MESSAGE_TYPE,
+  ORDER_BY,
+  SORT_TYPE,
+} from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
@@ -35,6 +40,7 @@ const ModelMap: Record<ModelType, String> = {
   [ModelType.forum]: 'forumPost',
   [ModelType.news]: 'portalNews',
   [ModelType.event]: 'portalEvent',
+  [ModelType.ticketing]: 'projectTask',
 };
 
 export async function upload(formData: FormData, workspaceURL: string) {
@@ -245,25 +251,30 @@ export async function addComment({
           ? {parentComment: {select: {id: parentComment.id}}}
           : {}),
         note,
-        mailMessage: {
-          create: {
-            subject: messageBody?.title ?? COMMENT_TRACKING,
-            relatedId: modelRecord.id,
-            relatedModel,
-            ...(messageBody ? {body: JSON.stringify(messageBody)} : {}),
-            author: {
-              select: {
-                id: aosUser.id,
+        ...(messageBody
+          ? {
+              mailMessage: {
+                create: {
+                  subject: messageBody?.title ?? COMMENT_TRACKING,
+                  relatedId: modelRecord.id,
+                  type: MAIL_MESSAGE_TYPE,
+                  relatedModel,
+                  ...(messageBody ? {body: JSON.stringify(messageBody)} : {}),
+                  author: {
+                    select: {
+                      id: aosUser.id,
+                    },
+                  },
+                  createdBy: {
+                    select: {
+                      id: aosUser.id,
+                    },
+                  },
+                  createdOn: timestamp as unknown as Date,
+                },
               },
-            },
-            createdBy: {
-              select: {
-                id: aosUser.id,
-              },
-            },
-            createdOn: timestamp as unknown as Date,
-          },
-        },
+            }
+          : {}),
         commentFileList:
           attachments?.length > 0
             ? {

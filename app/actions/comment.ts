@@ -11,17 +11,17 @@ export async function createComment({
   modelID,
   type,
   parentId,
-  tracks = [],
-  relatedModel,
+  messageBody = null,
+  relatedModel = null,
 }: {
-  formData: any;
-  values: any;
+  formData?: any;
+  values?: any;
   workspaceURL: string;
   type: ModelType;
   modelID: string | number;
-  parentId: any;
-  tracks?: any[];
-  relatedModel?: string;
+  parentId?: any;
+  relatedModel?: any;
+  messageBody?: any;
 }) {
   let attachmentIDs: string[] = [];
 
@@ -49,11 +49,11 @@ export async function createComment({
       type,
       workspaceURL,
       model: {id: modelID},
-      note: values.text,
+      note: values?.text,
       attachments: attachmentIDs,
       parentId,
-      tracks,
       relatedModel,
+      messageBody,
     });
 
     if (response.error) {
