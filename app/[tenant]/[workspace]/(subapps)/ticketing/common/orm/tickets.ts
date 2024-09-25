@@ -148,7 +148,7 @@ export async function createTicket(
     {
       name: 'taskDate',
       title: 'Task Date',
-      value: ticket.taskDate?.toISOString() ?? '',
+      value: String(ticket.taskDate) ?? '', //NOTE: ORM type is Date , but it is sending string,
     },
     {
       name: 'invoicingType',
