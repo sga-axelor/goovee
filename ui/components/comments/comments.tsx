@@ -39,6 +39,7 @@ interface CommentsProps {
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
   showTopBorder?: boolean;
+  sortByProp?: string;
 }
 
 export function Comments({
@@ -53,9 +54,10 @@ export function Comments({
   hideCloseComments = false,
   usePopUpStyles = false,
   showTopBorder = true,
+  sortByProp,
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
-  const [sortBy, setSortBy] = useState(SORT_TYPE.new);
+  const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
   const {comments, total, loading, fetching, loadMore, onCreate} = useComments({
     model: {id: record.id},
     modelType,
