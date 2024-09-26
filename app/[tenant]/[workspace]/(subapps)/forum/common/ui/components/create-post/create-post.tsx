@@ -93,7 +93,7 @@ export const CreatePost = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      groupId: selectedGroup?.id|| '',
+      groupId: selectedGroup?.id || '',
     },
   });
 

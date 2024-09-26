@@ -20,11 +20,8 @@ import {
   FilePreviewer,
   ImageGallery,
 } from '@/subapps/forum/common/ui/components';
-import {
-  SEE_MORE,
-  SEE_LESS,
-} from '@/subapps/forum/common/constants';
-import  type {Post} from '@/subapps/forum/common/types/forum';
+import {SEE_MORE, SEE_LESS} from '@/subapps/forum/common/constants';
+import type {Post} from '@/subapps/forum/common/types/forum';
 import {useTruncatedElement} from '@/subapps/forum/common/ui/hooks/use-truncatedElement';
 
 interface MetaFile {

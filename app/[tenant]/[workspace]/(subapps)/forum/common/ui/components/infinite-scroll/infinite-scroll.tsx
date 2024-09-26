@@ -93,21 +93,15 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
     setPosts(initialPosts);
   }, [initialPosts]);
 
-
   useEffect(() => {
     setPage(1);
   }, [sort, limit]);
-
-
 
   return (
     <>
       {posts.map(post => (
         <React.Fragment key={post.id}>
-          <Thread
-            post={post}
-            showHeader={params.id ? false : true}
-          />
+          <Thread post={post} showHeader={params.id ? false : true} />
         </React.Fragment>
       ))}
 
