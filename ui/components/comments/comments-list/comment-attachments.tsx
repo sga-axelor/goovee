@@ -3,11 +3,12 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {download} from '@/orm/comment';
+import {download} from '@/ui/components/comments/helpers';
 
 interface Attachment {
   id: string;
   attachmentFile: {
+    id: string | number;
     fileName: string;
   };
 }
@@ -19,7 +20,7 @@ interface CommentAttachmentsProps {
 export function CommentAttachments({attachments}: CommentAttachmentsProps) {
   const handleDownload = async (attachment: Attachment) => {
     const {attachmentFile} = attachment;
-    await download(attachmentFile, true);
+    download(attachmentFile, true);
   };
 
   if (!attachments?.length) {
