@@ -1,0 +1,13 @@
+{
+  "name": "AOSProjectTask",
+  "table": "project_project_task",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name",
+      "required": true
+    }
+  ]
+}
