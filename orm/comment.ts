@@ -433,17 +433,20 @@ export async function findComments({
       message: i18n.get('Model is missing'),
     };
   }
-
-  const modelRecord: any = await findByID({
+  const {
+    error,
+    message,
+    data: modelRecord,
+  }: any = await findByID({
     type,
     id: model?.id,
     workspace,
     withAuth: type === ModelType.forum ? false : true,
   });
-  if (!modelRecord) {
+  if (error) {
     return {
       error: true,
-      message: i18n.get(modelRecord?.message || 'Record not found.'),
+      message: i18n.get(message || 'Record not found.'),
     };
   }
 
