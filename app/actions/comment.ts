@@ -23,7 +23,7 @@ export async function createComment({
   relatedModel?: any;
   messageBody?: any;
 }) {
-  let attachmentIDs: string[] = [];
+  let attachments: string[] = [];
 
   if (values?.attachments?.length) {
     try {
@@ -34,7 +34,7 @@ export async function createComment({
           message: response.message || 'Error while uploading attachment.',
         };
       }
-      attachmentIDs = response.data;
+      attachments = response.data;
     } catch (error: any) {
       console.error('Submission error:', error);
       return {
@@ -50,7 +50,7 @@ export async function createComment({
       workspaceURL,
       model: {id: modelID},
       note: values?.text,
-      attachments: attachmentIDs,
+      attachments,
       parentId,
       relatedModel,
       messageBody,

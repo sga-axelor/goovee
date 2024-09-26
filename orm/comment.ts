@@ -111,6 +111,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
 
       return {
         id: Number(metaFile.id),
+        description: metaFile.description,
       };
     } catch (err) {
       console.error('Error creating file metadata:', err);
