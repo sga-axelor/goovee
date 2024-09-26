@@ -1,6 +1,7 @@
 'use client';
 import React, {useEffect, useState} from 'react';
 import {useInView} from 'react-intersection-observer';
+import {useParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
@@ -34,6 +35,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   const [ref, inView] = useInView();
 
   const {workspaceURL} = useWorkspace();
+  const params = useParams();
   const {toast} = useToast();
 
   const {searchParams} = useSearchParams();
@@ -102,7 +104,10 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
     <>
       {posts.map(post => (
         <React.Fragment key={post.id}>
-          <Thread post={post} />
+          <Thread
+            post={post}
+            showHeader={params.id ? false : true}
+          />
         </React.Fragment>
       ))}
 

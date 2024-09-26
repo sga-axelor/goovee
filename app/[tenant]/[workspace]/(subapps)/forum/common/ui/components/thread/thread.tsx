@@ -26,7 +26,7 @@ export const Thread = ({
   const {forumGroup}: any = post || {};
 
   return (
-    <div className="bg-white rounded-lg flex flex-col gap-4">
+    <div className="bg-white rounded-lg flex flex-col gap-2">
       {showHeader && (
         <ThreadHeader title={forumGroup?.name} image={forumGroup?.image} />
       )}
