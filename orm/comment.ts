@@ -239,9 +239,31 @@ export async function addComment({
     const timestamp = getCurrentDateTime();
     const modelName = ModelMap[type];
 
+    let sequence = 1;
+
+    const highestSequence = await client.aOSComment.findOne({
+      where: {
+        [modelName as string]: {
+          id: model.id,
+        },
+      },
+      orderBy: {
+        sequence: ORDER_BY.DESC,
+      } as any,
+      select: {
+        sequence: true,
+      },
+    });
+
+    if (highestSequence?.sequence) {
+      sequence = highestSequence.sequence + 1;
+    }
+
     const response = await client.aOSComment.create({
       data: {
-        ...(modelRecord && modelName && !parentId
+        ...(modelRecord &&
+        modelName &&
+        (type === ModelType.ticketing ? true : !parentId)
           ? {
               [modelName as string]: {
                 select: {
@@ -281,7 +303,7 @@ export async function addComment({
         ...(attachments?.length > 0 && {
           commentFileList: {
             create: attachments.map((attachment: any) => ({
-              description: attachments?.description || '',
+              description: attachment?.description || '',
               attachmentFile: {
                 select: {
                   id: attachment.id,
@@ -293,6 +315,7 @@ export async function addComment({
           },
         }),
         isPrivateNote: false,
+        sequence,
         createdBy: {
           select: {
             id: aosUser.id,
@@ -451,6 +474,11 @@ export async function findComments({
             }
           : {}),
         isPrivateNote: false,
+        parentComment: {
+          id: {
+            eq: null,
+          },
+        },
       },
       orderBy,
       take: limit,
@@ -474,6 +502,9 @@ export async function findComments({
           },
         },
         childCommentList: {
+          where: {
+            isPrivate: false,
+          },
           select: {
             id: true,
             note: true,
