@@ -65,7 +65,7 @@ export function AssignToSupplier({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
     assignToSupplier,
-    i18n.get('Ticket assinged to supplier'),
+    i18n.get('Ticket assigned to supplier'),
   );
 
   const handleClick = useCallback(async () => {
