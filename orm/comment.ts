@@ -34,8 +34,6 @@ if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
 }
 
-const timestamp = getCurrentDateTime();
-
 const ModelMap: Record<ModelType, String> = {
   [ModelType.forum]: 'forumPost',
   [ModelType.news]: 'portalNews',
@@ -157,7 +155,7 @@ export async function addComment({
   type: ModelType;
   model: {id: string | number} | null;
   workspaceURL: string;
-  note: string;
+  note?: string;
   attachments?: any;
   parentId?: any;
   relatedModel?: string;
@@ -196,23 +194,27 @@ export async function addComment({
       };
     }
 
-    if (!model) {
+    if (!model?.id) {
       return {
         error: true,
         message: i18n.get('Model is missing'),
       };
     }
 
-    const modelRecord: any = await findByID({
+    const {
+      error,
+      message,
+      data: modelRecord,
+    }: any = await findByID({
       type,
       id: model?.id,
       workspace,
     });
 
-    if (!modelRecord) {
+    if (error) {
       return {
         error: true,
-        message: i18n.get(modelRecord?.message || 'Record not found.'),
+        message: i18n.get(message || 'Record not found.'),
       };
     }
 
@@ -234,6 +236,7 @@ export async function addComment({
       }
     }
 
+    const timestamp = getCurrentDateTime();
     const modelName = ModelMap[type];
 
     const response = await client.aOSComment.create({
@@ -275,19 +278,21 @@ export async function addComment({
               },
             }
           : {}),
-        commentFileList:
-          attachments?.length > 0
-            ? {
-                create: attachments.map((attachment: any) => ({
-                  description: attachments?.description || '',
-                  attachmentFile: {
-                    select: {
-                      id: attachment.id,
-                    },
-                  },
-                })),
-              }
-            : [],
+        ...(attachments?.length > 0 && {
+          commentFileList: {
+            create: attachments.map((attachment: any) => ({
+              description: attachments?.description || '',
+              attachmentFile: {
+                select: {
+                  id: attachment.id,
+                },
+              },
+              createdOn: timestamp,
+              updatedOn: timestamp,
+            })),
+          },
+        }),
+        isPrivateNote: false,
         createdBy: {
           select: {
             id: aosUser.id,
@@ -336,9 +341,9 @@ export async function findByID({
     };
   }
 
+  const session = await getSession();
+  const user = session?.user;
   if (withAuth) {
-    const session = await getSession();
-    const user = session?.user;
     if (!user) {
       return {
         error: true,
@@ -367,7 +372,7 @@ export async function findByID({
       };
   }
 
-  return response;
+  return {success: true, data: response};
 }
 
 export async function findComments({
@@ -399,7 +404,7 @@ export async function findComments({
     };
   }
 
-  if (!model) {
+  if (!model?.id) {
     return {
       error: true,
       message: i18n.get('Model is missing'),
@@ -410,7 +415,7 @@ export async function findComments({
     type,
     id: model?.id,
     workspace,
-    withAuth: false,
+    withAuth: type === ModelType.forum ? false : true,
   });
   if (!modelRecord) {
     return {
@@ -445,6 +450,7 @@ export async function findComments({
               },
             }
           : {}),
+        isPrivateNote: false,
       },
       orderBy,
       take: limit,
@@ -531,4 +537,72 @@ export async function findComments({
   } catch (error) {
     return {error: true, message: i18n.get('Something went wromng')};
   }
+}
+
+export async function download(record: any, isMeta: boolean = false) {
+  if (!record) return null;
+
+  const html =
+    record.contentType === 'html' || record?.metaFile?.fileType === 'text/html';
+
+  const link = document.createElement('a');
+  const name = record.fileName;
+
+  link.innerHTML = name || 'File';
+  link.download = name || 'download';
+  link.href = html
+    ? await getHTMLURL(record)
+    : await getDownloadURL({id: record.id, isMeta});
+
+  Object.assign(link.style, {
+    position: 'absolute',
+    visibility: 'hidden',
+    zIndex: 1000000000,
+  });
+
+  document.body.appendChild(link);
+
+  link.onclick = e => {
+    setTimeout(() => {
+      if (e.target) {
+        document.body.removeChild(e.target as any);
+      }
+    }, 300);
+  };
+
+  setTimeout(() => link.click(), 100);
+}
+
+export async function getHTMLURL(record: any) {
+  const dynamicContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Generated HTML Page</title>
+    </head>
+    <body>
+      <main>
+        ${record.content}
+      </main>
+    </body>
+    </html>
+  `;
+
+  const blob = new Blob([dynamicContent], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+
+  return url;
+}
+
+export async function getDownloadURL({
+  id,
+  isMeta = false,
+}: {
+  id: string;
+  isMeta?: boolean;
+}) {
+  const metaParam = isMeta ? '?meta=true' : '';
+  return `${process.env.NEXT_PUBLIC_HOST}/api/download/${id}${metaParam}`;
 }

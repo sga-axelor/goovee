@@ -95,7 +95,7 @@ export function useComments({
           workspaceURL,
           modelID: model.id,
           parentId: parent,
-          type: ModelType.forum,
+          type: modelType,
         });
 
         if (response.success) {
@@ -115,7 +115,7 @@ export function useComments({
         });
       }
     },
-    [model.id, toast, workspaceURL, handleRefresh],
+    [workspaceURL, model.id, modelType, handleRefresh, toast],
   );
 
   useEffect(() => {

@@ -32,9 +32,9 @@ interface CommentsProps {
   modelType: ModelType;
   hideCommentsHeader?: boolean;
   hideCommentsFooter?: boolean;
-  showCommentsByDefault: boolean;
+  showCommentsByDefault?: boolean;
   showReactions?: boolean;
-  inputPosition: 'top' | 'bottom';
+  inputPosition?: 'top' | 'bottom';
   seeMore?: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
