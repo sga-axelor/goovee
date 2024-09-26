@@ -80,16 +80,12 @@ export function TicketForm(props: TicketFormProps) {
 
   const handleSubmit = useCallback(
     async (value: TicketInfo) => {
-      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
-      const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
-
-      if (!dirtyFieldKeys.length) return router.back();
       const mutateProps: MutateProps = {
         action: {
           type: 'create',
           data: {
             project: projectId,
-            ...dirtyValues,
+            ...value,
           },
         },
         workspaceURL,
