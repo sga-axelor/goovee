@@ -86,6 +86,7 @@ export const DATE_FORMATS = {
   us_date: 'MM/DD/YYYY',
   full_month_day_year_12_hour: 'MMMM D YYYY - hA',
   custom: 'MMMM D YYYY - h:mm A',
+  full_date: 'MMMM Do YYYY',
 };
 
 /**
