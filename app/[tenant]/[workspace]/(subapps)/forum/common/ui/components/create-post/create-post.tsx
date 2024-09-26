@@ -107,7 +107,7 @@ export const CreatePost = ({
   const handleImageUpload = (images: ImageItem[]) => {
     setAttachments(prev => ({
       ...prev,
-      images: images,
+      images,
     }));
   };
 
