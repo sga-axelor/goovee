@@ -158,6 +158,6 @@ export const GROUP = {
 export const GROUPS_ORDER_BY = {
   isPin: ORDER_BY.DESC,
   forumGroup: {
-    name: ORDER_BY.ASC.toLowerCase(),
+    name: ORDER_BY.ASC
   },
 };
