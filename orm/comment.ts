@@ -503,7 +503,7 @@ export async function findComments({
         },
         childCommentList: {
           where: {
-            isPrivate: false,
+            isPrivateNote: false,
           },
           select: {
             id: true,
