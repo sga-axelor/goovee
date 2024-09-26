@@ -9,11 +9,14 @@ import {parseDate} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {cn} from '@/utils/css';
-import {download} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
-import {getFileTypeIcon, getIconColor} from '@/subapps/resources/common/utils';
+import {
+  download,
+  getFileTypeIcon,
+  getIconColor,
+} from '@/subapps/resources/common/utils';
 
 export function ResourceList({resources}: any) {
   const router = useRouter();

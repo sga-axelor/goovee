@@ -3,13 +3,13 @@
 import CyntlerDocViewer, {DocViewerRenderers} from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 
-// ---- CORE IMPORTS ---- //
-import {getDownloadURL} from '@/utils/image';
+// ---- LOCAL IMPORTS ---- //
+import {getDownloadURL} from '@/subapps/resources/common/utils';
 
 import styles from './doc-viewer.module.scss';
 
 export default function DocViewer({record}: any) {
-  const docs = [{uri: getDownloadURL({id: record.id})}];
+  const docs = [{uri: getDownloadURL(record)}];
 
   return (
     <div className="overflow-auto">
