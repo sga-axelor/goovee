@@ -2,7 +2,7 @@
 
 import {getClient} from '@/goovee';
 import {PortalWorkspace} from '@/types';
-import {getPageInfo} from '@/utils';
+import {getPageInfo, getSkipInfo} from '@/utils';
 
 export async function getPopularQuery({
   page,
@@ -19,7 +19,7 @@ export async function getPopularQuery({
 }) {
   const client = await getClient();
 
-  const skip = Number(page) > 1 ? Number(page) * Number(limit) : 0;
+  const skip = getSkipInfo(limit, page);
 
   const whereClause = `WHERE forumGroup.workspace = ${workspaceID}
         ${groupIDs?.length ? `AND post.forum_group IN (${groupIDs.join(', ')})` : ''}
