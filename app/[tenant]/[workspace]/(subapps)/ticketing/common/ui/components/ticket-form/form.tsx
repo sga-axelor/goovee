@@ -101,15 +101,7 @@ export function TicketForm(props: TicketFormProps) {
 
       handleSuccess(data.id);
     },
-    [
-      form.formState.dirtyFields,
-      handleError,
-      handleSuccess,
-      projectId,
-      router,
-      workspaceURI,
-      workspaceURL,
-    ],
+    [handleError, handleSuccess, projectId, workspaceURI, workspaceURL],
   );
 
   return (
