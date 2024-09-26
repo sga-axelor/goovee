@@ -6,7 +6,7 @@ import {getImageURL} from '@/utils/image';
 
 export const ThreadHeader = ({title, image}: {title: string; image: any}) => {
   return (
-    <div className="flex items-center gap-2 p-4 border-b">
+    <div className="flex items-center gap-2 px-4 pb-4 border-b">
       <Avatar className="rounded-lg h-6 w-6">
         <AvatarImage src={getImageURL(image?.id)} />
       </Avatar>
