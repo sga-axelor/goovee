@@ -276,6 +276,7 @@ export async function findPostsByGroupId({
     sort,
     limit,
     search,
+    groupIDs: [id],
   });
 }
 
