@@ -59,6 +59,10 @@
     {
       "name": "note",
       "type": "String"
+    },
+    {
+      "name": "isPrivateNote",
+      "type": "Boolean"
     }
   ]
 }
