@@ -22,26 +22,29 @@ export function CommentTracks({tracks, title}: CommentTracksProps) {
     <div className="px-4 text-sm">
       <div className="font-semibold">{i18n.get(title)}</div>
       <ul className="list-disc">
-        {tracks?.map(({title, oldValue, value}, index) => (
-          <li key={index} className="mb-2">
-            <div className="flex items-center">
-              <span className="font-semibold flex-shrink-0">
-                {i18n.get(title)}:
-              </span>
-              <span className="flex items-center ml-2">
-                {oldValue ? (
-                  <>
-                    {i18n.get(oldValue)}
-                    <MdArrowRightAlt className="mx-2" />
-                    {i18n.get(value)}
-                  </>
-                ) : (
-                  ` ${i18n.get(value)}`
-                )}
-              </span>
-            </div>
-          </li>
-        ))}
+        {tracks?.map(({title, oldValue, value}, index) => {
+          if (title === 'comment.note') return;
+          return (
+            <li key={index} className="mb-2">
+              <div className="flex items-center">
+                <span className="font-semibold flex-shrink-0">
+                  {i18n.get(title)}:
+                </span>
+                <span className="flex items-center ml-2">
+                  {oldValue ? (
+                    <>
+                      {i18n.get(oldValue)}
+                      <MdArrowRightAlt className="mx-2" />
+                      {i18n.get(value)}
+                    </>
+                  ) : (
+                    ` ${i18n.get(value)}`
+                  )}
+                </span>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
