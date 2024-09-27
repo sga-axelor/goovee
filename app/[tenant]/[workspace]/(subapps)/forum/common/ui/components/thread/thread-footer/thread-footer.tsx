@@ -1,8 +1,8 @@
 'use client';
+import {useMemo} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {ModelType} from '@/types';
-
 import {Comments} from '@/ui/components';
 
 export const ThreadFooter = ({
@@ -10,12 +10,16 @@ export const ThreadFooter = ({
   showCommentsByDefault,
   hideCloseComments = false,
   usePopUpStyles = false,
+  isMember,
 }: {
   post: any;
   showCommentsByDefault: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
+  isMember?: boolean;
 }) => {
+  const disabled = useMemo(() => !isMember, [isMember]);
+
   return (
     <Comments
       record={post}
@@ -25,6 +29,7 @@ export const ThreadFooter = ({
       inputPosition="top"
       usePopUpStyles={usePopUpStyles}
       seeMore={true}
+      disabled={disabled}
     />
   );
 };

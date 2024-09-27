@@ -16,12 +16,14 @@ export const Thread = ({
   showCommentsByDefault = false,
   hideCloseComments = false,
   usePopUpStyles = false,
+  isMember,
 }: {
   post?: Post;
   showHeader?: boolean;
   showCommentsByDefault?: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
+  isMember?: boolean;
 }) => {
   const {forumGroup}: any = post || {};
 
@@ -36,6 +38,7 @@ export const Thread = ({
         usePopUpStyles={usePopUpStyles}
         hideCloseComments={hideCloseComments}
         showCommentsByDefault={showCommentsByDefault}
+        isMember={isMember}
       />
     </div>
   );

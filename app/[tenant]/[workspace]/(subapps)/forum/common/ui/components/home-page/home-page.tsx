@@ -58,6 +58,7 @@ export const HomePage = ({
   const [memberGroupList, setMemberGroupList] = useState<Group[]>(
     memberGroups || [],
   );
+
   const [nonMemberGroupList, setNonMemberGroupList] = useState<Group[]>(
     nonMemberGroups || [],
   );
@@ -217,6 +218,7 @@ export const HomePage = ({
             activeTab={type}
             posts={posts}
             pageInfo={pageInfo}
+            isMember={isMember}
           />
         </div>
       </div>

@@ -22,11 +22,13 @@ interface PageInfo {
 interface InfiniteScrollProps {
   initialPosts: Post[];
   pageInfo: PageInfo;
+  isMember?: boolean;
 }
 
 export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   initialPosts,
   pageInfo,
+  isMember,
 }) => {
   const {count} = pageInfo;
   const [posts, setPosts] = useState<Post[]>(initialPosts);
@@ -101,7 +103,11 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
     <>
       {posts.map(post => (
         <React.Fragment key={post.id}>
-          <Thread post={post} showHeader={params.id ? false : true} />
+          <Thread
+            post={post}
+            showHeader={params.id ? false : true}
+            isMember={isMember}
+          />
         </React.Fragment>
       ))}
 

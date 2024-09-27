@@ -15,9 +15,11 @@ import {InfiniteScroll} from '@/subapps/forum/common/ui/components';
 export const ThreadList = ({
   posts,
   pageInfo,
+  isMember,
 }: {
   posts: Post[];
   pageInfo: any;
+  isMember?: boolean;
 }) => {
   const {update, searchParams} = useSearchParams();
 
@@ -52,7 +54,11 @@ export const ThreadList = ({
         <div>{i18n.get('No posts available.')}</div>
       ) : (
         <div className="flex flex-col gap-4">
-          <InfiniteScroll initialPosts={posts} pageInfo={pageInfo} />
+          <InfiniteScroll
+            initialPosts={posts}
+            pageInfo={pageInfo}
+            isMember={isMember}
+          />
         </div>
       )}
     </div>
