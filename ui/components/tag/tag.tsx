@@ -29,7 +29,7 @@ const classes: Record<Variant, string> = {
 const outlineClasses: Record<Variant, string> = {
   success: 'border-success text-success border',
   destructive: 'border-destructive text-destructive border',
-  yellow: 'border-palette-yellow text-palette-yellow border',
+  yellow: 'border-palette-yellow-dark text-palette-yellow-dark border',
   purple: 'border-palette-purple text-palette-purple border',
   blue: 'border-violet-400 text-violet-400 border',
   default: 'border-primary text-primary border',
