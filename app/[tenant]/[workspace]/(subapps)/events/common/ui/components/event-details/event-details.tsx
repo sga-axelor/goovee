@@ -15,17 +15,15 @@ import {
   CommentsSection,
   EventDateCard,
 } from '@/subapps/events/common/ui/components';
-import type {Event, Comment} from '@/subapps/events/common/ui/components';
+import type {Event} from '@/subapps/events/common/ui/components';
 import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
 
 export function EventDetails({
   eventDetails,
   successMessage,
-  comments,
 }: {
   eventDetails: Event;
   successMessage: boolean;
-  comments: Comment[];
 }) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -57,7 +55,7 @@ export function EventDetails({
       <div className="w-full flex flex-col lg:flex-row lg:gap-x-6 gap-y-6 lg:space-y-0 justify-center px-4 pt-4 pb-20 lg:py-4 lg:px-0">
         <div className="order-2 lg:order-1 space-y-6">
           <EventPageCard eventDetails={eventDetails} />
-          <CommentsSection eventId={eventId} comments={comments} />
+          <CommentsSection eventId={eventId} />
         </div>
         <EventDateCard
           startDate={parseDate(

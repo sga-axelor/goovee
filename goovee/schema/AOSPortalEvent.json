@@ -61,7 +61,7 @@
     {
       "name": "eventCommentList",
       "type": "OneToMany",
-      "target": "AOSPortalComment",
+      "target": "AOSComment",
       "mappedBy": "portalEvent"
     },
     {

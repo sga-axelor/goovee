@@ -27,10 +27,6 @@ export default async function Page({
   const successMessage = searchParams.success === 'true';
 
   return (
-    <EventDetails
-      eventDetails={eventDetails}
-      successMessage={successMessage}
-      comments={eventDetails?.eventCommentList}
-    />
+    <EventDetails eventDetails={eventDetails} successMessage={successMessage} />
   );
 }

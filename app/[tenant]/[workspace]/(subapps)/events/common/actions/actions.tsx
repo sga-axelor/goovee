@@ -2,17 +2,14 @@
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {Comment, Participant} from '@/types';
+import {Participant} from '@/types';
 import {i18n} from '@/lib/i18n';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
 import {findContact} from '@/subapps/events/common/orm/partner';
-import {
-  createComment,
-  findCommentsByEventID,
-} from '@/subapps/events/common/orm/comment';
+
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {
@@ -70,61 +67,6 @@ export async function getAllEvents({
       workspace,
     }).then(clone);
     return {events, pageInfo};
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-export async function addComment(
-  eventId: string,
-  comment: Comment,
-  workspaceURL: string,
-) {
-  if (!eventId || !comment)
-    return error(i18n.get('Event ID or comment is missing!'));
-
-  const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-
-  const event = await findEventByID(eventId);
-  if (!event) return error(i18n.get('Event not found!'));
-
-  try {
-    return await createComment(eventId, workspaceURL, comment).then(clone);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-export async function getCommentsByEventID(
-  eventId: string,
-  workspaceURL: string,
-) {
-  if (!eventId) return error(i18n.get('Event ID is missing!'));
-
-  const result = await validate([
-    withWorkspace(workspaceURL, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-
-  const event = await findEventByID(eventId);
-  if (!event) return error(i18n.get('Event not found!'));
-
-  try {
-    const comments = await findCommentsByEventID(eventId, workspaceURL).then(
-      clone,
-    );
-    return comments;
   } catch (err) {
     console.log(err);
   }
