@@ -84,6 +84,7 @@ export const HomePage = ({
   };
 
   const hanldeDialogOpen = () => {
+    if (!isLoggedIn || !isMember) return;
     setOpen(true);
   };
 
@@ -181,22 +182,20 @@ export const HomePage = ({
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
-          <div className="bg-white px-4 pt-4 pb-1 rounded-t-lg flex items-center gap-[10px]">
+          <div className="bg-white px-4 py-4 rounded-lg flex items-center gap-[10px]">
             <Avatar
-              className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-black/20' : ''}`}>
+              className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
               {<AvatarImage src={getImageURL(picture?.id)} />}
             </Avatar>
             <Button
-              disabled={!isLoggedIn || !isMember}
-              onClick={() => hanldeDialogOpen()}
+              onClick={hanldeDialogOpen}
               variant="outline"
-              className={`flex-1 text-sm justify-start text-palette-mediumGray disabled:placeholder:text-gray-700 border ${
-                !isLoggedIn
-                  ? 'bg-black/20'
-                  : !isMember
-                    ? 'bg-black/20'
-                    : 'bg-white'
-              }`}>
+              className={`flex-1 text-sm justify-start font-normal border
+    ${
+      !isLoggedIn || !isMember
+        ? 'bg-gray-light hover:bg-gray-light text-gray-dark hover:text-gray-dark border-gray-dark cursor-default'
+        : 'bg-white text-gray border-gray hover:bg-white hover:text-gray'
+    }`}>
               {isLoggedIn
                 ? isMember
                   ? i18n.get(START_A_POST)
