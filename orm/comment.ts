@@ -347,7 +347,14 @@ export async function findByID({
       response = posts[0];
       break;
     case ModelType.ticketing:
-      response = user ? await findTicketAccess(id, user.id, workspace.id) : {};
+      if (user) {
+        response = await findTicketAccess(id, user.id, workspace.id);
+      }
+      if (!response)
+        return {
+          error: true,
+          message: i18n.get('Unauthorized'),
+        };
       break;
     default:
       return {
