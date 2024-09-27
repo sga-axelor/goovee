@@ -30,6 +30,10 @@ export type Theme = {
     'success-dark'?: string;
     'success-foreground'?: string;
 
+    gray?: string;
+    'gray-light'?: string;
+    'gray-dark'?: string;
+
     border?: string;
     input?: string;
     ring?: string;

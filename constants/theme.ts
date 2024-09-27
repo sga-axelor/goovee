@@ -32,6 +32,10 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
     'success-foreground': '210 40% 98%',
     'success-dark': '142 48% 37%',
 
+    gray: '160 3% 82',
+    'gray-light': '180 2% 90%',
+    'gray-dark': '170 3% 36%',
+
     border: '214.3 31.8% 91.4%',
     input: '214.3 31.8% 91.4%',
     ring: '222.2 84% 4.9%',

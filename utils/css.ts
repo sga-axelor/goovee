@@ -39,6 +39,10 @@ export function generateCSSVariableString(options: Theme) {
       --success-dark: ${options?.colors?.['success-dark']};
       --success-foreground: ${options?.colors?.['success-foreground']};
 
+      --gray: ${options?.colors?.gray};
+      --gray-light:${options?.colors?.['gray-light']};
+      --gray-dark: ${options?.colors?.['gray-dark']};
+
       --border: ${options?.colors?.border};
       --input: ${options?.colors?.input};
       --ring: ${options?.colors?.ring};

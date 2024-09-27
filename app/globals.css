@@ -40,6 +40,10 @@
 
     --radius: 0.5rem;
 
+    --gray: 160 3% 82%;
+    --gray-light: 180 2% 90%;
+    --gray-dark: 170 3% 36%;
+
     --palette-purple: 261 100% 97%;
     --palette-purple-dark: 269 97% 35%;
 

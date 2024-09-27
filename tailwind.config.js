@@ -54,6 +54,11 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        gray: {
+          DEFAULT: 'hsl(var(--gray))',
+          light: 'hsl(var(--gray-light))',
+          dark: 'hsl(var(--gray-dark))',
+        },
         palette: {
           purple: {
             DEFAULT: 'hsl(var(--palette-purple))',
