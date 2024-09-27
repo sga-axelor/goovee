@@ -140,14 +140,6 @@ export default async function Page({
         contacts={clone(contacts)}
       />
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-        <Comments
-          record={clone(ticket)}
-          modelType={ModelType.ticketing}
-          showCommentsByDefault
-          key={Math.random()}
-        />
-      </div>
-      <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}
         {ticket.childTasks && Boolean(ticket.childTasks.length) && (
           <ChildTickets tickets={ticket.childTasks} />
@@ -158,6 +150,20 @@ export default async function Page({
             ticketId={ticket.id}
           />
         </Suspense>
+      </div>
+      <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
+        <h4 className="text-xl font-semibold">{i18n.get('Comments')}</h4>
+        <Comments
+          record={clone(ticket)}
+          modelType={ModelType.ticketing}
+          showCommentsByDefault
+          showTopBorder={false}
+          showReactions={false}
+          hideSortBy
+          hideCloseComments
+          hideCommentsHeader
+          key={Math.random()}
+        />
       </div>
     </div>
   );
