@@ -215,7 +215,7 @@ function AssignedToField(
             values={
               assignment === ASSIGNMENT.PROVIDER
                 ? (field.value ?? []).concat(COMPANY)
-                : field.value ?? []
+                : (field.value ?? [])
             }
             className="space-y-0">
             <MultiSelectorTrigger
