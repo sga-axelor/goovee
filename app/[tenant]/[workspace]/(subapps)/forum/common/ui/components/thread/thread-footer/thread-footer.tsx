@@ -30,6 +30,7 @@ export const ThreadFooter = ({
       usePopUpStyles={usePopUpStyles}
       seeMore={true}
       disabled={disabled}
+      showReactions={false}
     />
   );
 };
