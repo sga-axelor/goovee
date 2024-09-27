@@ -120,7 +120,7 @@ export function CommentInput({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6 w-full">
         <div
-          className={`flex items-center relative ${disabled ? 'opacity-70 pointer-events-none' : ''}`}>
+          className={`flex items-center relative ${disabled ? 'pointer-events-none' : ''}`}>
           <FormField
             control={form.control}
             name="text"
@@ -129,7 +129,7 @@ export function CommentInput({
                 <FormControl>
                   <Input
                     className={cn(
-                      'h-12 w-full placeholder:text-sm placeholder:text-slate-400 pr-36',
+                      'h-12 w-full placeholder:text-sm placeholder:text-gray-dark pr-36',
                       className,
                     )}
                     placeholder={i18n.get(placeholderText)}
@@ -145,7 +145,9 @@ export function CommentInput({
             {showAttachmentIcon && (
               <div {...getRootProps({className: 'dropzone'})}>
                 <input {...getInputProps()} />
-                <MdAttachFile className="size-6 text-black cursor-pointer" />
+                <MdAttachFile
+                  className={`size-6 ${disabled ? `text-gray-dark cursor-none` : `text-black cursor-pointer`} `}
+                />
               </div>
             )}
             <Button

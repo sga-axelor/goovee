@@ -142,7 +142,7 @@ export const CommentListItem = ({
           )}
           <div className={`flex gap-2 items-center`}>
             <MdOutlineModeComment
-              className="w-4 h-4"
+              className="w-4 h-4 cursor-pointer"
               onClick={handleInputToggle}
             />
             {parentCommentId === id && childCommentList.length > 0 && (
@@ -163,7 +163,7 @@ export const CommentListItem = ({
           <div className="my-2">
             <CommentInput
               disabled={isDisabled}
-              className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${!isDisabled ? 'bg-white' : 'bg-black/20'}`}
+              className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
               placeholderText={
                 isLoggedIn
                   ? i18n.get(COMMENT)

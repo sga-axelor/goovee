@@ -95,7 +95,7 @@ export function Comments({
   const renderCommentInput = () => (
     <CommentInput
       disabled={isDisabled}
-      className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${!isDisabled ? 'bg-white' : 'bg-black/20'}`}
+      className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
       placeholderText={
         isLoggedIn ? i18n.get(COMMENT) : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
       }
@@ -129,7 +129,7 @@ export function Comments({
           <div className="flex items-center gap-6 px-4 py-2">
             {showReactions && (
               <div
-                className={`${isLoggedIn ? 'cursor-pointer' : 'bg-black/20 text-gray-700 p-2 rounded-lg cursor-not-allowed'}`}>
+                className={`${!isDisabled ? 'cursor-pointer' : 'bg-gray-light text-gray-dark p-2 rounded-lg cursor-not-allowed'}`}>
                 <MdOutlineThumbUp className="w-6 h-6" />
               </div>
             )}
