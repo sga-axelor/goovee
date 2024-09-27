@@ -41,6 +41,7 @@ interface CommentsProps {
   showTopBorder?: boolean;
   sortByProp?: string;
   disabled?: boolean;
+  hideSortBy?: boolean;
 }
 
 export function Comments({
@@ -57,6 +58,7 @@ export function Comments({
   showTopBorder = true,
   sortByProp,
   disabled = false,
+  hideSortBy = false,
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
@@ -139,17 +141,19 @@ export function Comments({
         {showComments && (
           <div
             className={`border-t flex flex-col gap-4 ${usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4'}`}>
-            <div className="w-full flex gap-4 items-center">
-              <div className="flex gap-2 text-sm flex-shrink-0">
-                <div>{i18n.get('Sort by')}:</div>
-                <DropdownToggle
-                  value={sortBy}
-                  options={dropdownSortOptions}
-                  handleDropdown={handleSortBy}
-                />
+            {!hideSortBy && (
+              <div className="w-full flex gap-4 items-center">
+                <div className="flex gap-2 text-sm flex-shrink-0">
+                  <div>{i18n.get('Sort by')}:</div>
+                  <DropdownToggle
+                    value={sortBy}
+                    options={dropdownSortOptions}
+                    handleDropdown={handleSortBy}
+                  />
+                </div>
+                <Separator style={{flexShrink: 1}} />
               </div>
-              <Separator style={{flexShrink: 1}} />
-            </div>
+            )}
             <CommentsList
               record={record}
               disabled={isDisabled}
