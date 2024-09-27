@@ -12,20 +12,18 @@ interface CommentsListProps {
   }>;
   usePopUpStyles?: boolean;
   showReactions?: boolean;
-  loading?: boolean;
-  fetching?: boolean;
   modelType: ModelType;
+  totalCommentsCount: boolean;
   onSubmit?: (comment: any) => void;
 }
 
 export const CommentsList: React.FC<CommentsListProps> = ({
   record,
   comments,
-  loading = false,
-  fetching = false,
   usePopUpStyles = false,
   showReactions = true,
   modelType,
+  totalCommentsCount,
   onSubmit,
 }) => {
   return (
@@ -39,12 +37,10 @@ export const CommentsList: React.FC<CommentsListProps> = ({
           comment={comment}
           showReactions={showReactions}
           modelType={modelType}
+          totalCommentsCount={totalCommentsCount}
           onSubmit={onSubmit}
         />
       ))}
-      {(loading || fetching) && (
-        <p className="text-center text-sm">{i18n.get('Loading...')}</p>
-      )}
     </div>
   );
 };

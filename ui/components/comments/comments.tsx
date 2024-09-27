@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {useSession} from 'next-auth/react';
 import {
   MdAdd,
@@ -58,7 +58,7 @@ export function Comments({
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
-  const {comments, total, loading, fetching, loadMore, onCreate} = useComments({
+  const {comments, total, loadMore, onCreate} = useComments({
     model: {id: record.id},
     modelType,
     sortBy,
@@ -81,6 +81,13 @@ export function Comments({
   const showCommentInputOnTop = inputPosition === 'top';
   const showCommentInputOnBottom = !showCommentInputOnTop;
 
+  const totalCommentsCount = useMemo(() => {
+    return comments?.reduce((acc: number, comment: any) => {
+      const childCommentsCount = comment.childCommentList?.length || 0;
+      return acc + 1 + childCommentsCount;
+    }, 0);
+  }, [comments]);
+
   const renderCommentInput = () => (
     <CommentInput
       disabled={!isLoggedIn}
@@ -99,13 +106,13 @@ export function Comments({
           {/* TODO: Add reactions preview */}
           <div />
           <div
-            className={`flex gap-2 items-center ${total ? 'cursor-pointer' : 'cursor-default'}`}
+            className={`flex gap-2 items-center ${totalCommentsCount ? 'cursor-pointer' : 'cursor-default'}`}
             onClick={toggleComments}>
             <MdOutlineModeComment className="w-6 h-6" />
-            {total > 0 && (
+            {totalCommentsCount > 0 && (
               <span className="text-sm">
-                {total}{' '}
-                {total > 1
+                {totalCommentsCount}{' '}
+                {totalCommentsCount > 1
                   ? i18n.get(COMMENTS.toLowerCase())
                   : i18n.get(COMMENT.toLowerCase())}
               </span>
@@ -129,7 +136,7 @@ export function Comments({
           <div
             className={`border-t flex flex-col gap-4 ${usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4'}`}>
             <div className="w-full flex gap-4 items-center">
-              <div className="flex gap-2 text-base flex-shrink-0">
+              <div className="flex gap-2 text-sm flex-shrink-0">
                 <div>{i18n.get('Sort by')}:</div>
                 <DropdownToggle
                   value={sortBy}
@@ -142,16 +149,13 @@ export function Comments({
             <CommentsList
               record={record}
               comments={comments}
-              loading={loading}
-              fetching={fetching}
               usePopUpStyles={usePopUpStyles}
               showReactions={showReactions}
               modelType={modelType}
+              totalCommentsCount={totalCommentsCount}
               onSubmit={onCreate}
             />
-            {loading && (
-              <p className="text-center text-sm">{i18n.get('Loading...')}</p>
-            )}
+
             {!hideCommentsFooter && (
               <div
                 className={`flex items-center ${hideCloseComments ? 'justify-end' : 'justify-between'}`}>
@@ -165,14 +169,16 @@ export function Comments({
                     </span>
                   </div>
                 )}
-                <div
-                  className={`flex items-center gap-2 ${comments.length >= total ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                  onClick={loadMore}>
-                  <MdAdd className="w-4 h-4" />
-                  <span className="text-xs font-semibold leading-[18px]">
-                    {i18n.get('See more')}
-                  </span>
-                </div>
+                {comments.length < total && (
+                  <div
+                    className={`flex items-center gap-2 cursor-pointer`}
+                    onClick={loadMore}>
+                    <MdAdd className="w-4 h-4" />
+                    <span className="text-xs font-semibold leading-[18px]">
+                      {i18n.get('See more')}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </div>

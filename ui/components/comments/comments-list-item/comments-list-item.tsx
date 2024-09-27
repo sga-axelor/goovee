@@ -49,6 +49,7 @@ interface CommentListItemProps {
   comment: Comment;
   showReactions: boolean;
   modelType: ModelType;
+  totalCommentsCount?: boolean;
   onSubmit?: (data: any) => void;
 }
 
@@ -58,9 +59,13 @@ export const CommentListItem = ({
   comment,
   showReactions,
   modelType,
+  totalCommentsCount,
   onSubmit,
 }: CommentListItemProps) => {
-  const [showSubComments, setShowSubComments] = useState(false);
+  const [showSubComments, setShowSubComments] = useState(
+    totalCommentsCount || false,
+  );
+  const [showCommentInput, setShowCommentInput] = useState<boolean>(false);
 
   const {
     createdOn,
@@ -78,7 +83,11 @@ export const CommentListItem = ({
   const {data: session} = useSession();
   const isLoggedIn = Boolean(session?.user?.id);
 
-  const handleSubCommentsToggle = () => setShowSubComments(prev => !prev);
+  const handleSubCommentsToggle = () => {
+    childCommentList?.length > 0 && setShowSubComments(prev => !prev);
+  };
+
+  const handleInputToggle = () => setShowCommentInput(prev => !prev);
 
   if (!comment) return null;
 
@@ -128,12 +137,15 @@ export const CommentListItem = ({
               </div>
             </div>
           )}
-          <div
-            className={`flex gap-2 items-center ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
-            onClick={handleSubCommentsToggle}>
-            <MdOutlineModeComment className="w-4 h-4" />
+          <div className={`flex gap-2 items-center`}>
+            <MdOutlineModeComment
+              className="w-4 h-4"
+              onClick={handleInputToggle}
+            />
             {parentCommentId === id && childCommentList.length > 0 && (
-              <span className="text-sm">
+              <span
+                className={`text-sm ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
+                onClick={handleSubCommentsToggle}>
                 {childCommentList.length}{' '}
                 {i18n.get(
                   childCommentList.length > 1
@@ -145,18 +157,30 @@ export const CommentListItem = ({
           </div>
         </div>
 
-        {showSubComments && (
+        {showCommentInput && (
           <div className="my-2">
             <CommentInput
+              disabled={!isLoggedIn}
               className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
               placeholderText={
                 isLoggedIn
                   ? i18n.get(COMMENT)
                   : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
               }
-              onSubmit={(data: any) =>
-                onSubmit && onSubmit({...data, parent: parentCommentId})
-              }
+              onSubmit={(data: any) => {
+                if (onSubmit) {
+                  try {
+                    onSubmit({...data, parent: parentCommentId});
+                  } catch (error) {
+                    console.error('Error submitting comment:', error);
+                  } finally {
+                    setShowCommentInput(false);
+                  }
+                } else {
+                  console.warn('onSubmit function not provided');
+                  setShowCommentInput(false);
+                }
+              }}
             />
           </div>
         )}
