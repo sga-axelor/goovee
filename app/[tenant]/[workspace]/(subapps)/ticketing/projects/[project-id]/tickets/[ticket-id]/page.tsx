@@ -26,6 +26,7 @@ import {FaChevronRight} from 'react-icons/fa';
 // ---- LOCAL IMPORTS ---- //
 import {
   findContactPartners,
+  findProject,
   findTicketCategories,
   findTicketPriorities,
   findTicketStatuses,
@@ -68,15 +69,19 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const [ticket, statuses, categories, priorities, contacts] =
+  const [project, ticket, statuses, categories, priorities, contacts] =
     await Promise.all([
+      findProject(projectId, workspace.id, session.user.id),
       findTicket(ticketId, projectId),
       findTicketStatuses(projectId),
       findTicketCategories(projectId),
       findTicketPriorities(projectId),
       findContactPartners(projectId),
     ]);
+
+  if (!project) notFound();
   if (!ticket) notFound();
+
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;

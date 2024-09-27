@@ -57,6 +57,8 @@ export default async function Page({
       findContactPartners(projectId).then(clone),
     ]);
 
+  if (!project) notFound();
+
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;

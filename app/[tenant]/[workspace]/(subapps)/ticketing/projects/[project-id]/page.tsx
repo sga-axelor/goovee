@@ -73,7 +73,8 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const project = (await findProject(projectId, workspace.id, userId))!;
+  const project = await findProject(projectId, workspace.id, userId);
+  if (!project) notFound();
   const tickets = await findTickets({
     projectId,
     take: Number(limit),
