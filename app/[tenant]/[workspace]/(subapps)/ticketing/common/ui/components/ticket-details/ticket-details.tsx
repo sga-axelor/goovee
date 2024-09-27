@@ -29,14 +29,13 @@ import {pick} from 'lodash';
 import {useCallback, useEffect, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 
-import {mutate, MutateProps} from '../../../actions';
+import {assignToSupplier, mutate, MutateProps} from '../../../actions';
 import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
 import {useRetryAction} from '../../../hooks';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
 import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority} from '../pills';
 import {Stepper} from '../stepper';
-import {AssignToSupplier} from '../ticket-form/ticket-actions';
 import type {Ticket} from '../../../orm/tickets';
 import type {
   Priority as TPriority,
@@ -44,6 +43,7 @@ import type {
   Status as TStatus,
   ContactPartner,
 } from '../../../orm/projects';
+import {useToast} from '@/ui/hooks';
 
 type Props = {
   ticket: Cloned<Ticket>;
@@ -296,6 +296,9 @@ export function TicketDetails(props: Props) {
                     <AssignToSupplier
                       id={ticket.id!}
                       version={ticket.version!}
+                      disabled={
+                        form.formState.isSubmitting || form.formState.isDirty
+                      }
                     />
                   </div>
                 )}
@@ -386,4 +389,49 @@ function getProgress(p: Maybe<string>): number {
     }
   }
   return 0;
+}
+
+type AssignToSupplierProps = {
+  id: string;
+  version: number;
+  disabled: boolean;
+};
+
+function AssignToSupplier(props: AssignToSupplierProps) {
+  const {id, version, disabled} = props;
+  const {toast} = useToast();
+  const {workspaceURL} = useWorkspace();
+  const {action, loading} = useRetryAction(
+    assignToSupplier,
+    i18n.get('Ticket assigned to supplier'),
+  );
+
+  const handleClick = useCallback(async () => {
+    if (disabled) {
+      return toast({
+        variant: 'destructive',
+        title: i18n.get('There are unsaved changes'),
+        description: (
+          <h4 className="font-medium">
+            {i18n.get('Please save your changes first')}
+          </h4>
+        ),
+      });
+    }
+    await action({
+      data: {id: id, version: version},
+      workspaceURL,
+    });
+  }, [id, version, workspaceURL, action, toast, disabled]);
+
+  return (
+    <Button
+      size="sm"
+      type="button"
+      variant="success"
+      disabled={loading}
+      onClick={handleClick}>
+      {i18n.get('Assign to supplier')}
+    </Button>
+  );
 }

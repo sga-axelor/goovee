@@ -7,7 +7,7 @@ import {X} from 'lucide-react';
 import {useCallback, useState} from 'react';
 import {MdAdd} from 'react-icons/md';
 
-import {assignToSupplier, cancelTicket, closeTicket} from '../../../actions';
+import {cancelTicket, closeTicket} from '../../../actions';
 import {useRetryAction} from '../../../hooks';
 import {TicketLinkForm} from '../ticket-link-form';
 
@@ -57,32 +57,6 @@ export function CloseTicket({id, version}: {id: string; version: number}) {
       disabled={loading}
       onClick={handleClick}>
       {i18n.get('Close ticket')}
-    </Button>
-  );
-}
-
-export function AssignToSupplier({id, version}: {id: string; version: number}) {
-  const {workspaceURL} = useWorkspace();
-  const {action, loading} = useRetryAction(
-    assignToSupplier,
-    i18n.get('Ticket assigned to supplier'),
-  );
-
-  const handleClick = useCallback(async () => {
-    await action({
-      data: {id: id, version: version},
-      workspaceURL,
-    });
-  }, [id, version, workspaceURL, action]);
-
-  return (
-    <Button
-      size="sm"
-      type="button"
-      variant="success"
-      disabled={loading}
-      onClick={handleClick}>
-      {i18n.get('Assign to supplier')}
     </Button>
   );
 }
