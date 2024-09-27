@@ -94,16 +94,6 @@ export async function findNews({
           },
         },
         slug: true,
-        portalCommentList: {
-          select: {
-            contentComment: true,
-            author: {
-              simpleFullName: true,
-              picture: true,
-            },
-            publicationDateTime: true,
-          },
-        },
       },
     })
     .catch(() => []);
@@ -193,73 +183,6 @@ export async function findCategoryTitleBySlugName({
   });
 
   return title?.name;
-}
-
-export async function addComment({
-  id,
-  contentComment,
-  publicationDateTime,
-  workspaceURL,
-}: any) {
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.news,
-    user,
-    url: workspaceURL,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: i18n.get('Invalid workspace'),
-    };
-  }
-
-  const c = await getClient();
-
-  const comment = await c.aOSPortalNews.create({
-    data: {
-      id,
-      portalCommentList: {
-        create: [
-          {
-            contentComment,
-            publicationDateTime,
-            author: {
-              select: {
-                id: user.id,
-              },
-            },
-          },
-        ],
-      },
-    },
-  });
-  return {
-    success: true,
-    data: comment,
-  };
 }
 
 export async function findNewsByCategory({

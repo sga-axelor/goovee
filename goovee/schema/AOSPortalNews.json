@@ -49,10 +49,10 @@
       "type": "String"
     },
     {
-      "name": "portalCommentList",
+      "name": "newsCommentList",
       "type": "OneToMany",
-      "target": "AOSPortalComment",
-      "mappedBy": "parentNews"
+      "target": "AOSComment",
+      "mappedBy": "portalNews"
     }
   ]
 }

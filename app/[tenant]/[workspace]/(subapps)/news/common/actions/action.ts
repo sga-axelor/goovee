@@ -2,25 +2,13 @@
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {getCurrentDateTime} from '@/utils/date';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {addComment, findNews} from '@/subapps/news/common/orm/news';
-
-export async function createComment({id, contentComment, workspaceURL}: any) {
-  const publicationDateTime = getCurrentDateTime();
-
-  return await addComment({
-    id,
-    contentComment,
-    publicationDateTime,
-    workspaceURL,
-  }).then(clone);
-}
+import {findNews} from '@/subapps/news/common/orm/news';
 
 export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   const session = await getSession();

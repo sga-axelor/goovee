@@ -9,7 +9,7 @@ import {i18n} from '@/lib/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {
   Breadcrumb,
-  Comments,
+  CommentsContent,
   FeedList,
   NewsInfo,
   SocialMedia,
@@ -32,7 +32,6 @@ export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
     content,
     author,
     relatedNewsSet,
-    portalCommentList,
   } = news || {};
   const router = useRouter();
   const pathname = usePathname();
@@ -80,7 +79,7 @@ export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
       </div>
 
       <div className="w-full  mb-12 md:mb-0">
-        <Comments newsId={news.id} comments={portalCommentList} />
+        <CommentsContent newsId={news.id} />
       </div>
     </div>
   );
