@@ -384,7 +384,7 @@ export async function findByID({
       break;
     case ModelType.news:
       const {news}: any = await findNews({id, workspace});
-      response = news;
+      response = news?.[0] || {};
       break;
     case ModelType.forum:
       response = {};
@@ -495,7 +495,6 @@ export async function findComments({
           relatedId: true,
           relatedModel: true,
           createdOn: true,
-          messageContentHtml: true,
           author: {
             id: true,
             name: true,
@@ -516,7 +515,6 @@ export async function findComments({
               body: true,
               relatedId: true,
               relatedModel: true,
-              messageContentHtml: true,
               author: {
                 id: true,
                 name: true,
@@ -570,6 +568,7 @@ export async function findComments({
       total: comments?.[0]?._count || comments?.length,
     };
   } catch (error) {
+    console.log('error >>>', error);
     return {error: true, message: i18n.get('Something went wromng')};
   }
 }
