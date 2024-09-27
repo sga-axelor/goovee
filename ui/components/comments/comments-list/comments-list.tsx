@@ -1,7 +1,6 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
 import {ModelType} from '@/types';
 import {CommentListItem} from '../comments-list-item';
 
@@ -14,6 +13,7 @@ interface CommentsListProps {
   showReactions?: boolean;
   modelType: ModelType;
   totalCommentsCount: boolean;
+  disabled?: boolean;
   onSubmit?: (comment: any) => void;
 }
 
@@ -24,6 +24,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   showReactions = true,
   modelType,
   totalCommentsCount,
+  disabled = false,
   onSubmit,
 }) => {
   return (
@@ -32,6 +33,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
       {comments.map((comment: any) => (
         <CommentListItem
           key={comment.id}
+          disabled={disabled}
           record={record}
           parentCommentId={comment.id}
           comment={comment}

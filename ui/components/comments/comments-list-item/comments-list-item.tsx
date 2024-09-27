@@ -50,6 +50,7 @@ interface CommentListItemProps {
   showReactions: boolean;
   modelType: ModelType;
   totalCommentsCount?: boolean;
+  disabled: boolean;
   onSubmit?: (data: any) => void;
 }
 
@@ -60,6 +61,7 @@ export const CommentListItem = ({
   showReactions,
   modelType,
   totalCommentsCount,
+  disabled = false,
   onSubmit,
 }: CommentListItemProps) => {
   const [showSubComments, setShowSubComments] = useState(
@@ -82,6 +84,7 @@ export const CommentListItem = ({
 
   const {data: session} = useSession();
   const isLoggedIn = Boolean(session?.user?.id);
+  const isDisabled = !isLoggedIn || disabled;
 
   const handleSubCommentsToggle = () => {
     childCommentList?.length > 0 && setShowSubComments(prev => !prev);
@@ -156,12 +159,11 @@ export const CommentListItem = ({
             )}
           </div>
         </div>
-
         {showCommentInput && (
           <div className="my-2">
             <CommentInput
-              disabled={!isLoggedIn}
-              className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+              disabled={isDisabled}
+              className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${!isDisabled ? 'bg-white' : 'bg-black/20'}`}
               placeholderText={
                 isLoggedIn
                   ? i18n.get(COMMENT)
@@ -192,6 +194,7 @@ export const CommentListItem = ({
           <div className="ml-6 mt-2">
             {childCommentList.map(childComment => (
               <CommentListItem
+                disabled={isDisabled}
                 key={childComment.id}
                 record={record}
                 parentCommentId={parentCommentId}

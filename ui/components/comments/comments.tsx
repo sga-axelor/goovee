@@ -40,6 +40,7 @@ interface CommentsProps {
   usePopUpStyles?: boolean;
   showTopBorder?: boolean;
   sortByProp?: string;
+  disabled?: boolean;
 }
 
 export function Comments({
@@ -55,6 +56,7 @@ export function Comments({
   usePopUpStyles = false,
   showTopBorder = true,
   sortByProp,
+  disabled = false,
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
@@ -66,6 +68,8 @@ export function Comments({
   });
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;
+  const isDisabled = !isLoggedIn || disabled;
+
   const dropdownSortOptions = SORT_BY_OPTIONS.slice(0, 2);
 
   const toggleComments = () => {
@@ -90,8 +94,8 @@ export function Comments({
 
   const renderCommentInput = () => (
     <CommentInput
-      disabled={!isLoggedIn}
-      className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${isLoggedIn ? 'bg-white' : 'bg-black/20'}`}
+      disabled={isDisabled}
+      className={`placeholder:text-sm placeholder:text-palette-mediumGray disabled:placeholder:text-gray-700 border ${!isDisabled ? 'bg-white' : 'bg-black/20'}`}
       placeholderText={
         isLoggedIn ? i18n.get(COMMENT) : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
       }
@@ -148,6 +152,7 @@ export function Comments({
             </div>
             <CommentsList
               record={record}
+              disabled={isDisabled}
               comments={comments}
               usePopUpStyles={usePopUpStyles}
               showReactions={showReactions}
