@@ -51,7 +51,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
 
     try {
       const nextPage = page + 1;
-      const response = await fetchPosts({
+      const response: any = await fetchPosts({
         sort,
         limit: Number(limit),
         page: nextPage,

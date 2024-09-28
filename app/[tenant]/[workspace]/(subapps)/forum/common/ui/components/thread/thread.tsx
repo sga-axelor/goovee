@@ -32,7 +32,11 @@ export const Thread = ({
       {showHeader && (
         <ThreadHeader title={forumGroup?.name} image={forumGroup?.image} />
       )}
-      <ThreadBody post={post} usePopUpStyles={usePopUpStyles} />
+      <ThreadBody
+        post={post}
+        usePopUpStyles={usePopUpStyles}
+        isMember={isMember}
+      />
       <ThreadFooter
         post={post}
         usePopUpStyles={usePopUpStyles}

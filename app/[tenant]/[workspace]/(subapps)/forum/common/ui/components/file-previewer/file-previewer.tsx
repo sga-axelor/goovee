@@ -9,6 +9,9 @@ export const FilePreviewer = React.memo(({file}: {file: any}) => {
   const icon = getFileTypeIcon(file?.type);
   const iconColor = getIconColor(icon);
 
+  if (!file.id) {
+    return;
+  }
   return (
     <div className="w-full">
       {file?.type === 'application/pdf' ? (

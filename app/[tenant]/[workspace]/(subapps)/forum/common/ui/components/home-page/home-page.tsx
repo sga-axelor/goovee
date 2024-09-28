@@ -44,7 +44,7 @@ export const HomePage = ({
   posts,
   pageInfo,
   selectedGroup = null,
-  isMember = true,
+  isMember = memberGroups.length !== 0,
 }: {
   memberGroups: Group[];
   nonMemberGroups: Group[];
@@ -72,7 +72,11 @@ export const HomePage = ({
 
   const {id, picture}: any = user || {};
 
-  const isLoggedIn = id ? true : false;
+  const isLoggedIn = !!id;
+
+  const isDisabled = useMemo(() => {
+    return isLoggedIn ? !isMember || memberGroups?.length === 0 : true;
+  }, [isLoggedIn, isMember, memberGroups?.length]);
 
   const groups = useMemo(
     () => memberGroups?.map((group: any) => group.forumGroup),
@@ -83,7 +87,7 @@ export const HomePage = ({
     setSearchKey(value);
   };
 
-  const hanldeDialogOpen = () => {
+  const handleDialogOpen = () => {
     if (!isLoggedIn || !isMember) return;
     setOpen(true);
   };
@@ -128,8 +132,7 @@ export const HomePage = ({
     <Search
       searchKey="title"
       findQuery={async () => {
-        //
-        const response = await fetchPosts({workspaceURL});
+        const response: any = await fetchPosts({workspaceURL});
         if (response) {
           const {posts} = response;
           return posts;
@@ -182,20 +185,19 @@ export const HomePage = ({
           />
         </div>
         <div className="w-full md:w-4/5 mb-16 lg:mb-0">
-          <div className="bg-white px-4 py-4 rounded-lg flex items-center gap-[10px]">
+          <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[10px]">
             <Avatar
               className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
               {<AvatarImage src={getImageURL(picture?.id)} />}
             </Avatar>
             <Button
-              onClick={hanldeDialogOpen}
+              onClick={handleDialogOpen}
               variant="outline"
-              className={`flex-1 text-sm justify-start font-normal border
-    ${
-      !isLoggedIn || !isMember
-        ? 'bg-gray-light hover:bg-gray-light text-gray-dark hover:text-gray-dark border-gray-dark cursor-default'
-        : 'bg-white text-gray border-gray hover:bg-white hover:text-gray'
-    }`}>
+              className={`flex-1 text-sm justify-start border font-normal ${
+                isDisabled
+                  ? 'bg-gray-light hover:bg-gray-light text-gray-dark hover:text-gray-dark cursor-default border-none'
+                  : 'bg-white text-gray border-gray hover:bg-white hover:text-gray'
+              }`}>
               {isLoggedIn
                 ? isMember
                   ? i18n.get(START_A_POST)

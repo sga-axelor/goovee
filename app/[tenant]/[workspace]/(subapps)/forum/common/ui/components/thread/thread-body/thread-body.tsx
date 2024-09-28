@@ -31,9 +31,11 @@ interface MetaFile {
 export const ThreadBody = ({
   post,
   usePopUpStyles = false,
+  isMember,
 }: {
   post?: Post;
   usePopUpStyles?: boolean;
+  isMember?: boolean;
 }) => {
   const {title, content, attachmentList, author, createdOn}: any = post || {};
 
@@ -114,7 +116,7 @@ export const ThreadBody = ({
           </div>
         </div>
         {images?.length > 0 && !usePopUpStyles && (
-          <ImageGallery post={post} images={images} />
+          <ImageGallery post={post} images={images} isMember={isMember} />
         )}
 
         {files?.length > 0 &&

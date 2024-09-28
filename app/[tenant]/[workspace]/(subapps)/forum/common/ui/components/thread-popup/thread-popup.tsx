@@ -16,11 +16,13 @@ export const ThreadPopup = ({
   post,
   open,
   images,
+  isMember,
   onClose,
 }: {
   post?: Post;
   open: boolean;
   images: any;
+  isMember?: boolean;
   onClose: () => void;
 }) => {
   return (
@@ -59,6 +61,7 @@ export const ThreadPopup = ({
               showCommentsByDefault={true}
               hideCloseComments={true}
               usePopUpStyles={true}
+              isMember={isMember}
             />
           </div>
         </div>
