@@ -7,7 +7,7 @@ const statusMap = new Map<string, Variant>();
 statusMap.set('New', 'default');
 statusMap.set('In progress', 'yellow');
 statusMap.set('Done', 'success');
-statusMap.set('Cancelled', 'destructive');
+statusMap.set('Canceled', 'destructive');
 
 type PillProps = {
   name: Maybe<string>;
