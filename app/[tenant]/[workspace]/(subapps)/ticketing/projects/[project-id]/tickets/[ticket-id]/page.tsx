@@ -42,12 +42,13 @@ import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
   CancelTicket,
   CloseTicket,
-  RelatedTicketsHeader,
-  ChildTicketsHeader,
 } from '../../../../common/ui/components/ticket-form/ticket-actions';
-import {RelatedTicketRows} from '../../../../common/ui/components/ticket-list/related-ticket-rows';
-import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
-import {ChildTicketRows} from '../../../../common/ui/components/ticket-list/child-ticket-list';
+import {
+  ChildTicketRows,
+  RelatedTicketRows,
+  TicketRows,
+} from '../../../../common/ui/components/ticket-list';
+import {ChildTicketsHeader, RelatedTicketsHeader} from './headers';
 
 export default async function Page({
   params,
