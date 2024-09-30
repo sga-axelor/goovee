@@ -583,6 +583,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
           assignedTo: {name: true},
           assignedToContact: {name: true, picture: {id: true}},
           requestedByContact: {name: true, picture: {id: true}},
+          assignment: true,
         },
       },
       parentTask: {
@@ -595,6 +596,7 @@ export async function findTicket(ticketId: ID, projectId: ID) {
         assignedTo: {name: true},
         assignedToContact: {name: true, picture: {id: true}},
         requestedByContact: {name: true, picture: {id: true}},
+        assignment: true,
       },
       project: {name: true, company: {name: true, logo: {id: true}}},
       projectTaskCategory: {name: true},
