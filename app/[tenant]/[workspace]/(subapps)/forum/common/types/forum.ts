@@ -39,7 +39,7 @@ export interface Image extends Model {
   metaFile: MetaFile;
 }
 
-export interface ForumGroup extends Model {
+export interface ForumGroup extends Group {
   name: string;
   description?: string;
   image?: Image;
