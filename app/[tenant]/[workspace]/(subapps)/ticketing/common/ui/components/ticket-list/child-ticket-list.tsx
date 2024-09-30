@@ -18,10 +18,10 @@ import {Fragment, useState} from 'react';
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {deleteRelatedLink} from '../../../actions';
+import {deleteChildLink} from '../../../actions';
 import {ASSIGNMENT, columns} from '../../../constants';
 import type {Ticket} from '../../../orm/tickets';
-import {getProfilePic} from '../../../utils';
+import {formatDate, getProfilePic} from '../../../utils';
 import {Button} from '../delete-button';
 import {Category, Priority, Status} from '../pills';
 
@@ -37,20 +37,20 @@ const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
   </>
 );
 
-type RelatedTicketRowProps = {
+type ChildTicketRowsProps = {
+  tickets: Cloned<NonNullable<Ticket['childTasks']>>;
   ticketId: ID;
-  links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
 };
 
-export function RelatedTicketRows(props: RelatedTicketRowProps) {
-  const {links, ticketId} = props;
+export function ChildTicketRows(props: ChildTicketRowsProps) {
+  const {tickets, ticketId} = props;
   const {workspaceURI} = useWorkspace();
   const [openId, setOpenId] = useState<string | null>(null);
   const res = useResponsive();
   const router = useRouter();
   const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
 
-  if (!links.length) {
+  if (!tickets.length) {
     return (
       <TableRow>
         <TableCell colSpan={columns.length + 1} align="center">
@@ -60,10 +60,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
     );
   }
 
-  return links.map(link => {
-    const ticket = link.relatedTask;
-    if (!ticket) return;
-
+  return tickets.map(ticket => {
     const handleClick = () => {
       ticket.project?.id &&
         router.push(
@@ -77,19 +74,15 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
     };
 
     return (
-      <Fragment key={link.id}>
+      <Fragment key={ticket.id}>
         <TableRow
           onClick={handleClick}
-          className="[&:not(:has(.action:hover))]:cursor-pointer  [&:not(:has(.action:hover)):hover]:bg-slate-100">
-          <TableCell>
-            <p className="font-medium">{link.projectTaskLinkType?.name}</p>
+          className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100">
+          <TableCell className="px-5">
+            <p className="font-medium">#{ticket.id}</p>
           </TableCell>
           {!small ? (
             <>
-              <TableCell className="px-5">
-                <p className="font-medium">#{ticket.id}</p>
-              </TableCell>
-
               <TableCell className="max-w-40 ">
                 <div className="line-clamp-2">{ticket.name}</div>
               </TableCell>
@@ -107,39 +100,31 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                   ? ticket.assignedToContact?.name
                   : ticket?.project?.company?.name}
               </TableCell>
+              <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
             </>
           ) : (
             <TableCell
               className="flex float-end items-center action"
               onClick={handleCollapse}>
-              <p className="font-medium px-5">#{ticket.id}</p>
+              <p className="max-w-48 line-clamp-2">{ticket.name}</p>
               {ticket?.id === openId ? (
-                <MdArrowDropUp className="cursor-pointer ms-1 inline" />
+                <MdArrowDropUp className="ms-auto inline" />
               ) : (
-                <MdArrowDropDown className="cursor-pointer ms-1 inline" />
+                <MdArrowDropDown className="ms-auto inline" />
               )}
             </TableCell>
           )}
 
           <TableCell className="text-center action pointer-events-none">
-            <DeleteCell
-              ticketId={ticketId}
-              relatedTicketId={ticket.id}
-              linkId={link.id}
-            />
+            <DeleteCell ticketId={ticketId} relatedTicketId={ticket.id} />
           </TableCell>
         </TableRow>
         {small && (
           <Collapsible open={ticket.id === openId} asChild>
             <TableRow>
               <CollapsibleContent asChild>
-                <TableCell colSpan={3}>
+                <TableCell colSpan={2}>
                   <div className="grid grid-cols-2 gap-y-2">
-                    <Item label="Subject">
-                      <span className="max-w-48 line-clamp-2">
-                        {ticket.name}
-                      </span>
-                    </Item>
                     <Item label="Requested by">
                       <Avatar className="h-8 w-8">
                         <AvatarImage
@@ -169,6 +154,9 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                         ? ticket.assignedToContact?.name
                         : ticket.project?.company?.name}
                     </Item>
+                    <Item label="Updated On">
+                      {formatDate(ticket.updatedOn)}
+                    </Item>
                   </div>
                 </TableCell>
               </CollapsibleContent>
@@ -182,11 +170,9 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
 
 function DeleteCell({
   ticketId,
-  linkId,
   relatedTicketId,
 }: {
   ticketId: ID;
-  linkId: ID;
   relatedTicketId: ID;
 }) {
   const {workspaceURL} = useWorkspace();
@@ -198,12 +184,11 @@ function DeleteCell({
     e.stopPropagation();
     if (!loading) {
       try {
-        const {error, message} = await deleteRelatedLink({
+        const {error, message} = await deleteChildLink({
           workspaceURL,
           data: {
             currentTicketId: ticketId,
             linkTicketId: relatedTicketId,
-            linkId,
           },
         });
 

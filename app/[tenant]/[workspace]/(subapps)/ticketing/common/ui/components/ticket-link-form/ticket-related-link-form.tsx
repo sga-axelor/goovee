@@ -23,11 +23,11 @@ import {useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
-import {createLink} from '../../../actions';
-import {RelatedTicketSchema} from '../../../schema';
+import {createChildLink, createRelatedLink} from '../../../actions';
+import {ChildTicketSchema, RelatedTicketSchema} from '../../../schema';
 import {TicketSelect} from '../ticket-select';
 
-export function TicketLinkForm({
+export function TicketRelatedLinkForm({
   linkTypes,
   ticketId,
   onSubmit,
@@ -53,7 +53,7 @@ export function TicketLinkForm({
 
   const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
     try {
-      const {error, message} = await createLink({
+      const {error, message} = await createRelatedLink({
         workspaceURL,
         data: {
           linkType: values.linkType,
@@ -119,7 +119,85 @@ export function TicketLinkForm({
                     className="w-full border-input"
                     value={field.value}
                     onChange={field.onChange}
-                    ticketId={ticketId}
+                    excludeList={[ticketId]}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <Button size="sm" variant="success" className="ms-auto">
+          {i18n.get('Create Link')}
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+export function TicketChildLinkForm({
+  ticketId,
+  parentIds,
+  projectId,
+  onSubmit,
+}: {
+  ticketId: ID;
+  parentIds: ID[];
+  projectId?: ID;
+  onSubmit: () => void;
+}) {
+  const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const {toast} = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+  const form = useForm<z.infer<typeof ChildTicketSchema>>({
+    resolver: zodResolver(ChildTicketSchema),
+  });
+
+  const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
+    try {
+      const {error, message} = await createChildLink({
+        workspaceURL,
+        data: {
+          linkTicketId: values.ticket.id,
+          currentTicketId: ticketId,
+        },
+      });
+      if (error) {
+        return toast({
+          variant: 'destructive',
+          title: message,
+        });
+      }
+      onSubmit();
+      router.refresh();
+    } catch (e) {
+      toast({
+        variant: 'destructive',
+        title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
+      });
+    }
+  };
+
+  return (
+    <Form {...form}>
+      <form
+        ref={formRef}
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-4">
+        <div className="flex gap-4 p-2 flex-col lg:flex-row">
+          <FormField
+            control={form.control}
+            name="ticket"
+            render={({field}) => (
+              <FormItem className="lg:grow-[2]">
+                <FormControl>
+                  <TicketSelect
+                    className="w-full border-input"
+                    value={field.value}
+                    onChange={field.onChange}
+                    excludeList={[ticketId, ...parentIds]}
+                    projectId={projectId}
                   />
                 </FormControl>
                 <FormMessage />

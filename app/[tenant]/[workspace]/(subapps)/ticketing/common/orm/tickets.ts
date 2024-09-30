@@ -687,8 +687,86 @@ export async function findTicketLinkTypes() {
   });
   return links;
 }
+export async function findParentTickets(ticketId: ID): Promise<string[]> {
+  const client = await getClient();
+  const parentTickets = await getParentTickets(ticketId);
 
-export async function createTicketLink(
+  return parentTickets;
+
+  async function getParentTickets(
+    currentTicketId: ID,
+    parentTickets: string[] = [],
+  ): Promise<string[]> {
+    const ticket = await client.aOSProjectTask.findOne({
+      where: {id: currentTicketId},
+      select: {parentTask: {id: true}},
+    });
+    if (ticket?.parentTask) {
+      parentTickets.push(ticket.parentTask.id);
+      getParentTickets(ticket.parentTask.id, parentTickets);
+    }
+    return parentTickets;
+  }
+}
+export async function createChildTicketLink(
+  data: {currentTicketId: ID; linkTicketId: ID},
+  userId: ID,
+  workspaceId: ID,
+) {
+  const {currentTicketId, linkTicketId} = data;
+  const client = await getClient();
+
+  const [currentTicket, linkTicket] = await Promise.all([
+    findTicketAccess(currentTicketId, userId, workspaceId),
+    findTicketAccess(linkTicketId, userId, workspaceId),
+  ]);
+
+  if (!currentTicket || !linkTicket) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
+  }
+
+  const ticket = await client.aOSProjectTask.update({
+    data: {
+      id: currentTicketId.toString(),
+      version: currentTicket.version,
+      childTasks: {select: {id: linkTicketId}},
+    },
+    select: {id: true},
+  });
+  return ticket;
+}
+
+export async function deleteChildTicketLink(
+  data: {currentTicketId: ID; linkTicketId: ID},
+  userId: ID,
+  workspaceId: ID,
+) {
+  const {currentTicketId, linkTicketId} = data;
+  const client = await getClient();
+
+  const [currentTicket, linkTicket] = await Promise.all([
+    findTicketAccess(currentTicketId, userId, workspaceId),
+    findTicketAccess(linkTicketId, userId, workspaceId),
+  ]);
+
+  if (!currentTicket || !linkTicket) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
+  }
+
+  const ticket = await client.aOSProjectTask.update({
+    data: {
+      id: currentTicketId.toString(),
+      version: currentTicket.version,
+      childTasks: {remove: linkTicketId},
+    },
+    select: {id: true},
+  });
+  return ticket;
+}
+
+export async function createRelatedTicketLink(
   data: {currentTicketId: ID; linkTicketId: ID; linkType: ID},
   userId: ID,
   workspaceId: ID,
@@ -753,7 +831,7 @@ export async function createTicketLink(
   return [link1.id, link2.id];
 }
 
-export async function deleteTicketLink(
+export async function deleteRelatedTicketLink(
   data: {currentTicketId: ID; linkTicketId: ID; linkId: ID},
   userId: ID,
   workspaceId: ID,

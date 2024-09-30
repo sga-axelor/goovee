@@ -29,11 +29,13 @@ export function TicketSelect({
   className,
   value,
   onChange,
-  ticketId,
+  projectId,
+  excludeList,
 }: {
   value: Maybe<AOSProjectTask>;
   onChange: (ticket: AOSProjectTask) => void;
-  ticketId: ID;
+  projectId?: ID;
+  excludeList?: ID[];
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -47,13 +49,15 @@ export function TicketSelect({
   const {toast} = useToast();
   const [tickets, setTickets] = useState<Cloned<TicketSearch>[]>([]);
 
+  const excludeListIds = excludeList?.join(); // To get a stable reference since array might be created without memoisation
   const fetchTickets = useCallback(
     async (search?: string) => {
       try {
         const {error, message, data} = await searchTickets({
           search: search,
           workspaceURL,
-          excludeList: [ticketId],
+          ...(projectId && {projectId}),
+          ...(excludeListIds && {excludeList: excludeListIds.split(',')}),
         });
         if (searchRef.current !== search) return;
         if (error) {
@@ -76,7 +80,7 @@ export function TicketSelect({
         }
       }
     },
-    [workspaceURL, toast, ticketId],
+    [workspaceURL, toast, excludeListIds, projectId],
   );
 
   const debouncedFetchTickets = useMemo(

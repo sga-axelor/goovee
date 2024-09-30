@@ -32,6 +32,7 @@ import {
   findTicketStatuses,
 } from '../../../../common/orm/projects';
 import {
+  findParentTickets,
   findTicket,
   findTicketLinkTypes,
   Ticket,
@@ -42,9 +43,11 @@ import {
   CancelTicket,
   CloseTicket,
   RelatedTicketsHeader,
+  ChildTicketsHeader,
 } from '../../../../common/ui/components/ticket-form/ticket-actions';
 import {RelatedTicketRows} from '../../../../common/ui/components/ticket-list/related-ticket-rows';
 import {TicketRows} from '../../../../common/ui/components/ticket-list/ticket-rows';
+import {ChildTicketRows} from '../../../../common/ui/components/ticket-list/child-ticket-list';
 
 export default async function Page({
   params,
@@ -146,9 +149,13 @@ export default async function Page({
       />
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}
-        {ticket.childTasks && Boolean(ticket.childTasks.length) && (
-          <ChildTickets tickets={ticket.childTasks} />
-        )}
+        <Suspense>
+          <ChildTickets
+            tickets={ticket.childTasks}
+            projectId={ticket.project?.id}
+            ticketId={ticket.id}
+          />
+        </Suspense>
         <Suspense>
           <RelatedTickets
             links={ticket.projectTaskLinkList}
@@ -174,14 +181,27 @@ export default async function Page({
   );
 }
 
-async function ChildTickets({tickets}: {tickets: TicketListTicket[]}) {
+async function ChildTickets({
+  tickets,
+  ticketId,
+  projectId,
+}: {
+  tickets?: Ticket['childTasks'];
+  ticketId: ID;
+  projectId?: ID;
+}) {
+  const parentIds = await findParentTickets(ticketId);
   return (
     <>
-      <h4 className="text-xl font-semibold">{i18n.get('Child tickets')}</h4>
+      <ChildTicketsHeader
+        ticketId={ticketId}
+        parentIds={parentIds}
+        projectId={projectId}
+      />
       <hr className="mt-5" />
       <Table>
         <TableBody>
-          <TicketRows tickets={clone(tickets)} />
+          <ChildTicketRows ticketId={ticketId} tickets={clone(tickets) ?? []} />
         </TableBody>
       </Table>
     </>

@@ -4,12 +4,13 @@ import {i18n} from '@/lib/i18n';
 import {Alert, AlertDescription, AlertTitle, Button} from '@/ui/components';
 import {ID} from '@goovee/orm';
 import {X} from 'lucide-react';
-import {useCallback, useState} from 'react';
+import {ReactNode, useCallback, useState} from 'react';
 import {MdAdd} from 'react-icons/md';
 
 import {cancelTicket, closeTicket} from '../../../actions';
 import {useRetryAction} from '../../../hooks';
-import {TicketLinkForm} from '../ticket-link-form';
+import {TicketChildLinkForm, TicketRelatedLinkForm} from '../ticket-link-form';
+import {HeaderWithAlert} from './header-with-alert';
 
 export function CancelTicket({id, version}: {id: string; version: number}) {
   const {workspaceURL} = useWorkspace();
@@ -68,40 +69,29 @@ export function RelatedTicketsHeader(props: {
   }[];
   ticketId: ID;
 }) {
-  const [showAlert, setShowAlert] = useState(false);
-
-  const closeAlert = useCallback(() => {
-    setShowAlert(false);
-  }, []);
-
-  const openAlert = useCallback(() => {
-    setShowAlert(true);
-  }, []);
-
   return (
-    <>
-      <div className="flex justify-between">
-        <h4 className="text-xl font-semibold">{i18n.get('Related tickets')}</h4>
-        {!showAlert && (
-          <Button size="sm" type="button" variant="success" onClick={openAlert}>
-            <MdAdd className="size-6 lg:me-1" />
-            <span className="hidden lg:inline">{i18n.get('Add')}</span>
-          </Button>
-        )}
-      </div>
-      {showAlert && (
-        <Alert variant="warning" className="group">
-          <button
-            className="ring-0 absolute right-2 top-2 rounded-md cursor-pointer p-1 text-foreground/50 lg:opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none group-hover:opacity-100"
-            onClick={() => setShowAlert(false)}>
-            <X className="h-4 w-4" />
-          </button>
-          <AlertTitle>{i18n.get('Add related ticket')}</AlertTitle>
-          <AlertDescription>
-            <TicketLinkForm {...props} onSubmit={closeAlert} />
-          </AlertDescription>
-        </Alert>
+    <HeaderWithAlert
+      title={i18n.get('Related tickets')}
+      alertTitle={i18n.get('Add related ticket')}
+      renderer={({closeAlert}) => (
+        <TicketRelatedLinkForm {...props} onSubmit={closeAlert} />
       )}
-    </>
+    />
+  );
+}
+
+export function ChildTicketsHeader(props: {
+  projectId?: ID;
+  ticketId: ID;
+  parentIds: ID[];
+}) {
+  return (
+    <HeaderWithAlert
+      title={i18n.get('Child tickets')}
+      alertTitle={i18n.get('Add child ticket')}
+      renderer={({closeAlert}) => (
+        <TicketChildLinkForm {...props} onSubmit={closeAlert} />
+      )}
+    />
   );
 }

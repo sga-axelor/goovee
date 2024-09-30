@@ -1,1 +1,1 @@
-export * from './ticket-link-form';
+export * from './ticket-related-link-form';

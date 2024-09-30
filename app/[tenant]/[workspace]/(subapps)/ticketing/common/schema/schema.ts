@@ -45,6 +45,16 @@ export const RelatedTicketSchema = z.object({
   ),
 });
 
+export const ChildTicketSchema = z.object({
+  ticket: z.object(
+    {
+      id: z.string(),
+      name: z.string(),
+    },
+    {required_error: i18n.get('Ticket is required')},
+  ),
+});
+
 export const FilterSchema = z.object({
   requestedBy: z.array(z.string()).optional(),
   priority: z.array(z.string()).optional(),

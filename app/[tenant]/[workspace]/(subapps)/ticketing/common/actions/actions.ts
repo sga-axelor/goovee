@@ -16,13 +16,15 @@ import {
 import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
 import {
   createTicket,
-  createTicketLink,
-  deleteTicketLink,
+  createRelatedTicketLink,
+  deleteRelatedTicketLink,
   findTicketsBySearch,
   findTicketVersion,
   TicketSearch,
   updateTicket,
   updateTicketViaWS,
+  createChildTicketLink,
+  deleteChildTicketLink,
 } from '../orm/tickets';
 import {CreateTicketSchema, UpdateTicketSchema} from '../schema';
 import {ensureAuth} from '../utils/auth-helper';
@@ -230,12 +232,14 @@ export async function cancelTicket(
   }
 }
 
-type CreateLinkProps = {
+type CreateRelatedLinkProps = {
   workspaceURL: string;
   data: {currentTicketId: ID; linkTicketId: ID; linkType: ID};
 };
 
-export async function createLink(props: CreateLinkProps): ActionResponse<true> {
+export async function createRelatedLink(
+  props: CreateRelatedLinkProps,
+): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -243,7 +247,7 @@ export async function createLink(props: CreateLinkProps): ActionResponse<true> {
   const {user, workspace} = auth;
 
   try {
-    await createTicketLink(data, user.id, workspace.id);
+    await createRelatedTicketLink(data, user.id, workspace.id);
     return {
       error: false,
       data: true,
@@ -259,12 +263,14 @@ export async function createLink(props: CreateLinkProps): ActionResponse<true> {
   }
 }
 
-type DeleteLinkProps = {
+type CreateChildLinkProps = {
   workspaceURL: string;
-  data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
+  data: {currentTicketId: ID; linkTicketId: ID};
 };
 
-export async function deleteLink(props: DeleteLinkProps): ActionResponse<ID> {
+export async function createChildLink(
+  props: CreateChildLinkProps,
+): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
@@ -272,7 +278,69 @@ export async function deleteLink(props: DeleteLinkProps): ActionResponse<ID> {
   const {user, workspace} = auth;
 
   try {
-    const count = await deleteTicketLink(data, user.id, workspace.id);
+    await createChildTicketLink(data, user.id, workspace.id);
+    return {
+      error: false,
+      data: true,
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
+type DeleteChildLinkProps = {
+  workspaceURL: string;
+  data: {currentTicketId: ID; linkTicketId: ID};
+};
+
+export async function deleteChildLink(
+  props: DeleteChildLinkProps,
+): ActionResponse<true> {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    await deleteChildTicketLink(data, user.id, workspace.id);
+    return {
+      error: false,
+      data: true,
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
+type DeleteRelatedLinkProps = {
+  workspaceURL: string;
+  data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
+};
+
+export async function deleteRelatedLink(
+  props: DeleteRelatedLinkProps,
+): ActionResponse<ID> {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    const count = await deleteRelatedTicketLink(data, user.id, workspace.id);
     return {
       error: false,
       data: count,
