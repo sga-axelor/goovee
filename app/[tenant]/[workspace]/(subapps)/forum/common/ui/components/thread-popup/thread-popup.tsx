@@ -16,13 +16,11 @@ export const ThreadPopup = ({
   post,
   open,
   images,
-  isMember,
   onClose,
 }: {
   post?: Post;
   open: boolean;
   images: any;
-  isMember?: boolean;
   onClose: () => void;
 }) => {
   return (
@@ -33,11 +31,12 @@ export const ThreadPopup = ({
           <div className=" w-full md:w-1/2 h-[480px] md:h-full md:pt-0 flex flex-col md:flex-row gap-4 md:mt-0 ">
             <div className="bg-black w-full h-full md:h-auto md:rounded-l-lg md:px-4">
               <Swiper
-                style={{
-                  '--swiper-navigation-color': '#fff',
-                  '--swiper-navigation-size': '20px',
-                }}
-                lazy={true}
+                style={
+                  {
+                    '--swiper-navigation-color': '#fff',
+                    '--swiper-navigation-size': '20px',
+                  } as React.CSSProperties
+                }
                 centeredSlides={true}
                 navigation={true}
                 modules={[Navigation]}
@@ -61,7 +60,6 @@ export const ThreadPopup = ({
               showCommentsByDefault={true}
               hideCloseComments={true}
               usePopUpStyles={true}
-              isMember={isMember}
             />
           </div>
         </div>

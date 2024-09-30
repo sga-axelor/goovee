@@ -11,6 +11,7 @@ import {getImageURL} from '@/utils/image';
 import {findMedia} from '@/subapps/forum/common/action/action';
 import {getFileTypeIcon, getIconColor} from '@/subapps/forum/common/utils/file';
 import {DynamicIcon} from '@/subapps/forum/common/ui/components';
+
 export const MediaContent = ({groupId = ''}: {groupId: string}) => {
   const [media, setMedia] = useState([]);
   const [attachmentList, setAttachmentList] = useState<{metaFile: MetaFile}[]>(

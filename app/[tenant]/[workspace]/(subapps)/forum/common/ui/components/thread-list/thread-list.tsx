@@ -9,21 +9,14 @@ import {useSearchParams} from '@/ui/hooks';
 import {SORT_BY_OPTIONS, URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {Post} from '@/subapps/forum/common/types/forum';
 import {InfiniteScroll} from '@/subapps/forum/common/ui/components';
+import {useForum} from '@/subapps/forum/common/ui/context';
 
-export const ThreadList = ({
-  posts,
-  pageInfo,
-  isMember,
-}: {
-  posts: Post[];
-  pageInfo: any;
-  isMember?: boolean;
-}) => {
+export const ThreadList = () => {
   const {update, searchParams} = useSearchParams();
-
   const sort = searchParams.get('sort') ?? 'new';
+
+  const {posts, pageInfo} = useForum();
 
   const handleSortBy = (value: any) => {
     if (!value) {
@@ -54,11 +47,7 @@ export const ThreadList = ({
         <div>{i18n.get('No posts available.')}</div>
       ) : (
         <div className="flex flex-col gap-4">
-          <InfiniteScroll
-            initialPosts={posts}
-            pageInfo={pageInfo}
-            isMember={isMember}
-          />
+          <InfiniteScroll initialPosts={posts} pageInfo={pageInfo} />
         </div>
       )}
     </div>

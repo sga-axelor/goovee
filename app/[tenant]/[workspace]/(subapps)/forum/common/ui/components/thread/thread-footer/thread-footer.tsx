@@ -5,19 +5,21 @@ import {useMemo} from 'react';
 import {ModelType} from '@/types';
 import {Comments} from '@/ui/components';
 
+// ---- LOCAL IMPORTS ---- //
+import {useForum} from '@/subapps/forum/common/ui/context';
+
 export const ThreadFooter = ({
   post,
   showCommentsByDefault,
   hideCloseComments = false,
   usePopUpStyles = false,
-  isMember,
 }: {
   post: any;
   showCommentsByDefault: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
-  isMember?: boolean;
 }) => {
+  const {isMember} = useForum();
   const disabled = useMemo(() => !isMember, [isMember]);
 
   return (

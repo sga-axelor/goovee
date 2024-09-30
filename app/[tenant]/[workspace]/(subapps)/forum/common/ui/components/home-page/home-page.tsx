@@ -36,24 +36,12 @@ import {
 } from '@/subapps/forum/common/constants';
 import {ForumGroup, Group} from '@/subapps/forum/common/types/forum';
 import {fetchPosts} from '@/subapps/forum/common/action/action';
+import {useForum} from '@/subapps/forum/common/ui/context';
 
-export const HomePage = ({
-  memberGroups,
-  nonMemberGroups,
-  user,
-  posts,
-  pageInfo,
-  selectedGroup = null,
-  isMember = memberGroups.length !== 0,
-}: {
-  memberGroups: Group[];
-  nonMemberGroups: Group[];
-  user: any;
-  posts: any;
-  pageInfo: any;
-  selectedGroup?: ForumGroup | null;
-  isMember?: boolean;
-}) => {
+export const HomePage = () => {
+  const {memberGroups, nonMemberGroups, user, selectedGroup, isMember} =
+    useForum();
+
   const [open, setOpen] = useState(false);
   const [memberGroupList, setMemberGroupList] = useState<Group[]>(
     memberGroups || [],
@@ -107,13 +95,15 @@ export const HomePage = ({
           const searchKeyLower = searchKey.toLowerCase();
 
           if (isLoggedIn) {
-            const filteredMemberGroups = memberGroups.filter(group =>
-              group?.forumGroup?.name?.toLowerCase().includes(searchKeyLower),
+            const filteredMemberGroups = memberGroups.filter(
+              (group: ForumGroup) =>
+                group?.forumGroup?.name?.toLowerCase().includes(searchKeyLower),
             );
             setMemberGroupList(filteredMemberGroups);
           }
-          const filteredNonMemberGroups = nonMemberGroups.filter(group =>
-            group?.name?.toLowerCase().includes(searchKeyLower),
+          const filteredNonMemberGroups = nonMemberGroups.filter(
+            (group: ForumGroup) =>
+              group?.name?.toLowerCase().includes(searchKeyLower),
           );
           setNonMemberGroupList(filteredNonMemberGroups);
         } else {
@@ -213,14 +203,7 @@ export const HomePage = ({
               </Button>
             )}
           </div>
-          <Tabs
-            tabs={TAB_TITLES}
-            onClick={handleTabClick}
-            activeTab={type}
-            posts={posts}
-            pageInfo={pageInfo}
-            isMember={isMember}
-          />
+          <Tabs tabs={TAB_TITLES} activeTab={type} onClick={handleTabClick} />
         </div>
       </div>
       <UploadPost

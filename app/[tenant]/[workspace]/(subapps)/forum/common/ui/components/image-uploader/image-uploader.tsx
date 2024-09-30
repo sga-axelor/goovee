@@ -1,4 +1,5 @@
 'use client';
+
 import Image from 'next/image';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
@@ -27,7 +28,7 @@ import {
   SUPPORTED_FILE_JPG_PNG,
   UPLOAD,
 } from '@/subapps/forum/common/constants';
-import ImageViewer from '../image-viewer/image-viewer';
+import {ImageViewer} from '@/subapps/forum/common/ui/components';
 
 interface ImageItem {
   file: File;

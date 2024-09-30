@@ -1,5 +1,5 @@
 'use client';
-import React, {useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -31,15 +31,14 @@ interface MetaFile {
 export const ThreadBody = ({
   post,
   usePopUpStyles = false,
-  isMember,
 }: {
   post?: Post;
   usePopUpStyles?: boolean;
-  isMember?: boolean;
 }) => {
-  const {title, content, attachmentList, author, createdOn}: any = post || {};
+  const {title, content, attachmentList, author, postDateT}: any = post || {};
 
   const ref = React.useRef(null);
+
   const {isTruncated, isShowingMore, toggleIsShowingMore} = useTruncatedElement(
     {ref},
   );
@@ -77,7 +76,7 @@ export const ThreadBody = ({
                 {author?.simpleFullName}
               </div>
               <div className="text-xs">
-                {parseDate(createdOn, DATE_FORMATS.full_date)}
+                {parseDate(postDateT, DATE_FORMATS.full_date)}
               </div>
             </div>
           </div>
@@ -116,7 +115,7 @@ export const ThreadBody = ({
           </div>
         </div>
         {images?.length > 0 && !usePopUpStyles && (
-          <ImageGallery post={post} images={images} isMember={isMember} />
+          <ImageGallery post={post} images={images} />
         )}
 
         {files?.length > 0 &&

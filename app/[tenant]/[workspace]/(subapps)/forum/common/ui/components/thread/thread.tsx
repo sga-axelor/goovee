@@ -1,14 +1,12 @@
 'use client';
 
-import {useState} from 'react';
-
 // ---- LOCAL IMPORTS ---- //
 import {
   ThreadBody,
   ThreadFooter,
   ThreadHeader,
 } from '@/subapps/forum/common/ui/components';
-import {Post} from '@/subapps/forum/common/types/forum';
+import type {Post} from '@/subapps/forum/common/types/forum';
 
 export const Thread = ({
   post,
@@ -16,14 +14,12 @@ export const Thread = ({
   showCommentsByDefault = false,
   hideCloseComments = false,
   usePopUpStyles = false,
-  isMember,
 }: {
   post?: Post;
   showHeader?: boolean;
   showCommentsByDefault?: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
-  isMember?: boolean;
 }) => {
   const {forumGroup}: any = post || {};
 
@@ -32,17 +28,12 @@ export const Thread = ({
       {showHeader && (
         <ThreadHeader title={forumGroup?.name} image={forumGroup?.image} />
       )}
-      <ThreadBody
-        post={post}
-        usePopUpStyles={usePopUpStyles}
-        isMember={isMember}
-      />
+      <ThreadBody post={post} usePopUpStyles={usePopUpStyles} />
       <ThreadFooter
         post={post}
         usePopUpStyles={usePopUpStyles}
         hideCloseComments={hideCloseComments}
         showCommentsByDefault={showCommentsByDefault}
-        isMember={isMember}
       />
     </div>
   );
