@@ -14,6 +14,7 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/orm/auth';
 import {getFileSizeText} from '@/utils/files';
+import {getCurrentDateTime} from '@/utils/date';
 
 //----LOCAL IMPORTS -----//
 import {
@@ -340,7 +341,6 @@ export async function addGroupNotification({
 }
 
 export async function addPost({
-  postDateT,
   group,
   title,
   content,
@@ -395,14 +395,16 @@ export async function addPost({
     );
   }
 
+  const publicationDateTime: any = getCurrentDateTime();
+
   try {
     const post = await client.aOSPortalForumPost.create({
       select: {
         attachmentList: {select: {metaFile: true}},
       },
       data: {
-        postDateT,
-        createdOn: postDateT,
+        postDateT: publicationDateTime,
+        createdOn: publicationDateTime,
         forumGroup: {select: {id: group.id}},
         title,
         content,

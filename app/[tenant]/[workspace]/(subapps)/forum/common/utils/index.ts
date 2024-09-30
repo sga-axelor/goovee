@@ -45,7 +45,8 @@ export async function getPopularQuery({
             post.created_on AS createdOn,
             post.author,
             author.simple_full_name AS authorSimpleFullName,
-            author.picture AS authorPicture
+            author.picture AS authorPicture,
+            post.post_datet AS postDateT
         FROM portal_forum_post AS post
         LEFT JOIN portal_forum_group AS forumGroup 
             ON post.forum_group = forumGroup.id
@@ -165,6 +166,7 @@ export async function getPopularQuery({
         pd.createdOn AS "createdOn",
         pd.title,
         pd.content,
+        pd.postDateT AS "postDateT",
         COALESCE(pd.forumGroupJson, '{}') AS "forumGroup",
         COALESCE(authorD.authorJson, '{}') AS author,
         COALESCE(ad.attachmentListJson, '[]') AS "attachmentList", 

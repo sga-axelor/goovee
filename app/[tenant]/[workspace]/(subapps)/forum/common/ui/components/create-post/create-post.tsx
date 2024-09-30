@@ -32,7 +32,6 @@ import {
 } from '@/ui/components';
 import {useToast} from '@/ui/hooks/use-toast';
 import {getImageURL} from '@/utils/image';
-import {getCurrentDateTime} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {clone} from '@/utils';
 
@@ -120,7 +119,6 @@ export const CreatePost = ({
   };
 
   const handlePost = async (values: z.infer<typeof formSchema>) => {
-    const publicationDateTime = getCurrentDateTime();
     const formData = new FormData();
     if (attachments.images.length) {
       attachments.images.forEach((element: any, index) => {
@@ -139,7 +137,6 @@ export const CreatePost = ({
     }
     try {
       const result: any = await addPost({
-        postDateT: publicationDateTime,
         group: {id: selectedGroup ? selectedGroup.id : values.groupId},
         title: values.title,
         content: editorContent,

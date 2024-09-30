@@ -179,6 +179,7 @@ export async function findPosts({
           name: true,
           image: true,
         },
+        postDateT: true,
         content: true,
         attachmentList: {
           select: {
