@@ -66,7 +66,6 @@ export async function getPopularQuery({
                     'mailMessage', JSON_BUILD_OBJECT(
                         'id', mailMessage.id,
                         'version', mailMessage.version,
-                        'messageContentHtml', mailMessage.message_content_html,
                         'author', JSON_BUILD_OBJECT(
                             'id', author.id,
                             'version', author.version,

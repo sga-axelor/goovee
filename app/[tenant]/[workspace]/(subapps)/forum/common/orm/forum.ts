@@ -204,7 +204,6 @@ export async function findPosts({
               body: true,
               relatedId: true,
               relatedModel: true,
-              messageContentHtml: true,
               author: {
                 id: true,
                 name: true,
@@ -223,7 +222,6 @@ export async function findPosts({
                   body: true,
                   relatedId: true,
                   relatedModel: true,
-                  messageContentHtml: true,
                   author: {
                     id: true,
                     name: true,
