@@ -3,7 +3,7 @@ import {AOSProjectTask} from '@/goovee/.generated/models';
 import {Maybe} from '@/types/util';
 import {Entity, ID, IdFilter, WhereArg, WhereOptions} from '@goovee/orm';
 import {set} from 'lodash';
-import {ASSIGNMENT} from '../constants';
+import {ASSIGNMENT, COMPANY} from '../constants';
 import {EncodedFilterSchema} from '../schema';
 
 export function getOrderBy(
@@ -59,7 +59,19 @@ export function getWhere(
   }
 
   if (requestedBy) {
-    where.requestedByContact = {id: {in: requestedBy}};
+    if (requestedBy.includes(COMPANY)) {
+      const filteredRequestedBy = requestedBy.filter(id => id !== COMPANY);
+      if (filteredRequestedBy.length) {
+        where.OR = [
+          {requestedByContact: {id: {in: filteredRequestedBy}}},
+          {requestedByContact: {id: null}},
+        ];
+      } else {
+        where.requestedByContact = {id: null};
+      }
+    } else {
+      where.requestedByContact = {id: {in: requestedBy}};
+    }
   }
 
   if (assignment && assignedTo) {

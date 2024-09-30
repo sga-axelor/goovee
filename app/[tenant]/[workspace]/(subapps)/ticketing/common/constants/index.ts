@@ -96,3 +96,4 @@ export const STATUS_CHANGE_METHOD = {
 };
 
 export const DEFAULT_SORT = 'updatedOn DESC';
+export const COMPANY = 'company';

@@ -30,7 +30,7 @@ import {useForm, UseFormReturn} from 'react-hook-form';
 import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
-import {ASSIGNMENT} from '../../../constants';
+import {ASSIGNMENT, COMPANY} from '../../../constants';
 import type {
   Company,
   ContactPartner,
@@ -56,8 +56,6 @@ type FilterProps = {
   statuses: Cloned<Status>[];
   company?: Cloned<Company>;
 };
-
-const COMPANY = 'company';
 
 const defaultValues = {
   requestedBy: [] as string[],
@@ -168,7 +166,11 @@ export function Filter(props: FilterProps) {
                 <MyTicketsField form={form} />
                 {!form.watch('myTickets') && (
                   <>
-                    <RequestedByField form={form} contacts={contacts} />
+                    <RequestedByField
+                      form={form}
+                      contacts={contacts}
+                      company={company}
+                    />
                     <AssignedToField
                       form={form}
                       contacts={contacts}
@@ -251,8 +253,10 @@ function AssignedToField(
     />
   );
 }
-function RequestedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
-  const {form, contacts} = props;
+function RequestedByField(
+  props: FieldProps & Pick<FilterProps, 'contacts' | 'company'>,
+) {
+  const {form, contacts, company} = props;
   return (
     <FormField
       control={form.control}
@@ -266,12 +270,21 @@ function RequestedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
             className="space-y-0">
             <MultiSelectorTrigger
               renderLabel={value =>
-                contacts.find(contact => contact.id === value)?.name
+                value === COMPANY
+                  ? company?.name
+                  : contacts.find(contact => contact.id === value)?.name
               }>
               <MultiSelectorInput placeholder="Select users" />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
+                {company?.id && (
+                  <MultiSelectorItem value={COMPANY}>
+                    <div className="flex items-center space-x-2">
+                      <span>{company.name}</span>
+                    </div>
+                  </MultiSelectorItem>
+                )}
                 {contacts.map(contact => (
                   <MultiSelectorItem key={contact.id} value={contact.id}>
                     <div className="flex items-center space-x-2">
