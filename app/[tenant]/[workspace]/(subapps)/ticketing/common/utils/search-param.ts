@@ -51,10 +51,12 @@ export function getWhere(
   };
 
   if (myTickets) {
-    where.OR = [
+    const OR = [
       {assignedToContact: {id: userId}, assignment: ASSIGNMENT.CUSTOMER},
       {requestedByContact: {id: userId}},
     ];
+    if (where.OR) where.OR.push(...OR);
+    else where.OR = OR;
     return where;
   }
 
@@ -62,10 +64,13 @@ export function getWhere(
     if (requestedBy.includes(COMPANY)) {
       const filteredRequestedBy = requestedBy.filter(id => id !== COMPANY);
       if (filteredRequestedBy.length) {
-        where.OR = [
+        const OR = [
           {requestedByContact: {id: {in: filteredRequestedBy}}},
           {requestedByContact: {id: null}},
         ];
+
+        if (where.OR) where.OR.push(...OR);
+        else where.OR = OR;
       } else {
         where.requestedByContact = {id: null};
       }
@@ -75,7 +80,10 @@ export function getWhere(
   }
 
   if (assignment && assignedTo) {
-    where.OR = [{assignedToContact: {id: {in: assignedTo}}}, {assignment}];
+    const OR = [{assignedToContact: {id: {in: assignedTo}}}, {assignment}];
+
+    if (where.OR) where.OR.push(...OR);
+    else where.OR = OR;
     return where;
   }
 
