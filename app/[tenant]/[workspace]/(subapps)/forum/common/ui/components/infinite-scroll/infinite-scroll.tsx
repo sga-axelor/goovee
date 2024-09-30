@@ -1,5 +1,6 @@
 'use client';
-import React, {useEffect, useState} from 'react';
+
+import React, {useEffect, useState, useMemo} from 'react';
 import {useInView} from 'react-intersection-observer';
 import {useParams} from 'next/navigation';
 
@@ -22,13 +23,11 @@ interface PageInfo {
 interface InfiniteScrollProps {
   initialPosts: Post[];
   pageInfo: PageInfo;
-  isMember?: boolean;
 }
 
 export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   initialPosts,
   pageInfo,
-  isMember,
 }) => {
   const {count} = pageInfo;
   const [posts, setPosts] = useState<Post[]>(initialPosts);
@@ -41,11 +40,14 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   const {toast} = useToast();
 
   const {searchParams} = useSearchParams();
-  const sort = searchParams.get('sort') || '';
-  const limit = searchParams.get('limit') || DEFAULT_LIMIT;
+  const sort = useMemo(() => searchParams.get('sort') || '', [searchParams]);
+  const limit = useMemo(
+    () => searchParams.get('limit') || DEFAULT_LIMIT,
+    [searchParams],
+  );
 
   const loadMorePosts = async () => {
-    if (posts.length >= count) return;
+    if (loading || posts.length >= count) return;
 
     setLoading(true);
 
@@ -53,7 +55,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
       const nextPage = page + 1;
       const response: any = await fetchPosts({
         sort,
-        limit: Number(limit),
+        limit: 1,
         page: nextPage,
         workspaceURL,
       });
@@ -78,37 +80,20 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (inView) {
-        await loadMorePosts();
-      }
-    };
-
-    fetchData();
-  }, [inView, page]);
+    if (inView) {
+      loadMorePosts();
+    }
+  }, [inView]);
 
   useEffect(() => {
     setPage(1);
-  }, [sort, limit]);
-
-  useEffect(() => {
     setPosts(initialPosts);
-  }, [initialPosts]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [sort, limit]);
+  }, [sort, limit, initialPosts]);
 
   return (
     <>
       {posts.map(post => (
-        <React.Fragment key={post.id}>
-          <Thread
-            post={post}
-            showHeader={params.id ? false : true}
-            isMember={isMember}
-          />
-        </React.Fragment>
+        <Thread key={post.id} post={post} showHeader={!params.id} />
       ))}
 
       {posts.length < count && (
