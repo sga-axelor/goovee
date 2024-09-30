@@ -2,7 +2,13 @@
 import {useEffect, useState} from 'react';
 import Image from 'next/image';
 
-const ImageViewer = ({file, altText}: {file: File; altText?: string}) => {
+export const ImageViewer = ({
+  file,
+  altText,
+}: {
+  file: File;
+  altText?: string;
+}) => {
   const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
