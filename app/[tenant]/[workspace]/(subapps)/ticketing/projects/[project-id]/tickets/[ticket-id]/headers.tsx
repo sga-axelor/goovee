@@ -1,6 +1,8 @@
 'use client';
 import {i18n} from '@/lib/i18n';
+import {Cloned} from '@/types/util';
 import {ID} from '@goovee/orm';
+import {Ticket} from '../../../../common/orm/tickets';
 import {HeaderWithAlert} from '../../../../common/ui/components/header-with-alert';
 import {
   TicketChildLinkForm,
@@ -13,6 +15,7 @@ export function RelatedTicketsHeader(props: {
     name: string;
   }[];
   ticketId: ID;
+  links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
 }) {
   return (
     <HeaderWithAlert

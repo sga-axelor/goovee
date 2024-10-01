@@ -161,6 +161,7 @@ export default async function Page({
           <RelatedTickets
             links={ticket.projectTaskLinkList}
             ticketId={ticket.id}
+            projectId={ticket.project?.id}
           />
         </Suspense>
       </div>
@@ -226,18 +227,25 @@ async function ParentTicket({ticket}: {ticket: TicketListTicket}) {
 async function RelatedTickets({
   links,
   ticketId,
+  projectId,
 }: {
   links?: Ticket['projectTaskLinkList'];
   ticketId: ID;
+  projectId?: ID;
 }) {
-  const linkTypes = await findTicketLinkTypes();
+  const linkTypes = await findTicketLinkTypes(projectId);
+  const clonedLinks = clone(links ?? []);
   return (
     <>
-      <RelatedTicketsHeader linkTypes={clone(linkTypes)} ticketId={ticketId} />
+      <RelatedTicketsHeader
+        linkTypes={clone(linkTypes)}
+        ticketId={ticketId}
+        links={clonedLinks}
+      />
       <hr className="mt-5" />
       <Table>
         <TableBody>
-          <RelatedTicketRows links={clone(links ?? [])} ticketId={ticketId} />
+          <RelatedTicketRows links={clonedLinks} ticketId={ticketId} />
         </TableBody>
       </Table>
     </>

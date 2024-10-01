@@ -1,5 +1,6 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
+import {Cloned} from '@/types/util';
 import {
   Button,
   Select,
@@ -19,10 +20,11 @@ import {useToast} from '@/ui/hooks';
 import {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useRouter} from 'next/navigation';
-import {useRef} from 'react';
+import {useMemo, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
+import {Ticket} from '../../../../common/orm/tickets';
 import {createChildLink, createRelatedLink} from '../../../actions';
 import {ChildTicketSchema, RelatedTicketSchema} from '../../../schema';
 import {TicketSelect} from '../ticket-select';
@@ -31,12 +33,14 @@ export function TicketRelatedLinkForm({
   linkTypes,
   ticketId,
   onSubmit,
+  links,
 }: {
   linkTypes: {
     id: string;
     name: string;
   }[];
   ticketId: ID;
+  links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
@@ -50,6 +54,15 @@ export function TicketRelatedLinkForm({
       ticket: undefined,
     },
   });
+
+  const excludeList = useMemo(
+    () =>
+      links
+        .map(({relatedTask}) => relatedTask?.id)
+        .concat(ticketId.toString())
+        .filter(Boolean) as string[],
+    [links, ticketId],
+  );
 
   const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
     try {
@@ -119,7 +132,7 @@ export function TicketRelatedLinkForm({
                     className="w-full border-input"
                     value={field.value}
                     onChange={field.onChange}
-                    excludeList={[ticketId]}
+                    excludeList={excludeList}
                   />
                 </FormControl>
                 <FormMessage />

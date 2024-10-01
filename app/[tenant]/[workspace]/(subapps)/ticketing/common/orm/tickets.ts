@@ -679,14 +679,6 @@ export async function findTicketsBySearch(props: {
   return tickets;
 }
 
-export type LinkType = Awaited<ReturnType<typeof findTicketLinkTypes>>[number];
-export async function findTicketLinkTypes() {
-  const client = await getClient();
-  const links = await client.aOSProjectTaskLinkType.find({
-    select: {name: true},
-  });
-  return links;
-}
 export async function findParentTickets(ticketId: ID): Promise<string[]> {
   const client = await getClient();
   const parentTickets = await getParentTickets(ticketId);
@@ -729,7 +721,7 @@ export async function createChildTicketLink(
   const ticket = await client.aOSProjectTask.update({
     data: {
       id: currentTicketId.toString(),
-      version: currentTicket.version,
+      version: currentTicket.version, //TODO: get the version from client
       childTasks: {select: {id: linkTicketId}},
     },
     select: {id: true},
@@ -758,12 +750,30 @@ export async function deleteChildTicketLink(
   const ticket = await client.aOSProjectTask.update({
     data: {
       id: currentTicketId.toString(),
-      version: currentTicket.version,
+      version: currentTicket.version, //TODO: get the version from client
       childTasks: {remove: linkTicketId},
     },
     select: {id: true},
   });
   return ticket;
+}
+
+export type LinkType = Awaited<ReturnType<typeof findTicketLinkTypes>>[number];
+export async function findTicketLinkTypes(projectId?: ID) {
+  const client = await getClient();
+  if (projectId) {
+    const project = await client.aOSProject.findOne({
+      where: {id: projectId},
+      select: {projectTaskLinkTypeSet: {select: {name: true}}},
+    });
+    if (project?.projectTaskLinkTypeSet?.length) {
+      return project.projectTaskLinkTypeSet;
+    }
+  }
+  const links = await client.aOSProjectTaskLinkType.find({
+    select: {name: true},
+  });
+  return links;
 }
 
 export async function createRelatedTicketLink(
@@ -773,25 +783,58 @@ export async function createRelatedTicketLink(
 ): Promise<[string, string]> {
   const {currentTicketId, linkTicketId, linkType} = data;
   const client = await getClient();
-  const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
-    findTicketAccess(currentTicketId, userId, workspaceId),
-    findTicketAccess(linkTicketId, userId, workspaceId),
+  const [currentTicket, linkTicket] = await Promise.all([
+    findTicketAccess(currentTicketId, userId, workspaceId, {
+      name: true,
+      project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
+    }),
+    findTicketAccess(linkTicketId, userId, workspaceId, {
+      name: true,
+      project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
+    }),
   ]);
-  if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
+  if (!currentTicket || !linkTicket) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
   }
 
   const type = await client.aOSProjectTaskLinkType.findOne({
     where: {id: linkType},
-    select: {oppositeLinkType: {id: true}},
+    select: {name: true, oppositeLinkType: {id: true, name: true}},
   });
 
   if (!type) {
     throw new Error(i18n.get('Invalid link type'));
   }
+  const currentTicketLinkTypes = currentTicket.project?.projectTaskLinkTypeSet;
+  const linkTicketLinkTypes = linkTicket.project?.projectTaskLinkTypeSet;
 
-  const oppositeType = type?.oppositeLinkType;
+  //NOTE: if the project has configured to use certain linkTypes , then only those linkTypes are allowed.
+  //if not then all linkTypes are allowed
+
+  if (currentTicketLinkTypes?.length) {
+    const hasTypeAccess = currentTicketLinkTypes.some(
+      link => link.id === type.id,
+    );
+    if (!hasTypeAccess) {
+      //NOTE: this message is copied from backend
+      throw new Error(
+        `${i18n.get('Please configure the project')} "${currentTicket.project?.name}" ${i18n.get('with project task link type')} "${type.name}" ${i18n.get('if you want to create this link')}.`,
+      );
+    }
+  }
+  const oppositeType = type?.oppositeLinkType ?? type;
+
+  if (linkTicketLinkTypes?.length) {
+    const hasTypeAccess = linkTicketLinkTypes.some(
+      link => link.id === oppositeType.id,
+    );
+    if (!hasTypeAccess) {
+      throw new Error(
+        `${i18n.get('Please configure the project')} "${linkTicket.project?.name}" ${i18n.get('with project task link type')} "${oppositeType.name}" ${i18n.get('if you want to create this link')}.`,
+      );
+    }
+  }
 
   let link1 = await client.aOSProjectTaskLink.create({
     data: {
@@ -811,7 +854,7 @@ export async function createRelatedTicketLink(
       projectTask: {select: {id: linkTicketId}},
       relatedTask: {select: {id: currentTicketId}},
       projectTaskLinkType: {
-        select: {id: oppositeType ? oppositeType.id : type.id},
+        select: {id: oppositeType.id},
       },
       projectTaskLink: {select: {id: link1.id}},
     },
