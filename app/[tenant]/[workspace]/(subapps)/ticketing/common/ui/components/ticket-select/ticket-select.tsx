@@ -24,7 +24,7 @@ import type {Cloned} from '@/types/util';
 import {searchTickets} from '../../../actions';
 import {TicketSearch} from '../../../orm/tickets';
 
-const INIT_SEARCH_VALUE = undefined;
+const INIT_SEARCH_VALUE = '';
 export function TicketSelect({
   className,
   value,
@@ -39,6 +39,7 @@ export function TicketSelect({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [fetchOnOpen, setFetchOnOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const res = useResponsive();
   const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
@@ -101,11 +102,35 @@ export function TicketSelect({
     (value: any) => {
       onChange(value);
       setOpen(false);
+      if (searchRef.current !== INIT_SEARCH_VALUE) {
+        setFetchOnOpen(true);
+      }
     },
     [onChange],
   );
 
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      setOpen(open);
+      if (!open && searchRef.current !== INIT_SEARCH_VALUE) {
+        setFetchOnOpen(true);
+        return;
+      }
+      if (open && fetchOnOpen) {
+        setFetchOnOpen(false);
+        setLoading(true);
+        searchRef.current = INIT_SEARCH_VALUE;
+        fetchTickets(INIT_SEARCH_VALUE);
+        return;
+      }
+    },
+    [fetchOnOpen, fetchTickets],
+  );
+
   useEffect(() => {
+    setFetchOnOpen(false);
+    setLoading(true);
+    searchRef.current = INIT_SEARCH_VALUE;
     fetchTickets(INIT_SEARCH_VALUE);
   }, [fetchTickets]);
 
@@ -140,7 +165,7 @@ export function TicketSelect({
 
   const buttonWidth = buttonRef.current?.offsetWidth;
   return (
-    <Controller open={open} onOpenChange={setOpen}>
+    <Controller open={open} onOpenChange={handleOpenChange}>
       <Trigger asChild>
         <Button variant="outline" className={className} ref={buttonRef}>
           {value ? value.name : i18n.get('Select ticket')}
