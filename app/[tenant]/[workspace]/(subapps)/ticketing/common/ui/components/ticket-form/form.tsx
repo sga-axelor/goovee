@@ -24,7 +24,6 @@ import {
 import {useToast} from '@/ui/hooks';
 import {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {pick} from 'lodash';
 import {useRouter} from 'next/navigation';
 import {useCallback, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
@@ -206,7 +205,7 @@ export function TicketForm(props: TicketFormProps) {
                         <SelectItem
                           value={contact.id.toString()}
                           key={contact.id}>
-                          {contact.name}
+                          {contact.simpleFullName}
                         </SelectItem>
                       ))}
                     </SelectContent>

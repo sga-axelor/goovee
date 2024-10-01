@@ -224,7 +224,8 @@ function AssignedToField(
               renderLabel={value =>
                 value === COMPANY
                   ? company?.name
-                  : contacts.find(contact => contact.id === value)?.name
+                  : contacts.find(contact => contact.id === value)
+                      ?.simpleFullName
               }>
               <MultiSelectorInput placeholder="Select users" />
             </MultiSelectorTrigger>
@@ -240,7 +241,7 @@ function AssignedToField(
                 {contacts.map(contact => (
                   <MultiSelectorItem key={contact.id} value={contact.id}>
                     <div className="flex items-center space-x-2">
-                      <span>{contact.name}</span>
+                      <span>{contact.simpleFullName}</span>
                     </div>
                   </MultiSelectorItem>
                 ))}
@@ -272,7 +273,8 @@ function RequestedByField(
               renderLabel={value =>
                 value === COMPANY
                   ? company?.name
-                  : contacts.find(contact => contact.id === value)?.name
+                  : contacts.find(contact => contact.id === value)
+                      ?.simpleFullName
               }>
               <MultiSelectorInput placeholder="Select users" />
             </MultiSelectorTrigger>
@@ -288,7 +290,7 @@ function RequestedByField(
                 {contacts.map(contact => (
                   <MultiSelectorItem key={contact.id} value={contact.id}>
                     <div className="flex items-center space-x-2">
-                      <span>{contact.name}</span>
+                      <span>{contact.simpleFullName}</span>
                     </div>
                   </MultiSelectorItem>
                 ))}

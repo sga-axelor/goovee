@@ -137,8 +137,8 @@ export async function findContactPartners(projectId: ID) {
     select: {
       clientPartner: {
         id: true,
-        name: true,
-        contactPartnerSet: {select: {name: true}},
+        simpleFullName: true,
+        contactPartnerSet: {select: {simpleFullName: true}},
       },
     },
   });
@@ -148,13 +148,13 @@ export async function findContactPartners(projectId: ID) {
     project.clientPartner.contactPartnerSet?.map(p => ({
       id: p.id,
       version: p.version,
-      name: p.name,
+      simpleFullName: p.simpleFullName,
     })) ?? [];
 
   partners.push({
     id: project.clientPartner.id,
     version: project.clientPartner.version,
-    name: project.clientPartner.name,
+    simpleFullName: project.clientPartner.simpleFullName,
   });
 
   return partners;

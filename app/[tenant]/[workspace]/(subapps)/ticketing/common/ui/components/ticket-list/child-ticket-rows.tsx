@@ -97,7 +97,7 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
               </TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
-                  ? ticket.assignedToContact?.name
+                  ? ticket.assignedToContact?.simpleFullName
                   : ticket?.project?.company?.name}
               </TableCell>
               <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
@@ -138,7 +138,7 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
                       </Avatar>
                       <span className="ms-2">
                         {ticket.requestedByContact?.id
-                          ? ticket.requestedByContact?.name
+                          ? ticket.requestedByContact?.simpleFullName
                           : ticket.project?.company?.name}
                       </span>
                     </Item>
@@ -151,7 +151,7 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
                     </Item>
                     <Item label="Assigned to">
                       {ticket.assignment === ASSIGNMENT.CUSTOMER
-                        ? ticket.assignedToContact?.name
+                        ? ticket.assignedToContact?.simpleFullName
                         : ticket.project?.company?.name}
                     </Item>
                     <Item label="Updated On">

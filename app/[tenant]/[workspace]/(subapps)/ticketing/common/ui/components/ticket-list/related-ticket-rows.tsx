@@ -104,7 +104,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
               </TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
-                  ? ticket.assignedToContact?.name
+                  ? ticket.assignedToContact?.simpleFullName
                   : ticket?.project?.company?.name}
               </TableCell>
             </>
@@ -153,7 +153,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                       </Avatar>
                       <span className="ms-2">
                         {ticket.requestedByContact?.id
-                          ? ticket.requestedByContact?.name
+                          ? ticket.requestedByContact?.simpleFullName
                           : ticket.project?.company?.name}
                       </span>
                     </Item>
@@ -166,7 +166,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                     </Item>
                     <Item label="Assigned to">
                       {ticket.assignment === ASSIGNMENT.CUSTOMER
-                        ? ticket.assignedToContact?.name
+                        ? ticket.assignedToContact?.simpleFullName
                         : ticket.project?.company?.name}
                     </Item>
                   </div>

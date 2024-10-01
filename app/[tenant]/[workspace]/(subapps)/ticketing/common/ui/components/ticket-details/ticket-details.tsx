@@ -233,8 +233,8 @@ export function TicketDetails(props: Props) {
                 />
               </Avatar>
               <span className="ms-2">
-                {ticket.requestedByContact?.name
-                  ? ticket.requestedByContact?.name
+                {ticket.requestedByContact?.simpleFullName
+                  ? ticket.requestedByContact?.simpleFullName
                   : ticket.project?.company?.name}
               </span>
             </p>
@@ -280,7 +280,7 @@ export function TicketDetails(props: Props) {
                                 <SelectItem
                                   value={contact.id.toString()}
                                   key={contact.id}>
-                                  {contact.name}
+                                  {contact.simpleFullName}
                                 </SelectItem>
                               ))}
                             </SelectContent>
