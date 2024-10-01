@@ -73,9 +73,8 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const [project, ticket, statuses, categories, priorities, contacts] =
+  const [ticket, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findProject(projectId, workspace.id, session.user.id),
       findTicket(ticketId, projectId),
       findTicketStatuses(projectId),
       findTicketCategories(projectId),
@@ -83,7 +82,6 @@ export default async function Page({
       findContactPartners(projectId),
     ]);
 
-  if (!project) notFound();
   if (!ticket) notFound();
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;

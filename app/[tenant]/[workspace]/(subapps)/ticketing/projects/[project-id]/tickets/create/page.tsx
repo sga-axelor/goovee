@@ -84,7 +84,7 @@ export default async function Page({
               asChild
               className="cursor-pointer max-w-[8ch] md:max-w-[35ch] truncate text-md">
               <Link href={`${workspaceURI}/ticketing/projects/${projectId}`}>
-                {project?.name}
+                {project.name}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
