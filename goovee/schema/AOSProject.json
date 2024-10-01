@@ -70,6 +70,12 @@
       "column": "project_project"
     },
     {
+      "type": "ManyToMany",
+      "name": "projectTaskLinkTypeSet",
+      "target": "AOSProjectTaskLinkType",
+      "column": "project_project"
+    },
+    {
       "type": "OneToMany",
       "name": "tasks",
       "target": "AOSProjectTask",
