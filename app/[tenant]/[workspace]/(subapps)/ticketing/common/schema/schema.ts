@@ -37,20 +37,14 @@ export type UpdateTicketInfo = z.infer<typeof UpdateTicketSchema>;
 export const RelatedTicketSchema = z.object({
   linkType: z.string({required_error: i18n.get('Link type is required')}),
   ticket: z.object(
-    {
-      id: z.string(),
-      name: z.string(),
-    },
+    {id: z.string(), fullName: z.string().optional(), version: z.number()},
     {required_error: i18n.get('Ticket is required')},
   ),
 });
 
 export const ChildTicketSchema = z.object({
   ticket: z.object(
-    {
-      id: z.string(),
-      name: z.string(),
-    },
+    {id: z.string(), fullName: z.string().optional(), version: z.number()},
     {required_error: i18n.get('Ticket is required')},
   ),
 });

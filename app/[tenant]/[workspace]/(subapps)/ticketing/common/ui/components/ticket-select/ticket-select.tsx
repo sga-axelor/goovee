@@ -1,7 +1,6 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
-import {Maybe} from '@/types/util';
+import type {Cloned} from '@/types/util';
 import {
   Button,
   Command,
@@ -19,7 +18,6 @@ import {ID} from '@goovee/orm';
 import {Drawer, DrawerContent, DrawerTrigger} from '@ui/components/drawer';
 import {debounce} from 'lodash';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import type {Cloned} from '@/types/util';
 
 import {searchTickets} from '../../../actions';
 import {TicketSearch} from '../../../orm/tickets';
@@ -32,8 +30,8 @@ export function TicketSelect({
   projectId,
   excludeList,
 }: {
-  value: Maybe<AOSProjectTask>;
-  onChange: (ticket: AOSProjectTask) => void;
+  value: Cloned<TicketSearch>;
+  onChange: (ticket: Cloned<TicketSearch>) => void;
   projectId?: ID;
   excludeList?: ID[];
   className?: string;
@@ -99,7 +97,7 @@ export function TicketSelect({
   );
 
   const handleSelect = useCallback(
-    (value: any) => {
+    (value: Cloned<TicketSearch>) => {
       onChange(value);
       setOpen(false);
       if (searchRef.current !== INIT_SEARCH_VALUE) {
@@ -168,7 +166,7 @@ export function TicketSelect({
     <Controller open={open} onOpenChange={handleOpenChange}>
       <Trigger asChild>
         <Button variant="outline" className={className} ref={buttonRef}>
-          {value ? value.name : i18n.get('Select ticket')}
+          {value ? value.fullName : i18n.get('Select ticket')}
         </Button>
       </Trigger>
       <Content
