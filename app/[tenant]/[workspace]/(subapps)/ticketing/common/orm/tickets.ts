@@ -665,7 +665,7 @@ export async function findTicketsBySearch(props: {
       ...getTicketAccessFilter(),
       ...(search && {
         OR: [
-          {name: {like: `%${search}%`}},
+          {fullName: {like: `%${search}%`}},
           {description: {like: `%${search}%`}},
         ],
       }),
@@ -674,7 +674,7 @@ export async function findTicketsBySearch(props: {
       }),
     },
     take: 10,
-    select: {name: true},
+    select: {fullName: true},
   });
   return tickets;
 }

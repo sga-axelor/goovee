@@ -126,7 +126,7 @@ export function Search({
                     className="block py-2 sm:px-6 cursor-pointer">
                     <div className="leading-5 text-sm space-y-2 p-3">
                       <h3 className="font-semibold line-clamp-1">
-                        {ticket.name}
+                        {ticket.fullName}
                       </h3>
                     </div>
                   </CommandItem>

@@ -155,7 +155,7 @@ export function TicketSelect({
               key={option.id}
               value={option.id.toString()}
               onSelect={() => handleSelect(option)}>
-              {option.name}
+              {option.fullName}
             </CommandItem>
           ))}
         </CommandGroup>
