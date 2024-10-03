@@ -3,7 +3,7 @@
 import * as React from 'react';
 import {type DialogProps} from '@radix-ui/react-dialog';
 import {Command as CommandPrimitive} from 'cmdk';
-import {Search} from 'lucide-react';
+import {LoaderCircle, Search} from 'lucide-react';
 
 import {cn} from '@/utils/css';
 import {Dialog, DialogContent} from '@/ui/components/dialog';
@@ -39,10 +39,16 @@ const CommandDialog = ({children, ...props}: CommandDialogProps) => {
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({className, ...props}, ref) => (
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & {
+    loading?: boolean;
+  }
+>(({className, loading, ...props}, ref) => (
   <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+    {loading ? (
+      <LoaderCircle className="mr-2 h-4 w-4 shrink-0 opacity-50 animate-spin" />
+    ) : (
+      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+    )}
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
