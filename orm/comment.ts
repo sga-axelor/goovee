@@ -579,10 +579,26 @@ export async function findComments({
       },
     });
 
+    const $comments = await client.aOSComment.find({
+      where: whereClause,
+      select: {
+        childCommentList: true,
+      },
+    });
+
+    const totalCommentThreadCount = $comments?.reduce(
+      (acc: number, comment: any) => {
+        const childCommentsCount = comment.childCommentList?.length || 0;
+        return acc + 1 + childCommentsCount;
+      },
+      0,
+    );
+
     return {
       success: true,
       data: clone(comments),
       total: comments?.[0]?._count || comments?.length,
+      totalCommentThreadCount,
     };
   } catch (error) {
     console.log('error >>>', error);

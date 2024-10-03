@@ -62,12 +62,13 @@ export function Comments({
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
-  const {comments, total, loadMore, onCreate} = useComments({
-    model: {id: record.id},
-    modelType,
-    sortBy,
-    seeMore,
-  });
+  const {comments, total, totalCommentThreadCount, loadMore, onCreate} =
+    useComments({
+      model: {id: record.id},
+      modelType,
+      sortBy,
+      seeMore,
+    });
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;
   const isDisabled = !isLoggedIn || disabled;
@@ -84,13 +85,6 @@ export function Comments({
 
   const showCommentInputOnTop = inputPosition === 'top';
   const showCommentInputOnBottom = !showCommentInputOnTop;
-
-  const totalCommentsCount = useMemo(() => {
-    return comments?.reduce((acc: number, comment: any) => {
-      const childCommentsCount = comment.childCommentList?.length || 0;
-      return acc + 1 + childCommentsCount;
-    }, 0);
-  }, [comments]);
 
   const renderCommentInput = () => (
     <CommentInput
@@ -110,13 +104,13 @@ export function Comments({
           {/* TODO: Add reactions preview */}
           <div />
           <div
-            className={`flex gap-2 items-center ${totalCommentsCount ? 'cursor-pointer' : 'cursor-default'}`}
+            className={`flex gap-2 items-center ${totalCommentThreadCount ? 'cursor-pointer' : 'cursor-default'}`}
             onClick={toggleComments}>
             <MdOutlineModeComment className="w-6 h-6" />
-            {totalCommentsCount > 0 && (
+            {totalCommentThreadCount > 0 && (
               <span className="text-sm">
-                {totalCommentsCount}{' '}
-                {totalCommentsCount > 1
+                {totalCommentThreadCount}{' '}
+                {totalCommentThreadCount > 1
                   ? i18n.get(COMMENTS.toLowerCase())
                   : i18n.get(COMMENT.toLowerCase())}
               </span>
@@ -159,7 +153,7 @@ export function Comments({
               usePopUpStyles={usePopUpStyles}
               showReactions={showReactions}
               modelType={modelType}
-              totalCommentsCount={totalCommentsCount}
+              hasSubComments={!!totalCommentThreadCount}
               onSubmit={onCreate}
             />
 

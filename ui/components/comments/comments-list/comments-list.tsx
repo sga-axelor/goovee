@@ -12,7 +12,7 @@ interface CommentsListProps {
   usePopUpStyles?: boolean;
   showReactions?: boolean;
   modelType: ModelType;
-  totalCommentsCount: boolean;
+  hasSubComments: boolean;
   disabled?: boolean;
   onSubmit?: (comment: any) => void;
 }
@@ -23,7 +23,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   usePopUpStyles = false,
   showReactions = true,
   modelType,
-  totalCommentsCount,
+  hasSubComments,
   disabled = false,
   onSubmit,
 }) => {
@@ -39,7 +39,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
           comment={comment}
           showReactions={showReactions}
           modelType={modelType}
-          totalCommentsCount={totalCommentsCount}
+          hasSubComments={hasSubComments}
           onSubmit={onSubmit}
         />
       ))}

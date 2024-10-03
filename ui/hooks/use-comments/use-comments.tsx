@@ -40,7 +40,7 @@ export function useComments({
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [fetching, setFetching] = useState(false);
-
+  const [totalCommentThreadCount, setTotalCommentThreadCount] = useState(0);
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
@@ -56,13 +56,14 @@ export function useComments({
           page,
           workspaceURL,
         });
-
         if (response.success) {
-          const {data = [], total} = response;
+          const {data = [], total, totalCommentThreadCount} = response;
+
           setComments(prevComments =>
             page > 1 ? [...prevComments, ...data] : data,
           );
           setTotal(total || 0);
+          setTotalCommentThreadCount(totalCommentThreadCount);
         } else {
           throw new Error('Something went wrong!');
         }
@@ -142,6 +143,7 @@ export function useComments({
       hasMore,
       fetching,
       loading,
+      totalCommentThreadCount,
       getComments,
       loadMore,
       onCreate: handleComment,
@@ -153,6 +155,7 @@ export function useComments({
       hasMore,
       fetching,
       loading,
+      totalCommentThreadCount,
       getComments,
       loadMore,
       handleComment,

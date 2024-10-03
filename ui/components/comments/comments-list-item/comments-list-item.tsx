@@ -49,7 +49,7 @@ interface CommentListItemProps {
   comment: Comment;
   showReactions: boolean;
   modelType: ModelType;
-  totalCommentsCount?: boolean;
+  hasSubComments?: boolean;
   disabled: boolean;
   onSubmit?: (data: any) => void;
 }
@@ -60,12 +60,12 @@ export const CommentListItem = ({
   comment,
   showReactions,
   modelType,
-  totalCommentsCount,
+  hasSubComments,
   disabled = false,
   onSubmit,
 }: CommentListItemProps) => {
   const [showSubComments, setShowSubComments] = useState(
-    totalCommentsCount || false,
+    hasSubComments || false,
   );
   const [showCommentInput, setShowCommentInput] = useState<boolean>(false);
 
@@ -77,7 +77,7 @@ export const CommentListItem = ({
     commentFileList = [],
     note = '',
     createdBy: {partner},
-  } = comment;
+  } = comment || {};
 
   const {body = ''} = mailMessage || {};
   const {title = '', tracks = []} = body ? JSON.parse(body) : {};
