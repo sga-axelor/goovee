@@ -1,4 +1,5 @@
 // ---- CORE IMPORTS ---- //
+import {SORT_TYPE} from '@/constants';
 import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
@@ -26,7 +27,6 @@ import {FaChevronRight} from 'react-icons/fa';
 // ---- LOCAL IMPORTS ---- //
 import {
   findContactPartners,
-  findProject,
   findTicketCategories,
   findTicketPriorities,
   findTicketStatuses,
@@ -174,6 +174,7 @@ export default async function Page({
           hideSortBy
           hideCloseComments
           hideCommentsHeader
+          sortByProp={SORT_TYPE.old}
           key={Math.random()}
         />
       </div>
