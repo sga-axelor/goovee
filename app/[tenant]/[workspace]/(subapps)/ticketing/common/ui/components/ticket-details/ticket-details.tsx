@@ -26,12 +26,14 @@ import {
 import {Progress} from '@/ui/components/progress';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
-import {useCallback, useEffect, useRef} from 'react';
+import {ReactNode, useCallback, useEffect, useRef} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
 
 import {
   ActionResponse,
   assignToSupplier,
+  cancelTicket,
+  closeTicket,
   mutate,
   MutateProps,
   MutateResponse,
@@ -56,6 +58,7 @@ type Props = {
   categories: TCategory[];
   priorities: TPriority[];
   contacts: ContactPartner[];
+  breadCrumbs: ReactNode;
 };
 
 const getDefaultValues = (ticket: Cloned<Ticket>) => {
@@ -69,7 +72,8 @@ const getDefaultValues = (ticket: Cloned<Ticket>) => {
 };
 
 export function TicketDetails(props: Props) {
-  const {ticket, categories, priorities, statuses, contacts} = props;
+  const {ticket, categories, priorities, statuses, contacts, breadCrumbs} =
+    props;
 
   const {action, loading} = useRetryAction(mutate);
 
@@ -121,6 +125,27 @@ export function TicketDetails(props: Props) {
 
   return (
     <Form {...form}>
+      <div className="flex flex-col lg:flex-row gap-4 justify-between min-h-9 items-center">
+        {breadCrumbs}
+        {!ticket.status?.isCompleted && (
+          <div className="flex gap-4">
+            <CancelTicket
+              id={ticket.id}
+              version={ticket.version}
+              disabled={form.formState.isSubmitting || loading}
+              form={form}
+              handleSubmit={handleSubmit}
+            />
+            <CloseTicket
+              id={ticket.id}
+              version={ticket.version}
+              disabled={form.formState.isSubmitting || loading}
+              form={form}
+              handleSubmit={handleSubmit}
+            />
+          </div>
+        )}
+      </div>
       <form
         ref={formRef}
         onSubmit={form.handleSubmit(value => handleSubmit(value))}>
@@ -304,8 +329,8 @@ export function TicketDetails(props: Props) {
                 {ticket.assignment !== ASSIGNMENT.PROVIDER && (
                   <div className="sm:ml-auto ml-[6.5rem]">
                     <AssignToSupplier
-                      id={ticket.id!}
-                      version={ticket.version!}
+                      id={ticket.id}
+                      version={ticket.version}
                       disabled={form.formState.isSubmitting || loading}
                       form={form}
                       handleSubmit={handleSubmit}
@@ -405,7 +430,7 @@ function getProgress(p: Maybe<string>): number {
   return 0;
 }
 
-type AssignToSupplierProps = {
+type ActionProps = {
   id: string;
   version: number;
   form: UseFormReturn<TicketInfo>;
@@ -416,7 +441,7 @@ type AssignToSupplierProps = {
   ) => void;
 };
 
-function AssignToSupplier(props: AssignToSupplierProps) {
+function AssignToSupplier(props: ActionProps) {
   const {id, version, disabled, form, handleSubmit} = props;
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
@@ -458,6 +483,96 @@ function AssignToSupplier(props: AssignToSupplierProps) {
       disabled={loading || disabled}
       onClick={handleClick}>
       {i18n.get('Assign to supplier')}
+    </Button>
+  );
+}
+
+function CancelTicket(props: ActionProps) {
+  const {id, version, disabled, form, handleSubmit} = props;
+  const {workspaceURL} = useWorkspace();
+  const {action, loading} = useRetryAction(
+    cancelTicket,
+    i18n.get('Ticket canceled'),
+  );
+
+  const handleClick = useCallback(async () => {
+    if (disabled) return;
+    const onSuccess = async (data?: MutateResponse) => {
+      let newVersion = version;
+      if (data) {
+        newVersion = data.version;
+      }
+
+      return await action({
+        data: {id: id, version: newVersion},
+        workspaceURL,
+      });
+    };
+
+    if (form.formState.isDirty) {
+      const isValid = await form.trigger(undefined, {shouldFocus: true});
+      if (!isValid) return;
+
+      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
+      const dirtyValues = pick(form.getValues(), dirtyFieldKeys) as TicketInfo;
+      return handleSubmit(dirtyValues, onSuccess);
+    }
+
+    await onSuccess();
+  }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
+
+  return (
+    <Button
+      size="sm"
+      variant="destructive"
+      disabled={loading}
+      onClick={handleClick}>
+      {i18n.get('Cancel ticket')}
+    </Button>
+  );
+}
+
+function CloseTicket(props: ActionProps) {
+  const {id, version, disabled, form, handleSubmit} = props;
+  const {workspaceURL} = useWorkspace();
+  const {action, loading} = useRetryAction(
+    closeTicket,
+    i18n.get('Ticket closed'),
+  );
+
+  const handleClick = useCallback(async () => {
+    if (disabled) return;
+    const onSuccess = async (data?: MutateResponse) => {
+      let newVersion = version;
+      if (data) {
+        newVersion = data.version;
+      }
+
+      return await action({
+        data: {id: id, version: newVersion},
+        workspaceURL,
+      });
+    };
+
+    if (form.formState.isDirty) {
+      const isValid = await form.trigger(undefined, {shouldFocus: true});
+      if (!isValid) return;
+
+      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
+      const dirtyValues = pick(form.getValues(), dirtyFieldKeys) as TicketInfo;
+      return handleSubmit(dirtyValues, onSuccess);
+    }
+
+    await onSuccess();
+  }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
+
+  return (
+    <Button
+      size="sm"
+      variant="success"
+      disabled={loading}
+      onClick={handleClick}>
+      {i18n.get('Close ticket')}
     </Button>
   );
 }
