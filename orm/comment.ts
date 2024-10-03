@@ -472,11 +472,11 @@ export async function findComments({
           modelRecord,
           type,
         });
-
-        const {comments = [], total} = results;
+        const {comments = [], total, success} = results;
         return {
           data: clone(comments),
           total,
+          success,
         };
       default:
         orderBy = {

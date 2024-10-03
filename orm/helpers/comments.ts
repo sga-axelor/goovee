@@ -72,7 +72,9 @@ export async function getPopularCommentsBySorting({
       'id', author.id,
       'name', author.name,
       'partner', JSON_BUILD_OBJECT(
-        'picture', partner.picture,
+        'picture', JSON_BUILD_OBJECT(
+          'id', partner.picture
+         ),
         'simpleFullName', partner.simple_full_name
       )
     ) AS createdBy
@@ -95,7 +97,9 @@ mailMessageData AS (
       'id', author.id,
       'name', author.name,
       'partner', JSON_BUILD_OBJECT(
-        'picture', partner.picture,
+        'picture', JSON_BUILD_OBJECT(
+          'id', partner.picture
+         ),
         'simpleFullName', partner.simple_full_name
       )
     ) AS mailMessageAuthor 
@@ -117,7 +121,9 @@ childCommentsData AS (
           'id', childAuthor.id,
           'name', childAuthor.name,
           'partner', JSON_BUILD_OBJECT(
-            'picture', childPartner.picture,
+            'picture', JSON_BUILD_OBJECT(
+              'id', childPartner.picture
+            ),
             'simpleFullName', childPartner.simple_full_name
           )
         )
@@ -191,5 +197,9 @@ OFFSET $2
     skip,
   );
 
-  return {comments, total: comments?.[0]?._count || comments?.length};
+  return {
+    success: true,
+    comments,
+    total: comments?.[0]?._count || comments?.length,
+  };
 }
