@@ -30,10 +30,11 @@ import {CreateTicketSchema, UpdateTicketSchema} from '../schema';
 import {ensureAuth} from '../utils/auth-helper';
 import type {ActionResponse, MutateProps} from './types';
 
+export type MutateResponse = {id: string; version: number};
 export async function mutate(
   props: MutateProps,
   force?: boolean,
-): ActionResponse<{id: string}> {
+): ActionResponse<MutateResponse> {
   const {workspaceURL, workspaceURI, action} = props;
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
@@ -71,7 +72,7 @@ export async function mutate(
 
     return {
       error: false,
-      data: {id: ticket.id},
+      data: {id: ticket.id, version: ticket.version},
     };
   } catch (e) {
     if (e instanceof Error) {

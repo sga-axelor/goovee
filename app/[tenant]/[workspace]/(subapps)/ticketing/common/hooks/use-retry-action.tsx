@@ -7,33 +7,57 @@ import {useCallback, useState} from 'react';
 import {ActionResponse} from '../actions';
 import {VERSION_MISMATCH_ERROR} from '../constants';
 
-export function useRetryAction<T extends Record<string, unknown>>(
-  action: (actionProps: T, force?: boolean) => ActionResponse,
+export function useRetryAction<
+  T extends Record<string, unknown>,
+  R extends ActionResponse,
+>(
+  action: (actionProps: T, force?: boolean) => R,
   successMessage?: string,
-): {action: (actionProps: T) => Promise<void>; loading: boolean} {
+): {
+  action: (
+    actionProps: T,
+    onSuccess?: (
+      res: Extract<Awaited<R>, {error: false}>['data'],
+    ) => Promise<void>,
+  ) => Promise<void>;
+  loading: boolean;
+} {
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
   const router = useRouter();
-  const handleSuccess = useCallback(() => {
-    router.refresh();
-    toast({
-      variant: 'success',
-      title: successMessage ?? i18n.get('Saved successfully'),
-    });
-  }, [toast, router, successMessage]);
+  const handleSuccess = useCallback(
+    async (
+      onSuccess?: (res: Extract<Awaited<R>, {error: false}>) => Promise<void>,
+      data?: Extract<Awaited<R>, {error: false}>['data'],
+    ) => {
+      toast({
+        variant: 'success',
+        title: successMessage ?? i18n.get('Saved successfully'),
+      });
+      if (onSuccess && data) {
+        await onSuccess(data);
+      }
+      router.refresh();
+    },
+    [toast, router, successMessage],
+  );
 
   const handleError = useCallback(
-    (message: string, retryProps: T) => {
+    (
+      message: string,
+      retryProps: T,
+      onSuccess?: (res: Extract<Awaited<R>, {error: false}>) => Promise<void>,
+    ) => {
       if (message === VERSION_MISMATCH_ERROR) {
         const handleOverwrite = async () => {
           setLoading(true);
           try {
-            const {error, message} = await action(retryProps, true);
+            const {error, message, data} = await action(retryProps, true);
             if (error) {
-              handleError(message, retryProps);
+              handleError(message, retryProps, onSuccess);
               return;
             }
-            handleSuccess();
+            await handleSuccess(onSuccess, data);
           } catch (e) {
             toast({
               variant: 'destructive',
@@ -73,15 +97,18 @@ export function useRetryAction<T extends Record<string, unknown>>(
   );
 
   const actionHandler = useCallback(
-    async (actionProps: T): Promise<void> => {
+    async (
+      actionProps: T,
+      onSuccess?: (res: Extract<Awaited<R>, {error: false}>) => Promise<void>,
+    ): Promise<void> => {
       try {
         setLoading(true);
-        const {error, message} = await action(actionProps);
+        const {error, message, data} = await action(actionProps);
         if (error) {
-          handleError(message, actionProps);
+          handleError(message, actionProps, onSuccess);
           return;
         }
-        handleSuccess();
+        await handleSuccess(onSuccess, data);
       } catch (e) {
         toast({
           variant: 'destructive',

@@ -14,7 +14,9 @@ export type MutateProps = {
       };
 };
 
+export type SuccessResponse<T = any> = {error: false; data: T; message?: never};
+export type ErrorResponse = {error: true; data?: never; message: string};
+
 export type ActionResponse<T = any> = Promise<
-  | {error: true; message: string; data?: never}
-  | {error: false; data: T; message?: never}
+  ErrorResponse | SuccessResponse<T>
 >;

@@ -27,9 +27,15 @@ import {Progress} from '@/ui/components/progress';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
 import {useCallback, useEffect, useRef} from 'react';
-import {useForm} from 'react-hook-form';
+import {useForm, UseFormReturn} from 'react-hook-form';
 
-import {assignToSupplier, mutate, MutateProps} from '../../../actions';
+import {
+  ActionResponse,
+  assignToSupplier,
+  mutate,
+  MutateProps,
+  MutateResponse,
+} from '../../../actions';
 import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
 import {useRetryAction} from '../../../hooks';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
@@ -43,7 +49,6 @@ import type {
   Status as TStatus,
   ContactPartner,
 } from '../../../orm/projects';
-import {useToast} from '@/ui/hooks';
 
 type Props = {
   ticket: Cloned<Ticket>;
@@ -66,7 +71,7 @@ const getDefaultValues = (ticket: Cloned<Ticket>) => {
 export function TicketDetails(props: Props) {
   const {ticket, categories, priorities, statuses, contacts} = props;
 
-  const {action} = useRetryAction(mutate);
+  const {action, loading} = useRetryAction(mutate);
 
   const {workspaceURL, workspaceURI} = useWorkspace();
   const formRef = useRef<HTMLFormElement>(null);
@@ -77,7 +82,10 @@ export function TicketDetails(props: Props) {
   });
 
   const handleSubmit = useCallback(
-    async (value: TicketInfo) => {
+    async (
+      value: TicketInfo,
+      onSuccess?: (res: MutateResponse) => Promise<void>,
+    ) => {
       const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
       const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
 
@@ -95,7 +103,7 @@ export function TicketDetails(props: Props) {
         workspaceURI,
       };
 
-      await action(mutateProps);
+      await action(mutateProps, onSuccess);
     },
     [
       form.formState.dirtyFields,
@@ -113,7 +121,9 @@ export function TicketDetails(props: Props) {
 
   return (
     <Form {...form}>
-      <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
+      <form
+        ref={formRef}
+        onSubmit={form.handleSubmit(value => handleSubmit(value))}>
         <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
           <Stepper
             steps={statuses}
@@ -296,9 +306,9 @@ export function TicketDetails(props: Props) {
                     <AssignToSupplier
                       id={ticket.id!}
                       version={ticket.version!}
-                      disabled={
-                        form.formState.isSubmitting || form.formState.isDirty
-                      }
+                      disabled={form.formState.isSubmitting || loading}
+                      form={form}
+                      handleSubmit={handleSubmit}
                     />
                   </div>
                 )}
@@ -371,7 +381,11 @@ export function TicketDetails(props: Props) {
             <Button
               type="submit"
               variant="success"
-              disabled={!form.formState.isDirty}>
+              disabled={
+                !form.formState.isDirty ||
+                form.formState.isSubmitting ||
+                loading
+              }>
               {i18n.get('Save Changes')}
             </Button>
           </div>
@@ -394,12 +408,16 @@ function getProgress(p: Maybe<string>): number {
 type AssignToSupplierProps = {
   id: string;
   version: number;
+  form: UseFormReturn<TicketInfo>;
   disabled: boolean;
+  handleSubmit: (
+    value: TicketInfo,
+    onSuccess?: (res: MutateResponse) => Promise<void>,
+  ) => void;
 };
 
 function AssignToSupplier(props: AssignToSupplierProps) {
-  const {id, version, disabled} = props;
-  const {toast} = useToast();
+  const {id, version, disabled, form, handleSubmit} = props;
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
     assignToSupplier,
@@ -407,29 +425,37 @@ function AssignToSupplier(props: AssignToSupplierProps) {
   );
 
   const handleClick = useCallback(async () => {
-    if (disabled) {
-      return toast({
-        variant: 'destructive',
-        title: i18n.get('There are unsaved changes'),
-        description: (
-          <h4 className="font-medium">
-            {i18n.get('Please save your changes first')}
-          </h4>
-        ),
+    if (disabled) return;
+    const onSuccess = async (data?: MutateResponse) => {
+      let newVersion = version;
+      if (data) {
+        newVersion = data.version;
+      }
+
+      return await action({
+        data: {id: id, version: newVersion},
+        workspaceURL,
       });
+    };
+
+    if (form.formState.isDirty) {
+      const isValid = await form.trigger(undefined, {shouldFocus: true});
+      if (!isValid) return;
+
+      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
+      const dirtyValues = pick(form.getValues(), dirtyFieldKeys) as TicketInfo;
+      return handleSubmit(dirtyValues, onSuccess);
     }
-    await action({
-      data: {id: id, version: version},
-      workspaceURL,
-    });
-  }, [id, version, workspaceURL, action, toast, disabled]);
+
+    await onSuccess();
+  }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
 
   return (
     <Button
       size="sm"
       type="button"
       variant="success"
-      disabled={loading}
+      disabled={loading || disabled}
       onClick={handleClick}>
       {i18n.get('Assign to supplier')}
     </Button>
