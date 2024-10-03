@@ -16,7 +16,7 @@ import {
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {workspacePathname} from '@/utils/workspace';
-import {ChevronLeft} from 'lucide-react';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {notFound, redirect} from 'next/navigation';
 
@@ -163,7 +163,10 @@ export default async function Page({
                         ...searchParams,
                         page: +page + 1,
                       },
-                    }}></Link>
+                    }}>
+                    <span className="sr-only">Next</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
                 </PaginationNext>
               </PaginationItem>
             </PaginationContent>
