@@ -55,16 +55,16 @@ export async function createComment({
       relatedModel,
       messageBody,
     });
-
     if (response.error) {
       return {
         error: true,
-        message: 'Error creating comment.',
+        message: response.message ?? 'Error creating comment.',
       };
     } else {
       return {
         success: true,
         message: 'Comment created successfully.',
+        data: response,
       };
     }
   } catch (error) {

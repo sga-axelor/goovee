@@ -21,6 +21,7 @@ import {
   SORT_TYPE,
 } from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
+import {getPopularCommentsBySorting} from '@/orm/helpers/comments';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
@@ -451,6 +452,8 @@ export async function findComments({
     };
   }
 
+  const modelName = ModelMap[type];
+
   const skip = getSkipInfo(limit, page);
   const client = await getClient();
   try {
@@ -461,29 +464,43 @@ export async function findComments({
           createdOn: ORDER_BY.ASC,
         };
         break;
+      case SORT_TYPE.popular:
+        const results: any = await getPopularCommentsBySorting({
+          page,
+          limit,
+          workspace,
+          modelRecord,
+          type,
+        });
+
+        const {comments = [], total} = results;
+        return {
+          data: clone(comments),
+          total,
+        };
       default:
         orderBy = {
           createdOn: ORDER_BY.DESC,
         };
     }
-    const modelName = ModelMap[type];
 
-    const comments = await client.aOSComment.find({
-      where: {
-        ...(modelRecord && modelName
-          ? {
-              [modelName as string]: {
-                id: modelRecord.id,
-              },
-            }
-          : {}),
-        isPrivateNote: false,
-        parentComment: {
-          id: {
-            eq: null,
-          },
+    const whereClause = {
+      ...(modelRecord && modelName
+        ? {
+            [modelName as string]: {
+              id: modelRecord.id,
+            },
+          }
+        : {}),
+      isPrivateNote: false,
+      parentComment: {
+        id: {
+          eq: null,
         },
       },
+    };
+    const comments = await client.aOSComment.find({
+      where: whereClause,
       orderBy,
       take: limit,
       ...(skip ? {skip} : {}),

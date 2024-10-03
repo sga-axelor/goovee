@@ -72,8 +72,6 @@ export function Comments({
   const isLoggedIn = !!session?.user?.id;
   const isDisabled = !isLoggedIn || disabled;
 
-  const dropdownSortOptions = SORT_BY_OPTIONS.slice(0, 2);
-
   const toggleComments = () => {
     if (comments.length > 0) {
       setShowComments(prev => !prev);
@@ -147,7 +145,7 @@ export function Comments({
                   <div>{i18n.get('Sort by')}:</div>
                   <DropdownToggle
                     value={sortBy}
-                    options={dropdownSortOptions}
+                    options={SORT_BY_OPTIONS}
                     handleDropdown={handleSortBy}
                   />
                 </div>
