@@ -1,6 +1,7 @@
 'use server';
 
 import {getClient} from '@/goovee';
+import {i18n} from '@/lib/i18n';
 import {PortalWorkspace} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
 
@@ -17,6 +18,9 @@ export async function getPopularQuery({
   groupIDs?: any[];
   search?: string | undefined;
 }) {
+  if (!workspaceID) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
   const client = await getClient();
 
   const skip = getSkipInfo(limit, page);

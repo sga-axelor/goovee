@@ -141,8 +141,15 @@ export async function findPosts({
         groupIDs,
         search,
       });
-      const {posts = [], pageInfo = {}} = query;
-      return {posts, pageInfo};
+      const {posts = [], pageInfo = {}, error, message} = query;
+
+      return {
+        ...(error ? {error: true} : {success: true}),
+        message,
+        posts,
+        pageInfo,
+      };
+
     default:
       orderBy = {createdOn: ORDER_BY.DESC};
   }
