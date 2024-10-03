@@ -148,7 +148,7 @@ export function Filter(props: FilterProps) {
           </Button>
         </Trigger>
 
-        <Content className={small ? 'px-5 pb-5' : 'w-[400px]'}>
+        <Content className={small ? 'px-5 pb-5 max-h-full' : 'w-[400px]'}>
           {small && (
             <>
               <h3 className="text-xl font-semibold mb-2">
@@ -161,7 +161,7 @@ export function Filter(props: FilterProps) {
             <form
               ref={formRef}
               onSubmit={form.handleSubmit(onSubmit)}
-              className="overflow-y-auto overflow-x-hidden">
+              className="overflow-x-hidden relative">
               <div className="space-y-4 pr-2 pl-2">
                 <MyTicketsField form={form} />
                 {!form.watch('myTickets') && (
@@ -181,7 +181,10 @@ export function Filter(props: FilterProps) {
                 <DatesField form={form} />
                 <PriorityField form={form} priorities={priorities} />
                 <StatusField form={form} statuses={statuses} />
-                <Button variant="success" type="submit" className="w-full">
+                <Button
+                  variant="success"
+                  type="submit"
+                  className="w-full sticky bottom-0">
                   {i18n.get('Apply')}
                 </Button>
               </div>
