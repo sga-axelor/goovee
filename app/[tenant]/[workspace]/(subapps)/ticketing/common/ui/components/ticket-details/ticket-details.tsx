@@ -30,7 +30,6 @@ import {ReactNode, useCallback, useEffect, useRef} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
 
 import {
-  ActionResponse,
   assignToSupplier,
   cancelTicket,
   closeTicket,
@@ -40,17 +39,17 @@ import {
 } from '../../../actions';
 import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
 import {useRetryAction} from '../../../hooks';
+import type {
+  ContactPartner,
+  Category as TCategory,
+  Priority as TPriority,
+  Status as TStatus,
+} from '../../../orm/projects';
+import type {Ticket} from '../../../orm/tickets';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
 import {formatDate, getProfilePic} from '../../../utils';
 import {Category, Priority} from '../pills';
 import {Stepper} from '../stepper';
-import type {Ticket} from '../../../orm/tickets';
-import type {
-  Priority as TPriority,
-  Category as TCategory,
-  Status as TStatus,
-  ContactPartner,
-} from '../../../orm/projects';
 
 type Props = {
   ticket: Cloned<Ticket>;
