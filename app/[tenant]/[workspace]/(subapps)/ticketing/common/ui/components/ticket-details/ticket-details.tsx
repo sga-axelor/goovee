@@ -306,7 +306,9 @@ export function TicketDetails(props: Props) {
                             defaultValue={field.value?.toString()}>
                             <FormControl>
                               <SelectTrigger className="w-fit">
-                                <SelectValue />
+                                <SelectValue
+                                  placeholder={i18n.get('Select Assignee')}
+                                />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
