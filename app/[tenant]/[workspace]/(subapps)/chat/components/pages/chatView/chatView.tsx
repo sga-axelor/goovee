@@ -1,18 +1,18 @@
 'use client';
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {ChannelList} from './channelList';
-import {ChannelView} from './channelView';
-import {getPostById, viewChannel} from '../api/api';
-import {Socket} from './Socket';
+import {ChannelList} from '../../atoms';
+import {ChannelView} from '../../organisms';
+import {getPostById, viewChannel} from '../../../api';
+import {Socket} from '../../Socket';
 import {
   getChannelInfosByChannelId,
   getChannelsWithUnreadCount,
-} from '../services/services';
-import {addReaction} from '../utils/AddReaction';
-import {addPost} from '../utils/addPost';
+} from '../../../services/services';
+import {addReaction} from '../../../utils/AddReaction';
+import {addPost} from '../../../utils/addPost';
 
-const ChatView = ({
+export const ChatView = ({
   token,
   user,
   userStatus,
@@ -226,5 +226,3 @@ const ChatView = ({
     </div>
   );
 };
-
-export default ChatView;

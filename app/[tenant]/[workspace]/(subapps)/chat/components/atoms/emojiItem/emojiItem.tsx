@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
-import styles from '../css/index.module.css';
-import {emojis, HOST} from '../constants';
+import {emojis, HOST} from '../../../constants';
+import styles from './index.module.css';
 
 export const EmojiItem = ({
   onEmojiClick,
@@ -30,7 +32,7 @@ export const EmojiItem = ({
           <img
             src={`${HOST}/static/emoji/${filename}`}
             alt={name}
-            className="w-4 h-4 mr-1" // Ajustez la taille selon vos besoins
+            className="w-4 h-4 mr-1"
           />
           <span>{count}</span>
         </div>
@@ -38,7 +40,5 @@ export const EmojiItem = ({
     );
   }
 
-  return null; // Retourne null si l'emoji n'est pas trouvé
+  return null;
 };
-
-export default EmojiItem;

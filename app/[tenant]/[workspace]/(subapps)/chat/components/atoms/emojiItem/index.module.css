@@ -1,0 +1,12 @@
+.emojiPickerItemSmall > img {
+  width: 16px;
+  height: 16px;
+  margin: 1px;
+}
+
+.emojiPickerItemSmall:hover > img {
+  width: 18px;
+  height: 18px;
+  margin: 1px;
+  cursor: pointer;
+}

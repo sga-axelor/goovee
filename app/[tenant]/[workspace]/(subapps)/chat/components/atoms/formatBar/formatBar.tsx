@@ -1,3 +1,5 @@
+'use client';
+
 import React, {useRef} from 'react';
 import {
   Bold,
@@ -10,7 +12,7 @@ import {
   Heading,
 } from 'lucide-react';
 
-const FormattingToolbar = ({
+export const FormattingToolbar = ({
   textareaRef,
   messageText,
   setMessageText,
@@ -137,5 +139,3 @@ const FormattingToolbar = ({
     </div>
   );
 };
-
-export default FormattingToolbar;

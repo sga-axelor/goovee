@@ -1,9 +1,11 @@
+'use client';
+
 import React, {useState} from 'react';
-import {emojis, HOST} from '../constants';
-import EmojiPopup from './emojiPopup';
+import {emojis, HOST} from '../../../constants';
+import {EmojiPopup} from '../../atoms';
 import {SmilePlus, Reply} from 'lucide-react';
 
-const MenuReaction = ({
+export const MenuReaction = ({
   onEmojiClick,
   onReplyClick,
   isReply,
@@ -52,5 +54,3 @@ const MenuReaction = ({
     </div>
   );
 };
-
-export default MenuReaction;

@@ -1,9 +1,10 @@
+'use client';
+
 import React, {useEffect, useState} from 'react';
 import ReactMarkdown from 'react-markdown';
-import EmojiItem from './emojiItem';
-import MenuReaction from './menuReaction';
-import FilePreview from './filePreview';
-import MarkdownRenderer from './markdownRenderer';
+import {MenuReaction} from '../../molecules';
+import {FilePreview, EmojiItem} from '../../atoms';
+import {MarkdownRenderer} from '../../atoms';
 
 interface Reaction {
   count: number;
@@ -14,7 +15,7 @@ interface GroupedReactions {
   [emojiName: string]: Reaction;
 }
 
-const Post = ({
+export const Post = ({
   post,
   onEmojiClick,
   getPost,
@@ -102,5 +103,3 @@ const Post = ({
     </div>
   );
 };
-
-export default Post;

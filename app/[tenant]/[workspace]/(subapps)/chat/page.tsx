@@ -1,5 +1,5 @@
-import {getAuthToken, getUsers, getUserStatus} from './api/api';
-import ChatView from './components/chatView';
+import {getAuthToken, getUsers, getUserStatus} from './api';
+import {ChatView} from './components';
 
 export default async function Chat({
   params,

@@ -1,9 +1,10 @@
+'use client';
+
 import React, {useRef, useEffect, useState} from 'react';
 import {SendHorizontal, Paperclip, Type, X, Eye, EyeOff} from 'lucide-react';
-import FormattingToolbar from './formatBar';
-import MarkdownRenderer from './markdownRenderer';
+import {MarkdownRenderer, FormattingToolbar} from '../../atoms';
 
-const InputMessage = ({
+export const InputMessage = ({
   messageText,
   setMessageText,
   fileInputRef,
@@ -215,5 +216,3 @@ const InputMessage = ({
     </div>
   );
 };
-
-export default InputMessage;

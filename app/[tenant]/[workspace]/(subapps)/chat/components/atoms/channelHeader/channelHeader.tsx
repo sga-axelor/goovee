@@ -1,8 +1,10 @@
+'use client';
+
 import {Users} from 'lucide-react';
 import React, {useEffect, useRef, useState} from 'react';
-import {getDisplayNickName} from '../services/services';
+import {getDisplayNickName} from '../../../services/services';
 
-const ChannelHeader = ({
+export const ChannelHeader = ({
   users,
   channelName,
 }: {
@@ -68,5 +70,3 @@ const ChannelHeader = ({
     </div>
   );
 };
-
-export default ChannelHeader;

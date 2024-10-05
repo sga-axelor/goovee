@@ -1,4 +1,4 @@
-import {createPost} from '../api/api';
+import {createPost} from '../api';
 import {getDisplayName} from '../services/services';
 
 export const addPost = async (

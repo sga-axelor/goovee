@@ -1,7 +1,9 @@
-import React from 'react';
-import {emojis, HOST} from '../constants';
+'use client';
 
-const EmojiPopup = ({
+import React from 'react';
+import {emojis, HOST} from '../../../constants';
+
+export const EmojiPopup = ({
   onEmojiClick,
   onClose,
 }: {
@@ -34,5 +36,3 @@ const EmojiPopup = ({
     </div>
   );
 };
-
-export default EmojiPopup;

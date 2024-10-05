@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
-import {API_URL} from '../api/api';
+import {HOST} from '../../../constants';
+import {FILES_API_ENDPOINT} from '../../../api/path-helpers';
 
 interface FileProps {
   file: {
@@ -10,7 +13,7 @@ interface FileProps {
   };
 }
 
-const FilePreview: React.FC<FileProps> = ({file}) => {
+export const FilePreview = ({file}) => {
   const isImage = file.mime_type.startsWith('image/');
   const isVideo = file.mime_type.startsWith('video/');
   const isPDF = file.mime_type === 'application/pdf';
@@ -19,7 +22,7 @@ const FilePreview: React.FC<FileProps> = ({file}) => {
     if (isImage) {
       return (
         <img
-          src={`${API_URL}/files/${file.id}/preview`}
+          src={`${HOST}${FILES_API_ENDPOINT}/${file.id}/preview`}
           alt={file.name}
           className="max-w-full h-auto rounded"
         />
@@ -27,7 +30,7 @@ const FilePreview: React.FC<FileProps> = ({file}) => {
     } else if (isVideo) {
       return (
         <video
-          src={`${API_URL}/files/${file.id}/preview`}
+          src={`${HOST}${FILES_API_ENDPOINT}/${file.id}/preview`}
           className="max-w-full h-auto rounded"
           controls
         />
@@ -35,7 +38,7 @@ const FilePreview: React.FC<FileProps> = ({file}) => {
     } else if (isPDF) {
       return (
         <embed
-          src={`${API_URL}/files/${file.id}/preview`}
+          src={`${HOST}${FILES_API_ENDPOINT}/${file.id}/preview`}
           type="application/pdf"
           className="w-full h-24 rounded"
         />
@@ -56,5 +59,3 @@ const FilePreview: React.FC<FileProps> = ({file}) => {
     </div>
   );
 };
-
-export default FilePreview;

@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {getUserProfileImage} from '../api/api';
-import Post from './Post';
+'use client';
 
-const GroupPost = ({
+import React, {useEffect, useState} from 'react';
+import {getUserProfileImage} from '../../../api';
+import {Post} from '../post/Post';
+
+export const GroupPost = ({
   group,
   token,
   onEmojiClick,
@@ -55,5 +57,3 @@ const GroupPost = ({
     </div>
   );
 };
-
-export default GroupPost;

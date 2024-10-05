@@ -5,7 +5,7 @@ import {
   getFileInfoById,
   getPostsChannel,
   getUnreadChannel,
-} from '../api/api';
+} from '../api';
 
 const characters =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -31,7 +33,7 @@ const components: Components = {
   ),
 };
 
-const MarkdownRenderer = ({content}: {content: string}) => {
+export const MarkdownRenderer = ({content}: {content: string}) => {
   return (
     <ReactMarkdown
       components={components}
@@ -42,5 +44,3 @@ const MarkdownRenderer = ({content}: {content: string}) => {
     </ReactMarkdown>
   );
 };
-
-export default MarkdownRenderer;

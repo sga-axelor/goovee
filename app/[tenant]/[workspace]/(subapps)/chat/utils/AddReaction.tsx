@@ -4,7 +4,7 @@ import {
   createReaction,
   removeReactionFromAPost,
   getPostReactions,
-} from '../api/api';
+} from '../api';
 
 const checkIfReactionExists = async (
   postId: string,

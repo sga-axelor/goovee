@@ -1,3 +1,5 @@
+'use client';
+
 import React, {useEffect, useState, useRef} from 'react';
 import {Hash, Search, GripVertical} from 'lucide-react';
 

@@ -1,10 +1,11 @@
+'use client';
+
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Loader, ChevronDown, Users, LoaderCircle} from 'lucide-react';
-import GroupPost from './groupPost';
-import InputMessage from './InputMessage';
-import DocumentList from './documentList';
-import {getChannelMembers} from '../api/api';
-import ChannelHeader from './channelHeader';
+import {getChannelMembers} from '../../../api';
+import {DocumentList, ChannelHeader} from '../../atoms';
+import {InputMessage} from '../../molecules';
+import {GroupPost} from '../groupPost/groupPost';
 
 export const ChannelView = ({
   channel,
@@ -62,10 +63,10 @@ export const ChannelView = ({
     (behavior: ScrollBehavior) => {
       if (messagesRef && messagesRef.current) {
         setTimeout(() => {
-          const scrollHeight = messagesRef.current.scrollHeight;
-          const height = messagesRef.current.clientHeight;
-          const maxScrollTop = scrollHeight - height;
-          messagesRef.current.scrollTo({
+          const scrollHeight = messagesRef.current?.scrollHeight;
+          const height = messagesRef.current?.clientHeight;
+          const maxScrollTop = scrollHeight! - height!;
+          messagesRef.current?.scrollTo({
             top: maxScrollTop > 0 ? maxScrollTop : 0,
             behavior: behavior,
           });

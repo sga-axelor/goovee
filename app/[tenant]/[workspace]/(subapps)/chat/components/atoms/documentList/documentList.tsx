@@ -1,7 +1,9 @@
+'use client';
+
 import React from 'react';
 import {X} from 'lucide-react';
 
-const DocumentList = ({
+export const DocumentList = ({
   selectedFiles,
   removeFile,
 }: {
@@ -30,5 +32,3 @@ const DocumentList = ({
     </div>
   );
 };
-
-export default DocumentList;
