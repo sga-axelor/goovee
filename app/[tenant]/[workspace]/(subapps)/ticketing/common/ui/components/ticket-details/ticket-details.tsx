@@ -26,7 +26,7 @@ import {
 import {Progress} from '@/ui/components/progress';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
-import {ReactNode, useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
 
 import {
@@ -48,8 +48,7 @@ import type {
 import type {Ticket} from '../../../orm/tickets';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
 import {formatDate, getProfilePic} from '../../../utils';
-import {Category, Priority} from '../pills';
-import {Stepper} from '../stepper';
+import {Category, Priority, Status} from '../pills';
 
 type Props = {
   ticket: Cloned<Ticket>;
@@ -57,7 +56,6 @@ type Props = {
   categories: TCategory[];
   priorities: TPriority[];
   contacts: ContactPartner[];
-  breadCrumbs: ReactNode;
 };
 
 const getDefaultValues = (ticket: Cloned<Ticket>) => {
@@ -71,8 +69,7 @@ const getDefaultValues = (ticket: Cloned<Ticket>) => {
 };
 
 export function TicketDetails(props: Props) {
-  const {ticket, categories, priorities, statuses, contacts, breadCrumbs} =
-    props;
+  const {ticket, categories, priorities, statuses, contacts} = props;
 
   const {action, loading} = useRetryAction(mutate);
 
@@ -122,38 +119,57 @@ export function TicketDetails(props: Props) {
     form.reset(getDefaultValues(ticket));
   }, [ticket, form]);
 
+  const closeAndCancel = !ticket.status?.isCompleted && (
+    <>
+      <CloseTicket
+        id={ticket.id}
+        version={ticket.version}
+        disabled={form.formState.isSubmitting || loading}
+        form={form}
+        handleSubmit={handleSubmit}
+      />
+      <CancelTicket
+        id={ticket.id}
+        version={ticket.version}
+        disabled={form.formState.isSubmitting || loading}
+        form={form}
+        handleSubmit={handleSubmit}
+      />
+    </>
+  );
+
+  const assignToSupplier = ticket.assignment !== ASSIGNMENT.PROVIDER && (
+    <AssignToSupplier
+      id={ticket.id}
+      version={ticket.version}
+      disabled={form.formState.isSubmitting || loading}
+      form={form}
+      handleSubmit={handleSubmit}
+    />
+  );
   return (
     <Form {...form}>
-      <div className="flex flex-col lg:flex-row gap-4 justify-between min-h-9 items-center">
-        {breadCrumbs}
-        {!ticket.status?.isCompleted && (
-          <div className="flex gap-4">
-            <CancelTicket
-              id={ticket.id}
-              version={ticket.version}
-              disabled={form.formState.isSubmitting || loading}
-              form={form}
-              handleSubmit={handleSubmit}
-            />
-            <CloseTicket
-              id={ticket.id}
-              version={ticket.version}
-              disabled={form.formState.isSubmitting || loading}
-              form={form}
-              handleSubmit={handleSubmit}
-            />
-          </div>
-        )}
-      </div>
       <form
         ref={formRef}
         onSubmit={form.handleSubmit(value => handleSubmit(value))}>
-        <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-          <Stepper
-            steps={statuses}
-            current={ticket.status?.id}
-            className="mb-12 md:mx-20"
-          />
+        <div className="flex flex-col-reverse lg:flex-col gap-4 rounded-md border bg-card p-4 mt-5">
+          <div className="grid grid-cols-1 gap-4 lg:flex lg:flex-row-reverse lg:justify-start lg:grow">
+            <Button
+              size="sm"
+              type="submit"
+              variant="success"
+              disabled={
+                !form.formState.isDirty ||
+                form.formState.isSubmitting ||
+                loading
+              }>
+              {i18n.get('Save Changes')}
+            </Button>
+            <div className="contents lg:hidden">
+              {assignToSupplier}
+              {closeAndCancel}
+            </div>
+          </div>
           <div className="space-y-3">
             <div className="flex justify-between">
               <p className="text-base font-medium">#{ticket?.id}</p>
@@ -175,82 +191,96 @@ export function TicketDetails(props: Props) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="category"
-              render={({field}) => (
-                <FormItem className="flex items-center gap-2 space-y-0">
-                  <FormLabel className="font-medium text-md">
-                    {i18n.get('Category')}:
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}>
-                    <FormControl>
-                      <SelectTrigger className="w-fit">
-                        <SelectValue
-                          asChild
-                          placeholder={i18n.get('Select your category')}>
-                          <Category
-                            name={
-                              categories.find(c => c.id == field.value)?.name
-                            }
-                          />
-                        </SelectValue>
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem
-                          value={category.id.toString()}
-                          key={category.id}>
-                          <Category name={category.name} />
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({field}) => (
-                <FormItem className="flex items-center gap-2 space-y-0">
-                  <FormLabel className="font-medium text-md">
-                    {i18n.get('Priority')}:
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}>
-                    <FormControl>
-                      <SelectTrigger className="w-fit">
-                        <SelectValue
-                          asChild
-                          placeholder={i18n.get('Select your priority')}>
-                          <Priority
-                            name={
-                              priorities.find(c => c.id == field.value)?.name
-                            }
-                          />
-                        </SelectValue>
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {priorities.map(priority => (
-                        <SelectItem
-                          value={priority.id.toString()}
-                          key={priority.id}>
-                          <Priority name={priority.name} />
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <span>
+                  <span className="font-medium pe-2">
+                    {i18n.get('Status')}:
+                  </span>
+                  <Status name={ticket.status?.name} />
+                </span>
+                <span className="hidden lg:inline-flex gap-4 ml-auto">
+                  {closeAndCancel}
+                </span>
+              </div>
+              <hr className="hidden lg:block" />
+              <FormField
+                control={form.control}
+                name="category"
+                render={({field}) => (
+                  <FormItem className="flex items-center gap-2 space-y-0">
+                    <FormLabel className="font-medium text-md">
+                      {i18n.get('Category')}:
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}>
+                      <FormControl>
+                        <SelectTrigger className="w-fit">
+                          <SelectValue
+                            asChild
+                            placeholder={i18n.get('Select your category')}>
+                            <Category
+                              name={
+                                categories.find(c => c.id == field.value)?.name
+                              }
+                            />
+                          </SelectValue>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem
+                            value={category.id.toString()}
+                            key={category.id}>
+                            <Category name={category.name} />
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({field}) => (
+                  <FormItem className="flex items-center gap-2 space-y-0">
+                    <FormLabel className="font-medium text-md">
+                      {i18n.get('Priority')}:
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}>
+                      <FormControl>
+                        <SelectTrigger className="w-fit">
+                          <SelectValue
+                            asChild
+                            placeholder={i18n.get('Select your priority')}>
+                            <Priority
+                              name={
+                                priorities.find(c => c.id == field.value)?.name
+                              }
+                            />
+                          </SelectValue>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {priorities.map(priority => (
+                          <SelectItem
+                            value={priority.id.toString()}
+                            key={priority.id}>
+                            <Priority name={priority.name} />
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <hr />
             <p className="flex !mt-3.5 items-center">
               <span className="font-medium pe-2">
@@ -281,7 +311,7 @@ export function TicketDetails(props: Props) {
             <hr />
 
             <div>
-              <div className="sm:flex space-y-2 mb-3">
+              <div className="lg:flex space-y-2 mb-3">
                 <div>
                   {ticket.assignment === ASSIGNMENT.PROVIDER ? (
                     <div className="flex items-center gap-2 space-y-0">
@@ -327,17 +357,9 @@ export function TicketDetails(props: Props) {
                     />
                   )}
                 </div>
-                {ticket.assignment !== ASSIGNMENT.PROVIDER && (
-                  <div className="sm:ml-auto ml-[6.5rem]">
-                    <AssignToSupplier
-                      id={ticket.id}
-                      version={ticket.version}
-                      disabled={form.formState.isSubmitting || loading}
-                      form={form}
-                      handleSubmit={handleSubmit}
-                    />
-                  </div>
-                )}
+                <div className="hidden lg:block ml-auto">
+                  {assignToSupplier}
+                </div>
               </div>
               <p>
                 <span className="font-medium pe-2">Expected on:</span>
@@ -402,19 +424,6 @@ export function TicketDetails(props: Props) {
               />
             </div>
           </div>
-
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              variant="success"
-              disabled={
-                !form.formState.isDirty ||
-                form.formState.isSubmitting ||
-                loading
-              }>
-              {i18n.get('Save Changes')}
-            </Button>
-          </div>
         </div>
       </form>
     </Form>
@@ -440,10 +449,11 @@ type ActionProps = {
     value: TicketInfo,
     onSuccess?: (res: MutateResponse) => Promise<void>,
   ) => void;
+  className?: string;
 };
 
 function AssignToSupplier(props: ActionProps) {
-  const {id, version, disabled, form, handleSubmit} = props;
+  const {id, version, disabled, form, handleSubmit, className} = props;
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
     assignToSupplier,
@@ -480,6 +490,7 @@ function AssignToSupplier(props: ActionProps) {
     <Button
       size="sm"
       type="button"
+      className={className}
       variant="success"
       disabled={loading || disabled}
       onClick={handleClick}>
@@ -489,7 +500,7 @@ function AssignToSupplier(props: ActionProps) {
 }
 
 function CancelTicket(props: ActionProps) {
-  const {id, version, disabled, form, handleSubmit} = props;
+  const {id, version, disabled, form, handleSubmit, className} = props;
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
     cancelTicket,
@@ -527,6 +538,7 @@ function CancelTicket(props: ActionProps) {
       size="sm"
       variant="destructive"
       disabled={loading}
+      className={className}
       onClick={handleClick}>
       {i18n.get('Cancel ticket')}
     </Button>
@@ -534,7 +546,7 @@ function CancelTicket(props: ActionProps) {
 }
 
 function CloseTicket(props: ActionProps) {
-  const {id, version, disabled, form, handleSubmit} = props;
+  const {id, version, disabled, form, handleSubmit, className} = props;
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
     closeTicket,
@@ -572,6 +584,7 @@ function CloseTicket(props: ActionProps) {
       size="sm"
       variant="success"
       disabled={loading}
+      className={className}
       onClick={handleClick}>
       {i18n.get('Close ticket')}
     </Button>
