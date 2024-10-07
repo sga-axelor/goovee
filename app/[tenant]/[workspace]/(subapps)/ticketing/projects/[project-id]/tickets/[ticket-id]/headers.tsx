@@ -1,12 +1,15 @@
 'use client';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 import {Cloned} from '@/types/util';
-import {Button} from '@/ui/components';
 import {ID} from '@goovee/orm';
-import Link from 'next/link';
+import type {
+  Category,
+  ContactPartner,
+  Priority,
+} from '../../../../common/orm/projects';
 import {Ticket} from '../../../../common/orm/tickets';
-import {HeaderWithAlert} from '../../../../common/ui/components/header-with-alert';
+import {TicketLinkHeader} from '../../../../common/ui/components/ticket-link-header';
+import {TicketForm} from '../../../../common/ui/components/ticket-form';
 import {
   TicketChildLinkForm,
   TicketRelatedLinkForm,
@@ -21,10 +24,10 @@ export function RelatedTicketsHeader(props: {
   links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
 }) {
   return (
-    <HeaderWithAlert
+    <TicketLinkHeader
       title={i18n.get('Related tickets')}
-      alertTitle={i18n.get('Add related ticket')}
-      renderer={({closeAlert}) => (
+      alertTitle={i18n.get('Link related ticket')}
+      alertContentRenderer={({closeAlert}) => (
         <TicketRelatedLinkForm {...props} onSubmit={closeAlert} />
       )}
     />
@@ -32,29 +35,48 @@ export function RelatedTicketsHeader(props: {
 }
 
 export function ChildTicketsHeader(props: {
-  projectId?: ID;
+  projectId: ID;
   ticketId: ID;
   parentIds: ID[];
+  categories: Category[];
+  priorities: Priority[];
+  contacts: ContactPartner[];
+  userId: ID;
 }) {
-  const {workspaceURI} = useWorkspace();
+  const {
+    ticketId,
+    projectId,
+    categories,
+    priorities,
+    contacts,
+    userId,
+    parentIds,
+  } = props;
+
   return (
-    <HeaderWithAlert
+    <TicketLinkHeader
       title={i18n.get('Child tickets')}
-      alertTitle={i18n.get('Add child ticket')}
-      renderer={({closeAlert}) => (
-        <div className="p-2">
-          <Button variant="outline" className="w-full border-input" asChild>
-            <Link
-              href={{
-                pathname: `${workspaceURI}/ticketing/projects/${props.projectId}/tickets/create`,
-                query: {parentId: props.ticketId},
-              }}>
-              {i18n.get('Create ticket')}
-            </Link>
-          </Button>
-          <h3 className="text-center my-2">{i18n.get('OR')}</h3>
-          <TicketChildLinkForm {...props} onSubmit={closeAlert} />
-        </div>
+      dialogTitle={i18n.get('Create child ticket')}
+      dialogContentRenderer={({closeDialog}) => (
+        <TicketForm
+          projectId={projectId.toString()}
+          categories={categories}
+          priorities={priorities}
+          contacts={contacts}
+          userId={userId}
+          parentId={ticketId.toString()}
+          className="mt-10 text-left"
+          onSuccess={closeDialog}
+        />
+      )}
+      alertTitle={i18n.get('Link child ticket')}
+      alertContentRenderer={({closeAlert}) => (
+        <TicketChildLinkForm
+          ticketId={ticketId}
+          parentIds={parentIds}
+          projectId={projectId}
+          onSubmit={closeAlert}
+        />
       )}
     />
   );

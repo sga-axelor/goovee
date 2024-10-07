@@ -1,5 +1,3 @@
-'use client';
-
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
@@ -24,7 +22,6 @@ import {
 import {useToast} from '@/ui/hooks';
 import {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {useRouter} from 'next/navigation';
 import {useCallback, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
@@ -40,11 +37,21 @@ type TicketFormProps = {
   priorities: Priority[];
   contacts: ContactPartner[];
   parentId?: string;
+  className?: string;
+  onSuccess?: (ticketId: string, projectId: string) => void;
 };
 
 export function TicketForm(props: TicketFormProps) {
-  const {categories, priorities, projectId, contacts, userId, parentId} = props;
-  const router = useRouter();
+  const {
+    categories,
+    priorities,
+    projectId,
+    contacts,
+    userId,
+    parentId,
+    className,
+    onSuccess,
+  } = props;
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
   const [success, setSuccess] = useState(false);
@@ -59,13 +66,11 @@ export function TicketForm(props: TicketFormProps) {
   });
 
   const handleSuccess = useCallback(
-    (ticketId: string) => {
+    (ticketId: string, projectId: string) => {
       setSuccess(true);
-      router.replace(
-        `${workspaceURI}/ticketing/projects/${projectId}/tickets/${ticketId}`,
-      );
+      onSuccess?.(ticketId, projectId);
     },
-    [router, workspaceURI, projectId],
+    [onSuccess],
   );
 
   const handleError = useCallback(
@@ -100,13 +105,13 @@ export function TicketForm(props: TicketFormProps) {
         return;
       }
 
-      handleSuccess(data.id);
+      handleSuccess(data.id, projectId);
     },
     [handleError, handleSuccess, projectId, workspaceURI, workspaceURL],
   );
 
   return (
-    <div className="mt-10">
+    <div className={className}>
       <Form {...form}>
         <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
           <div className="space-y-4 rounded-md border bg-card p-4">

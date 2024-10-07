@@ -21,10 +21,16 @@ import {workspacePathname} from '@/utils/workspace';
 import {ID} from '@goovee/orm';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
-import {Suspense} from 'react';
+import {ReactNode, Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
+import {Cloned} from '@/types/util';
+import type {
+  Category,
+  ContactPartner,
+  Priority,
+} from '../../../../common/orm/projects';
 import {
   findContactPartners,
   findTicketCategories,
@@ -76,7 +82,7 @@ export default async function Page({
       findTicketCategories(projectId),
       findTicketPriorities(projectId),
       findContactPartners(projectId),
-    ]);
+    ]).then(clone);
 
   if (!ticket) notFound();
 
@@ -128,11 +134,11 @@ export default async function Page({
         </BreadcrumbList>
       </Breadcrumb>
       <TicketDetails
-        ticket={clone(ticket)}
-        statuses={clone(statuses)}
-        categories={clone(categories)}
-        priorities={clone(priorities)}
-        contacts={clone(contacts)}
+        ticket={ticket}
+        statuses={statuses}
+        categories={categories}
+        priorities={priorities}
+        contacts={contacts}
       />
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}
@@ -141,6 +147,10 @@ export default async function Page({
             tickets={ticket.childTasks}
             projectId={ticket.project?.id}
             ticketId={ticket.id}
+            categories={categories}
+            priorities={priorities}
+            contacts={contacts}
+            userId={session.user.id}
           />
         </Suspense>
         <Suspense>
@@ -154,7 +164,7 @@ export default async function Page({
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         <h4 className="text-xl font-semibold">{i18n.get('Comments')}</h4>
         <Comments
-          record={clone(ticket)}
+          record={ticket}
           modelType={ModelType.ticketing}
           showCommentsByDefault
           showTopBorder={false}
@@ -174,11 +184,20 @@ async function ChildTickets({
   tickets,
   ticketId,
   projectId,
+  categories,
+  priorities,
+  contacts,
+  userId,
 }: {
-  tickets?: Ticket['childTasks'];
+  tickets?: Cloned<Ticket>['childTasks'];
   ticketId: ID;
   projectId?: ID;
+  categories: Category[];
+  priorities: Priority[];
+  contacts: ContactPartner[];
+  userId: ID;
 }) {
+  if (!projectId) return;
   const parentIds = await findParentTickets(ticketId);
   return (
     <>
@@ -186,25 +205,29 @@ async function ChildTickets({
         ticketId={ticketId}
         parentIds={parentIds}
         projectId={projectId}
+        categories={categories}
+        priorities={priorities}
+        contacts={contacts}
+        userId={userId}
       />
       <hr className="mt-5" />
       <Table>
         <TableBody>
-          <ChildTicketRows ticketId={ticketId} tickets={clone(tickets) ?? []} />
+          <ChildTicketRows ticketId={ticketId} tickets={tickets ?? []} />
         </TableBody>
       </Table>
     </>
   );
 }
 
-async function ParentTicket({ticket}: {ticket: TicketListTicket}) {
+async function ParentTicket({ticket}: {ticket: Cloned<TicketListTicket>}) {
   return (
     <>
       <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
       <hr className="mt-5" />
       <Table>
         <TableBody>
-          <TicketRows tickets={[clone(ticket)]} />
+          <TicketRows tickets={[ticket]} />
         </TableBody>
       </Table>
     </>
@@ -216,23 +239,22 @@ async function RelatedTickets({
   ticketId,
   projectId,
 }: {
-  links?: Ticket['projectTaskLinkList'];
+  links?: Cloned<Ticket>['projectTaskLinkList'];
   ticketId: ID;
   projectId?: ID;
 }) {
   const linkTypes = await findTicketLinkTypes(projectId);
-  const clonedLinks = clone(links ?? []);
   return (
     <>
       <RelatedTicketsHeader
         linkTypes={clone(linkTypes)}
         ticketId={ticketId}
-        links={clonedLinks}
+        links={links ?? []}
       />
       <hr className="mt-5" />
       <Table>
         <TableBody>
-          <RelatedTicketRows links={clonedLinks} ticketId={ticketId} />
+          <RelatedTicketRows links={links ?? []} ticketId={ticketId} />
         </TableBody>
       </Table>
     </>

@@ -27,6 +27,7 @@ import {
 } from '../../../../common/orm/projects';
 import {findTicketAccess} from '../../../../common/orm/tickets';
 import {TicketForm} from '../../../../common/ui/components/ticket-form';
+import {Form} from './client-form';
 export default async function Page({
   params,
   searchParams,
@@ -126,13 +127,14 @@ export default async function Page({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <TicketForm
+      <Form
         projectId={projectId}
         categories={categories}
         priorities={priorities}
         contacts={contacts}
         userId={userId}
         parentId={parentId}
+        workspaceURI={workspaceURI}
       />
     </div>
   );
