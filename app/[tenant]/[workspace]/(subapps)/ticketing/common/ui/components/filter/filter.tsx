@@ -148,7 +148,12 @@ export function Filter(props: FilterProps) {
           </Button>
         </Trigger>
 
-        <Content className={small ? 'px-5 pb-5 max-h-full' : 'w-[400px]'}>
+        <Content
+          className={
+            small
+              ? 'px-5 pb-5 max-h-full'
+              : 'w-[--radix-popper-anchor-width] p-0'
+          }>
           {small && (
             <>
               <h3 className="text-xl font-semibold mb-2">
@@ -161,8 +166,8 @@ export function Filter(props: FilterProps) {
             <form
               ref={formRef}
               onSubmit={form.handleSubmit(onSubmit)}
-              className="overflow-x-hidden relative">
-              <div className="space-y-4 pr-2 pl-2">
+              className="relative overflow-x-hidden lg:h-fit lg:max-h-[--radix-popper-available-height] lg:overflow-y-auto p-4">
+              <div className="space-y-4">
                 <MyTicketsField form={form} />
                 {!form.watch('myTickets') && (
                   <>
@@ -184,7 +189,7 @@ export function Filter(props: FilterProps) {
                 <Button
                   variant="success"
                   type="submit"
-                  className="w-full sticky bottom-0">
+                  className="w-full sticky bottom-0 text-xs">
                   {i18n.get('Apply')}
                 </Button>
               </div>
@@ -207,7 +212,7 @@ function AssignedToField(
       name="assignedTo"
       render={({field}) => (
         <FormItem className="grow">
-          <FormLabel>{i18n.get('Assigned to')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.get('Assigned to')} :</FormLabel>
           <MultiSelector
             onValuesChange={values => {
               if (values.includes(COMPANY)) {
@@ -230,7 +235,10 @@ function AssignedToField(
                   : contacts.find(contact => contact.id === value)
                       ?.simpleFullName
               }>
-              <MultiSelectorInput placeholder="Select users" />
+              <MultiSelectorInput
+                placeholder="Select users"
+                className="text-xs"
+              />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
@@ -267,7 +275,9 @@ function RequestedByField(
       name="requestedBy"
       render={({field}) => (
         <FormItem className="grow">
-          <FormLabel>{i18n.get('Requested by')} :</FormLabel>
+          <FormLabel className="text-xs">
+            {i18n.get('Requested by')} :
+          </FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             values={field.value ?? []}
@@ -279,7 +289,10 @@ function RequestedByField(
                   : contacts.find(contact => contact.id === value)
                       ?.simpleFullName
               }>
-              <MultiSelectorInput placeholder="Select users" />
+              <MultiSelectorInput
+                placeholder="Select users"
+                className="text-xs"
+              />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
@@ -345,13 +358,13 @@ function DatesField(props: FieldProps) {
           name="updatedOn.0"
           render={({field}) => (
             <FormItem className="grow">
-              <FormLabel>{i18n.get('From')} :</FormLabel>
+              <FormLabel className="text-xs">{i18n.get('From')} :</FormLabel>
               <FormControl>
                 <Input
                   type="date"
                   placeholder="DD/MM/YYYY"
                   {...field}
-                  className="block"
+                  className="block text-xs"
                 />
               </FormControl>
               <FormMessage />
@@ -363,13 +376,13 @@ function DatesField(props: FieldProps) {
           name="updatedOn.1"
           render={({field}) => (
             <FormItem className="grow">
-              <FormLabel>{i18n.get('To')} :</FormLabel>
+              <FormLabel className="text-xs">{i18n.get('To')} :</FormLabel>
               <FormControl>
                 <Input
                   type="date"
                   placeholder="DD/MM/YYYY"
                   {...field}
-                  className="block"
+                  className="block text-xs"
                 />
               </FormControl>
               <FormMessage />
@@ -394,7 +407,7 @@ function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
       name="priority"
       render={({field}) => (
         <FormItem>
-          <FormLabel>{i18n.get('Priority')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.get('Priority')} :</FormLabel>
           {priorities.map(priority => (
             <FormField
               key={priority.id}
@@ -446,7 +459,7 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
       name="status"
       render={({field}) => (
         <FormItem>
-          <FormLabel>{i18n.get('Status')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.get('Status')} :</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             className="space-y-0"
@@ -455,7 +468,10 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
               renderLabel={value =>
                 statuses.find(status => status.id === value)?.name
               }>
-              <MultiSelectorInput placeholder="Select statuses" />
+              <MultiSelectorInput
+                placeholder="Select statuses"
+                className="text-xs"
+              />
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
