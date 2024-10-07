@@ -7,6 +7,14 @@
     {
       "type": "String",
       "name": "name"
+    },
+    {
+      "type": "Int",
+      "name": "sequence"
+    },
+    {
+      "type": "Boolean",
+      "name": "isCompleted"
     }
   ]
 }

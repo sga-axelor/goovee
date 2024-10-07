@@ -19,6 +19,9 @@ export function getProjectAccessFilter(props: AuthProps) {
   const {userId, workspaceId} = props;
   const where: WhereOptions<AOSProject> = {
     isBusinessProject: true,
+    projectStatus: {
+      isCompleted: false,
+    },
     portalWorkspace: {
       id: workspaceId,
     },
