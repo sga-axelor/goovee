@@ -46,7 +46,7 @@ import type {SearchParams} from '../../common/types/search-param';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
-import Hero from './hero';
+import Search from './search';
 import {cn} from '@/utils/css';
 
 export default async function Page({
@@ -138,7 +138,6 @@ export default async function Page({
 
   return (
     <>
-      <Hero projectId={projectId} />
       <div className="container my-6 space-y-6 mx-auto">
         <Breadcrumb>
           <BreadcrumbList>
@@ -161,6 +160,7 @@ export default async function Page({
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+        <Search projectId={projectId} />
         <Swipe items={items} />
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-xl">
