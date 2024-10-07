@@ -563,12 +563,12 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       invoicingType: true,
       invoicingUnit: {name: true},
       description: true,
-      taskDate: true,
       taskEndDate: true,
       displayFinancialData: true,
       attrs: true,
       assignedToContact: {simpleFullName: true, picture: {id: true}},
       requestedByContact: {simpleFullName: true, picture: {id: true}},
+      createdOn: true,
       projectTaskLinkList: {
         select: {
           projectTaskLinkType: {name: true},

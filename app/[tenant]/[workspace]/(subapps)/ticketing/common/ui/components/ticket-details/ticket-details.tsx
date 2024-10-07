@@ -306,7 +306,7 @@ export function TicketDetails(props: Props) {
               <span className="font-medium pe-2">
                 {i18n.get('Created on')}:
               </span>
-              {formatDate(ticket.taskDate)}
+              {formatDate(ticket.createdOn)}
             </p>
             <hr />
 
