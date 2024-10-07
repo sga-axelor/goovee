@@ -12,6 +12,7 @@ export const TicketFormSchema = z.object({
   priority: z.string({required_error: i18n.get('Priority is required')}),
   description: z.string().optional(),
   assignedTo: z.string({required_error: i18n.get('AssignedTo is required')}),
+  parentId: z.string().optional(),
 });
 
 export const UpdateTicketSchema = z.object({

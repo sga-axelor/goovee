@@ -198,7 +198,7 @@ export function TicketChildLinkForm({
         ref={formRef}
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-4">
-        <div className="flex gap-4 p-2 flex-col lg:flex-row">
+        <div className="flex gap-4 flex-col lg:flex-row">
           <FormField
             control={form.control}
             name="ticket"

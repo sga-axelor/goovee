@@ -67,6 +67,7 @@ export async function createTicket(
     category,
     project: projectId,
     assignedTo,
+    parentId,
   } = data;
 
   const client = await getClient();
@@ -87,6 +88,18 @@ export async function createTicket(
 
   if (!project) {
     throw new Error(i18n.get('Project not found'));
+  }
+
+  if (parentId) {
+    const parentTicket = await findTicketAccess(parentId, userId, workspaceId, {
+      project: {id: true},
+    });
+    if (!parentTicket) {
+      throw new Error(i18n.get('Parent ticket not found'));
+    }
+    if (parentTicket?.project?.id !== projectId) {
+      throw new Error(i18n.get('Parent ticket not in this project'));
+    }
   }
 
   const manager = project.assignedTo?.id;
@@ -111,6 +124,7 @@ export async function createTicket(
       ...(category && {projectTaskCategory: {select: {id: category}}}),
       ...(manager && {assignedTo: {select: {id: manager}}}),
       ...(priority && {priority: {select: {id: priority}}}),
+      ...(parentId && {parentTask: {select: {id: parentId}}}),
     },
     select: {name: true},
   });

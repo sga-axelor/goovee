@@ -1,15 +1,15 @@
 // ---- CORE IMPORTS ---- //
+import {i18n} from '@/lib/i18n';
+import {getSession} from '@/orm/auth';
+import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
+import {encodeFilter} from '@/utils/filter';
+import {workspacePathname} from '@/utils/workspace';
+import Link from 'next/link';
+import {notFound} from 'next/navigation';
+import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  findContactPartners,
-  findProject,
-  findTicketCategories,
-  findTicketPriorities,
-  findTicketStatuses,
-} from '../../../../common/orm/projects';
-import {TicketForm} from '../../../../common/ui/components/ticket-form';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,27 +18,33 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/ui/components';
-import {FaChevronRight} from 'react-icons/fa';
-import {workspacePathname} from '@/utils/workspace';
-import Link from 'next/link';
-import {i18n} from '@/lib/i18n';
-import {encodeFilter} from '@/utils/filter';
-import {findWorkspace} from '@/orm/workspace';
-import {getSession} from '@/orm/auth';
-import {notFound} from 'next/navigation';
+import {
+  findContactPartners,
+  findProject,
+  findTicketCategories,
+  findTicketPriorities,
+  findTicketStatuses,
+} from '../../../../common/orm/projects';
+import {findTicketAccess} from '../../../../common/orm/tickets';
+import {TicketForm} from '../../../../common/ui/components/ticket-form';
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: {
     tenant: string;
     workspace: string;
     'project-id': string;
   };
+  searchParams: {
+    parentId?: string;
+  };
 }) {
   const session = await getSession();
   if (!session?.user) notFound();
   const userId = session!.user.id;
   const projectId = params['project-id'];
+  const {parentId} = searchParams;
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
@@ -47,6 +53,18 @@ export default async function Page({
   }).then(clone);
 
   if (!workspace) notFound();
+
+  if (parentId) {
+    const parentTicket = await findTicketAccess(
+      parentId,
+      userId,
+      workspace.id,
+      {
+        project: {id: true},
+      },
+    );
+    if (parentTicket?.project?.id !== projectId) notFound();
+  }
 
   const [project, statuses, categories, priorities, contacts] =
     await Promise.all([
@@ -114,6 +132,7 @@ export default async function Page({
         priorities={priorities}
         contacts={contacts}
         userId={userId}
+        parentId={parentId}
       />
     </div>
   );

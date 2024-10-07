@@ -30,8 +30,8 @@ import {useForm} from 'react-hook-form';
 
 // ---- LOCAL IMPORT ---- //
 import {mutate, MutateProps} from '../../../actions';
-import {TicketFormSchema, TicketInfo} from '../../../schema';
 import type {Category, ContactPartner, Priority} from '../../../orm/projects';
+import {TicketFormSchema, TicketInfo} from '../../../schema';
 
 type TicketFormProps = {
   projectId: string;
@@ -39,10 +39,11 @@ type TicketFormProps = {
   categories: Category[];
   priorities: Priority[];
   contacts: ContactPartner[];
+  parentId?: string;
 };
 
 export function TicketForm(props: TicketFormProps) {
-  const {categories, priorities, projectId, contacts, userId} = props;
+  const {categories, priorities, projectId, contacts, userId, parentId} = props;
   const router = useRouter();
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
@@ -53,6 +54,7 @@ export function TicketForm(props: TicketFormProps) {
     resolver: zodResolver(TicketFormSchema),
     defaultValues: {
       assignedTo: userId.toString(),
+      parentId: parentId,
     },
   });
 
