@@ -1,61 +1,80 @@
 'use client';
 
-import React from 'react';
-import {HOST} from '../../../constants';
-import {FILES_API_ENDPOINT} from '../../../api/path-helpers';
+import React, {useEffect, useState} from 'react';
+import {getFilePreview} from '../../../api';
+import {FileIcon, VideoIcon, FileTextIcon, EyeIcon} from 'lucide-react';
+import {FullscreenImagePreview} from '..';
 
-interface FileProps {
-  file: {
-    id: string;
-    name: string;
-    extension: string;
-    mime_type: string;
-  };
-}
+export const FilePreview = ({file, token}: {file: any; token: string}) => {
+  const [urlFilePreview, setUrlFilePreview] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
 
-export const FilePreview = ({file}) => {
   const isImage = file.mime_type.startsWith('image/');
   const isVideo = file.mime_type.startsWith('video/');
   const isPDF = file.mime_type === 'application/pdf';
+
+  console.log('file', file);
+
+  useEffect(() => {
+    const fetchFilePreview = async () => {
+      const url = await getFilePreview(file.id, token);
+      setUrlFilePreview(url);
+    };
+    if (isImage) {
+      fetchFilePreview();
+    }
+  }, [file.id, token, isImage]);
 
   const renderPreview = () => {
     if (isImage) {
       return (
         <img
-          src={`${HOST}${FILES_API_ENDPOINT}/${file.id}/preview`}
+          src={urlFilePreview || ''}
           alt={file.name}
           className="max-w-full h-auto rounded"
         />
       );
     } else if (isVideo) {
-      return (
-        <video
-          src={`${HOST}${FILES_API_ENDPOINT}/${file.id}/preview`}
-          className="max-w-full h-auto rounded"
-          controls
-        />
-      );
+      return <VideoIcon size={48} className="text-blue-500" />;
     } else if (isPDF) {
-      return (
-        <embed
-          src={`${HOST}${FILES_API_ENDPOINT}/${file.id}/preview`}
-          type="application/pdf"
-          className="w-full h-24 rounded"
-        />
-      );
+      return <FileTextIcon size={48} className="text-red-500" />;
     } else {
-      return (
-        <div className="bg-gray-200 flex items-center justify-center rounded p-4">
-          <span className="text-gray-600">{file.extension.toUpperCase()}</span>
-        </div>
-      );
+      return <FileIcon size={48} className="text-gray-500" />;
     }
   };
 
+  const toggleZoom = () => {
+    setIsZoomed(!isZoomed);
+  };
+
   return (
-    <div className="m-1 flex flex-col items-center">
-      <div className="mb-1">{renderPreview()}</div>
-      <p className="text-xs text-center truncate max-w-full">{file.name}</p>
-    </div>
+    <>
+      <div
+        className="m-1 flex flex-col items-center relative"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}>
+        <div className="mb-1 relative">
+          {renderPreview()}
+          {isHovered && isImage && (
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded cursor-pointer"
+              onClick={() => setIsFullscreen(true)}>
+              <EyeIcon size={24} className="text-white" />
+            </div>
+          )}
+        </div>
+        <p className="text-xs text-center truncate max-w-full">{file.name}</p>
+      </div>
+      <FullscreenImagePreview
+        isFullscreen={isFullscreen}
+        setIsFullscreen={setIsFullscreen}
+        isZoomed={isZoomed}
+        toggleZoom={toggleZoom}
+        urlFilePreview={urlFilePreview}
+        file={file}
+      />
+    </>
   );
 };

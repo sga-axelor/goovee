@@ -6,3 +6,4 @@ export {EmojiPopup} from './emojiPopup/emojiPopup';
 export {FilePreview} from './filePreview/filePreview';
 export {FormattingToolbar} from './formatBar/formatBar';
 export {MarkdownRenderer} from './markdownRenderer/markdownRenderer';
+export {FullscreenImagePreview} from './fullScreenImagePreview/fullScreenImagePreview';

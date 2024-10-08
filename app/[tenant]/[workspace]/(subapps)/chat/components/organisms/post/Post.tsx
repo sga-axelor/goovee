@@ -17,11 +17,13 @@ interface GroupedReactions {
 
 export const Post = ({
   post,
+  token,
   onEmojiClick,
   getPost,
   setPostReply,
 }: {
   post: any;
+  token: string;
   onEmojiClick: (name: string, postId: string) => void;
   getPost: (rootId: string) => any;
   setPostReply: (post: any) => void;
@@ -77,7 +79,7 @@ export const Post = ({
       {post.metadata.files && post.metadata.files.length > 0 && (
         <div className="mt-2 flex flex-wrap">
           {post.metadata.files.map((file: any) => (
-            <FilePreview key={file.id} file={file} />
+            <FilePreview key={file.id} file={file} token={token} />
           ))}
         </div>
       )}

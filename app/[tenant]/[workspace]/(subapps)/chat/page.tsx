@@ -7,15 +7,21 @@ export default async function Chat({
   params: {tenant: string; workspace: string};
 }) {
   const {data: user, token} = await getAuthToken(
-    'r.paux@kp1.fr',
-    'R.paux@kp1.fr',
+    process.env.MATTERMOST_LOGIN,
+    process.env.MATTERMOST_PASSWORD,
   );
+  const teamId: any = process.env.MATTERMOST_TEAM_ID;
 
   const userStatus = await getUserStatus(user.id, token);
   const users = await getUsers(token);
 
-  console.log('user', user);
   return (
-    <ChatView token={token} user={user} userStatus={userStatus} users={users} />
+    <ChatView
+      token={token}
+      user={user}
+      userStatus={userStatus}
+      users={users}
+      teamId={teamId}
+    />
   );
 }

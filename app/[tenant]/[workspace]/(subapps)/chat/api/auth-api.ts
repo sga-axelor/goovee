@@ -2,7 +2,10 @@ import axios from 'axios';
 import {HOST} from '../constants';
 import {USERS_API_ENDPOINT} from './path-helpers';
 
-export const getAuthToken = async (login: string, password: string) => {
+export const getAuthToken = async (
+  login: string | undefined,
+  password: string | undefined,
+) => {
   try {
     const {data, headers} = await axios.post(
       `${HOST}${USERS_API_ENDPOINT}/login`,

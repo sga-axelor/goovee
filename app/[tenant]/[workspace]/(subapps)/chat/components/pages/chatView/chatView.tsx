@@ -17,11 +17,13 @@ export const ChatView = ({
   user,
   userStatus,
   users,
+  teamId,
 }: {
   token: any;
   user: any;
   userStatus: any;
   users: any[];
+  teamId: string;
 }) => {
   const [activeChannel, setActiveChannel] = useState<any>();
   const [_channels, setChannels] = useState<any>(null);
@@ -29,7 +31,6 @@ export const ChatView = ({
   const [channelJustSelected, setChannelJustSelected] = useState(false);
   const [newMessage, setNewMessage] = useState<boolean>(false);
   const activeChannelRef = useRef(activeChannel);
-  const teamId: any = '7efg3j4y3pgfpyjkjtmhnoxrcc';
 
   const updateChannelUnread = (channelId: string, newMessage: boolean) => {
     setChannels((prevChannels: any) =>

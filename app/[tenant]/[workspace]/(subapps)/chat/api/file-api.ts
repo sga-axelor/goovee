@@ -31,3 +31,14 @@ export const uploadFile = async (
   });
   return data;
 };
+
+export const getFilePreview = async (fileId: string, token: string) => {
+  const {data} = await axios({
+    responseType: 'blob',
+    method: 'get',
+    url: `${HOST}${FILES_API_ENDPOINT}/${fileId}/preview`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  const blob = new Blob([data], {type: 'image/png'});
+  return URL.createObjectURL(blob);
+};

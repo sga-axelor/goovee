@@ -48,6 +48,7 @@ export const GroupPost = ({
           <Post
             key={index}
             post={post}
+            token={token}
             onEmojiClick={onEmojiClick}
             getPost={getPost}
             setPostReply={setPostReply}
