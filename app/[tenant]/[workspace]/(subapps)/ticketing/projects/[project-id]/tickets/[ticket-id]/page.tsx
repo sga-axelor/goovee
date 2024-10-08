@@ -243,6 +243,7 @@ async function RelatedTickets({
   ticketId: ID;
   projectId?: ID;
 }) {
+  if (!projectId) return;
   const linkTypes = await findTicketLinkTypes(projectId);
   return (
     <>
@@ -250,6 +251,7 @@ async function RelatedTickets({
         linkTypes={clone(linkTypes)}
         ticketId={ticketId}
         links={links ?? []}
+        projectId={projectId}
       />
       <hr className="mt-5" />
       <Table>

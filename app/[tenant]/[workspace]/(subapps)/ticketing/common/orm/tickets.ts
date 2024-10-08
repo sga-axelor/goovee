@@ -812,6 +812,12 @@ export async function createRelatedTicketLink(
     throw new Error(i18n.get('Ticket not found'));
   }
 
+  if (currentTicket.project?.id !== linkTicket.project?.id) {
+    // This is enabled as per #85205
+    // remove this check to enable cross project linking
+    throw new Error(i18n.get('Cross project linking not allowed'));
+  }
+
   const type = await client.aOSProjectTaskLinkType.findOne({
     where: {id: linkType},
     select: {name: true, oppositeLinkType: {id: true, name: true}},

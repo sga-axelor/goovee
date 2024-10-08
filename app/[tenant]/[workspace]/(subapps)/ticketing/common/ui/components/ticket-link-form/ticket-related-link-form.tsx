@@ -34,12 +34,14 @@ export function TicketRelatedLinkForm({
   ticketId,
   onSubmit,
   links,
+  projectId,
 }: {
   linkTypes: {
     id: string;
     name: string;
   }[];
   ticketId: ID;
+  projectId: ID;
   links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
   onSubmit: () => void;
 }) {
@@ -133,6 +135,7 @@ export function TicketRelatedLinkForm({
                     value={field.value}
                     onChange={field.onChange}
                     excludeList={excludeList}
+                    projectId={projectId}
                   />
                 </FormControl>
                 <FormMessage />

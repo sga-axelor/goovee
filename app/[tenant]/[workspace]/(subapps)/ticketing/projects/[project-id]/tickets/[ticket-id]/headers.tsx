@@ -20,6 +20,7 @@ export function RelatedTicketsHeader(props: {
     id: string;
     name: string;
   }[];
+  projectId: ID;
   ticketId: ID;
   links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
 }) {
