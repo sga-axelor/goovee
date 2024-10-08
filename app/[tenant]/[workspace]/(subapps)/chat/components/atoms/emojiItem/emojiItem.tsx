@@ -1,8 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React from 'react';
 import {emojis, HOST} from '../../../constants';
 import styles from './index.module.css';
+import Image from 'next/image';
 
 export const EmojiItem = ({
   onEmojiClick,

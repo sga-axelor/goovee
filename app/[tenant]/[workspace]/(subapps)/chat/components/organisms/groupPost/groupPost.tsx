@@ -3,6 +3,7 @@
 import React, {useEffect, useState} from 'react';
 import {getUserProfileImage} from '../../../api';
 import {Post} from '../post/Post';
+import Image from 'next/image';
 
 export const GroupPost = ({
   group,
@@ -20,6 +21,7 @@ export const GroupPost = ({
   setPostReply: (post: any) => void;
 }) => {
   const [profileImage, setProfileImage] = useState<any>(null);
+  const currentUserId: string = group[0].user_id;
 
   useEffect(() => {
     const retrieveImage = async () => {
@@ -27,7 +29,7 @@ export const GroupPost = ({
       setProfileImage(userImage);
     };
     void retrieveImage();
-  }, [group[0].user_id, token]);
+  }, [currentUserId, token, group]);
 
   return (
     <div
@@ -35,7 +37,13 @@ export const GroupPost = ({
         !isLast ? 'border-b border-gray-200' : ''
       }`}>
       {profileImage && (
-        <img src={profileImage} alt="" className="w-10 h-10 rounded-full" />
+        <Image
+          src={profileImage}
+          alt=""
+          className="w-10 h-10 rounded-full"
+          width={10}
+          height={10}
+        />
       )}
       <div className="flex-1">
         <div className="flex items-center space-x-2">

@@ -58,7 +58,7 @@ export const ChatView = ({
       }
     };
     fetchChannels();
-  }, []);
+  }, [teamId, token, user.id, userStatus]);
 
   useEffect(() => {
     activeChannelRef.current = activeChannel;
@@ -76,7 +76,7 @@ export const ChatView = ({
     if (activeChannel) {
       fetchCurrentChannel();
     }
-  }, [activeChannel]);
+  }, [activeChannel, token, user.id]);
 
   const handleNewPost = useCallback(
     async (channelId: string, rootId: string, post: any) => {
@@ -87,7 +87,7 @@ export const ChatView = ({
         updateChannelUnread(channelId, true);
       }
     },
-    [activeChannelRef.current, setCurrentChannel],
+    [setCurrentChannel, token, user],
   );
 
   const sendMessage = (
@@ -114,7 +114,7 @@ export const ChatView = ({
         console.log('ce post a été effecé : ', post);
       }
     },
-    [activeChannelRef.current, setCurrentChannel],
+    [],
   );
 
   const handleNewReaction = useCallback(
@@ -133,14 +133,14 @@ export const ChatView = ({
         );
       }
     },
-    [activeChannel, setCurrentChannel],
+    [setCurrentChannel, token, user.id],
   );
 
   const handleEmojiClick = useCallback(
     (name: string, postId: string) => {
       addReaction(setCurrentChannel, name, postId, user.id, token, true);
     },
-    [user, setCurrentChannel],
+    [user, setCurrentChannel, token],
   );
 
   const loadMoreMessages = async () => {
@@ -203,20 +203,22 @@ export const ChatView = ({
         setActiveChannel={setActiveChannel}
         token={token}
       />
-      <ChannelView
-        channel={_currentChannel}
-        token={token}
-        onEmojiClick={handleEmojiClick}
-        channelId={activeChannel}
-        channelJustSelected={channelJustSelected}
-        setChannelJustSelected={setChannelJustSelected}
-        newMessage={newMessage}
-        setNewMessage={setNewMessage}
-        sendMessage={sendMessage}
-        loadMoreMessages={loadMoreMessages}
-        getPost={getPost}
-        users={users}
-      />
+      {_currentChannel && (
+        <ChannelView
+          channel={_currentChannel}
+          token={token}
+          onEmojiClick={handleEmojiClick}
+          channelId={activeChannel}
+          channelJustSelected={channelJustSelected}
+          setChannelJustSelected={setChannelJustSelected}
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+          sendMessage={sendMessage}
+          loadMoreMessages={loadMoreMessages}
+          getPost={getPost}
+          users={users}
+        />
+      )}
       <Socket
         token={token}
         connectedUserId={user.id}

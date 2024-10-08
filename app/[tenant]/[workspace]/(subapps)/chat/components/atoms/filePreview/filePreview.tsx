@@ -30,6 +30,7 @@ export const FilePreview = ({file, token}: {file: any; token: string}) => {
   const renderPreview = () => {
     if (isImage) {
       return (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={urlFilePreview || ''}
           alt={file.name}

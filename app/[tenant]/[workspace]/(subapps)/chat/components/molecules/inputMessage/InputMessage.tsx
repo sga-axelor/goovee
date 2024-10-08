@@ -64,7 +64,7 @@ export const InputMessage = ({
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
     }
-  }, [messageText]);
+  }, [messageText, chatContainerRef]);
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;

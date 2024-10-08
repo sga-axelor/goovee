@@ -39,9 +39,6 @@ export const ChannelView = ({
   getPost: (rootId: string) => void;
   users: any[];
 }) => {
-  if (!channel) {
-    return <div>Chargement du canal</div>;
-  }
   const [messageText, setMessageText] = useState<string>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const groupsPosts = Object.values(channel.groupsPosts);
@@ -76,7 +73,7 @@ export const ChannelView = ({
     [messagesRef],
   );
 
-  const isBottom = () => {
+  const isBottom = useCallback(() => {
     if (messagesRef.current) {
       const scrollThreshold = 150;
       return (
@@ -84,7 +81,7 @@ export const ChannelView = ({
         messagesRef.current.clientHeight + scrollThreshold
       );
     }
-  };
+  }, []);
 
   const handleScroll = useCallback(() => {
     if (
@@ -162,7 +159,14 @@ export const ChannelView = ({
       }, 300);
       setChannelJustSelected(false);
     }
-  }, [channelJustSelected, setChannelJustSelected, scrollToBottom]);
+  }, [
+    channelJustSelected,
+    setChannelJustSelected,
+    scrollToBottom,
+    channelId,
+    token,
+    users,
+  ]);
 
   useEffect(() => {
     if (newMessage) {
@@ -222,6 +226,10 @@ export const ChannelView = ({
   };
 
   const isSendEnabled = messageText.trim() !== '' || selectedFiles.length > 0;
+
+  if (!channel) {
+    return <div>Chargement du canal</div>;
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] bg-white flex-grow relative">
