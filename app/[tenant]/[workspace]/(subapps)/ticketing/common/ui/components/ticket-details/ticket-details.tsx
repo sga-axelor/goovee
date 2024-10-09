@@ -64,7 +64,8 @@ const getDefaultValues = (ticket: Cloned<Ticket>) => {
     category: ticket?.projectTaskCategory?.id,
     priority: ticket?.priority?.id,
     description: ticket?.description ?? '',
-    assignedTo: ticket?.assignedToContact?.id,
+    assignedTo: ticket?.assignment,
+    managedBy: ticket?.assignedToContact?.id,
   };
 };
 
@@ -138,13 +139,21 @@ export function TicketDetails(props: Props) {
     </>
   );
 
-  const assignToSupplier = ticket.assignment !== ASSIGNMENT.PROVIDER && (
-    <AssignToSupplier
+  const label =
+    ticket.assignment === ASSIGNMENT.PROVIDER
+      ? 'Assign to Client'
+      : 'Assign to Company';
+  const assignmentValue = ticket.assignment === ASSIGNMENT.PROVIDER ? 2 : 1;
+
+  const assignToButton = (
+    <AssignToButton
       id={ticket.id}
       version={ticket.version}
       disabled={form.formState.isSubmitting || loading}
       form={form}
       handleSubmit={handleSubmit}
+      label={label}
+      assignment={assignmentValue}
     />
   );
   return (
@@ -166,7 +175,7 @@ export function TicketDetails(props: Props) {
               {i18n.get('Save Changes')}
             </Button>
             <div className="contents lg:hidden">
-              {assignToSupplier}
+              {assignToButton}
               {closeAndCancel}
             </div>
           </div>
@@ -284,7 +293,7 @@ export function TicketDetails(props: Props) {
             <hr />
             <p className="flex !mt-3.5 items-center">
               <span className="font-medium pe-2">
-                {i18n.get('Requested by')}:
+                {i18n.get('Created by')}:
               </span>
               <Avatar className="h-8 w-8">
                 <AvatarImage
@@ -323,43 +332,52 @@ export function TicketDetails(props: Props) {
                       </div>
                     </div>
                   ) : (
-                    <FormField
-                      control={form.control}
-                      name="assignedTo"
-                      render={({field}) => (
-                        <FormItem className="flex items-center gap-2 space-y-0">
-                          <FormLabel className="font-medium text-md">
-                            {i18n.get('Assigned to')}:
-                          </FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value?.toString()}>
-                            <FormControl>
-                              <SelectTrigger className="w-fit">
-                                <SelectValue
-                                  placeholder={i18n.get('Select Assignee')}
-                                />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {contacts.map(contact => (
-                                <SelectItem
-                                  value={contact.id.toString()}
-                                  key={contact.id}>
-                                  {contact.simpleFullName}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="flex items-center gap-2 space-y-0">
+                      <span className="font-medium pe-2">
+                        {i18n.get('Assigned to')}:
+                      </span>
+                      <div className="h-10 flex items-center">
+                        {ticket.project?.clientPartner?.simpleFullName}
+                      </div>
+                    </div>
                   )}
                 </div>
-                <div className="hidden lg:block ml-auto">
-                  {assignToSupplier}
-                </div>
+                <div className="lg:block ml-auto">{assignToButton}</div>
+              </div>
+
+              <div className="lg:flex space-y-2 mb-3">
+                <FormField
+                  control={form.control}
+                  name="managedBy"
+                  render={({field}) => (
+                    <FormItem className="flex items-center gap-2 space-y-0">
+                      <FormLabel className="font-medium text-md">
+                        {i18n.get('Managed by')}:
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value?.toString()}>
+                        <FormControl>
+                          <SelectTrigger className="w-fit">
+                            <SelectValue
+                              placeholder={i18n.get('Select Assignee')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {contacts.map(contact => (
+                            <SelectItem
+                              value={contact.id.toString()}
+                              key={contact.id}>
+                              {contact.simpleFullName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <p>
                 <span className="font-medium pe-2">Expected on:</span>
@@ -450,16 +468,28 @@ type ActionProps = {
     onSuccess?: (res: MutateResponse) => Promise<void>,
   ) => void;
   className?: string;
+  label?: string;
+  assignment?: number;
 };
 
-function AssignToSupplier(props: ActionProps) {
-  const {id, version, disabled, form, handleSubmit, className} = props;
+function AssignToButton(props: ActionProps) {
+  const {
+    id,
+    version,
+    disabled,
+    form,
+    handleSubmit,
+    className,
+    label,
+    assignment,
+  } = props;
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
     assignToSupplier,
-    i18n.get('Ticket assigned to supplier'),
+    assignment === 1
+      ? i18n.get('Ticket assigned to company')
+      : i18n.get('Ticket assigned to client'),
   );
-
   const handleClick = useCallback(async () => {
     if (disabled) return;
     const onSuccess = async (data?: MutateResponse) => {
@@ -471,6 +501,7 @@ function AssignToSupplier(props: ActionProps) {
       return await action({
         data: {id: id, version: newVersion},
         workspaceURL,
+        assignment: assignment,
       });
     };
 
@@ -484,7 +515,16 @@ function AssignToSupplier(props: ActionProps) {
     }
 
     await onSuccess();
-  }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
+  }, [
+    id,
+    version,
+    workspaceURL,
+    action,
+    form,
+    handleSubmit,
+    disabled,
+    assignment,
+  ]);
 
   return (
     <Button
@@ -494,7 +534,7 @@ function AssignToSupplier(props: ActionProps) {
       variant="success"
       disabled={loading || disabled}
       onClick={handleClick}>
-      {i18n.get('Assign to supplier')}
+      {i18n.get(`${label}`)}
     </Button>
   );
 }

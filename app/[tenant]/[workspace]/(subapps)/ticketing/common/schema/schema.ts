@@ -11,8 +11,9 @@ export const TicketFormSchema = z.object({
   category: z.string({required_error: i18n.get('Category is required')}),
   priority: z.string({required_error: i18n.get('Priority is required')}),
   description: z.string().optional(),
-  assignedTo: z.string({required_error: i18n.get('AssignedTo is required')}),
+  assignedTo: z.number({required_error: i18n.get('AssignedTo is required')}),
   parentId: z.string().optional(),
+  managedBy: z.string().optional(),
 });
 
 export const UpdateTicketSchema = z.object({
@@ -24,7 +25,8 @@ export const UpdateTicketSchema = z.object({
   status: z.string().optional(),
   assignment: z.number().optional(),
   description: z.string().optional(),
-  assignedTo: z.string().optional(),
+  assignedTo: z.number().optional(),
+  managedBy: z.string().optional(),
 });
 
 export const CreateTicketSchema = TicketFormSchema.extend({
@@ -51,7 +53,7 @@ export const ChildTicketSchema = z.object({
 });
 
 export const FilterSchema = z.object({
-  requestedBy: z.array(z.string()).optional(),
+  createdBy: z.array(z.string()).optional(),
   priority: z.array(z.string()).optional(),
   status: z.array(z.string()).optional(),
   updatedOn: z
@@ -84,6 +86,7 @@ export const FilterSchema = z.object({
     .optional(),
   myTickets: z.boolean().optional(),
   assignedTo: z.array(z.string()).optional(),
+  managedBy: z.array(z.string()).optional(),
   assignment: z.literal(ASSIGNMENT.PROVIDER).nullable().optional(),
 });
 

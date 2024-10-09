@@ -310,6 +310,7 @@ export async function updateTicket(
     status,
     assignment,
     assignedTo,
+    managedBy,
     id,
     version,
   } = data;
@@ -322,6 +323,7 @@ export async function updateTicket(
     ...(status && {status: {name: true}}),
     ...(assignment && {assignment: true}),
     ...(assignedTo && {assignedToContact: {name: true}}),
+    ...(managedBy && {assignedToContact: {name: true}}),
   };
 
   const oldTicket = await findTicketAccess(id, userId, workspaceId, select);
@@ -342,6 +344,7 @@ export async function updateTicket(
       ...(status && {status: {select: {id: status}}}),
       ...(assignment && {assignment: assignment}),
       ...(assignedTo && {assignedToContact: {select: {id: assignedTo}}}),
+      ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
     },
     select: {
       id: true,
@@ -538,7 +541,11 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
       status: {name: true},
       projectTaskCategory: {name: true},
       priority: {name: true},
-      project: {name: true, company: {name: true, logo: {id: true}}},
+      project: {
+        name: true,
+        company: {name: true, logo: {id: true}},
+        clientPartner: {simpleFullName: true},
+      },
       assignedTo: {name: true},
     },
   });
@@ -578,7 +585,11 @@ export async function findTicket(ticketId: ID, projectId: ID) {
             status: {name: true},
             projectTaskCategory: {name: true},
             priority: {name: true},
-            project: {name: true, company: {name: true, logo: {id: true}}},
+            project: {
+              name: true,
+              company: {name: true, logo: {id: true}},
+              clientPartner: {simpleFullName: true},
+            },
             assignedTo: {name: true},
             assignedToContact: {simpleFullName: true, picture: {id: true}},
             requestedByContact: {simpleFullName: true, picture: {id: true}},
@@ -593,7 +604,11 @@ export async function findTicket(ticketId: ID, projectId: ID) {
           status: {name: true},
           projectTaskCategory: {name: true},
           priority: {name: true},
-          project: {name: true, company: {name: true, logo: {id: true}}},
+          project: {
+            name: true,
+            company: {name: true, logo: {id: true}},
+            clientPartner: {simpleFullName: true},
+          },
           assignedTo: {name: true},
           assignedToContact: {simpleFullName: true, picture: {id: true}},
           requestedByContact: {simpleFullName: true, picture: {id: true}},
@@ -606,13 +621,21 @@ export async function findTicket(ticketId: ID, projectId: ID) {
         status: {name: true},
         projectTaskCategory: {name: true},
         priority: {name: true},
-        project: {name: true, company: {name: true, logo: {id: true}}},
+        project: {
+          name: true,
+          company: {name: true, logo: {id: true}},
+          clientPartner: {simpleFullName: true},
+        },
         assignedTo: {name: true},
         assignedToContact: {simpleFullName: true, picture: {id: true}},
         requestedByContact: {simpleFullName: true, picture: {id: true}},
         assignment: true,
       },
-      project: {name: true, company: {name: true, logo: {id: true}}},
+      project: {
+        name: true,
+        company: {name: true, logo: {id: true}},
+        clientPartner: {simpleFullName: true},
+      },
       projectTaskCategory: {name: true},
       priority: {name: true},
       assignedTo: {name: true},

@@ -87,13 +87,14 @@ export async function mutate(
 type TicketActionProps = {
   workspaceURL: string;
   data: {id: string; version: number};
+  assignment?: number;
 };
 
 export async function assignToSupplier(
   props: TicketActionProps,
   force?: boolean,
 ): ActionResponse<true> {
-  const {workspaceURL, data} = props;
+  const {workspaceURL, data, assignment} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
@@ -102,7 +103,7 @@ export async function assignToSupplier(
   try {
     const updateData = UpdateTicketSchema.parse({
       ...data,
-      assignment: ASSIGNMENT.PROVIDER,
+      assignment: assignment === 1 ? ASSIGNMENT.PROVIDER : ASSIGNMENT.CUSTOMER,
     });
 
     if (force) {
