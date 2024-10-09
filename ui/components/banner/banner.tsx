@@ -84,7 +84,7 @@ export const Banner = ({
     <div
       className={cn(className, bannerVariants({blendMode, background}))}
       style={{backgroundImage: image}}>
-      <div className="px-4 flex text-white items-center flex-col justify-center">
+      <div className="px-4 flex text-white items-center flex-col justify-cente py-0.5">
         {groupImg && (
           <div className="w-20 h-20 overflow-hidden rounded-lg relative mb-4">
             <Image
@@ -97,10 +97,10 @@ export const Banner = ({
           </div>
         )}
         <h2 className="lg:text-[32px] text-2xl font-semibold mb-2">{title}</h2>
-        <p className="lg:text-lg text-base font-medium mb-8 md:max-w-screen-sm lg:max-w-screen-md text-center">
+        <p className="lg:text-lg text-base font-medium md:max-w-screen-sm lg:max-w-screen-md text-center">
           {description}
         </p>
-        {renderSearch && renderSearch()}
+        {renderSearch && renderSearch?.()}
       </div>
     </div>
   );
