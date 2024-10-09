@@ -30,7 +30,7 @@ import {
   GROUPS,
   JOIN_GROUP_TO_POST,
   MEMBER,
-  NOT_MEMBER,
+  OTHER_GROUPS,
   START_A_POST,
   TAB_TITLES,
 } from '@/subapps/forum/common/constants';
@@ -167,7 +167,7 @@ export const HomePage = () => {
             />
           )}
           <GroupActionList
-            title={NOT_MEMBER}
+            title={OTHER_GROUPS}
             groups={nonMemberGroupList}
             isMember={false}
             userId={user?.id}

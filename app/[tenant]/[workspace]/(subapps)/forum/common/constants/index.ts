@@ -26,6 +26,7 @@ const PostsContent = lazy(
 export const GROUPS = 'Groups';
 export const MEMBER = 'Member';
 export const NOT_MEMBER = 'Not member';
+export const OTHER_GROUPS = 'Other groups';
 export const SEARCH_HERE = 'Search here';
 export const DISABLED_SEARCH_PLACEHOLDER = 'You must log in to be able to post';
 export const MARK_AS_READ = 'Mark as read';
