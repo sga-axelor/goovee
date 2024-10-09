@@ -4,7 +4,7 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation} from 'swiper/modules';
 
 // ---- CORE IMPORTS ---- //
-import {Dialog, DialogContent} from '@/ui/components';
+import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
 import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
@@ -27,6 +27,7 @@ export const ThreadPopup = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
         className={`${styles['my-styles']} max-w-[72rem] max-h-[55rem] md:max-h-[48em] overflow-hidden px-0 py-0 md:h-full border-none md:rounded-l-xl flex items-center`}>
+        <DialogTitle className="hidden" />
         <div className="w-full h-full flex flex-col md:flex-row gap-4">
           <div className=" w-full md:w-1/2 h-[480px] md:h-full md:pt-0 flex flex-col md:flex-row gap-4 md:mt-0 ">
             <div className="bg-black w-full h-full md:h-auto md:rounded-l-lg md:px-4">
@@ -44,9 +45,10 @@ export const ThreadPopup = ({
                 {images.map((image: Image, index: number) => (
                   <SwiperSlide key={index} className="flex items-center">
                     <div
-                      className="w-full h-full bg-no-repeat bg-center bg-cover"
+                      className="w-full h-full bg-no-repeat bg-center"
                       style={{
                         backgroundImage: `url(${getImageURL(image?.metaFile?.id)})`,
+                        backgroundSize: '100%',
                       }}></div>
                   </SwiperSlide>
                 ))}
