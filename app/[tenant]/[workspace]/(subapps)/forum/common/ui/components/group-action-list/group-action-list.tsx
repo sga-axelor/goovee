@@ -157,7 +157,7 @@ export const GroupActionList = ({
           return (
             <Collapsible key={group?.id}>
               <div
-                className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${groupId && groupId === (isMember ? group.forumGroup.id : group.id) ? 'bg-success-light' : ' '}`}>
+                className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${groupId && groupId === (isMember ? group.forumGroup.id : group.id) ? 'bg-success-light px-1' : ''}`}>
                 <div
                   onClick={() => handlePath(group?.forumGroup?.id || group?.id)}
                   className="flex items-center gap-2">
