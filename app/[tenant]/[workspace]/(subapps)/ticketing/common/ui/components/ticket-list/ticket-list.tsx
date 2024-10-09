@@ -50,7 +50,7 @@ export function TicketList(props: TicketListProps) {
                   getter && toggleSort({key: column.key, getter});
                 }}
                 className={cn(
-                  'text-card-foreground cursor-pointer text-base font-semibold border-none',
+                  'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
                 )}>
                 <div className="flex gap-1 items-center">
                   <div className="line-clamp-1">{label}</div>

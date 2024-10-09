@@ -12,8 +12,8 @@ export const columns: Column<SortKey>[] = [
     label: 'Ticket ID',
   },
   {
-    key: 'requestedBy',
-    label: 'Requested by',
+    key: 'createdBy',
+    label: 'Created by',
   },
   {
     key: 'subject',
@@ -32,6 +32,10 @@ export const columns: Column<SortKey>[] = [
     label: 'Category',
   },
   {
+    key: 'managedBy',
+    label: 'Managed by',
+  },
+  {
     key: 'assignedTo',
     label: 'Assigned to',
   },
@@ -44,12 +48,13 @@ export const columns: Column<SortKey>[] = [
 // NOTE: This is used for serverside sorting
 export const sortKeyPathMap: Record<string, string> = {
   ticketId: 'id',
-  requestedBy: 'requestedByContact.simpleFullName',
+  createdBy: 'requestedByContact.simpleFullName',
   subject: 'name',
   priority: 'priority.name',
   status: 'status.name',
   category: 'projectTaskCategory.name',
-  assignedTo: 'assignedToContact.simpleFullName',
+  managedBy: 'assignedToContact.simpleFullName',
+  assignedTo: 'assignment',
   updatedOn: 'updatedOn',
 };
 
@@ -57,7 +62,7 @@ type Getter = (t: Cloned<TicketListTicket>) => unknown;
 // NOTE: This is used for clientside sorting
 export const sortValueGetterMap: Record<string, string | Getter> = {
   ticketId: 'id',
-  requestedBy: t =>
+  createdBy: t =>
     t.requestedByContact?.simpleFullName ?? t.project?.company?.name,
   subject: 'name',
   priority: 'priority.name',
@@ -66,8 +71,9 @@ export const sortValueGetterMap: Record<string, string | Getter> = {
   assignedTo: t =>
     t.assignment === ASSIGNMENT.PROVIDER
       ? t.project?.company?.name
-      : t.assignedToContact?.simpleFullName,
+      : t.project?.clientPartner?.simpleFullName,
   updatedOn: 'updatedOn',
+  managedBy: t => t.assignedToContact?.simpleFullName,
 };
 
 export const TYPE_SELECT = {

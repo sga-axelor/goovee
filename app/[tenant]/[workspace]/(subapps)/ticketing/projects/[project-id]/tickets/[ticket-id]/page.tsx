@@ -50,7 +50,12 @@ import {
   RelatedTicketRows,
   TicketRows,
 } from '../../../../common/ui/components/ticket-list';
-import {ChildTicketsHeader, RelatedTicketsHeader} from './headers';
+import {
+  ChildTicketsHeader,
+  ChildTicketTableHeader,
+  RelatedTicketsHeader,
+  RelatedTicketsTableHeader,
+} from './headers';
 
 export default async function Page({
   params,
@@ -212,6 +217,7 @@ async function ChildTickets({
       />
       <hr className="mt-5" />
       <Table>
+        <ChildTicketTableHeader />
         <TableBody>
           <ChildTicketRows ticketId={ticketId} tickets={tickets ?? []} />
         </TableBody>
@@ -255,6 +261,7 @@ async function RelatedTickets({
       />
       <hr className="mt-5" />
       <Table>
+        <RelatedTicketsTableHeader />
         <TableBody>
           <RelatedTicketRows links={links ?? []} ticketId={ticketId} />
         </TableBody>

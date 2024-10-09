@@ -32,7 +32,7 @@ interface TicketDetailRowProps {
 
 const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
   <>
-    <p className="text-base font-semibold mb-0">{i18n.get(label)}</p>
+    <p className="text-xs font-semibold mb-0">{i18n.get(label)}</p>
     <p className="flex justify-self-end items-center">{children}</p>
   </>
 );
@@ -77,7 +77,7 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
       <Fragment key={ticket.id}>
         <TableRow
           onClick={handleClick}
-          className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100">
+          className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100 text-xs">
           <TableCell className="px-5">
             <p className="font-medium">#{ticket.id}</p>
           </TableCell>
@@ -95,9 +95,10 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
               <TableCell>
                 <Category name={ticket.projectTaskCategory?.name} />
               </TableCell>
+              <TableCell>{ticket.assignedToContact?.simpleFullName}</TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
-                  ? ticket.assignedToContact?.simpleFullName
+                  ? ticket.project?.clientPartner?.simpleFullName
                   : ticket?.project?.company?.name}
               </TableCell>
               <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
@@ -121,37 +122,28 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
         </TableRow>
         {small && (
           <Collapsible open={ticket.id === openId} asChild>
-            <TableRow>
+            <TableRow className="text-xs">
               <CollapsibleContent asChild>
                 <TableCell colSpan={2}>
                   <div className="grid grid-cols-2 gap-y-2">
-                    <Item label="Requested by">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          className="object-cover"
-                          src={getProfilePic(
-                            ticket.requestedByContact?.id
-                              ? ticket.requestedByContact.picture?.id
-                              : ticket.project?.company?.logo?.id,
-                          )}
-                        />
-                      </Avatar>
-                      <span className="ms-2">
-                        {ticket.requestedByContact?.id
-                          ? ticket.requestedByContact?.simpleFullName
-                          : ticket.project?.company?.name}
-                      </span>
-                    </Item>
-
                     <Item label="Priority">
                       <Priority name={ticket.priority?.name} />
                     </Item>
                     <Item label="Status">
                       <Status name={ticket.status?.name} />
                     </Item>
+                    <Item label="Category">
+                      <Category
+                        name={ticket.projectTaskCategory?.name}
+                        className="me-0"
+                      />
+                    </Item>
+                    <Item label="Managed by">
+                      {ticket.assignedToContact?.simpleFullName}
+                    </Item>
                     <Item label="Assigned to">
                       {ticket.assignment === ASSIGNMENT.CUSTOMER
-                        ? ticket.assignedToContact?.simpleFullName
+                        ? ticket.project?.clientPartner?.simpleFullName
                         : ticket.project?.company?.name}
                     </Item>
                     <Item label="Updated On">

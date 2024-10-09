@@ -110,7 +110,7 @@ export default async function Page({
       iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
     {
-      label: 'Assigned tickets',
+      label: 'Managed tickets',
       count: getAssignedTicketCount(projectId, userId),
       icon: MdListAlt,
       href: `${ticketsURL}?filter=${encodeFilter({status, assignedTo: [userId]})}`,

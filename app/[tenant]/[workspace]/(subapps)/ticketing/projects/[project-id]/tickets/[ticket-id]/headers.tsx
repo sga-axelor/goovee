@@ -1,6 +1,7 @@
 'use client';
 import {i18n} from '@/lib/i18n';
 import {Cloned} from '@/types/util';
+import {TableHead, TableHeader, TableRow} from '@/ui/components';
 import {ID} from '@goovee/orm';
 import type {
   Category,
@@ -14,6 +15,10 @@ import {
   TicketChildLinkForm,
   TicketRelatedLinkForm,
 } from '../../../../common/ui/components/ticket-link-form';
+import {useResponsive} from '@/ui/hooks';
+import {columns} from '../../../../common/constants';
+import {cn} from '@/utils/css';
+import {Column, SortKey} from '../../../../common/types';
 
 export function RelatedTicketsHeader(props: {
   linkTypes: {
@@ -80,5 +85,72 @@ export function ChildTicketsHeader(props: {
         />
       )}
     />
+  );
+}
+
+export function ChildTicketTableHeader() {
+  const res = useResponsive();
+  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
+  const mainColumns = small
+    ? [columns[0], columns[2]]
+    : columns.filter((column, index) => index !== 1);
+
+  return (
+    <TableHeader>
+      <TableRow>
+        {mainColumns?.map((column, index) => {
+          return (
+            <TableHead
+              key={column.key}
+              className={cn(
+                'text-card-foreground cursor-pointer text-xs font-semibold border-none',
+              )}>
+              <div
+                className={cn('flex gap-1 items-center', {
+                  'flex-row-reverse': index === 1 && small,
+                })}>
+                <div className="line-clamp-1">{column.label}</div>
+              </div>
+            </TableHead>
+          );
+        })}
+      </TableRow>
+    </TableHeader>
+  );
+}
+
+export function RelatedTicketsTableHeader() {
+  const res = useResponsive();
+  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
+  const newField = {
+    key: 'link',
+    label: 'Link',
+  };
+  const updatedColumns: Column<SortKey>[] = [newField, ...columns];
+  const mainColumns = small ? [columns[0], columns[2]] : updatedColumns;
+  return (
+    <TableHeader>
+      <TableRow>
+        {mainColumns?.map((column, index) => {
+          return (
+            index !== 2 &&
+            index !== 6 && (
+              <TableHead
+                key={column.key}
+                className={cn(
+                  'text-card-foreground cursor-pointer text-xs font-semibold border-none',
+                )}>
+                <div
+                  className={cn('flex gap-1 items-center', {
+                    'flex-row-reverse': index === 1 && small,
+                  })}>
+                  <div className="line-clamp-1">{column.label}</div>
+                </div>
+              </TableHead>
+            )
+          );
+        })}
+      </TableRow>
+    </TableHeader>
   );
 }

@@ -21,7 +21,7 @@ import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 import {deleteRelatedLink} from '../../../actions';
 import {ASSIGNMENT, columns} from '../../../constants';
 import type {Ticket} from '../../../orm/tickets';
-import {getProfilePic} from '../../../utils';
+import {formatDate, getProfilePic} from '../../../utils';
 import {Button} from '../delete-button';
 import {Category, Priority, Status} from '../pills';
 
@@ -32,7 +32,7 @@ interface TicketDetailRowProps {
 
 const Item: React.FC<TicketDetailRowProps> = ({label, children}) => (
   <>
-    <p className="text-base font-semibold mb-0">{i18n.get(label)}</p>
+    <p className="text-xs font-semibold mb-0">{i18n.get(label)}</p>
     <p className="flex justify-self-end items-center">{children}</p>
   </>
 );
@@ -80,9 +80,13 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
       <Fragment key={link.id}>
         <TableRow
           onClick={handleClick}
-          className="[&:not(:has(.action:hover))]:cursor-pointer  [&:not(:has(.action:hover)):hover]:bg-slate-100">
+          className="[&:not(:has(.action:hover))]:cursor-pointer  [&:not(:has(.action:hover)):hover]:bg-slate-100 text-xs">
           <TableCell>
-            <p className="font-medium">{link.projectTaskLinkType?.name}</p>
+            {small ? (
+              <p className="font-medium">#{ticket.id}</p>
+            ) : (
+              <p className="font-medium">{link.projectTaskLinkType?.name}</p>
+            )}
           </TableCell>
           {!small ? (
             <>
@@ -99,20 +103,20 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
               <TableCell>
                 <Status name={ticket.status?.name} />
               </TableCell>
-              <TableCell>
-                <Category name={ticket.projectTaskCategory?.name} />
-              </TableCell>
+
+              <TableCell>{ticket.assignedToContact?.simpleFullName}</TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
-                  ? ticket.assignedToContact?.simpleFullName
+                  ? ticket.project?.clientPartner?.simpleFullName
                   : ticket?.project?.company?.name}
               </TableCell>
+              <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
             </>
           ) : (
             <TableCell
               className="flex float-end items-center action"
               onClick={handleCollapse}>
-              <p className="font-medium px-5">#{ticket.id}</p>
+              <p className="font-medium px-5">{ticket.name}</p>
               {ticket?.id === openId ? (
                 <MdArrowDropUp className="cursor-pointer ms-1 inline" />
               ) : (
@@ -131,30 +135,15 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
         </TableRow>
         {small && (
           <Collapsible open={ticket.id === openId} asChild>
-            <TableRow>
+            <TableRow className="text-xs">
               <CollapsibleContent asChild>
-                <TableCell colSpan={3}>
+                <TableCell colSpan={2}>
                   <div className="grid grid-cols-2 gap-y-2">
-                    <Item label="Subject">
+                    <Item label="Link Type">
                       <span className="max-w-48 line-clamp-2">
-                        {ticket.name}
-                      </span>
-                    </Item>
-                    <Item label="Requested by">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          className="object-cover"
-                          src={getProfilePic(
-                            ticket.requestedByContact?.id
-                              ? ticket.requestedByContact.picture?.id
-                              : ticket.project?.company?.logo?.id,
-                          )}
-                        />
-                      </Avatar>
-                      <span className="ms-2">
-                        {ticket.requestedByContact?.id
-                          ? ticket.requestedByContact?.simpleFullName
-                          : ticket.project?.company?.name}
+                        <p className="font-medium">
+                          {link.projectTaskLinkType?.name}
+                        </p>
                       </span>
                     </Item>
 
@@ -164,11 +153,16 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                     <Item label="Status">
                       <Status name={ticket.status?.name} />
                     </Item>
+
+                    <Item label="Managed by">
+                      {ticket.assignedToContact?.simpleFullName}
+                    </Item>
                     <Item label="Assigned to">
                       {ticket.assignment === ASSIGNMENT.CUSTOMER
-                        ? ticket.assignedToContact?.simpleFullName
+                        ? ticket.project?.clientPartner?.simpleFullName
                         : ticket.project?.company?.name}
                     </Item>
+                    <Item label="Updated">{formatDate(ticket.updatedOn)}</Item>
                   </div>
                 </TableCell>
               </CollapsibleContent>
