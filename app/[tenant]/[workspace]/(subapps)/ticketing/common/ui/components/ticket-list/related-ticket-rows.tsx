@@ -81,7 +81,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
         <TableRow
           onClick={handleClick}
           className="[&:not(:has(.action:hover))]:cursor-pointer  [&:not(:has(.action:hover)):hover]:bg-slate-100 text-xs">
-          <TableCell>
+          <TableCell className="p-3">
             {small ? (
               <p className="font-medium">#{ticket.id}</p>
             ) : (
@@ -90,33 +90,37 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
           </TableCell>
           {!small ? (
             <>
-              <TableCell className="px-5">
+              <TableCell className="p-3">
                 <p className="font-medium">#{ticket.id}</p>
               </TableCell>
 
-              <TableCell className="max-w-40 ">
+              <TableCell className="max-w-40 p-3">
                 <div className="line-clamp-2">{ticket.name}</div>
               </TableCell>
-              <TableCell>
+              <TableCell className="p-3">
                 <Priority name={ticket.priority?.name} />
               </TableCell>
-              <TableCell>
+              <TableCell className="p-3">
                 <Status name={ticket.status?.name} />
               </TableCell>
 
-              <TableCell>{ticket.assignedToContact?.simpleFullName}</TableCell>
+              <TableCell className="p-3">
+                {ticket.assignedToContact?.simpleFullName}
+              </TableCell>
               <TableCell>
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
                   ? ticket.project?.clientPartner?.simpleFullName
                   : ticket?.project?.company?.name}
               </TableCell>
-              <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
+              <TableCell className="p-3">
+                {formatDate(ticket.updatedOn)}
+              </TableCell>
             </>
           ) : (
             <TableCell
-              className="flex float-end items-center action"
+              className="flex float-end items-center action p-3"
               onClick={handleCollapse}>
-              <p className="font-medium px-5">{ticket.name}</p>
+              <p className="">{ticket.name}</p>
               {ticket?.id === openId ? (
                 <MdArrowDropUp className="cursor-pointer ms-1 inline" />
               ) : (
@@ -125,7 +129,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
             </TableCell>
           )}
 
-          <TableCell className="text-center action pointer-events-none">
+          <TableCell className="text-center action pointer-events-none p-3">
             <DeleteCell
               ticketId={ticketId}
               relatedTicketId={ticket.id}
@@ -141,9 +145,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                   <div className="grid grid-cols-2 gap-y-2">
                     <Item label="Link Type">
                       <span className="max-w-48 line-clamp-2">
-                        <p className="font-medium">
-                          {link.projectTaskLinkType?.name}
-                        </p>
+                        {link.projectTaskLinkType?.name}
                       </span>
                     </Item>
 

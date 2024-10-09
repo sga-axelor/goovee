@@ -103,7 +103,7 @@ export function ChildTicketTableHeader() {
             <TableHead
               key={column.key}
               className={cn(
-                'text-card-foreground cursor-pointer text-xs font-semibold border-none',
+                'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
               )}>
               <div
                 className={cn('flex gap-1 items-center', {
@@ -138,7 +138,7 @@ export function RelatedTicketsTableHeader() {
               <TableHead
                 key={column.key}
                 className={cn(
-                  'text-card-foreground cursor-pointer text-xs font-semibold border-none',
+                  'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
                 )}>
                 <div
                   className={cn('flex gap-1 items-center', {

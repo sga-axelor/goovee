@@ -78,34 +78,38 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
         <TableRow
           onClick={handleClick}
           className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100 text-xs">
-          <TableCell className="px-5">
+          <TableCell className="p-3">
             <p className="font-medium">#{ticket.id}</p>
           </TableCell>
           {!small ? (
             <>
-              <TableCell className="max-w-40 ">
+              <TableCell className="max-w-40 p-3">
                 <div className="line-clamp-2">{ticket.name}</div>
               </TableCell>
-              <TableCell>
+              <TableCell className="p-3">
                 <Priority name={ticket.priority?.name} />
               </TableCell>
-              <TableCell>
+              <TableCell className="p-3">
                 <Status name={ticket.status?.name} />
               </TableCell>
-              <TableCell>
+              <TableCell className="p-3">
                 <Category name={ticket.projectTaskCategory?.name} />
               </TableCell>
-              <TableCell>{ticket.assignedToContact?.simpleFullName}</TableCell>
-              <TableCell>
+              <TableCell className="p-3">
+                {ticket.assignedToContact?.simpleFullName}
+              </TableCell>
+              <TableCell className="p-3">
                 {ticket.assignment === ASSIGNMENT.CUSTOMER
                   ? ticket.project?.clientPartner?.simpleFullName
                   : ticket?.project?.company?.name}
               </TableCell>
-              <TableCell>{formatDate(ticket.updatedOn)}</TableCell>
+              <TableCell className="p-3">
+                {formatDate(ticket.updatedOn)}
+              </TableCell>
             </>
           ) : (
             <TableCell
-              className="flex float-end items-center action"
+              className="flex float-end items-center action p-3"
               onClick={handleCollapse}>
               <p className="max-w-48 line-clamp-2">{ticket.name}</p>
               {ticket?.id === openId ? (
@@ -116,7 +120,7 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
             </TableCell>
           )}
 
-          <TableCell className="text-center action pointer-events-none">
+          <TableCell className="text-center action pointer-events-none p-3">
             <DeleteCell ticketId={ticketId} relatedTicketId={ticket.id} />
           </TableCell>
         </TableRow>
