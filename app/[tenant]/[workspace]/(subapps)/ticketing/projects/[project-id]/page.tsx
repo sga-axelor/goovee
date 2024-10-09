@@ -37,7 +37,7 @@ import {findProject, findTicketStatuses} from '../../common/orm/projects';
 import {
   findTickets,
   getAllTicketCount,
-  getAssignedTicketCount,
+  getManagedTicketCount,
   getCreatedTicketCount,
   getMyTicketCount,
   getResolvedTicketCount,
@@ -48,6 +48,7 @@ import {TicketList} from '../../common/ui/components/ticket-list';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
 import Search from './search';
 import {cn} from '@/utils/css';
+import {EncodedFilter} from '../../common/schema';
 
 export default async function Page({
   params,
@@ -93,7 +94,7 @@ export default async function Page({
 
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const statusCompleted = statuses.filter(s => s.isCompleted).map(s => s.id);
-  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;
   const items = [
     {
       label: 'All Tickets',
@@ -105,29 +106,29 @@ export default async function Page({
     {
       label: 'My tickets',
       count: getMyTicketCount(projectId, userId),
-      href: `${ticketsURL}?filter=${encodeFilter({status, myTickets: true})}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, myTickets: true})}`,
       icon: MdAllInbox,
       iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
     {
       label: 'Managed tickets',
-      count: getAssignedTicketCount(projectId, userId),
+      count: getManagedTicketCount(projectId, userId),
       icon: MdListAlt,
-      href: `${ticketsURL}?filter=${encodeFilter({status, assignedTo: [userId]})}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, managedBy: [userId.toString()]})}`,
       iconClassName: 'bg-palette-purple text-palette-purple-dark',
     },
     {
       label: 'Created tickets',
       count: getCreatedTicketCount(projectId, userId),
       icon: MdPending,
-      href: `${ticketsURL}?filter=${encodeFilter({status, requestedBy: [userId]})}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, createdBy: [userId.toString()]})}`,
       iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
     {
       label: 'Resolved tickets',
       count: getResolvedTicketCount(projectId),
       icon: MdCheckCircleOutline,
-      href: `${ticketsURL}?filter=${encodeFilter({status: statusCompleted})}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status: statusCompleted})}`,
       iconClassName: 'text-success bg-success-light',
     },
   ].map(props => (

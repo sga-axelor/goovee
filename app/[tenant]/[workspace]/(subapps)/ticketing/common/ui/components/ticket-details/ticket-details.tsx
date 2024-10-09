@@ -30,7 +30,7 @@ import {useCallback, useEffect, useRef} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
 
 import {
-  assignToSupplier,
+  updateAssignment,
   cancelTicket,
   closeTicket,
   mutate,
@@ -43,7 +43,6 @@ import type {
   ContactPartner,
   Category as TCategory,
   Priority as TPriority,
-  Status as TStatus,
 } from '../../../orm/projects';
 import type {Ticket} from '../../../orm/tickets';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
@@ -52,7 +51,6 @@ import {Category, Priority, Status} from '../pills';
 
 type Props = {
   ticket: Cloned<Ticket>;
-  statuses: TStatus[];
   categories: TCategory[];
   priorities: TPriority[];
   contacts: ContactPartner[];
@@ -64,13 +62,13 @@ const getDefaultValues = (ticket: Cloned<Ticket>) => {
     category: ticket?.projectTaskCategory?.id,
     priority: ticket?.priority?.id,
     description: ticket?.description ?? '',
-    assignedTo: ticket?.assignment,
+    assignment: ticket?.assignment,
     managedBy: ticket?.assignedToContact?.id,
   };
 };
 
 export function TicketDetails(props: Props) {
-  const {ticket, categories, priorities, statuses, contacts} = props;
+  const {ticket, categories, priorities, contacts} = props;
 
   const {action, loading} = useRetryAction(mutate);
 
@@ -139,12 +137,6 @@ export function TicketDetails(props: Props) {
     </>
   );
 
-  const label =
-    ticket.assignment === ASSIGNMENT.PROVIDER
-      ? 'Assign to Client'
-      : 'Assign to Company';
-  const assignmentValue = ticket.assignment === ASSIGNMENT.PROVIDER ? 2 : 1;
-
   const assignToButton = (
     <AssignToButton
       id={ticket.id}
@@ -152,8 +144,9 @@ export function TicketDetails(props: Props) {
       disabled={form.formState.isSubmitting || loading}
       form={form}
       handleSubmit={handleSubmit}
-      label={label}
-      assignment={assignmentValue}
+      assignment={ticket.assignment ?? ASSIGNMENT.PROVIDER}
+      company={ticket.project?.company?.name ?? ''}
+      client={ticket.project?.clientPartner?.simpleFullName ?? ''}
     />
   );
   return (
@@ -322,27 +315,18 @@ export function TicketDetails(props: Props) {
             <div>
               <div className="lg:flex space-y-2 mb-3">
                 <div>
-                  {ticket.assignment === ASSIGNMENT.PROVIDER ? (
-                    <div className="flex items-center gap-2 space-y-0">
-                      <span className="font-medium pe-2">
-                        {i18n.get('Assigned to')}:
-                      </span>
-                      <div className="h-10 flex items-center">
-                        {ticket.project?.company?.name}
-                      </div>
+                  <div className="flex items-center gap-2 space-y-0">
+                    <span className="font-medium pe-2">
+                      {i18n.get('Assigned to')}:
+                    </span>
+                    <div className="h-10 flex items-center">
+                      {ticket.assignment === ASSIGNMENT.PROVIDER
+                        ? ticket.project?.company?.name
+                        : ticket.project?.clientPartner?.simpleFullName}
                     </div>
-                  ) : (
-                    <div className="flex items-center gap-2 space-y-0">
-                      <span className="font-medium pe-2">
-                        {i18n.get('Assigned to')}:
-                      </span>
-                      <div className="h-10 flex items-center">
-                        {ticket.project?.clientPartner?.simpleFullName}
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
-                <div className="lg:block ml-auto">{assignToButton}</div>
+                <div className="hidden lg:block ml-auto">{assignToButton}</div>
               </div>
 
               <div className="lg:flex space-y-2 mb-3">
@@ -468,11 +452,11 @@ type ActionProps = {
     onSuccess?: (res: MutateResponse) => Promise<void>,
   ) => void;
   className?: string;
-  label?: string;
-  assignment?: number;
 };
 
-function AssignToButton(props: ActionProps) {
+function AssignToButton(
+  props: ActionProps & {assignment: number; client: string; company: string},
+) {
   const {
     id,
     version,
@@ -480,15 +464,16 @@ function AssignToButton(props: ActionProps) {
     form,
     handleSubmit,
     className,
-    label,
     assignment,
+    client,
+    company,
   } = props;
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
-    assignToSupplier,
-    assignment === 1
-      ? i18n.get('Ticket assigned to company')
-      : i18n.get('Ticket assigned to client'),
+    updateAssignment,
+    assignment === ASSIGNMENT.CUSTOMER
+      ? i18n.get('Ticket assigned to') + ' ' + company
+      : i18n.get('Ticket assigned to') + ' ' + client,
   );
   const handleClick = useCallback(async () => {
     if (disabled) return;
@@ -499,9 +484,15 @@ function AssignToButton(props: ActionProps) {
       }
 
       return await action({
-        data: {id: id, version: newVersion},
+        data: {
+          id,
+          version: newVersion,
+          assignment:
+            assignment === ASSIGNMENT.PROVIDER
+              ? ASSIGNMENT.CUSTOMER
+              : ASSIGNMENT.PROVIDER,
+        },
         workspaceURL,
-        assignment: assignment,
       });
     };
 
@@ -534,7 +525,9 @@ function AssignToButton(props: ActionProps) {
       variant="success"
       disabled={loading || disabled}
       onClick={handleClick}>
-      {i18n.get(`${label}`)}
+      {assignment === ASSIGNMENT.PROVIDER
+        ? i18n.get('Assign to') + ' ' + client
+        : i18n.get('Assign to') + ' ' + company}
     </Button>
   );
 }

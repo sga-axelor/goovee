@@ -26,7 +26,7 @@ import {
   findTicketStatuses,
 } from '../../../../common/orm/projects';
 import {findTicketAccess} from '../../../../common/orm/tickets';
-import {TicketForm} from '../../../../common/ui/components/ticket-form';
+import {EncodedFilter} from '../../../../common/schema';
 import {Form} from './client-form';
 export default async function Page({
   params,
@@ -80,7 +80,7 @@ export default async function Page({
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
-  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;
 
   return (
     <div className="container mt-5 mb-20">

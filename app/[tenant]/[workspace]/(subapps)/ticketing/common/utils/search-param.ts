@@ -3,7 +3,7 @@ import {AOSProjectTask} from '@/goovee/.generated/models';
 import {Maybe} from '@/types/util';
 import {Entity, ID, IdFilter, WhereArg, WhereOptions} from '@goovee/orm';
 import {set} from 'lodash';
-import {ASSIGNMENT, COMPANY} from '../constants';
+import {COMPANY} from '../constants';
 import {EncodedFilterSchema} from '../schema';
 
 export function getOrderBy(
@@ -35,10 +35,10 @@ export function getWhere(
   const {success, data} = EncodedFilterSchema.safeParse(filter);
   if (!success || !data) return null;
   const {
-    requestedBy,
+    createdBy,
     status,
     priority,
-    assignedTo,
+    managedBy,
     updatedOn,
     myTickets,
     assignment,
@@ -48,11 +48,12 @@ export function getWhere(
     ...(status && {status: {id: {in: status}}}),
     ...(priority && {priority: {id: {in: priority}}}),
     ...(updatedOn && {updatedOn: {between: updatedOn}}),
+    ...(assignment && {assignment}),
   };
 
   if (myTickets) {
     const OR = [
-      {assignedToContact: {id: userId}, assignment: ASSIGNMENT.CUSTOMER},
+      {assignedToContact: {id: userId}},
       {requestedByContact: {id: userId}},
     ];
     if (where.OR) where.OR.push(...OR);
@@ -60,12 +61,12 @@ export function getWhere(
     return where;
   }
 
-  if (requestedBy) {
-    if (requestedBy.includes(COMPANY)) {
-      const filteredRequestedBy = requestedBy.filter(id => id !== COMPANY);
-      if (filteredRequestedBy.length) {
+  if (createdBy) {
+    if (createdBy.includes(COMPANY)) {
+      const filteredCreatedBy = createdBy.filter(id => id !== COMPANY);
+      if (filteredCreatedBy.length) {
         const OR = [
-          {requestedByContact: {id: {in: filteredRequestedBy}}},
+          {requestedByContact: {id: {in: filteredCreatedBy}}},
           {requestedByContact: {id: null}},
         ];
 
@@ -75,24 +76,12 @@ export function getWhere(
         where.requestedByContact = {id: null};
       }
     } else {
-      where.requestedByContact = {id: {in: requestedBy}};
+      where.requestedByContact = {id: {in: createdBy}};
     }
   }
 
-  if (assignment && assignedTo) {
-    const OR = [{assignedToContact: {id: {in: assignedTo}}}, {assignment}];
-
-    if (where.OR) where.OR.push(...OR);
-    else where.OR = OR;
-    return where;
-  }
-
-  if (assignment) {
-    where.assignment = assignment;
-  }
-  if (assignedTo) {
-    where.assignedToContact = {id: {in: assignedTo}};
-    where.assignment = ASSIGNMENT.CUSTOMER;
+  if (managedBy) {
+    where.assignedToContact = {id: {in: managedBy}};
   }
 
   return where;

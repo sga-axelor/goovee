@@ -66,7 +66,7 @@ export async function createTicket(
     description,
     category,
     project: projectId,
-    assignedTo,
+    managedBy,
     parentId,
   } = data;
 
@@ -119,7 +119,7 @@ export async function createTicket(
       project: {select: {id: projectId}},
       name: subject,
       description: description,
-      ...(assignedTo && {assignedToContact: {select: {id: assignedTo}}}),
+      ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
       ...(defaultStatus && {status: {select: {id: defaultStatus}}}),
       ...(category && {projectTaskCategory: {select: {id: category}}}),
       ...(manager && {assignedTo: {select: {id: manager}}}),
@@ -146,11 +146,10 @@ export async function createTicket(
       progress: true,
       requestedByContact: {name: true},
       project: {name: true},
-      ...(assignedTo && {assignedToContact: {name: true}}),
+      ...(managedBy && {assignedToContact: {name: true}}),
       ...(category && {projectTaskCategory: {name: true}}),
       ...(priority && {priority: {name: true}}),
       ...(defaultStatus && {status: {name: true}}),
-      ...(assignedTo && {assignedToContact: {name: true}}),
       ...(manager && {assignedTo: {name: true}}),
     },
   });
@@ -207,7 +206,7 @@ export async function createTicket(
     });
   }
 
-  if (assignedTo) {
+  if (managedBy) {
     tracks.push({
       name: 'assignedToContact',
       title: 'AssignedToContact',
@@ -244,6 +243,7 @@ export async function updateTicketViaWS(
     category,
     status,
     assignment,
+    managedBy,
     id,
     version,
   } = data;
@@ -272,6 +272,7 @@ export async function updateTicketViaWS(
           ...(priority && {priority: {id: priority}}),
           ...(status && {status: {id: status}}),
           ...(assignment && {assignment: assignment}),
+          ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
         },
         fields: ['project'],
       },
@@ -309,7 +310,6 @@ export async function updateTicket(
     category,
     status,
     assignment,
-    assignedTo,
     managedBy,
     id,
     version,
@@ -322,7 +322,6 @@ export async function updateTicket(
     ...(priority && {priority: {name: true}}),
     ...(status && {status: {name: true}}),
     ...(assignment && {assignment: true}),
-    ...(assignedTo && {assignedToContact: {name: true}}),
     ...(managedBy && {assignedToContact: {name: true}}),
   };
 
@@ -343,7 +342,6 @@ export async function updateTicket(
       ...(priority && {priority: {select: {id: priority}}}),
       ...(status && {status: {select: {id: status}}}),
       ...(assignment && {assignment: assignment}),
-      ...(assignedTo && {assignedToContact: {select: {id: assignedTo}}}),
       ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
     },
     select: {
@@ -404,7 +402,7 @@ export async function updateTicket(
   }
 
   if (
-    assignedTo &&
+    managedBy &&
     oldTicket.assignedToContact?.name !== ticket.assignedToContact?.name
   ) {
     tracks.push({
@@ -462,7 +460,6 @@ export async function getMyTicketCount(
           assignedToContact: {
             id: userId,
           },
-          assignment: ASSIGNMENT.CUSTOMER,
         },
         {
           requestedByContact: {
@@ -475,7 +472,7 @@ export async function getMyTicketCount(
   return Number(count);
 }
 
-export async function getAssignedTicketCount(
+export async function getManagedTicketCount(
   projectId: ID,
   userId: ID,
 ): Promise<number> {
@@ -486,7 +483,6 @@ export async function getAssignedTicketCount(
       project: {id: projectId},
       status: {isCompleted: false},
       assignedToContact: {id: userId},
-      assignment: ASSIGNMENT.CUSTOMER,
     },
   });
   return Number(count);

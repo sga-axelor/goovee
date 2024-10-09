@@ -60,7 +60,7 @@ export function TicketForm(props: TicketFormProps) {
   const form = useForm<TicketInfo>({
     resolver: zodResolver(TicketFormSchema),
     defaultValues: {
-      assignedTo: userId.toString(),
+      managedBy: userId.toString(),
       parentId: parentId,
     },
   });
@@ -195,10 +195,10 @@ export function TicketForm(props: TicketFormProps) {
             />
             <FormField
               control={form.control}
-              name="assignedTo"
+              name="managedBy"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Assigned to')}*</FormLabel>
+                  <FormLabel>{i18n.get('Managed by')}*</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>

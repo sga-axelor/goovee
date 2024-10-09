@@ -1,6 +1,5 @@
 import {i18n} from '@/lib/i18n';
 import {z} from 'zod';
-import {ASSIGNMENT} from '../constants';
 import {Expand} from '@/types/util';
 
 export const TicketFormSchema = z.object({
@@ -10,10 +9,9 @@ export const TicketFormSchema = z.object({
     .min(1, {message: i18n.get('Subject is required')}),
   category: z.string({required_error: i18n.get('Category is required')}),
   priority: z.string({required_error: i18n.get('Priority is required')}),
+  managedBy: z.string({required_error: i18n.get('ManagedBy is required')}),
   description: z.string().optional(),
-  assignedTo: z.number({required_error: i18n.get('AssignedTo is required')}),
   parentId: z.string().optional(),
-  managedBy: z.string().optional(),
 });
 
 export const UpdateTicketSchema = z.object({
@@ -25,7 +23,6 @@ export const UpdateTicketSchema = z.object({
   status: z.string().optional(),
   assignment: z.number().optional(),
   description: z.string().optional(),
-  assignedTo: z.number().optional(),
   managedBy: z.string().optional(),
 });
 
@@ -85,9 +82,8 @@ export const FilterSchema = z.object({
     })
     .optional(),
   myTickets: z.boolean().optional(),
-  assignedTo: z.array(z.string()).optional(),
   managedBy: z.array(z.string()).optional(),
-  assignment: z.literal(ASSIGNMENT.PROVIDER).nullable().optional(),
+  assignment: z.number().nullable().optional(),
 });
 
 export const EncodedFilterSchema = FilterSchema.partial().transform(arg => {
@@ -103,7 +99,7 @@ export const EncodedFilterSchema = FilterSchema.partial().transform(arg => {
       return true;
     }),
   ) as Omit<Partial<z.infer<typeof FilterSchema>>, 'updatedOn'> & {
-    updatedOn: [string, string];
+    updatedOn?: [string, string];
   };
   if (!Object.keys(filter).length) return null; // remove empty object
   return filter;

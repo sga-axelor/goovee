@@ -4,7 +4,10 @@ import {
   decompressFromEncodedURIComponent,
 } from 'lz-string';
 
-export function encodeFilter(obj: Record<string, any>): string {
+export function encodeFilter<T extends Maybe<Record<string, any>> = any>(
+  obj: T,
+): string {
+  if (!obj) return '';
   try {
     const stringify = JSON.stringify(obj);
     return compressToEncodedURIComponent(stringify);

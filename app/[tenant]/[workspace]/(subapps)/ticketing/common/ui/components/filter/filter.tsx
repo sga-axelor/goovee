@@ -30,14 +30,18 @@ import {useForm, UseFormReturn} from 'react-hook-form';
 import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
-import {ASSIGNMENT, COMPANY} from '../../../constants';
+import {COMPANY} from '../../../constants';
 import type {
   Company,
   ContactPartner,
   Priority,
   Status,
 } from '../../../orm/projects';
-import {EncodedFilterSchema, FilterSchema} from '../../../schema';
+import {
+  EncodedFilter,
+  EncodedFilterSchema,
+  FilterSchema,
+} from '../../../schema';
 import {SearchParams} from '../../../types/search-param';
 import {
   MultiSelector,
@@ -100,7 +104,7 @@ export function Filter(props: FilterProps) {
     const params = new URLSearchParams(searchParams);
     params.delete('page');
     if (filter) {
-      params.set('filter', encodeFilter(filter));
+      params.set('filter', encodeFilter<EncodedFilter>(filter));
     } else {
       params.delete('filter');
     }
@@ -176,14 +180,13 @@ export function Filter(props: FilterProps) {
                       contacts={contacts}
                       company={company}
                     />
-                    <AssignedToField
-                      form={form}
-                      contacts={contacts}
-                      company={company}
-                    />
+                    <ManagedByField form={form} contacts={contacts} />
                   </>
                 )}
                 <DatesField form={form} />
+                {
+                  //TODO: Add filter for assignment (assignedTo column)
+                }
                 <PriorityField form={form} priorities={priorities} />
                 <StatusField form={form} statuses={statuses} />
                 <Button
@@ -201,39 +204,22 @@ export function Filter(props: FilterProps) {
   );
 }
 
-function AssignedToField(
-  props: FieldProps & Pick<FilterProps, 'contacts' | 'company'>,
-) {
-  const {form, contacts, company} = props;
-  const assignment = form.watch('assignment');
+function ManagedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
+  const {form, contacts} = props;
   return (
     <FormField
       control={form.control}
-      name="assignedTo"
+      name="managedBy"
       render={({field}) => (
         <FormItem className="grow">
-          <FormLabel className="text-xs">{i18n.get('Assigned to')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.get('Managed by')} :</FormLabel>
           <MultiSelector
-            onValuesChange={values => {
-              if (values.includes(COMPANY)) {
-                form.setValue('assignment', ASSIGNMENT.PROVIDER);
-              } else {
-                form.setValue('assignment', null);
-              }
-              field.onChange(values.filter(id => id !== COMPANY));
-            }}
-            values={
-              assignment === ASSIGNMENT.PROVIDER
-                ? (field.value ?? []).concat(COMPANY)
-                : field.value ?? []
-            }
+            onValuesChange={field.onChange}
+            values={field.value ?? []}
             className="space-y-0">
             <MultiSelectorTrigger
               renderLabel={value =>
-                value === COMPANY
-                  ? company?.name
-                  : contacts.find(contact => contact.id === value)
-                      ?.simpleFullName
+                contacts.find(contact => contact.id === value)?.simpleFullName
               }>
               <MultiSelectorInput
                 placeholder="Select users"
@@ -242,13 +228,6 @@ function AssignedToField(
             </MultiSelectorTrigger>
             <MultiSelectorContent>
               <MultiSelectorList>
-                {company?.id && (
-                  <MultiSelectorItem value={COMPANY}>
-                    <div className="flex items-center space-x-2">
-                      <span>{company.name}</span>
-                    </div>
-                  </MultiSelectorItem>
-                )}
                 {contacts.map(contact => (
                   <MultiSelectorItem key={contact.id} value={contact.id}>
                     <div className="flex items-center space-x-2">
@@ -272,12 +251,10 @@ function RequestedByField(
   return (
     <FormField
       control={form.control}
-      name="requestedBy"
+      name="createdBy"
       render={({field}) => (
         <FormItem className="grow">
-          <FormLabel className="text-xs">
-            {i18n.get('Requested by')} :
-          </FormLabel>
+          <FormLabel className="text-xs">{i18n.get('Created by')} :</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             values={field.value ?? []}
@@ -333,7 +310,7 @@ function MyTicketsField(props: FieldProps) {
               checked={!!field.value}
               onCheckedChange={v => {
                 if (v) {
-                  form.unregister(['assignedTo', 'requestedBy']);
+                  form.unregister(['createdBy', 'managedBy']);
                 }
                 field.onChange(v);
               }}

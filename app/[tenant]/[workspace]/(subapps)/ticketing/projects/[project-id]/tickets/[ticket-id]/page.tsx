@@ -21,7 +21,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {ID} from '@goovee/orm';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
-import {ReactNode, Suspense} from 'react';
+import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
@@ -44,6 +44,7 @@ import {
   Ticket,
   TicketListTicket,
 } from '../../../../common/orm/tickets';
+import {EncodedFilter} from '../../../../common/schema';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
   ChildTicketRows,
@@ -93,7 +94,7 @@ export default async function Page({
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
-  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter({status})}`;
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;
 
   return (
     <div className="container mt-5 mb-20">
@@ -140,7 +141,6 @@ export default async function Page({
       </Breadcrumb>
       <TicketDetails
         ticket={ticket}
-        statuses={statuses}
         categories={categories}
         priorities={priorities}
         contacts={contacts}

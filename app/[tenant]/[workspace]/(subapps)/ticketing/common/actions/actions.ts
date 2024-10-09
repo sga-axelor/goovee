@@ -84,17 +84,17 @@ export async function mutate(
     throw e;
   }
 }
-type TicketActionProps = {
+
+type UpdateAssignmentProps = {
   workspaceURL: string;
-  data: {id: string; version: number};
-  assignment?: number;
+  data: {id: string; version: number; assignment: number};
 };
 
-export async function assignToSupplier(
-  props: TicketActionProps,
+export async function updateAssignment(
+  props: UpdateAssignmentProps,
   force?: boolean,
 ): ActionResponse<true> {
-  const {workspaceURL, data, assignment} = props;
+  const {workspaceURL, data} = props;
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
@@ -103,7 +103,6 @@ export async function assignToSupplier(
   try {
     const updateData = UpdateTicketSchema.parse({
       ...data,
-      assignment: assignment === 1 ? ASSIGNMENT.PROVIDER : ASSIGNMENT.CUSTOMER,
     });
 
     if (force) {
@@ -131,6 +130,11 @@ export async function assignToSupplier(
     throw e;
   }
 }
+
+type TicketActionProps = {
+  workspaceURL: string;
+  data: {id: string; version: number};
+};
 
 export async function closeTicket(
   props: TicketActionProps,
