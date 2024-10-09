@@ -22,7 +22,7 @@ export const ThreadList = () => {
     if (!value) {
       return;
     }
-    update([{key: URL_PARAMS.sort, value}]);
+    update([{key: URL_PARAMS.sort, value}], {scroll: false});
   };
 
   return (

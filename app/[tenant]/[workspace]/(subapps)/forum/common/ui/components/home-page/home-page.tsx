@@ -85,7 +85,7 @@ export const HomePage = () => {
   };
 
   const handleSearch = (term: string) => {
-    update([{key: URL_PARAMS.search, value: term}]);
+    update([{key: URL_PARAMS.search, value: term}], {scroll: false});
   };
 
   useEffect(() => {

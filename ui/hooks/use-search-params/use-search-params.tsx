@@ -7,13 +7,19 @@ import {
   useRouter,
 } from 'next/navigation';
 
+type NavigationOptions = {
+  scroll?: boolean;
+  shallow?: boolean;
+  locale?: string;
+};
+
 export const useSearchParams = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useNextSearchParams();
 
   const update = useCallback(
-    (values: any) => {
+    (values: any, options: NavigationOptions = {}) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
 
       values.forEach(({key, value = ''}: any) => {
@@ -30,7 +36,7 @@ export const useSearchParams = () => {
         }
       });
       const query = current.toString();
-      router.push(`${pathname}${query ? `?${query}` : ''}`);
+      router.push(`${pathname}${query ? `?${query}` : ''}`, options);
     },
     [searchParams, router, pathname],
   );
