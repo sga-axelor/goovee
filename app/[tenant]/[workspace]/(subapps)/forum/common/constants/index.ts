@@ -25,7 +25,6 @@ const PostsContent = lazy(
 
 export const GROUPS = 'Groups';
 export const MEMBER = 'Member';
-export const NOT_MEMBER = 'Not member';
 export const OTHER_GROUPS = 'Other groups';
 export const SEARCH_HERE = 'Search here';
 export const DISABLED_SEARCH_PLACEHOLDER = 'You must log in to be able to post';
@@ -41,6 +40,7 @@ export const TITLE = 'Title';
 export const CHOOSE_GROUP = 'Chose in which group you want to post';
 export const CONTENT = 'Content';
 export const PUBLISH = 'Publish';
+export const PUBLISHING = 'Publishing...';
 export const MAKE_A_NEW_POST = 'Make a new post';
 export const CLICK_HERE_DRAG_DROP =
   'Click here to select your image or drag & drop';

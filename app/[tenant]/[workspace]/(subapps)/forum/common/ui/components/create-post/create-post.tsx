@@ -41,6 +41,7 @@ import {
   CONTENT,
   ENTER_TITLE,
   PUBLISH,
+  PUBLISHING,
   TITLE,
 } from '@/subapps/forum/common/constants';
 import {
@@ -71,17 +72,18 @@ export const CreatePost = ({
   selectedGroup = null,
   onClose,
 }: CreatePostProps) => {
-  const {toast} = useToast();
-  const {workspaceURI, workspaceURL} = useWorkspace();
-  const router = useRouter();
-  const formRef = useRef<HTMLFormElement>(null);
   const [editorContent, setEditorContent] = useState<string>('');
-
   const [attachments, setAttachments] = useState<{
     images: ImageItem[];
     file?: any;
   }>({images: []});
   const [modalOpen, setModalOpen] = useState<ModalType>('none');
+  const [loading, setLoading] = useState(false);
+
+  const {toast} = useToast();
+  const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const formSchema = z.object({
     title: z.string().min(1, {message: 'Title is required'}),
@@ -119,6 +121,7 @@ export const CreatePost = ({
   };
 
   const handlePost = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     const formData = new FormData();
     if (attachments.images.length) {
       attachments.images.forEach((element: any, index) => {
@@ -162,6 +165,8 @@ export const CreatePost = ({
         variant: 'destructive',
         title: i18n.get('An error occurred!'),
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -279,8 +284,11 @@ export const CreatePost = ({
                   </>
                 )}
               </div>
-              <Button type="submit" className="bg-success w-full mt-1 lg:mt-4">
-                {i18n.get(PUBLISH)}
+              <Button
+                type="submit"
+                className="bg-success w-full mt-1 lg:mt-4"
+                disabled={loading}>
+                {loading ? i18n.get(PUBLISHING) : i18n.get(PUBLISH)}
               </Button>
             </div>
           </div>
