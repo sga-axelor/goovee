@@ -90,7 +90,7 @@ export function useSortBy<T extends Record<string, any>>(items: T[]) {
 
       if (typeof sort.getter === 'string') {
         a = get(a, sort.getter);
-        b = get(a, sort.getter);
+        b = get(b, sort.getter);
       }
 
       // handle null | undefined
