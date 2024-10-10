@@ -362,7 +362,7 @@ function AssignedToField(
               onValueChange={value => field.onChange(Number(value))}
               defaultValue={field.value?.toString()}>
               <FormControl>
-                <SelectTrigger className="w-full text-xs  text-muted">
+                <SelectTrigger className="w-full text-xs  text-muted-foreground">
                   <SelectValue
                     placeholder={i18n.get('Select assignee')}></SelectValue>
                 </SelectTrigger>
