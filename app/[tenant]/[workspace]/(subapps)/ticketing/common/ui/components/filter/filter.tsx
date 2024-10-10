@@ -354,30 +354,28 @@ function AssignedToField(
         name="assignment"
         render={({field}) => (
           <FormItem className="grow">
-            <div className="flex items-center gap-2">
-              <FormLabel className="text-xs">
-                {i18n.get('Assigned To')} :
-              </FormLabel>
+            <FormLabel className="text-xs">
+              {i18n.get('Assigned To')} :
+            </FormLabel>
 
-              <Select
-                onValueChange={value => field.onChange(Number(value))}
-                defaultValue={field.value?.toString()}>
-                <FormControl>
-                  <SelectTrigger className="w-fit">
-                    <SelectValue
-                      placeholder={i18n.get('Select assignee')}></SelectValue>
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value={ASSIGNMENT.CUSTOMER.toString()}>
-                    {clientPartner?.simpleFullName}
-                  </SelectItem>
-                  <SelectItem value={ASSIGNMENT.PROVIDER.toString()}>
-                    {company?.name}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              onValueChange={value => field.onChange(Number(value))}
+              defaultValue={field.value?.toString()}>
+              <FormControl>
+                <SelectTrigger className="w-full">
+                  <SelectValue
+                    placeholder={i18n.get('Select assignee')}></SelectValue>
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent className="w-full">
+                <SelectItem value={ASSIGNMENT.CUSTOMER.toString()}>
+                  {clientPartner?.simpleFullName}
+                </SelectItem>
+                <SelectItem value={ASSIGNMENT.PROVIDER.toString()}>
+                  {company?.name}
+                </SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}
