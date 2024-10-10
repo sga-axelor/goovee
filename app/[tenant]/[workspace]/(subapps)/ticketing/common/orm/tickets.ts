@@ -568,7 +568,6 @@ export async function findTicket(ticketId: ID, projectId: ID) {
       description: true,
       taskEndDate: true,
       displayFinancialData: true,
-      attrs: true,
       assignedToContact: {simpleFullName: true, picture: {id: true}},
       requestedByContact: {simpleFullName: true, picture: {id: true}},
       createdOn: true,
