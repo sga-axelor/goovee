@@ -1,4 +1,5 @@
 import {ORDER_BY} from '@/constants';
+import {parseJSON} from 'date-fns';
 import {get} from 'lodash';
 import {useCallback, useMemo, useState} from 'react';
 
@@ -27,8 +28,8 @@ function genericSort<T extends string | number | Date>(a: T, b: T) {
   if (typeof a === 'string' && typeof b === 'string') {
     // attempt to convert to date
     // string like "12" would already be handled as number above
-    const dateA = new Date(a).valueOf();
-    const dateB = new Date(b).valueOf();
+    const dateA = parseJSON(a).valueOf();
+    const dateB = parseJSON(b).valueOf();
     if (isNaN(dateA) || isNaN(dateB)) {
       // if not convertable to date then they are regular string,
       return a.localeCompare(b);
@@ -48,7 +49,7 @@ function genericSort<T extends string | number | Date>(a: T, b: T) {
 type ToggleSortProps<T extends Record<string, any>> = {
   key: string | null;
   getter?: string | ((record: T) => unknown);
-  type?: 'number' | 'string' | 'string-date' | 'string-number' | 'date';
+  type?: 'number' | 'string' | 'json-date' | 'string-number' | 'date';
 };
 
 type Sort<T extends Record<string, any>> = ToggleSortProps<T> & {
@@ -109,7 +110,7 @@ export function useSortBy<T extends Record<string, any>>(items: T[]) {
         case 'string-number':
           return sortNumber(Number(a), Number(b));
         case 'date':
-        case 'string-date':
+        case 'json-date':
           return sortDate(a, b);
       }
     });
