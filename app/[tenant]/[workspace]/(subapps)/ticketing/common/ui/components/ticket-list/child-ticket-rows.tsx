@@ -107,13 +107,13 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
             </>
           ) : (
             <TableCell
-              className="flex float-end items-center action p-3"
+              className="flex items-center action p-3"
               onClick={handleCollapse}>
               <p className="max-w-48 line-clamp-2">{ticket.name}</p>
               {ticket?.id === openId ? (
-                <MdArrowDropUp className="ms-auto inline" />
+                <MdArrowDropUp className="cursor-pointer ms-1  inline" />
               ) : (
-                <MdArrowDropDown className="ms-auto inline" />
+                <MdArrowDropDown className="cursor-pointer ms-1  inline" />
               )}
             </TableCell>
           )}
@@ -126,7 +126,7 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
           <Collapsible open={ticket.id === openId} asChild>
             <TableRow className="text-xs">
               <CollapsibleContent asChild>
-                <TableCell colSpan={2}>
+                <TableCell colSpan={3}>
                   <div className="grid grid-cols-2 gap-y-2">
                     <Item label="Priority">
                       <Priority name={ticket.priority?.name} />

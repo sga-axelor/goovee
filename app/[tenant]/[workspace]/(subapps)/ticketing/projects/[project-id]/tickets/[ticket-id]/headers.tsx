@@ -87,6 +87,34 @@ export function ChildTicketsHeader(props: {
     />
   );
 }
+export function ParentTicketTableHeader() {
+  const res = useResponsive();
+  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
+  const mainColumns = small ? [columns[0], columns[2]] : columns;
+
+  return (
+    <TableHeader>
+      <TableRow>
+        {mainColumns?.map((column, index) => {
+          return (
+            <TableHead
+              key={column.key}
+              className={cn(
+                'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
+              )}>
+              <div
+                className={cn('flex gap-1 items-center', {
+                  'flex-row': index === 1 && small,
+                })}>
+                <div className="line-clamp-1">{column.label}</div>
+              </div>
+            </TableHead>
+          );
+        })}
+      </TableRow>
+    </TableHeader>
+  );
+}
 
 export function ChildTicketTableHeader() {
   const res = useResponsive();
@@ -107,7 +135,7 @@ export function ChildTicketTableHeader() {
               )}>
               <div
                 className={cn('flex gap-1 items-center', {
-                  'flex-row-reverse': index === 1 && small,
+                  'flex-row': index === 1 && small,
                 })}>
                 <div className="line-clamp-1">{column.label}</div>
               </div>
@@ -124,10 +152,13 @@ export function RelatedTicketsTableHeader() {
   const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
   const newField = {
     key: 'link',
-    label: 'Link',
+    label: 'Link Type',
   };
   const updatedColumns: Column<SortKey>[] = [newField, ...columns];
-  const mainColumns = small ? [columns[0], columns[2]] : updatedColumns;
+  const mainColumns = small
+    ? [updatedColumns[0], updatedColumns[3]]
+    : updatedColumns;
+
   return (
     <TableHeader>
       <TableRow>
@@ -142,7 +173,7 @@ export function RelatedTicketsTableHeader() {
                 )}>
                 <div
                   className={cn('flex gap-1 items-center', {
-                    'flex-row-reverse': index === 1 && small,
+                    'flex-row': index === 1 && small,
                   })}>
                   <div className="line-clamp-1">{column.label}</div>
                 </div>

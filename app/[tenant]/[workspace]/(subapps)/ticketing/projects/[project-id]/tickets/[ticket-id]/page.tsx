@@ -54,6 +54,7 @@ import {
 import {
   ChildTicketsHeader,
   ChildTicketTableHeader,
+  ParentTicketTableHeader,
   RelatedTicketsHeader,
   RelatedTicketsTableHeader,
 } from './headers';
@@ -220,7 +221,7 @@ async function ChildTickets({
       />
       <hr className="mt-5" />
       <Table>
-        <ChildTicketTableHeader />
+        {(tickets ?? [])?.length > 0 && <ChildTicketTableHeader />}
         <TableBody>
           <ChildTicketRows ticketId={ticketId} tickets={tickets ?? []} />
         </TableBody>
@@ -235,6 +236,7 @@ async function ParentTicket({ticket}: {ticket: Cloned<TicketListTicket>}) {
       <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
       <hr className="mt-5" />
       <Table>
+        {([ticket] ?? [])?.length > 0 && <ParentTicketTableHeader />}
         <TableBody>
           <TicketRows tickets={[ticket]} />
         </TableBody>
@@ -264,7 +266,7 @@ async function RelatedTickets({
       />
       <hr className="mt-5" />
       <Table>
-        <RelatedTicketsTableHeader />
+        {(links ?? [])?.length > 0 && <RelatedTicketsTableHeader />}
         <TableBody>
           <RelatedTicketRows links={links ?? []} ticketId={ticketId} />
         </TableBody>

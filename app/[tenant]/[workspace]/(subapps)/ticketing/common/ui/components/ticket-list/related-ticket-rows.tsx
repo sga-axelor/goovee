@@ -80,11 +80,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
           onClick={handleClick}
           className="[&:not(:has(.action:hover))]:cursor-pointer  [&:not(:has(.action:hover)):hover]:bg-slate-100 text-xs">
           <TableCell className="p-3">
-            {small ? (
-              <p className="font-medium">#{ticket.id}</p>
-            ) : (
-              <p className="font-medium">{link.projectTaskLinkType?.name}</p>
-            )}
+            <p className="font-medium">{link.projectTaskLinkType?.name}</p>
           </TableCell>
           {!small ? (
             <>
@@ -116,7 +112,7 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
             </>
           ) : (
             <TableCell
-              className="flex float-end items-center action p-3"
+              className="flex items-center action p-3"
               onClick={handleCollapse}>
               <p className="">{ticket.name}</p>
               {ticket?.id === openId ? (
@@ -139,12 +135,10 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
           <Collapsible open={ticket.id === openId} asChild>
             <TableRow className="text-xs">
               <CollapsibleContent asChild>
-                <TableCell colSpan={2}>
+                <TableCell colSpan={3}>
                   <div className="grid grid-cols-2 gap-y-2">
-                    <Item label="Link Type">
-                      <span className="max-w-48 line-clamp-2">
-                        {link.projectTaskLinkType?.name}
-                      </span>
+                    <Item label="Ticket Id">
+                      <p className="">#{ticket.id}</p>
                     </Item>
 
                     <Item label="Priority">

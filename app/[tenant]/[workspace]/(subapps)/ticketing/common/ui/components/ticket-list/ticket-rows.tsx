@@ -113,9 +113,9 @@ export function TicketRows(props: {tickets: Cloned<TicketListTicket>[]}) {
               onClick={e => handleCollapse(ticket.id, e)}>
               <p className="max-w-48 line-clamp-2">{ticket.name}</p>
               {show && ticket?.id === id ? (
-                <MdArrowDropUp className="ms-auto inline" />
+                <MdArrowDropUp className="inline" />
               ) : (
-                <MdArrowDropDown className="ms-auto inline" />
+                <MdArrowDropDown className="inline" />
               )}
             </TableCell>
           )}
