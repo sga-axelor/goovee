@@ -66,7 +66,7 @@ export function TicketLinkHeader({
               <DialogTrigger asChild>
                 <Button size="sm" type="button" variant="success">
                   <MdAdd className="size-6 lg:me-1" />
-                  <span className="hidden lg:inline">{i18n.get('Add')}</span>
+                  <span className="hidden lg:inline">{i18n.get('New')}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-h-full container overflow-y-auto">
