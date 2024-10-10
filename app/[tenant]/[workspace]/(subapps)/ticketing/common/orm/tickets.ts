@@ -751,6 +751,11 @@ export async function createChildTicketLink(
     throw new Error(i18n.get('Ticket not found'));
   }
 
+  const parentTickets = await findParentTickets(currentTicketId);
+  if (parentTickets.includes(linkTicketId.toString())) {
+    throw new Error(i18n.get('Circular dependency'));
+  }
+
   const ticket = await client.aOSProjectTask.update({
     data: {
       id: currentTicketId.toString(),
