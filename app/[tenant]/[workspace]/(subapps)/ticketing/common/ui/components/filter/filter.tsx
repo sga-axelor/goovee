@@ -362,16 +362,20 @@ function AssignedToField(
               onValueChange={value => field.onChange(Number(value))}
               defaultValue={field.value?.toString()}>
               <FormControl>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full text-xs  text-muted">
                   <SelectValue
                     placeholder={i18n.get('Select assignee')}></SelectValue>
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="w-full">
-                <SelectItem value={ASSIGNMENT.CUSTOMER.toString()}>
+                <SelectItem
+                  value={ASSIGNMENT.CUSTOMER.toString()}
+                  className="text-xs">
                   {clientPartner?.simpleFullName}
                 </SelectItem>
-                <SelectItem value={ASSIGNMENT.PROVIDER.toString()}>
+                <SelectItem
+                  value={ASSIGNMENT.PROVIDER.toString()}
+                  className="text-xs">
                   {company?.name}
                 </SelectItem>
               </SelectContent>
