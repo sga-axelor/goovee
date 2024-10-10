@@ -2,9 +2,10 @@
  * Tickets Constants
  */
 
-import {Column, SortKey} from '../types';
-import {TicketListTicket} from '../orm/tickets';
 import {Cloned} from '@/types/util';
+import {TicketListTicket} from '../orm/tickets';
+import {Column, SortKey} from '../types';
+import {isWithProvider} from '../utils';
 
 export const columns: Column<SortKey>[] = [
   {
@@ -69,7 +70,7 @@ export const sortValueGetterMap: Record<string, string | Getter> = {
   status: 'status.name',
   category: 'projectTaskCategory.name',
   assignedTo: t =>
-    t.assignment === ASSIGNMENT.PROVIDER
+    isWithProvider(t.assignment)
       ? t.project?.company?.name
       : t.project?.clientPartner?.simpleFullName,
   updatedOn: 'updatedOn',

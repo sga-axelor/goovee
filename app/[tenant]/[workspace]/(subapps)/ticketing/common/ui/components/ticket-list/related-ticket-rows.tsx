@@ -4,8 +4,6 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
 import type {Cloned} from '@/types/util';
 import {
-  Avatar,
-  AvatarImage,
   Collapsible,
   CollapsibleContent,
   TableCell,
@@ -19,11 +17,11 @@ import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
 import {deleteRelatedLink} from '../../../actions';
-import {ASSIGNMENT, columns} from '../../../constants';
+import {columns} from '../../../constants';
 import type {Ticket} from '../../../orm/tickets';
-import {formatDate, getProfilePic} from '../../../utils';
+import {formatDate, isWithProvider} from '../../../utils';
 import {Button} from '../delete-button';
-import {Category, Priority, Status} from '../pills';
+import {Priority, Status} from '../pills';
 
 interface TicketDetailRowProps {
   label: string;
@@ -108,9 +106,9 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                 {ticket.assignedToContact?.simpleFullName}
               </TableCell>
               <TableCell>
-                {ticket.assignment === ASSIGNMENT.CUSTOMER
-                  ? ticket.project?.clientPartner?.simpleFullName
-                  : ticket?.project?.company?.name}
+                {isWithProvider(ticket.assignment)
+                  ? ticket?.project?.company?.name
+                  : ticket.project?.clientPartner?.simpleFullName}
               </TableCell>
               <TableCell className="p-3">
                 {formatDate(ticket.updatedOn)}
@@ -160,9 +158,9 @@ export function RelatedTicketRows(props: RelatedTicketRowProps) {
                       {ticket.assignedToContact?.simpleFullName}
                     </Item>
                     <Item label="Assigned to">
-                      {ticket.assignment === ASSIGNMENT.CUSTOMER
-                        ? ticket.project?.clientPartner?.simpleFullName
-                        : ticket.project?.company?.name}
+                      {isWithProvider(ticket.assignment)
+                        ? ticket.project?.company?.name
+                        : ticket.project?.clientPartner?.simpleFullName}
                     </Item>
                     <Item label="Updated">{formatDate(ticket.updatedOn)}</Item>
                   </div>

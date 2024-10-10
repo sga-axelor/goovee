@@ -4,6 +4,7 @@
 
 import {Maybe} from '@/types/util';
 import {getImageURL} from '@/utils/image';
+import {ASSIGNMENT} from '../constants';
 
 export const formatDate = (date: Maybe<Date | string>): string => {
   if (!date) return '';
@@ -71,4 +72,8 @@ export function getPaginationButtons(
     buttons.push(ELLIPSIS, totolPages);
   }
   return buttons;
+}
+
+export function isWithProvider(assignment: Maybe<number>): boolean {
+  return assignment !== ASSIGNMENT.CUSTOMER;
 }

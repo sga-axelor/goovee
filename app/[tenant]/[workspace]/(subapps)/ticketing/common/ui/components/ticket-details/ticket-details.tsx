@@ -30,12 +30,12 @@ import {useCallback, useEffect, useRef} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
 
 import {
-  updateAssignment,
   cancelTicket,
   closeTicket,
   mutate,
   MutateProps,
   MutateResponse,
+  updateAssignment,
 } from '../../../actions';
 import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
 import {useRetryAction} from '../../../hooks';
@@ -46,7 +46,7 @@ import type {
 } from '../../../orm/projects';
 import type {Ticket} from '../../../orm/tickets';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
-import {formatDate, getProfilePic} from '../../../utils';
+import {formatDate, getProfilePic, isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 
 type Props = {
@@ -320,7 +320,7 @@ export function TicketDetails(props: Props) {
                       {i18n.get('Assigned to')}:
                     </span>
                     <div className="h-10 flex items-center">
-                      {ticket.assignment === ASSIGNMENT.PROVIDER
+                      {isWithProvider(ticket.assignment)
                         ? ticket.project?.company?.name
                         : ticket.project?.clientPartner?.simpleFullName}
                     </div>
@@ -471,9 +471,9 @@ function AssignToButton(
   const {workspaceURL} = useWorkspace();
   const {action, loading} = useRetryAction(
     updateAssignment,
-    assignment === ASSIGNMENT.CUSTOMER
-      ? i18n.get('Ticket assigned to') + ' ' + company
-      : i18n.get('Ticket assigned to') + ' ' + client,
+    isWithProvider(assignment)
+      ? i18n.get('Ticket assigned to') + ' ' + client
+      : i18n.get('Ticket assigned to') + ' ' + company,
   );
   const handleClick = useCallback(async () => {
     if (disabled) return;
@@ -487,10 +487,9 @@ function AssignToButton(
         data: {
           id,
           version: newVersion,
-          assignment:
-            assignment === ASSIGNMENT.PROVIDER
-              ? ASSIGNMENT.CUSTOMER
-              : ASSIGNMENT.PROVIDER,
+          assignment: isWithProvider(assignment)
+            ? ASSIGNMENT.CUSTOMER
+            : ASSIGNMENT.PROVIDER,
         },
         workspaceURL,
       });
@@ -525,7 +524,7 @@ function AssignToButton(
       variant="success"
       disabled={loading || disabled}
       onClick={handleClick}>
-      {assignment === ASSIGNMENT.PROVIDER
+      {isWithProvider(assignment)
         ? i18n.get('Assign to') + ' ' + client
         : i18n.get('Assign to') + ' ' + company}
     </Button>
