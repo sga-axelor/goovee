@@ -19,6 +19,7 @@ import {
   CommentTracks,
   CommentAttachments,
   CommentInput,
+  Separator,
 } from '@/ui/components';
 import {ModelType} from '@/types';
 import {i18n} from '@/lib/i18n';
@@ -51,6 +52,7 @@ interface CommentListItemProps {
   modelType: ModelType;
   hasSubComments?: boolean;
   disabled: boolean;
+  isTopLevel?: boolean;
   onSubmit?: (data: any) => void;
 }
 
@@ -62,6 +64,7 @@ export const CommentListItem = ({
   modelType,
   hasSubComments,
   disabled = false,
+  isTopLevel = true,
   onSubmit,
 }: CommentListItemProps) => {
   const [showSubComments, setShowSubComments] = useState(
@@ -94,23 +97,49 @@ export const CommentListItem = ({
 
   if (!comment) return null;
 
+  const renderChildComments = () => {
+    if (
+      !showSubComments ||
+      parentCommentId !== id ||
+      !childCommentList?.length
+    ) {
+      return null;
+    }
+
+    return childCommentList.map(childComment => (
+      <CommentListItem
+        disabled={isDisabled}
+        key={childComment.id}
+        record={record}
+        parentCommentId={parentCommentId}
+        comment={childComment}
+        showReactions={showReactions}
+        modelType={modelType}
+        isTopLevel={false}
+        onSubmit={onSubmit}
+      />
+    ));
+  };
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       <div className="flex gap-2 justify-between items-center">
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <Avatar className="rounded-full h-6 w-6">
             <AvatarImage
               src={getImageURL(partner?.picture?.id) ?? '/images/no-image.png'}
             />
           </Avatar>
-          <span className="font-semibold text-base">
-            {partner?.simpleFullName}
-          </span>
+          <div>
+            <div className="font-semibold text-sm">
+              {partner?.simpleFullName}
+            </div>
+            <div className="text-[10px] leading-none">
+              {parseDate(createdOn, DATE_FORMATS.full_date)}
+            </div>
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="text-xs">
-            {parseDate(createdOn, DATE_FORMATS.full_date)}
-          </div>
           <Popover>
             <PopoverTrigger>
               <MdOutlineMoreHoriz className="w-6 h-6 cursor-pointer" />
@@ -124,88 +153,84 @@ export const CommentListItem = ({
           </Popover>
         </div>
       </div>
+      <div
+        className={`${isTopLevel ? 'border-l ml-3 pl-10 border-gray-light' : 'pl-8'}`}>
+        {tracks?.length > 0 && <CommentTracks tracks={tracks} title={title} />}
+        <CommentAttachments attachments={commentFileList} />
 
-      {tracks?.length > 0 && <CommentTracks tracks={tracks} title={title} />}
-      <CommentAttachments attachments={commentFileList} />
-
-      <div className="flex flex-col">
-        <div className="text-sm">{note}</div>
-        <div className="flex justify-end items-center gap-6 mt-1 mb-2">
-          {showReactions && (
-            <div className="flex rounded-lg border h-8">
-              <MdOutlineThumbUp className="w-8 h-full cursor-pointer p-2 border-r" />
-              <div className="flex p-2">
-                <MdOutlineThumbUp className="cursor-pointer" />
-                <MdFavoriteBorder className="cursor-pointer" />
-              </div>
-            </div>
-          )}
-          <div className={`flex gap-2 items-center`}>
-            <MdOutlineModeComment
-              className="w-4 h-4 cursor-pointer"
-              onClick={handleInputToggle}
-            />
-            {parentCommentId === id && childCommentList.length > 0 && (
-              <span
-                className={`text-sm ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
-                onClick={handleSubCommentsToggle}>
-                {childCommentList.length}{' '}
-                {i18n.get(
-                  childCommentList.length > 1
-                    ? COMMENTS.toLowerCase()
-                    : COMMENT.toLowerCase(),
-                )}
-              </span>
+        <div className="flex flex-col">
+          <div className="text-xs">{note}</div>
+          <div className="flex justify-end items-center gap-6 mt-1 mb-2">
+            {showReactions && (
+              <>
+                <div className="flex items-center rounded-lg border h-7">
+                  <div className="w-8 h-full px-2 py-1 border-r">
+                    <MdOutlineThumbUp className="cursor-pointer" />
+                  </div>
+                  <div className="flex items-center px-2 py-1">
+                    <MdOutlineThumbUp className="cursor-pointer" />
+                    <MdFavoriteBorder className="cursor-pointer" />
+                  </div>
+                </div>
+                <Separator orientation="vertical" className="h-6 bg-black" />
+              </>
             )}
+            <div className="flex gap-6 items-center">
+              <span
+                className="text-xs cursor-pointer"
+                onClick={handleInputToggle}>
+                {i18n.get('Reply')}
+              </span>
+
+              {parentCommentId === id && childCommentList.length > 0 && (
+                <>
+                  <Separator orientation="vertical" className="h-6 bg-black" />
+                  <div
+                    className={`flex items-center gap-1 text-[10px] ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
+                    onClick={handleSubCommentsToggle}>
+                    <MdOutlineModeComment className="w-4 h-4 cursor-pointer" />
+                    {childCommentList.length}{' '}
+                    {i18n.get(
+                      childCommentList.length > 1
+                        ? COMMENTS.toLowerCase()
+                        : COMMENT.toLowerCase(),
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        {showCommentInput && (
-          <div className="my-2">
-            <CommentInput
-              disabled={isDisabled}
-              className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
-              placeholderText={
-                isLoggedIn
-                  ? i18n.get(COMMENT)
-                  : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
-              }
-              onSubmit={(data: any) => {
-                if (onSubmit) {
-                  try {
-                    onSubmit({...data, parent: parentCommentId});
-                  } catch (error) {
-                    console.error('Error submitting comment:', error);
-                  } finally {
+          {showCommentInput && (
+            <div className="my-2">
+              <CommentInput
+                disabled={isDisabled}
+                className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
+                placeholderText={
+                  isLoggedIn
+                    ? i18n.get(COMMENT)
+                    : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
+                }
+                onSubmit={(data: any) => {
+                  if (onSubmit) {
+                    try {
+                      onSubmit({...data, parent: parentCommentId});
+                    } catch (error) {
+                      console.error('Error submitting comment:', error);
+                    } finally {
+                      setShowCommentInput(false);
+                    }
+                  } else {
+                    console.warn('onSubmit function not provided');
                     setShowCommentInput(false);
                   }
-                } else {
-                  console.warn('onSubmit function not provided');
-                  setShowCommentInput(false);
-                }
-              }}
-            />
-          </div>
-        )}
-      </div>
-
-      {showSubComments &&
-        parentCommentId === id &&
-        childCommentList?.length > 0 && (
-          <div className="ml-6 mt-2">
-            {childCommentList.map(childComment => (
-              <CommentListItem
-                disabled={isDisabled}
-                key={childComment.id}
-                record={record}
-                parentCommentId={parentCommentId}
-                comment={childComment}
-                showReactions={showReactions}
-                modelType={modelType}
-                onSubmit={onSubmit}
+                }}
               />
-            ))}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
+
+        {renderChildComments()}
+      </div>
     </div>
   );
 };

@@ -29,7 +29,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col gap-4 ${usePopUpStyles ? 'h-full overflow-auto px-2' : ''}`}>
+      className={`flex flex-col gap-2${usePopUpStyles ? ' h-full overflow-auto px-2' : ''}`}>
       {comments.map((comment: any) => (
         <CommentListItem
           key={comment.id}

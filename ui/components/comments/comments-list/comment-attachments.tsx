@@ -27,7 +27,7 @@ export function CommentAttachments({attachments}: CommentAttachmentsProps) {
     return;
   }
   return (
-    <div className="px-4 text-sm">
+    <div className="px-4 text-xs mb-1">
       <div className="font-semibold"> {i18n.get('Files')}:</div>
       <ul className="list-disc">
         {attachments?.map(attachment => (

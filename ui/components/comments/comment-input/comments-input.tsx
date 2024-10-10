@@ -120,7 +120,7 @@ export function CommentInput({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6 w-full">
         <div
-          className={`flex items-center relative ${disabled ? 'pointer-events-none' : ''}`}>
+          className={`flex items-center relative gap-4 ${disabled ? 'pointer-events-none' : ''}`}>
           <FormField
             control={form.control}
             name="text"
@@ -129,7 +129,7 @@ export function CommentInput({
                 <FormControl>
                   <Input
                     className={cn(
-                      'h-12 w-full placeholder:text-sm placeholder:text-gray-dark pr-36',
+                      'h-10 placeholder:text-sm placeholder:text-gray-dark',
                       className,
                     )}
                     placeholder={i18n.get(placeholderText)}
@@ -141,7 +141,7 @@ export function CommentInput({
             )}
           />
 
-          <div className="flex items-center gap-2 absolute right-3 top-1.5">
+          <div className="flex items-center gap-4">
             {showAttachmentIcon && (
               <div {...getRootProps({className: 'dropzone'})}>
                 <input {...getInputProps()} />
@@ -152,7 +152,7 @@ export function CommentInput({
             )}
             <Button
               type="submit"
-              className="px-6 py-1.5 h-9 text-base"
+              className="px-6 py-1.5 h-9 text-base font-medium"
               variant="success"
               disabled={isSubmitting || disabled}>
               {i18n.get('Send')}

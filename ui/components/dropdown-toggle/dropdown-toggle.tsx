@@ -3,6 +3,9 @@
 import {memo, useState} from 'react';
 import {MdOutlineExpandMore} from 'react-icons/md';
 
+// ---- CORE IMPORTS ---- //
+import {cn} from '@/utils/css';
+
 interface Option {
   key: string;
   label: string;
@@ -11,11 +14,12 @@ interface Option {
 interface DropdownToggleProps {
   value: string;
   options: Option[];
+  iconClassName?: string;
   handleDropdown?: (value: string) => void;
 }
 
 export const DropdownToggle = memo(
-  ({value, options, handleDropdown}: DropdownToggleProps) => {
+  ({value, options, handleDropdown, iconClassName}: DropdownToggleProps) => {
     const [currentIndex, setCurrentIndex] = useState(
       options.findIndex(option => option.key === value) || 0,
     );
@@ -33,7 +37,7 @@ export const DropdownToggle = memo(
         {options.length > 0 && (
           <div className="flex gap-2 cursor-pointer" onClick={handleClick}>
             <div className="font-semibold">{label}</div>
-            <MdOutlineExpandMore className="w-6 h-6" />
+            <MdOutlineExpandMore className={cn('w-6 h-6', iconClassName)} />
           </div>
         )}
       </div>
