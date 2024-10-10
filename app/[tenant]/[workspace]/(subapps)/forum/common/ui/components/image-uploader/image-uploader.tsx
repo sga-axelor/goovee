@@ -116,8 +116,8 @@ export const ImageUploader = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogTitle className="hidden" />
       <DialogContent className={`max-w-screen-lg h-fit p-1 lg:p-4`}>
+        <DialogTitle className="hidden" />
         <div className="bg-background w-full h-screen lg:h-full z-[100] overflow-y-auto">
           <div className="relative w-full h-full pt-4 xl:pt-8">
             <Button

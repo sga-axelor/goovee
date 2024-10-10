@@ -1,4 +1,3 @@
-'use client';
 import {useEffect, useState} from 'react';
 import Image from 'next/image';
 
@@ -9,7 +8,7 @@ export const ImageViewer = ({
   file: File;
   altText?: string;
 }) => {
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const url = URL.createObjectURL(file);
@@ -20,12 +19,14 @@ export const ImageViewer = ({
     };
   }, [file]);
 
+  if (!imageUrl) return null;
+
   return (
     <Image
       fill
-      className="object-cover mx-auto"
       src={imageUrl}
       alt={altText || file?.name}
+      className="object-cover mx-auto"
     />
   );
 };

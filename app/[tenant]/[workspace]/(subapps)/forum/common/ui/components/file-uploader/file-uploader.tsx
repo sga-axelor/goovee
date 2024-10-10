@@ -78,8 +78,8 @@ export const FileUploader = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogTitle className="hidden" />
       <DialogContent className={`max-w-screen-lg h-fit p-1 lg:p-4`}>
+        <DialogTitle className="hidden" />
         <div className="bg-white w-full h-screen lg:h-full z-[100]">
           <ScrollArea
             className={`relative w-full ${fileDetails?.file?.type === 'application/pdf' ? 'h-[90vh]' : 'h-fit'} pt-8`}>
