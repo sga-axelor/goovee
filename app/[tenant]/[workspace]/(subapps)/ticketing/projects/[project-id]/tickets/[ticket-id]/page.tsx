@@ -166,8 +166,10 @@ export default async function Page({
           />
         </Suspense>
       </div>
-      <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-        <h4 className="text-xl font-semibold">{i18n.get('Comments')}</h4>
+      <div className="rounded-md border bg-card p-4 mt-5">
+        <h4 className="text-xl font-semibold border-b">
+          {i18n.get('Comments')}
+        </h4>
         <Comments
           record={ticket}
           modelType={ModelType.ticketing}
@@ -177,7 +179,8 @@ export default async function Page({
           hideSortBy
           hideCloseComments
           hideCommentsHeader
-          sortByProp={SORT_TYPE.old}
+          inputPosition="top"
+          sortByProp={SORT_TYPE.new}
           key={Math.random()}
         />
       </div>
