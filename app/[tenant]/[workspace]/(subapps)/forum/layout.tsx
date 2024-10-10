@@ -7,6 +7,10 @@ import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 
+// ---- LOCAL IMPORTS ---- //
+import {MENU} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
+import MobileMenu from '@/subapps/forum/mobile-menu';
+
 export default async function Layout({
   params,
   children,
@@ -38,5 +42,10 @@ export default async function Layout({
     return notFound();
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <MobileMenu items={MENU} />
+    </>
+  );
 }
