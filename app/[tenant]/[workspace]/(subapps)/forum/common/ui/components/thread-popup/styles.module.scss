@@ -1,6 +1,8 @@
-.my-styles {
+.custom-dialog-content {
+  height: 90%;
   > button {
     z-index: 1;
+    color: white;
     @media (min-width: 764px) {
       color: black;
     }

@@ -26,7 +26,7 @@ export const ThreadPopup = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className={`${styles['my-styles']} max-w-[72rem] max-h-[55rem] md:max-h-[48em] overflow-hidden px-0 py-0 md:h-full border-none md:rounded-l-xl flex items-center`}>
+        className={`${styles['custom-dialog-content']} max-w-[72rem] overflow-hidden px-0 py-0 md:h-full border-none md:rounded-l-xl flex items-center`}>
         <DialogTitle className="hidden" />
         <div className="w-full h-full flex flex-col md:flex-row gap-4">
           <div className=" w-full md:w-1/2 h-[480px] md:h-full md:pt-0 flex flex-col md:flex-row gap-4 md:mt-0 ">
