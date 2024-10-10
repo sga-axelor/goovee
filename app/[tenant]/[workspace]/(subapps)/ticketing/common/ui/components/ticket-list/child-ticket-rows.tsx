@@ -106,15 +106,15 @@ export function ChildTicketRows(props: ChildTicketRowsProps) {
               </TableCell>
             </>
           ) : (
-            <TableCell
-              className="flex items-center action p-3"
-              onClick={handleCollapse}>
-              <p className="max-w-48 line-clamp-2">{ticket.name}</p>
-              {ticket?.id === openId ? (
-                <MdArrowDropUp className="cursor-pointer ms-1  inline" />
-              ) : (
-                <MdArrowDropDown className="cursor-pointer ms-1  inline" />
-              )}
+            <TableCell className="action p-3" onClick={handleCollapse}>
+              <div className="flex items-center">
+                <p className="max-w-48 line-clamp-2">{ticket.name}</p>
+                {ticket?.id === openId ? (
+                  <MdArrowDropUp className="cursor-pointer ms-1  inline" />
+                ) : (
+                  <MdArrowDropDown className="cursor-pointer ms-1  inline" />
+                )}
+              </div>
             </TableCell>
           )}
 

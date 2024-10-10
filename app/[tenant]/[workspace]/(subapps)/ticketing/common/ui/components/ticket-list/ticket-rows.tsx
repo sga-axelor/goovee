@@ -109,14 +109,16 @@ export function TicketRows(props: {tickets: Cloned<TicketListTicket>[]}) {
             </>
           ) : (
             <TableCell
-              className="flex items-center cursor-pointer gap-1 action"
+              className="cursor-pointer gap-1 action"
               onClick={e => handleCollapse(ticket.id, e)}>
-              <p className="max-w-48 line-clamp-2">{ticket.name}</p>
-              {show && ticket?.id === id ? (
-                <MdArrowDropUp className="inline" />
-              ) : (
-                <MdArrowDropDown className="inline" />
-              )}
+              <div className="flex items-center">
+                <p className="max-w-48 line-clamp-2">{ticket.name}</p>
+                {show && ticket?.id === id ? (
+                  <MdArrowDropUp className="inline" />
+                ) : (
+                  <MdArrowDropDown className="inline" />
+                )}
+              </div>
             </TableCell>
           )}
         </TableRow>
