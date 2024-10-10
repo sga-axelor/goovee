@@ -41,6 +41,7 @@ import {
   findCompany,
   findTicketPriorities,
   findTicketStatuses,
+  findClientPartner,
 } from '../../../common/orm/projects';
 import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
@@ -258,12 +259,14 @@ async function AsyncFilter({
   searchParams: SearchParams;
   projectId: ID;
 }) {
-  const [contacts, statuses, priorities, company] = await Promise.all([
-    findContactPartners(projectId),
-    findTicketStatuses(projectId),
-    findTicketPriorities(projectId),
-    findCompany(projectId),
-  ]).then(clone);
+  const [contacts, statuses, priorities, company, clientPartner] =
+    await Promise.all([
+      findContactPartners(projectId),
+      findTicketStatuses(projectId),
+      findTicketPriorities(projectId),
+      findCompany(projectId),
+      findClientPartner(projectId),
+    ]).then(clone);
 
   return (
     <Filter
@@ -273,6 +276,7 @@ async function AsyncFilter({
       company={company}
       url={url}
       searchParams={searchParams}
+      clientPartner={clientPartner}
     />
   );
 }

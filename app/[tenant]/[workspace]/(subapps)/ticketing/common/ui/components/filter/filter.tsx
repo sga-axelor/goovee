@@ -8,6 +8,11 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/ui/components';
 import {Button} from '@/ui/components/button';
 import {Drawer, DrawerContent, DrawerTrigger} from '@/ui/components/drawer';
@@ -30,8 +35,9 @@ import {useForm, UseFormReturn} from 'react-hook-form';
 import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
-import {COMPANY} from '../../../constants';
+import {ASSIGNMENT, COMPANY} from '../../../constants';
 import type {
+  ClientPartner,
   Company,
   ContactPartner,
   Priority,
@@ -59,6 +65,7 @@ type FilterProps = {
   priorities: Cloned<Priority>[];
   statuses: Cloned<Status>[];
   company?: Cloned<Company>;
+  clientPartner?: Cloned<ClientPartner>;
 };
 
 const defaultValues = {
@@ -78,7 +85,15 @@ const defaultValues = {
 // 4. Add the where clause in getWhere function
 
 export function Filter(props: FilterProps) {
-  const {contacts, priorities, statuses, url, searchParams, company} = props;
+  const {
+    contacts,
+    priorities,
+    statuses,
+    url,
+    searchParams,
+    company,
+    clientPartner,
+  } = props;
   const [open, setOpen] = useState(false);
   const filter = useMemo(
     () => searchParams.filter && decodeFilter(searchParams.filter),
@@ -183,10 +198,12 @@ export function Filter(props: FilterProps) {
                     <ManagedByField form={form} contacts={contacts} />
                   </>
                 )}
+                <AssignedToField
+                  form={form}
+                  company={company}
+                  clientPartner={clientPartner}
+                />
                 <DatesField form={form} />
-                {
-                  //TODO: Add filter for assignment (assignedTo column)
-                }
                 <PriorityField form={form} priorities={priorities} />
                 <StatusField form={form} statuses={statuses} />
                 <Button
@@ -325,6 +342,49 @@ function MyTicketsField(props: FieldProps) {
   );
 }
 
+function AssignedToField(
+  props: FieldProps & Pick<FilterProps, 'company' | 'clientPartner'>,
+) {
+  const {form, company, clientPartner} = props;
+
+  return (
+    <div>
+      <FormField
+        control={form.control}
+        name="assignment"
+        render={({field}) => (
+          <FormItem className="grow">
+            <div className="flex items-center gap-2">
+              <FormLabel className="text-xs">
+                {i18n.get('Assigned To')} :
+              </FormLabel>
+
+              <Select
+                onValueChange={value => field.onChange(Number(value))}
+                defaultValue={field.value?.toString()}>
+                <FormControl>
+                  <SelectTrigger className="w-fit">
+                    <SelectValue
+                      placeholder={i18n.get('Select assignee')}></SelectValue>
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value={ASSIGNMENT.CUSTOMER.toString()}>
+                    {clientPartner?.simpleFullName}
+                  </SelectItem>
+                  <SelectItem value={ASSIGNMENT.PROVIDER.toString()}>
+                    {company?.name}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+}
 function DatesField(props: FieldProps) {
   const {form} = props;
   return (

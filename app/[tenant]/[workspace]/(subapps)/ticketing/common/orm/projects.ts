@@ -107,6 +107,19 @@ export async function findCompany(projectId: ID) {
   });
   return project?.company;
 }
+export type ClientPartner = NonNullable<
+  Awaited<ReturnType<typeof findClientPartner>>
+>;
+export async function findClientPartner(projectId: ID) {
+  const client = await getClient();
+  const project = await client.aOSProject.findOne({
+    where: {id: projectId},
+    select: {
+      clientPartner: {simpleFullName: true},
+    },
+  });
+  return project?.clientPartner;
+}
 
 export async function findTicketDoneStatus(): Promise<string | undefined> {
   const client = await getClient();
