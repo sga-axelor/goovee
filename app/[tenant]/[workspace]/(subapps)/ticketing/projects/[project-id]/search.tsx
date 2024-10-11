@@ -3,7 +3,7 @@
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
-import {Cloned} from '@/types/util';
+import type {Cloned} from '@/types/util';
 import {
   Command,
   CommandEmpty,
@@ -14,13 +14,14 @@ import {
 } from '@/ui/components/command';
 import {useToast} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import {debounce} from 'lodash';
 import {useRouter} from 'next/navigation';
-import {ChangeEvent, useCallback, useMemo, useRef, useState} from 'react';
+import type {ChangeEvent} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 
 import {searchTickets} from '../../common/actions';
-import {TicketSearch} from '../../common/orm/tickets';
+import type {TicketSearch} from '../../common/orm/tickets';
 
 export function Search({
   projectId,

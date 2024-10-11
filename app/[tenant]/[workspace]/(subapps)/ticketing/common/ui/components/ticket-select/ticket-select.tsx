@@ -14,13 +14,13 @@ import {
   PopoverTrigger,
 } from '@/ui/components';
 import {useResponsive, useToast} from '@/ui/hooks';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import {Drawer, DrawerContent, DrawerTrigger} from '@ui/components/drawer';
 import {debounce} from 'lodash';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {searchTickets} from '../../../actions';
-import {TicketSearch} from '../../../orm/tickets';
+import type {TicketSearch} from '../../../orm/tickets';
 
 const INIT_SEARCH_VALUE = '';
 export function TicketSelect({

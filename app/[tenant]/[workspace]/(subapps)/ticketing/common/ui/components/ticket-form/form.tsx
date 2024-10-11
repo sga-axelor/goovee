@@ -20,15 +20,17 @@ import {
   SelectValue,
 } from '@/ui/components/select';
 import {useToast} from '@/ui/hooks';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useCallback, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 // ---- LOCAL IMPORT ---- //
-import {mutate, MutateProps} from '../../../actions';
+import type {MutateProps} from '../../../actions';
+import {mutate} from '../../../actions';
 import type {Category, ContactPartner, Priority} from '../../../orm/projects';
-import {TicketFormSchema, TicketInfo} from '../../../schema';
+import type {TicketInfo} from '../../../schema';
+import {TicketFormSchema} from '../../../schema';
 
 type TicketFormProps = {
   projectId: string;

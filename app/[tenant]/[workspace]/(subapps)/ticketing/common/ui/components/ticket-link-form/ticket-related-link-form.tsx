@@ -1,6 +1,6 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
-import {Cloned} from '@/types/util';
+import type {Cloned} from '@/types/util';
 import {
   Button,
   Select,
@@ -17,14 +17,14 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {useToast} from '@/ui/hooks';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useRouter} from 'next/navigation';
 import {useMemo, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
-import {Ticket} from '../../../../common/orm/tickets';
+import type {Ticket} from '../../../../common/orm/tickets';
 import {createChildLink, createRelatedLink} from '../../../actions';
 import {ChildTicketSchema, RelatedTicketSchema} from '../../../schema';
 import {TicketSelect} from '../ticket-select';

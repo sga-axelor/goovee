@@ -24,7 +24,7 @@ import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {decodeFilter} from '@/utils/filter';
 import {workspacePathname} from '@/utils/workspace';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';

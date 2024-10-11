@@ -1,5 +1,5 @@
 import {DEFAULT_CURRENCY_SYMBOL, DEFAULT_SCALE} from '@/constants';
-import {Cloned} from '@/types/util';
+import type {Cloned} from '@/types/util';
 
 export function clone<T>(obj: T): Cloned<T> {
   return obj && JSON.parse(JSON.stringify(obj));

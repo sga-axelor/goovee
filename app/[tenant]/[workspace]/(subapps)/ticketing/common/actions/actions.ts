@@ -2,29 +2,25 @@
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/lib/i18n';
-import {Cloned} from '@/types/util';
+import type {Cloned} from '@/types/util';
 import {clone} from '@/utils';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  ASSIGNMENT,
-  STATUS_CHANGE_METHOD,
-  VERSION_MISMATCH_ERROR,
-} from '../constants';
+import {STATUS_CHANGE_METHOD, VERSION_MISMATCH_ERROR} from '../constants';
 import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
+import type {TicketSearch} from '../orm/tickets';
 import {
-  createTicket,
+  createChildTicketLink,
   createRelatedTicketLink,
+  createTicket,
+  deleteChildTicketLink,
   deleteRelatedTicketLink,
   findTicketsBySearch,
   findTicketVersion,
-  TicketSearch,
   updateTicket,
   updateTicketViaWS,
-  createChildTicketLink,
-  deleteChildTicketLink,
 } from '../orm/tickets';
 import {CreateTicketSchema, UpdateTicketSchema} from '../schema';
 import {ensureAuth} from '../utils/auth-helper';

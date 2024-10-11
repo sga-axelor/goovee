@@ -2,7 +2,7 @@
 
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/lib/i18n';
-import {Cloned, Maybe} from '@/types/util';
+import type {Cloned, Maybe} from '@/types/util';
 import {
   Avatar,
   AvatarImage,
@@ -27,8 +27,8 @@ import {Progress} from '@/ui/components/progress';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {pick} from 'lodash';
 import {useCallback, useEffect, useRef} from 'react';
-import {useForm, UseFormReturn} from 'react-hook-form';
-
+import type {UseFormReturn} from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 import {
   cancelTicket,
   closeTicket,

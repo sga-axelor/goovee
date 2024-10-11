@@ -1,7 +1,7 @@
 import {ORDER_BY} from '@/constants';
-import {AOSProjectTask} from '@/goovee/.generated/models';
-import {Maybe} from '@/types/util';
-import {Entity, ID, IdFilter, WhereArg, WhereOptions} from '@goovee/orm';
+import type {AOSProjectTask} from '@/goovee/.generated/models';
+import type {Maybe} from '@/types/util';
+import type {Entity, ID, IdFilter, WhereArg, WhereOptions} from '@goovee/orm';
 import {set} from 'lodash';
 import {COMPANY} from '../constants';
 import {EncodedFilterSchema} from '../schema';

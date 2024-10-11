@@ -4,9 +4,10 @@
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
 import {AOSProject} from '@/goovee/.generated/models';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 
-import {AuthProps, getProjectAccessFilter, QueryProps} from './helpers';
+import type {AuthProps, QueryProps} from './helpers';
+import {getProjectAccessFilter} from './helpers';
 import {getAllTicketCount} from './tickets';
 
 export async function findProjects(props: QueryProps<AOSProject> & AuthProps) {

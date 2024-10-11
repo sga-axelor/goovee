@@ -1,24 +1,19 @@
 'use client';
 import {i18n} from '@/lib/i18n';
-import {Cloned} from '@/types/util';
-import {TableHead, TableHeader, TableRow} from '@/ui/components';
-import {ID} from '@goovee/orm';
+import type {Cloned} from '@/types/util';
+import type {ID} from '@goovee/orm';
 import type {
   Category,
   ContactPartner,
   Priority,
 } from '../../../../common/orm/projects';
-import {Ticket} from '../../../../common/orm/tickets';
-import {TicketLinkHeader} from '../../../../common/ui/components/ticket-link-header';
+import type {Ticket} from '../../../../common/orm/tickets';
 import {TicketForm} from '../../../../common/ui/components/ticket-form';
 import {
   TicketChildLinkForm,
   TicketRelatedLinkForm,
 } from '../../../../common/ui/components/ticket-link-form';
-import {useResponsive} from '@/ui/hooks';
-import {columns} from '../../../../common/constants';
-import {cn} from '@/utils/css';
-import {Column, SortKey} from '../../../../common/types';
+import {TicketLinkHeader} from '../../../../common/ui/components/ticket-link-header';
 
 export function RelatedTicketsHeader(props: {
   linkTypes: {
@@ -85,103 +80,5 @@ export function ChildTicketsHeader(props: {
         />
       )}
     />
-  );
-}
-export function ParentTicketTableHeader() {
-  const res = useResponsive();
-  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
-  const mainColumns = small ? [columns[0], columns[2]] : columns;
-
-  return (
-    <TableHeader>
-      <TableRow>
-        {mainColumns?.map((column, index) => {
-          return (
-            <TableHead
-              key={column.key}
-              className={cn(
-                'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
-              )}>
-              <div
-                className={cn('flex gap-1 items-center', {
-                  'flex-row': index === 1 && small,
-                })}>
-                <div className="line-clamp-1">{column.label}</div>
-              </div>
-            </TableHead>
-          );
-        })}
-      </TableRow>
-    </TableHeader>
-  );
-}
-
-export function ChildTicketTableHeader() {
-  const res = useResponsive();
-  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
-  const mainColumns = small
-    ? [columns[0], columns[2]]
-    : columns.filter((column, index) => index !== 1);
-
-  return (
-    <TableHeader>
-      <TableRow>
-        {mainColumns?.map((column, index) => {
-          return (
-            <TableHead
-              key={column.key}
-              className={cn(
-                'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
-              )}>
-              <div
-                className={cn('flex gap-1 items-center', {
-                  'flex-row': index === 1 && small,
-                })}>
-                <div className="line-clamp-1">{column.label}</div>
-              </div>
-            </TableHead>
-          );
-        })}
-      </TableRow>
-    </TableHeader>
-  );
-}
-
-export function RelatedTicketsTableHeader() {
-  const res = useResponsive();
-  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
-  const newField = {
-    key: 'link',
-    label: 'Link Type',
-  };
-  const updatedColumns: Column<SortKey>[] = [newField, ...columns];
-  const mainColumns = small
-    ? [updatedColumns[0], updatedColumns[3]]
-    : updatedColumns;
-
-  return (
-    <TableHeader>
-      <TableRow>
-        {mainColumns?.map((column, index) => {
-          return (
-            index !== 2 &&
-            index !== 6 && (
-              <TableHead
-                key={column.key}
-                className={cn(
-                  'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
-                )}>
-                <div
-                  className={cn('flex gap-1 items-center', {
-                    'flex-row': index === 1 && small,
-                  })}>
-                  <div className="line-clamp-1">{column.label}</div>
-                </div>
-              </TableHead>
-            )
-          );
-        })}
-      </TableRow>
-    </TableHeader>
   );
 }

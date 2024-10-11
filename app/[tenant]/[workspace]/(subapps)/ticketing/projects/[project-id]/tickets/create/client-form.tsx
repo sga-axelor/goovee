@@ -1,6 +1,6 @@
 'use client';
 
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import type {
   Category,
   ContactPartner,

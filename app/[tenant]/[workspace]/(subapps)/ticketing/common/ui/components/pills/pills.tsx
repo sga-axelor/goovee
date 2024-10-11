@@ -56,7 +56,7 @@ export const Category = forwardRef<HTMLDivElement, PillProps>(
     return (
       <Tag
         variant="purple"
-        className={cn('text-[10px] py-1 me-5 rounded', className)}>
+        className={cn('text-[10px] py-1 rounded', className)}>
         {name}
       </Tag>
     );

@@ -4,6 +4,7 @@ import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {ModelType} from '@/types';
+import type {Cloned} from '@/types/util';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,20 +13,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   Comments,
-  Table,
-  TableBody,
 } from '@/ui/components';
 import {clone} from '@/utils';
 import {encodeFilter} from '@/utils/filter';
 import {workspacePathname} from '@/utils/workspace';
-import {ID} from '@goovee/orm';
+import type {ID} from '@goovee/orm';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
-import {Cloned} from '@/types/util';
 import type {
   Category,
   ContactPartner,
@@ -37,27 +35,20 @@ import {
   findTicketPriorities,
   findTicketStatuses,
 } from '../../../../common/orm/projects';
+import type {Ticket, TicketListTicket} from '../../../../common/orm/tickets';
 import {
   findParentTickets,
   findTicket,
   findTicketLinkTypes,
-  Ticket,
-  TicketListTicket,
 } from '../../../../common/orm/tickets';
 import {EncodedFilter} from '../../../../common/schema';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
-  ChildTicketRows,
-  RelatedTicketRows,
-  TicketRows,
+  ChildTicketList,
+  ParentTicketList,
+  RelatedTicketList,
 } from '../../../../common/ui/components/ticket-list';
-import {
-  ChildTicketsHeader,
-  ChildTicketTableHeader,
-  ParentTicketTableHeader,
-  RelatedTicketsHeader,
-  RelatedTicketsTableHeader,
-} from './headers';
+import {ChildTicketsHeader, RelatedTicketsHeader} from './headers';
 
 export default async function Page({
   params,
@@ -220,12 +211,7 @@ async function ChildTickets({
         userId={userId}
       />
       <hr className="mt-5" />
-      <Table>
-        {(tickets ?? [])?.length > 0 && <ChildTicketTableHeader />}
-        <TableBody>
-          <ChildTicketRows ticketId={ticketId} tickets={tickets ?? []} />
-        </TableBody>
-      </Table>
+      <ChildTicketList ticketId={ticketId.toString()} tickets={tickets} />
     </>
   );
 }
@@ -235,12 +221,7 @@ async function ParentTicket({ticket}: {ticket: Cloned<TicketListTicket>}) {
     <>
       <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
       <hr className="mt-5" />
-      <Table>
-        {([ticket] ?? [])?.length > 0 && <ParentTicketTableHeader />}
-        <TableBody>
-          <TicketRows tickets={[ticket]} />
-        </TableBody>
-      </Table>
+      <ParentTicketList tickets={[ticket]} />
     </>
   );
 }
@@ -265,12 +246,7 @@ async function RelatedTickets({
         projectId={projectId}
       />
       <hr className="mt-5" />
-      <Table>
-        {(links ?? [])?.length > 0 && <RelatedTicketsTableHeader />}
-        <TableBody>
-          <RelatedTicketRows links={links ?? []} ticketId={ticketId} />
-        </TableBody>
-      </Table>
+      <RelatedTicketList links={links ?? []} ticketId={ticketId.toString()} />
     </>
   );
 }

@@ -4,11 +4,11 @@
 
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
-import {AOSProjectTask} from '@/goovee/.generated/models';
+import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {addComment} from '@/orm/comment';
 import {ModelType} from '@/types';
-import {Entity, ID, SelectOptions} from '@goovee/orm';
+import type {Entity, ID, SelectOptions} from '@goovee/orm';
 import axios from 'axios';
 
 import {

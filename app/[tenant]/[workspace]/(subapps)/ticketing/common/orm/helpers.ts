@@ -1,5 +1,5 @@
-import {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
-import {Entity, ID, WhereOptions} from '@goovee/orm';
+import type {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
+import type {Entity, ID, WhereOptions} from '@goovee/orm';
 import {TYPE_SELECT} from '../constants';
 
 export type AuthProps = {

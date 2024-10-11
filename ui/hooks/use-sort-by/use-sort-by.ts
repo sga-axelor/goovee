@@ -46,13 +46,20 @@ function genericSort<T extends string | number | Date>(a: T, b: T) {
   return 0;
 }
 
-type ToggleSortProps<T extends Record<string, any>> = {
+export type SortType =
+  | 'number'
+  | 'string'
+  | 'json-date'
+  | 'string-number'
+  | 'date';
+
+export type ToggleSortProps<T extends Record<string, any>> = {
   key: string | null;
   getter?: string | ((record: T) => unknown);
-  type?: 'number' | 'string' | 'json-date' | 'string-number' | 'date';
+  type?: SortType;
 };
 
-type Sort<T extends Record<string, any>> = ToggleSortProps<T> & {
+export type Sort<T extends Record<string, any>> = ToggleSortProps<T> & {
   direction: 'ASC' | 'DESC';
 };
 
