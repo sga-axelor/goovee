@@ -10,8 +10,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   Button,
-  TableCell,
-  TableRow,
 } from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
@@ -32,23 +30,23 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {columns, DEFAULT_SORT, sortKeyPathMap} from '../../common/constants';
+import {cn} from '@/utils/css';
+import {DEFAULT_SORT, sortKeyPathMap} from '../../common/constants';
 import {findProject, findTicketStatuses} from '../../common/orm/projects';
 import {
   findTickets,
   getAllTicketCount,
-  getManagedTicketCount,
   getCreatedTicketCount,
+  getManagedTicketCount,
   getMyTicketCount,
   getResolvedTicketCount,
 } from '../../common/orm/tickets';
+import {EncodedFilter} from '../../common/schema';
 import type {SearchParams} from '../../common/types/search-param';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
 import Search from './search';
-import {cn} from '@/utils/css';
-import {EncodedFilter} from '../../common/schema';
 
 export default async function Page({
   params,
@@ -138,61 +136,51 @@ export default async function Page({
   ));
 
   return (
-    <>
-      <div className="container my-6 space-y-6 mx-auto">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                asChild
-                className="text-foreground-muted cursor-pointer truncate text-md">
-                <Link href={`${workspaceURI}/ticketing`}>
-                  {i18n.get('Projects')}
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <FaChevronRight className="text-primary" />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbPage className="sm:truncate text-lg font-semibold">
-                {project.name}
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <Search projectId={projectId} />
-        <Swipe items={items} />
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-xl">
-            {i18n.get('Latest tickets')}
-          </h2>
-          <Button variant="success" className="flex items-center" asChild>
-            <Link href={`${ticketsURL}/create`}>
-              <MdAdd className="size-6" />
-              <span>{i18n.get('Create a ticket')}</span>
-            </Link>
-          </Button>
-        </div>
-        <TicketList
-          tickets={tickets}
-          footer={
-            <TableRow>
-              <TableCell colSpan={columns.length + 1} align="right">
-                {tickets.length > 0 && (
-                  <Link
-                    href={allTicketsURL}
-                    className="inline-flex gap-1 items-center text-success">
-                    {i18n.get('See all tickets')}
-                    <MdArrowForward />
-                  </Link>
-                )}
-              </TableCell>
-            </TableRow>
-          }
-        />
+    <div className="container my-6 space-y-6 mx-auto">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              asChild
+              className="text-foreground-muted cursor-pointer truncate text-md">
+              <Link href={`${workspaceURI}/ticketing`}>
+                {i18n.get('Projects')}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <FaChevronRight className="text-primary" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbPage className="sm:truncate text-lg font-semibold">
+              {project.name}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <Search projectId={projectId} />
+      <Swipe items={items} />
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold text-xl">{i18n.get('Latest tickets')}</h2>
+        <Button variant="success" className="flex items-center" asChild>
+          <Link href={`${ticketsURL}/create`}>
+            <MdAdd className="size-6" />
+            <span>{i18n.get('Create a ticket')}</span>
+          </Link>
+        </Button>
       </div>
-    </>
+      <div>
+        <TicketList tickets={tickets} />
+        <div className="flex justify-end p-4">
+          <Link
+            href={allTicketsURL}
+            className="inline-flex gap-1 items-center text-success text-sm font-medium">
+            {i18n.get('See all tickets')}
+            <MdArrowForward />
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
 

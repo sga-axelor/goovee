@@ -20,7 +20,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/ui/components/pagination';
-import {TableCell, TableRow} from '@/ui/components/table';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {decodeFilter} from '@/utils/filter';
@@ -34,14 +33,14 @@ import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {columns, DEFAULT_SORT, sortKeyPathMap} from '../../../common/constants';
+import {DEFAULT_SORT, sortKeyPathMap} from '../../../common/constants';
 import {
+  findClientPartner,
+  findCompany,
   findContactPartners,
   findProject,
-  findCompany,
   findTicketPriorities,
   findTicketStatuses,
-  findClientPartner,
 } from '../../../common/orm/projects';
 import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
@@ -154,99 +153,95 @@ export default async function Page({
           />
         </Suspense>
       </div>
-      <TicketList
-        tickets={tickets}
-        footer={<Footer url={url} pages={pages} searchParams={searchParams} />}
-      />
+      <div>
+        <TicketList tickets={tickets} />
+        <TablePagination url={url} pages={pages} searchParams={searchParams} />
+      </div>
     </div>
   );
 }
 
-type FooterProps = {
+type TablePaginationProps = {
   url: string;
   searchParams: SearchParams;
   pages: number;
 };
 
-function Footer(props: FooterProps) {
+function TablePagination(props: TablePaginationProps) {
   const {url, searchParams, pages} = props;
   const {page = 1} = searchParams;
   return (
-    <TableRow>
-      <TableCell colSpan={columns.length + 1} align="center">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious asChild>
+    <Pagination className="p-4">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious asChild>
+            <Link
+              replace
+              scroll={false}
+              className={cn({
+                ['invisible']: +page <= 1,
+              })}
+              href={{
+                pathname: url,
+                query: {
+                  ...searchParams,
+                  page: +page - 1,
+                },
+              }}>
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Previous</span>
+            </Link>
+          </PaginationPrevious>
+        </PaginationItem>
+        {getPaginationButtons(+page, pages).map((value, i) => {
+          if (typeof value == 'string') {
+            return (
+              <PaginationItem key={i}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            );
+          }
+          return (
+            <PaginationItem key={value}>
+              <PaginationLink isActive={+page === value} asChild>
                 <Link
                   replace
                   scroll={false}
-                  className={cn({
-                    ['invisible']: +page <= 1,
-                  })}
                   href={{
                     pathname: url,
                     query: {
                       ...searchParams,
-                      page: +page - 1,
+                      page: value,
                     },
                   }}>
-                  <ChevronLeft className="h-4 w-4" />
-                  <span className="sr-only">Previous</span>
+                  {value}
                 </Link>
-              </PaginationPrevious>
+              </PaginationLink>
             </PaginationItem>
-            {getPaginationButtons(+page, pages).map((value, i) => {
-              if (typeof value == 'string') {
-                return (
-                  <PaginationItem key={i}>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                );
-              }
-              return (
-                <PaginationItem key={value}>
-                  <PaginationLink isActive={+page === value} asChild>
-                    <Link
-                      replace
-                      scroll={false}
-                      href={{
-                        pathname: url,
-                        query: {
-                          ...searchParams,
-                          page: value,
-                        },
-                      }}>
-                      {value}
-                    </Link>
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-            <PaginationItem>
-              <PaginationNext asChild>
-                <Link
-                  replace
-                  scroll={false}
-                  className={cn({
-                    ['invisible']: +page >= pages,
-                  })}
-                  href={{
-                    pathname: url,
-                    query: {
-                      ...searchParams,
-                      page: +page + 1,
-                    },
-                  }}>
-                  <span className="sr-only">Next</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              </PaginationNext>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </TableCell>
-    </TableRow>
+          );
+        })}
+        <PaginationItem>
+          <PaginationNext asChild>
+            <Link
+              replace
+              scroll={false}
+              className={cn({
+                ['invisible']: +page >= pages,
+              })}
+              href={{
+                pathname: url,
+                query: {
+                  ...searchParams,
+                  page: +page + 1,
+                },
+              }}>
+              <span className="sr-only">Next</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </PaginationNext>
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   );
 }
 

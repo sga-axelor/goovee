@@ -23,11 +23,10 @@ import {TicketRows} from './ticket-rows';
 
 type TicketListProps = {
   tickets: Cloned<TicketListTicket>[];
-  footer?: ReactNode;
 };
 
 export function TicketList(props: TicketListProps) {
-  const {tickets, footer} = props;
+  const {tickets} = props;
   const [sortedTickets, sort, toggleSort] = useSortBy(tickets);
   const res = useResponsive();
   const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
@@ -68,7 +67,6 @@ export function TicketList(props: TicketListProps) {
       <TableBody>
         <TicketRows tickets={sortedTickets} />
       </TableBody>
-      <TableFooter>{footer}</TableFooter>
     </Table>
   );
 }
