@@ -172,77 +172,81 @@ function Footer(props: FooterProps) {
   const {url, searchParams, pages} = props;
   const {page = 1} = searchParams;
   return (
-    <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious asChild>
-            <Link
-              replace
-              scroll={false}
-              className={cn({
-                ['invisible']: +page <= 1,
-              })}
-              href={{
-                pathname: url,
-                query: {
-                  ...searchParams,
-                  page: +page - 1,
-                },
-              }}>
-              <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">Previous</span>
-            </Link>
-          </PaginationPrevious>
-        </PaginationItem>
-        {getPaginationButtons(+page, pages).map((value, i) => {
-          if (typeof value == 'string') {
-            return (
-              <PaginationItem key={i}>
-                <PaginationEllipsis />
-              </PaginationItem>
-            );
-          }
-          return (
-            <PaginationItem key={value}>
-              <PaginationLink isActive={+page === value} asChild>
+    <TableRow>
+      <TableCell colSpan={columns.length + 1} align="center">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious asChild>
                 <Link
                   replace
                   scroll={false}
+                  className={cn({
+                    ['invisible']: +page <= 1,
+                  })}
                   href={{
                     pathname: url,
                     query: {
                       ...searchParams,
-                      page: value,
+                      page: +page - 1,
                     },
                   }}>
-                  {value}
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="sr-only">Previous</span>
                 </Link>
-              </PaginationLink>
+              </PaginationPrevious>
             </PaginationItem>
-          );
-        })}
-        <PaginationItem>
-          <PaginationNext asChild>
-            <Link
-              replace
-              scroll={false}
-              className={cn({
-                ['invisible']: +page >= pages,
-              })}
-              href={{
-                pathname: url,
-                query: {
-                  ...searchParams,
-                  page: +page + 1,
-                },
-              }}>
-              <span className="sr-only">Next</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </PaginationNext>
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+            {getPaginationButtons(+page, pages).map((value, i) => {
+              if (typeof value == 'string') {
+                return (
+                  <PaginationItem key={i}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                );
+              }
+              return (
+                <PaginationItem key={value}>
+                  <PaginationLink isActive={+page === value} asChild>
+                    <Link
+                      replace
+                      scroll={false}
+                      href={{
+                        pathname: url,
+                        query: {
+                          ...searchParams,
+                          page: value,
+                        },
+                      }}>
+                      {value}
+                    </Link>
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            })}
+            <PaginationItem>
+              <PaginationNext asChild>
+                <Link
+                  replace
+                  scroll={false}
+                  className={cn({
+                    ['invisible']: +page >= pages,
+                  })}
+                  href={{
+                    pathname: url,
+                    query: {
+                      ...searchParams,
+                      page: +page + 1,
+                    },
+                  }}>
+                  <span className="sr-only">Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </PaginationNext>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </TableCell>
+    </TableRow>
   );
 }
 

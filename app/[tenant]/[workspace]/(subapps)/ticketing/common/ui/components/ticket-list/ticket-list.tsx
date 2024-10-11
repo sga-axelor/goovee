@@ -34,43 +34,41 @@ export function TicketList(props: TicketListProps) {
   const mainColumns = small ? [columns[0], columns[2]] : columns;
 
   return (
-    <>
-      <Table className="rounded-lg bg-card text-card-foreground">
-        <TableHeader>
-          <TableRow>
-            {mainColumns?.map(column => {
-              const isActive = sort.key === column.key;
-              const isASC = isActive && sort.direction === ORDER_BY.ASC;
-              const label = i18n.get(column.label);
-              const Arrow = isASC ? MdArrowDropDown : MdArrowDropUp;
-              return (
-                <TableHead
-                  key={column.key}
-                  onClick={() => {
-                    const getter = sortValueGetterMap[column.key];
-                    getter && toggleSort({key: column.key, getter});
-                  }}
-                  className={cn(
-                    'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
-                  )}>
-                  <div className="flex gap-1 items-center">
-                    <div className="line-clamp-1">{label}</div>
-                    {isActive ? (
-                      <Arrow className="ms-auto" />
-                    ) : (
-                      <span className="h-[1em] w-[1em]" />
-                    )}
-                  </div>
-                </TableHead>
-              );
-            })}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TicketRows tickets={sortedTickets} />
-        </TableBody>
-      </Table>
-      <div>{footer}</div>
-    </>
+    <Table className="rounded-lg bg-card text-card-foreground">
+      <TableHeader>
+        <TableRow>
+          {mainColumns?.map(column => {
+            const isActive = sort.key === column.key;
+            const isASC = isActive && sort.direction === ORDER_BY.ASC;
+            const label = i18n.get(column.label);
+            const Arrow = isASC ? MdArrowDropDown : MdArrowDropUp;
+            return (
+              <TableHead
+                key={column.key}
+                onClick={() => {
+                  const getter = sortValueGetterMap[column.key];
+                  getter && toggleSort({key: column.key, getter});
+                }}
+                className={cn(
+                  'text-card-foreground cursor-pointer text-xs font-semibold border-none pr-0',
+                )}>
+                <div className="flex gap-1 items-center">
+                  <div className="line-clamp-1">{label}</div>
+                  {isActive ? (
+                    <Arrow className="ms-auto" />
+                  ) : (
+                    <span className="h-[1em] w-[1em]" />
+                  )}
+                </div>
+              </TableHead>
+            );
+          })}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TicketRows tickets={sortedTickets} />
+      </TableBody>
+      <TableFooter>{footer}</TableFooter>
+    </Table>
   );
 }

@@ -177,14 +177,18 @@ export default async function Page({
         <TicketList
           tickets={tickets}
           footer={
-            tickets.length > 0 && (
-              <Link
-                href={allTicketsURL}
-                className="inline-flex gap-1 items-center text-success float-right p-4">
-                {i18n.get('See all tickets')}
-                <MdArrowForward />
-              </Link>
-            )
+            <TableRow>
+              <TableCell colSpan={columns.length + 1} align="right">
+                {tickets.length > 0 && (
+                  <Link
+                    href={allTicketsURL}
+                    className="inline-flex gap-1 items-center text-success">
+                    {i18n.get('See all tickets')}
+                    <MdArrowForward />
+                  </Link>
+                )}
+              </TableCell>
+            </TableRow>
           }
         />
       </div>
