@@ -3,7 +3,7 @@
  */
 import {ORDER_BY} from '@/constants';
 import {getClient} from '@/goovee';
-import {AOSProject} from '@/goovee/.generated/models';
+import type {AOSProject} from '@/goovee/.generated/models';
 import type {ID} from '@goovee/orm';
 
 import type {AuthProps, QueryProps} from './helpers';
@@ -31,7 +31,7 @@ export async function findProjectsWithTaskCount(
 ) {
   const projects = await findProjects(props);
   const counts = await Promise.all(
-    projects.map(project => getAllTicketCount(project.id)),
+    projects.map(project => getAllTicketCount({projectId: project.id})),
   );
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
@@ -108,6 +108,7 @@ export async function findCompany(projectId: ID) {
   });
   return project?.company;
 }
+
 export type ClientPartner = NonNullable<
   Awaited<ReturnType<typeof findClientPartner>>
 >;
@@ -143,7 +144,6 @@ export async function findTicketCancelledStatus(): Promise<string | undefined> {
 export type ContactPartner = Awaited<
   ReturnType<typeof findContactPartners>
 >[number];
-
 export async function findContactPartners(projectId: ID) {
   const client = await getClient();
   const project = await client.aOSProject.findOne({

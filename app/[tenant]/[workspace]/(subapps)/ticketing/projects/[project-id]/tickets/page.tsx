@@ -193,33 +193,35 @@ function TablePagination(props: TablePaginationProps) {
             </Link>
           </PaginationPrevious>
         </PaginationItem>
-        {getPaginationButtons(+page, pages).map((value, i) => {
-          if (typeof value == 'string') {
+        {getPaginationButtons({currentPage: +page, totalPages: pages}).map(
+          (value, i) => {
+            if (typeof value == 'string') {
+              return (
+                <PaginationItem key={i}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              );
+            }
             return (
-              <PaginationItem key={i}>
-                <PaginationEllipsis />
+              <PaginationItem key={value}>
+                <PaginationLink isActive={+page === value} asChild>
+                  <Link
+                    replace
+                    scroll={false}
+                    href={{
+                      pathname: url,
+                      query: {
+                        ...searchParams,
+                        page: value,
+                      },
+                    }}>
+                    {value}
+                  </Link>
+                </PaginationLink>
               </PaginationItem>
             );
-          }
-          return (
-            <PaginationItem key={value}>
-              <PaginationLink isActive={+page === value} asChild>
-                <Link
-                  replace
-                  scroll={false}
-                  href={{
-                    pathname: url,
-                    query: {
-                      ...searchParams,
-                      page: value,
-                    },
-                  }}>
-                  {value}
-                </Link>
-              </PaginationLink>
-            </PaginationItem>
-          );
-        })}
+          },
+        )}
         <PaginationItem>
           <PaginationNext asChild>
             <Link

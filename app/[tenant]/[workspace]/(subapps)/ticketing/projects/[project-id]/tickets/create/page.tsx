@@ -56,14 +56,14 @@ export default async function Page({
   if (!workspace) notFound();
 
   if (parentId) {
-    const parentTicket = await findTicketAccess(
-      parentId,
+    const parentTicket = await findTicketAccess({
+      recordId: parentId,
       userId,
-      workspace.id,
-      {
+      workspaceId: workspace.id,
+      select: {
         project: {id: true},
       },
-    );
+    });
     if (parentTicket?.project?.id !== projectId) notFound();
   }
 

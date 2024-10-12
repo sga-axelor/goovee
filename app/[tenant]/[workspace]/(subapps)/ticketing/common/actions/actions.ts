@@ -40,24 +40,24 @@ export async function mutate(
     let ticket;
     if (action.type === 'create') {
       const createData = CreateTicketSchema.parse(action.data);
-      ticket = await createTicket(
-        createData,
-        user.id,
-        workspace.id,
+      ticket = await createTicket({
+        data: createData,
+        userId: user.id,
+        workspaceId: workspace.id,
         workspaceURL,
-      );
+      });
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
       if (force) {
         const version = await findTicketVersion(updateData.id);
         updateData.version = version;
       }
-      ticket = await updateTicket(
-        updateData,
-        user.id,
-        workspace.id,
+      ticket = await updateTicket({
+        data: updateData,
+        userId: user.id,
+        workspaceId: workspace.id,
         workspaceURL,
-      );
+      });
     }
 
     if (ticket.project?.id) {
@@ -111,7 +111,12 @@ export async function updateAssignment(
         ? updateTicketViaWS
         : updateTicket;
 
-    await update(updateData, user.id, workspace.id, workspaceURL);
+    await update({
+      data: updateData,
+      userId: user.id,
+      workspaceId: workspace.id,
+      workspaceURL,
+    });
     return {
       error: false,
       data: true,
@@ -166,7 +171,12 @@ export async function closeTicket(
         ? updateTicketViaWS
         : updateTicket;
 
-    await update(updateData, user.id, workspace.id, workspaceURL);
+    await update({
+      data: updateData,
+      userId: user.id,
+      workspaceId: workspace.id,
+      workspaceURL,
+    });
 
     //TODO: tickets path needs to be revalidated
     return {
@@ -218,7 +228,13 @@ export async function cancelTicket(
         ? updateTicketViaWS
         : updateTicket;
 
-    await update(updateData, user.id, workspace.id, workspaceURL);
+    await update({
+      data: updateData,
+      userId: user.id,
+      workspaceId: workspace.id,
+      workspaceURL,
+    });
+
     return {
       error: false,
       data: true,
@@ -249,7 +265,11 @@ export async function createRelatedLink(
   const {user, workspace} = auth;
 
   try {
-    await createRelatedTicketLink(data, user.id, workspace.id);
+    await createRelatedTicketLink({
+      data,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
     return {
       error: false,
       data: true,
@@ -280,7 +300,11 @@ export async function createChildLink(
   const {user, workspace} = auth;
 
   try {
-    await createChildTicketLink(data, user.id, workspace.id);
+    await createChildTicketLink({
+      data,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
     return {
       error: false,
       data: true,
@@ -311,7 +335,11 @@ export async function deleteChildLink(
   const {user, workspace} = auth;
 
   try {
-    await deleteChildTicketLink(data, user.id, workspace.id);
+    await deleteChildTicketLink({
+      data,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
     return {
       error: false,
       data: true,
@@ -342,7 +370,11 @@ export async function deleteRelatedLink(
   const {user, workspace} = auth;
 
   try {
-    const count = await deleteRelatedTicketLink(data, user.id, workspace.id);
+    const count = await deleteRelatedTicketLink({
+      data,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
     return {
       error: false,
       data: count,

@@ -75,7 +75,7 @@ export default async function Page({
 
   const [ticket, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findTicket(ticketId, projectId),
+      findTicket({ticketId, projectId}),
       findTicketStatuses(projectId),
       findTicketCategories(projectId),
       findTicketPriorities(projectId),

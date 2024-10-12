@@ -30,13 +30,17 @@ export const getPages = (
 
 const ELLIPSIS = '...' as const;
 type Ellipsis = typeof ELLIPSIS;
-export function getPaginationButtons(
-  currentPage: number,
-  totolPages: number,
-  maxVisibleButtons: number = 5,
-): (number | Ellipsis)[] {
-  if (totolPages <= maxVisibleButtons) {
-    return Array.from({length: totolPages}, (_, i) => i + 1);
+export function getPaginationButtons({
+  currentPage,
+  totalPages,
+  maxVisibleButtons = 5,
+}: {
+  currentPage: number;
+  totalPages: number;
+  maxVisibleButtons?: number;
+}): (number | Ellipsis)[] {
+  if (totalPages <= maxVisibleButtons) {
+    return Array.from({length: totalPages}, (_, i) => i + 1);
   }
 
   const buttons: (number | Ellipsis)[] = [];
@@ -47,14 +51,14 @@ export function getPaginationButtons(
       buttons.push(i);
     }
     // Add ellipsis and last page
-    buttons.push(ELLIPSIS, totolPages);
+    buttons.push(ELLIPSIS, totalPages);
   }
   // Check if the current page is near the end of the pagination
-  else if (currentPage >= totolPages - Math.floor(maxVisibleButtons / 2)) {
+  else if (currentPage >= totalPages - Math.floor(maxVisibleButtons / 2)) {
     // Display the first page, and ellipsis
     buttons.push(1, ELLIPSIS);
     // Display buttons for the ending pages
-    for (let i = totolPages - (maxVisibleButtons - 3); i <= totolPages; i++) {
+    for (let i = totalPages - (maxVisibleButtons - 3); i <= totalPages; i++) {
       buttons.push(i);
     }
   }
@@ -69,7 +73,7 @@ export function getPaginationButtons(
     ) {
       buttons.push(i);
     }
-    buttons.push(ELLIPSIS, totolPages);
+    buttons.push(ELLIPSIS, totalPages);
   }
   return buttons;
 }

@@ -122,7 +122,10 @@ export default async function Page({
                   </Link>
                 </PaginationPrevious>
               </PaginationItem>
-              {getPaginationButtons(+page, pages).map((value, i) => {
+              {getPaginationButtons({
+                currentPage: +page,
+                totalPages: pages,
+              }).map((value, i) => {
                 if (typeof value == 'string') {
                   return (
                     <PaginationItem key={i}>

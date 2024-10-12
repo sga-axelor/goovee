@@ -1,13 +1,13 @@
-import React from 'react';
-import {notFound} from 'next/navigation';
 import type {Metadata} from 'next';
+import {notFound} from 'next/navigation';
+import type {ReactNode} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {findSubappAccess} from '@/orm/workspace';
-import {getSession} from '@/orm/auth';
-import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/lib/i18n';
+import {getSession} from '@/orm/auth';
+import {findSubappAccess} from '@/orm/workspace';
+import {workspacePathname} from '@/utils/workspace';
 
 export const metadata: Metadata = {
   title: i18n.get('Ticketing'),
@@ -21,7 +21,7 @@ export default async function Layout({
     tenant: string;
     workspace: string;
   };
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const user = (await getSession())?.user;
   if (!user) return notFound();

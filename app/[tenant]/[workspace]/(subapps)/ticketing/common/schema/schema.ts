@@ -1,6 +1,6 @@
 import {i18n} from '@/lib/i18n';
 import {z} from 'zod';
-import {Expand} from '@/types/util';
+import type {Expand} from '@/types/util';
 
 export const TicketFormSchema = z.object({
   subject: z

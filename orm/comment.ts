@@ -348,7 +348,11 @@ export async function findByID({
       break;
     case ModelType.ticketing:
       if (user) {
-        response = await findTicketAccess(id, user.id, workspace.id);
+        response = await findTicketAccess({
+          recordId: id,
+          userId: user.id,
+          workspaceId: workspace.id,
+        });
       }
       if (!response)
         return {

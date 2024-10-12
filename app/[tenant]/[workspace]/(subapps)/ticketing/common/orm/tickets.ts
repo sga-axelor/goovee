@@ -36,12 +36,17 @@ type Track = {
   oldValue?: string;
 };
 
-export async function findTicketAccess(
-  ticketId: ID,
-  userId: ID,
-  workspaceId: ID,
-  select?: SelectOptions<AOSProjectTask>,
-) {
+export async function findTicketAccess({
+  recordId: ticketId,
+  userId,
+  workspaceId,
+  select,
+}: {
+  recordId: ID;
+  userId: ID;
+  workspaceId: ID;
+  select?: SelectOptions<AOSProjectTask>;
+}) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
@@ -54,12 +59,17 @@ export async function findTicketAccess(
   return ticket;
 }
 
-export async function createTicket(
-  data: CreateTicketInfo,
-  userId: ID,
-  workspaceId: ID,
-  workspaceURL: string,
-) {
+export async function createTicket({
+  data,
+  userId,
+  workspaceId,
+  workspaceURL,
+}: {
+  data: CreateTicketInfo;
+  userId: ID;
+  workspaceId: ID;
+  workspaceURL: string;
+}) {
   const {
     priority,
     subject,
@@ -91,8 +101,13 @@ export async function createTicket(
   }
 
   if (parentId) {
-    const parentTicket = await findTicketAccess(parentId, userId, workspaceId, {
-      project: {id: true},
+    const parentTicket = await findTicketAccess({
+      recordId: parentId,
+      userId,
+      workspaceId,
+      select: {
+        project: {id: true},
+      },
     });
     if (!parentTicket) {
       throw new Error(i18n.get('Parent ticket not found'));
@@ -231,11 +246,15 @@ export async function createTicket(
   return ticket;
 }
 
-export async function updateTicketViaWS(
-  data: UpdateTicketInfo,
-  userId: ID,
-  workspaceId: ID,
-) {
+export async function updateTicketViaWS({
+  data,
+  userId,
+  workspaceId,
+}: {
+  data: UpdateTicketInfo;
+  userId: ID;
+  workspaceId: ID;
+}) {
   const {
     priority,
     subject,
@@ -248,7 +267,7 @@ export async function updateTicketViaWS(
     version,
   } = data;
 
-  if (!(await findTicketAccess(id, userId, workspaceId))) {
+  if (!(await findTicketAccess({recordId: id, userId, workspaceId}))) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
   }
@@ -297,12 +316,17 @@ export async function updateTicketViaWS(
   return res.data;
 }
 
-export async function updateTicket(
-  data: UpdateTicketInfo,
-  userId: ID,
-  workspaceId: ID,
-  workspaceURL: string,
-) {
+export async function updateTicket({
+  data,
+  userId,
+  workspaceId,
+  workspaceURL,
+}: {
+  data: UpdateTicketInfo;
+  userId: ID;
+  workspaceId: ID;
+  workspaceURL: string;
+}) {
   const {
     priority,
     subject,
@@ -325,7 +349,12 @@ export async function updateTicket(
     ...(managedBy && {assignedToContact: {name: true}}),
   };
 
-  const oldTicket = await findTicketAccess(id, userId, workspaceId, select);
+  const oldTicket = await findTicketAccess({
+    recordId: id,
+    userId,
+    workspaceId,
+    select,
+  });
   if (!oldTicket) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
@@ -434,7 +463,11 @@ export async function updateTicket(
   return ticket;
 }
 
-export async function getAllTicketCount(projectId: ID): Promise<number> {
+export async function getAllTicketCount({
+  projectId,
+}: {
+  projectId: ID;
+}): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
@@ -445,10 +478,14 @@ export async function getAllTicketCount(projectId: ID): Promise<number> {
   });
   return Number(count);
 }
-export async function getMyTicketCount(
-  projectId: ID,
-  userId: ID,
-): Promise<number> {
+
+export async function getMyTicketCount({
+  projectId,
+  userId,
+}: {
+  projectId: ID;
+  userId: ID;
+}): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
@@ -472,10 +509,13 @@ export async function getMyTicketCount(
   return Number(count);
 }
 
-export async function getManagedTicketCount(
-  projectId: ID,
-  userId: ID,
-): Promise<number> {
+export async function getManagedTicketCount({
+  projectId,
+  userId,
+}: {
+  projectId: ID;
+  userId: ID;
+}): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
@@ -488,10 +528,13 @@ export async function getManagedTicketCount(
   return Number(count);
 }
 
-export async function getCreatedTicketCount(
-  projectId: ID,
-  userId: ID,
-): Promise<number> {
+export async function getCreatedTicketCount({
+  projectId,
+  userId,
+}: {
+  projectId: ID;
+  userId: ID;
+}): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
@@ -503,7 +546,11 @@ export async function getCreatedTicketCount(
   });
   return Number(count);
 }
-export async function getResolvedTicketCount(projectId: ID): Promise<number> {
+export async function getResolvedTicketCount({
+  projectId,
+}: {
+  projectId: ID;
+}): Promise<number> {
   const client = await getClient();
   const count = await client.aOSProjectTask.count({
     where: {
@@ -549,7 +596,13 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
 }
 
 export type Ticket = NonNullable<Awaited<ReturnType<typeof findTicket>>>;
-export async function findTicket(ticketId: ID, projectId: ID) {
+export async function findTicket({
+  ticketId,
+  projectId,
+}: {
+  ticketId: ID;
+  projectId: ID;
+}) {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
@@ -642,27 +695,6 @@ export async function findTicket(ticketId: ID, projectId: ID) {
   return ticket;
 }
 
-export type TicketInfo = Awaited<ReturnType<typeof findTicketInfo>>;
-export async function findTicketInfo(ticketId: ID, projectId: ID) {
-  const client = await getClient();
-  const ticket = await client.aOSProjectTask.findOne({
-    where: {
-      ...getTicketAccessFilter(),
-      id: ticketId,
-      project: {id: projectId},
-    },
-    select: {
-      name: true,
-      version: true,
-      description: true,
-      projectTaskCategory: {name: true},
-      priority: {name: true},
-    },
-  });
-
-  return ticket;
-}
-
 export async function findTicketVersion(ticketId: ID): Promise<number> {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
@@ -732,17 +764,21 @@ export async function findParentTickets(ticketId: ID): Promise<string[]> {
     return parentTickets;
   }
 }
-export async function createChildTicketLink(
-  data: {currentTicketId: ID; linkTicketId: ID},
-  userId: ID,
-  workspaceId: ID,
-) {
+export async function createChildTicketLink({
+  data,
+  userId,
+  workspaceId,
+}: {
+  data: {currentTicketId: ID; linkTicketId: ID};
+  userId: ID;
+  workspaceId: ID;
+}) {
   const {currentTicketId, linkTicketId} = data;
   const client = await getClient();
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess(currentTicketId, userId, workspaceId),
-    findTicketAccess(linkTicketId, userId, workspaceId),
+    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
+    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -766,17 +802,21 @@ export async function createChildTicketLink(
   return ticket;
 }
 
-export async function deleteChildTicketLink(
-  data: {currentTicketId: ID; linkTicketId: ID},
-  userId: ID,
-  workspaceId: ID,
-) {
+export async function deleteChildTicketLink({
+  data,
+  userId,
+  workspaceId,
+}: {
+  data: {currentTicketId: ID; linkTicketId: ID};
+  userId: ID;
+  workspaceId: ID;
+}) {
   const {currentTicketId, linkTicketId} = data;
   const client = await getClient();
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess(currentTicketId, userId, workspaceId),
-    findTicketAccess(linkTicketId, userId, workspaceId),
+    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
+    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -813,21 +853,35 @@ export async function findTicketLinkTypes(projectId?: ID) {
   return links;
 }
 
-export async function createRelatedTicketLink(
-  data: {currentTicketId: ID; linkTicketId: ID; linkType: ID},
-  userId: ID,
-  workspaceId: ID,
-): Promise<[string, string]> {
+export async function createRelatedTicketLink({
+  data,
+  userId,
+  workspaceId,
+}: {
+  data: {currentTicketId: ID; linkTicketId: ID; linkType: ID};
+  userId: ID;
+  workspaceId: ID;
+}): Promise<[string, string]> {
   const {currentTicketId, linkTicketId, linkType} = data;
   const client = await getClient();
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess(currentTicketId, userId, workspaceId, {
-      name: true,
-      project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
+    findTicketAccess({
+      recordId: currentTicketId,
+      userId,
+      workspaceId,
+      select: {
+        name: true,
+        project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
+      },
     }),
-    findTicketAccess(linkTicketId, userId, workspaceId, {
-      name: true,
-      project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
+    findTicketAccess({
+      recordId: linkTicketId,
+      userId,
+      workspaceId,
+      select: {
+        name: true,
+        project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
+      },
     }),
   ]);
   if (!currentTicket || !linkTicket) {
@@ -917,16 +971,20 @@ export async function createRelatedTicketLink(
   return [link1.id, link2.id];
 }
 
-export async function deleteRelatedTicketLink(
-  data: {currentTicketId: ID; linkTicketId: ID; linkId: ID},
-  userId: ID,
-  workspaceId: ID,
-): Promise<ID> {
+export async function deleteRelatedTicketLink({
+  data,
+  userId,
+  workspaceId,
+}: {
+  data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
+  userId: ID;
+  workspaceId: ID;
+}): Promise<ID> {
   const {currentTicketId, linkTicketId, linkId} = data;
   const client = await getClient();
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
-    findTicketAccess(currentTicketId, userId, workspaceId),
-    findTicketAccess(linkTicketId, userId, workspaceId),
+    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
+    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
   ]);
   if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
     // To make sure the user has access to the ticket.
