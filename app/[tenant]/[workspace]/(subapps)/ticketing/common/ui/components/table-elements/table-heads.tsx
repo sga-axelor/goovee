@@ -32,21 +32,23 @@ export function TableHeads<T extends Record<string, any>>(
 
   return mainColumns.map(column => {
     let icon: ReactNode;
+    let handleClick;
     if (sort) {
       const isActive = sort?.key === column.key;
       const isASC = isActive && sort.direction === ORDER_BY.ASC;
       const Arrow = isASC ? MdArrowDropDown : MdArrowDropUp;
       const SortIcon = isActive ? Arrow : 'span';
       icon = <SortIcon className="h-4 w-4 ms-auto" />;
+      handleClick = (e: MouseEvent<HTMLTableCellElement>) =>
+        sort.toggle(column, e);
     }
     return (
       <TableHead
         key={column.key}
-        onClick={e => {
-          sort?.toggle?.(column, e);
-        }}
+        onClick={handleClick}
         className={cn(
-          'text-card-foreground cursor-pointer text-xs font-semibold border-none p-3',
+          'text-card-foreground text-xs font-semibold border-none p-3',
+          {['cursor-pointer']: Boolean(sort)},
         )}>
         <div className="flex gap-1 items-center">
           <div className="line-clamp-1">{column.label}</div>

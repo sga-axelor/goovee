@@ -200,7 +200,7 @@ async function ChildTickets({
   if (!projectId) return;
   const parentIds = await findParentTickets(ticketId);
   return (
-    <>
+    <div>
       <ChildTicketsHeader
         ticketId={ticketId}
         parentIds={parentIds}
@@ -212,17 +212,17 @@ async function ChildTickets({
       />
       <hr className="mt-5" />
       <ChildTicketList ticketId={ticketId.toString()} tickets={tickets} />
-    </>
+    </div>
   );
 }
 
 async function ParentTicket({ticket}: {ticket: Cloned<TicketListTicket>}) {
   return (
-    <>
+    <div>
       <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
       <hr className="mt-5" />
       <ParentTicketList tickets={[ticket]} />
-    </>
+    </div>
   );
 }
 
@@ -238,7 +238,7 @@ async function RelatedTickets({
   if (!projectId) return;
   const linkTypes = await findTicketLinkTypes(projectId);
   return (
-    <>
+    <div>
       <RelatedTicketsHeader
         linkTypes={clone(linkTypes)}
         ticketId={ticketId}
@@ -247,6 +247,6 @@ async function RelatedTickets({
       />
       <hr className="mt-5" />
       <RelatedTicketList links={links ?? []} ticketId={ticketId.toString()} />
-    </>
+    </div>
   );
 }
