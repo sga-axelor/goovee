@@ -204,6 +204,7 @@ async function ChildTickets({
       <ChildTicketsHeader
         ticketId={ticketId}
         parentIds={parentIds}
+        childrenIds={tickets?.map(t => t.id) ?? []}
         projectId={projectId}
         categories={categories}
         priorities={priorities}

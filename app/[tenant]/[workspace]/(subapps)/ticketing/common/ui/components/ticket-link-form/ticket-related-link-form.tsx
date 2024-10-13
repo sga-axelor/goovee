@@ -154,11 +154,13 @@ export function TicketRelatedLinkForm({
 export function TicketChildLinkForm({
   ticketId,
   parentIds,
+  childrenIds,
   projectId,
   onSubmit,
 }: {
   ticketId: ID;
   parentIds: ID[];
+  childrenIds: ID[];
   projectId?: ID;
   onSubmit: () => void;
 }) {
@@ -212,7 +214,7 @@ export function TicketChildLinkForm({
                     className="w-full border-input"
                     value={field.value}
                     onChange={field.onChange}
-                    excludeList={[ticketId, ...parentIds]}
+                    excludeList={[ticketId, ...parentIds, ...childrenIds]}
                     projectId={projectId}
                   />
                 </FormControl>

@@ -43,6 +43,7 @@ export function ChildTicketsHeader(props: {
   priorities: Priority[];
   contacts: ContactPartner[];
   userId: ID;
+  childrenIds: ID[];
 }) {
   const {
     ticketId,
@@ -52,6 +53,7 @@ export function ChildTicketsHeader(props: {
     contacts,
     userId,
     parentIds,
+    childrenIds,
   } = props;
 
   return (
@@ -75,6 +77,7 @@ export function ChildTicketsHeader(props: {
         <TicketChildLinkForm
           ticketId={ticketId}
           parentIds={parentIds}
+          childrenIds={childrenIds}
           projectId={projectId}
           onSubmit={closeAlert}
         />
