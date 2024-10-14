@@ -1,6 +1,11 @@
 import {i18n} from '@/lib/i18n';
 import type {Cloned} from '@/types/util';
-import type {Ticket, TicketListTicket} from '../../../orm/tickets';
+import type {
+  ChildTicket,
+  ParentTicket,
+  TicketLink,
+  TicketListTicket,
+} from '../../../orm/tickets';
 import {formatDate, isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 import type {Column} from '../table-elements';
@@ -74,9 +79,7 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   },
 ];
 
-export const parentColumns: Column<
-  Cloned<NonNullable<Ticket['parentTask']>>
->[] = [
+export const parentColumns: Column<Cloned<ParentTicket>>[] = [
   {
     key: 'ticketId',
     label: i18n.get('Ticket ID'),
@@ -135,9 +138,7 @@ export const parentColumns: Column<
   },
 ];
 
-export const childColumns: Column<
-  Cloned<NonNullable<Ticket['childTasks']>[number]>
->[] = [
+export const childColumns: Column<Cloned<ChildTicket>>[] = [
   {
     key: 'ticketId',
     label: i18n.get('Ticket ID'),
@@ -196,9 +197,7 @@ export const childColumns: Column<
   },
 ];
 
-export const relatedColumns: Column<
-  Cloned<NonNullable<Ticket['projectTaskLinkList']>[number]>
->[] = [
+export const relatedColumns: Column<Cloned<TicketLink>>[] = [
   {
     key: 'linkType',
     label: i18n.get('Link type'),

@@ -7,7 +7,7 @@ import type {
   ContactPartner,
   Priority,
 } from '../../../../common/orm/projects';
-import type {Ticket} from '../../../../common/orm/tickets';
+import type {TicketLink} from '../../../../common/orm/tickets';
 import {TicketForm} from '../../../../common/ui/components/ticket-form';
 import {
   TicketChildLinkForm,
@@ -23,7 +23,7 @@ export function RelatedTicketsHeader(props: {
   }[];
   projectId: ID;
   ticketId: ID;
-  links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
+  links: Cloned<TicketLink[]>;
 }) {
   return (
     <TicketLinkHeader

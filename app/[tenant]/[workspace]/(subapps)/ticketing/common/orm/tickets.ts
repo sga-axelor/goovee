@@ -595,6 +595,100 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
   return tickets;
 }
 
+export type TicketLink = NonNullable<
+  Awaited<ReturnType<typeof findRelatedTicketLinks>>
+>[number];
+export async function findRelatedTicketLinks(ticketId: ID) {
+  const client = await getClient();
+  const ticket = await client.aOSProjectTask.findOne({
+    where: {id: ticketId},
+    select: {
+      projectTaskLinkList: {
+        select: {
+          projectTaskLinkType: {name: true},
+          relatedTask: {
+            name: true,
+            updatedOn: true,
+            status: {name: true},
+            projectTaskCategory: {name: true},
+            priority: {name: true},
+            project: {
+              name: true,
+              company: {name: true, logo: {id: true}},
+              clientPartner: {simpleFullName: true},
+            },
+            assignedTo: {name: true},
+            assignedToContact: {simpleFullName: true, picture: {id: true}},
+            requestedByContact: {simpleFullName: true, picture: {id: true}},
+            assignment: true,
+          },
+        },
+      },
+    },
+  });
+  return ticket?.projectTaskLinkList;
+}
+
+export type ChildTicket = Awaited<ReturnType<typeof findChildTickets>>[number];
+export async function findChildTickets(ticketId: ID) {
+  const client = await getClient();
+  const tickets = await client.aOSProjectTask.find({
+    where: {
+      parentTask: {
+        id: ticketId,
+      },
+    },
+    select: {
+      name: true,
+      updatedOn: true,
+      status: {name: true},
+      projectTaskCategory: {name: true},
+      priority: {name: true},
+      project: {
+        name: true,
+        company: {name: true, logo: {id: true}},
+        clientPartner: {simpleFullName: true},
+      },
+      assignedTo: {name: true},
+      assignedToContact: {simpleFullName: true, picture: {id: true}},
+      requestedByContact: {simpleFullName: true, picture: {id: true}},
+      assignment: true,
+    },
+  });
+  return tickets;
+}
+
+export type ParentTicket = NonNullable<
+  Awaited<ReturnType<typeof findParentTicket>>
+>;
+export async function findParentTicket(ticketId: ID) {
+  const client = await getClient();
+  const ticket = await client.aOSProjectTask.findOne({
+    where: {
+      id: ticketId,
+    },
+    select: {
+      parentTask: {
+        name: true,
+        updatedOn: true,
+        status: {name: true},
+        projectTaskCategory: {name: true},
+        priority: {name: true},
+        project: {
+          name: true,
+          company: {name: true, logo: {id: true}},
+          clientPartner: {simpleFullName: true},
+        },
+        assignedTo: {name: true},
+        assignedToContact: {simpleFullName: true, picture: {id: true}},
+        requestedByContact: {simpleFullName: true, picture: {id: true}},
+        assignment: true,
+      },
+    },
+  });
+  return ticket?.parentTask;
+}
+
 export type Ticket = NonNullable<Awaited<ReturnType<typeof findTicket>>>;
 export async function findTicket({
   ticketId,
@@ -624,61 +718,6 @@ export async function findTicket({
       assignedToContact: {simpleFullName: true, picture: {id: true}},
       requestedByContact: {simpleFullName: true, picture: {id: true}},
       createdOn: true,
-      projectTaskLinkList: {
-        select: {
-          projectTaskLinkType: {name: true},
-          relatedTask: {
-            name: true,
-            updatedOn: true,
-            status: {name: true},
-            projectTaskCategory: {name: true},
-            priority: {name: true},
-            project: {
-              name: true,
-              company: {name: true, logo: {id: true}},
-              clientPartner: {simpleFullName: true},
-            },
-            assignedTo: {name: true},
-            assignedToContact: {simpleFullName: true, picture: {id: true}},
-            requestedByContact: {simpleFullName: true, picture: {id: true}},
-            assignment: true,
-          },
-        },
-      },
-      childTasks: {
-        select: {
-          name: true,
-          updatedOn: true,
-          status: {name: true},
-          projectTaskCategory: {name: true},
-          priority: {name: true},
-          project: {
-            name: true,
-            company: {name: true, logo: {id: true}},
-            clientPartner: {simpleFullName: true},
-          },
-          assignedTo: {name: true},
-          assignedToContact: {simpleFullName: true, picture: {id: true}},
-          requestedByContact: {simpleFullName: true, picture: {id: true}},
-          assignment: true,
-        },
-      },
-      parentTask: {
-        name: true,
-        updatedOn: true,
-        status: {name: true},
-        projectTaskCategory: {name: true},
-        priority: {name: true},
-        project: {
-          name: true,
-          company: {name: true, logo: {id: true}},
-          clientPartner: {simpleFullName: true},
-        },
-        assignedTo: {name: true},
-        assignedToContact: {simpleFullName: true, picture: {id: true}},
-        requestedByContact: {simpleFullName: true, picture: {id: true}},
-        assignment: true,
-      },
       project: {
         name: true,
         company: {name: true, logo: {id: true}},
@@ -743,7 +782,7 @@ export async function findTicketsBySearch(props: {
   return tickets;
 }
 
-export async function findParentTickets(ticketId: ID): Promise<string[]> {
+export async function findParentTicketIds(ticketId: ID): Promise<string[]> {
   const client = await getClient();
   const parentTickets = await getParentTickets(ticketId);
 
@@ -772,7 +811,7 @@ export async function findParentTickets(ticketId: ID): Promise<string[]> {
   }
 }
 
-export async function findChildTickets(ticketId: ID): Promise<string[]> {
+export async function findChildTicketIds(ticketId: ID): Promise<string[]> {
   const client = await getClient();
   const childTickets = await getChildTickets(ticketId);
 
@@ -823,7 +862,7 @@ export async function createChildTicketLink({
     throw new Error(i18n.get('Ticket not found'));
   }
 
-  const parentTickets = await findParentTickets(currentTicketId);
+  const parentTickets = await findParentTicketIds(currentTicketId);
   if (parentTickets.includes(linkTicketId.toString())) {
     throw new Error(i18n.get('Circular dependency'));
   }
@@ -894,7 +933,7 @@ export async function createParentTicketLink({
     throw new Error(i18n.get('Ticket not found'));
   }
 
-  const childTickets = await findChildTickets(currentTicketId);
+  const childTickets = await findChildTicketIds(currentTicketId);
   if (childTickets.includes(linkTicketId.toString())) {
     throw new Error(i18n.get('Circular dependency'));
   }

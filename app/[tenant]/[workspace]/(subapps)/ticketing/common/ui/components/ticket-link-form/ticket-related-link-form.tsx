@@ -24,7 +24,7 @@ import {useMemo, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
-import type {Ticket} from '../../../../common/orm/tickets';
+import type {TicketLink} from '../../../../common/orm/tickets';
 import {
   createChildLink,
   createParentLink,
@@ -46,7 +46,7 @@ export function TicketRelatedLinkForm({
   }[];
   ticketId: ID;
   projectId: ID;
-  links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
+  links: Cloned<TicketLink>[];
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();

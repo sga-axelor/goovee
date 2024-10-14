@@ -4,7 +4,6 @@ import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {ModelType} from '@/types';
-import type {Cloned} from '@/types/util';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -35,10 +34,13 @@ import {
   findTicketPriorities,
   findTicketStatuses,
 } from '../../../../common/orm/projects';
-import type {Ticket, TicketListTicket} from '../../../../common/orm/tickets';
+import type {ParentTicket} from '../../../../common/orm/tickets';
 import {
+  findChildTicketIds,
   findChildTickets,
-  findParentTickets,
+  findParentTicket,
+  findParentTicketIds,
+  findRelatedTicketLinks,
   findTicket,
   findTicketLinkTypes,
 } from '../../../../common/orm/tickets';
@@ -144,15 +146,10 @@ export default async function Page({
       />
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         <Suspense>
-          <ParentTicket
-            ticket={ticket.parentTask}
-            ticketId={ticket.id}
-            projectId={ticket.project?.id}
-          />
+          <ParentTicket ticketId={ticket.id} projectId={ticket.project?.id} />
         </Suspense>
         <Suspense>
           <ChildTickets
-            tickets={ticket.childTasks}
             projectId={ticket.project?.id}
             ticketId={ticket.id}
             categories={categories}
@@ -162,11 +159,7 @@ export default async function Page({
           />
         </Suspense>
         <Suspense>
-          <RelatedTickets
-            links={ticket.projectTaskLinkList}
-            ticketId={ticket.id}
-            projectId={ticket.project?.id}
-          />
+          <RelatedTickets ticketId={ticket.id} projectId={ticket.project?.id} />
         </Suspense>
       </div>
       <div className="rounded-md border bg-card p-4 mt-5">
@@ -192,7 +185,6 @@ export default async function Page({
 }
 
 async function ChildTickets({
-  tickets,
   ticketId,
   projectId,
   categories,
@@ -200,7 +192,6 @@ async function ChildTickets({
   contacts,
   userId,
 }: {
-  tickets?: Cloned<Ticket>['childTasks'];
   ticketId: ID;
   projectId?: ID;
   categories: Category[];
@@ -209,7 +200,10 @@ async function ChildTickets({
   userId: ID;
 }) {
   if (!projectId) return;
-  const parentIds = await findParentTickets(ticketId);
+  const [parentIds, tickets] = await Promise.all([
+    findParentTicketIds(ticketId),
+    findChildTickets(ticketId).then(clone),
+  ]);
   return (
     <div>
       <ChildTicketsHeader
@@ -229,16 +223,17 @@ async function ChildTickets({
 }
 
 async function ParentTicket({
-  ticket,
   projectId,
   ticketId,
 }: {
-  ticket: Cloned<Ticket>['parentTask'];
   projectId?: ID;
   ticketId: ID;
 }) {
   if (!projectId) return;
-  const childIds = await findChildTickets(ticketId);
+  const [childIds, ticket] = await Promise.all([
+    findChildTicketIds(ticketId),
+    findParentTicket(ticketId).then(clone),
+  ]);
   return (
     <div>
       <ParentTicketsHeader
@@ -257,20 +252,22 @@ async function ParentTicket({
 }
 
 async function RelatedTickets({
-  links,
   ticketId,
   projectId,
 }: {
-  links?: Cloned<Ticket>['projectTaskLinkList'];
   ticketId: ID;
   projectId?: ID;
 }) {
   if (!projectId) return;
-  const linkTypes = await findTicketLinkTypes(projectId);
+  const [linkTypes, links] = await Promise.all([
+    findTicketLinkTypes(projectId),
+    findRelatedTicketLinks(ticketId),
+  ]).then(clone);
+
   return (
     <div>
       <RelatedTicketsHeader
-        linkTypes={clone(linkTypes)}
+        linkTypes={linkTypes}
         ticketId={ticketId}
         links={links ?? []}
         projectId={projectId}

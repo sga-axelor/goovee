@@ -5,7 +5,12 @@ import {Table, TableBody, TableHeader, TableRow} from '@/ui/components';
 import {useSortBy} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
 import {useCallback} from 'react';
-import type {Ticket, TicketListTicket} from '../../../orm/tickets';
+import type {
+  ChildTicket,
+  ParentTicket,
+  TicketLink,
+  TicketListTicket,
+} from '../../../orm/tickets';
 import {TableHeads, TableRows} from '../table-elements';
 import {
   childColumns,
@@ -72,7 +77,7 @@ export function TicketList(props: TicketListProps) {
 
 export function ParentTicketList(props: {
   ticketId: string;
-  tickets: Cloned<NonNullable<Ticket['parentTask']>>[];
+  tickets: Cloned<ParentTicket>[];
 }) {
   const {tickets, ticketId} = props;
 
@@ -117,7 +122,7 @@ export function ParentTicketList(props: {
 
 export function ChildTicketList(props: {
   ticketId: string;
-  tickets: Cloned<Ticket>['childTasks'];
+  tickets?: Cloned<ChildTicket[]>;
 }) {
   const {tickets, ticketId} = props;
   const hasTickets = Boolean(tickets?.length);
@@ -126,7 +131,7 @@ export function ChildTicketList(props: {
   const router = useRouter();
 
   const handleRowClick = useCallback(
-    (record: Cloned<NonNullable<Ticket['childTasks']>[number]>) => {
+    (record: Cloned<ChildTicket>) => {
       record.project?.id &&
         router.push(
           `${workspaceURI}/ticketing/projects/${record.project.id}/tickets/${record.id}`,
@@ -163,7 +168,7 @@ export function ChildTicketList(props: {
 
 export function RelatedTicketList(props: {
   ticketId: string;
-  links: Cloned<NonNullable<Ticket['projectTaskLinkList']>>;
+  links: Cloned<TicketLink[]>;
 }) {
   const {links, ticketId} = props;
   const hasLinks = Boolean(links?.length);
@@ -172,7 +177,7 @@ export function RelatedTicketList(props: {
   const router = useRouter();
 
   const handleRowClick = useCallback(
-    (record: Cloned<NonNullable<Ticket['projectTaskLinkList']>[number]>) => {
+    (record: Cloned<TicketLink>) => {
       record.relatedTask?.project?.id &&
         router.push(
           `${workspaceURI}/ticketing/projects/${record.relatedTask.project.id}/tickets/${record.relatedTask.id}`,
