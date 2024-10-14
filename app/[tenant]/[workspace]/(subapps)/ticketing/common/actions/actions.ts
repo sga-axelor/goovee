@@ -13,9 +13,11 @@ import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
 import type {TicketSearch} from '../orm/tickets';
 import {
   createChildTicketLink,
+  createParentTicketLink,
   createRelatedTicketLink,
   createTicket,
   deleteChildTicketLink,
+  deleteParentTicketLink,
   deleteRelatedTicketLink,
   findTicketsBySearch,
   findTicketVersion,
@@ -320,6 +322,36 @@ export async function createChildLink(
   }
 }
 
+export async function createParentLink(
+  props: CreateChildLinkProps,
+): ActionResponse<true> {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    await createParentTicketLink({
+      data,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+    return {
+      error: false,
+      data: true,
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
+
 type DeleteChildLinkProps = {
   workspaceURL: string;
   data: {currentTicketId: ID; linkTicketId: ID};
@@ -355,6 +387,40 @@ export async function deleteChildLink(
   }
 }
 
+type DeleteParentLinkProps = {
+  workspaceURL: string;
+  data: {currentTicketId: ID; linkTicketId: ID};
+};
+
+export async function deleteParentLink(
+  props: DeleteParentLinkProps,
+): ActionResponse<true> {
+  const {workspaceURL, data} = props;
+
+  const {error, message, auth} = await ensureAuth(workspaceURL);
+  if (error) return {error: true, message};
+  const {user, workspace} = auth;
+
+  try {
+    await deleteParentTicketLink({
+      data,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+    return {
+      error: false,
+      data: true,
+    };
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.name === VERSION_MISMATCH_ERROR) {
+        return {error: true, message: e.name};
+      }
+      return {error: true, message: e.message};
+    }
+    throw e;
+  }
+}
 type DeleteRelatedLinkProps = {
   workspaceURL: string;
   data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};

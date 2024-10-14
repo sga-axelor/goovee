@@ -771,6 +771,36 @@ export async function findParentTickets(ticketId: ID): Promise<string[]> {
     return parentTickets;
   }
 }
+
+export async function findChildTickets(ticketId: ID): Promise<string[]> {
+  const client = await getClient();
+  const childTickets = await getChildTickets(ticketId);
+
+  return childTickets;
+
+  async function getChildTickets(
+    currentTicketId: ID,
+    childTickets: string[] = [],
+  ): Promise<string[]> {
+    const ticket = await client.aOSProjectTask.findOne({
+      where: {id: currentTicketId},
+      select: {childTasks: {select: {id: true}}},
+    });
+
+    if (ticket?.childTasks) {
+      for (const child of ticket.childTasks) {
+        if (currentTicketId === child.id || childTickets.includes(child.id)) {
+          console.error('Circular reference found');
+          continue;
+        }
+        childTickets.push(child.id);
+        await getChildTickets(child.id, childTickets);
+      }
+    }
+    return childTickets;
+  }
+}
+
 export async function createChildTicketLink({
   data,
   userId,
@@ -836,6 +866,79 @@ export async function deleteChildTicketLink({
       id: currentTicketId.toString(),
       version: currentTicket.version, //TODO: get the version from client
       childTasks: {remove: linkTicketId},
+    },
+    select: {id: true},
+  });
+  return ticket;
+}
+
+export async function createParentTicketLink({
+  data,
+  userId,
+  workspaceId,
+}: {
+  data: {currentTicketId: ID; linkTicketId: ID};
+  userId: ID;
+  workspaceId: ID;
+}) {
+  const {currentTicketId, linkTicketId} = data;
+  const client = await getClient();
+
+  const [currentTicket, linkTicket] = await Promise.all([
+    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
+    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
+  ]);
+
+  if (!currentTicket || !linkTicket) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
+  }
+
+  const childTickets = await findChildTickets(currentTicketId);
+  if (childTickets.includes(linkTicketId.toString())) {
+    throw new Error(i18n.get('Circular dependency'));
+  }
+
+  const ticket = await client.aOSProjectTask.update({
+    data: {
+      id: currentTicketId.toString(),
+      version: currentTicket.version, //TODO: get the version from client
+      parentTask: {select: {id: linkTicketId}},
+    },
+    select: {id: true},
+  });
+  return ticket;
+}
+
+export async function deleteParentTicketLink({
+  data,
+  userId,
+  workspaceId,
+}: {
+  data: {currentTicketId: ID; linkTicketId: ID};
+  userId: ID;
+  workspaceId: ID;
+}) {
+  const {currentTicketId, linkTicketId} = data;
+  const client = await getClient();
+
+  const [currentTicket, linkTicket] = await Promise.all([
+    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
+    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
+  ]);
+
+  if (!currentTicket || !linkTicket) {
+    // To make sure the user has access to the ticket.
+    throw new Error(i18n.get('Ticket not found'));
+  }
+
+  const ticket = await client.aOSProjectTask.update({
+    data: {
+      id: linkTicketId.toString(),
+      version: linkTicket.version, //TODO: get the version from client
+      childTasks: {
+        remove: currentTicketId,
+      },
     },
     select: {id: true},
   });

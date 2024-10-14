@@ -37,6 +37,7 @@ import {
 } from '../../../../common/orm/projects';
 import type {Ticket, TicketListTicket} from '../../../../common/orm/tickets';
 import {
+  findChildTickets,
   findParentTickets,
   findTicket,
   findTicketLinkTypes,
@@ -48,7 +49,11 @@ import {
   ParentTicketList,
   RelatedTicketList,
 } from '../../../../common/ui/components/ticket-list';
-import {ChildTicketsHeader, RelatedTicketsHeader} from './headers';
+import {
+  ChildTicketsHeader,
+  ParentTicketsHeader,
+  RelatedTicketsHeader,
+} from './headers';
 
 export default async function Page({
   params,
@@ -138,7 +143,13 @@ export default async function Page({
         contacts={contacts}
       />
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-        {ticket.parentTask && <ParentTicket ticket={ticket.parentTask} />}
+        <Suspense>
+          <ParentTicket
+            ticket={ticket.parentTask}
+            ticketId={ticket.id}
+            projectId={ticket.project?.id}
+          />
+        </Suspense>
         <Suspense>
           <ChildTickets
             tickets={ticket.childTasks}
@@ -217,12 +228,30 @@ async function ChildTickets({
   );
 }
 
-async function ParentTicket({ticket}: {ticket: Cloned<TicketListTicket>}) {
+async function ParentTicket({
+  ticket,
+  projectId,
+  ticketId,
+}: {
+  ticket: Cloned<Ticket>['parentTask'];
+  projectId?: ID;
+  ticketId: ID;
+}) {
+  if (!projectId) return;
+  const childIds = await findChildTickets(ticketId);
   return (
     <div>
-      <h4 className="text-xl font-semibold">{i18n.get('Parent ticket')}</h4>
+      <ParentTicketsHeader
+        ticketId={ticketId}
+        projectId={projectId}
+        childrenIds={childIds}
+        parentId={ticket?.id}
+      />
       <hr className="mt-5" />
-      <ParentTicketList tickets={[ticket]} />
+      <ParentTicketList
+        tickets={ticket ? [ticket] : []}
+        ticketId={ticketId.toString()}
+      />
     </div>
   );
 }

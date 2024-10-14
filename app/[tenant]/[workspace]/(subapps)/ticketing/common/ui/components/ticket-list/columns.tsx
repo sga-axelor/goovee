@@ -74,6 +74,67 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   },
 ];
 
+export const parentColumns: Column<
+  Cloned<NonNullable<Ticket['parentTask']>>
+>[] = [
+  {
+    key: 'ticketId',
+    label: i18n.get('Ticket ID'),
+    content: t => <p className="font-medium">#{t.id}</p>,
+    getter: 'id',
+    mobile: true,
+  },
+  {
+    key: 'subject',
+    label: i18n.get('Subject'),
+    content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
+    getter: 'name',
+    mobile: true,
+  },
+  {
+    key: 'priority',
+    label: i18n.get('Priority'),
+    content: t => <Priority name={t.priority?.name} />,
+    getter: 'priority.name',
+  },
+  {
+    key: 'status',
+    label: i18n.get('Status'),
+    content: t => <Status name={t.status?.name} />,
+    getter: 'status.name',
+  },
+  {
+    key: 'category',
+    label: i18n.get('Category'),
+    content: t => <Category name={t.projectTaskCategory?.name} />,
+    getter: 'projectTaskCategory.name',
+  },
+  {
+    key: 'managedBy',
+    label: i18n.get('Managed by'),
+    content: t => t.assignedToContact?.simpleFullName,
+    getter: 'assignedToContact.simpleFullName',
+  },
+  {
+    key: 'assignedTo',
+    label: i18n.get('Assigned to'),
+    content: t =>
+      isWithProvider(t.assignment)
+        ? t?.project?.company?.name
+        : t.project?.clientPartner?.simpleFullName,
+    getter: t =>
+      isWithProvider(t.assignment)
+        ? t.project?.company?.name
+        : t.project?.clientPartner?.simpleFullName,
+  },
+  {
+    key: 'updatedOn',
+    label: i18n.get('Updated'),
+    content: t => formatDate(t.updatedOn),
+    getter: 'updatedOn',
+  },
+];
+
 export const childColumns: Column<
   Cloned<NonNullable<Ticket['childTasks']>[number]>
 >[] = [

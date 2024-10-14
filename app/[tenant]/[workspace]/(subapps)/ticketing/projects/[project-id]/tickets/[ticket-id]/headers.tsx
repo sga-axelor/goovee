@@ -11,6 +11,7 @@ import type {Ticket} from '../../../../common/orm/tickets';
 import {TicketForm} from '../../../../common/ui/components/ticket-form';
 import {
   TicketChildLinkForm,
+  TicketParentLinkForm,
   TicketRelatedLinkForm,
 } from '../../../../common/ui/components/ticket-link-form';
 import {TicketLinkHeader} from '../../../../common/ui/components/ticket-link-header';
@@ -30,6 +31,23 @@ export function RelatedTicketsHeader(props: {
       alertTitle={i18n.get('Link related ticket')}
       alertContentRenderer={({closeAlert}) => (
         <TicketRelatedLinkForm {...props} onSubmit={closeAlert} />
+      )}
+    />
+  );
+}
+
+export function ParentTicketsHeader(props: {
+  projectId: ID;
+  ticketId: ID;
+  childrenIds: ID[];
+  parentId?: ID;
+}) {
+  return (
+    <TicketLinkHeader
+      title={i18n.get('Parent ticket')}
+      alertTitle={i18n.get('Link parent ticket')}
+      alertContentRenderer={({closeAlert}) => (
+        <TicketParentLinkForm {...props} onSubmit={closeAlert} />
       )}
     />
   );

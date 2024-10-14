@@ -25,7 +25,11 @@ import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
 import type {Ticket} from '../../../../common/orm/tickets';
-import {createChildLink, createRelatedLink} from '../../../actions';
+import {
+  createChildLink,
+  createParentLink,
+  createRelatedLink,
+} from '../../../actions';
 import {ChildTicketSchema, RelatedTicketSchema} from '../../../schema';
 import {TicketSelect} from '../ticket-select';
 
@@ -215,6 +219,91 @@ export function TicketChildLinkForm({
                     value={field.value}
                     onChange={field.onChange}
                     excludeList={[ticketId, ...parentIds, ...childrenIds]}
+                    projectId={projectId}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <Button size="sm" variant="success" className="ms-auto">
+          {i18n.get('Create Link')}
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+export function TicketParentLinkForm({
+  ticketId,
+  childrenIds,
+  parentId,
+  projectId,
+  onSubmit,
+}: {
+  ticketId: ID;
+  parentId?: ID;
+  childrenIds: ID[];
+  projectId?: ID;
+  onSubmit: () => void;
+}) {
+  const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const {toast} = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+  const form = useForm<z.infer<typeof ChildTicketSchema>>({
+    resolver: zodResolver(ChildTicketSchema),
+  });
+
+  const excludeList = [ticketId, ...childrenIds];
+  if (parentId) {
+    excludeList.push(parentId);
+  }
+
+  const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
+    try {
+      const {error, message} = await createParentLink({
+        workspaceURL,
+        data: {
+          linkTicketId: values.ticket.id,
+          currentTicketId: ticketId,
+        },
+      });
+      if (error) {
+        return toast({
+          variant: 'destructive',
+          title: message,
+        });
+      }
+      onSubmit();
+      router.refresh();
+    } catch (e) {
+      toast({
+        variant: 'destructive',
+        title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
+      });
+    }
+  };
+
+  return (
+    <Form {...form}>
+      <form
+        ref={formRef}
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-4">
+        <div className="flex gap-4 flex-col lg:flex-row">
+          <FormField
+            control={form.control}
+            name="ticket"
+            render={({field}) => (
+              <FormItem className="lg:grow-[2]">
+                <FormControl>
+                  <TicketSelect
+                    className="w-full border-input"
+                    value={field.value}
+                    onChange={field.onChange}
+                    excludeList={excludeList}
                     projectId={projectId}
                   />
                 </FormControl>

@@ -7,8 +7,17 @@ import {useRouter} from 'next/navigation';
 import {useCallback} from 'react';
 import type {Ticket, TicketListTicket} from '../../../orm/tickets';
 import {TableHeads, TableRows} from '../table-elements';
-import {childColumns, relatedColumns, ticketColumns} from './columns';
-import {RemoveChildButton, RemoveLinkButton} from './ticket-row-buttons';
+import {
+  childColumns,
+  parentColumns,
+  relatedColumns,
+  ticketColumns,
+} from './columns';
+import {
+  RemoveChildButton,
+  RemoveLinkButton,
+  RemoveParentButton,
+} from './ticket-row-buttons';
 
 type TicketListProps = {
   tickets: Cloned<TicketListTicket>[];
@@ -61,8 +70,11 @@ export function TicketList(props: TicketListProps) {
   );
 }
 
-export function ParentTicketList(props: TicketListProps) {
-  const {tickets} = props;
+export function ParentTicketList(props: {
+  ticketId: string;
+  tickets: Cloned<NonNullable<Ticket['parentTask']>>[];
+}) {
+  const {tickets, ticketId} = props;
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
@@ -82,15 +94,21 @@ export function ParentTicketList(props: TicketListProps) {
       {hasTickets && (
         <TableHeader>
           <TableRow>
-            <TableHeads columns={ticketColumns} />
+            <TableHeads columns={parentColumns} />
           </TableRow>
         </TableHeader>
       )}
       <TableBody>
         <TableRows
           records={tickets}
-          columns={ticketColumns}
+          columns={parentColumns}
           onRowClick={handleRowClick}
+          deleteCellRenderer={ticket => (
+            <RemoveParentButton
+              ticketId={ticketId}
+              relatedTicketId={ticket.id}
+            />
+          )}
         />
       </TableBody>
     </Table>
