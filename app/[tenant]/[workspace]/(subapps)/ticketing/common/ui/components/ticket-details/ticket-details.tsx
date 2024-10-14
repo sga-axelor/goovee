@@ -7,6 +7,14 @@ import {
   Avatar,
   AvatarImage,
   Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
   Input,
   RichTextEditor,
   Select,
@@ -566,14 +574,41 @@ function CancelTicket(props: ActionProps) {
   }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
 
   return (
-    <Button
-      size="sm"
-      variant="destructive"
-      disabled={loading}
-      className={className}
-      onClick={handleClick}>
-      {i18n.get('Cancel ticket')}
-    </Button>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          size="sm"
+          variant="destructive"
+          disabled={loading}
+          className={className}>
+          {i18n.get('Cancel ticket')}
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{i18n.get('Are you sure?')}</DialogTitle>
+          <DialogDescription>
+            {i18n.get('This action cannot be undone.')}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" size="sm" variant="outline">
+              {i18n.get('Cancel')}
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              onClick={handleClick}>
+              {i18n.get('OK')}
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -612,13 +647,41 @@ function CloseTicket(props: ActionProps) {
   }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
 
   return (
-    <Button
-      size="sm"
-      variant="success"
-      disabled={loading}
-      className={className}
-      onClick={handleClick}>
-      {i18n.get('Close ticket')}
-    </Button>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          size="sm"
+          variant="success"
+          disabled={loading}
+          className={className}>
+          {i18n.get('Close ticket')}
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{i18n.get('Are you sure?')}</DialogTitle>
+          <DialogDescription>
+            {i18n.get('This action cannot be undone.')}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" size="sm" variant="outline">
+              {i18n.get('Cancel')}
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              onClick={handleClick}>
+              {i18n.get('OK')}
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
