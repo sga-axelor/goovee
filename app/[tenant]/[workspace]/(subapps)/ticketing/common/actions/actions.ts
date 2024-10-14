@@ -81,7 +81,7 @@ export async function mutate(
   }
 }
 
-type UpdateAssignmentProps = {
+export type UpdateAssignmentProps = {
   workspaceURL: string;
   data: {id: string; version: number; assignment: number};
 };
@@ -132,7 +132,7 @@ export async function updateAssignment(
   }
 }
 
-type TicketActionProps = {
+export type TicketActionProps = {
   workspaceURL: string;
   data: {id: string; version: number};
 };

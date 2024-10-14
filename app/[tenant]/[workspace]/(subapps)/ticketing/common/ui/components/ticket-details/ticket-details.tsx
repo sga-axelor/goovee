@@ -37,12 +37,16 @@ import {pick} from 'lodash';
 import {useCallback, useEffect, useRef} from 'react';
 import type {UseFormReturn} from 'react-hook-form';
 import {useForm} from 'react-hook-form';
+import type {
+  MutateProps,
+  MutateResponse,
+  TicketActionProps,
+  UpdateAssignmentProps,
+} from '../../../actions';
 import {
   cancelTicket,
   closeTicket,
   mutate,
-  MutateProps,
-  MutateResponse,
   updateAssignment,
 } from '../../../actions';
 import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
@@ -78,7 +82,25 @@ const getDefaultValues = (ticket: Cloned<Ticket>) => {
 export function TicketDetails(props: Props) {
   const {ticket, categories, priorities, contacts} = props;
 
-  const {action, loading} = useRetryAction(mutate);
+  const company = ticket.project?.company?.name ?? '';
+  const client = ticket.project?.clientPartner?.simpleFullName ?? '';
+
+  const {action: muatateAction, loading: isSubmitting} = useRetryAction(mutate);
+  const {action: closeTicketAction, loading: isClosingTicket} = useRetryAction(
+    closeTicket,
+    i18n.get('Ticket closed'),
+  );
+
+  const {action: cancelTicketAction, loading: isCancellingTicket} =
+    useRetryAction(cancelTicket, i18n.get('Ticket canceled'));
+
+  const {action: updateAssignmentAction, loading: isUpdatingAssignment} =
+    useRetryAction(
+      updateAssignment,
+      isWithProvider(ticket.assignment)
+        ? i18n.get('Ticket assigned to') + ' ' + client
+        : i18n.get('Ticket assigned to') + ' ' + company,
+    );
 
   const {workspaceURL, workspaceURI} = useWorkspace();
   const formRef = useRef<HTMLFormElement>(null);
@@ -87,6 +109,13 @@ export function TicketDetails(props: Props) {
     resolver: zodResolver(TicketFormSchema),
     defaultValues: getDefaultValues(ticket),
   });
+
+  const loading =
+    isSubmitting ||
+    isClosingTicket ||
+    isCancellingTicket ||
+    isUpdatingAssignment ||
+    form.formState.isSubmitting;
 
   const handleSubmit = useCallback(
     async (
@@ -110,11 +139,11 @@ export function TicketDetails(props: Props) {
         workspaceURI,
       };
 
-      await action(mutateProps, onSuccess);
+      await muatateAction(mutateProps, onSuccess);
     },
     [
       form.formState.dirtyFields,
-      action,
+      muatateAction,
       ticket?.id,
       ticket?.version,
       workspaceURI,
@@ -122,25 +151,23 @@ export function TicketDetails(props: Props) {
     ],
   );
 
-  useEffect(() => {
-    form.reset(getDefaultValues(ticket));
-  }, [ticket, form]);
-
   const closeAndCancel = !ticket.status?.isCompleted && (
     <>
       <CloseTicket
         id={ticket.id}
         version={ticket.version}
-        disabled={form.formState.isSubmitting || loading}
+        disabled={loading}
         form={form}
         handleSubmit={handleSubmit}
+        action={closeTicketAction}
       />
       <CancelTicket
         id={ticket.id}
         version={ticket.version}
-        disabled={form.formState.isSubmitting || loading}
+        disabled={loading}
         form={form}
         handleSubmit={handleSubmit}
+        action={cancelTicketAction}
       />
     </>
   );
@@ -149,14 +176,20 @@ export function TicketDetails(props: Props) {
     <AssignToButton
       id={ticket.id}
       version={ticket.version}
-      disabled={form.formState.isSubmitting || loading}
+      disabled={loading}
       form={form}
       handleSubmit={handleSubmit}
       assignment={ticket.assignment ?? ASSIGNMENT.PROVIDER}
-      company={ticket.project?.company?.name ?? ''}
-      client={ticket.project?.clientPartner?.simpleFullName ?? ''}
+      company={company}
+      client={client}
+      action={updateAssignmentAction}
     />
   );
+
+  useEffect(() => {
+    form.reset(getDefaultValues(ticket));
+  }, [ticket, form]);
+
   return (
     <Form {...form}>
       <form
@@ -168,11 +201,7 @@ export function TicketDetails(props: Props) {
               size="sm"
               type="submit"
               variant="success"
-              disabled={
-                !form.formState.isDirty ||
-                form.formState.isSubmitting ||
-                loading
-              }>
+              disabled={!form.formState.isDirty || loading}>
               {i18n.get('Save Changes')}
             </Button>
             <div className="contents lg:hidden">
@@ -463,7 +492,15 @@ type ActionProps = {
 };
 
 function AssignToButton(
-  props: ActionProps & {assignment: number; client: string; company: string},
+  props: ActionProps & {
+    assignment: number;
+    client: string;
+    company: string;
+    action: (
+      actionProps: UpdateAssignmentProps,
+      onSuccess?: ((res: true) => Promise<void>) | undefined,
+    ) => Promise<void>;
+  },
 ) {
   const {
     id,
@@ -475,14 +512,9 @@ function AssignToButton(
     assignment,
     client,
     company,
+    action,
   } = props;
   const {workspaceURL} = useWorkspace();
-  const {action, loading} = useRetryAction(
-    updateAssignment,
-    isWithProvider(assignment)
-      ? i18n.get('Ticket assigned to') + ' ' + client
-      : i18n.get('Ticket assigned to') + ' ' + company,
-  );
   const handleClick = useCallback(async () => {
     if (disabled) return;
     const onSuccess = async (data?: MutateResponse) => {
@@ -530,7 +562,7 @@ function AssignToButton(
       type="button"
       className={className}
       variant="success"
-      disabled={loading || disabled}
+      disabled={disabled}
       onClick={handleClick}>
       {isWithProvider(assignment)
         ? i18n.get('Assign to') + ' ' + client
@@ -539,13 +571,16 @@ function AssignToButton(
   );
 }
 
-function CancelTicket(props: ActionProps) {
-  const {id, version, disabled, form, handleSubmit, className} = props;
+function CancelTicket(
+  props: ActionProps & {
+    action: (
+      actionProps: TicketActionProps,
+      onSuccess?: ((res: true) => Promise<void>) | undefined,
+    ) => Promise<void>;
+  },
+) {
+  const {id, version, disabled, form, handleSubmit, action, className} = props;
   const {workspaceURL} = useWorkspace();
-  const {action, loading} = useRetryAction(
-    cancelTicket,
-    i18n.get('Ticket canceled'),
-  );
 
   const handleClick = useCallback(async () => {
     if (disabled) return;
@@ -579,7 +614,7 @@ function CancelTicket(props: ActionProps) {
         <Button
           size="sm"
           variant="destructive"
-          disabled={loading}
+          disabled={disabled}
           className={className}>
           {i18n.get('Cancel ticket')}
         </Button>
@@ -612,13 +647,16 @@ function CancelTicket(props: ActionProps) {
   );
 }
 
-function CloseTicket(props: ActionProps) {
-  const {id, version, disabled, form, handleSubmit, className} = props;
+function CloseTicket(
+  props: ActionProps & {
+    action: (
+      actionProps: TicketActionProps,
+      onSuccess?: ((res: true) => Promise<void>) | undefined,
+    ) => Promise<void>;
+  },
+) {
+  const {id, version, disabled, form, handleSubmit, className, action} = props;
   const {workspaceURL} = useWorkspace();
-  const {action, loading} = useRetryAction(
-    closeTicket,
-    i18n.get('Ticket closed'),
-  );
 
   const handleClick = useCallback(async () => {
     if (disabled) return;
@@ -652,7 +690,7 @@ function CloseTicket(props: ActionProps) {
         <Button
           size="sm"
           variant="success"
-          disabled={loading}
+          disabled={disabled}
           className={className}>
           {i18n.get('Close ticket')}
         </Button>
