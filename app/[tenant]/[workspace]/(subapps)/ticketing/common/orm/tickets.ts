@@ -758,8 +758,15 @@ export async function findParentTickets(ticketId: ID): Promise<string[]> {
       select: {parentTask: {id: true}},
     });
     if (ticket?.parentTask) {
+      if (
+        currentTicketId === ticket.parentTask?.id ||
+        parentTickets.includes(ticket.parentTask.id)
+      ) {
+        console.error('Circular reference found');
+        return parentTickets;
+      }
       parentTickets.push(ticket.parentTask.id);
-      getParentTickets(ticket.parentTask.id, parentTickets);
+      await getParentTickets(ticket.parentTask.id, parentTickets);
     }
     return parentTickets;
   }
