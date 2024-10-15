@@ -182,16 +182,8 @@ function TablePagination(props: TablePaginationProps) {
             <Link
               replace
               scroll={false}
-              className={cn({
-                ['invisible']: +page <= 1,
-              })}
-              href={{
-                pathname: url,
-                query: {
-                  ...searchParams,
-                  page: +page - 1,
-                },
-              }}>
+              className={cn({['invisible']: +page <= 1})}
+              href={{pathname: url, query: {...searchParams, page: +page - 1}}}>
               <ChevronLeft className="h-4 w-4" />
               <span className="sr-only">Previous</span>
             </Link>
@@ -214,10 +206,7 @@ function TablePagination(props: TablePaginationProps) {
                     scroll={false}
                     href={{
                       pathname: url,
-                      query: {
-                        ...searchParams,
-                        page: value,
-                      },
+                      query: {...searchParams, page: value},
                     }}>
                     {value}
                   </Link>
@@ -231,16 +220,8 @@ function TablePagination(props: TablePaginationProps) {
             <Link
               replace
               scroll={false}
-              className={cn({
-                ['invisible']: +page >= pages,
-              })}
-              href={{
-                pathname: url,
-                query: {
-                  ...searchParams,
-                  page: +page + 1,
-                },
-              }}>
+              className={cn({['invisible']: +page >= pages})}
+              href={{pathname: url, query: {...searchParams, page: +page + 1}}}>
               <span className="sr-only">Next</span>
               <ChevronRight className="h-4 w-4" />
             </Link>

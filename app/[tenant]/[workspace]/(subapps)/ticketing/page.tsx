@@ -106,16 +106,11 @@ export default async function Page({
                 <PaginationPrevious asChild>
                   <Link
                     scroll={false}
-                    className={cn({
-                      ['invisible']: +page <= 1,
-                    })}
+                    className={cn({['invisible']: +page <= 1})}
                     replace
                     href={{
                       pathname: `${workspaceURI}/ticketing`,
-                      query: {
-                        ...searchParams,
-                        page: +page - 1,
-                      },
+                      query: {...searchParams, page: +page - 1},
                     }}>
                     <ChevronLeft className="h-4 w-4" />
                     <span className="sr-only">Previous</span>
@@ -141,10 +136,7 @@ export default async function Page({
                         replace
                         href={{
                           pathname: `${workspaceURI}/ticketing`,
-                          query: {
-                            ...searchParams,
-                            page: value,
-                          },
+                          query: {...searchParams, page: value},
                         }}>
                         {value}
                       </Link>
@@ -157,15 +149,10 @@ export default async function Page({
                   <Link
                     scroll={false}
                     replace
-                    className={cn({
-                      ['invisible']: +page >= pages,
-                    })}
+                    className={cn({['invisible']: +page >= pages})}
                     href={{
                       pathname: `${workspaceURI}/ticketing`,
-                      query: {
-                        ...searchParams,
-                        page: +page + 1,
-                      },
+                      query: {...searchParams, page: +page + 1},
                     }}>
                     <span className="sr-only">Next</span>
                     <ChevronRight className="h-4 w-4" />
