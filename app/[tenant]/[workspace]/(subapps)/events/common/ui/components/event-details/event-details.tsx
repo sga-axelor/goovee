@@ -52,22 +52,9 @@ export function EventDetails({
           </div>
         </div>
       )}
-      <div className="w-full flex flex-col lg:flex-row lg:gap-x-6 gap-y-6 lg:space-y-0 justify-center px-4 pt-4 pb-20 lg:py-4 lg:px-0">
-        <div className="order-2 lg:order-1 space-y-6">
-          <EventPageCard eventDetails={eventDetails} />
-          <CommentsSection eventId={eventId} />
-        </div>
-        <EventDateCard
-          startDate={parseDate(
-            eventDetails?.eventStartDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
-          endDate={parseDate(
-            eventDetails?.eventEndDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
-          registered={eventDetails?.eventAllowRegistration}
-        />
+      <div className="flex flex-col gap-6 pt-6 px-4 lg:px-[6.25rem] pb-24 lg:pb-6">
+        <EventPageCard eventDetails={eventDetails} />
+        <CommentsSection eventId={eventId} />
       </div>
     </>
   );

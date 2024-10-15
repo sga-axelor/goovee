@@ -21,22 +21,21 @@ export const EventDateCard = ({
     ? endDate.split(' - ')
     : [i18n.get('Date not available'), ''];
   return (
-    <Card className="min-w-[16.438rem] order-1 lg:order-2 border-none shadow-none h-fit p-4 rounded-lg">
-      {registered === false && (
+    <Card className="border-none shadow-none">
+      {!registered && (
         <Badge
           variant="outline"
           className="mb-[0.688rem] text-[0.625rem] font-medium px-2 py-1">
           {i18n.get('#Registered')}
         </Badge>
       )}
-      <div className=" flex gap-x-3">
-        <MdOutlineCalendarMonth className="w-8 h-8 text-success" />
-        <div className=" space-y-[0.688rem]">
-          <p className=" font-semibold text-xl">{startDay}</p>
-          <p className="text-base font-medium">{startTime}</p>
-          <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-          <p className=" font-semibold text-xl">{endDay}</p>
-          <p className="text-base font-medium">{endTime}</p>
+      <div className="flex items-center gap-x-2">
+        <MdOutlineCalendarMonth className="w-6 h-6 text-success" />
+        <div className="flex">
+          <p className="text-base">
+            <span className="font-semibold">{startDay}</span> {startTime} to{' '}
+            <span className="font-semibold">{endDay}</span> {endTime}
+          </p>
         </div>
       </div>
     </Card>

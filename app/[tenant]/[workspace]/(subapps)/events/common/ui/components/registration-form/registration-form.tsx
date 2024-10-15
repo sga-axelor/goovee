@@ -21,11 +21,14 @@ import {
   formatStudioFields,
 } from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
+import {DATE_FORMATS} from '@/constants';
+import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   EventCardBadges,
   CustomSelect,
+  EventDateCard,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
@@ -200,11 +203,22 @@ export const RegistrationForm = ({
   };
 
   return (
-    <Card className="order-2 lg:order-1 p-4 w-full rounded-2xl border-none shadow-none">
-      <CardHeader className="p-0 space-y-4">
+    <Card className="w-full rounded-2xl border-none shadow-none">
+      <CardHeader className="p-4 flex flex-col gap-4">
         <CardTitle>
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
         </CardTitle>
+        <EventDateCard
+          startDate={parseDate(
+            eventDetails?.eventStartDateTime,
+            DATE_FORMATS.full_month_day_year_12_hour,
+          )}
+          endDate={parseDate(
+            eventDetails?.eventEndDateTime,
+            DATE_FORMATS.full_month_day_year_12_hour,
+          )}
+          registered={eventDetails?.eventAllowRegistration}
+        />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
         {eventDetails?.eventProduct?.salePrice && (
           <CardDescription className="my-6 text-xl font-semibold">
@@ -212,7 +226,7 @@ export const RegistrationForm = ({
           </CardDescription>
         )}
       </CardHeader>
-      <CardContent className="p-0 pt-4">
+      <CardContent className="px-4 pb-4 pt-2">
         <FormView
           fields={
             eventDetails?.eventAllowMultipleRegistrations
@@ -227,17 +241,6 @@ export const RegistrationForm = ({
               : '')
           }
         />
-        {tempError && (
-          <div className="flex lg:items-center justify-between text-red-1 bg-red-2 rounded-[0.313rem] py-4 px-8 border border-red-1 text-base font-normal leading-7 tracking-[0.031rem] w-full h-fit">
-            <p className="gap-x-4 flex lg:items-center">
-              <MdCheckCircleOutline className="shrink-0 w-6 h-6" />
-              {i18n.get(
-                'Sorry there has been a problem with your registration. Please try again.',
-              )}
-            </p>
-            <MdClose className="cursor-pointer shrink-0 w-6 h-6" />
-          </div>
-        )}
       </CardContent>
     </Card>
   );

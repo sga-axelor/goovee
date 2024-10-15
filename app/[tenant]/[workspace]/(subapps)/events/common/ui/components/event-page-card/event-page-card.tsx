@@ -14,23 +14,40 @@ import {
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/lib/i18n';
+import {parseDate} from '@/utils/date';
+import {DATE_FORMATS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventCardBadges} from '@/subapps/events/common/ui/components';
+import {
+  EventCardBadges,
+  EventDateCard,
+} from '@/subapps/events/common/ui/components';
 
 export const EventPageCard = ({eventDetails}: any & any) => {
   const {workspaceURI, tenant} = useWorkspace();
 
   return (
-    <Card className="min-w-full lg:min-w-[50rem] xl:min-w-[57.75rem] xl:max-w-[57.75rem]  w-full rounded-2xl border-none shadow-none">
-      <CardHeader className="p-4 space-y-4">
+    <Card className="w-full rounded-2xl border-none shadow-none">
+      <CardHeader className="p-4 flex flex-col gap-4">
         <CardTitle>
-          <p className=" text-xl font-semibold">{eventDetails?.eventTitle}</p>
+          <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
         </CardTitle>
+        <EventDateCard
+          startDate={parseDate(
+            eventDetails?.eventStartDateTime,
+            DATE_FORMATS.full_month_day_year_12_hour,
+          )}
+          endDate={parseDate(
+            eventDetails?.eventEndDateTime,
+            DATE_FORMATS.full_month_day_year_12_hour,
+          )}
+          registered={eventDetails?.eventAllowRegistration}
+        />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
-
-        <div className="relative mx-auto w-full max-w-[55.75rem] min-h-[15.625rem] xs:min-w-[22.875rem] flex items-center justify-center">
+      </CardHeader>
+      <CardContent className="px-4 pb-4 space-y-4">
+        <div className="relative h-[15.625rem]">
           <Image
             src={getImageURL(eventDetails?.eventImage?.id, tenant)}
             alt={`${eventDetails.eventTitle} image`}
@@ -38,8 +55,6 @@ export const EventPageCard = ({eventDetails}: any & any) => {
             className="rounded-lg mx-auto object-cover"
           />
         </div>
-      </CardHeader>
-      <CardContent className="px-4 pb-4 space-y-4">
         <CardDescription
           className="text-sm font-normal tracking-wide leading-6"
           dangerouslySetInnerHTML={{
