@@ -149,8 +149,8 @@ export const HomePage = () => {
         groupImg={selectedGroup?.image?.id}
         renderSearch={!selectedGroup && renderSearch}
       />
-      <div className="flex flex-col md:flex-row gap-5 px-4 md:px-[50px] lg:px-[100px] py-6 w-full">
-        <div className="w-full md:w-1/5 min-w-[281px] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
+      <div className="flex flex-col lg:flex-row gap-5 px-4 lg:px-[100px] py-6 w-full">
+        <div className="w-full lg:w-1/5 min-w-[281px] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
           <div>
             <h1 className="font-semibold text-xl leading-[30px]">
               {i18n.get(GROUPS)}
@@ -174,7 +174,7 @@ export const HomePage = () => {
             groupId={selectedGroup?.id}
           />
         </div>
-        <div className="w-full md:w-4/5 mb-16 lg:mb-0">
+        <div className="w-full lg:w-4/5 mb-16 lg:mb-0">
           <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[10px]">
             <Avatar
               className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
