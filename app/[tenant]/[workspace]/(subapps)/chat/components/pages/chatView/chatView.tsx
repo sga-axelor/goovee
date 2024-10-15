@@ -11,6 +11,13 @@ import {
 } from '../../../services/services';
 import {addReaction} from '../../../utils/AddReaction';
 import {addPost} from '../../../utils/addPost';
+import {
+  ChannelType,
+  Post,
+  Reaction,
+  User,
+  UserStatus,
+} from '../../../types/types';
 
 export const ChatView = ({
   token,
@@ -19,22 +26,23 @@ export const ChatView = ({
   users,
   teamId,
 }: {
-  token: any;
-  user: any;
-  userStatus: any;
-  users: any[];
+  token: string;
+  user: User;
+  userStatus: UserStatus;
+  users: User[];
   teamId: string;
 }) => {
-  const [activeChannel, setActiveChannel] = useState<any>();
-  const [_channels, setChannels] = useState<any>(null);
+  console.log('userstatus : ', userStatus);
+  const [activeChannel, setActiveChannel] = useState<string>('');
+  const [_channels, setChannels] = useState<ChannelType[]>([]);
   const [_currentChannel, setCurrentChannel] = useState<any>();
   const [channelJustSelected, setChannelJustSelected] = useState(false);
   const [newMessage, setNewMessage] = useState<boolean>(false);
   const activeChannelRef = useRef(activeChannel);
 
   const updateChannelUnread = (channelId: string, newMessage: boolean) => {
-    setChannels((prevChannels: any) =>
-      prevChannels.map((channel: any) =>
+    setChannels((prevChannels: ChannelType[]) =>
+      prevChannels.map((channel: ChannelType) =>
         channel.id === channelId
           ? {...channel, unread: newMessage ? channel.unread + 1 : 0}
           : channel,
@@ -45,13 +53,13 @@ export const ChatView = ({
   useEffect(() => {
     const fetchChannels = async () => {
       const channels = await getChannelsWithUnreadCount(token, teamId, user.id);
-      const filteredChannels = channels.filter((channel: any) => {
+      const filteredChannels = channels.filter((channel: ChannelType) => {
         return (
           channel.display_name != null && channel.display_name.trim() !== ''
         );
       });
       setChannels(filteredChannels);
-      if (userStatus && userStatus !== '') {
+      if (userStatus) {
         setActiveChannel(userStatus.active_channel);
       } else {
         setActiveChannel(filteredChannels[0].id);
@@ -63,23 +71,22 @@ export const ChatView = ({
   useEffect(() => {
     activeChannelRef.current = activeChannel;
     const fetchCurrentChannel = async () => {
-      const currentChannel = await getChannelInfosByChannelId(
-        activeChannel,
-        token,
-      );
-      console.log('curretnchannel : ', currentChannel);
-      setCurrentChannel(currentChannel);
-      setChannelJustSelected(true);
-      const data = await viewChannel(user.id, activeChannel, token);
-      updateChannelUnread(activeChannel, false);
+      if (activeChannel) {
+        const currentChannel = await getChannelInfosByChannelId(
+          activeChannel,
+          token,
+        );
+        setCurrentChannel(currentChannel);
+        setChannelJustSelected(true);
+        await viewChannel(user.id, activeChannel, token);
+        updateChannelUnread(activeChannel, false);
+      }
     };
-    if (activeChannel) {
-      fetchCurrentChannel();
-    }
+    fetchCurrentChannel();
   }, [activeChannel, token, user.id]);
 
   const handleNewPost = useCallback(
-    async (channelId: string, rootId: string, post: any) => {
+    async (channelId: string, rootId: string, post: Post) => {
       if (channelId == activeChannelRef.current && user.id !== post.user_id) {
         addPost(setCurrentChannel, channelId, token, false, user, post);
         setNewMessage(true);
@@ -94,7 +101,7 @@ export const ChatView = ({
     postText: string,
     channelId: string,
     files?: File[],
-    postReply?: any,
+    postReply?: Post,
   ) => {
     addPost(
       setCurrentChannel,
@@ -109,7 +116,7 @@ export const ChatView = ({
   };
 
   const handleDeletedPost = useCallback(
-    async (channelId: string, rootId: string, post: any) => {
+    async (channelId: string, rootId: string, post: Post) => {
       if (channelId == activeChannelRef.current) {
         console.log('ce post a été effecé : ', post);
       }
@@ -118,7 +125,7 @@ export const ChatView = ({
   );
 
   const handleNewReaction = useCallback(
-    async (channelId: string, postId: string, reaction: any) => {
+    async (channelId: string, postId: string, reaction: Reaction) => {
       if (
         channelId === activeChannelRef.current &&
         user.id !== reaction.user_id
@@ -156,7 +163,7 @@ export const ChatView = ({
     const oldestPostId = _currentChannel.groupsPosts[0][0].id;
 
     try {
-      const oldCurrentCHannel = await getChannelInfosByChannelId(
+      const oldCurrentChannel = await getChannelInfosByChannelId(
         activeChannel,
         token,
         {
@@ -165,7 +172,7 @@ export const ChatView = ({
         },
       );
 
-      const olderMessages = oldCurrentCHannel.groupsPosts;
+      const olderMessages = oldCurrentChannel.groupsPosts;
 
       if (olderMessages && olderMessages.length > 0) {
         setCurrentChannel((prevChannel: any) => {
@@ -201,7 +208,6 @@ export const ChatView = ({
         channels={_channels}
         activeChannel={activeChannel}
         setActiveChannel={setActiveChannel}
-        token={token}
       />
       {_currentChannel && (
         <ChannelView

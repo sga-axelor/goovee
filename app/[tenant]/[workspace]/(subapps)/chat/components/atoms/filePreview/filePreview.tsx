@@ -4,8 +4,9 @@ import React, {useEffect, useState} from 'react';
 import {getFilePreview} from '../../../api';
 import {FileIcon, VideoIcon, FileTextIcon, EyeIcon} from 'lucide-react';
 import {FullscreenImagePreview} from '..';
+import {File} from '../../../types/types';
 
-export const FilePreview = ({file, token}: {file: any; token: string}) => {
+export const FilePreview = ({file, token}: {file: File; token: string}) => {
   const [urlFilePreview, setUrlFilePreview] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -14,9 +15,6 @@ export const FilePreview = ({file, token}: {file: any; token: string}) => {
   const isImage = file.mime_type.startsWith('image/');
   const isVideo = file.mime_type.startsWith('video/');
   const isPDF = file.mime_type === 'application/pdf';
-
-  console.log('file', file);
-
   useEffect(() => {
     const fetchFilePreview = async () => {
       const url = await getFilePreview(file.id, token);
@@ -30,7 +28,6 @@ export const FilePreview = ({file, token}: {file: any; token: string}) => {
   const renderPreview = () => {
     if (isImage) {
       return (
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={urlFilePreview || ''}
           alt={file.name}

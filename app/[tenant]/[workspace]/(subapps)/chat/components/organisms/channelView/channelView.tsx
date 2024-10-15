@@ -1,11 +1,12 @@
 'use client';
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Loader, ChevronDown, Users, LoaderCircle} from 'lucide-react';
+import {Loader, ChevronDown, LoaderCircle} from 'lucide-react';
 import {getChannelMembers} from '../../../api';
 import {DocumentList, ChannelHeader} from '../../atoms';
 import {InputMessage} from '../../molecules';
 import {GroupPost} from '../groupPost/groupPost';
+import {User, File} from '../../../types/types';
 
 export const ChannelView = ({
   channel,
@@ -37,7 +38,7 @@ export const ChannelView = ({
   ) => void;
   loadMoreMessages: () => Promise<void>;
   getPost: (rootId: string) => void;
-  users: any[];
+  users: User[];
 }) => {
   const [messageText, setMessageText] = useState<string>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -50,7 +51,7 @@ export const ChannelView = ({
   const [showNewMessageIndicator, setShowNewMessageIndicator] =
     useState<boolean>(false);
   const [postReply, setPostReply] = useState<any>(null);
-  const [_users, setUsers] = useState<any[]>();
+  const [_users, setUsers] = useState<User[]>([]);
   const [showUserPopup, setShowUserPopup] = useState(false);
   const userPopupRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
@@ -142,7 +143,7 @@ export const ChannelView = ({
       setIsChannelReady(false);
       const fetchMembers = async () => {
         const members = await getChannelMembers(channelId, token);
-        const filteredUsers: any[] = users.filter(user =>
+        const filteredUsers: User[] = users.filter(user =>
           members.some((member: any) => member.user_id === user.id),
         );
         setUsers(filteredUsers);
@@ -219,10 +220,6 @@ export const ChannelView = ({
   const handleScrollToBottom = () => {
     scrollToBottom('smooth');
     setShowNewMessageIndicator(false);
-  };
-
-  const toggleUserPopup = () => {
-    setShowUserPopup(!showUserPopup);
   };
 
   const isSendEnabled = messageText.trim() !== '' || selectedFiles.length > 0;

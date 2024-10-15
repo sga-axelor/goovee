@@ -3,6 +3,7 @@ import {HOST} from '../constants';
 import {POSTS_API_ENDPOINT} from './path-helpers';
 import {asyncForEach} from '../services/services';
 import {uploadFile} from '../api';
+import {File} from '../types/types';
 
 export const getPostReactions = async (postId: string, token: string) => {
   const {data} = await axios({
@@ -17,7 +18,7 @@ export const createPost = async (
   channelId: string,
   message: string,
   rootId: string | null,
-  files: any,
+  files: File,
   token: string,
 ) => {
   let data: any = {
@@ -28,7 +29,7 @@ export const createPost = async (
     data = {...data, root_id: rootId};
   }
   if (files) {
-    let fileIds: any = [];
+    const fileIds: any = [];
     await asyncForEach(files, async (file: any) => {
       if (!file.id) {
         const fileInfo = await uploadFile(channelId, file, token);

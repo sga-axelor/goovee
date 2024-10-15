@@ -3,6 +3,7 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {SendHorizontal, Paperclip, Type, X, Eye, EyeOff} from 'lucide-react';
 import {MarkdownRenderer, FormattingToolbar} from '../../atoms';
+import {Post} from '../../../types/types';
 
 export const InputMessage = ({
   messageText,
@@ -25,7 +26,7 @@ export const InputMessage = ({
   handleMessageSend: () => void;
   chatContainerRef: React.RefObject<HTMLDivElement>;
   postReply: any;
-  setPostReply: (post: any) => void;
+  setPostReply: (post: Post) => void;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [textareaHeight, setTextareaHeight] = useState(20);

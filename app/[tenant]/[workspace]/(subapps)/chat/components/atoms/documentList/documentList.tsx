@@ -2,13 +2,14 @@
 
 import React from 'react';
 import {X} from 'lucide-react';
+import {File} from '../../../types/types';
 
 export const DocumentList = ({
   selectedFiles,
   removeFile,
 }: {
-  selectedFiles: any[];
-  removeFile: (file: any) => void;
+  selectedFiles: File[];
+  removeFile: (file: File) => void;
 }) => {
   return (
     <div className="mt-2">

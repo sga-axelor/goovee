@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-import ReactMarkdown from 'react-markdown';
 import {MenuReaction} from '../../molecules';
 import {FilePreview, EmojiItem} from '../../atoms';
 import {MarkdownRenderer} from '../../atoms';
@@ -38,14 +37,17 @@ export const Post = ({
   const isReply: boolean = post.root_id !== '';
 
   const groupedReactions: GroupedReactions = post.metadata?.reactions
-    ? post.metadata.reactions.reduce((acc: GroupedReactions, reaction: any) => {
-        if (!acc[reaction.emoji_name]) {
-          acc[reaction.emoji_name] = {count: 0, users: []};
-        }
-        acc[reaction.emoji_name].count += 1;
-        acc[reaction.emoji_name].users.push(reaction.user_id);
-        return acc;
-      }, {})
+    ? post.metadata.reactions.reduce(
+        (acc: GroupedReactions, reaction: Reaction) => {
+          if (!acc[reaction.emoji_name]) {
+            acc[reaction.emoji_name] = {count: 0, users: []};
+          }
+          acc[reaction.emoji_name].count += 1;
+          acc[reaction.emoji_name].users.push(reaction.user_id);
+          return acc;
+        },
+        {},
+      )
     : {};
 
   const onReplyClick = () => {

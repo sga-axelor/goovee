@@ -4,7 +4,6 @@ import React, {useEffect, useState} from 'react';
 import {getUserProfileImage} from '../../../api';
 import {Post} from '../post/Post';
 import Image from 'next/image';
-
 export const GroupPost = ({
   group,
   token,
@@ -17,7 +16,7 @@ export const GroupPost = ({
   token: string;
   onEmojiClick: (name: string, postId: string) => void;
   isLast?: boolean;
-  getPost: (rootId: string) => any;
+  getPost: (rootId: string) => void;
   setPostReply: (post: any) => void;
 }) => {
   const [profileImage, setProfileImage] = useState<any>(null);

@@ -1,10 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React from 'react';
 import {emojis, HOST} from '../../../constants';
 import styles from './index.module.css';
-import Image from 'next/image';
 
 export const EmojiItem = ({
   onEmojiClick,
@@ -19,11 +17,11 @@ export const EmojiItem = ({
 }) => {
   const filename = emojis[name];
   const handleClick = () => {
-    onEmojiClick && onEmojiClick(name);
+    onEmojiClick(name);
   };
 
   if (filename) {
-    let className = small
+    const className = small
       ? styles.emojiPickerItemSmall
       : styles.emojiPickerItem;
     return (

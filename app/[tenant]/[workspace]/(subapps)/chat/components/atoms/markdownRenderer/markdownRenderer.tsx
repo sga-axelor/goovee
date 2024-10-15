@@ -17,7 +17,6 @@ const components: Components = {
   strong: ({children}) => <strong className="font-bold">{children}</strong>,
   em: ({children}) => <em className="italic">{children}</em>,
   code: ({inline, className, children}) => {
-    const match = /language-(\w+)/.exec(className || '');
     return !inline ? (
       <pre className="bg-gray-100 rounded p-2">
         <code className={className}>{children}</code>

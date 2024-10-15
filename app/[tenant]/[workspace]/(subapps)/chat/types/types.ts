@@ -29,7 +29,8 @@ export interface ChannelType {
   total_msg_count: number;
   extra_update_at: Date;
   creator_id: string;
-  unread_msg_count: number;
+  unread: number;
+  groupsPost: any[];
 }
 
 export interface Member {
@@ -84,6 +85,12 @@ export interface User {
   terms_of_service_id?: string;
   terms_of_service_create_at?: Date;
   profileImage: any;
+}
+
+export interface UserStatus {
+  active_channel: string;
+  status: string;
+  user_id: string;
 }
 
 export interface Reaction {

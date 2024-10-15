@@ -3,12 +3,13 @@
 import {Users} from 'lucide-react';
 import React, {useEffect, useRef, useState} from 'react';
 import {getDisplayNickName} from '../../../services/services';
+import {User} from '../../../types/types';
 
 export const ChannelHeader = ({
   users,
   channelName,
 }: {
-  users: any[] | undefined;
+  users: User[];
   channelName: string;
 }) => {
   const [showUserPopup, setShowUserPopup] = useState<boolean>(false);
@@ -57,7 +58,7 @@ export const ChannelHeader = ({
               </div>
               <ul className="max-h-60 overflow-y-auto">
                 {users &&
-                  users.map(user => (
+                  users.map((user: User) => (
                     <li key={user.id} className="p-2">
                       {getDisplayNickName(user.nickname) || user.username}
                     </li>

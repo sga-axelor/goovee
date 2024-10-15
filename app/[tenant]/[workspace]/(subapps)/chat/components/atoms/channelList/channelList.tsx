@@ -2,18 +2,18 @@
 
 import React, {useEffect, useState, useRef} from 'react';
 import {Hash, Search, GripVertical} from 'lucide-react';
+import {ChannelType} from '../../../types/types';
 
 export const ChannelList = ({
   channels,
   activeChannel,
   setActiveChannel,
-  token,
 }: {
-  channels: any;
-  activeChannel: any;
-  setActiveChannel: any;
-  token: any;
+  channels: ChannelType[];
+  activeChannel: string;
+  setActiveChannel: (id: string) => void;
 }) => {
+  console.log('voici les channels : ', channels);
   const [width, setWidth] = useState(256);
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ export const ChannelList = ({
     return <div className="text-gray-400 p-4">Chargement des canaux...</div>;
   }
 
-  const filteredChannels = channels.filter((channel: any) =>
+  const filteredChannels = channels.filter((channel: ChannelType) =>
     channel.display_name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
@@ -71,7 +71,7 @@ export const ChannelList = ({
         </div>
       </div>
       <div className="overflow-y-auto flex-grow">
-        {filteredChannels.map((channel: any) => (
+        {filteredChannels.map((channel: ChannelType) => (
           <div
             key={channel.id}
             className={`flex items-center justify-between p-2 hover:bg-gray-700 cursor-pointer ${

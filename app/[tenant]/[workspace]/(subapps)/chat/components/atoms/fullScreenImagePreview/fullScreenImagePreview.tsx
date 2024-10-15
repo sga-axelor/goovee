@@ -13,7 +13,7 @@ export const FullscreenImagePreview = ({
   setIsFullscreen: (value: boolean) => void;
   isZoomed: boolean;
   toggleZoom: () => void;
-  urlFilePreview: any;
+  urlFilePreview: string | null;
   file: any;
 }) => {
   if (!isFullscreen) return null;

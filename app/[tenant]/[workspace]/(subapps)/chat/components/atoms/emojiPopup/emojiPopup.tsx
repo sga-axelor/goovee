@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React from 'react';
@@ -9,7 +8,7 @@ export const EmojiPopup = ({
   onClose,
 }: {
   onEmojiClick: (name: string) => void;
-  onClose?: any;
+  onClose: () => void;
 }) => {
   return (
     <div className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg p-2 z-10">
