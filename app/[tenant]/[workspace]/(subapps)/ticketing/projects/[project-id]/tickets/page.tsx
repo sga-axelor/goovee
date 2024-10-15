@@ -53,6 +53,7 @@ import {
   getWhere,
 } from '../../../common/utils/search-param';
 import Search from '../search';
+import {Skeleton} from '@/ui/components/skeleton';
 
 const TICKETS_PER_PAGE = 7;
 export default async function Page({
@@ -145,7 +146,10 @@ export default async function Page({
       </div>
       <div className="lg:flex items-end justify-between gap-6">
         <Search projectId={projectId} inputClassName="h-[39px]" />
-        <Suspense>
+        <Suspense
+          fallback={
+            <Skeleton className="h-10 w-[400px] bg-success-light shrink-0" />
+          }>
           <AsyncFilter
             url={url}
             searchParams={searchParams}

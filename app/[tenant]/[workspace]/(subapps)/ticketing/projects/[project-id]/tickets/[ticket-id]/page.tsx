@@ -56,6 +56,7 @@ import {
   ParentTicketsHeader,
   RelatedTicketsHeader,
 } from './headers';
+import {Skeleton} from '@/ui/components/skeleton';
 
 export default async function Page({
   params,
@@ -145,10 +146,10 @@ export default async function Page({
         contacts={contacts}
       />
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-        <Suspense>
+        <Suspense fallback={<Skeleton className="h-[160px]" />}>
           <ParentTicket ticketId={ticket.id} projectId={ticket.project?.id} />
         </Suspense>
-        <Suspense>
+        <Suspense fallback={<Skeleton className="h-[160px]" />}>
           <ChildTickets
             projectId={ticket.project?.id}
             ticketId={ticket.id}
@@ -158,7 +159,7 @@ export default async function Page({
             userId={session.user.id}
           />
         </Suspense>
-        <Suspense>
+        <Suspense fallback={<Skeleton className="h-[160px]" />}>
           <RelatedTickets ticketId={ticket.id} projectId={ticket.project?.id} />
         </Suspense>
       </div>

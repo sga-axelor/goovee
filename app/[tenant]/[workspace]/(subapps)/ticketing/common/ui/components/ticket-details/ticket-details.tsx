@@ -60,6 +60,7 @@ import type {Ticket} from '../../../orm/tickets';
 import {TicketFormSchema, TicketInfo} from '../../../schema';
 import {formatDate, getProfilePic, isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
+import {Skeleton} from '@/ui/components/skeleton';
 
 type Props = {
   ticket: Cloned<Ticket>;
@@ -450,7 +451,7 @@ export function TicketDetails(props: Props) {
                           onChange={field.onChange}
                           content={ticket.description}
                           classNames={{
-                            wrapperClassName: 'overflow-visible',
+                            wrapperClassName: 'overflow-visible bg-card',
                             toolbarClassName: 'mt-0',
                             editorClassName: 'px-4',
                           }}

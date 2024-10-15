@@ -143,9 +143,6 @@ export function Filter(props: FilterProps) {
 
   return (
     <div className={cn('relative', {'mt-5': small})}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-base mb-2">{i18n.get('Filter')} :</h3>
-      </div>
       <Controller open={open} onOpenChange={setOpen}>
         <Trigger asChild>
           <Button
