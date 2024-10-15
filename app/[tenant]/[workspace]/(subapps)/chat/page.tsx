@@ -1,3 +1,4 @@
+import React from 'react';
 import {getAuthToken, getUsers, getUserStatus} from './api';
 import {ChatView} from './components';
 

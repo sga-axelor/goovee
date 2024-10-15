@@ -18,6 +18,10 @@ export const FullscreenImagePreview = ({
 }) => {
   if (!isFullscreen) return null;
 
+  const focusInputMessage = () => {
+    window.dispatchEvent(new Event('focus-input-message'));
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 overflow-auto">
       <div className={`relative ${isZoomed ? '' : 'max-w-4xl max-h-full'}`}>
@@ -35,7 +39,10 @@ export const FullscreenImagePreview = ({
         </button>
         <button
           className="text-white hover:text-gray-300"
-          onClick={() => setIsFullscreen(false)}>
+          onClick={() => {
+            setIsFullscreen(false);
+            focusInputMessage();
+          }}>
           <XIcon size={24} />
         </button>
       </div>

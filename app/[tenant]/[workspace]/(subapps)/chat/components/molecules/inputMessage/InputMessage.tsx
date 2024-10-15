@@ -36,23 +36,22 @@ export const InputMessage = ({
   const MIN_HEIGHT = 20;
   const MAX_HEIGHT = 150;
 
-  useEffect(() => {
+  const doFocus = () => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
-  }, []);
+  };
 
   useEffect(() => {
-    const focusInterval = setInterval(() => {
-      if (
-        textareaRef.current &&
-        document.activeElement !== textareaRef.current
-      ) {
-        textareaRef.current.focus();
-      }
-    }, 100);
+    const handleFocusEvent = () => {
+      doFocus();
+    };
 
-    return () => clearInterval(focusInterval);
+    window.addEventListener('focus-input-message', handleFocusEvent);
+
+    return () => {
+      window.removeEventListener('focus-input-message', handleFocusEvent);
+    };
   }, []);
 
   useEffect(() => {

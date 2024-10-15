@@ -57,6 +57,10 @@ export const ChannelView = ({
   const userButtonRef = useRef<HTMLButtonElement>(null);
   const [isChannelReady, setIsChannelReady] = useState(false);
 
+  const focusInputMessage = () => {
+    window.dispatchEvent(new Event('focus-input-message'));
+  };
+
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior) => {
       if (messagesRef && messagesRef.current) {
@@ -124,6 +128,7 @@ export const ChannelView = ({
       messagesRef.current.scrollTop = newScrollTop;
       prevHeightRef.current = 0;
     }
+    focusInputMessage();
   }, [channel.groupsPosts]);
 
   useEffect(() => {
@@ -215,6 +220,7 @@ export const ChannelView = ({
       fileInputRef.current.value = '';
       fileInputRef.current.click();
     }
+    focusInputMessage();
   };
 
   const handleScrollToBottom = () => {

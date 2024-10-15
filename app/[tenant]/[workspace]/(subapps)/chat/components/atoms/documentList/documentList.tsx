@@ -11,6 +11,10 @@ export const DocumentList = ({
   selectedFiles: File[];
   removeFile: (file: File) => void;
 }) => {
+  const focusInputMessage = () => {
+    window.dispatchEvent(new Event('focus-input-message'));
+  };
+
   return (
     <div className="mt-2">
       <h4 className="text-sm font-semibold text-gray-700">
@@ -25,7 +29,10 @@ export const DocumentList = ({
             <X
               size={16}
               className="text-red-500 cursor-pointer"
-              onClick={() => removeFile(file)}
+              onClick={() => {
+                removeFile(file);
+                focusInputMessage();
+              }}
             />
           </li>
         ))}
