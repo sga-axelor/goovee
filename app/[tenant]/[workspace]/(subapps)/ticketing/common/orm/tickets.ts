@@ -8,6 +8,7 @@ import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {i18n} from '@/lib/i18n';
 import {addComment} from '@/orm/comment';
 import {ModelType} from '@/types';
+import {sql} from '@/utils/template-string';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';
 import axios from 'axios';
 
@@ -765,60 +766,88 @@ export async function findTicketsBySearch(props: {
 
 export async function findParentTicketIds(ticketId: ID): Promise<string[]> {
   const client = await getClient();
-  const parentTickets = await getParentTickets(ticketId);
 
-  return parentTickets;
+  const res = await client.$raw(
+    sql`
+      WITH RECURSIVE
+        parent_tickets AS (
+          -- Base case: Select the initial ticket's parent
+          SELECT
+            id,
+            parent_task
+          FROM
+            project_project_task
+          WHERE
+            id = $1
+          UNION ALL
+          -- Recursive step: Select the parent of the current ticket
+          SELECT
+            pt.id,
+            pt.parent_task
+          FROM
+            project_project_task pt
+            INNER JOIN parent_tickets p ON pt.id = p.parent_task
+          WHERE
+            pt.id IS NOT NULL
+        )
+      SELECT
+        ARRAY_AGG(parent_task) AS ids
+      FROM
+        parent_tickets
+      WHERE
+        parent_task IS NOT NULL;
+    `,
+    ticketId,
+  );
 
-  async function getParentTickets(
-    currentTicketId: ID,
-    parentTickets: string[] = [],
-  ): Promise<string[]> {
-    const ticket = await client.aOSProjectTask.findOne({
-      where: {id: currentTicketId},
-      select: {parentTask: {id: true}},
-    });
-    if (ticket?.parentTask) {
-      if (
-        currentTicketId === ticket.parentTask?.id ||
-        parentTickets.includes(ticket.parentTask.id)
-      ) {
-        console.error('Circular reference found');
-        return parentTickets;
-      }
-      parentTickets.push(ticket.parentTask.id);
-      await getParentTickets(ticket.parentTask.id, parentTickets);
-    }
-    return parentTickets;
+  if (Array.isArray(res)) {
+    const parentTickets = res[0]?.ids;
+    return parentTickets ?? [];
   }
+  return [];
 }
 
 export async function findChildTicketIds(ticketId: ID): Promise<string[]> {
   const client = await getClient();
-  const childTickets = await getChildTickets(ticketId);
 
-  return childTickets;
+  const res = await client.$raw(
+    sql`
+      WITH RECURSIVE
+        child_tickets AS (
+          -- Base case: Select the initial ticket
+          SELECT
+            id,
+            parent_task
+          FROM
+            project_project_task
+          WHERE
+            id = $1
+          UNION ALL
+          -- Recursive step: Select the child tickets where the current ticket is the parent
+          SELECT
+            pt.id,
+            pt.parent_task
+          FROM
+            project_project_task pt
+            INNER JOIN child_tickets ct ON pt.parent_task = ct.id
+        )
+      SELECT
+        ARRAY_AGG(id) AS ids
+      FROM
+        child_tickets
+      WHERE
+        -- Exclude the initial ticket itself from the results
+        id != $1;
+    `,
+    ticketId,
+  );
 
-  async function getChildTickets(
-    currentTicketId: ID,
-    childTickets: string[] = [],
-  ): Promise<string[]> {
-    const ticket = await client.aOSProjectTask.findOne({
-      where: {id: currentTicketId},
-      select: {childTasks: {select: {id: true}}},
-    });
-
-    if (ticket?.childTasks) {
-      for (const child of ticket.childTasks) {
-        if (currentTicketId === child.id || childTickets.includes(child.id)) {
-          console.error('Circular reference found');
-          continue;
-        }
-        childTickets.push(child.id);
-        await getChildTickets(child.id, childTickets);
-      }
-    }
-    return childTickets;
+  if (Array.isArray(res)) {
+    const childTickets = res[0]?.ids;
+    return childTickets ?? [];
   }
+
+  return [];
 }
 
 export async function createChildTicketLink({
