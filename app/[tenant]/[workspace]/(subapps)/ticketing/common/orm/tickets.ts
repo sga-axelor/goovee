@@ -19,11 +19,8 @@ import {
   VERSION_MISMATCH_ERROR,
 } from '../constants';
 import {CreateTicketInfo, UpdateTicketInfo} from '../schema';
-import {
-  getProjectAccessFilter,
-  getTicketAccessFilter,
-  QueryProps,
-} from './helpers';
+import type {QueryProps} from './helpers';
+import {getProjectAccessFilter, getTicketAccessFilter} from './helpers';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
@@ -233,11 +230,7 @@ export async function createTicket({
       workspaceURL,
       type: ModelType.ticketing,
       model: {id: ticket.id},
-      messageBody: {
-        title: 'Record Created',
-        tracks: tracks,
-        tags: [],
-      },
+      messageBody: {title: 'Record Created', tracks: tracks, tags: []},
     });
   } catch (e) {
     console.log('Error adding comment');
@@ -449,11 +442,7 @@ export async function updateTicket({
       workspaceURL,
       type: ModelType.ticketing,
       model: {id: ticket.id},
-      messageBody: {
-        title: 'Record Updated',
-        tracks: tracks,
-        tags: [],
-      },
+      messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
     });
   } catch (e) {
     console.log('Error adding comment');
@@ -493,16 +482,8 @@ export async function getMyTicketCount({
       project: {id: projectId},
       status: {isCompleted: false},
       OR: [
-        {
-          assignedToContact: {
-            id: userId,
-          },
-        },
-        {
-          requestedByContact: {
-            id: userId,
-          },
-        },
+        {assignedToContact: {id: userId}},
+        {requestedByContact: {id: userId}},
       ],
     },
   });
@@ -975,9 +956,7 @@ export async function deleteParentTicketLink({
     data: {
       id: linkTicketId.toString(),
       version: linkTicket.version, //TODO: get the version from client
-      childTasks: {
-        remove: currentTicketId,
-      },
+      childTasks: {remove: currentTicketId},
     },
     select: {id: true},
   });
@@ -1099,9 +1078,7 @@ export async function createRelatedTicketLink({
       updatedOn: new Date(),
       projectTask: {select: {id: linkTicketId}},
       relatedTask: {select: {id: currentTicketId}},
-      projectTaskLinkType: {
-        select: {id: oppositeType.id},
-      },
+      projectTaskLinkType: {select: {id: oppositeType.id}},
       projectTaskLink: {select: {id: link1.id}},
     },
     select: {id: true},
