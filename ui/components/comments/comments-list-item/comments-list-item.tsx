@@ -159,7 +159,10 @@ export const CommentListItem = ({
         <CommentAttachments attachments={commentFileList} />
 
         <div className="flex flex-col">
-          <div className="text-xs">{note}</div>
+          <div
+            className="text-sm w-full font-normal line-clamp-2"
+            dangerouslySetInnerHTML={{__html: note}}
+          />
           <div className="flex justify-end items-center gap-6 mt-1 mb-2">
             {showReactions && (
               <>
@@ -175,30 +178,35 @@ export const CommentListItem = ({
                 <Separator orientation="vertical" className="h-6 bg-black" />
               </>
             )}
-            <div className="flex gap-6 items-center">
-              <span
-                className="text-xs cursor-pointer"
-                onClick={handleInputToggle}>
-                {i18n.get('Reply')}
-              </span>
+            {note && (
+              <div className="flex gap-6 items-center">
+                <span
+                  className="text-xs cursor-pointer"
+                  onClick={handleInputToggle}>
+                  {i18n.get('Reply')}
+                </span>
 
-              {parentCommentId === id && childCommentList.length > 0 && (
-                <>
-                  <Separator orientation="vertical" className="h-6 bg-black" />
-                  <div
-                    className={`flex items-center gap-1 text-[10px] ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
-                    onClick={handleSubCommentsToggle}>
-                    <MdOutlineModeComment className="w-4 h-4 cursor-pointer" />
-                    {childCommentList.length}{' '}
-                    {i18n.get(
-                      childCommentList.length > 1
-                        ? COMMENTS.toLowerCase()
-                        : COMMENT.toLowerCase(),
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+                {parentCommentId === id && childCommentList.length > 0 && (
+                  <>
+                    <Separator
+                      orientation="vertical"
+                      className="h-6 bg-black"
+                    />
+                    <div
+                      className={`flex items-center gap-1 text-[10px] ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
+                      onClick={handleSubCommentsToggle}>
+                      <MdOutlineModeComment className="w-4 h-4 cursor-pointer" />
+                      {childCommentList.length}{' '}
+                      {i18n.get(
+                        childCommentList.length > 1
+                          ? COMMENTS.toLowerCase()
+                          : COMMENT.toLowerCase(),
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
           {showCommentInput && (
             <div className="my-2">
