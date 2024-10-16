@@ -1,78 +1,86 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
-import {getFilePreview} from '../../../api';
-import {FileIcon, VideoIcon, FileTextIcon, EyeIcon} from 'lucide-react';
-import {FullscreenImagePreview} from '..';
+import React, {useState} from 'react';
+import {ImagePreview} from '..';
 import {File} from '../../../types/types';
+import {
+  FileIcon,
+  FileText,
+  Film,
+  Image,
+  FileSpreadsheet,
+  Download,
+} from 'lucide-react';
+
+const getFileIconAndColor = (mimeType: string) => {
+  if (mimeType.startsWith('image/'))
+    return {icon: Image, color: 'text-gray-500'};
+  if (mimeType.startsWith('video/'))
+    return {icon: Film, color: 'text-blue-500'};
+  if (mimeType === 'application/pdf')
+    return {icon: FileText, color: 'text-red-500'};
+  if (
+    mimeType ===
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+    mimeType === 'application/vnd.ms-excel'
+  )
+    return {icon: FileSpreadsheet, color: 'text-green-500'};
+  return {icon: FileIcon, color: 'text-gray-500'};
+};
+
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return bytes + ' B';
+  else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  else if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+  else return (bytes / 1073741824).toFixed(1) + ' GB';
+};
 
 export const FilePreview = ({file, token}: {file: File; token: string}) => {
-  const [urlFilePreview, setUrlFilePreview] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isZoomed, setIsZoomed] = useState(false);
-
+  const [isDownloadHovered, setIsDownloadHovered] = useState(false);
   const isImage = file.mime_type.startsWith('image/');
-  const isVideo = file.mime_type.startsWith('video/');
-  const isPDF = file.mime_type === 'application/pdf';
-  useEffect(() => {
-    const fetchFilePreview = async () => {
-      const url = await getFilePreview(file.id, token);
-      setUrlFilePreview(url);
-    };
-    if (isImage) {
-      fetchFilePreview();
-    }
-  }, [file.id, token, isImage]);
+  const {icon: Icon, color} = getFileIconAndColor(file.mime_type);
 
-  const renderPreview = () => {
-    if (isImage) {
-      return (
-        <img
-          src={urlFilePreview || ''}
-          alt={file.name}
-          className="max-w-full h-auto rounded"
-        />
-      );
-    } else if (isVideo) {
-      return <VideoIcon size={48} className="text-blue-500" />;
-    } else if (isPDF) {
-      return <FileTextIcon size={48} className="text-red-500" />;
-    } else {
-      return <FileIcon size={48} className="text-gray-500" />;
-    }
-  };
-
-  const toggleZoom = () => {
-    setIsZoomed(!isZoomed);
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Implementez ici la logique de téléchargement
+    console.log('Téléchargement du fichier:', file.name);
   };
 
   return (
-    <>
-      <div
-        className="m-1 flex flex-col items-center relative"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}>
-        <div className="mb-1 relative">
-          {renderPreview()}
-          {isHovered && isImage && (
-            <div
-              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded cursor-pointer"
-              onClick={() => setIsFullscreen(true)}>
-              <EyeIcon size={24} className="text-white" />
-            </div>
+    <div className="m-1 flex flex-col items-center relative">
+      {isImage ? (
+        <ImagePreview file={file} token={token} />
+      ) : (
+        <div
+          className={`flex items-center p-2 rounded-md w-64 h-16 border border-gray-300 transition-shadow duration-200 ${
+            isHovered ? 'shadow-md' : ''
+          }`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}>
+          <Icon className={`w-8 h-8 mr-3 ${color} flex-shrink-0`} />
+          <div className="flex flex-col overflow-hidden flex-grow">
+            <p className="text-sm font-medium truncate">{file.name}</p>
+            <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+          </div>
+          {isHovered && (
+            <button
+              onClick={handleDownload}
+              onMouseEnter={() => setIsDownloadHovered(true)}
+              onMouseLeave={() => setIsDownloadHovered(false)}
+              className={`ml-2 p-1 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200 ${
+                isDownloadHovered ? 'bg-blue-100' : ''
+              }`}
+              aria-label="Télécharger le fichier">
+              <Download
+                className={`w-5 h-5 ${
+                  isDownloadHovered ? 'text-blue-500' : 'text-gray-500'
+                } transition-colors duration-200`}
+              />
+            </button>
           )}
         </div>
-        <p className="text-xs text-center truncate max-w-full">{file.name}</p>
-      </div>
-      <FullscreenImagePreview
-        isFullscreen={isFullscreen}
-        setIsFullscreen={setIsFullscreen}
-        isZoomed={isZoomed}
-        toggleZoom={toggleZoom}
-        urlFilePreview={urlFilePreview}
-        file={file}
-      />
-    </>
+      )}
+    </div>
   );
 };

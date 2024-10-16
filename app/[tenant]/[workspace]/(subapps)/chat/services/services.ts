@@ -3,6 +3,7 @@ import {
   getChannelsTeam,
   getChannelUsers,
   getFileInfoById,
+  getFileLink,
   getPostsChannel,
   getUnreadChannel,
 } from '../api';
@@ -38,16 +39,21 @@ export async function asyncForEach(array: any, callback: any) {
 }
 
 export const getFiles = async (fileIds: File[], token: string) => {
-  let files: File[] = [];
+  const files: File[] = [];
   await asyncForEach(fileIds, async (fileId: string) => {
     const fileInfo = await getFileInfoById(fileId, token);
+    //const publicLink = await getFileLink(fileId, token);
+    //console.log('publicLink : ', publicLink);
     if ('status_code' in fileInfo) {
       return;
     }
     if (fileInfo) {
+      // files.push({...fileInfo, publicLink: publicLink});
       files.push(fileInfo);
     }
   });
+
+  console.log('files ', files);
 
   return files;
 };

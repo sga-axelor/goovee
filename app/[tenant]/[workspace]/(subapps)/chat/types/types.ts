@@ -145,6 +145,7 @@ export interface File {
   height: number;
   has_preview_image: true;
   type?: string;
+  publicLink: string;
 }
 
 export interface SocketMsg {

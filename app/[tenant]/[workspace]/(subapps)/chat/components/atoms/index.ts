@@ -7,3 +7,4 @@ export {FilePreview} from './filePreview/filePreview';
 export {FormattingToolbar} from './formatBar/formatBar';
 export {MarkdownRenderer} from './markdownRenderer/markdownRenderer';
 export {FullscreenImagePreview} from './fullScreenImagePreview/fullScreenImagePreview';
+export {ImagePreview} from './imagePreview/imagePreview';

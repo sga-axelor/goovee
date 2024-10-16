@@ -42,3 +42,12 @@ export const getFilePreview = async (fileId: string, token: string) => {
   const blob = new Blob([data], {type: 'image/png'});
   return URL.createObjectURL(blob);
 };
+
+export const getFileLink = async (fileId: string, token: string) => {
+  const {data} = await axios({
+    method: 'get',
+    url: `${HOST}${FILES_API_ENDPOINT}/${fileId}/link`,
+    headers: {Authorization: `Bearer ${token}`},
+  });
+  return data;
+};
