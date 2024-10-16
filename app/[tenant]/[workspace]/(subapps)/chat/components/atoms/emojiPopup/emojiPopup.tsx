@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import {emojis, HOST} from '../../../constants';
+import {HOST} from '../../../constants';
+import {emojis} from '../../../constants/emojis';
 
 export const EmojiPopup = ({
   onEmojiClick,

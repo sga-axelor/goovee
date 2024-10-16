@@ -43,7 +43,6 @@ export const getFiles = async (fileIds: File[], token: string) => {
   await asyncForEach(fileIds, async (fileId: string) => {
     const fileInfo = await getFileInfoById(fileId, token);
     const {link} = await getFileLink(fileId, token);
-    console.log('publicLink : ', link);
     if ('status_code' in fileInfo) {
       return;
     }
@@ -51,8 +50,6 @@ export const getFiles = async (fileIds: File[], token: string) => {
       files.push({...fileInfo, publicLink: link});
     }
   });
-
-  console.log('files ', files);
 
   return files;
 };
