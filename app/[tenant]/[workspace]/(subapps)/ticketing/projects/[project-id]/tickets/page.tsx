@@ -145,7 +145,10 @@ export default async function Page({
         </Button>
       </div>
       <div className="lg:flex items-end justify-between gap-6">
-        <Search projectId={projectId} inputClassName="h-[39px]" />
+        <Search
+          projectId={projectId}
+          inputClassName="h-[39px] placeholder:!text-sm text-sm"
+        />
         <Suspense
           fallback={
             <Skeleton className="h-10 w-[400px] bg-success-light shrink-0" />

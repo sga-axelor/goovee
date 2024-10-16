@@ -152,13 +152,16 @@ export default async function Page({
             <FaChevronRight className="text-primary" />
           </BreadcrumbSeparator>
           <BreadcrumbItem>
-            <BreadcrumbPage className="sm:truncate text-lg font-semibold">
+            <BreadcrumbPage className="sm:truncate text-lg  font-semibold">
               {project.name}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Search projectId={projectId} />
+      <Search
+        projectId={projectId}
+        inputClassName="h-[39px] placeholder:!text-sm text-sm"
+      />
       <Swipe items={items} />
       <div className="flex items-center justify-between">
         <h2 className="font-semibold text-xl">{i18n.get('Latest tickets')}</h2>
