@@ -183,10 +183,11 @@ export async function findEvents({
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
 
+  const orderBy: any = {eventStartDateTime: ORDER_BY.DESC};
   const events = await c.aOSPortalEvent
     .find({
       where: whereClause,
-      orderBy: {eventStartDateTime: ORDER_BY.DESC},
+      orderBy,
       take: limit,
       ...(skip ? {skip} : {}),
       select: {

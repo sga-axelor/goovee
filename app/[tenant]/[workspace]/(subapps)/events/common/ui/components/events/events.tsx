@@ -14,8 +14,8 @@ import {
   IMAGE_URL,
   URL_PARAMS,
 } from '@/constants';
-import {useSearchParams} from '@/ui/hooks';
-import {i18n} from '@/i18n';
+import {useSearchParams, useToast} from '@/ui/hooks';
+import {i18n} from '@/lib/i18n';
 import {PortalWorkspace} from '@/types';
 import {getImageURL} from '@/utils/files';
 
@@ -53,6 +53,7 @@ export const Events = ({
   const imageURL = workspace?.config?.eventHeroBgImage?.id
     ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant)})`
     : IMAGE_URL;
+  const {toast} = useToast();
 
   const updateCateg = (category: Category) => {
     const updatedCategories = selectedCategory.some(
@@ -96,19 +97,32 @@ export const Events = ({
   const handlClick = (id: string | number) => {
     router.push(`${workspaceURI}/events/${id}`);
   };
-
   const renderSearch = () => (
     <Search
       findQuery={async () => {
-        const response = await getAllEvents({workspace});
-        if (response) {
-          const {events} = response;
-          return events;
+        try {
+          const response: any = await getAllEvents({workspace});
+          if (response?.error) {
+            toast({
+              variant: 'destructive',
+              description: i18n.get(
+                response.error || 'Something went wrong while searching!',
+              ),
+            });
+            return [];
+          }
+
+          return response.events || [];
+        } catch (error) {
+          toast({
+            variant: 'destructive',
+            description: i18n.get('Something went wrong while searching!'),
+          });
+          return [];
         }
-        return [];
       }}
       renderItem={SearchItem}
-      searchKey={'eventTitle'}
+      searchKey="eventTitle"
       onItemClick={handlClick}
     />
   );
