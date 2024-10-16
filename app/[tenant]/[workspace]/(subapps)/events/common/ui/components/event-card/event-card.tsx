@@ -26,33 +26,28 @@ import {EventCardProps} from '@/subapps/events/common/ui/components/events/types
 export const EventCard = ({event}: EventCardProps) => {
   const {tenant} = useWorkspace();
   return (
-    <Card className="px-4  overflow-hidden cursor-pointer  rounded-2xl flex h-fit border-none shadow-none ">
-      <div className=" relative my-auto lg:min-h-[10.625rem] lg:min-w-[9.375rem] min-h-[8.75rem] max-h-[9.375rem] min-w-[7.5rem] flex items-center justify-center">
-        <Image
-          src={getImageURL(event?.eventImage?.id, tenant)}
-          alt={`${event.eventTitle} image`}
-          width={150}
-          height={150}
-          className="rounded-lg h-[7.5rem] "
-          style={{objectFit: 'cover'}}
-        />
-      </div>
+    <Card className="p-2 overflow-hidden cursor-pointer rounded-2xl flex gap-6 h-fit border-none shadow-none ">
+      <div
+        className="w-[150px] h-[150px] rounded-lg bg-center bg-cover flex-shrink-0"
+        style={{
+          backgroundImage: `url(${getImageURL(event?.eventImage?.id)})`,
+        }}></div>
 
-      <div className="flex flex-col w-full">
-        <CardHeader className="pt-4 pb-2 pr-0 lg:pr-10 space-y-2 w-full ">
-          <CardTitle className="flex flex-col xs:flex-row space-y-2 xs:space-y-0 items-start justify-between w-full ">
-            <p className="text-base font-semibold w-full pr-3 ">
+      <div className="flex flex-col w-full py-2">
+        <CardHeader className="w-full p-0">
+          <CardTitle className="flex flex-col xs:flex-row items-start justify-between w-full ">
+            <p className="text-base font-semibold w-full flex justify-between">
               {event.eventTitle}
+              {!event.eventAllowRegistration && (
+                <Badge
+                  variant="outline"
+                  className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6">
+                  {i18n.get('#Registered')}
+                </Badge>
+              )}
             </p>
-            {event.eventAllowRegistration === false && (
-              <Badge
-                variant="outline"
-                className="text-[0.625rem] xs:ml-auto font-medium py-1 px-2">
-                {i18n.get('#Registered')}
-              </Badge>
-            )}
           </CardTitle>
-          <CardDescription className="text-sm font-medium">
+          <CardDescription className="text-sm font-medium text-secondary">
             {`${parseDate(
               event.eventStartDateTime,
               DATE_FORMATS.full_month_day_year_12_hour,
@@ -63,20 +58,16 @@ export const EventCard = ({event}: EventCardProps) => {
           </CardDescription>
           <EventCardBadges categories={event.eventCategorySet} />
         </CardHeader>
-        <CardContent className="pb-4 pr-0 w-full lg:pr-10">
+        <CardContent className="p-0 mt-1">
           <div
-            className="text-sm w-full font-normal line-clamp-2"
+            className="text-sm w-full font-normal line-clamp-2 text-gray-dark"
             dangerouslySetInnerHTML={{__html: event?.eventDescription}}
           />
         </CardContent>
       </div>
-      <div className="flex-col hidden ml-auto lg:flex items-center justify-center">
-        <Button
-          size="icon"
-          variant="ghost"
-          className="bg-success/10 text-success"
-          asChild>
-          <MdChevronRight className="w-10 h-10" />
+      <div className="flex-col hidden lg:flex items-center justify-center pr-2">
+        <Button className="bg-success-light hover:bg-success-light text-success hover:text-success h-10 w-10 p-0 rounded-lg">
+          <MdChevronRight className="h-6 w-6" />
         </Button>
       </div>
     </Card>

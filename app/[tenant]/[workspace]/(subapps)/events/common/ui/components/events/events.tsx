@@ -131,8 +131,7 @@ export const Events = ({
         renderSearch={renderSearch}
         tenantId={tenant}
       />
-
-      <div className="container py-6 px-4 overflow-hidden flex lg:flex-row flex-col space-y-6 lg:space-y-0 lg:gap-x-6 mb-16">
+      <div className="py-6 px-4 lg:px-[100px] flex flex-col lg:flex-row lg:gap-6 mb-16">
         <EventSelector
           date={date}
           setDate={updateDate}
@@ -140,7 +139,7 @@ export const Events = ({
           categories={categories}
           workspace={workspace}
         />
-        <div className="flex flex-col space-y-4 w-full  xl:max-w-[48.938rem]">
+        <div className="flex flex-col space-y-4 w-full">
           {events && events.length > 0 ? (
             events.map(event => (
               <Link
