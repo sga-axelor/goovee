@@ -1,1 +1,1 @@
-export * from './comments-input';
+export {CommentInput} from './comments-input';

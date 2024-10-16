@@ -1,1 +1,1 @@
-export * from './comments-list-item';
+export {CommentListItem} from './comments-list-item';

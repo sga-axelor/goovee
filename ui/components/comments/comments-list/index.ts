@@ -1,3 +1,3 @@
-export * from './comments-list';
-export * from './comment-attachments';
-export * from './comment-tracks';
+export {CommentsList} from './comments-list';
+export {CommentAttachments} from './comment-attachments';
+export {CommentTracks} from './comment-tracks';
