@@ -42,14 +42,13 @@ export const getFiles = async (fileIds: File[], token: string) => {
   const files: File[] = [];
   await asyncForEach(fileIds, async (fileId: string) => {
     const fileInfo = await getFileInfoById(fileId, token);
-    //const publicLink = await getFileLink(fileId, token);
-    //console.log('publicLink : ', publicLink);
+    const {link} = await getFileLink(fileId, token);
+    console.log('publicLink : ', link);
     if ('status_code' in fileInfo) {
       return;
     }
     if (fileInfo) {
-      // files.push({...fileInfo, publicLink: publicLink});
-      files.push(fileInfo);
+      files.push({...fileInfo, publicLink: link});
     }
   });
 
@@ -69,16 +68,16 @@ export const getFormattedPosts = async (
     return [];
   }
   const {posts} = data;
-  let postList: any[] = [];
+  const postList: any[] = [];
   await asyncForEach(Object.keys(posts), async (key: string) => {
-    let post = posts[key];
-    let root = {author: '', text: '', postId: ''};
+    const post = posts[key];
+    const root = {author: '', text: '', postId: ''};
     let files: any = [];
     if (post.file_ids) {
       files = await getFiles(post.file_ids, token);
     }
-    let postUser = users.find((u: any) => u.id === post.user_id);
-    let displayName = getDisplayName(postUser);
+    const postUser = users.find((u: any) => u.id === post.user_id);
+    const displayName = getDisplayName(postUser);
     postList.push({
       ...post,
       displayName,
@@ -102,7 +101,7 @@ export const getChannelInfosByChannelId = async (
   if ('status_code' in channelUsers) {
     return {posts: [], name: '', users: [], channel};
   }
-  let posts: any[] = await getFormattedPosts(
+  const posts: any[] = await getFormattedPosts(
     channelId,
     channelUsers,
     token,

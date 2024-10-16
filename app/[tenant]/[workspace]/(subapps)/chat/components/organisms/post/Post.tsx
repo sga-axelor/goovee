@@ -78,9 +78,9 @@ export const Post = ({
         </div>
       )}
       <MarkdownRenderer content={post.message} />
-      {post.metadata.files && post.metadata.files.length > 0 && (
+      {post.files && post.files.length > 0 && (
         <div className="mt-2 flex flex-wrap">
-          {post.metadata.files.map((file: any) => (
+          {post.files.map((file: any) => (
             <FilePreview key={file.id} file={file} token={token} />
           ))}
         </div>

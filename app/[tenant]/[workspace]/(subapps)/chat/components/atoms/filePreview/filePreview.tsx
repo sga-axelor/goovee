@@ -41,11 +41,19 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
   const isImage = file.mime_type.startsWith('image/');
   const {icon: Icon, color} = getFileIconAndColor(file.mime_type);
 
-  const handleDownload = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Implementez ici la logique de téléchargement
-    console.log('Téléchargement du fichier:', file.name);
-  };
+  console.log('file :', file);
+
+  // const handleDownload = (publicLink: string) => {
+  //   console.log("voici publicLink : ", publicLink);
+  //   const link = document.createElement("a");
+  //   link.href = publicLink;
+  //   link.download = "nom_du_fichier.pdf";
+
+  //   // Ajouter l'élément au DOM, cliquer dessus, puis le supprimer
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
 
   return (
     <div className="m-1 flex flex-col items-center relative">
@@ -64,11 +72,11 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
             <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
           </div>
           {isHovered && (
-            <button
-              onClick={handleDownload}
+            <a
+              href={file.publicLink}
               onMouseEnter={() => setIsDownloadHovered(true)}
               onMouseLeave={() => setIsDownloadHovered(false)}
-              className={`ml-2 p-1 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200 ${
+              className={`ml-2 p-1 rounded-full hover:bg-gray-100 focus:outline-none transition-colors duration-200 ${
                 isDownloadHovered ? 'bg-blue-100' : ''
               }`}
               aria-label="Télécharger le fichier">
@@ -77,7 +85,7 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
                   isDownloadHovered ? 'text-blue-500' : 'text-gray-500'
                 } transition-colors duration-200`}
               />
-            </button>
+            </a>
           )}
         </div>
       )}

@@ -32,7 +32,6 @@ export const ChatView = ({
   users: User[];
   teamId: string;
 }) => {
-  console.log('userstatus : ', userStatus);
   const [activeChannel, setActiveChannel] = useState<string>('');
   const [_channels, setChannels] = useState<ChannelType[]>([]);
   const [_currentChannel, setCurrentChannel] = useState<any>();
