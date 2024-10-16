@@ -41,20 +41,6 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
   const isImage = file.mime_type.startsWith('image/');
   const {icon: Icon, color} = getFileIconAndColor(file.mime_type);
 
-  console.log('file :', file);
-
-  // const handleDownload = (publicLink: string) => {
-  //   console.log("voici publicLink : ", publicLink);
-  //   const link = document.createElement("a");
-  //   link.href = publicLink;
-  //   link.download = "nom_du_fichier.pdf";
-
-  //   // Ajouter l'élément au DOM, cliquer dessus, puis le supprimer
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
-
   return (
     <div className="m-1 flex flex-col items-center relative">
       {isImage ? (
