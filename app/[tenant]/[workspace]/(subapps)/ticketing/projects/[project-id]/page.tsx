@@ -163,7 +163,7 @@ export default async function Page({
         inputClassName="h-[39px] placeholder:!text-sm text-sm"
       />
       <Swipe items={items} />
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between !mt-0">
         <h2 className="font-semibold text-xl">{i18n.get('Latest tickets')}</h2>
         <Button variant="success" className="flex items-center" asChild>
           <Link href={`${ticketsURL}/create`}>

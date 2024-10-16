@@ -55,7 +55,7 @@ import {
 import Search from '../search';
 import {Skeleton} from '@/ui/components/skeleton';
 
-const TICKETS_PER_PAGE = 7;
+const TICKETS_PER_PAGE = 10;
 export default async function Page({
   params,
   searchParams,

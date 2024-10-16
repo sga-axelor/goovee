@@ -69,7 +69,7 @@ export default async function Page({
         )}
         image={IMAGE_URL}
       />
-      <div className="container mt-6 space-y-6">
+      <div className="container py-6 space-y-6">
         {projects.length === 0 ? (
           <h2 className="font-semibold text-xl text-center">
             {i18n.get('No projects found')}
