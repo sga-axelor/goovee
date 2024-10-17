@@ -2,7 +2,6 @@
 
 import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {MdCheckCircleOutline, MdClose} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -83,6 +82,7 @@ const basicPerson = [
 export const RegistrationForm = ({
   eventDetails,
   metaFields = [],
+  workspace,
 }: EventPageCardProps) => {
   const [tempError, setTempError] = useState<boolean>(false);
   const router = useRouter();
@@ -182,7 +182,7 @@ export const RegistrationForm = ({
       const response = await register({
         eventId: eventDetails?.id,
         values: result,
-        workspaceURL,
+        workspace,
       });
 
       if (response.success) {

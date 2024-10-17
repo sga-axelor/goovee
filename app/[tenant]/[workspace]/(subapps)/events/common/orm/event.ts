@@ -9,12 +9,14 @@ import type {ID, PortalWorkspace} from '@/types';
 
 export async function findEventByID({
   id,
+  workspace,
   tenantId,
 }: {
   id: ID;
+  workspace: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
-  if (!(id && tenantId)) return null;
+  if (!(id && workspace && tenantId)) return null;
 
   const c = await manager.getClient(tenantId);
 

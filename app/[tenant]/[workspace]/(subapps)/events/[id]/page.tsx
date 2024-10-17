@@ -6,6 +6,9 @@ import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDetails} from '@/subapps/events/common/ui/components';
+import {getSession} from 'next-auth/react';
+import {workspacePathname} from '@/utils/workspace';
+import {findWorkspace} from '@/orm/workspace';
 
 export const metadata = {
   title: 'Event',
@@ -16,12 +19,26 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: {tenant: string; workspace: string; id: string};
+  params: {id: string; tenant: string; workspace: string};
   searchParams: {success?: string};
 }) {
   const {id, tenant} = params;
 
-  const eventDetails = await findEventByID({id, tenantId: tenant}).then(clone);
+  const session = await getSession();
+
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+    tenantId: tenant,
+  }).then(clone);
+
+  const eventDetails = await findEventByID({
+    id,
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
   if (!eventDetails) {
     return notFound();

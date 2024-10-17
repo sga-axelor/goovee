@@ -2,13 +2,16 @@
 
 // ---- LOCAL IMPORTS ---- //
 import {RegistrationForm} from '@/subapps/events/common/ui/components';
+import {PortalWorkspace} from '@/types';
 
 const Content = ({
   eventDetails,
   metaFields,
+  workspace,
 }: {
   eventDetails: any;
   metaFields: any;
+  workspace: PortalWorkspace;
 }) => {
   return (
     <>
@@ -17,6 +20,7 @@ const Content = ({
           <RegistrationForm
             eventDetails={eventDetails}
             metaFields={metaFields}
+            workspace={workspace}
           />
         </div>
       </main>
