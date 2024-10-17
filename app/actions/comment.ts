@@ -1,3 +1,4 @@
+'use server';
 // ---- CORE IMPORTS ---- //
 import {ModelType} from '@/types';
 import {addComment, findComments, upload} from '@/orm/comment';
