@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import {emojis, HOST} from '../../../constants';
+import {emojis} from '../../../constants/emojis';
+import {HOST} from '../../../constants';
 import styles from './index.module.css';
 
 export const EmojiItem = ({

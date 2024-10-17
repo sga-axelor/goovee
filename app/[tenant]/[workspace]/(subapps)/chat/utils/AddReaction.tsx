@@ -35,8 +35,6 @@ export const addReaction = async (
   byMe: boolean,
 ) => {
   if (byMe) {
-    let created: boolean;
-    let serverResponse;
     try {
       const reactionExists = await checkIfReactionExists(
         postId,
@@ -46,24 +44,10 @@ export const addReaction = async (
       );
 
       if (reactionExists) {
-        serverResponse = await removeReactionFromAPost(
-          userId,
-          postId,
-          name,
-          token,
-        );
-        created = false;
+        await removeReactionFromAPost(userId, postId, name, token);
       } else {
-        serverResponse = await createReaction(
-          userId,
-          postId,
-          name,
-          Date.now(),
-          token,
-        );
-        created = true;
+        await createReaction(userId, postId, name, Date.now(), token);
       }
-
       updateLocalState(setCurrentChannel, postId, userId, name);
     } catch (error) {
       console.error(

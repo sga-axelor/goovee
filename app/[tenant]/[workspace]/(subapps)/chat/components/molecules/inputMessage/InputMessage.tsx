@@ -1,9 +1,23 @@
 'use client';
 
 import React, {useRef, useEffect, useState} from 'react';
-import {SendHorizontal, Paperclip, Type, X, Eye, EyeOff} from 'lucide-react';
-import {MarkdownRenderer, FormattingToolbar} from '../../atoms';
+import {
+  SendHorizontal,
+  Paperclip,
+  Type,
+  X,
+  Eye,
+  EyeOff,
+  SmilePlus,
+} from 'lucide-react';
+import {MarkdownRenderer, FormattingToolbar, EmojiPopup} from '../../atoms';
 import {Post} from '../../../types/types';
+import {emojis} from '../../../constants/emojis';
+
+const fileNameToUnicode = (fileName: string): string => {
+  const codePoint = parseInt(fileName.split('.')[0], 16);
+  return String.fromCodePoint(codePoint);
+};
 
 export const InputMessage = ({
   messageText,
@@ -32,7 +46,9 @@ export const InputMessage = ({
   const [textareaHeight, setTextareaHeight] = useState(20);
   const [showFormatting, setShowFormatting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const previewRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef(null);
   const MIN_HEIGHT = 20;
   const MAX_HEIGHT = 150;
 
@@ -85,6 +101,7 @@ export const InputMessage = ({
 
   const onClickSend = () => {
     handleMessageSend();
+    setShowPopup(false);
     setShowPreview(false);
   };
 
@@ -121,6 +138,29 @@ export const InputMessage = ({
 
   const handleCancelReply = () => {
     setPostReply(null);
+  };
+
+  const onEmojiClick = (name: string) => {
+    const emojiFileName = emojis[name as keyof typeof emojis];
+    if (emojiFileName) {
+      const emojiUnicode = fileNameToUnicode(emojiFileName);
+      const textarea = textareaRef.current;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const newText =
+          messageText.substring(0, start) +
+          emojiUnicode +
+          messageText.substring(end);
+        setMessageText(newText);
+
+        // Positionner le curseur après l'emoji inséré
+        setTimeout(() => {
+          textarea.selectionStart = textarea.selectionEnd =
+            start + emojiUnicode.length;
+        }, 0);
+      }
+    }
   };
 
   return (
@@ -178,7 +218,10 @@ export const InputMessage = ({
             className={`text-gray-400 cursor-pointer mr-2 ${
               showFormatting ? 'text-blue-500' : ''
             }`}
-            onClick={toggleFormatting}
+            onClick={() => {
+              setShowPopup(false);
+              toggleFormatting();
+            }}
           />
           {showPreview ? (
             <EyeOff
@@ -197,6 +240,15 @@ export const InputMessage = ({
               onClick={togglePreview}
             />
           )}
+          <SmilePlus
+            ref={triggerRef}
+            size={20}
+            className="text-gray-400 cursor-pointer mr-2"
+            onClick={() => {
+              setShowPopup(!showPopup);
+              doFocus();
+            }}
+          />
           <SendHorizontal
             size={20}
             className={`cursor-pointer transition-colors duration-200 ${
@@ -210,6 +262,17 @@ export const InputMessage = ({
             textareaRef={textareaRef}
             messageText={messageText}
             setMessageText={setMessageText}
+          />
+        )}
+        {showPopup && (
+          <EmojiPopup
+            onEmojiClick={onEmojiClick}
+            onClose={() => {
+              setShowPopup(false);
+              doFocus();
+            }}
+            triggerRef={triggerRef}
+            input={true}
           />
         )}
       </div>

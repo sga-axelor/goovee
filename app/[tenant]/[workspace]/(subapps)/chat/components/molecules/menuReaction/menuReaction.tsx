@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {emojis, HOST} from '../../../constants';
 import {EmojiPopup} from '../../atoms';
 import {SmilePlus, Reply} from 'lucide-react';
@@ -16,6 +16,7 @@ export const MenuReaction = ({
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const firstThreeEmojis = Object.entries(emojis).slice(0, 3);
+  const triggerRef = useRef(null);
 
   return (
     <div className="absolute right-0 top-0 mt-[-20px] mr-2">
@@ -33,6 +34,7 @@ export const MenuReaction = ({
           </button>
         ))}
         <button
+          ref={triggerRef}
           className="hover:bg-gray-200 rounded-full p-1 text-gray-600"
           onClick={() => setShowPopup(!showPopup)}>
           <SmilePlus />
@@ -49,6 +51,7 @@ export const MenuReaction = ({
         <EmojiPopup
           onEmojiClick={onEmojiClick}
           onClose={() => setShowPopup(false)}
+          triggerRef={triggerRef}
         />
       )}
     </div>
