@@ -5,7 +5,6 @@ export {NewsList} from './news-list';
 export {NewsCard} from './news-card';
 export {FeedList} from './feed-list';
 export {SocialMedia} from './social-media';
-export {CommentsContent} from './comments-content';
 export {NewsInfo} from './news-info';
 export {Homepage} from './homepage';
 export {Article} from './article';
