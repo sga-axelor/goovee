@@ -204,7 +204,7 @@ export const RegistrationForm = ({
 
   return (
     <Card className="w-full rounded-2xl border-none shadow-none">
-      <CardHeader className="p-4 flex flex-col gap-4">
+      <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
         <CardTitle>
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
         </CardTitle>
