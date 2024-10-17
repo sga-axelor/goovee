@@ -774,7 +774,8 @@ export async function findParentTicketIds(ticketId: ID): Promise<string[]> {
           -- Base case: Select the initial ticket's parent
           SELECT
             id,
-            parent_task
+            parent_task,
+            ARRAY[id] AS visited_ids -- Track visited tickets
           FROM
             project_project_task
           WHERE
@@ -783,12 +784,14 @@ export async function findParentTicketIds(ticketId: ID): Promise<string[]> {
           -- Recursive step: Select the parent of the current ticket
           SELECT
             pt.id,
-            pt.parent_task
+            pt.parent_task,
+            visited_ids || pt.id -- Append the current ticket to the visited list
           FROM
             project_project_task pt
             INNER JOIN parent_tickets p ON pt.id = p.parent_task
           WHERE
             pt.id IS NOT NULL
+            AND NOT pt.id = ANY (p.visited_ids) -- Prevent circular reference
         )
       SELECT
         ARRAY_AGG(parent_task) AS ids
@@ -817,7 +820,8 @@ export async function findChildTicketIds(ticketId: ID): Promise<string[]> {
           -- Base case: Select the initial ticket
           SELECT
             id,
-            parent_task
+            parent_task,
+            ARRAY[id] AS visited_ids -- Track visited tickets
           FROM
             project_project_task
           WHERE
@@ -826,10 +830,14 @@ export async function findChildTicketIds(ticketId: ID): Promise<string[]> {
           -- Recursive step: Select the child tickets where the current ticket is the parent
           SELECT
             pt.id,
-            pt.parent_task
+            pt.parent_task,
+            visited_ids || pt.id -- Append the current ticket to the visited list
           FROM
             project_project_task pt
             INNER JOIN child_tickets ct ON pt.parent_task = ct.id
+          WHERE
+            pt.id IS NOT NULL
+            AND NOT pt.id = ANY (ct.visited_ids) -- Prevent circular reference
         )
       SELECT
         ARRAY_AGG(id) AS ids
