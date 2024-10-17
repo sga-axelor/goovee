@@ -3,6 +3,9 @@
 // ---- CORE IMPORTS ---- //
 import {ModelType} from '@/types';
 import {addComment, findComments, upload} from '@/orm/comment';
+import {getSession} from '@/orm/auth';
+import {i18n} from '@/lib/i18n';
+import {findWorkspace} from '@/orm/workspace';
 
 export async function createComment({
   formData,
@@ -84,6 +87,18 @@ export async function fetchComments({
   type,
   workspaceURL,
 }: any) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return {error: true, message: i18n.get('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL});
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
   try {
     const response = await findComments({
       model,
@@ -93,16 +108,12 @@ export async function fetchComments({
       type,
       workspaceURL,
     });
-    if (response.error) {
-      return {
-        error: true,
-        message: 'Error while fetching comments.',
-      };
-    } else {
-      return response;
-    }
+
+    return response.error
+      ? {error: true, message: 'Error while fetching comments.'}
+      : response;
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error while fetching comments:', error);
     return {
       error: true,
       message: 'An unexpected error occurred while fetching the comments.',
