@@ -1,6 +1,8 @@
 import {getClient} from '@/goovee';
+import {AOSPortalAppConfig} from '@/goovee/.generated/models';
 import {ID, User} from '@/types';
 import {clone} from '@/utils';
+import {SelectOptions} from '@goovee/orm';
 
 const defaultApps = [
   {
@@ -13,7 +15,7 @@ const defaultApps = [
   },
 ];
 
-const portalAppConfigFields = {
+const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   name: true,
   company: {
     id: true,
@@ -37,6 +39,14 @@ const portalAppConfigFields = {
       typeSelect: true,
     },
   },
+  ticketStatusChangeMethod: true,
+  ticketHeroTitle: true,
+  ticketHeroBgImage: {
+    id: true,
+    fileName: true,
+  },
+  ticketHeroDescription: true,
+  ticketHeroOverlayColorSelect: true,
   allowOnlinePaymentForEcommerce: true,
   carouselList: {
     select: {

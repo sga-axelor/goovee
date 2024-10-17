@@ -98,6 +98,23 @@
       "name": "carouselList",
       "target": "AOSPortalCarousel",
       "mappedBy": "portalAppConfig"
+    },
+    {
+      "type": "String",
+      "name": "ticketHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "ticketHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "ticketHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "ticketHeroBgImage",
+      "target": "AOSMetaFile"
     }
   ]
 }
