@@ -36,16 +36,26 @@ export async function getPopularCommentsBySorting({
 
   const client = await getClient();
 
-  const joinTables = `
-  LEFT JOIN portal_forum_post AS forum_post 
-    ON comment.forum_post = forum_post.id 
-  LEFT JOIN portal_portal_news AS portal_news 
-    ON comment.portal_news = portal_news.id
-  LEFT JOIN portal_portal_event AS portal_event 
-    ON comment.portal_event = portal_event.id
-  LEFT JOIN project_project_task AS project_task 
-    ON comment.project_task = project_task.id 
-  `;
+  const joinTablesMap: Record<ModelType, string> = {
+    [ModelType.forum]: `
+      LEFT JOIN portal_forum_post AS forum_post 
+        ON comment.forum_post = forum_post.id 
+    `,
+    [ModelType.news]: `
+      LEFT JOIN portal_portal_news AS portal_news 
+        ON comment.portal_news = portal_news.id
+    `,
+    [ModelType.event]: `
+      LEFT JOIN portal_portal_event AS portal_event 
+        ON comment.portal_event = portal_event.id
+    `,
+    [ModelType.ticketing]: `
+      LEFT JOIN project_project_task AS project_task 
+        ON comment.project_task = project_task.id 
+    `,
+  };
+
+  const joinTables = joinTablesMap[type] || '';
 
   const comments: any = await client.$raw(
     `
