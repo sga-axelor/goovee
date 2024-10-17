@@ -24,6 +24,7 @@ import {notFound, redirect} from 'next/navigation';
 import {findProjectsWithTaskCount} from './common/orm/projects';
 import {getPages, getPaginationButtons} from './common/utils';
 import {getSkip} from './common/utils/search-param';
+import {getImageURL} from '@/utils/image';
 
 export default async function Page({
   params,
@@ -60,14 +61,26 @@ export default async function Page({
   if (!projects.length) {
     <h3>{i18n.get('No projects found')}</h3>;
   }
+
+  const imageURL = workspace.config.ticketHeroBgImage?.id
+    ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id)})`
+    : IMAGE_URL;
+
   return (
     <>
       <HeroSearch
-        title={i18n.get('Ticketing')}
-        description={i18n.get(
-          'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam',
-        )}
-        image={IMAGE_URL}
+        title={workspace.config.ticketHeroTitle || i18n.get('Ticketing')}
+        description={
+          workspace.config.ticketHeroDescription ||
+          i18n.get(
+            'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam',
+          )
+        }
+        background={workspace.config.ticketHeroOverlayColorSelect || 'default'}
+        blendMode={
+          workspace.config.ticketHeroOverlayColorSelect ? 'overlay' : 'normal'
+        }
+        image={imageURL}
       />
       <div className="container py-6 space-y-6">
         {projects.length === 0 ? (
