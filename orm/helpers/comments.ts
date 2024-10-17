@@ -47,14 +47,6 @@ export async function getPopularCommentsBySorting({
     ON comment.project_task = project_task.id 
   `;
 
-  const whereClause = `
-  WHERE 
-        is_private_note = false 
-    AND 
-        parent_comment IS NULL
-    AND 
-        ${modelName}.id = ${modelRecord.id}`;
-
   const comments: any = await client.$raw(
     `
  WITH comments AS (
@@ -84,7 +76,12 @@ export async function getPopularCommentsBySorting({
   LEFT JOIN base_partner AS partner 
     ON author.partner = partner.id
   ${joinTables}
-  ${whereClause}
+  WHERE 
+        is_private_note = false 
+    AND 
+        parent_comment IS NULL
+    AND 
+        ${modelName}.id = $1  
 ),
 mailMessageData AS (
   SELECT 
@@ -159,7 +156,13 @@ parentCommentsCount AS (
   SELECT COUNT(*) AS totalParentCount
   FROM base_comment AS comment
   ${joinTables}
-  ${whereClause}
+  WHERE 
+        is_private_note = false 
+    AND 
+        parent_comment IS NULL
+    AND 
+        ${modelName}.id = $1  
+    )
 )
 SELECT 
   c.id AS id,
@@ -193,6 +196,7 @@ ORDER BY COALESCE(cc.childCommentCount, 0) DESC, c.createdOn DESC
 LIMIT $1
 OFFSET $2
      `,
+    modelRecord.id,
     limit,
     skip,
   );
