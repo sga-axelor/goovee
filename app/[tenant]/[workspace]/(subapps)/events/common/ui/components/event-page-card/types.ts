@@ -5,4 +5,5 @@ export interface EventPageCardProps {
   eventDetails?: Event;
   metaFields?: any[];
   workspace: PortalWorkspace;
+  user?: any;
 }

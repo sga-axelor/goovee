@@ -8,10 +8,12 @@ const Content = ({
   eventDetails,
   metaFields,
   workspace,
+  user,
 }: {
   eventDetails: any;
   metaFields: any;
   workspace: PortalWorkspace;
+  user: any;
 }) => {
   return (
     <>
@@ -21,6 +23,7 @@ const Content = ({
             eventDetails={eventDetails}
             metaFields={metaFields}
             workspace={workspace}
+            user={user}
           />
         </div>
       </main>

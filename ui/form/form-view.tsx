@@ -16,12 +16,7 @@ import {
   FormMessage,
   Input,
 } from '@/ui/components';
-import {
-  createDefaultValues,
-  sortFields,
-  mapFieldType,
-  createFormSchema,
-} from '@/ui/form';
+import {sortFields, mapFieldType, createFormSchema} from '@/ui/form';
 
 export const FormView = ({
   fields: _fields,
@@ -36,7 +31,17 @@ export const FormView = ({
 
   const formSchema = useMemo(() => createFormSchema(fields), [fields]);
 
-  const defaultValues = useMemo(() => createDefaultValues(fields), [fields]);
+  const defaultValues = useMemo(() => {
+    return fields.reduce(
+      (acc, field: any) => {
+        if (field.defaultValue !== undefined) {
+          acc[field.name] = field.defaultValue;
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+  }, [fields]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -52,7 +57,7 @@ export const FormView = ({
 
   const renderItem = useCallback(
     (item: any, key: any) => {
-      const renderFieldContent = ({field}: any) => {
+      const renderFieldContent: any = ({field}: any) => {
         if (item.widget === 'custom') {
           return React.createElement(item.customComponent, {
             key: `custom.${key}`,
@@ -91,7 +96,7 @@ export const FormView = ({
               </FormLabel>
               <FormControl>
                 <Input
-                  className="py-3 px-4 rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal  h-[2.875rem] border text-sm font-normal"
+                  className="py-3 px-4 rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal h-[2.875rem] border text-sm font-normal"
                   type={mapFieldType(item)}
                   placeholder={item.helper}
                   {...field}

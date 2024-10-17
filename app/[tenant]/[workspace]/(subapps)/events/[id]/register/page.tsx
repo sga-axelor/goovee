@@ -14,6 +14,7 @@ import {
   PORTAL_PARTICIPANT_MODEL,
   CONTACT_ATTRS,
 } from '@/subapps/events/common/constants';
+import {findUser} from '@/subapps/events/common/orm/partner';
 
 export default async function Page({
   params,
@@ -47,11 +48,18 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
+  const user = await findUser({userId, workspaceURL: workspace.url}).then(
+    clone,
+  );
+
   return (
-    <Content
-      eventDetails={eventDetails}
-      metaFields={metaFields}
-      workspace={workspace}
-    />
+    <>
+      <Content
+        eventDetails={eventDetails}
+        metaFields={metaFields}
+        workspace={workspace}
+        user={user}
+      />
+    </>
   );
 }

@@ -61,3 +61,41 @@ export async function findContact({
 
   return result;
 }
+
+export async function findUser({
+  userId,
+  workspaceURL,
+}: {
+  userId: any;
+  workspaceURL: string;
+}) {
+  if (!userId) {
+    return {};
+  }
+
+  const response = await validate([
+    withWorkspace(workspaceURL, {checkAuth: true}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL),
+  ]);
+
+  if (response.error) {
+    return response;
+  }
+
+  const client = await getClient();
+
+  const user = await client.aOSPartner.findOne({
+    where: {
+      id: userId,
+    },
+    select: {
+      name: true,
+      firstName: true,
+      emailAddress: {
+        address: true,
+      },
+      fixedPhone: true,
+    },
+  });
+  return user;
+}

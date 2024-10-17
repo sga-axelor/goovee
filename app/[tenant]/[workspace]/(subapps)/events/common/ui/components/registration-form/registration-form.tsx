@@ -32,66 +32,73 @@ import {
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
 
-const basicPerson = [
-  {
-    name: 'name',
-    title: 'Name',
-    type: 'string',
-    widget: null,
-    helper: 'Enter name',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 1,
-  },
-  {
-    name: 'surname',
-    title: 'Surname',
-    type: 'string',
-    widget: null,
-    helper: 'Enter surname',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 2,
-  },
-  {
-    name: 'emailAddress',
-    title: 'Email',
-    type: 'string',
-    widget: 'email',
-    helper: 'Enter email',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 3,
-  },
-  {
-    name: 'phone',
-    title: 'Phone',
-    type: 'string',
-    widget: 'phone',
-    helper: 'Enter phone number',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 4,
-  },
-];
-
 export const RegistrationForm = ({
   eventDetails,
   metaFields = [],
   workspace,
+  user,
 }: EventPageCardProps) => {
-  const [tempError, setTempError] = useState<boolean>(false);
   const router = useRouter();
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
+
+  const basicPerson = useMemo(
+    () => [
+      {
+        name: 'name',
+        title: 'Name',
+        type: 'string',
+        widget: null,
+        helper: 'Enter name',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 1,
+        defaultValue: user.firstName || '',
+      },
+      {
+        name: 'surname',
+        title: 'Surname',
+        type: 'string',
+        widget: null,
+        helper: 'Enter surname',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 2,
+        defaultValue: user?.name || '',
+      },
+      {
+        name: 'emailAddress',
+        title: 'Email',
+        type: 'string',
+        widget: 'email',
+        helper: 'Enter email',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 3,
+        defaultValue: user?.emailAddress?.address || '',
+      },
+      {
+        name: 'phone',
+        title: 'Phone',
+        type: 'string',
+        widget: 'phone',
+        helper: 'Enter phone number',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 4,
+        defaultValue: user?.fixedPhone || '',
+      },
+    ],
+    [user],
+  );
 
   const participantForm = useMemo(
     () => [...basicPerson, ...formatStudioFields(metaFields)],
-    [metaFields],
+    [basicPerson, metaFields],
   );
 
   const externalParticipantForm = useMemo(
@@ -198,7 +205,6 @@ export const RegistrationForm = ({
         variant: 'destructive',
         title: i18n.get('Error while adding comment'),
       });
-      setTempError(true);
     }
   };
 
