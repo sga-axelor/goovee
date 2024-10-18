@@ -1,5 +1,3 @@
-//
-
 import {
   createReaction,
   removeReactionFromAPost,

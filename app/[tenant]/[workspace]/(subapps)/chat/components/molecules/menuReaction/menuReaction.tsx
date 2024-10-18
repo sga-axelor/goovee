@@ -4,6 +4,7 @@ import React, {useState, useRef} from 'react';
 import {emojis, HOST} from '../../../constants';
 import {EmojiPopup} from '../../atoms';
 import {SmilePlus, Reply} from 'lucide-react';
+import {focusInputMessage} from '../../../utils/focusOnInput';
 
 export const MenuReaction = ({
   onEmojiClick,
@@ -20,7 +21,9 @@ export const MenuReaction = ({
 
   return (
     <div className="absolute right-0 top-0 mt-[-20px] mr-2">
-      <div className="bg-white shadow-md rounded-full p-1 flex space-x-1">
+      <div
+        className="bg-white shadow-md rounded-full p-1 flex space-x-1"
+        onClick={focusInputMessage}>
         {firstThreeEmojis.map(([emojiName, filename]) => (
           <button
             key={emojiName}

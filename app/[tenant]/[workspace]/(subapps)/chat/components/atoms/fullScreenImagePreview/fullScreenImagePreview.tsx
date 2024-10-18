@@ -1,5 +1,6 @@
 import React from 'react';
 import {Download, XIcon, ZoomInIcon, ZoomOutIcon} from 'lucide-react';
+import {focusInputMessage} from '../../../utils/focusOnInput';
 
 export const FullscreenImagePreview = ({
   isFullscreen,
@@ -17,10 +18,6 @@ export const FullscreenImagePreview = ({
   file: any;
 }) => {
   if (!isFullscreen) return null;
-
-  const focusInputMessage = () => {
-    window.dispatchEvent(new Event('focus-input-message'));
-  };
 
   const handleDownload = async () => {
     if (!file.publicLink) return;

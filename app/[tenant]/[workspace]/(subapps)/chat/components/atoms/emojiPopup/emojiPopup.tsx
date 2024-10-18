@@ -20,6 +20,7 @@ import {
   symbols,
   flags,
 } from '../../../constants/emojis';
+import {focusInputMessage} from '../../../utils/focusOnInput';
 
 const categories = [
   {name: 'Smileys & Emotion', icon: SmilePlus, emojis: smileysAndEmotion},
@@ -81,10 +82,6 @@ export const EmojiPopup = ({
   const [isPositioned, setIsPositioned] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
 
-  const focusInputMessage = () => {
-    window.dispatchEvent(new Event('focus-input-message'));
-  };
-
   useEffect(() => {
     const calculatePosition = () => {
       if (triggerRef) {
@@ -117,7 +114,20 @@ export const EmojiPopup = ({
     };
     calculatePosition();
     window.addEventListener('resize', calculatePosition);
-    return () => window.removeEventListener('resize', calculatePosition);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('resize', calculatePosition);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [triggerRef]);
 
   useEffect(() => {

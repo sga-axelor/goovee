@@ -99,10 +99,14 @@ export const InputMessage = ({
     }
   };
 
-  const onClickSend = () => {
+  const send = () => {
     handleMessageSend();
     setShowPopup(false);
     setShowPreview(false);
+  };
+
+  const onClickSend = () => {
+    send();
   };
 
   const handleKeyPress = (
@@ -110,8 +114,7 @@ export const InputMessage = ({
   ) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleMessageSend();
-      setShowPreview(false);
+      send();
     }
   };
 
@@ -153,8 +156,6 @@ export const InputMessage = ({
           emojiUnicode +
           messageText.substring(end);
         setMessageText(newText);
-
-        // Positionner le curseur après l'emoji inséré
         setTimeout(() => {
           textarea.selectionStart = textarea.selectionEnd =
             start + emojiUnicode.length;

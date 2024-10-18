@@ -7,6 +7,7 @@ import {DocumentList, ChannelHeader} from '../../atoms';
 import {InputMessage} from '../../molecules';
 import {GroupPost} from '../groupPost/groupPost';
 import {User, File} from '../../../types/types';
+import {focusInputMessage} from '../../../utils/focusOnInput';
 
 export const ChannelView = ({
   channel,
@@ -56,10 +57,6 @@ export const ChannelView = ({
   const userPopupRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
   const [isChannelReady, setIsChannelReady] = useState(false);
-
-  const focusInputMessage = () => {
-    window.dispatchEvent(new Event('focus-input-message'));
-  };
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior) => {
@@ -235,7 +232,9 @@ export const ChannelView = ({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)] bg-white flex-grow relative">
+    <div
+      className="flex flex-col h-[calc(100vh-120px)] bg-white flex-grow relative"
+      onClick={focusInputMessage}>
       <ChannelHeader
         users={_users}
         channelName={channel.channel.display_name}

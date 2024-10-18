@@ -3,6 +3,7 @@
 import React from 'react';
 import {X} from 'lucide-react';
 import {File} from '../../../types/types';
+import {focusInputMessage} from '../../../utils/focusOnInput';
 
 export const DocumentList = ({
   selectedFiles,
@@ -11,10 +12,6 @@ export const DocumentList = ({
   selectedFiles: File[];
   removeFile: (file: File) => void;
 }) => {
-  const focusInputMessage = () => {
-    window.dispatchEvent(new Event('focus-input-message'));
-  };
-
   return (
     <div className="mt-2">
       <h4 className="text-sm font-semibold text-gray-700">
