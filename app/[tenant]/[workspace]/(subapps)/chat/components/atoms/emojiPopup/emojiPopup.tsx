@@ -94,11 +94,11 @@ export const EmojiPopup = ({
         if (!input) {
           if (triggerRef.current && popupRef.current) {
             if (spaceBelow >= popupHeight || spaceBelow > spaceAbove) {
-              setPosition({top: triggerRect.bottom + 10, bottom: 'auto'});
+              setPosition({top: triggerRect.bottom + 5, bottom: 'auto'});
             } else {
               setPosition({
                 top: 'auto',
-                bottom: windowHeight - triggerRect.top + 10,
+                bottom: windowHeight - triggerRect.top + 5,
               });
             }
             setIsPositioned(true);
@@ -114,19 +114,8 @@ export const EmojiPopup = ({
     };
     calculatePosition();
     window.addEventListener('resize', calculatePosition);
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        popupRef.current &&
-        !popupRef.current.contains(event.target as Node)
-      ) {
-        onClose();
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
     return () => {
       window.removeEventListener('resize', calculatePosition);
-      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [triggerRef]);
 

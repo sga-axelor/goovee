@@ -69,17 +69,12 @@ export const getFormattedPosts = async (
   await asyncForEach(Object.keys(posts), async (key: string) => {
     const post = posts[key];
     const root = {author: '', text: '', postId: ''};
-    let files: any = [];
-    if (post.file_ids) {
-      files = await getFiles(post.file_ids, token);
-    }
     const postUser = users.find((u: any) => u.id === post.user_id);
     const displayName = getDisplayName(postUser);
     postList.push({
       ...post,
       displayName,
       root: root,
-      files: files,
     });
   });
   return postList;

@@ -244,7 +244,9 @@ export const InputMessage = ({
           <SmilePlus
             ref={triggerRef}
             size={20}
-            className="text-gray-400 cursor-pointer mr-2"
+            className={`cursor-pointer mr-2 transition-colors duration-200 ${
+              showPopup ? 'text-blue-500' : 'text-gray-400'
+            }`}
             onClick={() => {
               setShowPopup(!showPopup);
               doFocus();

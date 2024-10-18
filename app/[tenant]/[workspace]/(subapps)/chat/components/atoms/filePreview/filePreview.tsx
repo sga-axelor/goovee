@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ImagePreview} from '..';
 import {File} from '../../../types/types';
 import {
@@ -11,6 +11,7 @@ import {
   FileSpreadsheet,
   Download,
 } from 'lucide-react';
+import {getFileLink} from '../../../api';
 
 const getFileIconAndColor = (mimeType: string) => {
   if (mimeType.startsWith('image/'))
@@ -40,6 +41,15 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
   const [isDownloadHovered, setIsDownloadHovered] = useState(false);
   const isImage = file.mime_type.startsWith('image/');
   const {icon: Icon, color} = getFileIconAndColor(file.mime_type);
+  const [publicLink, setPublicLink] = useState<string>('');
+
+  useEffect(() => {
+    const fetchLink = async () => {
+      const {link} = await getFileLink(file.id, token);
+      setPublicLink(link);
+    };
+    fetchLink();
+  }, []);
 
   return (
     <div className="m-1 flex flex-col items-center relative">
@@ -59,7 +69,7 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
           </div>
           {isHovered && (
             <a
-              href={file.publicLink}
+              href={publicLink}
               onMouseEnter={() => setIsDownloadHovered(true)}
               onMouseLeave={() => setIsDownloadHovered(false)}
               className={`ml-2 p-1 rounded-full hover:bg-gray-100 focus:outline-none transition-colors duration-200 ${
