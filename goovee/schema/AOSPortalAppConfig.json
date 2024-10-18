@@ -84,6 +84,11 @@
       "column": "price_after_login_select"
     },
     {
+      "type": "String",
+      "name": "ticketStatusChangeMethod",
+      "column": "ticket_status_change_method_select"
+    },
+    {
       "type": "Boolean",
       "name": "requestQuotation"
     },
