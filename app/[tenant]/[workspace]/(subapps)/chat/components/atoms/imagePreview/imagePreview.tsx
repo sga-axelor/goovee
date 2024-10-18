@@ -6,7 +6,15 @@ import {File} from '../../../types/types';
 import {EyeIcon} from 'lucide-react';
 import {FullscreenImagePreview} from '../fullScreenImagePreview/fullScreenImagePreview';
 
-export const ImagePreview = ({file, token}: {file: File; token: string}) => {
+export const ImagePreview = ({
+  file,
+  token,
+  publicLink,
+}: {
+  file: File;
+  token: string;
+  publicLink: string;
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [urlFilePreview, setUrlFilePreview] = useState<string | null>(null);
@@ -55,6 +63,7 @@ export const ImagePreview = ({file, token}: {file: File; token: string}) => {
         toggleZoom={toggleZoom}
         urlFilePreview={urlFilePreview}
         file={file}
+        publicLink={publicLink}
       />
     </div>
   );

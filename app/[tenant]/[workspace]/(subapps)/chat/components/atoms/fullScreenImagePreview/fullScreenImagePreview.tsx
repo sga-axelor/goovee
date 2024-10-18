@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {Download, XIcon, ZoomInIcon, ZoomOutIcon} from 'lucide-react';
 import {focusInputMessage} from '../../../utils/focusOnInput';
@@ -9,6 +11,7 @@ export const FullscreenImagePreview = ({
   toggleZoom,
   urlFilePreview,
   file,
+  publicLink,
 }: {
   isFullscreen: boolean;
   setIsFullscreen: (value: boolean) => void;
@@ -16,14 +19,15 @@ export const FullscreenImagePreview = ({
   toggleZoom: () => void;
   urlFilePreview: string | null;
   file: any;
+  publicLink: string;
 }) => {
   if (!isFullscreen) return null;
 
-  const handleDownload = async () => {
-    if (!file.publicLink) return;
+  console.log('public link ', publicLink);
 
+  const handleDownload = async () => {
     try {
-      const response = await fetch(file.publicLink);
+      const response = await fetch(publicLink);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');

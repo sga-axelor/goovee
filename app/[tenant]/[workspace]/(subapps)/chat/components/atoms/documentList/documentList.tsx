@@ -13,7 +13,7 @@ export const DocumentList = ({
   removeFile: (file: File) => void;
 }) => {
   return (
-    <div className="mt-2">
+    <div className="mt-1 p-4">
       <h4 className="text-sm font-semibold text-gray-700">
         Fichiers sélectionnés:
       </h4>

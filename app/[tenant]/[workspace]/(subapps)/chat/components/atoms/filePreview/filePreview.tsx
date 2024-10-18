@@ -54,7 +54,7 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
   return (
     <div className="m-1 flex flex-col items-center relative">
       {isImage ? (
-        <ImagePreview file={file} token={token} />
+        <ImagePreview file={file} token={token} publicLink={publicLink} />
       ) : (
         <div
           className={`flex items-center p-2 rounded-md w-64 h-16 border border-gray-300 transition-shadow duration-200 ${
