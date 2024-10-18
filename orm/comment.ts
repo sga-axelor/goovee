@@ -19,11 +19,12 @@ import {
   SORT_TYPE,
 } from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
-import {getPopularCommentsBySorting} from '@/orm/helpers/comments';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
 import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
+import {SelectOptions} from '@goovee/orm';
+import {AOSMailMessage} from '@/goovee/.generated/models';
 
 const pump = promisify(pipeline);
 
@@ -33,11 +34,11 @@ if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
 }
 
-const ModelMap: Record<ModelType, String> = {
-  [ModelType.forum]: 'forumPost',
-  [ModelType.news]: 'portalNews',
-  [ModelType.event]: 'portalEvent',
-  [ModelType.ticketing]: 'projectTask',
+const ModelMap: Record<ModelType, string> = {
+  [ModelType.forum]: 'com.axelor.apps.portal.db.ForumPost',
+  [ModelType.news]: 'com.axelor.apps.portal.db.PortalNews',
+  [ModelType.event]: 'com.axelor.apps.portal.db.PortalEvent',
+  [ModelType.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
 };
 
 export async function upload(formData: FormData, workspaceURL: string) {
@@ -149,7 +150,6 @@ export async function addComment({
   workspaceURL,
   attachments = [],
   parentId = null,
-  relatedModel,
   messageBody,
 }: {
   type: ModelType;
@@ -220,15 +220,15 @@ export async function addComment({
 
     const client = await getClient();
 
-    let parentComment: any;
+    let parent;
     if (parentId) {
-      parentComment = await client.aOSComment.findOne({
+      parent = await client.aOSMailMessage.findOne({
         where: {
           id: {eq: parentId},
         },
         select: {id: true},
       });
-      if (!parentComment) {
+      if (!parent) {
         return {
           error: true,
           message: i18n.get('Invalid parent comment Id.'),
@@ -239,69 +239,30 @@ export async function addComment({
     const timestamp = getCurrentDateTime();
     const modelName = ModelMap[type];
 
-    let sequence = 1;
-
-    const highestSequence = await client.aOSComment.findOne({
-      where: {
-        [modelName as string]: {
-          id: model.id,
-        },
-      },
-      orderBy: {
-        sequence: ORDER_BY.DESC,
-      } as any,
-      select: {
-        sequence: true,
-      },
-    });
-
-    if (highestSequence?.sequence) {
-      sequence = highestSequence.sequence + 1;
+    if (!modelName) {
+      return {
+        error: true,
+        message: i18n.get('Invalid model type'),
+      };
     }
 
-    const response = await client.aOSComment.create({
+    const response = await client.aOSMailMessage.create({
       data: {
-        ...(modelRecord &&
-        modelName &&
-        (type === ModelType.ticketing ? true : !parentId)
-          ? {
-              [modelName as string]: {
-                select: {
-                  id: modelRecord.id,
-                },
-              },
-            }
-          : {}),
-        ...(parentComment
-          ? {parentComment: {select: {id: parentComment.id}}}
-          : {}),
+        relatedId: modelRecord.id,
+        relatedModel: modelName,
         note,
-        ...(messageBody
-          ? {
-              mailMessage: {
-                create: {
-                  subject: messageBody?.title ?? COMMENT_TRACKING,
-                  relatedId: modelRecord.id,
-                  type: MAIL_MESSAGE_TYPE,
-                  relatedModel,
-                  ...(messageBody ? {body: JSON.stringify(messageBody)} : {}),
-                  author: {
-                    select: {
-                      id: aosUser.id,
-                    },
-                  },
-                  createdBy: {
-                    select: {
-                      id: aosUser.id,
-                    },
-                  },
-                  createdOn: timestamp as unknown as Date,
-                },
-              },
-            }
-          : {}),
+        isPublicNote: true,
+        createdOn: timestamp as unknown as Date,
+        updatedOn: timestamp as unknown as Date,
+        type: MAIL_MESSAGE_TYPE, //TODO: check this later
+        ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
+        ...(messageBody && {body: JSON.stringify(messageBody)}),
+        subject: messageBody?.title ?? COMMENT_TRACKING,
+        author: {select: {id: aosUser.id}},
+        createdBy: {select: {id: aosUser.id}},
+        //relatedName: TODO: Add this later
         ...(attachments?.length > 0 && {
-          commentFileList: {
+          mailMessageFileList: {
             create: attachments.map((attachment: any) => ({
               description: attachment?.description || '',
               attachmentFile: {
@@ -314,15 +275,6 @@ export async function addComment({
             })),
           },
         }),
-        isPrivateNote: false,
-        sequence,
-        createdBy: {
-          select: {
-            id: aosUser.id,
-          },
-        },
-        createdOn: timestamp as unknown as Date,
-        updatedOn: timestamp as unknown as Date,
       },
     });
 
@@ -457,6 +409,13 @@ export async function findComments({
 
   const modelName = ModelMap[type];
 
+  if (!modelName) {
+    return {
+      error: true,
+      message: i18n.get('Invalid model type'),
+    };
+  }
+
   const skip = getSkipInfo(limit, page);
   const client = await getClient();
   try {
@@ -468,18 +427,18 @@ export async function findComments({
         };
         break;
       case SORT_TYPE.popular:
-        const results: any = await getPopularCommentsBySorting({
-          page,
-          limit,
-          workspace,
-          modelRecord,
-          type,
-        });
-        const {comments = [], total, success} = results;
+        // const results: any = await getPopularCommentsBySorting({
+        //   page,
+        //   limit,
+        //   workspace,
+        //   modelRecord,
+        //   type,
+        // });
+        // const {comments = [], total, success} = results;
         return {
-          data: clone(comments),
-          total,
-          success,
+          data: clone([]),
+          total: 0,
+          success: true,
         };
       default:
         orderBy = {
@@ -487,121 +446,66 @@ export async function findComments({
         };
     }
 
-    const whereClause = {
-      ...(modelRecord && modelName
-        ? {
-            [modelName as string]: {
-              id: modelRecord.id,
-            },
-          }
-        : {}),
-      isPrivateNote: false,
-      parentComment: {
-        id: {
-          eq: null,
+    const commentFields: SelectOptions<AOSMailMessage> = {
+      note: true,
+      body: true,
+      createdOn: true,
+      author: {
+        id: true,
+        name: true,
+        partner: {
+          picture: true,
+          simpleFullName: true,
+        },
+      },
+      mailMessageFileList: {
+        select: {
+          attachmentFile: {
+            id: true,
+            fileName: true,
+          },
+        },
+      },
+      createdBy: {
+        id: true,
+        name: true,
+        partner: {
+          picture: true,
+          simpleFullName: true,
         },
       },
     };
-    const comments = await client.aOSComment.find({
-      where: whereClause,
+
+    const where = {
+      relatedId: modelRecord.id,
+      relatedModel: modelName,
+      isPublicNote: true,
+    };
+
+    const comments = await client.aOSMailMessage.find({
+      where,
       orderBy,
       take: limit,
       ...(skip ? {skip} : {}),
       select: {
-        id: true,
-        note: true,
-        mailMessage: {
-          body: true,
-          relatedId: true,
-          relatedModel: true,
-          createdOn: true,
-          author: {
-            id: true,
-            name: true,
-            partner: {
-              picture: true,
-              simpleFullName: true,
-            },
-          },
+        ...commentFields,
+        parentMailMessage: {
+          ...commentFields,
         },
-        childCommentList: {
-          where: {
-            isPrivateNote: false,
-          },
+        childMailMessages: {
+          orderBy,
+          where,
           select: {
-            id: true,
-            note: true,
-            mailMessage: {
-              body: true,
-              relatedId: true,
-              relatedModel: true,
-              author: {
-                id: true,
-                name: true,
-                partner: {
-                  picture: true,
-                  simpleFullName: true,
-                },
-              },
-            },
-            createdOn: true,
-            createdBy: {
-              id: true,
-              name: true,
-              partner: {
-                picture: true,
-                simpleFullName: true,
-              },
-            },
-            commentFileList: {
-              select: {
-                attachmentFile: {
-                  id: true,
-                  fileName: true,
-                },
-              },
-            },
-          },
-        },
-        commentFileList: {
-          select: {
-            attachmentFile: {
-              id: true,
-              fileName: true,
-            },
-          },
-        },
-        createdBy: {
-          id: true,
-          name: true,
-          partner: {
-            picture: true,
-            simpleFullName: true,
+            ...commentFields,
           },
         },
       },
     });
-
-    const $comments = await client.aOSComment.find({
-      where: whereClause,
-      select: {
-        childCommentList: true,
-      },
-    });
-
-    const totalCommentThreadCount = $comments?.reduce(
-      (acc: number, comment: any) => {
-        const childCommentsCount = comment.childCommentList?.length || 0;
-        return acc + 1 + childCommentsCount;
-      },
-      0,
-    );
 
     return {
       success: true,
       data: clone(comments),
       total: comments?.[0]?._count || comments?.length,
-      totalCommentThreadCount,
     };
   } catch (error) {
     console.log('error >>>', error);

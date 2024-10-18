@@ -1,0 +1,22 @@
+{
+  "name": "AOSMailMessageFile",
+  "table": "base_mail_message_file",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "description"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "relatedMailMessage",
+      "target": "AOSMailMessage"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "attachmentFile",
+      "target": "AOSMetaFile"
+    }
+  ]
+}

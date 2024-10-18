@@ -50,6 +50,31 @@
       "type": "ManyToOne",
       "name": "createdBy",
       "target": "AOSUser"
+    },
+    {
+      "type": "String",
+      "name": "note"
+    },
+    {
+      "type": "Boolean",
+      "name": "isPublicNote"
+    },
+    {
+      "type": "OneToMany",
+      "name": "mailMessageFileList",
+      "mappedBy": "relatedMailMessage",
+      "target": "AOSMailMessageFile"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "parentMailMessage",
+      "target": "AOSMailMessage"
+    },
+    {
+      "type": "OneToMany",
+      "name": "childMailMessages",
+      "mappedBy": "parentMailMessage",
+      "target": "AOSMailMessage"
     }
   ]
 }

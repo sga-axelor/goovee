@@ -16,7 +16,6 @@ export async function createComment(formData: any, valueString: string) {
     type,
     parentId,
     messageBody = null,
-    relatedModel = null,
   } = JSON.parse(valueString) as {
     values?: any;
     workspaceURL: string;
@@ -24,7 +23,6 @@ export async function createComment(formData: any, valueString: string) {
     modelID: string | number;
     parentId?: any;
     messageBody?: any;
-    relatedModel?: any;
   };
   if (values?.attachments?.length) {
     try {
@@ -53,7 +51,6 @@ export async function createComment(formData: any, valueString: string) {
       note: values?.text,
       attachments,
       parentId,
-      relatedModel,
       messageBody,
     });
     if (response.error) {
