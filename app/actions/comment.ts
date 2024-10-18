@@ -6,27 +6,26 @@ import {getSession} from '@/orm/auth';
 import {i18n} from '@/lib/i18n';
 import {findWorkspace} from '@/orm/workspace';
 
-export async function createComment({
-  formData,
-  values,
-  workspaceURL,
-  modelID,
-  type,
-  parentId,
-  messageBody = null,
-  relatedModel = null,
-}: {
-  formData?: any;
-  values?: any;
-  workspaceURL: string;
-  type: ModelType;
-  modelID: string | number;
-  parentId?: any;
-  relatedModel?: any;
-  messageBody?: any;
-}) {
+export async function createComment(formData: any, valueString: string) {
   let attachments: string[] = [];
 
+  const {
+    values,
+    workspaceURL,
+    modelID,
+    type,
+    parentId,
+    messageBody = null,
+    relatedModel = null,
+  } = JSON.parse(valueString) as {
+    values?: any;
+    workspaceURL: string;
+    type: ModelType;
+    modelID: string | number;
+    parentId?: any;
+    messageBody?: any;
+    relatedModel?: any;
+  };
   if (values?.attachments?.length) {
     try {
       const response: any = await upload(formData, workspaceURL);

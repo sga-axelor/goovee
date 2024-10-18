@@ -99,14 +99,16 @@ export function useComments({
   const handleComment = useCallback(
     async ({formData, values, parent = null}: HandleCommentParams) => {
       try {
-        const response: CommentResponse = await createComment({
+        const response: CommentResponse = await createComment(
           formData,
-          values,
-          workspaceURL,
-          modelID: model.id,
-          parentId: parent,
-          type: modelType,
-        });
+          JSON.stringify({
+            values,
+            workspaceURL,
+            modelID: model.id,
+            parentId: parent,
+            type: modelType,
+          }),
+        );
 
         if (response.success) {
           handleRefresh();
