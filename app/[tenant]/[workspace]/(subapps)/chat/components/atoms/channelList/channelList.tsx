@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useMemo} from 'react';
 import {Hash, Search, GripVertical} from 'lucide-react';
 import {ChannelType} from '../../../types/types';
 
@@ -41,13 +41,24 @@ export const ChannelList = ({
     };
   }, [isResizing]);
 
+  const sortedAndFilteredChannels = useMemo(() => {
+    if (!channels) return [];
+
+    return channels
+      .filter((channel: ChannelType) =>
+        channel.display_name.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+      .sort((a, b) => {
+        if (b.unread !== a.unread) {
+          return b.unread - a.unread;
+        }
+        return a.display_name.localeCompare(b.display_name);
+      });
+  }, [channels, searchTerm]);
+
   if (!channels) {
     return <div className="text-gray-400 p-4">Chargement des canaux...</div>;
   }
-
-  const filteredChannels = channels.filter((channel: ChannelType) =>
-    channel.display_name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
 
   return (
     <div
@@ -70,7 +81,7 @@ export const ChannelList = ({
         </div>
       </div>
       <div className="overflow-y-auto flex-grow">
-        {filteredChannels.map((channel: ChannelType) => (
+        {sortedAndFilteredChannels.map((channel: ChannelType) => (
           <div
             key={channel.id}
             className={`flex items-center justify-between p-2 hover:bg-gray-700 cursor-pointer ${
