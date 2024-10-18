@@ -56,6 +56,7 @@ export function useComments({
           page,
           workspaceURL,
         });
+
         if (response.success) {
           const {data = [], total, totalCommentThreadCount} = response;
 
@@ -65,6 +66,14 @@ export function useComments({
           setTotal(total || 0);
           setTotalCommentThreadCount(totalCommentThreadCount);
         } else {
+          console.error('Response error:', response.error);
+          toast({
+            variant: 'destructive',
+            title: i18n.get(
+              response.error.message ||
+                'An error occurred while fetching comments.',
+            ),
+          });
           throw new Error('Something went wrong!');
         }
       } catch (error: any) {

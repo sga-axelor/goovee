@@ -433,6 +433,10 @@ export async function findComments({
       message: i18n.get('Model is missing'),
     };
   }
+
+  const shouldUseAuth = (type: ModelType) =>
+    ![ModelType.forum, ModelType.event, ModelType.news].includes(type);
+
   const {
     error,
     message,
@@ -441,8 +445,9 @@ export async function findComments({
     type,
     id: model?.id,
     workspace,
-    withAuth: type === ModelType.forum ? false : true,
+    withAuth: shouldUseAuth(type),
   });
+
   if (error) {
     return {
       error: true,
