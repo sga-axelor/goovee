@@ -1,3 +1,9 @@
+export const firtThreeEmojis: {[key: string]: string} = {
+  '+1': '1f44d.png',
+  heart: '2764-fe0f.png',
+  laughing: '1f606.png',
+};
+
 export const smileysAndEmotion: {[key: string]: string} = {
   grinning: '1f600.png',
   smiley: '1f603.png',
@@ -1767,6 +1773,7 @@ export const flags: {[key: string]: string} = {
 };
 
 export const emojis = {
+  ...peopleAndBody,
   ...smileysAndEmotion,
   ...animalsAndNature,
   ...travelAndPlaces,

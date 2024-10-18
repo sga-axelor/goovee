@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import {
   smileysAndEmotion,
+  peopleAndBody,
   animalsAndNature,
   travelAndPlaces,
   activities,
@@ -24,6 +25,7 @@ import {focusInputMessage} from '../../../utils/focusOnInput';
 
 const categories = [
   {name: 'Smileys & Emotion', icon: SmilePlus, emojis: smileysAndEmotion},
+  {name: 'Peaple and body', icon: SmilePlus, emojis: peopleAndBody},
   {name: 'Animals & Nature', icon: Leaf, emojis: animalsAndNature},
   {name: 'Travel & Places', icon: Plane, emojis: travelAndPlaces},
   {name: 'Activities', icon: Medal, emojis: activities},
@@ -78,7 +80,10 @@ export const EmojiPopup = ({
   input?: boolean;
 }) => {
   const [activeCategory, setActiveCategory] = useState(0);
-  const [position, setPosition] = useState({top: 0, bottom: 'auto'});
+  const [position, setPosition] = useState<{top: any; bottom: any}>({
+    top: 0,
+    bottom: 'auto',
+  });
   const [isPositioned, setIsPositioned] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
 
@@ -138,13 +143,15 @@ export const EmojiPopup = ({
         visibility: isPositioned ? 'visible' : 'hidden',
       }}>
       <div className="w-64 h-80 flex flex-col">
-        <div className="flex justify-between border-b pb-2 mb-2">
+        <div className="grid grid-cols-8 gap-1 border-b pb-2 mb-2">
           {categories.map((category, index) => (
             <button
               key={category.name}
-              className={`p-2 ${activeCategory === index ? 'bg-gray-200' : ''}`}
+              className={`p-1 flex items-center justify-center ${
+                activeCategory === index ? 'bg-gray-200' : ''
+              }`}
               onClick={() => setActiveCategory(index)}>
-              <category.icon size={20} />
+              <category.icon size={16} />
             </button>
           ))}
         </div>

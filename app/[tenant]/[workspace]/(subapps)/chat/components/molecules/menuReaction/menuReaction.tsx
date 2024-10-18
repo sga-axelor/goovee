@@ -1,10 +1,11 @@
 'use client';
 
 import React, {useState, useRef} from 'react';
-import {emojis, HOST} from '../../../constants';
+import {HOST} from '../../../constants';
 import {EmojiPopup} from '../../atoms';
 import {SmilePlus, Reply} from 'lucide-react';
 import {focusInputMessage} from '../../../utils/focusOnInput';
+import {firtThreeEmojis} from '../../../constants/emojis';
 
 export const MenuReaction = ({
   onEmojiClick,
@@ -16,7 +17,7 @@ export const MenuReaction = ({
   isReply: boolean;
 }) => {
   const [showPopup, setShowPopup] = useState(false);
-  const firstThreeEmojis = Object.entries(emojis).slice(0, 3);
+  const firstThreeEmojis = Object.entries(firtThreeEmojis).slice(0, 3);
   const triggerRef = useRef(null);
 
   return (

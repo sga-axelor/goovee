@@ -74,7 +74,13 @@ export const Post = ({
       {post.root_id && _previousPost && (
         <div className="mb-2 p-2 bg-gray-200 rounded-md text-sm">
           <p className="font-semibold">En réponse à :</p>
-          <MarkdownRenderer content={_previousPost.message} />
+          {_previousPost.message && (
+            <MarkdownRenderer content={_previousPost.message} />
+          )}
+          {_previousPost.metadata.files &&
+            _previousPost.metadata.files.length > 0 && (
+              <>{_previousPost.metadata.files[0].name}</>
+            )}
         </div>
       )}
       <MarkdownRenderer content={post.message} />

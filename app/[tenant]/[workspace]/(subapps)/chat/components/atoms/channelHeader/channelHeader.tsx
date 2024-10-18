@@ -41,7 +41,7 @@ export const ChannelHeader = ({
     <div className="bg-gray-100 p-4 border-b">
       <div className="flex flex-col items-start">
         <h2 className="font-semibold text-xl mb-2">#{channelName}</h2>
-        <div className="relative">
+        {/* <div className="relative">
           <button
             ref={userButtonRef}
             onClick={toggleUserPopup}
@@ -66,7 +66,7 @@ export const ChannelHeader = ({
               </ul>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );
