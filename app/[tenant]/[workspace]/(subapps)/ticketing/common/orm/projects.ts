@@ -152,7 +152,11 @@ export async function findContactPartners(projectId: ID) {
       clientPartner: {
         id: true,
         simpleFullName: true,
-        contactPartnerSet: {select: {simpleFullName: true}},
+        isRegisteredOnPortal: true,
+        contactPartnerSet: {
+          where: {isRegisteredOnPortal: true},
+          select: {simpleFullName: true},
+        } as {select: {simpleFullName: true}}, // as typecast is to prevent orm by giving wrong type
       },
     },
   });
@@ -165,11 +169,13 @@ export async function findContactPartners(projectId: ID) {
       simpleFullName: p.simpleFullName,
     })) ?? [];
 
-  partners.push({
-    id: project.clientPartner.id,
-    version: project.clientPartner.version,
-    simpleFullName: project.clientPartner.simpleFullName,
-  });
+  if (project.clientPartner.isRegisteredOnPortal) {
+    partners.push({
+      id: project.clientPartner.id,
+      version: project.clientPartner.version,
+      simpleFullName: project.clientPartner.simpleFullName,
+    });
+  }
 
   return partners;
 }
