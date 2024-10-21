@@ -91,7 +91,7 @@ export const EmojiPopup = ({
 
   useEffect(() => {
     const calculatePosition = () => {
-      if (triggerRef) {
+      if (triggerRef && popupRef && triggerRef.current && popupRef.current) {
         const triggerRect = triggerRef.current.getBoundingClientRect();
         const popupHeight = popupRef.current.offsetHeight;
         const windowHeight = window.innerHeight;
@@ -169,8 +169,6 @@ export const EmojiPopup = ({
                     onEmojiClick(emojiName);
                     focusInputMessage();
                     if (!input) {
-                      console.log('input', input);
-                      console.log('on ferme ');
                       onClose();
                     }
                   }}

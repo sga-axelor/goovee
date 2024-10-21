@@ -9,7 +9,7 @@ export const ChannelList = ({
   activeChannel,
   setActiveChannel,
 }: {
-  channels: ChannelType[];
+  channels: ChannelType | ChannelType[];
   activeChannel: string;
   setActiveChannel: (id: string) => void;
 }) => {
@@ -43,6 +43,7 @@ export const ChannelList = ({
 
   const sortedAndFilteredChannels = useMemo(() => {
     if (!channels) return [];
+    if (channels.length === 1) return channels[0];
 
     return channels
       .filter((channel: ChannelType) =>

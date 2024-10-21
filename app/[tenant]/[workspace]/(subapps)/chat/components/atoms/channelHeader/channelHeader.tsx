@@ -1,17 +1,11 @@
 'use client';
 
-import {Users} from 'lucide-react';
 import React, {useEffect, useRef, useState} from 'react';
-import {getDisplayNickName} from '../../../services/services';
-import {User} from '../../../types/types';
 
 export const ChannelHeader = ({channelName}: {channelName: string}) => {
   const [showUserPopup, setShowUserPopup] = useState<boolean>(false);
   const userPopupRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
-  const toggleUserPopup = () => {
-    setShowUserPopup(!showUserPopup);
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
