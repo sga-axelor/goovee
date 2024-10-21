@@ -223,11 +223,11 @@ export const ChannelView = ({
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-120px)] bg-white flex-grow relative"
+      className="flex flex-col bg-white flex-grow relative"
       onClick={focusInputMessage}>
       <ChannelHeader channelName={channel.channel.display_name} />
 
-      <div className="flex-grow overflow-hidden relative">
+      <div className="flex-grow overflow-hidden relative h-72">
         <div
           className={`h-full overflow-y-auto p-4 ${
             isChannelReady ? '' : 'invisible'

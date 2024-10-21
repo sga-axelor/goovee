@@ -202,7 +202,7 @@ export const ChatView = ({
   };
 
   return (
-    <div className="flex h-100">
+    <div className="flex h-full">
       <ChannelList
         channels={_channels}
         activeChannel={activeChannel}

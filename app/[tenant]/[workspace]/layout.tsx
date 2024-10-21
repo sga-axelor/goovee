@@ -68,7 +68,7 @@ export default async function Layout({
   try {
     theme = $workspace?.theme || defaultTheme;
     theme.options = JSON.parse(theme?.css);
-  } catch (err: any) {
+  } catch (err) {
     console.error(err.message);
   }
 
@@ -89,7 +89,7 @@ export default async function Layout({
       tenant={tenant}
       theme={theme}>
       <CartContext>
-        <div className="h-full w-full flex">
+        <div className="h-screen w-full flex">
           {isLeftNavigation && (
             <Sidebar subapps={subapps} workspaces={workspaces} />
           )}
@@ -99,7 +99,7 @@ export default async function Layout({
               hideTopNavigation={!isTopNavigation}
               workspaces={workspaces}
             />
-            {children}
+            <div className="h-full">{children}</div>
           </div>
           <MobileMenu subapps={subapps} workspaces={workspaces} />
         </div>

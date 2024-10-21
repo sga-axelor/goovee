@@ -63,7 +63,7 @@ export const ChannelList = ({
   return (
     <div
       ref={sidebarRef}
-      className="flex flex-col h-[calc(100vh-120px)] bg-gray-800 text-gray-100 relative flex-shrink-0"
+      className="flex flex-col bg-gray-800 text-gray-100 relative flex-shrink-0"
       style={{width: `${width}px`}}>
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center justify-between mb-2">
