@@ -59,7 +59,6 @@ interface CommentListItemProps {
   sortBy?: any;
   onSubmit?: (data: any) => void;
 }
-
 // NOTE: comments are not recursive,
 // only the top level commment will have childComments, and parentComment,
 // child comment will only have info that is needed to display the comment.
