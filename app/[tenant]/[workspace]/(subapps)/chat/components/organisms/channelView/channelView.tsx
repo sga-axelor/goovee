@@ -2,7 +2,6 @@
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Loader, ChevronDown, LoaderCircle} from 'lucide-react';
-import {getChannelMembers} from '../../../api';
 import {DocumentList, ChannelHeader} from '../../atoms';
 import {InputMessage} from '../../molecules';
 import {GroupPost} from '../groupPost/groupPost';
@@ -52,11 +51,10 @@ export const ChannelView = ({
   const [showNewMessageIndicator, setShowNewMessageIndicator] =
     useState<boolean>(false);
   const [postReply, setPostReply] = useState<any>(null);
-  const [_users, setUsers] = useState<User[]>([]);
   const [showUserPopup, setShowUserPopup] = useState(false);
   const userPopupRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
-  const [isChannelReady, setIsChannelReady] = useState(false);
+  const [isChannelReady, setIsChannelReady] = useState<boolean>(false);
 
   const scrollToBottom = useCallback(
     (behavior: ScrollBehavior) => {
@@ -143,14 +141,6 @@ export const ChannelView = ({
   useEffect(() => {
     if (channelJustSelected) {
       setIsChannelReady(false);
-      const fetchMembers = async () => {
-        const members = await getChannelMembers(channelId, token);
-        const filteredUsers: User[] = users.filter(user =>
-          members.some((member: any) => member.user_id === user.id),
-        );
-        setUsers(filteredUsers);
-      };
-      fetchMembers();
       setTimeout(() => {
         scrollToBottom('instant');
         setTimeout(() => {
@@ -235,10 +225,7 @@ export const ChannelView = ({
     <div
       className="flex flex-col h-[calc(100vh-120px)] bg-white flex-grow relative"
       onClick={focusInputMessage}>
-      <ChannelHeader
-        users={_users}
-        channelName={channel.channel.display_name}
-      />
+      <ChannelHeader channelName={channel.channel.display_name} />
 
       <div className="flex-grow overflow-hidden relative">
         <div

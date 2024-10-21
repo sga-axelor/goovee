@@ -69,6 +69,7 @@ export const ChatView = ({
 
   useEffect(() => {
     activeChannelRef.current = activeChannel;
+    setChannelJustSelected(true);
     const fetchCurrentChannel = async () => {
       if (activeChannel) {
         const currentChannel = await getChannelInfosByChannelId(
@@ -76,7 +77,6 @@ export const ChatView = ({
           token,
         );
         setCurrentChannel(currentChannel);
-        setChannelJustSelected(true);
         await viewChannel(user.id, activeChannel, token);
         updateChannelUnread(activeChannel, false);
       }
