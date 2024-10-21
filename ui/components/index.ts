@@ -206,3 +206,10 @@ export {
   CommentTracks,
   CommentAttachments,
 } from './comments';
+
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from './tooltip';

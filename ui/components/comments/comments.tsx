@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useSession} from 'next-auth/react';
 import {
   MdAdd,
@@ -139,7 +139,7 @@ export function Comments({
                   <div>{i18n.get('Sort by')}:</div>
                   <DropdownToggle
                     value={sortBy}
-                    options={SORT_BY_OPTIONS}
+                    options={SORT_BY_OPTIONS.slice(0, -1)}
                     iconClassName="w-4 h-4"
                     handleDropdown={handleSortBy}
                   />
@@ -155,6 +155,7 @@ export function Comments({
               showReactions={showReactions}
               modelType={modelType}
               hasSubComments={!!totalCommentThreadCount}
+              sortBy={sortBy}
               onSubmit={onCreate}
             />
 

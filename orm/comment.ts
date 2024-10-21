@@ -350,6 +350,10 @@ export async function findByID({
   return {success: true, data: response};
 }
 
+export type Comment = NonNullable<
+  Awaited<ReturnType<typeof findComments>>['data']
+>[number];
+
 export async function findComments({
   model,
   limit,
@@ -474,12 +478,21 @@ export async function findComments({
           simpleFullName: true,
         },
       },
-    };
+    } as const;
 
     const where = {
       relatedId: modelRecord.id,
       relatedModel: modelName,
       isPublicNote: true,
+      ...(type === ModelType.forum
+        ? {
+            parentMailMessage: {
+              id: {
+                eq: null,
+              },
+            },
+          }
+        : {}),
     };
 
     const comments = await client.aOSMailMessage.find({
@@ -494,18 +507,31 @@ export async function findComments({
         },
         childMailMessages: {
           orderBy,
-          where,
+          where: {
+            relatedId: modelRecord.id,
+            relatedModel: modelName,
+            isPublicNote: true,
+          },
           select: {
             ...commentFields,
           },
-        },
+        } as {select: typeof commentFields},
       },
     });
+
+    const totalCommentThreadCount = comments?.reduce(
+      (acc: number, comment: any) => {
+        const childCommentsCount = comment.childMailMessages?.length || 0;
+        return acc + 1 + childCommentsCount;
+      },
+      0,
+    );
 
     return {
       success: true,
       data: clone(comments),
       total: comments?.[0]?._count || comments?.length,
+      totalCommentThreadCount,
     };
   } catch (error) {
     console.log('error >>>', error);

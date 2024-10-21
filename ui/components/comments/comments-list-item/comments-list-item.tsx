@@ -7,6 +7,12 @@ import {
   MdOutlineThumbUp,
   MdFavoriteBorder,
   MdOutlineMoreHoriz,
+  MdKeyboardArrowUp,
+  MdKeyboardArrowDown,
+  MdOutlineStraight,
+  MdReply,
+  MdOutlineSouth,
+  MdNorth,
 } from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -20,6 +26,10 @@ import {
   CommentAttachments,
   CommentInput,
   Separator,
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from '@/ui/components';
 import {ModelType} from '@/types';
 import {i18n} from '@/lib/i18n';
@@ -32,17 +42,10 @@ import {
   DISABLED_COMMENT_PLACEHOLDER,
   NOT_INTERESTED,
   REPORT,
+  SORT_TYPE,
 } from '@/constants';
 
-interface Comment {
-  id: string;
-  createdOn: string;
-  mailMessage?: {body?: string};
-  childCommentList?: Comment[];
-  commentFileList?: any[];
-  note?: string;
-  createdBy: {partner: {picture?: {id: string}; simpleFullName?: string}};
-}
+import type {Comment} from '@/orm/comment';
 
 interface CommentListItemProps {
   record: any;
@@ -53,9 +56,13 @@ interface CommentListItemProps {
   hasSubComments?: boolean;
   disabled: boolean;
   isTopLevel?: boolean;
+  sortBy?: any;
   onSubmit?: (data: any) => void;
 }
 
+// NOTE: comments are not recursive,
+// only the top level commment will have childComments, and parentComment,
+// child comment will only have info that is needed to display the comment.
 export const CommentListItem = ({
   record,
   parentCommentId,
@@ -65,50 +72,77 @@ export const CommentListItem = ({
   hasSubComments,
   disabled = false,
   isTopLevel = true,
+  sortBy,
   onSubmit,
 }: CommentListItemProps) => {
   const [showSubComments, setShowSubComments] = useState(
     hasSubComments || false,
   );
-  const [showCommentInput, setShowCommentInput] = useState<boolean>(false);
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [toggle, setToggle] = useState(false);
 
   const {
     createdOn,
-    mailMessage,
-    childCommentList = [],
+    body,
+    childMailMessages = [],
     id,
-    commentFileList = [],
+    mailMessageFileList = [],
     note = '',
-    createdBy: {partner},
+    createdBy = {},
+    parentMailMessage,
   } = comment || {};
-
-  const {body = ''} = mailMessage || {};
+  const {partner} = createdBy;
   const {title = '', tracks = []} = body ? JSON.parse(body) : {};
 
   const {data: session} = useSession();
   const isLoggedIn = Boolean(session?.user?.id);
   const isDisabled = !isLoggedIn || disabled;
 
-  const handleSubCommentsToggle = () => {
-    childCommentList?.length > 0 && setShowSubComments(prev => !prev);
+  const scrollToComment = (id: string) => {
+    const element = document.querySelector(`#comment-${id}`);
+    if (element) {
+      element.classList.add(
+        'transition-colors',
+        'duration-500',
+        'ease-out',
+        'bg-success-light',
+      );
+      element.scrollIntoView({behavior: 'smooth', block: 'center'});
+      setTimeout(() => {
+        element.classList.remove('bg-success-light');
+      }, 1000);
+    }
   };
 
-  const handleInputToggle = () => setShowCommentInput(prev => !prev);
+  const toggleSubComments = () => {
+    if (childMailMessages?.length > 0) setShowSubComments(prev => !prev);
+  };
 
-  if (!comment) return null;
+  const toggleCommentInput = () => setShowCommentInput(prev => !prev);
+
+  const handleCommentSubmit = (data: any) => {
+    if (onSubmit) {
+      try {
+        onSubmit({...data, parent: parentMailMessage?.id || parentCommentId});
+      } catch (error) {
+        console.error('Error submitting comment:', error);
+      } finally {
+        setShowCommentInput(false);
+      }
+    } else {
+      console.warn('onSubmit is undefined.');
+    }
+  };
 
   const renderChildComments = () => {
     if (
       !showSubComments ||
       parentCommentId !== id ||
-      !childCommentList?.length
-    ) {
+      !childMailMessages?.length
+    )
       return null;
-    }
-
-    return childCommentList.map(childComment => (
+    return childMailMessages.map((childComment: any) => (
       <CommentListItem
-        disabled={isDisabled}
         key={childComment.id}
         record={record}
         parentCommentId={parentCommentId}
@@ -116,27 +150,107 @@ export const CommentListItem = ({
         showReactions={showReactions}
         modelType={modelType}
         isTopLevel={false}
+        disabled={isDisabled}
         onSubmit={onSubmit}
       />
     ));
   };
 
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex gap-2 justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Avatar className="rounded-full h-6 w-6">
-            <AvatarImage
-              src={getImageURL(partner?.picture?.id) ?? '/images/no-image.png'}
-            />
-          </Avatar>
-          <div>
+  const renderAvatar = (pictureId: string) => (
+    <Avatar className="rounded-full h-6 w-6">
+      <AvatarImage src={getImageURL(pictureId) ?? '/images/no-image.png'} />
+    </Avatar>
+  );
+
+  const renderParentMessage = () => {
+    if (!parentMailMessage?.id) return null;
+
+    const {
+      createdBy: {partner},
+    } = parentMailMessage;
+
+    return (
+      <div className="p-2 border-l-2 border-success bg-success-light rounded-sm">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            {renderAvatar(partner?.picture?.id)}
             <div className="font-semibold text-sm">
               {partner?.simpleFullName}
             </div>
-            <div className="text-[10px] leading-none">
-              {parseDate(createdOn, DATE_FORMATS.full_date)}
+          </div>
+          <div className="flex items-center gap-2">
+            {toggle ? (
+              <MdKeyboardArrowUp
+                className="w-4 h-4 cursor-pointer"
+                onClick={() => setToggle(false)}
+              />
+            ) : (
+              <MdKeyboardArrowDown
+                className="w-4 h-4 cursor-pointer"
+                onClick={() => setToggle(true)}
+              />
+            )}
+            {sortBy === SORT_TYPE.old ? (
+              <MdNorth
+                className="cursor-pointer"
+                onClick={() => scrollToComment(parentMailMessage?.id)}
+              />
+            ) : (
+              <MdOutlineSouth
+                className="cursor-pointer"
+                onClick={() => scrollToComment(parentMailMessage?.id)}
+              />
+            )}
+          </div>
+        </div>
+        <div>
+          <div
+            className={`text-sm w-full font-normal ${toggle ? '' : 'line-clamp-1'}`}
+            dangerouslySetInnerHTML={{__html: parentMailMessage.note}}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderReactions = () => (
+    <div className="flex items-center gap-6 mt-1 mb-2">
+      <div className="flex items-center rounded-lg border h-7">
+        <div className="w-8 h-full px-2 py-1 border-r">
+          <MdOutlineThumbUp className="cursor-pointer" />
+        </div>
+        <div className="flex items-center px-2 py-1">
+          <MdOutlineThumbUp className="cursor-pointer" />
+          <MdFavoriteBorder className="cursor-pointer" />
+        </div>
+      </div>
+      <Separator orientation="vertical" className="h-6 bg-black" />
+    </div>
+  );
+
+  if (!comment) return null;
+
+  return (
+    <div className="flex flex-col gap-1" key={id} id={`comment-${id}`}>
+      <div className="flex gap-2 justify-between items-center">
+        <div className="flex items-center gap-2">
+          {renderAvatar(partner?.picture?.id)}
+          <div className="flex flex-col">
+            <div className="font-semibold text-sm leading-[21px]">
+              {partner?.simpleFullName}
             </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="text-[10px] leading-3">
+                    {parseDate(createdOn, DATE_FORMATS.full_date)}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent align="start" className="px-4 py-1 text-[10px]">
+                  {parseDate(createdOn, `MMMM Do YYYY, h:mm a`)}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -153,52 +267,40 @@ export const CommentListItem = ({
           </Popover>
         </div>
       </div>
-      <div
-        className={`${isTopLevel ? 'border-l ml-3 pl-10 border-gray-light' : 'pl-8'}`}>
-        {tracks?.length > 0 && <CommentTracks tracks={tracks} title={title} />}
-        <CommentAttachments attachments={commentFileList} />
+      <div className={`${isTopLevel ? 'ml-3 pl-10' : 'pl-8'}`}>
+        {tracks.length > 0 && <CommentTracks tracks={tracks} title={title} />}
+        <CommentAttachments attachments={mailMessageFileList} />
 
         <div className="flex flex-col">
+          {renderParentMessage()}
           <div
-            className="text-sm w-full font-normal line-clamp-2"
+            className="text-sm w-full font-normal"
             dangerouslySetInnerHTML={{__html: note}}
           />
-          <div className="flex justify-end items-center gap-6 mt-1 mb-2">
-            {showReactions && (
-              <>
-                <div className="flex items-center rounded-lg border h-7">
-                  <div className="w-8 h-full px-2 py-1 border-r">
-                    <MdOutlineThumbUp className="cursor-pointer" />
-                  </div>
-                  <div className="flex items-center px-2 py-1">
-                    <MdOutlineThumbUp className="cursor-pointer" />
-                    <MdFavoriteBorder className="cursor-pointer" />
-                  </div>
-                </div>
-                <Separator orientation="vertical" className="h-6 bg-black" />
-              </>
-            )}
+          <div className="flex items-center gap-6 mt-1 mb-2">
+            {showReactions && renderReactions()}
             {note && (
               <div className="flex gap-6 items-center">
-                <span
-                  className="text-xs cursor-pointer"
-                  onClick={handleInputToggle}>
-                  {i18n.get('Reply')}
-                </span>
+                <div
+                  className="flex items-center gap-1 cursor-pointer"
+                  onClick={toggleCommentInput}>
+                  <MdReply className="w-4 h-4" />
+                  <span className="text-[10px]">{i18n.get('Reply')}</span>
+                </div>
 
-                {parentCommentId === id && childCommentList.length > 0 && (
+                {parentCommentId === id && childMailMessages.length > 0 && (
                   <>
                     <Separator
                       orientation="vertical"
                       className="h-6 bg-black"
                     />
                     <div
-                      className={`flex items-center gap-1 text-[10px] ${childCommentList.length ? 'cursor-pointer' : 'cursor-default'}`}
-                      onClick={handleSubCommentsToggle}>
+                      className={`flex items-center gap-1 text-[10px] ${childMailMessages.length ? 'cursor-pointer' : 'cursor-default'}`}
+                      onClick={toggleSubComments}>
                       <MdOutlineModeComment className="w-4 h-4 cursor-pointer" />
-                      {childCommentList.length}{' '}
+                      {childMailMessages.length}{' '}
                       {i18n.get(
-                        childCommentList.length > 1
+                        childMailMessages.length > 1
                           ? COMMENTS.toLowerCase()
                           : COMMENT.toLowerCase(),
                       )}
@@ -218,26 +320,12 @@ export const CommentListItem = ({
                     ? i18n.get(COMMENT)
                     : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
                 }
-                onSubmit={(data: any) => {
-                  if (onSubmit) {
-                    try {
-                      onSubmit({...data, parent: parentCommentId});
-                    } catch (error) {
-                      console.error('Error submitting comment:', error);
-                    } finally {
-                      setShowCommentInput(false);
-                    }
-                  } else {
-                    console.warn('onSubmit function not provided');
-                    setShowCommentInput(false);
-                  }
-                }}
+                onSubmit={handleCommentSubmit}
               />
             </div>
           )}
+          {renderChildComments()}
         </div>
-
-        {renderChildComments()}
       </div>
     </div>
   );

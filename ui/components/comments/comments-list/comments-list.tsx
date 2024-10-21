@@ -14,6 +14,7 @@ interface CommentsListProps {
   modelType: ModelType;
   hasSubComments: boolean;
   disabled?: boolean;
+  sortBy: any;
   onSubmit?: (comment: any) => void;
 }
 
@@ -26,6 +27,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   hasSubComments,
   disabled = false,
   onSubmit,
+  sortBy,
 }) => {
   return (
     <div
@@ -40,6 +42,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
           showReactions={showReactions}
           modelType={modelType}
           hasSubComments={hasSubComments}
+          sortBy={sortBy}
           onSubmit={onSubmit}
         />
       ))}

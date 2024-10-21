@@ -84,7 +84,7 @@ export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
         </div>
       </div>
 
-      <div className="w-full  mb-12 md:mb-0">
+      <div className="w-full mb-16 lg:mb-4">
         <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
           <div>
             <div className="text-xl font-semibold">{i18n.get(COMMENTS)}</div>
