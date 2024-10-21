@@ -18,6 +18,7 @@ import {
   User,
   UserStatus,
 } from '../../../types/types';
+import {deletePost} from '../../../utils/deletePost';
 
 export const ChatView = ({
   token,
@@ -33,20 +34,23 @@ export const ChatView = ({
   teamId: string;
 }) => {
   const [activeChannel, setActiveChannel] = useState<string>('');
-  const [_channels, setChannels] = useState<ChannelType[]>([]);
+  const [_channels, setChannels] = useState<ChannelType | ChannelType[]>([]);
   const [_currentChannel, setCurrentChannel] = useState<any>();
   const [channelJustSelected, setChannelJustSelected] = useState(false);
   const [newMessage, setNewMessage] = useState<boolean>(false);
   const activeChannelRef = useRef(activeChannel);
 
   const updateChannelUnread = (channelId: string, newMessage: boolean) => {
-    setChannels((prevChannels: ChannelType[]) =>
-      prevChannels.map((channel: ChannelType) =>
+    setChannels((prevChannels: ChannelType | ChannelType[]) => {
+      if (!Array.isArray(prevChannels)) {
+        return prevChannels;
+      }
+      return prevChannels.map((channel: ChannelType) =>
         channel.id === channelId
           ? {...channel, unread: newMessage ? channel.unread + 1 : 0}
           : channel,
-      ),
-    );
+      );
+    });
   };
 
   useEffect(() => {
@@ -57,8 +61,9 @@ export const ChatView = ({
           channel.display_name != null && channel.display_name.trim() !== ''
         );
       });
-      setChannels(filteredChannels);
-      if (userStatus) {
+      const channelsTest = filteredChannels.slice(0, 11);
+      setChannels(channelsTest);
+      if (userStatus && userStatus.active_channel) {
         setActiveChannel(userStatus.active_channel);
       } else {
         setActiveChannel(filteredChannels[0].id);
@@ -76,6 +81,7 @@ export const ChatView = ({
           activeChannel,
           token,
         );
+        console.log('voici le current channel', currentChannel);
         setCurrentChannel(currentChannel);
         await viewChannel(user.id, activeChannel, token);
         updateChannelUnread(activeChannel, false);
@@ -86,6 +92,7 @@ export const ChatView = ({
 
   const handleNewPost = useCallback(
     async (channelId: string, rootId: string, post: Post) => {
+      console.log('on recoisn un nouveau ost');
       if (channelId == activeChannelRef.current && user.id !== post.user_id) {
         addPost(setCurrentChannel, channelId, token, false, user, post);
         setNewMessage(true);
@@ -118,6 +125,7 @@ export const ChatView = ({
     async (channelId: string, rootId: string, post: Post) => {
       if (channelId == activeChannelRef.current) {
         console.log('ce post a été effecé : ', post);
+        deletePost(setCurrentChannel, post);
       }
     },
     [],
@@ -203,11 +211,13 @@ export const ChatView = ({
 
   return (
     <div className="flex h-full">
-      <ChannelList
-        channels={_channels}
-        activeChannel={activeChannel}
-        setActiveChannel={setActiveChannel}
-      />
+      {_channels.length > 1 && (
+        <ChannelList
+          channels={_channels}
+          activeChannel={activeChannel}
+          setActiveChannel={setActiveChannel}
+        />
+      )}
       {_currentChannel && (
         <ChannelView
           channel={_currentChannel}

@@ -145,11 +145,14 @@ export const ChannelView = ({
         scrollToBottom('instant');
         setTimeout(() => {
           scrollToBottom('instant');
+          setTimeout(() => {
+            scrollToBottom('instant');
+          }, 500);
         }, 50);
-      }, 0);
+      }, 10);
       setTimeout(() => {
         setIsChannelReady(true);
-      }, 300);
+      }, 700);
       setChannelJustSelected(false);
     }
   }, [

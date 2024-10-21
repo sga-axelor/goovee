@@ -69,16 +69,18 @@ export const ChannelList = ({
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-lg">Canaux</h2>
         </div>
-        <div className="flex items-center bg-gray-900 rounded p-1">
-          <Search size={16} className="text-gray-400 mr-2" />
-          <input
-            type="text"
-            placeholder="Rechercher des canaux"
-            className="bg-transparent text-sm w-full focus:outline-none"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-          />
-        </div>
+        {channels.length > 10 && (
+          <div className="flex items-center bg-gray-900 rounded p-1">
+            <Search size={16} className="text-gray-400 mr-2" />
+            <input
+              type="text"
+              placeholder="Rechercher des canaux"
+              className="bg-transparent text-sm w-full focus:outline-none"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+        )}
       </div>
       <div className="overflow-y-auto flex-grow">
         {sortedAndFilteredChannels.map((channel: ChannelType) => (
