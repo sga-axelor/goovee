@@ -49,7 +49,7 @@ export const FilePreview = ({file, token}: {file: File; token: string}) => {
       setPublicLink(link);
     };
     fetchLink();
-  }, []);
+  }, [file.id, token]);
 
   return (
     <div className="m-1 flex flex-col items-center relative">

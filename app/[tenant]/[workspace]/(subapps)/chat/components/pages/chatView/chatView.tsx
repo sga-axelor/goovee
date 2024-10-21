@@ -61,8 +61,7 @@ export const ChatView = ({
           channel.display_name != null && channel.display_name.trim() !== ''
         );
       });
-      const channelsTest = filteredChannels.slice(0, 11);
-      setChannels(channelsTest);
+      setChannels(filteredChannels);
       if (userStatus && userStatus.active_channel) {
         setActiveChannel(userStatus.active_channel);
       } else {

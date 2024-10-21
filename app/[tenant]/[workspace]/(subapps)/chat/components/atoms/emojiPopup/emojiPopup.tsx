@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 'use client';
 
 import React, {useState, useEffect, useRef} from 'react';
@@ -122,7 +124,7 @@ export const EmojiPopup = ({
     return () => {
       window.removeEventListener('resize', calculatePosition);
     };
-  }, [triggerRef]);
+  }, [triggerRef, input]);
 
   useEffect(() => {
     Object.values(categories[activeCategory].emojis).forEach(filename => {

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, {memo, useCallback, useEffect, useState} from 'react';
 import {SocketEvents, WEBSOCKET_URL} from '../constants';
 import {WebSocketClient} from '../api/websocket';
@@ -50,6 +52,7 @@ export const Socket = memo(function Socket({
       const {post_id} = reaction;
       const {channel_id, omit_users} = broadcast;
       if (!omit_users || !omit_users[connectedUserId]) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         handleReaction && handleReaction(channel_id, post_id, reaction, add);
       }
     },
@@ -88,6 +91,7 @@ export const Socket = memo(function Socket({
           !omit_users ||
           (omit_users && !omit_users[connectedUserId])
         ) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           handleNewPost && handleNewPost(channel_id, root_id, post);
         }
       };
@@ -103,6 +107,7 @@ export const Socket = memo(function Socket({
           !omit_users ||
           (omit_users && !omit_users[connectedUserId])
         ) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           handleDeletedPost && handleDeletedPost(channel_id, root_id, post);
         }
       };
@@ -116,6 +121,7 @@ export const Socket = memo(function Socket({
         const {user_id} = data;
         const {channel_id, omit_users} = broadcast;
         if (!omit_users[connectedUserId]) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           handleUserTyping && handleUserTyping(channel_id, user_id);
         }
       };
@@ -139,6 +145,7 @@ export const Socket = memo(function Socket({
 
         case SocketEvents.POST_DELETED:
           handleSocketPostDeleted(msg);
+          break;
 
         default:
       }
