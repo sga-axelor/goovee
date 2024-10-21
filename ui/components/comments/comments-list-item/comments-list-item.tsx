@@ -78,7 +78,7 @@ export const CommentListItem = ({
   const [showSubComments, setShowSubComments] = useState(
     hasSubComments || false,
   );
-  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [showCommentInput, setShowCommentInput] = useState<boolean>(false);
   const [toggle, setToggle] = useState(false);
 
   const {
