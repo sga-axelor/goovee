@@ -43,12 +43,12 @@ import type {
   Priority,
   Status,
 } from '../../../orm/projects';
+import {SearchParams} from '../../../types/search-param';
 import {
   EncodedFilter,
   EncodedFilterSchema,
   FilterSchema,
-} from '../../../schema';
-import {SearchParams} from '../../../types/search-param';
+} from '../../../utils/validators';
 import {
   MultiSelector,
   MultiSelectorContent,

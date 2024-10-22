@@ -41,11 +41,11 @@ import {
   getMyTicketCount,
   getResolvedTicketCount,
 } from '../../common/orm/tickets';
-import {EncodedFilter} from '../../common/schema';
 import type {SearchParams} from '../../common/types/search-param';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
+import {EncodedFilter} from '../../common/utils/validators';
 import Search from './search';
 
 export default async function Page({

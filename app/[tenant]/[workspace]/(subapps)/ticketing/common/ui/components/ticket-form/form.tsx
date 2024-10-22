@@ -29,8 +29,8 @@ import {useForm} from 'react-hook-form';
 import type {MutateProps} from '../../../actions';
 import {mutate} from '../../../actions';
 import type {Category, ContactPartner, Priority} from '../../../orm/projects';
-import type {TicketInfo} from '../../../schema';
-import {TicketFormSchema} from '../../../schema';
+import type {TicketInfo} from '../../../utils/validators';
+import {TicketFormSchema} from '../../../utils/validators';
 
 type TicketFormProps = {
   projectId: string;

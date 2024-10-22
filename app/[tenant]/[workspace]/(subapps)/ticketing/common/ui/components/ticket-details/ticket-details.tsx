@@ -57,10 +57,10 @@ import type {
   Priority as TPriority,
 } from '../../../orm/projects';
 import type {Ticket} from '../../../orm/tickets';
-import {TicketFormSchema, TicketInfo} from '../../../schema';
 import {formatDate, getProfilePic, isWithProvider} from '../../../utils';
+import type {TicketInfo} from '../../../utils/validators';
+import {TicketFormSchema} from '../../../utils/validators';
 import {Category, Priority, Status} from '../pills';
-import {Skeleton} from '@/ui/components/skeleton';
 
 type Props = {
   ticket: Cloned<Ticket>;

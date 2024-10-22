@@ -24,8 +24,8 @@ import {
   updateTicket,
   updateTicketByWS,
 } from '../orm/tickets';
-import {CreateTicketSchema, UpdateTicketSchema} from '../schema';
 import {ensureAuth} from '../utils/auth-helper';
+import {CreateTicketSchema, UpdateTicketSchema} from '../utils/validators';
 import type {ActionConfig, ActionResponse, MutateProps} from './types';
 
 export type MutateResponse = {id: string; version: number};

@@ -1,4 +1,4 @@
-import {CreateTicketInfo, UpdateTicketInfo} from '../schema';
+import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 
 export type MutateProps = {
   workspaceURL: string;

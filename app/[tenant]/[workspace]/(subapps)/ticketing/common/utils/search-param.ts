@@ -4,7 +4,7 @@ import type {Maybe} from '@/types/util';
 import type {Entity, ID, IdFilter, WhereArg, WhereOptions} from '@goovee/orm';
 import {set} from 'lodash';
 import {COMPANY} from '../constants';
-import {EncodedFilterSchema} from '../schema';
+import {EncodedFilterSchema} from '../utils/validators';
 
 export function getOrderBy(
   sort: Maybe<string>,

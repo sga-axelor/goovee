@@ -23,6 +23,7 @@ import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
+import {Skeleton} from '@/ui/components/skeleton';
 import type {
   Category,
   ContactPartner,
@@ -44,19 +45,18 @@ import {
   findTicket,
   findTicketLinkTypes,
 } from '../../../../common/orm/tickets';
-import {EncodedFilter} from '../../../../common/schema';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
   ChildTicketList,
   ParentTicketList,
   RelatedTicketList,
 } from '../../../../common/ui/components/ticket-list';
+import {EncodedFilter} from '../../../../common/utils/validators';
 import {
   ChildTicketsHeader,
   ParentTicketsHeader,
   RelatedTicketsHeader,
 } from './headers';
-import {Skeleton} from '@/ui/components/skeleton';
 
 export default async function Page({
   params,

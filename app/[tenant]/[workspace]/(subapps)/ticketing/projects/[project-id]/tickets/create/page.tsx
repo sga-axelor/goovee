@@ -26,7 +26,7 @@ import {
   findTicketStatuses,
 } from '../../../../common/orm/projects';
 import {findTicketAccess} from '../../../../common/orm/tickets';
-import {EncodedFilter} from '../../../../common/schema';
+import {EncodedFilter} from '../../../../common/utils/validators';
 import {Form} from './client-form';
 export default async function Page({
   params,

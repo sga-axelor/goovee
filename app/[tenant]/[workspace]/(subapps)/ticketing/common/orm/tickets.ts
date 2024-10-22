@@ -19,7 +19,7 @@ import {
   VERSION_MISMATCH_CAUSE_CLASS,
   VERSION_MISMATCH_ERROR,
 } from '../constants';
-import {CreateTicketInfo, UpdateTicketInfo} from '../schema';
+import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 import type {QueryProps} from './helpers';
 import {getProjectAccessFilter, getTicketAccessFilter} from './helpers';
 

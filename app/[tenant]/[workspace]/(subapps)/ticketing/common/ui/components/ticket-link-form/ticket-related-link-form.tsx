@@ -30,7 +30,10 @@ import {
   createParentLink,
   createRelatedLink,
 } from '../../../actions';
-import {ChildTicketSchema, RelatedTicketSchema} from '../../../schema';
+import {
+  ChildTicketSchema,
+  RelatedTicketSchema,
+} from '../../../utils/validators';
 import {TicketSelect} from '../ticket-select';
 
 export function TicketRelatedLinkForm({
