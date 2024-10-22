@@ -13,7 +13,7 @@ import {
 } from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
-import {encodeFilter} from '@/utils/filter';
+import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';

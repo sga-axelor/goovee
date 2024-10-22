@@ -27,7 +27,7 @@ import {
 import {Input} from '@/ui/components/input';
 import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-import {decodeFilter, encodeFilter} from '@/utils/filter';
+import {decodeFilter, encodeFilter} from '@/utils/url';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useRouter} from 'next/navigation';
 import {useEffect, useMemo, useRef, useState} from 'react';

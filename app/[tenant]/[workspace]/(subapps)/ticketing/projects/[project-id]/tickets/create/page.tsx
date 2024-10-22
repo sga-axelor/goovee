@@ -3,7 +3,7 @@ import {i18n} from '@/lib/i18n';
 import {getSession} from '@/orm/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {encodeFilter} from '@/utils/filter';
+import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';

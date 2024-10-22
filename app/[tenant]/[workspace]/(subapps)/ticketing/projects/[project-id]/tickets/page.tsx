@@ -22,7 +22,7 @@ import {
 } from '@/ui/components/pagination';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
-import {decodeFilter} from '@/utils/filter';
+import {decodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 import type {ID} from '@goovee/orm';
 import {ChevronLeft, ChevronRight} from 'lucide-react';

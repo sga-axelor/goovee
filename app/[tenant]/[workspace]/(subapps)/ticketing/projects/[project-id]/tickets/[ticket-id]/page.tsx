@@ -14,7 +14,7 @@ import {
   Comments,
 } from '@/ui/components';
 import {clone} from '@/utils';
-import {encodeFilter} from '@/utils/filter';
+import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 import type {ID} from '@goovee/orm';
 import Link from 'next/link';
