@@ -330,7 +330,7 @@ export async function findOpenWorkspaces({url}: {url?: string}) {
           apps: true,
         },
       },
-      orderBy: {updatedOn: 'DESC'},
+      orderBy: {updatedOn: 'DESC'} as any,
     })
     .then(workspaces => {
       return (workspaces || [])?.filter(
