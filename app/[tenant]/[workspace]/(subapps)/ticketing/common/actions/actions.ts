@@ -26,14 +26,15 @@ import {
 } from '../orm/tickets';
 import {CreateTicketSchema, UpdateTicketSchema} from '../schema';
 import {ensureAuth} from '../utils/auth-helper';
-import type {ActionResponse, MutateProps} from './types';
+import type {ActionConfig, ActionResponse, MutateProps} from './types';
 
 export type MutateResponse = {id: string; version: number};
 export async function mutate(
   props: MutateProps,
-  force?: boolean,
+  config?: ActionConfig,
 ): ActionResponse<MutateResponse> {
   const {workspaceURL, workspaceURI, action} = props;
+  const {force} = config || {};
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
   const {user, workspace} = auth;
@@ -90,9 +91,10 @@ export type UpdateAssignmentProps = {
 
 export async function updateAssignment(
   props: UpdateAssignmentProps,
-  force?: boolean,
+  config?: ActionConfig,
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
+  const {force} = config || {};
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
@@ -141,9 +143,10 @@ export type TicketActionProps = {
 
 export async function closeTicket(
   props: TicketActionProps,
-  force?: boolean,
+  config?: ActionConfig,
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
+  const {force} = config || {};
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};
@@ -198,9 +201,10 @@ export async function closeTicket(
 
 export async function cancelTicket(
   props: TicketActionProps,
-  force?: boolean,
+  config?: ActionConfig,
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
+  const {force} = config || {};
 
   const {error, message, auth} = await ensureAuth(workspaceURL);
   if (error) return {error: true, message};

@@ -4,14 +4,14 @@ import {useToast} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
 
-import type {ActionResponse} from '../actions';
+import type {ActionConfig, ActionResponse} from '../actions';
 import {VERSION_MISMATCH_ERROR} from '../constants';
 
 export function useRetryAction<
   T extends Record<string, unknown>,
   R extends ActionResponse,
 >(
-  action: (actionProps: T, force?: boolean) => R,
+  action: (actionProps: T, config?: ActionConfig) => R,
   successMessage?: string,
 ): {
   action: (
@@ -52,7 +52,9 @@ export function useRetryAction<
         const handleOverwrite = async () => {
           setLoading(true);
           try {
-            const {error, message, data} = await action(retryProps, true);
+            const {error, message, data} = await action(retryProps, {
+              force: true,
+            });
             if (error) {
               handleError(message, retryProps, onSuccess);
               return;

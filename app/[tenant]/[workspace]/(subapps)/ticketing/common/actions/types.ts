@@ -14,6 +14,10 @@ export type MutateProps = {
       };
 };
 
+export type ActionConfig = {
+  force?: boolean;
+};
+
 export type SuccessResponse<T = any> = {
   success: true;
   data: T;
