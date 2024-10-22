@@ -69,7 +69,7 @@ export async function mutate(
     }
 
     return {
-      error: false,
+      success: true,
       data: {id: ticket.id, version: ticket.version},
     };
   } catch (e) {
@@ -120,7 +120,7 @@ export async function updateAssignment(
       workspaceURL,
     });
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -182,7 +182,7 @@ export async function closeTicket(
 
     //TODO: tickets path needs to be revalidated
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -238,7 +238,7 @@ export async function cancelTicket(
     });
 
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -273,7 +273,7 @@ export async function createRelatedLink(
       workspaceId: workspace.id,
     });
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -308,7 +308,7 @@ export async function createChildLink(
       workspaceId: workspace.id,
     });
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -338,7 +338,7 @@ export async function createParentLink(
       workspaceId: workspace.id,
     });
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -373,7 +373,7 @@ export async function deleteChildLink(
       workspaceId: workspace.id,
     });
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -408,7 +408,7 @@ export async function deleteParentLink(
       workspaceId: workspace.id,
     });
     return {
-      error: false,
+      success: true,
       data: true,
     };
   } catch (e) {
@@ -442,7 +442,7 @@ export async function deleteRelatedLink(
       workspaceId: workspace.id,
     });
     return {
-      error: false,
+      success: true,
       data: count,
     };
   } catch (e) {
@@ -480,5 +480,5 @@ export async function searchTickets({
     projectId,
     excludeList,
   });
-  return {error: false, data: clone(tickets)};
+  return {success: true, data: clone(tickets)};
 }

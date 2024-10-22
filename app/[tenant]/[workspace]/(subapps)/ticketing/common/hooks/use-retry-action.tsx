@@ -17,7 +17,7 @@ export function useRetryAction<
   action: (
     actionProps: T,
     onSuccess?: (
-      res: Extract<Awaited<R>, {error: false}>['data'],
+      res: Extract<Awaited<R>, {success: true}>['data'],
     ) => Promise<void>,
   ) => Promise<void>;
   loading: boolean;
@@ -27,8 +27,8 @@ export function useRetryAction<
   const router = useRouter();
   const handleSuccess = useCallback(
     async (
-      onSuccess?: (res: Extract<Awaited<R>, {error: false}>) => Promise<void>,
-      data?: Extract<Awaited<R>, {error: false}>['data'],
+      onSuccess?: (res: Extract<Awaited<R>, {success: true}>) => Promise<void>,
+      data?: Extract<Awaited<R>, {success: true}>['data'],
     ) => {
       toast({
         variant: 'success',
@@ -46,7 +46,7 @@ export function useRetryAction<
     (
       message: string,
       retryProps: T,
-      onSuccess?: (res: Extract<Awaited<R>, {error: false}>) => Promise<void>,
+      onSuccess?: (res: Extract<Awaited<R>, {success: true}>) => Promise<void>,
     ) => {
       if (message === VERSION_MISMATCH_ERROR) {
         const handleOverwrite = async () => {
@@ -99,7 +99,7 @@ export function useRetryAction<
   const actionHandler = useCallback(
     async (
       actionProps: T,
-      onSuccess?: (res: Extract<Awaited<R>, {error: false}>) => Promise<void>,
+      onSuccess?: (res: Extract<Awaited<R>, {success: true}>) => Promise<void>,
     ): Promise<void> => {
       try {
         setLoading(true);
