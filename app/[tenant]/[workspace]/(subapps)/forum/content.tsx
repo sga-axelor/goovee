@@ -5,6 +5,7 @@ import {useMemo} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -21,12 +22,14 @@ const Content = ({
   user,
   posts,
   pageInfo,
+  workspace,
 }: {
   memberGroups: Group[];
   nonMemberGroups: Group[];
   user: any;
   posts: any;
   pageInfo: any;
+  workspace: PortalWorkspace;
 }) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -48,7 +51,7 @@ const Content = ({
         <div className="hidden lg:block">
           <NavMenu items={MENU} onClick={handleMenuClick} />
         </div>
-        <HomePage />
+        <HomePage workspace={workspace} />
       </div>
     </ForumContext>
   );

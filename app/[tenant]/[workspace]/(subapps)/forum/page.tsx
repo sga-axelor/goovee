@@ -71,6 +71,7 @@ export default async function Page({
       user={user}
       posts={posts}
       pageInfo={pageInfo}
+      workspace={workspace}
     />
   );
 }

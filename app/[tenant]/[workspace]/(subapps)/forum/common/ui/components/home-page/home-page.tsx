@@ -16,6 +16,7 @@ import {i18n} from '@/lib/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {getImageURL} from '@/utils/image';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -38,7 +39,7 @@ import {ForumGroup, Group} from '@/subapps/forum/common/types/forum';
 import {fetchPosts} from '@/subapps/forum/common/action/action';
 import {useForum} from '@/subapps/forum/common/ui/context';
 
-export const HomePage = () => {
+export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   const {memberGroups, nonMemberGroups, user, selectedGroup, isMember} =
     useForum();
 
@@ -70,6 +71,10 @@ export const HomePage = () => {
     () => memberGroups?.map((group: any) => group.forumGroup),
     [memberGroups],
   );
+
+  const imageURL = workspace?.config?.forumHeroBgImage?.id
+    ? `url(${getImageURL(workspace.config.forumHeroBgImage.id)})`
+    : IMAGE_URL;
 
   const handleGroupSearch = (value: string) => {
     setSearchKey(value);
@@ -141,12 +146,21 @@ export const HomePage = () => {
   return (
     <div>
       <HeroSearch
-        title={selectedGroup?.name ?? BANNER_TITLES.forum}
-        description={
-          selectedGroup ? selectedGroup?.description : BANNER_DESCRIPTION
+        title={
+          selectedGroup?.name ??
+          (workspace?.config?.forumHeroTitle || i18n.get(BANNER_TITLES.forum))
         }
-        image={IMAGE_URL}
+        description={
+          selectedGroup?.description ??
+          (workspace?.config?.forumHeroDescription ||
+            i18n.get(BANNER_DESCRIPTION))
+        }
+        image={imageURL}
         groupImg={selectedGroup?.image?.id}
+        background={workspace?.config?.forumHeroOverlayColorSelect || 'default'}
+        blendMode={
+          workspace?.config?.forumHeroOverlayColorSelect ? 'overlay' : 'normal'
+        }
         renderSearch={!selectedGroup && renderSearch}
       />
       <div className="flex flex-col lg:flex-row gap-5 px-4 lg:px-[100px] py-6 w-full">

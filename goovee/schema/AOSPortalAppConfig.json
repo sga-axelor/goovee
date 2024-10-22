@@ -120,6 +120,23 @@
       "type": "ManyToOne",
       "name": "ticketHeroBgImage",
       "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "forumHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "forumHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "forumHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "forumHeroBgImage",
+      "target": "AOSMetaFile"
     }
   ]
 }
