@@ -1,14 +1,14 @@
 import {notFound} from 'next/navigation';
+import {getSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {findEventByID} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
+import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDetails} from '@/subapps/events/common/ui/components';
-import {getSession} from 'next-auth/react';
-import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
 
 export const metadata = {
   title: 'Event',
@@ -17,10 +17,8 @@ export const metadata = {
 
 export default async function Page({
   params,
-  searchParams,
 }: {
   params: {id: string; tenant: string; workspace: string};
-  searchParams: {success?: string};
 }) {
   const {id, tenant} = params;
 
@@ -44,13 +42,5 @@ export default async function Page({
     return notFound();
   }
 
-  const successMessage = searchParams.success === 'true';
-
-  return (
-    <EventDetails
-      eventDetails={eventDetails}
-      successMessage={successMessage}
-      workspace={workspace}
-    />
-  );
+  return <EventDetails eventDetails={eventDetails} workspace={workspace} />;
 }

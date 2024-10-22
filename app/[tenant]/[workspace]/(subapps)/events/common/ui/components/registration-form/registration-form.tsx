@@ -1,6 +1,6 @@
 'use client';
 
-import {useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -31,6 +31,7 @@ import {
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
+import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
 
 export const RegistrationForm = ({
   eventDetails,
@@ -193,7 +194,11 @@ export const RegistrationForm = ({
       });
 
       if (response.success) {
-        router.push(`${workspaceURI}/events/${eventDetails?.id}?success=true`);
+        toast({
+          variant: 'success',
+          title: i18n.get(SUCCESS_REGISTER_MESSAGE),
+        });
+        router.push(`${workspaceURI}/events/${eventDetails?.id}`);
       } else {
         toast({
           variant: 'destructive',
