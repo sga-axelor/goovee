@@ -89,6 +89,10 @@ export function TicketRelatedLinkForm({
           title: message,
         });
       }
+      toast({
+        variant: 'success',
+        title: i18n.get('Link created'),
+      });
       onSubmit();
       router.refresh();
     } catch (e) {
@@ -194,6 +198,10 @@ export function TicketChildLinkForm({
           title: message,
         });
       }
+      toast({
+        variant: 'success',
+        title: i18n.get('Link created'),
+      });
       onSubmit();
       router.refresh();
     } catch (e) {
@@ -279,6 +287,10 @@ export function TicketParentLinkForm({
           title: message,
         });
       }
+      toast({
+        variant: 'success',
+        title: i18n.get('Link created'),
+      });
       onSubmit();
       router.refresh();
     } catch (e) {

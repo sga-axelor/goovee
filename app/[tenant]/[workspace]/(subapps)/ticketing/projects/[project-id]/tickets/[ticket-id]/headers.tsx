@@ -1,6 +1,7 @@
 'use client';
 import {i18n} from '@/lib/i18n';
 import type {Cloned} from '@/types/util';
+import {useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
 import type {
   Category,
@@ -74,6 +75,8 @@ export function ChildTicketsHeader(props: {
     childrenIds,
   } = props;
 
+  const {toast} = useToast();
+
   return (
     <TicketLinkHeader
       title={i18n.get('Child tickets')}
@@ -87,7 +90,13 @@ export function ChildTicketsHeader(props: {
           userId={userId}
           parentId={ticketId.toString()}
           className="mt-10 text-left"
-          onSuccess={closeDialog}
+          onSuccess={() => {
+            toast({
+              variant: 'success',
+              title: i18n.get('Ticket created and linked'),
+            });
+            closeDialog();
+          }}
         />
       )}
       alertTitle={i18n.get('Link child ticket')}
