@@ -4,7 +4,7 @@ import {useToast} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
 
-import {ActionResponse} from '../actions';
+import type {ActionResponse} from '../actions';
 import {VERSION_MISMATCH_ERROR} from '../constants';
 
 export function useRetryAction<
