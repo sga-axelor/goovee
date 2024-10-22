@@ -240,7 +240,7 @@ export async function createTicket({
   return ticket;
 }
 
-export async function updateTicketViaWS({
+export async function updateTicketByWS({
   data,
   userId,
   workspaceId,

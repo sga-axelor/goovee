@@ -22,7 +22,7 @@ import {
   findTicketsBySearch,
   findTicketVersion,
   updateTicket,
-  updateTicketViaWS,
+  updateTicketByWS,
 } from '../orm/tickets';
 import {CreateTicketSchema, UpdateTicketSchema} from '../schema';
 import {ensureAuth} from '../utils/auth-helper';
@@ -110,7 +110,7 @@ export async function updateAssignment(
 
     const update =
       workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
-        ? updateTicketViaWS
+        ? updateTicketByWS
         : updateTicket;
 
     await update({
@@ -170,7 +170,7 @@ export async function closeTicket(
 
     const update =
       workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
-        ? updateTicketViaWS
+        ? updateTicketByWS
         : updateTicket;
 
     await update({
@@ -227,7 +227,7 @@ export async function cancelTicket(
 
     const update =
       workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
-        ? updateTicketViaWS
+        ? updateTicketByWS
         : updateTicket;
 
     await update({
