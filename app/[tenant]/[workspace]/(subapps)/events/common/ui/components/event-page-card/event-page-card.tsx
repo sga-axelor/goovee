@@ -36,15 +36,10 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
         </CardTitle>
         <EventDateCard
-          startDate={parseDate(
-            eventDetails?.eventStartDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
-          endDate={parseDate(
-            eventDetails?.eventEndDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
+          startDate={eventDetails?.eventStartDateTime}
+          endDate={eventDetails?.eventEndDateTime}
           registered={eventDetails?.eventAllowRegistration}
+          eventAllDay={eventDetails?.eventAllDay}
         />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
       </CardHeader>

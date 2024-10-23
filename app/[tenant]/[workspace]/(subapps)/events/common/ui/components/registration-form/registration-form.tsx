@@ -20,9 +20,6 @@ import {
   formatStudioFields,
 } from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
-import {DATE_FORMATS} from '@/constants';
-import {parseDate} from '@/utils/date';
-
 // ---- LOCAL IMPORTS ---- //
 import {
   EventCardBadges,
@@ -220,15 +217,10 @@ export const RegistrationForm = ({
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
         </CardTitle>
         <EventDateCard
-          startDate={parseDate(
-            eventDetails?.eventStartDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
-          endDate={parseDate(
-            eventDetails?.eventEndDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
+          startDate={eventDetails?.eventStartDateTime}
+          endDate={eventDetails?.eventEndDateTime}
           registered={eventDetails?.eventAllowRegistration}
+          eventAllDay={eventDetails?.eventAllDay}
         />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
         {eventDetails?.eventProduct?.salePrice && (

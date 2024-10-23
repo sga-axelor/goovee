@@ -53,10 +53,17 @@ export const EventCard = ({event}: EventCardProps) => {
             {`${parseDate(
               event.eventStartDateTime,
               DATE_FORMATS.full_month_day_year_12_hour,
-            )} ${i18n.get('to')} ${parseDate(
-              event.eventEndDateTime,
-              DATE_FORMATS.full_month_day_year_12_hour,
-            )}`}
+            )}
+            ${event.eventEndDateTime && !event.eventAllDay ? i18n.get('to') : ''} 
+             ${
+               event.eventEndDateTime && !event.eventAllDay
+                 ? parseDate(
+                     event.eventEndDateTime,
+                     DATE_FORMATS.full_month_day_year_12_hour,
+                   ) 
+                 : ''
+             }
+              `}
           </CardDescription>
           <EventCardBadges categories={event.eventCategorySet} />
         </CardHeader>
