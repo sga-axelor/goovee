@@ -8,7 +8,7 @@ import type {ID} from '@goovee/orm';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {STATUS_CHANGE_METHOD, VERSION_MISMATCH_ERROR} from '../constants';
+import {STATUS_CHANGE_METHOD} from '../constants';
 import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
 import type {TicketSearch} from '../orm/tickets';
 import {
@@ -26,6 +26,7 @@ import {
 } from '../orm/tickets';
 import {ensureAuth} from '../utils/auth-helper';
 import {CreateTicketSchema, UpdateTicketSchema} from '../utils/validators';
+import {handleError} from './helpers';
 import type {ActionConfig, ActionResponse, MutateProps} from './types';
 
 export type MutateResponse = {id: string; version: number};
@@ -74,13 +75,7 @@ export async function mutate(
       data: {id: ticket.id, version: ticket.version},
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -126,13 +121,7 @@ export async function updateAssignment(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -189,13 +178,7 @@ export async function closeTicket(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -246,13 +229,7 @@ export async function cancelTicket(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -281,13 +258,7 @@ export async function createRelatedLink(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -316,13 +287,7 @@ export async function createChildLink(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -346,13 +311,7 @@ export async function createParentLink(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -381,13 +340,7 @@ export async function deleteChildLink(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
@@ -416,13 +369,7 @@ export async function deleteParentLink(
       data: true,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 type DeleteRelatedLinkProps = {
@@ -450,13 +397,7 @@ export async function deleteRelatedLink(
       data: count,
     };
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.name === VERSION_MISMATCH_ERROR) {
-        return {error: true, message: e.name};
-      }
-      return {error: true, message: e.message};
-    }
-    throw e;
+    return handleError(e);
   }
 }
 
