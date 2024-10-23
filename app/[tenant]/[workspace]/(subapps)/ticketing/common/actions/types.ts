@@ -1,3 +1,4 @@
+import {MUTATE_TYPE} from '../constants';
 import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 
 export type MutateProps = {
@@ -5,11 +6,11 @@ export type MutateProps = {
   workspaceURI: string;
   action:
     | {
-        type: 'create';
+        type: typeof MUTATE_TYPE.CREATE;
         data: CreateTicketInfo;
       }
     | {
-        type: 'update';
+        type: typeof MUTATE_TYPE.UPDATE;
         data: UpdateTicketInfo;
       };
 };
@@ -24,6 +25,7 @@ export type SuccessResponse<T = any> = {
   message?: never;
   error?: never;
 };
+
 export type ErrorResponse = {
   error: true;
   data?: never;

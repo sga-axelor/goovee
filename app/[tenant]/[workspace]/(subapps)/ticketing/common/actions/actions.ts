@@ -8,7 +8,7 @@ import type {ID} from '@goovee/orm';
 import {revalidatePath} from 'next/cache';
 
 // ---- LOCAL IMPORTS ---- //
-import {STATUS_CHANGE_METHOD} from '../constants';
+import {MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
 import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
 import type {TicketSearch} from '../orm/tickets';
 import {
@@ -42,7 +42,7 @@ export async function mutate(
 
   try {
     let ticket;
-    if (action.type === 'create') {
+    if (action.type === MUTATE_TYPE.CREATE) {
       const createData = CreateTicketSchema.parse(action.data);
       ticket = await createTicket({
         data: createData,

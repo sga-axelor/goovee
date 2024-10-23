@@ -39,3 +39,8 @@ export const STATUS_CHANGE_METHOD = {
 
 export const DEFAULT_SORT = 'updatedOn DESC';
 export const COMPANY = 'company';
+
+export const MUTATE_TYPE = {
+  CREATE: 'create',
+  UPDATE: 'update',
+} as const;
