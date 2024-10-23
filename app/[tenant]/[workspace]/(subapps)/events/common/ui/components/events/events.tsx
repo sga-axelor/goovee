@@ -169,15 +169,17 @@ export const Events = ({
             </>
           )}
           <div className="w-full mt-10 flex items-center justify-center ml-auto">
-            <Pagination
-              page={page}
-              pages={pages}
-              disablePrev={!hasPrev}
-              disableNext={!hasNext}
-              onPrev={handlePreviousPage}
-              onNext={handleNextPage}
-              onPage={handlePage}
-            />
+            {pages > 1 && (
+              <Pagination
+                page={page}
+                pages={pages}
+                disablePrev={!hasPrev}
+                disableNext={!hasNext}
+                onPrev={handlePreviousPage}
+                onNext={handleNextPage}
+                onPage={handlePage}
+              />
+            )}
           </div>
         </div>
       </div>
