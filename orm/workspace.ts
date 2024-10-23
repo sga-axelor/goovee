@@ -51,6 +51,18 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   forumHeroDescription: true,
   forumHeroOverlayColorSelect: true,
   forumHeroBgImage: {id: true},
+  eventHeroTitle: true,
+  eventHeroDescription: true,
+  eventHeroOverlayColorSelect: true,
+  eventHeroBgImage: {id: true},
+  newsHeroTitle: true,
+  newsHeroDescription: true,
+  newsHeroOverlayColorSelect: true,
+  newsHeroBgImage: {id: true},
+  resourcesHeroTitle: true,
+  resourcesHeroDescription: true,
+  resourcesHeroOverlayColorSelect: true,
+  resourcesHeroBgImage: {id: true},
   allowOnlinePaymentForEcommerce: true,
   carouselList: {
     select: {

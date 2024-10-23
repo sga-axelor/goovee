@@ -76,6 +76,7 @@ export default async function Page({
           latestNews={latestNews}
           featuredNews={homePageFeaturedNews}
           categories={parentCategories}
+          workspace={workspace}
         />
       </div>
     );

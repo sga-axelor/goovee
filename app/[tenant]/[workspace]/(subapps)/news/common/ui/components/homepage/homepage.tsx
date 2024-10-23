@@ -8,6 +8,7 @@ import {i18n} from '@/lib/i18n';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {HeroSearch, Search} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
+import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -32,13 +33,19 @@ export const Homepage = ({
   latestNews,
   featuredNews,
   categories,
+  workspace,
 }: {
   latestNews: any;
   featuredNews: any;
   categories: any;
+  workspace: PortalWorkspace;
 }) => {
   const router = useRouter();
   const {workspaceURI, workspaceURL} = useWorkspace();
+
+  const imageURL = workspace?.config?.newsHeroBgImage?.id
+    ? `url(${getImageURL(workspace.config.newsHeroBgImage.id)})`
+    : IMAGE_URL;
 
   const handleClick = (slug: string) => {
     router.push(`${workspaceURI}/news/article/${slug}`);
@@ -56,9 +63,15 @@ export const Homepage = ({
   return (
     <div className="h-full flex flex-col">
       <HeroSearch
-        title={BANNER_TITLES.news}
-        description={BANNER_DESCRIPTION}
-        image={IMAGE_URL}
+        title={workspace?.config?.newsHeroTitle || i18n.get(BANNER_TITLES.news)}
+        description={
+          workspace?.config?.newsHeroDescription || i18n.get(BANNER_DESCRIPTION)
+        }
+        image={imageURL}
+        background={workspace?.config?.newsHeroOverlayColorSelect || 'default'}
+        blendMode={
+          workspace?.config?.newsHeroOverlayColorSelect ? 'overlay' : 'normal'
+        }
         renderSearch={renderSearch}
       />
       <div

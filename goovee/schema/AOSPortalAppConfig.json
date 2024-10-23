@@ -137,6 +137,57 @@
       "type": "ManyToOne",
       "name": "forumHeroBgImage",
       "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "eventHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "eventHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "eventHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "eventHeroBgImage",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "newsHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "newsHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "newsHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "newsHeroBgImage",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "resourcesHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "resourcesHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "resourcesHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "resourcesHeroBgImage",
+      "target": "AOSMetaFile"
     }
   ]
 }

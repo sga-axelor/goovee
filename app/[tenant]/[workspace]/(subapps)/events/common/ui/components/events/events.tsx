@@ -17,6 +17,7 @@ import {
 import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/lib/i18n';
 import {PortalWorkspace} from '@/types';
+import {getImageURL} from '@/utils/image';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
@@ -48,6 +49,10 @@ export const Events = ({
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
+
+  const imageURL = workspace?.config?.eventHeroBgImage?.id
+    ? `url(${getImageURL(workspace.config.eventHeroBgImage.id)})`
+    : IMAGE_URL;
 
   const updateCateg = (category: Category) => {
     const updatedCategories = selectedCategory.some(
@@ -111,11 +116,21 @@ export const Events = ({
   return (
     <>
       <HeroSearch
-        title={BANNER_TITLES.events}
-        description={BANNER_DESCRIPTION}
-        image={IMAGE_URL}
+        title={
+          workspace?.config?.eventHeroTitle || i18n.get(BANNER_TITLES.events)
+        }
+        description={
+          workspace?.config?.eventHeroDescription ||
+          i18n.get(BANNER_DESCRIPTION)
+        }
+        image={imageURL}
+        background={workspace?.config?.eventHeroOverlayColorSelect || 'default'}
+        blendMode={
+          workspace?.config?.eventHeroOverlayColorSelect ? 'overlay' : 'normal'
+        }
         renderSearch={renderSearch}
       />
+
       <div className="container py-6 px-4 overflow-hidden flex lg:flex-row flex-col space-y-6 lg:space-y-0 lg:gap-x-6 mb-16">
         <EventSelector
           date={date}

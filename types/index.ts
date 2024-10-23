@@ -84,6 +84,24 @@ export interface PortalAppConfig extends Model {
     id: string;
   };
   forumHeroOverlayColorSelect: OverlayColor;
+  eventHeroTitle: string;
+  eventHeroDescription: string;
+  eventHeroOverlayColorSelect: OverlayColor;
+  eventHeroBgImage: {
+    id: string;
+  };
+  newsHeroTitle: string;
+  newsHeroDescription: string;
+  newsHeroOverlayColorSelect: OverlayColor;
+  newsHeroBgImage: {
+    id: string;
+  };
+  resourcesHeroTitle: string;
+  resourcesHeroDescription: string;
+  resourcesHeroOverlayColorSelect: OverlayColor;
+  resourcesHeroBgImage: {
+    id: string;
+  };
 }
 
 export interface PortalApp extends Model {
