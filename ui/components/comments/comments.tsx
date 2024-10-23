@@ -62,12 +62,13 @@ export function Comments({
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
-  const {comments, total, loadMore, onCreate} = useComments({
-    model: {id: record.id},
-    modelType,
-    sortBy,
-    seeMore,
-  });
+  const {comments, total, totalCommentThreadCount, loadMore, onCreate} =
+    useComments({
+      model: {id: record.id},
+      modelType,
+      sortBy,
+      seeMore,
+    });
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;
   const isDisabled = !isLoggedIn || disabled;
@@ -103,13 +104,13 @@ export function Comments({
           {/* TODO: Add reactions preview */}
           <div />
           <div
-            className={`flex gap-2 items-center ${total ? 'cursor-pointer' : 'cursor-default'}`}
+            className={`flex gap-2 items-center ${totalCommentThreadCount ? 'cursor-pointer' : 'cursor-default'}`}
             onClick={toggleComments}>
             <MdOutlineModeComment className="w-6 h-6" />
-            {total > 0 && (
+            {totalCommentThreadCount > 0 && (
               <span className="text-sm">
-                {total}{' '}
-                {total > 1
+                {totalCommentThreadCount}{' '}
+                {totalCommentThreadCount > 1
                   ? i18n.get(COMMENTS.toLowerCase())
                   : i18n.get(COMMENT.toLowerCase())}
               </span>
