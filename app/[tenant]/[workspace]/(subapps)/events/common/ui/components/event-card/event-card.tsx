@@ -60,7 +60,7 @@ export const EventCard = ({event}: EventCardProps) => {
                  ? parseDate(
                      event.eventEndDateTime,
                      DATE_FORMATS.full_month_day_year_12_hour,
-                   ) 
+                   )
                  : ''
              }
               `}

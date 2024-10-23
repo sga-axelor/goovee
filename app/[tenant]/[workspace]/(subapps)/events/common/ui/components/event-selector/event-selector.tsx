@@ -32,16 +32,16 @@ export const EventSelector = ({
   };
 
   return (
-    <Card className="p-4 border-none shadow-none space-y-4 lg:min-w-96 h-fit rounded-2xl">
+    <Card className="p-4 border-none shadow-none  flex flex-col gap-2 md:flex-row  lg:flex-col  lg:min-w-96 h-fit rounded-2xl">
       <Calendar
         workspace={workspace}
         date={date}
         mode="single"
         selected={date}
         onSelect={handleSelect}
-        className="flex items-center justify-center mx-auto max-w-[12.5rem] xs:max-w-none"
+        className="flex items-center justify-center mx-auto w-full md:flex-1"
       />
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 md:flex-1">
         {categories.map((category: any) => {
           const isActive = selectedCategories.includes(category.id);
           const {
@@ -54,7 +54,7 @@ export const EventSelector = ({
           return (
             <div
               onClick={() => selectCategory(category)}
-              className="p-2 rounded-lg text-sm font-normal text-start ease-out cursor-pointer"
+              className="p-2 rounded-lg text-sm font-normal lg:font-medium text-start ease-out cursor-pointer"
               style={{backgroundColor, color: textColor}}
               onMouseEnter={e => {
                 e.currentTarget.style.backgroundColor = hoverBackgroundColor;
