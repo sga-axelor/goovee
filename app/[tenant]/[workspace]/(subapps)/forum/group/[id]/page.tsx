@@ -88,6 +88,7 @@ export default async function Page({
       selectedGroup={selectedGroup}
       pageInfo={pageInfo}
       isMember={isMember}
+      workspace={workspace}
     />
   );
 }

@@ -4,6 +4,8 @@ import {useMemo} from 'react';
 
 // ---- CORE IMPORT ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import { SUBAPP_CODES } from '@/constants';
+import { PortalWorkspace } from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {HomePage, NavMenu} from '@/subapps/forum/common/ui/components';
@@ -19,6 +21,7 @@ interface groupContentProps {
   selectedGroup: ForumGroup;
   pageInfo: any;
   isMember: boolean;
+  workspace:PortalWorkspace
 }
 
 const Content = ({
@@ -29,6 +32,7 @@ const Content = ({
   selectedGroup,
   pageInfo,
   isMember,
+  workspace
 }: groupContentProps) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -55,7 +59,7 @@ const Content = ({
   );
 
   const handleMenuClick = (link: string) => {
-    router.push(`${workspaceURI}/forum/${link}`);
+    router.push(`${workspaceURI}/${SUBAPP_CODES.forum}/${link}`);
   };
 
   return (
@@ -64,7 +68,7 @@ const Content = ({
         <div className="hidden lg:block">
           <NavMenu items={MENU} onClick={handleMenuClick} />
         </div>
-        <HomePage />
+        <HomePage workspace={workspace} />
       </div>
     </ForumContext>
   );

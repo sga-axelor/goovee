@@ -6,6 +6,7 @@ import {useMemo} from 'react';
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {PortalWorkspace} from '@/types';
+import { SUBAPP_CODES } from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -42,7 +43,7 @@ const Content = ({
   );
 
   const handleMenuClick = (link: string) => {
-    router.push(`${workspaceURI}/forum/${link}`);
+    router.push(`${workspaceURI}/${SUBAPP_CODES.forum}/${link}`);
   };
 
   return (

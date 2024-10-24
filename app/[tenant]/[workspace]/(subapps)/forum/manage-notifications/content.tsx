@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components';
-import {ORDER_BY} from '@/constants';
+import {ORDER_BY, SUBAPP_CODES} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
@@ -40,7 +40,7 @@ const Content = ({userId}: {userId: string}) => {
   const router = useRouter();
   const {workspaceURI, workspaceID} = useWorkspace();
   const handleMenuClick = (link: string) => {
-    router.push(`${workspaceURI}/forum/${link}`);
+    router.push(`${workspaceURI}/${SUBAPP_CODES.forum}/${link}`);
   };
   const isLoggedIn = userId;
 

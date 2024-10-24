@@ -26,6 +26,7 @@ import {
 import {i18n} from '@/lib/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
+import { SUBAPP_CODES } from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -73,7 +74,7 @@ export const GroupActionList = ({
     });
 
     if (response.success) {
-      router.push(`${workspaceURI}/forum`);
+      router.push(`${workspaceURI}/${SUBAPP_CODES.forum}`);
       router.refresh();
     } else {
       toast({
@@ -91,7 +92,7 @@ export const GroupActionList = ({
       workspaceURL,
     });
     if (response.success) {
-      router.push(`${workspaceURI}/forum`);
+      router.push(`${workspaceURI}/${SUBAPP_CODES.forum}`);
       router.refresh();
     } else {
       toast({
@@ -106,7 +107,7 @@ export const GroupActionList = ({
     const response = await joinGroup({groupID: id, userId, workspaceURL});
 
     if (response.success) {
-      router.push(`${workspaceURI}/forum`);
+      router.push(`${workspaceURI}/${SUBAPP_CODES.forum}`);
       router.refresh();
     } else {
       toast({
@@ -129,7 +130,7 @@ export const GroupActionList = ({
     });
 
     if (response.success) {
-      router.push(`${workspaceURI}/forum`);
+      router.push(`${workspaceURI}/${SUBAPP_CODES.forum}`);
       router.refresh();
     } else {
       toast({
@@ -140,7 +141,7 @@ export const GroupActionList = ({
   };
 
   const handlePath = (id: string) => {
-    router.push(`${workspaceURI}/forum/group/${id}`);
+    router.push(`${workspaceURI}/${SUBAPP_CODES.forum}/group/${id}`);
   };
 
   return (

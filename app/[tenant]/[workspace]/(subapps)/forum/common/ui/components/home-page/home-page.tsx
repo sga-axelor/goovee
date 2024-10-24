@@ -10,6 +10,7 @@ import {
   BANNER_DESCRIPTION,
   BANNER_TITLES,
   IMAGE_URL,
+  SUBAPP_CODES,
   URL_PARAMS,
 } from '@/constants';
 import {i18n} from '@/lib/i18n';
@@ -140,7 +141,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   );
 
   const handleTabClick = (type: string) => {
-    router.push(`${workspaceURI}/forum?type=${type}`);
+    router.push(`${workspaceURI}/${SUBAPP_CODES.forum}?type=${type}`);
   };
 
   return (
