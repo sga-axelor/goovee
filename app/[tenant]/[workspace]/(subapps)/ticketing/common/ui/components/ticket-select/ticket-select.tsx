@@ -20,7 +20,7 @@ import {debounce} from 'lodash';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {searchTickets} from '../../../actions';
-import type {TicketSearch} from '../../../orm/tickets';
+import type {TicketSearch} from '../../../types';
 
 const INIT_SEARCH_VALUE = '';
 export function TicketSelect({

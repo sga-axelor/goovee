@@ -24,12 +24,12 @@ import {useMemo, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
-import type {TicketLink} from '../../../../common/orm/tickets';
 import {
   createChildLink,
   createParentLink,
   createRelatedLink,
 } from '../../../actions';
+import type {TicketLink} from '../../../types';
 import {
   ChildTicketSchema,
   RelatedTicketSchema,

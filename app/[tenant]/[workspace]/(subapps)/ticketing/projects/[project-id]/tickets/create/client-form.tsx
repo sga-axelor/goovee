@@ -1,14 +1,14 @@
 'use client';
 
 import type {ID} from '@goovee/orm';
+import {useRouter} from 'next/navigation';
+import {useCallback} from 'react';
 import type {
   Category,
   ContactPartner,
   Priority,
-} from '../../../../common/orm/projects';
+} from '../../../../common/types';
 import {TicketForm} from '../../../../common/ui/components/ticket-form';
-import {useRouter} from 'next/navigation';
-import {useCallback} from 'react';
 
 export function Form(props: {
   projectId: string;

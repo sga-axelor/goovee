@@ -9,6 +9,14 @@ import type {ID} from '@goovee/orm';
 import type {AuthProps, QueryProps} from './helpers';
 import {getProjectAccessFilter} from './helpers';
 import {getAllTicketCount} from './tickets';
+import {
+  Category,
+  ClientPartner,
+  Company,
+  ContactPartner,
+  Priority,
+  Status,
+} from '../types';
 
 export async function findProjects(props: QueryProps<AOSProject> & AuthProps) {
   const {workspaceId, userId, where, take, orderBy, skip} = props;
@@ -48,8 +56,7 @@ export async function findProject(id: ID, workspaceId: ID, userId: ID) {
   return project;
 }
 
-export type Category = Awaited<ReturnType<typeof findTicketCategories>>[number];
-export async function findTicketCategories(projectId: ID) {
+export async function findTicketCategories(projectId: ID): Promise<Category[]> {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
@@ -60,8 +67,7 @@ export async function findTicketCategories(projectId: ID) {
   return project?.projectTaskCategorySet ?? [];
 }
 
-export type Priority = Awaited<ReturnType<typeof findTicketPriorities>>[number];
-export async function findTicketPriorities(projectId: ID) {
+export async function findTicketPriorities(projectId: ID): Promise<Priority[]> {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
@@ -72,8 +78,7 @@ export async function findTicketPriorities(projectId: ID) {
   return project?.projectTaskPrioritySet ?? [];
 }
 
-export type Status = Awaited<ReturnType<typeof findTicketStatuses>>[number];
-export async function findTicketStatuses(projectId: ID) {
+export async function findTicketStatuses(projectId: ID): Promise<Status[]> {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
@@ -99,8 +104,7 @@ export async function findTicketStatuses(projectId: ID) {
   return project?.projectTaskStatusSet ?? [];
 }
 
-export type Company = NonNullable<Awaited<ReturnType<typeof findCompany>>>;
-export async function findCompany(projectId: ID) {
+export async function findCompany(projectId: ID): Promise<Company | undefined> {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
@@ -109,10 +113,9 @@ export async function findCompany(projectId: ID) {
   return project?.company;
 }
 
-export type ClientPartner = NonNullable<
-  Awaited<ReturnType<typeof findClientPartner>>
->;
-export async function findClientPartner(projectId: ID) {
+export async function findClientPartner(
+  projectId: ID,
+): Promise<ClientPartner | undefined> {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
@@ -141,10 +144,9 @@ export async function findTicketCancelledStatus(): Promise<string | undefined> {
   return projectAppConfig?.cancelledTaskStatus?.id;
 }
 
-export type ContactPartner = Awaited<
-  ReturnType<typeof findContactPartners>
->[number];
-export async function findContactPartners(projectId: ID) {
+export async function findContactPartners(
+  projectId: ID,
+): Promise<ContactPartner[]> {
   const client = await getClient();
   const project = await client.aOSProject.findOne({
     where: {id: projectId},

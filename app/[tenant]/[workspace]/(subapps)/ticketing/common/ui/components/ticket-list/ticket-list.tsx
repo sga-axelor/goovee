@@ -10,7 +10,7 @@ import type {
   ParentTicket,
   TicketLink,
   TicketListTicket,
-} from '../../../orm/tickets';
+} from '../../../types';
 import {TableHeads, TableRows} from '../table-elements';
 import {
   childColumns,

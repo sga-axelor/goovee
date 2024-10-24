@@ -10,7 +10,7 @@ import {revalidatePath} from 'next/cache';
 // ---- LOCAL IMPORTS ---- //
 import {MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
 import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
-import type {TicketSearch} from '../orm/tickets';
+import type {TicketSearch} from '../types';
 import {
   createChildTicketLink,
   createParentTicketLink,

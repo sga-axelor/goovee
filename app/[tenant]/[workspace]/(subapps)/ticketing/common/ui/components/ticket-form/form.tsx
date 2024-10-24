@@ -28,7 +28,7 @@ import {useForm} from 'react-hook-form';
 // ---- LOCAL IMPORT ---- //
 import type {MutateProps} from '../../../actions';
 import {mutate} from '../../../actions';
-import type {Category, ContactPartner, Priority} from '../../../orm/projects';
+import type {Category, ContactPartner, Priority} from '../../../types';
 import type {TicketInfo} from '../../../utils/validators';
 import {TicketFormSchema} from '../../../utils/validators';
 

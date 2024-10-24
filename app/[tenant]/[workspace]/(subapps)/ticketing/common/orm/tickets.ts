@@ -22,6 +22,15 @@ import {
 import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 import type {QueryProps} from './helpers';
 import {getProjectAccessFilter, getTicketAccessFilter} from './helpers';
+import {
+  ChildTicket,
+  LinkType,
+  ParentTicket,
+  Ticket,
+  TicketLink,
+  TicketListTicket,
+  TicketSearch,
+} from '../types';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
@@ -544,8 +553,9 @@ export async function getResolvedTicketCount({
   return Number(count);
 }
 
-export type TicketListTicket = Awaited<ReturnType<typeof findTickets>>[number];
-export async function findTickets(props: TicketProps<AOSProjectTask>) {
+export async function findTickets(
+  props: TicketProps<AOSProjectTask>,
+): Promise<TicketListTicket[]> {
   const {projectId, take, skip, where, orderBy} = props;
   const client = await getClient();
   const tickets = await client.aOSProjectTask.find({
@@ -577,10 +587,9 @@ export async function findTickets(props: TicketProps<AOSProjectTask>) {
   return tickets;
 }
 
-export type TicketLink = NonNullable<
-  Awaited<ReturnType<typeof findRelatedTicketLinks>>
->[number];
-export async function findRelatedTicketLinks(ticketId: ID) {
+export async function findRelatedTicketLinks(
+  ticketId: ID,
+): Promise<TicketLink[] | undefined> {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {id: ticketId},
@@ -611,8 +620,7 @@ export async function findRelatedTicketLinks(ticketId: ID) {
   return ticket?.projectTaskLinkList;
 }
 
-export type ChildTicket = Awaited<ReturnType<typeof findChildTickets>>[number];
-export async function findChildTickets(ticketId: ID) {
+export async function findChildTickets(ticketId: ID): Promise<ChildTicket[]> {
   const client = await getClient();
   const tickets = await client.aOSProjectTask.find({
     where: {
@@ -640,10 +648,9 @@ export async function findChildTickets(ticketId: ID) {
   return tickets;
 }
 
-export type ParentTicket = NonNullable<
-  Awaited<ReturnType<typeof findParentTicket>>
->;
-export async function findParentTicket(ticketId: ID) {
+export async function findParentTicket(
+  ticketId: ID,
+): Promise<ParentTicket | undefined> {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
@@ -671,14 +678,13 @@ export async function findParentTicket(ticketId: ID) {
   return ticket?.parentTask;
 }
 
-export type Ticket = NonNullable<Awaited<ReturnType<typeof findTicket>>>;
 export async function findTicket({
   ticketId,
   projectId,
 }: {
   ticketId: ID;
   projectId: ID;
-}) {
+}): Promise<Ticket | null> {
   const client = await getClient();
   const ticket = await client.aOSProjectTask.findOne({
     where: {
@@ -728,17 +734,13 @@ export async function findTicketVersion(ticketId: ID): Promise<number> {
   return ticket.version;
 }
 
-export type TicketSearch = Awaited<
-  ReturnType<typeof findTicketsBySearch>
->[number];
-
 export async function findTicketsBySearch(props: {
   search?: string;
   userId: ID;
   workspaceId: ID;
   projectId?: ID;
   excludeList?: ID[];
-}) {
+}): Promise<TicketSearch[]> {
   const {search, userId, workspaceId, projectId, excludeList} = props;
   const client = await getClient();
   const tickets = await client.aOSProjectTask.find({
@@ -1000,8 +1002,7 @@ export async function deleteParentTicketLink({
   return ticket;
 }
 
-export type LinkType = Awaited<ReturnType<typeof findTicketLinkTypes>>[number];
-export async function findTicketLinkTypes(projectId?: ID) {
+export async function findTicketLinkTypes(projectId?: ID): Promise<LinkType[]> {
   const client = await getClient();
   if (projectId) {
     const project = await client.aOSProject.findOne({

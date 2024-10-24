@@ -54,9 +54,9 @@ import {useRetryAction} from '../../../hooks';
 import type {
   ContactPartner,
   Category as TCategory,
+  Ticket,
   Priority as TPriority,
-} from '../../../orm/projects';
-import type {Ticket} from '../../../orm/tickets';
+} from '../../../types';
 import {formatDate, getProfilePic, isWithProvider} from '../../../utils';
 import type {TicketInfo} from '../../../utils/validators';
 import {TicketFormSchema} from '../../../utils/validators';

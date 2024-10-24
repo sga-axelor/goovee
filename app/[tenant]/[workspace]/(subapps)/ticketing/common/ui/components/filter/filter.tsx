@@ -42,7 +42,7 @@ import type {
   ContactPartner,
   Priority,
   Status,
-} from '../../../orm/projects';
+} from '../../../types';
 import {SearchParams} from '../../../types/search-param';
 import {
   EncodedFilter,

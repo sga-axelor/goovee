@@ -5,7 +5,7 @@ import type {
   ParentTicket,
   TicketLink,
   TicketListTicket,
-} from '../../../orm/tickets';
+} from '../../../types';
 import {formatDate, isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 import type {Column} from '../table-elements';

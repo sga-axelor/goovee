@@ -21,7 +21,7 @@ import type {ChangeEvent} from 'react';
 import {useCallback, useMemo, useRef, useState} from 'react';
 
 import {searchTickets} from '../../common/actions';
-import type {TicketSearch} from '../../common/orm/tickets';
+import type {TicketSearch} from '../../common/types';
 
 export function Search({
   projectId,

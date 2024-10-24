@@ -24,18 +24,12 @@ import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
 import {Skeleton} from '@/ui/components/skeleton';
-import type {
-  Category,
-  ContactPartner,
-  Priority,
-} from '../../../../common/orm/projects';
 import {
   findContactPartners,
   findTicketCategories,
   findTicketPriorities,
   findTicketStatuses,
 } from '../../../../common/orm/projects';
-import type {ParentTicket} from '../../../../common/orm/tickets';
 import {
   findChildTicketIds,
   findChildTickets,
@@ -45,6 +39,12 @@ import {
   findTicket,
   findTicketLinkTypes,
 } from '../../../../common/orm/tickets';
+import type {
+  Category,
+  ContactPartner,
+  ParentTicket,
+  Priority,
+} from '../../../../common/types';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
 import {
   ChildTicketList,

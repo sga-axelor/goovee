@@ -7,8 +7,8 @@ import type {
   Category,
   ContactPartner,
   Priority,
-} from '../../../../common/orm/projects';
-import type {TicketLink} from '../../../../common/orm/tickets';
+  TicketLink,
+} from '../../../../common/types';
 import {TicketForm} from '../../../../common/ui/components/ticket-form';
 import {
   TicketChildLinkForm,
