@@ -6,7 +6,7 @@ import {useMemo} from 'react';
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {PortalWorkspace} from '@/types';
-import { SUBAPP_CODES } from '@/constants';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {

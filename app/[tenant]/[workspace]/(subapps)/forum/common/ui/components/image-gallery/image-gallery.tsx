@@ -8,10 +8,10 @@ import {getImageURL} from '@/utils/image';
 // ---- LOCAL IMPORTS ---- //
 import {ThreadPopup} from '@/subapps/forum/common/ui/components';
 import type {Post} from '@/subapps/forum/common/types/forum';
-import { MAX_IMAGES_BEFORE_OVERLAY } from '@/subapps/forum/common/constants';
+import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
 
 export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
-const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
+  const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
 
   const [openPopUp, setOpenPopUp] = useState(false);
 

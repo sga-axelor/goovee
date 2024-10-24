@@ -69,7 +69,8 @@ interface CreatePostProps {
 enum ModalType {
   None = 'none',
   Image = 'image',
-  File = 'file'}
+  File = 'file',
+}
 
 export const CreatePost = ({
   groups,

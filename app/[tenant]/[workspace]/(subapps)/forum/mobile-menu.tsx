@@ -15,7 +15,7 @@ import {Sheet, SheetContent} from '@/ui/components/sheet';
 import {Portal} from '@/ui/components';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import { SUBAPP_CODES } from '@/constants';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';

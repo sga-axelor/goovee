@@ -6,8 +6,8 @@ import Image from 'next/image';
 // ---- CORE IMPORTS ---- //
 import {MetaFile} from '@/types';
 import {getImageURL} from '@/utils/image';
-import { DynamicIcon } from '@/ui/components';
-import { getFileTypeIcon, getIconColor } from '@/utils/files';
+import {DynamicIcon} from '@/ui/components';
+import {getFileTypeIcon, getIconColor} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {findMedia} from '@/subapps/forum/common/action/action';

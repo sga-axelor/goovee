@@ -10,7 +10,9 @@ export const ThreadHeader = ({title, image}: {title: string; image: any}) => {
       <Avatar className="rounded-lg h-6 w-6">
         <AvatarImage src={getImageURL(image?.id)} />
       </Avatar>
-      <p className="font-normal text-xs leading-[0.875rem] line-clamp-1">{title}</p>
+      <p className="font-normal text-xs leading-[0.875rem] line-clamp-1">
+        {title}
+      </p>
     </div>
   );
 };

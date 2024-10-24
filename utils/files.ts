@@ -33,7 +33,6 @@ export function parseFormData(formData: FormData) {
   return values;
 }
 
-
 export function getFileTypeIcon(fileType: string) {
   if (fileType === null || fileType === undefined) {
     return 'md-Web';

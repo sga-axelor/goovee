@@ -4,8 +4,8 @@ import {useMemo} from 'react';
 
 // ---- CORE IMPORT ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import { SUBAPP_CODES } from '@/constants';
-import { PortalWorkspace } from '@/types';
+import {SUBAPP_CODES} from '@/constants';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {HomePage, NavMenu} from '@/subapps/forum/common/ui/components';
@@ -21,7 +21,7 @@ interface groupContentProps {
   selectedGroup: ForumGroup;
   pageInfo: any;
   isMember: boolean;
-  workspace:PortalWorkspace
+  workspace: PortalWorkspace;
 }
 
 const Content = ({
@@ -32,7 +32,7 @@ const Content = ({
   selectedGroup,
   pageInfo,
   isMember,
-  workspace
+  workspace,
 }: groupContentProps) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
