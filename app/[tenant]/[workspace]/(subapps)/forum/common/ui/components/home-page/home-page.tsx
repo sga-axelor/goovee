@@ -74,7 +74,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   );
 
   const imageURL = workspace?.config?.forumHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.forumHeroBgImage.id)})`
+    ? `url(${getImageURL(workspace.config?.forumHeroBgImage?.id)})`
     : IMAGE_URL;
 
   const handleGroupSearch = (value: string) => {
