@@ -1,4 +1,5 @@
 'use client';
+
 import React, {useRef, useState} from 'react';
 import Image from 'next/image';
 import {
@@ -65,7 +66,10 @@ interface CreatePostProps {
   onClose: () => void;
 }
 
-type ModalType = 'none' | 'image' | 'file';
+enum ModalType {
+  None = 'none',
+  Image = 'image',
+  File = 'file'}
 
 export const CreatePost = ({
   groups,
@@ -77,7 +81,7 @@ export const CreatePost = ({
     images: ImageItem[];
     file?: any;
   }>({images: []});
-  const [modalOpen, setModalOpen] = useState<ModalType>('none');
+  const [modalOpen, setModalOpen] = useState<ModalType>(ModalType.None);
   const [loading, setLoading] = useState(false);
 
   const {toast} = useToast();
@@ -86,8 +90,8 @@ export const CreatePost = ({
   const formRef = useRef<HTMLFormElement>(null);
 
   const formSchema = z.object({
-    title: z.string().min(1, {message: 'Title is required'}),
-    groupId: z.string().min(1, {message: 'Group is required'}),
+    title: z.string().min(1, {message: i18n.get('Title is required')}),
+    groupId: z.string().min(1, {message: i18n.get('Group is required')}),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -99,7 +103,7 @@ export const CreatePost = ({
   });
 
   const handleOpen = (type: ModalType) => setModalOpen(type);
-  const handleClose = () => setModalOpen('none');
+  const handleClose = () => setModalOpen(ModalType.None);
 
   const handleContentChange = (text: string) => {
     setEditorContent(text);
@@ -256,7 +260,7 @@ export const CreatePost = ({
                     <div className="flex justify-end">
                       <MdOutlineEdit
                         className="w-6 h-6"
-                        onClick={() => handleOpen('image')}
+                        onClick={() => handleOpen(ModalType.Image)}
                       />
                     </div>
                     <ImagePreviewer images={attachments.images} />
@@ -266,7 +270,7 @@ export const CreatePost = ({
                     <div className="flex justify-end">
                       <MdOutlineEdit
                         className="w-6 h-6"
-                        onClick={() => handleOpen('file')}
+                        onClick={() => handleOpen(ModalType.File)}
                       />
                     </div>
                     <FilePreviewer file={attachments.file.file} />
@@ -275,10 +279,12 @@ export const CreatePost = ({
                   <>
                     <div
                       className="w-6 h-6"
-                      onClick={() => handleOpen('image')}>
+                      onClick={() => handleOpen(ModalType.Image)}>
                       <MdOutlineImage className="w-full h-full cursor-pointer" />
                     </div>
-                    <div className="w-6 h-6" onClick={() => handleOpen('file')}>
+                    <div
+                      className="w-6 h-6"
+                      onClick={() => handleOpen(ModalType.File)}>
                       <MdOutlineUploadFile className="w-full h-full cursor-pointer " />
                     </div>
                   </>
@@ -295,18 +301,18 @@ export const CreatePost = ({
         </form>
       </Form>
 
-      {modalOpen === 'image' && (
+      {modalOpen === ModalType.Image && (
         <ImageUploader
           initialValue={attachments.images}
-          open={modalOpen === 'image'}
+          open={modalOpen === ModalType.Image}
           onUpload={handleImageUpload}
           handleClose={handleClose}
         />
       )}
 
-      {modalOpen === 'file' && (
+      {modalOpen === ModalType.File && (
         <FileUploader
-          open={modalOpen === 'file'}
+          open={modalOpen === ModalType.File}
           initialValue={attachments.file}
           onUpload={handleFileUpload}
           handleClose={handleClose}
