@@ -162,3 +162,5 @@ export const GROUPS_ORDER_BY = {
     name: ORDER_BY.ASC,
   },
 };
+
+export const MAX_IMAGES_BEFORE_OVERLAY = 3;

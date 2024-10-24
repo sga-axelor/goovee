@@ -2,6 +2,9 @@
 
 import React, {useEffect, useState} from 'react';
 
+// ---- LOCAL IMPORTS ---- //
+import { MAX_IMAGES_BEFORE_OVERLAY } from '@/subapps/forum/common/constants';
+
 interface ImageItem {
   file: File;
   altText: string;
@@ -33,7 +36,8 @@ export const ImagePreviewer: React.FC<ImagePreviewerProps> = ({images}) => {
     };
   }, [images]);
 
-  const showOverlay = images.length > 3;
+
+  const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
 
   return (
     <div
