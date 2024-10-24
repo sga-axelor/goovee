@@ -1,8 +1,11 @@
 'use client';
 import React from 'react';
 
+// ---- CORE IMPORTS ---- //
+import { DynamicIcon } from '@/ui/components';
+
 // ---- LOCAL IMPORTS ---- //
-import {DynamicIcon, PdfViewer} from '@/subapps/forum/common/ui/components';
+import { PdfViewer} from '@/subapps/forum/common/ui/components';
 import {getFileTypeIcon, getIconColor} from '@/subapps/forum/common/utils/file';
 
 export const FilePreviewer = React.memo(({file}: {file: any}) => {

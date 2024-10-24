@@ -20,5 +20,4 @@ export {InfiniteScroll} from './infinite-scroll';
 export {SearchItem} from './search-item';
 export {FilePreviewer} from './file-previewer';
 export {ImagePreviewer} from './image-previewer';
-export {DynamicIcon} from './dynamic-icon';
 export {ImageViewer} from './image-viewer';
