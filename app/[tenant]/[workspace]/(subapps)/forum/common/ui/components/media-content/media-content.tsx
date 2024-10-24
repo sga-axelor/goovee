@@ -7,10 +7,10 @@ import Image from 'next/image';
 import {MetaFile} from '@/types';
 import {getImageURL} from '@/utils/image';
 import { DynamicIcon } from '@/ui/components';
+import { getFileTypeIcon, getIconColor } from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {findMedia} from '@/subapps/forum/common/action/action';
-import {getFileTypeIcon, getIconColor} from '@/subapps/forum/common/utils/file';
 
 export const MediaContent = ({groupId = ''}: {groupId: string}) => {
   const [media, setMedia] = useState([]);

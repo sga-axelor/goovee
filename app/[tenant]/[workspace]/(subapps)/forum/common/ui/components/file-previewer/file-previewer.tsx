@@ -3,10 +3,10 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import { DynamicIcon } from '@/ui/components';
+import { getFileTypeIcon, getIconColor } from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import { PdfViewer} from '@/subapps/forum/common/ui/components';
-import {getFileTypeIcon, getIconColor} from '@/subapps/forum/common/utils/file';
 
 export const FilePreviewer = React.memo(({file}: {file: any}) => {
   const icon = getFileTypeIcon(file?.type);
