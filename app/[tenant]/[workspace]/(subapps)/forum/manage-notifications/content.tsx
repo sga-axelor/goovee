@@ -77,7 +77,7 @@ const Content = ({userId}: {userId: string}) => {
       <div className="hidden lg:block">
         <NavMenu items={MENU} onClick={handleMenuClick} />
       </div>
-      <section className="py-6 px-4 lg:px-[100px] w-full rounded-sm">
+      <section className="py-6 px-4 lg:px-[6.25rem] w-full rounded-sm">
         <div>
           <h2 className="font-semibold text-xl mb-6">
             {i18n.get(MANAGE_NOTIFICATIONS)}

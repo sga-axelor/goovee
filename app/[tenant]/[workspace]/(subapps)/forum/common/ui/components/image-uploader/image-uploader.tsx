@@ -137,7 +137,7 @@ export const ImageUploader = ({
                   <label
                     htmlFor="image-upload"
                     className="flex flex-col gap-2 md:gap-4 items-center justify-center h-full cursor-pointer border rounded-md w-full p-2">
-                    <div className="w-[300px] md:w-[385px] h-[293px] relative my-2">
+                    <div className="w-[18.75rem] md:w-[24.063rem] h-[18.313rem] relative my-2">
                       <Image
                         fill
                         src={'/images/upload.png'}
@@ -156,7 +156,7 @@ export const ImageUploader = ({
                 ) : (
                   <div className="flex flex-col lg:flex-row gap-2 xl:gap-4 w-full h-full">
                     <div className="flex-1 flex flex-col justify-between h-full m-4 gap-4">
-                      <div className="w-full h-full min-h-[250px] max-h-[450px] shadow-sm relative overflow-hidden">
+                      <div className="w-full h-full min-h-[15.625rem] max-h-[28.125rem] shadow-sm relative overflow-hidden">
                         {images[selectedIndex] && (
                           <ImageViewer file={images[selectedIndex].file} />
                         )}
@@ -179,7 +179,7 @@ export const ImageUploader = ({
                         <p className="p-3 text-muted-foreground">
                           {selectedIndex + 1} {i18n.get(OUT_OF)} {images.length}
                         </p>
-                        <ScrollArea className="h-[360px]">
+                        <ScrollArea className="h-[22.5rem]">
                           <div className="flex flex-wrap justify-between p-2">
                             {images.map((item, i) => (
                               <div
@@ -187,7 +187,7 @@ export const ImageUploader = ({
                                 className={`w-fit h-fit p-1 mb-2 xl:mb-3 ${selectedIndex === i ? 'border border-success' : ''}`}>
                                 <div
                                   onClick={() => setSelectedIndex(i)}
-                                  className={`w-[150px] h-[150px] relative border overflow-hidden cursor-pointer`}>
+                                  className={`w-[9.375rem] h-[9.375rem] relative border overflow-hidden cursor-pointer`}>
                                   <ImageViewer file={item.file} />
                                 </div>
                               </div>

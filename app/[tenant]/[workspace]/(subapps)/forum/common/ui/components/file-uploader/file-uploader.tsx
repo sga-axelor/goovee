@@ -100,7 +100,7 @@ export const FileUploader = ({
                   <label
                     htmlFor="file-upload"
                     className="w-full rounded-sm  border flex flex-col gap-2 md:gap-4 items-center justify-center h-full cursor-pointer p-2">
-                    <div className="w-[385px] h-[293px] relative my-2">
+                    <div className="w-[24.063rem] h-[18.313rem] relative my-2">
                       <Image
                         fill
                         src={'/images/upload.png'}

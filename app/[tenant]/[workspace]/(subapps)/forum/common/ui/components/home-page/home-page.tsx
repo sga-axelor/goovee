@@ -163,10 +163,10 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
         }
         renderSearch={!selectedGroup && renderSearch}
       />
-      <div className="flex flex-col lg:flex-row gap-5 px-4 lg:px-[100px] py-6 w-full">
-        <div className="w-full lg:w-1/5 min-w-[281px] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
+      <div className="flex flex-col lg:flex-row gap-5 px-4 lg:px-[6.25rem] py-6 w-full">
+        <div className="w-full lg:w-1/5 min-w-[17.563rem] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
           <div>
-            <h1 className="font-semibold text-xl leading-[30px]">
+            <h1 className="font-semibold text-xl leading-[1.875rem]">
               {i18n.get(GROUPS)}
             </h1>
           </div>
@@ -189,7 +189,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
           />
         </div>
         <div className="w-full lg:w-4/5 mb-16 lg:mb-0">
-          <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[10px]">
+          <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[0.625rem]">
             <Avatar
               className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
               {<AvatarImage src={getImageURL(picture?.id)} />}
@@ -211,7 +211,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
             {false && (
               <Button
                 disabled={!isLoggedIn}
-                className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[11px]
+                className="bg-white hover:bg-white text-success hover:text-success-dark border-success hover:border-success-dark rounded-md border py-4 px-[0.688rem]
               disabled:bg-black/20 disabled:border-gray-700 disabled:text-gray-700">
                 <MdOutlineImage className="h-6 w-6" />
               </Button>

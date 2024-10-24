@@ -86,7 +86,7 @@ export const ThreadBody = ({
               <MdOutlineMoreHoriz className="w-6 h-6 cursor-pointer" />
             </PopoverTrigger>
             <PopoverContent className="p-0 w-fit">
-              <div className="flex flex-col gap-[10px] p-4 bg-white rounded-lg text-xs leading-[18px]">
+              <div className="flex flex-col gap-2.5 p-4 bg-white rounded-lg text-xs leading-[1.125rem]">
                 <div className="cursor-pointer">{i18n.get(REPORT)}</div>
                 <div className="cursor-pointer">{i18n.get(NOT_INTERESTED)}</div>
               </div>

@@ -41,7 +41,7 @@ export const ImagePreviewer: React.FC<ImagePreviewerProps> = ({images}) => {
       {imageUrls.slice(0, 3).map((url: any, index) => (
         <div key={index} className="relative">
           <div
-            className="w-full h-[205px] bg-no-repeat bg-center bg-cover"
+            className="w-full h-[12.813rem] bg-no-repeat bg-center bg-cover"
             style={{backgroundImage: url ? `url(${url})` : 'none'}}></div>
           {index === 2 && showOverlay && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-5xl font-semibold">

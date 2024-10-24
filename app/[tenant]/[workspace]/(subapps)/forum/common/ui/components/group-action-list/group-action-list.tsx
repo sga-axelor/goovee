@@ -170,8 +170,8 @@ export const GroupActionList = ({
                 </div>
                 <div className="flex items-center gap-2">
                   {false && (
-                    <div className="px-1 bg-success/10 cursor-pointer rounded-sm leading-[15px]">
-                      <span className="text-success text-[10px]">2</span>
+                    <div className="px-1 bg-success/10 cursor-pointer rounded-sm leading-[0.938rem]">
+                      <span className="text-success text-[0.625rem]">2</span>
                     </div>
                   )}
                   {group?.isPin && (
@@ -189,18 +189,18 @@ export const GroupActionList = ({
                   {isMember && (
                     <>
                       {false && (
-                        <div className="flex items-center gap-[10px] px-2">
+                        <div className="flex items-center gap-[0.625rem] px-2">
                           <MdOutlineMarkChatRead className="w-4 h-4" />
-                          <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                          <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
                             {MARK_AS_READ}
                           </span>
                         </div>
                       )}
                       <div
-                        className="flex items-center gap-[10px] px-2"
+                        className="flex items-center gap-[0.625rem] px-2"
                         onClick={() => handlePinGroup(group?.isPin, group)}>
                         <MdOutlinePushPin className="w-4 h-4" />
-                        <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                        <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
                           {!group?.isPin ? PIN : REMOVE_PIN}
                         </span>
                       </div>
@@ -210,15 +210,15 @@ export const GroupActionList = ({
                   {false && (
                     <Popover>
                       <PopoverTrigger>
-                        <div className="flex items-center gap-[10px] px-2">
+                        <div className="flex items-center gap-[0.625rem] px-2">
                           <MdNotificationsNone className="w-4 h-4" />
-                          <span className="w-full text-left text-xs leading-[18px] font-normal cursor-pointer">
+                          <span className="w-full text-left text-xs leading-[1.125rem] font-normal cursor-pointer">
                             {NOTIFICATIONS}
                           </span>
                         </div>
                       </PopoverTrigger>
                       <PopoverContent side="right" className="p-0">
-                        <div className="flex flex-col gap-[10px] py-4 bg-white rounded-lg text-xs leading-[18px]">
+                        <div className="flex flex-col gap-[0.625rem] py-4 bg-white rounded-lg text-xs leading-[1.125rem]">
                           {NOTIFICATIONS_OPTIONS.map(option => (
                             <div
                               key={option.id}
@@ -235,19 +235,19 @@ export const GroupActionList = ({
                   )}
                   {isMember ? (
                     <div
-                      className="flex items-center gap-[10px] px-2"
+                      className="flex items-center gap-[0.625rem] px-2"
                       onClick={() => handleExit(group)}>
                       <MdExitToApp className="w-4 h-4" />
-                      <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                      <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
                         {LEAVE_THIS_GROUP}
                       </span>
                     </div>
                   ) : (
                     <div
-                      className="flex items-center gap-[10px] px-2"
+                      className="flex items-center gap-[0.625rem] px-2"
                       onClick={() => handleJoinGroup(group, userId)}>
                       <MdOutlineGroupAdd className="w-4 h-4" />
-                      <span className="w-full text-xs leading-[18px] font-normal cursor-pointer">
+                      <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
                         {ASK_TO_JOIN}
                       </span>
                     </div>

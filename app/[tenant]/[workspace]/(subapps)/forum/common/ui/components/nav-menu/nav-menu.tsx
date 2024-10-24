@@ -31,7 +31,7 @@ export const NavMenu = ({
           </div>
           {index !== filteredItems.length - 1 && (
             <Separator
-              className="bg-black w-[2px] h-[22px]"
+              className="bg-black w-0.5 h-[1.375rem]"
               orientation="vertical"
             />
           )}

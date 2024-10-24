@@ -40,7 +40,7 @@ export const Search = ({
           setSearchValue(value);
         }}
       />
-      <Button className="bg-success px-2 py-1 h-7 w-9 hover:bg-success-dark absolute top-[6px] right-[9px]">
+      <Button className="bg-success px-2 py-1 h-7 w-9 hover:bg-success-dark absolute top-1.5 right-[0.563rem]">
         <MdOutlineSearch className="w-5 h-5" />
       </Button>
     </div>

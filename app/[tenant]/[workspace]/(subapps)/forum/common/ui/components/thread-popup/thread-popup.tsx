@@ -29,7 +29,7 @@ export const ThreadPopup = ({
         className={`${styles['custom-dialog-content']} max-w-[72rem] overflow-hidden px-0 py-0 md:h-full border-none md:rounded-l-xl flex items-center`}>
         <DialogTitle className="hidden" />
         <div className="w-full h-full flex flex-col md:flex-row gap-4">
-          <div className=" w-full md:w-1/2 h-[480px] md:h-full md:pt-0 flex flex-col md:flex-row gap-4 md:mt-0 ">
+          <div className=" w-full md:w-1/2 h-[30rem] md:h-full md:pt-0 flex flex-col md:flex-row gap-4 md:mt-0 ">
             <div className="bg-black w-full h-full md:h-auto md:rounded-l-lg md:px-4">
               <Swiper
                 style={
@@ -55,7 +55,7 @@ export const ThreadPopup = ({
               </Swiper>
             </div>
           </div>
-          <div className="md:pt-12 md:pr-4 pb-6 md:pb-0 w-full md:w-1/2 h-[450px] md:h-full overflow-auto">
+          <div className="md:pt-12 md:pr-4 pb-6 md:pb-0 w-full md:w-1/2 h-[28.125rem] md:h-full overflow-auto">
             <Thread
               post={post}
               showHeader={false}

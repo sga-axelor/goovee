@@ -30,7 +30,7 @@ export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
         {images.slice(0, 3).map((image: any, index: number) => (
           <div key={image.id} className="relative">
             <div
-              className="w-full h-[205px] bg-no-repeat bg-center bg-cover cursor-pointer"
+              className="w-full h-[12.813rem] bg-no-repeat bg-center bg-cover cursor-pointer"
               style={{
                 backgroundImage: `url(${getImageURL(image?.metaFile?.id)})`,
               }}></div>
