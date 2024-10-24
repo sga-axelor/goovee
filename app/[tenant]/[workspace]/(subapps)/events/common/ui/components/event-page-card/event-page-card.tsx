@@ -24,9 +24,11 @@ import {
   EventDateCard,
 } from '@/subapps/events/common/ui/components';
 
-export const EventPageCard = ({eventDetails}: any & any) => {
+export const EventPageCard = ({eventDetails, workspace}: any) => {
   const {workspaceURI, tenant} = useWorkspace();
 
+  const allowGuestEventRegistartion =
+    workspace.config?.allowGuestEventRegistartion;
   return (
     <Card className="w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
@@ -89,7 +91,8 @@ export const EventPageCard = ({eventDetails}: any & any) => {
             )}
         </div>
       </CardContent>
-      {eventDetails?.eventAllowRegistration === true && (
+      {(eventDetails?.eventAllowRegistration ||
+        allowGuestEventRegistartion) && (
         <CardFooter className="px-4 pb-4">
           <Link
             href={`${workspaceURI}/events/${eventDetails?.id}/register`}

@@ -4,16 +4,14 @@ import {MdCheckCircleOutline, MdClose} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/i18n';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   EventPageCard,
   CommentsSection,
-  EventDateCard,
 } from '@/subapps/events/common/ui/components';
 import type {Event} from '@/subapps/events/common/ui/components';
 import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
@@ -21,9 +19,11 @@ import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
 export function EventDetails({
   eventDetails,
   successMessage,
+  workspace,
 }: {
   eventDetails: Event;
   successMessage: boolean;
+  workspace: PortalWorkspace;
 }) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -53,7 +53,7 @@ export function EventDetails({
         </div>
       )}
       <div className="flex flex-col gap-6 pt-6 px-4 lg:px-[6.25rem] pb-24 lg:pb-6">
-        <EventPageCard eventDetails={eventDetails} />
+        <EventPageCard eventDetails={eventDetails} workspace={workspace} />
         <CommentsSection eventId={eventId} />
       </div>
     </>

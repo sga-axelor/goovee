@@ -47,6 +47,10 @@ export default async function Page({
   const successMessage = searchParams.success === 'true';
 
   return (
-    <EventDetails eventDetails={eventDetails} successMessage={successMessage} />
+    <EventDetails
+      eventDetails={eventDetails}
+      successMessage={successMessage}
+      workspace={workspace}
+    />
   );
 }
