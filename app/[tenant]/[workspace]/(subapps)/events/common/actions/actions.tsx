@@ -131,7 +131,7 @@ export async function register({
 
   const workspaceURL = workspace.url;
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
