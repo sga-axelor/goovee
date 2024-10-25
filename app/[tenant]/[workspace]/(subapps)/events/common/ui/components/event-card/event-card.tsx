@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import {MdChevronRight} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -25,6 +24,9 @@ import {EventCardProps} from '@/subapps/events/common/ui/components/events/types
 
 export const EventCard = ({event}: EventCardProps) => {
   const {tenant} = useWorkspace();
+  const stripImages = (htmlContent: any = '') =>
+    htmlContent?.replace(/<img[^>]*>/g, '');
+
   return (
     <Card className="p-2 overflow-hidden cursor-pointer rounded-2xl flex gap-6 h-fit border-none shadow-none ">
       <div
@@ -60,8 +62,12 @@ export const EventCard = ({event}: EventCardProps) => {
         </CardHeader>
         <CardContent className="p-0 mt-1">
           <div
-            className="text-sm w-full font-normal line-clamp-2 text-gray-dark"
-            dangerouslySetInnerHTML={{__html: event?.eventDescription}}
+            className="text-sm w-full font-normal line-clamp-2 text-gray-dark overflow-hidden"
+            dangerouslySetInnerHTML={{
+              __html: event?.eventDescription
+                ? stripImages(event.eventDescription)
+                : '',
+            }}
           />
         </CardContent>
       </div>
