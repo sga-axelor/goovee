@@ -26,7 +26,6 @@ import {SearchItem} from '@/app/[tenant]/[workspace]/(subapps)/events/common/ui/
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
 
 export const Events = ({
-  limit,
   categories,
   events,
   category,
@@ -34,7 +33,6 @@ export const Events = ({
   workspace,
   pageInfo: {page, pages, hasPrev, hasNext} = {},
 }: {
-  limit: number;
   categories: Category[];
   events: Event[];
   category: any[];
@@ -147,6 +145,7 @@ export const Events = ({
       />
       <div className="py-6 px-4 lg:px-[100px] flex flex-col lg:flex-row lg:gap-6 mb-16">
         <EventSelector
+          selectedCategories={selectedCategory}
           date={date}
           setDate={updateDate}
           updateCateg={updateCateg}
