@@ -4,6 +4,30 @@ import type {Theme} from '@/types/theme';
 export type ID = string | number;
 export type Version = number;
 
+export type OverlayColor =
+  | 'default'
+  | 'red'
+  | 'pink'
+  | 'purple'
+  | 'deeppurple'
+  | 'indigo'
+  | 'blue'
+  | 'lightblue'
+  | 'cyan'
+  | 'teal'
+  | 'green'
+  | 'lightgreen'
+  | 'lime'
+  | 'yellow'
+  | 'amber'
+  | 'orange'
+  | 'deeporange'
+  | 'brown'
+  | 'grey'
+  | 'bluegrey'
+  | 'black'
+  | 'white';
+
 export interface Model {
   id: ID;
   version: Version;
@@ -56,6 +80,30 @@ export interface PortalAppConfig extends Model {
   canConfirmQuotation?: boolean;
   payQuotationToConfirm?: boolean;
   canPayInvoice?: 'no' | 'total' | 'partial';
+  forumHeroTitle: string;
+  forumHeroDescription: string;
+  forumHeroBgImage: {
+    id: string;
+  };
+  forumHeroOverlayColorSelect: OverlayColor;
+  eventHeroTitle: string;
+  eventHeroDescription: string;
+  eventHeroOverlayColorSelect: OverlayColor;
+  eventHeroBgImage: {
+    id: string;
+  };
+  newsHeroTitle: string;
+  newsHeroDescription: string;
+  newsHeroOverlayColorSelect: OverlayColor;
+  newsHeroBgImage: {
+    id: string;
+  };
+  resourcesHeroTitle: string;
+  resourcesHeroDescription: string;
+  resourcesHeroOverlayColorSelect: OverlayColor;
+  resourcesHeroBgImage: {
+    id: string;
+  };
 }
 
 export interface PortalApp extends Model {
@@ -163,6 +211,7 @@ export type ComputedProduct = {
 export type MetaFile = {
   id: ID;
   fileName: string;
+  fileType?: string;
 };
 
 export type Category = {
@@ -205,4 +254,12 @@ export enum ModelType {
   news = 'news',
   event = 'event',
   forum = 'forum',
+  ticketing = 'ticketing',
+}
+
+export interface CommentResponse {
+  success?: boolean;
+  error?: boolean;
+  message?: string;
+  data?: any;
 }

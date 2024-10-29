@@ -23,6 +23,7 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
     accent: '210 40% 96.1%',
     'accent-foreground': '222.2 47.4% 11.2%',
 
+    'destructive-light': '0 58% 90%',
     destructive: '0 84.2% 60.2%',
     'destructive-foreground': '210 40% 98%',
     'destructive-dark': '3 86% 61%',
@@ -31,6 +32,11 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
     success: '153 60% 59%',
     'success-foreground': '210 40% 98%',
     'success-dark': '142 48% 37%',
+    'success-light': '164 52% 94%',
+
+    gray: '160 3% 82',
+    'gray-light': '180 2% 90%',
+    'gray-dark': '170 3% 36%',
 
     border: '214.3 31.8% 91.4%',
     input: '214.3 31.8% 91.4%',
@@ -48,6 +54,14 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
       yellow: {
         default: '37 100% 87%',
         dark: '36 100% 54%',
+      },
+      orange: {
+        default: '16 100% 90%',
+        dark: '16 96% 56%',
+      },
+      pink: {
+        default: '337 74% 91%',
+        dark: '335 100% 54%',
       },
     },
   },

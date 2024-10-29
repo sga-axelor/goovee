@@ -1,5 +1,3 @@
-'use server';
-
 import fs from 'fs';
 import path from 'path';
 import {pipeline} from 'stream';
@@ -12,14 +10,23 @@ import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
-import {clone} from '@/utils';
-import {ModelType, PortalWorkspace} from '@/types';
-import {COMMENT_TRACKING} from '@/constants';
+import {clone, getSkipInfo} from '@/utils';
+import {ID, ModelType, PortalWorkspace} from '@/types';
+import {
+  COMMENT_TRACKING,
+  MAIL_MESSAGE_TYPE,
+  ORDER_BY,
+  SORT_TYPE,
+} from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
+import {findPosts} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/orm/forum';
 import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
+import {SelectOptions} from '@goovee/orm';
+import {AOSMailMessage} from '@/goovee/.generated/models';
+import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/common/orm/tickets';
 
 const pump = promisify(pipeline);
 
@@ -29,12 +36,11 @@ if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
 }
 
-const timestamp = getCurrentDateTime();
-
-const ModelMap: Record<ModelType, String> = {
-  [ModelType.forum]: 'forumPost',
-  [ModelType.news]: 'portalNews',
-  [ModelType.event]: 'portalEvent',
+const ModelMap: Record<ModelType, string> = {
+  [ModelType.forum]: 'com.axelor.apps.portal.db.ForumPost',
+  [ModelType.news]: 'com.axelor.apps.portal.db.PortalNews',
+  [ModelType.event]: 'com.axelor.apps.portal.db.PortalEvent',
+  [ModelType.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
 };
 
 export async function upload(formData: FormData, workspaceURL: string) {
@@ -107,6 +113,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
 
       return {
         id: Number(metaFile.id),
+        description: metaFile.description,
       };
     } catch (err) {
       console.error('Error creating file metadata:', err);
@@ -141,17 +148,24 @@ export async function upload(formData: FormData, workspaceURL: string) {
 export async function addComment({
   type,
   model = null,
-  content,
+  note,
   workspaceURL,
   attachments = [],
   parentId = null,
+  messageBody,
 }: {
   type: ModelType;
   model: {id: string | number} | null;
   workspaceURL: string;
-  content: any;
+  note?: string;
   attachments?: any;
   parentId?: any;
+  relatedModel?: string;
+  messageBody?: {
+    title: string;
+    tracks: any[];
+    tags: any[];
+  };
 }) {
   try {
     const session = await getSession();
@@ -162,7 +176,6 @@ export async function addComment({
         message: i18n.get('Unauthorized'),
       };
     }
-
     const aosUser = await findUserForPartner({partnerId: user.id});
     if (!aosUser) {
       return {
@@ -183,37 +196,41 @@ export async function addComment({
       };
     }
 
-    if (!model) {
+    if (!model?.id) {
       return {
         error: true,
         message: i18n.get('Model is missing'),
       };
     }
 
-    const modelRecord: any = await findByID({
+    const {
+      error,
+      message,
+      data: modelRecord,
+    }: any = await findByID({
       type,
       id: model?.id,
       workspace,
     });
 
-    if (!modelRecord) {
+    if (error) {
       return {
         error: true,
-        message: i18n.get(modelRecord?.message || 'Record not found.'),
+        message: i18n.get(message || 'Record not found.'),
       };
     }
 
     const client = await manager.getClient();
 
-    let parentComment: any;
+    let parent;
     if (parentId) {
-      parentComment = await client.aOSComment.findOne({
+      parent = await client.aOSMailMessage.findOne({
         where: {
           id: {eq: parentId},
         },
         select: {id: true},
       });
-      if (!parentComment) {
+      if (!parent) {
         return {
           error: true,
           message: i18n.get('Invalid parent comment Id.'),
@@ -221,61 +238,48 @@ export async function addComment({
       }
     }
 
+    const timestamp = getCurrentDateTime();
     const modelName = ModelMap[type];
 
-    const response = await client.aOSComment.create({
+    if (!modelName) {
+      return {
+        error: true,
+        message: i18n.get('Invalid model type'),
+      };
+    }
+
+    const response = await client.aOSMailMessage.create({
       data: {
-        ...(modelRecord && modelName && !parentId
-          ? {
-              [modelName as string]: {
-                select: {
-                  id: modelRecord.id,
-                },
-              },
-            }
-          : {}),
-        ...(parentComment
-          ? {parentComment: {select: {id: parentComment.id}}}
-          : {}),
-        mailMessage: {
-          create: {
-            subject: COMMENT_TRACKING,
-            messageContentHtml: content,
-            author: {
-              select: {
-                id: aosUser.id,
-              },
-            },
-            createdBy: {
-              select: {
-                id: aosUser.id,
-              },
-            },
-            createdOn: timestamp as unknown as Date,
-          },
-        },
-        commentFileList:
-          attachments?.length > 0
-            ? {
-                create: attachments.map((attachment: any) => ({
-                  description: attachments?.description || '',
-                  attachmentFile: {
-                    select: {
-                      id: attachment.id,
-                    },
-                  },
-                })),
-              }
-            : [],
-        createdBy: {
-          select: {
-            id: aosUser.id,
-          },
-        },
+        relatedId: modelRecord.id,
+        relatedModel: modelName,
+        note,
+        isPublicNote: true,
         createdOn: timestamp as unknown as Date,
         updatedOn: timestamp as unknown as Date,
+        type: MAIL_MESSAGE_TYPE, //TODO: check this later
+        ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
+        ...(messageBody && {body: JSON.stringify(messageBody)}),
+        subject: messageBody?.title ?? COMMENT_TRACKING,
+        author: {select: {id: aosUser.id}},
+        createdBy: {select: {id: aosUser.id}},
+        //relatedName: TODO: Add this later
+        ...(attachments?.length > 0 && {
+          mailMessageFileList: {
+            create: attachments.map((attachment: any) => ({
+              description: attachment?.description || '',
+              attachmentFile: {
+                select: {
+                  id: attachment.id,
+                },
+              },
+              createdOn: timestamp,
+              updatedOn: timestamp,
+            })),
+          },
+        }),
       },
     });
+
     return {
       success: true,
       data: clone(response),
@@ -293,10 +297,12 @@ export async function findByID({
   type,
   id,
   workspace,
+  withAuth = true,
 }: {
   type: ModelType;
   id: string | number;
   workspace: PortalWorkspace;
+  withAuth?: boolean;
 }) {
   if (!type || !id) {
     return {
@@ -314,11 +320,13 @@ export async function findByID({
 
   const session = await getSession();
   const user = session?.user;
-  if (!user) {
-    return {
-      error: true,
-      message: i18n.get('Unauthorized'),
-    };
+  if (withAuth) {
+    if (!user) {
+      return {
+        error: true,
+        message: i18n.get('Unauthorized'),
+      };
+    }
   }
 
   let response: any;
@@ -329,10 +337,28 @@ export async function findByID({
       break;
     case ModelType.news:
       const {news}: any = await findNews({id, workspace});
-      response = news;
+      response = news?.[0] || {};
       break;
     case ModelType.forum:
-      response = {};
+      const {posts = []}: any = await findPosts({
+        whereClause: {id},
+        workspaceID: workspace.id,
+      });
+      response = posts[0];
+      break;
+    case ModelType.ticketing:
+      if (user) {
+        response = await findTicketAccess({
+          recordId: id,
+          userId: user.id,
+          workspaceId: workspace.id,
+        });
+      }
+      if (!response)
+        return {
+          error: true,
+          message: i18n.get('Unauthorized'),
+        };
       break;
     default:
       return {
@@ -341,5 +367,194 @@ export async function findByID({
       };
   }
 
-  return response;
+  return {success: true, data: response};
+}
+
+export type Comment = NonNullable<
+  Awaited<ReturnType<typeof findComments>>['data']
+>[number];
+
+export async function findComments({
+  model,
+  limit,
+  page,
+  sort,
+  workspaceURL,
+  type,
+}: {
+  model: {id: ID} | null;
+  limit?: number;
+  page?: number;
+  sort?: any;
+  workspaceURL: string;
+  type: ModelType;
+}) {
+  const session = await getSession();
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: i18n.get('Invalid workspace'),
+    };
+  }
+
+  if (!model?.id) {
+    return {
+      error: true,
+      message: i18n.get('Model is missing'),
+    };
+  }
+
+  const shouldUseAuth = (type: ModelType) =>
+    ![ModelType.forum, ModelType.event, ModelType.news].includes(type);
+
+  const {
+    error,
+    message,
+    data: modelRecord,
+  }: any = await findByID({
+    type,
+    id: model?.id,
+    workspace,
+    withAuth: shouldUseAuth(type),
+  });
+
+  if (error) {
+    return {
+      error: true,
+      message: i18n.get(message || 'Record not found.'),
+    };
+  }
+
+  const modelName = ModelMap[type];
+
+  if (!modelName) {
+    return {
+      error: true,
+      message: i18n.get('Invalid model type'),
+    };
+  }
+
+  const skip = getSkipInfo(limit, page);
+  const client = await getClient();
+  try {
+    let orderBy: any = null;
+    switch (sort) {
+      case SORT_TYPE.old:
+        orderBy = {
+          createdOn: ORDER_BY.ASC,
+        };
+        break;
+      case SORT_TYPE.popular:
+        // const results: any = await getPopularCommentsBySorting({
+        //   page,
+        //   limit,
+        //   workspace,
+        //   modelRecord,
+        //   type,
+        // });
+        // const {comments = [], total, success} = results;
+        return {
+          data: clone([]),
+          total: 0,
+          success: true,
+        };
+      default:
+        orderBy = {
+          createdOn: ORDER_BY.DESC,
+        };
+    }
+
+    const commentFields: SelectOptions<AOSMailMessage> = {
+      note: true,
+      body: true,
+      createdOn: true,
+      author: {
+        id: true,
+        name: true,
+        partner: {
+          picture: true,
+          simpleFullName: true,
+        },
+      },
+      mailMessageFileList: {
+        select: {
+          attachmentFile: {
+            id: true,
+            fileName: true,
+          },
+        },
+      },
+      createdBy: {
+        id: true,
+        name: true,
+        partner: {
+          picture: true,
+          simpleFullName: true,
+        },
+      },
+    } as const;
+
+    const where = {
+      relatedId: modelRecord.id,
+      relatedModel: modelName,
+      isPublicNote: true,
+      ...(type === ModelType.forum
+        ? {
+            parentMailMessage: {
+              id: {
+                eq: null,
+              },
+            },
+          }
+        : {}),
+    };
+
+    const comments = await client.aOSMailMessage.find({
+      where,
+      orderBy,
+      take: limit,
+      ...(skip ? {skip} : {}),
+      select: {
+        ...commentFields,
+        parentMailMessage: {
+          ...commentFields,
+        },
+        childMailMessages: {
+          orderBy,
+          where: {
+            relatedId: modelRecord.id,
+            relatedModel: modelName,
+            isPublicNote: true,
+          },
+          select: {
+            ...commentFields,
+          },
+        } as {select: typeof commentFields},
+      },
+    });
+
+    const totalCommentThreadCount = comments?.reduce(
+      (acc: number, comment: any) => {
+        const childCommentsCount = comment.childMailMessages?.length || 0;
+        return acc + 1 + childCommentsCount;
+      },
+      0,
+    );
+
+    return {
+      success: true,
+      data: clone(comments),
+      total: comments?.[0]?._count || comments?.length,
+      totalCommentThreadCount,
+    };
+  } catch (error) {
+    console.log('error >>>', error);
+    return {error: true, message: i18n.get('Something went wromng')};
+  }
 }

@@ -2,14 +2,17 @@
 
 import React from 'react';
 import {usePathname, useRouter} from 'next/navigation';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
+import {COMMENTS, SORT_TYPE} from '@/constants';
+import {Comments} from '@/ui/components';
+import {ModelType} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   Breadcrumb,
-  Comments,
   FeedList,
   NewsInfo,
   SocialMedia,
@@ -32,10 +35,12 @@ export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
     content,
     author,
     relatedNewsSet,
-    portalCommentList,
   } = news || {};
   const router = useRouter();
   const pathname = usePathname();
+
+  const {data: session} = useSession();
+  const isDisabled = !session ? true : false;
 
   const handleClick = (slug: string) => {
     const urlRoute = pathname.split('/article/')[0];
@@ -79,8 +84,26 @@ export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
         </div>
       </div>
 
-      <div className="w-full  mb-12 md:mb-0">
-        <Comments newsId={news.id} comments={portalCommentList} />
+      <div className="w-full mb-16 lg:mb-4">
+        <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
+          <div>
+            <div className="text-xl font-semibold">{i18n.get(COMMENTS)}</div>
+          </div>
+
+          <Comments
+            record={{id: news.id}}
+            modelType={ModelType.news}
+            showCommentsByDefault={true}
+            disabled={isDisabled}
+            inputPosition="bottom"
+            hideCommentsHeader={true}
+            hideSortBy={true}
+            showReactions={false}
+            showTopBorder={false}
+            hideCloseComments={true}
+            sortByProp={SORT_TYPE.old}
+          />
+        </div>
       </div>
     </div>
   );

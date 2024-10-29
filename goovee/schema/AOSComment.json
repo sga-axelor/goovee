@@ -21,6 +21,11 @@
       "target": "AOSPortalForumPost"
     },
     {
+      "name": "projectTask",
+      "type": "ManyToOne",
+      "target": "AOSProjectTask"
+    },
+    {
       "name": "mailMessage",
       "type": "ManyToOne",
       "target": "AOSMailMessage"
@@ -50,6 +55,18 @@
       "name": "parentComment",
       "type": "ManyToOne",
       "target": "AOSComment"
+    },
+    {
+      "name": "note",
+      "type": "String"
+    },
+    {
+      "name": "isPrivateNote",
+      "type": "Boolean"
+    },
+    {
+      "name": "sequence",
+      "type": "Int"
     }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "name": "AOSProjectTaskCategory",
+  "table": "project_project_task_category",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    }
+  ]
+}

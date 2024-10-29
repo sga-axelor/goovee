@@ -14,5 +14,4 @@ export interface Author {
 }
 export interface CommentSectionProps {
   eventId: string;
-  comments: Comment[];
 }

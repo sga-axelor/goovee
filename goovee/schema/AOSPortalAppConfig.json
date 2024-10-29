@@ -84,6 +84,11 @@
       "column": "price_after_login_select"
     },
     {
+      "type": "String",
+      "name": "ticketStatusChangeMethod",
+      "column": "ticket_status_change_method_select"
+    },
+    {
       "type": "Boolean",
       "name": "requestQuotation"
     },
@@ -98,6 +103,91 @@
       "name": "carouselList",
       "target": "AOSPortalCarousel",
       "mappedBy": "portalAppConfig"
+    },
+    {
+      "type": "String",
+      "name": "ticketHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "ticketHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "ticketHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "ticketHeroBgImage",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "forumHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "forumHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "forumHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "forumHeroBgImage",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "eventHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "eventHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "eventHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "eventHeroBgImage",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "newsHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "newsHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "newsHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "newsHeroBgImage",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "resourcesHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "resourcesHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "resourcesHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "resourcesHeroBgImage",
+      "target": "AOSMetaFile"
     }
   ]
 }

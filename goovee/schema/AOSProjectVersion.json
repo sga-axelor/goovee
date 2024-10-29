@@ -1,0 +1,12 @@
+{
+  "name": "AOSProjectVersion",
+  "table": "businesssupport_project_version",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "title"
+    }
+  ]
+}

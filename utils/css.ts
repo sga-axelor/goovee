@@ -30,6 +30,7 @@ export function generateCSSVariableString(options: Theme) {
       --accent: ${options?.colors?.accent};
       --accent-foreground: ${options?.colors?.['accent-foreground']};
 
+      --destructive-light: ${options?.colors?.['destructive-light']};
       --destructive: ${options?.colors?.destructive};
       --destructive-dark: ${options?.colors?.['destructive-dark']};
       --destructive-foreground: ${options?.colors?.['destructive-foreground']};
@@ -38,6 +39,11 @@ export function generateCSSVariableString(options: Theme) {
       --success: ${options?.colors?.success};
       --success-dark: ${options?.colors?.['success-dark']};
       --success-foreground: ${options?.colors?.['success-foreground']};
+      --success-light:${options?.colors?.['success-light']};
+
+      --gray: ${options?.colors?.gray};
+      --gray-light:${options?.colors?.['gray-light']};
+      --gray-dark: ${options?.colors?.['gray-dark']};
 
       --border: ${options?.colors?.border};
       --input: ${options?.colors?.input};
@@ -53,6 +59,13 @@ export function generateCSSVariableString(options: Theme) {
 
       --palette-yellow: ${options?.colors?.palette?.yellow?.default};
       --palette-yellow-dark: ${options?.colors?.palette?.yellow?.dark};
+
+      --palette-orange: ${options?.colors?.palette?.orange?.default};
+      --palette-orange-dark: ${options?.colors?.palette?.orange?.dark};
+
+      --palette-pink: ${options?.colors?.palette?.pink?.default};
+      --palette-pink-dark: ${options?.colors?.palette?.pink?.dark}
+
     }
     `;
 }

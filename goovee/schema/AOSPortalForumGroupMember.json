@@ -1,0 +1,26 @@
+{
+  "name": "AOSPortalForumGroupMember",
+  "table": "portal_forum_group_member",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "forumGroup",
+      "type": "ManyToOne",
+      "target": "AOSPortalForumGroup"
+    },
+    {
+      "name": "member",
+      "type": "ManyToOne",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "isPin",
+      "type": "Boolean"
+    },
+    {
+      "name": "notificationSelect",
+      "type": "String"
+    }
+  ]
+}

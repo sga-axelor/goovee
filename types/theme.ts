@@ -21,6 +21,7 @@ export type Theme = {
     accent?: string;
     'accent-foreground'?: string;
 
+    'destructive-light'?: string;
     destructive?: string;
     'destructive-dark'?: string;
     'destructive-foreground'?: string;
@@ -29,6 +30,11 @@ export type Theme = {
     success?: string;
     'success-dark'?: string;
     'success-foreground'?: string;
+    'success-light'?: string;
+
+    gray?: string;
+    'gray-light'?: string;
+    'gray-dark'?: string;
 
     border?: string;
     input?: string;

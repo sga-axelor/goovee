@@ -1,6 +1,8 @@
 import {manager, type Tenant} from '@/tenant';
+import {AOSPortalAppConfig} from '@/goovee/.generated/models';
 import {ID, User} from '@/types';
 import {clone} from '@/utils';
+import {SelectOptions} from '@goovee/orm';
 
 const defaultApps = [
   {
@@ -13,7 +15,7 @@ const defaultApps = [
   },
 ];
 
-const portalAppConfigFields = {
+const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   name: true,
   company: {
     id: true,
@@ -37,6 +39,30 @@ const portalAppConfigFields = {
       typeSelect: true,
     },
   },
+  ticketStatusChangeMethod: true,
+  ticketHeroTitle: true,
+  ticketHeroBgImage: {
+    id: true,
+    fileName: true,
+  },
+  ticketHeroDescription: true,
+  ticketHeroOverlayColorSelect: true,
+  forumHeroTitle: true,
+  forumHeroDescription: true,
+  forumHeroOverlayColorSelect: true,
+  forumHeroBgImage: {id: true},
+  eventHeroTitle: true,
+  eventHeroDescription: true,
+  eventHeroOverlayColorSelect: true,
+  eventHeroBgImage: {id: true},
+  newsHeroTitle: true,
+  newsHeroDescription: true,
+  newsHeroOverlayColorSelect: true,
+  newsHeroBgImage: {id: true},
+  resourcesHeroTitle: true,
+  resourcesHeroDescription: true,
+  resourcesHeroOverlayColorSelect: true,
+  resourcesHeroBgImage: {id: true},
   allowOnlinePaymentForEcommerce: true,
   carouselList: {
     select: {
@@ -346,7 +372,7 @@ export async function findOpenWorkspaces({
           apps: true,
         },
       },
-      orderBy: {updatedOn: 'DESC'},
+      orderBy: {updatedOn: 'DESC'} as any,
     })
     .then(workspaces => {
       return (workspaces || [])?.filter(

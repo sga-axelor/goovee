@@ -1,3 +1,6 @@
+// ---- CORE IMPORTS ---- //
+import {i18n} from '@/lib/i18n';
+
 /**
  * CURRENCY
  */
@@ -25,6 +28,7 @@ export const PREFIX_CART_KEY = 'ct';
  * QUERY
  */
 export const DEFAULT_LIMIT = 12;
+export const DEFAULT_PAGE = 1;
 export const ORDER_BY = {
   ASC: 'ASC' as const,
   DESC: 'DESC' as const,
@@ -61,6 +65,8 @@ export const SUBAPP_CODES = {
   resources: 'resources',
   news: 'news',
   events: 'events',
+  forum: 'forum',
+  ticketing: 'ticketing',
 };
 
 /**
@@ -82,6 +88,7 @@ export const DATE_FORMATS = {
   us_date: 'MM/DD/YYYY',
   full_month_day_year_12_hour: 'MMMM D YYYY - hA',
   custom: 'MMMM D YYYY - h:mm A',
+  full_date: 'MMMM Do YYYY',
 };
 
 /**
@@ -92,6 +99,7 @@ export const BANNER_TITLES = {
   resources: 'Resources',
   news: 'News',
   events: 'Events',
+  forum: 'Forum',
 };
 export const BANNER_DESCRIPTION =
   'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam';
@@ -108,6 +116,8 @@ export const NO_RESULTS_FOUND = 'No results found.';
  */
 export const URL_PARAMS = {
   page: 'page',
+  sort: 'sort',
+  search: 'search',
 };
 
 /**
@@ -129,4 +139,35 @@ export const SEARCH_PARAMS = {
 /**
  * COMMENT
  */
+export const DEFAULT_COMMENTS_LIMIT = 3;
 export const COMMENT_TRACKING = 'User created a comment';
+export const MAIL_MESSAGE_TYPE = 'notification';
+export const COMMENT = 'Comment';
+export const COMMENTS = 'Comments';
+export const DISABLED_COMMENT_PLACEHOLDER =
+  'You need to log in to comment posts';
+export const SORT_TYPE = {
+  new: 'new',
+  old: 'old',
+  popular: 'popular',
+};
+
+export const REPORT = 'Report';
+export const NOT_INTERESTED = 'Not interested';
+export const SORT_BY_OPTIONS = [
+  {
+    id: 1,
+    key: SORT_TYPE.new,
+    label: i18n.get('New'),
+  },
+  {
+    id: 2,
+    key: SORT_TYPE.old,
+    label: i18n.get('Old'),
+  },
+  {
+    id: 3,
+    key: SORT_TYPE.popular,
+    label: i18n.get('Popular'),
+  },
+];

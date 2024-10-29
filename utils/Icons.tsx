@@ -14,6 +14,8 @@ import {
   MdPayment,
   MdNewspaper,
   MdEvent,
+  MdOutlineForum,
+  MdListAlt,
 } from 'react-icons/md';
 
 interface IconMapping {
@@ -30,6 +32,8 @@ interface IconMapping {
   app: IconType;
   newspaper: IconType;
   event: IconType;
+  forum: IconType;
+  ticketing: IconType;
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
@@ -47,6 +51,8 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
     app: MdAppRegistration,
     newspaper: MdNewspaper,
     event: MdEvent,
+    forum: MdOutlineForum,
+    ticketing: MdListAlt,
   };
 
   const icon = iconMapping[type];

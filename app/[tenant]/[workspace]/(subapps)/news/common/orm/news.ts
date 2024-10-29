@@ -96,16 +96,6 @@ export async function findNews({
           },
         },
         slug: true,
-        portalCommentList: {
-          select: {
-            contentComment: true,
-            author: {
-              simpleFullName: true,
-              picture: true,
-            },
-            publicationDateTime: true,
-          },
-        },
       },
     })
     .catch(() => []);

@@ -38,38 +38,6 @@ export async function findEventByID({
       eventLink: true,
       eventStartDateTime: true,
       eventEndDateTime: true,
-      eventCommentList: {
-        select: {
-          id: true,
-          contentComment: true,
-          publicationDateTime: true,
-          parentComment: {
-            id: true,
-            contentComment: true,
-          },
-          childCommentList: {
-            select: {
-              id: true,
-              contentComment: true,
-              publicationDateTime: true,
-              author: {
-                id: true,
-                name: true,
-              },
-              image: {
-                id: true,
-              },
-            },
-          },
-          author: {
-            id: true,
-            name: true,
-          },
-          image: {
-            id: true,
-          },
-        },
-      },
       eventAllDay: true,
       eventDegressiveNumberPartcipant: true,
       eventAllowRegistration: true,

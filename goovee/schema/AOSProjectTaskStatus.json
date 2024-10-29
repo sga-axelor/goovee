@@ -1,0 +1,20 @@
+{
+  "name": "AOSProjectTaskStatus",
+  "table": "project_task_status",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "Int",
+      "name": "sequence"
+    },
+    {
+      "type": "Boolean",
+      "name": "isCompleted"
+    }
+  ]
+}

@@ -1,13 +1,13 @@
 'use client';
 
 import CyntlerDocViewer, {DocViewerRenderers} from '@cyntler/react-doc-viewer';
+import '@cyntler/react-doc-viewer/dist/index.css';
 
 // ---- CORE IMPORTS ---- //
 import {getDownloadURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 import styles from './doc-viewer.module.scss';
-import '@cyntler/react-doc-viewer/dist/index.css';
 
 export default function DocViewer({record}: any) {
   const {tenant} = useWorkspace();

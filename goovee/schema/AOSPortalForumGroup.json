@@ -1,0 +1,26 @@
+{
+  "name": "AOSPortalForumGroup",
+  "table": "portal_forum_group",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "type": "String"
+    },
+    {
+      "name": "image",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
+    },
+    {
+      "name": "workspace",
+      "type": "ManyToOne",
+      "target": "AOSPortalWorkspace"
+    }
+  ]
+}

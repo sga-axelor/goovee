@@ -1,0 +1,18 @@
+{
+  "name": "AOSAppProject",
+  "table": "studio_app_project",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "ManyToOne",
+      "name": "completedTaskStatus",
+      "target": "AOSProjectTaskStatus"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "cancelledTaskStatus",
+      "target": "AOSProjectTaskStatus"
+    }
+  ]
+}

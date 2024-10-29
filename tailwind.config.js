@@ -32,6 +32,7 @@ module.exports = {
           foreground: 'hsl(var(--accent-foreground))',
         },
         destructive: {
+          light: 'hsl(var(--destructive-light))',
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
           dark: 'hsl(var(--destructive-dark))',
@@ -41,6 +42,7 @@ module.exports = {
           DEFAULT: 'hsl(var(--success))',
           foreground: 'hsl(var(--success-foreground))',
           dark: 'hsl(var(--success-dark))',
+          light: 'hsl(var(--success-light))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
@@ -54,6 +56,11 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        gray: {
+          DEFAULT: 'hsl(var(--gray))',
+          light: 'hsl(var(--gray-light))',
+          dark: 'hsl(var(--gray-dark))',
+        },
         palette: {
           purple: {
             DEFAULT: 'hsl(var(--palette-purple))',
@@ -66,6 +73,14 @@ module.exports = {
           yellow: {
             DEFAULT: 'hsl(var(--palette-yellow))',
             dark: 'hsl(var(--palette-yellow-dark))',
+          },
+          orange: {
+            DEFAULT: 'hsl(var(--palette-orange))',
+            dark: 'hsl(var(--palette-orange-dark))',
+          },
+          pink: {
+            DEFAULT: 'hsl(var(--palette-pink))',
+            dark: 'hsl(var(--palette-pink-dark))',
           },
         },
       },

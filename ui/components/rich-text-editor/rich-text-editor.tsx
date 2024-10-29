@@ -8,17 +8,19 @@ import {stateFromHTML} from 'draft-js-import-html';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import './rich-text-editor.css';
 import {cn} from '@/utils/css';
+import {Skeleton} from '../skeleton';
 
 const Editor = dynamic(
   () => import('react-draft-wysiwyg').then(module => module.Editor),
   {
     ssr: false,
+    loading: () => <Skeleton className={'min-h-[344px] xl:min-h-[244px]'} />,
   },
 );
 
 interface RichTextEditorProps {
   content?: string | any;
-  className?: {
+  classNames?: {
     toolbarClassName?: string;
     wrapperClassName?: string;
     editorClassName?: string;
@@ -31,14 +33,14 @@ interface RichTextEditorProps {
 export const RichTextEditor = ({
   content,
   onChange,
-  className,
+  classNames,
   ...rest
 }: RichTextEditorProps) => {
   const {
     toolbarClassName = '',
     wrapperClassName = '',
     editorClassName = '',
-  } = className || {};
+  } = classNames || {};
 
   const initiated = useRef(false);
 

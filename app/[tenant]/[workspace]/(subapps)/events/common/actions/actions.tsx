@@ -12,10 +12,7 @@ import type {Comment, ID, Participant} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
 import {findContact} from '@/subapps/events/common/orm/partner';
-import {
-  createComment,
-  findCommentsByEventID,
-} from '@/subapps/events/common/orm/comment';
+
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {

@@ -15,8 +15,7 @@
     {
       "name": "partner",
       "type": "OneToOne",
-      "target": "AOSPartner",
-      "mappedBy": "emailAddress"
+      "target": "AOSPartner"
     }
   ]
 }

@@ -9,6 +9,11 @@
       "type": "String"
     },
     {
+      "name": "forumGroup",
+      "type": "ManyToOne",
+      "target": "AOSPortalForumGroup"
+    },
+    {
       "name": "author",
       "type": "ManyToOne",
       "target": "AOSPartner"
@@ -22,6 +27,17 @@
       "type": "OneToMany",
       "target": "AOSComment",
       "mappedBy": "forumPost"
+    },
+    {
+      "name": "attachmentList",
+      "type": "OneToMany",
+      "target": "AOSPortalPostAttachment",
+      "mappedBy": "forumPost"
+    },
+    {
+      "name": "author",
+      "type": "ManyToOne",
+      "target": "AOSPartner"
     },
     {
       "name": "createdOn",

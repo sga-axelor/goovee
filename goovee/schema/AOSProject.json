@@ -1,0 +1,95 @@
+{
+  "name": "AOSProject",
+  "table": "project_project",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "String",
+      "name": "code"
+    },
+    {
+      "type": "Boolean",
+      "name": "isBusinessProject"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "contactPartner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "Decimal",
+      "name": "percentageOfProgress"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "projectStatus",
+      "target": "AOSProjectStatus"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "customerAddress",
+      "target": "AOSAddress"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "clientPartner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "assignedTo",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "membersUserSet",
+      "target": "AOSUser",
+      "column": "project_set"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskStatusSet",
+      "target": "AOSProjectTaskStatus",
+      "column": "project_project"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskPrioritySet",
+      "target": "AOSProjectPriority",
+      "column": "project_project"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskCategorySet",
+      "target": "AOSProjectTaskCategory",
+      "column": "project_project"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskLinkTypeSet",
+      "target": "AOSProjectTaskLinkType",
+      "column": "project_project"
+    },
+    {
+      "type": "OneToMany",
+      "name": "tasks",
+      "target": "AOSProjectTask",
+      "mappedBy": "project"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalWorkspace",
+      "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "company",
+      "target": "AOSCompany"
+    }
+  ]
+}

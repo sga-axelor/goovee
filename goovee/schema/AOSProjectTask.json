@@ -1,0 +1,175 @@
+{
+  "name": "AOSProjectTask",
+  "table": "project_project_task",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name",
+      "required": true
+    },
+    {
+      "type": "String",
+      "name": "fullName"
+    },
+    {
+      "type": "String",
+      "name": "typeSelect"
+    },
+    {
+      "type": "Int",
+      "name": "sequence"
+    },
+    {
+      "type": "Int",
+      "name": "invoicingType"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "invoicingUnit",
+      "target": "AOSUnit"
+    },
+    {
+      "type": "Date",
+      "name": "taskDeadline"
+    },
+    {
+      "type": "Date",
+      "name": "taskDate"
+    },
+    {
+      "type": "Date",
+      "name": "taskEndDate"
+    },
+    {
+      "type": "String",
+      "name": "ticketNumber"
+    },
+    {
+      "type": "Boolean",
+      "name": "isPrivate",
+      "default": false
+    },
+    {
+      "type": "Boolean",
+      "name": "displayFinancialData",
+      "default": false
+    },
+    {
+      "type": "Boolean",
+      "name": "isOrderAccepted",
+      "default": false
+    },
+    {
+      "type": "String",
+      "name": "description"
+    },
+    {
+      "type": "Int",
+      "name": "assignment"
+    },
+    {
+      "type": "Decimal",
+      "name": "unitPrice",
+      "default": "0.00"
+    },
+    {
+      "type": "Decimal",
+      "name": "exTaxTotal",
+      "default": "0.00"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "assignedTo",
+      "target": "AOSUser"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "createdBy",
+      "target": "AOSUser"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "assignedToContact",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "requestedByContact",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "priority",
+      "target": "AOSProjectPriority"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "project",
+      "target": "AOSProject"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "parentTask",
+      "target": "AOSProjectTask"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "status",
+      "target": "AOSProjectTaskStatus"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "targetVersion",
+      "target": "AOSProjectVersion"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "projectTaskTagSet",
+      "target": "AOSProjectTaskTag"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "product",
+      "target": "AOSProduct"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "projectTaskCategory",
+      "target": "AOSProjectTaskCategory"
+    },
+    {
+      "type": "OneToMany",
+      "name": "projectTaskLinkList",
+      "mappedBy": "projectTask",
+      "target": "AOSProjectTaskLink"
+    },
+    {
+      "type": "Decimal",
+      "name": "progress",
+      "default": "0.00"
+    },
+    {
+      "type": "Decimal",
+      "name": "quantity",
+      "default": "0.00"
+    },
+    {
+      "type": "JSON",
+      "name": "attrs"
+    },
+
+    {
+      "type": "OneToMany",
+      "name": "childTasks",
+      "mappedBy": "parentTask",
+      "target": "AOSProjectTask"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "updatedBy",
+      "target": "AOSUser"
+    }
+  ]
+}

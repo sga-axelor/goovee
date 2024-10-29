@@ -154,6 +154,7 @@ export {
   SheetTitle,
   SheetTrigger,
 } from './sheet';
+export {ScrollArea} from './scroll-area';
 export {
   Table,
   TableBody,
@@ -197,3 +198,20 @@ export {Pagination} from './custom-pagination';
 export {HeroSearch} from './hero-search';
 export {Search} from './search';
 export {RichTextEditor} from './rich-text-editor';
+export {DropdownToggle} from './dropdown-toggle';
+export {
+  Comments,
+  CommentInput,
+  CommentsList,
+  CommentListItem,
+  CommentTracks,
+  CommentAttachments,
+} from './comments';
+
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from './tooltip';
+export {DynamicIcon} from './dynamic-icon';

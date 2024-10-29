@@ -83,5 +83,6 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   }
 
   const {news} = await findNews({workspace, tenantId}).then(clone);
+  
   return news;
 }

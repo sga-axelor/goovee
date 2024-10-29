@@ -16,12 +16,12 @@ export function useMediaQuery(query: string) {
 }
 
 export function useResponsive() {
-  const xs = useMediaQuery('(max-width: 575.98px)');
-  const sm = useMediaQuery('(min-width: 576px) and (max-width: 767.98px)');
-  const md = useMediaQuery('(min-width: 768px) and (max-width: 991.98px)');
-  const lg = useMediaQuery('(min-width: 992px) and (max-width: 1199.98px)');
-  const xl = useMediaQuery('(min-width: 1200px) and (max-width: 1399.98px)');
-  const xxl = useMediaQuery('(min-width: 1400px)');
+  const xs = useMediaQuery('(max-width: 639.98px)');
+  const sm = useMediaQuery('(min-width: 640px) and (max-width: 767.98px)');
+  const md = useMediaQuery('(min-width: 768px) and (max-width: 1023.98px)');
+  const lg = useMediaQuery('(min-width: 1024px) and (max-width: 1279.98px)');
+  const xl = useMediaQuery('(min-width: 1280px) and (max-width: 1535.98px)');
+  const xxl = useMediaQuery('(min-width: 1536px)');
   return {
     xs,
     sm,
