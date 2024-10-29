@@ -26,7 +26,7 @@ import {useCallback, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 // ---- LOCAL IMPORT ---- //
-import type {MutateProps} from '../../../actions';
+import type {MutateProps, MutateResponse} from '../../../actions';
 import {mutate} from '../../../actions';
 import type {Category, ContactPartner, Priority} from '../../../types';
 import type {TicketInfo} from '../../../utils/validators';
@@ -41,6 +41,9 @@ type TicketFormProps = {
   parentId?: string;
   className?: string;
   onSuccess?: (ticketId: string, projectId: string) => void;
+  submitFormWithAction?: (
+    action: (data?: MutateResponse) => Promise<void>,
+  ) => Promise<void>;
 };
 
 export function TicketForm(props: TicketFormProps) {
@@ -53,6 +56,7 @@ export function TicketForm(props: TicketFormProps) {
     parentId,
     className,
     onSuccess,
+    submitFormWithAction,
   } = props;
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
@@ -87,7 +91,7 @@ export function TicketForm(props: TicketFormProps) {
   );
 
   const handleSubmit = useCallback(
-    async (value: TicketInfo) => {
+    async (value: TicketInfo): Promise<void> => {
       const mutateProps: MutateProps = {
         action: {
           type: 'create',
@@ -112,10 +116,22 @@ export function TicketForm(props: TicketFormProps) {
     [handleError, handleSuccess, projectId, workspaceURI, workspaceURL],
   );
 
+  const handleSubmitWithAction = useCallback(
+    (value: TicketInfo): Promise<void> => {
+      if (submitFormWithAction) {
+        return submitFormWithAction(() => handleSubmit(value));
+      }
+      return handleSubmit(value);
+    },
+    [submitFormWithAction, handleSubmit],
+  );
+
   return (
     <div className={className}>
       <Form {...form}>
-        <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
+        <form
+          ref={formRef}
+          onSubmit={form.handleSubmit(handleSubmitWithAction)}>
           <div className="space-y-4 rounded-md border bg-card p-4">
             <FormField
               control={form.control}

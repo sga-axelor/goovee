@@ -10,6 +10,7 @@ import {
   deleteRelatedLink,
 } from '../../../actions';
 import {Button} from '../delete-button';
+import {useTicketDetails} from '../ticket-details/ticket-details-provider';
 
 export function RemoveLinkButton({
   ticketId,
@@ -23,11 +24,11 @@ export function RemoveLinkButton({
   const {workspaceURL} = useWorkspace();
   const router = useRouter();
   const {toast} = useToast();
+  const {submitFormWithAction, loading: isSubmitting} = useTicketDetails();
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if (!loading) {
+  const deleteAction = async () => {
+    if (!loading && !isSubmitting) {
       try {
         const {error, message} = await deleteRelatedLink({
           workspaceURL,
@@ -39,10 +40,11 @@ export function RemoveLinkButton({
         });
 
         if (error) {
-          return toast({
+          toast({
             variant: 'destructive',
             title: message,
           });
+          return;
         }
 
         toast({
@@ -53,10 +55,11 @@ export function RemoveLinkButton({
         router.refresh();
       } catch (e) {
         if (e instanceof Error) {
-          return toast({
+          toast({
             variant: 'destructive',
             title: e.message,
           });
+          return;
         }
         toast({
           variant: 'destructive',
@@ -68,7 +71,12 @@ export function RemoveLinkButton({
     }
   };
 
-  return <Button onClick={handleDelete} disabled={loading} />;
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    submitFormWithAction(deleteAction);
+  };
+
+  return <Button onClick={handleDelete} disabled={loading || isSubmitting} />;
 }
 
 export function RemoveChildButton({
@@ -81,11 +89,11 @@ export function RemoveChildButton({
   const {workspaceURL} = useWorkspace();
   const router = useRouter();
   const {toast} = useToast();
+  const {submitFormWithAction, loading: isSubmitting} = useTicketDetails();
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if (!loading) {
+  const deleteAction = async () => {
+    if (!loading && !isSubmitting) {
       try {
         const {error, message} = await deleteChildLink({
           workspaceURL,
@@ -96,10 +104,11 @@ export function RemoveChildButton({
         });
 
         if (error) {
-          return toast({
+          toast({
             variant: 'destructive',
             title: message,
           });
+          return;
         }
 
         toast({
@@ -110,10 +119,11 @@ export function RemoveChildButton({
         router.refresh();
       } catch (e) {
         if (e instanceof Error) {
-          return toast({
+          toast({
             variant: 'destructive',
             title: e.message,
           });
+          return;
         }
         toast({
           variant: 'destructive',
@@ -125,7 +135,12 @@ export function RemoveChildButton({
     }
   };
 
-  return <Button onClick={handleDelete} disabled={loading} />;
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    submitFormWithAction(deleteAction);
+  };
+
+  return <Button onClick={handleDelete} disabled={loading || isSubmitting} />;
 }
 
 export function RemoveParentButton({
@@ -137,12 +152,12 @@ export function RemoveParentButton({
 }) {
   const {workspaceURL} = useWorkspace();
   const router = useRouter();
+  const {submitFormWithAction, loading: isSubmitting} = useTicketDetails();
   const {toast} = useToast();
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if (!loading) {
+  const deleteAction = async () => {
+    if (!loading && !isSubmitting) {
       try {
         const {error, message} = await deleteParentLink({
           workspaceURL,
@@ -153,10 +168,11 @@ export function RemoveParentButton({
         });
 
         if (error) {
-          return toast({
+          toast({
             variant: 'destructive',
             title: message,
           });
+          return;
         }
 
         toast({
@@ -167,10 +183,11 @@ export function RemoveParentButton({
         router.refresh();
       } catch (e) {
         if (e instanceof Error) {
-          return toast({
+          toast({
             variant: 'destructive',
             title: e.message,
           });
+          return;
         }
         toast({
           variant: 'destructive',
@@ -182,5 +199,10 @@ export function RemoveParentButton({
     }
   };
 
-  return <Button onClick={handleDelete} disabled={loading} />;
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    submitFormWithAction(deleteAction);
+  };
+
+  return <Button onClick={handleDelete} disabled={loading || isSubmitting} />;
 }

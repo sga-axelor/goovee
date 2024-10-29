@@ -59,6 +59,7 @@ import {
   ParentTicketsHeader,
   RelatedTicketsHeader,
 } from './headers';
+import {TicketDetailsProvider} from '../../../../common/ui/components/ticket-details/ticket-details-provider';
 
 export default async function Page({
   params,
@@ -146,39 +147,42 @@ export default async function Page({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <TicketDetails
-        ticket={ticket}
-        categories={categories}
-        priorities={priorities}
-        contacts={contacts}
-      />
-      <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-        <Suspense fallback={<Skeleton className="h-[160px]" />}>
-          <ParentTicket
-            ticketId={ticket.id}
-            projectId={ticket.project?.id}
-            tenantId={tenant}
-          />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-[160px]" />}>
-          <ChildTickets
-            projectId={ticket.project?.id}
-            ticketId={ticket.id}
+      <TicketDetailsProvider ticket={ticket}>
+        <>
+          <TicketDetails
             categories={categories}
             priorities={priorities}
             contacts={contacts}
-            userId={session.user.id}
-            tenantId={tenant}
           />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-[160px]" />}>
-          <RelatedTickets
-            ticketId={ticket.id}
-            projectId={ticket.project?.id}
-            tenantId={tenant}
-          />
-        </Suspense>
-      </div>
+          <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
+            <Suspense fallback={<Skeleton className="h-[160px]" />}>
+              <ParentTicket
+                ticketId={ticket.id}
+                projectId={ticket.project?.id}
+                tenantId={tenant}
+              />
+            </Suspense>
+            <Suspense fallback={<Skeleton className="h-[160px]" />}>
+              <ChildTickets
+                projectId={ticket.project?.id}
+                ticketId={ticket.id}
+                categories={categories}
+                priorities={priorities}
+                contacts={contacts}
+                userId={session.user.id}
+                tenantId={tenant}
+              />
+            </Suspense>
+            <Suspense fallback={<Skeleton className="h-[160px]" />}>
+              <RelatedTickets
+                ticketId={ticket.id}
+                projectId={ticket.project?.id}
+                tenantId={tenant}
+              />
+            </Suspense>
+          </div>
+        </>
+      </TicketDetailsProvider>
       <div className="rounded-md border bg-card p-4 mt-5">
         <h4 className="text-xl font-semibold border-b">
           {i18n.get('Comments')}

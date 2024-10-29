@@ -1,8 +1,7 @@
 'use client';
 
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/i18n';
-import type {Cloned, Maybe} from '@/types/util';
+import type {Maybe} from '@/types/util';
 import {
   Avatar,
   AvatarImage,
@@ -32,170 +31,45 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {Progress} from '@/ui/components/progress';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {pick} from 'lodash';
-import {useCallback, useEffect, useRef} from 'react';
-import type {UseFormReturn} from 'react-hook-form';
-import {useForm} from 'react-hook-form';
-import type {
-  MutateProps,
-  MutateResponse,
-  TicketActionProps,
-  UpdateAssignmentProps,
-} from '../../../actions';
-import {
-  cancelTicket,
-  closeTicket,
-  mutate,
-  updateAssignment,
-} from '../../../actions';
-import {ASSIGNMENT, INVOICING_TYPE} from '../../../constants';
-import {useRetryAction} from '../../../hooks';
+import {INVOICING_TYPE} from '../../../constants';
 import type {
   ContactPartner,
   Category as TCategory,
-  Ticket,
   Priority as TPriority,
 } from '../../../types';
 import {formatDate, getProfilePic, isWithProvider} from '../../../utils';
-import type {TicketInfo} from '../../../utils/validators';
-import {TicketFormSchema} from '../../../utils/validators';
 import {Category, Priority, Status} from '../pills';
+import {useTicketDetails} from './ticket-details-provider';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 type Props = {
-  ticket: Cloned<Ticket>;
   categories: TCategory[];
   priorities: TPriority[];
   contacts: ContactPartner[];
 };
 
-const getDefaultValues = (ticket: Cloned<Ticket>) => {
-  return {
-    subject: ticket?.name ?? '',
-    category: ticket?.projectTaskCategory?.id,
-    priority: ticket?.priority?.id,
-    description: ticket?.description ?? '',
-    assignment: ticket?.assignment,
-    managedBy: ticket?.assignedToContact?.id,
-  };
-};
-
 export function TicketDetails(props: Props) {
-  const {ticket, categories, priorities, contacts} = props;
-
-  const company = ticket.project?.company?.name ?? '';
-  const client = ticket.project?.clientPartner?.simpleFullName ?? '';
-
-  const {action: muatateAction, loading: isSubmitting} = useRetryAction(mutate);
-  const {action: closeTicketAction, loading: isClosingTicket} = useRetryAction(
-    closeTicket,
-    i18n.get('Ticket closed'),
-  );
-
-  const {action: cancelTicketAction, loading: isCancellingTicket} =
-    useRetryAction(cancelTicket, i18n.get('Ticket canceled'));
-
-  const {action: updateAssignmentAction, loading: isUpdatingAssignment} =
-    useRetryAction(
-      updateAssignment,
-      isWithProvider(ticket.assignment)
-        ? i18n.get('Ticket assigned to') + ' ' + client
-        : i18n.get('Ticket assigned to') + ' ' + company,
-    );
-
-  const {workspaceURL, workspaceURI, tenant} = useWorkspace();
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const form = useForm<TicketInfo>({
-    resolver: zodResolver(TicketFormSchema),
-    defaultValues: getDefaultValues(ticket),
-  });
-
-  const loading =
-    isSubmitting ||
-    isClosingTicket ||
-    isCancellingTicket ||
-    isUpdatingAssignment ||
-    form.formState.isSubmitting;
-
-  const handleSubmit = useCallback(
-    async (
-      value: TicketInfo,
-      onSuccess?: (res: MutateResponse) => Promise<void>,
-    ) => {
-      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
-      const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
-
-      if (!dirtyFieldKeys.length) return;
-      const mutateProps: MutateProps = {
-        action: {
-          type: 'update',
-          data: {
-            id: ticket.id!,
-            version: ticket.version!,
-            ...dirtyValues,
-          },
-        },
-        workspaceURL,
-        workspaceURI,
-      };
-
-      await muatateAction(mutateProps, onSuccess);
-    },
-    [
-      form.formState.dirtyFields,
-      muatateAction,
-      ticket?.id,
-      ticket?.version,
-      workspaceURI,
-      workspaceURL,
-    ],
-  );
+  const {
+    ticketForm: form,
+    ticket,
+    handleTicketFormSubmit: handleSubmit,
+    loading,
+  } = useTicketDetails();
+  const {tenant} = useWorkspace();
+  const {categories, priorities, contacts} = props;
 
   const closeAndCancel = !ticket.status?.isCompleted && (
     <>
-      <CloseTicket
-        id={ticket.id}
-        version={ticket.version}
-        disabled={loading}
-        form={form}
-        handleSubmit={handleSubmit}
-        action={closeTicketAction}
-      />
-      <CancelTicket
-        id={ticket.id}
-        version={ticket.version}
-        disabled={loading}
-        form={form}
-        handleSubmit={handleSubmit}
-        action={cancelTicketAction}
-      />
+      <CloseTicket />
+      <CancelTicket />
     </>
   );
 
-  const assignToButton = (
-    <AssignToButton
-      id={ticket.id}
-      version={ticket.version}
-      disabled={loading}
-      form={form}
-      handleSubmit={handleSubmit}
-      assignment={ticket.assignment ?? ASSIGNMENT.PROVIDER}
-      company={company}
-      client={client}
-      action={updateAssignmentAction}
-    />
-  );
-
-  useEffect(() => {
-    form.reset(getDefaultValues(ticket));
-  }, [ticket, form]);
+  const assignToButton = <AssignToButton />;
 
   return (
     <Form {...form}>
-      <form
-        ref={formRef}
-        onSubmit={form.handleSubmit(value => handleSubmit(value))}>
+      <form onSubmit={form.handleSubmit(value => handleSubmit(value))}>
         <div className="flex flex-col-reverse lg:flex-col gap-4 rounded-md border bg-card p-4 mt-5">
           <div className="grid grid-cols-1 gap-4 lg:flex lg:flex-row-reverse lg:justify-start lg:grow">
             <Button
@@ -254,7 +128,7 @@ export function TicketDetails(props: Props) {
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value?.toString()}>
+                      value={field.value?.toString()}>
                       <FormControl>
                         <SelectTrigger className="w-fit">
                           <SelectValue
@@ -292,7 +166,7 @@ export function TicketDetails(props: Props) {
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value?.toString()}>
+                      value={field.value?.toString()}>
                       <FormControl>
                         <SelectTrigger className="w-fit">
                           <SelectValue
@@ -379,7 +253,7 @@ export function TicketDetails(props: Props) {
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value?.toString()}>
+                        value={field.value?.toString()}>
                         <FormControl>
                           <SelectTrigger className="w-fit">
                             <SelectValue
@@ -481,142 +355,35 @@ function getProgress(p: Maybe<string>): number {
   return 0;
 }
 
-type ActionProps = {
-  id: string;
-  version: number;
-  form: UseFormReturn<TicketInfo>;
-  disabled: boolean;
-  handleSubmit: (
-    value: TicketInfo,
-    onSuccess?: (res: MutateResponse) => Promise<void>,
-  ) => void;
-  className?: string;
-};
+function AssignToButton({className}: {className?: string}) {
+  const {loading, handleAssignment, ticket} = useTicketDetails();
 
-function AssignToButton(
-  props: ActionProps & {
-    assignment: number;
-    client: string;
-    company: string;
-    action: (
-      actionProps: UpdateAssignmentProps,
-      onSuccess?: ((res: true) => Promise<void>) | undefined,
-    ) => Promise<void>;
-  },
-) {
-  const {
-    id,
-    version,
-    disabled,
-    form,
-    handleSubmit,
-    className,
-    assignment,
-    client,
-    company,
-    action,
-  } = props;
-  const {workspaceURL} = useWorkspace();
-  const handleClick = useCallback(async () => {
-    if (disabled) return;
-    const onSuccess = async (data?: MutateResponse) => {
-      let newVersion = version;
-      if (data) {
-        newVersion = data.version;
-      }
-
-      return await action({
-        data: {
-          id,
-          version: newVersion,
-          assignment: isWithProvider(assignment)
-            ? ASSIGNMENT.CUSTOMER
-            : ASSIGNMENT.PROVIDER,
-        },
-        workspaceURL,
-      });
-    };
-
-    if (form.formState.isDirty) {
-      const isValid = await form.trigger(undefined, {shouldFocus: true});
-      if (!isValid) return;
-
-      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
-      const dirtyValues = pick(form.getValues(), dirtyFieldKeys) as TicketInfo;
-      return handleSubmit(dirtyValues, onSuccess);
-    }
-
-    await onSuccess();
-  }, [
-    id,
-    version,
-    workspaceURL,
-    action,
-    form,
-    handleSubmit,
-    disabled,
-    assignment,
-  ]);
-
+  const company = ticket.project?.company?.name ?? '';
+  const client = ticket.project?.clientPartner?.simpleFullName ?? '';
   return (
     <Button
       size="sm"
       type="button"
       className={className}
       variant="success"
-      disabled={disabled}
-      onClick={handleClick}>
-      {isWithProvider(assignment)
+      disabled={loading}
+      onClick={handleAssignment}>
+      {isWithProvider(ticket.assignment)
         ? i18n.get('Assign to') + ' ' + client
         : i18n.get('Assign to') + ' ' + company}
     </Button>
   );
 }
 
-function CancelTicket(
-  props: ActionProps & {
-    action: (
-      actionProps: TicketActionProps,
-      onSuccess?: ((res: true) => Promise<void>) | undefined,
-    ) => Promise<void>;
-  },
-) {
-  const {id, version, disabled, form, handleSubmit, action, className} = props;
-  const {workspaceURL} = useWorkspace();
-
-  const handleClick = useCallback(async () => {
-    if (disabled) return;
-    const onSuccess = async (data?: MutateResponse) => {
-      let newVersion = version;
-      if (data) {
-        newVersion = data.version;
-      }
-
-      return await action({
-        data: {id: id, version: newVersion},
-        workspaceURL,
-      });
-    };
-
-    if (form.formState.isDirty) {
-      const isValid = await form.trigger(undefined, {shouldFocus: true});
-      if (!isValid) return;
-
-      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
-      const dirtyValues = pick(form.getValues(), dirtyFieldKeys) as TicketInfo;
-      return handleSubmit(dirtyValues, onSuccess);
-    }
-
-    await onSuccess();
-  }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
-
+function CancelTicket({className}: {className?: string}) {
+  const {loading, handleCancelTicket} = useTicketDetails();
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
           size="sm"
           variant="destructive"
-          disabled={disabled}
+          disabled={loading}
           className={className}>
           {i18n.get('Cancel ticket')}
         </Button>
@@ -639,7 +406,7 @@ function CancelTicket(
               type="button"
               size="sm"
               variant="destructive"
-              onClick={handleClick}>
+              onClick={handleCancelTicket}>
               {i18n.get('OK')}
             </Button>
           </DialogClose>
@@ -649,50 +416,15 @@ function CancelTicket(
   );
 }
 
-function CloseTicket(
-  props: ActionProps & {
-    action: (
-      actionProps: TicketActionProps,
-      onSuccess?: ((res: true) => Promise<void>) | undefined,
-    ) => Promise<void>;
-  },
-) {
-  const {id, version, disabled, form, handleSubmit, className, action} = props;
-  const {workspaceURL} = useWorkspace();
-
-  const handleClick = useCallback(async () => {
-    if (disabled) return;
-    const onSuccess = async (data?: MutateResponse) => {
-      let newVersion = version;
-      if (data) {
-        newVersion = data.version;
-      }
-
-      return await action({
-        data: {id: id, version: newVersion},
-        workspaceURL,
-      });
-    };
-
-    if (form.formState.isDirty) {
-      const isValid = await form.trigger(undefined, {shouldFocus: true});
-      if (!isValid) return;
-
-      const dirtyFieldKeys = Object.keys(form.formState.dirtyFields);
-      const dirtyValues = pick(form.getValues(), dirtyFieldKeys) as TicketInfo;
-      return handleSubmit(dirtyValues, onSuccess);
-    }
-
-    await onSuccess();
-  }, [id, version, workspaceURL, action, form, handleSubmit, disabled]);
-
+function CloseTicket({className}: {className?: string}) {
+  const {loading, handleCloseTicket} = useTicketDetails();
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
           size="sm"
           variant="success"
-          disabled={disabled}
+          disabled={loading}
           className={className}>
           {i18n.get('Close ticket')}
         </Button>
@@ -716,7 +448,7 @@ function CloseTicket(
               type="button"
               size="sm"
               variant="destructive"
-              onClick={handleClick}>
+              onClick={handleCloseTicket}>
               {i18n.get('OK')}
             </Button>
           </DialogClose>

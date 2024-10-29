@@ -16,24 +16,24 @@ import {
   FormItem,
   FormMessage,
 } from '@/ui/components/form';
-import {useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {useRouter} from 'next/navigation';
 import {useMemo, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 
+import type {TicketLink} from '../../../../common/types';
 import {
   createChildLink,
   createParentLink,
   createRelatedLink,
 } from '../../../actions';
-import type {TicketLink} from '../../../types';
+import {useRetryAction} from '../../../hooks';
 import {
   ChildTicketSchema,
   RelatedTicketSchema,
 } from '../../../utils/validators';
+import {useTicketDetails} from '../ticket-details/ticket-details-provider';
 import {TicketSelect} from '../ticket-select';
 
 export function TicketRelatedLinkForm({
@@ -53,8 +53,6 @@ export function TicketRelatedLinkForm({
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
-  const router = useRouter();
-  const {toast} = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<z.infer<typeof RelatedTicketSchema>>({
     resolver: zodResolver(RelatedTicketSchema),
@@ -64,6 +62,26 @@ export function TicketRelatedLinkForm({
     },
   });
 
+  const {loading, submitFormWithAction} = useTicketDetails();
+  const {action, loading: isSubmitting} = useRetryAction(
+    createRelatedLink,
+    i18n.get('Link created'),
+  );
+
+  const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
+    submitFormWithAction(async () => {
+      await action({
+        workspaceURL,
+        data: {
+          linkType: values.linkType,
+          linkTicketId: values.ticket.id,
+          currentTicketId: ticketId,
+        },
+      });
+      onSubmit();
+    });
+  };
+
   const excludeList = useMemo(
     () =>
       links
@@ -72,36 +90,6 @@ export function TicketRelatedLinkForm({
         .filter(Boolean) as string[],
     [links, ticketId],
   );
-
-  const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
-    try {
-      const {error, message} = await createRelatedLink({
-        workspaceURL,
-        data: {
-          linkType: values.linkType,
-          linkTicketId: values.ticket.id,
-          currentTicketId: ticketId,
-        },
-      });
-      if (error) {
-        return toast({
-          variant: 'destructive',
-          title: message,
-        });
-      }
-      toast({
-        variant: 'success',
-        title: i18n.get('Link created'),
-      });
-      onSubmit();
-      router.refresh();
-    } catch (e) {
-      toast({
-        variant: 'destructive',
-        title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
-      });
-    }
-  };
 
   return (
     <Form {...form}>
@@ -154,7 +142,11 @@ export function TicketRelatedLinkForm({
             )}
           />
         </div>
-        <Button size="sm" variant="success" className="ms-auto">
+        <Button
+          size="sm"
+          variant="success"
+          className="ms-auto"
+          disabled={loading || isSubmitting || form.formState.isSubmitting}>
           {i18n.get('Create Link')}
         </Button>
       </form>
@@ -176,40 +168,29 @@ export function TicketChildLinkForm({
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
-  const router = useRouter();
-  const {toast} = useToast();
   const formRef = useRef<HTMLFormElement>(null);
+
   const form = useForm<z.infer<typeof ChildTicketSchema>>({
     resolver: zodResolver(ChildTicketSchema),
   });
 
+  const {loading, submitFormWithAction} = useTicketDetails();
+  const {action, loading: isSubmitting} = useRetryAction(
+    createChildLink,
+    i18n.get('Link created'),
+  );
+
   const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
-    try {
-      const {error, message} = await createChildLink({
+    submitFormWithAction(async () => {
+      await action({
         workspaceURL,
         data: {
           linkTicketId: values.ticket.id,
           currentTicketId: ticketId,
         },
       });
-      if (error) {
-        return toast({
-          variant: 'destructive',
-          title: message,
-        });
-      }
-      toast({
-        variant: 'success',
-        title: i18n.get('Link created'),
-      });
       onSubmit();
-      router.refresh();
-    } catch (e) {
-      toast({
-        variant: 'destructive',
-        title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
-      });
-    }
+    });
   };
 
   return (
@@ -238,7 +219,11 @@ export function TicketChildLinkForm({
             )}
           />
         </div>
-        <Button size="sm" variant="success" className="ms-auto">
+        <Button
+          size="sm"
+          variant="success"
+          className="ms-auto"
+          disabled={loading || form.formState.isSubmitting || isSubmitting}>
           {i18n.get('Create Link')}
         </Button>
       </form>
@@ -260,46 +245,34 @@ export function TicketParentLinkForm({
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
-  const router = useRouter();
-  const {toast} = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<z.infer<typeof ChildTicketSchema>>({
     resolver: zodResolver(ChildTicketSchema),
   });
 
-  const excludeList = [ticketId, ...childrenIds];
-  if (parentId) {
-    excludeList.push(parentId);
-  }
+  const {loading, submitFormWithAction} = useTicketDetails();
+  const {action, loading: isSubmitting} = useRetryAction(
+    createParentLink,
+    i18n.get('Link created'),
+  );
 
   const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
-    try {
-      const {error, message} = await createParentLink({
+    submitFormWithAction(async () => {
+      await action({
         workspaceURL,
         data: {
           linkTicketId: values.ticket.id,
           currentTicketId: ticketId,
         },
       });
-      if (error) {
-        return toast({
-          variant: 'destructive',
-          title: message,
-        });
-      }
-      toast({
-        variant: 'success',
-        title: i18n.get('Link created'),
-      });
       onSubmit();
-      router.refresh();
-    } catch (e) {
-      toast({
-        variant: 'destructive',
-        title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
-      });
-    }
+    });
   };
+
+  const excludeList = [ticketId, ...childrenIds];
+  if (parentId) {
+    excludeList.push(parentId);
+  }
 
   return (
     <Form {...form}>
@@ -327,7 +300,11 @@ export function TicketParentLinkForm({
             )}
           />
         </div>
-        <Button size="sm" variant="success" className="ms-auto">
+        <Button
+          size="sm"
+          variant="success"
+          className="ms-auto"
+          disabled={loading || form.formState.isSubmitting || isSubmitting}>
           {i18n.get('Create Link')}
         </Button>
       </form>

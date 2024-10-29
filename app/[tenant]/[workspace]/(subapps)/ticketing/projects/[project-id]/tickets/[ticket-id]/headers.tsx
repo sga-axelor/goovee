@@ -16,6 +16,7 @@ import {
   TicketRelatedLinkForm,
 } from '../../../../common/ui/components/ticket-link-form';
 import {TicketLinkHeader} from '../../../../common/ui/components/ticket-link-header';
+import {useTicketDetails} from '../../../../common/ui/components/ticket-details/ticket-details-provider';
 
 export function RelatedTicketsHeader(props: {
   linkTypes: {
@@ -76,6 +77,7 @@ export function ChildTicketsHeader(props: {
   } = props;
 
   const {toast} = useToast();
+  const {submitFormWithAction} = useTicketDetails();
 
   return (
     <TicketLinkHeader
@@ -90,6 +92,7 @@ export function ChildTicketsHeader(props: {
           userId={userId}
           parentId={ticketId.toString()}
           className="mt-10 text-left"
+          submitFormWithAction={submitFormWithAction}
           onSuccess={() => {
             toast({
               variant: 'success',
