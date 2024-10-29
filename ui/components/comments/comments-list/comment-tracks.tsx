@@ -4,7 +4,7 @@ import React from 'react';
 import {MdArrowRightAlt} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 interface Track {
   title: string;

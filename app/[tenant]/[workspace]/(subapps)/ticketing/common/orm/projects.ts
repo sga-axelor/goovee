@@ -1,8 +1,6 @@
-/**
- * Projects ORM API
- */
+// ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
-import {getClient} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 import type {AOSProject} from '@/goovee/.generated/models';
 import type {ID} from '@goovee/orm';
 
@@ -18,9 +16,17 @@ import {
   Status,
 } from '../types';
 
-export async function findProjects(props: QueryProps<AOSProject> & AuthProps) {
-  const {workspaceId, userId, where, take, orderBy, skip} = props;
-  const client = await getClient();
+export async function findProjects(
+  props: QueryProps<AOSProject> & AuthProps & {tenantId: Tenant['id']},
+) {
+  const {workspaceId, userId, where, take, orderBy, skip, tenantId} = props;
+
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const projects = await client.aOSProject.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
@@ -31,21 +37,36 @@ export async function findProjects(props: QueryProps<AOSProject> & AuthProps) {
     },
     select: {name: true},
   });
+
   return projects;
 }
 
 export async function findProjectsWithTaskCount(
-  props: QueryProps<AOSProject> & AuthProps,
+  props: QueryProps<AOSProject> & AuthProps & {tenantId: Tenant['id']},
 ) {
   const projects = await findProjects(props);
+
   const counts = await Promise.all(
-    projects.map(project => getAllTicketCount({projectId: project.id})),
+    projects.map(project =>
+      getAllTicketCount({projectId: project.id, tenantId: props.tenantId}),
+    ),
   );
+
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
 
-export async function findProject(id: ID, workspaceId: ID, userId: ID) {
-  const client = await getClient();
+export async function findProject(
+  id: ID,
+  workspaceId: ID,
+  userId: ID,
+  tenantId: Tenant['id'],
+) {
+  if (!tenantId) {
+    return null;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {
       id: id,
@@ -53,33 +74,60 @@ export async function findProject(id: ID, workspaceId: ID, userId: ID) {
     },
     select: {id: true, name: true},
   });
+
   return project;
 }
 
-export async function findTicketCategories(projectId: ID): Promise<Category[]> {
-  const client = await getClient();
+export async function findTicketCategories(
+  projectId: ID,
+  tenantId: Tenant['id'],
+): Promise<Category[]> {
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {
       projectTaskCategorySet: {select: {id: true, name: true}},
     },
   });
+
   return project?.projectTaskCategorySet ?? [];
 }
 
-export async function findTicketPriorities(projectId: ID): Promise<Priority[]> {
-  const client = await getClient();
+export async function findTicketPriorities(
+  projectId: ID,
+  tenantId: Tenant['id'],
+): Promise<Priority[]> {
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {
       projectTaskPrioritySet: {select: {id: true, name: true}},
     },
   });
+
   return project?.projectTaskPrioritySet ?? [];
 }
 
-export async function findTicketStatuses(projectId: ID): Promise<Status[]> {
-  const client = await getClient();
+export async function findTicketStatuses(
+  projectId: ID,
+  tenantId: Tenant['id'],
+): Promise<Status[]> {
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {
@@ -101,33 +149,57 @@ export async function findTicketStatuses(projectId: ID): Promise<Status[]> {
       },
     },
   });
+
   return project?.projectTaskStatusSet ?? [];
 }
 
-export async function findCompany(projectId: ID): Promise<Company | undefined> {
-  const client = await getClient();
+export async function findCompany(
+  projectId: ID,
+  tenantId: Tenant['id'],
+): Promise<Company | undefined> {
+  if (!tenantId) {
+    return undefined;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {company: {id: true, name: true}},
   });
+
   return project?.company;
 }
 
 export async function findClientPartner(
   projectId: ID,
+  tenantId: Tenant['id'],
 ): Promise<ClientPartner | undefined> {
-  const client = await getClient();
+  if (!tenantId) {
+    return undefined;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {
       clientPartner: {simpleFullName: true},
     },
   });
+
   return project?.clientPartner;
 }
 
-export async function findTicketDoneStatus(): Promise<string | undefined> {
-  const client = await getClient();
+export async function findTicketDoneStatus(
+  tenantId: Tenant['id'],
+): Promise<string | undefined> {
+  if (!tenantId) {
+    return undefined;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const projectAppConfig = await client.aOSAppProject.findOne({
     select: {completedTaskStatus: {id: true}},
   });
@@ -135,8 +207,15 @@ export async function findTicketDoneStatus(): Promise<string | undefined> {
   return projectAppConfig?.completedTaskStatus?.id;
 }
 
-export async function findTicketCancelledStatus(): Promise<string | undefined> {
-  const client = await getClient();
+export async function findTicketCancelledStatus(
+  tenantId: Tenant['id'],
+): Promise<string | undefined> {
+  if (!tenantId) {
+    return undefined;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const projectAppConfig = await client.aOSAppProject.findOne({
     select: {cancelledTaskStatus: {id: true}},
   });
@@ -146,8 +225,14 @@ export async function findTicketCancelledStatus(): Promise<string | undefined> {
 
 export async function findContactPartners(
   projectId: ID,
+  tenantId: Tenant['id'],
 ): Promise<ContactPartner[]> {
-  const client = await getClient();
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {
@@ -162,6 +247,7 @@ export async function findContactPartners(
       },
     },
   });
+
   if (!project?.clientPartner) return [];
 
   const partners =

@@ -23,7 +23,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 import {SUBAPP_CODES} from '@/constants';
@@ -44,7 +44,7 @@ import {
   joinGroup,
   pinGroup,
 } from '@/subapps/forum/common/action/action';
-import {getImageURL} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
+import {getImageURL} from '@/utils/files';
 import {Group} from '@/subapps/forum/common/types/forum';
 
 export const GroupActionList = ({
@@ -61,7 +61,7 @@ export const GroupActionList = ({
   groupId?: string;
 }) => {
   const router = useRouter();
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
   const {toast} = useToast();
 
   const handlePinGroup = async (isPin: boolean, group: any) => {
@@ -152,8 +152,7 @@ export const GroupActionList = ({
       <div className="flex flex-col gap-4">
         {groups?.map((group: any) => {
           const groupImageID = group?.forumGroup?.image?.id || group?.image?.id;
-          const groupImage =
-            getImageURL(groupImageID) || '/images/no-image.png';
+          const groupImage = getImageURL(groupImageID, tenant, {noimage: true});
 
           return (
             <Collapsible key={group?.id}>

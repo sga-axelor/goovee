@@ -13,7 +13,7 @@ import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   Form,
   Button,
@@ -32,7 +32,7 @@ import {
   SelectValue,
 } from '@/ui/components';
 import {useToast} from '@/ui/hooks/use-toast';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {clone} from '@/utils';
 
@@ -86,7 +86,7 @@ export const CreatePost = ({
   const [loading, setLoading] = useState(false);
 
   const {toast} = useToast();
-  const {workspaceURL} = useWorkspace();
+  const {workspaceURL, tenant} = useWorkspace();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -229,7 +229,7 @@ export const CreatePost = ({
                                 <div className="w-6 h-6 rounded-lg overflow-hidden relative">
                                   <Image
                                     fill
-                                    src={getImageURL(group?.image?.id)}
+                                    src={getImageURL(group?.image?.id, tenant)}
                                     alt={group.name}
                                     objectFit="cover"
                                   />

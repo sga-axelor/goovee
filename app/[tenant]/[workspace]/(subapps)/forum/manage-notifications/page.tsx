@@ -1,7 +1,7 @@
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';

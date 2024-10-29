@@ -1,8 +1,11 @@
-import {getClient} from '@/goovee';
-import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
+import {notFound} from 'next/navigation';
 
-import {getTicketAccessFilter} from '../../../../common/orm/helpers';
+// ---- CORE IMPORTS ---- //
+import {manager} from '@/tenant';
+
+// ---- LOCAL IMPORTS ---- //
+import {getTicketAccessFilter} from '@/subapps/ticketing/common/orm/helpers';
 
 export default async function Layout({
   params,
@@ -18,8 +21,10 @@ export default async function Layout({
 }) {
   const projectId = params?.['project-id'];
   const ticketId = params['ticket-id'];
+  const {tenant} = params;
 
-  const client = await getClient();
+  const client = await manager.getClient(tenant);
+
   const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: ticketId,
@@ -30,6 +35,8 @@ export default async function Layout({
       id: true,
     },
   });
+
   if (!ticket) notFound();
+
   return children;
 }

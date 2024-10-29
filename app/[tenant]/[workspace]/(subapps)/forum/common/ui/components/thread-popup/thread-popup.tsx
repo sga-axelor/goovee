@@ -4,8 +4,9 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation} from 'swiper/modules';
 
 // ---- CORE IMPORTS ---- //
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
@@ -23,6 +24,8 @@ export const ThreadPopup = ({
   images: any;
   onClose: () => void;
 }) => {
+  const {tenant} = useWorkspace();
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
@@ -47,7 +50,7 @@ export const ThreadPopup = ({
                     <div
                       className="w-full h-full bg-no-repeat bg-center"
                       style={{
-                        backgroundImage: `url(${getImageURL(image?.metaFile?.id)})`,
+                        backgroundImage: `url(${getImageURL(image?.metaFile?.id, tenant)})`,
                         backgroundSize: '100%',
                       }}></div>
                   </SwiperSlide>

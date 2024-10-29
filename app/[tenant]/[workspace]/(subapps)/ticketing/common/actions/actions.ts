@@ -1,11 +1,14 @@
 'use server';
 
+import {revalidatePath} from 'next/cache';
+import {headers} from 'next/headers';
+
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-import type {Cloned} from '@/types/util';
+import {TENANT_HEADER} from '@/middleware';
+import {i18n} from '@/i18n';
 import {clone} from '@/utils';
 import type {ID} from '@goovee/orm';
-import {revalidatePath} from 'next/cache';
+import type {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
@@ -30,14 +33,28 @@ import {handleError} from './helpers';
 import type {ActionConfig, ActionResponse, MutateProps} from './types';
 
 export type MutateResponse = {id: string; version: number};
+
 export async function mutate(
   props: MutateProps,
   config?: ActionConfig,
 ): ActionResponse<MutateResponse> {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
   const {workspaceURL, workspaceURI, action} = props;
+
   const {force} = config || {};
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -49,11 +66,12 @@ export async function mutate(
         userId: user.id,
         workspaceId: workspace.id,
         workspaceURL,
+        tenantId,
       });
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
       if (force) {
-        const version = await findTicketVersion(updateData.id);
+        const version = await findTicketVersion(updateData.id, tenantId);
         updateData.version = version;
       }
       ticket = await updateTicket({
@@ -61,6 +79,7 @@ export async function mutate(
         userId: user.id,
         workspaceId: workspace.id,
         workspaceURL,
+        tenantId,
       });
     }
 
@@ -91,8 +110,19 @@ export async function updateAssignment(
   const {workspaceURL, data} = props;
   const {force} = config || {};
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -101,7 +131,7 @@ export async function updateAssignment(
     });
 
     if (force) {
-      const version = await findTicketVersion(updateData.id);
+      const version = await findTicketVersion(updateData.id, tenantId);
       updateData.version = version;
     }
 
@@ -115,6 +145,7 @@ export async function updateAssignment(
       userId: user.id,
       workspaceId: workspace.id,
       workspaceURL,
+      tenantId,
     });
     return {
       success: true,
@@ -137,12 +168,24 @@ export async function closeTicket(
   const {workspaceURL, data} = props;
   const {force} = config || {};
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
-    const status = await findTicketDoneStatus();
+    const status = await findTicketDoneStatus(tenantId);
+
     if (!status) {
       return {
         error: true,
@@ -156,7 +199,7 @@ export async function closeTicket(
     });
 
     if (force) {
-      const version = await findTicketVersion(updateData.id);
+      const version = await findTicketVersion(updateData.id, tenantId);
       updateData.version = version;
     }
 
@@ -170,6 +213,7 @@ export async function closeTicket(
       userId: user.id,
       workspaceId: workspace.id,
       workspaceURL,
+      tenantId,
     });
 
     //TODO: tickets path needs to be revalidated
@@ -189,12 +233,23 @@ export async function cancelTicket(
   const {workspaceURL, data} = props;
   const {force} = config || {};
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
-    const status = await findTicketCancelledStatus();
+    const status = await findTicketCancelledStatus(tenantId);
     if (!status) {
       return {
         error: true,
@@ -208,7 +263,7 @@ export async function cancelTicket(
     });
 
     if (force) {
-      const version = await findTicketVersion(updateData.id);
+      const version = await findTicketVersion(updateData.id, tenantId);
       updateData.version = version;
     }
 
@@ -222,6 +277,7 @@ export async function cancelTicket(
       userId: user.id,
       workspaceId: workspace.id,
       workspaceURL,
+      tenantId,
     });
 
     return {
@@ -243,8 +299,19 @@ export async function createRelatedLink(
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -252,6 +319,7 @@ export async function createRelatedLink(
       data,
       userId: user.id,
       workspaceId: workspace.id,
+      tenantId,
     });
     return {
       success: true,
@@ -272,8 +340,19 @@ export async function createChildLink(
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -281,7 +360,9 @@ export async function createChildLink(
       data,
       userId: user.id,
       workspaceId: workspace.id,
+      tenantId,
     });
+
     return {
       success: true,
       data: true,
@@ -296,8 +377,19 @@ export async function createParentLink(
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -305,7 +397,9 @@ export async function createParentLink(
       data,
       userId: user.id,
       workspaceId: workspace.id,
+      tenantId,
     });
+
     return {
       success: true,
       data: true,
@@ -325,8 +419,19 @@ export async function deleteChildLink(
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -334,6 +439,7 @@ export async function deleteChildLink(
       data,
       userId: user.id,
       workspaceId: workspace.id,
+      tenantId,
     });
     return {
       success: true,
@@ -354,8 +460,19 @@ export async function deleteParentLink(
 ): ActionResponse<true> {
   const {workspaceURL, data} = props;
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -363,6 +480,7 @@ export async function deleteParentLink(
       data,
       userId: user.id,
       workspaceId: workspace.id,
+      tenantId,
     });
     return {
       success: true,
@@ -382,8 +500,19 @@ export async function deleteRelatedLink(
 ): ActionResponse<ID> {
   const {workspaceURL, data} = props;
 
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) return {error: true, message};
+
   const {user, workspace} = auth;
 
   try {
@@ -391,7 +520,9 @@ export async function deleteRelatedLink(
       data,
       userId: user.id,
       workspaceId: workspace.id,
+      tenantId,
     });
+
     return {
       success: true,
       data: count,
@@ -412,7 +543,17 @@ export async function searchTickets({
   projectId?: ID;
   excludeList?: ID[];
 }): ActionResponse<Cloned<TicketSearch>[]> {
-  const {error, message, auth} = await ensureAuth(workspaceURL);
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+
   if (error) {
     return {error: true, message};
   }
@@ -424,6 +565,8 @@ export async function searchTickets({
     workspaceId: workspace.id,
     projectId,
     excludeList,
+    tenantId,
   });
+
   return {success: true, data: clone(tickets)};
 }

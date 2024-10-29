@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   Avatar,
   AvatarImage,
@@ -10,7 +10,7 @@ import {
   RadioGroupItem,
   Separator,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 
@@ -27,7 +27,7 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
   const [selectedOption, setSelectedOption] = useState<string | null>('');
   const {forumGroup, id, notificationSelect, isPin} = group;
 
-  const {workspaceURL} = useWorkspace();
+  const {workspaceURL, tenant} = useWorkspace();
   const {toast} = useToast();
 
   useEffect(() => {
@@ -59,10 +59,9 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
         <div className="flex items-center gap-3">
           <Avatar className="rounded-full h-6 w-6">
             <AvatarImage
-              src={
-                getImageURL(group.forumGroup?.image?.id) ??
-                '/images/no-image.png'
-              }
+              src={getImageURL(group.forumGroup?.image?.id, tenant, {
+                noimage: true,
+              })}
             />
           </Avatar>
           <span className="text-sm">{i18n.get(forumGroup.name)}</span>

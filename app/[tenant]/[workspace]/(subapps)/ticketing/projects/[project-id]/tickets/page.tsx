@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
+import {i18n} from '@/i18n';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {
   Breadcrumb,
@@ -31,6 +31,7 @@ import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
+import {Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_SORT, sortKeyPathMap} from '../../../common/constants';
@@ -76,16 +77,18 @@ export default async function Page({
   if (!session?.user) notFound();
   const userId = session!.user.id;
 
-  const {workspaceURL, workspaceURI} = workspacePathname(params);
+  const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) notFound();
 
-  const project = await findProject(projectId, workspace.id, userId);
+  const project = await findProject(projectId, workspace.id, userId, tenant);
+
   if (!project) notFound();
 
   const tickets = await findTickets({
@@ -94,6 +97,7 @@ export default async function Page({
     skip: getSkip(limit, page),
     where: getWhere(decodeFilter(filter), userId),
     orderBy: getOrderBy(sort, sortKeyPathMap),
+    tenantId: tenant,
   }).then(clone);
 
   const url = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
@@ -157,6 +161,7 @@ export default async function Page({
             url={url}
             searchParams={searchParams}
             projectId={projectId}
+            tenantId={tenant}
           />
         </Suspense>
       </div>
@@ -239,18 +244,20 @@ async function AsyncFilter({
   url,
   searchParams,
   projectId,
+  tenantId,
 }: {
   url: string;
   searchParams: SearchParams;
   projectId: ID;
+  tenantId: Tenant['id'];
 }) {
   const [contacts, statuses, priorities, company, clientPartner] =
     await Promise.all([
-      findContactPartners(projectId),
-      findTicketStatuses(projectId),
-      findTicketPriorities(projectId),
-      findCompany(projectId),
-      findClientPartner(projectId),
+      findContactPartners(projectId, tenantId),
+      findTicketStatuses(projectId, tenantId),
+      findTicketPriorities(projectId, tenantId),
+      findCompany(projectId, tenantId),
+      findClientPartner(projectId, tenantId),
     ]).then(clone);
 
   return (

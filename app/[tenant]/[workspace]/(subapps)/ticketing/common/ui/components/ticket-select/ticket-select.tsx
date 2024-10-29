@@ -1,5 +1,5 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import type {Cloned} from '@/types/util';
 import {
   Button,
@@ -15,7 +15,7 @@ import {
 } from '@/ui/components';
 import {useResponsive, useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
-import {Drawer, DrawerContent, DrawerTrigger} from '@ui/components/drawer';
+import {Drawer, DrawerContent, DrawerTrigger} from '@/ui/components/drawer';
 import {debounce} from 'lodash';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 

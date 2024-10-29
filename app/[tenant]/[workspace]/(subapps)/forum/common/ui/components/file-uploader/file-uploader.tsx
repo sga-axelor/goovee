@@ -5,7 +5,7 @@ import {MdClose} from 'react-icons/md';
 import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   Button,
   ScrollArea,

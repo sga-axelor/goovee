@@ -1,17 +1,16 @@
-/**
- * Tickets ORM API
- */
+import axios from 'axios';
 
+// ---- LOCAL IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
-import {getClient} from '@/goovee';
-import type {AOSProjectTask} from '@/goovee/.generated/models';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {addComment} from '@/orm/comment';
 import {ModelType} from '@/types';
 import {sql} from '@/utils/template-string';
+import {TenancyType, manager, type Tenant} from '@/tenant';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';
-import axios from 'axios';
+import type {AOSProjectTask} from '@/goovee/.generated/models';
 
+// ---- LOCAL IMPORTS ---- //
 import {
   ASSIGNMENT,
   INVOICING_TYPE,
@@ -48,13 +47,20 @@ export async function findTicketAccess({
   userId,
   workspaceId,
   select,
+  tenantId,
 }: {
   recordId: ID;
   userId: ID;
   workspaceId: ID;
   select?: SelectOptions<AOSProjectTask>;
+  tenantId: Tenant['id'];
 }) {
-  const client = await getClient();
+  if (!tenantId) {
+    return null;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: ticketId,
@@ -63,6 +69,7 @@ export async function findTicketAccess({
     },
     select: {id: true, ...select},
   });
+
   return ticket;
 }
 
@@ -71,11 +78,13 @@ export async function createTicket({
   userId,
   workspaceId,
   workspaceURL,
+  tenantId,
 }: {
   data: CreateTicketInfo;
   userId: ID;
   workspaceId: ID;
   workspaceURL: string;
+  tenantId: Tenant['id'];
 }) {
   const {
     priority,
@@ -87,7 +96,12 @@ export async function createTicket({
     parentId,
   } = data;
 
-  const client = await getClient();
+  if (!tenantId) {
+    throw new Error(i18n.get('TenantId is required.'));
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const project = await client.aOSProject.findOne({
     where: {
       id: projectId,
@@ -115,16 +129,19 @@ export async function createTicket({
       select: {
         project: {id: true},
       },
+      tenantId,
     });
+
     if (!parentTicket) {
       throw new Error(i18n.get('Parent ticket not found'));
     }
+
     if (parentTicket?.project?.id !== projectId) {
       throw new Error(i18n.get('Parent ticket not in this project'));
     }
   }
 
-  const manager = project.assignedTo?.id;
+  const projectManager = project.assignedTo?.id;
   const defaultStatus = project?.projectTaskStatusSet?.[0]?.id;
 
   let ticketWithoutFullName = await client.aOSProjectTask.create({
@@ -144,7 +161,7 @@ export async function createTicket({
       ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
       ...(defaultStatus && {status: {select: {id: defaultStatus}}}),
       ...(category && {projectTaskCategory: {select: {id: category}}}),
-      ...(manager && {assignedTo: {select: {id: manager}}}),
+      ...(projectManager && {assignedTo: {select: {id: projectManager}}}),
       ...(priority && {priority: {select: {id: priority}}}),
       ...(parentId && {parentTask: {select: {id: parentId}}}),
     },
@@ -172,7 +189,7 @@ export async function createTicket({
       ...(category && {projectTaskCategory: {name: true}}),
       ...(priority && {priority: {name: true}}),
       ...(defaultStatus && {status: {name: true}}),
-      ...(manager && {assignedTo: {name: true}}),
+      ...(projectManager && {assignedTo: {name: true}}),
     },
   });
 
@@ -241,6 +258,7 @@ export async function createTicket({
       type: ModelType.ticketing,
       model: {id: ticket.id},
       messageBody: {title: 'Record Created', tracks: tracks, tags: []},
+      tenantId,
     });
   } catch (e) {
     console.log('Error adding comment');
@@ -253,10 +271,12 @@ export async function updateTicketByWS({
   data,
   userId,
   workspaceId,
+  tenantId,
 }: {
   data: UpdateTicketInfo;
   userId: ID;
   workspaceId: ID;
+  tenantId: Tenant['id'];
 }) {
   const {
     priority,
@@ -270,7 +290,9 @@ export async function updateTicketByWS({
     version,
   } = data;
 
-  if (!(await findTicketAccess({recordId: id, userId, workspaceId}))) {
+  if (
+    !(await findTicketAccess({recordId: id, userId, workspaceId, tenantId}))
+  ) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
   }
@@ -324,11 +346,13 @@ export async function updateTicket({
   userId,
   workspaceId,
   workspaceURL,
+  tenantId,
 }: {
   data: UpdateTicketInfo;
   userId: ID;
   workspaceId: ID;
   workspaceURL: string;
+  tenantId: Tenant['id'];
 }) {
   const {
     priority,
@@ -341,7 +365,8 @@ export async function updateTicket({
     id,
     version,
   } = data;
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
 
   const select: SelectOptions<AOSProjectTask> = {
     ...(subject != null && {name: true}),
@@ -357,6 +382,7 @@ export async function updateTicket({
     userId,
     workspaceId,
     select,
+    tenantId,
   });
   if (!oldTicket) {
     // To make sure the user has access to the ticket.
@@ -453,6 +479,7 @@ export async function updateTicket({
       type: ModelType.ticketing,
       model: {id: ticket.id},
       messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
+      tenantId,
     });
   } catch (e) {
     console.log('Error adding comment');
@@ -464,10 +491,17 @@ export async function updateTicket({
 
 export async function getAllTicketCount({
   projectId,
+  tenantId,
 }: {
   projectId: ID;
+  tenantId: Tenant['id'];
 }): Promise<number> {
-  const client = await getClient();
+  if (!tenantId) {
+    return 0;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
@@ -475,17 +509,25 @@ export async function getAllTicketCount({
       status: {isCompleted: false},
     },
   });
+
   return Number(count);
 }
 
 export async function getMyTicketCount({
   projectId,
   userId,
+  tenantId,
 }: {
   projectId: ID;
   userId: ID;
+  tenantId: Tenant['id'];
 }): Promise<number> {
-  const client = await getClient();
+  if (!tenantId) {
+    return 0;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
@@ -503,11 +545,18 @@ export async function getMyTicketCount({
 export async function getManagedTicketCount({
   projectId,
   userId,
+  tenantId,
 }: {
   projectId: ID;
   userId: ID;
+  tenantId: Tenant['id'];
 }): Promise<number> {
-  const client = await getClient();
+  if (!tenantId) {
+    return 0;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
@@ -516,17 +565,25 @@ export async function getManagedTicketCount({
       assignedToContact: {id: userId},
     },
   });
+
   return Number(count);
 }
 
 export async function getCreatedTicketCount({
   projectId,
   userId,
+  tenantId,
 }: {
   projectId: ID;
   userId: ID;
+  tenantId: Tenant['id'];
 }): Promise<number> {
-  const client = await getClient();
+  if (!tenantId) {
+    return 0;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
@@ -535,14 +592,22 @@ export async function getCreatedTicketCount({
       requestedByContact: {id: userId},
     },
   });
+
   return Number(count);
 }
 export async function getResolvedTicketCount({
   projectId,
+  tenantId,
 }: {
   projectId: ID;
+  tenantId: Tenant['id'];
 }): Promise<number> {
-  const client = await getClient();
+  if (!tenantId) {
+    return 0;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const count = await client.aOSProjectTask.count({
     where: {
       ...getTicketAccessFilter(),
@@ -550,14 +615,21 @@ export async function getResolvedTicketCount({
       status: {isCompleted: true},
     },
   });
+
   return Number(count);
 }
 
 export async function findTickets(
-  props: TicketProps<AOSProjectTask>,
+  props: TicketProps<AOSProjectTask> & {tenantId: Tenant['id']},
 ): Promise<TicketListTicket[]> {
-  const {projectId, take, skip, where, orderBy} = props;
-  const client = await getClient();
+  const {projectId, take, skip, where, orderBy, tenantId} = props;
+
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const tickets = await client.aOSProjectTask.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
@@ -584,13 +656,20 @@ export async function findTickets(
       assignedTo: {name: true},
     },
   });
+
   return tickets;
 }
 
 export async function findRelatedTicketLinks(
   ticketId: ID,
+  tenantId: Tenant['id'],
 ): Promise<TicketLink[] | undefined> {
-  const client = await getClient();
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const ticket = await client.aOSProjectTask.findOne({
     where: {id: ticketId},
     select: {
@@ -617,11 +696,20 @@ export async function findRelatedTicketLinks(
       },
     },
   });
+
   return ticket?.projectTaskLinkList;
 }
 
-export async function findChildTickets(ticketId: ID): Promise<ChildTicket[]> {
-  const client = await getClient();
+export async function findChildTickets(
+  ticketId: ID,
+  tenantId: Tenant['id'],
+): Promise<ChildTicket[]> {
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const tickets = await client.aOSProjectTask.find({
     where: {
       parentTask: {
@@ -645,13 +733,20 @@ export async function findChildTickets(ticketId: ID): Promise<ChildTicket[]> {
       assignment: true,
     },
   });
+
   return tickets;
 }
 
 export async function findParentTicket(
   ticketId: ID,
+  tenantId: Tenant['id'],
 ): Promise<ParentTicket | undefined> {
-  const client = await getClient();
+  if (!tenantId) {
+    return undefined;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: ticketId,
@@ -675,17 +770,25 @@ export async function findParentTicket(
       },
     },
   });
+
   return ticket?.parentTask;
 }
 
 export async function findTicket({
   ticketId,
   projectId,
+  tenantId,
 }: {
   ticketId: ID;
   projectId: ID;
+  tenantId: Tenant['id'];
 }): Promise<Ticket | null> {
-  const client = await getClient();
+  if (!tenantId) {
+    return null;
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const ticket = await client.aOSProjectTask.findOne({
     where: {
       id: ticketId,
@@ -722,12 +825,21 @@ export async function findTicket({
   return ticket;
 }
 
-export async function findTicketVersion(ticketId: ID): Promise<number> {
-  const client = await getClient();
+export async function findTicketVersion(
+  ticketId: ID,
+  tenantId: Tenant['id'],
+): Promise<number> {
+  if (!tenantId) {
+    throw new Error(i18n.get('TenantId is required.'));
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const ticket = await client.aOSProjectTask.findOne({
     where: {id: ticketId},
     select: {version: true},
   });
+
   if (!ticket) {
     throw new Error('Ticket not found');
   }
@@ -740,9 +852,16 @@ export async function findTicketsBySearch(props: {
   workspaceId: ID;
   projectId?: ID;
   excludeList?: ID[];
+  tenantId: Tenant['id'];
 }): Promise<TicketSearch[]> {
-  const {search, userId, workspaceId, projectId, excludeList} = props;
-  const client = await getClient();
+  const {search, userId, workspaceId, projectId, excludeList, tenantId} = props;
+
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const tickets = await client.aOSProjectTask.find({
     where: {
       project: {
@@ -763,11 +882,19 @@ export async function findTicketsBySearch(props: {
     take: 10,
     select: {fullName: true},
   });
+
   return tickets;
 }
 
-export async function findParentTicketIds(ticketId: ID): Promise<string[]> {
-  const client = await getClient();
+export async function findParentTicketIds(
+  ticketId: ID,
+  tenantId: Tenant['id'],
+): Promise<string[]> {
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
 
   const res = await client.$raw(
     sql`
@@ -809,11 +936,19 @@ export async function findParentTicketIds(ticketId: ID): Promise<string[]> {
     const parentTickets = res[0]?.ids;
     return parentTickets ?? [];
   }
+
   return [];
 }
 
-export async function findChildTicketIds(ticketId: ID): Promise<string[]> {
-  const client = await getClient();
+export async function findChildTicketIds(
+  ticketId: ID,
+  tenantId: Tenant['id'],
+): Promise<string[]> {
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
 
   const res = await client.$raw(
     sql`
@@ -864,17 +999,34 @@ export async function createChildTicketLink({
   data,
   userId,
   workspaceId,
+  tenantId,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
   userId: ID;
   workspaceId: ID;
+  tenantId: Tenant['id'];
 }) {
   const {currentTicketId, linkTicketId} = data;
-  const client = await getClient();
+
+  if (!tenantId) {
+    throw new Error('TenantId is required.');
+  }
+
+  const client = await manager.getClient(tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
-    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
+    findTicketAccess({
+      recordId: linkTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -882,7 +1034,8 @@ export async function createChildTicketLink({
     throw new Error(i18n.get('Ticket not found'));
   }
 
-  const parentTickets = await findParentTicketIds(currentTicketId);
+  const parentTickets = await findParentTicketIds(currentTicketId, tenantId);
+
   if (parentTickets.includes(linkTicketId.toString())) {
     throw new Error(i18n.get('Circular dependency'));
   }
@@ -895,6 +1048,7 @@ export async function createChildTicketLink({
     },
     select: {id: true},
   });
+
   return ticket;
 }
 
@@ -902,17 +1056,34 @@ export async function deleteChildTicketLink({
   data,
   userId,
   workspaceId,
+  tenantId,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
   userId: ID;
   workspaceId: ID;
+  tenantId: Tenant['id'];
 }) {
+  if (!tenantId) {
+    throw new Error(i18n.get('TenantId is required.'));
+  }
+
   const {currentTicketId, linkTicketId} = data;
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
-    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
+    findTicketAccess({
+      recordId: linkTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -928,6 +1099,7 @@ export async function deleteChildTicketLink({
     },
     select: {id: true},
   });
+
   return ticket;
 }
 
@@ -935,17 +1107,34 @@ export async function createParentTicketLink({
   data,
   userId,
   workspaceId,
+  tenantId,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
   userId: ID;
   workspaceId: ID;
+  tenantId: Tenant['id'];
 }) {
+  if (!tenantId) {
+    throw new Error(i18n.get('TenantId is required.'));
+  }
+
   const {currentTicketId, linkTicketId} = data;
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
-    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
+    findTicketAccess({
+      recordId: linkTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -953,7 +1142,8 @@ export async function createParentTicketLink({
     throw new Error(i18n.get('Ticket not found'));
   }
 
-  const childTickets = await findChildTicketIds(currentTicketId);
+  const childTickets = await findChildTicketIds(currentTicketId, tenantId);
+
   if (childTickets.includes(linkTicketId.toString())) {
     throw new Error(i18n.get('Circular dependency'));
   }
@@ -973,17 +1163,34 @@ export async function deleteParentTicketLink({
   data,
   userId,
   workspaceId,
+  tenantId,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
   userId: ID;
   workspaceId: ID;
+  tenantId: Tenant['id'];
 }) {
+  if (!tenantId) {
+    throw new Error(i18n.get('TenantId is required.'));
+  }
+
   const {currentTicketId, linkTicketId} = data;
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
-    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
+    findTicketAccess({
+      recordId: linkTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1002,20 +1209,29 @@ export async function deleteParentTicketLink({
   return ticket;
 }
 
-export async function findTicketLinkTypes(projectId?: ID): Promise<LinkType[]> {
-  const client = await getClient();
+export async function findTicketLinkTypes(
+  projectId: ID,
+  tenantId: Tenant['id'],
+): Promise<LinkType[]> {
+  if (!tenantId) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
   if (projectId) {
     const project = await client.aOSProject.findOne({
       where: {id: projectId},
       select: {projectTaskLinkTypeSet: {select: {name: true}}},
     });
     if (project?.projectTaskLinkTypeSet?.length) {
-      return project.projectTaskLinkTypeSet;
+      return project?.projectTaskLinkTypeSet;
     }
   }
   const links = await client.aOSProjectTaskLinkType.find({
     select: {name: true},
   });
+
   return links;
 }
 
@@ -1023,13 +1239,21 @@ export async function createRelatedTicketLink({
   data,
   userId,
   workspaceId,
+  tenantId,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID; linkType: ID};
   userId: ID;
   workspaceId: ID;
+  tenantId: Tenant['id'];
 }): Promise<[string, string]> {
+  if (!tenantId) {
+    throw new Error(i18n.get('TenantId is required.'));
+  }
+
   const {currentTicketId, linkTicketId, linkType} = data;
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
+
   const [currentTicket, linkTicket] = await Promise.all([
     findTicketAccess({
       recordId: currentTicketId,
@@ -1039,6 +1263,7 @@ export async function createRelatedTicketLink({
         name: true,
         project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
       },
+      tenantId,
     }),
     findTicketAccess({
       recordId: linkTicketId,
@@ -1048,8 +1273,10 @@ export async function createRelatedTicketLink({
         name: true,
         project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
       },
+      tenantId,
     }),
   ]);
+
   if (!currentTicket || !linkTicket) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));
@@ -1139,17 +1366,36 @@ export async function deleteRelatedTicketLink({
   data,
   userId,
   workspaceId,
+  tenantId,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
   userId: ID;
   workspaceId: ID;
+  tenantId: Tenant['id'];
 }): Promise<ID> {
+  if (!tenantId) {
+    throw new Error(i18n.get('TenantId is required.'));
+  }
+
   const {currentTicketId, linkTicketId, linkId} = data;
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
+
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, userId, workspaceId}),
-    findTicketAccess({recordId: linkTicketId, userId, workspaceId}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
+    findTicketAccess({
+      recordId: linkTicketId,
+      userId,
+      workspaceId,
+      tenantId,
+    }),
   ]);
+
   if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
     // To make sure the user has access to the ticket.
     throw new Error(i18n.get('Ticket not found'));

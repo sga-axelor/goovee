@@ -2,6 +2,9 @@
 
 // ---- CORE IMPORTS ---- //
 import {ModelType} from '@/types';
+import {type Tenant} from '@/tenant';
+
+// ---- LOCAL IMPORTS ---- //
 import {CommentListItem} from '../comments-list-item';
 
 interface CommentsListProps {
@@ -16,6 +19,7 @@ interface CommentsListProps {
   disabled?: boolean;
   sortBy: any;
   onSubmit?: (comment: any) => void;
+  tenantId: Tenant['id'];
 }
 
 export const CommentsList: React.FC<CommentsListProps> = ({
@@ -28,6 +32,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   disabled = false,
   onSubmit,
   sortBy,
+  tenantId,
 }) => {
   return (
     <div
@@ -44,6 +49,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
           hasSubComments={hasSubComments}
           sortBy={sortBy}
           onSubmit={onSubmit}
+          tenantId={tenantId}
         />
       ))}
     </div>

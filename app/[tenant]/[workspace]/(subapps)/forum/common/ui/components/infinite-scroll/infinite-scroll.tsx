@@ -5,7 +5,7 @@ import {useInView} from 'react-intersection-observer';
 import {useParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useSearchParams} from '@/ui/hooks';
 import {DEFAULT_LIMIT} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';

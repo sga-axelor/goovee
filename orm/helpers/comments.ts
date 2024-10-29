@@ -1,8 +1,8 @@
 'use server';
 
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
-import {i18n} from '@/lib/i18n';
+import {manager, type Tenant} from '@/tenant';
+import {i18n} from '@/i18n';
 import {ModelType, PortalWorkspace} from '@/types';
 import {getSkipInfo} from '@/utils';
 
@@ -19,22 +19,28 @@ export async function getPopularCommentsBySorting({
   workspace,
   modelRecord,
   type,
+  tenantId,
 }: {
   page?: string | number;
   limit?: number;
   workspace: PortalWorkspace;
   modelRecord: any;
   type: ModelType;
+  tenantId: Tenant['id'];
 }) {
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
+  if (!tenantId) {
+    return {error: true, message: i18n.get('TenantId is required.')};
   }
 
   const modelName = ModelMap[type];
 
   const skip = getSkipInfo(limit, page);
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
 
   const joinTablesMap: Record<ModelType, string> = {
     [ModelType.forum]: `
@@ -203,8 +209,8 @@ LEFT JOIN commentFileData AS cf
   ON c.id = cf.id  
 CROSS JOIN parentCommentsCount AS pc 
 ORDER BY COALESCE(cc.childCommentCount, 0) DESC, c.createdOn DESC 
-LIMIT $1
-OFFSET $2
+LIMIT $2
+OFFSET $3
      `,
     modelRecord.id,
     limit,

@@ -105,7 +105,7 @@ export const CategorySlider = ({
                     <div
                       className="h-[120px] w-full bg-no-repeat bg-center bg-cover rounded-md flex items-end justify-center"
                       style={{
-                        backgroundImage: `url(${getImageURL(image?.id, tenant, {noimage: true})})`,
+                        backgroundImage: `url(${(image?.id, tenant, {noimage: true})})`,
                       }}>
                       <div className="pb-4 text-center text-white font-semibold text-xs z-10">
                         {name}

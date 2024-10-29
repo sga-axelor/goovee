@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
+import {i18n} from '@/i18n';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {
   Breadcrumb,
@@ -63,16 +63,18 @@ export default async function Page({
   if (!session?.user) notFound();
   const userId = session!.user.id;
 
-  const {workspaceURL, workspaceURI} = workspacePathname(params);
+  const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) notFound();
 
-  const project = await findProject(projectId, workspace.id, userId);
+  const project = await findProject(projectId, workspace.id, userId, tenant);
+
   if (!project) notFound();
   const tickets = await findTickets({
     projectId,
@@ -84,11 +86,12 @@ export default async function Page({
         isCompleted: false,
       },
     },
+    tenantId: tenant,
   }).then(clone);
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
 
-  const statuses = await findTicketStatuses(projectId);
+  const statuses = await findTicketStatuses(projectId, tenant);
 
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const statusCompleted = statuses.filter(s => s.isCompleted).map(s => s.id);
@@ -96,35 +99,35 @@ export default async function Page({
   const items = [
     {
       label: 'All Tickets',
-      count: getAllTicketCount({projectId}),
+      count: getAllTicketCount({projectId, tenantId: tenant}),
       icon: MdAllInbox,
       href: allTicketsURL,
       iconClassName: 'bg-palette-pink text-palette-pink-dark',
     },
     {
       label: 'My tickets',
-      count: getMyTicketCount({projectId, userId}),
+      count: getMyTicketCount({projectId, userId, tenantId: tenant}),
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, myTickets: true})}`,
       icon: MdAllInbox,
       iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
     {
       label: 'Managed tickets',
-      count: getManagedTicketCount({projectId, userId}),
+      count: getManagedTicketCount({projectId, userId, tenantId: tenant}),
       icon: MdListAlt,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, managedBy: [userId.toString()]})}`,
       iconClassName: 'bg-palette-purple text-palette-purple-dark',
     },
     {
       label: 'Created tickets',
-      count: getCreatedTicketCount({projectId, userId}),
+      count: getCreatedTicketCount({projectId, userId, tenantId: tenant}),
       icon: MdPending,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, createdBy: [userId.toString()]})}`,
       iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
     {
       label: 'Resolved tickets',
-      count: getResolvedTicketCount({projectId}),
+      count: getResolvedTicketCount({projectId, tenantId: tenant}),
       icon: MdCheckCircleOutline,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status: statusCompleted})}`,
       iconClassName: 'text-success bg-success-light',

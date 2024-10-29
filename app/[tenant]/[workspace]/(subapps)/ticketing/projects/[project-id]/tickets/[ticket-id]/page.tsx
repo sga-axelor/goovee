@@ -1,7 +1,13 @@
+import Link from 'next/link';
+import {notFound} from 'next/navigation';
+import {Suspense} from 'react';
+import {FaChevronRight} from 'react-icons/fa';
+
 // ---- CORE IMPORTS ---- //
+import {type Tenant} from '@/tenant';
 import {SORT_TYPE} from '@/constants';
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
+import {i18n} from '@/i18n';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {ModelType} from '@/types';
 import {
@@ -17,10 +23,6 @@ import {clone} from '@/utils';
 import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 import type {ID} from '@goovee/orm';
-import Link from 'next/link';
-import {notFound} from 'next/navigation';
-import {Suspense} from 'react';
-import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
 import {Skeleton} from '@/ui/components/skeleton';
@@ -69,25 +71,30 @@ export default async function Page({
   };
 }) {
   const session = await getSession();
+
   if (!session?.user) notFound();
+
   const {workspaceURI, workspaceURL} = workspacePathname(params);
   const projectId = params['project-id'];
   const ticketId = params['ticket-id'];
 
+  const {tenant} = params;
+
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   });
 
   if (!workspace) notFound();
 
   const [ticket, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findTicket({ticketId, projectId}),
-      findTicketStatuses(projectId),
-      findTicketCategories(projectId),
-      findTicketPriorities(projectId),
-      findContactPartners(projectId),
+      findTicket({ticketId, projectId, tenantId: tenant}),
+      findTicketStatuses(projectId, tenant),
+      findTicketCategories(projectId, tenant),
+      findTicketPriorities(projectId, tenant),
+      findContactPartners(projectId, tenant),
     ]).then(clone);
 
   if (!ticket) notFound();
@@ -147,7 +154,11 @@ export default async function Page({
       />
       <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
         <Suspense fallback={<Skeleton className="h-[160px]" />}>
-          <ParentTicket ticketId={ticket.id} projectId={ticket.project?.id} />
+          <ParentTicket
+            ticketId={ticket.id}
+            projectId={ticket.project?.id}
+            tenantId={tenant}
+          />
         </Suspense>
         <Suspense fallback={<Skeleton className="h-[160px]" />}>
           <ChildTickets
@@ -157,10 +168,15 @@ export default async function Page({
             priorities={priorities}
             contacts={contacts}
             userId={session.user.id}
+            tenantId={tenant}
           />
         </Suspense>
         <Suspense fallback={<Skeleton className="h-[160px]" />}>
-          <RelatedTickets ticketId={ticket.id} projectId={ticket.project?.id} />
+          <RelatedTickets
+            ticketId={ticket.id}
+            projectId={ticket.project?.id}
+            tenantId={tenant}
+          />
         </Suspense>
       </div>
       <div className="rounded-md border bg-card p-4 mt-5">
@@ -192,6 +208,7 @@ async function ChildTickets({
   priorities,
   contacts,
   userId,
+  tenantId,
 }: {
   ticketId: ID;
   projectId?: ID;
@@ -199,11 +216,13 @@ async function ChildTickets({
   priorities: Priority[];
   contacts: ContactPartner[];
   userId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!projectId) return;
+
   const [parentIds, tickets] = await Promise.all([
-    findParentTicketIds(ticketId),
-    findChildTickets(ticketId).then(clone),
+    findParentTicketIds(ticketId, tenantId),
+    findChildTickets(ticketId, tenantId).then(clone),
   ]);
   return (
     <div>
@@ -226,14 +245,16 @@ async function ChildTickets({
 async function ParentTicket({
   projectId,
   ticketId,
+  tenantId,
 }: {
   projectId?: ID;
   ticketId: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!projectId) return;
   const [childIds, ticket] = await Promise.all([
-    findChildTicketIds(ticketId),
-    findParentTicket(ticketId).then(clone),
+    findChildTicketIds(ticketId, tenantId),
+    findParentTicket(ticketId, tenantId).then(clone),
   ]);
   return (
     <div>
@@ -255,14 +276,16 @@ async function ParentTicket({
 async function RelatedTickets({
   ticketId,
   projectId,
+  tenantId,
 }: {
   ticketId: ID;
   projectId?: ID;
+  tenantId: Tenant['id'];
 }) {
   if (!projectId) return;
   const [linkTypes, links] = await Promise.all([
-    findTicketLinkTypes(projectId),
-    findRelatedTicketLinks(ticketId),
+    findTicketLinkTypes(projectId, tenantId),
+    findRelatedTicketLinks(ticketId, tenantId),
   ]).then(clone);
 
   return (

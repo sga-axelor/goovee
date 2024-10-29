@@ -17,7 +17,7 @@ import {
 import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
@@ -47,11 +47,11 @@ export const Events = ({
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
   const {update} = useSearchParams();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, tenant} = useWorkspace();
   const router = useRouter();
 
   const imageURL = workspace?.config?.eventHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.eventHeroBgImage.id)})`
+    ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant)})`
     : IMAGE_URL;
 
   const updateCateg = (category: Category) => {
@@ -129,6 +129,7 @@ export const Events = ({
           workspace?.config?.eventHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         renderSearch={renderSearch}
+        tenantId={tenant}
       />
 
       <div className="container py-6 px-4 overflow-hidden flex lg:flex-row flex-col space-y-6 lg:space-y-0 lg:gap-x-6 mb-16">

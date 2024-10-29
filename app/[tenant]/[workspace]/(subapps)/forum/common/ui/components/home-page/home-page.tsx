@@ -13,9 +13,9 @@ import {
   SUBAPP_CODES,
   URL_PARAMS,
 } from '@/constants';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useSearchParams} from '@/ui/hooks';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {PortalWorkspace} from '@/types';
 
@@ -55,7 +55,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   const [searchKey, setSearchKey] = useState<string>('');
 
   const router = useRouter();
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
 
   const {searchParams, update} = useSearchParams();
   const type = searchParams.get('type') ?? 'posts';
@@ -74,7 +74,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   );
 
   const imageURL = workspace?.config?.forumHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config?.forumHeroBgImage?.id)})`
+    ? `url(${getImageURL(workspace.config?.forumHeroBgImage?.id, tenant)})`
     : IMAGE_URL;
 
   const handleGroupSearch = (value: string) => {
@@ -163,6 +163,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
           workspace?.config?.forumHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         renderSearch={!selectedGroup && renderSearch}
+        tenantId={tenant}
       />
       <div className="flex flex-col lg:flex-row gap-5 px-4 lg:px-[6.25rem] py-6 w-full">
         <div className="w-full lg:w-1/5 min-w-[17.563rem] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
@@ -193,7 +194,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
           <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[0.625rem]">
             <Avatar
               className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
-              {<AvatarImage src={getImageURL(picture?.id)} />}
+              {<AvatarImage src={getImageURL(picture?.id, tenant)} />}
             </Avatar>
             <Button
               onClick={handleDialogOpen}

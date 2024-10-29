@@ -4,7 +4,7 @@ import {pipeline} from 'stream';
 import {promisify} from 'util';
 
 // ---- CORE IMPORTS ---- //
-import {manager} from '@/tenant';
+import {manager, type Tenant} from '@/tenant';
 import {i18n} from '@/i18n';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
@@ -43,7 +43,11 @@ const ModelMap: Record<ModelType, string> = {
   [ModelType.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
 };
 
-export async function upload(formData: FormData, workspaceURL: string) {
+export async function upload(
+  formData: FormData,
+  workspaceURL: string,
+  tenantId: Tenant['id'],
+) {
   if (!workspaceURL) {
     return {
       error: true,
@@ -51,7 +55,14 @@ export async function upload(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const client = await manager.getClient();
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const client = await manager.getClient(tenantId);
 
   const text = formData.get('text');
 
@@ -75,6 +86,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -153,6 +165,7 @@ export async function addComment({
   attachments = [],
   parentId = null,
   messageBody,
+  tenantId,
 }: {
   type: ModelType;
   model: {id: string | number} | null;
@@ -166,17 +179,28 @@ export async function addComment({
     tracks: any[];
     tags: any[];
   };
+  tenantId: Tenant['id'];
 }) {
   try {
     const session = await getSession();
     const user = session?.user;
+
     if (!user) {
       return {
         error: true,
         message: i18n.get('Unauthorized'),
       };
     }
-    const aosUser = await findUserForPartner({partnerId: user.id});
+
+    if (!tenantId) {
+      return {
+        error: true,
+        message: i18n.get('TenantId is required.'),
+      };
+    }
+
+    const aosUser = await findUserForPartner({partnerId: user.id, tenantId});
+
     if (!aosUser) {
       return {
         error: true,
@@ -187,6 +211,7 @@ export async function addComment({
     const workspace = await findWorkspace({
       user,
       url: workspaceURL,
+      tenantId,
     });
 
     if (!workspace) {
@@ -211,6 +236,7 @@ export async function addComment({
       type,
       id: model?.id,
       workspace,
+      tenantId,
     });
 
     if (error) {
@@ -220,7 +246,7 @@ export async function addComment({
       };
     }
 
-    const client = await manager.getClient();
+    const client = await manager.getClient(tenantId);
 
     let parent;
     if (parentId) {
@@ -298,11 +324,13 @@ export async function findByID({
   id,
   workspace,
   withAuth = true,
+  tenantId,
 }: {
   type: ModelType;
   id: string | number;
   workspace: PortalWorkspace;
   withAuth?: boolean;
+  tenantId: Tenant['id'];
 }) {
   if (!type || !id) {
     return {
@@ -315,6 +343,13 @@ export async function findByID({
     return {
       error: true,
       message: i18n.get('Invalid workspace'),
+    };
+  }
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
     };
   }
 
@@ -333,16 +368,17 @@ export async function findByID({
 
   switch (type) {
     case ModelType.event:
-      response = await findEventByID(id);
+      response = await findEventByID({id, tenantId});
       break;
     case ModelType.news:
-      const {news}: any = await findNews({id, workspace});
+      const {news}: any = await findNews({id, workspace, tenantId});
       response = news?.[0] || {};
       break;
     case ModelType.forum:
       const {posts = []}: any = await findPosts({
         whereClause: {id},
         workspaceID: workspace.id,
+        tenantId,
       });
       response = posts[0];
       break;
@@ -352,6 +388,7 @@ export async function findByID({
           recordId: id,
           userId: user.id,
           workspaceId: workspace.id,
+          tenantId,
         });
       }
       if (!response)
@@ -381,6 +418,7 @@ export async function findComments({
   sort,
   workspaceURL,
   type,
+  tenantId,
 }: {
   model: {id: ID} | null;
   limit?: number;
@@ -388,12 +426,21 @@ export async function findComments({
   sort?: any;
   workspaceURL: string;
   type: ModelType;
+  tenantId: Tenant['id'];
 }) {
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -422,6 +469,7 @@ export async function findComments({
     id: model?.id,
     workspace,
     withAuth: shouldUseAuth(type),
+    tenantId,
   });
 
   if (error) {
@@ -441,7 +489,7 @@ export async function findComments({
   }
 
   const skip = getSkipInfo(limit, page);
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
   try {
     let orderBy: any = null;
     switch (sort) {

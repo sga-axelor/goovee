@@ -1,8 +1,8 @@
 import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
 import {hash} from '@/auth/utils';
-import {findDefaultPartnerWorkspaceConfig} from './workspace';
 import {ID} from '@/types';
+import {findDefaultPartnerWorkspaceConfig} from './workspace';
 
 export async function findPartnerByEmail(
   email: string,
@@ -88,10 +88,16 @@ export async function registerPartner({
   return partner;
 }
 
-export async function findUserForPartner({partnerId}: {partnerId: ID}) {
-  if (!partnerId) return null;
+export async function findUserForPartner({
+  partnerId,
+  tenantId,
+}: {
+  partnerId: ID;
+  tenantId: Tenant['id'];
+}) {
+  if (!(partnerId && tenantId)) return null;
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
 
   const user = await client.aOSUser.findOne({
     where: {

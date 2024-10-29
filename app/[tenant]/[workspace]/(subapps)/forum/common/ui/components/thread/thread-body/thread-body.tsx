@@ -3,7 +3,7 @@ import React, {useMemo} from 'react';
 import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   Popover,
   PopoverContent,
@@ -11,9 +11,10 @@ import {
   Avatar,
   AvatarImage,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {DATE_FORMATS, NOT_INTERESTED, REPORT} from '@/constants';
 import {parseDate} from '@/utils/date';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -36,6 +37,8 @@ export const ThreadBody = ({
   usePopUpStyles?: boolean;
 }) => {
   const {title, content, attachmentList, author, postDateT}: any = post || {};
+
+  const {tenant} = useWorkspace();
 
   const ref = React.useRef(null);
 
@@ -69,7 +72,7 @@ export const ThreadBody = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Avatar className="rounded-full h-10 w-10">
-              <AvatarImage src={getImageURL(author?.picture?.id)} />
+              <AvatarImage src={getImageURL(author?.picture?.id, tenant)} />
             </Avatar>
             <div className="flex flex-col gap-2">
               <div className="text-base font-semibold">

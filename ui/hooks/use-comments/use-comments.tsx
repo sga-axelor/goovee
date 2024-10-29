@@ -8,7 +8,7 @@ import {DEFAULT_COMMENTS_LIMIT, DEFAULT_PAGE} from '@/constants';
 import {CommentResponse, ID, ModelType} from '@/types';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 
 interface UseCommentsProps {
   sortBy: string;

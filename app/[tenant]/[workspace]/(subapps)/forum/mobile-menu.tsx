@@ -10,7 +10,7 @@ import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
-} from '@ui/components/accordion';
+} from '@/ui/components/accordion';
 import {Sheet, SheetContent} from '@/ui/components/sheet';
 import {Portal} from '@/ui/components';
 import {cn} from '@/utils/css';

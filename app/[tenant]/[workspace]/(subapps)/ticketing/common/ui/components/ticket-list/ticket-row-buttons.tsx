@@ -1,5 +1,5 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
 import {useRouter} from 'next/navigation';

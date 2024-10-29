@@ -1,7 +1,7 @@
 'use client';
 
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import type {Cloned, Maybe} from '@/types/util';
 import {
   Avatar,
@@ -103,7 +103,7 @@ export function TicketDetails(props: Props) {
         : i18n.get('Ticket assigned to') + ' ' + company,
     );
 
-  const {workspaceURL, workspaceURI} = useWorkspace();
+  const {workspaceURL, workspaceURI, tenant} = useWorkspace();
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<TicketInfo>({
@@ -333,6 +333,7 @@ export function TicketDetails(props: Props) {
                     ticket.requestedByContact?.id
                       ? ticket.requestedByContact.picture?.id
                       : ticket.project?.company?.logo?.id,
+                    tenant,
                   )}
                 />
               </Avatar>

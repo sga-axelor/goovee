@@ -4,6 +4,7 @@
 import {Banner} from '@/ui/components';
 import {VariantProps} from 'class-variance-authority';
 import {BannerVariants} from '../banner';
+import {type Tenant} from '@/tenant';
 
 type HearoSerchTypes = {
   groupImg?: string;
@@ -11,6 +12,7 @@ type HearoSerchTypes = {
   description?: string;
   image: any;
   renderSearch?: any;
+  tenantId: Tenant['id'];
 } & VariantProps<BannerVariants>;
 
 export const HeroSearch = ({
@@ -21,6 +23,7 @@ export const HeroSearch = ({
   renderSearch,
   background,
   blendMode,
+  tenantId,
 }: HearoSerchTypes) => {
   return (
     <>
@@ -32,6 +35,7 @@ export const HeroSearch = ({
         renderSearch={renderSearch}
         background={background}
         blendMode={blendMode}
+        tenantId={tenantId}
       />
     </>
   );

@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY, SORT_TYPE} from '@/constants';
-import {getClient} from '@/goovee';
+import {manager, type Tenant} from '@/tenant';
 import {ID} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {PortalWorkspace} from '@/types';
@@ -10,13 +10,15 @@ import {getPopularQuery} from '@/subapps/forum/common/utils';
 
 export async function findGroups({
   workspace,
+  tenantId,
 }: {
   workspace: PortalWorkspace;
   memberGroupIDs?: any;
+  tenantId: Tenant['id'];
 }) {
-  if (!workspace) return [];
+  if (!(workspace && tenantId)) return [];
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
 
   const groups = await client.aOSPortalForumGroup.find({
     where: {
@@ -38,14 +40,18 @@ export async function findGroupsByMembers({
   searchKey,
   orderBy,
   workspaceID,
+  tenantId,
 }: {
   id: any;
   searchKey?: string;
   orderBy?: any;
   workspaceID: PortalWorkspace['id'];
+  tenantId: Tenant['id'];
 }) {
-  if (!workspaceID) return [];
-  const client = await getClient();
+  if (!(workspaceID && tenantId)) return [];
+
+  const client = await manager.getClient(tenantId);
+
   const whereClause = {
     member: {
       AND: [{id: id}, {id: {ne: null}}],
@@ -84,11 +90,18 @@ export async function findGroupsByMembers({
     .then(clone);
 }
 
-export async function findUser({userId}: {userId: any}) {
-  if (!userId) {
+export async function findUser({
+  userId,
+  tenantId,
+}: {
+  userId: any;
+  tenantId: Tenant['id'];
+}) {
+  if (!(userId && tenantId)) {
     return {};
   }
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
 
   const user = await client.aOSPartner.findOne({
     where: {
@@ -109,6 +122,7 @@ export async function findPosts({
   whereClause = {},
   workspaceID,
   groupIDs = [],
+  tenantId,
 }: {
   sort?: any;
   limit?: number;
@@ -117,15 +131,16 @@ export async function findPosts({
   whereClause?: any;
   workspaceID: PortalWorkspace['id'];
   groupIDs?: any[];
+  tenantId: Tenant['id'];
 }) {
-  if (!workspaceID) {
+  if (!(workspaceID && tenantId)) {
     return {
       posts: [],
       pageInfo: {},
     };
   }
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
 
   let orderBy: any = null;
 
@@ -263,12 +278,14 @@ export async function findPostsByGroupId({
   sort = null,
   limit,
   search = '',
+  tenantId,
 }: {
   id: ID;
   workspaceID: string;
   sort?: any;
   limit?: number;
   search?: string | undefined;
+  tenantId: Tenant['id'];
 }) {
   const whereClause = {
     forumGroup: {
@@ -283,14 +300,21 @@ export async function findPostsByGroupId({
     limit,
     search,
     groupIDs: [id],
+    tenantId,
   });
 }
 
-export async function findGroupById(id: ID, workspaceID: string) {
-  if (!workspaceID) {
+export async function findGroupById(
+  id: ID,
+  workspaceID: string,
+  tenantId: Tenant['id'],
+) {
+  if (!(workspaceID && tenantId)) {
     return null;
   }
-  const client = await getClient();
+
+  const client = await manager.getClient(tenantId);
+
   const group = await client.aOSPortalForumGroup.findOne({
     where: {
       id,
@@ -313,19 +337,21 @@ export async function findMemberGroupById({
   id,
   groupID,
   workspaceID,
+  tenantId,
 }: {
   id: ID;
   groupID: ID;
   workspaceID: string;
+  tenantId: Tenant['id'];
 }) {
-  if (!workspaceID) {
-    return {error: true, message: ''};
+  if (!(workspaceID && tenantId)) {
+    return {error: true, message: 'Bad Request'};
   }
 
   if (!(id || groupID)) {
     return {error: true, message: 'Reccord ID not found'};
   }
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
   const group = await client.aOSPortalForumGroupMember.findOne({
     where: {
       id,

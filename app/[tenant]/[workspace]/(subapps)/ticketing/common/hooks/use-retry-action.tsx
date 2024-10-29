@@ -1,8 +1,9 @@
-import {i18n} from '@/lib/i18n';
-import {ToastAction} from '@/ui/components';
-import {useToast} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
+
+import {i18n} from '@/i18n';
+import {ToastAction} from '@/ui/components';
+import {useToast} from '@/ui/hooks';
 
 import type {ActionConfig, ActionResponse} from '../actions';
 import {VERSION_MISMATCH_ERROR} from '../constants';

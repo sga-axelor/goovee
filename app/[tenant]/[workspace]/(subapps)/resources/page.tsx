@@ -1,3 +1,5 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {findWorkspace} from '@/orm/workspace';
@@ -30,6 +32,10 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
+  if (!workspace) {
+    return notFound();
+  }
+
   const files = await fetchLatestFiles({
     workspace,
     tenantId: tenant,
@@ -42,7 +48,7 @@ export default async function Page({
 
   return (
     <>
-      <Hero workspace={workspace} />
+      <Hero workspace={workspace} tenantId={tenant} />
       <main className="container p-4 mx-auto space-y-6">
         <Categories items={folders} />
         <h2 className="font-semibold text-xl">{i18n.get('New Resources')}</h2>

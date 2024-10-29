@@ -1,13 +1,14 @@
+import Link from 'next/link';
+import {notFound} from 'next/navigation';
+import {FaChevronRight} from 'react-icons/fa';
+
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
+import {i18n} from '@/i18n';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
-import Link from 'next/link';
-import {notFound} from 'next/navigation';
-import {FaChevronRight} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -46,11 +47,12 @@ export default async function Page({
   const userId = session!.user.id;
   const projectId = params['project-id'];
   const {parentId} = searchParams;
-  const {workspaceURL, workspaceURI} = workspacePathname(params);
+  const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) notFound();
@@ -63,17 +65,18 @@ export default async function Page({
       select: {
         project: {id: true},
       },
+      tenantId: tenant,
     });
     if (parentTicket?.project?.id !== projectId) notFound();
   }
 
   const [project, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findProject(projectId, workspace.id, userId),
-      findTicketStatuses(projectId),
-      findTicketCategories(projectId).then(clone),
-      findTicketPriorities(projectId).then(clone),
-      findContactPartners(projectId).then(clone),
+      findProject(projectId, workspace.id, userId, tenant),
+      findTicketStatuses(projectId, tenant),
+      findTicketCategories(projectId, tenant).then(clone),
+      findTicketPriorities(projectId, tenant).then(clone),
+      findContactPartners(projectId, tenant).then(clone),
     ]);
 
   if (!project) notFound();

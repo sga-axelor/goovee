@@ -1,12 +1,16 @@
+import {i18n} from '@/i18n';
+import {getSession} from '@/auth';
+import {Tenant} from '@/tenant';
 import {SUBAPP_CODES} from '@/constants';
 import {AOSPortalTheme} from '@/goovee/.generated/models';
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {User} from '@/types';
 import {Maybe} from '@/types/util';
 
-export async function ensureAuth(workspaceURL: Maybe<string>): Promise<
+export async function ensureAuth(
+  workspaceURL: Maybe<string>,
+  tenantId: Tenant['id'],
+): Promise<
   | {error: true; message: string; auth?: never}
   | {
       error: false;
@@ -49,6 +53,7 @@ export async function ensureAuth(workspaceURL: Maybe<string>): Promise<
     code: SUBAPP_CODES.ticketing,
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!subapp) {
@@ -61,6 +66,7 @@ export async function ensureAuth(workspaceURL: Maybe<string>): Promise<
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {

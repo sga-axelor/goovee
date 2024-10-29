@@ -1,7 +1,7 @@
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
@@ -33,24 +33,26 @@ export default async function Page({
   const session = await getSession();
   const userId = session?.user?.id as string;
 
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   const {sort, limit, search} = searchParams;
 
   const groupId = params.id as string;
 
-  const groups = await findGroups({workspace}).then(clone);
+  const groups = await findGroups({workspace, tenantId: tenant}).then(clone);
 
   const memberGroups = userId
     ? await findGroupsByMembers({
         id: userId,
         orderBy: GROUPS_ORDER_BY,
         workspaceID: workspace?.id,
+        tenantId: tenant,
       })
     : [];
 
@@ -63,7 +65,11 @@ export default async function Page({
     return !memberGroupIDs.includes(group.id);
   });
 
-  const selectedGroup = await findGroupById(groupId, workspace?.id).then(clone);
+  const selectedGroup = await findGroupById(
+    groupId,
+    workspace?.id!,
+    tenant,
+  ).then(clone);
 
   const {posts, pageInfo} = await findPostsByGroupId({
     id: groupId,
@@ -73,7 +79,7 @@ export default async function Page({
     search,
   }).then(clone);
 
-  const user = await findUser({userId}).then(clone);
+  const user = await findUser({userId, tenantId: tenant}).then(clone);
 
   if (!selectedGroup) {
     return notFound();

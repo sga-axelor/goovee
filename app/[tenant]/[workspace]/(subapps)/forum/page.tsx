@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {DEFAULT_LIMIT} from '@/constants';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
@@ -26,23 +26,29 @@ export default async function Page({
   const session = await getSession();
   const userId = session?.user?.id as string;
 
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   const {sort, limit, search} = searchParams;
 
-  const groups = await findGroups({workspace}).then(clone);
+  const groups = await findGroups({
+    workspace: workspace!,
+    tenantId: tenant,
+  }).then(clone);
+
   const groupIDs = groups.map((group: any) => group.id);
 
   const memberGroups = userId
     ? await findGroupsByMembers({
         id: userId,
         orderBy: GROUPS_ORDER_BY,
-        workspaceID: workspace?.id,
+        workspaceID: workspace?.id!,
+        tenantId: tenant,
       })
     : [];
 
@@ -58,11 +64,15 @@ export default async function Page({
     sort,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     search,
-    workspaceID: workspace?.id,
+    workspaceID: workspace?.id!,
     groupIDs,
+    tenantId: tenant,
   }).then(clone);
 
-  const user = await findUser({userId}).then(clone);
+  const user = await findUser({
+    userId,
+    tenantId: tenant,
+  }).then(clone);
 
   return (
     <Content

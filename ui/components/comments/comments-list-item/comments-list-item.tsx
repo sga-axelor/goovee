@@ -32,8 +32,8 @@ import {
   TooltipContent,
 } from '@/ui/components';
 import {ModelType} from '@/types';
-import {i18n} from '@/lib/i18n';
-import {getImageURL} from '@/utils/image';
+import {i18n} from '@/i18n';
+import {getImageURL} from '@/utils/files';
 import {parseDate} from '@/utils/date';
 import {
   COMMENT,
@@ -46,6 +46,7 @@ import {
 } from '@/constants';
 
 import type {Comment} from '@/orm/comment';
+import {type Tenant} from '@/tenant';
 
 interface CommentListItemProps {
   record: any;
@@ -58,6 +59,7 @@ interface CommentListItemProps {
   isTopLevel?: boolean;
   sortBy?: any;
   onSubmit?: (data: any) => void;
+  tenantId: Tenant['id'];
 }
 
 // NOTE: comments are not recursive,
@@ -74,6 +76,7 @@ export const CommentListItem = ({
   isTopLevel = true,
   sortBy,
   onSubmit,
+  tenantId,
 }: CommentListItemProps) => {
   const [showSubComments, setShowSubComments] = useState(
     hasSubComments || false,
@@ -152,13 +155,14 @@ export const CommentListItem = ({
         isTopLevel={false}
         disabled={isDisabled}
         onSubmit={onSubmit}
+        tenantId={tenantId}
       />
     ));
   };
 
   const renderAvatar = (pictureId: string) => (
     <Avatar className="rounded-full h-6 w-6">
-      <AvatarImage src={getImageURL(pictureId) ?? '/images/no-image.png'} />
+      <AvatarImage src={getImageURL(pictureId, tenantId, {noimage: true})} />
     </Avatar>
   );
 

@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {IMAGE_URL} from '@/constants';
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
+import {i18n} from '@/i18n';
+import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {HeroSearch} from '@/ui/components';
 import {
@@ -24,7 +24,7 @@ import {notFound, redirect} from 'next/navigation';
 import {findProjectsWithTaskCount} from './common/orm/projects';
 import {getPages, getPaginationButtons} from './common/utils';
 import {getSkip} from './common/utils/search-param';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 
 export default async function Page({
   params,
@@ -36,13 +36,14 @@ export default async function Page({
   const session = await getSession();
   if (!session?.user) notFound();
 
-  const {workspaceURL, workspaceURI} = workspacePathname(params);
+  const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const {limit = 8, page = 1} = searchParams;
 
   const workspace = await findWorkspace({
     user: session.user,
     url: workspaceURL,
+    tenantId: tenant,
   }).then(clone);
 
   if (!workspace) notFound();
@@ -52,6 +53,7 @@ export default async function Page({
     workspaceId: workspace.id,
     take: +limit,
     skip: getSkip(limit, page),
+    tenantId: tenant,
   });
 
   const pages = getPages(projects, limit);
@@ -63,7 +65,7 @@ export default async function Page({
   }
 
   const imageURL = workspace.config.ticketHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id)})`
+    ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id, tenant)})`
     : IMAGE_URL;
 
   return (
@@ -81,6 +83,7 @@ export default async function Page({
           workspace.config.ticketHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         image={imageURL}
+        tenantId={tenant}
       />
       <div className="container py-6 space-y-6">
         {projects.length === 0 ? (

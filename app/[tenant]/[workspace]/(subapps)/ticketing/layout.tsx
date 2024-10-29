@@ -4,8 +4,8 @@ import type {ReactNode} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
-import {i18n} from '@/lib/i18n';
-import {getSession} from '@/orm/auth';
+import {i18n} from '@/i18n';
+import {getSession} from '@/auth';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
@@ -24,12 +24,16 @@ export default async function Layout({
   children: ReactNode;
 }) {
   const user = (await getSession())?.user;
+
   if (!user) return notFound();
+
+  const {tenant} = params;
 
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.ticketing,
     user,
     url: workspacePathname(params)?.workspaceURL,
+    tenantId: tenant,
   });
 
   if (!subapp) return notFound();

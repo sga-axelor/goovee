@@ -3,7 +3,8 @@ import CyntlerDocViewer, {DocViewerRenderers} from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 
 // ---- CORE IMPORTS ---- //
-import {getImageURL} from '@/utils/product';
+import {getImageURL} from '@/utils/files';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from './pdf-viewer.module.scss';
@@ -19,10 +20,12 @@ export function PdfViewer({
         type: string;
       };
 }) {
+  const {tenant} = useWorkspace();
+
   const docs =
     file instanceof File
       ? [{uri: URL.createObjectURL(file)}]
-      : [{uri: getImageURL(file?.id) || ''}];
+      : [{uri: getImageURL(file?.id, tenant) || ''}];
 
   return (
     <div className="overflow-x-hidden">

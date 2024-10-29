@@ -1,10 +1,13 @@
+import {ReactNode} from 'react';
+import {notFound} from 'next/navigation';
+
+// ---- CORE IMPORTS ---- //
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-import {notFound} from 'next/navigation';
-import {ReactNode} from 'react';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 
-import {findProject} from '../../common/orm/projects';
+// ---- LOCAL IMPORTS ---- //
+import {findProject} from '@/subapps/ticketing/common/orm/projects';
 
 export default async function Layout({
   params,
@@ -17,15 +20,24 @@ export default async function Layout({
   if (!session?.user) notFound();
   const projectId = params?.['project-id'];
 
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
+    tenantId: tenant,
   });
+
   if (!workspace) notFound();
 
-  const project = await findProject(projectId, workspace.id, session!.user.id);
+  const project = await findProject(
+    projectId,
+    workspace.id,
+    session!.user.id,
+    tenant,
+  );
+
   if (!project) notFound();
+
   return children;
 }

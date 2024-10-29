@@ -5,18 +5,21 @@ import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {MetaFile} from '@/types';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 import {DynamicIcon} from '@/ui/components';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getFileTypeIcon, getIconColor} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {findMedia} from '@/subapps/forum/common/action/action';
 
 export const MediaContent = ({groupId = ''}: {groupId: string}) => {
-  const [media, setMedia] = useState([]);
+  const [media, setMedia] = useState<any>([]);
   const [attachmentList, setAttachmentList] = useState<{metaFile: MetaFile}[]>(
     [],
   );
+
+  const {tenant} = useWorkspace();
 
   useEffect(() => {
     findMedia(groupId).then(setMedia);
@@ -44,7 +47,7 @@ export const MediaContent = ({groupId = ''}: {groupId: string}) => {
             {item.metaFile.fileType?.startsWith('image') ? (
               <Image
                 fill
-                src={getImageURL(item.metaFile.id)}
+                src={getImageURL(item.metaFile.id, tenant)}
                 alt={item.metaFile.fileName}
               />
             ) : (

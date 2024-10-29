@@ -17,7 +17,7 @@ import {
   DropdownToggle,
   Separator,
 } from '@/ui/components';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {
   COMMENT,
   COMMENTS,
@@ -26,6 +26,7 @@ import {
   SORT_TYPE,
 } from '@/constants';
 import {ModelType} from '@/types';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 interface CommentsProps {
   record: any;
@@ -62,6 +63,7 @@ export function Comments({
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
+
   const {comments, total, totalCommentThreadCount, loadMore, onCreate} =
     useComments({
       model: {id: record.id},
@@ -72,6 +74,8 @@ export function Comments({
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;
   const isDisabled = !isLoggedIn || disabled;
+
+  const {tenant} = useWorkspace();
 
   const toggleComments = () => {
     if (comments.length > 0) {
@@ -157,6 +161,7 @@ export function Comments({
               hasSubComments={!!totalCommentThreadCount}
               sortBy={sortBy}
               onSubmit={onCreate}
+              tenantId={tenant}
             />
 
             {!hideCommentsFooter && (

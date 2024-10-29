@@ -8,7 +8,7 @@ import {i18n} from '@/i18n';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {HeroSearch, Search} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -41,10 +41,10 @@ export const Homepage = ({
   workspace: PortalWorkspace;
 }) => {
   const router = useRouter();
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
 
   const imageURL = workspace?.config?.newsHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.newsHeroBgImage.id)})`
+    ? `url(${getImageURL(workspace.config.newsHeroBgImage.id, tenant)})`
     : IMAGE_URL;
 
   const handleClick = (slug: string) => {
@@ -73,6 +73,7 @@ export const Homepage = ({
           workspace?.config?.newsHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         renderSearch={renderSearch}
+        tenantId={tenant}
       />
       <div
         className={`px-4 lg:px-[100px] flex flex-col gap-6 flex-auto ${styles['news-container']}`}>

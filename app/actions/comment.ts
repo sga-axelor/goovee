@@ -1,9 +1,13 @@
 'use server';
+
+import {headers} from 'next/headers';
+
 // ---- CORE IMPORTS ---- //
-import {ModelType} from '@/types';
+import {i18n} from '@/i18n';
 import {addComment, findComments, upload} from '@/orm/comment';
-import {getSession} from '@/orm/auth';
-import {i18n} from '@/lib/i18n';
+import {TENANT_HEADER} from '@/middleware';
+import {getSession} from '@/auth';
+import {ModelType} from '@/types';
 import {findWorkspace} from '@/orm/workspace';
 
 export async function createComment(formData: any, valueString: string) {
@@ -24,9 +28,19 @@ export async function createComment(formData: any, valueString: string) {
     parentId?: any;
     messageBody?: any;
   };
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
   if (values?.attachments?.length) {
     try {
-      const response: any = await upload(formData, workspaceURL);
+      const response: any = await upload(formData, workspaceURL, tenantId);
       if (!response) {
         return {
           error: true,
@@ -52,7 +66,9 @@ export async function createComment(formData: any, valueString: string) {
       attachments,
       parentId,
       messageBody,
+      tenantId,
     });
+
     if (response.error) {
       return {
         error: true,
@@ -83,9 +99,20 @@ export async function fetchComments({
   workspaceURL,
 }: any) {
   const session = await getSession();
+
   const user = session?.user;
 
-  const workspace = await findWorkspace({user, url: workspaceURL});
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required.'),
+    };
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
@@ -98,6 +125,7 @@ export async function fetchComments({
       page,
       type,
       workspaceURL,
+      tenantId,
     });
 
     return response.error

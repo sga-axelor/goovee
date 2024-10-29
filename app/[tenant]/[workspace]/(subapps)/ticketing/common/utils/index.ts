@@ -1,9 +1,7 @@
-/**
- * Tickets Utils
- */
-
+import {type Tenant} from '@/tenant';
 import {Maybe} from '@/types/util';
-import {getImageURL} from '@/utils/image';
+import {getImageURL} from '@/utils/files';
+
 import {ASSIGNMENT} from '../constants';
 
 export const formatDate = (date: Maybe<Date | string>): string => {
@@ -11,11 +9,15 @@ export const formatDate = (date: Maybe<Date | string>): string => {
   return new Date(date).toLocaleDateString();
 };
 
-export function getProfilePic(id: Maybe<string>): string {
+export function getProfilePic(
+  id: Maybe<string>,
+  tenantId: Tenant['id'],
+): string {
   if (!id) {
     return '/images/user.png';
   }
-  return getImageURL(id);
+
+  return getImageURL(id, tenantId!);
 }
 
 export const getPages = (

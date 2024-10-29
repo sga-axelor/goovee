@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {RichTextEditor} from '@/ui/components';
 import {Button} from '@/ui/components/button';
 import {

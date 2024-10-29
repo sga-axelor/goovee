@@ -78,7 +78,7 @@ export default async function Layout({
     tenantId: tenant,
   });
 
-  const navigationSelect = $workspace?.navigationSelect;
+  const navigationSelect = $workspace?.navigationSelect || NAVIGATION.left;
   const isTopNavigation = navigationSelect === NAVIGATION.top;
   const isLeftNavigation = navigationSelect === NAVIGATION.left;
 

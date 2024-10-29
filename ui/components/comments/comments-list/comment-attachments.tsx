@@ -2,7 +2,7 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {download} from '@/ui/components/comments/helpers';
 
 interface Attachment {

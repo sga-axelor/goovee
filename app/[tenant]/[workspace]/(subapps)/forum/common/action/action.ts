@@ -1,20 +1,22 @@
 'use server';
 
 import fs from 'fs';
+import {headers} from 'next/headers';
 import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
 
 // ---- CORE IMPORTS ---- //
-import {getClient} from '@/goovee';
-import {i18n} from '@/lib/i18n';
+import {i18n} from '@/i18n';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {getFileSizeText} from '@/utils/files';
 import {getCurrentDateTime} from '@/utils/date';
+import {manager, type Tenant} from '@/tenant';
+import {TENANT_HEADER} from '@/middleware';
 
 //----LOCAL IMPORTS -----//
 import {
@@ -79,6 +81,15 @@ export async function pinGroup({
   groupID: string;
   workspaceURL: string;
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
   const user = session?.user;
 
@@ -90,12 +101,15 @@ export async function pinGroup({
     code: SUBAPP_CODES.forum,
     user,
     url: workspaceURL,
+    tenantId,
   });
+
   if (!subapp) {
     return {error: true, message: i18n.get('Unauthorized')};
   }
 
-  const workspace = await findWorkspace({user, url: workspaceURL});
+  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
@@ -104,7 +118,9 @@ export async function pinGroup({
     id,
     groupID,
     workspaceID: workspace.id,
+    tenantId,
   });
+
   if (!memberGroup) {
     return {
       error: true,
@@ -112,7 +128,7 @@ export async function pinGroup({
     };
   }
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
   try {
     const result = await client.aOSPortalForumGroupMember
       .update({
@@ -151,8 +167,19 @@ export async function exitGroup({
   groupID: string;
   workspaceURL: string;
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
+
   const user = session?.user;
+
   if (!user) {
     return {error: true, message: i18n.get('Unauthorized')};
   }
@@ -161,19 +188,24 @@ export async function exitGroup({
     code: SUBAPP_CODES.forum,
     user,
     url: workspaceURL,
+    tenantId,
   });
+
   if (!subapp) {
     return {error: true, message: i18n.get('Unauthorized')};
   }
 
-  const workspace = await findWorkspace({user, url: workspaceURL});
+  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
+
   const memberGroup: any = await findMemberGroupById({
     id,
     groupID,
     workspaceID: workspace.id,
+    tenantId,
   });
 
   if (!memberGroup) {
@@ -183,7 +215,7 @@ export async function exitGroup({
     };
   }
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
 
   try {
     const result = await client.aOSPortalForumGroupMember
@@ -214,7 +246,17 @@ export async function joinGroup({
   userId: string;
   workspaceURL: string;
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
+
   const user = session?.user;
 
   if (!user) {
@@ -225,17 +267,25 @@ export async function joinGroup({
     code: SUBAPP_CODES.forum,
     user,
     url: workspaceURL,
+    tenantId,
   });
+
   if (!subapp) {
     return {error: true, message: i18n.get('Unauthorized')};
   }
 
-  const workspace = await findWorkspace({user, url: workspaceURL});
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
 
-  const group = await findGroupById(groupID, workspace.id);
+  const group = await findGroupById(groupID, workspace.id, tenantId);
+
   if (!group) {
     return {
       error: true,
@@ -243,7 +293,7 @@ export async function joinGroup({
     };
   }
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
 
   try {
     const result = await client.aOSPortalForumGroupMember
@@ -286,7 +336,17 @@ export async function addGroupNotification({
   notificationType: string;
   workspaceURL: string;
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
+
   const user = session?.user;
 
   if (!user) {
@@ -297,20 +357,30 @@ export async function addGroupNotification({
     code: SUBAPP_CODES.forum,
     user,
     url: workspaceURL,
+    tenantId,
   });
+
   if (!subapp) {
     return {error: true, message: i18n.get('Unauthorized')};
   }
 
-  const workspace = await findWorkspace({user, url: workspaceURL});
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
+
   const memberGroup: any = await findMemberGroupById({
     id,
     groupID,
     workspaceID: workspace.id,
+    tenantId,
   });
+
   if (!memberGroup) {
     return {
       error: true,
@@ -318,7 +388,7 @@ export async function addGroupNotification({
     };
   }
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
   try {
     const response = await client.aOSPortalForumGroupMember
       .update({
@@ -347,7 +417,17 @@ export async function addPost({
   workspaceURL,
   formData,
 }: any) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
+
   const user = session?.user;
 
   if (!user) {
@@ -358,17 +438,24 @@ export async function addPost({
     code: SUBAPP_CODES.forum,
     user,
     url: workspaceURL,
+    tenantId,
   });
+
   if (!subapp) {
     return {error: true, message: i18n.get('Unauthorized')};
   }
 
-  const workspace = await findWorkspace({user, url: workspaceURL});
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
 
-  const client = await getClient();
+  const client = await manager.getClient(tenantId);
 
   let attachmentListArray: {id: number; fileName: string; title: string}[] = [];
 
@@ -428,7 +515,16 @@ export async function addPost({
 }
 
 export async function findMedia(id: ID) {
-  const client = await getClient();
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
+  const client = await manager.getClient(tenantId);
 
   return await client.aOSPortalForumPost
     .find({
@@ -469,9 +565,24 @@ export async function fetchPosts({
   search?: string | undefined;
   workspaceURL: string;
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
+
   const user = session?.user;
-  const workspace = await findWorkspace({user, url: workspaceURL});
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
 
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
@@ -483,11 +594,22 @@ export async function fetchPosts({
     page,
     search,
     workspaceID: workspace.id,
+    tenantId,
   }).then(clone);
 }
 
 async function uploadAttachment(formData: FormData): Promise<any> {
-  const client = await getClient();
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
+  const client = await manager.getClient(tenantId);
+
   const values = extractFileValues(formData);
 
   const getTimestampFilename = (name: string) =>
@@ -545,7 +667,17 @@ async function uploadAttachment(formData: FormData): Promise<any> {
 }
 
 async function authorizeAndValidate({appCode, workspaceURL}: any) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   const session = await getSession();
+
   const user = session?.user;
 
   if (!user) {
@@ -559,6 +691,7 @@ async function authorizeAndValidate({appCode, workspaceURL}: any) {
     code: appCode,
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!subapp) {
@@ -571,6 +704,7 @@ async function authorizeAndValidate({appCode, workspaceURL}: any) {
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
+    tenantId,
   });
 
   if (!workspace) {
@@ -596,10 +730,20 @@ export async function fetchGroupsByMembers({
   orderBy?: any;
   workspaceID: PortalWorkspace['id'];
 }) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: i18n.get('TenantId is required'),
+    };
+  }
+
   return await findGroupsByMembers({
     id,
     searchKey,
     orderBy,
     workspaceID,
+    tenantId,
   });
 }
