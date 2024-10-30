@@ -35,22 +35,101 @@ export function parseFormData(formData: FormData) {
   return values;
 }
 
-export function getImageURL(
-  id: ID,
-  tenant: string,
-  options?: {noimage?: boolean},
+type DownloadOptions = {
+  isMeta?: boolean;
+};
+
+export function download(
+  record: any,
+  tenantId: string,
+  options: DownloadOptions = {},
 ) {
+  if (!(record && tenantId)) return null;
+
+  const html =
+    record.contentType === 'html' || record?.metaFile?.fileType === 'text/html';
+
+  const link = document.createElement('a');
+  const name = record.fileName;
+
+  link.innerHTML = name || 'File';
+  link.download = name || 'download';
+  link.href = html
+    ? getHTMLURL(record)
+    : getDownloadURL(record?.id, tenantId, options);
+
+  Object.assign(link.style, {
+    position: 'absolute',
+    visibility: 'hidden',
+    zIndex: 1000000000,
+  });
+
+  document.body.appendChild(link);
+
+  link.onclick = e => {
+    setTimeout(() => {
+      if (e.target) {
+        document.body.removeChild(e.target as any);
+      }
+    }, 300);
+  };
+
+  setTimeout(() => link.click(), 100);
+}
+
+export function getHTMLURL(record: any) {
+  const dynamicContent = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated HTML Page</title>
+  </head>
+  <body>
+    <main>
+      ${record.content}
+    </main>
+  </body>
+  </html>
+`;
+
+  const blob = new Blob([dynamicContent], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+
+  return url;
+}
+
+export function getImageURL(
+  id: ID | undefined,
+  tenant: string,
+  options: {noimage?: boolean; noimageSrc?: string} = {},
+) {
+  const {noimage, noimageSrc} = options;
+
   if (!(id && tenant)) {
-    return options?.noimage ? '/images/no-image.png' : '';
+    return noimage ? noimageSrc || '/images/no-image.png' : '';
   }
 
   return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/download/image/${id}`;
 }
 
-export function getDownloadURL(id: ID, tenantId: string) {
+export function getDownloadURL(
+  id: ID,
+  tenantId: string,
+  options: DownloadOptions = {},
+) {
   if (!(id && tenantId)) return '';
 
-  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${id}`;
+  let query = '';
+
+  const {isMeta} = options;
+
+  if (isMeta) {
+    query += 'meta=true';
+  }
+
+  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${id}${query ? `?${query}` : ''}`;
 }
 
 export function getFileTypeIcon(fileType: string) {

@@ -7,16 +7,12 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
 import {i18n} from '@/i18n';
+import {download, getFileTypeIcon, getIconColor} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
-import {
-  download,
-  getFileTypeIcon,
-  getIconColor,
-} from '@/subapps/resources/common/utils';
 
 export function ResourceList({resources}: any) {
   const router = useRouter();

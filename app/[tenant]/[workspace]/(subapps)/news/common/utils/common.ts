@@ -1,7 +1,6 @@
 import moment from 'moment';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Category} from '@/subapps/news/common/types';
 import {TIME_UNITS} from '@/subapps/news/common/constants';
 
 export function getPublishedLabel(dateString: any) {

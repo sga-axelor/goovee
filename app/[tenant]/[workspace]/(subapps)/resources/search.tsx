@@ -19,7 +19,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {getFileTypeIcon, getIconColor} from '@/subapps/resources/common/utils';
+import {getFileTypeIcon, getIconColor} from '@/utils/files';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components';
 import {findDmsFiles} from './action';
 

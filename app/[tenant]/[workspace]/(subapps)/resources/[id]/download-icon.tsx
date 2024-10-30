@@ -2,7 +2,7 @@
 
 import {MdOutlineFileDownload} from 'react-icons/md';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {download} from '@/subapps/resources/common/utils';
+import {download} from '@/utils/files';
 
 export default function DownloadIcon({record}: any) {
   const {tenant} = useWorkspace();
