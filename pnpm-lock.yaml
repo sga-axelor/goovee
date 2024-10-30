@@ -195,7 +195,7 @@ dependencies:
     specifier: ^4.0.0
     version: 4.0.0
   sass:
-    specifier: ^1.80.5
+    specifier: ^1.80.4
     version: 1.80.5
   server-only:
     specifier: ^0.0.1
