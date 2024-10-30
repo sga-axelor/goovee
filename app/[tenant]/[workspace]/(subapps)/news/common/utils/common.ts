@@ -32,7 +32,6 @@ export function getPublishedLabel(dateString: any) {
   return TIME_UNITS.NOW;
 }
 
-
 export function parseDate(dateString: any) {
   const date = moment(dateString);
   const currentYear = moment().year();
