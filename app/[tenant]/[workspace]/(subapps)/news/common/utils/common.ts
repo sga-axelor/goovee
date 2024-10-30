@@ -33,13 +33,6 @@ export function getPublishedLabel(dateString: any) {
   return TIME_UNITS.NOW;
 }
 
-export function getImageURL(id?: string | number) {
-  if (!id) {
-    return `/images/no-image.png`;
-  }
-
-  return `${process.env.NEXT_PUBLIC_HOST}/api/download/${id}?meta=true`;
-}
 
 export function parseDate(dateString: any) {
   const date = moment(dateString);
