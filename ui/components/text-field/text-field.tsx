@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {cn} from '@/utils/css';
-import Icons from '@/utils/Icons';
+import {Icon} from '@/ui/components';
 
 interface IconProps {
   icon: string;
@@ -39,7 +39,7 @@ const TextField = React.forwardRef<HTMLInputElement, InputProps>(
           />
           {Array.isArray(icons) &&
             icons?.map((ic, i) => (
-              <Icons
+              <Icon
                 className="absolute right-4 top-2"
                 key={i}
                 name={ic.icon}

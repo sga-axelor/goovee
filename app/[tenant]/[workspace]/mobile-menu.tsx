@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components/select';
-import Icons from '@/utils/Icons';
+import {Icon} from '@/ui/components';
 import {SUBAPP_PAGE} from '@/constants';
 import {Account} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -78,7 +78,7 @@ function MobileSidebar({subapps, workspaces}: any) {
                   <div
                     className="flex items-center pt-8 px-6 py-2 font-normal gap-x-4"
                     key={code}>
-                    <Icons
+                    <Icon
                       name={icon || 'app'}
                       className="h-6 w-6"
                       style={{color}}

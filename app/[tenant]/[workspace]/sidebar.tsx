@@ -6,7 +6,7 @@ import {useRouter} from 'next/navigation';
 import {MdApps} from 'react-icons/md';
 import {useSession} from 'next-auth/react';
 import {cn} from '@/utils/css';
-import Icons from '@/utils/Icons';
+import {Icon} from '@/ui/components';
 import {
   Select,
   SelectContent,
@@ -85,7 +85,7 @@ export function Sidebar({
                 href={`${workspaceURI}/${code}${page}`}
                 className="no-underline">
                 <div className="flex gap-4 items-center" key={code}>
-                  <Icons
+                  <Icon
                     name={icon || 'app'}
                     className="h-6 w-6"
                     style={{color}}

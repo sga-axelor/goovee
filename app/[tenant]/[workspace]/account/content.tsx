@@ -7,7 +7,7 @@ import {useSession} from 'next-auth/react';
 import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_PAGE} from '@/constants';
-import Icons from '@/utils/Icons';
+import {Icon} from '@/ui/components';
 
 export default function Content({subapps}: {subapps: any}) {
   const {workspaceURI} = useWorkspace();
@@ -42,7 +42,7 @@ export default function Content({subapps}: {subapps: any}) {
                         background,
                         color,
                       }}>
-                      {icon ? <Icons name={icon} className="text-2xl" /> : null}
+                      {icon ? <Icon name={icon} className="text-2xl" /> : null}
                     </div>
                     <p className="text-lg font-semibold mb-0">
                       {i18n.get(name)}

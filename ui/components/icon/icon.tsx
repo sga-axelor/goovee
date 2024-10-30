@@ -60,7 +60,7 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
   return icon;
 }
 
-const Icons = ({
+export const Icon = ({
   name,
   className,
   size,
@@ -82,4 +82,4 @@ const Icons = ({
   return <IconComponent className={`${className}`} {...rest} />;
 };
 
-export default Icons;
+export default Icon;

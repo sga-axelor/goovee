@@ -21,7 +21,7 @@ import {
 import {SUBAPP_PAGE} from '@/constants';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import Icons from '@/utils/Icons';
+import {Icon} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
@@ -119,7 +119,7 @@ export default function Header({
               return (
                 <Link key={code} href={`${workspaceURI}/${code}${page}`}>
                   {icon ? (
-                    <Icons name={icon} className="h-6 w-6" style={{color}} />
+                    <Icon name={icon} className="h-6 w-6" style={{color}} />
                   ) : (
                     <p className="font-medium">{name}</p>
                   )}

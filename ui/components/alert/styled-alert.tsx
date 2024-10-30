@@ -2,7 +2,7 @@
 
 import React, {useState, useEffect} from 'react';
 import {MdClose} from 'react-icons/md';
-import Icons from '@/utils/Icons';
+import {Icon} from '@/ui/components';
 import {Alert, AlertTitle, AlertDescription} from './alert';
 
 type Variant = 'success' | 'error' | 'warning' | 'purple';
@@ -67,7 +67,7 @@ export const StyledAlert = ({
     <Alert
       className={`${alertType[variant].styles} border relative flex items-start justify-between py-4 px-8`}>
       <div className="flex items-start">
-        <Icons name={alertType[variant].icon} className="mr-4 text-2xl" />
+        <Icon name={alertType[variant].icon} className="mr-4 text-2xl" />
         <div className="flex-1">
           <AlertTitle className="text-base font-medium">{heading}</AlertTitle>
           <AlertDescription className="text-sm">{description}</AlertDescription>

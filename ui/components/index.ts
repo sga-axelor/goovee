@@ -215,3 +215,4 @@ export {
   TooltipProvider,
 } from './tooltip';
 export {DynamicIcon} from './dynamic-icon';
+export {Icon} from './icon';
