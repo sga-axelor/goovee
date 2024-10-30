@@ -4,6 +4,7 @@ import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
 import {download} from '@/utils/files';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 interface Attachment {
   id: string;
@@ -18,14 +19,17 @@ interface CommentAttachmentsProps {
 }
 
 export function CommentAttachments({attachments}: CommentAttachmentsProps) {
+  const {tenant} = useWorkspace();
+
   const handleDownload = async (attachment: Attachment) => {
     const {attachmentFile} = attachment;
-    download(attachmentFile, '', {isMeta: true});
+    download(attachmentFile, tenant, {isMeta: true});
   };
 
   if (!attachments?.length) {
     return;
   }
+
   return (
     <div className="px-4 text-xs mb-1">
       <div className="font-semibold"> {i18n.get('Files')}:</div>
