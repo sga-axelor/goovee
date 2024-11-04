@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useState} from 'react';
-import {MdOutlineGroups3} from 'react-icons/md';
+import {MdOutlineForum} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 import {useSession} from 'next-auth/react';
 
@@ -57,7 +57,7 @@ export default function MobileMenu({items}: any) {
   return (
     container && (
       <Portal container={container}>
-        <MdOutlineGroups3
+        <MdOutlineForum
           className="cursor-pointer h-6 w-6"
           onClick={openSidebar}
         />
