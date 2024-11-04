@@ -57,6 +57,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '../multi-select';
+import {X as RemoveIcon} from 'lucide-react';
 
 type FilterProps = {
   url: string;
@@ -344,6 +345,10 @@ function AssignedToField(
 ) {
   const {form, company, clientPartner} = props;
 
+  const handleClear = () => {
+    form.setValue('assignment', null);
+  };
+
   return (
     <div>
       <FormField
@@ -356,13 +361,27 @@ function AssignedToField(
             </FormLabel>
 
             <Select
-              onValueChange={value => field.onChange(Number(value))}
+              value={field.value ? field.value.toString() : ''}
+              onValueChange={value => {
+                field.onChange(Number(value));
+              }}
               defaultValue={field.value?.toString()}>
               <FormControl>
-                <SelectTrigger className="w-full text-xs  text-muted-foreground">
-                  <SelectValue
-                    placeholder={i18n.get('Select assignee')}></SelectValue>
-                </SelectTrigger>
+                <div className="flex">
+                  <SelectTrigger
+                    className={cn('w-full text-xs text-muted-foreground', {
+                      ['text-foreground']: field.value,
+                    })}>
+                    <SelectValue
+                      placeholder={i18n.get('Select assignee')}></SelectValue>
+                  </SelectTrigger>
+                  {field.value && (
+                    <RemoveIcon
+                      className="h-4 w-4 hover:stroke-destructive -ms-12 mt-3 cursor-pointer"
+                      onClick={handleClear}
+                    />
+                  )}
+                </div>
               </FormControl>
               <SelectContent className="w-full">
                 <SelectItem
