@@ -13,6 +13,7 @@ export const ChannelList = ({
   activeChannel: string;
   setActiveChannel: (id: string) => void;
 }) => {
+  console.log('voici les channels : ', channels);
   const [width, setWidth] = useState(256);
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);

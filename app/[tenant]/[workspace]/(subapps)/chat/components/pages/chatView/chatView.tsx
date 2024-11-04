@@ -58,7 +58,9 @@ export const ChatView = ({
       const channels = await getChannelsWithUnreadCount(token, teamId, user.id);
       const filteredChannels = channels.filter((channel: ChannelType) => {
         return (
-          channel.display_name != null && channel.display_name.trim() !== ''
+          channel.display_name != null &&
+          channel.display_name.trim() !== '' &&
+          channel.display_name != 'Town Square'
         );
       });
       setChannels(filteredChannels);
@@ -80,7 +82,6 @@ export const ChatView = ({
           activeChannel,
           token,
         );
-        console.log('voici le current channel', currentChannel);
         setCurrentChannel(currentChannel);
         await viewChannel(user.id, activeChannel, token);
         updateChannelUnread(activeChannel, false);
@@ -91,7 +92,6 @@ export const ChatView = ({
 
   const handleNewPost = useCallback(
     async (channelId: string, rootId: string, post: Post) => {
-      console.log('on recoisn un nouveau ost');
       if (channelId == activeChannelRef.current && user.id !== post.user_id) {
         addPost(setCurrentChannel, channelId, token, false, user, post);
         setNewMessage(true);

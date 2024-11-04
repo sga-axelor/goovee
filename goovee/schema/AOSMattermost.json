@@ -1,0 +1,12 @@
+{
+  "name": "AOSMattermost",
+  "table": "studio_app_mattermost",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "teamId"
+    }
+  ]
+}
