@@ -9,7 +9,6 @@ import {
   MdOutlineMoreHoriz,
   MdKeyboardArrowUp,
   MdKeyboardArrowDown,
-  MdOutlineStraight,
   MdReply,
   MdOutlineSouth,
   MdNorth,
@@ -34,11 +33,10 @@ import {
 import {ModelType} from '@/types';
 import {i18n} from '@/i18n';
 import {getImageURL} from '@/utils/files';
-import {parseDate} from '@/utils/date';
+import {getPublishedLabel, parseDate} from '@/utils/date';
 import {
   COMMENT,
   COMMENTS,
-  DATE_FORMATS,
   DISABLED_COMMENT_PLACEHOLDER,
   NOT_INTERESTED,
   REPORT,
@@ -54,7 +52,6 @@ interface CommentListItemProps {
   comment: Comment;
   showReactions: boolean;
   modelType: ModelType;
-  hasSubComments?: boolean;
   disabled: boolean;
   isTopLevel?: boolean;
   sortBy?: any;
@@ -71,16 +68,13 @@ export const CommentListItem = ({
   comment,
   showReactions,
   modelType,
-  hasSubComments,
   disabled = false,
   isTopLevel = true,
   sortBy,
   onSubmit,
   tenantId,
 }: CommentListItemProps) => {
-  const [showSubComments, setShowSubComments] = useState(
-    hasSubComments || false,
-  );
+  const [showSubComments, setShowSubComments] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [toggle, setToggle] = useState(false);
 
@@ -236,7 +230,7 @@ export const CommentListItem = ({
 
   return (
     <div className="flex flex-col gap-1" key={id} id={`comment-${id}`}>
-      <div className="flex gap-2 justify-between items-center">
+      <div className="flex gap-2 justify-between items-center border-b-2 border-dotted">
         <div className="flex items-center gap-2">
           {renderAvatar(partner?.picture?.id)}
           <div className="flex flex-col">
@@ -247,7 +241,7 @@ export const CommentListItem = ({
               <Tooltip>
                 <TooltipTrigger>
                   <div className="text-[10px] leading-3">
-                    {parseDate(createdOn, DATE_FORMATS.full_date)}
+                    {i18n.get('Updated')} {getPublishedLabel(createdOn)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent align="start" className="px-4 py-1 text-[10px]">

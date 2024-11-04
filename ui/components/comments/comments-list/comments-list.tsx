@@ -15,7 +15,6 @@ interface CommentsListProps {
   usePopUpStyles?: boolean;
   showReactions?: boolean;
   modelType: ModelType;
-  hasSubComments: boolean;
   disabled?: boolean;
   sortBy: any;
   onSubmit?: (comment: any) => void;
@@ -28,7 +27,6 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   usePopUpStyles = false,
   showReactions = true,
   modelType,
-  hasSubComments,
   disabled = false,
   onSubmit,
   sortBy,
@@ -46,7 +44,6 @@ export const CommentsList: React.FC<CommentsListProps> = ({
           comment={comment}
           showReactions={showReactions}
           modelType={modelType}
-          hasSubComments={hasSubComments}
           sortBy={sortBy}
           onSubmit={onSubmit}
           tenantId={tenantId}

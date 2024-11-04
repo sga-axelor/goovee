@@ -158,7 +158,6 @@ export function Comments({
               usePopUpStyles={usePopUpStyles}
               showReactions={showReactions}
               modelType={modelType}
-              hasSubComments={!!totalCommentThreadCount}
               sortBy={sortBy}
               onSubmit={onCreate}
               tenantId={tenant}

@@ -15,17 +15,6 @@ export const LATEST_NEWS = 'Latest News';
 export const RELATED_NEWS = 'Related News';
 export const CATEGORIES = 'Categories';
 
-// Time Units
-export const TIME_UNITS = {
-  DAY: 'day',
-  HOUR: 'hour',
-  MINUTE: 'minute',
-  MINUTES: 'minutes',
-  MONTH: 'month',
-  NOW: 'now',
-  AGO: 'ago',
-};
-
 // Others
 export const SHARE_ON_SOCIAL_MEDIA = 'Share on social media';
 export const NO_NEWS_AVAILABLE = 'No news available.';

@@ -6,9 +6,7 @@ import React from 'react';
 import {Badge} from '@/ui/components/badge';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-
-// ---- LOCAL IMPORTS ---- //
-import {getPublishedLabel} from '@/subapps/news/common/utils';
+import {getPublishedLabel} from '@/utils/date';
 
 export const NewsList = ({
   news,

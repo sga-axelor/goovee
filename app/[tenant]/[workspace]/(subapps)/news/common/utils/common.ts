@@ -1,37 +1,5 @@
 import moment from 'moment';
 
-// ---- LOCAL IMPORTS ---- //
-import {TIME_UNITS} from '@/subapps/news/common/constants';
-
-export function getPublishedLabel(dateString: any) {
-  if (!dateString) {
-    return null;
-  }
-
-  const dateMoment = moment(dateString);
-  const now = moment();
-  const timeDifference = now.diff(
-    dateMoment,
-    TIME_UNITS.MINUTES as moment.unitOfTime.DurationConstructor,
-  );
-
-  const units = [
-    {unit: TIME_UNITS.MONTH, divisor: 24 * 60 * 30},
-    {unit: TIME_UNITS.DAY, divisor: 24 * 60},
-    {unit: TIME_UNITS.HOUR, divisor: 60},
-    {unit: TIME_UNITS.MINUTE, divisor: 1},
-  ];
-
-  for (const {unit, divisor} of units) {
-    if (timeDifference >= divisor) {
-      const count = Math.floor(timeDifference / divisor);
-      return `${count} ${unit}${count === 1 ? '' : 's'} ${TIME_UNITS.AGO}`;
-    }
-  }
-
-  return TIME_UNITS.NOW;
-}
-
 export function parseDate(dateString: any) {
   const date = moment(dateString);
   const currentYear = moment().year();

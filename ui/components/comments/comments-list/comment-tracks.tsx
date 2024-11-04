@@ -20,12 +20,12 @@ interface CommentTracksProps {
 export function CommentTracks({tracks, title}: CommentTracksProps) {
   return (
     <div className="px-4 text-xs mb-1">
-      <div className="font-semibold">{i18n.get(title)}</div>
+      <div className="font-semibold mb-1 -ml-9">{i18n.get(title)}</div>
       <ul className="list-disc">
         {tracks?.map(({title, oldValue, value}, index) => {
           if (title === 'comment.note') return;
           return (
-            <li key={index} className="mb-2">
+            <li key={index} className="mb-1">
               <div className="flex items-center">
                 <span className="font-semibold flex-shrink-0">
                   {i18n.get(title)}:

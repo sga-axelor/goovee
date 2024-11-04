@@ -2,6 +2,7 @@ import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {DATE_FORMATS} from '@/constants';
+import {TIME_UNITS} from '@/constants/units';
 
 export function parseDate(
   dateString: any,
@@ -46,3 +47,32 @@ export const dateIsExist = (dateToCheck: Date, datesArray: Date[]) => {
 
   return false;
 };
+
+export function getPublishedLabel(dateString: any) {
+  if (!dateString) {
+    return null;
+  }
+
+  const dateMoment = moment(dateString);
+  const now = moment();
+  const timeDifference = now.diff(
+    dateMoment,
+    TIME_UNITS.MINUTES as moment.unitOfTime.DurationConstructor,
+  );
+
+  const units = [
+    {unit: TIME_UNITS.MONTH, divisor: 24 * 60 * 30},
+    {unit: TIME_UNITS.DAY, divisor: 24 * 60},
+    {unit: TIME_UNITS.HOUR, divisor: 60},
+    {unit: TIME_UNITS.MINUTE, divisor: 1},
+  ];
+
+  for (const {unit, divisor} of units) {
+    if (timeDifference >= divisor) {
+      const count = Math.floor(timeDifference / divisor);
+      return `${count} ${unit}${count === 1 ? '' : 's'} ${TIME_UNITS.AGO}`;
+    }
+  }
+
+  return TIME_UNITS.NOW;
+}

@@ -7,9 +7,7 @@ import {MdChevronRight} from 'react-icons/md';
 import {Badge, Separator} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-
-// ---- LOCAL IMPORTS ---- //
-import {getPublishedLabel} from '@/subapps/news/common/utils';
+import {getPublishedLabel} from '@/utils/date';
 
 export const FeedList = ({
   title,
