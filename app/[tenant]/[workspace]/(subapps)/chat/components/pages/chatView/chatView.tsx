@@ -58,7 +58,9 @@ export const ChatView = ({
       const channels = await getChannelsWithUnreadCount(token, teamId, user.id);
       const filteredChannels = channels.filter((channel: ChannelType) => {
         return (
-          channel.display_name != null && channel.display_name.trim() !== ''
+          channel.display_name != null &&
+          channel.display_name.trim() !== '' &&
+          channel.display_name != 'Town Square'
         );
       });
       setChannels(filteredChannels);
