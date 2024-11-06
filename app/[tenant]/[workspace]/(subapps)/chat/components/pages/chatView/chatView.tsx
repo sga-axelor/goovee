@@ -19,6 +19,7 @@ import {
   UserStatus,
 } from '../../../types/types';
 import {deletePost} from '../../../utils/deletePost';
+import {DEFAULT_CHANNEL} from '../../../constants';
 
 export const ChatView = ({
   token,
@@ -60,7 +61,7 @@ export const ChatView = ({
         return (
           channel.display_name != null &&
           channel.display_name.trim() !== '' &&
-          channel.display_name != 'Town Square'
+          channel.display_name != DEFAULT_CHANNEL
         );
       });
       setChannels(filteredChannels);

@@ -111,3 +111,5 @@ export const emojis: {[key: string]: string} = {
   broken_heart: '1f494.png',
   handshake: '1f91d.png',
 };
+
+export const DEFAULT_CHANNEL = 'Town Square'
