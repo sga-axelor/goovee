@@ -1,21 +1,17 @@
 import React from 'react';
+
+// ---- LOCAL IMPORTS ---- //
 import {getAuthToken, getUsers, getUserStatus} from './api';
 import {ChatView} from './components';
-import {getTeamId} from './orm/orm';
+import {getTeamId} from './orm/team';
 
-export default async function Chat({
-  params,
-}: {
-  params: {tenant: string; workspace: string};
-}) {
-  //A CHANGER
+export default async function Chat({params}: {params: {tenant: string}}) {
   const {data: user, token} = await getAuthToken(
     process.env.MATTERMOST_LOGIN,
     process.env.MATTERMOST_PASSWORD,
   );
 
-  const tenant = await getTeamId();
-  const teamId = tenant?.teamId;
+  const teamId = await getTeamId({tenant: params.tenant});
 
   if (!teamId || teamId === '') {
     return <div>Erreur de configuration du chat.</div>;

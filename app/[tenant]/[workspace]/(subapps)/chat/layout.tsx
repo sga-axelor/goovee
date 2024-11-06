@@ -1,14 +1,5 @@
 import React from 'react';
 
-export default async function Layout({
-  params,
-  children,
-}: {
-  params: {
-    tenant: string;
-    workspace: string;
-  };
-  children: React.ReactNode;
-}) {
+export default async function Layout({children}: {children: React.ReactNode}) {
   return <>{children}</>;
 }
