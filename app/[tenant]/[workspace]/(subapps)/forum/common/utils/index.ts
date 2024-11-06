@@ -68,45 +68,16 @@ export async function getPopularQuery({
             ON author.picture = metaFile.id
         ${whereClause}
     ),
-    
+
     commentData AS (
         SELECT 
-            commentList.forum_post AS postId,
-            JSON_AGG(
-                JSON_BUILD_OBJECT(
-                    'id', commentList.id,
-                    'createdOn', commentList.created_on,
-                    'mailMessage', JSON_BUILD_OBJECT(
-                        'id', mailMessage.id,
-                        'version', mailMessage.version,
-                        'author', JSON_BUILD_OBJECT(
-                            'id', author.id,
-                            'version', author.version,
-                            'name', author.name, 
-                            'partner', JSON_BUILD_OBJECT(
-                                'id', partner.id,
-                                'simpleFullName', partner.simple_full_name,
-                                'picture', JSON_BUILD_OBJECT(
-                                    'id', picture.id
-                                )
-                            )
-                        )
-                    )
-                )
-            ORDER BY commentList.created_on DESC 
-            ) AS commentListJson
-        FROM base_comment AS commentList
-        LEFT JOIN mail_message AS mailMessage 
-            ON commentList.mail_message = mailMessage.id
-        LEFT JOIN auth_user AS author 
-            ON mailMessage.author = author.id
-        LEFT JOIN base_partner AS partner 
-            ON author.partner = partner.id
-        LEFT JOIN meta_file AS picture 
-            ON partner.picture = picture.id
-        GROUP BY commentList.forum_post
+            commentList.related_id AS postId,
+            COUNT(*) AS totalComments
+        FROM mail_message AS commentList
+        WHERE commentList.related_model = 'com.axelor.apps.portal.db.ForumPost'
+        GROUP BY commentList.related_id
     ), 
-    
+
     attachmentData AS (
         SELECT 
             attachmentList.forum_post AS postId,
@@ -126,7 +97,7 @@ export async function getPopularQuery({
             ON attachmentList.meta_file = metaFile.id
         GROUP BY attachmentList.forum_post
     ),
-
+        
     authorData AS (
         SELECT 
             author.id AS id, 
@@ -141,7 +112,7 @@ export async function getPopularQuery({
         LEFT JOIN meta_file AS metaFile 
             ON author.picture = metaFile.id
     ),
-    
+
     totalCount AS (
         SELECT COUNT(*) AS _count
         FROM portal_forum_post AS post
@@ -152,26 +123,7 @@ export async function getPopularQuery({
         LEFT JOIN meta_file AS metaFile 
             ON author.picture = metaFile.id
         ${whereClause}
-    ),
-
-   totalCommentCount AS (
-    SELECT 
-       post.id AS postId,
-       COALESCE(commentCounts.commentCount, 0) AS commentCount
-  FROM portal_forum_post AS post
-  LEFT JOIN (
-  SELECT 
-        COALESCE(comment.forum_post, 
-            (SELECT pc.forum_post 
-             FROM base_comment AS pc 
-             WHERE pc.id = comment.parent_comment)
-        ) AS postId,
-        COUNT(comment.id) AS commentCount
-    FROM base_comment AS comment
-    GROUP BY postId
-  ) AS commentCounts ON post.id = commentCounts.postId 
-   
-  )
+    )
 
     SELECT 
         pd.postId AS "id",
@@ -182,8 +134,7 @@ export async function getPopularQuery({
         COALESCE(pd.forumGroupJson, '{}') AS "forumGroup",
         COALESCE(authorD.authorJson, '{}') AS author,
         COALESCE(ad.attachmentListJson, '[]') AS "attachmentList", 
-        COALESCE(cd.commentListJson, '[]') AS "commentList", 
-        COALESCE(tc.commentCount, 0) AS "commentCount",
+        COALESCE(cd.totalComments, 0) AS "totalComments",
         (SELECT _count FROM totalCount) AS "_count"
     FROM postData AS pd
     LEFT JOIN commentData AS cd 
@@ -192,11 +143,10 @@ export async function getPopularQuery({
         ON pd.postId = ad.postId
     LEFT JOIN authorData AS authorD 
         ON pd.author = authorD.id
-    LEFT JOIN totalCommentCount  AS tc
-        ON pd.postId = tc.postId  
-    ORDER BY commentCount DESC 
+    ORDER BY COALESCE(cd.totalComments, 0) DESC, pd.createdOn DESC
     LIMIT $1
-    OFFSET $2`,
+    OFFSET $2
+        `,
     limit,
     skip,
   );
