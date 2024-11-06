@@ -6,27 +6,22 @@ import {i18n} from '@/i18n';
 import {ModelType, PortalWorkspace} from '@/types';
 import {getSkipInfo} from '@/utils';
 
-const ModelMap: Record<ModelType, String> = {
-  [ModelType.forum]: 'forum_post',
-  [ModelType.news]: 'portal_news',
-  [ModelType.event]: 'portal_event',
-  [ModelType.ticketing]: 'project_task',
-};
-
 export async function getPopularCommentsBySorting({
   page,
   limit,
   workspace,
   modelRecord,
-  type,
   tenantId,
+  modelName,
+  type,
 }: {
   page?: string | number;
   limit?: number;
   workspace: PortalWorkspace;
   modelRecord: any;
-  type: ModelType;
   tenantId: Tenant['id'];
+  type: ModelType;
+  modelName: string;
 }) {
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
@@ -36,100 +31,67 @@ export async function getPopularCommentsBySorting({
     return {error: true, message: i18n.get('TenantId is required.')};
   }
 
-  const modelName = ModelMap[type];
-
   const skip = getSkipInfo(limit, page);
 
   const client = await manager.getClient(tenantId);
 
-  const joinTablesMap: Record<ModelType, string> = {
-    [ModelType.forum]: `
-      LEFT JOIN portal_forum_post AS forum_post 
-        ON comment.forum_post = forum_post.id 
-    `,
-    [ModelType.news]: `
-      LEFT JOIN portal_portal_news AS portal_news 
-        ON comment.portal_news = portal_news.id
-    `,
-    [ModelType.event]: `
-      LEFT JOIN portal_portal_event AS portal_event 
-        ON comment.portal_event = portal_event.id
-    `,
-    [ModelType.ticketing]: `
-      LEFT JOIN project_project_task AS project_task 
-        ON comment.project_task = project_task.id 
-    `,
-  };
-
-  const joinTables = joinTablesMap[type] || '';
-
   const comments: any = await client.$raw(
     `
- WITH comments AS (
+ WITH mailMessageFileListData AS (
   SELECT 
-    comment.id AS id,
-    comment.note AS note,
-    comment.mail_message AS mailMessageId,
-    comment.created_on AS createdOn,
-    comment.is_private_note AS isPrivateNote,
-    comment.forum_post AS forumPost,
-    comment.portal_news AS portalNews,
-    comment.portal_event AS portalEvent,
-    comment.project_task AS projectTask,
+    mailMessageFile.related_mail_message AS id,
+    JSON_AGG(
+      JSON_BUILD_OBJECT(
+        'id', mailMessageFile.id,
+        'attachmentFile', JSON_BUILD_OBJECT(
+          'id', metaFile.id,
+          'fileName', metaFile.file_name
+        )
+      )
+    ) AS mailMessageFileList
+  FROM base_mail_message_file AS mailMessageFile
+  LEFT JOIN meta_file AS metaFile
+    ON mailMessageFile.attachment_file = metaFile.id
+  GROUP BY mailMessageFile.related_mail_message
+),
+comments AS (
+  SELECT 
+    mail_message.id AS id,
+    mail_message.note AS note,
+    mail_message.public_body AS publicBody,
+    mail_message.created_on AS createdOn,
+    mail_message.is_public_note AS isPublicNote,
+    mail_message.parent AS parentComment,
     JSON_BUILD_OBJECT(
       'id', author.id,
       'name', author.name,
       'partner', JSON_BUILD_OBJECT(
         'picture', JSON_BUILD_OBJECT(
           'id', partner.picture
-         ),
+        ),
         'simpleFullName', partner.simple_full_name
       )
     ) AS createdBy
-  FROM base_comment AS comment
-  LEFT JOIN auth_user AS author 
-    ON comment.created_by = author.id
-  LEFT JOIN base_partner AS partner 
-    ON author.partner = partner.id
-  ${joinTables}
-  WHERE 
-        is_private_note = false 
-    AND 
-        parent_comment IS NULL
-    AND 
-        ${modelName}.id = $1  
-),
-mailMessageData AS (
-  SELECT 
-    mail_message.id AS mailMessageId,
-    mail_message.body AS mailMessageBody,
-    mail_message.related_id AS relatedId,
-    mail_message.related_model AS relatedModel,
-    mail_message.created_on AS mailMessageCreatedOn,
-    JSON_BUILD_OBJECT(
-      'id', author.id,
-      'name', author.name,
-      'partner', JSON_BUILD_OBJECT(
-        'picture', JSON_BUILD_OBJECT(
-          'id', partner.picture
-         ),
-        'simpleFullName', partner.simple_full_name
-      )
-    ) AS mailMessageAuthor 
   FROM mail_message
   LEFT JOIN auth_user AS author 
     ON mail_message.author = author.id
   LEFT JOIN base_partner AS partner 
     ON author.partner = partner.id
+  WHERE 
+    (mail_message.public_body IS NOT NULL OR mail_message.is_public_note = true) 
+    AND mail_message.related_model = $4
+    AND mail_message.related_id = $1
+    ${type === ModelType.forum ? 'AND mail_message.parent_mail_message IS NULL' : ''}
 ),
 childCommentsData AS (
   SELECT 
-    childCommentList.parent_comment AS parentId,
+    childComment.parent_mail_message AS parentId,
     JSON_AGG(
       JSON_BUILD_OBJECT(
-        'id', childCommentList.id,
-        'note', childCommentList.note,
-        'createdOn', childCommentList.created_on,
+        'id', childComment.id,
+        'note', childComment.note,
+        'publicBody', childComment.public_body,
+        'createdOn', childComment.created_on,
         'createdBy', JSON_BUILD_OBJECT(
           'id', childAuthor.id,
           'name', childAuthor.name,
@@ -139,87 +101,54 @@ childCommentsData AS (
             ),
             'simpleFullName', childPartner.simple_full_name
           )
-        )
-      ) ORDER BY childCommentList.created_on ASC
-    ) AS childCommentList,
-    COUNT(childCommentList.id) AS childCommentCount 
-  FROM base_comment AS childCommentList
+        ),
+        'mailMessageFileList', COALESCE(mf.mailMessageFileList, '[]')
+      ) ORDER BY childComment.created_on ASC
+    ) AS childMailMessages,
+    COUNT(childComment.id) AS childCommentCount
+  FROM mail_message AS childComment
   LEFT JOIN auth_user AS childAuthor 
-    ON childCommentList.created_by = childAuthor.id
+    ON childComment.author = childAuthor.id
   LEFT JOIN base_partner AS childPartner 
     ON childAuthor.partner = childPartner.id
-  WHERE childCommentList.is_private_note = FALSE
-  GROUP BY childCommentList.parent_comment
-),
-commentFileData AS (
-  SELECT 
-    base_comment_file.related_comment AS id,
-    JSON_AGG(
-      JSON_BUILD_OBJECT(
-        'id', base_comment_file.id,
-        'attachmentFile', JSON_BUILD_OBJECT(
-          'id', file.id,
-          'fileName', file.file_name
-        )
-      )
-    ) AS commentFileList
-  FROM base_comment_file
-  LEFT JOIN meta_file AS file 
-    ON base_comment_file.attachment_file = file.id
-  GROUP BY base_comment_file.related_comment
-),
-parentCommentsCount AS (
-  SELECT COUNT(*) AS totalParentCount
-  FROM base_comment AS comment
-  ${joinTables}
+  LEFT JOIN mailMessageFileListData AS mf
+    ON childComment.id = mf.id
   WHERE 
-        is_private_note = false 
-    AND 
-        parent_comment IS NULL
-    AND 
-        ${modelName}.id = $1  
-    )
+    childComment.is_public_note = true 
+    AND childComment.related_model = $4
+    AND childComment.related_id = $1
+  GROUP BY childComment.parent_mail_message
 )
 SELECT 
   c.id AS id,
   c.note,
   c.createdOn AS "createdOn",
-  c.isPrivateNote AS "isPrivateNote",
-  COALESCE(
-    JSON_BUILD_OBJECT(
-      'body', m.mailMessageBody,
-      'relatedId', m.relatedId,
-      'relatedModel', m.relatedModel,
-      'createdOn', m.mailMessageCreatedOn,
-      'author', m.mailMessageAuthor
-    ), 
-    '{}'
-  ) AS "mailMessage", 
+  c.isPublicNote AS "isPublicNote",
   c.createdBy AS "createdBy", 
-  COALESCE(cc.childCommentList, '[]') AS "childCommentList",
-  COALESCE(cf.commentFileList, '[]') AS "commentFileList",
+  COALESCE(mf.mailMessageFileList, '[]') AS "mailMessageFileList",
+  COALESCE(cc.childMailMessages, '[]') AS "childMailMessages",
   COALESCE(cc.childCommentCount, 0) AS "childCommentCount",
-  pc.totalParentCount AS "_count"
+  COUNT(*) OVER () AS "_count", 
+  (SELECT COALESCE(SUM(cc.childCommentCount), 0) FROM childCommentsData cc) AS "_threadCount"
 FROM comments AS c
-LEFT JOIN mailMessageData AS m 
-  ON c.mailMessageId = m.mailMessageId 
 LEFT JOIN childCommentsData AS cc 
-  ON c.id = cc.parentId 
-LEFT JOIN commentFileData AS cf 
-  ON c.id = cf.id  
-CROSS JOIN parentCommentsCount AS pc 
+  ON c.id = cc.parentId
+LEFT JOIN mailMessageFileListData AS mf 
+  ON c.id = mf.id
 ORDER BY COALESCE(cc.childCommentCount, 0) DESC, c.createdOn DESC 
 LIMIT $2
 OFFSET $3
-     `,
+    `,
     modelRecord.id,
     limit,
     skip,
+    modelName,
   );
 
   return {
     success: true,
     comments,
-    total: comments?.[0]?._count || comments?.length,
+    total: Number(comments?.[0]?._count), // only parent comments counts
+    totalCommentThreadCount: Number(comments?.[0]?._threadCount), // total count of comments ( parent + child comments )
   };
 }

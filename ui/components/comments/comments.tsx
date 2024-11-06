@@ -143,7 +143,7 @@ export function Comments({
                   <div>{i18n.get('Sort by')}:</div>
                   <DropdownToggle
                     value={sortBy}
-                    options={SORT_BY_OPTIONS.slice(0, -1)}
+                    options={SORT_BY_OPTIONS}
                     iconClassName="w-4 h-4"
                     handleDropdown={handleSortBy}
                   />

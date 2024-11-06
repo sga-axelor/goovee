@@ -19,6 +19,7 @@ import {
   SORT_TYPE,
 } from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
+import {getPopularCommentsBySorting} from '@/orm/helpers/comments';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
@@ -500,18 +501,27 @@ export async function findComments({
         };
         break;
       case SORT_TYPE.popular:
-        // const results: any = await getPopularCommentsBySorting({
-        //   page,
-        //   limit,
-        //   workspace,
-        //   modelRecord,
-        //   type,
-        // });
-        // const {comments = [], total, success} = results;
+        const results: any = await getPopularCommentsBySorting({
+          page,
+          limit,
+          workspace,
+          modelRecord,
+          tenantId,
+          modelName,
+          type,
+        });
+        const {
+          comments = [],
+          total,
+          totalCommentThreadCount,
+          success,
+        } = results;
+
         return {
-          data: clone([]),
-          total: 0,
-          success: true,
+          data: clone(comments),
+          total,
+          success,
+          totalCommentThreadCount,
         };
       default:
         orderBy = {
@@ -575,13 +585,17 @@ export async function findComments({
       },
     });
 
-    let totalCommentThreadCount = 0;
-
     comments = comments?.map(comment => {
-      const childCommentsCount = comment.childMailMessages?.length || 0;
-      totalCommentThreadCount += 1 + childCommentsCount;
-      if (!comment.isPublicNote) return {...comment, note: undefined}; // if not a public note , do not leak it to frontend
+      if (!comment.isPublicNote) return {...comment, note: undefined};
       return comment;
+    });
+
+    const totalCommentThreadCount = await client.aOSMailMessage.count({
+      where: {
+        relatedId: modelRecord.id,
+        relatedModel: modelName,
+        OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+      },
     });
 
     return {
