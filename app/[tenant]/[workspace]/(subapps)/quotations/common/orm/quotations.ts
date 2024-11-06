@@ -1,6 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {type Tenant} from '@/tenant';
-import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+import {
+  DEFAULT_CURRENCY_SCALE,
+  DEFAULT_CURRENCY_SYMBOL,
+  ORDER_BY,
+} from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
 import type {ID} from '@/types';
 
@@ -53,6 +57,7 @@ export const fetchQuotations = async ({
       where: whereClause,
       take: limit as any,
       ...(skip ? {skip} : {}),
+      orderBy: {createdOn: ORDER_BY.DESC} as any,
       select: {
         saleOrderSeq: true,
         statusSelect: true,

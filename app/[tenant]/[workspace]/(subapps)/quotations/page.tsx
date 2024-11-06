@@ -50,7 +50,7 @@ export default async function Page({
 
   const where = getWhereClause(isContact, role, id, mainPartnerId);
 
-  const {quotations, pageInfo} = await fetchQuotations({
+  const {quotations, pageInfo}: any = await fetchQuotations({
     page: page || 1,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     partnerId: id,
