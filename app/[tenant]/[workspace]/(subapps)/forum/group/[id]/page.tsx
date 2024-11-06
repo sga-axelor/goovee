@@ -17,7 +17,6 @@ import {
 } from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 import {GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
-import {ForumGroup} from '@/subapps/forum/common/types/forum';
 
 export default async function Page({
   params,
@@ -35,7 +34,7 @@ export default async function Page({
 
   const {workspaceURL, tenant} = workspacePathname(params);
 
-  const workspace = await findWorkspace({
+  const workspace: any = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
     tenantId: tenant,
@@ -47,7 +46,7 @@ export default async function Page({
 
   const groups = await findGroups({workspace, tenantId: tenant}).then(clone);
 
-  const memberGroups = userId
+  const memberGroups: any = userId
     ? await findGroupsByMembers({
         id: userId,
         orderBy: GROUPS_ORDER_BY,
@@ -61,11 +60,11 @@ export default async function Page({
   );
   const isMember = memberGroupIDs.includes(groupId);
 
-  const nonMemberGroups = groups.filter((group: ForumGroup) => {
+  const nonMemberGroups: any = groups.filter((group: any) => {
     return !memberGroupIDs.includes(group.id);
   });
 
-  const selectedGroup = await findGroupById(
+  const selectedGroup: any = await findGroupById(
     groupId,
     workspace?.id!,
     tenant,
@@ -77,6 +76,7 @@ export default async function Page({
     sort,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     search,
+    tenantId: tenant,
   }).then(clone);
 
   const user = await findUser({userId, tenantId: tenant}).then(clone);
