@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import { cn } from '@/utils/css';
+import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
