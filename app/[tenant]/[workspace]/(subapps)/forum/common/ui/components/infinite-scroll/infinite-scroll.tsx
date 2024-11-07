@@ -47,7 +47,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   );
 
   const loadMorePosts = async () => {
-    if (loading || posts.length >= count) return;
+    if (loading || posts.length >= Number(count)) return;
 
     setLoading(true);
 
@@ -55,7 +55,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
       const nextPage = page + 1;
       const response: any = await fetchPosts({
         sort,
-        limit: 1,
+        limit: Number(limit),
         page: nextPage,
         workspaceURL,
       });
