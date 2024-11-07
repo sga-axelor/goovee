@@ -2,7 +2,7 @@
 
 import React, {useContext} from 'react';
 
-export const ForumContext = React.createContext<any>({});
+export const ForumContext = React.createContext<any>(null);
 
 export default function ForumContextProvider({
   children,

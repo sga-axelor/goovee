@@ -21,15 +21,17 @@ export const Search = ({
   searchKey = 'title',
   onItemClick,
   onSearch,
+  value = '',
 }: {
   findQuery: any;
   renderItem: any;
   searchKey?: string;
   onItemClick?: any;
   onSearch?: any;
+  value?: string;
 }) => {
   const RenderItem = renderItem;
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(value || '');
   const [results, setResults] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -55,6 +57,10 @@ export const Search = ({
       onSearch(search);
     }
   }, [search, onSearch]);
+
+  useEffect(() => {
+    value && setSearch(value);
+  }, [value]);
 
   return (
     <>

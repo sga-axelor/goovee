@@ -2,7 +2,7 @@
 
 import {useRouter} from 'next/navigation';
 import {MdOutlineImage} from 'react-icons/md';
-import {useMemo, useEffect, useState} from 'react';
+import {useMemo, useEffect, useState, useCallback} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {HeroSearch, Search, Avatar, AvatarImage, Button} from '@/ui/components';
@@ -52,7 +52,8 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   const [nonMemberGroupList, setNonMemberGroupList] = useState<Group[]>(
     nonMemberGroups || [],
   );
-  const [searchKey, setSearchKey] = useState<string>('');
+  const [groupSearchValue, setGroupSearchKey] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const router = useRouter();
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
@@ -78,7 +79,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
     : IMAGE_URL;
 
   const handleGroupSearch = (value: string) => {
-    setSearchKey(value);
+    setGroupSearchKey(value);
   };
 
   const handleDialogOpen = () => {
@@ -94,11 +95,20 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
     update([{key: URL_PARAMS.search, value: term}], {scroll: false});
   };
 
+  const handleSearchItemClick = useCallback(
+    (result: any) => {
+      if (!result) return;
+      setSearchValue(result.title);
+      update([{key: URL_PARAMS.search, value: result.title}], {scroll: false});
+    },
+    [update],
+  );
+
   useEffect(() => {
     const getGroups = async () => {
       try {
-        if (searchKey) {
-          const searchKeyLower = searchKey.toLowerCase();
+        if (groupSearchValue) {
+          const searchKeyLower = groupSearchValue.toLowerCase();
 
           if (isLoggedIn) {
             const filteredMemberGroups = memberGroups.filter(
@@ -122,7 +132,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
     };
 
     getGroups();
-  }, [isLoggedIn, searchKey, memberGroups, nonMemberGroups]);
+  }, [isLoggedIn, groupSearchValue, memberGroups, nonMemberGroups]);
 
   const renderSearch = () => (
     <Search
@@ -135,8 +145,10 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
         }
         return [];
       }}
+      value={searchValue}
       renderItem={SearchItem}
       onSearch={handleSearch}
+      onItemClick={handleSearchItemClick}
     />
   );
 
