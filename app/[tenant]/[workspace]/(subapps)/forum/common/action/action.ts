@@ -5,6 +5,7 @@ import {headers} from 'next/headers';
 import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
+import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
@@ -508,6 +509,7 @@ export async function addPost({
       },
     });
 
+    revalidatePath(`${workspaceURL}/${SUBAPP_CODES.forum}`);
     return {success: true, data: clone(post)};
   } catch (error) {
     return {error: true, message: i18n.get('Failed to create post')};
