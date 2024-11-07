@@ -1,18 +1,16 @@
 'use client';
 
 import {MdOutlineCalendarMonth} from 'react-icons/md';
+import {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Badge, Card} from '@/ui/components';
 import {i18n} from '@/i18n';
+import {DATE_FORMATS} from '@/constants';
+import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
-
-//------CORE IMPORTS ----//
-import {DATE_FORMATS} from '@/constants';
-import {parseDate} from '@/utils/date';
-import {useEffect, useState} from 'react';
 
 export const EventDateCard = ({
   startDate,
