@@ -43,7 +43,7 @@ export async function getAllEvents({
   year?: number;
   dates?: [Date | undefined];
   workspace?: any;
-  tenantId?: ID | null;
+  tenantId?: any;
 }) {
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
@@ -75,39 +75,6 @@ export async function getAllEvents({
       tenantId,
     }).then(clone);
     return {events, pageInfo};
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-export async function addComment(
-  eventId: string,
-  comment: Comment,
-  workspaceURL: string,
-) {
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!(eventId && comment && tenantId)) return error(i18n.get('Bad Request'));
-
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-
-  const event = await findEventByID({id: eventId, tenantId});
-  if (!event) return error(i18n.get('Event not found!'));
-
-  try {
-    return await createComment({
-      id: eventId,
-      workspaceURL,
-      values: comment,
-      tenantId,
-    }).then(clone);
   } catch (err) {
     console.log(err);
   }

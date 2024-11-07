@@ -14,9 +14,7 @@ import {
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/lib/i18n';
-import {parseDate} from '@/utils/date';
-import {DATE_FORMATS} from '@/constants';
+import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {
