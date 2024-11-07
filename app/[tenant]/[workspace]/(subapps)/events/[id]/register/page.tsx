@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {getSession} from '@/orm/auth';
+import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 
@@ -27,7 +27,7 @@ export default async function Page({
 
   const {workspaceURL} = workspacePathname(params);
 
-  const workspace = await findWorkspace({
+  const workspace: any = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
     tenantId: tenant,
@@ -48,9 +48,10 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
-  const user = await findUser({userId, workspaceURL: workspace.url}).then(
-    clone,
-  );
+  const user = await findUser({
+    userId: session?.user.id,
+    tenantId: tenant,
+  }).then(clone);
 
   return (
     <>

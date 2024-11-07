@@ -128,6 +128,8 @@ export const CustomSelect = ({
       onInputChange={handleInputChange}
       inputValue={inputValue}
       styles={{
+        menuPortal: base => ({...base, zIndex: 9999}),
+        menu: provided => ({...provided, zIndex: 9999}),
         multiValue: provided => ({
           ...provided,
           backgroundColor: '#CDCFEF',

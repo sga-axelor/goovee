@@ -153,7 +153,7 @@ export async function fetchContacts({
   }
 
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
