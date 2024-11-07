@@ -39,7 +39,7 @@ export const EventSelector = ({
         mode="single"
         selected={date}
         onSelect={handleSelect}
-        className="flex items-center justify-center mx-auto w-full md:flex-1"
+        className="flex justify-center mx-auto w-full md:flex-1"
       />
       <div className="flex flex-col space-y-2 md:flex-1">
         {categories.map((category: any) => {

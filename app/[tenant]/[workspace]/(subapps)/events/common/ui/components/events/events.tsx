@@ -143,7 +143,7 @@ export const Events = ({
         renderSearch={renderSearch}
         tenantId={tenant}
       />
-      <div className="py-6 px-4 lg:px-[100px] flex flex-col lg:flex-row lg:gap-6 mb-16">
+      <div className="py-6 px-4 lg:px-[100px] flex flex-col lg:flex-row gap-4 lg:gap-6 mb-16">
         <EventSelector
           selectedCategories={selectedCategory}
           date={date}
