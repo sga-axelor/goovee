@@ -39,7 +39,7 @@ function AddressList({
             return (
               <div
                 key={id}
-                className={`rounded-md p-2 border flex flex-col justify-between cursor-pointer ${active === id ? 'bg-success/10' : ''}`}
+                className={`rounded-md p-2 border flex flex-col justify-between cursor-pointer ${active === id ? 'bg-success/10 border-primary rounded-lg' : ''}`}
                 onClick={() => onClick?.({id, address})}>
                 <div>
                   <h5 className="font-bold text-xl">{address.addressl2}</h5>
