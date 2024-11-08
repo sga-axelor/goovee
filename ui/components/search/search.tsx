@@ -22,6 +22,9 @@ export const Search = ({
   onItemClick,
   onSearch,
   value = '',
+  forceClose,
+  onFilter,
+  onFocus,
 }: {
   findQuery: any;
   renderItem: any;
@@ -29,6 +32,9 @@ export const Search = ({
   onItemClick?: any;
   onSearch?: any;
   value?: string;
+  forceClose?: boolean;
+  onFilter?: any;
+  onFocus?: any;
 }) => {
   const RenderItem = renderItem;
   const [search, setSearch] = useState(value || '');
@@ -65,7 +71,7 @@ export const Search = ({
   return (
     <>
       <div className="w-full relative">
-        <Command className="p-0 bg-white">
+        <Command className="p-0 bg-white" filter={onFilter}>
           <CommandInput
             placeholder="Search here"
             className="lg:placeholder:text-base placeholder:text-sm placeholder:font-normal lg:placeholder:font-medium pl-[10px] py-4 pr-[132px] h-14 lg:pl-4 border-none text-base font-medium rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black"
@@ -73,12 +79,14 @@ export const Search = ({
             onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearch(e.target.value)
             }
+            onFocus={() => onFocus && onFocus(true)}
           />
 
           <CommandList
             className={cn(
               'absolute bg-white top-[60px] right-0 border border-grey-1 rounded-lg no-scrollbar text-main-black z-50 w-full p-0',
               open ? 'block' : 'hidden',
+              forceClose ? 'hidden' : '',
             )}>
             <CommandEmpty>{NO_RESULTS_FOUND}</CommandEmpty>
             <CommandGroup className="p-2">

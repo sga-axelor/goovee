@@ -54,6 +54,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   );
   const [groupSearchValue, setGroupSearchKey] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
+  const [forceClose, setForceClose] = useState(false);
 
   const router = useRouter();
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
@@ -91,6 +92,14 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
     setOpen(false);
   };
 
+  const handleSearchFocus = () => setForceClose(false);
+
+  const handleSearchFilter = (value: string, search: string) => {
+    const regex = /^(.*?)(?==[^=]*$)/;
+    if (value.match(regex)?.[0].includes(search)) return 1;
+    return 0;
+  };
+
   const handleSearch = (term: string) => {
     update([{key: URL_PARAMS.search, value: term}], {scroll: false});
   };
@@ -100,6 +109,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
       if (!result) return;
       setSearchValue(result.title);
       update([{key: URL_PARAMS.search, value: result.title}], {scroll: false});
+      setForceClose(true);
     },
     [update],
   );
@@ -136,12 +146,13 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
 
   const renderSearch = () => (
     <Search
-      searchKey="title"
+      searchKey="label"
+      forceClose={forceClose}
       findQuery={async () => {
         const response: any = await fetchPosts({workspaceURL});
         if (response) {
           const {posts} = response;
-          return posts;
+          return posts.map((p: any) => ({...p, label: `${p.title}=${p.id}`}));
         }
         return [];
       }}
@@ -149,6 +160,8 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
       renderItem={SearchItem}
       onSearch={handleSearch}
       onItemClick={handleSearchItemClick}
+      onFilter={handleSearchFilter}
+      onFocus={handleSearchFocus}
     />
   );
 
