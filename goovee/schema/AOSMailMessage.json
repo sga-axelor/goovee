@@ -18,6 +18,10 @@
     },
     {
       "type": "String",
+      "name": "publicBody"
+    },
+    {
+      "type": "String",
       "name": "type"
     },
     {

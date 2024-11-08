@@ -274,6 +274,7 @@ export async function addComment({
       };
     }
 
+    const body = JSON.stringify(messageBody);
     const response = await client.aOSMailMessage.create({
       data: {
         relatedId: modelRecord.id,
@@ -284,7 +285,7 @@ export async function addComment({
         updatedOn: timestamp as unknown as Date,
         type: MAIL_MESSAGE_TYPE, //TODO: check this later
         ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
-        ...(messageBody && {body: JSON.stringify(messageBody)}),
+        ...(messageBody && {body, publicBody: body}),
         subject: messageBody?.title ?? COMMENT_TRACKING,
         author: {select: {id: aosUser.id}},
         createdBy: {select: {id: aosUser.id}},
@@ -518,9 +519,9 @@ export async function findComments({
         };
     }
 
-    const commentFields: SelectOptions<AOSMailMessage> = {
+    const commentFields = {
       note: true,
-      body: true,
+      publicBody: true,
       createdOn: true,
       author: {
         id: true,
@@ -548,31 +549,20 @@ export async function findComments({
       },
     } as const;
 
-    const where = {
-      relatedId: modelRecord.id,
-      relatedModel: modelName,
-      isPublicNote: true,
-      ...(type === ModelType.forum
-        ? {
-            parentMailMessage: {
-              id: {
-                eq: null,
-              },
-            },
-          }
-        : {}),
-    };
-
-    const comments = await client.aOSMailMessage.find({
-      where,
+    let comments = await client.aOSMailMessage.find({
+      where: {
+        relatedId: modelRecord.id,
+        relatedModel: modelName,
+        OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+        ...(type === ModelType.forum && {parentMailMessage: {id: {eq: null}}}),
+      },
       orderBy,
       take: limit,
       ...(skip ? {skip} : {}),
       select: {
         ...commentFields,
-        parentMailMessage: {
-          ...commentFields,
-        },
+        parentMailMessage: commentFields,
+        isPublicNote: true,
         childMailMessages: {
           orderBy,
           where: {
@@ -580,20 +570,19 @@ export async function findComments({
             relatedModel: modelName,
             isPublicNote: true,
           },
-          select: {
-            ...commentFields,
-          },
+          select: commentFields,
         } as {select: typeof commentFields},
       },
     });
 
-    const totalCommentThreadCount = comments?.reduce(
-      (acc: number, comment: any) => {
-        const childCommentsCount = comment.childMailMessages?.length || 0;
-        return acc + 1 + childCommentsCount;
-      },
-      0,
-    );
+    let totalCommentThreadCount = 0;
+
+    comments = comments?.map(comment => {
+      const childCommentsCount = comment.childMailMessages?.length || 0;
+      totalCommentThreadCount += 1 + childCommentsCount;
+      if (!comment.isPublicNote) return {...comment, note: undefined}; // if not a public note , do not leak it to frontend
+      return comment;
+    });
 
     return {
       success: true,

@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {useSession} from 'next-auth/react';
 import {
   MdOutlineModeComment,
@@ -80,16 +80,23 @@ export const CommentListItem = ({
 
   const {
     createdOn,
-    body,
+    publicBody,
     childMailMessages = [],
     id,
     mailMessageFileList = [],
     note = '',
-    createdBy = {},
+    createdBy,
     parentMailMessage,
   } = comment || {};
-  const {partner} = createdBy;
-  const {title = '', tracks = []} = body ? JSON.parse(body) : {};
+  const {partner} = createdBy || {};
+  const {title = '', tracks = []} = useMemo(() => {
+    if (!publicBody) return {};
+    try {
+      return JSON.parse(publicBody);
+    } catch {
+      return {};
+    }
+  }, [publicBody]);
 
   const {data: session} = useSession();
   const isLoggedIn = Boolean(session?.user?.id);
@@ -154,7 +161,7 @@ export const CommentListItem = ({
     ));
   };
 
-  const renderAvatar = (pictureId: string) => (
+  const renderAvatar = (pictureId: string | undefined) => (
     <Avatar className="rounded-full h-6 w-6">
       <AvatarImage src={getImageURL(pictureId, tenantId, {noimage: true})} />
     </Avatar>
@@ -163,9 +170,7 @@ export const CommentListItem = ({
   const renderParentMessage = () => {
     if (!parentMailMessage?.id) return null;
 
-    const {
-      createdBy: {partner},
-    } = parentMailMessage;
+    const partner = parentMailMessage.createdBy?.partner;
 
     return (
       <div className="p-2 border-l-2 border-success bg-success-light rounded-sm">
@@ -204,7 +209,7 @@ export const CommentListItem = ({
         <div>
           <div
             className={`text-sm w-full font-normal ${toggle ? '' : 'line-clamp-1'}`}
-            dangerouslySetInnerHTML={{__html: parentMailMessage.note}}
+            dangerouslySetInnerHTML={{__html: parentMailMessage.note ?? ''}}
           />
         </div>
       </div>

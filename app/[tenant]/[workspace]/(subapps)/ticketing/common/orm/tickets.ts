@@ -216,7 +216,7 @@ export async function createTicket({
     },
     {
       name: 'requestedByContact',
-      title: 'Requested By',
+      title: 'Created by',
       value: ticket.requestedByContact?.name ?? '',
     },
   ];
@@ -248,20 +248,21 @@ export async function createTicket({
   if (managedBy) {
     tracks.push({
       name: 'assignedToContact',
-      title: 'AssignedToContact',
+      title: 'Managed by',
       value: ticket.assignedToContact?.name ?? '',
     });
   }
   try {
-    await addComment({
+    const {error, message} = await addComment({
       workspaceURL,
       type: ModelType.ticketing,
       model: {id: ticket.id},
       messageBody: {title: 'Record Created', tracks: tracks, tags: []},
       tenantId,
     });
+    if (error) console.error(message);
   } catch (e) {
-    console.log('Error adding comment');
+    console.error('Error adding comment');
     console.error(e);
   }
   return ticket;

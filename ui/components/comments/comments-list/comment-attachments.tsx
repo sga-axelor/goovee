@@ -8,9 +8,9 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 interface Attachment {
   id: string;
-  attachmentFile: {
+  attachmentFile?: {
     id: string | number;
-    fileName: string;
+    fileName?: string;
   };
 }
 
@@ -39,7 +39,7 @@ export function CommentAttachments({attachments}: CommentAttachmentsProps) {
             key={attachment.id}
             className="text-blue-600 underline cursor-pointer marker:text-black"
             onClick={() => handleDownload(attachment)}>
-            {attachment.attachmentFile.fileName}
+            {attachment.attachmentFile?.fileName}
           </li>
         ))}
       </ul>

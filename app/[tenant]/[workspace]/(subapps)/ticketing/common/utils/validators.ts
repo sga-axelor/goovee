@@ -9,7 +9,7 @@ export const TicketFormSchema = z.object({
     .min(1, {message: i18n.get('Subject is required')}),
   category: z.string({required_error: i18n.get('Category is required')}),
   priority: z.string({required_error: i18n.get('Priority is required')}),
-  managedBy: z.string({required_error: i18n.get('ManagedBy is required')}),
+  managedBy: z.string({required_error: i18n.get('Managed by is required')}),
   description: z.string().optional(),
   parentId: z.string().optional(),
 });
