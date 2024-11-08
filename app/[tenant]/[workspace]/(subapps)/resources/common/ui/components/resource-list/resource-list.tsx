@@ -47,8 +47,8 @@ export function ResourceList({resources}: any) {
               key={resource.id}
               onClick={handleRedirection(resource)}>
               <div className="leading-5 text-sm space-y-2">
-                <div className="flex items-center">
-                  <div className="flex items-center gap-2 grow">
+                <div className="grid grid-cols-[1fr_40%] items-center">
+                  <div className="flex items-center gap-2">
                     <DynamicIcon
                       icon={icon}
                       className={'h-6 w-6 shrink-0'}
@@ -64,18 +64,18 @@ export function ResourceList({resources}: any) {
                       {resource.fileName}
                     </h3>
                   </div>
-                  <div className="flex gap-16 md:gap-12 lg:gap-16 shrink-0 justify-between">
-                    <p className="hidden sm:inline-block whitespace-nowrap">
+                  <div className="grid sm:grid-cols-[1fr_1fr_1fr_20px] gap-16 md:gap-12 lg:gap-16 shrink-0">
+                    <p className="hidden sm:inline-block line-clamp-1 whitespace-nowrap">
                       {author}
                     </p>
-                    <p className="hidden sm:inline-block whitespace-nowrap">
+                    <p className="hidden sm:inline-block line-clamp-1 whitespace-nowrap">
                       {date}
                     </p>
-                    <p className="hidden sm:inline-block whitespace-nowrap">
+                    <p className="hidden sm:inline-block line-clamp-1 whitespace-nowrap text-end">
                       {size}
                     </p>
                     <MdOutlineFileDownload
-                      className="shrink-0 h-6 w-6 bg-success-light text-success cursor-pointer"
+                      className="shrink-0 h-6 w-6 bg-success-light text-success cursor-pointer ms-auto sm:ms-0"
                       onClick={handleDownload(resource)}
                     />
                   </div>
