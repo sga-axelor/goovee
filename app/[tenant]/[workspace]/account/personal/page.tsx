@@ -78,7 +78,7 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="space-y-20">
+        <div className="space-y-10">
           <div className="space-y-4">
             <Title text={i18n.get('Personal Settings')} />
             <div className="space-y-4">
