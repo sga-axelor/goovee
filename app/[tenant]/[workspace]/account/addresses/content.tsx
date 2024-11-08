@@ -32,14 +32,14 @@ function AddressList({
 
   return (
     <>
-      <h4 className="text-lg font-medium text-card-foreground mb-4">{title}</h4>
+      <h4 className="text-xl font-medium text-card-foreground mb-4">{title}</h4>
       {Boolean(addresses?.length) ? (
         <div className="my-4 grid gap-4 md:grid-cols-3">
           {addresses?.map(({id, address}) => {
             return (
               <div
                 key={id}
-                className={`rounded-md p-2 border flex flex-col justify-between cursor-pointer ${active === id ? 'bg-palette-purple' : ''}`}
+                className={`rounded-md p-2 border flex flex-col justify-between cursor-pointer ${active === id ? 'bg-success/10 border-primary rounded-lg' : ''}`}
                 onClick={() => onClick?.({id, address})}>
                 <div>
                   <h5 className="font-bold text-xl">{address.addressl2}</h5>
@@ -51,8 +51,7 @@ function AddressList({
                   <Link
                     href={`${workspaceURI}/account/addresses/edit/${id}${checkout ? '?checkout=true' : ''}`}>
                     <Button
-                      variant="outline"
-                      className="rounded-full"
+                      variant="outline-success"
                       onClick={e => {
                         e.stopPropagation();
                       }}>
@@ -70,9 +69,9 @@ function AddressList({
       ) : null}
       <Link
         href={`${workspaceURI}/account/addresses/${type}/create${checkout ? '?checkout=true' : ''}`}>
-        <Button className="rounded-full flex items-center">
-          <LuPlus className="text-xl" />
-          <p className="mb-0 ml-2">{i18n.get('Create Address')}</p>
+        <Button variant="success">
+          <LuPlus className="size-6" />
+          {i18n.get('Create Address')}
         </Button>
       </Link>
     </>
@@ -101,18 +100,7 @@ export default function Content({
 
   return (
     <>
-      <h4 className="text-lg font-medium mb-4">{i18n.get('Addresses')}</h4>
-      <div className="p-4 rounded-md flex flex-col gap-4 bg-card text-card-foreground">
-        <div className="p-4 rounded-md border">
-          <AddressList
-            title={i18n.get('Delivery Address')}
-            addresses={deliveryAddresses}
-            type="delivery"
-            active={checkout && cart?.deliveryAddress}
-            onClick={handleClick('delivery')}
-          />
-        </div>
-        <Separator />
+      <div className="rounded-md flex flex-col gap-4 bg-card text-card-foreground">
         <div className="p-4 rounded-md border">
           <AddressList
             title={i18n.get('Invoicing Address')}
@@ -122,8 +110,18 @@ export default function Content({
             onClick={handleClick('invoicing')}
           />
         </div>
+        <Separator />
+        <div className="p-4 rounded-md border">
+          <AddressList
+            title={i18n.get('Delivery Address')}
+            addresses={deliveryAddresses}
+            type="delivery"
+            active={checkout && cart?.deliveryAddress}
+            onClick={handleClick('delivery')}
+          />
+        </div>
         {checkout && (
-          <Button className="rounded-full" asChild>
+          <Button variant="success" asChild>
             <Link href={`${workspaceURI}/${SUBAPP_PAGE.checkout}`}>
               {i18n.get('Confirm address')}
             </Link>

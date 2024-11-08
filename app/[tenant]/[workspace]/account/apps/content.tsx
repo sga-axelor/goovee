@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
@@ -11,15 +10,10 @@ import {Icon} from '@/ui/components';
 
 export default function Content({subapps}: {subapps: any}) {
   const {workspaceURI} = useWorkspace();
-  const {data: session} = useSession();
 
   return (
     <>
-      <h4 className="text-lg font-medium mb-6">
-        {i18n.get('My Account')} {session ? `- ${session?.user?.name}` : ''}{' '}
-        {session?.user && <span>({session?.user?.email})</span>}
-      </h4>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-10">
         {subapps
           .filter((app: any) => app.installed && app.showInMySpace)
           .sort(
@@ -27,7 +21,7 @@ export default function Content({subapps}: {subapps: any}) {
               app1.orderForMySpaceMenu - app2.orderForMySpaceMenu,
           )
           .reverse()
-          .map(({code, name, icon, color, background}: any) => {
+          .map(({code, name, icon, color}: any) => {
             const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
             return (
               <Link
@@ -38,11 +32,14 @@ export default function Content({subapps}: {subapps: any}) {
                   <div className="flex items-center gap-2">
                     <div
                       className="w-[4.5rem] h-[4.5rem] p-4 rounded-lg flex items-center justify-center"
-                      style={{
-                        background,
-                        color,
-                      }}>
-                      {icon ? <Icon name={icon} className="text-2xl" /> : null}
+                      style={{backgroundColor: color}}>
+                      {icon ? (
+                        <Icon
+                          name={icon}
+                          className="size-10 font-extrabold"
+                          style={{color, filter: 'brightness(0.4)'}}
+                        />
+                      ) : null}
                     </div>
                     <p className="text-lg font-semibold mb-0">
                       {i18n.get(name)}
