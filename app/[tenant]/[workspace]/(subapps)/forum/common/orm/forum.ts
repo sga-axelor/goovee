@@ -7,6 +7,7 @@ import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {getPopularQuery} from '@/subapps/forum/common/utils';
+import {Post} from '@/subapps/forum/common/types/forum';
 
 export async function findGroups({
   workspace,
@@ -123,11 +124,13 @@ export async function findPosts({
   workspaceID,
   groupIDs = [],
   tenantId,
+  ids,
 }: {
   sort?: any;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
+  ids?: Array<Post['id']> | undefined;
   whereClause?: any;
   workspaceID: PortalWorkspace['id'];
   groupIDs?: any[];
@@ -155,6 +158,8 @@ export async function findPosts({
         workspaceID,
         groupIDs,
         search,
+        tenantId,
+        ids,
       });
       const {posts = [], pageInfo = {}, error, message} = query;
 
@@ -187,6 +192,7 @@ export async function findPosts({
           },
         }
       : {}),
+    ...(ids?.length ? {id: {in: ids}} : {}),
   };
 
   const posts = await client.aOSPortalForumPost

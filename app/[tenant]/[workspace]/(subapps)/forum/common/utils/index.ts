@@ -1,22 +1,29 @@
 'use server';
 
-import {getClient} from '@/goovee';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
+import {manager, type Tenant} from '@/tenant';
+
+// ---- LOCAL IMPORTS ---- //
+import {Post} from '@/subapps/forum/common/types/forum';
 
 export async function getPopularQuery({
   page,
   limit,
   workspaceID,
   groupIDs,
+  ids,
   search,
+  tenantId,
 }: {
   page?: string | number;
   limit?: number;
   workspaceID: PortalWorkspace['id'];
   groupIDs?: any[];
+  ids?: Array<Post['id']> | undefined;
   search?: string | undefined;
+  tenantId: Tenant['id'];
 }) {
   if (!workspaceID) {
     return {error: true, message: i18n.get('Invalid workspace')};
@@ -27,6 +34,7 @@ export async function getPopularQuery({
 
   const whereClause = `WHERE forumGroup.workspace = ${workspaceID}
         ${groupIDs?.length ? `AND post.forum_group IN (${groupIDs.join(', ')})` : ''}
+        ${ids?.length ? `AND post.id IN (${ids.join(', ')})` : ''}
         ${search ? `AND post.title LIKE '%${search}%'` : ''}`;
 
   const posts: any = await client.$raw(

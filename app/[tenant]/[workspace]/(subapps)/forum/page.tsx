@@ -33,7 +33,7 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
-  const {sort, limit, search} = searchParams;
+  const {sort, limit, search, searchid} = searchParams;
 
   const groups = await findGroups({
     workspace: workspace!,
@@ -63,6 +63,7 @@ export default async function Page({
     sort,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     search,
+    ids: searchid ? [searchid] : undefined,
     workspaceID: workspace?.id!,
     groupIDs,
     tenantId: tenant,

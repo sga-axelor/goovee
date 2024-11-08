@@ -55,6 +55,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   const [groupSearchValue, setGroupSearchKey] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
   const [forceClose, setForceClose] = useState(false);
+  const [searchPostId, setSearchPostId] = useState(null);
 
   const router = useRouter();
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
@@ -92,7 +93,10 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
     setOpen(false);
   };
 
-  const handleSearchFocus = () => setForceClose(false);
+  const handleSearchFocus = () => {
+    setSearchPostId(null);
+    setForceClose(false);
+  };
 
   const handleSearchFilter = (value: string, search: string) => {
     const regex = /^(.*?)(?==[^=]*$)/;
@@ -101,13 +105,23 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   };
 
   const handleSearch = (term: string) => {
-    update([{key: URL_PARAMS.search, value: term}], {scroll: false});
+    update(
+      [
+        {key: URL_PARAMS.search, value: term},
+        ...(searchPostId
+          ? [{key: URL_PARAMS.searchid, value: searchPostId}]
+          : []),
+      ],
+      {scroll: false},
+    );
   };
 
   const handleSearchItemClick = useCallback(
     (result: any) => {
       if (!result) return;
       setSearchValue(result.title);
+      setSearchPostId(result.id);
+
       update([{key: URL_PARAMS.search, value: result.title}], {scroll: false});
       setForceClose(true);
     },
@@ -143,6 +157,18 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
 
     getGroups();
   }, [isLoggedIn, groupSearchValue, memberGroups, nonMemberGroups]);
+
+  useEffect(() => {
+    if (!searchPostId) return;
+    update(
+      [
+        ...(searchPostId
+          ? [{key: URL_PARAMS.searchid, value: searchPostId}]
+          : []),
+      ],
+      {scroll: false},
+    );
+  }, [update, searchPostId]);
 
   const renderSearch = () => (
     <Search
