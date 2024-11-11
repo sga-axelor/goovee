@@ -71,11 +71,14 @@ export const Events = ({
   const updateDate = (d: Date | undefined) => {
     const newDate = d ? new Date(d) : undefined;
     setDate(newDate);
-    update([
-      {key: 'category', value: selectedCategory},
-      {key: 'page', value: 1},
-      {key: 'date', value: convertDateToISO8601(d) || ''},
-    ]);
+    update(
+      [
+        {key: 'category', value: selectedCategory},
+        {key: 'page', value: 1},
+        {key: 'date', value: convertDateToISO8601(d) || ''},
+      ],
+      {scroll: false},
+    );
   };
 
   const handlePreviousPage = () => {
