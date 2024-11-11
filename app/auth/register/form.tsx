@@ -543,13 +543,10 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
           </div>
         </div>
         <div className="sr-only">
-        <Button
-          type="button"
-          variant="outline-success"
-          >
-          <FaGoogle className="text-xl me-2 w-full" />
-          {i18n.get('Sign Up with Google')}
-        </Button>
+          <Button type="button" variant="outline-success">
+            <FaGoogle className="text-xl me-2 w-full" />
+            {i18n.get('Sign Up with Google')}
+          </Button>
         </div>
       </div>
     </div>
