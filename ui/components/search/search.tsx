@@ -21,7 +21,6 @@ export const Search = ({
   searchKey = 'title',
   onItemClick,
   onSearch,
-  value = '',
   forceClose,
   onFilter,
   onFocus,
@@ -31,20 +30,19 @@ export const Search = ({
   searchKey?: string;
   onItemClick?: any;
   onSearch?: any;
-  value?: string;
   forceClose?: boolean;
   onFilter?: any;
   onFocus?: any;
 }) => {
   const RenderItem = renderItem;
-  const [search, setSearch] = useState(value || '');
+  const [search, setSearch] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
   const debouncedFindQuery = useCallback(
     debounce(async (query: string) => {
       if (query) {
-        const results = await findQuery();
+        const results = await findQuery({query});
         setResults(results);
       } else {
         setResults([]);
@@ -63,10 +61,6 @@ export const Search = ({
       onSearch(search);
     }
   }, [search, onSearch]);
-
-  useEffect(() => {
-    value && setSearch(value);
-  }, [value]);
 
   return (
     <>

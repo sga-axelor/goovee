@@ -9,6 +9,7 @@ import {HeroSearch, Search, Avatar, AvatarImage, Button} from '@/ui/components';
 import {
   BANNER_DESCRIPTION,
   BANNER_TITLES,
+  DEFAULT_LIMIT,
   IMAGE_URL,
   SUBAPP_CODES,
   URL_PARAMS,
@@ -55,7 +56,6 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   const [groupSearchValue, setGroupSearchKey] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
   const [forceClose, setForceClose] = useState(false);
-  const [searchPostId, setSearchPostId] = useState(null);
 
   const router = useRouter();
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
@@ -94,7 +94,6 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   };
 
   const handleSearchFocus = () => {
-    setSearchPostId(null);
     setForceClose(false);
   };
 
@@ -105,24 +104,17 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   };
 
   const handleSearch = (term: string) => {
-    update(
-      [
-        {key: URL_PARAMS.search, value: term},
-        ...(searchPostId
-          ? [{key: URL_PARAMS.searchid, value: searchPostId}]
-          : []),
-      ],
-      {scroll: false},
-    );
+    if (term.length === 0) {
+      update([{key: URL_PARAMS.searchid, value: null}], {scroll: false});
+    } else {
+      setSearchValue(term);
+    }
   };
 
   const handleSearchItemClick = useCallback(
     (result: any) => {
       if (!result) return;
-      setSearchValue(result.title);
-      setSearchPostId(result.id);
-
-      update([{key: URL_PARAMS.search, value: result.title}], {scroll: false});
+      update([{key: URL_PARAMS.searchid, value: result.id}], {scroll: false});
       setForceClose(true);
     },
     [update],
@@ -158,31 +150,22 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
     getGroups();
   }, [isLoggedIn, groupSearchValue, memberGroups, nonMemberGroups]);
 
-  useEffect(() => {
-    if (!searchPostId) return;
-    update(
-      [
-        ...(searchPostId
-          ? [{key: URL_PARAMS.searchid, value: searchPostId}]
-          : []),
-      ],
-      {scroll: false},
-    );
-  }, [update, searchPostId]);
-
   const renderSearch = () => (
     <Search
       searchKey="label"
       forceClose={forceClose}
-      findQuery={async () => {
-        const response: any = await fetchPosts({workspaceURL});
+      findQuery={async ({query}: any) => {
+        const response: any = await fetchPosts({
+          workspaceURL,
+          search: query,
+          limit: DEFAULT_LIMIT,
+        });
         if (response) {
           const {posts} = response;
           return posts.map((p: any) => ({...p, label: `${p.title}=${p.id}`}));
         }
         return [];
       }}
-      value={searchValue}
       renderItem={SearchItem}
       onSearch={handleSearch}
       onItemClick={handleSearchItemClick}
