@@ -6,7 +6,7 @@ import {clone} from '@/utils';
 import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from './content';
+import Form from './form';
 import {i18n} from '@/i18n';
 import {Button} from '@/ui/components';
 import Link from 'next/link';
@@ -75,5 +75,5 @@ export default async function Page({
     return notFound();
   }
 
-  return <Content workspace={workspace} />;
+  return <Form workspace={workspace} />;
 }
