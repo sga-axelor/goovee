@@ -218,47 +218,6 @@ export async function findPosts({
           picture: true,
         },
         createdOn: true,
-        commentList: {
-          orderBy: {createdOn: ORDER_BY.DESC},
-          select: {
-            id: true,
-            note: true,
-            mailMessage: {
-              body: true,
-              relatedId: true,
-              relatedModel: true,
-              author: {
-                id: true,
-                name: true,
-                partner: {
-                  picture: true,
-                  simpleFullName: true,
-                },
-              },
-            },
-            createdOn: true,
-            childCommentList: {
-              note: true,
-              select: {
-                id: true,
-                mailMessage: {
-                  body: true,
-                  relatedId: true,
-                  relatedModel: true,
-                  author: {
-                    id: true,
-                    name: true,
-                    partner: {
-                      picture: true,
-                      simpleFullName: true,
-                    },
-                  },
-                },
-                createdOn: true,
-              },
-            },
-          },
-        },
       },
     })
     .then(clone)

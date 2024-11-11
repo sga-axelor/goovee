@@ -23,12 +23,6 @@
       "type": "String"
     },
     {
-      "name": "commentList",
-      "type": "OneToMany",
-      "target": "AOSComment",
-      "mappedBy": "forumPost"
-    },
-    {
       "name": "attachmentList",
       "type": "OneToMany",
       "target": "AOSPortalPostAttachment",
