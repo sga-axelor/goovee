@@ -89,7 +89,7 @@ export default async function Shop({
       (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean),
   );
 
-  const defaultSort = availableSortByOptions?.[0]?.value
+  const defaultSort = availableSortByOptions?.[0]?.value;
 
   const {products, pageInfo}: any = await findProducts({
     search,
