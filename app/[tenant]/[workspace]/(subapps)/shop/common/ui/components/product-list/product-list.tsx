@@ -48,6 +48,7 @@ export function ProductList({
   workspace,
   breadcrumbs,
   productPath,
+  defaultSort,
 }: {
   breadcrumbs?: any;
   products: ComputedProduct[];
@@ -56,6 +57,7 @@ export function ProductList({
   pageInfo?: any;
   workspace?: PortalWorkspace;
   productPath?: string;
+  defaultSort?: string;
 }) {
   const {cart, addItem} = useCart();
   const {workspaceURI} = useWorkspace();
@@ -181,7 +183,7 @@ export function ProductList({
           <SortBy
             workspace={workspace}
             onChange={handleChangeSortBy}
-            value={sort}
+            value={sort || defaultSort}
             className="flex-grow-0! basis-[25%]"
           />
           <MdGridView
@@ -197,7 +199,7 @@ export function ProductList({
         </div>
         <div className="bg-card text-card-foreground shadow mb-4 grid md:hidden grid-cols-2 gap-2 p-2">
           <MobileSortBy
-            active={sort}
+            active={sort || defaultSort}
             workspace={workspace}
             onChange={handleChangeSortBy}
           />

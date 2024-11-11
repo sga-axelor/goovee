@@ -17,34 +17,8 @@ import {
 import type {PortalAppConfig, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
+import {SORT_BY_OPTIONS} from '@/subapps/shop/common/constants';
 import styles from './sort-by.module.scss';
-
-const SORT_BY_OPTIONS = [
-  {
-    value: 'byNewest',
-    label: i18n.get('New'),
-  },
-  {
-    value: 'byFeature',
-    label: i18n.get('Featured'),
-  },
-  {
-    value: 'byAToZ',
-    label: i18n.get('Name: A-Z'),
-  },
-  {
-    value: 'byZToA',
-    label: i18n.get('Name: Z-A'),
-  },
-  {
-    value: 'byLessExpensive',
-    label: i18n.get('Price: Low-High'),
-  },
-  {
-    value: 'byMostExpensive',
-    label: i18n.get('Price: High-Low'),
-  },
-];
 
 export function SortBy({
   onChange,
@@ -60,6 +34,11 @@ export function SortBy({
         workspace?.config &&
         (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean),
     );
+
+  if (!options?.length) {
+    return null;
+  }
+
   const value = SORT_BY_OPTIONS.find(o => o.value === valueProp);
 
   return (
@@ -101,11 +80,16 @@ export function MobileSortBy({
   const [open, setOpen] = useState(false);
   const [targetEl, setTargetEl] = useState<HTMLElement | null>(null);
   const toggle = () => setOpen(v => !v);
+
   const options = SORT_BY_OPTIONS.filter(
     o =>
       workspace?.config &&
       (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean),
   );
+
+  if (!options?.length) {
+    return null;
+  }
 
   return (
     <div

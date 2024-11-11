@@ -5,13 +5,14 @@ import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
-import type {Category} from '@/types';
 import {DEFAULT_LIMIT} from '@/constants';
+import type {Category, PortalAppConfig} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductList} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
-import {findProducts} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
-import {findCategories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/categories';
+import {ProductList} from '@/subapps/shop/common/ui/components';
+import {findProducts} from '@/subapps/shop/common/orm/product';
+import {findCategories} from '@/subapps/shop/common/orm/categories';
+import {SORT_BY_OPTIONS} from '@/subapps/shop/common/constants';
 
 export default async function Shop({
   params,
@@ -21,7 +22,8 @@ export default async function Shop({
   searchParams: {[key: string]: string | undefined};
 }) {
   const {tenant} = params;
-  const {search, sort, limit, page} = searchParams;
+  const {search, limit, page, sort} = searchParams;
+
   const category = params['category-id']?.split('-')?.at(-1);
 
   const session = await getSession();
@@ -81,9 +83,17 @@ export default async function Shop({
 
   const breadcrumbs = $category ? getbreadcrumbs($category) : [];
 
+  const availableSortByOptions = SORT_BY_OPTIONS.filter(
+    o =>
+      workspace?.config &&
+      (workspace?.config?.[o.value as keyof PortalAppConfig] as boolean),
+  );
+
+  const defaultSort = availableSortByOptions?.[0]?.value
+
   const {products, pageInfo}: any = await findProducts({
     search,
-    sort,
+    sort: sort || defaultSort,
     page,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     categoryids,
@@ -103,6 +113,7 @@ export default async function Shop({
       pageInfo={pageInfo}
       workspace={workspace}
       productPath={`${workspaceURI}/shop/category/${$category.id}/product/`}
+      defaultSort={defaultSort}
     />
   );
 }
