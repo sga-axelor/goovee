@@ -200,7 +200,7 @@ function CartSummary({
   const authenticated = session?.user?.id;
 
   return (
-    <div className="p-4 bg-card text-card-foreground rounded-lg h-[26.25rem]">
+    <div className="p-4 bg-card text-card-foreground rounded-lg">
       {workspace?.config?.displayPrices && (
         <>
           <p className="text-xl font-semibold mb-6">{i18n.get('Total')}</p>
@@ -372,7 +372,7 @@ export default function Content({
   return (
     <>
       <h4 className="mb-6 text-xl font-medium">{i18n.get('Cart')}</h4>
-      <div className="grid lg:grid-cols-[1fr_25%] xl:grid-cols-[1fr_21%] grid-cols-1 gap-4">
+      <div className="grid mb-[5rem] lg:mb-0 lg:grid-cols-[1fr_25%] xl:grid-cols-[1fr_21%] grid-cols-1 gap-4">
         {cart?.items?.length ? (
           <CartItems
             cart={$cart}
