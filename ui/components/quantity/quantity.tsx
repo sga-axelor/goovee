@@ -15,9 +15,9 @@ export function Quantity({
   return (
     <div className="flex items-center gap-2">
       <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
-        <IoAdd
+        <IoRemove
           className="courser-pointer block p-2 text-4xl"
-          onClick={() => !disabled && onIncrement?.()}
+          onClick={() => !disabled && onDecrement?.()}
         />
       </div>
       <div
@@ -26,9 +26,9 @@ export function Quantity({
         <span>{value}</span>
       </div>
       <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
-        <IoRemove
+        <IoAdd
           className="courser-pointer block p-2 text-4xl"
-          onClick={() => !disabled && onDecrement?.()}
+          onClick={() => !disabled && onIncrement?.()}
         />
       </div>
     </div>
