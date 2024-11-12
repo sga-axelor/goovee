@@ -13,17 +13,17 @@ export function Quantity({
   onDecrement?: () => void;
 }) {
   return (
-    <div className="flex items-center gap-4">
-      <div
-        className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10"
-        style={{width: '3.5rem'}}>
-        <span>{value}</span>
-      </div>
+    <div className="flex items-center gap-2">
       <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
         <IoAdd
           className="courser-pointer block p-2 text-4xl"
           onClick={() => !disabled && onIncrement?.()}
         />
+      </div>
+      <div
+        className="mb-0 !p-1 border rounded-lg flex items-center justify-center h-10"
+        style={{width: '3.5rem'}}>
+        <span>{value}</span>
       </div>
       <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
         <IoRemove
