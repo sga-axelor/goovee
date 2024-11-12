@@ -2,6 +2,7 @@
 
 import {MdOutlineCalendarMonth} from 'react-icons/md';
 import {useEffect, useState} from 'react';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {Badge, Card} from '@/ui/components';
@@ -11,12 +12,15 @@ import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
+import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 
 export const EventDateCard = ({
+  id,
   startDate,
   endDate,
-  registered,
   eventAllDay = false,
+  workspace,
+  canRegister,
 }: EventDateCardProps) => {
   const [startDateTime, setStartDateTime] = useState({
     startDay: '',
@@ -26,6 +30,34 @@ export const EventDateCard = ({
     endDay: '',
     endTime: '',
   });
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  const {data: session} = useSession();
+  const {user} = session || {};
+
+  useEffect(() => {
+    const checkRegistrationStatus = async () => {
+      if (!user || !id) return;
+
+      try {
+        const response = await fetchEventParticipants({
+          id,
+          workspace,
+        });
+
+        if (response.success) {
+          const {emailAddress} = response.data;
+          setIsRegistered(emailAddress === user.email);
+        }
+      } catch (error) {
+        console.error('Error fetching participants:', error);
+      }
+    };
+
+    if (canRegister) {
+      checkRegistrationStatus();
+    }
+  }, [workspace, id, user, canRegister]);
 
   useEffect(() => {
     if (startDate) {
@@ -46,10 +78,10 @@ export const EventDateCard = ({
   }, [startDate, endDate, eventAllDay]);
   return (
     <Card className="border-none shadow-none">
-      {!registered && (
+      {isRegistered && (
         <Badge
           variant="outline"
-          className="mb-[0.688rem] text-[0.625rem] font-medium px-2 py-1">
+          className="text-[0.625rem] mb-[0.688rem] font-medium py-1 px-2 text-success border-success h-6">
           {i18n.get('#Registered')}
         </Badge>
       )}

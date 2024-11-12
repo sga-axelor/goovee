@@ -1,6 +1,10 @@
+import {PortalWorkspace} from '@/types';
+
 export interface EventDateCardProps {
+  id: string | number;
   startDate?: string;
   endDate?: string;
-  registered?: boolean;
   eventAllDay?: boolean;
+  workspace: PortalWorkspace;
+  canRegister?: boolean;
 }

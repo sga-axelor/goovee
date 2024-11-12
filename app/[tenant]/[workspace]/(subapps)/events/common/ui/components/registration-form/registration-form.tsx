@@ -217,10 +217,12 @@ export const RegistrationForm = ({
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
         </CardTitle>
         <EventDateCard
+          id={eventDetails?.id}
           startDate={eventDetails?.eventStartDateTime}
           endDate={eventDetails?.eventEndDateTime}
-          registered={eventDetails?.eventAllowRegistration}
           eventAllDay={eventDetails?.eventAllDay}
+          canRegister={eventDetails?.eventAllowRegistration}
+          workspace={workspace}
         />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
         {eventDetails?.eventProduct?.salePrice && (

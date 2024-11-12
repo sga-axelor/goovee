@@ -13,7 +13,10 @@ import type {Comment, ID, Participant, PortalWorkspace} from '@/types';
 import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
 import {findContact} from '@/subapps/events/common/orm/partner';
 
-import {registerParticipants} from '@/subapps/events/common/orm/registration';
+import {
+  findEventParticipant,
+  registerParticipants,
+} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {
   validate,
@@ -161,10 +164,6 @@ export async function fetchContacts({
     return result;
   }
 
-  if (!tenantId) {
-    return error(i18n.get('Bad Request'));
-  }
-
   try {
     const result = await findContact({search, workspaceURL, tenantId}).then(
       clone,
@@ -173,5 +172,55 @@ export async function fetchContacts({
   } catch (err) {
     console.log(err);
     return error(i18n.get('Something went wrong!'));
+  }
+}
+
+export async function fetchEventParticipants({
+  id,
+  workspace,
+}: {
+  id: ID;
+  workspace: PortalWorkspace;
+}) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!id) {
+    return error(i18n.get('Invalid Event.'));
+  }
+
+  if (!tenantId) {
+    return error(i18n.get('Bad Request'));
+  }
+
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
+  const workspaceURL = workspace?.url;
+
+  const result = await validate([
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+  try {
+    const result = await findEventParticipant({
+      id,
+      workspace,
+      tenantId,
+    }).then(clone);
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      error: true,
+      message: i18n.get('Something went wrong!'),
+    };
   }
 }

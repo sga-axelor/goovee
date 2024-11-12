@@ -1,6 +1,8 @@
 'use client';
 
 import {MdChevronRight} from 'react-icons/md';
+import {useEffect, useState} from 'react';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -21,18 +23,49 @@ import {i18n} from '@/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {EventCardBadges} from '@/subapps/events/common/ui/components';
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
+import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 
-export const EventCard = ({event}: EventCardProps) => {
+export const EventCard = ({event, workspace}: EventCardProps) => {
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  const {data: session} = useSession();
+  const {user} = session || {};
+
   const {tenant} = useWorkspace();
+
   const stripImages = (htmlContent: any = '') =>
     htmlContent?.replace(/<img[^>]*>/g, '');
+
+  useEffect(() => {
+    const checkRegistrationStatus = async () => {
+      if (!user || !event.id) return;
+
+      try {
+        const response = await fetchEventParticipants({
+          id: event.id,
+          workspace,
+        });
+
+        if (response.success) {
+          const {emailAddress} = response.data;
+          setIsRegistered(emailAddress === user.email);
+        }
+      } catch (error) {
+        console.error('Error fetching participants:', error);
+      }
+    };
+
+    if (event.eventAllowRegistration) {
+      checkRegistrationStatus();
+    }
+  }, [workspace, event.id, user, event.eventAllowRegistration]);
 
   return (
     <Card className="p-2 overflow-hidden cursor-pointer rounded-2xl flex gap-6 h-fit border-none shadow-none ">
       <div
         className="w-[150px] h-[150px] rounded-lg bg-center bg-cover flex-shrink-0"
         style={{
-          backgroundImage: `url(${getImageURL(event?.eventImage?.id)})`,
+          backgroundImage: `url(${getImageURL(event?.eventImage?.id, tenant)})`,
         }}></div>
 
       <div className="flex flex-col w-full py-2">
@@ -40,7 +73,7 @@ export const EventCard = ({event}: EventCardProps) => {
           <CardTitle className="flex flex-col xs:flex-row items-start justify-between w-full ">
             <p className="text-base font-semibold w-full flex justify-between">
               {event.eventTitle}
-              {!event.eventAllowRegistration && (
+              {isRegistered && (
                 <Badge
                   variant="outline"
                   className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6">

@@ -162,7 +162,7 @@ export const Events = ({
                 href={`${workspaceURI}/events/${event.id}`}
                 key={event.id}
                 passHref>
-                <EventCard event={event} key={event.id} />
+                <EventCard event={event} key={event.id} workspace={workspace} />
               </Link>
             ))
           ) : (

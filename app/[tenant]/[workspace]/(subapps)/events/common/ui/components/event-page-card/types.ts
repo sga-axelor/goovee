@@ -2,7 +2,7 @@ import {PortalWorkspace} from '@/types';
 import {Event} from '../events';
 
 export interface EventPageCardProps {
-  eventDetails?: Event;
+  eventDetails: Event;
   metaFields?: any[];
   workspace: PortalWorkspace;
   user?: any;
