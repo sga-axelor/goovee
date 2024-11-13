@@ -189,6 +189,10 @@
       "name": "resourcesHeroBgImage",
       "target": "AOSMetaFile"
     },
+    {
+      "type": "Boolean",
+      "name": "enableRecommendedNews"
+    },
     {"name": "allowGuestEventRegistration", "type": "Boolean"},
     {
       "type": "Boolean",

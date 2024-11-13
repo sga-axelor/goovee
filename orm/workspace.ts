@@ -73,6 +73,7 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
     },
   },
   allowGuestEventRegistration: true,
+  enableRecommendedNews: true,
   enableSocialMediaSharing: true,
   enableNewsComment: true,
   enableEventComment: true,

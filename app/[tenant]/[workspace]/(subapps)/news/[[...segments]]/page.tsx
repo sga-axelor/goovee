@@ -4,7 +4,10 @@ import {notFound} from 'next/navigation';
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
+import {
+  findDefaultPartnerWorkspaceConfig,
+  findWorkspace,
+} from '@/orm/workspace';
 import {ORDER_BY} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
@@ -23,6 +26,7 @@ import {
   Homepage,
 } from '@/subapps/news/common/ui/components';
 import {DEFAULT_LIMIT} from '@/subapps/news/common/constants';
+import {findRecommendedNews} from '@/subapps/news/common/actions/action';
 
 interface CategorySegment {
   slug: string;
@@ -61,6 +65,15 @@ export default async function Page({
     workspace,
     tenantId: tenant,
   }).then(clone);
+
+  let isRecommendationEnable = false;
+  if (workspaceURL) {
+    const {portalAppConfig} = await findDefaultPartnerWorkspaceConfig({
+      url: workspaceURL,
+      tenantId: tenant,
+    });
+    isRecommendationEnable = portalAppConfig?.enableRecommendedNews;
+  }
   if (homepage) {
     const {news: latestNews} = await findNews({
       orderBy: {publicationDateTime: ORDER_BY.DESC},
@@ -109,6 +122,7 @@ export default async function Page({
         limit={limit}
         workspace={workspace}
         tenantId={tenant}
+        isRecommendationEnable={isRecommendationEnable}
       />
     </div>
   );
@@ -120,12 +134,14 @@ async function CategoryPage({
   limit,
   workspace,
   tenantId,
+  isRecommendationEnable,
 }: {
   segments: string[];
   page?: string;
   limit?: string | number;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  isRecommendationEnable: boolean;
 }) {
   if (!tenantId) {
     return null;
@@ -146,6 +162,11 @@ async function CategoryPage({
     }).then(clone);
 
     const [newsObject] = news;
+
+    let recommendedNews = [];
+    if (isRecommendationEnable) {
+      recommendedNews = await findRecommendedNews({workspace, tenantId});
+    }
 
     if (!newsObject) {
       return notFound();
@@ -177,11 +198,14 @@ async function CategoryPage({
     const breadcrumbs = await getBreadcrumbs();
 
     return (
+      (
       <Article
-        news={newsObject}
+        news={{...newsObject, recommendedNews}}
         breadcrumbs={breadcrumbs}
         workspace={workspace}
+     
       />
+    )
     );
   }
 

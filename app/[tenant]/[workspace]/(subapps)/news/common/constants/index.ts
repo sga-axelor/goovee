@@ -13,6 +13,7 @@ export const SEARCH_HERE = 'Search here';
 export const FEATURED_NEWS = 'Featured News';
 export const LATEST_NEWS = 'Latest News';
 export const RELATED_NEWS = 'Related News';
+export const RECOMMENDED_NEWS = 'Recommended News';
 export const CATEGORIES = 'Categories';
 
 // Others

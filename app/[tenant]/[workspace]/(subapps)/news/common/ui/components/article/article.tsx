@@ -17,7 +17,7 @@ import {
   NewsInfo,
   SocialMedia,
 } from '@/subapps/news/common/ui/components';
-import {RELATED_NEWS} from '@/subapps/news/common/constants';
+import {RECOMMENDED_NEWS, RELATED_NEWS} from '@/subapps/news/common/constants';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 
 interface ArticleProps {
@@ -36,6 +36,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
     content,
     author,
     relatedNewsSet,
+    recommendedNews,
   } = news || {};
   const router = useRouter();
   const pathname = usePathname();
@@ -81,6 +82,14 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
             <FeedList
               title={i18n.get(RELATED_NEWS)}
               items={relatedNewsSet}
+              width="w-full"
+              onClick={handleClick}
+            />
+          )}
+          {recommendedNews?.length > 0 && (
+            <FeedList
+              title={i18n.get(RECOMMENDED_NEWS)}
+              items={recommendedNews}
               width="w-full"
               onClick={handleClick}
             />
