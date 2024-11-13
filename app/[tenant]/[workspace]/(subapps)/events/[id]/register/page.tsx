@@ -5,6 +5,7 @@ import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
+import {findPartnerByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/events/[id]/register/content';
@@ -14,7 +15,6 @@ import {
   PORTAL_PARTICIPANT_MODEL,
   CONTACT_ATTRS,
 } from '@/subapps/events/common/constants';
-import {findUser} from '@/subapps/events/common/orm/partner';
 
 export default async function Page({
   params,
@@ -24,6 +24,7 @@ export default async function Page({
   const {id, tenant} = params;
 
   const session = await getSession();
+  const user: any = session?.user;
 
   const {workspaceURL} = workspacePathname(params);
 
@@ -48,10 +49,9 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
-  const user = await findUser({
-    userId: session?.user.id,
-    tenantId: tenant,
-  }).then(clone);
+  const partner = user
+    ? await findPartnerByEmail(user.email, tenant).then(clone)
+    : {};
 
   return (
     <>
@@ -59,7 +59,7 @@ export default async function Page({
         eventDetails={eventDetails}
         metaFields={metaFields}
         workspace={workspace}
-        user={user}
+        user={partner}
       />
     </>
   );
