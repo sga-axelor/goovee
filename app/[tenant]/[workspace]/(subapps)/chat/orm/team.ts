@@ -1,8 +1,6 @@
 import {type Tenant, manager} from '@/tenant';
 
 export async function getTeamId({tenant}: {tenant: Tenant['id']}) {
-  return process.env.MATTERMOST_TEAM_ID;
-
   const c = await manager.getClient(tenant);
 
   if (!c) {
