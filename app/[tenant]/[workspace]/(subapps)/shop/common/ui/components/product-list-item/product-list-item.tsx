@@ -52,7 +52,7 @@ export function ProductListItem({
           </div>
         )}
       </BackgroundImage>
-      <div className="p-6 pl-6 md:pl-0 flex flex-col justify-between">
+      <div className="p-6 pl-6 md:pl-0 flex flex-col justify-between gap-4">
         <div onClick={handleClick}>
           <>
             <div className="flex-col md:flex-row flex justify-between mb-6">
