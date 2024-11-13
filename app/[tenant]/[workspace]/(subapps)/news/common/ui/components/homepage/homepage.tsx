@@ -79,6 +79,11 @@ export const Homepage = ({
         className={`px-4 lg:px-[100px] flex flex-col gap-6 flex-auto ${styles['news-container']}`}>
         {latestNews?.length ? (
           <>
+            <CategorySlider
+              showTitle={categories.length}
+              title={i18n.get(CATEGORIES)}
+              categories={categories}
+            />
             <div className="mt-6">
               <LeadStories
                 title={i18n.get(LATEST_NEWS)}
@@ -86,11 +91,7 @@ export const Homepage = ({
                 onClick={handleClick}
               />
             </div>
-            <CategorySlider
-              showTitle={categories.length}
-              title={i18n.get(CATEGORIES)}
-              categories={categories}
-            />
+
             <div className="flex flex-col lg:flex-row gap-6">
               {featuredNews?.length > 0 ? (
                 <FeedList
