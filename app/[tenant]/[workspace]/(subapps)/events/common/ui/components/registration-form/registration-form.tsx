@@ -20,6 +20,8 @@ import {
   formatStudioFields,
 } from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
+import {SUBAPP_CODES} from '@/constants';
+
 // ---- LOCAL IMPORTS ---- //
 import {
   EventCardBadges,
@@ -195,7 +197,9 @@ export const RegistrationForm = ({
           variant: 'success',
           title: i18n.get(SUCCESS_REGISTER_MESSAGE),
         });
-        router.push(`${workspaceURI}/events/${eventDetails?.id}`);
+        router.push(
+          `${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}`,
+        );
       } else {
         toast({
           variant: 'destructive',

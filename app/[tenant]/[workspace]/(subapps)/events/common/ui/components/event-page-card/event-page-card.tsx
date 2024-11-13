@@ -15,6 +15,7 @@ import {
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/i18n';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -90,7 +91,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
         allowGuestEventRegistartion) && (
         <CardFooter className="px-4 pb-4">
           <Link
-            href={`${workspaceURI}/events/${eventDetails?.id}/register`}
+            href={`${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}/register`}
             className="w-full">
             <Button
               size="sm"

@@ -12,6 +12,7 @@ import {
   BANNER_DESCRIPTION,
   BANNER_TITLES,
   IMAGE_URL,
+  SUBAPP_CODES,
   URL_PARAMS,
 } from '@/constants';
 import {useSearchParams, useToast} from '@/ui/hooks';
@@ -96,7 +97,7 @@ export const Events = ({
   };
 
   const handlClick = (id: string | number) => {
-    router.push(`${workspaceURI}/events/${id}`);
+    router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${id}`);
   };
   const renderSearch = () => (
     <Search
@@ -159,7 +160,7 @@ export const Events = ({
           {events && events.length > 0 ? (
             events.map(event => (
               <Link
-                href={`${workspaceURI}/events/${event.id}`}
+                href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
                 key={event.id}
                 passHref>
                 <EventCard event={event} key={event.id} workspace={workspace} />
