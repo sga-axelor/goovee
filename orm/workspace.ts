@@ -72,7 +72,7 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
       image: true,
     },
   },
-  allowGuestEventRegistartion: true,
+  allowGuestEventRegistration: true,
 };
 
 export async function findContactWorkspaceConfig({
