@@ -18,7 +18,7 @@ export async function validate(validators: Function[]) {
     }
 
     const result = await validator();
-    if (result.error) {
+    if (result?.error) {
       return result;
     }
   }
@@ -57,6 +57,7 @@ export function withWorkspace(
     if (config?.checkAuth) {
       const result = await withAuth();
       if (result?.error) return result;
+      return {error: null};
     }
 
     const session = await getSession();

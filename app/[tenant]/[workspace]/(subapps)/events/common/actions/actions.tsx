@@ -7,13 +7,16 @@ import {clone} from '@/utils';
 import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
-import type {Comment, ID, Participant} from '@/types';
+import type {Comment, ID, Participant, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
 import {findContact} from '@/subapps/events/common/orm/partner';
 
-import {registerParticipants} from '@/subapps/events/common/orm/registration';
+import {
+  findEventParticipant,
+  registerParticipants,
+} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {
   validate,
@@ -31,7 +34,6 @@ export async function getAllEvents({
   year,
   dates,
   workspace,
-  workspaceURL,
   tenantId,
 }: {
   limit?: number;
@@ -44,16 +46,17 @@ export async function getAllEvents({
   year?: number;
   dates?: [Date | undefined];
   workspace?: any;
-  workspaceURL?: any;
-  tenantId?: ID | null;
+  tenantId?: any;
 }) {
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
   if (!(workspace && tenantId)) {
     return {events: [], pageInfo: null};
   }
+  const workspaceURL = workspace.url;
+
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
@@ -80,89 +83,25 @@ export async function getAllEvents({
   }
 }
 
-export async function addComment(
-  eventId: string,
-  comment: Comment,
-  workspaceURL: string,
-) {
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!(eventId && comment && tenantId)) return error(i18n.get('Bad Request'));
-
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-
-  const event = await findEventByID({id: eventId, tenantId});
-  if (!event) return error(i18n.get('Event not found!'));
-
-  try {
-    return await createComment({
-      id: eventId,
-      workspaceURL,
-      values: comment,
-      tenantId,
-    }).then(clone);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-export async function getCommentsByEventID(
-  eventId: string,
-  workspaceURL: string,
-) {
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!(eventId && tenantId)) return error(i18n.get('Bad Request'));
-
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-
-  const event = await findEventByID({id: eventId, tenantId});
-  if (!event) return error(i18n.get('Event not found!'));
-
-  try {
-    const comments = await findCommentsByEventID({
-      id: eventId,
-      workspaceURL,
-      tenantId,
-    }).then(clone);
-    return comments;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 export async function register({
   eventId,
   values,
-  workspaceURL,
+  workspace,
 }: {
   eventId: any;
   values: any;
-  workspaceURL: string;
+  workspace: PortalWorkspace;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
-  if (!(eventId && values && tenantId))
-    return error(i18n.get('Event ID or values are missing!'));
+  if (!eventId) return error(i18n.get('Event ID is missing!'));
+  if (!values) return error(i18n.get('Values are missing!'));
+  if (!tenantId) return error(i18n.get('Tenant ID is missing!'));
+  if (!workspace) return error(i18n.get('Workspace is missing!'));
 
-  if (!workspaceURL) return error(i18n.get('workspaceURL is missing!'));
-
+  const workspaceURL = workspace.url;
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
@@ -170,7 +109,7 @@ export async function register({
     return result;
   }
 
-  const event = await findEventByID(eventId);
+  const event = await findEventByID({id: eventId, workspace, tenantId});
   if (!event) return error(i18n.get('Event not found!'));
 
   try {
@@ -217,16 +156,12 @@ export async function fetchContacts({
   }
 
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
-  }
-
-  if (!tenantId) {
-    return error(i18n.get('Bad Request'));
   }
 
   try {
@@ -237,5 +172,55 @@ export async function fetchContacts({
   } catch (err) {
     console.log(err);
     return error(i18n.get('Something went wrong!'));
+  }
+}
+
+export async function fetchEventParticipants({
+  id,
+  workspace,
+}: {
+  id: ID;
+  workspace: PortalWorkspace;
+}) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!id) {
+    return error(i18n.get('Invalid Event.'));
+  }
+
+  if (!tenantId) {
+    return error(i18n.get('Bad Request'));
+  }
+
+  if (!workspace) {
+    return {error: true, message: i18n.get('Invalid workspace')};
+  }
+
+  const workspaceURL = workspace?.url;
+
+  const result = await validate([
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+  try {
+    const result = await findEventParticipant({
+      id,
+      workspace,
+      tenantId,
+    }).then(clone);
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      error: true,
+      message: i18n.get('Something went wrong!'),
+    };
   }
 }

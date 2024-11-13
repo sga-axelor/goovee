@@ -1,19 +1,19 @@
-// ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils/date';
-import {DATE_FORMATS} from '@/constants';
+'use client';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  EventDateCard,
-  RegistrationForm,
-} from '@/subapps/events/common/ui/components';
+import {RegistrationForm} from '@/subapps/events/common/ui/components';
+import {PortalWorkspace} from '@/types';
 
 const Content = ({
   eventDetails,
   metaFields,
+  workspace,
+  user,
 }: {
   eventDetails: any;
   metaFields: any;
+  workspace: PortalWorkspace;
+  user: any;
 }) => {
   return (
     <>
@@ -22,19 +22,10 @@ const Content = ({
           <RegistrationForm
             eventDetails={eventDetails}
             metaFields={metaFields}
+            workspace={workspace}
+            user={user}
           />
         </div>
-        <EventDateCard
-          startDate={parseDate(
-            eventDetails?.eventStartDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
-          endDate={parseDate(
-            eventDetails?.eventEndDateTime,
-            DATE_FORMATS.full_month_day_year_12_hour,
-          )}
-          registered={eventDetails?.eventAllowRegistration}
-        />
       </main>
     </>
   );

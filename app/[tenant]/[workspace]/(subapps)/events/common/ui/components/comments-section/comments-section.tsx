@@ -12,7 +12,7 @@ import type {CommentSectionProps} from '@/subapps/events/common/ui/components';
 
 export const CommentsSection = ({eventId}: CommentSectionProps) => {
   return (
-    <Card className="rounded-2xl border-none shadow-none p-4 w-full max-w-screen-lg space-y-4 ">
+    <Card className="rounded-2xl border-none shadow-none p-4 w-full space-y-4 ">
       <h2 className="text-xl font-semibold">{i18n.get('Comments')}</h2>
 
       <Comments

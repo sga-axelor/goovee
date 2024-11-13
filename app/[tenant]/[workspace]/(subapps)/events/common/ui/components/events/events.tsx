@@ -12,9 +12,10 @@ import {
   BANNER_DESCRIPTION,
   BANNER_TITLES,
   IMAGE_URL,
+  SUBAPP_CODES,
   URL_PARAMS,
 } from '@/constants';
-import {useSearchParams} from '@/ui/hooks';
+import {useSearchParams, useToast} from '@/ui/hooks';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 import {getImageURL} from '@/utils/files';
@@ -26,7 +27,6 @@ import {SearchItem} from '@/app/[tenant]/[workspace]/(subapps)/events/common/ui/
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
 
 export const Events = ({
-  limit,
   categories,
   events,
   category,
@@ -34,7 +34,6 @@ export const Events = ({
   workspace,
   pageInfo: {page, pages, hasPrev, hasNext} = {},
 }: {
-  limit: number;
   categories: Category[];
   events: Event[];
   category: any[];
@@ -53,6 +52,7 @@ export const Events = ({
   const imageURL = workspace?.config?.eventHeroBgImage?.id
     ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant)})`
     : IMAGE_URL;
+  const {toast} = useToast();
 
   const updateCateg = (category: Category) => {
     const updatedCategories = selectedCategory.some(
@@ -72,11 +72,14 @@ export const Events = ({
   const updateDate = (d: Date | undefined) => {
     const newDate = d ? new Date(d) : undefined;
     setDate(newDate);
-    update([
-      {key: 'category', value: selectedCategory},
-      {key: 'page', value: 1},
-      {key: 'date', value: convertDateToISO8601(d) || ''},
-    ]);
+    update(
+      [
+        {key: 'category', value: selectedCategory},
+        {key: 'page', value: 1},
+        {key: 'date', value: convertDateToISO8601(d) || ''},
+      ],
+      {scroll: false},
+    );
   };
 
   const handlePreviousPage = () => {
@@ -94,21 +97,34 @@ export const Events = ({
   };
 
   const handlClick = (id: string | number) => {
-    router.push(`${workspaceURI}/events/${id}`);
+    router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${id}`);
   };
-
   const renderSearch = () => (
     <Search
       findQuery={async () => {
-        const response = await getAllEvents({workspace});
-        if (response) {
-          const {events} = response;
-          return events;
+        try {
+          const response: any = await getAllEvents({workspace});
+          if (response?.error) {
+            toast({
+              variant: 'destructive',
+              description: i18n.get(
+                response.error || 'Something went wrong while searching!',
+              ),
+            });
+            return [];
+          }
+
+          return response.events || [];
+        } catch (error) {
+          toast({
+            variant: 'destructive',
+            description: i18n.get('Something went wrong while searching!'),
+          });
+          return [];
         }
-        return [];
       }}
       renderItem={SearchItem}
-      searchKey={'eventTitle'}
+      searchKey="eventTitle"
       onItemClick={handlClick}
     />
   );
@@ -131,23 +147,23 @@ export const Events = ({
         renderSearch={renderSearch}
         tenantId={tenant}
       />
-
-      <div className="container py-6 px-4 overflow-hidden flex lg:flex-row flex-col space-y-6 lg:space-y-0 lg:gap-x-6 mb-16">
+      <div className="py-6 px-4 lg:px-[100px] flex flex-col lg:flex-row gap-4 lg:gap-6 mb-16">
         <EventSelector
+          selectedCategories={selectedCategory}
           date={date}
           setDate={updateDate}
           updateCateg={updateCateg}
           categories={categories}
           workspace={workspace}
         />
-        <div className="flex flex-col space-y-4 w-full  xl:max-w-[48.938rem]">
+        <div className="flex flex-col space-y-4 w-full">
           {events && events.length > 0 ? (
             events.map(event => (
               <Link
-                href={`${workspaceURI}/events/${event.id}`}
+                href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
                 key={event.id}
                 passHref>
-                <EventCard event={event} key={event.id} />
+                <EventCard event={event} key={event.id} workspace={workspace} />
               </Link>
             ))
           ) : (
@@ -157,15 +173,17 @@ export const Events = ({
             </>
           )}
           <div className="w-full mt-10 flex items-center justify-center ml-auto">
-            <Pagination
-              page={page}
-              pages={pages}
-              disablePrev={!hasPrev}
-              disableNext={!hasNext}
-              onPrev={handlePreviousPage}
-              onNext={handleNextPage}
-              onPage={handlePage}
-            />
+            {pages > 1 && (
+              <Pagination
+                page={page}
+                pages={pages}
+                disablePrev={!hasPrev}
+                disableNext={!hasNext}
+                onPrev={handlePreviousPage}
+                onNext={handleNextPage}
+                onPage={handlePage}
+              />
+            )}
           </div>
         </div>
       </div>

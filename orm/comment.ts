@@ -370,7 +370,7 @@ export async function findByID({
 
   switch (type) {
     case ModelType.event:
-      response = await findEventByID({id, tenantId});
+      response = await findEventByID({id, workspace, tenantId});
       break;
     case ModelType.news:
       const {news}: any = await findNews({id, workspace, tenantId});

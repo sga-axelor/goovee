@@ -6,6 +6,8 @@ import {parseDate} from '@/utils/date';
 
 export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
   const {id, eventTitle, eventStartDateTime, eventDescription} = result;
+  const stripImages = (htmlContent: any = '') =>
+    htmlContent?.replace(/<img[^>]*>/g, '');
   return (
     <>
       <div onClick={() => onClick(id)} className="space-y-2">
@@ -20,9 +22,12 @@ export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
             )}
           </p>
         </div>
-        <p className="overflow-hidden text-xs font-normal text-main-black line-clamp-1">
-          {eventDescription}
-        </p>
+        <div
+          className="overflow-hidden text-xs font-normal text-main-black line-clamp-1"
+          dangerouslySetInnerHTML={{
+            __html: eventDescription ? stripImages(eventDescription) : '',
+          }}
+        />
       </div>
     </>
   );

@@ -104,6 +104,7 @@ export interface PortalAppConfig extends Model {
   resourcesHeroBgImage: {
     id: string;
   };
+  allowGuestEventRegistration?: boolean;
 }
 
 export interface PortalApp extends Model {

@@ -12,4 +12,5 @@ export interface EventSelectorProps {
   updateCateg: (Input: Category) => void;
   categories: Category[];
   workspace: PortalWorkspace;
+  selectedCategories?: string[];
 }

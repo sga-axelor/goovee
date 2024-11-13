@@ -188,6 +188,7 @@
       "type": "ManyToOne",
       "name": "resourcesHeroBgImage",
       "target": "AOSMetaFile"
-    }
+    },
+    {"name": "allowGuestEventRegistration", "type": "Boolean"}
   ]
 }

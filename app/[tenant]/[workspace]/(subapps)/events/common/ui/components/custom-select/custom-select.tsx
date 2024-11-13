@@ -80,28 +80,24 @@ export const CustomSelect = ({
     form.setValue(field.name, selected);
   };
 
-  const handleInputChange = async (input: string) => {
+  const handleInputChange = async (input: string = ' ') => {
     setInputValue(input.toLocaleLowerCase());
 
-    if (input.length > 0) {
-      try {
-        const data: any = await fetchContacts({search: input, workspaceURL});
+    try {
+      const data: any = await fetchContacts({search: input, workspaceURL});
 
-        if (data && !data.error) {
-          setFilteredOptions(formatItems(data));
-        } else {
-          toast({
-            variant: 'destructive',
-            title: i18n.get(
-              data?.message || 'Error while fetching updated comments.',
-            ),
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching options:', error);
+      if (data && !data.error) {
+        setFilteredOptions(formatItems(data));
+      } else {
+        toast({
+          variant: 'destructive',
+          title: i18n.get(
+            data?.message || 'Error while fetching updated comments.',
+          ),
+        });
       }
-    } else {
-      setFilteredOptions([]);
+    } catch (error) {
+      console.error('Error fetching options:', error);
     }
   };
 
@@ -118,6 +114,10 @@ export const CustomSelect = ({
     }
   }, [arrayName, field.name, form, watchFields]);
 
+  useEffect(() => {
+    handleInputChange();
+  }, []);
+
   return (
     <Select
       isMulti
@@ -128,6 +128,8 @@ export const CustomSelect = ({
       onInputChange={handleInputChange}
       inputValue={inputValue}
       styles={{
+        menuPortal: base => ({...base, zIndex: 9999}),
+        menu: provided => ({...provided, zIndex: 9999}),
         multiValue: provided => ({
           ...provided,
           backgroundColor: '#CDCFEF',

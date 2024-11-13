@@ -9,7 +9,6 @@ import {
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
-import {error} from '@/subapps/events/common/utils';
 
 export async function findContact({
   search,
@@ -20,10 +19,8 @@ export async function findContact({
   workspaceURL: string;
   tenantId: Tenant['id'];
 }) {
-  if (!(search && tenantId)) return error(i18n.get('Search value is missing.'));
-
   const response = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 

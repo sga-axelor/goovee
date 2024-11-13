@@ -24,7 +24,9 @@ export async function findPartnerByEmail(
       select: {
         firstName: true,
         fullName: true,
+        fixedPhone: true,
         isContact: true,
+        name: true,
         password: true,
         emailAddress: true,
         mainPartner: {

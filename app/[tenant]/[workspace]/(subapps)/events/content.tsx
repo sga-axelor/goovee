@@ -25,7 +25,6 @@ const Content = ({
     <main className="h-full w-full">
       <Events
         categories={categories}
-        limit={LIMIT}
         events={events}
         pageInfo={pageInfo}
         category={category}

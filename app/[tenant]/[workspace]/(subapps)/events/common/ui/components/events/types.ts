@@ -1,3 +1,5 @@
+import {PortalWorkspace} from '@/types';
+
 export interface Event {
   key: string | undefined;
   id: string;
@@ -37,4 +39,5 @@ export interface CategoriesProps {
 }
 export interface EventCardProps {
   event: Event;
+  workspace: PortalWorkspace;
 }

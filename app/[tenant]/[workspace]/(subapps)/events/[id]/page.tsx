@@ -1,8 +1,11 @@
 import {notFound} from 'next/navigation';
+import {getSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {findEventByID} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
+import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDetails} from '@/subapps/events/common/ui/components';
@@ -14,22 +17,30 @@ export const metadata = {
 
 export default async function Page({
   params,
-  searchParams,
 }: {
-  params: {tenant: string; workspace: string; id: string};
-  searchParams: {success?: string};
+  params: {id: string; tenant: string; workspace: string};
 }) {
   const {id, tenant} = params;
 
-  const eventDetails = await findEventByID({id, tenantId: tenant}).then(clone);
+  const session = await getSession();
+
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+    tenantId: tenant,
+  }).then(clone);
+
+  const eventDetails = await findEventByID({
+    id,
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
   if (!eventDetails) {
     return notFound();
   }
 
-  const successMessage = searchParams.success === 'true';
-
-  return (
-    <EventDetails eventDetails={eventDetails} successMessage={successMessage} />
-  );
+  return <EventDetails eventDetails={eventDetails} workspace={workspace} />;
 }

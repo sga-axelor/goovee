@@ -1,8 +1,7 @@
 'use client';
 
-import {useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {useRouter} from 'next/navigation';
-import {MdCheckCircleOutline, MdClose} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -21,74 +20,85 @@ import {
   formatStudioFields,
 } from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   EventCardBadges,
   CustomSelect,
+  EventDateCard,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
-
-const basicPerson = [
-  {
-    name: 'name',
-    title: 'Name',
-    type: 'string',
-    widget: null,
-    helper: 'Enter name',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 1,
-  },
-  {
-    name: 'surname',
-    title: 'Surname',
-    type: 'string',
-    widget: null,
-    helper: 'Enter surname',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 2,
-  },
-  {
-    name: 'emailAddress',
-    title: 'Email',
-    type: 'string',
-    widget: 'email',
-    helper: 'Enter email',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 3,
-  },
-  {
-    name: 'phone',
-    title: 'Phone',
-    type: 'string',
-    widget: 'phone',
-    helper: 'Enter phone number',
-    hidden: false,
-    required: true,
-    readonly: false,
-    order: 4,
-  },
-];
+import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
 
 export const RegistrationForm = ({
   eventDetails,
   metaFields = [],
+  workspace,
+  user,
 }: EventPageCardProps) => {
-  const [tempError, setTempError] = useState<boolean>(false);
   const router = useRouter();
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
+
+  const basicPerson = useMemo(
+    () => [
+      {
+        name: 'name',
+        title: 'Name',
+        type: 'string',
+        widget: null,
+        helper: 'Enter name',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 1,
+        defaultValue: user.firstName || '',
+      },
+      {
+        name: 'surname',
+        title: 'Surname',
+        type: 'string',
+        widget: null,
+        helper: 'Enter surname',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 2,
+        defaultValue: user?.name || '',
+      },
+      {
+        name: 'emailAddress',
+        title: 'Email',
+        type: 'string',
+        widget: 'email',
+        helper: 'Enter email',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 3,
+        defaultValue: user?.emailAddress?.address || '',
+      },
+      {
+        name: 'phone',
+        title: 'Phone',
+        type: 'string',
+        widget: 'phone',
+        helper: 'Enter phone number',
+        hidden: false,
+        required: true,
+        readonly: false,
+        order: 4,
+        defaultValue: user?.fixedPhone || '',
+      },
+    ],
+    [user],
+  );
 
   const participantForm = useMemo(
     () => [...basicPerson, ...formatStudioFields(metaFields)],
-    [metaFields],
+    [basicPerson, metaFields],
   );
 
   const externalParticipantForm = useMemo(
@@ -179,11 +189,17 @@ export const RegistrationForm = ({
       const response = await register({
         eventId: eventDetails?.id,
         values: result,
-        workspaceURL,
+        workspace,
       });
 
       if (response.success) {
-        router.push(`${workspaceURI}/events/${eventDetails?.id}?success=true`);
+        toast({
+          variant: 'success',
+          title: i18n.get(SUCCESS_REGISTER_MESSAGE),
+        });
+        router.push(
+          `${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}`,
+        );
       } else {
         toast({
           variant: 'destructive',
@@ -195,16 +211,23 @@ export const RegistrationForm = ({
         variant: 'destructive',
         title: i18n.get('Error while adding comment'),
       });
-      setTempError(true);
     }
   };
 
   return (
-    <Card className="order-2 lg:order-1 p-4 w-full rounded-2xl border-none shadow-none">
-      <CardHeader className="p-0 space-y-4">
+    <Card className="w-full rounded-2xl border-none shadow-none">
+      <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
         <CardTitle>
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
         </CardTitle>
+        <EventDateCard
+          id={eventDetails?.id}
+          startDate={eventDetails?.eventStartDateTime}
+          endDate={eventDetails?.eventEndDateTime}
+          eventAllDay={eventDetails?.eventAllDay}
+          canRegister={eventDetails?.eventAllowRegistration}
+          workspace={workspace}
+        />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
         {eventDetails?.eventProduct?.salePrice && (
           <CardDescription className="my-6 text-xl font-semibold">
@@ -212,7 +235,7 @@ export const RegistrationForm = ({
           </CardDescription>
         )}
       </CardHeader>
-      <CardContent className="p-0 pt-4">
+      <CardContent className="px-4 pb-4 pt-2">
         <FormView
           fields={
             eventDetails?.eventAllowMultipleRegistrations
@@ -227,17 +250,6 @@ export const RegistrationForm = ({
               : '')
           }
         />
-        {tempError && (
-          <div className="flex lg:items-center justify-between text-red-1 bg-red-2 rounded-[0.313rem] py-4 px-8 border border-red-1 text-base font-normal leading-7 tracking-[0.031rem] w-full h-fit">
-            <p className="gap-x-4 flex lg:items-center">
-              <MdCheckCircleOutline className="shrink-0 w-6 h-6" />
-              {i18n.get(
-                'Sorry there has been a problem with your registration. Please try again.',
-              )}
-            </p>
-            <MdClose className="cursor-pointer shrink-0 w-6 h-6" />
-          </div>
-        )}
       </CardContent>
     </Card>
   );

@@ -21,7 +21,7 @@ export async function findEventCategories({
         id: workspace.id,
       },
     },
-    orderBy: {name: ORDER_BY.ASC},
+    orderBy: {name: ORDER_BY.ASC} as any,
     select: {
       id: true,
       name: true,
