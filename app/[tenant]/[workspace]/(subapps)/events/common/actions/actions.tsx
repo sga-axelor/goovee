@@ -94,9 +94,9 @@ export async function register({
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
-  if (!(eventId && values && tenantId))
-    return error(i18n.get('Event ID or values are missing!'));
-
+  if (!eventId) return error(i18n.get('Event ID is missing!'));
+  if (!values) return error(i18n.get('Values are missing!'));
+  if (!tenantId) return error(i18n.get('Tenant ID is missing!'));
   if (!workspace) return error(i18n.get('Workspace is missing!'));
 
   const workspaceURL = workspace.url;

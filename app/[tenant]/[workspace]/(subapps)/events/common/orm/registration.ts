@@ -25,7 +25,8 @@ export async function registerParticipants({
   values: Participant | Participant[];
   tenantId: Tenant['id'];
 }) {
-  if (!(eventId && tenantId)) return error(i18n.get('Event ID is missing!'));
+  if (!eventId) return error(i18n.get('Event ID is missing!'));
+  if (!tenantId) return error(i18n.get('Tenant ID is missing!'));
 
   const result = await validate([
     withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
@@ -73,7 +74,9 @@ export async function findEventParticipant({
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
-  if (!(id && tenantId)) return error(i18n.get('Event ID is missing!'));
+  if (!id) return error(i18n.get('Event ID is missing!'));
+
+  if (!tenantId) return error(i18n.get('Tenant ID is missing!'));
 
   const event = await findEventByID({id, workspace, tenantId});
   if (!event) {

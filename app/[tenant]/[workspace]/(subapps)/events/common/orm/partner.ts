@@ -58,33 +58,3 @@ export async function findContact({
 
   return result;
 }
-
-export async function findUser({
-  userId,
-  tenantId,
-}: {
-  userId: any;
-  tenantId: Tenant['id'];
-}) {
-  console.log('userId || tenantId >>>', {userId, tenantId});
-  if (!(userId && tenantId)) {
-    return {};
-  }
-
-  const client = await manager.getClient(tenantId);
-
-  const user = await client.aOSPartner.findOne({
-    where: {
-      id: userId,
-    },
-    select: {
-      name: true,
-      firstName: true,
-      emailAddress: {
-        address: true,
-      },
-      fixedPhone: true,
-    },
-  });
-  return user;
-}
