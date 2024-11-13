@@ -60,7 +60,7 @@ export function download(
 
   Object.assign(link.style, {
     position: 'absolute',
-    visibility: 'hidden',
+    display: 'none',
     zIndex: 1000000000,
   });
 
