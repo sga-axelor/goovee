@@ -15,7 +15,7 @@ import {useSortBy} from '@/ui/hooks';
 import {Survey} from '@/subapps/survey/common/types';
 import {COLUMNS, ROWS} from '@/subapps/survey/common/constants';
 
-export default function Conetnt() {
+export default function Content() {
   const {workspaceURI} = useWorkspace();
   const [sortedSurveys, sort, toggleSort] = useSortBy(ROWS);
 
