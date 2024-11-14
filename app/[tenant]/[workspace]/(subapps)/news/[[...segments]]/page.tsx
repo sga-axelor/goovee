@@ -163,9 +163,14 @@ async function CategoryPage({
 
     const [newsObject] = news;
 
+    const categoryIds = newsObject?.categorySet?.map((item: any) => item.id);
     let recommendedNews = [];
     if (isRecommendationEnable) {
-      recommendedNews = await findRecommendedNews({workspace, tenantId});
+      recommendedNews = await findRecommendedNews({
+        workspace,
+        tenantId,
+        categoryIds,
+      });
     }
 
     if (!newsObject) {

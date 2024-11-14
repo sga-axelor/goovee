@@ -84,7 +84,7 @@ export const Homepage = ({
               title={i18n.get(CATEGORIES)}
               categories={categories}
             />
-            <div className="mt-6">
+            <div>
               <LeadStories
                 title={i18n.get(LATEST_NEWS)}
                 news={latestNews}
