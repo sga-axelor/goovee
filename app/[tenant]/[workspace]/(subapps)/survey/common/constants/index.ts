@@ -1,0 +1,132 @@
+// ---- CORE IMPORTS ---- //
+import {i18n} from '@/i18n';
+
+// ---- LOCAL IMPORTS ---- //
+import {Survey} from '@/subapps/survey/common/types';
+
+export const ROWS: Survey[] = [
+  {
+    id: 1,
+    name: 'Survey A',
+    statusSelect: 'Active',
+    typeSelect: 'Multiple Choice',
+    category: 'Education',
+    target: 'Teachers',
+    publicationDatetime: '2024-12-01T10:00:00',
+    customModel: 'Model 1',
+  },
+  {
+    id: 2,
+    name: 'Survey B',
+    statusSelect: 'Inactive',
+    typeSelect: 'Rating',
+    category: 'Healthcare',
+    target: 'Patients',
+    publicationDatetime: '2024-11-20T14:30:00',
+    customModel: 'Model 2',
+  },
+  {
+    id: 3,
+    name: 'Survey C',
+    statusSelect: 'Active',
+    typeSelect: 'Text Response',
+    category: 'Technology',
+    target: 'Developers',
+    publicationDatetime: '2024-12-10T09:00:00',
+    customModel: 'Model 3',
+  },
+  {
+    id: 4,
+    name: 'Survey D',
+    statusSelect: 'Inactive',
+    typeSelect: 'Multiple Choice',
+    category: 'Marketing',
+    target: 'Marketers',
+    publicationDatetime: '2024-11-18T16:00:00',
+    customModel: 'Model 4',
+  },
+  {
+    id: 5,
+    name: 'Survey E',
+    statusSelect: 'Active',
+    typeSelect: 'Rating',
+    category: 'Education',
+    target: 'Students',
+    publicationDatetime: '2024-12-05T11:45:00',
+    customModel: 'Model 5',
+  },
+  {
+    id: 6,
+    name: 'Survey F',
+    statusSelect: 'Active',
+    typeSelect: 'Text Response',
+    category: 'Business',
+    target: 'Entrepreneurs',
+    publicationDatetime: '2024-12-08T08:30:00',
+    customModel: 'Model 6',
+  },
+  {
+    id: 7,
+    name: 'Survey G',
+    statusSelect: 'Inactive',
+    typeSelect: 'Multiple Choice',
+    category: 'Healthcare',
+    target: 'Doctors',
+    publicationDatetime: '2024-11-25T13:00:00',
+    customModel: 'Model 7',
+  },
+];
+
+export const COLUMNS = [
+  {
+    key: 'name',
+    label: i18n.get('Name'),
+    sortable: true,
+    mobile: true,
+    getter: (row: Survey) => row.name,
+    content: (row: any) => row.name,
+  },
+  {
+    key: 'statusSelect',
+    label: 'Status',
+    // sortable: true,
+    mobile: true,
+    getter: (row: Survey) => row.statusSelect,
+    content: (row: any) => row.statusSelect,
+  },
+  {
+    key: 'type',
+    label: 'Type',
+    // sortable: true,
+    getter: (row: Survey) => row.typeSelect,
+    content: (row: any) => row.typeSelect,
+  },
+  {
+    key: 'category',
+    label: 'Category',
+    // sortable: false,
+    getter: (row: Survey) => row.category,
+    content: (row: any) => row.category,
+  },
+  {
+    key: 'target',
+    label: 'Target',
+    // sortable: false,
+    getter: (row: Survey) => row.target,
+    content: (row: any) => row.target,
+  },
+  {
+    key: 'publicationDatetime',
+    label: 'Publication date',
+    // sortable: true,
+    getter: (row: Survey) => row.publicationDatetime,
+    content: (row: any) => row.publicationDatetime,
+  },
+  {
+    key: 'customModel',
+    label: 'Response model',
+    // sortable: false,
+    getter: (row: Survey) => row.customModel,
+    content: (row: any) => row.customModel,
+  },
+];
