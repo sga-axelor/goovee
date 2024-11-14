@@ -13,11 +13,15 @@ import {useSortBy} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {Survey} from '@/subapps/survey/common/types';
-import {COLUMNS, ROWS} from '@/subapps/survey/common/constants';
+import {Columns} from '@/subapps/survey/common/ui/components';
 
-export default function Content() {
+type ContentProps = {
+  surveys: any;
+};
+
+export default function Content({surveys = []}: ContentProps) {
   const {workspaceURI} = useWorkspace();
-  const [sortedSurveys, sort, toggleSort] = useSortBy(ROWS);
+  const [sortedSurveys, sort, toggleSort] = useSortBy(surveys);
 
   const handleRowClick = (survey: Survey) => {};
 
@@ -30,7 +34,7 @@ export default function Content() {
           <h2 className="font-semibold text-xl">{i18n.get('Open Surveys')}</h2>
 
           <TableList
-            columns={COLUMNS}
+            columns={Columns}
             rows={sortedSurveys}
             sort={sort}
             onSort={toggleSort}

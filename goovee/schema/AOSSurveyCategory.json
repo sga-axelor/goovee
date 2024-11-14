@@ -1,0 +1,7 @@
+{
+  "name": "AOSSurveyCategory",
+  "table": "survey_survey_category",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [{"name": "Name", "type": "String"}]
+}
