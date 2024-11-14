@@ -14,6 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipArrow,
+} from '@/ui/components/tooltip';
 import {SUBAPP_PAGE} from '@/constants';
 import {useWorkspace} from './workspace-context';
 
@@ -45,7 +52,7 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        'hidden lg:block sticky left-0 top-0 h-full min-h-screen transition-all bg-secondary text-secondary-foreground w-60 py-3 px-6 shrink-0',
+        'hidden lg:block sticky left-0 top-0 h-full min-h-screen transition-all bg-secondary text-secondary-foreground w-60 py-3 px-6 shrink-0 z-10',
         {'w-14 py-3 px-4': collapsed},
       )}>
       <div className="flex items-center gap-4 mb-10">
@@ -70,36 +77,53 @@ export function Sidebar({
         )}
       </div>
       <div className="flex flex-col gap-6">
-        {subapps
-          ?.filter((app: any) => app.installed)
-          .sort(
-            (app1: any, app2: any) =>
-              app1.orderForMySpaceMenu - app2.orderForMySpaceMenu,
-          )
-          .reverse()
-          ?.map(({code, name, icon, color, background}: any) => {
-            const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
-            return (
-              <Link
-                key={code}
-                href={`${workspaceURI}/${code}${page}`}
-                className="no-underline">
-                <div className="flex gap-4 items-center" key={code}>
-                  <Icon
-                    name={icon || 'app'}
-                    className="h-6 w-6"
-                    style={{color}}
-                  />
-                  <p
-                    className={`${
-                      collapsed ? 'hidden' : 'block'
-                    } whitespace-nowrap overflow-hidden duration-500`}>
-                    {name}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
+        <TooltipProvider>
+          {subapps
+            ?.filter((app: any) => app.installed)
+            .sort(
+              (app1: any, app2: any) =>
+                app1.orderForMySpaceMenu - app2.orderForMySpaceMenu,
+            )
+            .reverse()
+            ?.map(({code, name, icon, color, background}: any) => {
+              const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
+              return (
+                <Link
+                  key={code}
+                  href={`${workspaceURI}/${code}${page}`}
+                  className="no-underline">
+                  <div className="flex gap-4 items-center" key={code}>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <span>
+                          <Icon
+                            name={icon || 'app'}
+                            className="h-6 w-6"
+                            style={{color}}
+                          />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="right"
+                        align="center"
+                        className="bg-success-light"
+                        hidden={!collapsed}>
+                        <p>{name}</p>
+                        <TooltipArrow className="fill-success-light" />
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <p
+                      className={`${
+                        collapsed ? 'hidden' : 'block'
+                      } whitespace-nowrap overflow-hidden duration-500`}>
+                      {name}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+        </TooltipProvider>
       </div>
     </div>
   );
