@@ -68,6 +68,7 @@ export enum SUBAPP_CODES {
   forum = 'forum',
   ticketing = 'ticketing',
   chat = 'chat',
+  directory = 'directory',
 }
 
 /**
