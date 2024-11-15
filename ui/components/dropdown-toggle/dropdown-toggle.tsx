@@ -5,7 +5,15 @@ import {MdOutlineExpandMore} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {cn} from '@/utils/css';
-
+import {
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/ui/components';
 interface Option {
   key: string;
   label: string;
@@ -14,32 +22,51 @@ interface Option {
 interface DropdownToggleProps {
   value: string;
   options: Option[];
-  iconClassName?: string;
-  handleDropdown?: (value: string) => void;
+  title: string;
+  labelClassName?: string;
+  selectClassName?: string;
+  valueClassName?: string;
+  optionClassName?: string;
+  onSelect?: (value: string) => void;
 }
 
 export const DropdownToggle = memo(
-  ({value, options, handleDropdown, iconClassName}: DropdownToggleProps) => {
-    const [currentIndex, setCurrentIndex] = useState(
-      options.findIndex(option => option.key === value) || 0,
-    );
-
-    const handleClick = () => {
-      const newIndex = (currentIndex + 1) % options.length;
-      setCurrentIndex(newIndex);
-      handleDropdown?.(options[newIndex].key);
+  ({
+    value,
+    options,
+    onSelect,
+    title,
+    labelClassName = '',
+    selectClassName = '',
+    valueClassName = '',
+    optionClassName = '',
+  }: DropdownToggleProps) => {
+    const handleSelect = (value: any) => {
+      onSelect?.(value);
     };
 
-    const {label} = options[currentIndex];
-
     return (
-      <div className="flex flex-col gap-3">
-        {options.length > 0 && (
-          <div className="flex gap-2 cursor-pointer" onClick={handleClick}>
-            <div className="font-semibold">{label}</div>
-            <MdOutlineExpandMore className={cn('w-6 h-6', iconClassName)} />
-          </div>
-        )}
+      <div className="flex items-center gap-2 text-base flex-shrink-0">
+        <Label className={cn('!shrink-0', labelClassName)}>{title}:</Label>
+
+        <Select defaultValue={value} onValueChange={handleSelect}>
+          <SelectTrigger className={cn(selectClassName)}>
+            <SelectValue
+              className={cn(valueClassName)}
+              placeholder="Select..."
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map(option => (
+              <SelectItem
+                key={option.key}
+                className={cn(optionClassName)}
+                value={option.key}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     );
   },

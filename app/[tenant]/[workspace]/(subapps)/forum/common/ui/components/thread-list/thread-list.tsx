@@ -34,14 +34,12 @@ export const ThreadList = () => {
             flexShrink: 1,
           }}
         />
-        <div className="flex gap-2 text-base flex-shrink-0">
-          <div>{i18n.get('Sort by')}:</div>
-          <DropdownToggle
-            value={sort}
-            options={SORT_BY_OPTIONS}
-            handleDropdown={handleSortBy}
-          />
-        </div>
+        <DropdownToggle
+          title={i18n.get('Sort by')}
+          value={sort}
+          options={SORT_BY_OPTIONS}
+          onSelect={handleSortBy}
+        />
       </div>
       {!posts?.length ? (
         <div>{i18n.get('No posts available.')}</div>

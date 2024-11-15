@@ -139,15 +139,16 @@ export function Comments({
             className={`border-t flex flex-col gap-4 ${usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4'}`}>
             {!hideSortBy && (
               <div className="w-full flex gap-4 items-center">
-                <div className="flex items-center gap-2 text-xs flex-shrink-0">
-                  <div>{i18n.get('Sort by')}:</div>
-                  <DropdownToggle
-                    value={sortBy}
-                    options={SORT_BY_OPTIONS}
-                    iconClassName="w-4 h-4"
-                    handleDropdown={handleSortBy}
-                  />
-                </div>
+                <DropdownToggle
+                  title={i18n.get('Sort by')}
+                  labelClassName="text-xs"
+                  value={sortBy}
+                  options={SORT_BY_OPTIONS}
+                  onSelect={handleSortBy}
+                  selectClassName="text-xs h-8"
+                  valueClassName="text-xs"
+                  optionClassName="text-xs"
+                />
                 <Separator style={{flexShrink: 1}} />
               </div>
             )}
