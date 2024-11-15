@@ -169,9 +169,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           onClick={loginWithGoogle}
           className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-primary-foreground">
           <FaGoogle className="text-xl" />
-          <span className="text-primary font-medium">
-            {i18n.get('Log In with Google')}
-          </span>
+          <span className="font-medium">{i18n.get('Log In with Google')}</span>
         </Button>
       </div>
     </div>
