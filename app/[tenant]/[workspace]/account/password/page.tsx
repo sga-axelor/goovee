@@ -16,9 +16,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/ui/components/form';
+import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {Title} from '../common/ui/components';
+import {changePassword} from './action';
 
 const formSchema = z.object({
   oldPassword: z.string(),
@@ -27,6 +29,8 @@ const formSchema = z.object({
 });
 
 export default function Page() {
+  const {toast} = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,7 +40,24 @@ export default function Page() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {};
+  const onSubmit = async ({
+    oldPassword,
+    newPassword,
+  }: z.infer<typeof formSchema>) => {
+    const result = await changePassword({
+      oldPassword,
+      newPassword,
+    });
+
+    toast({
+      title: result?.message,
+      variant: result?.error ? 'destructive' : 'success',
+    });
+
+    result.success && form.reset();
+  };
+
+  const isSubmitting = form.formState.isSubmitting;
 
   return (
     <Form {...form}>
@@ -56,6 +77,7 @@ export default function Page() {
                       type="password"
                       value={field.value}
                       placeholder={i18n.get('Enter old password')}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                   <FormMessage />
@@ -74,6 +96,7 @@ export default function Page() {
                       type="password"
                       value={field.value}
                       placeholder={i18n.get('Enter new password')}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                   <FormMessage />
@@ -92,6 +115,7 @@ export default function Page() {
                       type="password"
                       value={field.value}
                       placeholder={i18n.get('Confirm new password')}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                   <FormMessage />
@@ -101,7 +125,9 @@ export default function Page() {
           </div>
 
           <div className="space-y-4 text-end">
-            <Button variant="success">{i18n.get('Change password')}</Button>
+            <Button variant="success" disabled={isSubmitting}>
+              {i18n.get('Change password')}
+            </Button>
           </div>
         </div>
       </form>
