@@ -54,7 +54,6 @@ export function TicketDetails(props: Props) {
     handleTicketFormSubmit: handleSubmit,
     loading,
   } = useTicketDetails();
-  const {tenant} = useWorkspace();
   const {categories, priorities, contacts} = props;
 
   const closeAndCancel = !ticket.status?.isCompleted && (

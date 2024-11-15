@@ -1,6 +1,4 @@
-import {type Tenant} from '@/tenant';
 import {Maybe} from '@/types/util';
-import {getImageURL} from '@/utils/files';
 
 import {ASSIGNMENT} from '../constants';
 
