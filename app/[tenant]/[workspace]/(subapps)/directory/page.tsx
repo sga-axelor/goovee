@@ -1,14 +1,16 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {IMAGE_URL} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import {notFound} from 'next/navigation';
+import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
-import {getImageURL} from '@/utils/files';
 import Hero from './hero';
+import {Map} from './common/ui/components/map';
 
 export default async function Page({
   params,
@@ -42,6 +44,18 @@ export default async function Page({
         image={imageURL}
         tenantId={tenant}
       />
+      <div className="container flex has-[.expand]:flex-col gap-4 mt-4">
+        <Map />
+        <div className="grow flex flex-col gap-4 ">
+          {Array.from({length: 10}).map((_, index) => (
+            <div
+              key={index}
+              className="flex justify-center items-center p-4 h-40 bg-blue-400">
+              cards
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 }
