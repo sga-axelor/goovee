@@ -117,7 +117,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Checkbox id="terms" disabled={submitting} />
+            <Checkbox variant="success" id="terms" disabled={submitting} />
             <Label htmlFor="terms" className="ml-2">
               {i18n.get('Remember Me')}
             </Label>
@@ -125,22 +125,26 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           <Link
             href={`/auth/forgot-password?${searchQuery}`}
             aria-disabled={submitting}
-            className="text-palette-purple-dark flex text-decoration-underline">
+            className="flex underline text-success">
             {i18n.get('Forgot Password ?')}
           </Link>
         </div>
-        <Button type="submit" disabled={submitting} className="rounded-full">
+        <Button
+          variant="success"
+          type="submit"
+          disabled={submitting}
+          className="rounded-full">
           {i18n.get('Log In')}
         </Button>
         {canRegister && (
-          <div>
-            <p className="text-card-foreground inline-flex text-lg mr-2 mb-0">
+          <div className="text-success">
+            <p className="inline-flex text-lg mr-2 mb-0">
               {i18n.get("Don't have an account yet ?")}
             </p>
             <Link
               href={`/auth/register?${searchQuery}`}
               aria-disabled={submitting}
-              className="text-palette-purple-dark inline-flex text-decoration-underline text-lg">
+              className="inline-flex underline text-lg">
               {i18n.get('Sign Up')}
             </Link>
           </div>
@@ -161,7 +165,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
       <div className="mt-4">
         <Button
           type="button"
-          variant="outline"
+          variant="outline-success"
           onClick={loginWithGoogle}
           className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-primary-foreground">
           <FaGoogle className="text-xl" />
