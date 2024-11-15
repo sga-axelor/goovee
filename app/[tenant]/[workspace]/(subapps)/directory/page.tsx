@@ -12,18 +12,26 @@ import {getImageURL} from '@/utils/files';
 import Hero from './hero';
 import {Map} from './common/ui/components/map';
 
+const markers = [
+  {lat: 48.85341, lng: 2.3488},
+  {lat: 48.85671, lng: 2.4475},
+  {lat: 48.80671, lng: 2.4075},
+];
+
 export default async function Page({
   params,
 }: {
   params: {tenant: string; workspace: string};
 }) {
   const session = await getSession();
-  if (!session?.user) notFound();
+
+  // TODO: check if user auth is required
+  // if (!session?.user) notFound();
 
   const {workspaceURL, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session.user,
+    user: session?.user,
     url: workspaceURL,
     tenantId: tenant,
   }).then(clone);
@@ -45,8 +53,8 @@ export default async function Page({
         tenantId={tenant}
       />
       <div className="container flex has-[.expand]:flex-col gap-4 mt-4">
-        <Map />
-        <div className="grow flex flex-col gap-4 ">
+        <Map showExpand markers={markers} />
+        <div className="grow flex flex-col gap-4">
           {Array.from({length: 10}).map((_, index) => (
             <div
               key={index}

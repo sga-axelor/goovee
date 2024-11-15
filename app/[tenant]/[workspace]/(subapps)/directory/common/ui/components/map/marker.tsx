@@ -8,28 +8,16 @@ import {useCallback, useState} from 'react';
 import {LatLng} from './types';
 
 export function Marker({position}: {position: LatLng}) {
-  // `markerRef` and `marker` are needed to establish the connection between
   const [markerRef, marker] = useMarkerRef();
 
-  const [infoWindowShown, setInfoWindowShown] = useState(false);
-
-  // clicking the marker will toggle the infowindow
-  const handleMarkerClick = useCallback(
-    () => setInfoWindowShown(isShown => !isShown),
-    [],
-  );
-
-  // if the maps api closes the infowindow, we have to synchronize our state
-  const handleClose = useCallback(() => setInfoWindowShown(false), []);
+  const [show, setShow] = useState(false);
+  const toggle = useCallback(() => setShow(show => !show), []);
+  const handleClose = useCallback(() => setShow(false), []);
 
   return (
     <>
-      <MarkerComponent
-        ref={markerRef}
-        position={position}
-        onClick={handleMarkerClick}
-      />
-      {infoWindowShown && (
+      <MarkerComponent ref={markerRef} position={position} onClick={toggle} />
+      {show && (
         <InfoWindow
           anchor={marker}
           onClose={handleClose}
