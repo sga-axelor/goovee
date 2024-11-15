@@ -11,6 +11,7 @@ import {getImageURL} from '@/utils/files';
 // ---- LOCAL IMPORTS ---- //
 import Hero from './hero';
 import {Map} from './common/ui/components/map';
+import {Sort} from './common/ui/components/sort';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -53,8 +54,11 @@ export default async function Page({
         tenantId={tenant}
       />
       <div className="container flex has-[.expand]:flex-col gap-4 mt-4">
-        <Map showExpand markers={markers} />
-        <div className="grow flex flex-col gap-4">
+        <aside className="space-y-4">
+          <Map showExpand markers={markers} />
+          <Sort />
+        </aside>
+        <main className="grow flex flex-col gap-4">
           {Array.from({length: 10}).map((_, index) => (
             <div
               key={index}
@@ -62,7 +66,7 @@ export default async function Page({
               cards
             </div>
           ))}
-        </div>
+        </main>
       </div>
     </>
   );
