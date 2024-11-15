@@ -27,6 +27,7 @@ import {Swipe} from '../ticketing/common/ui/components/swipe';
 import {cn} from '@/utils/css';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
+import {DirectoryList} from './common/ui/components/directory-list';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -121,13 +122,7 @@ export default async function Page({
             <Sort />
           </aside>
           <main className="grow flex flex-col gap-4">
-            {Array.from({length: 10}).map((_, index) => (
-              <div
-                key={index}
-                className="flex justify-center items-center p-4 h-40 bg-blue-400">
-                cards
-              </div>
-            ))}
+            <DirectoryList />
           </main>
         </div>
       </div>

@@ -2,7 +2,12 @@
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {FreeMode, Pagination} from 'swiper/modules';
 import {ReactNode} from 'react';
-export function Swipe({items}: {items: ReactNode[]}) {
+import {cn} from '@/utils/css';
+type SwipeProps = {
+  items: ReactNode[];
+  className?: string;
+};
+export function Swipe({items, className}: SwipeProps) {
   return (
     <Swiper
       slidesPerView="auto"
@@ -18,7 +23,10 @@ export function Swipe({items}: {items: ReactNode[]}) {
       {items.map((item, i) => (
         <SwiperSlide
           key={i}
-          className="bg-card rounded-lg shrink-0 !w-[218px] !h-[120px] cursor-pointer">
+          className={cn(
+            'bg-card rounded-lg shrink-0 !w-[218px] !h-[120px] cursor-pointer',
+            className,
+          )}>
           {item}
         </SwiperSlide>
       ))}
