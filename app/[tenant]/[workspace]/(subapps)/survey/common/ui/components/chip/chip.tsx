@@ -18,6 +18,9 @@ export function Chip({
   className?: string;
   outline?: boolean;
 }) {
+  if (!value) {
+    return null;
+  }
   return (
     <Tag
       variant={variant}
