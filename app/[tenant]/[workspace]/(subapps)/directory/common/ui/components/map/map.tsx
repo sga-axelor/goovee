@@ -46,7 +46,7 @@ export function Map(props: MapProps) {
           </Button>
         )}
         {markers?.map((marker, index) => (
-          <Marker position={marker} key={index} />
+          <Marker position={marker} key={index} small={small || !expand} />
         ))}
       </GMap>
     </APIProvider>

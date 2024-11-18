@@ -158,7 +158,7 @@ export default async function Page({
         tenantId={tenant}
       />
       <div className="container mb-5">
-        <div className="flex justify-between mt-5">
+        <div className="flex items-center justify-between mt-5">
           <p className="text-xl font-semibold">{i18n.get('Services')}</p>
           <Button variant="success" className="flex items-center">
             <MdOutlineNotificationAdd className="size-6 me-2" />

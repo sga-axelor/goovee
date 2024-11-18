@@ -18,7 +18,13 @@ const item = {
     'Lorem ipsum dolor sit amet consectetur. Neque diam integer Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi veritatis ex labore illum quos dolores, nam optio consectetur odit. Minus facilis illo, consequuntur dolor nam illum facere velit? Ipsum, illo! purus aenean porttitor morbi. Turpis. ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
 };
 
-export function Marker({position}: {position: LatLng}) {
+type MarkerProps = {
+  position: LatLng;
+  small: boolean;
+};
+
+export function Marker(props: MarkerProps) {
+  const {position, small} = props;
   const {workspaceURI} = useWorkspace();
 
   const url = `${workspaceURI}/directory/${item.id}`;
@@ -33,7 +39,7 @@ export function Marker({position}: {position: LatLng}) {
       <MarkerComponent ref={markerRef} position={position} onClick={toggle} />
       {show && (
         <InfoWindow anchor={marker} onClose={handleClose} headerDisabled>
-          <Card item={item} url={url} />
+          <Card item={item} url={url} small={small} />
         </InfoWindow>
       )}
     </>
