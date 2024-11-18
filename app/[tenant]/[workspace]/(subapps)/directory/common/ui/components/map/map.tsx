@@ -27,6 +27,7 @@ export function Map(props: MapProps) {
           expand ? 'expand h-[45rem] w-full' : 'h-80 w-96',
           className,
         )}
+        reuseMaps={true}
         defaultCenter={{lat: 48.85341, lng: 2.3488}}
         defaultZoom={10}
         gestureHandling={'greedy'}
