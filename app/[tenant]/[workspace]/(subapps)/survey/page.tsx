@@ -48,5 +48,11 @@ export default async function Page({params}: {params: any}) {
     })),
   );
 
-  return <Content surveys={surveys} responses={clone(enrichedResponses)} />;
+  return (
+    <Content
+      surveys={surveys}
+      responses={clone(enrichedResponses)}
+      workspace={workspace}
+    />
+  );
 }
