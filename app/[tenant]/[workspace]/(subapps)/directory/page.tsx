@@ -24,13 +24,23 @@ import {workspacePathname} from '@/utils/workspace';
 import {MdOutlineNotificationAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {Card} from './common/ui/components/card';
-import {Map} from './common/ui/components/map';
-import {Sort} from './common/ui/components/sort';
-import {Swipe} from './common/ui/components/swipe';
 import Hero from './hero';
 import {Button} from '@/ui/components';
 import {i18n} from '@/lib/core/i18n';
+import {Card} from './common/ui/components/card';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/ui/components/pagination';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
+import {getPages, getPaginationButtons} from '../ticketing/common/utils';
+import {Map} from './common/ui/components/map';
+import {Sort} from './common/ui/components/sort';
+import {Swipe} from './common/ui/components/swipe';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -38,6 +48,7 @@ const markers = [
   {lat: 48.80671, lng: 2.4075},
 ];
 
+const ITEMS_PER_PAGE = 3;
 const cardData = [
   {
     id: '1',
@@ -83,8 +94,10 @@ const cardData = [
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: {tenant: string; workspace: string};
+  searchParams: {page?: number; limit?: number};
 }) {
   const session = await getSession();
 
@@ -102,6 +115,10 @@ export default async function Page({
   if (!workspace) notFound();
 
   // TODO: change it to direcotory app later
+  const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
+
+  const data = cardData.slice((page - 1) * limit, page * limit);
+  const pages = getPages([{_count: cardData.length.toString()}], limit);
   const imageURL = workspace.config.ticketHeroBgImage?.id
     ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id, tenant)})`
     : IMAGE_URL;
@@ -175,7 +192,7 @@ export default async function Page({
             <Sort />
           </aside>
           <main className="grow flex flex-col gap-4">
-            {cardData.map(item => (
+            {data.map(item => (
               <Card
                 item={item}
                 url={`${workspaceURI}/directory/${item.id}`}
@@ -184,8 +201,76 @@ export default async function Page({
             ))}
           </main>
         </div>
+        <CardPagination
+          url={`${workspaceURI}/directory`}
+          pages={pages}
+          searchParams={searchParams}
+        />
       </div>
     </>
+  );
+}
+
+type CardPaginationProps = {
+  url: string;
+  searchParams: {page?: number; limit?: number};
+  pages: number;
+};
+
+function CardPagination({url, searchParams, pages}: CardPaginationProps) {
+  const {page = 1} = searchParams;
+
+  return (
+    <Pagination className="p-4">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious asChild>
+            <Link
+              replace
+              scroll={false}
+              className={+page <= 1 ? 'invisible' : ''}
+              href={{pathname: url, query: {...searchParams, page: +page - 1}}}>
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Previous</span>
+            </Link>
+          </PaginationPrevious>
+        </PaginationItem>
+        {getPaginationButtons({currentPage: +page, totalPages: pages}).map(
+          (value, i) =>
+            typeof value === 'string' ? (
+              <PaginationItem key={i}>
+                <span className="pagination-ellipsis">...</span>
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={value}>
+                <PaginationLink isActive={+page === value} asChild>
+                  <Link
+                    replace
+                    scroll={false}
+                    href={{
+                      pathname: url,
+                      query: {...searchParams, page: value},
+                    }}>
+                    {value}
+                  </Link>
+                </PaginationLink>
+              </PaginationItem>
+            ),
+        )}
+        <PaginationItem>
+          <PaginationNext asChild>
+            <Link
+              replace
+              scroll={false}
+              className={+page >= pages ? 'invisible' : ''}
+              href={{pathname: url, query: {...searchParams, page: +page + 1}}}>
+              <span className="sr-only">Next</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </PaginationNext>
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   );
 }
 
