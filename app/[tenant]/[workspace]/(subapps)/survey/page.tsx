@@ -9,7 +9,10 @@ import {DEFAULT_LIMIT} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
-import {findSurveys} from '@/subapps/survey/common/orm/survey';
+import {
+  findMetaModelRecords,
+  findSurveys,
+} from '@/subapps/survey/common/orm/survey';
 
 export default async function Page({params}: {params: any}) {
   const session = await getSession();
@@ -31,5 +34,19 @@ export default async function Page({params}: {params: any}) {
     limit: DEFAULT_LIMIT,
   });
 
-  return <Content surveys={surveys} />;
+  const responses =
+    (await findMetaModelRecords({
+      workspace,
+      tenantId: tenant,
+      limit: DEFAULT_LIMIT,
+    })) ?? [];
+
+  const enrichedResponses = await Promise.all(
+    responses.map(async response => ({
+      ...response,
+      attrs: await response.attrs,
+    })),
+  );
+
+  return <Content surveys={surveys} responses={clone(enrichedResponses)} />;
 }

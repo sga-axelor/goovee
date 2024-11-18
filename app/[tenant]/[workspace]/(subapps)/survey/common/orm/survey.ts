@@ -2,6 +2,7 @@
 import {clone} from '@/utils';
 import {manager, type Tenant} from '@/tenant';
 import {PortalWorkspace} from '@/types';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {SURVEY_STATUS, SURVEY_TYPE} from '@/subapps/survey/common/constants';
@@ -42,4 +43,40 @@ export async function findSurveys({
     .catch((error: any) => console.log('error >>>', error));
 
   return surveys;
+}
+
+export async function findMetaModelRecords({
+  workspace,
+  tenantId,
+  limit,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  limit?: number;
+}) {
+  if (!(workspace && tenantId)) return [];
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return [];
+  }
+  const client = await manager.getClient(tenantId);
+
+  const responses = await client.aOSMetaJsonModel
+    .find({
+      where: {
+        AND: [
+          {attrs: {path: 'partner.id', eq: user.id}},
+          {attrs: {path: 'surveyConfig', ne: null}},
+        ],
+      },
+      take: limit,
+      select: {
+        attrs: true,
+      },
+    })
+    .catch((error: any) => console.log('error >>>', error));
+  return responses;
 }

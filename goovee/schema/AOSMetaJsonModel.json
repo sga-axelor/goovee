@@ -1,0 +1,16 @@
+{
+  "name": "AOSMetaJsonModel",
+  "table": "meta_json_record",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "name": "attrs",
+      "type": "JSON"
+    }
+  ]
+}

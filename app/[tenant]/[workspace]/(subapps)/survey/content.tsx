@@ -17,12 +17,12 @@ import {Columns} from '@/subapps/survey/common/ui/components';
 
 type ContentProps = {
   surveys: any;
+  responses: any;
 };
 
-export default function Content({surveys = []}: ContentProps) {
+export default function Content({surveys = [], responses = []}: ContentProps) {
   const {workspaceURI} = useWorkspace();
   const [sortedSurveys, sort, toggleSort] = useSortBy(surveys);
-
   const handleRowClick = (survey: Survey) => {};
 
   return (
