@@ -99,7 +99,9 @@ function Details() {
           </span>
         </div>
       </div>
-      <p className="font-semibold text-xl mt-5 mb-5">Social Media</p>
+      <p className="font-semibold text-xl mt-5 mb-5">
+        {i18n.get('Social media')}
+      </p>
       <div className="flex space-x-6">
         <FaLinkedin className="h-8 w-8 text-blue-700" />
         <FaXTwitter className="h-8 w-8" />
