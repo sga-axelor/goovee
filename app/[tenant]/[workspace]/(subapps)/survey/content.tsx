@@ -6,7 +6,6 @@ import React from 'react';
 import {DEFAULT_LIMIT} from '@/constants';
 import {i18n} from '@/lib/core/i18n';
 import {Search, TableList} from '@/ui/components';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSortBy} from '@/ui/hooks';
 import {PortalWorkspace} from '@/types';
 import {useToast} from '@/ui/hooks';
@@ -61,7 +60,7 @@ export default function Content({
         });
       }
 
-      return result;
+      return result.surveys;
     } catch (error) {
       toast({
         variant: 'destructive',
