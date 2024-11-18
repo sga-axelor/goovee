@@ -1,33 +1,32 @@
 import {notFound} from 'next/navigation';
+import Link from 'next/link';
+import {IconType} from 'react-icons';
+import {
+  MdAllInbox,
+  MdFoodBank,
+  MdMoney,
+  MdOutlineDiamond,
+  MdOutlineMedicalServices,
+  MdOutlineSmartphone,
+  MdOutlineSupervisedUserCircle,
+} from 'react-icons/md';
+import {TbTool} from 'react-icons/tb';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {IMAGE_URL} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {workspacePathname} from '@/utils/workspace';
 import {getImageURL} from '@/utils/files';
-
-import {
-  MdOutlineSupervisedUserCircle,
-  MdOutlineDiamond,
-  MdFoodBank,
-  MdAllInbox,
-  MdMoney,
-  MdOutlineMedicalServices,
-  MdOutlineSmartphone,
-} from 'react-icons/md';
-import {TbTool} from 'react-icons/tb';
+import {workspacePathname} from '@/utils/workspace';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
-import Hero from './hero';
-import {IconType} from 'react-icons';
-import Link from 'next/link';
-import {Swipe} from '../ticketing/common/ui/components/swipe';
-import {cn} from '@/utils/css';
+import {DirectoryList} from './common/ui/components/directory-list';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
-import {DirectoryList} from './common/ui/components/directory-list';
+import {Swipe} from './common/ui/components/swipe';
+import Hero from './hero';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -114,7 +113,7 @@ export default async function Page({
       <div className="container mb-5">
         <Swipe
           items={cards}
-          className="flex justify-center items-center !w-[127px] !h-[100px] mb-10 mt-5 pt-5 space-y-2"
+          className="flex justify-center items-center mt-5 p-2 space-y-2"
         />
         <div className="flex has-[.expand]:flex-col gap-4 mt-4">
           <aside className="space-y-4">
@@ -135,6 +134,7 @@ type DirectoryCardsProps = {
   icon: IconType;
   iconClassName: string;
 };
+
 function DirectoryCards(props: DirectoryCardsProps) {
   const {label, icon: Icon, iconClassName} = props;
   return (
@@ -142,12 +142,12 @@ function DirectoryCards(props: DirectoryCardsProps) {
       <div
         className={cn(
           iconClassName,
-          'flex items-center justify-center h-10 w-10 rounded-full m-auto',
+          'flex items-center justify-center  h-14 w-14 rounded-full m-auto',
         )}>
-        <Icon className="h-8 w-8 " />
+        <Icon className="h-10 w-10 " />
       </div>
 
-      <p className="text-sm font-semibold text-center">{label}</p>
+      <p className="text-[0.8125rem] font-semibold text-center mt-1">{label}</p>
     </Link>
   );
 }
