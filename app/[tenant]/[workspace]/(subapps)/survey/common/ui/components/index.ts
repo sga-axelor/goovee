@@ -1,2 +1,2 @@
-export {Status} from './status';
+export {Chip} from './chip';
 export {Columns} from './columns';
