@@ -6,9 +6,15 @@ import {
 import {useCallback, useState} from 'react';
 
 import {LatLng} from './types';
-import {Category} from '../directory-list';
+import {Card} from '../card';
 
-const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
+const item = {
+  name: 'Entry Name',
+  address: '43 Mainstreet - London',
+  image: '',
+  description:
+    'Lorem ipsum dolor sit amet consectetur. Neque diam integer Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi veritatis ex labore illum quos dolores, nam optio consectetur odit. Minus facilis illo, consequuntur dolor nam illum facere velit? Ipsum, illo! purus aenean porttitor morbi. Turpis. ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
+};
 
 export function Marker({position}: {position: LatLng}) {
   const [markerRef, marker] = useMarkerRef();
@@ -21,31 +27,8 @@ export function Marker({position}: {position: LatLng}) {
     <>
       <MarkerComponent ref={markerRef} position={position} onClick={toggle} />
       {show && (
-        <InfoWindow
-          anchor={marker}
-          onClose={handleClose}
-          headerDisabled
-          headerContent={<span>show me header</span>}>
-          <div className="flex bg-card rounded-lg gap-5" key="">
-            <div className="p-3 space-y-2">
-              {category.map((item, index) => (
-                <Category
-                  name={item?.name}
-                  key={index}
-                  className="me-3"
-                  variant={item?.name}
-                />
-              ))}
-
-              <h4 className="font-semibold">Entry Name</h4>
-              <p className="text-success text-sm"> 43 Mainstreet - London</p>
-              <p className="text-xs">
-                Lorem ipsum dolor sit amet consectetur. Neque diam integer purus
-                aenean porttitor morbi. Turpis.
-              </p>
-            </div>
-            <div className="bg-yellow-200 w-[150px] h-[153px] rounded-r-lg"></div>
-          </div>
+        <InfoWindow anchor={marker} onClose={handleClose} headerDisabled>
+          <Card item={item} />
         </InfoWindow>
       )}
     </>

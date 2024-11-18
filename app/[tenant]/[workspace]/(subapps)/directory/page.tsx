@@ -1,5 +1,5 @@
-import {notFound} from 'next/navigation';
 import Link from 'next/link';
+import {notFound} from 'next/navigation';
 import {IconType} from 'react-icons';
 import {
   MdAllInbox,
@@ -17,12 +17,12 @@ import {getSession} from '@/auth';
 import {IMAGE_URL} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
+import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
-import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
-import {DirectoryList} from './common/ui/components/directory-list';
+import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
 import {Swipe} from './common/ui/components/swipe';
@@ -32,6 +32,44 @@ const markers = [
   {lat: 48.85341, lng: 2.3488},
   {lat: 48.85671, lng: 2.4475},
   {lat: 48.80671, lng: 2.4075},
+];
+
+const cardData = [
+  {
+    name: 'Entry Name',
+    address: '43 Mainstreet - London',
+    image: '',
+    description:
+      'Lorem ipsum dolor sit amet consectetur. Neque diam integer Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi veritatis ex labore illum quos dolores, nam optio consectetur odit. Minus facilis illo, consequuntur dolor nam illum facere velit? Ipsum, illo! purus aenean porttitor morbi. Turpis. ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
+  },
+  {
+    name: 'Entry Name',
+    address: '43 Mainstreet - London',
+    image: '',
+    description:
+      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
+  },
+  {
+    name: 'Entry Name',
+    address: '43 Mainstreet - London',
+    image: '',
+    description:
+      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
+  },
+  {
+    name: 'Entry Name',
+    address: '43 Mainstreet - London',
+    image: '',
+    description:
+      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
+  },
+  {
+    name: 'Entry Name',
+    address: '43 Mainstreet - London',
+    image: '',
+    description:
+      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
+  },
 ];
 
 export default async function Page({
@@ -121,7 +159,9 @@ export default async function Page({
             <Sort />
           </aside>
           <main className="grow flex flex-col gap-4">
-            <DirectoryList />
+            {cardData.map((item, index) => (
+              <Card item={item} key={index} />
+            ))}
           </main>
         </div>
       </div>
