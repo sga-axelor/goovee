@@ -1,5 +1,12 @@
 import {i18n} from '@/lib/core/i18n';
 
+export const DEFAULT_TABLE_LIMIT = 10;
+
+export const SURVEY_URL_PARAMS = {
+  page: 'page',
+  responsePage: 'responsePage',
+};
+
 export const SURVEY_STATUS = {
   DRAFT: 0,
   READY: 1,

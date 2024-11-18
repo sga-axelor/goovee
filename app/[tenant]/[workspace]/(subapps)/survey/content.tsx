@@ -1,13 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
+import {DEFAULT_LIMIT} from '@/constants';
 import {i18n} from '@/lib/core/i18n';
 import {Search, TableList} from '@/ui/components';
-import {MdArrowForward} from 'react-icons/md';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSortBy} from '@/ui/hooks';
 import {PortalWorkspace} from '@/types';
@@ -21,19 +19,23 @@ import {
   SearchItem,
 } from '@/subapps/survey/common/ui/components';
 import {getAllSurveys} from '@/subapps/survey/common/action/action';
+import {SURVEY_URL_PARAMS} from '@/subapps/survey/common/constants';
 
 type ContentProps = {
   surveys: any;
   responses: any;
   workspace: PortalWorkspace;
+  responsesPageInfo: any;
+  surveysPageInfo: any;
 };
 
 export default function Content({
   surveys = [],
   responses = [],
+  surveysPageInfo = {},
+  responsesPageInfo = {},
   workspace,
 }: ContentProps) {
-  const {workspaceURI} = useWorkspace();
   const [sortedSurveys, surveySortOrder, toggleSurveySortOrder] =
     useSortBy(surveys);
   const [sortedResponses, responseSortOrder, toggleResponseSortOrder] =
@@ -95,15 +97,9 @@ export default function Content({
             sort={surveySortOrder}
             onSort={toggleSurveySortOrder}
             onRowClick={handleRowClick}
+            pageInfo={surveysPageInfo}
+            pageParamKey={SURVEY_URL_PARAMS.page}
           />
-          <div className="flex justify-end p-4">
-            <Link
-              href={`${workspaceURI}/${SUBAPP_CODES.survey}`}
-              className="inline-flex gap-1 items-center text-success text-sm font-medium">
-              {i18n.get('See all surveys')}
-              <MdArrowForward />
-            </Link>
-          </div>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -116,15 +112,9 @@ export default function Content({
             sort={responseSortOrder}
             onSort={toggleResponseSortOrder}
             onRowClick={handleRowClick}
+            pageInfo={responsesPageInfo}
+            pageParamKey={SURVEY_URL_PARAMS.responsePage}
           />
-          <div className="flex justify-end p-4">
-            <Link
-              href={`${workspaceURI}/${SUBAPP_CODES.survey}`}
-              className="inline-flex gap-1 items-center text-success text-sm font-medium">
-              {i18n.get('See all responses')}
-              <MdArrowForward />
-            </Link>
-          </div>
         </div>
       </div>
     </div>

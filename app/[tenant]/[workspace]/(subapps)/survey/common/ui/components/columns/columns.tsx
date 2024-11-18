@@ -4,7 +4,11 @@ import {i18n} from '@/i18n';
 // ---- LOCAL IMPORTS ---- //
 import {Response, Survey} from '@/subapps/survey/common/types';
 import {Chip} from '@/subapps/survey/common/ui/components';
-import {getStatusName, getSurveyTypeName} from '@/subapps/survey/common/utils';
+import {
+  getResponseStatusName,
+  getStatusName,
+  getSurveyTypeName,
+} from '@/subapps/survey/common/utils';
 
 export const surveyColumns = [
   {
@@ -70,7 +74,10 @@ export const partnerResponseColumns = [
     mobile: true,
     getter: (row: Response) => row.attrs?.statusSelect,
     content: (row: Response) => (
-      <Chip value={getStatusName(row.attrs?.statusSelect)} outline={true} />
+      <Chip
+        value={getResponseStatusName(row.attrs?.statusSelect)}
+        outline={true}
+      />
     ),
   },
   {

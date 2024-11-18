@@ -5,7 +5,6 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {DEFAULT_LIMIT} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
@@ -13,14 +12,22 @@ import {
   findMetaModelRecords,
   findSurveys,
 } from '@/subapps/survey/common/orm/survey';
+import {DEFAULT_TABLE_LIMIT} from '@/subapps/survey/common/constants';
 
-export default async function Page({params}: {params: any}) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: any;
+  searchParams: {[key: string]: string | undefined};
+}) {
   const session = await getSession();
   const user = session?.user;
 
   if (!user) return notFound();
 
   const {workspaceURL, tenant} = workspacePathname(params);
+  const {page, responsePage} = searchParams;
 
   const workspace: any = await findWorkspace({
     user: session?.user,
@@ -28,21 +35,23 @@ export default async function Page({params}: {params: any}) {
     tenantId: tenant,
   }).then(clone);
 
-  const surveys = await findSurveys({
+  const {surveys, pageInfo: surveysPageInfo}: any = await findSurveys({
     workspace,
     tenantId: tenant,
-    limit: DEFAULT_LIMIT,
+    limit: DEFAULT_TABLE_LIMIT,
+    page,
   });
 
-  const responses =
+  const {responses, pageInfo: responsesPageInfo}: any =
     (await findMetaModelRecords({
       workspace,
       tenantId: tenant,
-      limit: DEFAULT_LIMIT,
+      limit: DEFAULT_TABLE_LIMIT,
+      page: responsePage,
     })) ?? [];
 
   const enrichedResponses = await Promise.all(
-    responses.map(async response => ({
+    responses.map(async (response: any) => ({
       ...response,
       attrs: await response.attrs,
     })),
@@ -51,7 +60,9 @@ export default async function Page({params}: {params: any}) {
   return (
     <Content
       surveys={surveys}
+      surveysPageInfo={surveysPageInfo}
       responses={clone(enrichedResponses)}
+      responsesPageInfo={responsesPageInfo}
       workspace={workspace}
     />
   );
