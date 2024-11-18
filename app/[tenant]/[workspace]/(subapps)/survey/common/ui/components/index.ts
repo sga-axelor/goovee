@@ -1,2 +1,2 @@
 export {Chip} from './chip';
-export {surveyColumns} from './columns';
+export {surveyColumns, partnerResponseColumns} from './columns';

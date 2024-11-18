@@ -2,7 +2,7 @@
 import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import {Survey} from '@/subapps/survey/common/types';
+import {Response, Survey} from '@/subapps/survey/common/types';
 import {Chip} from '@/subapps/survey/common/ui/components';
 import {getStatusName, getSurveyTypeName} from '@/subapps/survey/common/utils';
 
@@ -45,5 +45,38 @@ export const surveyColumns = [
     label: i18n.get('Publication date'),
     getter: (row: Survey) => row.publicationDatetime,
     content: (row: any) => row.publicationDatetime,
+  },
+];
+
+export const partnerResponseColumns = [
+  {
+    key: 'title',
+    label: i18n.get('Title'),
+    sortable: true,
+    mobile: true,
+    getter: (row: Response) => row.attrs?.title,
+    content: (row: any) => row.attrs?.title,
+  },
+  {
+    key: 'survey',
+    label: i18n.get('Survey'),
+    sortable: true,
+    getter: (row: Response) => row.attrs?.surveyConfig?.name,
+    content: (row: any) => row.attrs?.surveyConfig?.name,
+  },
+  {
+    key: 'statusSelect',
+    label: i18n.get('Status'),
+    mobile: true,
+    getter: (row: Response) => row.attrs?.statusSelect,
+    content: (row: Response) => (
+      <Chip value={getStatusName(row.attrs?.statusSelect)} outline={true} />
+    ),
+  },
+  {
+    key: 'partner',
+    label: i18n.get('Partner'),
+    getter: (row: Response) => row.attrs?.partner.fullName,
+    content: (row: any) => row.attrs?.partner.fullName,
   },
 ];

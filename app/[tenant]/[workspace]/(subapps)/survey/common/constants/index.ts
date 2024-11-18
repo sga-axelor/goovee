@@ -14,6 +14,12 @@ export const SURVEY_TYPE = {
   PUBLIC: 3,
 };
 
+export const RESPONSE_STATUS = {
+  OPEN: 1,
+  IN_PROGRESS: 2,
+  COMPLETED: 3,
+};
+
 export const STATUS_NAMES: {[key: number]: string} = {
   [SURVEY_STATUS.DRAFT]: i18n.get('Draft'),
   [SURVEY_STATUS.READY]: i18n.get('Ready'),
@@ -26,4 +32,10 @@ export const SURVEY_TYPE_NAMES: {[key: number]: string} = {
   [SURVEY_TYPE.INTERNAL]: i18n.get('Internal'),
   [SURVEY_TYPE.EXTERNAL]: i18n.get('External'),
   [SURVEY_TYPE.PUBLIC]: i18n.get('Public'),
+};
+
+export const RESPONSE_STATUS_NAMES: {[key: number]: string} = {
+  [RESPONSE_STATUS.OPEN]: i18n.get('Open'),
+  [RESPONSE_STATUS.IN_PROGRESS]: i18n.get('In progress'),
+  [RESPONSE_STATUS.COMPLETED]: i18n.get('Completed'),
 };

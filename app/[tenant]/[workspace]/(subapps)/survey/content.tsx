@@ -13,7 +13,10 @@ import {useSortBy} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {Survey} from '@/subapps/survey/common/types';
-import {surveyColumns} from '@/subapps/survey/common/ui/components';
+import {
+  surveyColumns,
+  partnerResponseColumns,
+} from '@/subapps/survey/common/ui/components';
 
 type ContentProps = {
   surveys: any;
@@ -24,6 +27,8 @@ export default function Content({surveys = [], responses = []}: ContentProps) {
   const {workspaceURI} = useWorkspace();
   const [sortedSurveys, surveySortOrder, toggleSurveySortOrder] =
     useSortBy(surveys);
+  const [sortedResponses, responseSortOrder, toggleResponseSortOrder] =
+    useSortBy(responses);
 
   const handleRowClick = (survey: Survey) => {};
 
@@ -52,11 +57,17 @@ export default function Content({surveys = [], responses = []}: ContentProps) {
           </div>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-4">
           <h2 className="font-semibold text-xl">
             {i18n.get('Partner Responses')}
           </h2>
-
+          <TableList
+            columns={partnerResponseColumns}
+            rows={sortedResponses}
+            sort={responseSortOrder}
+            onSort={toggleResponseSortOrder}
+            onRowClick={handleRowClick}
+          />
           <div className="flex justify-end p-4">
             <Link
               href={`${workspaceURI}/${SUBAPP_CODES.survey}`}
