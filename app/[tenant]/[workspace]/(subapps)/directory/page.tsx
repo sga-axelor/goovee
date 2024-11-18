@@ -111,7 +111,7 @@ export default async function Page({
         image={imageURL}
         tenantId={tenant}
       />
-      <div>
+      <div className="container mb-5">
         <Swipe
           items={cards}
           className="flex justify-center items-center !w-[127px] !h-[100px] mb-10 mt-5 pt-5 space-y-2"
