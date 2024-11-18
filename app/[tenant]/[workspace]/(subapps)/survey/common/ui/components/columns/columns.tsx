@@ -6,7 +6,7 @@ import {Survey} from '@/subapps/survey/common/types';
 import {Chip} from '@/subapps/survey/common/ui/components';
 import {getStatusName, getSurveyTypeName} from '@/subapps/survey/common/utils';
 
-export const Columns = [
+export const surveyColumns = [
   {
     key: 'name',
     label: i18n.get('Name'),
@@ -35,9 +35,9 @@ export const Columns = [
   {
     key: 'category',
     label: i18n.get('Category'),
-    getter: (row: Survey) => row.category.name,
+    getter: (row: Survey) => row.category?.name,
     content: (row: any) => (
-      <Chip value={row.category.name} variant="purple" className="rounded" />
+      <Chip value={row.category?.name} variant="purple" className="rounded" />
     ),
   },
   {

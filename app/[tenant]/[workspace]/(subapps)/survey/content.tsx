@@ -13,7 +13,7 @@ import {useSortBy} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {Survey} from '@/subapps/survey/common/types';
-import {Columns} from '@/subapps/survey/common/ui/components';
+import {surveyColumns} from '@/subapps/survey/common/ui/components';
 
 type ContentProps = {
   surveys: any;
@@ -22,7 +22,9 @@ type ContentProps = {
 
 export default function Content({surveys = [], responses = []}: ContentProps) {
   const {workspaceURI} = useWorkspace();
-  const [sortedSurveys, sort, toggleSort] = useSortBy(surveys);
+  const [sortedSurveys, surveySortOrder, toggleSurveySortOrder] =
+    useSortBy(surveys);
+
   const handleRowClick = (survey: Survey) => {};
 
   return (
@@ -34,10 +36,10 @@ export default function Content({surveys = [], responses = []}: ContentProps) {
           <h2 className="font-semibold text-xl">{i18n.get('Open Surveys')}</h2>
 
           <TableList
-            columns={Columns}
+            columns={surveyColumns}
             rows={sortedSurveys}
-            sort={sort}
-            onSort={toggleSort}
+            sort={surveySortOrder}
+            onSort={toggleSurveySortOrder}
             onRowClick={handleRowClick}
           />
           <div className="flex justify-end p-4">
@@ -54,6 +56,7 @@ export default function Content({surveys = [], responses = []}: ContentProps) {
           <h2 className="font-semibold text-xl">
             {i18n.get('Partner Responses')}
           </h2>
+
           <div className="flex justify-end p-4">
             <Link
               href={`${workspaceURI}/${SUBAPP_CODES.survey}`}
