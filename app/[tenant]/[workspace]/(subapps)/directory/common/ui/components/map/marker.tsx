@@ -7,8 +7,10 @@ import {useCallback, useState} from 'react';
 
 import {LatLng} from './types';
 import {Card} from '../card';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 const item = {
+  id: '1',
   name: 'Entry Name',
   address: '43 Mainstreet - London',
   image: '',
@@ -17,6 +19,9 @@ const item = {
 };
 
 export function Marker({position}: {position: LatLng}) {
+  const {workspaceURI} = useWorkspace();
+
+  const url = `${workspaceURI}/directory/${item.id}`;
   const [markerRef, marker] = useMarkerRef();
 
   const [show, setShow] = useState(false);
@@ -28,7 +33,7 @@ export function Marker({position}: {position: LatLng}) {
       <MarkerComponent ref={markerRef} position={position} onClick={toggle} />
       {show && (
         <InfoWindow anchor={marker} onClose={handleClose} headerDisabled>
-          <Card item={item} />
+          <Card item={item} url={url} />
         </InfoWindow>
       )}
     </>

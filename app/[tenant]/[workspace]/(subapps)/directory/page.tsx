@@ -36,6 +36,7 @@ const markers = [
 
 const cardData = [
   {
+    id: '1',
     name: 'Entry Name',
     address: '43 Mainstreet - London',
     image: '',
@@ -43,6 +44,7 @@ const cardData = [
       'Lorem ipsum dolor sit amet consectetur. Neque diam integer Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi veritatis ex labore illum quos dolores, nam optio consectetur odit. Minus facilis illo, consequuntur dolor nam illum facere velit? Ipsum, illo! purus aenean porttitor morbi. Turpis. ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
   },
   {
+    id: '2',
     name: 'Entry Name',
     address: '43 Mainstreet - London',
     image: '',
@@ -50,6 +52,7 @@ const cardData = [
       'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
   },
   {
+    id: '3',
     name: 'Entry Name',
     address: '43 Mainstreet - London',
     image: '',
@@ -57,6 +60,7 @@ const cardData = [
       'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
   },
   {
+    id: '4',
     name: 'Entry Name',
     address: '43 Mainstreet - London',
     image: '',
@@ -64,6 +68,7 @@ const cardData = [
       'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
   },
   {
+    id: '5',
     name: 'Entry Name',
     address: '43 Mainstreet - London',
     image: '',
@@ -82,7 +87,7 @@ export default async function Page({
   // TODO: check if user auth is required
   // if (!session?.user) notFound();
 
-  const {workspaceURL, tenant} = workspacePathname(params);
+  const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
@@ -159,8 +164,12 @@ export default async function Page({
             <Sort />
           </aside>
           <main className="grow flex flex-col gap-4">
-            {cardData.map((item, index) => (
-              <Card item={item} key={index} />
+            {cardData.map(item => (
+              <Card
+                item={item}
+                url={`${workspaceURI}/directory/${item.id}`}
+                key={item.id}
+              />
             ))}
           </main>
         </div>

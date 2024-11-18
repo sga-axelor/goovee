@@ -1,15 +1,19 @@
+import Link from 'next/link';
 import {Category} from '../pills';
 
 const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
 
 export type CardProps = {
-  item: {name: string; address: string; description: string};
+  item: {id: string; name: string; address: string; description: string};
+  url: string;
 };
 
 export function Card(props: CardProps) {
-  const {item} = props;
+  const {item, url} = props;
   return (
-    <div className="flex bg-card rounded-lg gap-1 justify-between">
+    <Link
+      href={{pathname: url}}
+      className="flex bg-card rounded-lg gap-1 justify-between">
       <div className="p-3 space-y-2 grow">
         <div className="flex flex-wrap items-center gap-2">
           {category.map((item, index) => (
@@ -21,6 +25,6 @@ export function Card(props: CardProps) {
         <p className="text-xs line-clamp-3">{item.description}</p>
       </div>
       <div className="bg-yellow-200 w-[150px] shrink-0 rounded-r-lg"></div>
-    </div>
+    </Link>
   );
 }
