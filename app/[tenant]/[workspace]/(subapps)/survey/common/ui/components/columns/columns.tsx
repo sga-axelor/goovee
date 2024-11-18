@@ -37,21 +37,9 @@ export const Columns = [
     content: (row: any) => row.category,
   },
   {
-    key: 'target',
-    label: i18n.get('Target'),
-    getter: (row: Survey) => row.target,
-    content: (row: any) => row.target,
-  },
-  {
     key: 'publicationDatetime',
     label: i18n.get('Publication date'),
     getter: (row: Survey) => row.publicationDatetime,
     content: (row: any) => row.publicationDatetime,
-  },
-  {
-    key: 'customModel',
-    label: i18n.get('Response model'),
-    getter: (row: Survey) => row.customModel,
-    content: (row: any) => row.customModel,
   },
 ];
