@@ -6,12 +6,15 @@ import {i18n} from '@/i18n';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import {FaLinkedin} from 'react-icons/fa';
+import {FaLinkedin, FaInstagram} from 'react-icons/fa';
 import {Avatar, AvatarImage} from '@/ui/components';
 import {getProfilePic} from '@/utils/files';
+import {MdOutlineWeb} from 'react-icons/md';
+import {FaXTwitter} from 'react-icons/fa6';
 
 // ---- LOCAL IMPORTS ---- //
 import {Map} from '../common/ui/components/map';
+import {Category} from '../common/ui/components/pills';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
 export default async function Page({
@@ -49,7 +52,62 @@ export default async function Page({
 }
 
 function Details() {
-  return <div>Details</div>;
+  const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
+  return (
+    <div>
+      <div className="flex bg-card gap-5 justify-between">
+        <div className="space-y-6">
+          <h2 className="font-semibold text-xl">Entry Name</h2>
+          {category.map((cat, idx) => (
+            <Category
+              name={cat?.name}
+              key={idx}
+              className="me-3"
+              variant={cat?.name}
+            />
+          ))}
+          <p className="text-success text-base">43 Mainstreet - London</p>
+        </div>
+        <div className="bg-yellow-200 w-[150px] h-[153px]"></div>
+      </div>
+      <hr />
+
+      {/* directory description */}
+
+      <div className="space-y-4 mt-5">
+        <p className="text-sm text-gray-500">
+          Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
+          mattis pharetra sed. Sem id morbi nunc consectetur ultrices. Magna id
+          nisi metus tortor pharetra nullam. Eget vestibulum nisi orci aliquam.
+          Convallis sed turpis et amet. Pharetra eget adipiscing vivamus mattis
+          lorem iaculis bibendum. Egestas lectus diam ultrices nibh scelerisque
+          nunc scelerisque at consectetur.
+        </p>
+
+        <div>
+          <span className="text-base font-semibold me-2">Info 1:</span>
+          <span className="text-sm text-gray-500">
+            Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
+            mattis pharetra sed.
+          </span>
+        </div>
+        <div>
+          <span className="text-base font-semibold me-2">Info 2:</span>
+          <span className="text-sm text-gray-500">
+            Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
+            mattis pharetra sed.
+          </span>
+        </div>
+      </div>
+      <p className="font-semibold text-xl mt-5 mb-5">Social Media</p>
+      <div className="flex space-x-6">
+        <FaLinkedin className="h-8 w-8 text-blue-700" />
+        <FaXTwitter className="h-8 w-8" />
+        <FaInstagram className="h-8 w-8 text-yellow-500" />
+        <MdOutlineWeb className="h-8 w-8 text-gray-500" />
+      </div>
+    </div>
+  );
 }
 
 function Contacts({tenant}: {tenant: string}) {

@@ -21,12 +21,16 @@ import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 
+import {MdOutlineNotificationAdd} from 'react-icons/md';
+
 // ---- LOCAL IMPORTS ---- //
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
 import {Swipe} from './common/ui/components/swipe';
 import Hero from './hero';
+import {Button} from '@/ui/components';
+import {i18n} from '@/lib/core/i18n';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -154,6 +158,13 @@ export default async function Page({
         tenantId={tenant}
       />
       <div className="container mb-5">
+        <div className="flex justify-between mt-5">
+          <p className="text-xl font-semibold">Services</p>
+          <Button variant="success" className="flex items-center">
+            <MdOutlineNotificationAdd className="size-6 me-2" />
+            <span>{i18n.get('Subscribe')}</span>
+          </Button>
+        </div>
         <Swipe
           items={cards}
           className="flex justify-center items-center mt-5 p-2 space-y-2"
