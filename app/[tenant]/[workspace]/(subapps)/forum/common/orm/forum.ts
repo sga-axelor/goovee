@@ -188,7 +188,7 @@ export async function findPosts({
     ...(search
       ? {
           title: {
-            like: `%${search.toLowerCase()}%`,
+            like: `%${search}%`,
           },
         }
       : {}),

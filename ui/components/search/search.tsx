@@ -24,6 +24,7 @@ export const Search = ({
   forceClose,
   onFilter,
   onFocus,
+  onKeyDown,
 }: {
   findQuery: any;
   renderItem: any;
@@ -33,6 +34,7 @@ export const Search = ({
   forceClose?: boolean;
   onFilter?: any;
   onFocus?: any;
+  onKeyDown?: any;
 }) => {
   const RenderItem = renderItem;
   const [search, setSearch] = useState('');
@@ -74,6 +76,7 @@ export const Search = ({
               setSearch(e.target.value)
             }
             onFocus={() => onFocus && onFocus(true)}
+            onKeyDown={e => onKeyDown && onKeyDown(e, search)}
           />
 
           <CommandList

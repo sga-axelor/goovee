@@ -99,13 +99,19 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
 
   const handleSearchFilter = (value: string, search: string) => {
     const regex = /^(.*?)(?==[^=]*$)/;
-    if (value.match(regex)?.[0].includes(search)) return 1;
+    if (value.match(regex)?.[0].includes(search.toLowerCase())) return 1;
     return 0;
   };
 
   const handleSearch = (term: string) => {
     if (term.length === 0) {
-      update([{key: URL_PARAMS.searchid, value: null}], {scroll: false});
+      update(
+        [
+          {key: URL_PARAMS.searchid, value: null},
+          {key: URL_PARAMS.search, value: null},
+        ],
+        {scroll: false},
+      );
     } else {
       setSearchValue(term);
     }
@@ -116,6 +122,15 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
       if (!result) return;
       update([{key: URL_PARAMS.searchid, value: result.id}], {scroll: false});
       setForceClose(true);
+    },
+    [update],
+  );
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>, term: string) => {
+      if (e.key === 'Enter' && term.trim().length > 0) {
+        update([{key: URL_PARAMS.search, value: term}], {scroll: false});
+      }
     },
     [update],
   );
@@ -162,7 +177,10 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
         });
         if (response) {
           const {posts} = response;
-          return posts.map((p: any) => ({...p, label: `${p.title}=${p.id}`}));
+          return posts.map((p: any) => ({
+            ...p,
+            label: `${p.title.toLowerCase()}=${p.id}`,
+          }));
         }
         return [];
       }}
@@ -171,6 +189,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
       onItemClick={handleSearchItemClick}
       onFilter={handleSearchFilter}
       onFocus={handleSearchFocus}
+      onKeyDown={handleSearchKeyDown}
     />
   );
 
