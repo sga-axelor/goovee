@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {
@@ -147,7 +147,7 @@ export default async function Page({
               asChild
               className="text-foreground-muted cursor-pointer truncate text-md">
               <Link href={`${workspaceURI}/ticketing`}>
-                {i18n.get('Projects')}
+                {await getTranslation('Projects')}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -167,11 +167,13 @@ export default async function Page({
       />
       <Swipe items={items} />
       <div className="flex items-center justify-between !mt-0">
-        <h2 className="font-semibold text-xl">{i18n.get('Latest tickets')}</h2>
+        <h2 className="font-semibold text-xl">
+          {await getTranslation('Latest tickets')}
+        </h2>
         <Button variant="success" className="flex items-center" asChild>
           <Link href={`${ticketsURL}/create`}>
             <MdAdd className="size-6" />
-            <span>{i18n.get('Create a ticket')}</span>
+            <span>{await getTranslation('Create a ticket')}</span>
           </Link>
         </Button>
       </div>
@@ -181,7 +183,7 @@ export default async function Page({
           <Link
             href={allTicketsURL}
             className="inline-flex gap-1 items-center text-success text-sm font-medium">
-            {i18n.get('See all tickets')}
+            {await getTranslation('See all tickets')}
             <MdArrowForward />
           </Link>
         </div>

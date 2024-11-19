@@ -6,7 +6,7 @@ import {FaChevronRight} from 'react-icons/fa';
 // ---- CORE IMPORTS ---- //
 import {type Tenant} from '@/tenant';
 import {SORT_TYPE} from '@/constants';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {ModelType} from '@/types';
@@ -113,7 +113,7 @@ export default async function Page({
               asChild
               className="text-foreground-muted cursor-pointer truncate text-md">
               <Link href={`${workspaceURI}/ticketing`}>
-                {i18n.get('Projects')}
+                {await getTranslation('Projects')}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -134,7 +134,9 @@ export default async function Page({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild className="cursor-pointer text-md">
-              <Link href={allTicketsURL}>{i18n.get('All tickets')}</Link>
+              <Link href={allTicketsURL}>
+                {await getTranslation('All tickets')}
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator>
@@ -185,7 +187,7 @@ export default async function Page({
       </TicketDetailsProvider>
       <div className="rounded-md border bg-card p-4 mt-5">
         <h4 className="text-xl font-semibold border-b">
-          {i18n.get('Comments')}
+          {await getTranslation('Comments')}
         </h4>
         <Comments
           record={ticket}

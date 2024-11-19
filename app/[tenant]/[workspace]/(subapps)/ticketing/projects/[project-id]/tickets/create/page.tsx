@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
@@ -94,7 +94,7 @@ export default async function Page({
               asChild
               className="text-foreground-muted cursor-pointer truncate text-md">
               <Link href={`${workspaceURI}/ticketing`}>
-                {i18n.get('Projects')}
+                {await getTranslation('Projects')}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -115,7 +115,9 @@ export default async function Page({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild className="cursor-pointer text-md">
-              <Link href={allTicketsURL}>{i18n.get('All tickets')}</Link>
+              <Link href={allTicketsURL}>
+                {await getTranslation('All tickets')}
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator>
@@ -124,7 +126,7 @@ export default async function Page({
           <BreadcrumbItem>
             <BreadcrumbPage className="truncate text-lg font-semibold">
               <h2 className="font-semibold text-xl">
-                {i18n.get('Create a ticket')}
+                {await getTranslation('Create a ticket')}
               </h2>
             </BreadcrumbPage>
           </BreadcrumbItem>

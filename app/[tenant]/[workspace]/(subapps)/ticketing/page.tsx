@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {IMAGE_URL} from '@/constants';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {HeroSearch} from '@/ui/components';
@@ -61,7 +61,7 @@ export default async function Page({
     redirect(`${workspaceURI}/ticketing/projects/${projects[0].id}`);
   }
   if (!projects.length) {
-    <h3>{i18n.get('No projects found')}</h3>;
+    <h3>{await getTranslation('No projects found')}</h3>;
   }
 
   const imageURL = workspace.config.ticketHeroBgImage?.id
@@ -71,12 +71,15 @@ export default async function Page({
   return (
     <>
       <HeroSearch
-        title={workspace.config.ticketHeroTitle || i18n.get('Ticketing')}
+        title={
+          workspace.config.ticketHeroTitle ||
+          (await getTranslation('Ticketing'))
+        }
         description={
           workspace.config.ticketHeroDescription ||
-          i18n.get(
+          (await getTranslation(
             'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam',
-          )
+          ))
         }
         background={workspace.config.ticketHeroOverlayColorSelect || 'default'}
         blendMode={
@@ -88,16 +91,16 @@ export default async function Page({
       <div className="container py-6 space-y-6">
         {projects.length === 0 ? (
           <h2 className="font-semibold text-xl text-center">
-            {i18n.get('No projects found')}
+            {await getTranslation('No projects found')}
           </h2>
         ) : (
           <h2 className="font-semibold text-xl">
-            {i18n.get('Choose your project')}
+            {await getTranslation('Choose your project')}
           </h2>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projects.map(project => (
+          {projects.map(async project => (
             <Link
               key={project.id}
               href={`${workspaceURI}/ticketing/projects/${project.id}`}>
@@ -108,8 +111,8 @@ export default async function Page({
                 <p className="text-[12px] font-medium mt-2">
                   {project.taskCount}{' '}
                   {project.taskCount === 1
-                    ? i18n.get('ticket')
-                    : i18n.get('tickets')}
+                    ? await getTranslation('ticket')
+                    : await getTranslation('tickets')}
                 </p>
               </div>
             </Link>
