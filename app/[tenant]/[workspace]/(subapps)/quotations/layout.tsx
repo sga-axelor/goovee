@@ -1,17 +1,18 @@
 import React from 'react';
 import {notFound} from 'next/navigation';
-import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {findSubappAccess} from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 
-export const metadata: Metadata = {
-  title: i18n.get('Quotations'),
-};
+export async function generateMetadata() {
+  return {
+    title: await getTranslation('Quotations'),
+  };
+}
 
 export default async function Layout({
   params,
