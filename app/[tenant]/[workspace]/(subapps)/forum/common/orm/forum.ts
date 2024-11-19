@@ -149,7 +149,7 @@ export async function findPosts({
 
   switch (sort) {
     case SORT_TYPE.old:
-      orderBy = {createdOn: ORDER_BY.ASC};
+      orderBy = {postDateT: ORDER_BY.ASC};
       break;
     case SORT_TYPE.popular:
       const query: any = await getPopularQuery({
@@ -171,7 +171,7 @@ export async function findPosts({
       };
 
     default:
-      orderBy = {createdOn: ORDER_BY.DESC};
+      orderBy = {postDateT: ORDER_BY.DESC};
   }
 
   const skip = getSkipInfo(limit, page);

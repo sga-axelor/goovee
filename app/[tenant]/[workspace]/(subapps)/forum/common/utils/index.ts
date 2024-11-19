@@ -146,7 +146,7 @@ export async function getPopularQuery({
         ON pd.postId = ad.postId
     LEFT JOIN authorData AS authorD 
         ON pd.author = authorD.id
-    ORDER BY COALESCE(cd.totalComments, 0) DESC, pd.createdOn DESC
+    ORDER BY COALESCE(cd.totalComments, 0) DESC, pd.postDateT DESC
     LIMIT $1
     OFFSET $2
         `,
