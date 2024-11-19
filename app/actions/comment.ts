@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {addComment, findComments, upload} from '@/orm/comment';
 import {TENANT_HEADER} from '@/middleware';
 import {getSession} from '@/auth';
@@ -34,7 +34,7 @@ export async function createComment(formData: any, valueString: string) {
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required.'),
+      message: await getTranslation('TenantId is required.'),
     };
   }
 
@@ -107,14 +107,14 @@ export async function fetchComments({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required.'),
+      message: await getTranslation('TenantId is required.'),
     };
   }
 
   const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   try {

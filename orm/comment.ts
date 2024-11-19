@@ -5,7 +5,7 @@ import {promisify} from 'util';
 
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
@@ -57,11 +57,14 @@ export async function getPopularCommentsBySorting({
   modelName: string;
 }) {
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   if (!tenantId) {
-    return {error: true, message: i18n.get('TenantId is required.')};
+    return {
+      error: true,
+      message: await getTranslation('TenantId is required.'),
+    };
   }
 
   const skip = getSkipInfo(limit, page);
@@ -194,14 +197,14 @@ export async function upload(
   if (!workspaceURL) {
     return {
       error: true,
-      message: i18n.get('Workspace not provided.'),
+      message: await getTranslation('Workspace not provided.'),
     };
   }
 
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required.'),
+      message: await getTranslation('TenantId is required.'),
     };
   }
 
@@ -212,7 +215,7 @@ export async function upload(
   if (!text) {
     return {
       error: true,
-      message: i18n.get('Text is required'),
+      message: await getTranslation('Text is required'),
     };
   }
 
@@ -222,7 +225,7 @@ export async function upload(
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -235,7 +238,7 @@ export async function upload(
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
@@ -295,7 +298,9 @@ export async function upload(
     console.error('Error processing attachments:', err);
     return {
       error: true,
-      message: i18n.get('An error occurred while processing the attachments.'),
+      message: await getTranslation(
+        'An error occurred while processing the attachments.',
+      ),
     };
   }
 }
@@ -331,14 +336,14 @@ export async function addComment({
     if (!user) {
       return {
         error: true,
-        message: i18n.get('Unauthorized'),
+        message: await getTranslation('Unauthorized'),
       };
     }
 
     if (!tenantId) {
       return {
         error: true,
-        message: i18n.get('TenantId is required.'),
+        message: await getTranslation('TenantId is required.'),
       };
     }
 
@@ -347,7 +352,9 @@ export async function addComment({
     if (!aosUser) {
       return {
         error: true,
-        message: i18n.get('Cannot create comment. Configuration Error.'),
+        message: await getTranslation(
+          'Cannot create comment. Configuration Error.',
+        ),
       };
     }
 
@@ -360,14 +367,14 @@ export async function addComment({
     if (!workspace) {
       return {
         error: true,
-        message: i18n.get('Invalid workspace'),
+        message: await getTranslation('Invalid workspace'),
       };
     }
 
     if (!model?.id) {
       return {
         error: true,
-        message: i18n.get('Model is missing'),
+        message: await getTranslation('Model is missing'),
       };
     }
 
@@ -385,7 +392,7 @@ export async function addComment({
     if (error) {
       return {
         error: true,
-        message: i18n.get(message || 'Record not found.'),
+        message: await getTranslation(message || 'Record not found.'),
       };
     }
 
@@ -402,7 +409,7 @@ export async function addComment({
       if (!parent) {
         return {
           error: true,
-          message: i18n.get('Invalid parent comment Id.'),
+          message: await getTranslation('Invalid parent comment Id.'),
         };
       }
     }
@@ -413,7 +420,7 @@ export async function addComment({
     if (!modelName) {
       return {
         error: true,
-        message: i18n.get('Invalid model type'),
+        message: await getTranslation('Invalid model type'),
       };
     }
 
@@ -479,21 +486,21 @@ export async function findByID({
   if (!type || !id) {
     return {
       error: true,
-      message: i18n.get('Missing type or ID'),
+      message: await getTranslation('Missing type or ID'),
     };
   }
 
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required.'),
+      message: await getTranslation('TenantId is required.'),
     };
   }
 
@@ -503,7 +510,7 @@ export async function findByID({
     if (!user) {
       return {
         error: true,
-        message: i18n.get('Unauthorized'),
+        message: await getTranslation('Unauthorized'),
       };
     }
   }
@@ -538,13 +545,13 @@ export async function findByID({
       if (!response)
         return {
           error: true,
-          message: i18n.get('Unauthorized'),
+          message: await getTranslation('Unauthorized'),
         };
       break;
     default:
       return {
         error: true,
-        message: i18n.get('Unknown type'),
+        message: await getTranslation('Unknown type'),
       };
   }
 
@@ -575,7 +582,7 @@ export async function findComments({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -590,14 +597,14 @@ export async function findComments({
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
   if (!model?.id) {
     return {
       error: true,
-      message: i18n.get('Model is missing'),
+      message: await getTranslation('Model is missing'),
     };
   }
 
@@ -619,7 +626,7 @@ export async function findComments({
   if (error) {
     return {
       error: true,
-      message: i18n.get(message || 'Record not found.'),
+      message: await getTranslation(message || 'Record not found.'),
     };
   }
 
@@ -628,7 +635,7 @@ export async function findComments({
   if (!modelName) {
     return {
       error: true,
-      message: i18n.get('Invalid model type'),
+      message: await getTranslation('Invalid model type'),
     };
   }
 
@@ -748,6 +755,9 @@ export async function findComments({
     };
   } catch (error) {
     console.log('error >>>', error);
-    return {error: true, message: i18n.get('Something went wromng')};
+    return {
+      error: true,
+      message: await getTranslation('Something went wromng'),
+    };
   }
 }
