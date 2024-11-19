@@ -4,7 +4,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
 import type {Comment, ID, Participant, PortalWorkspace} from '@/types';
@@ -94,10 +94,13 @@ export async function register({
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
-  if (!eventId) return error(i18n.get('Event ID is missing!'));
-  if (!values) return error(i18n.get('Values are missing!'));
-  if (!tenantId) return error(i18n.get('Tenant ID is missing!'));
-  if (!workspace) return error(i18n.get('Workspace is missing!'));
+  if (!eventId) return error(await getTranslation('Event ID is missing!'));
+
+  if (!values) return error(await getTranslation('Values are missing!'));
+
+  if (!tenantId) return error(await getTranslation('Tenant ID is missing!'));
+
+  if (!workspace) return error(await getTranslation('Workspace is missing!'));
 
   const workspaceURL = workspace.url;
   const result = await validate([
@@ -110,7 +113,7 @@ export async function register({
   }
 
   const event = await findEventByID({id: eventId, workspace, tenantId});
-  if (!event) return error(i18n.get('Event not found!'));
+  if (!event) return error(await getTranslation('Event not found!'));
 
   try {
     const {otherPeople, ...rest} = values;
@@ -138,7 +141,7 @@ export async function register({
     }).then(clone);
   } catch (err) {
     console.log(err);
-    return error(i18n.get('Something went wrong!'));
+    return error(await getTranslation('Something went wrong!'));
   }
 }
 
@@ -152,7 +155,7 @@ export async function fetchContacts({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(i18n.get('Bad Request'));
+    return error(await getTranslation('Bad Request'));
   }
 
   const result = await validate([
@@ -171,7 +174,7 @@ export async function fetchContacts({
     return result;
   } catch (err) {
     console.log(err);
-    return error(i18n.get('Something went wrong!'));
+    return error(await getTranslation('Something went wrong!'));
   }
 }
 
@@ -185,15 +188,15 @@ export async function fetchEventParticipants({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!id) {
-    return error(i18n.get('Invalid Event.'));
+    return error(await getTranslation('Invalid Event.'));
   }
 
   if (!tenantId) {
-    return error(i18n.get('Bad Request'));
+    return error(await getTranslation('Bad Request'));
   }
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   const workspaceURL = workspace?.url;
@@ -220,7 +223,7 @@ export async function fetchEventParticipants({
     console.log(err);
     return {
       error: true,
-      message: i18n.get('Something went wrong!'),
+      message: await getTranslation('Something went wrong!'),
     };
   }
 }

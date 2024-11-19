@@ -6,14 +6,17 @@ import {findEventByID} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
+import {getTranslation} from '@/i18n/server';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDetails} from '@/subapps/events/common/ui/components';
 
-export const metadata = {
-  title: 'Event',
-  description: 'Event website',
-};
+export async function generateMetadata() {
+  return {
+    title: await getTranslation('Event'),
+    description: await getTranslation('Event website'),
+  };
+}
 
 export default async function Page({
   params,

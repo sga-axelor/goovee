@@ -1,4 +1,4 @@
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import type {Tenant} from '@/tenant';
@@ -25,10 +25,19 @@ export async function validate(validators: Function[]) {
   return {error: null};
 }
 
-export async function withAuth(): Promise<ValidationResult> {
+export async function withAuth(
+  {
+    tenantId,
+  }: {
+    tenantId: Tenant['id'];
+  } = {tenantId: ''},
+): Promise<ValidationResult> {
   const session = await getSession();
   if (!session?.user?.id) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {
+      error: true,
+      message: await getTranslation('Unauthorized', {tenantId}),
+    };
   }
   return {error: null};
 }
@@ -41,7 +50,7 @@ export function withSubapp(code: string, url: string, tenantId: Tenant['id']) {
     const subapp = await findSubappAccess({code, user, url, tenantId});
 
     if (!subapp) {
-      return error(i18n.get('Unauthorized'));
+      return error(await getTranslation('Unauthorized'));
     }
 
     return {error: null};
@@ -55,7 +64,7 @@ export function withWorkspace(
 ) {
   return async function (): Promise<ValidationResult> {
     if (config?.checkAuth) {
-      const result = await withAuth();
+      const result = await withAuth({tenantId});
       if (result?.error) return result;
       return {error: null};
     }
@@ -66,7 +75,10 @@ export function withWorkspace(
     const workspace = await findWorkspace({user, url, tenantId});
 
     if (!workspace) {
-      return {error: true, message: i18n.get('Invalid workspace')};
+      return {
+        error: true,
+        message: await getTranslation('Invalid workspace', {tenantId}),
+      };
     }
 
     return {error: null};

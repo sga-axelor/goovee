@@ -1,5 +1,4 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 import {manager, type Tenant} from '@/tenant';
 
