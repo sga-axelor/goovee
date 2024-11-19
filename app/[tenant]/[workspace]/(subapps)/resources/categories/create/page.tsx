@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
@@ -47,7 +47,9 @@ export default async function Page({
 
   return (
     <main className="container mx-auto mt-4 p-4 md:p-8 bg-white rounded space-y-2">
-      <h2 className="font-semibold text-lg">{i18n.get('Create a category')}</h2>
+      <h2 className="font-semibold text-lg">
+        {await getTranslation('Create a category')}
+      </h2>
       <CategoryForm categories={folders} colors={colors} icons={icons} />
     </main>
   );

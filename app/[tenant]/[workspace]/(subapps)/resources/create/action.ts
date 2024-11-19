@@ -8,7 +8,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
@@ -61,7 +61,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!workspaceURL) {
     return {
       error: true,
-      message: i18n.get('Workspace not provided.'),
+      message: await getTranslation('Workspace not provided.'),
     };
   }
 
@@ -70,7 +70,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('Invalid Tenant'),
+      message: await getTranslation('Invalid Tenant'),
     };
   }
 
@@ -81,7 +81,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!category) {
     return {
       error: true,
-      message: i18n.get('Category is required'),
+      message: await getTranslation('Category is required'),
     };
   }
 
@@ -92,7 +92,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -106,7 +106,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -119,7 +119,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
@@ -138,7 +138,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!isSharedCategory) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 

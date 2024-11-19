@@ -7,11 +7,13 @@ import {findSubappAccess} from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 
-export const metadata: Metadata = {
-  title: i18n.get('Resources'),
-};
+export async function generateMetadata() {
+  return {
+    title: await getTranslation('Resources'),
+  };
+}
 
 export default async function Layout({
   params,

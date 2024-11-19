@@ -6,7 +6,7 @@ import {MdHistory, MdWeb} from 'react-icons/md';
 import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {clone} from '@/utils';
 import {parseDate} from '@/utils/date';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 
 // ---- LOCAL IMPORTS ---- //
 import DownloadIcon from './download-icon';
@@ -41,7 +41,9 @@ export default async function Page({
 
   if (!Viewer) {
     // eslint-disable-next-line react/display-name
-    Viewer = () => <p>{i18n.get('No viewer available for this file type.')}</p>;
+    Viewer = async () => (
+      <p>{await getTranslation('No viewer available for this file type.')}</p>
+    );
   }
 
   const name = file?.fileName || '--';
@@ -64,14 +66,20 @@ export default async function Page({
         </div>
         <div className="flex items-start gap-4 text-xs leading-4">
           <p className="grow">
-            {i18n.get('Posted on')} {date} {i18n.get('by')} {author}
+            {await getTranslation('Posted on')} {date}{' '}
+            {await getTranslation('by')} {author}
           </p>
           <p className="pe-2">
-            <span className="font-semibold">{i18n.get('Size')}: </span>
+            <span className="font-semibold">
+              {await getTranslation('Size')}:{' '}
+            </span>
             {size}
           </p>
           <p className="hidden">
-            <span className="font-semibold">{i18n.get('Views')}: </span>43
+            <span className="font-semibold">
+              {await getTranslation('Views')}:{' '}
+            </span>
+            43
           </p>
         </div>
       </div>
