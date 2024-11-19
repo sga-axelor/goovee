@@ -32,7 +32,7 @@ export function Sidebar({
   workspaces?: any;
 }) {
   const {data: session} = useSession();
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   const {workspaceURI, workspaceURL} = useWorkspace();
 
   const user = session?.user;
