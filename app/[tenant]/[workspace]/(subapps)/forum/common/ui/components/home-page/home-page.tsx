@@ -218,8 +218,8 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
         renderSearch={!selectedGroup && renderSearch}
         tenantId={tenant}
       />
-      <div className="flex flex-col lg:flex-row gap-5 px-4 lg:px-[6.25rem] py-6 w-full">
-        <div className="w-full lg:w-1/5 min-w-[17.563rem] h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
+      <div className="container py-6 mx-auto grid grid-cols-1 md:grid-cols-[17.563rem_1fr] gap-5">
+        <div className="h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
           <div>
             <h1 className="font-semibold text-xl leading-[1.875rem]">
               {i18n.get(GROUPS)}
@@ -243,7 +243,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
             groupId={selectedGroup?.id}
           />
         </div>
-        <div className="w-full lg:w-4/5 mb-16 lg:mb-0">
+        <div className="mb-16 lg:mb-0">
           <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[0.625rem]">
             <Avatar
               className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
