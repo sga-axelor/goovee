@@ -1,6 +1,6 @@
 'use server';
 
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {PortalWorkspace} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
 import {manager, type Tenant} from '@/tenant';
@@ -26,7 +26,10 @@ export async function getPopularQuery({
   tenantId: Tenant['id'];
 }) {
   if (!workspaceID) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {
+      error: true,
+      message: getTranslation('Invalid workspace', {tenantId}),
+    };
   }
   const client = await manager.getClient(tenantId);
 

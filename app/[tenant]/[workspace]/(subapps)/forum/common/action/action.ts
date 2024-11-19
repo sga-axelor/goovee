@@ -8,7 +8,7 @@ import {promisify} from 'util';
 import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -87,7 +87,7 @@ export async function pinGroup({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -95,7 +95,7 @@ export async function pinGroup({
   const user = session?.user;
 
   if (!user) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const subapp = await findSubappAccess({
@@ -106,13 +106,13 @@ export async function pinGroup({
   });
 
   if (!subapp) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   const memberGroup: any = await findMemberGroupById({
@@ -125,7 +125,9 @@ export async function pinGroup({
   if (!memberGroup) {
     return {
       error: true,
-      message: i18n.get(memberGroup.message || 'Member group not found.'),
+      message: await getTranslation(
+        memberGroup.message || 'Member group not found.',
+      ),
     };
   }
 
@@ -173,7 +175,7 @@ export async function exitGroup({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -182,7 +184,7 @@ export async function exitGroup({
   const user = session?.user;
 
   if (!user) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const subapp = await findSubappAccess({
@@ -193,13 +195,13 @@ export async function exitGroup({
   });
 
   if (!subapp) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   const memberGroup: any = await findMemberGroupById({
@@ -212,7 +214,9 @@ export async function exitGroup({
   if (!memberGroup) {
     return {
       error: true,
-      message: i18n.get(memberGroup.message || 'Member not part of the group'),
+      message: await getTranslation(
+        memberGroup.message || 'Member not part of the group',
+      ),
     };
   }
 
@@ -252,7 +256,7 @@ export async function joinGroup({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -261,7 +265,7 @@ export async function joinGroup({
   const user = session?.user;
 
   if (!user) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const subapp = await findSubappAccess({
@@ -272,7 +276,7 @@ export async function joinGroup({
   });
 
   if (!subapp) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const workspace = await findWorkspace({
@@ -282,7 +286,7 @@ export async function joinGroup({
   });
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   const group = await findGroupById(groupID, workspace.id, tenantId);
@@ -290,7 +294,7 @@ export async function joinGroup({
   if (!group) {
     return {
       error: true,
-      message: i18n.get('Member not part of the group'),
+      message: await getTranslation('Member not part of the group'),
     };
   }
 
@@ -342,7 +346,7 @@ export async function addGroupNotification({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -351,7 +355,7 @@ export async function addGroupNotification({
   const user = session?.user;
 
   if (!user) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const subapp = await findSubappAccess({
@@ -362,7 +366,7 @@ export async function addGroupNotification({
   });
 
   if (!subapp) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const workspace = await findWorkspace({
@@ -372,7 +376,7 @@ export async function addGroupNotification({
   });
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   const memberGroup: any = await findMemberGroupById({
@@ -385,7 +389,9 @@ export async function addGroupNotification({
   if (!memberGroup) {
     return {
       error: true,
-      message: i18n.get(memberGroup.messgae || 'Member not part of the group'),
+      message: await getTranslation(
+        memberGroup.messgae || 'Member not part of the group',
+      ),
     };
   }
 
@@ -423,7 +429,7 @@ export async function addPost({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -432,7 +438,7 @@ export async function addPost({
   const user = session?.user;
 
   if (!user) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const subapp = await findSubappAccess({
@@ -443,7 +449,7 @@ export async function addPost({
   });
 
   if (!subapp) {
-    return {error: true, message: i18n.get('Unauthorized')};
+    return {error: true, message: await getTranslation('Unauthorized')};
   }
 
   const workspace = await findWorkspace({
@@ -453,7 +459,7 @@ export async function addPost({
   });
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   const client = await manager.getClient(tenantId);
@@ -470,7 +476,9 @@ export async function addPost({
     if (attachmentResponse.some((item: any) => item.error)) {
       return {
         error: true,
-        message: i18n.get('Something went wrong while attachment upload!'),
+        message: await getTranslation(
+          'Something went wrong while attachment upload!',
+        ),
       };
     }
 
@@ -512,7 +520,10 @@ export async function addPost({
     revalidatePath(`${workspaceURL}/${SUBAPP_CODES.forum}`);
     return {success: true, data: clone(post)};
   } catch (error) {
-    return {error: true, message: i18n.get('Failed to create post')};
+    return {
+      error: true,
+      message: await getTranslation('Failed to create post'),
+    };
   }
 }
 
@@ -522,7 +533,7 @@ export async function findMedia(id: ID) {
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -572,7 +583,7 @@ export async function fetchPosts({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -587,7 +598,7 @@ export async function fetchPosts({
   });
 
   if (!workspace) {
-    return {error: true, message: i18n.get('Invalid workspace')};
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   return await findPosts({
@@ -606,7 +617,7 @@ async function uploadAttachment(formData: FormData): Promise<any> {
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -674,7 +685,7 @@ async function authorizeAndValidate({appCode, workspaceURL}: any) {
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
@@ -685,7 +696,7 @@ async function authorizeAndValidate({appCode, workspaceURL}: any) {
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -699,7 +710,7 @@ async function authorizeAndValidate({appCode, workspaceURL}: any) {
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -712,7 +723,7 @@ async function authorizeAndValidate({appCode, workspaceURL}: any) {
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
@@ -737,7 +748,7 @@ export async function fetchGroupsByMembers({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('TenantId is required'),
+      message: await getTranslation('TenantId is required'),
     };
   }
 
