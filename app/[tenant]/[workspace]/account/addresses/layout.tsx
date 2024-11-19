@@ -1,11 +1,13 @@
 import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 
-export const metadata: Metadata = {
-  title: i18n.get('Addresses'),
-};
+export async function generateMetadata() {
+  return {
+    title: await getTranslation('Address'),
+  };
+}
 
 export default function Layout({children}: {children: React.ReactNode}) {
   return <>{children}</>;
