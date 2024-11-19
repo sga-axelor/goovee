@@ -56,7 +56,6 @@ export async function getPopularCommentsBySorting({
   type: ModelType;
   modelName: string;
 }) {
-  
   if (!workspace) {
     return {error: true, message: i18n.get('Invalid workspace')};
   }
