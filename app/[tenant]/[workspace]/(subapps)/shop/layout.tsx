@@ -7,16 +7,18 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import MobileMenuCategory from './mobile-menu-category';
 import {findCategories} from './common/orm/categories';
 
-export const metadata: Metadata = {
-  title: i18n.get('Shop'),
-};
+export async function generateMetadata() {
+  return {
+    title: await getTranslation('Shop'),
+  };
+}
 
 export default async function Layout({
   params,
