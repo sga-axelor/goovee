@@ -7,7 +7,7 @@ import {
   findDefaultPartnerWorkspaceConfig,
   findWorkspaces,
 } from '@/orm/workspace';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {manager, type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
 import {revalidatePath} from 'next/cache';
@@ -25,14 +25,14 @@ export async function subscribe({
   if (!(workspace && tenantId)) {
     return {
       error: true,
-      message: i18n.get('Bad Request'),
+      message: await getTranslation('Bad Request'),
     };
   }
 
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -45,7 +45,7 @@ export async function subscribe({
   if (existing) {
     return {
       error: true,
-      message: i18n.get('Already subscribed'),
+      message: await getTranslation('Already subscribed'),
     };
   }
 
@@ -56,7 +56,7 @@ export async function subscribe({
   if (!defaultPartnerWorkspaceConfig) {
     return {
       error: true,
-      message: i18n.get(
+      message: await getTranslation(
         'Cannot subscribe, no default permissions available for the workspace',
       ),
     };
@@ -79,7 +79,7 @@ export async function subscribe({
   if (!$user) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
@@ -103,7 +103,7 @@ export async function subscribe({
 
       return {
         success: true,
-        message: i18n.get('Successfully subscribed'),
+        message: await getTranslation('Successfully subscribed'),
       };
     } catch (err) {}
   } else {
@@ -112,7 +112,7 @@ export async function subscribe({
     if (!mainPartner?.id) {
       return {
         error: true,
-        message: i18n.get('Partner not available for the contact'),
+        message: await getTranslation('Partner not available for the contact'),
       };
     }
     const partnerWorkspaces = await findWorkspaces({
@@ -129,7 +129,7 @@ export async function subscribe({
     if (!existsInPartner) {
       return {
         error: true,
-        message: i18n.get(
+        message: await getTranslation(
           `Partner didn't have access to workspace, cannot subscribe`,
         ),
       };
@@ -160,7 +160,7 @@ export async function subscribe({
 
         return {
           success: true,
-          message: i18n.get('Successfully subscribed'),
+          message: await getTranslation('Successfully subscribed'),
         };
       } catch (err) {
         console.log(err);
@@ -170,7 +170,7 @@ export async function subscribe({
 
   return {
     error: true,
-    message: i18n.get('Error subscribing, try again.'),
+    message: await getTranslation('Error subscribing, try again.'),
   };
 }
 
@@ -208,7 +208,7 @@ export async function register({
   if (existing) {
     return {
       error: true,
-      message: i18n.get('Email already exists'),
+      message: await getTranslation('Email already exists'),
     };
   }
 
@@ -224,12 +224,12 @@ export async function register({
 
     return {
       success: true,
-      message: i18n.get('Registered successfully'),
+      message: await getTranslation('Registered successfully'),
     };
   } catch (err) {}
 
   return {
     error: true,
-    message: i18n.get('Error registering, try again'),
+    message: await getTranslation('Error registering, try again'),
   };
 }

@@ -7,7 +7,7 @@ import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import Form from './form';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {Button} from '@/ui/components';
 import Link from 'next/link';
 
@@ -49,14 +49,16 @@ export default async function Page({
     return (
       <div className="container mx-auto px-6 py-4 gap-2 min-h-screen flex flex-col items-center justify-center">
         <h2 className="text-xl font-medium">
-          {i18n.get('You are already registered with the workspace!')}
+          {await getTranslation(
+            'You are already registered with the workspace!',
+          )}
         </h2>
         <p className="text-muted-foreground">
-          {i18n.get('Workspace')} : {workspaceURL}
+          {await getTranslation('Workspace')} : {workspaceURL}
         </p>
         <Button asChild>
           <Link href={workspaceURL}>
-            {i18n.get('Continue to the workspace')}
+            {await getTranslation('Continue to the workspace')}
           </Link>
         </Button>
       </div>
