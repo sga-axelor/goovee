@@ -10,7 +10,7 @@ export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
     htmlContent?.replace(/<img[^>]*>/g, '');
   return (
     <>
-      <div onClick={() => onClick(id)} className="space-y-2">
+      <div onClick={() => onClick(id)} className="space-y-2 cursor-pointer">
         <div className="flex items-start justify-between">
           <p className="text-sm font-semibold text-main-black pr-2">
             {eventTitle}
