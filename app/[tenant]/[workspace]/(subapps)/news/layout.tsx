@@ -1,5 +1,4 @@
 import {notFound} from 'next/navigation';
-import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
@@ -8,15 +7,17 @@ import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 
 // ---- LOCAL IMPORTS ---- //
 import MobileMenuCategory from '@/subapps/news/mobile-menu-category';
 import {findCategories} from '@/subapps/news/common/orm/news';
 
-export const metadata: Metadata = {
-  title: i18n.get('News'),
-};
+export async function generateMetadata() {
+  return {
+    title: await getTranslation('News'),
+  };
+}
 
 export default async function Layout({
   params,

@@ -5,7 +5,7 @@ import {headers} from 'next/headers';
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {getCurrentDateTime} from '@/utils/date';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -22,7 +22,7 @@ export async function createComment({id, contentComment, workspaceURL}: any) {
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('Bad Request'),
+      message: await getTranslation('Bad Request'),
     };
   }
 
@@ -42,7 +42,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -51,7 +51,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('Bad Request'),
+      message: await getTranslation('Bad Request'),
     };
   }
 
@@ -65,7 +65,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -78,7 +78,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
