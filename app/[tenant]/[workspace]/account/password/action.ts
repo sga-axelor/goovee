@@ -5,7 +5,7 @@ import {headers} from 'next/headers';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {compare, hash} from '@/auth/utils';
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {findPartnerByEmail} from '@/orm/partner';
 import {TENANT_HEADER} from '@/middleware';
 import {manager} from '@/tenant';
@@ -20,7 +20,7 @@ export async function changePassword({
   if (!(oldPassword && newPassword)) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
@@ -30,7 +30,7 @@ export async function changePassword({
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -39,7 +39,7 @@ export async function changePassword({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
@@ -48,7 +48,7 @@ export async function changePassword({
   if (!partner?.password) {
     return {
       error: true,
-      message: i18n.get('Bad request.'),
+      message: await getTranslation('Bad request.'),
     };
   }
 
@@ -57,7 +57,7 @@ export async function changePassword({
   if (!isOldPasswordMatch) {
     return {
       error: true,
-      message: i18n.get('Invalid old password'),
+      message: await getTranslation('Invalid old password'),
     };
   }
 
@@ -76,12 +76,12 @@ export async function changePassword({
   } catch (err) {
     return {
       error: true,
-      message: i18n.get('Error setting new password. Try again.'),
+      message: await getTranslation('Error setting new password. Try again.'),
     };
   }
 
   return {
     success: true,
-    message: i18n.get('Password changed successfully.'),
+    message: await getTranslation('Password changed successfully.'),
   };
 }
