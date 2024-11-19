@@ -4,7 +4,7 @@ import paypal from '@paypal/checkout-server-sdk';
 import type {Stripe} from 'stripe';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {
@@ -102,14 +102,14 @@ export async function paypalCaptureOrder({
   if (workspace?.config?.canPayInvoice === 'no') {
     return {
       error: true,
-      message: i18n.get('Not allowed'),
+      message: await getTranslation('Not allowed'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: i18n.get('Online payment is not available'),
+      message: await getTranslation('Online payment is not available'),
     };
   }
 
@@ -120,7 +120,7 @@ export async function paypalCaptureOrder({
   if (!allowPaypal) {
     return {
       error: true,
-      message: i18n.get('Paypal is not available'),
+      message: await getTranslation('Paypal is not available'),
     };
   }
 
@@ -195,7 +195,7 @@ export async function paypalCreateOrder({
   if (!session) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -204,14 +204,14 @@ export async function paypalCreateOrder({
   if (!(invoice && tenantId)) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
@@ -226,7 +226,7 @@ export async function paypalCreateOrder({
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
@@ -240,7 +240,7 @@ export async function paypalCreateOrder({
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -265,7 +265,7 @@ export async function paypalCreateOrder({
   if (workspace?.config?.canPayInvoice === 'no') {
     return {
       error: true,
-      message: i18n.get('Not allowed'),
+      message: await getTranslation('Not allowed'),
     };
   }
 
@@ -275,14 +275,14 @@ export async function paypalCreateOrder({
   ) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: i18n.get('Online payment is not available'),
+      message: await getTranslation('Online payment is not available'),
     };
   }
 
@@ -293,7 +293,7 @@ export async function paypalCreateOrder({
   if (!allowPaypal) {
     return {
       error: true,
-      message: i18n.get('Paypal is not available'),
+      message: await getTranslation('Paypal is not available'),
     };
   }
 
@@ -329,7 +329,7 @@ export async function paypalCreateOrder({
     if (response.statusCode !== 201) {
       return {
         error: true,
-        message: i18n.get('Error processing payment. Try again'),
+        message: await getTranslation('Error processing payment. Try again'),
       };
     }
 
@@ -337,7 +337,7 @@ export async function paypalCreateOrder({
   } catch (err) {
     return {
       error: true,
-      message: i18n.get('Error processing payment. Try again'),
+      message: await getTranslation('Error processing payment. Try again'),
     };
   }
 }
@@ -356,7 +356,7 @@ export async function createStripeCheckoutSession({
   if (!session) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -365,7 +365,7 @@ export async function createStripeCheckoutSession({
   if (!(invoice && workspaceURL && tenantId)) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
@@ -380,7 +380,7 @@ export async function createStripeCheckoutSession({
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
@@ -394,7 +394,7 @@ export async function createStripeCheckoutSession({
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -419,7 +419,7 @@ export async function createStripeCheckoutSession({
   if (workspace?.config?.canPayInvoice === 'no') {
     return {
       error: true,
-      message: i18n.get('Not allowed'),
+      message: await getTranslation('Not allowed'),
     };
   }
 
@@ -429,7 +429,7 @@ export async function createStripeCheckoutSession({
   ) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   } else if (
     workspace?.config?.canPayInvoice === 'partial' &&
@@ -437,14 +437,14 @@ export async function createStripeCheckoutSession({
   ) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: i18n.get('Online payment is not available'),
+      message: await getTranslation('Online payment is not available'),
     };
   }
 
@@ -455,7 +455,7 @@ export async function createStripeCheckoutSession({
   if (!allowStripe) {
     return {
       error: true,
-      message: i18n.get('Stripe is not available'),
+      message: await getTranslation('Stripe is not available'),
     };
   }
 
@@ -508,7 +508,7 @@ export async function validateStripePayment({
   if (!session) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -517,7 +517,7 @@ export async function validateStripePayment({
   if (!(invoice && workspaceURL && tenantId)) {
     return {
       error: true,
-      message: i18n.get('Bad request'),
+      message: await getTranslation('Bad request'),
     };
   }
 
@@ -532,7 +532,7 @@ export async function validateStripePayment({
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
@@ -546,7 +546,7 @@ export async function validateStripePayment({
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -571,14 +571,14 @@ export async function validateStripePayment({
   if (workspace?.config?.canPayInvoice === 'no') {
     return {
       error: true,
-      message: i18n.get('Not allowed'),
+      message: await getTranslation('Not allowed'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: i18n.get('Online payment is not available'),
+      message: await getTranslation('Online payment is not available'),
     };
   }
 
@@ -589,14 +589,14 @@ export async function validateStripePayment({
   if (!allowStripe) {
     return {
       error: true,
-      message: i18n.get('Stripe is not available'),
+      message: await getTranslation('Stripe is not available'),
     };
   }
 
   if (!stripeSessionId) {
     return {
       error: true,
-      message: i18n.get('Bad Request'),
+      message: await getTranslation('Bad Request'),
     };
   }
 
@@ -606,7 +606,7 @@ export async function validateStripePayment({
   if (!stripeSession) {
     return {
       error: true,
-      message: i18n.get('Invalid stripe session'),
+      message: await getTranslation('Invalid stripe session'),
     };
   }
 
@@ -618,7 +618,7 @@ export async function validateStripePayment({
   ) {
     return {
       error: true,
-      message: i18n.get('Payment not successfull'),
+      message: await getTranslation('Payment not successfull'),
     };
   }
 
@@ -628,7 +628,7 @@ export async function validateStripePayment({
   if (!lineItems) {
     return {
       error: true,
-      message: i18n.get('Payment not successfull'),
+      message: await getTranslation('Payment not successfull'),
     };
   }
 
