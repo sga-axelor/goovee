@@ -56,7 +56,7 @@ function Details() {
   return (
     <div>
       <div className="flex bg-card gap-5 justify-between">
-        <div className="space-y-6">
+        <div className="space-y-4 mt-4">
           <h2 className="font-semibold text-xl">Entry Name</h2>
           {category.map((cat, idx) => (
             <Category
@@ -68,14 +68,16 @@ function Details() {
           ))}
           <p className="text-success text-base">43 Mainstreet - London</p>
         </div>
-        <div className="bg-yellow-200 w-[150px] h-[153px]"></div>
+
+        {/* image */}
+        <div className="bg-yellow-200 w-[156px] h-[138px] rounded-r-lg"></div>
       </div>
       <hr />
 
       {/* directory description */}
 
       <div className="space-y-4 mt-5">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
           mattis pharetra sed. Sem id morbi nunc consectetur ultrices. Magna id
           nisi metus tortor pharetra nullam. Eget vestibulum nisi orci aliquam.
@@ -85,15 +87,15 @@ function Details() {
         </p>
 
         <div>
-          <span className="text-base font-semibold me-2">Info 1:</span>
-          <span className="text-sm text-gray-500">
+          <span className="text-base font-semibold me-2">Info 1 :</span>
+          <span className="text-sm text-muted-foreground">
             Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
             mattis pharetra sed.
           </span>
         </div>
         <div>
-          <span className="text-base font-semibold me-2">Info 2:</span>
-          <span className="text-sm text-gray-500">
+          <span className="text-base font-semibold me-2">Info 2 :</span>
+          <span className="text-sm text-muted-foreground">
             Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
             mattis pharetra sed.
           </span>
@@ -103,10 +105,10 @@ function Details() {
         {i18n.get('Social media')}
       </p>
       <div className="flex space-x-6">
-        <FaLinkedin className="h-8 w-8 text-blue-700" />
+        <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
         <FaXTwitter className="h-8 w-8" />
-        <FaInstagram className="h-8 w-8 text-yellow-500" />
-        <MdOutlineWeb className="h-8 w-8 text-gray-500" />
+        <FaInstagram className="h-8 w-8 text-palette-yellow-dark" />
+        <MdOutlineWeb className="h-8 w-8 text-gray-dark" />
       </div>
     </div>
   );
@@ -136,7 +138,7 @@ function Contacts({tenant}: {tenant: string}) {
         <a className="text-sm text-muted-foreground" href="tel:+1-202-555-0170">
           +1 (202) 555-0170
         </a>
-        <FaLinkedin className="h-8 w-8 text-blue-700" />
+        <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
       </div>
     </div>
   );
