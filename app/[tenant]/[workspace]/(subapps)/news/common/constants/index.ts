@@ -14,8 +14,9 @@ export const SEARCH_HERE = 'Search here';
 export const FEATURED_NEWS = 'Featured News';
 export const LATEST_NEWS = 'Latest News';
 export const RELATED_NEWS = 'Related News';
-export const RECOMMENDED_NEWS = 'Recommended News';
+export const RECOMMENDED_NEWS = 'Recommended news';
 export const CATEGORIES = 'Categories';
+export const RELATED_FILES = 'Related files';
 
 // Others
 export const SHARE_ON_SOCIAL_MEDIA = 'Share on social media';

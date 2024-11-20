@@ -16,8 +16,13 @@ import {
   FeedList,
   NewsInfo,
   SocialMedia,
+  AttachmentList,
 } from '@/subapps/news/common/ui/components';
-import {RECOMMENDED_NEWS, RELATED_NEWS} from '@/subapps/news/common/constants';
+import {
+  RECOMMENDED_NEWS,
+  RELATED_NEWS,
+  RELATED_FILES,
+} from '@/subapps/news/common/constants';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 
 interface ArticleProps {
@@ -37,6 +42,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
     author,
     relatedNewsSet,
     recommendedNews,
+    attachmentList,
   } = news || {};
   const router = useRouter();
   const pathname = usePathname();
@@ -78,6 +84,14 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
 
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
           {enableSocialMediaSharing && <SocialMedia />}
+          {attachmentList?.length > 0 && (
+            <AttachmentList
+              title={i18n.get(RELATED_FILES)}
+              items={attachmentList}
+              width="w-full"
+            />
+          )}
+
           {relatedNewsSet?.length > 0 && (
             <FeedList
               title={i18n.get(RELATED_NEWS)}

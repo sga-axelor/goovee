@@ -67,6 +67,12 @@
       "name": "partnerCategorySet",
       "type": "ManyToMany",
       "target": "AOSPartnerCategory"
+    },
+    {
+      "name": "attachmentList",
+      "type": "OneToMany",
+      "target": "AOSPortalAttachment",
+      "mappedBy": "portalNews"
     }
   ]
 }

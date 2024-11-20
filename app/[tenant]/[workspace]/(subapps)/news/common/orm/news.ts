@@ -94,6 +94,18 @@ export async function findNews({
             slug: true,
           },
         },
+        attachmentList: {
+          select: {
+            title: true,
+            metaFile: {
+              id: true,
+              fileName: true,
+              fileSize: true,
+              sizeText: true,
+              fileType: true,
+            },
+          },
+        },
         slug: true,
       },
     })

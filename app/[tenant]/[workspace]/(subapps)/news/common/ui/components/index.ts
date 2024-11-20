@@ -10,3 +10,4 @@ export {Homepage} from './homepage';
 export {Article} from './article';
 export {SearchItem} from './search-item';
 export {Breadcrumb} from './breadcrumb';
+export {AttachmentList} from './attachment-list';
