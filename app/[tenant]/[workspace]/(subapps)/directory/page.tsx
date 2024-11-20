@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 import {IconType} from 'react-icons';
 import {
   MdAllInbox,
-  MdFoodBank,
+  MdOutlineFoodBank,
   MdMoney,
   MdOutlineDiamond,
   MdOutlineMedicalServices,
@@ -135,7 +135,7 @@ export default async function Page({
       iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
     {
-      icon: MdFoodBank,
+      icon: MdOutlineFoodBank,
       label: 'Agribusiness',
       iconClassName: 'bg-palette-pink text-palette-pink-dark',
     },
@@ -147,7 +147,7 @@ export default async function Page({
     {
       icon: TbTool,
       label: 'Industry',
-      iconClassName: 'bg-palette-purple text-palette-purple-dark',
+      iconClassName: 'bg-palette-orange text-palette-orange-dark',
     },
     {
       icon: MdMoney,
@@ -157,7 +157,7 @@ export default async function Page({
     {
       icon: MdOutlineMedicalServices,
       label: 'Medical',
-      iconClassName: 'bg-palette-purple text-palette-purple-dark',
+      iconClassName: 'bg-palette-red text-palette-red-dark',
     },
     {
       icon: MdOutlineSmartphone,
