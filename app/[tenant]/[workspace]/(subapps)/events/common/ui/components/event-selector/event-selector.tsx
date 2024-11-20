@@ -32,7 +32,7 @@ export const EventSelector = ({
   };
 
   return (
-    <Card className="p-4 border-none shadow-none  flex flex-col gap-2 md:flex-row  lg:flex-col  lg:min-w-96 h-fit rounded-2xl">
+    <Card className="p-4 border-none shadow-none flex flex-col gap-2 md:flex-row lg:flex-col h-fit rounded-2xl">
       <Calendar
         workspace={workspace}
         date={date}

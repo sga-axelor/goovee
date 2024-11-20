@@ -24,6 +24,7 @@ import {i18n} from '@/i18n';
 import {EventCardBadges} from '@/subapps/events/common/ui/components';
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
 import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
+import styles from './event-card.module.scss';
 
 export const EventCard = ({event, workspace}: EventCardProps) => {
   const [isRegistered, setIsRegistered] = useState(false);
@@ -68,25 +69,27 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
           backgroundImage: `url(${getImageURL(event?.eventImage?.id, tenant)})`,
         }}></div>
 
-      <div className="flex flex-col w-full py-2">
-        <CardHeader className="w-full p-0">
-          <CardTitle className="flex flex-col xs:flex-row items-start justify-between w-full ">
-            <p className="text-base font-semibold w-full flex justify-between">
-              {event.eventTitle}
-              {isRegistered && (
-                <Badge
-                  variant="outline"
-                  className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6">
-                  {i18n.get('#Registered')}
-                </Badge>
+      <div className="flex w-full gap-10 py-2">
+        <div
+          className={`flex flex-col flex-1 ${styles['event-details-container']}`}>
+          <CardHeader className="w-full p-0">
+            <CardTitle className="flex flex-col xs:flex-row items-start justify-between w-full ">
+              <p className="text-base font-semibold w-full flex justify-between">
+                {event.eventTitle}
+                {isRegistered && (
+                  <Badge
+                    variant="outline"
+                    className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6">
+                    {i18n.get('#Registered')}
+                  </Badge>
+                )}
+              </p>
+            </CardTitle>
+            <CardDescription className="text-sm font-medium text-secondary">
+              {`${parseDate(
+                event.eventStartDateTime,
+                DATE_FORMATS.full_month_day_year_12_hour,
               )}
-            </p>
-          </CardTitle>
-          <CardDescription className="text-sm font-medium text-secondary">
-            {`${parseDate(
-              event.eventStartDateTime,
-              DATE_FORMATS.full_month_day_year_12_hour,
-            )}
             ${event.eventEndDateTime && !event.eventAllDay ? i18n.get('to') : ''} 
              ${
                event.eventEndDateTime && !event.eventAllDay
@@ -97,24 +100,25 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
                  : ''
              }
               `}
-          </CardDescription>
-          <EventCardBadges categories={event.eventCategorySet} />
-        </CardHeader>
-        <CardContent className="p-0 mt-1">
-          <div
-            className="text-sm w-full font-normal line-clamp-2 text-gray-dark overflow-hidden"
-            dangerouslySetInnerHTML={{
-              __html: event?.eventDescription
-                ? stripImages(event.eventDescription)
-                : '',
-            }}
-          />
-        </CardContent>
-      </div>
-      <div className="flex-col hidden lg:flex items-center justify-center pr-2">
-        <Button className="bg-success-light hover:bg-success-light text-success hover:text-success h-10 w-10 p-0 rounded-lg">
-          <MdChevronRight className="h-6 w-6" />
-        </Button>
+            </CardDescription>
+            <EventCardBadges categories={event.eventCategorySet} />
+          </CardHeader>
+          <CardContent className="p-0 mt-1">
+            <div
+              className="text-sm w-full font-normal line-clamp-2 text-gray-dark overflow-hidden"
+              dangerouslySetInnerHTML={{
+                __html: event?.eventDescription
+                  ? stripImages(event.eventDescription)
+                  : '',
+              }}
+            />
+          </CardContent>
+        </div>
+        <div className="flex-col hidden lg:flex items-center justify-center pr-2">
+          <Button className="bg-success-light hover:bg-success-light text-success hover:text-success h-10 w-10 p-0 rounded-lg">
+            <MdChevronRight className="h-6 w-6" />
+          </Button>
+        </div>
       </div>
     </Card>
   );

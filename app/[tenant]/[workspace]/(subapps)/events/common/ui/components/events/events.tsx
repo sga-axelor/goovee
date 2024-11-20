@@ -19,6 +19,7 @@ import {useSearchParams, useToast} from '@/ui/hooks';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 import {getImageURL} from '@/utils/files';
+import {useResponsive} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
@@ -147,7 +148,7 @@ export const Events = ({
         renderSearch={renderSearch}
         tenantId={tenant}
       />
-      <div className="py-6 px-4 lg:px-[100px] flex flex-col lg:flex-row gap-4 lg:gap-6 mb-16">
+      <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
         <EventSelector
           selectedCategories={selectedCategory}
           date={date}
