@@ -193,6 +193,10 @@
     {
       "name": "enableSocialMediaSharing",
       "type": "Boolean"
+    },
+    {
+      "name": "enableNewsComment",
+      "type": "Boolean"
     }
   ]
 }

@@ -44,6 +44,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
   const isDisabled = !session ? true : false;
 
   const enableSocialMediaSharing = workspace.config?.enableSocialMediaSharing;
+  const enableNewsComment = workspace.config?.enableNewsComment;
 
   const handleClick = (slug: string) => {
     const urlRoute = pathname.split('/article/')[0];
@@ -87,27 +88,29 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
         </div>
       </div>
 
-      <div className="w-full mb-16 lg:mb-4">
-        <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
-          <div>
-            <div className="text-xl font-semibold">{i18n.get(COMMENTS)}</div>
-          </div>
+      {enableNewsComment && (
+        <div className="w-full mb-16 lg:mb-4">
+          <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
+            <div>
+              <div className="text-xl font-semibold">{i18n.get(COMMENTS)}</div>
+            </div>
 
-          <Comments
-            record={{id: news.id}}
-            modelType={ModelType.news}
-            showCommentsByDefault={true}
-            disabled={isDisabled}
-            inputPosition="bottom"
-            hideCommentsHeader={true}
-            hideSortBy={true}
-            showReactions={false}
-            showTopBorder={false}
-            hideCloseComments={true}
-            sortByProp={SORT_TYPE.old}
-          />
+            <Comments
+              record={{id: news.id}}
+              modelType={ModelType.news}
+              showCommentsByDefault={true}
+              disabled={isDisabled}
+              inputPosition="bottom"
+              hideCommentsHeader={true}
+              hideSortBy={true}
+              showReactions={false}
+              showTopBorder={false}
+              hideCloseComments={true}
+              sortByProp={SORT_TYPE.old}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
