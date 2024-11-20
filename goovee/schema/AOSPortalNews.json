@@ -53,6 +53,20 @@
       "type": "OneToMany",
       "target": "AOSComment",
       "mappedBy": "portalNews"
+    },
+    {
+      "name": "isPrivate",
+      "type": "Boolean"
+    },
+    {
+      "name": "partnerSet",
+      "type": "ManyToMany",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "partnerCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPartnerCategory"
     }
   ]
 }
