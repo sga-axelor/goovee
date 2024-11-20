@@ -22,7 +22,9 @@ export const filterPrivate = async (
 
   if (!user) {
     return {
-      isPrivate: false,
+      isPrivate: {
+        ne: true,
+      },
     };
   }
 
