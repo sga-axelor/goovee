@@ -32,6 +32,10 @@ export async function findPartnerByEmail(
         mainPartner: {
           id: true,
         },
+        partnerCategory: {
+          name: true,
+          code: true,
+        },
       },
     })
     .then(clone);
