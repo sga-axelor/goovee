@@ -41,6 +41,10 @@ export default async function Layout({
     tenantId: tenant,
   }).then(clone);
 
+  if (!workspace) {
+    return notFound();
+  }
+
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.news,
     user,
@@ -54,6 +58,7 @@ export default async function Layout({
     showAllCategories: true,
     workspace,
     tenantId: tenant,
+    user,
   }).then(clone);
 
   return (

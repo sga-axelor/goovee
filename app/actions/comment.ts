@@ -11,6 +11,17 @@ import {ModelType} from '@/types';
 import {findWorkspace} from '@/orm/workspace';
 
 export async function createComment(formData: any, valueString: string) {
+  const session = await getSession();
+
+  const user = session?.user;
+
+  if (!user) {
+    return {
+      error: true,
+      message: await getTranslation('Unauthorized'),
+    };
+  }
+
   let attachments: string[] = [];
 
   const {

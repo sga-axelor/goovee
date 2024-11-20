@@ -1,14 +1,11 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
 import {getPageInfo, getSkipInfo} from '@/utils';
-import {getTranslation} from '@/i18n/server';
-import {getSession} from '@/auth';
-import {SUBAPP_CODES} from '@/constants';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import type {PortalWorkspace} from '@/types';
+import type {PortalWorkspace, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_PAGE} from '@/subapps/news/common/constants';
+import {filterPrivate} from '@/orm/filter';
 
 export async function findNews({
   id = '',
@@ -20,6 +17,7 @@ export async function findNews({
   workspace,
   categoryIds = [],
   tenantId,
+  user,
 }: {
   id?: string | number;
   orderBy?: any;
@@ -30,6 +28,7 @@ export async function findNews({
   workspace: any;
   categoryIds?: any[];
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -45,7 +44,7 @@ export async function findNews({
       : {}),
     ...(isFeaturedNews ? {isFeaturedNews: true} : {}),
     ...(slug ? {slug} : {}),
-
+    ...(await filterPrivate({user, tenantId})),
     categorySet: {
       workspace: {
         id: workspace.id,
@@ -114,12 +113,14 @@ export async function findCategories({
   slug = null,
   workspace,
   tenantId,
+  user,
 }: {
   category?: any;
   showAllCategories?: boolean;
   slug?: string | null;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -130,6 +131,7 @@ export async function findCategories({
       workspace: {
         id: workspace.id,
       },
+      ...(await filterPrivate({user, tenantId})),
       ...(category
         ? {
             parentCategory: {
@@ -196,83 +198,6 @@ export async function findCategoryTitleBySlugName({
   return title?.name;
 }
 
-export async function addComment({
-  id,
-  contentComment,
-  publicationDateTime,
-  workspaceURL,
-  tenantId,
-}: any) {
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await getTranslation('Bad Request'),
-    };
-  }
-
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: await getTranslation('Unauthorized'),
-    };
-  }
-
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.news,
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: await getTranslation('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await getTranslation('Invalid workspace'),
-    };
-  }
-
-  const c = await manager.getClient(tenantId);
-
-  const comment = await c.aOSPortalNews.create({
-    data: {
-      id,
-      portalCommentList: {
-        create: [
-          {
-            contentComment,
-            publicationDateTime,
-            author: {
-              select: {
-                id: user.id,
-              },
-            },
-          },
-        ],
-      },
-    },
-  });
-  return {
-    success: true,
-    data: comment,
-  };
-}
-
 export async function findNewsByCategory({
   orderBy,
   page,
@@ -281,6 +206,7 @@ export async function findNewsByCategory({
   workspace,
   isFeaturedNews,
   tenantId,
+  user,
 }: {
   orderBy?: any;
   isFeaturedNews?: boolean;
@@ -289,6 +215,7 @@ export async function findNewsByCategory({
   slug?: string;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!tenantId) {
     return [];
@@ -298,6 +225,7 @@ export async function findNewsByCategory({
     showAllCategories: true,
     workspace,
     tenantId,
+    user,
   });
 
   const categoryMap = new Map(
@@ -332,5 +260,6 @@ export async function findNewsByCategory({
     workspace,
     categoryIds,
     tenantId,
+    user,
   });
 }

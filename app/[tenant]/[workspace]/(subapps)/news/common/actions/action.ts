@@ -12,39 +12,11 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
-import {addComment, findNews} from '@/subapps/news/common/orm/news';
-
-export async function createComment({id, contentComment, workspaceURL}: any) {
-  const publicationDateTime = getCurrentDateTime();
-
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await getTranslation('Bad Request'),
-    };
-  }
-
-  return await addComment({
-    id,
-    contentComment,
-    publicationDateTime,
-    workspaceURL,
-    tenantId,
-  }).then(clone);
-}
+import {findNews} from '@/subapps/news/common/orm/news';
 
 export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   const session = await getSession();
   const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: await getTranslation('Unauthorized'),
-    };
-  }
 
   const tenantId = headers().get(TENANT_HEADER);
 
@@ -82,7 +54,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
     };
   }
 
-  const {news} = await findNews({workspace, tenantId}).then(clone);
+  const {news} = await findNews({workspace, tenantId, user}).then(clone);
 
   return news;
 }
