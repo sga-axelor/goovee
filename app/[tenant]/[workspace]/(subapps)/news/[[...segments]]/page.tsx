@@ -27,6 +27,7 @@ import {
 } from '@/subapps/news/common/ui/components';
 import {DEFAULT_LIMIT} from '@/subapps/news/common/constants';
 import {findRecommendedNews} from '@/subapps/news/common/actions/action';
+import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 
 interface CategorySegment {
   slug: string;
@@ -97,7 +98,8 @@ export default async function Page({
     }).then(clone);
 
     return (
-      <div className="flex flex-col h-full flex-1">
+      <div
+        className={`flex flex-col h-full flex-1 ${styles['news-container']}`}>
         <div className="hidden lg:block">
           <Categories categories={allCategories} />
         </div>
@@ -112,7 +114,7 @@ export default async function Page({
   }
 
   return (
-    <div className="flex flex-col h-full flex-1">
+    <div className={`flex flex-col h-full flex-1 ${styles['news-container']}`}>
       <div className="hidden lg:block">
         <Categories categories={allCategories} />
       </div>

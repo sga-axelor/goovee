@@ -23,7 +23,6 @@ import {
   RELATED_NEWS,
   RELATED_FILES,
 } from '@/subapps/news/common/constants';
-import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 
 interface ArticleProps {
   news: any;
@@ -61,16 +60,15 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
   const directRoute = pathname.includes('/news/article/');
 
   return (
-    <div
-      className={`${styles['news-container']} flex-1 py-6 px-4 lg:px-[100px] flex flex-col gap-6`}>
+    <div className={`container mx-auto grid grid-cols-1 gap-6`}>
       {!directRoute && (
         <div className="py-4">
           <Breadcrumb items={breadcrumbs} title={title} />
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-2/3">
+      <div className=" grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
           <NewsInfo
             title={title}
             categorySet={categorySet}

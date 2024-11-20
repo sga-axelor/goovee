@@ -40,7 +40,7 @@ export const FeedList = ({
                 <div
                   className={`w-full flex gap-4 justify-between items-center flex-auto p-2 cursor-pointer`}
                   onClick={() => onClick(slug)}>
-                  <div className="flex w-full gap-4">
+                  <div className="flex w-full gap-4 [overflow-wrap:anywhere]">
                     <div
                       className="w-[97px] h-[97px] rounded-lg bg-center bg-cover flex-shrink-0"
                       style={{

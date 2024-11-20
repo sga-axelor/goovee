@@ -18,7 +18,6 @@ import {
   NewsCard,
   NewsList,
 } from '@/subapps/news/common/ui/components';
-import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 import {
   FEATURED_NEWS,
   NO_NEWS_AVAILABLE,
@@ -76,8 +75,7 @@ const Content = ({
 
   return (
     <>
-      <div
-        className={`${styles['news-container']} flex-auto py-6 px-4 lg:px-[100px] flex flex-col gap-6`}>
+      <div className={`container mx-auto grid grid-cols-1 pb-6 px-4 gap-6`}>
         {news?.length > 0 ? (
           <>
             <CategorySlider

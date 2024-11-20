@@ -25,7 +25,6 @@ import {
   LATEST_NEWS,
   NO_NEWS_AVAILABLE,
 } from '@/subapps/news/common/constants';
-import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {findSearchNews} from '@/subapps/news/common/actions/action';
 
@@ -75,8 +74,7 @@ export const Homepage = ({
         renderSearch={renderSearch}
         tenantId={tenant}
       />
-      <div
-        className={`px-4 lg:px-[100px] flex flex-col gap-6 flex-auto ${styles['news-container']}`}>
+      <div className={`container mx-auto grid grid-cols-1 gap-6`}>
         {latestNews?.length ? (
           <>
             <CategorySlider
