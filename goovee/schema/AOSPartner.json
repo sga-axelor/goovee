@@ -82,6 +82,15 @@
       "name": "defaultWorkspace",
       "target": "AOSPartnerPortalWorkspace"
     },
-    {"name": "picture", "type": "ManyToOne", "target": "AOSMetaFile"}
+    {
+      "name": "picture",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "partnerCategory",
+      "target": "AOSPartnerCategory"
+    }
   ]
 }

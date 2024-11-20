@@ -1,0 +1,16 @@
+{
+  "name": "AOSPartnerCategory",
+  "table": "base_partner_category",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "code",
+      "type": "String"
+    }
+  ]
+}

@@ -522,8 +522,8 @@ export async function findByID({
       response = await findEventByID({id, workspace, tenantId});
       break;
     case ModelType.news:
-      const {news}: any = await findNews({id, workspace, tenantId});
-      response = news?.[0] || {};
+      const {news}: any = await findNews({id, workspace, tenantId, user});
+      response = news?.[0];
       break;
     case ModelType.forum:
       const {posts = []}: any = await findPosts({
@@ -542,11 +542,7 @@ export async function findByID({
           tenantId,
         });
       }
-      if (!response)
-        return {
-          error: true,
-          message: await getTranslation('Unauthorized'),
-        };
+
       break;
     default:
       return {
@@ -554,6 +550,12 @@ export async function findByID({
         message: await getTranslation('Unknown type'),
       };
   }
+
+  if (!response)
+    return {
+      error: true,
+      message: await getTranslation('Unauthorized'),
+    };
 
   return {success: true, data: response};
 }
