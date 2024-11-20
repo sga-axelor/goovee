@@ -176,7 +176,13 @@ async function CategoryPage({
     }
     const breadcrumbs = await getBreadcrumbs();
 
-    return <Article news={newsObject} breadcrumbs={breadcrumbs} />;
+    return (
+      <Article
+        news={newsObject}
+        breadcrumbs={breadcrumbs}
+        workspace={workspace}
+      />
+    );
   }
 
   const categoryTitle = await findCategoryTitleBySlugName({

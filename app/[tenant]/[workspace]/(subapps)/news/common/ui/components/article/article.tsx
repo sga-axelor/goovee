@@ -8,7 +8,7 @@ import {useSession} from 'next-auth/react';
 import {i18n} from '@/i18n';
 import {COMMENTS, SORT_TYPE} from '@/constants';
 import {Comments} from '@/ui/components';
-import {ModelType} from '@/types';
+import {ModelType, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -23,9 +23,10 @@ import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 interface ArticleProps {
   news: any;
   breadcrumbs: any;
+  workspace: PortalWorkspace;
 }
 
-export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
+export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
   const {
     title,
     categorySet,
@@ -41,6 +42,8 @@ export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
 
   const {data: session} = useSession();
   const isDisabled = !session ? true : false;
+
+  const enableSocialMediaSharing = workspace.config?.enableSocialMediaSharing;
 
   const handleClick = (slug: string) => {
     const urlRoute = pathname.split('/article/')[0];
@@ -72,7 +75,7 @@ export const Article = ({news, breadcrumbs = []}: ArticleProps) => {
         </div>
 
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
-          <SocialMedia />
+          {enableSocialMediaSharing && <SocialMedia />}
           {relatedNewsSet?.length > 0 && (
             <FeedList
               title={i18n.get(RELATED_NEWS)}

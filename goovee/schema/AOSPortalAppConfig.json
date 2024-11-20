@@ -189,6 +189,10 @@
       "name": "resourcesHeroBgImage",
       "target": "AOSMetaFile"
     },
-    {"name": "allowGuestEventRegistration", "type": "Boolean"}
+    {"name": "allowGuestEventRegistration", "type": "Boolean"},
+    {
+      "name": "enableSocialMediaSharing",
+      "type": "Boolean"
+    }
   ]
 }
