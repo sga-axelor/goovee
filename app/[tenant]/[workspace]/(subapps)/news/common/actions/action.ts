@@ -11,7 +11,6 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {TENANT_HEADER} from '@/middleware';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
-import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
 import {findNews} from '@/subapps/news/common/orm/news';
