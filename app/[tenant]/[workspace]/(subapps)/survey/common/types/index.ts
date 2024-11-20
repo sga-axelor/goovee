@@ -18,6 +18,11 @@ export type Response = {
     statusSelect: number;
     surveyConfig: {
       name: string;
+      statusSelect: number;
+      category: {
+        name: string;
+      };
+      publicationDatetime: 'string';
     };
     partner: {
       name: string;

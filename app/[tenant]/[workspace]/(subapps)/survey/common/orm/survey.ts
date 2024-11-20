@@ -7,6 +7,7 @@ import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {SURVEY_STATUS, SURVEY_TYPE} from '@/subapps/survey/common/constants';
+import {Survey} from '@/subapps/survey/common/types';
 
 export async function findSurveys({
   workspace,
@@ -37,9 +38,6 @@ export async function findSurveys({
         statusSelect: true,
         typeSelect: true,
         category: {
-          name: true,
-        },
-        target: {
           name: true,
         },
         publicationDatetime: true,
@@ -78,7 +76,7 @@ export async function findMetaModelRecords({
   }
   const client = await manager.getClient(tenantId);
   const skip = getSkipInfo(limit, page);
-  const responses = await client.aOSMetaJsonModel
+  const responses: any = await client.aOSMetaJsonRecord
     .find({
       where: {
         AND: [
@@ -93,10 +91,72 @@ export async function findMetaModelRecords({
       },
     })
     .catch((error: any) => console.log('error >>>', error));
+
+  const enrichedResponses = await Promise.all(
+    responses.map(async (response: any) => ({
+      ...response,
+      attrs: await response.attrs,
+    })),
+  );
+
+  const finalResponses = await Promise.all(
+    enrichedResponses.map(async response => ({
+      ...response,
+      attrs: {
+        ...response.attrs,
+        surveyConfig: await findSurvey({
+          workspace,
+          tenantId,
+          id: response.attrs.surveyConfig.id,
+        }),
+      },
+    })),
+  );
+
   const pageInfo = getPageInfo({
     count: responses?.[0]?._count,
     page,
     limit,
   });
-  return {responses, pageInfo};
+
+  return {responses: finalResponses, pageInfo};
+}
+
+export async function findSurvey({
+  workspace,
+  tenantId,
+  id,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  id: Survey['id'];
+}) {
+  if (!(workspace && tenantId)) return [];
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return [];
+  }
+  const client = await manager.getClient(tenantId);
+  const survey = await client.aOSSurveyConfig
+    .findOne({
+      where: {
+        id,
+      },
+      select: {
+        name: true,
+        statusSelect: true,
+        typeSelect: true,
+        category: {
+          name: true,
+        },
+        publicationDatetime: true,
+      },
+    })
+    .then(clone)
+    .catch((error: any) => console.log('error >>>', error));
+
+  return survey;
 }

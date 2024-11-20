@@ -50,18 +50,11 @@ export default async function Page({
       page: responsePage,
     })) ?? [];
 
-  const enrichedResponses = await Promise.all(
-    responses.map(async (response: any) => ({
-      ...response,
-      attrs: await response.attrs,
-    })),
-  );
-
   return (
     <Content
       surveys={surveys}
       surveysPageInfo={surveysPageInfo}
-      responses={clone(enrichedResponses)}
+      responses={clone(responses)}
       responsesPageInfo={responsesPageInfo}
       workspace={workspace}
     />

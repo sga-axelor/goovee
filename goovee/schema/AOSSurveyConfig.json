@@ -14,7 +14,6 @@
       "type": "Int"
     },
     {"name": "category", "type": "ManyToOne", "target": "AOSSurveyCategory"},
-    {"name": "target", "type": "ManyToOne", "target": "AOSMarketingTargetList"},
     {"name": "publicationDatetime", "type": "Date"}
   ]
 }

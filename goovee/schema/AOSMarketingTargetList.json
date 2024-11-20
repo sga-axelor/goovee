@@ -1,7 +1,0 @@
-{
-  "name": "AOSMarketingTargetList",
-  "table": "marketing_target_list",
-  "extends": "Model",
-  "synchronize": false,
-  "fields": [{"name": "name", "type": "String"}]
-}
