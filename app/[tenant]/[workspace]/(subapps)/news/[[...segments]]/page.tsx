@@ -205,14 +205,11 @@ async function CategoryPage({
     const breadcrumbs = await getBreadcrumbs();
 
     return (
-      (
       <Article
         news={{...newsObject, recommendedNews}}
         breadcrumbs={breadcrumbs}
         workspace={workspace}
-     
       />
-    )
     );
   }
 

@@ -102,6 +102,7 @@ export async function findRecommendedNews({
       publicationDateTime: ORDER_BY.DESC,
     },
     categoryIds,
+    user,
   }).then(clone);
   return news;
 }
