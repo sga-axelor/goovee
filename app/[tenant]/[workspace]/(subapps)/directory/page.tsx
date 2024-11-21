@@ -26,7 +26,6 @@ import {MdOutlineNotificationAdd} from 'react-icons/md';
 // ---- LOCAL IMPORTS ---- //
 import Hero from './hero';
 import {Button} from '@/ui/components';
-import {i18n} from '@/lib/core/i18n';
 import {Card} from './common/ui/components/card';
 import {
   Pagination,
@@ -41,6 +40,7 @@ import {getPages, getPaginationButtons} from '../ticketing/common/utils';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
 import {Swipe} from './common/ui/components/swipe';
+import {getTranslation} from '@/lib/core/i18n/server';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -176,10 +176,12 @@ export default async function Page({
       />
       <div className="container mb-5">
         <div className="flex items-center justify-between mt-5">
-          <p className="text-xl font-semibold">{i18n.get('Services')}</p>
+          <p className="text-xl font-semibold">
+            {await getTranslation('Services')}
+          </p>
           <Button variant="success" className="flex items-center">
             <MdOutlineNotificationAdd className="size-6 me-2" />
-            <span>{i18n.get('Subscribe')}</span>
+            <span>{await getTranslation('Subscribe')}</span>
           </Button>
         </div>
         <Swipe

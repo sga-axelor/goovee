@@ -2,7 +2,6 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {i18n} from '@/i18n';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
@@ -15,6 +14,7 @@ import {FaXTwitter} from 'react-icons/fa6';
 // ---- LOCAL IMPORTS ---- //
 import {Map} from '../common/ui/components/map';
 import {Category} from '../common/ui/components/pills';
+import {getTranslation} from '@/lib/core/i18n/server';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
 export default async function Page({
@@ -51,7 +51,7 @@ export default async function Page({
   );
 }
 
-function Details() {
+async function Details() {
   const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
   return (
     <div>
@@ -102,7 +102,7 @@ function Details() {
         </div>
       </div>
       <p className="font-semibold text-xl mt-5 mb-5">
-        {i18n.get('Social media')}
+        {await getTranslation('Social media')}
       </p>
       <div className="flex space-x-6">
         <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
@@ -114,10 +114,12 @@ function Details() {
   );
 }
 
-function Contacts({tenant}: {tenant: string}) {
+async function Contacts({tenant}: {tenant: string}) {
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold text-xl">{i18n.get('Contact')}</h2>
+      <h2 className="font-semibold text-xl">
+        {await getTranslation('Contact')}
+      </h2>
       <div className="flex items-center gap-2">
         <Avatar className="h-10 w-10">
           <AvatarImage
@@ -128,13 +130,13 @@ function Contacts({tenant}: {tenant: string}) {
         <span className="font-semibold">Alfredo Keebler</span>
       </div>
       <div className="ms-4 space-y-4">
-        <h4 className="font-semibold">{i18n.get('Email')}</h4>
+        <h4 className="font-semibold">{await getTranslation('Email')}</h4>
         <a
           className="text-sm text-muted-foreground"
           href="mailto:alfredo.keebler@example.com">
           alfredo.keebler@example.com
         </a>
-        <h4 className="font-semibold">{i18n.get('Phone')}</h4>
+        <h4 className="font-semibold">{await getTranslation('Phone')}</h4>
         <a className="text-sm text-muted-foreground" href="tel:+1-202-555-0170">
           +1 (202) 555-0170
         </a>

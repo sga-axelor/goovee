@@ -4,14 +4,16 @@ import type {ReactNode} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
-import {i18n} from '@/i18n';
 import {getSession} from '@/auth';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
+import {getTranslation} from '@/lib/core/i18n/server';
 
-export const metadata: Metadata = {
-  title: i18n.get('Directory'),
-};
+export async function generateMetadata() {
+  return {
+    title: await getTranslation('Directory'),
+  };
+}
 
 export default async function Layout({
   params,
