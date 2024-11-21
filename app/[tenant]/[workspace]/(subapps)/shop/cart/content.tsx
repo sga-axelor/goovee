@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
 import {useSession} from 'next-auth/react';
@@ -327,18 +327,36 @@ export default function Content({
       const computedProductIDs = computedProducts
         .map(cp => cp?.product?.id)
         .filter(Boolean);
+
       const cartItemIDs = cart?.items?.map((i: any) => i.product);
+
       const diff = cartItemIDs.filter(
         (id: string) => !computedProductIDs.includes(id),
       );
+
       if (diff.length) {
         await Promise.all(
           cart.items.map((i: any) =>
-            findProduct({id: i.product, workspace, user}),
+            findProduct({
+              id: i.product,
+              workspace,
+            }),
           ),
         )
           .then(computedProducts => {
-            setComputedProducts(computedProducts);
+            if (computedProducts) {
+              const computedItemIds = computedProducts.map(
+                cp => cp?.product?.id,
+              );
+
+              const unavailableProductIds = cartItemIDs.filter(
+                (i: string | number) => !computedItemIds.includes(i),
+              );
+
+              unavailableProductIds?.forEach(removeItem);
+
+              setComputedProducts(computedProducts);
+            }
           })
           .finally(() => {
             setLoading(false);
@@ -348,7 +366,7 @@ export default function Content({
       }
     };
     init();
-  }, [cart, computedProducts, workspace, user, tenant]);
+  }, [cart, computedProducts, workspace, user, tenant, removeItem]);
 
   const $cart = useMemo(
     () => ({

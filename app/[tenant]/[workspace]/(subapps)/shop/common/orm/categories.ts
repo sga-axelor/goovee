@@ -1,6 +1,7 @@
 // ---- CORE IMPORTS ---- //
+import {filterPrivate} from '@/orm/filter';
 import {manager, type Tenant} from '@/tenant';
-import {PortalWorkspace} from '@/types';
+import type {PortalWorkspace, User} from '@/types';
 
 function transform($categories: any[]) {
   const categories: any = {};
@@ -26,9 +27,11 @@ function transform($categories: any[]) {
 export async function findCategories({
   workspace,
   tenantId,
+  user,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -39,6 +42,7 @@ export async function findCategories({
       portalWorkspace: {
         id: workspace.id,
       },
+      ...(await filterPrivate({user, tenantId})),
     },
     select: {
       name: true,
@@ -52,9 +56,11 @@ export async function findCategories({
 export async function findFeaturedCategories({
   workspace,
   tenantId,
+  user,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -66,6 +72,7 @@ export async function findFeaturedCategories({
         id: workspace.id,
       },
       isFeatured: true,
+      ...(await filterPrivate({tenantId, user})),
     },
     select: {
       name: true,

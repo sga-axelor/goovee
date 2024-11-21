@@ -1,4 +1,4 @@
-import {redirect} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -7,9 +7,9 @@ import {clone, isNumeric} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductView} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
-import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
-import {findCategories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/categories';
+import {ProductView} from '@/subapps/shop/common/ui/components';
+import {findProduct} from '@/subapps/shop/common/orm/product';
+import {findCategories} from '@/subapps/shop/common/orm/categories';
 
 export default async function Page({
   params,
@@ -24,7 +24,7 @@ export default async function Page({
 }) {
   const {tenant} = params;
 
-  const category = params['category-id']?.split('-')?.at(-1);
+  const categoryId = params['category-id']?.split('-')?.at(-1);
 
   const session = await getSession();
   const user = session?.user;
@@ -33,64 +33,71 @@ export default async function Page({
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
+  if (!(id && isNumeric(id) && categoryId && isNumeric(categoryId))) {
+    return redirect(`${workspaceURI}/shop`);
+  }
+
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
     tenantId: tenant,
   }).then(clone);
 
-  if (!(id && isNumeric(id))) redirect(`${workspaceURI}/shop`);
+  if (!workspace) {
+    return notFound();
+  }
+
+  const categories = await findCategories({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
+
+  const $category: any = categories.find(
+    (c: any) => Number(c.id) === Number(categoryId),
+  );
+
+  if (!$category) {
+    return redirect(`${workspaceURI}/shop`);
+  }
 
   const computedProduct = await findProduct({
     id,
     workspace,
     user,
     tenantId: tenant,
+    categoryids: $category.id,
   });
 
   if (!computedProduct) redirect(`${workspaceURI}/shop`);
 
   let breadcrumbs: any = [];
 
-  if (category) {
-    const categories = await findCategories({workspace, tenantId: tenant}).then(
-      clone,
-    );
+  const getbreadcrumbs: any = (category: any) => {
+    if (!category) return [];
 
-    const $category = category
-      ? categories.find((c: any) => Number(c.id) === Number(category))
-      : null;
+    let breadcrumbs: any = [];
 
-    const getbreadcrumbs: any = (category: any) => {
-      if (!category) return [];
+    if (category?.parent?.id) {
+      breadcrumbs = [
+        ...getbreadcrumbs(
+          categories.find((c: any) => c.id === category?.parent?.id),
+        ),
+      ];
+    }
 
-      let breadcrumbs: any = [];
+    breadcrumbs.push({id: category.id, name: category.name});
 
-      if (category?.parent?.id) {
-        breadcrumbs = [
-          ...getbreadcrumbs(
-            categories.find((c: any) => c.id === category?.parent?.id),
-          ),
-        ];
-      }
+    return breadcrumbs;
+  };
 
-      breadcrumbs.push({id: category.id, name: category.name});
-
-      return breadcrumbs;
-    };
-
-    breadcrumbs = $category ? getbreadcrumbs($category) : [];
-  }
+  breadcrumbs = $category ? getbreadcrumbs($category) : [];
 
   const {product} = computedProduct;
 
   if (breadcrumbs.length) {
     breadcrumbs.push({id: product.id, name: product.name});
   }
-
-  const categories = await findCategories({workspace, tenantId: tenant}).then(
-    clone,
-  );
 
   const parentcategories = categories?.filter((c: any) => !c.parent);
 

@@ -30,7 +30,10 @@ export default function Content({
 
   useEffect(() => {
     const request = async () => {
-      const res = await requestQuotation({cart, workspace});
+      const res = await requestQuotation({
+        cart,
+        workspace,
+      });
 
       if (res?.data) {
         toast({

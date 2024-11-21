@@ -1,6 +1,5 @@
 import React from 'react';
 import {notFound} from 'next/navigation';
-import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -32,11 +31,12 @@ export default async function Layout({
 }) {
   const {tenant} = params;
   const session = await getSession();
+  const user = session?.user;
 
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
     tenantId: tenant,
   }).then(clone);
@@ -46,7 +46,7 @@ export default async function Layout({
   const app = await findSubapp({
     code: SUBAPP_CODES.shop,
     url: workspace.url,
-    user: session?.user,
+    user,
     tenantId: tenant,
   });
 
@@ -54,9 +54,11 @@ export default async function Layout({
     return notFound();
   }
 
-  const categories = await findCategories({workspace, tenantId: tenant}).then(
-    clone,
-  );
+  const categories = await findCategories({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
 
   const parentcategories = categories?.filter((c: any) => !c.parent);
 

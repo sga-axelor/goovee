@@ -1,4 +1,4 @@
-import {redirect} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- ///
 import {findWorkspace} from '@/orm/workspace';
@@ -13,6 +13,7 @@ import {ProductList} from '@/subapps/shop/common/ui/components';
 import {findProducts} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {SORT_BY_OPTIONS} from '@/subapps/shop/common/constants';
+import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 
 export default async function Shop({
   params,
@@ -37,21 +38,15 @@ export default async function Shop({
     tenantId: tenant,
   }).then(clone);
 
-  const categories = await findCategories({workspace, tenantId: tenant}).then(
-    clone,
-  );
+  if (!workspace) {
+    return notFound();
+  }
 
-  const getcategoryids = (category: Category) => {
-    if (!category) return [];
-
-    let ids: Category['id'][] = [category.id];
-
-    if (category?.items?.length) {
-      ids = [...ids, ...category.items.map(getcategoryids).flat()];
-    }
-
-    return ids.flat();
-  };
+  const categories = await findCategories({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
 
   const getbreadcrumbs: any = (category: any) => {
     if (!category) return [];
@@ -71,7 +66,7 @@ export default async function Shop({
     return breadcrumbs;
   };
 
-  const $category = category
+  const $category: any = category
     ? categories.find((c: any) => Number(c.id) === Number(category))
     : null;
 

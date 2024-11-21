@@ -31,10 +31,10 @@ import {getImageURL} from '@/utils/files';
 import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import {ID, PaymentOption, type PortalWorkspace} from '@/types';
+import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
+import {findProduct} from '@/subapps/shop/common/actions/cart';
 import styles from './content.module.scss';
 import {
   createStripeCheckoutSession,
@@ -547,7 +547,6 @@ export default function Content({
             findProduct({
               id: i.product,
               workspace: workspace,
-              user,
             }),
           ),
         )

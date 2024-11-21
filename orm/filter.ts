@@ -1,6 +1,6 @@
 import {manager, type Tenant} from '@/tenant';
-import {type User} from '@/types';
 import {findPartnerByEmail} from './partner';
+import type {User} from '@/types';
 
 const openRecordFilters = [
   {

@@ -9,19 +9,19 @@ import {clone} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {TENANT_HEADER} from '@/middleware';
 import {manager} from '@/tenant';
-import type {ID, PortalWorkspace, Product, User} from '@/types';
+import type {PortalWorkspace, Product} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {findProduct as $findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
+import {findProduct as $findProduct} from '@/subapps/shop/common/orm/product';
+import {findCategories} from '@/subapps/shop/common/orm/categories';
+import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 
 export async function findProduct({
   id,
   workspace,
-  user,
 }: {
   id: Product['id'];
   workspace?: PortalWorkspace;
-  user?: User;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
@@ -29,11 +29,29 @@ export async function findProduct({
     return null;
   }
 
+  if (!workspace) {
+    return null;
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const categories = await findCategories({
+    workspace,
+    tenantId,
+    user,
+  });
+
+  const categoryids = (categories || [])
+    .map((c: any) => getcategoryids(c))
+    .flat();
+
   return await $findProduct({
     id,
     workspace,
     user,
     tenantId,
+    categoryids,
   }).then(clone);
 }
 
@@ -82,9 +100,16 @@ export async function requestOrder({
   if (!(session && workspace && workspace.config)) return null;
 
   try {
-    const computedProducts = await Promise.all(
-      cart.items.map((i: any) => findProduct({id: i.product, workspace, user})),
-    );
+    const computedProducts = (
+      await Promise.all(
+        cart.items.map((i: any) =>
+          findProduct({
+            id: i.product,
+            workspace,
+          }),
+        ),
+      )
+    ).filter(Boolean);
 
     const $cart = {
       ...cart,

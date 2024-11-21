@@ -18,6 +18,7 @@ import type {
   User,
 } from '@/types';
 import {manager, type Tenant} from '@/tenant';
+import {filterPrivate} from '@/orm/filter';
 
 function getPageInfo({
   count = 0,
@@ -50,6 +51,7 @@ export async function findProducts({
   workspace,
   user,
   tenantId,
+  associateWorkspace,
 }: {
   ids?: Product['id'][];
   search?: string;
@@ -60,6 +62,7 @@ export async function findProducts({
   workspace?: PortalWorkspace;
   user?: User;
   tenantId: Tenant['id'];
+  associateWorkspace?: boolean;
 }) {
   if (!(workspace && workspace.config && tenantId)) return [];
 
@@ -118,9 +121,14 @@ export async function findProducts({
               },
             }
           : {}),
-        portalWorkspace: {
-          id: workspace.id,
-        },
+        ...(associateWorkspace
+          ? {
+              portalWorkspace: {
+                id: workspace.id,
+              },
+            }
+          : {}),
+        ...(await filterPrivate({tenantId, user})),
       },
       orderBy: orderBy as any,
       take: limit as any,
@@ -386,17 +394,24 @@ export async function findProduct({
   workspace,
   user,
   tenantId,
+  categoryids,
 }: {
   id: Product['id'];
-  workspace?: PortalWorkspace;
+  workspace: PortalWorkspace;
   user?: User;
   tenantId: Tenant['id'];
+  categoryids?: (string | number)[];
 }) {
-  return (
-    id &&
-    findProducts({ids: [id], workspace, user, tenantId}).then(
-      ({products}: any = {}) => products && products[0],
-    )
+  if (!id) {
+    return null;
+  }
+
+  if (!workspace) {
+    return null;
+  }
+
+  return findProducts({ids: [id], workspace, user, tenantId, categoryids}).then(
+    ({products}: any = {}) => products && products[0],
   );
 }
 

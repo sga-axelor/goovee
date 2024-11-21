@@ -1,9 +1,10 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {FeaturedCategories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
@@ -31,21 +32,15 @@ export default async function Shop({
     tenantId: tenant,
   }).then(clone);
 
-  const categories = await findCategories({workspace, tenantId: tenant}).then(
-    clone,
-  );
+  if (!workspace) {
+    return notFound();
+  }
 
-  const getcategoryids = (category: Category) => {
-    if (!category) return [];
-
-    let ids: Category['id'][] = [category.id];
-
-    if (category?.items?.length) {
-      ids = [...ids, ...category.items.map(getcategoryids).flat()];
-    }
-
-    return ids.flat();
-  };
+  const categories = await findCategories({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
 
   const getbreadcrumbs: any = (category: any) => {
     if (!category) return [];
@@ -70,11 +65,12 @@ export default async function Shop({
   const featuredCategories: any = await findFeaturedCategories({
     workspace,
     tenantId: tenant,
+    user,
   }).then(clone);
 
   for (const category of featuredCategories) {
     if (category?.productList?.length) {
-      const res = await findProducts({
+      const res: any = await findProducts({
         ids: category.productList.map((p: any) => p.id),
         workspace,
         user,
