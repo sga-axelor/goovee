@@ -2,6 +2,15 @@ import {manager, type Tenant} from '@/tenant';
 import {type User} from '@/types';
 import {findPartnerByEmail} from './partner';
 
+const openRecordFilters = [
+  {
+    isPrivate: null,
+  },
+  {
+    isPrivate: false,
+  },
+];
+
 export const filterPrivate = async (
   {user, tenantId}: {user?: User; tenantId: Tenant['id']} = {
     tenantId: '',
@@ -22,9 +31,7 @@ export const filterPrivate = async (
 
   if (!user) {
     return {
-      isPrivate: {
-        ne: true,
-      },
+      OR: openRecordFilters,
     };
   }
 
@@ -36,10 +43,10 @@ export const filterPrivate = async (
 
   const partnerCategory = partner?.partnerCategory;
 
-  const OR = [];
+  let OR: any[] = [];
 
   if (!config?.privateOnly) {
-    OR.push({isPrivate: false});
+    OR = [...openRecordFilters];
   }
 
   OR.push({
