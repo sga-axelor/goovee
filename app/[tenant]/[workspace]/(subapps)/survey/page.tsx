@@ -27,7 +27,7 @@ export default async function Page({
   if (!user) return notFound();
 
   const {workspaceURL, tenant} = workspacePathname(params);
-  const {page, responsePage} = searchParams;
+  const {page, responsePage, search} = searchParams;
 
   const workspace: any = await findWorkspace({
     user: session?.user,
@@ -40,6 +40,7 @@ export default async function Page({
     tenantId: tenant,
     limit: DEFAULT_TABLE_LIMIT,
     page,
+    search,
   });
 
   const {responses, pageInfo: responsesPageInfo}: any =
@@ -48,6 +49,7 @@ export default async function Page({
       tenantId: tenant,
       limit: DEFAULT_TABLE_LIMIT,
       page: responsePage,
+      search,
     })) ?? [];
 
   return (

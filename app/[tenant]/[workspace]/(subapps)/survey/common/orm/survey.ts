@@ -14,11 +14,13 @@ export async function findSurveys({
   tenantId,
   limit,
   page = DEFAULT_PAGE,
+  search,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   limit?: number;
   page?: string | number;
+  search?: string;
 }) {
   if (!(workspace && tenantId)) return [];
   const client = await manager.getClient(tenantId);
@@ -30,6 +32,13 @@ export async function findSurveys({
       where: {
         typeSelect: SURVEY_TYPE.PUBLIC,
         statusSelect: SURVEY_STATUS.PUBLISHED,
+        ...(search
+          ? {
+              name: {
+                like: `%${search}%`,
+              },
+            }
+          : {}),
       },
       take: limit,
       ...(skip ? {skip} : {}),
@@ -60,11 +69,13 @@ export async function findMetaModelRecords({
   tenantId,
   limit,
   page = DEFAULT_PAGE,
+  search,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   limit?: number;
   page?: string | number;
+  search?: string;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -83,6 +94,9 @@ export async function findMetaModelRecords({
           {attrs: {path: 'partner.id', eq: user.id}},
           {attrs: {path: 'surveyConfig', ne: null}},
         ],
+        ...(search
+          ? {attrs: {path: 'surveyConfig.name', like: `%${search}%`}}
+          : {}),
       },
       take: limit,
       ...(skip ? {skip} : {}),

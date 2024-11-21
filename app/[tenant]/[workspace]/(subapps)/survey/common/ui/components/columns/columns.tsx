@@ -57,13 +57,13 @@ export const partnerResponseColumns = [
     key: 'survey',
     label: i18n.get('Survey'),
     sortable: true,
+    mobile: true,
     getter: (row: Response) => row.attrs?.surveyConfig?.name,
     content: (row: Response) => row.attrs?.surveyConfig?.name,
   },
   {
     key: 'statusSelect',
     label: i18n.get('Survey status'),
-    mobile: true,
     getter: (row: Response) => row.attrs?.surveyConfig?.statusSelect,
     content: (row: Response) => (
       <Chip
@@ -75,7 +75,6 @@ export const partnerResponseColumns = [
   {
     key: 'category',
     label: i18n.get('Category'),
-    mobile: true,
     getter: (row: Response) => row.attrs?.surveyConfig?.category?.name,
     content: (row: Response) => (
       <Chip

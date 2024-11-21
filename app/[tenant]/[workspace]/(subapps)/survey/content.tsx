@@ -1,14 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, {useCallback} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {DEFAULT_LIMIT} from '@/constants';
+import {DEFAULT_LIMIT, URL_PARAMS} from '@/constants';
 import {i18n} from '@/lib/core/i18n';
 import {Search, TableList} from '@/ui/components';
 import {useSortBy} from '@/ui/hooks';
 import {PortalWorkspace} from '@/types';
-import {useToast} from '@/ui/hooks';
+import {useToast, useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {Survey} from '@/subapps/survey/common/types';
@@ -40,11 +40,19 @@ export default function Content({
   const [sortedResponses, responseSortOrder, toggleResponseSortOrder] =
     useSortBy(responses);
 
+  const {update} = useSearchParams();
+
   const {toast} = useToast();
 
   const handleRowClick = (survey: Survey) => {};
 
-  const handleSurveySearch = async () => {
+  const handleSurveySearch = (term: string) => {
+    if (term.length === 0) {
+      update([{key: URL_PARAMS.search, value: term}], {scroll: false});
+    }
+  };
+
+  const fetchAllSurveys = async () => {
     try {
       const result: any = await getAllSurveys({
         workspace,
@@ -71,13 +79,24 @@ export default function Content({
     }
   };
 
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>, term: string) => {
+      if (e.key === 'Enter' && term.trim().length > 0) {
+        update([{key: URL_PARAMS.search, value: term}], {scroll: false});
+      }
+    },
+    [update],
+  );
+
   const renderSearch = () => {
     return (
       <Search
         searchKey={'name'}
-        findQuery={handleSurveySearch}
+        findQuery={fetchAllSurveys}
+        onSearch={handleSurveySearch}
         renderItem={SearchItem}
         onItemClick={handleRowClick}
+        onKeyDown={handleSearchKeyDown}
       />
     );
   };
