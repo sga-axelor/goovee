@@ -20,7 +20,15 @@ import {
 } from '@/subapps/news/common/ui/components';
 import {
   FEATURED_NEWS,
+  FINAL_BATCH_START_INDEX,
+  MAX_ITEMS_INDEX,
   NO_NEWS_AVAILABLE,
+  OTHER_PAGES_END_INDEX,
+  OTHER_PAGES_MIDDLE_INDEX,
+  OTHER_PAGES_START_INDEX,
+  PAGE_1_END_INDEX,
+  PAGE_1_MIDDLE_INDEX,
+  PAGE_1_START_INDEX,
   SUBSCRIBE,
 } from '@/subapps/news/common/constants';
 
@@ -99,37 +107,65 @@ const Content = ({
               )}
               <ConditionalRender
                 items={renderNewsItems(
-                  Number(page) !== 1 ? 0 : 3,
-                  Number(page) !== 1 ? 4 : 7,
+                  Number(page) !== 1
+                    ? OTHER_PAGES_START_INDEX
+                    : PAGE_1_START_INDEX,
+                  Number(page) !== 1
+                    ? OTHER_PAGES_MIDDLE_INDEX
+                    : PAGE_1_MIDDLE_INDEX,
                   NewsList,
                 )}
                 className={`${
                   featuredNews?.length ? 'lg:w-3/5' : 'w-full'
                 } flex flex-col gap-4`}>
                 {renderNewsItems(
-                  Number(page) !== 1 ? 0 : 3,
-                  Number(page) !== 1 ? 4 : 7,
+                  Number(page) !== 1
+                    ? OTHER_PAGES_START_INDEX
+                    : PAGE_1_START_INDEX,
+                  Number(page) !== 1
+                    ? OTHER_PAGES_MIDDLE_INDEX
+                    : PAGE_1_MIDDLE_INDEX,
                   NewsList,
                 )}
               </ConditionalRender>
             </div>
             <ConditionalRender
               items={renderNewsItems(
-                Number(page) !== 1 ? 4 : 7,
-                Number(page) !== 1 ? 9 : 12,
+                Number(page) !== 1
+                  ? OTHER_PAGES_MIDDLE_INDEX
+                  : PAGE_1_END_INDEX,
+                Number(page) !== 1
+                  ? OTHER_PAGES_END_INDEX
+                  : FINAL_BATCH_START_INDEX,
                 NewsCard,
               )}
               className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
               {renderNewsItems(
-                Number(page) !== 1 ? 4 : 7,
-                Number(page) !== 1 ? 9 : 12,
+                Number(page) !== 1
+                  ? OTHER_PAGES_MIDDLE_INDEX
+                  : PAGE_1_END_INDEX,
+                Number(page) !== 1
+                  ? OTHER_PAGES_END_INDEX
+                  : FINAL_BATCH_START_INDEX,
                 NewsCard,
               )}
             </ConditionalRender>
             <ConditionalRender
-              items={renderNewsItems(Number(page) !== 1 ? 9 : 12, 16, NewsList)}
+              items={renderNewsItems(
+                Number(page) !== 1
+                  ? OTHER_PAGES_END_INDEX
+                  : FINAL_BATCH_START_INDEX,
+                MAX_ITEMS_INDEX,
+                NewsList,
+              )}
               className="flex flex-wrap gap-6">
-              {renderNewsItems(Number(page) !== 1 ? 9 : 12, 16, NewsList)}
+              {renderNewsItems(
+                Number(page) !== 1
+                  ? OTHER_PAGES_END_INDEX
+                  : FINAL_BATCH_START_INDEX,
+                MAX_ITEMS_INDEX,
+                NewsList,
+              )}
             </ConditionalRender>
             <div className="mb-12 md:mb-0">
               <Pagination
