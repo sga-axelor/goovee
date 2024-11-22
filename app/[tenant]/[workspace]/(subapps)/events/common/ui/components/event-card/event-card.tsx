@@ -47,7 +47,7 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
           workspace,
         });
 
-        if (response.success) {
+        if (response.success && response.data) {
           const {emailAddress} = response.data;
           setIsRegistered(emailAddress === user.email);
         }
@@ -79,7 +79,7 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
                 {isRegistered && (
                   <Badge
                     variant="outline"
-                    className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6">
+                    className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6 flex flex-none">
                     {i18n.get('#Registered')}
                   </Badge>
                 )}

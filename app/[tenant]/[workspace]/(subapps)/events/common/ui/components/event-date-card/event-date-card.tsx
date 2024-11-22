@@ -45,7 +45,7 @@ export const EventDateCard = ({
           workspace,
         });
 
-        if (response.success) {
+        if (response.success && response.data) {
           const {emailAddress} = response.data;
           setIsRegistered(emailAddress === user.email);
         }
