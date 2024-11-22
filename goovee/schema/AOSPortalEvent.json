@@ -68,6 +68,20 @@
       "name": "eventProduct",
       "type": "ManyToOne",
       "target": "AOSProduct"
+    },
+    {
+      "name": "isPrivate",
+      "type": "Boolean"
+    },
+    {
+      "name": "partnerSet",
+      "type": "ManyToMany",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "partnerCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPartnerCategory"
     }
   ]
 }
