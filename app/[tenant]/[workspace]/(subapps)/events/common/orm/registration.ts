@@ -98,7 +98,6 @@ export async function findEventParticipant({
       registration: {
         event: {
           id: event.id,
-          ...(await filterPrivate({user, tenantId})),
         },
       },
       emailAddress: user?.email,
