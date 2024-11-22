@@ -94,7 +94,8 @@ export default async function Page({
         {user && (
           <div className="flex items-center gap-2">
             {canWrite && (
-              <Link href={`${workspaceURI}/resources/categories/create?id=${id}`}>
+              <Link
+                href={`${workspaceURI}/resources/categories/create?id=${id}`}>
                 <Button variant="success" className="flex items-center">
                   <MdAdd className="size-6" />
                   <span>{await getTranslation('New Category')}</span>
