@@ -7,7 +7,8 @@ import {clone} from '@/utils';
 import {getTranslation} from '@/i18n/server';
 import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
-import type {Comment, ID, Participant, PortalWorkspace} from '@/types';
+import type {ID, Participant, PortalWorkspace, User} from '@/types';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
@@ -35,6 +36,7 @@ export async function getAllEvents({
   dates,
   workspace,
   tenantId,
+  user,
 }: {
   limit?: number;
   page?: number;
@@ -47,6 +49,7 @@ export async function getAllEvents({
   dates?: [Date | undefined];
   workspace?: any;
   tenantId?: any;
+  user?: User;
 }) {
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
@@ -76,7 +79,9 @@ export async function getAllEvents({
       selectedDates: dates,
       workspace,
       tenantId,
+      user,
     }).then(clone);
+
     return {events, pageInfo};
   } catch (err) {
     console.log(err);
@@ -111,8 +116,10 @@ export async function register({
   if (result.error) {
     return result;
   }
+  const session = await getSession();
+  const user = session?.user;
 
-  const event = await findEventByID({id: eventId, workspace, tenantId});
+  const event = await findEventByID({id: eventId, workspace, tenantId, user});
   if (!event) return error(await getTranslation('Event not found!'));
 
   try {

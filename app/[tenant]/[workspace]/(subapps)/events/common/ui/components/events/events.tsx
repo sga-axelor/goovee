@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/date';
@@ -19,7 +20,6 @@ import {useSearchParams, useToast} from '@/ui/hooks';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 import {getImageURL} from '@/utils/files';
-import {useResponsive} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
@@ -49,6 +49,9 @@ export const Events = ({
   const {update} = useSearchParams();
   const {workspaceURI, tenant} = useWorkspace();
   const router = useRouter();
+
+  const {data: session} = useSession();
+  const {user} = session || {};
 
   const imageURL = workspace?.config?.eventHeroBgImage?.id
     ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant)})`
@@ -104,7 +107,7 @@ export const Events = ({
     <Search
       findQuery={async () => {
         try {
-          const response: any = await getAllEvents({workspace});
+          const response: any = await getAllEvents({workspace, user});
           if (response?.error) {
             toast({
               variant: 'destructive',

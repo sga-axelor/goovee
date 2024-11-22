@@ -5,23 +5,33 @@ import {formatDateToISOString} from '@/utils/date';
 import {DATE_FORMATS, ORDER_BY} from '@/constants';
 import {getPageInfo} from '@/utils';
 import {type Tenant, manager} from '@/tenant';
-import type {ID, PortalWorkspace} from '@/types';
+import type {ID, PortalWorkspace, User} from '@/types';
+import {filterPrivate} from '@/orm/filter';
 
 export async function findEventByID({
   id,
   workspace,
   tenantId,
+  user,
 }: {
   id: ID;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(id && workspace && tenantId)) return null;
 
   const c = await manager.getClient(tenantId);
 
   const event = await c.aOSPortalEvent.findOne({
-    where: {id, eventVisibility: true},
+    where: {
+      id,
+      eventVisibility: true,
+      ...(await filterPrivate({user, tenantId})),
+      eventCategorySet: {
+        ...(await filterPrivate({user, tenantId})),
+      },
+    },
     select: {
       id: true,
       eventTitle: true,
@@ -73,6 +83,7 @@ export async function findEvents({
   selectedDates,
   workspace,
   tenantId,
+  user,
 }: {
   ids?: ID[];
   search?: string;
@@ -85,6 +96,7 @@ export async function findEvents({
   selectedDates?: any[];
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!tenantId) {
     return {events: [], pageInfo: {}};
@@ -124,7 +136,16 @@ export async function findEvents({
       workspace: {
         id: workspace?.id,
       },
+      ...(categoryids?.length
+        ? {
+            id: {
+              in: categoryids,
+            },
+          }
+        : {}),
+      ...(await filterPrivate({user, tenantId})),
     },
+    ...(await filterPrivate({user, tenantId})),
     ...(ids?.length
       ? {
           id: {
@@ -139,15 +160,7 @@ export async function findEvents({
           },
         }
       : {}),
-    ...(categoryids?.length
-      ? {
-          eventCategorySet: {
-            id: {
-              in: categoryids,
-            },
-          },
-        }
-      : {}),
+
     ...(eventStartDateTimeCriteria
       ? {OR: eventStartDateTimeCriteria}
       : year

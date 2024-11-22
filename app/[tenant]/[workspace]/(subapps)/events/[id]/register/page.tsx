@@ -34,10 +34,15 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
+  if (!workspace) {
+    return notFound();
+  }
+
   const eventDetails = await findEventByID({
     id,
     workspace,
     tenantId: tenant,
+    user,
   }).then(clone);
 
   if (!eventDetails) {

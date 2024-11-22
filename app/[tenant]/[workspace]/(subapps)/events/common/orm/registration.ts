@@ -1,9 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
-import type {ID, Participant, PortalWorkspace} from '@/types';
+import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getTranslation} from '@/i18n/server';
 import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
+import {filterPrivate} from '@/orm/filter';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
@@ -79,7 +80,10 @@ export async function findEventParticipant({
 
   if (!tenantId) return error(await getTranslation('Tenant ID is missing!'));
 
-  const event = await findEventByID({id, workspace, tenantId});
+  const session = await getSession();
+  const user = session?.user;
+
+  const event = await findEventByID({id, workspace, tenantId, user});
   if (!event) {
     return {
       error: true,
@@ -89,14 +93,12 @@ export async function findEventParticipant({
 
   const client = await manager.getClient(tenantId);
 
-  const session = await getSession();
-  const user = session?.user;
-
   return client.aOSPortalParticipant.findOne({
     where: {
       registration: {
         event: {
           id: event.id,
+          ...(await filterPrivate({user, tenantId})),
         },
       },
       emailAddress: user?.email,

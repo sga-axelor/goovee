@@ -1,15 +1,16 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ----//
-import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {Category} from '@/subapps/events/common/ui/components';
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
 import Content from '@/subapps/events/content';
 import {LIMIT} from '@/subapps/events/common/constants';
+import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 
 export default async function Page(context: any) {
   const params = context?.params;
@@ -18,6 +19,8 @@ export default async function Page(context: any) {
   const {tenant} = params;
 
   const session = await getSession();
+  const user = session?.user;
+
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
@@ -25,6 +28,10 @@ export default async function Page(context: any) {
     url: workspaceURL,
     tenantId: tenant,
   }).then(clone);
+
+  if (!workspace) {
+    return notFound();
+  }
 
   const category = context?.searchParams?.category
     ? Array.isArray(context?.searchParams?.category)
@@ -43,11 +50,13 @@ export default async function Page(context: any) {
     year: new Date(date).getFullYear() || undefined,
     workspace,
     tenantId: tenant,
+    user,
   });
 
-  const categories: Category[] = await findEventCategories({
+  const categories: any = await findEventCategories({
     workspace,
     tenantId: tenant,
+    user,
   }).then(clone);
 
   return (

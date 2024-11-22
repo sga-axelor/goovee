@@ -26,6 +26,7 @@ export default async function Page({
   const {id, tenant} = params;
 
   const session = await getSession();
+  const user = session?.user;
 
   const {workspaceURL} = workspacePathname(params);
 
@@ -35,10 +36,15 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
+  if (!workspace) {
+    return notFound();
+  }
+
   const eventDetails: any = await findEventByID({
     id,
     workspace,
     tenantId: tenant,
+    user,
   }).then(clone);
 
   if (!eventDetails) {

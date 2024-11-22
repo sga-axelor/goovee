@@ -24,6 +24,7 @@ export default async function Layout({
   const {tenant} = params;
 
   const session = await getSession();
+  const user = session?.user;
   const {workspaceURL} = workspacePathname(params);
 
   const subapp = await findSubappAccess({
@@ -41,9 +42,14 @@ export default async function Layout({
     tenantId: tenant,
   }).then(clone);
 
+  if (!workspace) {
+    return notFound();
+  }
+
   const categories = await findEventCategories({
     workspace,
     tenantId: tenant,
+    user,
   }).then(clone);
 
   return (
