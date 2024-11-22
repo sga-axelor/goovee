@@ -1,5 +1,3 @@
-'use server';
-
 import {getTranslation} from '@/i18n/server';
 import {PortalWorkspace, User} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
