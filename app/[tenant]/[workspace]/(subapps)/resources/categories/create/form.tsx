@@ -1,7 +1,7 @@
 'use client';
 
 import {useRef} from 'react';
-import {useRouter} from 'next/navigation';
+import {notFound, useRouter} from 'next/navigation';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
@@ -36,13 +36,12 @@ import {DynamicIcon} from '@/subapps/resources/common/ui/components';
 
 const formSchema = z.object({
   title: z.string().min(1, {message: 'Title is required'}),
-  parent: z.string(),
   description: z.string(),
   icon: z.string(),
   color: z.string(),
 });
 
-export default function ResourceForm({categories, colors, icons}: any) {
+export default function ResourceForm({parent, colors, icons}: any) {
   const formRef = useRef<HTMLFormElement>(null);
   const {toast} = useToast();
   const router = useRouter();
@@ -52,7 +51,6 @@ export default function ResourceForm({categories, colors, icons}: any) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      parent: '',
       description: '',
       icon: '',
       color: '',
@@ -61,10 +59,10 @@ export default function ResourceForm({categories, colors, icons}: any) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
+    formData.append('parent', parent.id);
     formData.append('title', values.title);
     formData.append('description', values.description);
     formData.append('icon', values.icon);
-    formData.append('parent', values.parent);
     formData.append('color', values.color);
 
     const result = await create(formData, workspaceURL);
@@ -84,6 +82,10 @@ export default function ResourceForm({categories, colors, icons}: any) {
       });
     }
   };
+
+  if (!parent?.id) {
+    return notFound();
+  }
 
   return (
     <Form {...form}>
@@ -107,34 +109,17 @@ export default function ResourceForm({categories, colors, icons}: any) {
             </FormItem>
           )}
         />
-
-        <FormField
-          control={form.control}
-          name="parent"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Parent')}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={i18n.get('Select a parent')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((category: any) => (
-                    <SelectItem
-                      value={category.id}
-                      key={category.id}
-                      className="data-[highlighted]:text-success data-[highlighted]:bg-success-light">
-                      {category.fileName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>{i18n.get('Parent')}</FormLabel>
+          <FormControl>
+            <Input
+              className="shadow-none h-11 text-black placeholder:text-muted-foreground"
+              readOnly
+              value={parent?.fileName}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
 
         <FormField
           control={form.control}

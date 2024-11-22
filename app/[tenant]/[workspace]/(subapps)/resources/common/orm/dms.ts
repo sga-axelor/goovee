@@ -1,19 +1,22 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
-import {PortalWorkspace} from '@/types';
+import type {PortalWorkspace, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {COLORS, ICONS} from '@/subapps/resources/common/constants';
+import {filterPrivate} from '@/orm/filter';
 
 export async function fetchFolders({
   workspace,
   tenantId,
   params,
+  user,
 }: {
   params?: any;
   tenantId: Tenant['id'];
   workspace: PortalWorkspace;
+  user?: User;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -26,6 +29,10 @@ export async function fetchFolders({
         id: workspace?.id,
       },
       ...params?.where,
+      ...(await filterPrivate({
+        tenantId,
+        user,
+      })),
     },
     select: {
       fileName: true,
@@ -45,37 +52,18 @@ export async function fetchFolders({
 export async function fetchLatestFolders({
   workspace,
   tenantId,
+  user,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   return fetchFolders({
     workspace,
     tenantId,
+    user,
     params: {
       take: 10,
-    },
-  });
-}
-
-export async function fetchSharedFolders({
-  workspace,
-  tenantId,
-  params,
-}: {
-  workspace: PortalWorkspace;
-  tenantId: Tenant['id'];
-  params?: any;
-}) {
-  return fetchFolders({
-    workspace,
-    tenantId,
-    params: {
-      ...params,
-      where: {
-        isSharedFolder: true,
-        ...params?.where,
-      },
     },
   });
 }
@@ -83,10 +71,12 @@ export async function fetchSharedFolders({
 export async function fetchFiles({
   id,
   workspace,
+  user,
   tenantId,
 }: {
   id: string;
   workspace: PortalWorkspace;
+  user?: User;
   tenantId: Tenant['id'];
 }) {
   if (!(workspace && tenantId)) {
@@ -100,7 +90,13 @@ export async function fetchFiles({
       isDirectory: {
         ne: true,
       },
-      parent: {id},
+      parent: {
+        id,
+      },
+      ...(await filterPrivate({
+        tenantId,
+        user,
+      })),
     },
     select: {
       fileName: true,
@@ -116,9 +112,11 @@ export async function fetchFiles({
 export async function fetchLatestFiles({
   workspace,
   tenantId,
+  user,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -132,6 +130,10 @@ export async function fetchLatestFiles({
       workspaceSet: {
         id: workspace?.id,
       },
+      ...(await filterPrivate({
+        tenantId,
+        user,
+      })),
     },
     select: {
       fileName: true,
@@ -150,9 +152,13 @@ export async function fetchLatestFiles({
 
 export async function fetchFile({
   id,
+  workspace,
+  user,
   tenantId,
 }: {
   id: string;
+  workspace: PortalWorkspace;
+  user?: User;
   tenantId: Tenant['id'];
 }) {
   const client = await manager.getClient(tenantId);
@@ -160,6 +166,13 @@ export async function fetchFile({
   const file = await client.aOSDMSFile.findOne({
     where: {
       id,
+      workspaceSet: {
+        id: workspace?.id,
+      },
+      ...(await filterPrivate({
+        tenantId,
+        user,
+      })),
     },
     select: {
       fileName: true,
@@ -168,6 +181,11 @@ export async function fetchFile({
       createdBy: true,
       createdOn: true,
       metaFile: true,
+      permissionSelect: true,
+      isPrivate: true,
+      partnerSet: true,
+      partnerCategorySet: true,
+      isDirectory: true,
     },
   });
 
@@ -184,9 +202,11 @@ export async function fetchIcons() {
 
 export async function fetchExplorerCategories({
   workspace,
+  user,
   tenantId,
 }: {
   workspace: PortalWorkspace;
+  user?: User;
   tenantId: Tenant['id'];
 }) {
   if (!(workspace && tenantId)) return [];
@@ -200,6 +220,10 @@ export async function fetchExplorerCategories({
         workspaceSet: {
           id: workspace.id,
         },
+        ...(await filterPrivate({
+          tenantId,
+          user,
+        })),
       },
       select: {
         parent: {

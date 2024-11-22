@@ -1,7 +1,7 @@
 'use client';
 
 import {useRef} from 'react';
-import {useRouter} from 'next/navigation';
+import {notFound, useRouter} from 'next/navigation';
 import {useDropzone} from 'react-dropzone';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
@@ -53,10 +53,9 @@ const formSchema = z.object({
       }),
     )
     .min(1, {message: i18n.get('Single file is required to create resource')}),
-  category: z.string().min(1, {message: i18n.get('Category is required')}),
 });
 
-export default function ResourceForm({categories}: any) {
+export default function ResourceForm({parent}: any) {
   const {toast} = useToast();
   const router = useRouter();
   const {workspaceURI, workspaceURL} = useWorkspace();
@@ -66,7 +65,6 @@ export default function ResourceForm({categories}: any) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      category: '',
       values: [],
     },
   });
@@ -74,7 +72,7 @@ export default function ResourceForm({categories}: any) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
 
-    formData.append('category', values.category);
+    formData.append('parent', parent?.id);
 
     values.values.forEach((value: any, index: number) => {
       formData.append(`values[${index}][title]`, value.title);
@@ -89,7 +87,7 @@ export default function ResourceForm({categories}: any) {
         title: i18n.get('Resource created successfully.'),
       });
       router.refresh();
-      router.push(`${workspaceURI}/resources/categories?id=${values.category}`);
+      router.push(`${workspaceURI}/resources/categories?id=${parent?.id}`);
     } else {
       toast({
         variant: 'destructive',
@@ -114,39 +112,27 @@ export default function ResourceForm({categories}: any) {
     onDrop,
   });
 
+  if (!parent?.id) {
+    return notFound();
+  }
+
   return (
     <Form {...form}>
       <form
         ref={formRef}
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8">
-        <FormField
-          control={form.control}
-          name="category"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Category')}*</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={i18n.get('Select a category')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((category: any) => (
-                    <SelectItem
-                      value={category.id}
-                      key={category.id}
-                      className="data-[highlighted]:text-success data-[highlighted]:bg-success-light">
-                      {category.fileName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>{i18n.get('Parent')}</FormLabel>
+          <FormControl>
+            <Input
+              className="shadow-none h-11 text-black placeholder:text-muted-foreground"
+              readOnly
+              value={parent?.fileName}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
         <div
           {...getRootProps({className: 'dropzone'})}
           className="flex justify-center items-center cursor-pointer rounded bg-muted h-36">

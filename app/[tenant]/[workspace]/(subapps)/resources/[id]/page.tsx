@@ -7,12 +7,15 @@ import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {clone} from '@/utils';
 import {parseDate} from '@/utils/date';
 import {getTranslation} from '@/i18n/server';
+import {workspacePathname} from '@/utils/workspace';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import DownloadIcon from './download-icon';
 import ImageViewer from './image-viewer';
 import HTMLViewer from './html-viewer';
 import DocViewer from './doc-viewer';
+import {findWorkspace} from '@/orm/workspace';
 
 const viewer: Record<string, React.JSXElementConstructor<any>> = {
   'application/pdf': DocViewer,
@@ -27,11 +30,30 @@ const viewer: Record<string, React.JSXElementConstructor<any>> = {
 export default async function Page({
   params,
 }: {
-  params: {tenant: string; id: string};
+  params: {tenant: string; workspace: string; id: string};
 }) {
   const {id, tenant} = params;
+  const {workspaceURL} = workspacePathname(params);
 
-  const file = await fetchFile({id, tenantId: tenant}).then(clone);
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId: tenant,
+  }).then(clone);
+
+  if (!workspace) {
+    return notFound();
+  }
+
+  const file = await fetchFile({
+    id,
+    tenantId: tenant,
+    workspace,
+    user,
+  }).then(clone);
 
   if (!file) {
     return notFound();

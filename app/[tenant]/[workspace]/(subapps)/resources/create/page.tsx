@@ -8,15 +8,24 @@ import {findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';
 import ResourceForm from './form';
+import {fetchFile} from '@/subapps/resources/common/orm/dms';
+import {ACTION} from '@/subapps/resources/common/constants';
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: {tenant: string; workspace: string};
+  searchParams: {id: string};
 }) {
   const {tenant} = params;
+  const {id} = searchParams;
+
+  if (!id) {
+    return notFound();
+  }
+
   const session = await getSession();
 
   const user = session?.user;
@@ -33,17 +42,37 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
-  const folders = await fetchSharedFolders({
+  if (!workspace) {
+    return notFound();
+  }
+
+  const parent = await fetchFile({
+    id,
     workspace,
+    user,
     tenantId: tenant,
   }).then(clone);
+
+  if (!parent) {
+    return notFound();
+  }
+
+  const {permissionSelect, isDirectory} = parent;
+
+  const canModify =
+    permissionSelect &&
+    [ACTION.WRITE, ACTION.UPLOAD].includes(permissionSelect);
+
+  if (!(isDirectory && canModify)) {
+    return notFound();
+  }
 
   return (
     <main className="container mx-auto mt-4 p-4 md:p-8 bg-white rounded space-y-2">
       <h2 className="font-semibold text-lg">
         {await getTranslation('Create a resource')}
       </h2>
-      <ResourceForm categories={folders} />
+      <ResourceForm parent={parent} />
     </main>
   );
 }
