@@ -1,9 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY, SORT_TYPE} from '@/constants';
 import {manager, type Tenant} from '@/tenant';
-import {ID} from '@/types';
+import {ID, User} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {PortalWorkspace} from '@/types';
+import {filterPrivate} from '@/orm/filter';
 
 // ---- LOCAL IMPORTS ---- //
 import {getPopularQuery} from '@/subapps/forum/common/utils';
@@ -12,10 +13,12 @@ import {Post} from '@/subapps/forum/common/types/forum';
 export async function findGroups({
   workspace,
   tenantId,
+  user,
 }: {
   workspace: PortalWorkspace;
   memberGroupIDs?: any;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -26,6 +29,7 @@ export async function findGroups({
       workspace: {
         id: workspace.id,
       },
+      ...(await filterPrivate({user, tenantId})),
     },
     select: {
       name: true,
@@ -42,12 +46,14 @@ export async function findGroupsByMembers({
   orderBy,
   workspaceID,
   tenantId,
+  user,
 }: {
   id: any;
   searchKey?: string;
   orderBy?: any;
   workspaceID: PortalWorkspace['id'];
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspaceID && tenantId)) return [];
 
@@ -61,6 +67,7 @@ export async function findGroupsByMembers({
       workspace: {
         id: workspaceID,
       },
+      ...(await filterPrivate({user, tenantId})),
     },
     ...(searchKey
       ? {
@@ -125,6 +132,7 @@ export async function findPosts({
   groupIDs = [],
   tenantId,
   ids,
+  user,
 }: {
   sort?: any;
   limit?: number;
@@ -135,6 +143,7 @@ export async function findPosts({
   workspaceID: PortalWorkspace['id'];
   groupIDs?: any[];
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspaceID && tenantId)) {
     return {
@@ -152,6 +161,7 @@ export async function findPosts({
       orderBy = {postDateT: ORDER_BY.ASC};
       break;
     case SORT_TYPE.popular:
+      //
       const query: any = await getPopularQuery({
         page,
         limit,
@@ -184,6 +194,7 @@ export async function findPosts({
       },
       ...(groupIDs.length ? {id: {in: groupIDs}} : {}),
       ...whereClause.forumGroup,
+      ...(await filterPrivate({user, tenantId})),
     },
     ...(search
       ? {
@@ -244,6 +255,7 @@ export async function findPostsByGroupId({
   limit,
   search = '',
   tenantId,
+  user,
 }: {
   id: ID;
   workspaceID: string;
@@ -251,6 +263,7 @@ export async function findPostsByGroupId({
   limit?: number;
   search?: string | undefined;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   const whereClause = {
     forumGroup: {
@@ -266,6 +279,7 @@ export async function findPostsByGroupId({
     search,
     groupIDs: [id],
     tenantId,
+    user,
   });
 }
 
@@ -273,6 +287,7 @@ export async function findGroupById(
   id: ID,
   workspaceID: string,
   tenantId: Tenant['id'],
+  user?: User,
 ) {
   if (!(workspaceID && tenantId)) {
     return null;
@@ -286,6 +301,7 @@ export async function findGroupById(
       workspace: {
         id: workspaceID,
       },
+      ...(await filterPrivate({user, tenantId})),
     },
     select: {
       name: true,
@@ -303,11 +319,13 @@ export async function findMemberGroupById({
   groupID,
   workspaceID,
   tenantId,
+  user,
 }: {
   id: ID;
   groupID: ID;
   workspaceID: string;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!(workspaceID && tenantId)) {
     return {error: true, message: 'Bad Request'};
@@ -325,6 +343,7 @@ export async function findMemberGroupById({
           id: workspaceID,
         },
         id: groupID,
+        ...(await filterPrivate({user, tenantId})),
       },
     },
     select: {

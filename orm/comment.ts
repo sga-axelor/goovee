@@ -530,6 +530,7 @@ export async function findByID({
         whereClause: {id},
         workspaceID: workspace.id,
         tenantId,
+        user,
       });
       response = posts[0];
       break;

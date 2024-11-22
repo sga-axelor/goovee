@@ -49,7 +49,7 @@ const Content = ({userId}: {userId: string}) => {
 
     const fetchGroups = async () => {
       try {
-        const result = await fetchGroupsByMembers({
+        const result: any = await fetchGroupsByMembers({
           id: userId,
           searchKey,
           orderBy: {

@@ -16,8 +16,9 @@ import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/auth';
 import {getFileSizeText} from '@/utils/files';
 import {getCurrentDateTime} from '@/utils/date';
-import {manager, type Tenant} from '@/tenant';
+import {manager} from '@/tenant';
 import {TENANT_HEADER} from '@/middleware';
+import {filterPrivate} from '@/orm/filter';
 
 //----LOCAL IMPORTS -----//
 import {
@@ -120,6 +121,7 @@ export async function pinGroup({
     groupID,
     workspaceID: workspace.id,
     tenantId,
+    user,
   });
 
   if (!memberGroup) {
@@ -209,6 +211,7 @@ export async function exitGroup({
     groupID,
     workspaceID: workspace.id,
     tenantId,
+    user,
   });
 
   if (!memberGroup) {
@@ -289,7 +292,7 @@ export async function joinGroup({
     return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
-  const group = await findGroupById(groupID, workspace.id, tenantId);
+  const group = await findGroupById(groupID, workspace.id, tenantId, user);
 
   if (!group) {
     return {
@@ -384,6 +387,7 @@ export async function addGroupNotification({
     groupID,
     workspaceID: workspace.id,
     tenantId,
+    user,
   });
 
   if (!memberGroup) {
@@ -501,7 +505,12 @@ export async function addPost({
       data: {
         postDateT: publicationDateTime,
         createdOn: publicationDateTime,
-        forumGroup: {select: {id: group.id}},
+        forumGroup: {
+          where: {
+            ...(await filterPrivate({user, tenantId})),
+          },
+          select: {id: group.id},
+        },
         title,
         content,
         author: {select: {id: user.id}},
@@ -527,7 +536,13 @@ export async function addPost({
   }
 }
 
-export async function findMedia(id: ID) {
+export async function findMedia({
+  id,
+  workspaceURL,
+}: {
+  id: ID;
+  workspaceURL: string;
+}) {
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -535,6 +550,30 @@ export async function findMedia(id: ID) {
       error: true,
       message: await getTranslation('TenantId is required'),
     };
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!subapp) {
+    return {error: true, message: await getTranslation('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
   const client = await manager.getClient(tenantId);
@@ -546,6 +585,7 @@ export async function findMedia(id: ID) {
           ? {
               forumGroup: {
                 id,
+                ...(await filterPrivate({user, tenantId})),
               },
             }
           : {}),
@@ -608,6 +648,7 @@ export async function fetchPosts({
     search,
     workspaceID: workspace.id,
     tenantId,
+    user,
   }).then(clone);
 }
 
@@ -679,59 +720,6 @@ async function uploadAttachment(formData: FormData): Promise<any> {
   }
 }
 
-async function authorizeAndValidate({appCode, workspaceURL}: any) {
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await getTranslation('TenantId is required'),
-    };
-  }
-
-  const session = await getSession();
-
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: await getTranslation('Unauthorized'),
-    };
-  }
-
-  const subapp = await findSubappAccess({
-    code: appCode,
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: await getTranslation('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await getTranslation('Invalid workspace'),
-    };
-  }
-
-  return {
-    error: false,
-  };
-}
-
 export async function fetchGroupsByMembers({
   id,
   searchKey,
@@ -744,6 +732,10 @@ export async function fetchGroupsByMembers({
   workspaceID: PortalWorkspace['id'];
 }) {
   const tenantId = headers().get(TENANT_HEADER);
+
+  const session = await getSession();
+
+  const user = session?.user;
 
   if (!tenantId) {
     return {
@@ -758,5 +750,6 @@ export async function fetchGroupsByMembers({
     orderBy,
     workspaceID,
     tenantId,
+    user,
   });
 }

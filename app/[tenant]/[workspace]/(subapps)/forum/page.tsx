@@ -1,3 +1,5 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
@@ -23,21 +25,27 @@ export default async function Page({
   searchParams: {[key: string]: string | undefined};
 }) {
   const session = await getSession();
-  const userId = session?.user?.id as string;
+  const user = session?.user;
+  const userId = user?.id as string;
 
   const {workspaceURL, tenant} = workspacePathname(params);
 
   const workspace: any = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
     tenantId: tenant,
   }).then(clone);
+
+  if (!workspace) {
+    return notFound();
+  }
 
   const {sort, limit, search, searchid} = searchParams;
 
   const groups = await findGroups({
     workspace: workspace!,
     tenantId: tenant,
+    user,
   }).then(clone);
 
   const groupIDs = groups.map((group: any) => group.id);
@@ -48,6 +56,7 @@ export default async function Page({
         orderBy: GROUPS_ORDER_BY,
         workspaceID: workspace?.id!,
         tenantId: tenant,
+        user,
       })
     : [];
 
@@ -67,9 +76,10 @@ export default async function Page({
     workspaceID: workspace?.id!,
     groupIDs,
     tenantId: tenant,
+    user,
   }).then(clone);
 
-  const user = await findUser({
+  const $user = await findUser({
     userId,
     tenantId: tenant,
   }).then(clone);
@@ -78,7 +88,7 @@ export default async function Page({
     <Content
       memberGroups={memberGroups}
       nonMemberGroups={nonMemberGroups}
-      user={user}
+      user={$user}
       posts={posts}
       pageInfo={pageInfo}
       workspace={workspace}

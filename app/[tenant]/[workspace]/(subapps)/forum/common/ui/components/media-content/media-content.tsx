@@ -19,11 +19,11 @@ export const MediaContent = ({groupId = ''}: {groupId: string}) => {
     [],
   );
 
-  const {tenant} = useWorkspace();
+  const {tenant, workspaceURL} = useWorkspace();
 
   useEffect(() => {
-    findMedia(groupId).then(setMedia);
-  }, []);
+    findMedia({id: groupId, workspaceURL}).then(setMedia);
+  }, [groupId, workspaceURL]);
 
   useEffect(() => {
     media.forEach(
