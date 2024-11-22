@@ -161,7 +161,6 @@ export async function findPosts({
       orderBy = {postDateT: ORDER_BY.ASC};
       break;
     case SORT_TYPE.popular:
-      //
       const query: any = await getPopularQuery({
         page,
         limit,
@@ -170,6 +169,7 @@ export async function findPosts({
         search,
         tenantId,
         ids,
+        user,
       });
       const {posts = [], pageInfo = {}, error, message} = query;
 

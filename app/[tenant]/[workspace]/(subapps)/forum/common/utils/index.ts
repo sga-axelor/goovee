@@ -1,12 +1,50 @@
 'use server';
 
 import {getTranslation} from '@/i18n/server';
-import {PortalWorkspace} from '@/types';
+import {PortalWorkspace, User} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
 import {manager, type Tenant} from '@/tenant';
+import {findPartnerByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import {Post} from '@/subapps/forum/common/types/forum';
+
+export const filterPrivateQuery = async (user: any, tenantId: any) => {
+  const OPEN_RECORD_FILTERS = `COALESCE(forumGroup.is_private, false) IS FALSE`;
+
+  if (!user) {
+    return `OR ${OPEN_RECORD_FILTERS}`;
+  }
+
+  const partner = await findPartnerByEmail(user.email, tenantId);
+  if (!partner) {
+    throw new Error('Unauthorized');
+  }
+
+  const partnerCategory = partner?.partnerCategory;
+  const PRIVATE_FILTERS = `
+        forumGroup.is_private = TRUE 
+        AND (
+              forumGroup.id IN (
+                SELECT portal_forum_group_partner_set.portal_forum_group
+                FROM portal_forum_group_partner_set
+                WHERE portal_forum_group_partner_set.partner_set = ${partner?.id}
+              )
+            ${
+              partnerCategory
+                ? `OR 
+                    forumGroup.id IN (
+                      SELECT portal_forum_group_partner_category_set.portal_forum_group
+                      FROM portal_forum_group_partner_category_set
+                      WHERE portal_forum_group_partner_category_set.partner_category_set = ${partnerCategory.id}
+                    )
+                      `
+                : ''
+            }
+            )
+    `;
+  return `AND (${OPEN_RECORD_FILTERS} OR (${PRIVATE_FILTERS}))`;
+};
 
 export async function getPopularQuery({
   page,
@@ -16,6 +54,7 @@ export async function getPopularQuery({
   ids,
   search,
   tenantId,
+  user,
 }: {
   page?: string | number;
   limit?: number;
@@ -24,6 +63,7 @@ export async function getPopularQuery({
   ids?: Array<Post['id']> | undefined;
   search?: string | undefined;
   tenantId: Tenant['id'];
+  user?: User;
 }) {
   if (!workspaceID) {
     return {
@@ -36,9 +76,11 @@ export async function getPopularQuery({
   const skip = getSkipInfo(limit, page);
 
   const whereClause = `WHERE forumGroup.workspace = ${workspaceID}
-        ${groupIDs?.length ? `AND post.forum_group IN (${groupIDs.join(', ')})` : ''}
-        ${ids?.length ? `AND post.id IN (${ids.join(', ')})` : ''}
-        ${search ? `AND post.title LIKE '%${search}%'` : ''}`;
+          ${groupIDs?.length ? `AND post.forum_group IN (${groupIDs.join(', ')})` : ''}
+          ${ids?.length ? `AND post.id IN (${ids.join(', ')})` : ''}
+          ${search ? `AND post.title LIKE '%${search}%'` : ''}
+          ${await filterPrivateQuery(user, tenantId)}
+          `;
 
   const posts: any = await client.$raw(
     `WITH 
