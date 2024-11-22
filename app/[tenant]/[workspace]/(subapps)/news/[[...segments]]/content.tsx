@@ -75,7 +75,8 @@ const Content = ({
 
   return (
     <>
-      <div className={`container mx-auto grid grid-cols-1 pb-6 px-4 gap-6`}>
+      <div
+        className={`container mx-auto grid grid-cols-1 pb-6 px-4 gap-6 mb-20 lg:mb-0`}>
         {news?.length > 0 ? (
           <>
             <CategorySlider
@@ -96,7 +97,12 @@ const Content = ({
                   onClick={handleClick}
                 />
               )}
-              <div
+              <ConditionalRender
+                items={renderNewsItems(
+                  Number(page) !== 1 ? 0 : 3,
+                  Number(page) !== 1 ? 4 : 7,
+                  NewsList,
+                )}
                 className={`${
                   featuredNews?.length ? 'lg:w-3/5' : 'w-full'
                 } flex flex-col gap-4`}>
@@ -105,18 +111,26 @@ const Content = ({
                   Number(page) !== 1 ? 4 : 7,
                   NewsList,
                 )}
-              </div>
+              </ConditionalRender>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
+            <ConditionalRender
+              items={renderNewsItems(
+                Number(page) !== 1 ? 4 : 7,
+                Number(page) !== 1 ? 9 : 12,
+                NewsCard,
+              )}
+              className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
               {renderNewsItems(
                 Number(page) !== 1 ? 4 : 7,
                 Number(page) !== 1 ? 9 : 12,
                 NewsCard,
               )}
-            </div>
-            <div className="flex flex-wrap gap-6">
+            </ConditionalRender>
+            <ConditionalRender
+              items={renderNewsItems(Number(page) !== 1 ? 9 : 12, 16, NewsList)}
+              className="flex flex-wrap gap-6">
               {renderNewsItems(Number(page) !== 1 ? 9 : 12, 16, NewsList)}
-            </div>
+            </ConditionalRender>
             <div className="mb-12 md:mb-0">
               <Pagination
                 page={page}
@@ -142,3 +156,17 @@ const Content = ({
 };
 
 export default Content;
+
+// ---- HELPER COMPONENT ---- //
+const ConditionalRender = ({
+  children,
+  items,
+  className,
+}: {
+  children: React.ReactNode;
+  items: any[];
+  className?: string;
+}) => {
+  if (!items || items.length === 0) return null;
+  return <div className={className}>{children}</div>;
+};

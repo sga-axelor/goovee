@@ -74,7 +74,7 @@ export const Homepage = ({
         renderSearch={renderSearch}
         tenantId={tenant}
       />
-      <div className={`container mx-auto grid grid-cols-1 gap-6`}>
+      <div className={`container mx-auto grid grid-cols-1 gap-6 mb-20 lg:mb-0`}>
         {latestNews?.length ? (
           <>
             <CategorySlider
@@ -111,7 +111,7 @@ export const Homepage = ({
                 ))}
               </div>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5 mb-10">
+            <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
               {latestNews.slice(7, 12).map((news: any) => (
                 <NewsCard
                   key={news.id}

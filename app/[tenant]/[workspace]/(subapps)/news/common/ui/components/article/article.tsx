@@ -60,7 +60,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
   const directRoute = pathname.includes('/news/article/');
 
   return (
-    <div className={`container mx-auto grid grid-cols-1 gap-6`}>
+    <div className={`container mx-auto grid grid-cols-1 gap-6 mt-6`}>
       {!directRoute && (
         <div className="py-4">
           <Breadcrumb items={breadcrumbs} title={title} />
@@ -80,7 +80,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
           />
         </div>
 
-        <div className="w-full lg:w-1/3 flex flex-col gap-6">
+        <div className="w-full flex flex-col gap-6">
           {enableSocialMediaSharing && <SocialMedia />}
           {attachmentList?.length > 0 && (
             <AttachmentList
@@ -110,7 +110,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
       </div>
 
       {enableNewsComment && (
-        <div className="w-full mb-16 lg:mb-4">
+        <div className="w-full mb-24 lg:mb-4">
           <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
             <div>
               <div className="text-xl font-semibold">{i18n.get(COMMENTS)}</div>
