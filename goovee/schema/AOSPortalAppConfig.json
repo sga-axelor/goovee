@@ -191,6 +191,10 @@
     },
     {"name": "allowGuestEventRegistration", "type": "Boolean"},
     {
+      "type": "Boolean",
+      "name": "enableEventComment"
+    },
+    {
       "name": "enableSocialMediaSharing",
       "type": "Boolean"
     },

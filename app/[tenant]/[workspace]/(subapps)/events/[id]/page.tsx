@@ -29,13 +29,13 @@ export default async function Page({
 
   const {workspaceURL} = workspacePathname(params);
 
-  const workspace = await findWorkspace({
+  const workspace: any = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
     tenantId: tenant,
   }).then(clone);
 
-  const eventDetails = await findEventByID({
+  const eventDetails: any = await findEventByID({
     id,
     workspace,
     tenantId: tenant,

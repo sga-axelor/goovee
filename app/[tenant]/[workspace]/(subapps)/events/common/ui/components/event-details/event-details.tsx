@@ -18,10 +18,12 @@ export function EventDetails({
   workspace: PortalWorkspace;
 }) {
   const eventId = eventDetails.id;
+  const enableEventComment = workspace.config?.enableEventComment;
+
   return (
     <div className="flex flex-col gap-6 pt-6 px-4 lg:px-[6.25rem] pb-24 lg:pb-6">
       <EventPageCard eventDetails={eventDetails} workspace={workspace} />
-      <CommentsSection eventId={eventId} />
+      {enableEventComment && <CommentsSection eventId={eventId} />}
     </div>
   );
 }

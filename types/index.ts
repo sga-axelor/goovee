@@ -107,6 +107,7 @@ export interface PortalAppConfig extends Model {
   allowGuestEventRegistration?: boolean;
   enableSocialMediaSharing?: boolean;
   enableNewsComment?: boolean;
+  enableEventComment?: boolean;
 }
 
 export interface PortalApp extends Model {

@@ -75,6 +75,7 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   allowGuestEventRegistration: true,
   enableSocialMediaSharing: true,
   enableNewsComment: true,
+  enableEventComment: true,
 };
 
 export async function findContactWorkspaceConfig({
