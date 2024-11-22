@@ -53,6 +53,24 @@
       "type": "ManyToMany",
       "name": "workspaceSet",
       "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "String",
+      "name": "permissionSelect"
+    },
+    {
+      "name": "isPrivate",
+      "type": "Boolean"
+    },
+    {
+      "name": "partnerSet",
+      "type": "ManyToMany",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "partnerCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPartnerCategory"
     }
   ]
 }

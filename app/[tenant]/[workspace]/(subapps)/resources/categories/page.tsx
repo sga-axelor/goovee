@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
+import {notFound} from 'next/navigation';
 import {MdAdd} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -18,9 +19,11 @@ import {
 } from '@/subapps/resources/common/ui/components';
 import {
   fetchExplorerCategories,
+  fetchFile,
   fetchFiles,
   fetchLatestFiles,
 } from '@/subapps/resources/common/orm/dms';
+import {ACTION} from '../common/constants';
 
 export default async function Page({
   searchParams,
@@ -44,24 +47,43 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
+  if (!workspace) {
+    return notFound();
+  }
+
   let files;
+  let file;
 
   if (id) {
     files = await fetchFiles({
       id,
       workspace,
+      user,
       tenantId: tenant,
     }).then(clone);
+
+    file = await fetchFile({
+      id,
+      workspace,
+      user,
+      tenantId: tenant,
+    });
   } else {
     files = await fetchLatestFiles({
       workspace,
+      user,
       tenantId: tenant,
     }).then(clone);
   }
   const categories = await fetchExplorerCategories({
     workspace,
+    user,
     tenantId: tenant,
   }).then(clone);
+
+  const permissionSelect = file?.permissionSelect;
+  const canWrite = permissionSelect && permissionSelect === ACTION.WRITE;
+  const canUpload = permissionSelect && permissionSelect === ACTION.UPLOAD;
 
   return (
     <main className="container p-4 mx-auto space-y-6">
@@ -69,21 +91,25 @@ export default async function Page({
         <h2 className="font-semibold text-xl leading-8 grow">
           {await getTranslation('Resource Category')}
         </h2>
-        {/* <SortBy className="hidden sm:flex me-2" /> */}
         {user && (
           <div className="flex items-center gap-2">
-            <Link href={`${workspaceURI}/resources/categories/create`}>
-              <Button variant="success" className="flex items-center">
-                <MdAdd className="size-6" />
-                <span>{await getTranslation('New Category')}</span>
-              </Button>
-            </Link>
-            <Link href={`${workspaceURI}/resources/create`}>
-              <Button variant="success" className="flex items-center">
-                <MdAdd className="size-6" />
-                <span>{await getTranslation('New Resource')}</span>
-              </Button>
-            </Link>
+            {canWrite && (
+              <Link
+                href={`${workspaceURI}/resources/categories/create?id=${id}`}>
+                <Button variant="success" className="flex items-center">
+                  <MdAdd className="size-6" />
+                  <span>{await getTranslation('New Category')}</span>
+                </Button>
+              </Link>
+            )}
+            {(canWrite || canUpload) && (
+              <Link href={`${workspaceURI}/resources/create?id=${id}`}>
+                <Button variant="success" className="flex items-center">
+                  <MdAdd className="size-6" />
+                  <span>{await getTranslation('New Resource')}</span>
+                </Button>
+              </Link>
+            )}
           </div>
         )}
       </div>

@@ -12,13 +12,14 @@ import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
-import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';
+import {fetchFile} from '@/subapps/resources/common/orm/dms';
+import {ACTION} from '../../common/constants';
 
 export async function create(formData: FormData, workspaceURL: string) {
   const title = formData.get('title') as string;
   const description = formData.get('description')!;
   const icon = formData.get('icon')!;
-  const parent = formData.get('parent')!;
+  const parentId = formData.get('parent')!;
   const color = formData.get('color')!;
 
   if (!workspaceURL) {
@@ -35,10 +36,10 @@ export async function create(formData: FormData, workspaceURL: string) {
     };
   }
 
-  if (!parent) {
+  if (!parentId) {
     return {
       error: true,
-      message: await getTranslation('Parent category is required'),
+      message: await getTranslation('Parent is required'),
     };
   }
 
@@ -89,19 +90,32 @@ export async function create(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const isSharedParent = (
-    await fetchSharedFolders({
-      workspace,
-      tenantId,
-      params: {
-        where: {
-          id: parent,
-        },
-      },
-    })
-  )?.length;
+  const parent = await fetchFile({
+    id: parentId as string,
+    workspace,
+    user,
+    tenantId,
+  });
 
-  if (!isSharedParent) {
+  if (!parent) {
+    return {
+      error: true,
+      message: await getTranslation('Bad request'),
+    };
+  }
+
+  const {
+    permissionSelect,
+    isPrivate,
+    partnerSet,
+    partnerCategorySet,
+    isDirectory,
+  } = parent;
+
+  const canModify =
+    permissionSelect && [ACTION.WRITE].includes(permissionSelect);
+
+  if (!(isDirectory && canModify)) {
     return {
       error: true,
       message: await getTranslation('Unauthorized'),
@@ -120,11 +134,27 @@ export async function create(formData: FormData, workspaceURL: string) {
           workspaceSet: {
             select: [{id: workspace.id}],
           },
+          isPrivate,
+          permissionSelect,
+          ...(partnerSet?.length
+            ? {
+                partnerSet: {
+                  select: partnerSet.map(({id}: any) => ({id})),
+                },
+              }
+            : {}),
+          ...(partnerCategorySet?.length
+            ? {
+                partnerCategorySet: {
+                  select: partnerCategorySet.map(({id}: any) => ({id})),
+                },
+              }
+            : {}),
           ...(parent
             ? {
                 parent: {
                   select: {
-                    id: Number(parent),
+                    id: Number(parent?.id),
                   },
                 },
               }

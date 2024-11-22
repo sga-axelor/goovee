@@ -7,6 +7,8 @@ import {manager} from '@/tenant';
 import {clone} from '@/utils';
 import type {PortalWorkspace} from '@/types';
 import {TENANT_HEADER} from '@/middleware';
+import {getSession} from '@/auth';
+import {filterPrivate} from '@/orm/filter';
 
 export async function findDmsFiles({
   search = '',
@@ -23,6 +25,9 @@ export async function findDmsFiles({
 
   const client = await manager.getClient(tenantId);
 
+  const session = await getSession();
+  const user = session?.user;
+
   return client.aOSDMSFile
     .find({
       where: {
@@ -36,6 +41,10 @@ export async function findDmsFiles({
         workspaceSet: {
           id: workspace.id,
         },
+        ...(await filterPrivate({
+          user,
+          tenantId,
+        })),
       },
       select: {
         fileName: true,

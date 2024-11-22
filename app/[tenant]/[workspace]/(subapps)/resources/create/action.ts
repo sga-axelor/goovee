@@ -17,7 +17,8 @@ import {TENANT_HEADER} from '@/middleware';
 import {getFileSizeText} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
-import {fetchSharedFolders} from '@/subapps/resources/common/orm/dms';
+import {fetchFile} from '@/subapps/resources/common/orm/dms';
+import {ACTION} from '@/subapps/resources/common/constants';
 
 const pump = promisify(pipeline);
 
@@ -76,12 +77,12 @@ export async function upload(formData: FormData, workspaceURL: string) {
 
   const client = await manager.getClient(tenantId);
 
-  const category = formData.get('category');
+  const parentId = formData.get('parent');
 
-  if (!category) {
+  if (!parentId) {
     return {
       error: true,
-      message: await getTranslation('Category is required'),
+      message: await getTranslation('Parent is required'),
     };
   }
 
@@ -123,19 +124,33 @@ export async function upload(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const isSharedCategory = (
-    await fetchSharedFolders({
-      workspace,
-      tenantId,
-      params: {
-        where: {
-          id: category,
-        },
-      },
-    })
-  )?.length;
+  const parent = await fetchFile({
+    id: parentId as string,
+    workspace,
+    user,
+    tenantId,
+  });
 
-  if (!isSharedCategory) {
+  if (!parent) {
+    return {
+      error: true,
+      message: await getTranslation('Bad request'),
+    };
+  }
+
+  const {
+    permissionSelect,
+    partnerSet,
+    partnerCategorySet,
+    isDirectory,
+    isPrivate,
+  } = parent;
+
+  const canModify =
+    permissionSelect &&
+    [ACTION.WRITE, ACTION.UPLOAD].includes(permissionSelect);
+
+  if (!(isDirectory && canModify)) {
     return {
       error: true,
       message: await getTranslation('Unauthorized'),
@@ -165,12 +180,28 @@ export async function upload(formData: FormData, workspaceURL: string) {
         data: {
           fileName: name,
           isDirectory: false,
-          parent: {select: {id: Number(category)}},
+          parent: {select: {id: Number(parent.id)}},
           createdOn: timestamp as unknown as Date,
           updatedOn: timestamp as unknown as Date,
           workspaceSet: {
             select: [{id: workspace.id}],
           },
+          isPrivate,
+          permissionSelect,
+          ...(partnerSet?.length
+            ? {
+                partnerSet: {
+                  select: partnerSet.map(({id}: any) => ({id})),
+                },
+              }
+            : {}),
+          ...(partnerCategorySet?.length
+            ? {
+                partnerCategorySet: {
+                  select: partnerCategorySet.map(({id}: any) => ({id})),
+                },
+              }
+            : {}),
           metaFile: {
             create: {
               fileName: name,

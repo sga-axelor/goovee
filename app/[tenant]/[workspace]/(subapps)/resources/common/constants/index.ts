@@ -1,3 +1,8 @@
+export const ACTION = {
+  WRITE: 'write',
+  UPLOAD: 'upload',
+};
+
 export const COLORS = [
   {
     label: 'Purple',

@@ -11,16 +11,25 @@ import {workspacePathname} from '@/utils/workspace';
 import CategoryForm from './form';
 import {
   fetchColors,
+  fetchFile,
   fetchIcons,
-  fetchSharedFolders,
 } from '@/subapps/resources/common/orm/dms';
+import {ACTION} from '@/subapps/resources/common/constants';
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: {tenant: string; workspace: string};
+  searchParams: {id: string};
 }) {
   const {tenant} = params;
+  const {id} = searchParams;
+
+  if (!id) {
+    return notFound();
+  }
+
   const session = await getSession();
 
   const user = session?.user;
@@ -37,10 +46,29 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
-  const folders = await fetchSharedFolders({
+  if (!workspace) {
+    return notFound();
+  }
+
+  const parent = await fetchFile({
+    id,
     workspace,
+    user,
     tenantId: tenant,
   }).then(clone);
+
+  if (!parent) {
+    return notFound();
+  }
+
+  const {permissionSelect, isDirectory} = parent;
+
+  const canModify =
+    permissionSelect && [ACTION.WRITE].includes(permissionSelect);
+
+  if (!(isDirectory && canModify)) {
+    return notFound();
+  }
 
   const colors = await fetchColors().then(clone);
   const icons = await fetchIcons().then(clone);
@@ -50,7 +78,7 @@ export default async function Page({
       <h2 className="font-semibold text-lg">
         {await getTranslation('Create a category')}
       </h2>
-      <CategoryForm categories={folders} colors={colors} icons={icons} />
+      <CategoryForm parent={parent} colors={colors} icons={icons} />
     </main>
   );
 }
