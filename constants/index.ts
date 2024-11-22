@@ -50,7 +50,7 @@ export const DEFAULT_WORKSPACE_URL = `${process.env.NEXT_PUBLIC_HOST}${DEFAULT_W
  * CUSTOMER ROLE
  */
 export const ROLE = {
-  TOTAL: 'Total',
+  TOTAL: 'total',
   RESTRICTED: 'restricted',
 };
 
