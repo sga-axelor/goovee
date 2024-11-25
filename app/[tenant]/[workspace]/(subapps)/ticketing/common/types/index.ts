@@ -60,6 +60,7 @@ export type TicketListTicket = {
   status?: {id: string; version: number; name?: string};
   projectTaskCategory?: {id: string; version: number; name?: string};
   updatedOn?: Date;
+  _count?: string;
 };
 
 export type TicketLink = {
