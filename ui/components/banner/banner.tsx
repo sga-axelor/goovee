@@ -101,7 +101,7 @@ export const Banner = ({
           </div>
         )}
         <h2 className="lg:text-[32px] text-2xl font-semibold mb-2">{title}</h2>
-        <p className="lg:text-lg text-base font-medium md:max-w-screen-sm lg:max-w-screen-md text-center">
+        <p className="lg:text-lg text-base font-medium md:max-w-screen-sm lg:max-w-screen-md text-center mb-4">
           {description}
         </p>
         {renderSearch && renderSearch()}
