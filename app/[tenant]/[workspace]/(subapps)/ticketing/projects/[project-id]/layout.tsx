@@ -1,13 +1,12 @@
-import {ReactNode} from 'react';
 import {notFound} from 'next/navigation';
+import {ReactNode} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProject} from '@/subapps/ticketing/common/orm/projects';
+import {ensureAuth} from '../../common/utils/auth-helper';
 
 export default async function Layout({
   params,
@@ -16,26 +15,15 @@ export default async function Layout({
   params: {tenant: string; workspace: string; 'project-id': string};
   children: ReactNode;
 }) {
-  const session = await getSession();
-  if (!session?.user) notFound();
   const projectId = params?.['project-id'];
 
   const {workspaceURL, tenant} = workspacePathname(params);
 
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  });
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  if (error) notFound();
+  const {auth} = info;
 
-  if (!workspace) notFound();
-
-  const project = await findProject(
-    projectId,
-    workspace.id,
-    session!.user.id,
-    tenant,
-  );
+  const project = await findProject(projectId, auth);
 
   if (!project) notFound();
 

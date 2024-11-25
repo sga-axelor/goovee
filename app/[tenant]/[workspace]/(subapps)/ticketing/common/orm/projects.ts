@@ -1,10 +1,12 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
+import {getTranslation} from '@/i18n/server';
 import {manager, type Tenant} from '@/tenant';
 import type {AOSProject} from '@/goovee/.generated/models';
 import type {ID} from '@goovee/orm';
 
-import type {AuthProps, QueryProps} from './helpers';
+import type {QueryProps} from './helpers';
+import type {AuthProps} from '../utils/auth-helper';
 import {getProjectAccessFilter} from './helpers';
 import {getAllTicketCount} from './tickets';
 import {
@@ -17,22 +19,22 @@ import {
 } from '../types';
 
 export async function findProjects(
-  props: QueryProps<AOSProject> & AuthProps & {tenantId: Tenant['id']},
+  props: QueryProps<AOSProject> & {auth: AuthProps},
 ) {
-  const {workspaceId, userId, where, take, orderBy, skip, tenantId} = props;
+  const {where, take, orderBy, skip, auth} = props;
 
-  if (!tenantId) {
-    return [];
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const projects = await client.aOSProject.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
     where: {
-      ...getProjectAccessFilter({workspaceId, userId}),
+      ...getProjectAccessFilter(auth),
       ...where,
     },
     select: {name: true},
@@ -42,35 +44,30 @@ export async function findProjects(
 }
 
 export async function findProjectsWithTaskCount(
-  props: QueryProps<AOSProject> & AuthProps & {tenantId: Tenant['id']},
+  props: QueryProps<AOSProject> & {auth: AuthProps},
 ) {
   const projects = await findProjects(props);
 
   const counts = await Promise.all(
     projects.map(project =>
-      getAllTicketCount({projectId: project.id, tenantId: props.tenantId}),
+      getAllTicketCount({projectId: project.id, auth: props.auth}),
     ),
   );
 
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
 
-export async function findProject(
-  id: ID,
-  workspaceId: ID,
-  userId: ID,
-  tenantId: Tenant['id'],
-) {
-  if (!tenantId) {
-    return null;
+export async function findProject(id: ID, auth: AuthProps) {
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const project = await client.aOSProject.findOne({
     where: {
       id: id,
-      ...getProjectAccessFilter({workspaceId, userId}),
+      ...getProjectAccessFilter(auth),
     },
     select: {id: true, name: true},
   });
@@ -83,7 +80,7 @@ export async function findTicketCategories(
   tenantId: Tenant['id'],
 ): Promise<Category[]> {
   if (!tenantId) {
-    return [];
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -103,7 +100,7 @@ export async function findTicketPriorities(
   tenantId: Tenant['id'],
 ): Promise<Priority[]> {
   if (!tenantId) {
-    return [];
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -123,7 +120,7 @@ export async function findTicketStatuses(
   tenantId: Tenant['id'],
 ): Promise<Status[]> {
   if (!tenantId) {
-    return [];
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -158,7 +155,7 @@ export async function findCompany(
   tenantId: Tenant['id'],
 ): Promise<Company | undefined> {
   if (!tenantId) {
-    return undefined;
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -176,7 +173,7 @@ export async function findClientPartner(
   tenantId: Tenant['id'],
 ): Promise<ClientPartner | undefined> {
   if (!tenantId) {
-    return undefined;
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -195,7 +192,7 @@ export async function findTicketDoneStatus(
   tenantId: Tenant['id'],
 ): Promise<string | undefined> {
   if (!tenantId) {
-    return undefined;
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -211,7 +208,7 @@ export async function findTicketCancelledStatus(
   tenantId: Tenant['id'],
 ): Promise<string | undefined> {
   if (!tenantId) {
-    return undefined;
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -228,7 +225,7 @@ export async function findContactPartners(
   tenantId: Tenant['id'],
 ): Promise<ContactPartner[]> {
   if (!tenantId) {
-    return [];
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);

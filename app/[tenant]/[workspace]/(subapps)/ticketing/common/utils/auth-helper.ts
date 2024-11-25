@@ -1,4 +1,3 @@
-import {i18n} from '@/i18n';
 import {getSession} from '@/auth';
 import {Tenant} from '@/tenant';
 import {SUBAPP_CODES} from '@/constants';
@@ -6,16 +5,29 @@ import {AOSPortalTheme} from '@/goovee/.generated/models';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {User} from '@/types';
 import {Maybe} from '@/types/util';
+import type {ID} from '@goovee/orm';
+import {getTranslation} from '@/lib/core/i18n/server';
+
+export type UserAuthProps = {
+  userId: ID;
+  isContact: boolean;
+  role?: 'total' | 'restricted';
+};
+
+export type WorkspaceAuthProps = {workspaceId: string};
+export type TenantAuthProps = {tenantId: Tenant['id']};
+export type AuthProps = UserAuthProps & WorkspaceAuthProps & TenantAuthProps;
 
 export async function ensureAuth(
   workspaceURL: Maybe<string>,
   tenantId: Tenant['id'],
 ): Promise<
-  | {error: true; message: string; auth?: never}
+  | {error: true; message: string; info?: never}
   | {
       error: false;
       message?: never;
-      auth: {
+      info: {
+        auth: AuthProps;
         user: User;
         subapp: any;
         workspace: {
@@ -34,7 +46,7 @@ export async function ensureAuth(
   if (!workspaceURL) {
     return {
       error: true,
-      message: i18n.get('Workspace not provided.'),
+      message: await getTranslation('Workspace not provided.'),
     };
   }
 
@@ -45,7 +57,7 @@ export async function ensureAuth(
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -59,7 +71,7 @@ export async function ensureAuth(
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: await getTranslation('Unauthorized'),
     };
   }
 
@@ -72,12 +84,23 @@ export async function ensureAuth(
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
     };
   }
 
   return {
     error: false,
-    auth: {user, subapp, workspace},
+    info: {
+      user,
+      subapp,
+      workspace,
+      auth: {
+        userId: user.id,
+        workspaceId: workspace.id,
+        isContact: user.isContact!,
+        tenantId,
+        role: subapp.role,
+      },
+    },
   };
 }

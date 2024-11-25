@@ -4,8 +4,6 @@ import {FaChevronRight} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
 import {getTranslation} from '@/i18n/server';
-import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
@@ -27,6 +25,7 @@ import {
   findTicketStatuses,
 } from '../../../../common/orm/projects';
 import {findTicketAccess} from '../../../../common/orm/tickets';
+import {ensureAuth} from '../../../../common/utils/auth-helper';
 import {EncodedFilter} from '../../../../common/utils/validators';
 import {Form} from './client-form';
 export default async function Page({
@@ -42,37 +41,25 @@ export default async function Page({
     parentId?: string;
   };
 }) {
-  const session = await getSession();
-  if (!session?.user) notFound();
-  const userId = session!.user.id;
   const projectId = params['project-id'];
   const {parentId} = searchParams;
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  }).then(clone);
-
-  if (!workspace) notFound();
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  if (error) notFound();
+  const {auth} = info;
 
   if (parentId) {
     const parentTicket = await findTicketAccess({
       recordId: parentId,
-      userId,
-      workspaceId: workspace.id,
-      select: {
-        project: {id: true},
-      },
-      tenantId: tenant,
+      select: {project: {id: true}},
+      auth,
     });
     if (parentTicket?.project?.id !== projectId) notFound();
   }
 
   const [project, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findProject(projectId, workspace.id, userId, tenant),
+      findProject(projectId, auth),
       findTicketStatuses(projectId, tenant),
       findTicketCategories(projectId, tenant).then(clone),
       findTicketPriorities(projectId, tenant).then(clone),
@@ -137,7 +124,7 @@ export default async function Page({
         categories={categories}
         priorities={priorities}
         contacts={contacts}
-        userId={userId}
+        userId={auth.userId}
         parentId={parentId}
         workspaceURI={workspaceURI}
       />

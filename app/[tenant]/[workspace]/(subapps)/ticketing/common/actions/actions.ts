@@ -51,36 +51,24 @@ export async function mutate(
 
   const {force} = config || {};
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   try {
     let ticket;
     if (action.type === MUTATE_TYPE.CREATE) {
       const createData = CreateTicketSchema.parse(action.data);
-      ticket = await createTicket({
-        data: createData,
-        userId: user.id,
-        workspaceId: workspace.id,
-        workspaceURL,
-        tenantId,
-      });
+      ticket = await createTicket({data: createData, workspaceURL, auth});
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
       if (force) {
         const version = await findTicketVersion(updateData.id, tenantId);
         updateData.version = version;
       }
-      ticket = await updateTicket({
-        data: updateData,
-        userId: user.id,
-        workspaceId: workspace.id,
-        workspaceURL,
-        tenantId,
-      });
+      ticket = await updateTicket({data: updateData, workspaceURL, auth});
     }
 
     if (ticket.project?.id) {
@@ -119,11 +107,11 @@ export async function updateAssignment(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {workspace, auth} = info;
 
   try {
     const updateData = UpdateTicketSchema.parse({
@@ -140,17 +128,8 @@ export async function updateAssignment(
         ? updateTicketByWS
         : updateTicket;
 
-    await update({
-      data: updateData,
-      userId: user.id,
-      workspaceId: workspace.id,
-      workspaceURL,
-      tenantId,
-    });
-    return {
-      success: true,
-      data: true,
-    };
+    await update({data: updateData, workspaceURL, auth});
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -177,11 +156,11 @@ export async function closeTicket(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {workspace, auth} = info;
 
   try {
     const status = await findTicketDoneStatus(tenantId);
@@ -193,10 +172,7 @@ export async function closeTicket(
       };
     }
 
-    const updateData = UpdateTicketSchema.parse({
-      ...data,
-      status,
-    });
+    const updateData = UpdateTicketSchema.parse({...data, status});
 
     if (force) {
       const version = await findTicketVersion(updateData.id, tenantId);
@@ -208,19 +184,9 @@ export async function closeTicket(
         ? updateTicketByWS
         : updateTicket;
 
-    await update({
-      data: updateData,
-      userId: user.id,
-      workspaceId: workspace.id,
-      workspaceURL,
-      tenantId,
-    });
+    await update({data: updateData, workspaceURL, auth});
 
-    //TODO: tickets path needs to be revalidated
-    return {
-      success: true,
-      data: true,
-    };
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -242,11 +208,11 @@ export async function cancelTicket(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {workspace, auth} = info;
 
   try {
     const status = await findTicketCancelledStatus(tenantId);
@@ -257,10 +223,7 @@ export async function cancelTicket(
       };
     }
 
-    const updateData = UpdateTicketSchema.parse({
-      ...data,
-      status,
-    });
+    const updateData = UpdateTicketSchema.parse({...data, status});
 
     if (force) {
       const version = await findTicketVersion(updateData.id, tenantId);
@@ -272,18 +235,9 @@ export async function cancelTicket(
         ? updateTicketByWS
         : updateTicket;
 
-    await update({
-      data: updateData,
-      userId: user.id,
-      workspaceId: workspace.id,
-      workspaceURL,
-      tenantId,
-    });
+    await update({data: updateData, workspaceURL, auth});
 
-    return {
-      success: true,
-      data: true,
-    };
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -308,23 +262,15 @@ export async function createRelatedLink(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   try {
-    await createRelatedTicketLink({
-      data,
-      userId: user.id,
-      workspaceId: workspace.id,
-      tenantId,
-    });
-    return {
-      success: true,
-      data: true,
-    };
+    await createRelatedTicketLink({data, auth});
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -349,24 +295,16 @@ export async function createChildLink(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   try {
-    await createChildTicketLink({
-      data,
-      userId: user.id,
-      workspaceId: workspace.id,
-      tenantId,
-    });
+    await createChildTicketLink({data, auth});
 
-    return {
-      success: true,
-      data: true,
-    };
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -386,24 +324,15 @@ export async function createParentLink(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   try {
-    await createParentTicketLink({
-      data,
-      userId: user.id,
-      workspaceId: workspace.id,
-      tenantId,
-    });
-
-    return {
-      success: true,
-      data: true,
-    };
+    await createParentTicketLink({data, auth});
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -428,23 +357,15 @@ export async function deleteChildLink(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   try {
-    await deleteChildTicketLink({
-      data,
-      userId: user.id,
-      workspaceId: workspace.id,
-      tenantId,
-    });
-    return {
-      success: true,
-      data: true,
-    };
+    await deleteChildTicketLink({data, auth});
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -469,23 +390,15 @@ export async function deleteParentLink(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   try {
-    await deleteParentTicketLink({
-      data,
-      userId: user.id,
-      workspaceId: workspace.id,
-      tenantId,
-    });
-    return {
-      success: true,
-      data: true,
-    };
+    await deleteParentTicketLink({data, auth});
+    return {success: true, data: true};
   } catch (e) {
     return handleError(e);
   }
@@ -509,24 +422,16 @@ export async function deleteRelatedLink(
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   try {
-    const count = await deleteRelatedTicketLink({
-      data,
-      userId: user.id,
-      workspaceId: workspace.id,
-      tenantId,
-    });
+    const count = await deleteRelatedTicketLink({data, auth});
 
-    return {
-      success: true,
-      data: count,
-    };
+    return {success: true, data: count};
   } catch (e) {
     return handleError(e);
   }
@@ -552,20 +457,18 @@ export async function searchTickets({
     };
   }
 
-  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) {
     return {error: true, message};
   }
-  const {user, workspace} = auth;
+  const {auth} = info;
 
   const tickets = await findTicketsBySearch({
     search,
-    userId: user.id,
-    workspaceId: workspace.id,
     projectId,
     excludeList,
-    tenantId,
+    auth,
   });
 
   return {success: true, data: clone(tickets)};

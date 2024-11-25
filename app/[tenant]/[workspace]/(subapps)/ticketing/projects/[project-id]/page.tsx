@@ -1,7 +1,5 @@
 // ---- CORE IMPORTS ---- //
 import {getTranslation} from '@/i18n/server';
-import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -44,6 +42,7 @@ import {
 import type {SearchParams} from '../../common/types/search-param';
 import {Swipe} from '../../common/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
+import {ensureAuth} from '../../common/utils/auth-helper';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
 import {EncodedFilter} from '../../common/utils/validators';
 import Search from './search';
@@ -59,21 +58,13 @@ export default async function Page({
 
   const {limit = 7, page = 1, sort = DEFAULT_SORT} = searchParams;
 
-  const session = await getSession();
-  if (!session?.user) notFound();
-  const userId = session!.user.id;
-
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  }).then(clone);
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  if (error) notFound();
+  const {auth} = info;
 
-  if (!workspace) notFound();
-
-  const project = await findProject(projectId, workspace.id, userId, tenant);
+  const project = await findProject(projectId, auth);
 
   if (!project) notFound();
   const tickets = await findTickets({
@@ -81,12 +72,8 @@ export default async function Page({
     take: Number(limit),
     skip: getSkip(limit, page),
     orderBy: getOrderBy(sort, sortKeyPathMap),
-    where: {
-      status: {
-        isCompleted: false,
-      },
-    },
-    tenantId: tenant,
+    where: {status: {isCompleted: false}},
+    auth,
   }).then(clone);
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
@@ -99,35 +86,35 @@ export default async function Page({
   const items = [
     {
       label: 'All Tickets',
-      count: getAllTicketCount({projectId, tenantId: tenant}),
+      count: getAllTicketCount({projectId, auth}),
       icon: MdAllInbox,
       href: allTicketsURL,
       iconClassName: 'bg-palette-pink text-palette-pink-dark',
     },
     {
       label: 'My tickets',
-      count: getMyTicketCount({projectId, userId, tenantId: tenant}),
+      count: getMyTicketCount({projectId, auth}),
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, myTickets: true})}`,
       icon: MdAllInbox,
       iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
     {
       label: 'Managed tickets',
-      count: getManagedTicketCount({projectId, userId, tenantId: tenant}),
+      count: getManagedTicketCount({projectId, auth}),
       icon: MdListAlt,
-      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, managedBy: [userId.toString()]})}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, managedBy: [auth.userId.toString()]})}`,
       iconClassName: 'bg-palette-purple text-palette-purple-dark',
     },
     {
       label: 'Created tickets',
-      count: getCreatedTicketCount({projectId, userId, tenantId: tenant}),
+      count: getCreatedTicketCount({projectId, auth}),
       icon: MdPending,
-      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, createdBy: [userId.toString()]})}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, createdBy: [auth.userId.toString()]})}`,
       iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
     {
       label: 'Resolved tickets',
-      count: getResolvedTicketCount({projectId, tenantId: tenant}),
+      count: getResolvedTicketCount({projectId, auth}),
       icon: MdCheckCircleOutline,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status: statusCompleted})}`,
       iconClassName: 'text-success bg-success-light',

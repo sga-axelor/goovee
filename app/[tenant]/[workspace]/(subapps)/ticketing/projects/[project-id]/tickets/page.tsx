@@ -55,6 +55,7 @@ import {
 } from '../../../common/utils/search-param';
 import Search from '../search';
 import {Skeleton} from '@/ui/components/skeleton';
+import {ensureAuth} from '../../../common/utils/auth-helper';
 
 const TICKETS_PER_PAGE = 10;
 export default async function Page({
@@ -73,21 +74,13 @@ export default async function Page({
     filter,
   } = searchParams;
 
-  const session = await getSession();
-  if (!session?.user) notFound();
-  const userId = session!.user.id;
-
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  }).then(clone);
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  if (error) notFound();
+  const {auth} = info;
 
-  if (!workspace) notFound();
-
-  const project = await findProject(projectId, workspace.id, userId, tenant);
+  const project = await findProject(projectId, auth);
 
   if (!project) notFound();
 
@@ -95,9 +88,9 @@ export default async function Page({
     projectId,
     take: +limit,
     skip: getSkip(limit, page),
-    where: getWhere(decodeFilter(filter), userId),
+    where: getWhere(decodeFilter(filter), auth.userId),
     orderBy: getOrderBy(sort, sortKeyPathMap),
-    tenantId: tenant,
+    auth,
   }).then(clone);
 
   const url = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;

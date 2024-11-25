@@ -2,13 +2,13 @@ import axios from 'axios';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
+import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {getTranslation} from '@/i18n/server';
 import {addComment} from '@/orm/comment';
+import {manager, type Tenant} from '@/tenant';
 import {ModelType} from '@/types';
 import {sql} from '@/utils/template-string';
-import {TenancyType, manager, type Tenant} from '@/tenant';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';
-import type {AOSProjectTask} from '@/goovee/.generated/models';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -18,9 +18,6 @@ import {
   VERSION_MISMATCH_CAUSE_CLASS,
   VERSION_MISMATCH_ERROR,
 } from '../constants';
-import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
-import type {QueryProps} from './helpers';
-import {getProjectAccessFilter, getTicketAccessFilter} from './helpers';
 import {
   ChildTicket,
   LinkType,
@@ -30,6 +27,10 @@ import {
   TicketListTicket,
   TicketSearch,
 } from '../types';
+import type {AuthProps} from '../utils/auth-helper';
+import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
+import type {QueryProps} from './helpers';
+import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
@@ -44,29 +45,29 @@ type Track = {
 
 export async function findTicketAccess({
   recordId: ticketId,
-  userId,
-  workspaceId,
+  auth,
   select,
-  tenantId,
+  projectId,
 }: {
   recordId: ID;
-  userId: ID;
-  workspaceId: ID;
+  auth: AuthProps;
+  projectId?: ID;
   select?: SelectOptions<AOSProjectTask>;
-  tenantId: Tenant['id'];
 }) {
-  if (!tenantId) {
-    return null;
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const ticket = await client.aOSProjectTask.findOne({
-    where: {
+    where: withTicketAccessFilter(auth)({
       id: ticketId,
-      project: {...getProjectAccessFilter({userId, workspaceId})},
-      ...getTicketAccessFilter(),
-    },
+      project: {
+        ...(projectId && {id: projectId}),
+        ...getProjectAccessFilter(auth),
+      },
+    }),
     select: {id: true, ...select},
   });
 
@@ -75,16 +76,12 @@ export async function findTicketAccess({
 
 export async function createTicket({
   data,
-  userId,
-  workspaceId,
   workspaceURL,
-  tenantId,
+  auth,
 }: {
   data: CreateTicketInfo;
-  userId: ID;
-  workspaceId: ID;
   workspaceURL: string;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }) {
   const {
     priority,
@@ -96,16 +93,16 @@ export async function createTicket({
     parentId,
   } = data;
 
-  if (!tenantId) {
+  if (!auth.tenantId) {
     throw new Error(await getTranslation('TenantId is required.'));
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const project = await client.aOSProject.findOne({
     where: {
       id: projectId,
-      ...getProjectAccessFilter({userId, workspaceId}),
+      ...getProjectAccessFilter(auth),
     },
     select: {
       assignedTo: {id: true},
@@ -124,12 +121,8 @@ export async function createTicket({
   if (parentId) {
     const parentTicket = await findTicketAccess({
       recordId: parentId,
-      userId,
-      workspaceId,
-      select: {
-        project: {id: true},
-      },
-      tenantId,
+      select: {project: {id: true}},
+      auth,
     });
 
     if (!parentTicket) {
@@ -156,7 +149,7 @@ export async function createTicket({
       invoicingType: INVOICING_TYPE.NO_INVOICING,
       isPrivate: false,
       progress: '0.00',
-      requestedByContact: {select: {id: userId}},
+      requestedByContact: {select: {id: auth.userId}},
       project: {select: {id: projectId}},
       name: subject,
       description: description,
@@ -260,7 +253,7 @@ export async function createTicket({
       type: ModelType.ticketing,
       model: {id: ticket.id},
       messageBody: {title: 'Record Created', tracks: tracks, tags: []},
-      tenantId,
+      tenantId: auth.tenantId,
     });
     if (error) console.error(message);
   } catch (e) {
@@ -272,14 +265,10 @@ export async function createTicket({
 
 export async function updateTicketByWS({
   data,
-  userId,
-  workspaceId,
-  tenantId,
+  auth,
 }: {
   data: UpdateTicketInfo;
-  userId: ID;
-  workspaceId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }) {
   const {
     priority,
@@ -293,9 +282,7 @@ export async function updateTicketByWS({
     version,
   } = data;
 
-  if (
-    !(await findTicketAccess({recordId: id, userId, workspaceId, tenantId}))
-  ) {
+  if (!(await findTicketAccess({recordId: id, auth}))) {
     // To make sure the user has access to the ticket.
     throw new Error(await getTranslation('Ticket not found'));
   }
@@ -346,16 +333,12 @@ export async function updateTicketByWS({
 
 export async function updateTicket({
   data,
-  userId,
-  workspaceId,
+  auth,
   workspaceURL,
-  tenantId,
 }: {
   data: UpdateTicketInfo;
-  userId: ID;
-  workspaceId: ID;
   workspaceURL: string;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }) {
   const {
     priority,
@@ -369,7 +352,7 @@ export async function updateTicket({
     version,
   } = data;
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const select: SelectOptions<AOSProjectTask> = {
     ...(subject != null && {name: true}),
@@ -380,13 +363,7 @@ export async function updateTicket({
     ...(managedBy && {assignedToContact: {name: true}}),
   };
 
-  const oldTicket = await findTicketAccess({
-    recordId: id,
-    userId,
-    workspaceId,
-    select,
-    tenantId,
-  });
+  const oldTicket = await findTicketAccess({recordId: id, select, auth});
   if (!oldTicket) {
     // To make sure the user has access to the ticket.
     throw new Error(await getTranslation('Ticket not found'));
@@ -482,7 +459,7 @@ export async function updateTicket({
       type: ModelType.ticketing,
       model: {id: ticket.id},
       messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
-      tenantId,
+      tenantId: auth.tenantId,
     });
   } catch (e) {
     console.log('Error adding comment');
@@ -492,156 +469,129 @@ export async function updateTicket({
   return ticket;
 }
 
-export async function getAllTicketCount({
-  projectId,
-  tenantId,
-}: {
+export async function getAllTicketCount(props: {
   projectId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<number> {
-  if (!tenantId) {
-    return 0;
+  const {projectId, auth} = props;
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
-
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const count = await client.aOSProjectTask.count({
-    where: {
-      ...getTicketAccessFilter(),
+    where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
-    },
+    }),
   });
 
   return Number(count);
 }
 
-export async function getMyTicketCount({
-  projectId,
-  userId,
-  tenantId,
-}: {
+export async function getMyTicketCount(props: {
   projectId: ID;
-  userId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<number> {
-  if (!tenantId) {
-    return 0;
+  const {projectId, auth} = props;
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
-
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const count = await client.aOSProjectTask.count({
-    where: {
-      ...getTicketAccessFilter(),
+    where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
       OR: [
-        {assignedToContact: {id: userId}},
-        {requestedByContact: {id: userId}},
+        {assignedToContact: {id: auth.userId}},
+        {requestedByContact: {id: auth.userId}},
       ],
-    },
+    }),
   });
   return Number(count);
 }
 
-export async function getManagedTicketCount({
-  projectId,
-  userId,
-  tenantId,
-}: {
+export async function getManagedTicketCount(props: {
   projectId: ID;
-  userId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<number> {
-  if (!tenantId) {
-    return 0;
+  const {projectId, auth} = props;
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
-
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const count = await client.aOSProjectTask.count({
-    where: {
-      ...getTicketAccessFilter(),
+    where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
-      assignedToContact: {id: userId},
-    },
+      assignedToContact: {id: auth.userId},
+    }),
   });
 
   return Number(count);
 }
 
-export async function getCreatedTicketCount({
-  projectId,
-  userId,
-  tenantId,
-}: {
+export async function getCreatedTicketCount(props: {
   projectId: ID;
-  userId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<number> {
-  if (!tenantId) {
-    return 0;
+  const {projectId, auth} = props;
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
-
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const count = await client.aOSProjectTask.count({
-    where: {
-      ...getTicketAccessFilter(),
+    where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
-      requestedByContact: {id: userId},
-    },
+      requestedByContact: {id: auth.userId},
+    }),
   });
 
   return Number(count);
 }
-export async function getResolvedTicketCount({
-  projectId,
-  tenantId,
-}: {
+export async function getResolvedTicketCount(props: {
   projectId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<number> {
-  if (!tenantId) {
-    return 0;
+  const {projectId, auth} = props;
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
-
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const count = await client.aOSProjectTask.count({
-    where: {
-      ...getTicketAccessFilter(),
+    where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: true},
-    },
+    }),
   });
 
   return Number(count);
 }
 
 export async function findTickets(
-  props: TicketProps<AOSProjectTask> & {tenantId: Tenant['id']},
+  props: TicketProps<AOSProjectTask> & {auth: AuthProps},
 ): Promise<TicketListTicket[]> {
-  const {projectId, take, skip, where, orderBy, tenantId} = props;
+  const {projectId, take, skip, where, orderBy, auth} = props;
 
-  if (!tenantId) {
-    return [];
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const tickets = await client.aOSProjectTask.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
-    where: {
-      ...getTicketAccessFilter(),
+    where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       ...where,
-    },
+    }),
     select: {
       name: true,
       updatedOn: true,
@@ -668,7 +618,7 @@ export async function findRelatedTicketLinks(
   tenantId: Tenant['id'],
 ): Promise<TicketLink[] | undefined> {
   if (!tenantId) {
-    return [];
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -708,7 +658,7 @@ export async function findChildTickets(
   tenantId: Tenant['id'],
 ): Promise<ChildTicket[]> {
   if (!tenantId) {
-    return [];
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -745,7 +695,7 @@ export async function findParentTicket(
   tenantId: Tenant['id'],
 ): Promise<ParentTicket | undefined> {
   if (!tenantId) {
-    return undefined;
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -780,24 +730,23 @@ export async function findParentTicket(
 export async function findTicket({
   ticketId,
   projectId,
-  tenantId,
+  auth,
 }: {
   ticketId: ID;
   projectId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<Ticket | null> {
-  if (!tenantId) {
-    return null;
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const ticket = await client.aOSProjectTask.findOne({
-    where: {
+    where: withTicketAccessFilter(auth)({
       id: ticketId,
       project: {id: projectId},
-      ...getTicketAccessFilter(),
-    },
+    }),
     select: {
       name: true,
       targetVersion: {title: true},
@@ -851,27 +800,24 @@ export async function findTicketVersion(
 
 export async function findTicketsBySearch(props: {
   search?: string;
-  userId: ID;
-  workspaceId: ID;
   projectId?: ID;
   excludeList?: ID[];
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<TicketSearch[]> {
-  const {search, userId, workspaceId, projectId, excludeList, tenantId} = props;
+  const {search, projectId, excludeList, auth} = props;
 
-  if (!tenantId) {
-    return [];
+  if (!auth.tenantId) {
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const tickets = await client.aOSProjectTask.find({
-    where: {
+    where: withTicketAccessFilter(auth)({
       project: {
         ...(projectId && {id: projectId}),
-        ...getProjectAccessFilter({userId, workspaceId}),
+        ...getProjectAccessFilter(auth),
       },
-      ...getTicketAccessFilter(),
       ...(search && {
         OR: [
           {fullName: {like: `%${search}%`}},
@@ -881,7 +827,7 @@ export async function findTicketsBySearch(props: {
       ...(Boolean(excludeList?.length) && {
         id: {notIn: excludeList},
       }),
-    },
+    }),
     take: 10,
     select: {fullName: true},
   });
@@ -1000,36 +946,22 @@ export async function findChildTicketIds(
 
 export async function createChildTicketLink({
   data,
-  userId,
-  workspaceId,
-  tenantId,
+  auth,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  userId: ID;
-  workspaceId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }) {
   const {currentTicketId, linkTicketId} = data;
 
-  if (!tenantId) {
+  if (!auth.tenantId) {
     throw new Error('TenantId is required.');
   }
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({
-      recordId: currentTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
-    findTicketAccess({
-      recordId: linkTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
+    findTicketAccess({recordId: currentTicketId, auth}),
+    findTicketAccess({recordId: linkTicketId, auth}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1037,7 +969,10 @@ export async function createChildTicketLink({
     throw new Error(await getTranslation('Ticket not found'));
   }
 
-  const parentTickets = await findParentTicketIds(currentTicketId, tenantId);
+  const parentTickets = await findParentTicketIds(
+    currentTicketId,
+    auth.tenantId,
+  );
 
   if (parentTickets.includes(linkTicketId.toString())) {
     throw new Error(await getTranslation('Circular dependency'));
@@ -1057,36 +992,22 @@ export async function createChildTicketLink({
 
 export async function deleteChildTicketLink({
   data,
-  userId,
-  workspaceId,
-  tenantId,
+  auth,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  userId: ID;
-  workspaceId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }) {
-  if (!tenantId) {
+  if (!auth.tenantId) {
     throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId} = data;
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({
-      recordId: currentTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
-    findTicketAccess({
-      recordId: linkTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
+    findTicketAccess({recordId: currentTicketId, auth}),
+    findTicketAccess({recordId: linkTicketId, auth}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1108,36 +1029,22 @@ export async function deleteChildTicketLink({
 
 export async function createParentTicketLink({
   data,
-  userId,
-  workspaceId,
-  tenantId,
+  auth,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  userId: ID;
-  workspaceId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }) {
-  if (!tenantId) {
+  if (!auth.tenantId) {
     throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId} = data;
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({
-      recordId: currentTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
-    findTicketAccess({
-      recordId: linkTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
+    findTicketAccess({recordId: currentTicketId, auth}),
+    findTicketAccess({recordId: linkTicketId, auth}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1145,7 +1052,7 @@ export async function createParentTicketLink({
     throw new Error(await getTranslation('Ticket not found'));
   }
 
-  const childTickets = await findChildTicketIds(currentTicketId, tenantId);
+  const childTickets = await findChildTicketIds(currentTicketId, auth.tenantId);
 
   if (childTickets.includes(linkTicketId.toString())) {
     throw new Error(await getTranslation('Circular dependency'));
@@ -1164,36 +1071,22 @@ export async function createParentTicketLink({
 
 export async function deleteParentTicketLink({
   data,
-  userId,
-  workspaceId,
-  tenantId,
+  auth,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  userId: ID;
-  workspaceId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }) {
-  if (!tenantId) {
+  if (!auth.tenantId) {
     throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId} = data;
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({
-      recordId: currentTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
-    findTicketAccess({
-      recordId: linkTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
+    findTicketAccess({recordId: currentTicketId, auth}),
+    findTicketAccess({recordId: linkTicketId, auth}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1217,7 +1110,7 @@ export async function findTicketLinkTypes(
   tenantId: Tenant['id'],
 ): Promise<LinkType[]> {
   if (!tenantId) {
-    return [];
+    throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -1240,43 +1133,35 @@ export async function findTicketLinkTypes(
 
 export async function createRelatedTicketLink({
   data,
-  userId,
-  workspaceId,
-  tenantId,
+  auth,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID; linkType: ID};
-  userId: ID;
-  workspaceId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<[string, string]> {
-  if (!tenantId) {
+  if (!auth.tenantId) {
     throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId, linkType} = data;
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const [currentTicket, linkTicket] = await Promise.all([
     findTicketAccess({
       recordId: currentTicketId,
-      userId,
-      workspaceId,
       select: {
         name: true,
         project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
       },
-      tenantId,
+      auth,
     }),
     findTicketAccess({
       recordId: linkTicketId,
-      userId,
-      workspaceId,
       select: {
         name: true,
         project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
       },
-      tenantId,
+      auth,
     }),
   ]);
 
@@ -1367,36 +1252,22 @@ export async function createRelatedTicketLink({
 
 export async function deleteRelatedTicketLink({
   data,
-  userId,
-  workspaceId,
-  tenantId,
+  auth,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
-  userId: ID;
-  workspaceId: ID;
-  tenantId: Tenant['id'];
+  auth: AuthProps;
 }): Promise<ID> {
-  if (!tenantId) {
+  if (!auth.tenantId) {
     throw new Error(await getTranslation('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId, linkId} = data;
 
-  const client = await manager.getClient(tenantId);
+  const client = await manager.getClient(auth.tenantId);
 
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
-    findTicketAccess({
-      recordId: currentTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
-    findTicketAccess({
-      recordId: linkTicketId,
-      userId,
-      workspaceId,
-      tenantId,
-    }),
+    findTicketAccess({recordId: currentTicketId, auth}),
+    findTicketAccess({recordId: linkTicketId, auth}),
   ]);
 
   if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {

@@ -7,7 +7,7 @@ import {promisify} from 'util';
 import {manager, type Tenant} from '@/tenant';
 import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
 import {clone, getSkipInfo} from '@/utils';
@@ -17,6 +17,7 @@ import {
   MAIL_MESSAGE_TYPE,
   ORDER_BY,
   SORT_TYPE,
+  SUBAPP_CODES,
 } from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
 import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
@@ -385,6 +386,7 @@ export async function addComment({
     }: any = await findByID({
       type,
       id: model?.id,
+      workspaceURL,
       workspace,
       tenantId,
     });
@@ -476,11 +478,13 @@ export async function findByID({
   workspace,
   withAuth = true,
   tenantId,
+  workspaceURL,
 }: {
   type: ModelType;
   id: string | number;
   workspace: PortalWorkspace;
   withAuth?: boolean;
+  workspaceURL: string;
   tenantId: Tenant['id'];
 }) {
   if (!type || !id) {
@@ -536,11 +540,29 @@ export async function findByID({
       break;
     case ModelType.ticketing:
       if (user) {
+        // TODO: why subapp access is not checked for commments for all apps?
+        const subapp = await findSubappAccess({
+          code: SUBAPP_CODES.ticketing,
+          user,
+          url: workspaceURL,
+          tenantId,
+        });
+
+        if (!subapp) {
+          return {
+            error: true,
+            message: await getTranslation('Unauthorized'),
+          };
+        }
         response = await findTicketAccess({
           recordId: id,
-          userId: user.id,
-          workspaceId: workspace.id,
-          tenantId,
+          auth: {
+            userId: user.id,
+            workspaceId: workspace.id.toString(),
+            tenantId,
+            isContact: user.isContact!,
+            role: subapp.role,
+          },
         });
       }
 
@@ -621,6 +643,7 @@ export async function findComments({
   }: any = await findByID({
     type,
     id: model?.id,
+    workspaceURL,
     workspace,
     withAuth: shouldUseAuth(type),
     tenantId,

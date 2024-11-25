@@ -4,11 +4,9 @@ import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
-import {type Tenant} from '@/tenant';
 import {SORT_TYPE} from '@/constants';
 import {getTranslation} from '@/i18n/server';
-import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
+import {type Tenant} from '@/tenant';
 import {ModelType} from '@/types';
 import {
   Breadcrumb,
@@ -48,18 +46,19 @@ import type {
   Priority,
 } from '../../../../common/types';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
+import {TicketDetailsProvider} from '../../../../common/ui/components/ticket-details/ticket-details-provider';
 import {
   ChildTicketList,
   ParentTicketList,
   RelatedTicketList,
 } from '../../../../common/ui/components/ticket-list';
+import {ensureAuth} from '../../../../common/utils/auth-helper';
 import {EncodedFilter} from '../../../../common/utils/validators';
 import {
   ChildTicketsHeader,
   ParentTicketsHeader,
   RelatedTicketsHeader,
 } from './headers';
-import {TicketDetailsProvider} from '../../../../common/ui/components/ticket-details/ticket-details-provider';
 
 export default async function Page({
   params,
@@ -71,27 +70,19 @@ export default async function Page({
     'ticket-id': string;
   };
 }) {
-  const session = await getSession();
-
-  if (!session?.user) notFound();
-
   const {workspaceURI, workspaceURL} = workspacePathname(params);
   const projectId = params['project-id'];
   const ticketId = params['ticket-id'];
 
   const {tenant} = params;
 
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  });
-
-  if (!workspace) notFound();
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  if (error) notFound();
+  const {auth} = info;
 
   const [ticket, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findTicket({ticketId, projectId, tenantId: tenant}),
+      findTicket({ticketId, projectId, auth}),
       findTicketStatuses(projectId, tenant),
       findTicketCategories(projectId, tenant),
       findTicketPriorities(projectId, tenant),
@@ -171,7 +162,7 @@ export default async function Page({
                 categories={categories}
                 priorities={priorities}
                 contacts={contacts}
-                userId={session.user.id}
+                userId={auth.userId}
                 tenantId={tenant}
               />
             </Suspense>

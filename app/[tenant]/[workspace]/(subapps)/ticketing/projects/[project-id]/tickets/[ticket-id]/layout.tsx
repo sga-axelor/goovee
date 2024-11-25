@@ -2,10 +2,11 @@ import {ReactNode} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {manager} from '@/tenant';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {getTicketAccessFilter} from '@/subapps/ticketing/common/orm/helpers';
+import {findTicketAccess} from '../../../../common/orm/tickets';
+import {ensureAuth} from '../../../../common/utils/auth-helper';
 
 export default async function Layout({
   params,
@@ -21,21 +22,12 @@ export default async function Layout({
 }) {
   const projectId = params?.['project-id'];
   const ticketId = params['ticket-id'];
-  const {tenant} = params;
+  const {workspaceURL, tenant} = workspacePathname(params);
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  if (error) notFound();
+  const {auth} = info;
 
-  const client = await manager.getClient(tenant);
-
-  const ticket = await client.aOSProjectTask.findOne({
-    where: {
-      id: ticketId,
-      project: {id: projectId},
-      ...getTicketAccessFilter(),
-    },
-    select: {
-      id: true,
-    },
-  });
-
+  const ticket = await findTicketAccess({recordId: ticketId, projectId, auth});
   if (!ticket) notFound();
 
   return children;

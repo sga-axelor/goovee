@@ -1,8 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {IMAGE_URL} from '@/constants';
 import {getTranslation} from '@/i18n/server';
-import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
 import {HeroSearch} from '@/ui/components';
 import {
   Pagination,
@@ -13,7 +11,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/ui/components/pagination';
-import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {workspacePathname} from '@/utils/workspace';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
@@ -21,10 +18,11 @@ import Link from 'next/link';
 import {notFound, redirect} from 'next/navigation';
 
 // ---- LOCAL IMPORTS ---- //
+import {getImageURL} from '@/utils/files';
 import {findProjectsWithTaskCount} from './common/orm/projects';
 import {getPages, getPaginationButtons} from './common/utils';
+import {ensureAuth} from './common/utils/auth-helper';
 import {getSkip} from './common/utils/search-param';
-import {getImageURL} from '@/utils/files';
 
 export default async function Page({
   params,
@@ -33,27 +31,17 @@ export default async function Page({
   params: {tenant: string; workspace: string};
   searchParams: {[key: string]: string | undefined};
 }) {
-  const session = await getSession();
-  if (!session?.user) notFound();
-
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const {limit = 8, page = 1} = searchParams;
-
-  const workspace = await findWorkspace({
-    user: session.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  }).then(clone);
-
-  if (!workspace) notFound();
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  if (error) notFound();
+  const {auth, workspace} = info;
 
   const projects = await findProjectsWithTaskCount({
-    userId: session.user.id,
-    workspaceId: workspace.id,
     take: +limit,
     skip: getSkip(limit, page),
-    tenantId: tenant,
+    auth,
   });
 
   const pages = getPages(projects, limit);
