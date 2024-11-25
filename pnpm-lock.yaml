@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@axelor/react-survey-components':
+    specifier: file:../axelor-survey-react
+    version: file:../axelor-survey-react(react-dom@18.3.1)
   '@cyntler/react-doc-viewer':
     specifier: ^1.17.0
     version: 1.17.0(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)
@@ -8726,6 +8729,56 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  /survey-core@1.12.9:
+    resolution: {integrity: sha512-vBV2ysXtxUacOdFzCDEkboiqlo5OtJh6tL2AD3QA/pYe+tnp1o02vRp27kjcH4T71EkUGOeZMcNWq0tz7n6YAg==}
+    dev: false
+
+  /survey-creator-core@1.12.9(survey-core@1.12.9):
+    resolution: {integrity: sha512-/MWfroF+x5gixmVqhRSlQxH5j4YwIgCs8AVQtDkLx0JaQHQWqiZDU4HOoJDvGmjD49iGxdLCVSeTIwHY18URVQ==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      ace-builds: ^1.4.12
+      survey-core: 1.12.9
+    peerDependenciesMeta:
+      ace-builds:
+        optional: true
+    dependencies:
+      survey-core: 1.12.9
+    dev: false
+
+  /survey-creator-react@1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)(survey-creator-core@1.12.9)(survey-react-ui@1.12.9):
+    resolution: {integrity: sha512-eHyX+Op3NrHOgm+mI3w+xcfhMV+7NXWLriFmcoqLiIp2dTFMOwf/os1pUvdt5vkjg1LkPi8O6+1CXJDsxiwtLw==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      ace-builds: ^1.4.12
+      react: ^16.5.0 || ^17.0.1 || ^18.1.0
+      react-dom: ^16.5.0 || ^17.0.1 || ^18.1.0
+      survey-core: 1.12.9
+      survey-creator-core: 1.12.9
+      survey-react-ui: 1.12.9
+    peerDependenciesMeta:
+      ace-builds:
+        optional: true
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      survey-core: 1.12.9
+      survey-creator-core: 1.12.9(survey-core@1.12.9)
+      survey-react-ui: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)
+    dev: false
+
+  /survey-react-ui@1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9):
+    resolution: {integrity: sha512-gQFEZgcKeb+CNvY6BV3bcZebZJHvLsJVqi2oFFsAihMTDWwFS61GjmHo+ilrZRYyv7mxY1cwGT1Ersdr/QfOtQ==}
+    peerDependencies:
+      react: ^16.5.0 || ^17.0.1 || ^18.2.0
+      react-dom: ^16.5.0 || ^17.0.1 || ^18.2.0
+      survey-core: 1.12.9
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      survey-core: 1.12.9
+    dev: false
+
   /svg-parser@2.0.4:
     resolution: {integrity: sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==}
     dev: false
@@ -9564,4 +9617,19 @@ packages:
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
+    dev: false
+
+  file:../axelor-survey-react(react-dom@18.3.1):
+    resolution: {directory: ../axelor-survey-react, type: directory}
+    id: file:../axelor-survey-react
+    name: '@axelor/react-survey-components'
+    dependencies:
+      react: 18.3.1
+      survey-core: 1.12.9
+      survey-creator-core: 1.12.9(survey-core@1.12.9)
+      survey-creator-react: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)(survey-creator-core@1.12.9)(survey-react-ui@1.12.9)
+      survey-react-ui: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)
+    transitivePeerDependencies:
+      - ace-builds
+      - react-dom
     dev: false

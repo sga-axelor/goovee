@@ -14,6 +14,8 @@
       "type": "Int"
     },
     {"name": "category", "type": "ManyToOne", "target": "AOSSurveyCategory"},
-    {"name": "publicationDatetime", "type": "Date"}
+    {"name": "publicationDatetime", "type": "Date"},
+    {"name": "config", "type": "String"},
+    {"name": "themeConfig", "type": "String"}
   ]
 }

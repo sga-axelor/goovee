@@ -1,14 +1,21 @@
 'use client';
 
 import React, {useCallback} from 'react';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {DEFAULT_LIMIT, URL_PARAMS} from '@/constants';
+import {
+  SUBAPP_CODES,
+  SUBAPP_PAGE,
+  DEFAULT_LIMIT,
+  URL_PARAMS,
+} from '@/constants';
 import {i18n} from '@/lib/core/i18n';
 import {Search, TableList} from '@/ui/components';
 import {useSortBy} from '@/ui/hooks';
 import {PortalWorkspace} from '@/types';
 import {useToast, useSearchParams} from '@/ui/hooks';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {Survey} from '@/subapps/survey/common/types';
@@ -43,8 +50,20 @@ export default function Content({
   const {update} = useSearchParams();
 
   const {toast} = useToast();
+  const {workspaceURI} = useWorkspace();
+  const router = useRouter();
 
-  const handleRowClick = (survey: Survey) => {};
+  const handleRowOpenClick = (survey: Survey) => {
+    router.push(
+      `${workspaceURI}/${SUBAPP_CODES.survey}/${SUBAPP_PAGE.openSurvey}/${survey.id}`,
+    );
+  };
+
+  const handleRowResponseClick = (response: Survey) => {
+    router.push(
+      `${workspaceURI}/${SUBAPP_CODES.survey}/${SUBAPP_PAGE.responseSurvey}/${response.id}`,
+    );
+  };
 
   const handleSurveySearch = (term: string) => {
     if (term.length === 0) {
@@ -95,7 +114,7 @@ export default function Content({
         findQuery={fetchAllSurveys}
         onSearch={handleSurveySearch}
         renderItem={SearchItem}
-        onItemClick={handleRowClick}
+        onItemClick={handleRowOpenClick}
         onKeyDown={handleSearchKeyDown}
       />
     );
@@ -114,7 +133,7 @@ export default function Content({
             rows={sortedSurveys}
             sort={surveySortOrder}
             onSort={toggleSurveySortOrder}
-            onRowClick={handleRowClick}
+            onRowClick={handleRowOpenClick}
             pageInfo={surveysPageInfo}
             pageParamKey={SURVEY_URL_PARAMS.page}
           />
@@ -129,7 +148,7 @@ export default function Content({
             rows={sortedResponses}
             sort={responseSortOrder}
             onSort={toggleResponseSortOrder}
-            onRowClick={handleRowClick}
+            onRowClick={handleRowResponseClick}
             pageInfo={responsesPageInfo}
             pageParamKey={SURVEY_URL_PARAMS.responsePage}
           />

@@ -94,6 +94,8 @@ export const SUBAPP_PAGE = {
   create: 'create',
   edit: 'edit',
   account: 'account',
+  openSurvey: 'open',
+  responseSurvey: 'response',
 };
 
 /**

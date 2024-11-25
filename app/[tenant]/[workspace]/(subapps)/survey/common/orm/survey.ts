@@ -7,7 +7,7 @@ import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {SURVEY_STATUS, SURVEY_TYPE} from '@/subapps/survey/common/constants';
-import {Survey} from '@/subapps/survey/common/types';
+import {Response, Survey} from '@/subapps/survey/common/types';
 
 export async function findSurveys({
   workspace,
@@ -118,7 +118,7 @@ export async function findMetaModelRecords({
       ...response,
       attrs: {
         ...response.attrs,
-        surveyConfig: await findSurvey({
+        surveyConfig: await findSurveyById({
           workspace,
           tenantId,
           id: response.attrs.surveyConfig.id,
@@ -136,7 +136,7 @@ export async function findMetaModelRecords({
   return {responses: finalResponses, pageInfo};
 }
 
-export async function findSurvey({
+export async function findSurveyById({
   workspace,
   tenantId,
   id,
@@ -167,10 +167,54 @@ export async function findSurvey({
           name: true,
         },
         publicationDatetime: true,
+        config: true,
+        themeConfig: true,
       },
     })
     .then(clone)
     .catch((error: any) => console.log('error >>>', error));
 
   return survey;
+}
+
+export async function findMetaModelRecordById({
+  workspace,
+  tenantId,
+  id,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  id: Response['id'];
+}) {
+  if (!(workspace && tenantId)) return [];
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return [];
+  }
+  const client = await manager.getClient(tenantId);
+  const response = await client.aOSMetaJsonRecord.findOne({
+    where: {id},
+    select: {
+      attrs: true,
+    },
+  });
+
+  const enrichedResponse = {...response, attrs: await response?.attrs};
+
+  const finalResponse = {
+    ...response,
+    attrs: {
+      ...enrichedResponse.attrs,
+      surveyConfig: await findSurveyById({
+        workspace,
+        tenantId,
+        id: (enrichedResponse.attrs?.surveyConfig as any)?.id,
+      }),
+    },
+  };
+
+  return finalResponse as any;
 }
