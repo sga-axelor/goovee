@@ -74,7 +74,6 @@ export function useComments({
                 'An error occurred while fetching comments.',
             ),
           });
-          throw new Error('Something went wrong!');
         }
       } catch (error: any) {
         console.error('Fetch error:', error);
