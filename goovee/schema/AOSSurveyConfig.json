@@ -15,7 +15,8 @@
     },
     {"name": "category", "type": "ManyToOne", "target": "AOSSurveyCategory"},
     {"name": "publicationDatetime", "type": "Date"},
-    {"name": "config", "type": "String"},
-    {"name": "themeConfig", "type": "String"}
+    {"name": "canAnswerBeModified", "type": "Boolean"},
+    {"name": "config", "type": "JSON"},
+    {"name": "themeConfig", "type": "JSON"}
   ]
 }

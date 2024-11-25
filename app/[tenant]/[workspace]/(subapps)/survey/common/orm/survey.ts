@@ -166,11 +166,17 @@ export async function findSurveyById({
         category: {
           name: true,
         },
+        canAnswerBeModified: true,
         publicationDatetime: true,
         config: true,
         themeConfig: true,
       },
     })
+    .then(async res => ({
+      ...res,
+      config: await res?.config,
+      themeConfig: await res?.themeConfig,
+    }))
     .then(clone)
     .catch((error: any) => console.log('error >>>', error));
 
