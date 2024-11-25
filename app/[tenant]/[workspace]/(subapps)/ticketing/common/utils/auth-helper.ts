@@ -1,12 +1,13 @@
 import {getSession} from '@/auth';
-import {Tenant} from '@/tenant';
 import {SUBAPP_CODES} from '@/constants';
 import {AOSPortalTheme} from '@/goovee/.generated/models';
+import {getTranslation} from '@/lib/core/i18n/server';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {Tenant} from '@/tenant';
 import {User} from '@/types';
 import {Maybe} from '@/types/util';
 import type {ID} from '@goovee/orm';
-import {getTranslation} from '@/lib/core/i18n/server';
+import {cache} from 'react';
 
 export type UserAuthProps = {
   userId: ID;
@@ -18,7 +19,7 @@ export type WorkspaceAuthProps = {workspaceId: string};
 export type TenantAuthProps = {tenantId: Tenant['id']};
 export type AuthProps = UserAuthProps & WorkspaceAuthProps & TenantAuthProps;
 
-export async function ensureAuth(
+export const ensureAuth = cache(async function ensureAuth(
   workspaceURL: Maybe<string>,
   tenantId: Tenant['id'],
 ): Promise<
@@ -103,4 +104,4 @@ export async function ensureAuth(
       },
     },
   };
-}
+});
