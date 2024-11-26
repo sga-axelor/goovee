@@ -3,7 +3,7 @@ import React from 'react';
 // ---- LOCAL IMPORTS ---- //
 import {getAuthToken, getUsers, getUserStatus} from './api';
 import {ChatView} from './components';
-import {getTeam} from './orm/team';
+import {getTeam} from './orm/orm';
 import {clone} from '@/utils';
 import {getSession} from '@/lib/core/auth';
 
