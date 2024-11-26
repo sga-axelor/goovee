@@ -19,26 +19,37 @@ export const filterPrivate = async (
     privateOnly?: boolean;
   } = {},
 ) => {
+  const defaultFilter = {
+    OR: openRecordFilters,
+  };
+
   if (!tenantId) {
-    throw new Error('TenantId is required.');
+    console.error('TenantId is required.');
+    return defaultFilter;
   }
 
-  const client = await manager.getClient(tenantId);
+  let client;
+  try {
+    client = await manager.getClient(tenantId);
+  } catch (err) {
+    console.log(err);
+  }
 
   if (!client) {
-    throw new Error('Invalid tenant provided.');
+    console.error('Client is required.');
+    return defaultFilter;
   }
 
   if (!user) {
-    return {
-      OR: openRecordFilters,
-    };
+    console.error('User is required');
+    return defaultFilter;
   }
 
   const partner = await findPartnerByEmail(user.email, tenantId);
 
   if (!partner) {
-    throw new Error('Unauthorized');
+    console.error('Unauthorized');
+    return defaultFilter;
   }
 
   const partnerCategory = partner?.partnerCategory;
@@ -63,15 +74,17 @@ export const filterPrivate = async (
               },
             },
           },
-          partnerCategory
-            ? {
-                partnerCategorySet: {
-                  id: {
-                    in: [partnerCategory.id],
+          ...(partnerCategory
+            ? [
+                {
+                  partnerCategorySet: {
+                    id: {
+                      in: [partnerCategory.id],
+                    },
                   },
                 },
-              }
-            : {},
+              ]
+            : []),
         ],
       },
     ],
