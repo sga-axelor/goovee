@@ -23,32 +23,13 @@ export const filterPrivate = async (
     OR: openRecordFilters,
   };
 
-  if (!tenantId) {
-    console.error('TenantId is required.');
-    return defaultFilter;
-  }
-
-  let client;
-  try {
-    client = await manager.getClient(tenantId);
-  } catch (err) {
-    console.log(err);
-  }
-
-  if (!client) {
-    console.error('Client is required.');
-    return defaultFilter;
-  }
-
-  if (!user) {
-    console.error('User is required');
+  if (!(tenantId && user)) {
     return defaultFilter;
   }
 
   const partner = await findPartnerByEmail(user.email, tenantId);
 
   if (!partner) {
-    console.error('Unauthorized');
     return defaultFilter;
   }
 

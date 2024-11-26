@@ -8,9 +8,11 @@ export async function findPartnerByEmail(
   email: string,
   tenantId: Tenant['id'],
 ) {
-  if (!email) return null;
+  if (!(email && tenantId)) return null;
 
   const client = await manager.getClient(tenantId);
+
+  if (!client) return null;
 
   const partner = await client.aOSPartner
     .findOne({
