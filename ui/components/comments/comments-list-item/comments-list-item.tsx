@@ -176,7 +176,9 @@ export const CommentListItem = ({
       <div className="p-2 border-l-2 border-success bg-success-light rounded-sm">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            {renderAvatar(partner?.picture?.id)}
+            {modelType === ModelType.forum
+              ? renderAvatar(partner?.picture?.id)
+              : null}
             <div className="font-semibold text-sm">
               {partner?.simpleFullName}
             </div>
@@ -237,7 +239,9 @@ export const CommentListItem = ({
     <div className="flex flex-col gap-1" key={id} id={`comment-${id}`}>
       <div className="flex gap-2 justify-between items-center border-b-2 border-dotted">
         <div className="flex items-center gap-2">
-          {renderAvatar(partner?.picture?.id)}
+          {modelType === ModelType.forum
+            ? renderAvatar(partner?.picture?.id)
+            : null}
           <div className="flex flex-col">
             <div className="font-semibold text-sm leading-[21px]">
               {partner?.simpleFullName}
