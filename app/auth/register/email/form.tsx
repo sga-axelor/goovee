@@ -1,0 +1,577 @@
+'use client';
+
+import {useState} from 'react';
+import Link from 'next/link';
+import {useSession} from 'next-auth/react';
+import {useRouter, useSearchParams} from 'next/navigation';
+import {z} from 'zod';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {MdOutlineVisibility, MdOutlineVisibilityOff} from 'react-icons/md';
+
+// ---- CORE IMPORTS ---- //
+import {i18n} from '@/i18n';
+import {useToast} from '@/ui/hooks';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/ui/components/form';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/ui/components/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/ui/components';
+import {Button} from '@/ui/components/button';
+import {Checkbox} from '@/ui/components/checkbox';
+import {Input} from '@/ui/components/input';
+import {Separator} from '@/ui/components/separator';
+import {SEARCH_PARAMS} from '@/constants';
+import type {PortalWorkspace} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
+import {register, subscribe} from '../actions';
+
+enum UserType {
+  company = 'company',
+  individual = 'individual',
+}
+
+const formSchema = z
+  .object({
+    type: z.enum([UserType.company, UserType.individual]),
+    companyName: z.string(),
+    siretNumber: z.string(),
+    companyNumber: z.string(),
+    firstName: z.string(),
+    name: z.string(),
+    email: z.string().min(1, {message: i18n.get('Email is required')}),
+    phone: z.string(),
+    password: z.string().min(1, {message: i18n.get('Password is required')}),
+    confirmPassword: z
+      .string()
+      .min(1, {message: i18n.get('Confirm password is required')}),
+    showProfileAsContactOnDirectory: z.boolean(),
+    showNameOnDirectory: z.boolean(),
+    showLinkOnDirectory: z.boolean(),
+    showEmailOnDirectory: z.boolean(),
+    showPhoneOnDirectory: z.boolean(),
+    linkedInLink: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: i18n.get("Passwords don't match"),
+    path: ['confirmPassword'],
+  });
+
+export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      type: UserType.individual,
+      companyName: '',
+      siretNumber: '',
+      companyNumber: '',
+      firstName: '',
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      showProfileAsContactOnDirectory: false,
+      showNameOnDirectory: false,
+      showLinkOnDirectory: false,
+      showEmailOnDirectory: false,
+      showPhoneOnDirectory: false,
+      linkedInLink: '',
+    },
+  });
+
+  const {data: session} = useSession();
+  const user = session?.user;
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const searchQuery = new URLSearchParams(searchParams).toString();
+  const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
+
+  const showDirectoryControls = form.watch(
+    'showProfileAsContactOnDirectory',
+    false,
+  );
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const {toast} = useToast();
+
+  const toggleShowPassword = () => setShowPassword(show => !show);
+  const toggleShowConfirmPassword = () => setShowConfirmPassword(show => !show);
+
+  const handleCancel = () => {
+    router.replace('/');
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!workspace) return;
+
+    try {
+      const res = await register({
+        ...values,
+        workspaceURL: workspace?.url,
+        tenantId,
+      });
+
+      if (res.success) {
+        toast({
+          variant: 'success',
+          title: res.message,
+        });
+        router.push(`/auth/login?${searchQuery}`);
+      } else if (res.error) {
+        toast({
+          variant: 'destructive',
+          title: res.message,
+        });
+      }
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error registering, try again'),
+      });
+    }
+  };
+
+  const handleSubscription = async () => {
+    if (!workspace) return;
+
+    try {
+      const res = await subscribe({
+        workspace,
+        tenantId,
+      });
+
+      if (res.error) {
+        toast({
+          variant: 'destructive',
+          title: res.message,
+        });
+      } else if (res.success) {
+        toast({
+          variant: 'success',
+          title: res.message,
+        });
+        router.replace(workspace.url);
+      }
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error subscribing, try again'),
+      });
+    }
+  };
+
+  if (user) {
+    return (
+      <Dialog open onOpenChange={handleCancel}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{i18n.get('Already an user')}</DialogTitle>
+            <DialogDescription>
+              {i18n.get(
+                `You are already a user, do you want to subscribe to ${workspace?.url} ?`,
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              {i18n.get('Cancel')}
+            </Button>
+            <Button type="button" onClick={handleSubscription}>
+              {i18n.get('Subscribe')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  const isCompany = form.watch('type') === UserType.company;
+
+  return (
+    <div className="container space-y-6 mt-8">
+      <h1 className="text-[2rem] font-bold">{i18n.get('Sign Up')}</h1>
+      <div className="bg-white py-4 px-6 space-y-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <h2 className="text-xl font-medium">
+              {i18n.get('Personal information')}
+            </h2>
+            <FormField
+              control={form.control}
+              name="type"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Type')}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value?.toString()}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={i18n.get('Select your account type')}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {[
+                        {
+                          label: i18n.get('Company'),
+                          value: UserType.company,
+                        },
+                        {
+                          label: i18n.get('Private Individual'),
+                          value: UserType.individual,
+                        },
+                      ].map(type => (
+                        <SelectItem value={type.value} key={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {isCompany && (
+              <>
+                {' '}
+                <FormField
+                  control={form.control}
+                  name="companyName"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Company name')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          placeholder={i18n.get('Enter company name')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="siretNumber"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('SIRET number')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          placeholder={i18n.get('Enter company SIRET number')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="companyNumber"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Company number')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          placeholder={i18n.get('Enter company number')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.get('First name')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value}
+                        placeholder={i18n.get('Enter first Name')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.get('Last name')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value}
+                        placeholder={i18n.get('Enter Last Name')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Email')}*</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value}
+                      placeholder={i18n.get('Enter email')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Password')}*</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-2 border border-input px-3 py-2">
+                      <Input
+                        {...field}
+                        className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
+                        type={showPassword ? 'text' : 'password'}
+                        value={field.value}
+                        placeholder={i18n.get('Enter password')}
+                      />
+                      {showPassword ? (
+                        <MdOutlineVisibility
+                          className="size-6 text-muted cursor-pointer"
+                          onClick={toggleShowPassword}
+                        />
+                      ) : (
+                        <MdOutlineVisibilityOff
+                          className="size-6 text-muted cursor-pointer"
+                          onClick={toggleShowPassword}
+                        />
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Confirm Password')}*</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-2 border border-input px-3 py-2">
+                      <Input
+                        {...field}
+                        className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        value={field.value}
+                        placeholder={i18n.get('Enter password')}
+                      />
+                      {showConfirmPassword ? (
+                        <MdOutlineVisibility
+                          className="size-6 text-muted cursor"
+                          onClick={toggleShowConfirmPassword}
+                        />
+                      ) : (
+                        <MdOutlineVisibilityOff
+                          className="size-6 text-muted cursor"
+                          onClick={toggleShowConfirmPassword}
+                        />
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="sr-only space-y-4">
+              <h4 className="text-lg font-medium">{i18n.get('Directory')}</h4>
+              <div>
+                <FormField
+                  control={form.control}
+                  name="showProfileAsContactOnDirectory"
+                  render={({field}) => (
+                    <FormItem className="flex flex-row items-center space-x-6 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          variant="success"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>
+                          {i18n.get(
+                            'Show my profile as a contact for my company on the portal directory',
+                          )}
+                        </FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {showDirectoryControls && (
+                <>
+                  <div>
+                    <p className="font-medium text-base">
+                      {i18n.get('Informations displayed in the directory:')}
+                    </p>
+                  </div>
+                  <div className="flex gap-16">
+                    <FormField
+                      control={form.control}
+                      name="showNameOnDirectory"
+                      render={({field}) => (
+                        <FormItem className="flex flex-row items-center space-x-6 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              variant="success"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>{i18n.get('Name')}</FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="showLinkOnDirectory"
+                      render={({field}) => (
+                        <FormItem className="flex flex-row items-center space-x-6 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              variant="success"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>{i18n.get('LinkedIn')}</FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="showEmailOnDirectory"
+                      render={({field}) => (
+                        <FormItem className="flex flex-row items-center space-x-6 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              variant="success"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>{i18n.get('Email')}</FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="showPhoneOnDirectory"
+                      render={({field}) => (
+                        <FormItem className="flex flex-row items-center space-x-6 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              variant="success"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>{i18n.get('Phone')}</FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="linkedInLink"
+                      render={({field}) => (
+                        <FormItem>
+                          <FormLabel>{i18n.get('LinkedIn link')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              value={field.value}
+                              placeholder={i18n.get('Enter your linkedin link')}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+            <Button variant="success" className="w-full">
+              {i18n.get('Sign Up')}
+            </Button>
+            <p className="text-success">
+              {i18n.get('Already have an account')} ?{' '}
+              <Link href={`/auth/login?${searchQuery}`}>
+                <span className="underline">{i18n.get('Log In')}</span>
+              </Link>
+            </p>
+          </form>
+        </Form>
+      </div>
+    </div>
+  );
+}
