@@ -142,10 +142,13 @@ dependencies:
     version: 14.2.4(@babel/core@7.26.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.80.6)
   next-auth:
     specifier: ^4.24.10
-    version: 4.24.10(next@14.2.4)(react-dom@18.3.1)(react@18.3.1)
+    version: 4.24.10(next@14.2.4)(nodemailer@6.9.16)(react-dom@18.3.1)(react@18.3.1)
   next-themes:
     specifier: ^0.3.0
     version: 0.3.0(react-dom@18.3.1)(react@18.3.1)
+  nodemailer:
+    specifier: ^6.9.16
+    version: 6.9.16
   pg:
     specifier: ^8.13.1
     version: 8.13.1
@@ -253,6 +256,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.17.6
     version: 20.17.6
+  '@types/nodemailer':
+    specifier: ^6.4.17
+    version: 6.4.17
   '@types/paypal__checkout-server-sdk':
     specifier: ^1.0.8
     version: 1.0.8
@@ -3397,6 +3403,12 @@ packages:
     resolution: {integrity: sha512-VEI7OdvK2wP7XHnsuXbAJnEpEkF6NjSN45QJlL4VGqZSXsnicpesdTWsg9RISeSdYd3yeRj/y3k5KGjUXYnFwQ==}
     dependencies:
       undici-types: 6.19.8
+
+  /@types/nodemailer@6.4.17:
+    resolution: {integrity: sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww==}
+    dependencies:
+      '@types/node': 20.17.6
+    dev: true
 
   /@types/papaparse@5.3.15:
     resolution: {integrity: sha512-JHe6vF6x/8Z85nCX4yFdDslN11d+1pr12E526X8WAfhadOeaOTx5AuIkvDKIBopfvlzpzkdMx4YyvSKCM9oqtw==}
@@ -6989,7 +7001,7 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: false
 
-  /next-auth@4.24.10(next@14.2.4)(react-dom@18.3.1)(react@18.3.1):
+  /next-auth@4.24.10(next@14.2.4)(nodemailer@6.9.16)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-8NGqiRO1GXBcVfV8tbbGcUgQkAGsX4GRzzXXea4lDikAsJtD5KiEY34bfhUOjHLvr6rT6afpcxw2H8EZqOV6aQ==}
     peerDependencies:
       '@auth/core': 0.34.2
@@ -7008,6 +7020,7 @@ packages:
       cookie: 0.7.2
       jose: 4.15.9
       next: 14.2.4(@babel/core@7.26.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.80.6)
+      nodemailer: 6.9.16
       oauth: 0.9.15
       openid-client: 5.7.0
       preact: 10.24.3
@@ -7121,6 +7134,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       big-integer: 1.6.52
+    dev: false
+
+  /nodemailer@6.9.16:
+    resolution: {integrity: sha512-psAuZdTIRN08HKVd/E8ObdV6NO7NTBY3KsC30F7M4H1OnmLCUNaS56FpYxyb26zWLSyYF9Ozch9KYHhHegsiOQ==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /nopt@5.0.0:
