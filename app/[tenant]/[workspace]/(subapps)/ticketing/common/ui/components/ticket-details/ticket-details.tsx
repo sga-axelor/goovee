@@ -3,8 +3,6 @@
 import {i18n} from '@/i18n';
 import type {Maybe} from '@/types/util';
 import {
-  Avatar,
-  AvatarImage,
   Button,
   Dialog,
   DialogClose,
@@ -37,7 +35,7 @@ import type {
   Category as TCategory,
   Priority as TPriority,
 } from '../../../types';
-import {formatDate, getProfilePic, isWithProvider} from '../../../utils';
+import {formatDate, isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 import {useTicketDetails} from './ticket-details-provider';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';

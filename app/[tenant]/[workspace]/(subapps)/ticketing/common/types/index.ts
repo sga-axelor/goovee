@@ -198,7 +198,6 @@ export type Ticket = {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   priority?: {id: string; version: number; name?: string};
   project?: {
@@ -209,7 +208,6 @@ export type Ticket = {
       id: string;
       version: number;
       name?: string;
-      logo?: {id: string; version: number};
     };
     clientPartner?: {id: string; version: number; simpleFullName?: string};
   };

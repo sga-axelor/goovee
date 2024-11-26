@@ -759,11 +759,11 @@ export async function findTicket({
       taskEndDate: true,
       displayFinancialData: true,
       assignedToContact: {simpleFullName: true, picture: {id: true}},
-      requestedByContact: {simpleFullName: true, picture: {id: true}},
+      requestedByContact: {simpleFullName: true},
       createdOn: true,
       project: {
         name: true,
-        company: {name: true, logo: {id: true}},
+        company: {name: true},
         clientPartner: {simpleFullName: true},
       },
       projectTaskCategory: {name: true},
