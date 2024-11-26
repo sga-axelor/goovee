@@ -67,6 +67,7 @@ export const SUBAPP_CODES = {
   events: 'events',
   forum: 'forum',
   ticketing: 'ticketing',
+  chat: 'chat',
 };
 
 /**

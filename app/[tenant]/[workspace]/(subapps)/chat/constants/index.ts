@@ -113,3 +113,4 @@ export const emojis: {[key: string]: string} = {
 };
 
 export const DEFAULT_CHANNEL = 'Town Square';
+export const DEFAULT_TOPIC = 'Off-Topic';

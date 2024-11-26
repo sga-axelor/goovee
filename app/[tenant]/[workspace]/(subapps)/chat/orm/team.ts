@@ -1,6 +1,6 @@
 import {type Tenant, manager} from '@/tenant';
 
-export async function getTeamId({tenant}: {tenant: Tenant['id']}) {
+export async function getTeam({tenant}: {tenant: Tenant['id']}) {
   const c = await manager.getClient(tenant);
 
   if (!c) {

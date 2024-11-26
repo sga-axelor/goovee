@@ -3,30 +3,35 @@ import React from 'react';
 // ---- LOCAL IMPORTS ---- //
 import {getAuthToken, getUsers, getUserStatus} from './api';
 import {ChatView} from './components';
-import {getTeamId} from './orm/team';
+import {getTeam} from './orm/team';
+import {clone} from '@/utils';
+import {getSession} from '@/lib/core/auth';
 
 export default async function Chat({params}: {params: {tenant: string}}) {
-  const {data: user, token} = await getAuthToken(
-    process.env.MATTERMOST_LOGIN,
-    process.env.MATTERMOST_PASSWORD,
-  );
+  const session = await getSession();
+  const user = session?.user;
+  const {data: mmuser, token} = await getAuthToken(user?.email, user?.email);
 
-  const teamId = await getTeamId({tenant: params.tenant});
+  if (!token) {
+    return <div>Aucune discussion disponible</div>;
+  }
 
-  if (!teamId || teamId === '') {
+  const team = await getTeam({tenant: params.tenant}).then(clone);
+
+  if (!team || team?.teamId === '') {
     return <div>Erreur de configuration du chat.</div>;
   }
 
-  const userStatus = await getUserStatus(user.id, token);
+  const userStatus = await getUserStatus(mmuser.id, token);
   const users = await getUsers(token);
 
   return (
     <ChatView
       token={token}
-      user={user}
+      user={mmuser}
       userStatus={userStatus}
       users={users}
-      teamId={teamId}
+      teamId={team?.teamId}
     />
   );
 }

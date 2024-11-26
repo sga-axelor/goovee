@@ -19,7 +19,7 @@ import {
   UserStatus,
 } from '../../../types/types';
 import {deletePost} from '../../../utils/deletePost';
-import {DEFAULT_CHANNEL} from '../../../constants';
+import {DEFAULT_CHANNEL, DEFAULT_TOPIC} from '../../../constants';
 
 export const ChatView = ({
   token,
@@ -32,7 +32,7 @@ export const ChatView = ({
   user: User;
   userStatus: UserStatus;
   users: User[];
-  teamId: string;
+  teamId: string | undefined;
 }) => {
   const [activeChannel, setActiveChannel] = useState<string>('');
   const [_channels, setChannels] = useState<ChannelType | ChannelType[]>([]);
@@ -61,7 +61,8 @@ export const ChatView = ({
         return (
           channel.display_name != null &&
           channel.display_name.trim() !== '' &&
-          channel.display_name != DEFAULT_CHANNEL
+          channel.display_name != DEFAULT_CHANNEL &&
+          channel.display_name != DEFAULT_TOPIC
         );
       });
       setChannels(filteredChannels);
