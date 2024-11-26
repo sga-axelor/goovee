@@ -1,15 +1,24 @@
 'use client';
 
-import React from 'react';
-import {requester, SurveyViewer} from '@axelor/react-survey-components';
+import React, {useEffect} from 'react';
+import {SurveyViewer} from '@axelor/react-survey-components';
 
-const Content = ({survey, response}: {survey: any; response?: any}) => {
+import {ensureAuth} from '@/subapps/survey/common/utils/auth-helper';
+
+const Content = ({
+  survey,
+  response,
+  partnerId,
+}: {
+  survey: any;
+  response?: any;
+  partnerId: number;
+}) => {
   const {config, themeConfig} = survey;
 
-  requester.registerConfig(process.env.NEXT_PUBLIC_AOS_URL ?? '', {
-    username: process.env.BASIC_AUTH_USERNAME ?? '',
-    password: process.env.BASIC_AUTH_PASSWORD ?? '',
-  });
+  useEffect(() => {
+    ensureAuth();
+  }, []);
 
   return (
     <SurveyViewer
@@ -17,6 +26,12 @@ const Content = ({survey, response}: {survey: any; response?: any}) => {
       theme={themeConfig}
       response={response}
       readonly={response != null && !survey.canAnswerBeModified}
+      completeData={{
+        partnerId,
+        configId: survey.id,
+        responseId: response?.id,
+        modelName: survey.customModel?.name,
+      }}
     />
   );
 };

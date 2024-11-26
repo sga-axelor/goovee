@@ -17,6 +17,7 @@
     {"name": "publicationDatetime", "type": "Date"},
     {"name": "canAnswerBeModified", "type": "Boolean"},
     {"name": "config", "type": "JSON"},
-    {"name": "themeConfig", "type": "JSON"}
+    {"name": "themeConfig", "type": "JSON"},
+    {"name": "customModel", "type": "OneToOne", "target": "AOSMetaJsonModel"}
   ]
 }

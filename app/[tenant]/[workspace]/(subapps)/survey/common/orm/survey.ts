@@ -170,6 +170,7 @@ export async function findSurveyById({
         publicationDatetime: true,
         config: true,
         themeConfig: true,
+        customModel: {name: true},
       },
     })
     .then(async res => ({

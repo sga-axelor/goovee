@@ -1,0 +1,7 @@
+{
+  "name": "AOSMetaJsonModel",
+  "table": "meta_json_model",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [{"type": "String", "name": "name"}]
+}

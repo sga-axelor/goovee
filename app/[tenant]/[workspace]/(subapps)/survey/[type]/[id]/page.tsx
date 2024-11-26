@@ -24,6 +24,9 @@ export default async function Page({
 
   if (!user) return notFound();
 
+  const partnerId =
+    typeof user.id === 'number' ? user.id : parseInt(user.id, 10);
+
   const {workspaceURL} = workspacePathname(params);
   const {id, tenant, type} = params;
 
@@ -43,7 +46,8 @@ export default async function Page({
     return (
       <Content
         survey={response.attrs?.surveyConfig}
-        response={JSON.stringify(response?.attrs)}
+        response={response}
+        partnerId={partnerId}
       />
     );
   } else if (type === 'open') {
@@ -53,7 +57,7 @@ export default async function Page({
       tenantId: tenant,
     });
 
-    return <Content survey={clone(survey)} />;
+    return <Content survey={clone(survey)} partnerId={partnerId} />;
   }
 
   return notFound();
