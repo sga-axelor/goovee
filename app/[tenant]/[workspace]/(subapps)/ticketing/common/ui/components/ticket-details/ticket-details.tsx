@@ -196,21 +196,11 @@ export function TicketDetails(props: Props) {
               />
             </div>
             <hr />
-            <p className="flex !mt-3.5 items-center">
+            <p className="!mt-3.5">
               <span className="font-medium pe-2">
                 {i18n.get('Created by')}:
               </span>
-              <Avatar className="h-8 w-8">
-                <AvatarImage
-                  className="object-cover"
-                  src={getProfilePic(
-                    ticket.requestedByContact?.id
-                      ? ticket.requestedByContact.picture?.id
-                      : ticket.project?.company?.logo?.id,
-                    tenant,
-                  )}
-                />
-              </Avatar>
+
               <span className="ms-2">
                 {ticket.requestedByContact?.simpleFullName
                   ? ticket.requestedByContact?.simpleFullName
