@@ -37,13 +37,11 @@ export type TicketListTicket = {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   requestedByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   project?: {
     id: string;
@@ -53,7 +51,6 @@ export type TicketListTicket = {
       id: string;
       version: number;
       name?: string;
-      logo?: {id: string; version: number};
     };
     clientPartner?: {id: string; version: number; simpleFullName?: string};
   };
@@ -77,13 +74,11 @@ export type TicketLink = {
       id: string;
       version: number;
       simpleFullName?: string;
-      picture?: {id: string; version: number};
     };
     requestedByContact?: {
       id: string;
       version: number;
       simpleFullName?: string;
-      picture?: {id: string; version: number};
     };
     priority?: {id: string; version: number; name?: string};
     project?: {
@@ -94,7 +89,6 @@ export type TicketLink = {
         id: string;
         version: number;
         name?: string;
-        logo?: {id: string; version: number};
       };
       clientPartner?: {id: string; version: number; simpleFullName?: string};
     };
@@ -114,13 +108,11 @@ export type ChildTicket = {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   requestedByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   priority?: {id: string; version: number; name?: string};
   project?: {
@@ -131,7 +123,6 @@ export type ChildTicket = {
       id: string;
       version: number;
       name?: string;
-      logo?: {id: string; version: number};
     };
     clientPartner?: {id: string; version: number; simpleFullName?: string};
   };
@@ -150,13 +141,11 @@ export type ParentTicket = {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   requestedByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   priority?: {id: string; version: number; name?: string};
   project?: {
@@ -167,7 +156,6 @@ export type ParentTicket = {
       id: string;
       version: number;
       name?: string;
-      logo?: {id: string; version: number};
     };
     clientPartner?: {id: string; version: number; simpleFullName?: string};
   };
@@ -192,7 +180,6 @@ export type Ticket = {
     id: string;
     version: number;
     simpleFullName?: string;
-    picture?: {id: string; version: number};
   };
   requestedByContact?: {
     id: string;
