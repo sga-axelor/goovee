@@ -3,13 +3,11 @@ import {notFound} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {findWorkspaces} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import Form from './form';
-import {getTranslation} from '@/i18n/server';
-import {Button} from '@/ui/components';
-import Link from 'next/link';
+import Navigation from './navigation';
+import {extractSearchParams, isExistingUser} from './common/utils';
+import {UserExists} from './common/ui/components';
 
 export default async function Page({
   searchParams,
@@ -19,50 +17,18 @@ export default async function Page({
     tenant: string;
   };
 }) {
-  const session = await getSession();
-  const user = session?.user;
-
-  const workspaceURI =
-    searchParams?.workspaceURI && decodeURIComponent(searchParams.workspaceURI);
-
-  const tenantId =
-    searchParams?.tenant && decodeURIComponent(searchParams.tenant);
+  const {workspaceURI, tenantId, workspaceURL} = extractSearchParams({
+    searchParams,
+  });
 
   if (!(workspaceURI && tenantId)) {
     return notFound();
   }
 
-  const workspaceURL = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;
-
-  let userWorkspaces = [];
-  if (user) {
-    userWorkspaces = await findWorkspaces({
-      url: workspaceURL,
-      user,
-      tenantId,
-    }).then(clone);
-  }
-
-  const existing = userWorkspaces.some((w: any) => w.url === workspaceURL);
+  const existing = await isExistingUser({workspaceURL, tenantId});
 
   if (existing) {
-    return (
-      <div className="container mx-auto px-6 py-4 gap-2 min-h-screen flex flex-col items-center justify-center">
-        <h2 className="text-xl font-medium">
-          {await getTranslation(
-            'You are already registered with the workspace!',
-          )}
-        </h2>
-        <p className="text-muted-foreground">
-          {await getTranslation('Workspace')} : {workspaceURL}
-        </p>
-        <Button asChild>
-          <Link href={workspaceURL}>
-            {await getTranslation('Continue to the workspace')}
-          </Link>
-        </Button>
-      </div>
-    );
+    return <UserExists workspaceURL={workspaceURL} />;
   }
 
   const workspaces = await findWorkspaces({url: workspaceURL, tenantId}).then(
@@ -77,5 +43,5 @@ export default async function Page({
     return notFound();
   }
 
-  return <Form workspace={workspace} />;
+  return <Navigation workspace={workspace} />;
 }
