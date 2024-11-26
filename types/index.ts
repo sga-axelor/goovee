@@ -254,13 +254,6 @@ export enum PaymentOption {
   stripe = 'stripe',
 }
 
-export enum ModelType {
-  news = 'news',
-  event = 'event',
-  forum = 'forum',
-  ticketing = 'ticketing',
-}
-
 export interface CommentResponse {
   success?: boolean;
   error?: boolean;

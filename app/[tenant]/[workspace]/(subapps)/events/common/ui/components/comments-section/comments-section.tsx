@@ -4,8 +4,7 @@
 import {Card} from '@/ui/components';
 import {i18n} from '@/i18n';
 import {Comments} from '@/ui/components';
-import {ModelType} from '@/types';
-import {SORT_TYPE} from '@/constants';
+import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import type {CommentSectionProps} from '@/subapps/events/common/ui/components';
@@ -17,7 +16,7 @@ export const CommentsSection = ({eventId}: CommentSectionProps) => {
 
       <Comments
         record={{id: eventId}}
-        modelType={ModelType.event}
+        subapp={SUBAPP_CODES.events}
         showCommentsByDefault={true}
         inputPosition="bottom"
         hideCommentsHeader={true}

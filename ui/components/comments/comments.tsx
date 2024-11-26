@@ -24,13 +24,13 @@ import {
   DISABLED_COMMENT_PLACEHOLDER,
   SORT_BY_OPTIONS,
   SORT_TYPE,
+  type SUBAPP_CODES,
 } from '@/constants';
-import {ModelType} from '@/types';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 interface CommentsProps {
   record: any;
-  modelType: ModelType;
+  subapp: SUBAPP_CODES;
   hideCommentsHeader?: boolean;
   hideCommentsFooter?: boolean;
   showCommentsByDefault?: boolean;
@@ -47,7 +47,7 @@ interface CommentsProps {
 
 export function Comments({
   record,
-  modelType,
+  subapp,
   hideCommentsHeader = false,
   hideCommentsFooter = false,
   showCommentsByDefault,
@@ -67,7 +67,7 @@ export function Comments({
   const {comments, total, totalCommentThreadCount, loadMore, onCreate} =
     useComments({
       model: {id: record.id},
-      modelType,
+      subapp,
       sortBy,
       seeMore,
     });
@@ -158,7 +158,7 @@ export function Comments({
               comments={comments}
               usePopUpStyles={usePopUpStyles}
               showReactions={showReactions}
-              modelType={modelType}
+              subapp={subapp}
               sortBy={sortBy}
               onSubmit={onCreate}
               tenantId={tenant}

@@ -1,12 +1,11 @@
 import axios from 'axios';
 
 // ---- LOCAL IMPORTS ---- //
-import {ORDER_BY} from '@/constants';
+import {ORDER_BY, SUBAPP_CODES} from '@/constants';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {getTranslation} from '@/i18n/server';
 import {addComment} from '@/orm/comment';
 import {manager, type Tenant} from '@/tenant';
-import {ModelType} from '@/types';
 import {sql} from '@/utils/template-string';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';
 
@@ -250,7 +249,7 @@ export async function createTicket({
   try {
     const {error, message} = await addComment({
       workspaceURL,
-      type: ModelType.ticketing,
+      subapp: SUBAPP_CODES.ticketing,
       model: {id: ticket.id},
       messageBody: {title: 'Record Created', tracks: tracks, tags: []},
       tenantId: auth.tenantId,
@@ -456,7 +455,7 @@ export async function updateTicket({
   try {
     await addComment({
       workspaceURL,
-      type: ModelType.ticketing,
+      subapp: SUBAPP_CODES.ticketing,
       model: {id: ticket.id},
       messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
       tenantId: auth.tenantId,

@@ -1,7 +1,7 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {ModelType} from '@/types';
+import {type SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
@@ -14,7 +14,7 @@ interface CommentsListProps {
   }>;
   usePopUpStyles?: boolean;
   showReactions?: boolean;
-  modelType: ModelType;
+  subapp: SUBAPP_CODES;
   disabled?: boolean;
   sortBy: any;
   onSubmit?: (comment: any) => void;
@@ -26,7 +26,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   comments,
   usePopUpStyles = false,
   showReactions = true,
-  modelType,
+  subapp,
   disabled = false,
   onSubmit,
   sortBy,
@@ -43,7 +43,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
           parentCommentId={comment.id}
           comment={comment}
           showReactions={showReactions}
-          modelType={modelType}
+          subapp={subapp}
           sortBy={sortBy}
           onSubmit={onSubmit}
           tenantId={tenantId}

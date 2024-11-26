@@ -7,7 +7,7 @@ import {getTranslation} from '@/i18n/server';
 import {addComment, findComments, upload} from '@/orm/comment';
 import {TENANT_HEADER} from '@/middleware';
 import {getSession} from '@/auth';
-import {ModelType} from '@/types';
+import {type SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 
 export async function createComment(formData: any, valueString: string) {
@@ -28,13 +28,13 @@ export async function createComment(formData: any, valueString: string) {
     values,
     workspaceURL,
     modelID,
-    type,
+    subapp,
     parentId,
     messageBody = null,
   } = JSON.parse(valueString) as {
     values?: any;
     workspaceURL: string;
-    type: ModelType;
+    subapp: SUBAPP_CODES;
     modelID: string | number;
     parentId?: any;
     messageBody?: any;
@@ -70,7 +70,7 @@ export async function createComment(formData: any, valueString: string) {
 
   try {
     const response: any = await addComment({
-      type,
+      subapp,
       workspaceURL,
       model: {id: modelID},
       note: values?.text,
@@ -106,7 +106,7 @@ export async function fetchComments({
   sort,
   limit,
   page,
-  type,
+  subapp,
   workspaceURL,
 }: any) {
   const session = await getSession();
@@ -134,7 +134,7 @@ export async function fetchComments({
       sort,
       limit,
       page,
-      type,
+      subapp,
       workspaceURL,
       tenantId,
     });

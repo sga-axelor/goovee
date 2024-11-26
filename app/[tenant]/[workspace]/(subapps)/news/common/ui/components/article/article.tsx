@@ -6,9 +6,9 @@ import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
-import {COMMENTS, SORT_TYPE} from '@/constants';
+import {COMMENTS, SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {Comments} from '@/ui/components';
-import {ModelType, PortalWorkspace} from '@/types';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -118,7 +118,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
 
             <Comments
               record={{id: news.id}}
-              modelType={ModelType.news}
+              subapp={SUBAPP_CODES.news}
               showCommentsByDefault={true}
               disabled={isDisabled}
               inputPosition="bottom"

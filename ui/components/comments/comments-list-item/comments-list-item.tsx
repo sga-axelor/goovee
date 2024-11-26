@@ -30,7 +30,6 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/ui/components';
-import {ModelType} from '@/types';
 import {i18n} from '@/i18n';
 import {getImageURL} from '@/utils/files';
 import {getPublishedLabel, parseDate} from '@/utils/date';
@@ -41,6 +40,7 @@ import {
   NOT_INTERESTED,
   REPORT,
   SORT_TYPE,
+  SUBAPP_CODES,
 } from '@/constants';
 
 import type {Comment} from '@/orm/comment';
@@ -51,7 +51,7 @@ interface CommentListItemProps {
   parentCommentId: string;
   comment: Comment;
   showReactions: boolean;
-  modelType: ModelType;
+  subapp: SUBAPP_CODES;
   disabled: boolean;
   isTopLevel?: boolean;
   sortBy?: any;
@@ -67,7 +67,7 @@ export const CommentListItem = ({
   parentCommentId,
   comment,
   showReactions,
-  modelType,
+  subapp,
   disabled = false,
   isTopLevel = true,
   sortBy,
@@ -152,7 +152,7 @@ export const CommentListItem = ({
         parentCommentId={parentCommentId}
         comment={childComment}
         showReactions={showReactions}
-        modelType={modelType}
+        subapp={subapp}
         isTopLevel={false}
         disabled={isDisabled}
         onSubmit={onSubmit}
@@ -176,7 +176,7 @@ export const CommentListItem = ({
       <div className="p-2 border-l-2 border-success bg-success-light rounded-sm">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            {modelType === ModelType.forum
+            {subapp === SUBAPP_CODES.forum
               ? renderAvatar(partner?.picture?.id)
               : null}
             <div className="font-semibold text-sm">
@@ -239,7 +239,7 @@ export const CommentListItem = ({
     <div className="flex flex-col gap-1" key={id} id={`comment-${id}`}>
       <div className="flex gap-2 justify-between items-center border-b-2 border-dotted">
         <div className="flex items-center gap-2">
-          {modelType === ModelType.forum
+          {subapp === SUBAPP_CODES.forum
             ? renderAvatar(partner?.picture?.id)
             : null}
           <div className="flex flex-col">

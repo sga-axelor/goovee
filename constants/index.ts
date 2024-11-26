@@ -57,18 +57,18 @@ export const ROLE = {
 /**
  * SUBAPP CODES
  */
-export const SUBAPP_CODES = {
-  shop: 'shop',
-  quotations: 'quotations',
-  orders: 'orders',
-  invoices: 'invoices',
-  resources: 'resources',
-  news: 'news',
-  events: 'events',
-  forum: 'forum',
-  ticketing: 'ticketing',
-  chat: 'chat',
-};
+export enum SUBAPP_CODES {
+  shop = 'shop',
+  quotations = 'quotations',
+  orders = 'orders',
+  invoices = 'invoices',
+  resources = 'resources',
+  news = 'news',
+  events = 'events',
+  forum = 'forum',
+  ticketing = 'ticketing',
+  chat = 'chat',
+}
 
 /**
  * SUBAPP PAGE

@@ -4,8 +4,12 @@ import {useState, useEffect, useCallback, useMemo} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {createComment, fetchComments} from '@/app/actions/comment';
-import {DEFAULT_COMMENTS_LIMIT, DEFAULT_PAGE} from '@/constants';
-import {CommentResponse, ID, ModelType} from '@/types';
+import {
+  DEFAULT_COMMENTS_LIMIT,
+  DEFAULT_PAGE,
+  type SUBAPP_CODES,
+} from '@/constants';
+import {CommentResponse, ID} from '@/types';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 import {i18n} from '@/i18n';
@@ -13,7 +17,7 @@ import {i18n} from '@/i18n';
 interface UseCommentsProps {
   sortBy: string;
   model: {id: ID};
-  modelType: ModelType;
+  subapp: SUBAPP_CODES;
   seeMore?: boolean;
 }
 
@@ -31,7 +35,7 @@ interface HandleCommentParams {
 export function useComments({
   sortBy: sortByProp,
   model,
-  modelType,
+  subapp,
   seeMore,
 }: UseCommentsProps) {
   const [comments, setComments] = useState<any[]>([]);
@@ -50,7 +54,7 @@ export function useComments({
       try {
         const response: any = await fetchComments({
           model: {id: model.id},
-          type: modelType,
+          subapp,
           sort: sortBy,
           limit: seeMore ? DEFAULT_COMMENTS_LIMIT : undefined,
           page,
@@ -87,7 +91,7 @@ export function useComments({
         setFetching(false);
       }
     },
-    [model.id, modelType, seeMore, workspaceURL, toast],
+    [model.id, subapp, seeMore, workspaceURL, toast],
   );
 
   const handleRefresh = useCallback(async () => {
@@ -105,7 +109,7 @@ export function useComments({
             workspaceURL,
             modelID: model.id,
             parentId: parent,
-            type: modelType,
+            subapp,
           }),
         );
 
@@ -126,7 +130,7 @@ export function useComments({
         });
       }
     },
-    [workspaceURL, model.id, modelType, handleRefresh, toast],
+    [workspaceURL, model.id, subapp, handleRefresh, toast],
   );
 
   useEffect(() => {

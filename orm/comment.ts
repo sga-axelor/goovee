@@ -11,7 +11,7 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
 import {clone, getSkipInfo} from '@/utils';
-import {ID, ModelType, PortalWorkspace} from '@/types';
+import {ID, PortalWorkspace} from '@/types';
 import {
   COMMENT_TRACKING,
   MAIL_MESSAGE_TYPE,
@@ -33,11 +33,11 @@ if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
 }
 
-const ModelMap: Record<ModelType, string> = {
-  [ModelType.forum]: 'com.axelor.apps.portal.db.ForumPost',
-  [ModelType.news]: 'com.axelor.apps.portal.db.PortalNews',
-  [ModelType.event]: 'com.axelor.apps.portal.db.PortalEvent',
-  [ModelType.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
+const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
+  [SUBAPP_CODES.forum]: 'com.axelor.apps.portal.db.ForumPost',
+  [SUBAPP_CODES.news]: 'com.axelor.apps.portal.db.PortalNews',
+  [SUBAPP_CODES.events]: 'com.axelor.apps.portal.db.PortalEvent',
+  [SUBAPP_CODES.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
 };
 
 export async function getPopularCommentsBySorting({
@@ -47,14 +47,14 @@ export async function getPopularCommentsBySorting({
   modelRecord,
   tenantId,
   modelName,
-  type,
+  subapp,
 }: {
   page?: string | number;
   limit?: number;
   workspace: PortalWorkspace;
   modelRecord: any;
   tenantId: Tenant['id'];
-  type: ModelType;
+  subapp: SUBAPP_CODES;
   modelName: string;
 }) {
   if (!workspace) {
@@ -118,7 +118,7 @@ comments AS (
     (mail_message.public_body IS NOT NULL OR mail_message.is_public_note = true) 
     AND mail_message.related_model = $4
     AND mail_message.related_id = $1
-    ${type === ModelType.forum ? 'AND mail_message.parent_mail_message IS NULL' : ''}
+    ${subapp === SUBAPP_CODES.forum ? 'AND mail_message.parent_mail_message IS NULL' : ''}
 ),
 childCommentsData AS (
   SELECT 
@@ -307,7 +307,7 @@ export async function upload(
 }
 
 export async function addComment({
-  type,
+  subapp,
   model = null,
   note,
   workspaceURL,
@@ -316,7 +316,7 @@ export async function addComment({
   messageBody,
   tenantId,
 }: {
-  type: ModelType;
+  subapp: SUBAPP_CODES;
   model: {id: string | number} | null;
   workspaceURL: string;
   note?: string;
@@ -384,7 +384,7 @@ export async function addComment({
       message,
       data: modelRecord,
     }: any = await findByID({
-      type,
+      subapp,
       id: model?.id,
       workspaceURL,
       workspace,
@@ -417,7 +417,7 @@ export async function addComment({
     }
 
     const timestamp = getCurrentDateTime();
-    const modelName = ModelMap[type];
+    const modelName = ModelMap[subapp];
 
     if (!modelName) {
       return {
@@ -473,24 +473,24 @@ export async function addComment({
 }
 
 export async function findByID({
-  type,
+  subapp,
   id,
   workspace,
   withAuth = true,
   tenantId,
   workspaceURL,
 }: {
-  type: ModelType;
+  subapp: SUBAPP_CODES;
   id: string | number;
   workspace: PortalWorkspace;
   withAuth?: boolean;
   workspaceURL: string;
   tenantId: Tenant['id'];
 }) {
-  if (!type || !id) {
+  if (!subapp || !id) {
     return {
       error: true,
-      message: await getTranslation('Missing type or ID'),
+      message: await getTranslation('Missing subapp or ID'),
     };
   }
 
@@ -519,17 +519,31 @@ export async function findByID({
     }
   }
 
+  const app = await findSubappAccess({
+    code: subapp,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!app) {
+    return {
+      error: true,
+      message: await getTranslation('Unauthorized'),
+    };
+  }
+
   let response: any;
 
-  switch (type) {
-    case ModelType.event:
+  switch (subapp) {
+    case SUBAPP_CODES.events:
       response = await findEventByID({id, workspace, tenantId, user});
       break;
-    case ModelType.news:
+    case SUBAPP_CODES.news:
       const {news}: any = await findNews({id, workspace, tenantId, user});
       response = news?.[0];
       break;
-    case ModelType.forum:
+    case SUBAPP_CODES.forum:
       const {posts = []}: any = await findPosts({
         whereClause: {id},
         workspaceID: workspace.id,
@@ -538,22 +552,8 @@ export async function findByID({
       });
       response = posts[0];
       break;
-    case ModelType.ticketing:
+    case SUBAPP_CODES.ticketing:
       if (user) {
-        // TODO: why subapp access is not checked for commments for all apps?
-        const subapp = await findSubappAccess({
-          code: SUBAPP_CODES.ticketing,
-          user,
-          url: workspaceURL,
-          tenantId,
-        });
-
-        if (!subapp) {
-          return {
-            error: true,
-            message: await getTranslation('Unauthorized'),
-          };
-        }
         response = await findTicketAccess({
           recordId: id,
           auth: {
@@ -561,7 +561,7 @@ export async function findByID({
             workspaceId: workspace.id.toString(),
             tenantId,
             isContact: user.isContact!,
-            role: subapp.role,
+            role: app.role,
           },
         });
       }
@@ -593,7 +593,7 @@ export async function findComments({
   page,
   sort,
   workspaceURL,
-  type,
+  subapp,
   tenantId,
 }: {
   model: {id: ID} | null;
@@ -601,7 +601,7 @@ export async function findComments({
   page?: number;
   sort?: any;
   workspaceURL: string;
-  type: ModelType;
+  subapp: SUBAPP_CODES;
   tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
@@ -633,19 +633,21 @@ export async function findComments({
     };
   }
 
-  const shouldUseAuth = (type: ModelType) =>
-    ![ModelType.forum, ModelType.event, ModelType.news].includes(type);
+  const shouldUseAuth = (subapp: SUBAPP_CODES) =>
+    ![SUBAPP_CODES.forum, SUBAPP_CODES.events, SUBAPP_CODES.news].includes(
+      subapp,
+    );
 
   const {
     error,
     message,
     data: modelRecord,
   }: any = await findByID({
-    type,
+    subapp,
     id: model?.id,
     workspaceURL,
     workspace,
-    withAuth: shouldUseAuth(type),
+    withAuth: shouldUseAuth(subapp),
     tenantId,
   });
 
@@ -656,7 +658,7 @@ export async function findComments({
     };
   }
 
-  const modelName = ModelMap[type];
+  const modelName = ModelMap[subapp];
 
   if (!modelName) {
     return {
@@ -683,7 +685,7 @@ export async function findComments({
           modelRecord,
           tenantId,
           modelName,
-          type,
+          subapp,
         });
         const {
           comments = [],
@@ -739,7 +741,9 @@ export async function findComments({
         relatedId: modelRecord.id,
         relatedModel: modelName,
         OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
-        ...(type === ModelType.forum && {parentMailMessage: {id: {eq: null}}}),
+        ...(subapp === SUBAPP_CODES.forum && {
+          parentMailMessage: {id: {eq: null}},
+        }),
       },
       orderBy,
       take: limit,

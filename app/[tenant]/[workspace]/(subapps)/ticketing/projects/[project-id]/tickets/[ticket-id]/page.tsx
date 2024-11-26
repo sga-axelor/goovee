@@ -4,10 +4,9 @@ import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
-import {SORT_TYPE} from '@/constants';
+import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {getTranslation} from '@/i18n/server';
 import {type Tenant} from '@/tenant';
-import {ModelType} from '@/types';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -182,7 +181,7 @@ export default async function Page({
         </h4>
         <Comments
           record={ticket}
-          modelType={ModelType.ticketing}
+          subapp={SUBAPP_CODES.ticketing}
           showCommentsByDefault
           showTopBorder={false}
           showReactions={false}

@@ -2,7 +2,7 @@
 import {useMemo} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {ModelType} from '@/types';
+import {SUBAPP_CODES} from '@/constants';
 import {Comments} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
@@ -25,7 +25,7 @@ export const ThreadFooter = ({
   return (
     <Comments
       record={post}
-      modelType={ModelType.forum}
+      subapp={SUBAPP_CODES.forum}
       showCommentsByDefault={showCommentsByDefault}
       hideCloseComments={hideCloseComments}
       inputPosition="top"
