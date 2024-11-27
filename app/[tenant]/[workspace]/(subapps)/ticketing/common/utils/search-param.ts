@@ -53,8 +53,8 @@ export function getWhere(
 
   if (myTickets) {
     const OR = [
-      {assignedToContact: {id: userId}},
-      {requestedByContact: {id: userId}},
+      {managedByContact: {id: userId}},
+      {createdByContact: {id: userId}},
     ];
     if (where.OR) where.OR.push(...OR);
     else where.OR = OR;
@@ -66,22 +66,22 @@ export function getWhere(
       const filteredCreatedBy = createdBy.filter(id => id !== COMPANY);
       if (filteredCreatedBy.length) {
         const OR = [
-          {requestedByContact: {id: {in: filteredCreatedBy}}},
-          {requestedByContact: {id: null}},
+          {createdByContact: {id: {in: filteredCreatedBy}}},
+          {createdByContact: {id: null}},
         ];
 
         if (where.OR) where.OR.push(...OR);
         else where.OR = OR;
       } else {
-        where.requestedByContact = {id: null};
+        where.createdByContact = {id: null};
       }
     } else {
-      where.requestedByContact = {id: {in: createdBy}};
+      where.createdByContact = {id: {in: createdBy}};
     }
   }
 
   if (managedBy) {
-    where.assignedToContact = {id: {in: managedBy}};
+    where.managedByContact = {id: {in: managedBy}};
   }
 
   return where;

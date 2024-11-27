@@ -36,8 +36,8 @@ export function getTicketAccessFilter() {
 export function getRestrictedTicketAccessFilter(props: AuthProps) {
   const where: WhereOptions<AOSProjectTask> = {
     OR: [
-      {assignedToContact: {id: props.userId}},
-      {requestedByContact: {id: props.userId}},
+      {createdByContact: {id: props.userId}},
+      {managedByContact: {id: props.userId}},
     ],
   };
   return where;

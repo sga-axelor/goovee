@@ -200,8 +200,8 @@ export function TicketDetails(props: Props) {
               </span>
 
               <span className="ms-2">
-                {ticket.requestedByContact?.simpleFullName
-                  ? ticket.requestedByContact?.simpleFullName
+                {ticket.createdByContact?.simpleFullName
+                  ? ticket.createdByContact?.simpleFullName
                   : ticket.project?.company?.name}
               </span>
             </p>

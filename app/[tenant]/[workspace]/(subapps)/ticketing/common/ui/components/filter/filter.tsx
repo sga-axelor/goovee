@@ -70,8 +70,8 @@ type FilterProps = {
 };
 
 const defaultValues = {
-  requestedBy: [] as string[],
-  assignedTo: [] as string[],
+  createdBy: [] as string[],
+  managedBy: [] as string[],
   updatedOn: ['', ''] as [string, string],
   priority: [] as string[],
   status: [] as string[],
@@ -188,7 +188,7 @@ export function Filter(props: FilterProps) {
                 <MyTicketsField form={form} />
                 {!form.watch('myTickets') && (
                   <>
-                    <RequestedByField
+                    <CreatedByField
                       form={form}
                       contacts={contacts}
                       company={company}
@@ -259,7 +259,7 @@ function ManagedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
     />
   );
 }
-function RequestedByField(
+function CreatedByField(
   props: FieldProps & Pick<FilterProps, 'contacts' | 'company'>,
 ) {
   const {form, contacts, company} = props;

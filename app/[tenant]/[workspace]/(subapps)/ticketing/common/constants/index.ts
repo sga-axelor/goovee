@@ -1,12 +1,12 @@
 // NOTE: This is used for serverside sorting
 export const sortKeyPathMap: Record<string, string> = {
   ticketId: 'id',
-  createdBy: 'requestedByContact.simpleFullName',
+  createdBy: 'createdByContact.simpleFullName',
   subject: 'name',
   priority: 'priority.name',
   status: 'status.name',
   category: 'projectTaskCategory.name',
-  managedBy: 'assignedToContact.simpleFullName',
+  managedBy: 'managedByContact.simpleFullName',
   assignedTo: 'assignment',
   updatedOn: 'updatedOn',
 };

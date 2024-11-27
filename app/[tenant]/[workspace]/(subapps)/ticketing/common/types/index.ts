@@ -33,12 +33,12 @@ export type TicketListTicket = {
   assignment?: number;
   assignedTo?: {id: string; version: number; name?: string};
   priority?: {id: string; version: number; name?: string};
-  assignedToContact?: {
+  managedByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
   };
-  requestedByContact?: {
+  createdByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
@@ -70,12 +70,12 @@ export type TicketLink = {
     name: string;
     assignment?: number | undefined;
     assignedTo?: {id: string; version: number; name?: string};
-    assignedToContact?: {
+    managedByContact?: {
       id: string;
       version: number;
       simpleFullName?: string;
     };
-    requestedByContact?: {
+    createdByContact?: {
       id: string;
       version: number;
       simpleFullName?: string;
@@ -104,12 +104,12 @@ export type ChildTicket = {
   name: string;
   assignment?: number | undefined;
   assignedTo?: {id: string; version: number; name?: string};
-  assignedToContact?: {
+  managedByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
   };
-  requestedByContact?: {
+  createdByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
@@ -137,12 +137,12 @@ export type ParentTicket = {
   name?: string;
   assignment?: number | undefined;
   assignedTo?: {id: string; version: number; name?: string};
-  assignedToContact?: {
+  managedByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
   };
-  requestedByContact?: {
+  createdByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
@@ -176,12 +176,12 @@ export type Ticket = {
   assignment?: number | undefined;
   unitPrice?: string | undefined;
   assignedTo?: {id: string; version: number; name?: string};
-  assignedToContact?: {
+  managedByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;
   };
-  requestedByContact?: {
+  createdByContact?: {
     id: string;
     version: number;
     simpleFullName?: string;

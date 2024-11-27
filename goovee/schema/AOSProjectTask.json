@@ -91,12 +91,12 @@
     },
     {
       "type": "ManyToOne",
-      "name": "assignedToContact",
+      "name": "managedByContact",
       "target": "AOSPartner"
     },
     {
       "type": "ManyToOne",
-      "name": "requestedByContact",
+      "name": "createdByContact",
       "target": "AOSPartner"
     },
     {

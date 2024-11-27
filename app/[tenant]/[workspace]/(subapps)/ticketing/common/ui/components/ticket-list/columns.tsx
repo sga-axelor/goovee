@@ -22,11 +22,10 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
     key: 'createdBy',
     label: i18n.get('Created by'),
     content: t =>
-      t.requestedByContact?.id
-        ? t.requestedByContact.simpleFullName
+      t.createdByContact?.id
+        ? t.createdByContact.simpleFullName
         : t.project?.company?.name,
-    getter: t =>
-      t.requestedByContact?.simpleFullName ?? t.project?.company?.name,
+    getter: t => t.createdByContact?.simpleFullName ?? t.project?.company?.name,
   },
   {
     key: 'subject',
@@ -56,8 +55,8 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   {
     key: 'managedBy',
     label: i18n.get('Managed by'),
-    content: t => t.assignedToContact?.simpleFullName,
-    getter: 'assignedToContact.simpleFullName',
+    content: t => t.managedByContact?.simpleFullName,
+    getter: 'managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',
@@ -115,8 +114,8 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
   {
     key: 'managedBy',
     label: i18n.get('Managed by'),
-    content: t => t.assignedToContact?.simpleFullName,
-    getter: 'assignedToContact.simpleFullName',
+    content: t => t.managedByContact?.simpleFullName,
+    getter: 'managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',
@@ -174,8 +173,8 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
   {
     key: 'managedBy',
     label: i18n.get('Managed by'),
-    content: t => t.assignedToContact?.simpleFullName,
-    getter: 'assignedToContact.simpleFullName',
+    content: t => t.managedByContact?.simpleFullName,
+    getter: 'managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',
@@ -235,8 +234,8 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
   {
     key: 'managedBy',
     label: i18n.get('Managed by'),
-    content: ({relatedTask: t}) => t?.assignedToContact?.simpleFullName,
-    getter: 'relatedTask.assignedToContact.simpleFullName',
+    content: ({relatedTask: t}) => t?.managedByContact?.simpleFullName,
+    getter: 'relatedTask.managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',

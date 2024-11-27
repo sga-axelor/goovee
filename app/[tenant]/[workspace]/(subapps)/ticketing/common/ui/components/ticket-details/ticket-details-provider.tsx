@@ -37,7 +37,7 @@ const getDefaultValues = (ticket: Cloned<Ticket>) => {
     priority: ticket?.priority?.id,
     description: ticket?.description ?? '',
     assignment: ticket?.assignment,
-    managedBy: ticket?.assignedToContact?.id,
+    managedBy: ticket?.managedByContact?.id,
   };
 };
 

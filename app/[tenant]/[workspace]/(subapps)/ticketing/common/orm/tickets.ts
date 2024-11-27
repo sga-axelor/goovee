@@ -148,11 +148,11 @@ export async function createTicket({
       invoicingType: INVOICING_TYPE.NO_INVOICING,
       isPrivate: false,
       progress: '0.00',
-      requestedByContact: {select: {id: auth.userId}},
+      createdByContact: {select: {id: auth.userId}},
       project: {select: {id: projectId}},
       name: subject,
       description: description,
-      ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
+      ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
       ...(defaultStatus && {status: {select: {id: defaultStatus}}}),
       ...(category && {projectTaskCategory: {select: {id: category}}}),
       ...(projectManager && {assignedTo: {select: {id: projectManager}}}),
@@ -177,9 +177,9 @@ export async function createTicket({
       invoicingType: true,
       isPrivate: true,
       progress: true,
-      requestedByContact: {name: true},
+      createdByContact: {name: true},
       project: {name: true},
-      ...(managedBy && {assignedToContact: {name: true}}),
+      ...(managedBy && {managedByContact: {name: true}}),
       ...(category && {projectTaskCategory: {name: true}}),
       ...(priority && {priority: {name: true}}),
       ...(defaultStatus && {status: {name: true}}),
@@ -209,9 +209,9 @@ export async function createTicket({
       value: String(ticket.invoicingType),
     },
     {
-      name: 'requestedByContact',
+      name: 'createdByContact',
       title: 'Created by',
-      value: ticket.requestedByContact?.name ?? '',
+      value: ticket.createdByContact?.name ?? '',
     },
   ];
 
@@ -241,9 +241,9 @@ export async function createTicket({
 
   if (managedBy) {
     tracks.push({
-      name: 'assignedToContact',
+      name: 'managedByContact',
       title: 'Managed by',
-      value: ticket.assignedToContact?.name ?? '',
+      value: ticket.managedByContact?.name ?? '',
     });
   }
   try {
@@ -305,7 +305,7 @@ export async function updateTicketByWS({
           ...(priority && {priority: {id: priority}}),
           ...(status && {status: {id: status}}),
           ...(assignment && {assignment: assignment}),
-          ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
+          ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
         },
         fields: ['project'],
       },
@@ -359,7 +359,7 @@ export async function updateTicket({
     ...(priority && {priority: {name: true}}),
     ...(status && {status: {name: true}}),
     ...(assignment && {assignment: true}),
-    ...(managedBy && {assignedToContact: {name: true}}),
+    ...(managedBy && {managedByContact: {name: true}}),
   };
 
   const oldTicket = await findTicketAccess({recordId: id, select, auth});
@@ -379,7 +379,7 @@ export async function updateTicket({
       ...(priority && {priority: {select: {id: priority}}}),
       ...(status && {status: {select: {id: status}}}),
       ...(assignment && {assignment: assignment}),
-      ...(managedBy && {assignedToContact: {select: {id: managedBy}}}),
+      ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
     },
     select: {
       id: true,
@@ -440,14 +440,14 @@ export async function updateTicket({
 
   if (
     managedBy &&
-    oldTicket.assignedToContact?.name !== ticket.assignedToContact?.name
+    oldTicket.managedByContact?.name !== ticket.managedByContact?.name
   ) {
     tracks.push({
-      name: 'assignedToContact',
-      title: 'AssignedToContact',
-      value: ticket.assignedToContact?.name ?? '',
-      ...(oldTicket.assignedToContact?.name && {
-        oldValue: oldTicket.assignedToContact.name,
+      name: 'managedByContact',
+      title: 'Managed by',
+      value: ticket.managedByContact?.name ?? '',
+      ...(oldTicket.managedByContact?.name && {
+        oldValue: oldTicket.managedByContact.name,
       }),
     });
   }
@@ -503,8 +503,8 @@ export async function getMyTicketCount(props: {
       project: {id: projectId},
       status: {isCompleted: false},
       OR: [
-        {assignedToContact: {id: auth.userId}},
-        {requestedByContact: {id: auth.userId}},
+        {managedByContact: {id: auth.userId}},
+        {createdByContact: {id: auth.userId}},
       ],
     }),
   });
@@ -525,7 +525,7 @@ export async function getManagedTicketCount(props: {
     where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
-      assignedToContact: {id: auth.userId},
+      managedByContact: {id: auth.userId},
     }),
   });
 
@@ -546,7 +546,7 @@ export async function getCreatedTicketCount(props: {
     where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
-      requestedByContact: {id: auth.userId},
+      createdByContact: {id: auth.userId},
     }),
   });
 
@@ -595,8 +595,8 @@ export async function findTickets(
       name: true,
       updatedOn: true,
       assignment: true,
-      assignedToContact: {simpleFullName: true},
-      requestedByContact: {simpleFullName: true},
+      managedByContact: {simpleFullName: true},
+      createdByContact: {simpleFullName: true},
       status: {name: true},
       projectTaskCategory: {name: true},
       priority: {name: true},
@@ -640,8 +640,8 @@ export async function findRelatedTicketLinks(
               clientPartner: {simpleFullName: true},
             },
             assignedTo: {name: true},
-            assignedToContact: {simpleFullName: true},
-            requestedByContact: {simpleFullName: true},
+            managedByContact: {simpleFullName: true},
+            createdByContact: {simpleFullName: true},
             assignment: true,
           },
         },
@@ -680,8 +680,8 @@ export async function findChildTickets(
         clientPartner: {simpleFullName: true},
       },
       assignedTo: {name: true},
-      assignedToContact: {simpleFullName: true},
-      requestedByContact: {simpleFullName: true},
+      createdByContact: {simpleFullName: true},
+      managedByContact: {simpleFullName: true},
       assignment: true,
     },
   });
@@ -716,8 +716,8 @@ export async function findParentTicket(
           clientPartner: {simpleFullName: true},
         },
         assignedTo: {name: true},
-        assignedToContact: {simpleFullName: true},
-        requestedByContact: {simpleFullName: true},
+        managedByContact: {simpleFullName: true},
+        createdByContact: {simpleFullName: true},
         assignment: true,
       },
     },
@@ -757,8 +757,8 @@ export async function findTicket({
       description: true,
       taskEndDate: true,
       displayFinancialData: true,
-      assignedToContact: {simpleFullName: true},
-      requestedByContact: {simpleFullName: true},
+      managedByContact: {simpleFullName: true},
+      createdByContact: {simpleFullName: true},
       createdOn: true,
       project: {
         name: true,
