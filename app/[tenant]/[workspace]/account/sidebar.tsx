@@ -4,29 +4,54 @@ import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
+import {i18n} from '@/i18n';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {MENU} from './common/constants';
+import {GLOBAL_MENU, WORKSPACE_MENU} from './common/constants';
 
-export default function Sidebar() {
+type Item = {
+  label: string;
+  route: string;
+};
+
+function MenuItem({item}: {item: Item}) {
   const pathname = usePathname();
   const {workspaceURL} = useWorkspace();
 
   return (
-    <div className="border-e space-y-6 px-2">
-      {MENU.map(item => (
-        <div
-          key={item.route}
-          className={cn('p-1 rounded-sm cursor-pointer', {
-            ['bg-success-light text-success']: pathname.includes(item.route),
-          })}>
-          <Link key={item.route} href={`${workspaceURL}/account/${item.route}`}>
-            {item.label}
-          </Link>
-        </div>
-      ))}
+    <div
+      key={item.route}
+      className={cn('p-1 rounded-sm cursor-pointer w-fit', {
+        ['bg-success-light text-success']: pathname.includes(item.route),
+      })}>
+      <Link key={item.route} href={`${workspaceURL}/account/${item.route}`}>
+        {item.label}
+      </Link>
+    </div>
+  );
+}
+
+function Menu({title, items}: {title: string; items: Item[]}) {
+  return (
+    <div className="space-y-2">
+      <h2 className="p-1 text-sm font-semibold">{title}</h2>
+      <div className="h-[1px] border-b" />
+      <div className="ps-2 space-y-8">
+        {items.map(item => (
+          <MenuItem key={item.route} item={item} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Sidebar() {
+  return (
+    <div className="border-e space-y-10 py-2">
+      <Menu title={i18n.get('Global')} items={GLOBAL_MENU} />
+      <Menu title={i18n.get('Workspace')} items={WORKSPACE_MENU} />
     </div>
   );
 }
