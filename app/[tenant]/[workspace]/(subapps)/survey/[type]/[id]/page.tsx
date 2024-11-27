@@ -41,7 +41,7 @@ export default async function Page({
       id: parseInt(id, 10) as Response['id'],
       workspace,
       tenantId: tenant,
-    });
+    }).then(clone);
 
     return (
       <Content

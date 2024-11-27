@@ -24,7 +24,7 @@ const Content = ({
     <SurveyViewer
       config={config}
       theme={themeConfig}
-      response={response}
+      response={JSON.stringify(response)}
       readonly={response != null && !survey.canAnswerBeModified}
       completeData={{
         partnerId,
