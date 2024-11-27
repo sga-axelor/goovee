@@ -15,10 +15,6 @@ export const MENU = [
     route: ROUTES.personal,
   },
   {
-    label: i18n.get('Company settings'),
-    route: ROUTES.company,
-  },
-  {
     label: i18n.get('Notifications'),
     route: ROUTES.notifications,
   },

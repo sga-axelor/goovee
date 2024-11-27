@@ -12,13 +12,6 @@ import {Button} from '@/ui/components/button';
 import {Checkbox} from '@/ui/components/checkbox';
 import {Input} from '@/ui/components/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/ui/components';
-import {
   Form,
   FormControl,
   FormField,
@@ -35,8 +28,9 @@ const formSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   email: z.string(),
-  phone: z.string(),
-  company: z.string(),
+  companyName: z.string(),
+  indentificationNumber: z.string(),
+  companyNumber: z.string(),
   role: z.string(),
   defaultWorkspace: z.string(),
   showProfileAsContactOnDirectory: z.boolean(),
@@ -48,22 +42,22 @@ const formSchema = z.object({
 });
 
 enum Role {
-  user = 'User',
-  admin = 'Admin',
+  user = 'user',
+  admin = 'admin',
+  owner = 'owner',
 }
 
 export default function Page() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userName: '',
       firstName: '',
       lastName: '',
       email: '',
-      phone: '',
-      company: '',
+      companyName: '',
+      indentificationNumber: '',
+      companyNumber: '',
       role: Role.user,
-      defaultWorkspace: '',
       showProfileAsContactOnDirectory: false,
       showNameOnDirectory: false,
       showLinkOnDirectory: false,
@@ -74,6 +68,8 @@ export default function Page() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {};
+
+  const isCompany = false;
 
   return (
     <Form {...form}>
@@ -102,23 +98,7 @@ export default function Page() {
                 </div>
               </div>
             </div>
-            <FormField
-              control={form.control}
-              name="userName"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Username')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value}
-                      placeholder={i18n.get('Enter username')}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -155,112 +135,93 @@ export default function Page() {
                 )}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Email')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value}
-                        placeholder={i18n.get('Enter email')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Phone')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value}
-                        placeholder={i18n.get('Enter phone')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="company"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Company')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value}
-                        placeholder={i18n.get('Enter company')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="role"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Role')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value} readOnly />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="defaultWorkspace"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Default Workspace')}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value?.toString()}>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Email')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value}
+                      placeholder={i18n.get('Enter email')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {isCompany && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="companyName"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Company name')}</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={i18n.get(
-                              'Select your default workspace',
-                            )}
-                          />
-                        </SelectTrigger>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          placeholder={i18n.get('Enter company name')}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        {[].map((workspace: any) => (
-                          <SelectItem
-                            value={workspace.id?.toString()}
-                            key={workspace.id}>
-                            {workspace.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="indentificationNumber"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Identification number')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          placeholder={i18n.get('Enter company SIRET number')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="companyNumber"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Company number')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          placeholder={i18n.get('Enter company number')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            <FormField
+              control={form.control}
+              name="role"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Role')}</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value} readOnly />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          <div className="space-y-4">
+          <div className="sr-only space-y-4">
             <Title text={i18n.get('Directory')}></Title>
             <div>
               <FormField

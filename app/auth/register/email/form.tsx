@@ -10,6 +10,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {MdOutlineVisibility, MdOutlineVisibilityOff} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
+import {UserType} from '@/auth/types';
 import {i18n} from '@/i18n';
 import {useToast} from '@/ui/hooks';
 import {
@@ -38,23 +39,17 @@ import {
 import {Button} from '@/ui/components/button';
 import {Checkbox} from '@/ui/components/checkbox';
 import {Input} from '@/ui/components/input';
-import {Separator} from '@/ui/components/separator';
 import {SEARCH_PARAMS} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {register, subscribe} from '../actions';
 
-enum UserType {
-  company = 'company',
-  individual = 'individual',
-}
-
 const formSchema = z
   .object({
     type: z.enum([UserType.company, UserType.individual]),
     companyName: z.string(),
-    siretNumber: z.string(),
+    indentificationNumber: z.string(),
     companyNumber: z.string(),
     firstName: z.string(),
     name: z.string(),
@@ -82,7 +77,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     defaultValues: {
       type: UserType.individual,
       companyName: '',
-      siretNumber: '',
+      indentificationNumber: '',
       companyNumber: '',
       firstName: '',
       name: '',
@@ -257,7 +252,6 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
             />
             {isCompany && (
               <>
-                {' '}
                 <FormField
                   control={form.control}
                   name="companyName"
@@ -277,10 +271,10 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 />
                 <FormField
                   control={form.control}
-                  name="siretNumber"
+                  name="indentificationNumber"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('SIRET number')}</FormLabel>
+                      <FormLabel>{i18n.get('Identification number')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
