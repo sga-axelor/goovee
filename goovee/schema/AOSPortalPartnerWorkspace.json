@@ -27,10 +27,6 @@
       "type": "ManyToOne",
       "name": "workspace",
       "target": "AOSPortalWorkspace"
-    },
-    {
-      "type": "Boolean",
-      "name": "isDefaultWorkspaceAfterLogin"
     }
   ]
 }
