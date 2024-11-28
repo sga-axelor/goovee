@@ -24,12 +24,13 @@ const Content = ({
     <SurveyViewer
       config={config}
       theme={themeConfig}
-      response={JSON.stringify(response)}
+      response={JSON.stringify(response?.attrs)}
       readonly={response != null && !survey.canAnswerBeModified}
       completeData={{
         partnerId,
         configId: survey.id,
         responseId: response?.id,
+        responseVersion: response?.version,
         modelName: survey.customModel?.name,
       }}
     />
