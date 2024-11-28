@@ -32,7 +32,6 @@ const formSchema = z.object({
   indentificationNumber: z.string(),
   companyNumber: z.string(),
   role: z.string(),
-  defaultWorkspace: z.string(),
   showProfileAsContactOnDirectory: z.boolean(),
   showNameOnDirectory: z.boolean(),
   showLinkOnDirectory: z.boolean(),
