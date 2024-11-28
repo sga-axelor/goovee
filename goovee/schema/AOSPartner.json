@@ -91,6 +91,11 @@
       "type": "ManyToOne",
       "name": "partnerCategory",
       "target": "AOSPartnerCategory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "localization",
+      "target": "AOSLocalization"
     }
   ]
 }
