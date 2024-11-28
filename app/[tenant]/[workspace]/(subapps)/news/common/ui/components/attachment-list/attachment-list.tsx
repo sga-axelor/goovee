@@ -10,6 +10,7 @@ import {download} from '@/utils/files';
 
 interface Attachment {
   id: string;
+  title?: string;
   metaFile?: {
     id: string | number;
     fileName?: string;
@@ -44,7 +45,7 @@ export const AttachmentList = ({
             key={item.id}
             className="mb-4 grid grid-cols-[4fr_2fr_1fr] gap-2 shrink-0 items-center">
             <p className="text-[16px] font-medium">
-              {item?.metaFile?.fileName}
+              {item?.title || item?.metaFile?.fileName}
             </p>
             <div className="text-end">{item?.metaFile?.sizeText}</div>
             <div
