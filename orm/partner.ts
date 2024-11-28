@@ -1,8 +1,9 @@
 import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
 import {hash} from '@/auth/utils';
-import {ID} from '@/types';
+import {ID, Partner} from '@/types';
 import {findDefaultPartnerWorkspaceConfig} from './workspace';
+import type {AOSPartner} from '@/goovee/.generated/models';
 
 export async function findPartnerByEmail(
   email: string,
@@ -38,6 +39,52 @@ export async function findPartnerByEmail(
           name: true,
           code: true,
         },
+        defaultWorkspace: {
+          workspace: {
+            id: true,
+          },
+        },
+        partnerWorkspaceSet: {
+          select: {
+            workspace: {
+              id: true,
+            },
+          },
+        },
+        localization: {
+          code: true,
+          name: true,
+        },
+      },
+    })
+    .then(clone);
+
+  return partner;
+}
+
+export async function updatePartner({
+  data,
+  tenantId,
+}: {
+  data: {id: Partner['id']; version: Partner['version']} & Partial<AOSPartner>;
+  tenantId: Tenant['id'];
+}) {
+  if (!(data && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) return null;
+
+  if (!(data?.id && data?.version)) return null;
+
+  const partner = await client.aOSPartner
+    .update({
+      data: {
+        ...data,
+        id: String(data.id),
+      },
+      select: {
+        localization: true,
       },
     })
     .then(clone);
