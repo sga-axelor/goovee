@@ -48,7 +48,7 @@ import {register, subscribe} from '../actions';
 const formSchema = z
   .object({
     type: z.enum([UserType.company, UserType.individual]),
-    companyName: z.string(),
+    companyName: z.string().superRefine((val, ctx) => {}),
     indentificationNumber: z.string(),
     companyNumber: z.string(),
     firstName: z.string(),
@@ -69,7 +69,31 @@ const formSchema = z
   .refine(data => data.password === data.confirmPassword, {
     message: i18n.get("Passwords don't match"),
     path: ['confirmPassword'],
-  });
+  })
+  .refine(
+    data => {
+      if (data.type === UserType.company) {
+        if (!data.companyName) return false;
+      }
+      return true;
+    },
+    {
+      message: i18n.get('Company name is required'),
+      path: ['companyName'],
+    },
+  )
+  .refine(
+    data => {
+      if (data.type === UserType.individual) {
+        if (!data.name) return false;
+      }
+      return true;
+    },
+    {
+      message: i18n.get('Name is required'),
+      path: ['name'],
+    },
+  );
 
 export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -257,7 +281,10 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                   name="companyName"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('Company name')}</FormLabel>
+                      <FormLabel>
+                        {i18n.get('Company name')}
+                        {isCompany && '*'}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -324,23 +351,30 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="name"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Last name')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value}
-                        placeholder={i18n.get('Enter Last Name')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {!isCompany ? (
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>
+                        {i18n.get('Last name')}
+                        {!isCompany && '*'}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          placeholder={i18n.get('Enter Last Name')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <div />
+              )}
             </div>
 
             <FormField

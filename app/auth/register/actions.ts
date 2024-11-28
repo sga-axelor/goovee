@@ -1,7 +1,10 @@
 'use server';
 
+import {revalidatePath} from 'next/cache';
+
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
+import {UserType} from '@/auth/types';
 import {findPartnerByEmail, registerPartner} from '@/orm/partner';
 import {
   findDefaultPartnerWorkspaceConfig,
@@ -10,7 +13,6 @@ import {
 import {getTranslation} from '@/i18n/server';
 import {manager, type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
-import {revalidatePath} from 'next/cache';
 
 export async function subscribe({
   workspace,
@@ -175,6 +177,10 @@ export async function subscribe({
 }
 
 export async function register({
+  type,
+  companyName,
+  identificationNumber,
+  companyNumber,
   firstName,
   name,
   email,
@@ -183,6 +189,10 @@ export async function register({
   workspaceURL,
   tenantId,
 }: {
+  type: UserType;
+  companyName?: string;
+  identificationNumber?: string;
+  companyNumber?: string;
   firstName?: string;
   name: string;
   email: string;
@@ -191,12 +201,20 @@ export async function register({
   workspaceURL?: string;
   tenantId?: Tenant['id'] | null;
 }) {
-  if (!(name && email && password && confirmPassword)) {
-    throw new Error('Name, email and password is required.');
+  if (!(email && password && confirmPassword)) {
+    throw new Error('Email and password are required.');
   }
 
   if (password !== confirmPassword) {
     throw new Error('Password and confirm password mismatch.');
+  }
+
+  if (type === UserType.individual && !name) {
+    throw new Error('Name is required.');
+  }
+
+  if (type === UserType.company && !companyName) {
+    throw new Error('Company name is required.');
   }
 
   if (!tenantId) {
@@ -214,6 +232,10 @@ export async function register({
 
   try {
     const partner = await registerPartner({
+      type,
+      companyName,
+      identificationNumber,
+      companyNumber,
       firstName,
       name,
       email,

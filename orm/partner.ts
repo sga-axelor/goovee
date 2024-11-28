@@ -1,3 +1,4 @@
+import {UserType} from '@/auth/types';
 import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
 import {hash} from '@/auth/utils';
@@ -92,7 +93,16 @@ export async function updatePartner({
   return partner;
 }
 
+const PartnerTypeMap = {
+  [UserType.company]: 1,
+  [UserType.individual]: 2,
+};
+
 export async function registerPartner({
+  type = UserType.individual,
+  companyName,
+  identificationNumber,
+  companyNumber,
   firstName,
   name,
   password = '',
@@ -100,6 +110,10 @@ export async function registerPartner({
   workspaceURL,
   tenantId,
 }: {
+  type: UserType;
+  companyName?: string;
+  identificationNumber?: string;
+  companyNumber?: string;
   firstName?: string;
   name: string;
   password?: string;
@@ -111,9 +125,16 @@ export async function registerPartner({
 
   const hashedPassword = await hash(password);
 
+  const isCompany = type === UserType.company;
+  const partnerTypeSelect =
+    PartnerTypeMap[type] || PartnerTypeMap[UserType.individual];
+
   const data: any = {
+    partnerTypeSelect,
+    registrationCode: identificationNumber,
+    fixedPhone: companyNumber,
     firstName,
-    name,
+    name: isCompany ? companyName : name,
     password: hashedPassword,
     isContact: false,
     isCustomer: true,

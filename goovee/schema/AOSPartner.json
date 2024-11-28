@@ -29,6 +29,10 @@
       "name": "isCustomer"
     },
     {
+      "type": "Int",
+      "name": "partnerTypeSelect"
+    },
+    {
       "type": "String",
       "name": "simpleFullName"
     },
