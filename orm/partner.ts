@@ -56,6 +56,8 @@ export async function findPartnerByEmail(
           code: true,
           name: true,
         },
+        partnerTypeSelect: true,
+        registrationCode: true,
       },
     })
     .then(clone);
@@ -93,7 +95,7 @@ export async function updatePartner({
   return partner;
 }
 
-const PartnerTypeMap = {
+export const PartnerTypeMap = {
   [UserType.company]: 1,
   [UserType.individual]: 2,
 };
