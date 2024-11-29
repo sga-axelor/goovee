@@ -51,10 +51,6 @@
       "type": "Boolean"
     },
     {
-      "name": "eventVisibility",
-      "type": "Boolean"
-    },
-    {
       "name": "eventDescription",
       "type": "String"
     },

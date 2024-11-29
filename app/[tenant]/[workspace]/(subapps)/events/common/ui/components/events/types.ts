@@ -3,7 +3,6 @@ import {PortalWorkspace} from '@/types';
 export interface Event {
   key: string | undefined;
   id: string;
-  eventVisibility: boolean;
   eventTitle: string;
   eventStartDateTime: string;
   eventImage: {

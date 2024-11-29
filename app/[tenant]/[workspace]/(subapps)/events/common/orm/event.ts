@@ -26,7 +26,6 @@ export async function findEventByID({
   const event = await c.aOSPortalEvent.findOne({
     where: {
       id,
-      eventVisibility: true,
       ...(await filterPrivate({user, tenantId})),
       eventCategorySet: {
         ...(await filterPrivate({user, tenantId})),
@@ -54,7 +53,6 @@ export async function findEventByID({
       eventDegressiveNumberPartcipant: true,
       eventAllowRegistration: true,
       eventAllowMultipleRegistrations: true,
-      eventVisibility: true,
       eventProduct: {
         name: true,
         code: true,
@@ -193,7 +191,6 @@ export async function findEvents({
             ],
           }
         : {}),
-    eventVisibility: true,
   };
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
@@ -226,7 +223,6 @@ export async function findEvents({
         eventDegressiveNumberPartcipant: true,
         eventAllowRegistration: true,
         eventAllowMultipleRegistrations: true,
-        eventVisibility: true,
         eventProduct: {
           id: true,
           name: true,
