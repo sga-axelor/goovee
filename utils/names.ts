@@ -9,7 +9,7 @@ export function toTitleCase(name: string, allUpper = false) {
 
 export function getInitials(fullName?: string) {
   if (!fullName) return '';
-  
+
   const nameParts = fullName.split(' ');
 
   const firstInitial = nameParts[0].charAt(0).toUpperCase();
