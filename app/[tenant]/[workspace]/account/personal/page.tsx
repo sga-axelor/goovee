@@ -30,6 +30,8 @@ export default async function Page({params}: {params: {tenant: string}}) {
     fixedPhone,
     firstName,
     emailAddress,
+    picture,
+    fullName,
   } = partner;
 
   const type = Object.entries(PartnerTypeMap).find(
@@ -44,6 +46,8 @@ export default async function Page({params}: {params: {tenant: string}}) {
     firstName,
     name,
     email: emailAddress?.address,
+    picture: picture?.id,
+    fullName,
   };
 
   return <Form settings={settings as any} />;

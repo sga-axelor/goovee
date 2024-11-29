@@ -1,18 +1,123 @@
 'use server';
 
+import fs from 'fs';
+import path from 'path';
+import {pipeline} from 'stream';
+import {promisify} from 'util';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
+
+import {manager} from '@/lib/core/tenant';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
-import {PartnerTypeMap, findPartnerByEmail, updatePartner} from '@/orm/partner';
+import {getFileSizeText} from '@/utils/files';
 import {getTranslation} from '@/i18n/server';
+import {clone} from '@/utils';
+import {PartnerTypeMap, findPartnerByEmail, updatePartner} from '@/orm/partner';
 import {UserType} from '@/auth/types';
+
+const pump = promisify(pipeline);
+
+const storage = process.env.DATA_STORAGE as string;
+
+if (!fs.existsSync(storage)) {
+  fs.mkdirSync(storage);
+}
 
 function error(message: string) {
   return {
     error: true,
     message,
+  };
+}
+
+export async function updateProfileImage(formData: FormData) {
+  const file: any = formData.get('picture');
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(await getTranslation('TenantId is required'));
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return error(await getTranslation('Unauthorized'));
+  }
+
+  const partner = await findPartnerByEmail(user.email, tenantId);
+
+  if (!partner) {
+    return error(await getTranslation('Invalid partner'));
+  }
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) {
+    return error(await getTranslation('Invalid tenant'));
+  }
+
+  let uploadedPicture = null;
+
+  if (file) {
+    try {
+      const fileName = `${new Date().getTime()}-${file.name}`;
+
+      await pump(
+        file.stream(),
+        fs.createWriteStream(path.resolve(storage, fileName)),
+      );
+
+      uploadedPicture = await client.aOSMetaFile
+        .create({
+          data: {
+            fileName: file.name,
+            filePath: fileName,
+            fileType: file.type,
+            fileSize: file.size,
+            sizeText: getFileSizeText(file.size),
+            description: '',
+          },
+        })
+        .then(clone);
+    } catch (err) {
+      return error(
+        await getTranslation('Error updating profile picture. Try again.'),
+      );
+    }
+  }
+
+  try {
+    const updatedPartner = await updatePartner({
+      data: {
+        id: partner.id,
+        version: partner.version,
+        ...(uploadedPicture
+          ? {
+              picture: {
+                select: {
+                  id: uploadedPicture.id,
+                },
+              },
+            }
+          : {
+              picture: null,
+            }),
+      },
+      tenantId,
+    });
+  } catch (err) {
+    return error(
+      await getTranslation('Error updating profile picture. Try again.'),
+    );
+  }
+
+  return {
+    success: true,
+    data: uploadedPicture,
   };
 }
 

@@ -33,6 +33,7 @@ export async function findPartnerByEmail(
         name: true,
         password: true,
         emailAddress: true,
+        picture: true,
         mainPartner: {
           id: true,
         },
