@@ -19,13 +19,6 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {Input} from '@/ui/components/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/ui/components/select';
 import {Textarea} from '@/ui/components/textarea';
 import {useToast} from '@/ui/hooks/use-toast';
 import {i18n} from '@/i18n';
