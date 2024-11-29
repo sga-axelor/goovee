@@ -115,11 +115,15 @@ export function getImageURL(
 }
 
 export function getDownloadURL(
-  id: ID,
-  tenantId: string,
-  options: DownloadOptions = {},
+  id?: ID,
+  tenantId?: string,
+  options: DownloadOptions & {noimage?: boolean; noimageSrc?: string} = {},
 ) {
-  if (!(id && tenantId)) return '';
+  const {noimage, noimageSrc} = options;
+
+  if (!(id && tenantId)) {
+    return noimage ? noimageSrc || '/images/no-image.png' : '';
+  }
 
   let query = '';
 
