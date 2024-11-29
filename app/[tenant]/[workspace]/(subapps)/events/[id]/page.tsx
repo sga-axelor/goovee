@@ -1,5 +1,4 @@
 import {notFound} from 'next/navigation';
-import {getSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {findEventByID} from '@/subapps/events/common/orm/event';
@@ -7,6 +6,7 @@ import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {getTranslation} from '@/i18n/server';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDetails} from '@/subapps/events/common/ui/components';
