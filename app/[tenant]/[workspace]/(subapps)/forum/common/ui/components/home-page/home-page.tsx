@@ -243,7 +243,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
             groupId={selectedGroup?.id}
           />
         </div>
-        <div className="mb-16 lg:mb-0">
+        <div className="w-full overflow-hidden mb-16 lg:mb-0">
           <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[0.625rem]">
             <Avatar
               className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
