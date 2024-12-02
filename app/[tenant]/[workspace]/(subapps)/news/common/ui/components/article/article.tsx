@@ -51,6 +51,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
 
   const enableSocialMediaSharing = workspace.config?.enableSocialMediaSharing;
   const enableNewsComment = workspace.config?.enableNewsComment;
+  const socialMediaSelect = workspace.config?.socialMediaSelect;
 
   const handleClick = (slug: string) => {
     const urlRoute = pathname.split('/article/')[0];
@@ -81,7 +82,9 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
         </div>
 
         <div className="w-full flex flex-col gap-6">
-          {enableSocialMediaSharing && <SocialMedia />}
+          {enableSocialMediaSharing && (
+            <SocialMedia socialMediaSelect={socialMediaSelect} />
+          )}
           {attachmentList?.length > 0 && (
             <AttachmentList
               title={i18n.get(RELATED_FILES)}

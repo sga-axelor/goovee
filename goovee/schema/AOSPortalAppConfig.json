@@ -205,6 +205,10 @@
     {
       "name": "enableNewsComment",
       "type": "Boolean"
+    },
+    {
+      "type": "String",
+      "name": "socialMediaSelect"
     }
   ]
 }

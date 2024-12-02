@@ -27,24 +27,28 @@ export const SOCIAL_ICONS = [
     name: 'linkedin',
     color: '#E0ECFF',
     image: '/images/linkedin.png',
+    redirectUrl: 'https://www.linkedin.com/login',
   },
   {
     key: 2,
-    name: 'twitter-x',
+    name: 'twitter',
     color: '#E6E7E7',
     image: '/images/twitter-x.png',
+    redirectUrl: 'https://x.com/i/flow/login',
   },
   {
     key: 3,
     name: 'instagram',
     color: '#FEF1CC',
     image: '/images/instagram.png',
+    redirectUrl: 'https://www.instagram.com/accounts/login/?hl=en',
   },
   {
     key: 4,
     name: 'whatsapp',
     color: '#EBFFF0',
     image: '/images/whatsapp.png',
+    redirectUrl: 'https://web.whatsapp.com/',
   },
 ];
 
