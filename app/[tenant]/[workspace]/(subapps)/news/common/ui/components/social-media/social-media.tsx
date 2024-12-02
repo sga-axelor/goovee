@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
@@ -13,47 +13,34 @@ import {
   SOCIAL_ICONS,
 } from '@/subapps/news/common/constants';
 
-type SocialMediaPrpos = {
-  socialMediaSelect?: string;
-};
-type IconType = {
-  key: number;
-  name: string;
-  color: string;
-  image: string;
-  redirectUrl: string;
+type SocialMediaProps = {
+  availableSocials?: string;
 };
 
-export const SocialMedia = ({socialMediaSelect}: SocialMediaPrpos) => {
-  const [filteredIcons, setFilteredIcons] = useState<IconType[]>([]);
-  useEffect(() => {
-    if (socialMediaSelect) {
-      const selectedNames = new Set(socialMediaSelect.split(','));
-      const matchedIcons = SOCIAL_ICONS.filter(icon =>
-        selectedNames.has(icon.name),
-      );
-      setFilteredIcons(matchedIcons);
-    } else {
-      setFilteredIcons([]);
-    }
-  }, [socialMediaSelect]);
+export const SocialMedia = ({
+  availableSocials: availableSocialsProps,
+}: SocialMediaProps) => {
+  const availableSocials = SOCIAL_ICONS.filter(icon =>
+    availableSocialsProps?.includes(icon.name),
+  );
 
   return (
     <div className="bg-white rounded-lg p-4 flex flex-col gap-4">
       <div className="text-xl font-semibold text-black">
         {i18n.get(SHARE_ON_SOCIAL_MEDIA)}
       </div>
+
       <div className="flex gap-6">
-        {filteredIcons.map(icon => (
+        {availableSocials.map(({key, redirectUrl = '', color, image}) => (
           <Link
-            key={icon.key}
-            href={icon.redirectUrl}
+            key={key}
+            href={redirectUrl}
             target="_blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+            className="cursor-pointer">
             <Avatar
-              key={icon.key}
-              className={`w-8 h-8 bg-[${icon.color}] p-1 rounded cursor-pointer`}>
-              <AvatarImage src={`${icon.image}`} />
+              className={`w-8 h-8 bg-[${color}] p-1 rounded cursor-pointer`}>
+              <AvatarImage src={image} alt={`Visit ${redirectUrl}`} />
             </Avatar>
           </Link>
         ))}

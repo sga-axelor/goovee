@@ -27,31 +27,30 @@ export const SOCIAL_ICONS = [
     name: 'linkedin',
     color: '#E0ECFF',
     image: '/images/linkedin.png',
-    redirectUrl: 'https://www.linkedin.com/login',
+    redirectUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL,
   },
   {
     key: 2,
     name: 'twitter',
     color: '#E6E7E7',
     image: '/images/twitter-x.png',
-    redirectUrl: 'https://x.com/i/flow/login',
+    redirectUrl: process.env.NEXT_PUBLIC_TWITTER_URL,
   },
   {
     key: 3,
     name: 'instagram',
     color: '#FEF1CC',
     image: '/images/instagram.png',
-    redirectUrl: 'https://www.instagram.com/accounts/login/?hl=en',
+    redirectUrl: process.env.NEXT_PUBLIC_INSTAGRAM_URL,
   },
   {
     key: 4,
     name: 'whatsapp',
     color: '#EBFFF0',
     image: '/images/whatsapp.png',
-    redirectUrl: 'https://web.whatsapp.com/',
+    redirectUrl: process.env.NEXT_PUBLIC_WHATSAPP_URL,
   },
 ];
-
 export const NEWS = 'News';
 export const COMMENTS = 'Comments';
 export const POSTED_ON = 'Posted on';
