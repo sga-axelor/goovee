@@ -24,6 +24,10 @@ export const SocialMedia = ({
     availableSocialsProps?.includes(icon.name),
   );
 
+  if (!availableSocials.length) {
+    return;
+  }
+
   return (
     <div className="bg-white rounded-lg p-4 flex flex-col gap-4">
       <div className="text-xl font-semibold text-black">
