@@ -27,7 +27,7 @@ import {
 import {RadioGroup, RadioGroupItem} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {Title} from '../common/ui/components';
+import {Title} from '../../common/ui/components';
 
 enum Role {
   user = 'user',
@@ -87,8 +87,8 @@ const subappConfig = {
   },
 };
 
-const inviteFormSchema = z.object({
-  emails: z.array(z.string()),
+const formSchema = z.object({
+  emails: z.string().min(1, i18n.get('Emails cannot be empty')),
   role: z.enum([Role.user, Role.admin]),
   apps: z.record(
     z.string(),
@@ -103,16 +103,22 @@ const inviteFormSchema = z.object({
 });
 
 export default function InviteForm() {
-  const inviteForm = useForm<z.infer<typeof inviteFormSchema>>({
-    resolver: zodResolver(inviteFormSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      emails: [],
+      emails: '',
       role: Role.user,
       apps: Object.values(subappConfig).reduce(
-        (acc, i) => ({
+        (acc, {label, code, authorization}) => ({
           ...acc,
-          [i.code]: {
+          [code]: {
+            code,
             access: 'no',
+            ...(authorization
+              ? {
+                  authorization: Authorization.restricted,
+                }
+              : {}),
           },
         }),
         {},
@@ -120,16 +126,16 @@ export default function InviteForm() {
     },
   });
 
-  const onInviteSubmit = async (values: z.infer<typeof inviteFormSchema>) => {};
+  const onInviteSubmit = async (values: z.infer<typeof formSchema>) => {};
 
   return (
-    <Form {...inviteForm}>
+    <Form {...form}>
       <form
         className="space-y-10"
         onSubmit={event => {
           event.preventDefault();
           event.stopPropagation();
-          inviteForm.handleSubmit(onInviteSubmit)();
+          form.handleSubmit(onInviteSubmit)();
         }}>
         <div className="space-y-4">
           <Title text={i18n.get('Invite new members')}></Title>
@@ -141,7 +147,7 @@ export default function InviteForm() {
               )}
             </small>
             <FormField
-              control={inviteForm.control}
+              control={form.control}
               name="emails"
               render={({field}) => (
                 <FormItem>
@@ -167,7 +173,7 @@ export default function InviteForm() {
         </div>
         <div>
           <FormField
-            control={inviteForm.control}
+            control={form.control}
             name="role"
             render={({field}) => (
               <FormItem>
@@ -179,18 +185,18 @@ export default function InviteForm() {
                     className="flex gap-16">
                     <FormItem className="flex items-center space-x-6 space-y-0">
                       <FormControl>
-                        <RadioGroupItem variant="success" value="user" />
-                      </FormControl>
-                      <FormLabel className="font-normal">
-                        {i18n.get('User')}
-                      </FormLabel>
-                    </FormItem>
-                    <FormItem className="flex items-center space-x-6 space-y-0">
-                      <FormControl>
                         <RadioGroupItem variant="success" value="admin" />
                       </FormControl>
                       <FormLabel className="font-normal">
                         {i18n.get('Admin')}
+                      </FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-6 space-y-0">
+                      <FormControl>
+                        <RadioGroupItem variant="success" value="user" />
+                      </FormControl>
+                      <FormLabel className="font-normal">
+                        {i18n.get('User')}
                       </FormLabel>
                     </FormItem>
                   </RadioGroup>
@@ -200,9 +206,9 @@ export default function InviteForm() {
             )}
           />
         </div>
-        {inviteForm.getValues('role') === 'user' && (
+        {form.getValues('role') === 'user' && (
           <div className="flex flex-col p-2 rounded-lg gap-2">
-            <div className="grid grid-cols-[20%_1fr_20%] p-4 gap-6 border-b">
+            <div className="grid grid-cols-[20%_20%_20%] p-4 gap-6 border-b">
               <p className="text-base font-bold">App</p>
               <p className="text-base font-bold">Access</p>
               <p className="text-base font-bold">Authorization</p>
@@ -210,14 +216,14 @@ export default function InviteForm() {
             {Object.values(subappConfig).map(({code, label, authorization}) => (
               <div
                 key={code}
-                className="grid grid-cols-[20%_1fr_20%] p-4 gap-6 border-b">
+                className="grid grid-cols-[20%_20%_20%] p-4 gap-6 border-b">
                 <p>{label}</p>
                 <div>
                   <FormField
-                    control={inviteForm.control}
+                    control={form.control}
                     name={`apps.${code}.access`}
                     render={({field}) => (
-                      <FormItem className="w-fit">
+                      <FormItem>
                         <Select
                           value={field.value}
                           onValueChange={field.onChange}
@@ -249,7 +255,7 @@ export default function InviteForm() {
                 </div>
                 {authorization && (
                   <FormField
-                    control={inviteForm.control}
+                    control={form.control}
                     name={`apps.${code}.authorization`}
                     render={({field}) => (
                       <FormItem>
