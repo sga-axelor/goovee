@@ -79,7 +79,7 @@ export function TableList({
           />
         </TableBody>
       </Table>
-      {pageInfo && (
+      {pageInfo && page > 1 && (
         <Pagination
           page={page}
           pages={pages}
