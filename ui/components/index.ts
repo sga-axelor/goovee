@@ -218,3 +218,4 @@ export {DynamicIcon} from './dynamic-icon';
 export {Icon} from './icon';
 export {BadgeList} from './badge-list';
 export {TableList, SortableHeader, ExpandableTableRows} from './table-list';
+export {Chip} from './chip';
