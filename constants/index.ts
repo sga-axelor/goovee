@@ -199,3 +199,9 @@ export const ALLOW_AOS_ONLY_REGISTRATION = 'yesForAOS';
  */
 
 export const DEFAULT_LANGUAGE_CODE = 'en';
+
+/**
+ * RESPONSIVE SIZES
+ */
+
+export const RESPONSIVE_SIZES = ['xs', 'sm', 'md'] as const;
