@@ -530,7 +530,7 @@ export default function Content({
     (order: any) => {
       if (orderSubapp) {
         router.replace(
-          `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders}/${order.data}`,
+          `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders.ongoing}/${order.data}`,
         );
       } else {
         router.replace(`${workspaceURI}/shop`);
