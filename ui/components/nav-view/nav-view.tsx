@@ -24,7 +24,9 @@ export const NavView = ({
   return (
     <div>
       <StyledTabs items={items} activeTab={activeTab} onTabChange={onTabChange}>
-        <TabsContent value={activeTab}>{children}</TabsContent>
+        <TabsContent className="mt-6" value={activeTab}>
+          {children}
+        </TabsContent>
       </StyledTabs>
     </div>
   );
