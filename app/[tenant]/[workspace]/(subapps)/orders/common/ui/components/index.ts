@@ -1,6 +1,4 @@
 export {Informations} from './informations';
-export {Card} from './card';
-export {OrdersTable} from './table';
 export {Total} from './total';
 export {Contact} from './contact';
 export {Products} from './products';
@@ -8,3 +6,4 @@ export {PaymentMethod} from './payment-method';
 export {History} from './history';
 export {ContactUs} from './contact-us';
 export {ProductCard} from './product-card';
+export {OrderColumns} from './columns';

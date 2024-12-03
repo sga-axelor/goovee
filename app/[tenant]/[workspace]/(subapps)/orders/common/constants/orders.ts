@@ -1,14 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
 
-export const ORDERS_COLUMNS = [
-  {key: 'saleOrderSeq', label: i18n.get('Order number')},
-  {key: 'statusSelect', label: i18n.get('Status')},
-  {key: 'createdOn', label: i18n.get('Created on')},
-  {key: 'exTaxTotal', label: i18n.get('Total WT')},
-  {key: 'inTaxTotal', label: i18n.get('Total ATI')},
-];
-
 export const ITEMS = [
   {
     id: '1',
