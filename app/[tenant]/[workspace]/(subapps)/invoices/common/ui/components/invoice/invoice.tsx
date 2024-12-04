@@ -9,7 +9,7 @@ import {Button, Separator} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
-import {InvoiceContent} from '.';
+import {InvoiceContent} from '@/subapps/invoices/common/ui/components';
 
 export function Invoice({invoice, isUnpaid}: InvoiceProps) {
   return (

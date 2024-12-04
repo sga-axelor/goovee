@@ -5,7 +5,7 @@ import {parseDate} from '@/utils/date';
 import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import {InvoiceTable} from '.';
+import {InvoiceTable} from '@/subapps/invoices/common/ui/components';
 
 export function InvoiceContent({invoice}: {invoice: any}) {
   const {

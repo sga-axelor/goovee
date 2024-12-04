@@ -2,12 +2,12 @@
 
 import React from 'react';
 import {MdEast} from 'react-icons/md';
-import {Button, Separator} from '@/ui/components';
 
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_CURRENCY_SCALE} from '@/constants';
 import {i18n} from '@/i18n';
 import {cn} from '@/utils/css';
+import {Button, Separator} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {TotalProps} from '@/subapps/invoices/common/types/invoices';
