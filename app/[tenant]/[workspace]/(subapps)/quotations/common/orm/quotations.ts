@@ -41,7 +41,7 @@ export const fetchQuotations = async ({
     OR: [
       {
         statusSelect: {
-          lt: 3,
+          lt: QUOTATION_STATUS.CONFIRMED,
         },
       },
       {
@@ -199,6 +199,7 @@ export async function findQuotation({
   };
 }
 
+// TODO: remove this getComments()
 export async function getComments({
   id,
   tenantId,

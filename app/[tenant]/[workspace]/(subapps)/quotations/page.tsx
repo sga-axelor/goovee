@@ -5,7 +5,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
+import {DEFAULT_LIMIT, DEFAULT_PAGE, SUBAPP_CODES} from '@/constants';
 import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -61,7 +61,7 @@ export default async function Page({
   });
 
   const {quotations, pageInfo}: any = await fetchQuotations({
-    page: page || 1,
+    page: page || DEFAULT_PAGE,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     where,
     tenantId: tenant,
