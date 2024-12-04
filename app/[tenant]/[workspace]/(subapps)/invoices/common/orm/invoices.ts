@@ -6,6 +6,10 @@ import type {Partner, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
+import {
+  INVOICE,
+  INVOICE_CATEGORY,
+} from '@/subapps/invoices/common/constants/invoices';
 
 const fetchInvoices = async ({
   params,
@@ -37,9 +41,9 @@ const fetchInvoices = async ({
     },
   };
 
-  if (type === 'archived') {
+  if (type === INVOICE.ARCHIVED) {
     whereClause.archived = true;
-    whereClause.operationTypeSelect = 3;
+    whereClause.operationTypeSelect = INVOICE_CATEGORY.SALE_INVOICE;
   } else {
     whereClause.amountRemaining = {
       ne: 0,
@@ -102,7 +106,7 @@ export const findArchivedInvoices = async ({
 }) => {
   return await fetchInvoices({
     params,
-    type: 'archived',
+    type: INVOICE.ARCHIVED,
     tenantId,
     workspaceURL,
   });

@@ -1,47 +1,53 @@
 'use client';
 import React from 'react';
-import {usePathname, useRouter} from 'next/navigation';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {Container, NavView} from '@/ui/components';
+import {Container, NavView, TableList} from '@/ui/components';
 import {i18n} from '@/i18n';
+import {SUBAPP_CODES, SUBAPP_PAGE, URL_PARAMS} from '@/constants';
+import {useSortBy} from '@/ui/hooks';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  ARCHIVED_INVOICE_COLUMNS,
-  ITEMS,
-} from '@/subapps/invoices/common/constants/invoices';
-import {Card, ArchivedTable} from '@/subapps/invoices/common/ui/components';
+import {ITEMS} from '@/subapps/invoices/common/constants/invoices';
+import {ArchivedColumns} from '@/subapps/invoices/common/ui/components';
 
 export default function Content({
   invoices = [],
+  pageInfo,
 }: {
   invoices: [];
   pageInfo?: any;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
-  const handleTabChange = () => {
-    router.push(`unpaid`);
+  const {workspaceURI} = useWorkspace();
+
+  const [sortedInvoices, sortOrder, toggleSortOrder] = useSortBy(invoices);
+
+  const handleTabChange = (e: any) => {
+    router.push(`${e.href}`);
   };
 
-  const handleClick = (id: string) => {
-    router.push(`${pathname}/${id}`);
-  };
+  const handleClick = (invoice: any) =>
+    router.push(
+      `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.archived}/${invoice.id}`,
+    );
 
   return (
     <>
       <Container title={i18n.get('Invoices')}>
         <NavView items={ITEMS} activeTab="2" onTabChange={handleTabChange}>
-          <div className="hidden md:block">
-            <ArchivedTable
-              columns={ARCHIVED_INVOICE_COLUMNS}
-              rows={invoices}
-              handleRowClick={handleClick}
+          <div className="flex flex-col gap-4">
+            <TableList
+              columns={ArchivedColumns}
+              rows={sortedInvoices}
+              sort={sortOrder}
+              onSort={toggleSortOrder}
+              onRowClick={handleClick}
+              pageInfo={pageInfo}
+              pageParamKey={URL_PARAMS.page}
             />
-          </div>
-          <div className="md:hidden block">
-            <Card invoices={invoices} handleRowClick={handleClick} />
           </div>
         </NavView>
       </Container>
