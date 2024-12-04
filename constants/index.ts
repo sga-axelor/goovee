@@ -84,10 +84,8 @@ export const SUBAPP_WITH_ROLES = [
  * SUBAPP PAGE
  */
 export const SUBAPP_PAGE = {
-  orders: {
-    ongoing: '/ongoing',
-    archived: '/archived',
-  },
+  orders: '/ongoing',
+  archived: '/archived',
   invoices: '/unpaid',
   checkout: `${SUBAPP_CODES.shop}/cart/checkout`,
 };

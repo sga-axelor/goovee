@@ -32,7 +32,7 @@ const Content = ({orders, pageInfo}: ContentProps) => {
 
   const handleClick = (order: any) =>
     router.push(
-      `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders.archived}/${order.id}`,
+      `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.archived}/${order.id}`,
     );
 
   return (
