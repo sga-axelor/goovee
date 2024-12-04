@@ -2,9 +2,9 @@
 
 import React from 'react';
 import {MdKeyboardReturn, MdHelpOutline} from 'react-icons/md';
-import {Separator, Button} from '@/ui/components';
 
 // ---- CORE IMPORTS ---- //
+import {Separator, Button} from '@/ui/components';
 import {i18n} from '@/i18n';
 
 export const ContactUs = () => {

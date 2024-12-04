@@ -15,17 +15,16 @@ import {i18n} from '@/i18n';
 import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductCard} from './product-card';
+import {ProductCard} from '@/subapps/orders/common/ui/components';
 import {
   PRODUCT_COLUMNS,
   PRODUCT_CARD_COLUMNS,
 } from '@/subapps/orders/common/constants/orders';
 
-export const Products = ({saleOrderLineList, tenant}: any) => {
+export const ProductsList = ({saleOrderLineList, tenant}: any) => {
   const getProductImage = (product: any) => {
     return getImageURL(product?.picture?.id, tenant, {noimage: true});
   };
-
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -97,4 +96,4 @@ export const Products = ({saleOrderLineList, tenant}: any) => {
     </>
   );
 };
-export default Products;
+export default ProductsList;

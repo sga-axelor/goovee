@@ -13,7 +13,7 @@ import {
 import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
-import MdUpDownIcon from './MdUpDownIcon';
+import MdUpDownIcon from '../MdUpDownIcon';
 
 export const ProductCard = ({
   saleOrder,
