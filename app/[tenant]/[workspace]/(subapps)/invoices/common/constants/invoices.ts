@@ -18,15 +18,6 @@ const ITEMS = [
   },
 ];
 
-const UNPAID_INVOICE_COLUMNS = [
-  {key: 'invoiceId', label: i18n.get('Invoice number')},
-  {key: 'amountRemaining', label: i18n.get('Status')},
-  {key: 'dueDate', label: i18n.get('Due on')},
-  {key: 'exTaxTotal', label: i18n.get('Total WT')},
-  {key: 'inTaxTotal', label: i18n.get('Total ATI')},
-  {key: '', label: ''},
-];
-
 const INVOICE_COLUMNS = [
   i18n.get('Description'),
   i18n.get('Rate'),
@@ -55,7 +46,6 @@ const INVOICE_STATUS = {
 export {
   HEADING,
   ITEMS,
-  UNPAID_INVOICE_COLUMNS,
   INVOICE_COLUMNS,
   INVOICE_TYPE,
   INVOICE_STATUS,

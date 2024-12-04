@@ -11,7 +11,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {ITEMS} from '@/subapps/invoices/common/constants/invoices';
-import {ArchivedColumns} from '@/subapps/invoices/common/ui/components';
+import {Columns} from '@/subapps/invoices/common/ui/components';
 
 export default function Content({
   invoices = [],
@@ -40,7 +40,7 @@ export default function Content({
         <NavView items={ITEMS} activeTab="2" onTabChange={handleTabChange}>
           <div className="flex flex-col gap-4">
             <TableList
-              columns={ArchivedColumns}
+              columns={Columns}
               rows={sortedInvoices}
               sort={sortOrder}
               onSort={toggleSortOrder}

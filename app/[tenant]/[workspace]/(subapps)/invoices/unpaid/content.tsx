@@ -1,23 +1,27 @@
 'use client';
 
-import React, {useMemo} from 'react';
-import {usePathname, useRouter} from 'next/navigation';
+import React, {useEffect, useMemo} from 'react';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {PaymentOption, type PortalWorkspace} from '@/types';
-import {Container, NavView, StyledAlert} from '@/ui/components';
+import {type PortalWorkspace} from '@/types';
+import {Container, NavView, TableList} from '@/ui/components';
 import {i18n} from '@/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useSortBy, useToast} from '@/ui/hooks';
+import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  UNPAID_INVOICE_COLUMNS,
   ITEMS,
   HEADING,
+  INVOICE,
 } from '@/subapps/invoices/common/constants/invoices';
-import {Card, UnpaidTable} from '@/subapps/invoices/common/ui/components';
+import {UnpaidColumns} from '@/subapps/invoices/common/ui/components';
 
 export default function Content({
   invoices = [],
+  pageInfo,
   workspace,
 }: {
   invoices: [];
@@ -25,15 +29,19 @@ export default function Content({
   workspace: PortalWorkspace;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
+  const {workspaceURI} = useWorkspace();
+  const {toast} = useToast();
 
-  const handleTabChange = () => {
-    router.push(`archived`);
+  const [sortedInvoices, sortOrder, toggleSortOrder] = useSortBy(invoices);
+
+  const handleTabChange = (e: any) => {
+    router.push(`${e.href}`);
   };
 
-  const handleClick = (id: string) => {
-    router.push(`${pathname}/${id}`);
-  };
+  const handleClick = (invoice: any) =>
+    router.push(
+      `${workspaceURI}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${invoice.id}`,
+    );
 
   const hasUpcomingInvoices = useMemo(() => {
     return invoices?.some(
@@ -53,25 +61,34 @@ export default function Content({
     canPayInvoice !== 'no' &&
     Boolean(paymentOptionSet?.length);
 
+  const unpaidColumns = useMemo(
+    () => UnpaidColumns(allowInvoicePayment),
+    [allowInvoicePayment],
+  );
+
+  useEffect(() => {
+    if (hasUpcomingInvoices) {
+      toast({
+        variant: 'orange',
+        title: HEADING,
+      });
+    }
+  }, [hasUpcomingInvoices, toast]);
+
   return (
     <>
       <Container title={i18n.get('Invoices')}>
-        <StyledAlert
-          show={hasUpcomingInvoices}
-          variant="purple"
-          heading={HEADING}
-        />
         <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
-          <div className="hidden md:block">
-            <UnpaidTable
-              columns={UNPAID_INVOICE_COLUMNS}
-              rows={invoices}
-              handleRowClick={handleClick}
-              allowInvoicePayment={allowInvoicePayment}
+          <div className="flex flex-col gap-4">
+            <TableList
+              columns={unpaidColumns}
+              rows={sortedInvoices}
+              sort={sortOrder}
+              onSort={toggleSortOrder}
+              onRowClick={handleClick}
+              pageInfo={pageInfo}
+              pageParamKey={URL_PARAMS.page}
             />
-          </div>
-          <div className="md:hidden block">
-            <Card invoices={invoices} handleRowClick={handleClick} />
           </div>
         </NavView>
       </Container>
