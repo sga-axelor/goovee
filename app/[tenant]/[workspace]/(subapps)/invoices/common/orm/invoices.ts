@@ -1,7 +1,17 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
-import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
-import {clone, getFormattedValue, scale} from '@/utils';
+import {
+  DEFAULT_CURRENCY_SCALE,
+  DEFAULT_CURRENCY_SYMBOL,
+  DEFAULT_PAGE,
+} from '@/constants';
+import {
+  clone,
+  getFormattedValue,
+  getPageInfo,
+  getSkipInfo,
+  scale,
+} from '@/utils';
 import type {Partner, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -16,6 +26,8 @@ const fetchInvoices = async ({
   type,
   tenantId,
   workspaceURL,
+  page,
+  limit,
 }: {
   params?: {
     where: object & {
@@ -27,6 +39,8 @@ const fetchInvoices = async ({
   type?: string;
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
+  limit?: string | number;
+  page?: string | number;
 }) => {
   const {id: partnerId} = params?.where?.partner || {};
 
@@ -49,10 +63,13 @@ const fetchInvoices = async ({
       ne: 0,
     };
   }
+  const skip = getSkipInfo(limit, page);
 
   const $invoices = await client.aOSInvoice
     .find({
       where: whereClause,
+      take: limit as any,
+      ...(skip ? {skip: skip as any} : {}),
       select: {
         invoiceId: true,
         dueDate: true,
@@ -80,35 +97,50 @@ const fetchInvoices = async ({
     };
   });
 
-  return invoices;
+  const pageInfo = getPageInfo({
+    count: invoices?.[0]?._count,
+    page,
+    limit,
+  });
+  return {invoices, pageInfo};
 };
 
 export const findUnpaidInvoices = async ({
   params,
   tenantId,
   workspaceURL,
+  page = DEFAULT_PAGE,
+  limit,
 }: {
   params?: any;
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
+  page?: string | number;
+  limit?: string | number;
 }) => {
-  return await fetchInvoices({params, tenantId, workspaceURL});
+  return await fetchInvoices({params, tenantId, workspaceURL, page, limit});
 };
 
 export const findArchivedInvoices = async ({
   params,
   tenantId,
   workspaceURL,
+  page = DEFAULT_PAGE,
+  limit,
 }: {
   params?: any;
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
+  page?: string | number;
+  limit?: string | number;
 }) => {
   return await fetchInvoices({
     params,
     type: INVOICE.ARCHIVED,
     tenantId,
     workspaceURL,
+    page,
+    limit,
   });
 };
 

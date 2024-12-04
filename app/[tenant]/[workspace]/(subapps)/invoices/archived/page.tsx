@@ -5,22 +5,25 @@ import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
+import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findArchivedInvoices} from '@/subapps/invoices/common/orm/invoices';
 import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
-import {SUBAPP_CODES} from '@/constants';
 
 export default async function Invoices({
   params,
+  searchParams,
 }: {
   params: {
     tenant: string;
     workspace: string;
   };
+  searchParams: {[key: string]: string | undefined};
 }) {
   const {tenant} = params;
+  const {limit, page} = searchParams;
 
   const session = await getSession();
 
@@ -55,7 +58,7 @@ export default async function Invoices({
 
   const {role, isContactAdmin} = app;
 
-  const invoices: any = await findArchivedInvoices({
+  const {invoices, pageInfo}: any = await findArchivedInvoices({
     params: {
       where: getWhereClause({
         user,
@@ -65,7 +68,9 @@ export default async function Invoices({
     },
     tenantId: tenant,
     workspaceURL,
+    page,
+    limit: limit ? Number(limit) : DEFAULT_LIMIT,
   });
 
-  return <Content invoices={invoices} />;
+  return <Content invoices={invoices} pageInfo={pageInfo} />;
 }
