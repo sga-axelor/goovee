@@ -7,3 +7,4 @@ export {Products} from './products';
 export {ProductCard} from './product-card';
 export {QuotationsTable} from './table';
 export {Total} from './total';
+export {Columns} from './columns';

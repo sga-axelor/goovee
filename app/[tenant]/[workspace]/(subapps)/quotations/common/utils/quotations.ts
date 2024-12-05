@@ -14,11 +14,11 @@ import type {User} from '@/types';
 
 type Variant = 'blue' | 'yellow' | 'destructive' | 'default';
 
-export function getStatus(statusSelect: number | string): {
-  status: string | number;
+export function getStatus(statusSelect: any): {
+  status: any;
   variant: Variant;
 } {
-  let status: string | number;
+  let status: any;
   let variant: Variant;
 
   switch (statusSelect) {

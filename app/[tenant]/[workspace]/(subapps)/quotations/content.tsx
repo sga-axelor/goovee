@@ -1,15 +1,17 @@
 'use client';
-import React from 'react';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
+
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
-import {Container, Pagination} from '@/ui/components';
+import {Container, TableList} from '@/ui/components';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useSortBy} from '@/ui/hooks';
+import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {Card, QuotationsTable} from '@/subapps/quotations/common/ui/components';
-import {QUOTATIONS_COLUMNS} from '@/subapps/quotations/common/constants/quotations';
 import type {Quotations} from '@/subapps/quotations/common/types/quotations';
+import {Columns} from '@/subapps/quotations/common/ui/components';
 
 type Props = {
   quotations: Quotations[];
@@ -18,73 +20,26 @@ type Props = {
 
 const Content = (props: Props) => {
   const {quotations, pageInfo} = props;
-  const {page, pages} = pageInfo || {};
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const {workspaceURI} = useWorkspace();
 
-  const handleRowClick = (id: any) => {
-    router.push(`${pathname}/${id}`);
-  };
+  const [sortedQuotations, sortOrder, toggleSortOrder] = useSortBy(quotations);
 
-  const updateSearchParams = (
-    values: Array<{
-      key: string;
-      value?: string | number;
-    }>,
-  ) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    values.forEach(({key, value = ''}: any) => {
-      value = value && String(value)?.trim();
-      if (!value) {
-        current.delete(key);
-      } else {
-        current.set(key, value);
-      }
-    });
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
-    router.push(`${pathname}${query}`);
-  };
-
-  const handlePreviousPage = () => {
-    const {page, hasPrev} = pageInfo;
-    if (!hasPrev) return;
-    updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
-  };
-
-  const handleNextPage = () => {
-    const {page, hasNext} = pageInfo;
-    if (!hasNext) return;
-    updateSearchParams([{key: 'page', value: Number(page) + 1}]);
-  };
-
-  const handlePage = (page: string | number) => {
-    updateSearchParams([{key: 'page', value: page}]);
-  };
+  const handleClick = (quotation: any) =>
+    router.push(`${workspaceURI}/${SUBAPP_CODES.quotations}/${quotation.id}`);
 
   return (
     <>
       <Container title={i18n.get('Quotations')}>
-        <div className="hidden md:block">
-          <QuotationsTable
-            columns={QUOTATIONS_COLUMNS}
-            quotations={quotations}
-            onClick={handleRowClick}
-          />
-        </div>
-        <div className="block md:hidden">
-          <Card quotations={quotations} onClick={handleRowClick} />
-        </div>
-        <div className="flex items-center justify-center mt-6 mb-4">
-          <Pagination
-            page={page}
-            pages={pages}
-            disablePrev={!pageInfo?.hasPrev}
-            disableNext={!pageInfo?.hasNext}
-            onPrev={handlePreviousPage}
-            onNext={handleNextPage}
-            onPage={handlePage}
+        <div className="flex flex-col gap-4">
+          <TableList
+            columns={Columns}
+            rows={sortedQuotations}
+            sort={sortOrder}
+            onSort={toggleSortOrder}
+            onRowClick={handleClick}
+            pageInfo={pageInfo}
+            pageParamKey={URL_PARAMS.page}
           />
         </div>
       </Container>
