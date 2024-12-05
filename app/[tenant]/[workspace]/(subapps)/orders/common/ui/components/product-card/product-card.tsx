@@ -9,11 +9,9 @@ import {
   CollapsibleContent,
   Avatar,
   AvatarImage,
+  ArrowSwitch,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-
-// ---- LOCAL IMPORTS ---- //
-import MdUpDownIcon from '../MdUpDownIcon';
 
 export const ProductCard = ({
   saleOrder,
@@ -44,7 +42,7 @@ export const ProductCard = ({
           {saleOrder.inTaxTotal}
         </TableCell>
         <TableCell>
-          <MdUpDownIcon show={show} onClick={() => setShow(!show)} />
+          <ArrowSwitch show={show} onClick={() => setShow(!show)} />
         </TableCell>
       </TableRow>
       <TableRow>
