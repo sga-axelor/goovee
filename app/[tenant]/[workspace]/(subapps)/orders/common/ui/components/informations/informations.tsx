@@ -16,6 +16,7 @@ export const Informations = ({
   shipmentMode,
   status,
   variant,
+  onDownload,
 }: any) => {
   const showShippingLink = [ORDER_TYPE.SHIPPED, ORDER_TYPE.DELIVERED].includes(
     status,
@@ -55,9 +56,10 @@ export const Informations = ({
           <div className="flex">
             <Button
               variant="outline"
-              className="flex items-center justify-center gap-3 rounded-full !font-medium basis-full md:basis-0">
+              className="flex items-center justify-center gap-3 rounded-full !font-medium basis-full md:basis-0"
+              onClick={onDownload}>
               <MdOutlineFileDownload className="text-2xl" />{' '}
-              {i18n.get('Download bill')}
+              {i18n.get('Download invoice')}
             </Button>
           </div>
         </div>

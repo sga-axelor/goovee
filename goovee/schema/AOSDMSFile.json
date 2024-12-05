@@ -67,6 +67,14 @@
       "name": "partnerCategorySet",
       "type": "ManyToMany",
       "target": "AOSPartnerCategory"
+    },
+    {
+      "type": "Int",
+      "name": "relatedId"
+    },
+    {
+      "type": "String",
+      "name": "relatedModel"
     }
   ]
 }

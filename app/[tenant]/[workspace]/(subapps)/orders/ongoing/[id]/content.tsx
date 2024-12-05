@@ -6,6 +6,10 @@ import React from 'react';
 import {Container} from '@/ui/components';
 import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {download} from '@/utils/files';
+import {RELATED_MODELS} from '@/constants/models';
+import {useToast} from '@/ui/hooks';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -19,6 +23,7 @@ import {
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
+import {getFile} from '@/subapps/orders/common/actions/file';
 
 const Content = ({order}: {order: any}) => {
   const {
@@ -35,11 +40,36 @@ const Content = ({order}: {order: any}) => {
     company,
     saleOrderLineList,
     totalDiscount,
+    id,
   } = order;
   const {status, variant} = getStatus(statusSelect, deliveryState);
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
 
-  const {tenant} = useWorkspace();
+  const {workspaceURL, tenant} = useWorkspace();
+  const {toast} = useToast();
+
+  const handleInvoiceDownload = async () => {
+    try {
+      const result = await getFile({
+        modelId: id,
+        workspaceURL,
+        modelName: RELATED_MODELS.SALE_ORDER_MODEL,
+        subapp: SUBAPP_CODES.orders,
+      });
+
+      if (result?.error) {
+        toast({
+          variant: 'destructive',
+          description: i18n.get(result.message),
+        });
+        return;
+      }
+
+      download(result, tenant);
+    } catch (error) {
+      console.error('Unexpected error during invoice download:', error);
+    }
+  };
 
   return (
     <>
@@ -49,6 +79,7 @@ const Content = ({order}: {order: any}) => {
           shipmentMode={shipmentMode}
           status={status}
           variant={variant}
+          onDownload={handleInvoiceDownload}
         />
         <div className="flex flex-col-reverse lg:flex-row gap-6 lg:gap-4">
           <div className="flex flex-col gap-6 basis-full md:basis-3/4">

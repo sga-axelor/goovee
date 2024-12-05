@@ -11,10 +11,7 @@ import type {ID, PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import {manager} from '@/tenant';
-
-export const RELATED_MODELS = {
-  SALE_ORDER_MODEL: 'com.axelor.apps.sale.db.SaleOrder',
-};
+import {RELATED_MODELS} from '@/constants/models';
 
 export const fetchQuotations = async ({
   page,
