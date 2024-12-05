@@ -8,19 +8,19 @@ import {i18n} from '@/i18n';
 import {TableCell, TableRow, StyledTable, Separator} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductCard} from './product-card';
+import {ProductCard} from '../product-card/product-card';
 import {
   PRODUCT_COLUMNS,
   PRODUCT_CARD_COLUMNS,
 } from '@/subapps/quotations/common/constants/quotations';
 import type {Product} from '@/subapps/quotations/common/types/quotations';
-import styles from './styles.module.scss';
+import styles from '@/subapps/quotations/common/ui/components/styles.module.scss';
 
 type Props = {
   saleOrderLineList: Product[];
 };
 
-export const Products = ({saleOrderLineList}: Props) => {
+export const ProductsList = ({saleOrderLineList}: Props) => {
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -70,4 +70,4 @@ export const Products = ({saleOrderLineList}: Props) => {
     </>
   );
 };
-export default Products;
+export default ProductsList;

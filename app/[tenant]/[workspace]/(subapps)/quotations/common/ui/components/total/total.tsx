@@ -162,4 +162,5 @@ export const Total = ({
     </>
   );
 };
+
 export default Total;

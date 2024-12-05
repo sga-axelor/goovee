@@ -1,12 +1,5 @@
 import {i18n} from '@/i18n';
 
-export const QUOTATIONS_COLUMNS = [
-  {key: 'saleOrderSeq', label: i18n.get('Quotation number')},
-  {key: 'statusSelect', label: i18n.get('Status')},
-  {key: 'createdOn', label: i18n.get('Created on')},
-  {key: 'action', label: ''},
-];
-
 export const HEADING = i18n.get('You have quotations awaiting for reponse.');
 
 export const QUOTATION_STATUS = {

@@ -12,7 +12,7 @@ import {TextField, Separator, Button} from '@/ui/components';
 // ---- LOCAL IMPORTS ---- //
 import type {CommentsProps} from '@/subapps/quotations/common/types/quotations';
 import {updateDocument} from '@/subapps/quotations/common/utils/quotations';
-import styles from './styles.module.scss';
+import styles from '@/subapps/quotations/common/ui/components/styles.module.scss';
 
 type Props = {
   comments: CommentsProps[];

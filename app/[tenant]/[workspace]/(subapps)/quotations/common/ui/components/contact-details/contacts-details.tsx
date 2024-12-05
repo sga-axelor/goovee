@@ -8,10 +8,10 @@ import {getCityName} from '@/utils';
 import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import Products from './products';
+import {ProductsList} from '@/subapps/quotations/common/ui/components';
 import type {ContactProps} from '@/subapps/quotations/common/types/quotations';
 
-export const Contacts = ({
+export const ContactDetails = ({
   clientPartner,
   company,
   mainInvoicingAddress,
@@ -70,9 +70,9 @@ export const Contacts = ({
             </div>
           </div>
         </div>
-        <Products saleOrderLineList={saleOrderLineList} />
+        <ProductsList saleOrderLineList={saleOrderLineList} />
       </div>
     </>
   );
 };
-export default Contacts;
+export default ContactDetails;

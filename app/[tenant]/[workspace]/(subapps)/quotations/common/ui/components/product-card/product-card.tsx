@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
@@ -7,12 +8,11 @@ import {
   TableRow,
   Collapsible,
   CollapsibleContent,
+  ArrowSwitch,
 } from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import styles from './styles.module.scss';
-import Image from 'next/image';
-import MdUpDownIcon from '../../../../orders/common/ui/components/MdUpDownIcon';
+import styles from '@/subapps/quotations/common/ui/components/styles.module.scss';
 
 export const ProductCard = (props: any) => {
   const {product} = props;
@@ -31,7 +31,7 @@ export const ProductCard = (props: any) => {
         <TableCell className="p-4 text-sm">{product.qty}</TableCell>
         <TableCell className="p-4 text-sm">{product.inTaxTotal}</TableCell>
         <TableCell>
-          <MdUpDownIcon show={show} onClick={() => setShow(!show)} />
+          <ArrowSwitch show={show} onClick={() => setShow(!show)} />
         </TableCell>
       </TableRow>
       <TableRow>

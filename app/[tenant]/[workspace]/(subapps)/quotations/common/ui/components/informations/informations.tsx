@@ -11,7 +11,7 @@ import {i18n} from '@/i18n';
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {InfoProps} from '@/subapps/quotations/common/types/quotations';
-import styles from './styles.module.scss';
+import styles from '@/subapps/quotations/common/ui/components/styles.module.scss';
 
 export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
   const {variant, status} = getStatus(statusSelect);
