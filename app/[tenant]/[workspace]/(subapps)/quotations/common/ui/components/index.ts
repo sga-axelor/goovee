@@ -1,6 +1,5 @@
 export {ContactDetails} from './contact-details';
 export {Comments} from './comments';
-export {History} from './history';
 export {Informations} from './informations';
 export {ProductsList} from './products-list';
 export {ProductCard} from './product-card';

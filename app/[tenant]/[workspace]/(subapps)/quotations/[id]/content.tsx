@@ -22,7 +22,6 @@ import {PaymentOption, type PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {
   Comments,
-  History,
   Informations,
   Total,
   ContactDetails,
@@ -310,7 +309,6 @@ const Content = ({
               deliveryAddress={deliveryAddress}
               saleOrderLineList={saleOrderLineList}
             />
-            <History />
             <Comments comments={comments} />
           </div>
           {statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION && (
