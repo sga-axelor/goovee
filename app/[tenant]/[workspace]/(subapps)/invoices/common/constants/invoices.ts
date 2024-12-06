@@ -42,6 +42,7 @@ const INVOICE_STATUS = {
   VENTILATED: 3,
   UNPAID: 0,
 };
+const UNABLE_TO_FIND_INVOICE = 'Unable to load file';
 
 export {
   HEADING,
@@ -51,4 +52,5 @@ export {
   INVOICE_STATUS,
   INVOICE_CATEGORY,
   INVOICE,
+  UNABLE_TO_FIND_INVOICE,
 };

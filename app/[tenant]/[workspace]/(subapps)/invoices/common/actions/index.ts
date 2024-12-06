@@ -2,6 +2,8 @@
 
 import paypal from '@paypal/checkout-server-sdk';
 import type {Stripe} from 'stripe';
+import {headers} from 'next/headers';
+import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
 import {getTranslation} from '@/i18n/server';
@@ -19,11 +21,12 @@ import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {scale} from '@/utils';
 import {TENANT_HEADER} from '@/middleware';
+import {ID} from '@/types';
+import {manager} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
-import {headers} from 'next/headers';
 
 export async function paypalCaptureOrder({
   orderId,
@@ -671,4 +674,72 @@ export async function validateStripePayment({
     success: true,
     invoice: $invoice,
   };
+}
+
+export async function getPDF({
+  id,
+  workspaceURL,
+}: {
+  id: ID;
+  workspaceURL: string;
+}) {
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await getTranslation('Bad Request'),
+      data: null,
+    };
+  }
+
+  const tenant = await manager.getTenant(tenantId);
+
+  if (!tenant?.config?.aos?.url) {
+    return {
+      error: true,
+      message: 'Order creation failed. Webservice not available',
+      data: null,
+    };
+  }
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: getTranslation('Invalid workspace'),
+      data: null,
+    };
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    url: workspaceURL,
+    user,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: 'Invalid workspace',
+      data: null,
+    };
+  }
+
+  const {aos} = tenant.config;
+  const ws = `${aos.url}/ws/portal/invoice/print/${id}`;
+
+  try {
+    const res = await axios.get(ws, {
+      responseType: 'arraybuffer',
+      auth: {
+        username: aos.auth.username,
+        password: aos.auth.password,
+      },
+    });
+    return res?.data;
+  } catch (error) {
+    console.error('Error', error);
+  }
 }
