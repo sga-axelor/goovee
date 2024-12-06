@@ -148,5 +148,4 @@ export type ContactProps = {
       name: string;
     };
   };
-  saleOrderLineList: Product[];
 };

@@ -1,11 +1,18 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
-import {TableCell, TableRow, StyledTable, Separator} from '@/ui/components';
+import {
+  TableCell,
+  TableRow,
+  StyledTable,
+  Separator,
+  Avatar,
+  AvatarImage,
+} from '@/ui/components';
+import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {ProductCard} from '../product-card/product-card';
@@ -14,13 +21,17 @@ import {
   PRODUCT_CARD_COLUMNS,
 } from '@/subapps/quotations/common/constants/quotations';
 import type {Product} from '@/subapps/quotations/common/types/quotations';
-import styles from '@/subapps/quotations/common/ui/components/styles.module.scss';
 
 type Props = {
   saleOrderLineList: Product[];
+  tenant: any;
 };
 
-export const ProductsList = ({saleOrderLineList}: Props) => {
+export const ProductsList = ({saleOrderLineList, tenant}: Props) => {
+  const getProductImage = (product: any) => {
+    return getImageURL(product?.picture?.id, tenant, {noimage: true});
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -28,30 +39,30 @@ export const ProductsList = ({saleOrderLineList}: Props) => {
         <Separator />
         <div className="hidden lg:block">
           <StyledTable
-            headStyle="bg-foreground !text-background !rounded-none !text-sm !px-4"
+            headStyle="bg-foreground !text-background !rounded-none !px-4"
             columns={PRODUCT_COLUMNS}>
-            {saleOrderLineList?.map((product: any) => {
+            {saleOrderLineList?.map((saleOrder: any) => {
               return (
-                <TableRow key={product.id}>
+                <TableRow key={saleOrder.id} className="text-base">
                   <TableCell>
-                    <div className="flex">
-                      <div className="flex items-center">
-                        <Image
-                          src=""
-                          alt="product"
-                          className={styles['product-image']}
-                        />
-                      </div>
-                      <p className="text-sm mb-0">{product.productName}</p>
+                    <div className="flex gap-2">
+                      <Avatar className="rounded-sm h-6 w-6">
+                        <AvatarImage src={getProductImage(saleOrder.product)} />
+                      </Avatar>
+                      <p className="font-semibold mb-0">
+                        {saleOrder.productName}
+                      </p>
                     </div>
                   </TableCell>
-                  <TableCell>{product.qty}</TableCell>
-                  <TableCell>{product?.unit?.name}</TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  <TableCell>{product.exTaxTotal}</TableCell>
-                  <TableCell>{product?.taxLineSet[0]?.value}%</TableCell>
-                  <TableCell>{product.discountAmount}%</TableCell>
-                  <TableCell>{product.inTaxTotal}</TableCell>
+                  <TableCell>{saleOrder.qty}</TableCell>
+                  <TableCell>{saleOrder?.unit?.name}</TableCell>
+                  <TableCell>{saleOrder.price}</TableCell>
+                  <TableCell>{saleOrder.exTaxTotal}</TableCell>
+                  <TableCell>{saleOrder?.taxLineSet[0]?.value}%</TableCell>
+                  <TableCell>{saleOrder.discountAmount}%</TableCell>
+                  <TableCell className="font-semibold">
+                    {saleOrder.inTaxTotal}
+                  </TableCell>
                 </TableRow>
               );
             })}
@@ -59,11 +70,15 @@ export const ProductsList = ({saleOrderLineList}: Props) => {
         </div>
         <div className="block lg:hidden">
           <StyledTable
-            headStyle="bg-foreground !text-background !rounded-none !text-sm !px-4"
+            headStyle="bg-foreground !text-background !rounded-none !px-4"
             columns={PRODUCT_CARD_COLUMNS}>
-            {saleOrderLineList?.map((product: any) => {
-              return <ProductCard key={product.id} product={product} />;
-            })}
+            {saleOrderLineList?.map((saleOrder: any) => (
+              <ProductCard
+                key={saleOrder.id}
+                saleOrder={saleOrder}
+                tenant={tenant}
+              />
+            ))}
           </StyledTable>
         </div>
       </div>

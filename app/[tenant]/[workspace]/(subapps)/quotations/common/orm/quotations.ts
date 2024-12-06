@@ -147,6 +147,11 @@ export async function findQuotation({
           },
           discountAmount: true,
           inTaxTotal: true,
+          product: {
+            picture: {
+              id: true,
+            },
+          },
         },
       },
       currency: {

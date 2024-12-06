@@ -25,6 +25,7 @@ import {
   Informations,
   Total,
   ContactDetails,
+  ProductsList,
 } from '@/subapps/quotations/common/ui/components';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {
@@ -223,7 +224,7 @@ const Content = ({
   const [confirmingQuotation, setConfirmingQuotation] = useState(false);
   const {toast} = useToast();
   const router = useRouter();
-  const {workspaceURL, workspaceURI} = useWorkspace();
+  const {workspaceURL, workspaceURI, tenant} = useWorkspace();
 
   const redirectOrder = (order?: {id: string}) => {
     if (orderSubapp && order) {
@@ -302,13 +303,18 @@ const Content = ({
         <div className="flex flex-col-reverse xl:flex-row gap-6 xl:gap-4">
           <div
             className={`${statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION ? 'lg:basis-3/4' : 'lg:basis-full'} flex flex-col gap-6 basis-full`}>
-            <ContactDetails
-              clientPartner={clientPartner}
-              company={company}
-              mainInvoicingAddress={mainInvoicingAddress}
-              deliveryAddress={deliveryAddress}
-              saleOrderLineList={saleOrderLineList}
-            />
+            <div className="flex flex-col gap-4  bg-card text-card-foreground p-6 rounded-lg">
+              <ContactDetails
+                clientPartner={clientPartner}
+                company={company}
+                mainInvoicingAddress={mainInvoicingAddress}
+                deliveryAddress={deliveryAddress}
+              />
+              <ProductsList
+                saleOrderLineList={saleOrderLineList}
+                tenant={tenant}
+              />
+            </div>
             <Comments comments={comments} />
           </div>
           {statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION && (

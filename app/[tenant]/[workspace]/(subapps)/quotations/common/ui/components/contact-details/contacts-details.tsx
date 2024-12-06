@@ -8,7 +8,6 @@ import {getCityName} from '@/utils';
 import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductsList} from '@/subapps/quotations/common/ui/components';
 import type {ContactProps} from '@/subapps/quotations/common/types/quotations';
 
 export const ContactDetails = ({
@@ -16,23 +15,24 @@ export const ContactDetails = ({
   company,
   mainInvoicingAddress,
   deliveryAddress,
-  saleOrderLineList,
 }: ContactProps) => {
   const billingAddressCity = getCityName(mainInvoicingAddress?.addressl6);
   const deliveryAddressCity = getCityName(deliveryAddress?.addressl6);
 
   return (
     <>
-      <div className="flex flex-col gap-4 bg-card text-card-foreground p-6 rounded-lg">
+      <div className="flex flex-col gap-4">
         <h4 className="text-xl font-medium mb-0">{i18n.get('Contact')}</h4>
         <div className="flex flex-col gap-4 border rounded-lg p-4">
           <div className="flex flex-col gap-4">
-            <h6 className="font-semibold">{i18n.get('Invoicing address')}</h6>
+            <h6 className="font-semibold text-base">
+              {i18n.get('Invoicing address')}
+            </h6>
             <div className="flex flex-col gap-4">
-              <h6 className="font-semibold">
+              <h6 className="font-semibold text-base">
                 {clientPartner?.fullName}, {company?.name}
               </h6>
-              <div>
+              <div className="text-sm leading-[1.313rem]">
                 <p>{mainInvoicingAddress?.addressl4}</p>
                 <p>{billingAddressCity}</p>
                 <p>{mainInvoicingAddress?.zip}</p>
@@ -40,10 +40,8 @@ export const ContactDetails = ({
               </div>
             </div>
             <div className="flex">
-              <Button
-                variant="outline"
-                className="flex items-center justify-center gap-3 rounded-full font-normal basis-full md:basis-0">
-                {i18n.get('Choose another adress')}
+              <Button className="bg-white border border-success text-success hover:bg-success hover:text-white rounded-md font-medium text-base py-1.5 px-3">
+                {i18n.get('Choose another address')}
               </Button>
             </div>
           </div>
@@ -51,10 +49,10 @@ export const ContactDetails = ({
           <div className="flex flex-col gap-4">
             <h6 className="font-semibold">{i18n.get('Delivery address')}</h6>
             <div className="flex flex-col gap-4">
-              <h6 className="font-semibold">
+              <h6 className="font-semibold text-base">
                 {clientPartner?.fullName}, {company?.name}
               </h6>
-              <div>
+              <div className="text-sm leading-[1.313rem]">
                 <p>{deliveryAddress?.addressl4}</p>
                 <p>{deliveryAddressCity}</p>
                 <p>{deliveryAddress?.zip}</p>
@@ -62,15 +60,12 @@ export const ContactDetails = ({
               </div>
             </div>
             <div className="flex">
-              <Button
-                variant="outline"
-                className="flex items-center justify-center gap-3 rounded-full font-normal basis-full md:basis-0">
-                {i18n.get('Choose another adress')}
+              <Button className="bg-white border border-success text-success hover:bg-success hover:text-white rounded-md font-medium text-base py-1.5 px-3">
+                {i18n.get('Choose another address')}
               </Button>
             </div>
           </div>
         </div>
-        <ProductsList saleOrderLineList={saleOrderLineList} />
       </div>
     </>
   );

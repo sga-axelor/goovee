@@ -18,7 +18,7 @@ export const QUOTATION_TYPE = {
 };
 
 export const PRODUCT_COLUMNS = [
-  {key: 'productName', label: i18n.get('Product number')},
+  {key: 'productName', label: i18n.get('Product Name')},
   {key: 'qty', label: i18n.get('Quantity')},
   {key: 'unit', label: i18n.get('Unit')},
   {key: 'price', label: i18n.get('Unit Price Wt')},
