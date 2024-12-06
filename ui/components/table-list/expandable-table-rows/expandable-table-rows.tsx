@@ -83,7 +83,7 @@ export function ExpandableTableRows<T extends Record<string, any>>({
         <Fragment key={row.id}>
           <TableRow
             onClick={e => handleClick(row, e)}
-            className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100 text-xs">
+            className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100 text-sm">
             {mainColumns.map((column: any) => (
               <TableCell key={column.key} className="p-3">
                 {column.content(row)}

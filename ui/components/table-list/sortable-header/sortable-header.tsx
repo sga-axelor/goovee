@@ -51,7 +51,7 @@ export function SortableHeader({columns, sort}: SortableHeaderProps) {
               key={String(column.key)}
               onClick={canSort ? e => sort?.toggle(column, e) : undefined}
               className={cn(
-                'text-card-foreground text-xs font-semibold border-none p-3',
+                'text-card-foreground text-base font-semibold border-none p-3',
                 {'cursor-pointer': canSort},
               )}>
               <div className="flex gap-1 items-center">

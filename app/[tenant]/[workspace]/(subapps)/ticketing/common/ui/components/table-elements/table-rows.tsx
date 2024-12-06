@@ -63,7 +63,7 @@ export function TableRows<T extends Record<string, any>>(
       <Fragment key={record.id}>
         <TableRow
           onClick={handleClick}
-          className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100 text-xs">
+          className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100 text-sm">
           {mainColumns.map(column => (
             <TableCell key={column.key} className="p-3">
               {column.content(record)}
