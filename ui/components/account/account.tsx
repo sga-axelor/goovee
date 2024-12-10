@@ -82,7 +82,9 @@ export function Account({
                 href={`/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
                   baseURL,
                 )}${tenant ? `&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`}>
-                <DropdownMenuItem>Log In</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Log In
+                </DropdownMenuItem>
               </Link>
             </>
           )}
