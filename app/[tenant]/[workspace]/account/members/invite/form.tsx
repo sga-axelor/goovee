@@ -3,6 +3,7 @@
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
@@ -25,67 +26,13 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {RadioGroup, RadioGroupItem} from '@/ui/components';
+import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {Title} from '../../common/ui/components';
-
-enum Role {
-  user = 'user',
-  admin = 'admin',
-}
-
-enum Authorization {
-  restricted = 'restricted',
-  total = 'total',
-}
-
-const subappConfig = {
-  [SUBAPP_CODES.shop]: {
-    label: 'Shop',
-    code: SUBAPP_CODES.shop,
-    authorization: false,
-  },
-  [SUBAPP_CODES.quotations]: {
-    label: 'Quotations',
-    code: SUBAPP_CODES.quotations,
-    authorization: true,
-  },
-  [SUBAPP_CODES.orders]: {
-    label: 'Orders',
-    code: SUBAPP_CODES.orders,
-    authorization: true,
-  },
-  [SUBAPP_CODES.invoices]: {
-    label: 'Invoices',
-    code: SUBAPP_CODES.invoices,
-    authorization: true,
-  },
-  [SUBAPP_CODES.resources]: {
-    label: 'Resources',
-    code: SUBAPP_CODES.resources,
-    authorization: false,
-  },
-  [SUBAPP_CODES.news]: {
-    label: 'News',
-    code: SUBAPP_CODES.news,
-    authorization: false,
-  },
-  [SUBAPP_CODES.events]: {
-    label: 'Events',
-    code: SUBAPP_CODES.events,
-    authorization: false,
-  },
-  [SUBAPP_CODES.forum]: {
-    label: 'Forum',
-    code: SUBAPP_CODES.forum,
-    authorization: false,
-  },
-  [SUBAPP_CODES.ticketing]: {
-    label: 'Ticketing',
-    code: SUBAPP_CODES.ticketing,
-    authorization: true,
-  },
-};
+import {Authorization, Role} from '../../common/types';
+import {sendInvites} from './action';
+import {useWorkspace} from '../../../workspace-context';
 
 const formSchema = z.object({
   emails: z.string().min(1, i18n.get('Emails cannot be empty')),
@@ -102,14 +49,26 @@ const formSchema = z.object({
   ),
 });
 
-export default function InviteForm() {
+export default function InviteForm({
+  availableApps,
+}: {
+  availableApps: Array<{
+    name: string;
+    code: string;
+    authorization?: boolean;
+  }>;
+}) {
+  const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       emails: '',
       role: Role.user,
-      apps: Object.values(subappConfig).reduce(
-        (acc, {label, code, authorization}) => ({
+      apps: (availableApps || []).reduce(
+        (acc, {name, code, authorization}) => ({
           ...acc,
           [code]: {
             code,
@@ -126,7 +85,28 @@ export default function InviteForm() {
     },
   });
 
-  const onInviteSubmit = async (values: z.infer<typeof formSchema>) => {};
+  const onInviteSubmit = async (values: z.infer<typeof formSchema>) => {
+    const result =
+      (await sendInvites({
+        ...values,
+        workspaceURL,
+      })) || ({} as any);
+
+    if ('success' in result) {
+      toast({
+        title: i18n.get('Invites send successfully'),
+        variant: 'success',
+      });
+      router.replace(`${workspaceURL}/account/members`);
+    } else {
+      toast({
+        title: result.message || i18n.get('Error sending invites'),
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const isSubmitting = form?.formState?.isSubmitting;
 
   return (
     <Form {...form}>
@@ -140,8 +120,10 @@ export default function InviteForm() {
         <div className="space-y-4">
           <Title text={i18n.get('Invite new members')}></Title>
           <div className="space-y-2">
-            <p className="text-base">{i18n.get('Invite contact')}</p>
-            <small className="text-xs">
+            <p className="text-base font-medium">
+              {i18n.get('Invite contact')}
+            </p>
+            <small className="text-xs font-medium">
               {i18n.get(
                 'The contact you invite must be people from your company as their account will be linked to your company.',
               )}
@@ -160,7 +142,11 @@ export default function InviteForm() {
                         placeholder={i18n.get(
                           'Please write the emails of the people you want to invite on the portal',
                         )}></Input>
-                      <Button size="sm" type="submit" variant="success">
+                      <Button
+                        size="sm"
+                        type="submit"
+                        variant="success"
+                        disabled={isSubmitting}>
                         {i18n.get('Invite')}
                       </Button>
                     </div>
@@ -177,17 +163,20 @@ export default function InviteForm() {
             name="role"
             render={({field}) => (
               <FormItem>
-                <FormLabel>{i18n.get('Role')}</FormLabel>
+                <FormLabel className="font-medium">
+                  {i18n.get('Role')}
+                </FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    className="flex gap-16">
+                    className="flex gap-16"
+                    disabled={isSubmitting}>
                     <FormItem className="flex items-center space-x-6 space-y-0">
                       <FormControl>
                         <RadioGroupItem variant="success" value="admin" />
                       </FormControl>
-                      <FormLabel className="font-normal">
+                      <FormLabel className="font-medium text-sm">
                         {i18n.get('Admin')}
                       </FormLabel>
                     </FormItem>
@@ -195,7 +184,7 @@ export default function InviteForm() {
                       <FormControl>
                         <RadioGroupItem variant="success" value="user" />
                       </FormControl>
-                      <FormLabel className="font-normal">
+                      <FormLabel className="font-medium text-sm">
                         {i18n.get('User')}
                       </FormLabel>
                     </FormItem>
@@ -208,28 +197,29 @@ export default function InviteForm() {
         </div>
         {form.getValues('role') === 'user' && (
           <div className="flex flex-col p-2 rounded-lg gap-2">
-            <div className="grid grid-cols-[20%_20%_20%] p-4 gap-6 border-b">
-              <p className="text-base font-bold">App</p>
-              <p className="text-base font-bold">Access</p>
-              <p className="text-base font-bold">Authorization</p>
+            <div className="grid grid-cols-[20%_20%_20%] items-center p-4 gap-6 border-b">
+              <p className="text-xs font-bold">App</p>
+              <p className="text-xs font-bold">Access</p>
+              <p className="text-xs font-bold">Authorization</p>
             </div>
-            {Object.values(subappConfig).map(({code, label, authorization}) => (
+            {(availableApps || []).map(({name, code, authorization}) => (
               <div
                 key={code}
-                className="grid grid-cols-[20%_20%_20%] p-4 gap-6 border-b">
-                <p>{label}</p>
+                className="grid grid-cols-[20%_20%_20%] items-center p-4 gap-6 border-b">
+                <p className="text-xs font-bold">{name}</p>
                 <div>
                   <FormField
                     control={form.control}
                     name={`apps.${code}.access`}
                     render={({field}) => (
-                      <FormItem>
+                      <FormItem className="w-16">
                         <Select
                           value={field.value}
                           onValueChange={field.onChange}
-                          defaultValue={field.value?.toString()}>
+                          defaultValue={field.value?.toString()}
+                          disabled={isSubmitting}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="text-xs">
                               <SelectValue
                                 placeholder={i18n.get('Select access')}
                               />
@@ -241,6 +231,7 @@ export default function InviteForm() {
                               {label: 'No', value: 'no'},
                             ].map((option: any) => (
                               <SelectItem
+                                className="text-xs"
                                 value={option.value}
                                 key={option.value}>
                                 {option.label}
@@ -258,13 +249,14 @@ export default function InviteForm() {
                     control={form.control}
                     name={`apps.${code}.authorization`}
                     render={({field}) => (
-                      <FormItem>
+                      <FormItem className="w-28">
                         <Select
                           value={field.value}
                           onValueChange={field.onChange}
-                          defaultValue={Authorization.restricted}>
+                          defaultValue={Authorization.restricted}
+                          disabled={isSubmitting}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="text-xs">
                               <SelectValue
                                 placeholder={i18n.get('Select authorization')}
                               />
@@ -282,6 +274,7 @@ export default function InviteForm() {
                               },
                             ].map((option: any) => (
                               <SelectItem
+                                className="text-xs"
                                 value={option.value}
                                 key={option.value}>
                                 {option.label}

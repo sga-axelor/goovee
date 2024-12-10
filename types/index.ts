@@ -43,6 +43,7 @@ export type User = {
 };
 
 export interface PortalWorkspace extends Model {
+  name?: string;
   url: string;
   theme?: Theme;
   config?: PortalAppConfig;

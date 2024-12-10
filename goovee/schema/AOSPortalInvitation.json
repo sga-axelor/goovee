@@ -1,0 +1,28 @@
+{
+  "name": "AOSPortalInvitation",
+  "table": "portal_invitation",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "OneToOne",
+      "name": "emailAddress",
+      "target": "AOSEmailAddress"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "workspace",
+      "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "contactAppPermissionList",
+      "target": "AOSPortalContactWorkspaceConfig"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "partner",
+      "target": "AOSPartner"
+    }
+  ]
+}

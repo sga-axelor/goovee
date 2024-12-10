@@ -80,6 +80,101 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   socialMediaSelect: true,
 };
 
+export async function findWorkspaceMembers({
+  url,
+  tenantId,
+}: {
+  url?: string;
+  tenantId: Tenant['id'];
+}) {
+  if (!(url && tenantId)) {
+    return {
+      partners: [],
+      contacts: [],
+    };
+  }
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) {
+    return {
+      partners: [],
+      contacts: [],
+    };
+  }
+
+  const memberPartners = await client.aOSPartner.find({
+    where: {
+      isContact: false,
+      partnerWorkspaceSet: {
+        workspace: {
+          url,
+        },
+      },
+    },
+    select: {
+      id: true,
+      firstName: true,
+      name: true,
+      fullName: true,
+      picture: true,
+      emailAddress: {
+        address: true,
+      },
+    },
+  });
+
+  const memberContacts = await client.aOSPartner
+    .find({
+      where: {
+        isContact: true,
+        contactWorkspaceConfigSet: {
+          portalWorkspace: {
+            url,
+          },
+        },
+      },
+      select: {
+        id: true,
+        firstName: true,
+        name: true,
+        fullName: true,
+        picture: true,
+        emailAddress: {
+          address: true,
+        },
+        contactWorkspaceConfigSet: {
+          select: {
+            portalWorkspace: {
+              url: true,
+            },
+            contactAppPermissionList: {
+              select: {
+                app: {
+                  name: true,
+                  code: true,
+                  installed: true,
+                },
+              },
+              roleSelect: true,
+            },
+          },
+        },
+      },
+    })
+    .then((contacts: any) =>
+      contacts?.map((c: any) => ({
+        ...c,
+        contactWorkspaceConfig: c?.contactWorkspaceConfigSet?.[0],
+      })),
+    );
+
+  return {
+    partners: memberPartners,
+    contacts: memberContacts,
+  };
+}
+
 export async function findContactWorkspaceConfig({
   url,
   contactId,

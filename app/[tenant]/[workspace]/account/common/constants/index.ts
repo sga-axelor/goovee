@@ -1,4 +1,6 @@
 import {i18n} from '@/i18n';
+import {Role} from '../types';
+import {SUBAPP_CODES} from '@/constants';
 
 export const ROUTES = {
   personal: 'personal',
@@ -44,3 +46,8 @@ export const WORKSPACE_MENU = [
     route: ROUTES.apps,
   },
 ];
+
+export const RoleLabel = {
+  [Role.admin]: i18n.get('Admin'),
+  [Role.user]: i18n.get('User'),
+};

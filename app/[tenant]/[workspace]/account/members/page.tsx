@@ -1,43 +1,35 @@
-'use client';
+import {workspacePathname} from '@/utils/workspace';
+import {findAvailableSubapps, findMembers} from '../common/orm/members';
+import Content from './content';
+import {findInvites} from '../common/orm/invites';
 
-import {z} from 'zod';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
+export default async function Page({
+  params,
+}: {
+  params: {workspace: string; tenant: string};
+}) {
+  const {tenant, workspaceURL} = workspacePathname(params);
 
-// ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
-import {Button} from '@/ui/components/button';
-
-import {Form} from '@/ui/components/form';
-
-// ---- LOCAL IMPORTS ---- //
-import {Title} from '../common/ui/components';
-
-const formSchema = z.object({});
-
-export default function Page() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {},
+  const members = await findMembers({
+    workspaceURL,
+    tenantId: tenant,
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {};
+  const invites = await findInvites({
+    workspaceURL,
+    tenantId: tenant,
+  });
+
+  const availableApps = await findAvailableSubapps({
+    url: workspaceURL,
+    tenantId: tenant,
+  });
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="space-y-20">
-          <div className="space-y-4">
-            <Title text={i18n.get('Members')} />
-          </div>
-
-          <div className="space-y-4 text-end sr-only">
-            <Button variant="success" disabled>
-              {i18n.get('Save settings')}
-            </Button>
-          </div>
-        </div>
-      </form>
-    </Form>
+    <Content
+      members={members}
+      invites={invites}
+      availableApps={availableApps || []}
+    />
   );
 }

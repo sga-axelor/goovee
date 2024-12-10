@@ -71,6 +71,16 @@ export enum SUBAPP_CODES {
 }
 
 /**
+ * SUBAPP WITH ROLES
+ */
+export const SUBAPP_WITH_ROLES = [
+  SUBAPP_CODES.quotations,
+  SUBAPP_CODES.orders,
+  SUBAPP_CODES.invoices,
+  SUBAPP_CODES.ticketing,
+];
+
+/**
  * SUBAPP PAGE
  */
 export const SUBAPP_PAGE = {

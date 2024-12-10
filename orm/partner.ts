@@ -1,9 +1,13 @@
+import {getSession} from '@/auth';
 import {UserType} from '@/auth/types';
+import {hash} from '@/auth/utils';
 import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
-import {hash} from '@/auth/utils';
-import {ID, Partner} from '@/types';
-import {findDefaultPartnerWorkspaceConfig} from './workspace';
+import {ID, Partner, PortalWorkspace} from '@/types';
+import {
+  findContactWorkspaceConfig,
+  findDefaultPartnerWorkspaceConfig,
+} from './workspace';
 import type {AOSPartner} from '@/goovee/.generated/models';
 
 const partnerFields = {
@@ -59,6 +63,70 @@ export async function findPartnerById(id: ID, tenantId: Tenant['id']) {
     .then(clone);
 
   return partner;
+}
+
+export async function isPartner() {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return false;
+  }
+
+  if (user.isContact) {
+    return false;
+  }
+
+  return user;
+}
+
+export async function isAdminContact({
+  workspaceURL,
+  tenantId,
+}: {
+  workspaceURL: PortalWorkspace['url'];
+  tenantId: Tenant['id'];
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return false;
+  }
+
+  if (!user?.isContact) {
+    return false;
+  }
+
+  const contactWorkspaceConfig = await findContactWorkspaceConfig({
+    tenantId,
+    url: workspaceURL,
+    contactId: user.id,
+  });
+
+  if (!contactWorkspaceConfig?.isAdmin) {
+    return false;
+  }
+
+  return user;
+}
+
+export async function findEmailAddress(email: string, tenantId: Tenant['id']) {
+  if (!(email && tenantId)) {
+    return null;
+  }
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) {
+    return null;
+  }
+
+  return client.aOSEmailAddress.findOne({
+    where: {
+      address: email,
+    },
+  });
 }
 
 export async function findPartnerByEmail(
