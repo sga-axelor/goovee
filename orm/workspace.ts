@@ -4,17 +4,6 @@ import {ID, User} from '@/types';
 import {clone} from '@/utils';
 import {SelectOptions} from '@goovee/orm';
 
-const defaultApps = [
-  {
-    name: 'Addresses',
-    code: 'account/addresses',
-    icon: 'storeFront',
-    showInTopMenu: false,
-    showInMySpace: true,
-    installed: 'yes',
-  },
-];
-
 const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   name: true,
   company: {
@@ -427,8 +416,6 @@ export async function findWorkspace({
 
   apps = apps || [];
 
-  apps = user ? [...defaultApps, ...apps] : apps;
-
   const {
     id,
     name,
@@ -671,7 +658,7 @@ export async function findWorkspaceApps({
 
   const contactApps = (contactWorkpaceConfig?.apps || []).filter(available);
 
-  return [...defaultApps, ...contactApps];
+  return contactApps;
 }
 
 export async function findSubapps({
