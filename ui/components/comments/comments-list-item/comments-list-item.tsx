@@ -81,6 +81,7 @@ export const CommentListItem = ({
   const {
     createdOn,
     publicBody,
+    body,
     childMailMessages = [],
     id,
     mailMessageFileList = [],
@@ -89,14 +90,33 @@ export const CommentListItem = ({
     parentMailMessage,
   } = comment || {};
   const {partner} = createdBy || {};
-  const {title = '', tracks = []} = useMemo(() => {
-    if (!publicBody) return {};
+
+  const parseJson = (data: any) => {
     try {
-      return JSON.parse(publicBody);
+      const parsed = JSON.parse(data);
+
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed;
+      }
+
+      return {title: '', tracks: []};
     } catch {
-      return {};
+      if (typeof data === 'string') {
+        return {value: data};
+      }
+      return {title: '', tracks: []};
     }
-  }, [publicBody]);
+  };
+
+  const {
+    title = '',
+    tracks = [],
+    value = '',
+  } = useMemo(() => {
+    const dataToParse = subapp === SUBAPP_CODES.quotations ? body : publicBody;
+    const result = parseJson(dataToParse ?? '');
+    return result;
+  }, [subapp, body, publicBody]);
 
   const {data: session} = useSession();
   const isLoggedIn = Boolean(session?.user?.id);
@@ -275,6 +295,12 @@ export const CommentListItem = ({
         </div>
       </div>
       <div className={`${isTopLevel ? 'ml-3 pl-10' : 'pl-8'}`}>
+        {value && (
+          <div
+            className="text-sm w-full font-normal"
+            dangerouslySetInnerHTML={{__html: value}}
+          />
+        )}
         {tracks.length > 0 && <CommentTracks tracks={tracks} title={title} />}
         <CommentAttachments attachments={mailMessageFileList} />
 

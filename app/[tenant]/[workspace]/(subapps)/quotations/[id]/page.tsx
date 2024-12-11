@@ -10,10 +10,7 @@ import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
-import {
-  findQuotation,
-  getComments,
-} from '@/subapps/quotations/common/orm/quotations';
+import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
 import {SUBAPP_CODES} from '@/constants';
 import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
 
@@ -26,8 +23,6 @@ type PageProps = {
 };
 export default async function Page({params}: PageProps) {
   const {id, tenant} = params;
-
-  const comments = await getComments({id, tenantId: tenant});
 
   const session = await getSession();
   const user = session?.user;
@@ -84,7 +79,6 @@ export default async function Page({params}: PageProps) {
   return (
     <Content
       quotation={clone(quotation)}
-      comments={clone(comments)}
       workspace={workspace}
       orderSubapp={Boolean(orderSubapp)}
     />

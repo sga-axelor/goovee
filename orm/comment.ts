@@ -7,7 +7,7 @@ import {promisify} from 'util';
 import {manager, type Tenant} from '@/tenant';
 import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {findWorkspace} from '@/orm/workspace';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
 import {clone, getSkipInfo} from '@/utils';
@@ -20,10 +20,7 @@ import {
   SUBAPP_CODES,
 } from '@/constants';
 import {findUserForPartner} from '@/orm/partner';
-import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
-import {findPosts} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/orm/forum';
-import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
-import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/common/orm/tickets';
+import {findByID} from '@/orm/record';
 
 const pump = promisify(pipeline);
 
@@ -38,6 +35,7 @@ const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
   [SUBAPP_CODES.news]: 'com.axelor.apps.portal.db.PortalNews',
   [SUBAPP_CODES.events]: 'com.axelor.apps.portal.db.PortalEvent',
   [SUBAPP_CODES.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
+  [SUBAPP_CODES.quotations]: 'com.axelor.apps.sale.db.SaleOrder',
 };
 
 export async function getPopularCommentsBySorting({
@@ -431,7 +429,11 @@ export async function addComment({
       data: {
         relatedId: modelRecord.id,
         relatedModel: modelName,
-        note,
+        ...(subapp === SUBAPP_CODES.quotations
+          ? {
+              body: note,
+            }
+          : {note}),
         isPublicNote: true,
         createdOn: timestamp as unknown as Date,
         updatedOn: timestamp as unknown as Date,
@@ -470,118 +472,6 @@ export async function addComment({
       message: 'An unexpected error occurred.',
     };
   }
-}
-
-export async function findByID({
-  subapp,
-  id,
-  workspace,
-  withAuth = true,
-  tenantId,
-  workspaceURL,
-}: {
-  subapp: SUBAPP_CODES;
-  id: string | number;
-  workspace: PortalWorkspace;
-  withAuth?: boolean;
-  workspaceURL: string;
-  tenantId: Tenant['id'];
-}) {
-  if (!subapp || !id) {
-    return {
-      error: true,
-      message: await getTranslation('Missing subapp or ID'),
-    };
-  }
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await getTranslation('Invalid workspace'),
-    };
-  }
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await getTranslation('TenantId is required.'),
-    };
-  }
-
-  const session = await getSession();
-  const user = session?.user;
-  if (withAuth) {
-    if (!user) {
-      return {
-        error: true,
-        message: await getTranslation('Unauthorized'),
-      };
-    }
-  }
-
-  const app = await findSubappAccess({
-    code: subapp,
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!app) {
-    return {
-      error: true,
-      message: await getTranslation('Unauthorized'),
-    };
-  }
-
-  let response: any;
-
-  switch (subapp) {
-    case SUBAPP_CODES.events:
-      response = await findEventByID({id, workspace, tenantId, user});
-      break;
-    case SUBAPP_CODES.news:
-      const {news}: any = await findNews({id, workspace, tenantId, user});
-      response = news?.[0];
-      break;
-    case SUBAPP_CODES.forum:
-      const {posts = []}: any = await findPosts({
-        whereClause: {id},
-        workspaceID: workspace.id,
-        tenantId,
-        user,
-      });
-      response = posts[0];
-      break;
-    case SUBAPP_CODES.ticketing:
-      if (user) {
-        response = await findTicketAccess({
-          recordId: id,
-          auth: {
-            userId: user.id,
-            workspaceId: workspace.id.toString(),
-            tenantId,
-            isContact: user.isContact!,
-            role: app.role,
-            isContactAdmin: app.isContactAdmin,
-          },
-        });
-      }
-
-      break;
-    default:
-      return {
-        error: true,
-        message: await getTranslation('Unknown type'),
-      };
-  }
-
-  if (!response)
-    return {
-      error: true,
-      message: await getTranslation('Unauthorized'),
-    };
-
-  return {success: true, data: response};
 }
 
 export type Comment = NonNullable<
@@ -635,9 +525,12 @@ export async function findComments({
   }
 
   const shouldUseAuth = (subapp: SUBAPP_CODES) =>
-    ![SUBAPP_CODES.forum, SUBAPP_CODES.events, SUBAPP_CODES.news].includes(
-      subapp,
-    );
+    ![
+      SUBAPP_CODES.forum,
+      SUBAPP_CODES.events,
+      SUBAPP_CODES.news,
+      SUBAPP_CODES.quotations,
+    ].includes(subapp);
 
   const {
     error,
@@ -710,6 +603,7 @@ export async function findComments({
     const commentFields = {
       note: true,
       publicBody: true,
+      body: true,
       createdOn: true,
       author: {
         id: true,
@@ -737,15 +631,26 @@ export async function findComments({
       },
     } as const;
 
-    let comments = await client.aOSMailMessage.find({
-      where: {
+    const getWhereConditions = () => {
+      const baseConditions = {
         relatedId: modelRecord.id,
         relatedModel: modelName,
-        OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+      };
+
+      const subappConditions = {
+        ...(subapp !== SUBAPP_CODES.quotations && {
+          OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+        }),
         ...(subapp === SUBAPP_CODES.forum && {
           parentMailMessage: {id: {eq: null}},
         }),
-      },
+      };
+
+      return {...baseConditions, ...subappConditions};
+    };
+
+    let comments = await client.aOSMailMessage.find({
+      where: getWhereConditions(),
       orderBy,
       take: limit,
       ...(skip ? {skip} : {}),

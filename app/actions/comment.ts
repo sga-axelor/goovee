@@ -138,7 +138,6 @@ export async function fetchComments({
       workspaceURL,
       tenantId,
     });
-
     return response.error
       ? {error: true, message: 'Error while fetching comments.'}
       : response;

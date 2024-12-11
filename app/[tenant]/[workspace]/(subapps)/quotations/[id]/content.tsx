@@ -13,15 +13,15 @@ import {
   DialogTitle,
   DialogContent,
   Button,
+  Comments,
 } from '@/ui/components';
 import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
+import {DEFAULT_CURRENCY_CODE, SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  Comments,
   Informations,
   Total,
   ContactDetails,
@@ -198,12 +198,10 @@ function Paypal({onApprove, quotation}: any) {
 
 const Content = ({
   quotation,
-  comments,
   workspace,
   orderSubapp,
 }: {
   quotation: Quotation;
-  comments: CommentsProps[];
   workspace: PortalWorkspace;
   orderSubapp?: boolean;
 }) => {
@@ -315,8 +313,8 @@ const Content = ({
                 tenant={tenant}
               />
             </div>
-            <Comments comments={comments} />
           </div>
+
           {statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION && (
             <div className="flex flex-col gap-6 basis-full lg:basis-1/4">
               <Total
@@ -330,6 +328,24 @@ const Content = ({
               />
             </div>
           )}
+        </div>
+        <div className="rounded-md border bg-card p-4 mt-5">
+          <h4 className="text-xl font-semibold border-b">
+            {i18n.get('Comments')}
+          </h4>
+          <Comments
+            record={{id: quotation.id}}
+            subapp={SUBAPP_CODES.quotations}
+            showCommentsByDefault
+            showTopBorder={false}
+            showReactions={false}
+            hideCloseComments
+            hideCommentsHeader
+            hideSortBy
+            inputPosition="top"
+            sortByProp={SORT_TYPE.new}
+            key={Math.random()}
+          />
         </div>
       </Container>
       <Dialog open={confirmingQuotation}>

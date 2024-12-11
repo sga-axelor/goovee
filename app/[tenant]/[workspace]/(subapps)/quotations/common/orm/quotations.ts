@@ -7,11 +7,10 @@ import {
 } from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
 import type {ID, PortalWorkspace} from '@/types';
+import {manager} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
-import {manager} from '@/tenant';
-import {RELATED_MODELS} from '@/constants/models';
 
 export const fetchQuotations = async ({
   page,
@@ -199,51 +198,4 @@ export async function findQuotation({
     }),
     totalDiscount,
   };
-}
-
-// TODO: remove this getComments()
-export async function getComments({
-  id,
-  tenantId,
-}: {
-  id: ID;
-  tenantId: Tenant['id'];
-}) {
-  if (!tenantId) return [];
-
-  const client = await manager.getClient(tenantId);
-
-  const comments = await client.aOSMailMessage.find({
-    where: {
-      relatedId: id as any,
-      relatedModel: RELATED_MODELS.SALE_ORDER_MODEL as string,
-    },
-    select: {
-      subject: true,
-      body: true,
-      type: true,
-      createdOn: true,
-      updatedOn: true,
-      author: true,
-    },
-  });
-
-  const $comments = comments
-    ?.map((comment: any) => {
-      let body;
-      try {
-        body = JSON.parse(comment.body);
-      } catch (error) {
-        body = comment.body;
-      }
-      return {
-        ...comment,
-        body: body,
-      };
-    })
-    ?.sort((a: any, b: any) => {
-      return parseInt(b.id) - parseInt(a.id);
-    });
-
-  return $comments;
 }

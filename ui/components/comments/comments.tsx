@@ -124,7 +124,7 @@ export function Comments({
       )}
       <div className={`${showTopBorder ? 'border-t' : ''}`}>
         {showCommentInputOnTop && (
-          <div className="flex items-center gap-6 px-4 py-2">
+          <div className="flex items-center gap-6 py-2">
             {showReactions && (
               <div
                 className={`${!isDisabled ? 'cursor-pointer' : 'bg-gray-light text-gray-dark p-2 rounded-lg cursor-not-allowed'}`}>
@@ -134,7 +134,7 @@ export function Comments({
             {renderCommentInput()}
           </div>
         )}
-        {showComments && (
+        {showComments && comments?.length ? (
           <div
             className={`border-t flex flex-col gap-4 ${usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4'}`}>
             {!hideSortBy && (
@@ -152,6 +152,7 @@ export function Comments({
                 <Separator style={{flexShrink: 1}} />
               </div>
             )}
+
             <CommentsList
               record={record}
               disabled={isDisabled}
@@ -190,6 +191,8 @@ export function Comments({
               </div>
             )}
           </div>
+        ) : (
+          <></>
         )}
         {showCommentInputOnBottom && renderCommentInput()}
       </div>

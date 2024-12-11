@@ -12,6 +12,8 @@ import {findPosts} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/orm/f
 import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
 import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/common/orm/tickets';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
+import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
+import {getWhereClause as getQuotationsWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/utils/quotations';
 
 export async function findByID({
   subapp,
@@ -123,6 +125,30 @@ export async function findByID({
     case SUBAPP_CODES.orders:
       response = await findOrder({id, tenantId});
       break;
+    case SUBAPP_CODES.quotations:
+      if (!user) {
+        return {
+          error: true,
+          message: await getTranslation('Unauthorized'),
+        };
+      }
+      const {isContact, id: userID, mainPartnerId} = user;
+
+      const {role} = app;
+
+      const where = getQuotationsWhereClause(
+        isContact,
+        role,
+        userID,
+        mainPartnerId,
+      );
+      response = await findQuotation({
+        id,
+        tenantId,
+        params: {where},
+      });
+      break;
+
     default:
       return {
         error: true,

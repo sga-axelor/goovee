@@ -74,8 +74,7 @@ export function useComments({
           toast({
             variant: 'destructive',
             title: i18n.get(
-              response.error.message ||
-                'An error occurred while fetching comments.',
+              response?.message || 'An error occurred while fetching comments.',
             ),
           });
         }
