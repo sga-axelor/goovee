@@ -22,7 +22,7 @@ import {
   BackgroundImage,
   Quantity,
 } from '@/ui/components';
-import {useQuantity} from '@/ui/hooks';
+import {useQuantity, useToast} from '@/ui/hooks';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {computeTotal} from '@/utils/cart';
 import {getImageURL} from '@/utils/files';
@@ -39,9 +39,10 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   const {updateQuantity, getProductNote, setProductNote} = useCart();
   const {workspaceURI, tenant} = useWorkspace();
   const [note, setNote] = useState('');
+  const {toast} = useToast();
 
   // Hooks should always be called unconditionally
-  const {quantity, increment, decrement} = useQuantity({
+  const {quantity, increment, decrement, setQuantity} = useQuantity({
     initialValue: item?.computedProduct ? Number(item.quantity) : 0,
   });
 
@@ -53,9 +54,11 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
       productId: Product['id'];
       quantity: number;
     }) => {
-      setUpdating(true);
-      await updateQuantity({productId, quantity});
-      setUpdating(false);
+      if (quantity > 0) {
+        setUpdating(true);
+        await updateQuantity({productId, quantity});
+        setUpdating(false);
+      }
     },
     [updateQuantity],
   );
@@ -83,6 +86,15 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
     const {value} = event.target;
     setNote(value);
     await setProductNote(item.computedProduct.product.id, value);
+  };
+  const handleChange = (newValue: string | number) => {
+    if (Number(newValue) < 1) {
+      toast({
+        variant: 'destructive',
+        description: i18n.get('Enter valid quantity'),
+      });
+    }
+    setQuantity(Number(newValue));
   };
 
   if (!item.computedProduct) return null;
@@ -126,6 +138,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
               disabled={updating}
               onIncrement={increment}
               onDecrement={decrement}
+              onChange={handleChange}
             />
           </div>
         </div>

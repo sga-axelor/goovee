@@ -25,6 +25,8 @@ export default function CartContextProvider({
   const [loading, setLoading] = useState(true);
   const {workspaceURL, workspaceURI} = useWorkspace();
 
+  // TODO: Update CART_KEY to include both 'workspaceURL' and 'tenant ID'
+
   const CART_KEY = useMemo(
     () => PREFIX_CART_KEY + '-' + workspaceURL,
     [workspaceURL],

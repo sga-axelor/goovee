@@ -37,8 +37,8 @@ export function ProductView({
   const {workspaceURI, tenant} = useWorkspace();
   const {product, price} = computedProduct;
   const [updating, setUpdating] = useState(false);
-  const {quantity, increment, decrement} = useQuantity();
-  const {addItem, getProductQuantity, getProductNote, setProductNote} =
+  const {quantity, increment, decrement, setQuantity} = useQuantity();
+  const {updateQuantity, getProductQuantity, getProductNote, setProductNote} =
     useCart();
   const [cartQuantity, setCartQuantity] = useState(0);
   const [note, setNote] = useState('');
@@ -47,12 +47,17 @@ export function ProductView({
   const handleAddToCart = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
+    if (quantity < 1) {
+      toast({
+        variant: 'destructive',
+        description: i18n.get('Enter valid quantity'),
+      });
+      return;
+    }
     setUpdating(true);
-    setCartQuantity(q => Number(q) + Number(quantity));
-    await addItem({productId: product.id, quantity});
-    toast({
-      title: i18n.get('Added to cart'),
-    });
+    setCartQuantity(quantity);
+    await updateQuantity({productId: product.id, quantity});
+    toast({title: i18n.get('Added to cart')});
     setUpdating(false);
   };
 
@@ -74,10 +79,11 @@ export function ProductView({
       if (!product) return;
       const quantity = await getProductQuantity(product.id);
       setCartQuantity(quantity);
+      setQuantity(quantity || 1);
       const note = await getProductNote(product.id);
       setNote(note);
     })();
-  }, [getProductNote, getProductQuantity, product]);
+  }, [getProductNote, getProductQuantity, product, setQuantity]);
 
   return (
     <div>
@@ -132,6 +138,8 @@ export function ProductView({
                 value={quantity}
                 onIncrement={increment}
                 onDecrement={decrement}
+                onChange={newValue => setQuantity(Number(newValue))}
+                disabled={updating}
               />
             </div>
             <Button

@@ -24,6 +24,7 @@ export function useQuantity(
       quantity,
       increment,
       decrement,
+      setQuantity,
     }),
     [quantity, increment, decrement],
   );
