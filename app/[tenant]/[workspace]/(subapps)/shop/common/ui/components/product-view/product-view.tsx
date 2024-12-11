@@ -21,17 +21,20 @@ import type {ComputedProduct, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {Categories} from '..';
+import {ProductMetaFieldView} from '../product-meta-field-view';
 
 export function ProductView({
   product: computedProduct,
   workspace,
   breadcrumbs,
   categories,
+  metaFields,
 }: {
   categories?: any;
   product: ComputedProduct;
   workspace?: PortalWorkspace;
   breadcrumbs: any;
+  metaFields: any;
 }) {
   const router = useRouter();
   const {workspaceURI, tenant} = useWorkspace();
@@ -118,6 +121,10 @@ export function ProductView({
                 <p className="text-sm">{price.displayPrimary}</p>
               </>
             )}
+            <ProductMetaFieldView
+              productAttrs={product.productAttrs}
+              fields={metaFields}
+            />
             <p
               className="text-sm mb-0"
               dangerouslySetInnerHTML={{

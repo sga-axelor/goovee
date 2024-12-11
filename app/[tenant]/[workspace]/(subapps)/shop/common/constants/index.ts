@@ -24,3 +24,6 @@ export const SORT_BY_OPTIONS = [
     label: 'Price: High-Low',
   },
 ];
+
+export const BASE_PRODUCT_MODEL = 'com.axelor.apps.base.db.Product';
+export const PRODUCT_ATTRS = 'productAttrs';

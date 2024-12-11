@@ -10,6 +10,12 @@ import {workspacePathname} from '@/utils/workspace';
 import {ProductView} from '@/subapps/shop/common/ui/components';
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
+import {findModelFields} from '@/subapps/events/common/orm/meta-json-field';
+import {
+  BASE_PRODUCT_MODEL,
+  PRODUCT_ATTRS,
+} from '@/subapps/shop/common/constants';
+import {transformMetaFields} from '../../../../common/actions/meta-field-value';
 
 export default async function Page({
   params,
@@ -71,6 +77,18 @@ export default async function Page({
 
   if (!computedProduct) redirect(`${workspaceURI}/shop`);
 
+  const metaFields = await findModelFields({
+    modelName: BASE_PRODUCT_MODEL,
+    modelField: PRODUCT_ATTRS,
+    tenantId: tenant,
+  }).then(clone);
+
+  const metaFieldsValues = await transformMetaFields(
+    metaFields,
+    computedProduct.product.productAttrs,
+    tenant,
+  );
+
   let breadcrumbs: any = [];
 
   const getbreadcrumbs: any = (category: any) => {
@@ -107,6 +125,7 @@ export default async function Page({
       workspace={workspace}
       breadcrumbs={breadcrumbs}
       categories={parentcategories}
+      metaFields={metaFieldsValues}
     />
   );
 }

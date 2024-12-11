@@ -147,6 +147,7 @@ export async function findProducts({
         picture: {
           id: true,
         },
+        productAttrs: true,
         allowCustomNote: true,
         portalImageList: {
           select: {
