@@ -45,6 +45,9 @@ const partnerFields = {
   },
   partnerTypeSelect: true,
   registrationCode: true,
+  isRegisteredOnPortal: true,
+  isActivatedOnPortal: true,
+  createdFromSelect: true,
 };
 
 export async function findPartnerById(id: ID, tenantId: Tenant['id']) {
@@ -202,6 +205,7 @@ export async function registerPartner({
   email,
   workspaceURL,
   tenantId,
+  isContact,
 }: {
   type: UserType;
   companyName?: string;
@@ -213,6 +217,7 @@ export async function registerPartner({
   email: string;
   workspaceURL?: string;
   tenantId: Tenant['id'];
+  isContact?: boolean;
 }) {
   const client = await manager.getClient(tenantId);
 
@@ -229,10 +234,12 @@ export async function registerPartner({
     firstName,
     name: isCompany ? companyName : name,
     password: hashedPassword,
-    isContact: false,
+    isContact: isContact || false,
     isCustomer: true,
     fullName: `${name} ${firstName || ''}`,
     createdFromSelect: USER_CREATED_FROM,
+    isRegisteredOnPortal: true,
+    isActivatedOnPortal: true,
     emailAddress: {
       create: {
         address: email,
@@ -253,8 +260,22 @@ export async function registerPartner({
     }
   }
 
-  const partner = await client.aOSPartner.create({data}).then(clone);
+  const existingPartner = await findPartnerByEmail(email, tenantId);
 
+  if (existingPartner && !existingPartner.isRegisteredOnPortal) {
+    const {id, version} = existingPartner;
+    const udpatedPartner = await client.aOSPartner.update({
+      data: {
+        ...data,
+        id,
+        version,
+      },
+    });
+
+    return udpatedPartner;
+  }
+
+  const partner = await client.aOSPartner.create({data}).then(clone);
   return partner;
 }
 

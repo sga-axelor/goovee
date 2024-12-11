@@ -221,9 +221,9 @@ export async function register({
     throw new Error('Tenant is required.');
   }
 
-  const existing = await findPartnerByEmail(email, tenantId);
+  const $partner = await findPartnerByEmail(email, tenantId);
 
-  if (existing) {
+  if ($partner && $partner.isRegisteredOnPortal) {
     return {
       error: true,
       message: await getTranslation('Email already exists'),

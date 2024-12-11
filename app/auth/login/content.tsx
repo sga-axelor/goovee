@@ -8,24 +8,18 @@ import {FaGoogle} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
-import {
-  TextField,
-  Checkbox,
-  Label,
-  Button,
-  Separator,
-  StyledAlert,
-} from '@/ui/components';
+import {TextField, Checkbox, Label, Button, Separator} from '@/ui/components';
 import {SEARCH_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {revalidate} from './actions';
+import {useToast} from '@/ui/hooks';
 
 export default function Content({canRegister}: {canRegister?: boolean}) {
   const [values, setValues] = useState({email: '', password: ''});
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(false);
+  const {toast} = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
@@ -46,7 +40,6 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
     event.preventDefault();
 
     setSubmitting(true);
-    setError(false);
 
     const {email, password} = values;
 
@@ -61,7 +54,10 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
       await revalidate();
       router.replace(redirection);
     } else {
-      setError(true);
+      toast({
+        title: i18n.get('Login unsuccessful, Try again'),
+        variant: 'destructive',
+      });
     }
 
     setSubmitting(false);
@@ -107,13 +103,6 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
             onChange={handleChange}
           />
         </div>
-        {error && (
-          <StyledAlert
-            variant="error"
-            show={true}
-            heading={i18n.get('The email or the password is wrong.')}
-          />
-        )}
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
