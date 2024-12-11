@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {findWorkspaces} from '@/orm/workspace';
 import {clone} from '@/utils';
+import {ALLOW_ALL_REGISTRATION, ALLOW_AOS_ONLY_REGISTRATION} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Form from './form';
@@ -37,7 +38,10 @@ export default async function Page({
 
   const workspace = workspaces.find((w: any) => w.url === workspaceURL);
 
-  const canRegister = workspace?.allowRegistrationSelect === 'yes';
+  const canRegister = [
+    ALLOW_ALL_REGISTRATION,
+    ALLOW_AOS_ONLY_REGISTRATION,
+  ].includes(workspace?.allowRegistrationSelect);
 
   if (!canRegister) {
     return notFound();

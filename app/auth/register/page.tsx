@@ -8,6 +8,7 @@ import {clone} from '@/utils';
 import Navigation from './navigation';
 import {extractSearchParams, isExistingUser} from './common/utils';
 import {UserExists} from './common/ui/components';
+import {ALLOW_ALL_REGISTRATION, ALLOW_AOS_ONLY_REGISTRATION} from '@/constants';
 
 export default async function Page({
   searchParams,
@@ -37,7 +38,10 @@ export default async function Page({
 
   const workspace = workspaces.find((w: any) => w.url === workspaceURL);
 
-  const canRegister = workspace?.allowRegistrationSelect === 'yes';
+  const canRegister = [
+    ALLOW_ALL_REGISTRATION,
+    ALLOW_AOS_ONLY_REGISTRATION,
+  ].includes(workspace?.allowRegistrationSelect);
 
   if (!canRegister) {
     return notFound();

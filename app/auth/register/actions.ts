@@ -8,11 +8,13 @@ import {UserType} from '@/auth/types';
 import {findPartnerByEmail, registerPartner} from '@/orm/partner';
 import {
   findDefaultPartnerWorkspaceConfig,
+  findWorkspaceByURL,
   findWorkspaces,
 } from '@/orm/workspace';
 import {getTranslation} from '@/i18n/server';
 import {manager, type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
+import {ALLOW_AOS_ONLY_REGISTRATION, ALLOW_NO_REGISTRATION} from '@/constants';
 
 export async function subscribe({
   workspace,
@@ -221,7 +223,28 @@ export async function register({
     throw new Error('Tenant is required.');
   }
 
+  if (!workspaceURL) {
+    throw new Error('Workspace is required.');
+  }
+
+  const workspace = await findWorkspaceByURL({url: workspaceURL, tenantId});
+
+  if (!workspace) {
+    throw new Error('Invalid workspace');
+  }
+
+  if (workspace.allowRegistrationSelect === ALLOW_NO_REGISTRATION) {
+    throw new Error('Registration not allowed');
+  }
+
   const $partner = await findPartnerByEmail(email, tenantId);
+
+  if (
+    workspace.allowRegistrationSelect === ALLOW_AOS_ONLY_REGISTRATION &&
+    !$partner
+  ) {
+    throw new Error('Registration not allowed');
+  }
 
   if ($partner && $partner.isRegisteredOnPortal) {
     return {

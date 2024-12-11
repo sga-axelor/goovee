@@ -189,3 +189,7 @@ export const SORT_BY_OPTIONS = [
  */
 
 export const USER_CREATED_FROM = 'portal';
+
+export const ALLOW_NO_REGISTRATION = 'no';
+export const ALLOW_ALL_REGISTRATION = 'yesForAll';
+export const ALLOW_AOS_ONLY_REGISTRATION = 'yesForAOS';

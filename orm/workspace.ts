@@ -587,6 +587,35 @@ export async function findContactWorkspaces({
     .filter(Boolean);
 }
 
+export async function findWorkspaceByURL({
+  url,
+  tenantId,
+}: {
+  url: string;
+  tenantId: Tenant['id'];
+}) {
+  if (!(url && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) return null;
+
+  return client.aOSPortalWorkspace.findOne({
+    where: {
+      url,
+    },
+    select: {
+      name: true,
+      navigationSelect: true,
+      url: true,
+      defaultGuestWorkspace: true,
+      defaultTheme:true,
+      defaultPartnerWorkspace: true,
+      allowRegistrationSelect: true,
+    },
+  });
+}
+
 export async function findWorkspaces({
   url,
   user,
