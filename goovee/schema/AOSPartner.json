@@ -104,6 +104,18 @@
     {
       "type": "String",
       "name": "registrationCode"
+    },
+    {
+      "type": "Boolean",
+      "name": "isRegisteredOnPortal"
+    },
+    {
+      "type": "Boolean",
+      "name": "isActivatedOnPortal"
+    },
+    {
+      "type": "String",
+      "name": "createdFromSelect"
     }
   ]
 }

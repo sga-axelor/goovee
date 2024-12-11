@@ -183,3 +183,9 @@ export const SORT_BY_OPTIONS = [
     label: i18n.get('Popular'),
   },
 ];
+
+/**
+ * REGISTRATION
+ */
+
+export const USER_CREATED_FROM = 'portal';

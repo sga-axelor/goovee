@@ -2,6 +2,7 @@ import {getSession} from '@/auth';
 import {UserType} from '@/auth/types';
 import {hash} from '@/auth/utils';
 import {manager, type Tenant} from '@/tenant';
+import {USER_CREATED_FROM} from '@/constants';
 import {clone} from '@/utils';
 import {ID, Partner, PortalWorkspace} from '@/types';
 import {
@@ -231,6 +232,7 @@ export async function registerPartner({
     isContact: false,
     isCustomer: true,
     fullName: `${name} ${firstName || ''}`,
+    createdFromSelect: USER_CREATED_FROM,
     emailAddress: {
       create: {
         address: email,
