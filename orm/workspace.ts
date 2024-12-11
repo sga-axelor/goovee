@@ -609,7 +609,7 @@ export async function findWorkspaceByURL({
       navigationSelect: true,
       url: true,
       defaultGuestWorkspace: true,
-      defaultTheme:true,
+      defaultTheme: true,
       defaultPartnerWorkspace: true,
       allowRegistrationSelect: true,
     },
