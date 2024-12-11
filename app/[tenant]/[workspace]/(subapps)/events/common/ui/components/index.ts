@@ -36,3 +36,4 @@ export {EventDetails} from './event-details';
 
 export {MobileMenuCategory} from './mobile-menu-category';
 export {SearchItem} from './search-item';
+export {EventHeader} from './event-header';
