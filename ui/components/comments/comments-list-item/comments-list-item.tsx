@@ -320,6 +320,7 @@ export const CommentListItem = ({
           {showCommentInput && (
             <div className="my-2">
               <CommentInput
+                autoFocus
                 disabled={isDisabled}
                 className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
                 placeholderText={

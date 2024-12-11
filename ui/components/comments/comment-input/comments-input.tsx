@@ -27,6 +27,7 @@ type CommentProps = {
   showAttachmentIcon?: boolean;
   className?: string;
   onSubmit: any;
+  autoFocus?: boolean;
 };
 
 const MAX_FILE_SIZE = 20000000; // 20 MB
@@ -55,6 +56,7 @@ export function CommentInput({
   placeholderText = 'Enter text here*',
   showAttachmentIcon = true,
   onSubmit,
+  autoFocus = false,
 }: CommentProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -131,6 +133,7 @@ export function CommentInput({
               <FormItem className="w-full">
                 <FormControl>
                   <Input
+                    autoFocus={autoFocus}
                     className={cn(
                       'h-10 placeholder:text-sm placeholder:text-gray-dark',
                       className,
