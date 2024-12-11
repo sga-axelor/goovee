@@ -34,10 +34,6 @@ export const GLOBAL_MENU = [
 
 export const WORKSPACE_MENU = [
   {
-    label: i18n.get('Members'),
-    route: ROUTES.members,
-  },
-  {
     label: i18n.get('Notifications'),
     route: ROUTES.notifications,
   },
@@ -45,6 +41,14 @@ export const WORKSPACE_MENU = [
     label: i18n.get('My apps'),
     route: ROUTES.apps,
   },
+];
+
+export const ADMIN_WORKSPACE_MENU = [
+  {
+    label: i18n.get('Members'),
+    route: ROUTES.members,
+  },
+  ...WORKSPACE_MENU,
 ];
 
 export const RoleLabel = {

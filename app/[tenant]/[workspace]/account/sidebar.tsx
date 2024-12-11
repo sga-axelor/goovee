@@ -9,7 +9,11 @@ import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {GLOBAL_MENU, WORKSPACE_MENU} from './common/constants';
+import {
+  GLOBAL_MENU,
+  WORKSPACE_MENU,
+  ADMIN_WORKSPACE_MENU,
+} from './common/constants';
 
 type Item = {
   label: string;
@@ -47,11 +51,14 @@ function Menu({title, items}: {title: string; items: Item[]}) {
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({isAdmin}: {isAdmin: boolean}) {
   return (
     <div className="border-e space-y-10 py-2">
       <Menu title={i18n.get('Global')} items={GLOBAL_MENU} />
-      <Menu title={i18n.get('Workspace')} items={WORKSPACE_MENU} />
+      <Menu
+        title={i18n.get('Workspace')}
+        items={isAdmin ? ADMIN_WORKSPACE_MENU : WORKSPACE_MENU}
+      />
     </div>
   );
 }
