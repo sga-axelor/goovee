@@ -1,5 +1,5 @@
 import {log} from 'console';
-import {findModelRecords} from '../orm/meta_json_record';
+import {findModelRecord, findModelRecords} from '../orm/meta_json_record';
 
 export async function transformMetaFields(
   metaFields: any[],
@@ -14,15 +14,23 @@ export async function transformMetaFields(
     if (attrs) {
       if (field.type === 'json-many-to-one' && attrs[field.name]) {
         try {
-          const modelRecords = await findModelRecords({
+          const modelRecord = await findModelRecord({
             recordId: attrs[field.name].id,
             tenantId: tenantId,
           });
 
-          value = modelRecords.map(modelRecord => modelRecord.attrs);
+          value = modelRecord?.attrs;
         } catch (error) {
           value = attrs[field.name];
         }
+      } else if (field.type === 'json-many-to-many' && attrs[field.name]) {
+        const recordIds = attrs[field.name].map((attr: any) => attr.id);
+        const modelRecords = await findModelRecords({
+          recordIds: recordIds,
+          tenantId: tenantId,
+        });
+
+        value = modelRecords.map((modelRecord: any) => modelRecord.attrs);
       } else {
         value = attrs[field.name];
       }

@@ -1,6 +1,7 @@
 'use client';
 import React, {useState} from 'react';
 import {MdOutlineChevronRight} from 'react-icons/md';
+import {MetaFieldPicture} from '../MetafieldPicture';
 
 export function ProductMetaFieldView({
   fields,
@@ -20,8 +21,48 @@ export function ProductMetaFieldView({
     }));
   };
 
-  const renderFieldValue = (field: any) => {
-    if (field.type === 'json-many-to-one' && field.value) {
+  const isImage = (type: string) => {
+    console.log('le type : ', type);
+    if (type === 'image/png') {
+      return true;
+    }
+  };
+
+  const renderFieldMTM = (field: any) => {
+    const fieldValue = field.value[0].value;
+    if (fieldValue.fileType && isImage(fieldValue.fileType)) {
+      return (
+        <div className="w-full">
+          <div
+            onClick={() => toggleField(field.title)}
+            className="flex items-center cursor-pointer gap-2">
+            <MdOutlineChevronRight
+              className={`transition-transform duration-200 ${
+                expandedFields[field.title] ? 'rotate-90' : ''
+              }`}
+              size={15}
+            />
+            <span className="font-medium">{field.title}</span>
+          </div>
+          {expandedFields[field.title] && (
+            <div className="ml-7 mt-2 space-y-4">
+              {Array.isArray(field.value) ? (
+                field.value.map((image, index) => (
+                  <MetaFieldPicture image={image.value} key={index} />
+                ))
+              ) : (
+                <MetaFieldPicture image={field.value.value} />
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+  };
+
+  const renderFieldValueMTO = (field: any) => {
+    const fieldValue = field.value.value;
+    if (fieldValue.fileType && isImage(fieldValue.fileType)) {
       return (
         <div className="w-full">
           <div
@@ -37,13 +78,34 @@ export function ProductMetaFieldView({
           </div>
           {expandedFields[field.title] && (
             <div className="ml-7 mt-2">
-              <img
-                src={`${process.env.NEXT_PUBLIC_AOS_URL}/ws/rest/com.axelor.meta.db.MetaFile/${field.value[0].image.id}/content/download`}
-                alt={field.value.name || 'Image'}
-                className="w-64 h-64 object-contain rounded"
-              />
+              <MetaFieldPicture image={fieldValue} />
             </div>
           )}
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex">
+          <div>
+            <span className="font-medium">{field.title}</span> : {fieldValue}
+          </div>
+        </div>
+      );
+    }
+  };
+
+  const renderFieldValue = (field: any) => {
+    console.log('fieldfield', field);
+    if (field.type === 'json-many-to-one' && field.value) {
+      return renderFieldValueMTO(field);
+    } else if (field.type === 'json-many-to-many') {
+      return renderFieldMTM(field);
+    } else if (field.type === 'json-many-to-many') {
+      return (
+        <div className="flex">
+          <div>
+            <span className="font-medium">coucou</span> : coucou
+          </div>
         </div>
       );
     }
