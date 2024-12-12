@@ -9,6 +9,7 @@ import {findPartnerByEmail, registerPartner} from '@/orm/partner';
 import {
   findDefaultPartnerWorkspaceConfig,
   findWorkspaceByURL,
+  findWorkspaceMembers,
   findWorkspaces,
 } from '@/orm/workspace';
 import {getTranslation} from '@/i18n/server';
@@ -250,6 +251,22 @@ export async function register({
     return {
       error: true,
       message: await getTranslation('Email already exists'),
+    };
+  }
+
+  const existingMembers = await findWorkspaceMembers({
+    tenantId,
+    url: workspaceURL,
+  });
+
+  const alreadyHasPartnerInWorkspace = existingMembers?.partners?.length;
+
+  if (alreadyHasPartnerInWorkspace) {
+    return {
+      error: true,
+      message: await getTranslation(
+        'You cannot register, partner already exists for the workspace',
+      ),
     };
   }
 
