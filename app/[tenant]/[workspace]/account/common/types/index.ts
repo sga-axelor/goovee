@@ -3,6 +3,7 @@ import {PortalApp} from '@/types';
 export enum Role {
   user = 'user',
   admin = 'admin',
+  owner = 'owner',
 }
 
 export enum Authorization {

@@ -3,12 +3,18 @@ import {notFound} from 'next/navigation';
 // ---- CORE IMPORT ---- //
 import {getSession} from '@/auth';
 import {PartnerTypeMap, findPartnerByEmail} from '@/orm/partner';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORT ---- //
 import Form from './form';
+import {Role} from '../common/types';
 
-export default async function Page({params}: {params: {tenant: string}}) {
-  const {tenant} = params;
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string};
+}) {
+  const {tenant, workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
   const user = session?.user;
@@ -34,6 +40,23 @@ export default async function Page({params}: {params: {tenant: string}}) {
     fullName,
   } = partner;
 
+  const isPartner = !partner.isContact;
+  const isAdminContact =
+    partner.isContact &&
+    partner.contactWorkspaceConfigSet?.find(
+      (c: any) => c.portalWorkspace?.url === workspaceURL,
+    )?.isAdmin;
+
+  let role: Role = Role.user;
+
+  if (isAdminContact) {
+    role = Role.admin;
+  }
+
+  if (isPartner) {
+    role = Role.owner;
+  }
+
   const type = Object.entries(PartnerTypeMap).find(
     ([key, value]) => value === partnerTypeSelect,
   )?.[0];
@@ -48,6 +71,7 @@ export default async function Page({params}: {params: {tenant: string}}) {
     email: emailAddress?.address,
     picture: picture?.id,
     fullName,
+    role,
   };
 
   return <Form settings={settings as any} />;

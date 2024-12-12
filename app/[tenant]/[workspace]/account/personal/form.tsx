@@ -38,6 +38,7 @@ import {useWorkspace} from '../../workspace-context';
 // ---- LOCAL IMPORTS ---- //
 import {Title} from '../common/ui/components';
 import {update, updateProfileImage} from './action';
+import {RoleLabel} from '../common/constants';
 
 const formSchema = z
   .object({
@@ -81,12 +82,6 @@ const formSchema = z
     },
   );
 
-enum Role {
-  user = 'user',
-  admin = 'admin',
-  owner = 'owner',
-}
-
 export default function Personal({
   settings: {
     type,
@@ -98,6 +93,7 @@ export default function Personal({
     email,
     picture: pictureProp,
     fullName,
+    role,
   },
 }: {
   settings: {
@@ -110,6 +106,7 @@ export default function Personal({
     email: string;
     picture?: string;
     fullName?: string;
+    role?: string;
   };
 }) {
   const {toast} = useToast();
@@ -131,7 +128,7 @@ export default function Personal({
       firstName: firstName || '',
       name,
       email,
-      role: Role.user,
+      role,
       showProfileAsContactOnDirectory: false,
       showNameOnDirectory: false,
       showLinkOnDirectory: false,
@@ -392,7 +389,11 @@ export default function Personal({
                   <FormItem>
                     <FormLabel>{i18n.get('Role')}</FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value} readOnly />
+                      <Input
+                        {...field}
+                        value={(RoleLabel as any)[field.value]}
+                        readOnly
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
