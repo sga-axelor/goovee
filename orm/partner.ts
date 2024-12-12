@@ -251,6 +251,7 @@ export async function registerContact({
 
   if (contactConfig?.id) {
     data.contactWorkspaceConfigSet = {select: [{id: contactConfig.id}]};
+    data.defaultWorkspace = {select: [{id: contactConfig.id}]};
   }
 
   const contact = await client.aOSPartner.create({data}).then(clone);

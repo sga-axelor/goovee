@@ -6,7 +6,7 @@ import {headers} from 'next/headers';
 import {getTranslation} from '@/i18n/server';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
-import {findPartnerWorkspaces} from '@/orm/workspace';
+import {findContactWorkspaces, findPartnerWorkspaces} from '@/orm/workspace';
 
 // ---- CORE IMPORTS ---- //
 import {findLocalizations} from '../common/orm/languages';
@@ -78,8 +78,10 @@ export async function updatePreference({
       data: {
         id: partner.id,
         version: partner.version,
-        defaultWorkspace: {select: {id: partnerWorkspace?.id}},
-        localization: {select: {id: localization}},
+        defaultWorkspace: defaultWorkspace
+          ? {select: {id: partnerWorkspace?.id}}
+          : null,
+        localization: localization ? {select: {id: localization}} : null,
       },
       tenantId,
     });
@@ -145,10 +147,16 @@ export async function fetchWorkspaces() {
   }
 
   try {
-    const workspaces = await findPartnerWorkspaces({
-      partnerId: user.id,
-      tenantId,
-    });
+    const workspaces = user.isContact
+      ? await findContactWorkspaces({
+          contactId: user.id,
+          partnerId: user.mainPartnerId!,
+          tenantId,
+        })
+      : await findPartnerWorkspaces({
+          partnerId: user.id,
+          tenantId,
+        });
 
     return {
       success: true,

@@ -160,7 +160,8 @@ export default function Page() {
                 <FormLabel>{i18n.get('Default Workspace')}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value?.toString()}>
+                  defaultValue={field.value?.toString()}
+                  disabled={user?.isContact}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue

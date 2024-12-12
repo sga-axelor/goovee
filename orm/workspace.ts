@@ -531,12 +531,12 @@ export async function findContactWorkspaces({
   contactId,
   tenantId,
 }: {
-  url: string;
+  url?: string;
   partnerId: ID;
   contactId: ID;
   tenantId: Tenant['id'];
 }) {
-  if (!(url && partnerId && contactId)) return [];
+  if (!(partnerId && contactId)) return [];
 
   const client = await manager.getClient(tenantId);
 
@@ -548,30 +548,36 @@ export async function findContactWorkspaces({
 
   if (!partnerWorkspaces?.length) return [];
 
-  const res: any = await client.aOSPartner.findOne({
-    where: {
-      id: contactId,
-    },
-    select: {
-      contactWorkspaceConfigSet: {
-        where: {
-          portalWorkspace: {
-            url: {
-              like: `${url}%`,
+  const res: any = await client.aOSPartner
+    .findOne({
+      where: {
+        id: contactId,
+      },
+      select: {
+        contactWorkspaceConfigSet: {
+          where: {
+            ...(url
+              ? {
+                  portalWorkspace: {
+                    url: {
+                      like: `${url}%`,
+                    },
+                  },
+                }
+              : {}),
+          },
+          select: {
+            portalWorkspace: {
+              id: true,
+              name: true,
+              url: true,
+              allowRegistrationSelect: true,
             },
           },
         },
-        select: {
-          portalWorkspace: {
-            id: true,
-            name: true,
-            url: true,
-            allowRegistrationSelect: true,
-          },
-        },
       },
-    },
-  });
+    })
+    .then(clone);
 
   if (!res?.contactWorkspaceConfigSet?.length) {
     return [];
