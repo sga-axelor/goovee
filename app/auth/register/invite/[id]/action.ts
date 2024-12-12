@@ -30,6 +30,12 @@ export async function register({
     return error(await getTranslation('Invalid invite'));
   }
 
+  if (!invite?.partner?.id) {
+    return error(
+      await getTranslation('No partner available for the workspace'),
+    );
+  }
+
   if (email !== invite.emailAddress?.address) {
     return error(await getTranslation('Bad request'));
   }
@@ -60,6 +66,7 @@ export async function register({
       password,
       tenantId,
       contactConfig,
+      partnerId: invite.partner.id,
     });
 
     const uri = `${workspace.url.replace(process.env.NEXT_PUBLIC_HOST, '')}`;

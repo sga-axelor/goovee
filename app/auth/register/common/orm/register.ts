@@ -25,8 +25,11 @@ export async function findInviteById({
       emailAddress: {
         address: true,
       },
+      partner: {
+        id: true,
+      },
       workspace: {
-        url:true,
+        url: true,
         allowRegistrationSelect: true,
       },
       contactAppPermissionList: {

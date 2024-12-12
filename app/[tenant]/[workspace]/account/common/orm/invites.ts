@@ -196,14 +196,16 @@ export async function createInvite({
   role = Role.user,
   email,
   apps,
+  partnerId,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   role: Role;
   email: string;
   apps: InviteAppsConfig;
+  partnerId: string;
 }) {
-  if (!(workspace?.id && tenantId && role && email && apps)) {
+  if (!(workspace?.id && tenantId && role && email && apps && partnerId)) {
     return null;
   }
 
@@ -265,6 +267,11 @@ export async function createInvite({
           workspace: {
             select: {
               id: workspace.id,
+            },
+          },
+          partner: {
+            select: {
+              id: partnerId,
             },
           },
           contactAppPermissionList: {

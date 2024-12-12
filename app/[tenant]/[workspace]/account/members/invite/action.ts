@@ -195,6 +195,7 @@ export async function sendInvites({
         email,
         role,
         apps: filteredApps,
+        partnerId: (user.isContact ? user.mainPartnerId : user.id) as any,
       });
 
       if (!invite?.id) {
