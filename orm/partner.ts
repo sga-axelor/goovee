@@ -39,6 +39,14 @@ const partnerFields = {
       },
     },
   },
+  contactWorkspaceConfigSet: {
+    select: {
+      portalWorkspace: {
+        id: true,
+        url: true,
+      },
+    },
+  },
   localization: {
     code: true,
     name: true,
@@ -187,6 +195,58 @@ export async function updatePartner({
     .then(clone);
 
   return partner;
+}
+
+export async function registerContact({
+  name,
+  firstName,
+  email,
+  password,
+  tenantId,
+  contactConfig,
+}: {
+  name: string;
+  firstName?: string;
+  email: string;
+  password: string;
+  tenantId: Tenant['id'];
+  contactConfig?: any;
+}) {
+  if (!(name && email && password && tenantId)) {
+    return null;
+  }
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) return null;
+
+  const hashedPassword = await hash(password);
+
+  const data: any = {
+    partnerTypeSelect: PartnerTypeMap[UserType.individual],
+    firstName,
+    name,
+    password: hashedPassword,
+    isContact: true,
+    isCustomer: true,
+    fullName: `${name} ${firstName || ''}`,
+    createdFromSelect: USER_CREATED_FROM,
+    isRegisteredOnPortal: true,
+    isActivatedOnPortal: true,
+    emailAddress: {
+      create: {
+        address: email,
+        name: email,
+      },
+    },
+  };
+
+  if (contactConfig?.id) {
+    data.contactWorkspaceConfigSet = {select: [{id: contactConfig.id}]};
+  }
+
+  const contact = await client.aOSPartner.create({data}).then(clone);
+  return contact;
 }
 
 export const PartnerTypeMap = {

@@ -11,6 +11,7 @@ import {TENANT_HEADER} from '@/middleware';
 import {findPartnerByEmail, isAdminContact, isPartner} from '@/orm/partner';
 import {findWorkspace} from '@/orm/workspace';
 import NotificationManager, {NotificationType} from '@/notification';
+import {SEARCH_PARAMS} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -161,7 +162,7 @@ export async function sendInvites({
   }
 
   const filteredApps = Object.entries(apps).reduce((acc, [code, config]) => {
-    const availableApp = availableApps.find(a => a.code === code);
+    const availableApp = availableApps.find((a: any) => a.code === code);
     if (config && availableApp) {
       acc[code] = {...config, id: availableApp.id};
     }
@@ -206,7 +207,7 @@ export async function sendInvites({
       mailService?.notify(
         inviteTemplate({
           email,
-          link: `${workspace.url}/auth/register?invite=${invite.id}`,
+          link: `${process.env.NEXT_PUBLIC_HOST}/auth/register/invite/${invite.id}?${SEARCH_PARAMS.TENANT_ID}=${tenantId}`,
         }),
       );
     } catch (err) {
