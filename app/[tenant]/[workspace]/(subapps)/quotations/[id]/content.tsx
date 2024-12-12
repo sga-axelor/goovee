@@ -17,7 +17,12 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {DEFAULT_CURRENCY_CODE, SORT_TYPE, SUBAPP_CODES} from '@/constants';
+import {
+  DEFAULT_CURRENCY_CODE,
+  SORT_TYPE,
+  SUBAPP_CODES,
+  SUBAPP_PAGE,
+} from '@/constants';
 import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -28,10 +33,7 @@ import {
   ProductsList,
 } from '@/subapps/quotations/common/ui/components';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
-import type {
-  CommentsProps,
-  Quotation,
-} from '@/subapps/quotations/common/types/quotations';
+import type {Quotation} from '@/subapps/quotations/common/types/quotations';
 import {
   confirmQuotation,
   createStripeCheckoutSession,
@@ -291,6 +293,12 @@ const Content = ({
     );
   };
 
+  const handleAddressSelection = () => {
+    router.push(
+      `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotation.id}/${SUBAPP_PAGE.address}`,
+    );
+  };
+
   return (
     <>
       <Container title={`${i18n.get('Quotation')} ${saleOrderSeq}`}>
@@ -307,6 +315,7 @@ const Content = ({
                 company={company}
                 mainInvoicingAddress={mainInvoicingAddress}
                 deliveryAddress={deliveryAddress}
+                onAddressSelection={handleAddressSelection}
               />
               <ProductsList
                 saleOrderLineList={saleOrderLineList}

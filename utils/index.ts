@@ -28,8 +28,8 @@ export function isNumeric(str: string) {
   return !isNaN(Number(str)) && !isNaN(parseFloat(str));
 }
 
-export function getCityName(addressl6: string) {
-  const city = addressl6.split(' ').pop();
+export function getCityName(addressl6?: string) {
+  const city = addressl6?.split(' ').pop();
   return city;
 }
 

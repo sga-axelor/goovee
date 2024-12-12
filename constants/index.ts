@@ -88,6 +88,9 @@ export const SUBAPP_PAGE = {
   archived: '/archived',
   invoices: '/unpaid',
   checkout: `${SUBAPP_CODES.shop}/cart/checkout`,
+  address: 'address',
+  create: 'create',
+  edit: 'edit',
 };
 
 /**
@@ -206,3 +209,11 @@ export const DEFAULT_LANGUAGE_CODE = 'en';
  */
 
 export const RESPONSIVE_SIZES = ['xs', 'sm', 'md'] as const;
+
+/**
+ * Address
+ */
+export enum ADDRESS_TYPE {
+  invoicing = 'invoicing',
+  delivery = 'delivery',
+}

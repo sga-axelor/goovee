@@ -15,7 +15,8 @@ export const ContactDetails = ({
   company,
   mainInvoicingAddress,
   deliveryAddress,
-}: ContactProps) => {
+  onAddressSelection,
+}: ContactProps & {onAddressSelection: () => void}) => {
   const billingAddressCity = getCityName(mainInvoicingAddress?.addressl6);
   const deliveryAddressCity = getCityName(deliveryAddress?.addressl6);
 
@@ -40,7 +41,9 @@ export const ContactDetails = ({
               </div>
             </div>
             <div className="flex">
-              <Button className="bg-white border border-success text-success hover:bg-success hover:text-white rounded-md font-medium text-base py-1.5 px-3">
+              <Button
+                className="bg-white border border-success text-success hover:bg-success hover:text-white rounded-md font-medium text-base py-1.5 px-3"
+                onClick={onAddressSelection}>
                 {i18n.get('Choose another address')}
               </Button>
             </div>
