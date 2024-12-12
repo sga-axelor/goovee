@@ -220,3 +220,4 @@ export {BadgeList} from './badge-list';
 export {TableList, SortableHeader, ExpandableTableRows} from './table-list';
 export {Chip} from './chip';
 export {ArrowSwitch} from './arrow-switch';
+export {Countries} from './countries';
