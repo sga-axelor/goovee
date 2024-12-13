@@ -13,7 +13,7 @@ import {
 } from '@/ui/components';
 import {cn} from '@/utils/css';
 
-type CountriesProps = {
+type DropdownSelectorProps = {
   options: any[];
   label: string;
   placeholder?: string;
@@ -24,7 +24,7 @@ type CountriesProps = {
   onValueChange: (selectedOption: {id: string; name: string}) => void;
 };
 
-export function Countries({
+export function DropdownSelector({
   options = [],
   label,
   placeholder = 'Select an option',
@@ -33,7 +33,7 @@ export function Countries({
   rootClassName,
   isRequired,
   onValueChange,
-}: CountriesProps) {
+}: DropdownSelectorProps) {
   return (
     <div className={rootClassName}>
       <Label className={cn('font-medium mb-1', labelClassName)}>
@@ -63,4 +63,4 @@ export function Countries({
     </div>
   );
 }
-export default Countries;
+export default DropdownSelector;
