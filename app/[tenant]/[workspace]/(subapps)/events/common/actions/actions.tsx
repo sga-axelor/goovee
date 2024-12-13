@@ -9,9 +9,14 @@ import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
 import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getSession} from '@/auth';
+import {type Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
+import {
+  findAllRegisteredEvents,
+  findEventByID,
+  findEvents,
+} from '@/subapps/events/common/orm/event';
 import {findContact} from '@/subapps/events/common/orm/partner';
 
 import {
@@ -37,6 +42,7 @@ export async function getAllEvents({
   workspace,
   tenantId,
   user,
+  onlyRegisteredEvent = false,
 }: {
   limit?: number;
   page?: number;
@@ -50,6 +56,7 @@ export async function getAllEvents({
   workspace?: any;
   tenantId?: any;
   user?: User;
+  onlyRegisteredEvent?: boolean;
 }) {
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
@@ -68,21 +75,36 @@ export async function getAllEvents({
   }
 
   try {
-    const {events, pageInfo} = await findEvents({
-      limit: limit,
-      page: page,
-      categoryids: categories,
-      day: day,
-      search: search,
-      month: month,
-      year: year,
-      selectedDates: dates,
-      workspace,
-      tenantId,
-      user,
-    }).then(clone);
-
-    return {events, pageInfo};
+    if (onlyRegisteredEvent) {
+      const {events, pageInfo} = await findAllRegisteredEvents({
+        limit: limit,
+        page: page,
+        categoryids: categories,
+        day: day,
+        search: search,
+        month: month,
+        year: year,
+        selectedDates: dates,
+        workspace,
+        tenantId,
+      }).then(clone);
+      return {events, pageInfo};
+    } else {
+      const {events, pageInfo} = await findEvents({
+        limit: limit,
+        page: page,
+        categoryids: categories,
+        day: day,
+        search: search,
+        month: month,
+        year: year,
+        selectedDates: dates,
+        workspace,
+        tenantId,
+        user,
+      }).then(clone);
+      return {events, pageInfo};
+    }
   } catch (err) {
     console.log(err);
   }

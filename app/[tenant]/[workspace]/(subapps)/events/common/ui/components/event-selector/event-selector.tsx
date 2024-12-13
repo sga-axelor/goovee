@@ -32,6 +32,7 @@ export const EventSelector = ({
   categories,
   workspace,
   selectedCategories = [],
+  onlyRegisteredEvent = false,
 }: EventSelectorProps) => {
   const selectCategory = (category: Category) => {
     updateCateg(category);
@@ -55,6 +56,7 @@ export const EventSelector = ({
         selected={date}
         onSelect={handleSelect}
         className="flex justify-center mx-auto w-full md:flex-1"
+        onlyRegisteredEvent={onlyRegisteredEvent}
       />
       <div className="flex flex-col space-y-2 md:flex-1">
         <Collapsible

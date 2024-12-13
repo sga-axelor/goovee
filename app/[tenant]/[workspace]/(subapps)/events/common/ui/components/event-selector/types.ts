@@ -13,4 +13,5 @@ export interface EventSelectorProps {
   categories: Category[];
   workspace: PortalWorkspace;
   selectedCategories?: string[];
+  onlyRegisteredEvent?: boolean;
 }

@@ -147,8 +147,13 @@ export function Calendar({
   showOutsideDays = false,
   date,
   workspace,
+  onlyRegisteredEvent,
   ...props
-}: CalendarProps & {date: Date | undefined; workspace: any}) {
+}: CalendarProps & {
+  date: Date | undefined;
+  workspace: any;
+  onlyRegisteredEvent: boolean;
+}) {
   const [eventDates, setEventDates] = React.useState<Date[]>([]);
 
   const {data: session} = useSession();
@@ -222,7 +227,7 @@ export function Calendar({
           month: month.getMonth() + 1,
           year: month.getFullYear(),
           workspace,
-          user,
+          onlyRegisteredEvent,
         });
         const allDates = datesBetweenTwoDates(data);
 

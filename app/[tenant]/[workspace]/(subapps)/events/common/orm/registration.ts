@@ -1,9 +1,9 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
+import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getTranslation, t} from '@/locale/server';
 import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
-import type {ID, Participant, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';

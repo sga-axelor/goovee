@@ -7,6 +7,7 @@ import {getPageInfo} from '@/utils';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
+import {getSession} from '@/auth';
 
 export async function findEventByID({
   id,
@@ -237,6 +238,171 @@ export async function findEvents({
 
   const pageInfo = getPageInfo({
     count: events?.[0]?._count,
+    page,
+    limit,
+  });
+  return {events, pageInfo};
+}
+
+export async function findAllRegisteredEvents({
+  search,
+  categoryids,
+  page = 1,
+  limit,
+  day,
+  month,
+  year,
+  selectedDates,
+  workspace,
+  tenantId,
+}: {
+  search?: string;
+  categoryids?: ID[];
+  page?: string | number;
+  limit?: number;
+  day?: string | number;
+  month?: string | number;
+  year?: string | number;
+  selectedDates?: any[];
+  workspace?: PortalWorkspace;
+  tenantId: Tenant['id'];
+}) {
+  if (!tenantId) {
+    return {events: [], pageInfo: {}};
+  }
+  const session = await getSession();
+  const user = session?.user;
+  const client = await manager.getClient(tenantId);
+
+  let date, predicate: any;
+  if (day && month && year) {
+    predicate = 'day';
+    date = moment(`${day}-${month}-${year}`, 'DD-MM-YYYY');
+  } else if (month && year) {
+    predicate = 'month';
+    date = moment(`${month}-${year}`, 'MM-YYYY');
+  } else if (year) {
+    predicate = 'year';
+    date = moment(year, 'YYYY');
+  }
+
+  let startDate, endDate;
+  if (year) {
+    startDate = formatDateToISOString(date?.startOf(predicate));
+    endDate = formatDateToISOString(date?.endOf(predicate));
+  }
+
+  const eventStartDateTimeCriteria = selectedDates?.map((date: any) => ({
+    eventStartDateTime: {
+      between: [
+        moment(date).startOf('day').format(DATE_FORMATS.timestamp_with_seconds),
+        moment(date).endOf('day').format(DATE_FORMATS.timestamp_with_seconds),
+      ],
+    },
+  }));
+
+  const skip = Number(limit) * Math.max(Number(page) - 1, 0);
+
+  const orderBy: any = {eventStartDateTime: ORDER_BY.DESC};
+
+  const registerEvents = await client.aOSPortalParticipant.find({
+    where: {
+      registration: {
+        event: {
+          eventCategorySet: {
+            workspace: {
+              id: workspace?.id,
+            },
+            ...(categoryids?.length
+              ? {
+                  id: {
+                    in: categoryids,
+                  },
+                }
+              : {}),
+            ...(await filterPrivate({user, tenantId})),
+          },
+          ...(await filterPrivate({user, tenantId})),
+          ...(search
+            ? {
+                eventTitle: {
+                  like: `%${search}%`,
+                },
+              }
+            : {}),
+
+          ...(eventStartDateTimeCriteria
+            ? {OR: eventStartDateTimeCriteria}
+            : year
+              ? {
+                  OR: [
+                    {
+                      eventStartDateTime: {
+                        between: [startDate, endDate],
+                      },
+                    },
+                    {
+                      eventEndDateTime: {
+                        between: [startDate, endDate],
+                      },
+                    },
+                    {
+                      AND: [
+                        {
+                          eventStartDateTime: {
+                            le: startDate,
+                          },
+                        },
+                        {
+                          eventEndDateTime: {
+                            ge: endDate,
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                }
+              : {}),
+        },
+      },
+      emailAddress: user?.email,
+    },
+    select: {
+      registration: {
+        event: {
+          id: true,
+          eventTitle: true,
+          eventCategorySet: {
+            select: {
+              id: true,
+              name: true,
+              color: true,
+            },
+          },
+          eventImage: {
+            id: true,
+            filePath: true,
+          },
+          eventDescription: true,
+          eventStartDateTime: true,
+          eventEndDateTime: true,
+          eventAllDay: true,
+          eventDegressiveNumberPartcipant: true,
+          eventAllowRegistration: true,
+          eventAllowMultipleRegistrations: true,
+          eventProduct: {
+            id: true,
+            name: true,
+            salePrice: true,
+          },
+        },
+      },
+    },
+  });
+
+  const events = registerEvents?.map(item => item?.registration?.event);
+  const pageInfo = getPageInfo({
+    count: registerEvents?.[0]?._count,
     page,
     limit,
   });
