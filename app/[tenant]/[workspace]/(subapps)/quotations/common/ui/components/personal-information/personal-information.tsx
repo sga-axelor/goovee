@@ -33,6 +33,22 @@ export function PersonalInformation({
       <div className="flex flex-col gap-4">
         <FormField
           control={form.control}
+          name="personalInformation.addressName"
+          render={({field}) => (
+            <FormItem>
+              <FormLabel>{i18n.get('Address name')}</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder={i18n.get('Enter address name')}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="personalInformation.firstName"
           render={({field}) => (
             <FormItem>
@@ -47,24 +63,22 @@ export function PersonalInformation({
             </FormItem>
           )}
         />
-        {!isCompany && (
-          <FormField
-            control={form.control}
-            name="personalInformation.name"
-            render={({field}) => (
-              <FormItem>
-                <FormLabel>
-                  {i18n.get('Last name')}
-                  <span className="text-destructive">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder={i18n.get('Enter last name')} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+        <FormField
+          control={form.control}
+          name="personalInformation.lastName"
+          render={({field}) => (
+            <FormItem>
+              <FormLabel>
+                {i18n.get('Last name')}
+                <span className="text-destructive">*</span>
+              </FormLabel>
+              <FormControl>
+                <Input placeholder={i18n.get('Enter last name')} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {isCompany && (
           <FormField
             control={form.control}
@@ -83,32 +97,6 @@ export function PersonalInformation({
             )}
           />
         )}
-        <FormField
-          control={form.control}
-          name="personalInformation.emailAddress"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Email')}</FormLabel>
-              <FormControl>
-                <Input placeholder={i18n.get('Enter email')} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="personalInformation.fixedPhone"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel>{i18n.get('Phone')}</FormLabel>
-              <FormControl>
-                <Input placeholder={i18n.get('Enter phone')} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
       </div>
     </div>
   );

@@ -45,6 +45,26 @@
     {
       "type": "String",
       "name": "fullName"
+    },
+    {
+      "type": "String",
+      "name": "streetName"
+    },
+    {
+      "type": "String",
+      "name": "countrySubDivision"
+    },
+    {
+      "type": "String",
+      "name": "companyName"
+    },
+    {
+      "type": "String",
+      "name": "firstName"
+    },
+    {
+      "type": "String",
+      "name": "lastName"
     }
   ]
 }

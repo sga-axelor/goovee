@@ -3,69 +3,39 @@
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {capitalise} from '@/utils';
-import {ADDRESS_TYPE} from '@/constants';
+import {ADDRESS_TYPE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {i18n} from '@/lib/core/i18n';
 import {Button, Form} from '@/ui/components';
 import {UserType} from '@/lib/core/auth/types';
 import {Country} from '@/types';
+import {useToast} from '@/ui/hooks';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   AddressInformation,
   PersonalInformation,
 } from '@/subapps/quotations/common/ui/components';
+import {createAddress} from '@/app/[tenant]/[workspace]/account/addresses/[type]/create/actions';
 
-const personalInformationSchema = z
-  .object({
-    type: z.nativeEnum(UserType),
-    firstName: z.string().min(1, 'First name is required'),
-    name: z.string(),
-    companyName: z.string(),
-    emailAddress: z
-      .string()
-      .optional()
-      .refine(
-        val =>
-          val === '' ||
-          (val !== undefined && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)),
-        {
-          message: 'Invalid email address format',
-        },
-      ),
-    fixedPhone: z.string().optional(),
-  })
-  .refine(
-    data => {
-      if (data.type === UserType.company) {
-        if (!data.companyName) return false;
-      }
-      return true;
-    },
-    {
-      message: i18n.get('Company name is required'),
-      path: ['companyName'],
-    },
-  )
-  .refine(
-    data => {
-      if (data.type === UserType.individual) {
-        if (!data.name) return false;
-      }
-      return true;
-    },
-    {
-      message: i18n.get('Name is required'),
-      path: ['name'],
-    },
-  );
+const personalInformationSchema = z.object({
+  addressName: z.string().optional(),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string(),
+  companyName: z.string(),
+});
 
 const addressInformationSchema = z.object({
-  country: z.string().min(1, 'Country is required'),
+  country: z.object({
+    id: z.string().min(1, 'Country ID is required'),
+    name: z.string().min(1, 'Country name is required'),
+  }),
   streetName: z.string().min(1, 'Street name is required'),
-  countrySubDivision: z.string().min(1, 'State is required'),
+  state: z.string().min(1, 'State is required'),
   zip: z.string().min(1, 'Zip code is required'),
   city: z.string().min(1, 'City is required'),
   multipletype: z.boolean().default(false),
@@ -77,31 +47,38 @@ const formSchema = z.object({
 });
 
 function Content({
+  quotation,
   type,
   userType,
   countries = [],
 }: {
+  quotation: any;
   type: ADDRESS_TYPE;
   userType: UserType;
   countries?: Country[];
 }) {
   const title = `${capitalise(type)} Address`;
 
+  const {toast} = useToast();
+  const router = useRouter();
+  const {workspaceURI} = useWorkspace();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       personalInformation: {
-        type: userType,
-        companyName: '',
+        addressName: '',
         firstName: '',
-        name: '',
-        emailAddress: '',
-        fixedPhone: '',
+        lastName: '',
+        companyName: '',
       },
       addressInformation: {
-        country: '',
+        country: {
+          id: '',
+          name: '',
+        },
         streetName: '',
-        countrySubDivision: '',
+        state: '',
         zip: '',
         city: '',
         multipletype: false,
@@ -110,7 +87,71 @@ function Content({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log('Submitted Values:', values);
+    const {addressInformation, personalInformation} = values;
+    const {multipletype, city, country, state, streetName, zip} =
+      addressInformation;
+    const {addressName, firstName, lastName, companyName} = personalInformation;
+
+    const isDeliveryAddr = multipletype || type === ADDRESS_TYPE.delivery;
+    const isInvoicingAddr = multipletype || type === ADDRESS_TYPE.invoicing;
+
+    const computeFullName = () => {
+      return [streetName, state, zip, city]
+        .filter(Boolean)
+        .join(' ')
+        .toUpperCase();
+    };
+
+    const formattedFullName = () => {
+      return [streetName, state, zip, city, country?.name]
+        .filter(Boolean)
+        .join('\n')
+        .toUpperCase();
+    };
+
+    const addressBody = {
+      country: country.id,
+      addressl4: streetName,
+      addressl3: state,
+      addressl6: city,
+      zip,
+      streetName,
+      countrySubDivision: state,
+      addressName,
+      fullName: computeFullName(),
+      formattedFullName: formattedFullName(),
+      firstName,
+      lastName,
+      companyName,
+      ...(userType === UserType.company && {department: companyName}),
+    };
+
+    try {
+      const result = await createAddress({
+        address: addressBody as any,
+        isInvoicingAddr,
+        isDeliveryAddr,
+      });
+
+      if (result) {
+        router.push(
+          `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotation.id}/${SUBAPP_PAGE.address}`,
+        );
+      }
+
+      toast({
+        variant: result ? 'success' : 'destructive',
+        title: result
+          ? i18n.get('Address information saved successfully!')
+          : i18n.get('Something went wrong while creating the address!'),
+      });
+    } catch (error) {
+      console.error('Error while creating address:', error);
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error while creating address'),
+      });
+    }
   };
 
   return (
@@ -125,11 +166,12 @@ function Content({
         </div>
 
         <Button
+          className="w-full bg-success hover:bg-success-dark py-1.5"
+          disabled={form.formState.isSubmitting}
           onClick={e => {
             e.preventDefault();
             form.handleSubmit(onSubmit)();
-          }}
-          className="w-full bg-success hover:bg-success-dark py-1.5">
+          }}>
           {i18n.get('Create address')}
         </Button>
       </form>

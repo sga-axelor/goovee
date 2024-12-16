@@ -10,12 +10,15 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {PartnerTypeMap, findPartnerByEmail} from '@/orm/partner';
 import {findCountries} from '@/orm/address';
+import {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/quotations/[id]/address/[type]/create/content';
+import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
+import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
 
 export default async function Page({params}: {params: any}) {
-  const {tenant, type} = params;
+  const {tenant, type, id} = params;
 
   const session = await getSession();
   const user: any = session?.user;
@@ -41,6 +44,25 @@ export default async function Page({params}: {params: any}) {
 
   if (!subapp) return notFound();
 
+  const {id: userId, isContact, mainPartnerId} = user as User;
+
+  const where = getWhereClause(
+    isContact as boolean,
+    subapp?.role,
+    userId,
+    mainPartnerId as string,
+  );
+
+  const quotation = await findQuotation({
+    id,
+    tenantId: tenant,
+    params: {where},
+  }).then(clone);
+
+  if (!quotation) {
+    return notFound();
+  }
+
   if (![ADDRESS_TYPE.invoicing, ADDRESS_TYPE.delivery].includes(params?.type)) {
     redirect('/account/addresses');
   }
@@ -58,5 +80,12 @@ export default async function Page({params}: {params: any}) {
 
   const countries: any = await findCountries(tenant).then(clone);
 
-  return <Content type={type} userType={userType} countries={countries} />;
+  return (
+    <Content
+      quotation={quotation}
+      type={type}
+      userType={userType}
+      countries={countries}
+    />
+  );
 }

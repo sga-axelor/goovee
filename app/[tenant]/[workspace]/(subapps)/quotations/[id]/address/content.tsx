@@ -11,7 +11,6 @@ import {i18n} from '@/i18n';
 import {cn} from '@/utils/css';
 import {ADDRESS_TYPE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {getCityName} from '@/utils';
 
 interface ContentProps {
   quotation: {
@@ -38,32 +37,57 @@ const AddressBlock = ({
   id: string | number;
   isSelected: boolean;
   type: ADDRESS_TYPE;
-  address: any;
+  address: {
+    firstName?: string;
+    lastName?: string;
+    companyName?: string;
+    addressl4?: string;
+    addressl6?: string;
+    zip?: string;
+    country?: {name: string};
+  };
   onEdit: (type: ADDRESS_TYPE, id: string | number) => void;
 }) => {
-  const cityName = getCityName(address?.addressl6);
+  const {
+    firstName = '',
+    lastName = '',
+    companyName = '',
+    addressl4 = '',
+    addressl6 = '',
+    zip = '',
+    country,
+  } = address;
+
+  const handleEdit = () => onEdit(type, id);
+  const formatAddressHeader = (
+    firstName: string,
+    lastName: string,
+    companyName: string,
+  ) => {
+    const nameParts = [firstName, lastName].filter(Boolean).join(' ');
+    return [nameParts, companyName].filter(Boolean).join(', ');
+  };
 
   return (
     <div
-      key={id}
       className={cn(
         'min-h-56 flex flex-col justify-between gap-4 rounded-lg p-4 border cursor-pointer hover:bg-success-light',
         isSelected ? 'bg-success-light border-black' : 'border-gray-800',
       )}>
       <div className="flex flex-col gap-4">
-        {/* <div className="font-semibold text-base">{name}</div> */}
-        <div className="font-semibold text-base">Axel Blaze, AB Co.</div>
+        <div className="font-semibold text-base">
+          {formatAddressHeader(firstName, lastName, companyName)}
+        </div>
         <div className="text-sm leading-[1.313rem] font-normal">
-          <p>{address?.addressl4}</p>
-          <p>{cityName}</p>
-          <p>{address?.zip}</p>
-          <p>{address?.country?.name}</p>
+          {[addressl4, addressl6, zip, country?.name].map(
+            (line, index) => line && <p key={index}>{line}</p>,
+          )}
         </div>
       </div>
       <div className="flex justify-end">
         <Button
-          className="h-9 flex gap-2 bg-white hover:bg-success hover:text-white border border-success text-success rounded-md font-base font-medium px-3 py-1.5"
-          onClick={() => onEdit(type, id)}>
+          className="h-9 flex items-center gap-2 bg-white hover:bg-success hover:text-white border border-success text-success rounded-md font-medium px-3 py-1.5"
+          onClick={handleEdit}>
           <MdOutlineEdit className="w-6 h-6" />
           {i18n.get('Edit')}
         </Button>
@@ -94,7 +118,7 @@ const AddressesBlock = ({
           modules={[Pagination]}
           pagination={{
             dynamicBullets: true,
-            horizontalClass: '!bottom-1',
+            horizontalClass: '!bottom-0',
           }}
           className="min-h-[15.5rem]">
           {addresses.map(({address}) => {
@@ -133,13 +157,13 @@ function Content({
   const router = useRouter();
 
   const handleCreate = (type: ADDRESS_TYPE) => {
-    router.replace(
+    router.push(
       `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotationId}/${SUBAPP_PAGE.address}/${type}/${SUBAPP_PAGE.create}`,
     );
   };
 
   const handleEdit = (type: ADDRESS_TYPE, id: string | number) => {
-    router.replace(
+    router.push(
       `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotationId}/${SUBAPP_PAGE.address}/${type}/${SUBAPP_PAGE.edit}/${id}`,
     );
   };

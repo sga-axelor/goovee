@@ -5,8 +5,15 @@ const addressFields = {
   address: {
     zip: true,
     addressl2: true,
+    addressl3: true,
     addressl4: true,
     addressl6: true,
+    city: true,
+    streetName: true,
+    countrySubDivision: true,
+    firstName: true,
+    lastName: true,
+    companyName: true,
     country: {
       id: true,
       name: true,

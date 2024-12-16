@@ -4,7 +4,7 @@
 import {i18n} from '@/lib/core/i18n';
 import {
   Checkbox,
-  Countries,
+  DropdownSelector,
   FormControl,
   FormField,
   FormItem,
@@ -23,7 +23,7 @@ interface AddressInformationProps {
 
 export function AddressInformation({countries, form}: AddressInformationProps) {
   const handleCountryChange = (selectedOption: {id: string; name: string}) => {
-    form.setValue('addressInformation.country', selectedOption.name);
+    form.setValue('addressInformation.country', selectedOption);
   };
 
   return (
@@ -39,7 +39,7 @@ export function AddressInformation({countries, form}: AddressInformationProps) {
           render={({field}) => (
             <FormItem>
               <FormControl>
-                <Countries
+                <DropdownSelector
                   options={countries}
                   selectedValue={field.value}
                   onValueChange={handleCountryChange}
@@ -85,7 +85,7 @@ export function AddressInformation({countries, form}: AddressInformationProps) {
         />
         <FormField
           control={form.control}
-          name="addressInformation.countrySubDivision"
+          name="addressInformation.state"
           render={({field}) => (
             <FormItem>
               <FormLabel>
