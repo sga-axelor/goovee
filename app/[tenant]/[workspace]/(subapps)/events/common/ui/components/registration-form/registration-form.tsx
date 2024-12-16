@@ -41,6 +41,7 @@ export const RegistrationForm = ({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
+  const isLoggedIn = user?.emailAddress && true;
 
   const basicPerson = useMemo(
     () => [
@@ -76,7 +77,7 @@ export const RegistrationForm = ({
         helper: 'Enter email',
         hidden: false,
         required: true,
-        readonly: false,
+        readonly: isLoggedIn,
         order: 3,
         defaultValue: user?.emailAddress?.address || '',
       },
@@ -168,7 +169,9 @@ export const RegistrationForm = ({
             ...props,
             addTitle: 'Add a new person that does not have an account',
           }),
-        subSchema: externalParticipantForm,
+        subSchema: externalParticipantForm.map(field =>
+          field.name === 'emailAddress' ? {...field, readonly: false} : field,
+        ),
       },
     ],
     [participantForm, externalParticipantForm],
@@ -177,7 +180,7 @@ export const RegistrationForm = ({
   const onSubmit = async (values: any) => {
     try {
       const result = extractCustomData(values, 'contactAttrs', metaFields);
-
+      if (isLoggedIn) result.emailAddress = user?.emailAddress?.address;
       if (!result.addOtherPeople) {
         result.otherPeople = [];
       } else {
