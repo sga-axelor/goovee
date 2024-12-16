@@ -315,6 +315,9 @@ const Content = ({
                 company={company}
                 mainInvoicingAddress={mainInvoicingAddress}
                 deliveryAddress={deliveryAddress}
+                showAddressSelectionButton={
+                  statusSelect === QUOTATION_STATUS.DRAFT_QUOTATION
+                }
                 onAddressSelection={handleAddressSelection}
               />
               <ProductsList
