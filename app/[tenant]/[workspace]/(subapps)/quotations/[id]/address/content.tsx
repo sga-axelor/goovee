@@ -4,6 +4,7 @@ import {MdAdd, MdOutlineEdit} from 'react-icons/md';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 import {useRouter} from 'next/navigation';
+import {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Separator} from '@/ui/components';
@@ -11,6 +12,10 @@ import {i18n} from '@/i18n';
 import {cn} from '@/utils/css';
 import {ADDRESS_TYPE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks';
+
+// ---- LOCAL IMPORTS ---- //
+import {confirmAddresses} from '@/subapps/quotations/[id]/action';
 
 interface ContentProps {
   quotation: {
@@ -32,6 +37,7 @@ const AddressBlock = ({
   isSelected,
   type,
   address,
+  onSelect,
   onEdit,
 }: {
   id: string | number;
@@ -46,6 +52,7 @@ const AddressBlock = ({
     zip?: string;
     country?: {name: string};
   };
+  onSelect: (type: ADDRESS_TYPE, address: any) => void;
   onEdit: (type: ADDRESS_TYPE, id: string | number) => void;
 }) => {
   const {
@@ -58,6 +65,7 @@ const AddressBlock = ({
     country,
   } = address;
 
+  const handleSelect = () => onSelect(type, address);
   const handleEdit = () => onEdit(type, id);
   const formatAddressHeader = (
     firstName: string,
@@ -70,6 +78,7 @@ const AddressBlock = ({
 
   return (
     <div
+      onClick={handleSelect}
       className={cn(
         'min-h-56 flex flex-col justify-between gap-4 rounded-lg p-4 border cursor-pointer hover:bg-success-light',
         isSelected ? 'bg-success-light border-black' : 'border-gray-800',
@@ -87,7 +96,10 @@ const AddressBlock = ({
       <div className="flex justify-end">
         <Button
           className="h-9 flex items-center gap-2 bg-white hover:bg-success hover:text-white border border-success text-success rounded-md font-medium px-3 py-1.5"
-          onClick={handleEdit}>
+          onClick={e => {
+            e.stopPropagation();
+            handleEdit();
+          }}>
           <MdOutlineEdit className="w-6 h-6" />
           {i18n.get('Edit')}
         </Button>
@@ -102,12 +114,14 @@ const AddressesBlock = ({
   type,
   onEdit,
   onCreate,
+  onSelect,
 }: {
   currentAddress: any;
   addresses: any[];
   type: ADDRESS_TYPE;
   onCreate: (type: ADDRESS_TYPE) => void;
   onEdit: (type: ADDRESS_TYPE, id: string | number) => void;
+  onSelect: (type: ADDRESS_TYPE, id: string | number) => void;
 }) => {
   return (
     <div className="flex flex-col gap-4">
@@ -131,6 +145,7 @@ const AddressesBlock = ({
                   type={type}
                   isSelected={isSelected}
                   onEdit={onEdit}
+                  onSelect={onSelect}
                 />
               </SwiperSlide>
             );
@@ -151,10 +166,15 @@ function Content({
   invoicingAddresses,
   deliveryAddresses,
 }: ContentProps) {
-  const {id: quotationId, mainInvoicingAddress, deliveryAddress} = quotation;
+  const [selectedAddresses, setSelectedAddresses] = useState({
+    invoicing: quotation.mainInvoicingAddress || null,
+    delivery: quotation.deliveryAddress || null,
+  });
 
-  const {workspaceURI} = useWorkspace();
+  const {id: quotationId} = quotation;
+  const {workspaceURI, workspaceURL} = useWorkspace();
   const router = useRouter();
+  const {toast} = useToast();
 
   const handleCreate = (type: ADDRESS_TYPE) => {
     router.push(
@@ -166,6 +186,49 @@ function Content({
     router.push(
       `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotationId}/${SUBAPP_PAGE.address}/${type}/${SUBAPP_PAGE.edit}/${id}`,
     );
+  };
+
+  const handleAddressSelection = (type: ADDRESS_TYPE, address: any) => {
+    setSelectedAddresses(prev => ({...prev, [type]: address}));
+  };
+
+  const handleConfirm = async () => {
+    const payload = {
+      invoicingAddress: selectedAddresses.invoicing,
+      deliveryAddress: selectedAddresses.delivery,
+    };
+
+    try {
+      const result = await confirmAddresses({
+        workspaceURL,
+        subAppCode: SUBAPP_CODES.quotations,
+        record: {
+          ...quotation,
+          deliveryAddress: payload.deliveryAddress,
+          mainInvoicingAddress: payload.invoicingAddress,
+        },
+      });
+
+      if (result.error) {
+        toast({
+          variant: 'destructive',
+          description: i18n.get(result?.message || ''),
+        });
+      } else {
+        toast({
+          variant: 'success',
+          title: i18n.get('Address changes saved successfully!'),
+        });
+        router.push(
+          `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotationId}`,
+        );
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Something went wrong while saving address!'),
+      });
+    }
   };
 
   return (
@@ -181,13 +244,13 @@ function Content({
             <div className="font-semibold text-xl">
               {i18n.get('Invoicing address')}
             </div>
-
             <AddressesBlock
-              currentAddress={mainInvoicingAddress}
+              currentAddress={selectedAddresses.invoicing}
               addresses={invoicingAddresses}
               type={ADDRESS_TYPE.invoicing}
               onCreate={handleCreate}
               onEdit={handleEdit}
+              onSelect={handleAddressSelection}
             />
           </div>
 
@@ -197,16 +260,19 @@ function Content({
               {i18n.get('Delivery address')}
             </div>
             <AddressesBlock
-              currentAddress={deliveryAddress}
+              currentAddress={selectedAddresses.delivery}
               addresses={deliveryAddresses}
               type={ADDRESS_TYPE.delivery}
               onCreate={handleCreate}
               onEdit={handleEdit}
+              onSelect={handleAddressSelection}
             />
           </div>
         </div>
       </div>
-      <Button className="w-full bg-success hover:bg-success-dark py-1.5">
+      <Button
+        className="w-full bg-success hover:bg-success-dark py-1.5"
+        onClick={handleConfirm}>
         {i18n.get('Confirm address')}
       </Button>
     </>

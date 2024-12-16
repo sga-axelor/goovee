@@ -18,8 +18,10 @@ import {stripe} from '@/payment/stripe';
 import {PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
-import {scale} from '@/utils';
+import {clone, scale} from '@/utils';
 import {TENANT_HEADER} from '@/middleware';
+import {manager} from '@/tenant';
+import {findByID} from '@/orm/record';
 
 // ---- LOCAL IMPORTS ---- //
 import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
@@ -625,4 +627,130 @@ export async function validateStripePayment({
     success: true,
     order: quotation,
   };
+}
+
+export async function confirmAddresses({
+  workspaceURL,
+  record,
+  subAppCode,
+}: {
+  workspaceURL: string;
+  record: any;
+  subAppCode: SUBAPP_CODES;
+}) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: await getTranslation('Workspace not provided.'),
+    };
+  }
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await getTranslation('Bad request.'),
+    };
+  }
+
+  if (!record) {
+    return {
+      error: true,
+      message: await getTranslation('Invalid record.'),
+    };
+  }
+
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      error: true,
+      message: await getTranslation('Unauthorized'),
+    };
+  }
+
+  const user = session.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: await getTranslation('Invalid workspace'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: subAppCode,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+
+  if (!subapp) {
+    return {
+      error: true,
+      message: await getTranslation('Unauthorized'),
+    };
+  }
+
+  const {
+    error,
+    message,
+    data: modelRecord,
+  }: any = await findByID({
+    subapp: subapp.code,
+    id: record.id,
+    workspaceURL,
+    workspace,
+    tenantId,
+    withAuth: false,
+  });
+
+  if (error) {
+    return {
+      error: true,
+      message: await getTranslation(message || 'Record not found.'),
+    };
+  }
+
+  try {
+    const reqBody = {
+      id: modelRecord.id,
+      version: modelRecord.version,
+      mainInvoicingAddressStr: record.mainInvoicingAddress.formattedFullName,
+      mainInvoicingAddress: {
+        select: {
+          id: record.mainInvoicingAddress.id,
+        },
+      },
+      deliveryAddressStr: record.deliveryAddress.formattedFullName,
+      deliveryAddress: {
+        select: {
+          id: record.deliveryAddress.id,
+        },
+      },
+    };
+
+    const client = await manager.getClient(tenantId);
+    const result = await client.aOSOrder
+      .update({data: reqBody})
+      .then(clone)
+      .catch(error => {
+        console.log('Error >>>', error);
+      });
+    return {success: true, data: result};
+  } catch (error) {
+    return {
+      error: true,
+      message: await getTranslation(
+        'Something went wrong while saving address!',
+      ),
+    };
+  }
 }

@@ -19,6 +19,7 @@ const addressFields = {
       id: true,
       name: true,
     },
+    formattedFullName: true,
   },
   isDefaultAddr: true,
   isDeliveryAddr: true,

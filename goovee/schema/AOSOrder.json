@@ -89,6 +89,14 @@
       "type": "ManyToOne",
       "name": "portalWorkspace",
       "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "String",
+      "name": "mainInvoicingAddressStr"
+    },
+    {
+      "name": "deliveryAddressStr",
+      "type": "String"
     }
   ]
 }

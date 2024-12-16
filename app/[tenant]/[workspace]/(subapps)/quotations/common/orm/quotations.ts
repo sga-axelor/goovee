@@ -117,6 +117,8 @@ export async function findQuotation({
         country: {
           name: true,
         },
+        fullName: true,
+        formattedFullName: true,
       },
       clientPartner: {
         fullName: true,
@@ -131,6 +133,8 @@ export async function findQuotation({
         country: {
           name: true,
         },
+        fullName: true,
+        formattedFullName: true,
       },
       saleOrderLineList: {
         select: {
