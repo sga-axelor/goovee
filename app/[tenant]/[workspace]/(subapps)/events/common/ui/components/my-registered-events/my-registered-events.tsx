@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {useSession} from 'next-auth/react';
@@ -18,6 +18,11 @@ import {getImageURL} from '@/utils/files';
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
 import {EventSelector, EventCard} from '@/subapps/events/common/ui/components';
+import {
+  MY_REGISTRATIONS,
+  FINDING_SEARCH_RESULT,
+} from '@/subapps/events/common/constants';
+import {EventSearch} from '@/subapps/events/common/ui/components/event-search/event-search';
 
 export const MyRegisteredEvents = ({
   categories,
@@ -36,6 +41,11 @@ export const MyRegisteredEvents = ({
   pageInfo: any;
   onlyRegisteredEvent: boolean;
 }) => {
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState<any[]>([]);
+  const [registeredEvents, setRegisteredEvents] = useState<any[]>([]);
+  const [searchPending, setSearchPending] = useState<boolean>(false);
+
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
@@ -94,51 +104,88 @@ export const MyRegisteredEvents = ({
     update([{key: URL_PARAMS.page, value: page}]);
   };
 
-  const handlClick = (id: string | number) => {
-    router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${id}`);
+  const handleSearch = (searchKey: string) => {
+    setSearch(searchKey);
   };
+
+  const handleResult = (result: []) => {
+    setResults(result);
+  };
+  const handleSearchStatus = (loading: boolean) => {
+    setSearchPending(loading);
+  };
+
+  useEffect(() => {
+    if (search !== '') {
+      setRegisteredEvents(results);
+    } else {
+      setRegisteredEvents(events);
+    }
+  }, [search, results, events]);
 
   return (
     <div>
-      {' '}
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
-        <EventSelector
-          selectedCategories={selectedCategory}
-          date={date}
-          setDate={updateDate}
-          updateCateg={updateCateg}
-          categories={categories}
-          workspace={workspace}
-          onlyRegisteredEvent={onlyRegisteredEvent}
-        />
-        <div className="flex flex-col space-y-4 w-full">
-          {events && events.length > 0 ? (
-            events.map(event => (
-              <Link
-                href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
-                key={event.id}
-                passHref>
-                <EventCard event={event} key={event.id} workspace={workspace} />
-              </Link>
-            ))
-          ) : (
-            <>
-              <h5 className="text-lg font-bold">{i18n.get('No events')}</h5>
-              <p>{i18n.get('There are no events today')}</p>
-            </>
-          )}
-          <div className="w-full mt-10 flex items-center justify-center ml-auto">
-            {pages > 1 && (
-              <Pagination
-                page={page}
-                pages={pages}
-                disablePrev={!hasPrev}
-                disableNext={!hasNext}
-                onPrev={handlePreviousPage}
-                onNext={handleNextPage}
-                onPage={handlePage}
-              />
+        <div>
+          <h2 className="text-lg font-semibold text-start mb-4 h-[54px]">
+            {i18n.get(MY_REGISTRATIONS)}
+          </h2>
+          <EventSelector
+            selectedCategories={selectedCategory}
+            date={date}
+            setDate={updateDate}
+            updateCateg={updateCateg}
+            categories={categories}
+            workspace={workspace}
+            onlyRegisteredEvent={onlyRegisteredEvent}
+          />
+        </div>
+        <div className="">
+          <div className="mb-4 h-[54px]">
+            <EventSearch
+              workspace={workspace}
+              searchKey={'title'}
+              search={search}
+              handleSearch={handleSearch}
+              handleResult={handleResult}
+              handleSearchStatus={handleSearchStatus}
+            />
+          </div>
+          <div className="flex flex-col space-y-4 w-full">
+            {registeredEvents && registeredEvents.length > 0 ? (
+              registeredEvents.map(event => (
+                <Link
+                  href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
+                  key={event.id}
+                  passHref>
+                  <EventCard
+                    event={event}
+                    key={event.id}
+                    workspace={workspace}
+                  />
+                </Link>
+              ))
+            ) : searchPending ? (
+              <p>{i18n.get(FINDING_SEARCH_RESULT)}</p>
+            ) : (
+              <>
+                <h5 className="text-lg font-bold">{i18n.get('No events')}</h5>
+                <p>{i18n.get('There are no events today')}</p>
+              </>
             )}
+            <div className="w-full mt-10 flex items-center justify-center ml-auto">
+              {pages > 1 && (
+                <Pagination
+                  page={page}
+                  pages={pages}
+                  disablePrev={!hasPrev}
+                  disableNext={!hasNext}
+                  onPrev={handlePreviousPage}
+                  onNext={handleNextPage}
+                  onPage={handlePage}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

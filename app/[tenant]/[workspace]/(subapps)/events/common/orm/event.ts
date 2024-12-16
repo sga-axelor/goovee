@@ -2,7 +2,7 @@ import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {formatDateToISOString} from '@/utils/date';
-import {DATE_FORMATS, ORDER_BY} from '@/constants';
+import {DATE_FORMATS, DEFAULT_LIMIT, ORDER_BY} from '@/constants';
 import {getPageInfo} from '@/utils';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
@@ -367,6 +367,8 @@ export async function findAllRegisteredEvents({
       },
       emailAddress: user?.email,
     },
+    take: limit,
+    ...(skip ? {skip} : {}),
     select: {
       registration: {
         event: {

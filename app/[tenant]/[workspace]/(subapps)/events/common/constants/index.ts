@@ -26,3 +26,6 @@ export const EVENTS_NAVBAR_LINKS = [
     validate: true,
   },
 ];
+
+export const MY_REGISTRATIONS = 'My Registrations';
+export const FINDING_SEARCH_RESULT = 'Finding Search Result...';

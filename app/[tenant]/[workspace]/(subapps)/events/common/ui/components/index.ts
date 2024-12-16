@@ -38,3 +38,4 @@ export {MobileMenuCategory} from './mobile-menu-category';
 export {SearchItem} from './search-item';
 export {EventHeader} from './event-header';
 export {MyRegisteredEvents} from './my-registered-events';
+export {EventSearch} from './event-search';
