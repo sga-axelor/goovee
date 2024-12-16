@@ -8,7 +8,6 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import {PartnerTypeMap, findPartnerByEmail} from '@/orm/partner';
 import {findCountries} from '@/orm/address';
 import {User} from '@/types';
 
@@ -67,25 +66,7 @@ export default async function Page({params}: {params: any}) {
     redirect('/account/addresses');
   }
 
-  const partner = await findPartnerByEmail(user.email, tenant);
-
-  if (!partner) {
-    return notFound();
-  }
-  const {partnerTypeSelect} = partner;
-
-  const userType: any = Object.entries(PartnerTypeMap).find(
-    ([key, value]) => value === partnerTypeSelect,
-  )?.[0];
-
   const countries: any = await findCountries(tenant).then(clone);
 
-  return (
-    <Content
-      quotation={quotation}
-      type={type}
-      userType={userType}
-      countries={countries}
-    />
-  );
+  return <Content quotation={quotation} type={type} countries={countries} />;
 }
