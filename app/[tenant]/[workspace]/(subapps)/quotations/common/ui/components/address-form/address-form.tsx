@@ -4,6 +4,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {useRouter} from 'next/navigation';
+import {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {capitalise} from '@/utils';
@@ -21,23 +22,27 @@ import {
 } from '@/subapps/quotations/common/ui/components';
 import {createAddress} from '@/app/[tenant]/[workspace]/account/addresses/[type]/create/actions';
 import {updateAddress} from '@/app/[tenant]/[workspace]/account/addresses/edit/[id]/actions';
+import {fetchCities} from '@/subapps/quotations/common/actions/address';
 
 const personalInformationSchema = z.object({
   addressName: z.string().optional(),
-  firstName: z.string().min(1, i18n.get('First name is required')),
+  firstName: z.string().optional(),
   lastName: z.string(),
   companyName: z.string(),
 });
 
 const addressInformationSchema = z.object({
   country: z.object({
-    id: z.string().min(1, 'Country ID is required'),
+    id: z.string().min(1, 'Country is required'),
     name: z.string().min(1, i18n.get('Country name is required')),
   }),
   streetName: z.string().min(1, i18n.get('Street name is required')),
-  state: z.string().min(1, i18n.get('State is required')),
+  addressAddition: z.string().optional(),
   zip: z.string().min(1, i18n.get('Zip code is required')),
-  city: z.string().min(1, i18n.get('City is required')),
+  city: z.object({
+    id: z.string().min(1, 'City is required'),
+    name: z.string().min(1, i18n.get('City name is required')),
+  }),
   multipletype: z.boolean().default(false),
 });
 
@@ -56,11 +61,12 @@ export const AddressForm = ({
   countries?: Country[];
   address?: any;
 }) => {
+  const [cities, setCities] = useState([]);
   const title = i18n.get(`${capitalise(type)} Address`);
 
   const {toast} = useToast();
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -77,17 +83,22 @@ export const AddressForm = ({
           name: address?.country?.name ?? '',
         },
         streetName: address?.streetName ?? '',
-        state: address?.countrySubDivision ?? '',
+        addressAddition: address?.countrySubDivision ?? '',
         zip: address?.zip ?? '',
-        city: address?.addressl6 ?? '',
+        city: {
+          id: address?.city?.id ?? '',
+          name: address?.city?.id ?? '',
+        },
         multipletype: false,
       },
     },
   });
 
+  const country = form.watch('addressInformation.country');
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const {addressInformation, personalInformation} = values;
-    const {multipletype, city, country, state, streetName, zip} =
+    const {multipletype, city, country, addressAddition, streetName, zip} =
       addressInformation;
     const {addressName, firstName, lastName, companyName} = personalInformation;
 
@@ -95,14 +106,14 @@ export const AddressForm = ({
     const isInvoicingAddr = multipletype || type === ADDRESS_TYPE.invoicing;
 
     const computeFullName = () => {
-      return [streetName, state, zip, city]
+      return [streetName, addressAddition, zip, city?.name]
         .filter(Boolean)
         .join(' ')
         .toUpperCase();
     };
 
     const formattedFullName = () => {
-      return [streetName, state, zip, city, country?.name]
+      return [streetName, addressAddition, zip, city?.name, country?.name]
         .filter(Boolean)
         .join('\n')
         .toUpperCase();
@@ -113,11 +124,12 @@ export const AddressForm = ({
       country: country.id,
       addressl2: addressName,
       addressl4: streetName,
-      addressl3: state,
-      addressl6: city,
+      addressl3: addressAddition,
+      addressl6: city.name,
       zip,
+      city: city.id,
       streetName,
-      countrySubDivision: state,
+      countrySubDivision: addressAddition,
       department: addressName,
       fullName: computeFullName(),
       formattedFullName: formattedFullName(),
@@ -135,6 +147,7 @@ export const AddressForm = ({
       });
 
       if (result) {
+        router.refresh();
         router.push(
           `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotation.id}/${SUBAPP_PAGE.address}`,
         );
@@ -159,7 +172,30 @@ export const AddressForm = ({
     }
   };
 
-  console.log('address >>>', address);
+  useEffect(() => {
+    const getCities = async () => {
+      if (!country.id) {
+        return;
+      }
+
+      try {
+        const response: any = await fetchCities({
+          countryId: country.id,
+          workspaceURL,
+        });
+        if (response.success) {
+          setCities(response.data);
+        } else {
+          setCities([]);
+        }
+      } catch (error) {
+        console.error('Unexpected error while fetching cities:', error);
+        setCities([]);
+      }
+    };
+
+    getCities();
+  }, [country, workspaceURL]);
 
   return (
     <Form {...form}>
@@ -169,7 +205,12 @@ export const AddressForm = ({
         <div className="font-medium text-xl">{title}</div>
         <div className="flex flex-col gap-4">
           <PersonalInformation form={form} />
-          <AddressInformation countries={countries} form={form} />
+          <AddressInformation
+            countries={countries}
+            form={form}
+            cities={cities}
+            country={country}
+          />
         </div>
 
         <Button

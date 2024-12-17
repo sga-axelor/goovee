@@ -1,5 +1,5 @@
 import {manager, type Tenant} from '@/tenant';
-import {PartnerAddress, Partner, ID} from '@/types';
+import {PartnerAddress, Partner, ID, City} from '@/types';
 
 const addressFields = {
   address: {
@@ -68,6 +68,11 @@ export async function createPartnerAddress(
               id: values?.address?.country,
             },
           },
+          city: {
+            select: {
+              id: values?.address?.city,
+            },
+          },
         },
       },
       isInvoicingAddr: values.isInvoicingAddr,
@@ -98,6 +103,11 @@ export async function updatePartnerAddress(
           country: {
             select: {
               id: values?.address?.country,
+            },
+          },
+          city: {
+            select: {
+              id: values?.address?.city,
             },
           },
         },
@@ -270,4 +280,32 @@ export async function findCountries(tenantId: Tenant['id']) {
   const countries = await client.aOSCountry.find();
 
   return countries;
+}
+
+export async function findCities({
+  countryId,
+  tenantId,
+}: {
+  countryId: string | number;
+  tenantId: Tenant['id'];
+}): Promise<City[]> {
+  if (!tenantId || !countryId) return [];
+
+  try {
+    const client = await manager.getClient(tenantId);
+
+    const cities = await client.aOSCity.find({
+      where: {
+        country: {id: countryId},
+      },
+    });
+
+    return cities.map(city => ({
+      id: city.id,
+      name: city.name,
+    })) as City[];
+  } catch (error) {
+    console.error('Error fetching cities:', error);
+    return [];
+  }
 }

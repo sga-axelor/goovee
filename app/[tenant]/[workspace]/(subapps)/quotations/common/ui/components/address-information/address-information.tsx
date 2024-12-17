@@ -14,16 +14,36 @@ import {
   Label,
   Separator,
 } from '@/ui/components';
-import {Country} from '@/types';
+import {City, Country} from '@/types';
 
 interface AddressInformationProps {
+  country: {
+    id: string | number;
+    name: string;
+  };
   countries: Country[];
+  cities: City[];
   form: any;
 }
 
-export function AddressInformation({countries, form}: AddressInformationProps) {
+export function AddressInformation({
+  countries,
+  cities = [],
+  form,
+  country,
+}: AddressInformationProps) {
   const handleCountryChange = (selectedOption: {id: string; name: string}) => {
-    form.setValue('addressInformation.country', selectedOption);
+    form.setValue('addressInformation.country', selectedOption, {
+      shouldValidate: true,
+    });
+    form.trigger('addressInformation.country.id');
+  };
+
+  const handleCityChange = (selectedOption: {id: string; name: string}) => {
+    form.setValue('addressInformation.city', selectedOption, {
+      shouldValidate: true,
+    });
+    form.trigger('addressInformation.city.id');
   };
 
   return (
@@ -42,12 +62,15 @@ export function AddressInformation({countries, form}: AddressInformationProps) {
                 <DropdownSelector
                   options={countries}
                   selectedValue={field.value}
-                  onValueChange={handleCountryChange}
                   isRequired={true}
                   label={i18n.get('Country')}
                   placeholder={i18n.get('Select a country')}
                   labelClassName="mb-0"
                   rootClassName="space-y-2"
+                  hasError={
+                    !!form.formState.errors?.addressInformation?.country?.id
+                  }
+                  onValueChange={handleCountryChange}
                 />
               </FormControl>
               <FormMessage>
@@ -85,15 +108,15 @@ export function AddressInformation({countries, form}: AddressInformationProps) {
         />
         <FormField
           control={form.control}
-          name="addressInformation.state"
+          name="addressInformation.addressAddition"
           render={({field}) => (
             <FormItem>
-              <FormLabel>
-                {i18n.get('State')}
-                <span className="text-destructive">*</span>
-              </FormLabel>
+              <FormLabel>{i18n.get('Address addition')}</FormLabel>
               <FormControl>
-                <Input placeholder={i18n.get('Enter state')} {...field} />
+                <Input
+                  placeholder={i18n.get('Enter address addition')}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -118,15 +141,24 @@ export function AddressInformation({countries, form}: AddressInformationProps) {
           />
           <FormField
             control={form.control}
-            name="addressInformation.city"
+            name="addressInformation.city.id"
             render={({field}) => (
               <FormItem className="md:col-span-2">
-                <FormLabel>
-                  {i18n.get('City')}
-                  <span className="text-destructive">*</span>
-                </FormLabel>
                 <FormControl>
-                  <Input placeholder={i18n.get('Enter city')} {...field} />
+                  <DropdownSelector
+                    options={cities || []}
+                    selectedValue={field.value}
+                    isRequired={true}
+                    label={i18n.get('City')}
+                    placeholder={i18n.get('Select city')}
+                    labelClassName="mb-0"
+                    rootClassName="space-y-2"
+                    disabled={!country.id}
+                    hasError={
+                      !!form.formState.errors?.addressInformation?.city?.id
+                    }
+                    onValueChange={handleCityChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -45,10 +45,7 @@ export function PersonalInformation({form}: PersonalInformationProps) {
           name="personalInformation.firstName"
           render={({field}) => (
             <FormItem>
-              <FormLabel>
-                {i18n.get('First name')}
-                <span className="text-destructive">*</span>
-              </FormLabel>
+              <FormLabel>{i18n.get('First name')}</FormLabel>
               <FormControl>
                 <Input placeholder={i18n.get('Enter first name')} {...field} />
               </FormControl>
@@ -61,10 +58,7 @@ export function PersonalInformation({form}: PersonalInformationProps) {
           name="personalInformation.lastName"
           render={({field}) => (
             <FormItem>
-              <FormLabel>
-                {i18n.get('Last name')}
-                <span className="text-destructive">*</span>
-              </FormLabel>
+              <FormLabel>{i18n.get('Last name')}</FormLabel>
               <FormControl>
                 <Input placeholder={i18n.get('Enter last name')} {...field} />
               </FormControl>

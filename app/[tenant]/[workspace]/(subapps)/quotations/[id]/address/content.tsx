@@ -4,7 +4,7 @@ import {MdAdd, MdOutlineEdit} from 'react-icons/md';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 import {useRouter} from 'next/navigation';
-import {useState} from 'react';
+import {useState, useTransition} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Separator} from '@/ui/components';
@@ -80,11 +80,11 @@ const AddressBlock = ({
     <div
       onClick={handleSelect}
       className={cn(
-        'min-h-56 flex flex-col justify-between gap-4 rounded-lg p-4 border cursor-pointer hover:bg-success-light',
+        'min-h-56 flex flex-col justify-between gap-4 rounded-lg p-4 border cursor-pointer hover:bg-success-light h-full',
         isSelected ? 'bg-success-light border-black' : 'border-gray-800',
       )}>
       <div className="flex flex-col gap-4">
-        <div className="font-semibold text-base">
+        <div className="font-semibold text-base line-clamp-2">
           {formatAddressHeader(firstName, lastName, companyName)}
         </div>
         <div className="text-sm leading-[1.313rem] font-normal">
@@ -136,9 +136,9 @@ const AddressesBlock = ({
           }}
           className="min-h-[15.5rem]">
           {addresses.map(({address}) => {
-            const isSelected = currentAddress.id === address.id;
+            const isSelected = currentAddress?.id === address.id;
             return (
-              <SwiperSlide key={address.id} className="!w-[17.563rem]">
+              <SwiperSlide key={address.id} className="!w-[17.563rem] !h-auto">
                 <AddressBlock
                   id={address.id}
                   address={address}
@@ -171,6 +171,8 @@ function Content({
     delivery: quotation.deliveryAddress || null,
   });
 
+  const [isPending, startTransition] = useTransition();
+
   const {id: quotationId} = quotation;
   const {workspaceURI, workspaceURL} = useWorkspace();
   const router = useRouter();
@@ -192,43 +194,45 @@ function Content({
     setSelectedAddresses(prev => ({...prev, [type]: address}));
   };
 
-  const handleConfirm = async () => {
-    const payload = {
-      invoicingAddress: selectedAddresses.invoicing,
-      deliveryAddress: selectedAddresses.delivery,
-    };
+  const handleConfirm = () => {
+    startTransition(async () => {
+      const payload = {
+        invoicingAddress: selectedAddresses.invoicing,
+        deliveryAddress: selectedAddresses.delivery,
+      };
 
-    try {
-      const result = await confirmAddresses({
-        workspaceURL,
-        subAppCode: SUBAPP_CODES.quotations,
-        record: {
-          ...quotation,
-          deliveryAddress: payload.deliveryAddress,
-          mainInvoicingAddress: payload.invoicingAddress,
-        },
-      });
+      try {
+        const result = await confirmAddresses({
+          workspaceURL,
+          subAppCode: SUBAPP_CODES.quotations,
+          record: {
+            ...quotation,
+            deliveryAddress: payload.deliveryAddress,
+            mainInvoicingAddress: payload.invoicingAddress,
+          },
+        });
 
-      if (result.error) {
+        if (result.error) {
+          toast({
+            variant: 'destructive',
+            description: i18n.get(result?.message || ''),
+          });
+        } else {
+          toast({
+            variant: 'success',
+            title: i18n.get('Address changes saved successfully!'),
+          });
+          router.push(
+            `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotationId}`,
+          );
+        }
+      } catch (error) {
         toast({
           variant: 'destructive',
-          description: i18n.get(result?.message || ''),
+          title: i18n.get('Something went wrong while saving address!'),
         });
-      } else {
-        toast({
-          variant: 'success',
-          title: i18n.get('Address changes saved successfully!'),
-        });
-        router.push(
-          `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotationId}`,
-        );
       }
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: i18n.get('Something went wrong while saving address!'),
-      });
-    }
+    });
   };
 
   return (
@@ -272,8 +276,9 @@ function Content({
       </div>
       <Button
         className="w-full bg-success hover:bg-success-dark py-1.5"
-        onClick={handleConfirm}>
-        {i18n.get('Confirm address')}
+        onClick={handleConfirm}
+        disabled={isPending}>
+        {isPending ? i18n.get('Processing...') : i18n.get('Confirm address')}
       </Button>
     </>
   );

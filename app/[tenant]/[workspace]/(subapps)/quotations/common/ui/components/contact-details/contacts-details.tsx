@@ -3,7 +3,7 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {Separator, Button} from '@/ui/components';
+import {Button} from '@/ui/components';
 import {getCityName} from '@/utils';
 import {i18n} from '@/i18n';
 
