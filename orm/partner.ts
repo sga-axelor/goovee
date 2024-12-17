@@ -6,6 +6,61 @@ import {ID, Partner} from '@/types';
 import {findDefaultPartnerWorkspaceConfig} from './workspace';
 import type {AOSPartner} from '@/goovee/.generated/models';
 
+const partnerFields = {
+  firstName: true,
+  fullName: true,
+  fixedPhone: true,
+  isContact: true,
+  name: true,
+  password: true,
+  emailAddress: true,
+  picture: true,
+  mainPartner: {
+    id: true,
+  },
+  partnerCategory: {
+    name: true,
+    code: true,
+  },
+  defaultWorkspace: {
+    workspace: {
+      id: true,
+    },
+  },
+  partnerWorkspaceSet: {
+    select: {
+      workspace: {
+        id: true,
+      },
+    },
+  },
+  localization: {
+    code: true,
+    name: true,
+  },
+  partnerTypeSelect: true,
+  registrationCode: true,
+};
+
+export async function findPartnerById(id: ID, tenantId: Tenant['id']) {
+  if (!(id && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) return null;
+
+  const partner = await client.aOSPartner
+    .findOne({
+      where: {
+        id,
+      },
+      select: partnerFields,
+    })
+    .then(clone);
+
+  return partner;
+}
+
 export async function findPartnerByEmail(
   email: string,
   tenantId: Tenant['id'],
@@ -25,41 +80,7 @@ export async function findPartnerByEmail(
           },
         },
       },
-      select: {
-        firstName: true,
-        fullName: true,
-        fixedPhone: true,
-        isContact: true,
-        name: true,
-        password: true,
-        emailAddress: true,
-        picture: true,
-        mainPartner: {
-          id: true,
-        },
-        partnerCategory: {
-          name: true,
-          code: true,
-        },
-        defaultWorkspace: {
-          workspace: {
-            id: true,
-          },
-        },
-        partnerWorkspaceSet: {
-          select: {
-            workspace: {
-              id: true,
-            },
-          },
-        },
-        localization: {
-          code: true,
-          name: true,
-        },
-        partnerTypeSelect: true,
-        registrationCode: true,
-      },
+      select: partnerFields,
     })
     .then(clone);
 

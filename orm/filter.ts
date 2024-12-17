@@ -1,5 +1,5 @@
-import {manager, type Tenant} from '@/tenant';
-import {findPartnerByEmail} from './partner';
+import {type Tenant} from '@/tenant';
+import {findPartnerById} from './partner';
 import type {User} from '@/types';
 
 const openRecordFilters = [
@@ -27,7 +27,13 @@ export const filterPrivate = async (
     return defaultFilter;
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const partnerId = user?.isContact ? user.mainPartnerId : user.id;
+
+  if (!partnerId) {
+    return defaultFilter;
+  }
+
+  const partner = await findPartnerById(partnerId, tenantId);
 
   if (!partner) {
     return defaultFilter;
