@@ -159,6 +159,11 @@ export async function findQuotation({
       },
     },
   });
+
+  if (!quotation) {
+    return null;
+  }
+
   const {currency, saleOrderLineList, exTaxTotal, inTaxTotal} = quotation;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;

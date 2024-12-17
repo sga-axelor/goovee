@@ -65,7 +65,7 @@ const fetchInvoices = async ({
     })
     .then(clone);
 
-  const invoices = $invoices.map((invoice: any) => {
+  const invoices = ($invoices || []).map((invoice: any) => {
     const {currency, exTaxTotal, inTaxTotal} = invoice;
     const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
     const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
@@ -189,6 +189,10 @@ export const findInvoice = async ({
       },
     })
     .then(clone);
+
+  if (!invoice) {
+    return null;
+  }
 
   const {
     currency,

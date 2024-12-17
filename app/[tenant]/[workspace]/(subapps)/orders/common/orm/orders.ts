@@ -259,6 +259,10 @@ export async function findOrder({
     },
   });
 
+  if (!order) {
+    return null;
+  }
+
   const {currency, exTaxTotal, inTaxTotal, saleOrderLineList} = order;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
