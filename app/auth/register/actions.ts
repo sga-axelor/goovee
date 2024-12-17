@@ -254,22 +254,6 @@ export async function register({
     };
   }
 
-  const existingMembers = await findWorkspaceMembers({
-    tenantId,
-    url: workspaceURL,
-  });
-
-  const alreadyHasPartnerInWorkspace = existingMembers?.partners?.length;
-
-  if (alreadyHasPartnerInWorkspace) {
-    return {
-      error: true,
-      message: await getTranslation(
-        'You cannot register, partner already exists for the workspace',
-      ),
-    };
-  }
-
   try {
     const partner = await registerPartner({
       type,
