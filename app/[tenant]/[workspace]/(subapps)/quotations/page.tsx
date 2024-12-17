@@ -28,7 +28,7 @@ export default async function Page({
   if (!user) {
     return notFound();
   }
-  
+
   const {limit, page} = searchParams;
 
   const {workspaceURL} = workspacePathname(params);
