@@ -224,7 +224,7 @@ export async function fetchEventParticipants({
     return result;
   }
   try {
-    const result = await findEventParticipant({
+    const result: any = await findEventParticipant({
       id,
       workspace,
       tenantId,

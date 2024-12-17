@@ -49,7 +49,6 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
           )}
         </CardTitle>
         <EventDateCard
-          id={eventDetails?.id}
           startDate={eventDetails?.eventStartDateTime}
           endDate={eventDetails?.eventEndDateTime}
           eventAllDay={eventDetails?.eventAllDay}

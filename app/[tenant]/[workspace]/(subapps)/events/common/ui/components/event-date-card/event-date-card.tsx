@@ -4,8 +4,7 @@ import {MdOutlineCalendarMonth} from 'react-icons/md';
 import {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {Badge, Card} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {Card} from '@/ui/components';
 import {DATE_FORMATS} from '@/constants';
 import {parseDate} from '@/utils/date';
 
@@ -13,7 +12,6 @@ import {parseDate} from '@/utils/date';
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
 
 export const EventDateCard = ({
-  id,
   startDate,
   endDate,
   eventAllDay = false,
@@ -44,6 +42,7 @@ export const EventDateCard = ({
       setEndDateTime({endDay: dateTime[0], endTime: dateTime[1]});
     }
   }, [startDate, endDate, eventAllDay]);
+
   return (
     <Card className="border-none shadow-none">
       <div className="flex items-center gap-x-2">
