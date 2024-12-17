@@ -6,7 +6,7 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import type {Partner, User} from '@/types';
+import type {Partner} from '@/types';
 import {findDeliveryAddresses, findInvoicingAddresses} from '@/orm/address';
 
 // ---- LOCAL IMPORTS ---- //
@@ -23,6 +23,9 @@ export default async function Page({
 
   const session = await getSession();
   const user: any = session?.user;
+  if (!user) {
+    return notFound();
+  }
 
   const {workspaceURL} = workspacePathname(params);
 
@@ -43,19 +46,23 @@ export default async function Page({
     tenantId: tenant,
   });
 
-  const {id: userId, isContact, mainPartnerId} = user as User;
+  if (!subapp) {
+    return notFound();
+  }
 
-  const where = getWhereClause(
-    isContact as boolean,
-    subapp?.role,
-    userId,
-    mainPartnerId as string,
-  );
+  const {role, isContactAdmin} = subapp;
+
+  const where = getWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
 
   const quotation = await findQuotation({
     id,
     tenantId: tenant,
     params: {where},
+    workspaceURL,
   }).then(clone);
 
   if (!quotation) {

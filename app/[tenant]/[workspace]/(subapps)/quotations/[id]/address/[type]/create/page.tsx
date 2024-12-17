@@ -21,6 +21,9 @@ export default async function Page({params}: {params: any}) {
 
   const session = await getSession();
   const user: any = session?.user;
+  if (!user) {
+    return notFound();
+  }
 
   const {workspaceURL} = workspacePathname(params);
 
@@ -43,19 +46,19 @@ export default async function Page({params}: {params: any}) {
 
   if (!subapp) return notFound();
 
-  const {id: userId, isContact, mainPartnerId} = user as User;
+  const {role, isContactAdmin} = subapp;
 
-  const where = getWhereClause(
-    isContact as boolean,
-    subapp?.role,
-    userId,
-    mainPartnerId as string,
-  );
+  const where = getWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
 
   const quotation = await findQuotation({
     id,
     tenantId: tenant,
     params: {where},
+    workspaceURL,
   }).then(clone);
 
   if (!quotation) {
