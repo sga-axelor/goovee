@@ -10,6 +10,7 @@ import {
   QUOTATION_TYPE,
   SECONDS,
 } from '@/subapps/quotations/common/constants/quotations';
+import type {User} from '@/types';
 
 type Variant = 'blue' | 'yellow' | 'destructive' | 'default';
 
@@ -60,28 +61,33 @@ export const updateDocument = (date1: any, date2: any) => {
   return update;
 };
 
-export function getWhereClause(
-  isContact: boolean | undefined,
-  role: any,
-  id: string | number | undefined,
-  mainPartnerId: string | number | undefined,
-) {
-  let where;
+export function getWhereClause({
+  user,
+  role,
+  isContactAdmin,
+}: {
+  user: User;
+  role: any;
+  isContactAdmin?: boolean;
+}) {
+  if (!user) return {};
+
+  const {id, mainPartnerId, isContact} = user;
+
+  let where: any = {
+    clientPartner: {
+      id: isContact ? mainPartnerId : id,
+    },
+  };
 
   if (isContact) {
-    if (role === ROLE.TOTAL) {
-      where = {
-        clientPartner: {id: mainPartnerId},
-      };
-    } else {
-      where = {
-        contactPartner: {id},
-      };
-    }
-  } else {
-    where = {
-      clientPartner: {id},
+    where.contactPartner = {
+      id,
     };
+  }
+
+  if (isContactAdmin || role === ROLE.TOTAL) {
+    delete where.contactPartner;
   }
 
   return where;

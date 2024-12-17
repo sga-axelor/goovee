@@ -45,17 +45,21 @@ export default async function Page({
     return notFound();
   }
 
-  const {isContact, id, mainPartnerId} = session?.user as User;
-  const {role} = app;
+  const user = session?.user as User;
+  const {role, isContactAdmin} = app;
 
-  const where = getWhereClause(isContact, role, id, mainPartnerId);
+  const where = getWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
 
   const {quotations, pageInfo}: any = await fetchQuotations({
     page: page || 1,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    partnerId: id,
     where,
     tenantId: tenant,
+    workspaceURL,
   });
 
   return <Content quotations={clone(quotations)} pageInfo={pageInfo} />;

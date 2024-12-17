@@ -6,7 +6,7 @@ import {
   ORDER_BY,
 } from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
-import type {ID} from '@/types';
+import type {ID, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
@@ -19,18 +19,18 @@ export const RELATED_MODELS = {
 export const fetchQuotations = async ({
   page,
   limit,
-  partnerId,
   where,
   tenantId,
+  workspaceURL,
 }: {
   archived?: boolean;
   limit?: string | number;
   page?: string | number;
-  partnerId?: ID;
   where?: any;
   tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
 }) => {
-  if (!(partnerId && tenantId)) return {quotations: [], pageInfo: {}};
+  if (!(tenantId && workspaceURL)) return {quotations: [], pageInfo: {}};
 
   const client = await manager.getClient(tenantId);
   const skip = getSkipInfo(limit, page);
@@ -50,6 +50,9 @@ export const fetchQuotations = async ({
         },
       },
     ],
+    portalWorkspace: {
+      url: workspaceURL,
+    },
   };
 
   const quotations = await client.aOSOrder
@@ -86,12 +89,14 @@ export async function findQuotation({
   id,
   tenantId,
   params,
+  workspaceURL,
 }: {
   id: any;
   tenantId: Tenant['id'];
   params?: any;
+  workspaceURL: PortalWorkspace['url'];
 }) {
-  if (!tenantId) return null;
+  if (!(tenantId && workspaceURL)) return null;
 
   const client = await manager.getClient(tenantId);
 
@@ -99,6 +104,9 @@ export async function findQuotation({
     where: {
       id,
       ...params?.where,
+      portalWorkspace: {
+        url: workspaceURL,
+      },
     },
     select: {
       saleOrderSeq: true,

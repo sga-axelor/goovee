@@ -42,26 +42,28 @@ export default async function Page({params}: PageProps) {
 
   if (!workspace) return notFound();
 
-  const subapp = await findSubappAccess({
+  const app = await findSubappAccess({
     code: SUBAPP_CODES.quotations,
     user,
     url: workspaceURL,
     tenantId: tenant,
   });
 
-  const {id: userId, isContact, mainPartnerId} = user as User;
+  const {role, isContactAdmin} = app;
 
-  const where = getWhereClause(
-    isContact as boolean,
-    subapp?.role,
-    userId,
-    mainPartnerId as string,
-  );
+  const where = getWhereClause({
+    user: user as User,
+    role,
+    isContactAdmin,
+  });
 
   const quotation = await findQuotation({
     id,
     tenantId: tenant,
-    params: {where},
+    params: {
+      where,
+    },
+    workspaceURL,
   });
 
   const orderSubapp = await findSubappAccess({
