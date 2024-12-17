@@ -1,6 +1,7 @@
 'use server';
 
 import {headers} from 'next/headers';
+import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
@@ -17,7 +18,7 @@ import {ACTION} from '../../common/constants';
 
 export async function create(formData: FormData, workspaceURL: string) {
   const title = formData.get('title') as string;
-  const description = formData.get('description')!;
+  const description = formData.get('description') as string;
   const icon = formData.get('icon')!;
   const parentId = formData.get('parent')!;
   const color = formData.get('color')!;
@@ -130,12 +131,12 @@ export async function create(formData: FormData, workspaceURL: string) {
         data: {
           fileName: title,
           isDirectory: true,
-          isSharedFolder: true,
           workspaceSet: {
             select: [{id: workspace.id}],
           },
           isPrivate,
           permissionSelect,
+          description,
           ...(partnerSet?.length
             ? {
                 partnerSet: {
@@ -162,6 +163,8 @@ export async function create(formData: FormData, workspaceURL: string) {
         },
       })
       .then(clone);
+
+    revalidatePath(`${workspaceURL}/${SUBAPP_CODES.resources}`);
 
     return {
       success: true,

@@ -5,6 +5,7 @@ import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
 import {headers} from 'next/headers';
+import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
@@ -233,6 +234,8 @@ export async function upload(formData: FormData, workspaceURL: string) {
         }),
       ),
     );
+
+    revalidatePath(`${workspaceURL}/${SUBAPP_CODES.resources}/categories`);
   } catch (err) {
     return {
       error: true,

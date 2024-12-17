@@ -30,10 +30,6 @@
       "name": "isDirectory"
     },
     {
-      "type": "Boolean",
-      "name": "isSharedFolder"
-    },
-    {
       "type": "ManyToOne",
       "name": "metaFile",
       "target": "AOSMetaFile"
