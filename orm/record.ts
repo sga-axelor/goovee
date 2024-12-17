@@ -123,7 +123,7 @@ export async function findByID({
       }
       break;
     case SUBAPP_CODES.orders:
-      response = await findOrder({id, tenantId});
+      response = await findOrder({id, tenantId, workspaceURL});
       break;
     case SUBAPP_CODES.quotations:
       if (!user) {
@@ -132,20 +132,15 @@ export async function findByID({
           message: await getTranslation('Unauthorized'),
         };
       }
-      const {isContact, id: userID, mainPartnerId} = user;
 
-      const {role} = app;
+      const {role, isContactAdmin} = app;
 
-      const where = getQuotationsWhereClause(
-        isContact,
-        role,
-        userID,
-        mainPartnerId,
-      );
+      const where = getQuotationsWhereClause({user, role, isContactAdmin});
       response = await findQuotation({
         id,
         tenantId,
         params: {where},
+        workspaceURL,
       });
       break;
 
