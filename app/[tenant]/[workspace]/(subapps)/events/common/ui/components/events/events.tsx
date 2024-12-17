@@ -64,11 +64,14 @@ export const Events = ({
     )
       ? selectedCategory.filter((i: string) => i !== category.id)
       : [...selectedCategory, category.id];
-    update([
-      {key: 'category', value: updatedCategories},
-      {key: 'page', value: 1},
-      {key: 'date', value: convertDateToISO8601(date) || ''},
-    ]);
+    update(
+      [
+        {key: 'category', value: updatedCategories},
+        {key: 'page', value: 1},
+        {key: 'date', value: convertDateToISO8601(date) || ''},
+      ],
+      {scroll: false},
+    );
 
     setSelectedCategory(updatedCategories);
   };

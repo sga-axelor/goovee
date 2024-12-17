@@ -6,3 +6,4 @@ export const PORTAL_PARTICIPANT_MODEL =
 export const CONTACT_ATTRS = 'contactAttrs';
 export const SUCCESS_REGISTER_MESSAGE =
   'You have been successfully registered to this event.';
+export const CATEGORIES = 'Categories';
