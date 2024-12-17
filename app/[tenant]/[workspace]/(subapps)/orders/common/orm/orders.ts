@@ -175,6 +175,9 @@ export async function findOrder({
   const whereClause = {
     id,
     ...params?.where,
+    portalWorkspace: {
+      url: workspaceURL,
+    },
   };
 
   if (archived) {
