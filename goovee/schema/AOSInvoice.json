@@ -52,6 +52,16 @@
     },
     {
       "type": "ManyToOne",
+      "name": "contactPartner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalWorkspace",
+      "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "ManyToOne",
       "name": "paymentCondition",
       "target": "AOSPaymentCondition"
     },

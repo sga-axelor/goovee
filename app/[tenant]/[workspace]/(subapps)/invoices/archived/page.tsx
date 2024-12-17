@@ -49,16 +49,19 @@ export default async function Invoices({
     return notFound();
   }
 
-  const {id, isContact, mainPartnerId} = user;
-
-  const {role} = app;
+  const {role, isContactAdmin} = app;
 
   const invoices = await findArchivedInvoices({
     params: {
-      where: getWhereClause(isContact, role, id, mainPartnerId),
+      where: getWhereClause({
+        user,
+        role,
+        isContactAdmin,
+      }),
     },
     tenantId: tenant,
+    workspaceURL,
   });
 
-  return <Content invoices={clone(invoices)} />;
+  return <Content invoices={invoices} />;
 }

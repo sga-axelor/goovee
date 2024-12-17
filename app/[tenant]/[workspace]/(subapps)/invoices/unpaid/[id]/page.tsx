@@ -19,14 +19,13 @@ export default async function Page({
   params: {id: string; tenant: string; workspace: string};
 }) {
   const {id, tenant} = params;
+  const {workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
 
   if (!session) return notFound();
 
   const user = session?.user as User;
-
-  const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user,
@@ -47,15 +46,19 @@ export default async function Page({
     return notFound();
   }
 
-  const {id: userId, isContact, mainPartnerId} = user;
-  const {role} = app;
+  const {role, isContactAdmin} = app;
 
   const invoice = await findInvoice({
     id,
     params: {
-      where: getWhereClause(isContact, role, userId, mainPartnerId),
+      where: getWhereClause({
+        user,
+        role,
+        isContactAdmin,
+      }),
     },
     tenantId: tenant,
+    workspaceURL,
   });
 
   return <Content invoice={clone(invoice)} workspace={workspace} />;

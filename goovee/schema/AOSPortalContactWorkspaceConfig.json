@@ -9,6 +9,10 @@
       "name": "name"
     },
     {
+      "type": "Boolean",
+      "name": "isAdmin"
+    },
+    {
       "type": "ManyToOne",
       "name": "portalWorkspace",
       "target": "AOSPortalWorkspace"

@@ -106,6 +106,7 @@ export async function findContactWorkspaceConfig({
         },
         select: {
           portalWorkspace: true,
+          isAdmin: true,
           contactAppPermissionList: {
             select: {
               roleSelect: true,
@@ -125,6 +126,7 @@ export async function findContactWorkspaceConfig({
   }));
 
   return {
+    ...contactWorkpace,
     apps,
   };
 }
@@ -564,6 +566,10 @@ export async function findWorkspaceApps({
     contactId: user.id,
     tenantId,
   });
+
+  if (contactWorkpaceConfig.isAdmin) {
+    return apps.map(app => ({...app, isContactAdmin: true}));
+  }
 
   const available = (app: any) =>
     apps.some(a => a.code === app.code && a.installed === 'yes');

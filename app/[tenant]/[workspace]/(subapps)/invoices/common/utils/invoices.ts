@@ -6,6 +6,7 @@ import {
   INVOICE_TYPE,
   INVOICE_STATUS,
 } from '@/subapps/invoices/common/constants/invoices';
+import {User} from '@/types';
 
 export function getStatus(value: string | number): {
   status: string;
@@ -24,34 +25,33 @@ export function getStatus(value: string | number): {
   }
 }
 
-export function getWhereClause(
-  isContact: boolean | undefined,
-  role: any,
-  id: string | number | undefined,
-  mainPartnerId: string | number | undefined,
-) {
-  let where;
+export function getWhereClause({
+  user,
+  role,
+  isContactAdmin,
+}: {
+  user: User;
+  role: any;
+  isContactAdmin?: boolean;
+}) {
+  if (!user) return {};
+
+  const {id, mainPartnerId, isContact} = user;
+
+  let where: any = {
+    partner: {
+      id: isContact ? mainPartnerId : id,
+    },
+  };
 
   if (isContact) {
-    if (role === ROLE.TOTAL) {
-      where = {
-        partner: {
-          id: mainPartnerId || '',
-        },
-      };
-    } else if (role === ROLE.RESTRICTED) {
-      where = {
-        partner: {
-          id: id || '',
-        },
-      };
-    }
-  } else {
-    where = {
-      partner: {
-        id: id || '',
-      },
+    where.contactPartner = {
+      id,
     };
+  }
+
+  if (isContactAdmin || role === ROLE.TOTAL) {
+    delete where.contactPartner;
   }
 
   return where;
