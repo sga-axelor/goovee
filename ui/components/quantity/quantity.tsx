@@ -49,7 +49,7 @@ export function Quantity({
           type="number"
           value={value !== 0 ? value : ''}
           onChange={handleInputChange}
-          className="w-full h-full text-center border-none outline-none"
+          className="w-full h-full text-center border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
       <div className="border rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer">
