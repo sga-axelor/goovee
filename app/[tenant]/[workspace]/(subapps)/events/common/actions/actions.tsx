@@ -9,7 +9,6 @@ import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
 import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getSession} from '@/auth';
-import {type Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {

@@ -27,5 +27,11 @@ export const EVENTS_NAVBAR_LINKS = [
   },
 ];
 
-export const MY_REGISTRATIONS = 'My Registrations';
-export const FINDING_SEARCH_RESULT = 'Finding Search Result...';
+export const MY_REGISTRATIONS = 'My registrations';
+export const SEARCHING = 'Searching...';
+export const ONGOING_EVETNS = 'Ongoing events';
+export const UPCOMING_EVENTS = 'Upcoming events';
+export const PAST_EVENTS = 'Past events';
+export const NO_EVENT = 'No event';
+export const NO_EVENT_FOUND_TODAY = 'There are no events today';
+export const NO_RESULT_FOUND = 'No result found';

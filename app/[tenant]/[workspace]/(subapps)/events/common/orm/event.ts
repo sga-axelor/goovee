@@ -367,6 +367,11 @@ export async function findAllRegisteredEvents({
       },
       emailAddress: user?.email,
     },
+    orderBy: {
+      registration: {
+        event: orderBy,
+      },
+    },
     take: limit,
     ...(skip ? {skip} : {}),
     select: {

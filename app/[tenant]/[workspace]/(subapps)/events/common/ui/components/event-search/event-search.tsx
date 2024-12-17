@@ -1,23 +1,24 @@
 'use client';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {debounce} from 'lodash';
 
 // ---- CORE IMPORTS ---- //
 import {Command, CommandInput} from '@/ui/components/command';
 import {useToast} from '@/ui/hooks';
-import {getAllEvents} from '../../../actions/actions';
 import {i18n} from '@/lib/core/i18n';
 import {PortalWorkspace} from '@/types';
 
+// ---- LOCAL IMPORTS ---- //
+import {getAllEvents} from '@/subapps/events/common/actions/actions';
+
+
 export const EventSearch = ({
-  searchKey = 'title',
   workspace,
   search,
   handleSearch,
   handleResult,
   handleSearchStatus,
 }: {
-  searchKey: any;
   search: string;
   workspace: PortalWorkspace;
   handleSearch: (x: string) => void;

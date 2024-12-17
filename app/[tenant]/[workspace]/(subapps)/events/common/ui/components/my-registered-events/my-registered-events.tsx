@@ -1,28 +1,35 @@
 'use client';
 
-import {useState, useEffect} from 'react';
-import Link from 'next/link';
-import {useRouter} from 'next/navigation';
-import {useSession} from 'next-auth/react';
+import {useState, useEffect, useCallback} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Pagination} from '@/ui/components';
-import {IMAGE_URL, SUBAPP_CODES, URL_PARAMS} from '@/constants';
-import {useSearchParams, useToast} from '@/ui/hooks';
+import { URL_PARAMS} from '@/constants';
+import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
-import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';
-import {EventSelector, EventCard} from '@/subapps/events/common/ui/components';
+import {EventSelector, ShowEvents,EventSearch} from '@/subapps/events/common/ui/components';
 import {
   MY_REGISTRATIONS,
-  FINDING_SEARCH_RESULT,
+  SEARCHING,
+  UPCOMING_EVENTS,
+  ONGOING_EVETNS,
+  PAST_EVENTS,
+  NO_EVENT,
+  NO_EVENT_FOUND_TODAY,
+  NO_RESULT_FOUND
 } from '@/subapps/events/common/constants';
-import {EventSearch} from '@/subapps/events/common/ui/components/event-search/event-search';
+
+type PartitionType = {
+  upcoming: Event[];
+  ongoing: Event[];
+  past: Event[];
+};
 
 export const MyRegisteredEvents = ({
   categories,
@@ -43,24 +50,18 @@ export const MyRegisteredEvents = ({
 }) => {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<any[]>([]);
-  const [registeredEvents, setRegisteredEvents] = useState<any[]>([]);
   const [searchPending, setSearchPending] = useState<boolean>(false);
-
+  const [partition, setPartition] = useState<PartitionType>({
+    upcoming: [],
+    ongoing: [],
+    past: [],
+  });
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
   const {update} = useSearchParams();
-  const {workspaceURI, tenant} = useWorkspace();
-  const router = useRouter();
-
-  const {data: session} = useSession();
-  const {user} = session || {};
-
-  const imageURL = workspace?.config?.eventHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant)})`
-    : IMAGE_URL;
-  const {toast} = useToast();
+  const {workspaceURI} = useWorkspace();
 
   const updateCateg = (category: Category) => {
     const updatedCategories = selectedCategory.some(
@@ -117,11 +118,38 @@ export const MyRegisteredEvents = ({
 
   useEffect(() => {
     if (search !== '') {
-      setRegisteredEvents(results);
+      setPartition(classifyEvents(results));
     } else {
-      setRegisteredEvents(events);
+      setPartition(classifyEvents(events));
     }
   }, [search, results, events]);
+
+  const classifyEvents = useCallback(
+    (events: Event[]) => {
+      const upcoming: Event[] = [];
+      const ongoing: Event[] = [];
+      const past: Event[] = [];
+      const today = new Date();
+
+      events.forEach(event => {
+        const startDate = new Date(event.eventStartDateTime);
+        const end_date = event.eventAllDay
+          ? event.eventStartDateTime
+          : event.eventEndDateTime;
+        const endDate = new Date(end_date);
+        if (startDate > today) {
+          upcoming.push(event);
+        } else if (startDate <= today && (!endDate || endDate >= today)) {
+          ongoing.push(event);
+        } else {
+          past.push(event);
+        }
+      });
+
+      return {upcoming, ongoing, past};
+    },
+    [events],
+  );
 
   return (
     <div>
@@ -140,11 +168,10 @@ export const MyRegisteredEvents = ({
             onlyRegisteredEvent={onlyRegisteredEvent}
           />
         </div>
-        <div className="">
+        <div>
           <div className="mb-4 h-[54px]">
             <EventSearch
               workspace={workspace}
-              searchKey={'title'}
               search={search}
               handleSearch={handleSearch}
               handleResult={handleResult}
@@ -152,25 +179,35 @@ export const MyRegisteredEvents = ({
             />
           </div>
           <div className="flex flex-col space-y-4 w-full">
-            {registeredEvents && registeredEvents.length > 0 ? (
-              registeredEvents.map(event => (
-                <Link
-                  href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
-                  key={event.id}
-                  passHref>
-                  <EventCard
-                    event={event}
-                    key={event.id}
-                    workspace={workspace}
-                  />
-                </Link>
-              ))
-            ) : searchPending ? (
-              <p>{i18n.get(FINDING_SEARCH_RESULT)}</p>
+            <ShowEvents
+              title={ONGOING_EVETNS}
+              events={partition.ongoing}
+              workspace={workspace}
+              workspaceURI={workspaceURI}
+            />
+            <ShowEvents
+              title={UPCOMING_EVENTS}
+              events={partition.upcoming}
+              workspace={workspace}
+              workspaceURI={workspaceURI}
+            />
+            <ShowEvents
+              title={PAST_EVENTS}
+              events={partition.past}
+              workspace={workspace}
+              workspaceURI={workspaceURI}
+            />
+
+            {searchPending ? (
+              <p>{i18n.get(SEARCHING)}</p>
             ) : (
+              search &&
+              results.length === 0 && <p>{i18n.get(NO_RESULT_FOUND)}</p>
+            )}
+            {events && events.length === 0 && (
               <>
-                <h5 className="text-lg font-bold">{i18n.get('No events')}</h5>
-                <p>{i18n.get('There are no events today')}</p>
+                <h5 className="text-lg font-bold">{i18n.get(NO_EVENT)}</h5>
+                <p>{i18n.get(NO_EVENT_FOUND_TODAY)}</p>
               </>
             )}
             <div className="w-full mt-10 flex items-center justify-center ml-auto">
