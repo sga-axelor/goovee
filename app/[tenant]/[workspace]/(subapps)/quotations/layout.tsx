@@ -2,7 +2,7 @@ import React from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {findSubappAccess} from '@/orm/workspace';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
@@ -34,6 +34,14 @@ export default async function Layout({
   }
 
   const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+    tenantId: tenant,
+  });
+
+  if (!workspace) return notFound();
 
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.quotations,

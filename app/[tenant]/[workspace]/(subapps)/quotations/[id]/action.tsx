@@ -81,16 +81,19 @@ export async function confirmQuotation({
     };
   }
 
-  const {isContact, id, mainPartnerId} = session?.user;
+  const {role, isContactAdmin} = subapp;
 
-  const {role} = subapp;
-
-  const where = getWhereClause(isContact, role, id, mainPartnerId);
+  const where = getWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
 
   const quotation = await findQuotation({
     id: quotationId,
     tenantId,
     params: {where},
+    workspaceURL,
   });
 
   if (!quotation) {
