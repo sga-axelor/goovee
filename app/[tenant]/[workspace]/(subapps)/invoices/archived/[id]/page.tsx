@@ -24,6 +24,10 @@ export default async function Page({
 
   const user = session?.user;
 
+  if (!user) {
+    return notFound();
+  }
+
   const app = await findSubappAccess({
     code: SUBAPP_CODES.invoices,
     user,
@@ -49,6 +53,10 @@ export default async function Page({
     tenantId: tenant,
     workspaceURL,
   });
+
+  if (!invoice) {
+    return notFound();
+  }
 
   return <Content invoice={invoice} />;
 }

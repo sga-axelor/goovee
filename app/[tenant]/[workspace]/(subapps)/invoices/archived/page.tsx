@@ -28,6 +28,10 @@ export default async function Invoices({
 
   const user = session?.user;
 
+  if (!user) {
+    return notFound();
+  }
+
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
@@ -51,7 +55,7 @@ export default async function Invoices({
 
   const {role, isContactAdmin} = app;
 
-  const invoices = await findArchivedInvoices({
+  const invoices: any = await findArchivedInvoices({
     params: {
       where: getWhereClause({
         user,

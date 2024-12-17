@@ -27,6 +27,10 @@ export default async function Page({
 
   const user = session?.user as User;
 
+  if (!user) {
+    return notFound();
+  }
+
   const workspace = await findWorkspace({
     user,
     url: workspaceURL,
@@ -60,6 +64,10 @@ export default async function Page({
     tenantId: tenant,
     workspaceURL,
   });
+
+  if (!invoice) {
+    return notFound();
+  }
 
   return <Content invoice={clone(invoice)} workspace={workspace} />;
 }

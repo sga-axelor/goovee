@@ -22,6 +22,13 @@ export default async function Page({
 }) {
   const {tenant} = params;
   const session = await getSession();
+
+  const user = session?.user as User;
+
+  if (!user) {
+    return notFound();
+  }
+  
   const {limit, page} = searchParams;
 
   const {workspaceURL} = workspacePathname(params);
@@ -45,7 +52,6 @@ export default async function Page({
     return notFound();
   }
 
-  const user = session?.user as User;
   const {role, isContactAdmin} = app;
 
   const where = getWhereClause({

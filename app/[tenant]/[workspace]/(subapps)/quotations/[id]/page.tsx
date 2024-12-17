@@ -32,6 +32,10 @@ export default async function Page({params}: PageProps) {
   const session = await getSession();
   const user = session?.user;
 
+  if (!user) {
+    return notFound();
+  }
+
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
@@ -65,6 +69,10 @@ export default async function Page({params}: PageProps) {
     },
     workspaceURL,
   });
+
+  if (!quotation) {
+    return notFound();
+  }
 
   const orderSubapp = await findSubappAccess({
     code: SUBAPP_CODES.orders,

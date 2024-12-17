@@ -24,6 +24,12 @@ export default async function Page({
 
   const {limit, page} = searchParams;
   const session = await getSession();
+  const user = session?.user as User;
+
+  if (!user) {
+    return notFound();
+  }
+
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
@@ -41,13 +47,10 @@ export default async function Page({
     tenantId: tenant,
   });
 
-  const {isContact, id, mainPartnerId} = session?.user as User;
-
   if (!app?.installed) {
     return notFound();
   }
 
-  const user = session?.user as User;
   const {role, isContactAdmin} = app;
 
   const where = getWhereClause({
