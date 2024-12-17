@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
   Button,
+  Badge,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -24,6 +25,7 @@ import {
 } from '@/subapps/events/common/ui/components';
 import {
   EDIT_MY_REGISTRATION,
+  REGISTER_TAG,
   REGISTER_TO_EVENT,
 } from '@/subapps/events/common/constants';
 
@@ -36,15 +38,21 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
   return (
     <Card className="w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
-        <CardTitle>
+        <CardTitle className="w-full flex items-center justify-between">
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
+          {isRegistered && (
+            <Badge
+              variant="outline"
+              className="text-[0.625rem] mb-[0.688rem] font-medium py-1 px-2 text-success border-success h-6">
+              {i18n.get(REGISTER_TAG)}
+            </Badge>
+          )}
         </CardTitle>
         <EventDateCard
           id={eventDetails?.id}
           startDate={eventDetails?.eventStartDateTime}
           endDate={eventDetails?.eventEndDateTime}
           eventAllDay={eventDetails?.eventAllDay}
-          isRegistered={isRegistered}
         />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
       </CardHeader>

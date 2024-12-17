@@ -17,7 +17,6 @@ export const EventDateCard = ({
   startDate,
   endDate,
   eventAllDay = false,
-  isRegistered,
 }: EventDateCardProps) => {
   const [startDateTime, setStartDateTime] = useState({
     startDay: '',
@@ -47,13 +46,6 @@ export const EventDateCard = ({
   }, [startDate, endDate, eventAllDay]);
   return (
     <Card className="border-none shadow-none">
-      {isRegistered && (
-        <Badge
-          variant="outline"
-          className="text-[0.625rem] mb-[0.688rem] font-medium py-1 px-2 text-success border-success h-6">
-          {i18n.get('#Registered')}
-        </Badge>
-      )}
       <div className="flex items-center gap-x-2">
         <MdOutlineCalendarMonth className="w-6 h-6 text-success" />
         <div className="flex">
