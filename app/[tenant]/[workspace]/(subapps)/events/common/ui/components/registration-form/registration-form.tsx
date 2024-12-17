@@ -94,7 +94,13 @@ export const RegistrationForm = ({
         defaultValue: user?.fixedPhone || '',
       },
     ],
-    [user],
+    [
+      isLoggedIn,
+      user?.emailAddress?.address,
+      user.firstName,
+      user?.fixedPhone,
+      user?.name,
+    ],
   );
 
   const participantForm = useMemo(
