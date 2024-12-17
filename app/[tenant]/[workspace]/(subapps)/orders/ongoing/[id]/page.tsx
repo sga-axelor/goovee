@@ -1,9 +1,17 @@
+import {notFound} from 'next/navigation';
+
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
+import {getSession} from '@/auth';
+import {findSubapp, findWorkspace} from '@/orm/workspace';
+import {workspacePathname} from '@/utils/workspace';
+import {SUBAPP_CODES} from '@/constants';
+import {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
+import {getWhereClause} from '@/subapps/orders/common/utils/orders';
 
 export default async function Page({
   params,
@@ -12,6 +20,45 @@ export default async function Page({
 }) {
   const {id, tenant} = params;
 
-  const order = await findOrder({id, tenantId: tenant});
+  const session = await getSession();
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+    tenantId: tenant,
+  }).then(clone);
+
+  if (!workspace) return notFound();
+
+  const app = await findSubapp({
+    code: SUBAPP_CODES.orders,
+    url: workspace.url,
+    user: session?.user,
+    tenantId: tenant,
+  });
+
+  if (!app?.installed) {
+    return notFound();
+  }
+
+  const user = session?.user as User;
+  const {role, isContactAdmin} = app;
+
+  const where = getWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
+
+  const order = await findOrder({
+    id,
+    tenantId: tenant,
+    params: {
+      where,
+    },
+    workspaceURL,
+  });
+
   return <Content order={clone(order)} />;
 }

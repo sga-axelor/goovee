@@ -2,7 +2,7 @@
 import {manager, type Tenant} from '@/tenant';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
-import type {Partner} from '@/types';
+import type {Partner, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_STATUS} from '@/subapps/orders/common/constants/orders';
@@ -16,6 +16,7 @@ const fetchOrders = async ({
   skip,
   where,
   tenantId,
+  workspaceURL,
 }: {
   partnerId?: Partner['id'];
   archived?: boolean;
@@ -24,13 +25,17 @@ const fetchOrders = async ({
   skip?: boolean | number;
   where?: any;
   tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
 }) => {
-  if (!(partnerId && tenantId)) return null;
+  if (!(partnerId && tenantId && workspaceURL)) return null;
 
   const client = await manager.getClient(tenantId);
 
   const whereClause: any = {
     ...where,
+    portalWorkspace: {
+      url: workspaceURL,
+    },
   };
 
   if (archived) {
@@ -99,16 +104,26 @@ export async function findOngoingOrders({
   page = 1,
   limit,
   tenantId,
+  workspaceURL,
 }: {
   partnerId?: string | number;
   page?: string | number;
   limit?: string | number;
   where?: any;
   tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
 }): Promise<any> {
   const skip = getSkipInfo(limit, page);
 
-  return await fetchOrders({partnerId, page, limit, skip, where, tenantId});
+  return await fetchOrders({
+    partnerId,
+    page,
+    limit,
+    skip,
+    where,
+    tenantId,
+    workspaceURL,
+  });
 }
 
 export async function findArchivedOrders({
@@ -117,12 +132,14 @@ export async function findArchivedOrders({
   limit,
   where,
   tenantId,
+  workspaceURL,
 }: {
   partnerId?: string | number;
   page?: string | number;
   limit?: string | number;
   where?: any;
   tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
 }): Promise<any> {
   const skip = getSkipInfo(limit, page);
 
@@ -134,24 +151,52 @@ export async function findArchivedOrders({
     skip,
     where,
     tenantId,
+    workspaceURL,
   });
 }
 
 export async function findOrder({
   id,
   tenantId,
+  workspaceURL,
+  params,
+  archived,
 }: {
   id: Order['id'];
   tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
+  params?: any;
+  archived?: boolean;
 }) {
-  if (!tenantId) return null;
+  if (!(tenantId && workspaceURL)) return null;
 
   const client = await manager.getClient(tenantId);
 
+  const whereClause = {
+    id,
+    ...params?.where,
+  };
+
+  if (archived) {
+    whereClause.OR = [
+      {
+        archived: {
+          eq: true,
+        },
+      },
+      {
+        statusSelect: {
+          eq: ORDER_STATUS.CLOSED,
+        },
+      },
+    ];
+  } else {
+    whereClause.template = false;
+    whereClause.statusSelect = ORDER_STATUS.CONFIRMED;
+  }
+
   const order: any = await client.aOSOrder.findOne({
-    where: {
-      id,
-    },
+    where: whereClause,
     select: {
       saleOrderSeq: true,
       inTaxTotal: true,

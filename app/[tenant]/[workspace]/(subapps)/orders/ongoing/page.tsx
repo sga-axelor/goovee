@@ -47,9 +47,14 @@ export default async function Page({
     return notFound();
   }
 
-  const {role} = app;
+  const user = session?.user as User;
+  const {role, isContactAdmin} = app;
 
-  const where = getWhereClause(isContact, role, id, mainPartnerId);
+  const where = getWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
 
   const {orders, pageInfo} = await findOngoingOrders({
     partnerId: session?.user?.id,
@@ -57,6 +62,7 @@ export default async function Page({
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     where,
     tenantId: tenant,
+    workspaceURL,
   });
 
   return <Content orders={clone(orders)} pageInfo={pageInfo} />;
