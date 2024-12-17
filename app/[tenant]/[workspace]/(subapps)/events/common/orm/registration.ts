@@ -102,5 +102,8 @@ export async function findEventParticipant({
       },
       emailAddress: user?.email,
     },
+    select: {
+      emailAddress: true,
+    },
   });
 }

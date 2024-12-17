@@ -22,12 +22,17 @@ import {
   EventCardBadges,
   EventDateCard,
 } from '@/subapps/events/common/ui/components';
+import {
+  EDIT_MY_REGISTRATION,
+  REGISTER_TO_EVENT,
+} from '@/subapps/events/common/constants';
 
-export const EventPageCard = ({eventDetails, workspace}: any) => {
+export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
   const {workspaceURI, tenant} = useWorkspace();
 
   const allowGuestEventRegistration =
     workspace.config?.allowGuestEventRegistration;
+
   return (
     <Card className="w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
@@ -39,8 +44,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
           startDate={eventDetails?.eventStartDateTime}
           endDate={eventDetails?.eventEndDateTime}
           eventAllDay={eventDetails?.eventAllDay}
-          canRegister={eventDetails?.eventAllowRegistration}
-          workspace={workspace}
+          isRegistered={isRegistered}
         />
         <EventCardBadges categories={eventDetails?.eventCategorySet} />
       </CardHeader>
@@ -90,15 +94,19 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
       {(eventDetails?.eventAllowRegistration ||
         allowGuestEventRegistration) && (
         <CardFooter className="px-4 pb-4">
-          <Link
-            href={`${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}/register`}
-            className="w-full">
-            <Button
-              size="sm"
-              className="w-full text-base font-medium bg-success hover:bg-success-dark">
-              {i18n.get('Register to the event')}
-            </Button>
-          </Link>
+          {
+            <Link
+              href={`${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}/register`}
+              className="w-full">
+              <Button
+                size="sm"
+                className="w-full text-base font-medium bg-success hover:bg-success-dark">
+                {!isRegistered
+                  ? i18n.get(REGISTER_TO_EVENT)
+                  : i18n.get(EDIT_MY_REGISTRATION)}
+              </Button>
+            </Link>
+          }
         </CardFooter>
       )}
     </Card>

@@ -13,16 +13,22 @@ import type {Event} from '@/subapps/events/common/ui/components';
 export function EventDetails({
   eventDetails,
   workspace,
+  isRegistered,
 }: {
   eventDetails: Event;
   workspace: PortalWorkspace;
+  isRegistered: boolean;
 }) {
   const eventId = eventDetails.id;
   const enableEventComment = workspace.config?.enableEventComment;
 
   return (
     <div className="flex flex-col gap-6 pt-6 px-4 lg:px-[6.25rem] pb-24 lg:pb-6">
-      <EventPageCard eventDetails={eventDetails} workspace={workspace} />
+      <EventPageCard
+        eventDetails={eventDetails}
+        workspace={workspace}
+        isRegistered={isRegistered}
+      />
       {enableEventComment && <CommentsSection eventId={eventId} />}
     </div>
   );

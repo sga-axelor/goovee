@@ -42,15 +42,12 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
       if (!user || !event.id) return;
 
       try {
-        const response = await fetchEventParticipants({
+        const res = await fetchEventParticipants({
           id: event.id,
           workspace,
+          user,
         });
-
-        if (response.success && response.data) {
-          const {emailAddress} = response.data;
-          setIsRegistered(emailAddress === user.email);
-        }
+        setIsRegistered(res?.isRegistered);
       } catch (error) {
         console.error('Error fetching participants:', error);
       }

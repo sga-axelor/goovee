@@ -5,6 +5,5 @@ export interface EventDateCardProps {
   startDate?: string;
   endDate?: string;
   eventAllDay?: boolean;
-  workspace: PortalWorkspace;
-  canRegister?: boolean;
+  isRegistered: boolean;
 }

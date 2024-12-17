@@ -2,7 +2,6 @@
 
 import {MdOutlineCalendarMonth} from 'react-icons/md';
 import {useEffect, useState} from 'react';
-import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {Badge, Card} from '@/ui/components';
@@ -12,15 +11,13 @@ import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
-import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 
 export const EventDateCard = ({
   id,
   startDate,
   endDate,
   eventAllDay = false,
-  workspace,
-  canRegister,
+  isRegistered,
 }: EventDateCardProps) => {
   const [startDateTime, setStartDateTime] = useState({
     startDay: '',
@@ -30,34 +27,6 @@ export const EventDateCard = ({
     endDay: '',
     endTime: '',
   });
-  const [isRegistered, setIsRegistered] = useState(false);
-
-  const {data: session} = useSession();
-  const {user} = session || {};
-
-  useEffect(() => {
-    const checkRegistrationStatus = async () => {
-      if (!user || !id) return;
-
-      try {
-        const response = await fetchEventParticipants({
-          id,
-          workspace,
-        });
-
-        if (response.success && response.data) {
-          const {emailAddress} = response.data;
-          setIsRegistered(emailAddress === user.email);
-        }
-      } catch (error) {
-        console.error('Error fetching participants:', error);
-      }
-    };
-
-    if (canRegister) {
-      checkRegistrationStatus();
-    }
-  }, [workspace, id, user, canRegister]);
 
   useEffect(() => {
     if (startDate) {

@@ -188,12 +188,19 @@ export async function fetchContacts({
 export async function fetchEventParticipants({
   id,
   workspace,
+  user,
 }: {
   id: ID;
   workspace: PortalWorkspace;
+  user?: User;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
+  if (!user?.email) {
+    return {
+      isRegistered: false,
+    };
+  }
   if (!id) {
     return error(await getTranslation('Invalid Event.'));
   }
@@ -222,9 +229,10 @@ export async function fetchEventParticipants({
       workspace,
       tenantId,
     }).then(clone);
+
+    const emailAddress = result?.emailAddress;
     return {
-      success: true,
-      data: result,
+      isRegistered: emailAddress === user.email,
     };
   } catch (err) {
     console.log(err);
