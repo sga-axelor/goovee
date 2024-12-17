@@ -31,7 +31,7 @@ export async function registerParticipants({
   if (!tenantId) return error(await getTranslation('Tenant ID is missing!'));
 
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
