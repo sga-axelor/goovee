@@ -26,6 +26,13 @@ export default async function Layout({
 }) {
   const {tenant} = params;
 
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return notFound();
+  }
+
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.orders,
     user: (await getSession())?.user,

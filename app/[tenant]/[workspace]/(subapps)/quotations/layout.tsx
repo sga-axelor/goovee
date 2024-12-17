@@ -27,6 +27,12 @@ export default async function Layout({
   const {tenant} = params;
   const session = await getSession();
 
+  const user = session?.user;
+
+  if (!user) {
+    return notFound();
+  }
+
   const {workspaceURL} = workspacePathname(params);
 
   const subapp = await findSubappAccess({

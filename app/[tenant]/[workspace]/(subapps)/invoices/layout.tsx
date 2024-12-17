@@ -28,12 +28,17 @@ export default async function Layout({
   const {tenant} = params;
 
   const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return notFound();
+  }
 
   const {workspaceURL} = workspacePathname(params);
 
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.invoices,
-    user: session?.user,
+    user,
     url: workspaceURL,
     tenantId: tenant,
   });
