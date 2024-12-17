@@ -154,6 +154,7 @@ export async function requestOrder({
           price: price?.ati,
         };
       }),
+      workspaceId: workspace.id,
     };
 
     const res = await axios.post(ws, payload, {
