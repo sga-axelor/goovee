@@ -14,6 +14,7 @@ import {Button, Form} from '@/ui/components';
 import {Country} from '@/types';
 import {useToast} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {UserType} from '@/lib/core/auth/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -55,14 +56,17 @@ export const AddressForm = ({
   type,
   countries = [],
   address = null,
+  userType,
 }: {
   quotation: any;
   type: ADDRESS_TYPE;
   countries?: Country[];
   address?: any;
+  userType: UserType;
 }) => {
   const [cities, setCities] = useState([]);
   const title = i18n.get(`${capitalise(type)} Address`);
+  const isCompany = userType === UserType.company;
 
   const {toast} = useToast();
   const router = useRouter();
@@ -204,7 +208,7 @@ export const AddressForm = ({
         className="flex flex-col gap-4">
         <div className="font-medium text-xl">{title}</div>
         <div className="flex flex-col gap-4">
-          <PersonalInformation form={form} />
+          <PersonalInformation form={form} isCompany={isCompany} />
           <AddressInformation
             countries={countries}
             form={form}
