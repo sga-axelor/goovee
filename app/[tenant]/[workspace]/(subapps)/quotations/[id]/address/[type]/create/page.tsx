@@ -9,6 +9,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {findSubappAccess} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {findCountries} from '@/orm/address';
+import {findPartnerByEmail, PartnerTypeMap} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/quotations/[id]/address/[type]/create/content';
@@ -35,6 +36,22 @@ export default async function Page({params}: {params: any}) {
 
   if (!subapp) return notFound();
 
+  const partner = await findPartnerByEmail(user.email, tenant);
+
+  if (!partner) {
+    return notFound();
+  }
+
+  if (![ADDRESS_TYPE.invoicing, ADDRESS_TYPE.delivery].includes(params?.type)) {
+    redirect('/account/addresses');
+  }
+
+  const {partnerTypeSelect} = partner;
+
+  const userType: any = Object.entries(PartnerTypeMap).find(
+    ([key, value]) => value === partnerTypeSelect,
+  )?.[0];
+
   const {role, isContactAdmin} = subapp;
 
   const where = getWhereClause({
@@ -54,11 +71,14 @@ export default async function Page({params}: {params: any}) {
     return notFound();
   }
 
-  if (![ADDRESS_TYPE.invoicing, ADDRESS_TYPE.delivery].includes(params?.type)) {
-    redirect('/account/addresses');
-  }
-
   const countries: any = await findCountries(tenant).then(clone);
 
-  return <Content quotation={quotation} type={type} countries={countries} />;
+  return (
+    <Content
+      quotation={quotation}
+      type={type}
+      countries={countries}
+      userType={userType}
+    />
+  );
 }

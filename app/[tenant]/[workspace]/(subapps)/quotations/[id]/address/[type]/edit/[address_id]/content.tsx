@@ -3,6 +3,7 @@
 // ---- CORE IMPORTS ---- //
 import {ADDRESS_TYPE} from '@/constants';
 import {Country} from '@/types';
+import {UserType} from '@/lib/core/auth/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {AddressForm} from '@/subapps/quotations/common/ui/components';
@@ -12,10 +13,12 @@ function Content({
   address,
   type,
   countries = [],
+  userType,
 }: {
   quotation: any;
   address: any;
   countries?: Country[];
+  userType: UserType;
   type: ADDRESS_TYPE;
 }) {
   return (
@@ -24,6 +27,7 @@ function Content({
       address={address}
       type={type}
       countries={countries}
+      userType={userType}
     />
   );
 }

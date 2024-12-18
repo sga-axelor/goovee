@@ -32,7 +32,7 @@ interface ContentProps {
   deliveryAddresses: any;
 }
 
-const AddressBlock = ({
+const AddressCard = ({
   id,
   isSelected,
   type,
@@ -108,7 +108,7 @@ const AddressBlock = ({
   );
 };
 
-const AddressesBlock = ({
+const AddressesList = ({
   currentAddress,
   addresses,
   type,
@@ -139,7 +139,7 @@ const AddressesBlock = ({
             const isSelected = currentAddress?.id === address.id;
             return (
               <SwiperSlide key={address.id} className="!w-[17.563rem] !h-auto">
-                <AddressBlock
+                <AddressCard
                   id={address.id}
                   address={address}
                   type={type}
@@ -248,7 +248,7 @@ function Content({
             <div className="font-semibold text-xl">
               {i18n.get('Invoicing address')}
             </div>
-            <AddressesBlock
+            <AddressesList
               currentAddress={selectedAddresses.invoicing}
               addresses={invoicingAddresses}
               type={ADDRESS_TYPE.invoicing}
@@ -263,7 +263,7 @@ function Content({
             <div className="font-semibold text-xl">
               {i18n.get('Delivery address')}
             </div>
-            <AddressesBlock
+            <AddressesList
               currentAddress={selectedAddresses.delivery}
               addresses={deliveryAddresses}
               type={ADDRESS_TYPE.delivery}

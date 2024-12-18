@@ -6,10 +6,10 @@ import {ADDRESS_TYPE} from '@/constants';
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {findSubappAccess} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {findAddress, findCountries} from '@/orm/address';
-import {User} from '@/types';
+import {findPartnerByEmail, PartnerTypeMap} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/quotations/[id]/address/[type]/edit/[address_id]/content';
@@ -36,6 +36,22 @@ export default async function Page({params}: {params: any}) {
 
   if (!subapp) return notFound();
 
+  if (![ADDRESS_TYPE.invoicing, ADDRESS_TYPE.delivery].includes(params?.type)) {
+    redirect('/account/addresses');
+  }
+
+  const partner = await findPartnerByEmail(user.email, tenant);
+
+  if (!partner) {
+    return notFound();
+  }
+
+  const {partnerTypeSelect} = partner;
+
+  const userType: any = Object.entries(PartnerTypeMap).find(
+    ([key, value]) => value === partnerTypeSelect,
+  )?.[0];
+
   const {role, isContactAdmin} = subapp;
 
   const where = getWhereClause({
@@ -55,10 +71,6 @@ export default async function Page({params}: {params: any}) {
     return notFound();
   }
 
-  if (![ADDRESS_TYPE.invoicing, ADDRESS_TYPE.delivery].includes(params?.type)) {
-    redirect('/account/addresses');
-  }
-
   const countries: any = await findCountries(tenant).then(clone);
 
   const address = await findAddress({
@@ -72,6 +84,7 @@ export default async function Page({params}: {params: any}) {
       type={type}
       address={address}
       countries={countries}
+      userType={userType}
     />
   );
 }
