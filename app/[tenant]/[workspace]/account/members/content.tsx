@@ -37,6 +37,7 @@ import {getInitials} from '@/utils/names';
 import {getDownloadURL} from '@/utils/files';
 import {SUBAPP_WITH_ROLES} from '@/constants';
 import {useToast} from '@/ui/hooks';
+import {useSession} from 'next-auth/react';
 
 // ---- LOCAL IMPORTS ---- //
 import {Authorization, Role} from '../common/types';
@@ -51,6 +52,9 @@ import {
 } from './action';
 
 function Members({members, availableApps}: any) {
+  const {data: session} = useSession();
+  const user = session?.user;
+
   const {workspaceURL, tenant} = useWorkspace();
   const {toast} = useToast();
   const router = useRouter();
@@ -149,6 +153,7 @@ function Members({members, availableApps}: any) {
 
             const isPartner = !member.isContact;
             const isOwner = isPartner;
+            const currentUser = member.id === user?.id;
 
             const roleLabel =
               RoleLabel[
@@ -179,7 +184,7 @@ function Members({members, availableApps}: any) {
                     <p className="text-sm">{emailAddress?.address}</p>
                     <p className="text-sm">{roleLabel}</p>
                     <div className="flex items-center gap-6 justify-self-end">
-                      {isOwner ? (
+                      {isOwner || currentUser ? (
                         <div />
                       ) : (
                         <MdDeleteOutline
