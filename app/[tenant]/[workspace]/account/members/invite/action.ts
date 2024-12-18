@@ -146,9 +146,9 @@ export async function sendInvites({
     return error(await getTranslation('Unauthorized'));
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const isValidUser = await findPartnerByEmail(user.email, tenantId);
 
-  if (!partner) {
+  if (!isValidUser) {
     return error(await getTranslation('Unauthorized'));
   }
 
@@ -177,9 +177,19 @@ export async function sendInvites({
 
   let inviteError;
 
+  const partnerId = (user.isContact ? user.mainPartnerId : user.id) as any;
+
   for (const email of emailAddresses) {
     try {
       z.string().email({message: 'Invalid email address'}).parse(email);
+
+      const existingContact = await findPartnerByEmail(email, tenantId);
+
+      if (existingContact?.mainPartner) {
+        if (existingContact.mainPartner.id !== partnerId) {
+          continue; // don't send invite to contact with different partner
+        }
+      }
 
       const existingInvite = await findInviteForEmail({
         email,
@@ -197,7 +207,7 @@ export async function sendInvites({
         email,
         role,
         apps: filteredApps,
-        partnerId: (user.isContact ? user.mainPartnerId : user.id) as any,
+        partnerId,
       });
 
       if (!invite?.id) {

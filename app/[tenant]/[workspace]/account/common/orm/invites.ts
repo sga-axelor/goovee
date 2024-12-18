@@ -193,6 +193,10 @@ export async function findInviteForEmail({
         url: workspaceURL,
       },
     },
+    select: {
+      partner: true,
+      workspace: true,
+    },
   });
 
   return invite;
