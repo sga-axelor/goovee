@@ -6,9 +6,8 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {getTranslation} from '@/i18n/server';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {findSubappAccess} from '@/orm/workspace';
 import {clone} from '@/utils';
-import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
@@ -35,22 +34,16 @@ export default async function Layout({
 
   const {workspaceURL} = workspacePathname(params);
 
-  const workspace: any = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  }).then(clone);
-
-  if (!workspace) {
-    return notFound();
-  }
-
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.quotations,
     user,
     url: workspaceURL,
     tenantId: tenant,
   });
+
+  if (!subapp) {
+    return notFound();
+  }
 
   const {role, isContactAdmin} = subapp;
 

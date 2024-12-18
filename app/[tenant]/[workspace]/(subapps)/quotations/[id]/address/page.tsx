@@ -29,16 +29,6 @@ export default async function Page({
 
   const {workspaceURL} = workspacePathname(params);
 
-  const workspace: any = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  }).then(clone);
-
-  if (!workspace) {
-    return notFound();
-  }
-
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.quotations,
     user,

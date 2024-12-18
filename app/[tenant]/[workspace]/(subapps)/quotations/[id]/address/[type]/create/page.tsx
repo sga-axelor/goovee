@@ -6,10 +6,9 @@ import {ADDRESS_TYPE} from '@/constants';
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {findSubappAccess} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {findCountries} from '@/orm/address';
-import {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/quotations/[id]/address/[type]/create/content';
@@ -26,16 +25,6 @@ export default async function Page({params}: {params: any}) {
   }
 
   const {workspaceURL} = workspacePathname(params);
-
-  const workspace: any = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId: tenant,
-  }).then(clone);
-
-  if (!workspace) {
-    return notFound();
-  }
 
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.quotations,
