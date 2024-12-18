@@ -38,7 +38,7 @@ import {
 import {useRouter} from 'next/navigation';
 
 const formSchema = z.object({
-  defaultWorkspace: z.string(),
+  defaultWorkspace: z.string().optional(),
   localization: z.string(),
 });
 
@@ -152,37 +152,40 @@ export default function Page() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-4">
-          <FormField
-            control={form.control}
-            name="defaultWorkspace"
-            render={({field}) => (
-              <FormItem>
-                <FormLabel>{i18n.get('Default Workspace')}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value?.toString()}
-                  disabled={user?.isContact}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={i18n.get('Select your default workspace')}
-                      />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {workspaces.map((workspace: any) => (
-                      <SelectItem
-                        value={workspace.id?.toString()}
-                        key={workspace.id}>
-                        {workspace.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!user?.isContact && (
+            <FormField
+              control={form.control}
+              name="defaultWorkspace"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Default Workspace')}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value?.toString()}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={i18n.get(
+                            'Select your default workspace',
+                          )}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {workspaces.map((workspace: any) => (
+                        <SelectItem
+                          value={workspace.id?.toString()}
+                          key={workspace.id}>
+                          {workspace.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name="localization"
