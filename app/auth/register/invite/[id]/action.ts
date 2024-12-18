@@ -2,8 +2,8 @@
 
 import {getTranslation} from '@/i18n/server';
 import {findInviteById} from '../../common/orm/register';
-import {ALLOW_NO_REGISTRATION} from '@/constants';
 import {findPartnerByEmail, registerContact} from '@/orm/partner';
+import {deleteInviteById} from '@/app/[tenant]/[workspace]/account/common/orm/invites';
 
 function error(message: string) {
   return {
@@ -66,6 +66,13 @@ export async function register({
     });
 
     const uri = `${workspace.url.replace(process.env.NEXT_PUBLIC_HOST, '')}`;
+
+    deleteInviteById({
+      id: invite.id,
+      tenantId,
+    }).catch(err => {
+      console.error(err);
+    });
 
     return {
       success: true,
