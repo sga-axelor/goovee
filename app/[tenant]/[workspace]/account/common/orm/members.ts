@@ -4,7 +4,7 @@ import {getSession} from '@/lib/core/auth';
 import {isAdminContact, isPartner} from '@/orm/partner';
 import {findSubapps, findWorkspaceMembers} from '@/orm/workspace';
 import {type Tenant, manager} from '@/tenant';
-import type {PortalWorkspace} from '@/types';
+import type {Partner, PortalWorkspace} from '@/types';
 import {clone} from '@/utils';
 
 export async function findAvailableSubapps({
@@ -35,8 +35,8 @@ export async function findAvailableSubapps({
     .then(clone)
     .then(apps =>
       apps
-        .filter(a => a.id)
-        .map(({id, name, code}) => ({
+        .filter((a: any) => a.id)
+        .map(({id, name, code}: any) => ({
           id,
           name,
           code,
@@ -50,11 +50,13 @@ export async function findAvailableSubapps({
 export async function findMembers({
   workspaceURL,
   tenantId,
+  partnerId,
 }: {
   workspaceURL: PortalWorkspace['url'];
   tenantId: Tenant['id'];
+  partnerId: Partner['id'];
 }) {
-  if (!tenantId) {
+  if (!tenantId && partnerId) {
     return [];
   }
 
@@ -75,15 +77,8 @@ export async function findMembers({
   const workspaceMembers = await findWorkspaceMembers({
     url: workspaceURL,
     tenantId,
+    partnerId,
   }).then(clone);
 
-  if (admin) {
-    return workspaceMembers.contacts;
-  }
-
-  if (adminContact) {
-    return workspaceMembers.contacts.filter(
-      (c: any) => c.id !== adminContact.id,
-    );
-  }
+  return workspaceMembers;
 }

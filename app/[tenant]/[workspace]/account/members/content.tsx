@@ -51,7 +51,7 @@ import {
 } from './action';
 
 function Members({members, availableApps}: any) {
-  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
+  const {workspaceURL, tenant} = useWorkspace();
   const {toast} = useToast();
   const router = useRouter();
 
@@ -146,10 +146,19 @@ function Members({members, availableApps}: any) {
               contactWorkspaceConfig,
             } = member;
             const isAdminContact = contactWorkspaceConfig?.isAdmin;
+
+            const isPartner = !member.isContact;
+            const isOwner = isPartner;
+
+            const roleLabel =
+              RoleLabel[
+                isOwner ? Role.owner : isAdminContact ? Role.admin : Role.user
+              ];
+
             return (
-              <AccordionItem value={id} key={id}>
+              <AccordionItem value={id} key={id} className="border-b">
                 <div className="flex flex-col gap-2 py-2 px-4">
-                  <div className="flex items-center justify-between gap-6">
+                  <div className="grid grid-cols-4 items-center gap-6">
                     <div className="flex items-center gap-[7.5rem]">
                       <div className="flex items-center gap-2">
                         <Avatar className="size-8">
@@ -168,21 +177,23 @@ function Members({members, availableApps}: any) {
                       </div>
                     </div>
                     <p className="text-sm">{emailAddress?.address}</p>
-                    <p className="text-sm">
-                      {RoleLabel[isAdminContact ? Role.admin : Role.user]}
-                    </p>
-                    <div className="flex items-center gap-6">
+                    <p className="text-sm">{roleLabel}</p>
+                    <div className="flex items-center gap-6 justify-self-end">
                       <MdDeleteOutline
-                        className="size-6 text-destructive cursor-pointer"
+                        className={cn(
+                          'size-6 text-destructive cursor-pointer',
+                          {hidden: isOwner},
+                        )}
                         onClick={openConfirmation(member)}
                       />
                       <AccordionTrigger
-                        className={cn({hidden: isAdminContact})}>
+                        className={cn({hidden: isAdminContact || isOwner})}>
                         <MdKeyboardArrowDown className="size-6 cursor-pointer" />
                       </AccordionTrigger>
                     </div>
                   </div>
-                  <AccordionContent className={cn({hidden: isAdminContact})}>
+                  <AccordionContent
+                    className={cn({hidden: isAdminContact || isOwner})}>
                     <div className="space-y-[1px]">
                       {availableApps?.map((app: any) => {
                         const {name, code} = app;

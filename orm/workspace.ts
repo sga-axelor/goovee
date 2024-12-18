@@ -1,6 +1,6 @@
 import {manager, type Tenant} from '@/tenant';
 import {AOSPortalAppConfig} from '@/goovee/.generated/models';
-import {ID, User} from '@/types';
+import {ID, Partner, User} from '@/types';
 import {clone} from '@/utils';
 import {SelectOptions} from '@goovee/orm';
 
@@ -72,11 +72,13 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
 export async function findWorkspaceMembers({
   url,
   tenantId,
+  partnerId,
 }: {
   url?: string;
   tenantId: Tenant['id'];
+  partnerId: Partner['id'];
 }) {
-  if (!(url && tenantId)) {
+  if (!(url && tenantId && partnerId)) {
     return {
       partners: [],
       contacts: [],
@@ -95,6 +97,8 @@ export async function findWorkspaceMembers({
   const memberPartners = await client.aOSPartner.find({
     where: {
       isContact: false,
+      id: partnerId,
+      isRegisteredOnPortal: true,
       partnerWorkspaceSet: {
         workspace: {
           url,
@@ -107,6 +111,7 @@ export async function findWorkspaceMembers({
       name: true,
       fullName: true,
       picture: true,
+      isContact: true,
       emailAddress: {
         address: true,
       },
@@ -117,6 +122,10 @@ export async function findWorkspaceMembers({
     .find({
       where: {
         isContact: true,
+        isRegisteredOnPortal: true,
+        mainPartner: {
+          id: partnerId,
+        },
         contactWorkspaceConfigSet: {
           portalWorkspace: {
             url,
@@ -129,11 +138,13 @@ export async function findWorkspaceMembers({
         name: true,
         fullName: true,
         picture: true,
+        isContact: true,
         emailAddress: {
           address: true,
         },
         contactWorkspaceConfigSet: {
           select: {
+            isAdmin: true,
             portalWorkspace: {
               url: true,
             },
