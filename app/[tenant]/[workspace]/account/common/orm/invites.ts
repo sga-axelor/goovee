@@ -2,7 +2,7 @@
 import {manager, type Tenant} from '@/tenant';
 import {findEmailAddress, isAdminContact, isPartner} from '@/orm/partner';
 import {clone} from '@/utils';
-import type {PortalWorkspace} from '@/types';
+import type {Partner, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {InviteAppsConfig, Role} from '../types';
@@ -30,6 +30,9 @@ export async function findInviteById({
         id,
       },
       select: {
+        partner: {
+          id: true,
+        },
         contactAppPermissionList: {
           select: {
             isAdmin: true,
@@ -102,11 +105,13 @@ export async function deleteInviteById({
 export async function findInvites({
   workspaceURL,
   tenantId,
+  partnerId,
 }: {
   workspaceURL: PortalWorkspace['url'];
   tenantId: Tenant['id'];
+  partnerId: Partner['id'];
 }) {
-  if (!tenantId) {
+  if (!(tenantId && partnerId)) {
     return [];
   }
 
@@ -130,6 +135,9 @@ export async function findInvites({
       where: {
         workspace: {
           url: workspaceURL,
+        },
+        partner: {
+          id: partnerId,
         },
       },
       select: {

@@ -73,7 +73,9 @@ export async function deleteInvite({
 
   const invite = await findInviteById({id, tenantId});
 
-  if (!invite) {
+  const partnerId = (user?.isContact ? user.mainPartnerId : user.id)!;
+
+  if (!(invite && invite?.partner?.id && invite.partner.id === partnerId)) {
     return error(await getTranslation('Invalid invite'));
   }
 

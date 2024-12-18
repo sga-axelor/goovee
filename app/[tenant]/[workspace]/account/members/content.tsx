@@ -179,16 +179,23 @@ function Members({members, availableApps}: any) {
                     <p className="text-sm">{emailAddress?.address}</p>
                     <p className="text-sm">{roleLabel}</p>
                     <div className="flex items-center gap-6 justify-self-end">
-                      <MdDeleteOutline
-                        className={cn(
-                          'size-6 text-destructive cursor-pointer',
-                          {hidden: isOwner},
+                      {isOwner ? (
+                        <div />
+                      ) : (
+                        <MdDeleteOutline
+                          className={'size-6 text-destructive cursor-pointer'}
+                          onClick={openConfirmation(member)}
+                        />
+                      )}
+
+                      <AccordionTrigger disabled={isAdminContact || isOwner}>
+                        {isAdminContact || isOwner ? (
+                          <div className="size-6" />
+                        ) : (
+                          <MdKeyboardArrowDown
+                            className={'size-6 cursor-pointer'}
+                          />
                         )}
-                        onClick={openConfirmation(member)}
-                      />
-                      <AccordionTrigger
-                        className={cn({hidden: isAdminContact || isOwner})}>
-                        <MdKeyboardArrowDown className="size-6 cursor-pointer" />
                       </AccordionTrigger>
                     </div>
                   </div>

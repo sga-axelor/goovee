@@ -94,12 +94,21 @@ export async function updateInviteApplication({
     return error(await getTranslation('Bad Request'));
   }
 
+  const session = await getSession();
+  const user = session?.user!;
+
+  const partnerId = user?.isContact ? user.mainPartnerId : user.id;
+
+  if (!($invite?.partner?.id && $invite.partner.id === partnerId)) {
+    return error(await getTranslation('Unauthorized'));
+  }
+
   const availableApps = await findAvailableSubapps({
     url: workspaceURL,
     tenantId,
   });
 
-  const $app = availableApps.find(a => a.code === app.code);
+  const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
     return error(await getTranslation('Bad Request'));
@@ -191,12 +200,21 @@ export async function updateInviteAuthentication({
     return error(await getTranslation('Bad Request'));
   }
 
+  const session = await getSession();
+  const user = session?.user!;
+
+  const partnerId = user?.isContact ? user.mainPartnerId : user.id;
+
+  if (!($invite?.partner?.id && $invite.partner.id === partnerId)) {
+    return error(await getTranslation('Unauthorized'));
+  }
+
   const availableApps = await findAvailableSubapps({
     url: workspaceURL,
     tenantId,
   });
 
-  const $app = availableApps.find(a => a.code === app.code);
+  const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
     return error(await getTranslation('Bad Request'));
@@ -270,16 +288,24 @@ export async function deleteMember({
 
   const adminContact = await isAdminContact({workspaceURL, tenantId});
 
-  const members = await findWorkspaceMembers({tenantId, url: workspaceURL});
+  const session = await getSession();
+  const user = session?.user!;
 
-  const isPartner = members?.partners?.find(p => p.id === member.id);
+  const partnerId = (user?.isContact ? user.mainPartnerId : user.id)!;
 
-  if (isPartner && adminContact) {
+  const members = await findWorkspaceMembers({
+    tenantId,
+    url: workspaceURL,
+    partnerId,
+  });
+
+  const partnerMember = members?.partners?.find(p => p.id === member.id);
+
+  if (partnerMember && adminContact) {
     return error(await getTranslation('Unauthorized')); // admin contact cannot remove partner
   }
 
-  let $member =
-    isPartner || members?.contacts?.find((c: any) => c.id === member.id);
+  let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member?.contactWorkspaceConfig?.id) {
     return error(await getTranslation('Bad Request'));
@@ -292,7 +318,7 @@ export async function deleteMember({
         version: $member.version,
         contactWorkspaceConfigSet: {
           remove: [$member.contactWorkspaceConfig?.id],
-        },
+        } as any,
       },
       tenantId,
     }).then(clone);
@@ -335,7 +361,24 @@ export async function updateMemberApplication({
     return error(await getTranslation('Bad Request'));
   }
 
-  const members = await findWorkspaceMembers({tenantId, url: workspaceURL});
+  const session = await getSession();
+  const user = session?.user!;
+
+  const partnerId = (user?.isContact ? user.mainPartnerId : user.id)!;
+
+  const members = await findWorkspaceMembers({
+    tenantId,
+    url: workspaceURL,
+    partnerId,
+  });
+
+  const adminContact = await isAdminContact({workspaceURL, tenantId});
+
+  const partnerMember = members?.partners?.find(p => p.id === member.id);
+
+  if (partnerMember && adminContact) {
+    return error(await getTranslation('Unauthorized')); // admin contact cannot update partner
+  }
 
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
@@ -348,7 +391,7 @@ export async function updateMemberApplication({
     tenantId,
   });
 
-  const $app = availableApps.find(a => a.code === app.code);
+  const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
     return error(await getTranslation('Bad Request'));
@@ -444,7 +487,24 @@ export async function updateMemberAuthentication({
     return error(await getTranslation('Bad Request'));
   }
 
-  const members = await findWorkspaceMembers({tenantId, url: workspaceURL});
+  const session = await getSession();
+  const user = session?.user!;
+
+  const partnerId = (user?.isContact ? user.mainPartnerId : user.id)!;
+
+  const members = await findWorkspaceMembers({
+    tenantId,
+    url: workspaceURL,
+    partnerId,
+  });
+
+  const adminContact = await isAdminContact({workspaceURL, tenantId});
+
+  const partnerMember = members?.partners?.find(p => p.id === member.id);
+
+  if (partnerMember && adminContact) {
+    return error(await getTranslation('Unauthorized')); // admin contact cannot update partner
+  }
 
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
@@ -457,7 +517,7 @@ export async function updateMemberAuthentication({
     tenantId,
   });
 
-  const $app = availableApps.find(a => a.code === app.code);
+  const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
     return error(await getTranslation('Bad Request'));
