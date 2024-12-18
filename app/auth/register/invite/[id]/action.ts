@@ -46,10 +46,6 @@ export async function register({
     return error(await 'Invalid workspace');
   }
 
-  if (workspace.allowRegistrationSelect === ALLOW_NO_REGISTRATION) {
-    return error(await 'Registration not allowed');
-  }
-
   const $partner = await findPartnerByEmail(email, tenantId);
 
   if ($partner) {
