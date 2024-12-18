@@ -13,9 +13,7 @@ export const EventSearch = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedFindQuery = useCallback(
     debounce(async (query: string) => {
-      if (query) {
-        handleSearch(query);
-      }
+      handleSearch(query.trim());
     }, 500),
     [],
   );
