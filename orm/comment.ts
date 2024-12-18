@@ -562,6 +562,7 @@ export async function findByID({
             tenantId,
             isContact: user.isContact!,
             role: app.role,
+            isContactAdmin: app.isContactAdmin,
           },
         });
       }

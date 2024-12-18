@@ -44,8 +44,8 @@ export function getRestrictedTicketAccessFilter(props: AuthProps) {
 }
 
 export function withTicketAccessFilter(props: AuthProps) {
-  const {isContact, role} = props;
-  const isRestricted = isContact && role != ROLE.TOTAL;
+  const {isContact, role, isContactAdmin} = props;
+  const isRestricted = isContact && !isContactAdmin && role != ROLE.TOTAL;
   return function (where: WhereOptions<AOSProjectTask>) {
     if (isRestricted) {
       return {
