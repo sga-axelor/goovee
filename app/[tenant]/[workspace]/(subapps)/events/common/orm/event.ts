@@ -307,6 +307,9 @@ export async function findRegisteredEvents({
     },
   }));
   const currentDateTime = new Date().toISOString();
+  const yesterDayDateTime = new Date(
+    new Date().getTime() - 24 * 60 * 60 * 1000,
+  ).toISOString();
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
   const orderBy: any = {eventStartDateTime: ORDER_BY.ASC};
   const registerEvents = await client.aOSPortalParticipant.find({
@@ -376,22 +379,36 @@ export async function findRegisteredEvents({
             : {}),
           ...(pastEvents
             ? {
-                AND: [
+                OR: [
                   {
-                    eventStartDateTime: {
-                      lt: currentDateTime,
-                    },
+                    AND: [
+                      {
+                        eventStartDateTime: {
+                          lt: currentDateTime,
+                        },
+                      },
+                      {
+                        eventEndDateTime: {
+                          lt: currentDateTime,
+                        },
+                      },
+                    ],
                   },
                   {
-                    OR: [
+                    AND: [
                       {
                         eventAllDay: {
                           eq: true,
                         },
                       },
                       {
-                        eventEndDateTime: {
+                        eventStartDateTime: {
                           lt: currentDateTime,
+                        },
+                      },
+                      {
+                        eventStartDateTime: {
+                          notBetween: [yesterDayDateTime, currentDateTime],
                         },
                       },
                     ],
@@ -420,7 +437,7 @@ export async function findRegisteredEvents({
                     AND: [
                       {
                         eventStartDateTime: {
-                          eq: currentDateTime,
+                          between: [yesterDayDateTime, currentDateTime],
                         },
                       },
                       {
