@@ -137,6 +137,9 @@ export type ContactProps = {
       id: ID;
       name: string;
     };
+    firstName: string;
+    lastName: string;
+    companyName: string;
   };
   deliveryAddress: {
     id: ID;
@@ -147,5 +150,8 @@ export type ContactProps = {
       id: ID;
       name: string;
     };
+    firstName: string;
+    lastName: string;
+    companyName: string;
   };
 };

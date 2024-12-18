@@ -35,9 +35,19 @@ export const ContactDetails = ({
                 {i18n.get('Invoicing address')}
               </h6>
               <div className="flex flex-col gap-4">
-                <h6 className="font-semibold text-base">
-                  {clientPartner?.fullName}, {company?.name}
-                </h6>
+                {mainInvoicingAddress?.firstName ||
+                mainInvoicingAddress?.lastName ||
+                mainInvoicingAddress?.companyName ? (
+                  <div className="font-semibold text-base">
+                    {mainInvoicingAddress?.firstName || ''}
+                    {mainInvoicingAddress?.lastName
+                      ? ` ${mainInvoicingAddress.lastName}`
+                      : ''}
+                    {mainInvoicingAddress?.companyName
+                      ? `, ${mainInvoicingAddress.companyName}`
+                      : ''}
+                  </div>
+                ) : null}
                 <div className="text-sm leading-[1.313rem]">
                   <p>{mainInvoicingAddress?.addressl4}</p>
                   <p>{billingAddressCity}</p>
@@ -49,9 +59,19 @@ export const ContactDetails = ({
             <div className="flex-1 flex flex-col gap-4">
               <h6 className="font-semibold">{i18n.get('Delivery address')}</h6>
               <div className="flex flex-col gap-4">
-                <h6 className="font-semibold text-base">
-                  {clientPartner?.fullName}, {company?.name}
-                </h6>
+                {deliveryAddress?.firstName ||
+                deliveryAddress?.lastName ||
+                deliveryAddress?.companyName ? (
+                  <div className="font-semibold text-base">
+                    {deliveryAddress?.firstName || ''}
+                    {deliveryAddress?.lastName
+                      ? ` ${deliveryAddress.lastName}`
+                      : ''}
+                    {deliveryAddress?.companyName
+                      ? `, ${deliveryAddress.companyName}`
+                      : ''}
+                  </div>
+                ) : null}
                 <div className="text-sm leading-[1.313rem]">
                   <p>{deliveryAddress?.addressl4}</p>
                   <p>{deliveryAddressCity}</p>

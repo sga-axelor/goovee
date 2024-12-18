@@ -119,6 +119,9 @@ export async function findQuotation({
         },
         fullName: true,
         formattedFullName: true,
+        firstName: true,
+        lastName: true,
+        companyName: true,
       },
       clientPartner: {
         fullName: true,
@@ -135,6 +138,9 @@ export async function findQuotation({
         },
         fullName: true,
         formattedFullName: true,
+        firstName: true,
+        lastName: true,
+        companyName: true,
       },
       saleOrderLineList: {
         select: {
