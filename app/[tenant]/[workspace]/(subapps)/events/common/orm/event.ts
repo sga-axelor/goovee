@@ -2,7 +2,7 @@ import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {formatDateToISOString} from '@/utils/date';
-import {DATE_FORMATS, DEFAULT_LIMIT, ORDER_BY} from '@/constants';
+import {DATE_FORMATS, ORDER_BY} from '@/constants';
 import {getPageInfo} from '@/utils';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
@@ -244,7 +244,7 @@ export async function findEvents({
   return {events, pageInfo};
 }
 
-export async function findAllRegisteredEvents({
+export async function findRegisteredEvents({
   search,
   categoryids,
   page = 1,
@@ -255,6 +255,9 @@ export async function findAllRegisteredEvents({
   selectedDates,
   workspace,
   tenantId,
+  upComingEvents,
+  pastEvents,
+  onGoingEvents,
 }: {
   search?: string;
   categoryids?: ID[];
@@ -266,6 +269,9 @@ export async function findAllRegisteredEvents({
   selectedDates?: any[];
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
+  upComingEvents: boolean;
+  pastEvents: boolean;
+  onGoingEvents: boolean;
 }) {
   if (!tenantId) {
     return {events: [], pageInfo: {}};
@@ -300,11 +306,9 @@ export async function findAllRegisteredEvents({
       ],
     },
   }));
-
+  const currentDateTime = new Date().toISOString();
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
-
-  const orderBy: any = {eventStartDateTime: ORDER_BY.DESC};
-
+  const orderBy: any = {eventStartDateTime: ORDER_BY.ASC};
   const registerEvents = await client.aOSPortalParticipant.find({
     where: {
       registration: {
@@ -363,6 +367,72 @@ export async function findAllRegisteredEvents({
                   ],
                 }
               : {}),
+          ...(upComingEvents
+            ? {
+                eventStartDateTime: {
+                  gt: currentDateTime,
+                },
+              }
+            : {}),
+          ...(pastEvents
+            ? {
+                AND: [
+                  {
+                    eventStartDateTime: {
+                      lt: currentDateTime,
+                    },
+                  },
+                  {
+                    OR: [
+                      {
+                        eventAllDay: {
+                          eq: true,
+                        },
+                      },
+                      {
+                        eventEndDateTime: {
+                          lt: currentDateTime,
+                        },
+                      },
+                    ],
+                  },
+                ],
+              }
+            : {}),
+          ...(onGoingEvents
+            ? {
+                OR: [
+                  {
+                    AND: [
+                      {
+                        eventStartDateTime: {
+                          le: currentDateTime,
+                        },
+                      },
+                      {
+                        eventEndDateTime: {
+                          ge: currentDateTime,
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    AND: [
+                      {
+                        eventStartDateTime: {
+                          eq: currentDateTime,
+                        },
+                      },
+                      {
+                        eventAllDay: {
+                          eq: true,
+                        },
+                      },
+                    ],
+                  },
+                ],
+              }
+            : {}),
         },
       },
       emailAddress: user?.email,

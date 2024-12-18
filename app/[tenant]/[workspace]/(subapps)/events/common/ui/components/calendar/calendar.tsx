@@ -227,6 +227,7 @@ export function Calendar({
           month: month.getMonth() + 1,
           year: month.getFullYear(),
           workspace,
+          user,
           onlyRegisteredEvent,
         });
         const allDates = datesBetweenTwoDates(data);

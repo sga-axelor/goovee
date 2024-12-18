@@ -12,7 +12,7 @@ import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  findAllRegisteredEvents,
+  findRegisteredEvents,
   findEventByID,
   findEvents,
 } from '@/subapps/events/common/orm/event';
@@ -42,6 +42,9 @@ export async function getAllEvents({
   tenantId,
   user,
   onlyRegisteredEvent = false,
+  upComingEvents = false,
+  pastEvents = false,
+  onGoingEvents = false,
 }: {
   limit?: number;
   page?: number;
@@ -56,6 +59,9 @@ export async function getAllEvents({
   tenantId?: any;
   user?: User;
   onlyRegisteredEvent?: boolean;
+  upComingEvents?: boolean;
+  pastEvents?: boolean;
+  onGoingEvents?: boolean;
 }) {
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
@@ -75,7 +81,7 @@ export async function getAllEvents({
 
   try {
     if (onlyRegisteredEvent) {
-      const {events, pageInfo} = await findAllRegisteredEvents({
+      const {events, pageInfo} = await findRegisteredEvents({
         limit: limit,
         page: page,
         categoryids: categories,
@@ -86,6 +92,9 @@ export async function getAllEvents({
         selectedDates: dates,
         workspace,
         tenantId,
+        upComingEvents,
+        pastEvents,
+        onGoingEvents,
       }).then(clone);
       return {events, pageInfo};
     } else {

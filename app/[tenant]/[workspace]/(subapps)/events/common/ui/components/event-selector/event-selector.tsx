@@ -24,6 +24,7 @@ import type {
 } from '@/subapps/events/common/ui/components';
 import {Calendar} from '@/subapps/events/common/ui/components';
 import {CATEGORIES} from '@/subapps/events/common/constants';
+import {SHOW_PAST_EVENTS} from '@/subapps/events/common/constants';
 
 export const EventSelector = ({
   date,
@@ -33,6 +34,7 @@ export const EventSelector = ({
   workspace,
   selectedCategories = [],
   onlyRegisteredEvent = false,
+  handleToogle,
 }: EventSelectorProps) => {
   const selectCategory = (category: Category) => {
     updateCateg(category);
@@ -58,6 +60,20 @@ export const EventSelector = ({
         className="flex justify-center mx-auto w-full md:flex-1"
         onlyRegisteredEvent={onlyRegisteredEvent}
       />
+      {onlyRegisteredEvent && (
+        <div className="flex items-center space-x-4 my-2">
+          <Checkbox
+            id="pastevent"
+            className="data-[state=checked]:bg-success data-[state=checked]:border-none"
+            onCheckedChange={handleToogle}
+          />
+          <label
+            htmlFor="pastevent"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            {i18n.get(SHOW_PAST_EVENTS)}
+          </label>
+        </div>
+      )}
       <div className="flex flex-col space-y-2 md:flex-1">
         <Collapsible
           open={isOpen}

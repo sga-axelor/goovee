@@ -1,65 +1,47 @@
 'use client';
 
-import {useState, useEffect, useCallback} from 'react';
+import {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {Pagination} from '@/ui/components';
-import { URL_PARAMS} from '@/constants';
 import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Event, Category} from '@/subapps/events/common/ui/components';
-import {EventSelector, ShowEvents,EventSearch} from '@/subapps/events/common/ui/components';
+import type {Category} from '@/subapps/events/common/ui/components';
+import {
+  EventSelector,
+  ShowEvents,
+  EventSearch,
+} from '@/subapps/events/common/ui/components';
 import {
   MY_REGISTRATIONS,
-  SEARCHING,
   UPCOMING_EVENTS,
   ONGOING_EVETNS,
   PAST_EVENTS,
-  NO_EVENT,
-  NO_EVENT_FOUND_TODAY,
-  NO_RESULT_FOUND
 } from '@/subapps/events/common/constants';
-
-type PartitionType = {
-  upcoming: Event[];
-  ongoing: Event[];
-  past: Event[];
-};
 
 export const MyRegisteredEvents = ({
   categories,
-  events,
   category,
   dateOfEvent,
   workspace,
-  pageInfo: {page, pages, hasPrev, hasNext} = {},
   onlyRegisteredEvent,
 }: {
   categories: Category[];
-  events: Event[];
   category: any[];
   dateOfEvent: string;
   workspace: PortalWorkspace;
-  pageInfo: any;
   onlyRegisteredEvent: boolean;
 }) => {
   const [search, setSearch] = useState('');
-  const [results, setResults] = useState<any[]>([]);
-  const [searchPending, setSearchPending] = useState<boolean>(false);
-  const [partition, setPartition] = useState<PartitionType>({
-    upcoming: [],
-    ongoing: [],
-    past: [],
-  });
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
+  const [showPastEvents, setShowPastEvents] = useState<boolean>(false);
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
 
@@ -91,65 +73,13 @@ export const MyRegisteredEvents = ({
     );
   };
 
-  const handlePreviousPage = () => {
-    if (!hasPrev) return;
-    update([{key: URL_PARAMS.page, value: Math.max(Number(page) - 1, 1)}]);
-  };
-
-  const handleNextPage = () => {
-    if (!hasNext) return;
-    update([{key: URL_PARAMS.page, value: Number(page) + 1}]);
-  };
-
-  const handlePage = (page: string | number) => {
-    update([{key: URL_PARAMS.page, value: page}]);
-  };
-
   const handleSearch = (searchKey: string) => {
     setSearch(searchKey);
   };
 
-  const handleResult = (result: []) => {
-    setResults(result);
+  const handleTooglePastEvents = () => {
+    setShowPastEvents(prev => !prev);
   };
-  const handleSearchStatus = (loading: boolean) => {
-    setSearchPending(loading);
-  };
-
-  useEffect(() => {
-    if (search !== '') {
-      setPartition(classifyEvents(results));
-    } else {
-      setPartition(classifyEvents(events));
-    }
-  }, [search, results, events]);
-
-  const classifyEvents = useCallback(
-    (events: Event[]) => {
-      const upcoming: Event[] = [];
-      const ongoing: Event[] = [];
-      const past: Event[] = [];
-      const today = new Date();
-
-      events.forEach(event => {
-        const startDate = new Date(event.eventStartDateTime);
-        const end_date = event.eventAllDay
-          ? event.eventStartDateTime
-          : event.eventEndDateTime;
-        const endDate = new Date(end_date);
-        if (startDate > today) {
-          upcoming.push(event);
-        } else if (startDate <= today && (!endDate || endDate >= today)) {
-          ongoing.push(event);
-        } else {
-          past.push(event);
-        }
-      });
-
-      return {upcoming, ongoing, past};
-    },
-    [events],
-  );
 
   return (
     <div>
@@ -166,63 +96,46 @@ export const MyRegisteredEvents = ({
             categories={categories}
             workspace={workspace}
             onlyRegisteredEvent={onlyRegisteredEvent}
+            handleToogle={handleTooglePastEvents}
           />
         </div>
         <div>
           <div className="mb-4 h-[54px]">
-            <EventSearch
-              workspace={workspace}
-              search={search}
-              handleSearch={handleSearch}
-              handleResult={handleResult}
-              handleSearchStatus={handleSearchStatus}
-            />
+            <EventSearch handleSearch={handleSearch} />
           </div>
           <div className="flex flex-col space-y-4 w-full">
             <ShowEvents
               title={ONGOING_EVETNS}
-              events={partition.ongoing}
+              dateOfEvent={dateOfEvent}
+              category={category}
+              searchQuery={search}
               workspace={workspace}
               workspaceURI={workspaceURI}
+              onlyRegisteredEvent={true}
+              onGoingEvents={true}
             />
             <ShowEvents
               title={UPCOMING_EVENTS}
-              events={partition.upcoming}
+              dateOfEvent={dateOfEvent}
+              category={category}
+              searchQuery={search}
               workspace={workspace}
               workspaceURI={workspaceURI}
+              onlyRegisteredEvent={true}
+              upComingEvents={true}
             />
-            <ShowEvents
-              title={PAST_EVENTS}
-              events={partition.past}
-              workspace={workspace}
-              workspaceURI={workspaceURI}
-            />
-
-            {searchPending ? (
-              <p>{i18n.get(SEARCHING)}</p>
-            ) : (
-              search &&
-              results.length === 0 && <p>{i18n.get(NO_RESULT_FOUND)}</p>
+            {showPastEvents && (
+              <ShowEvents
+                title={PAST_EVENTS}
+                dateOfEvent={dateOfEvent}
+                category={category}
+                searchQuery={search}
+                workspace={workspace}
+                workspaceURI={workspaceURI}
+                onlyRegisteredEvent={true}
+                pastEvents={true}
+              />
             )}
-            {events && events.length === 0 && (
-              <>
-                <h5 className="text-lg font-bold">{i18n.get(NO_EVENT)}</h5>
-                <p>{i18n.get(NO_EVENT_FOUND_TODAY)}</p>
-              </>
-            )}
-            <div className="w-full mt-10 flex items-center justify-center ml-auto">
-              {pages > 1 && (
-                <Pagination
-                  page={page}
-                  pages={pages}
-                  disablePrev={!hasPrev}
-                  disableNext={!hasNext}
-                  onPrev={handlePreviousPage}
-                  onNext={handleNextPage}
-                  onPage={handlePage}
-                />
-              )}
-            </div>
           </div>
         </div>
       </div>

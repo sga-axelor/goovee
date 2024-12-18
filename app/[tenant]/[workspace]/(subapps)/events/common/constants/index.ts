@@ -28,10 +28,11 @@ export const EVENTS_NAVBAR_LINKS = [
 ];
 
 export const MY_REGISTRATIONS = 'My registrations';
-export const SEARCHING = 'Searching...';
+export const SEARCHING = 'Searching the results...';
 export const ONGOING_EVETNS = 'Ongoing events';
 export const UPCOMING_EVENTS = 'Upcoming events';
 export const PAST_EVENTS = 'Past events';
 export const NO_EVENT = 'No event';
-export const NO_EVENT_FOUND_TODAY = 'There are no events today';
-export const NO_RESULT_FOUND = 'No result found';
+export const NO_RESULT_FOUND = 'No events found';
+export const SHOW_PAST_EVENTS = 'Show past events';
+export const SOME_WENT_WRONG = 'Something went wrong';
