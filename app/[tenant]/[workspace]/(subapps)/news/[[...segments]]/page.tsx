@@ -25,7 +25,10 @@ import {
   Categories,
   Homepage,
 } from '@/subapps/news/common/ui/components';
-import {DEFAULT_LIMIT} from '@/subapps/news/common/constants';
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_NEWS_ASIDE_LIMIT,
+} from '@/subapps/news/common/constants';
 import {findRecommendedNews} from '@/subapps/news/common/actions/action';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 
@@ -76,18 +79,19 @@ export default async function Page({
     isRecommendationEnable = portalAppConfig?.enableRecommendedNews;
   }
   if (homepage) {
-    const {news: latestNews} = await findNews({
+    const {news: latestNews}: any = await findNews({
       orderBy: {publicationDateTime: ORDER_BY.DESC},
       workspace,
       tenantId: tenant,
       user,
     }).then(clone);
 
-    const {news: homePageFeaturedNews} = await findNews({
+    const {news: homePageFeaturedNews}: any = await findNews({
       isFeaturedNews: true,
       workspace,
       tenantId: tenant,
       user,
+      limit: DEFAULT_NEWS_ASIDE_LIMIT,
     }).then(clone);
 
     const parentCategories = await findCategories({
@@ -156,7 +160,7 @@ async function CategoryPage({
   const articlepage = segments.includes('article');
 
   if (articlepage) {
-    const {news} = await findNews({
+    const {news}: any = await findNews({
       slug,
       workspace,
       tenantId,
@@ -233,7 +237,7 @@ async function CategoryPage({
     user,
   }).then(clone);
 
-  const {news: categoryFeaturedNews} = await findNewsByCategory({
+  const {news: categoryFeaturedNews}: any = await findNewsByCategory({
     isFeaturedNews: true,
     slug,
     workspace,

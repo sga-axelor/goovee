@@ -14,7 +14,7 @@ import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findNews} from '@/subapps/news/common/orm/news';
-import {DEFAULT_RECOMMENDED_NEWS_LIMIT} from '@/subapps/news/common/constants';
+import {DEFAULT_NEWS_ASIDE_LIMIT} from '@/subapps/news/common/constants';
 
 export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   const session = await getSession();
@@ -56,7 +56,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
     };
   }
 
-  const {news} = await findNews({workspace, tenantId, user}).then(clone);
+  const {news}: any = await findNews({workspace, tenantId, user}).then(clone);
 
   return news;
 }
@@ -94,10 +94,10 @@ export async function findRecommendedNews({
     };
   }
 
-  const {news} = await findNews({
+  const {news}: any = await findNews({
     workspace,
     tenantId,
-    limit: DEFAULT_RECOMMENDED_NEWS_LIMIT,
+    limit: DEFAULT_NEWS_ASIDE_LIMIT,
     orderBy: {
       publicationDateTime: ORDER_BY.DESC,
     },

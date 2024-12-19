@@ -13,7 +13,7 @@ import {Category} from '@/subapps/news/common/types';
 import {transformCategories} from '@/subapps/news/common/utils';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
-export const Categories = ({categories}: {categories: Category[]}) => {
+export const Categories = ({categories}: {categories: any[]}) => {
   const categoriesRef = useRef<HTMLDivElement>(null);
 
   const [openSubMenu, setOpenSubMenu] = useState<number | null>(null);
