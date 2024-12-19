@@ -161,6 +161,11 @@ function Content({
     });
     setInitiating(false);
   }, [fromCheckout, fromQuotation, cart, quotation]);
+
+  useEffect(() => {
+    router.refresh();
+  }, [router]);
+
   if (initiating) {
     return <p>Loading...</p>;
   }
