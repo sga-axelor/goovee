@@ -91,6 +91,7 @@ export const SUBAPP_PAGE = {
   address: 'address',
   create: 'create',
   edit: 'edit',
+  account: 'account',
 };
 
 /**

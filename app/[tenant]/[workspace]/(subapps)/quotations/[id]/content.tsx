@@ -295,7 +295,7 @@ const Content = ({
 
   const handleAddressSelection = () => {
     router.push(
-      `${workspaceURI}/${SUBAPP_CODES.quotations}/${quotation.id}/${SUBAPP_PAGE.address}`,
+      `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.address}?quotation=${quotation.id}`,
     );
   };
 

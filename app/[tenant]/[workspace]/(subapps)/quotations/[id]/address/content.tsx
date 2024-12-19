@@ -19,7 +19,6 @@ import {confirmAddresses} from '@/subapps/quotations/[id]/action';
 
 interface ContentProps {
   quotation: {
-    saleOrderSeq: string | number;
     id: number;
     mainInvoicingAddress: {
       id: string | number;
@@ -167,8 +166,8 @@ function Content({
   deliveryAddresses,
 }: ContentProps) {
   const [selectedAddresses, setSelectedAddresses] = useState({
-    invoicing: quotation.mainInvoicingAddress || null,
-    delivery: quotation.deliveryAddress || null,
+    invoicing: quotation?.mainInvoicingAddress || null,
+    delivery: quotation?.deliveryAddress || null,
   });
 
   const [isPending, startTransition] = useTransition();
