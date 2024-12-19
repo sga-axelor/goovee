@@ -1,9 +1,9 @@
 'use server';
-
 import paypal from '@paypal/checkout-server-sdk';
 import type {Stripe} from 'stripe';
 import {headers} from 'next/headers';
 import axios from 'axios';
+import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getTranslation} from '@/i18n/server';
@@ -16,7 +16,7 @@ import {
 } from '@/constants';
 import paypalhttpclient from '@/payment/paypal';
 import {stripe} from '@/payment/stripe';
-import {PaymentOption} from '@/types';
+import {PaymentOption, User} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {scale} from '@/utils';
@@ -683,6 +683,14 @@ export async function getPDF({
   id: ID;
   workspaceURL: string;
 }) {
+  if (!id) {
+    return {
+      error: true,
+      message: await getTranslation('Invalid Invoice Id'),
+      data: null,
+    };
+  }
+
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) {
     return {
@@ -697,7 +705,7 @@ export async function getPDF({
   if (!tenant?.config?.aos?.url) {
     return {
       error: true,
-      message: 'Order creation failed. Webservice not available',
+      message: 'Webservice not available',
       data: null,
     };
   }
@@ -727,8 +735,34 @@ export async function getPDF({
     };
   }
 
+  const app = await findSubappAccess({
+    code: SUBAPP_CODES.invoices,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!app?.installed) {
+    return notFound();
+  }
+
+  const {role, isContactAdmin} = app;
+
+  const invoice = await findInvoice({
+    id,
+    params: {
+      where: getWhereClause({
+        user: user as User,
+        role,
+        isContactAdmin,
+      }),
+    },
+    tenantId,
+    workspaceURL,
+  });
+
   const {aos} = tenant.config;
-  const ws = `${aos.url}/ws/portal/invoice/print/${id}`;
+  const ws = `${aos.url}/ws/portal/invoice/print/${invoice.id}`;
 
   try {
     const res = await axios.get(ws, {
