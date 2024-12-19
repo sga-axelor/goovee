@@ -9,7 +9,7 @@ import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {findCities} from '@/orm/address';
+import {findCities, findCounty} from '@/orm/address';
 import {createPartnerAddress, updatePartnerAddress} from '@/orm/address';
 import {PartnerAddress} from '@/types';
 import {manager} from '@/tenant';
@@ -29,6 +29,13 @@ export const fetchCities = async ({
     };
   }
 
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: await getTranslation('Workspace not provided.'),
+    };
+  }
+
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -45,25 +52,23 @@ export const fetchCities = async ({
     return {error: true, message: await getTranslation('Unauthorized')};
   }
 
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.quotations,
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!subapp) {
-    return {error: true, message: await getTranslation('Unauthorized')};
-  }
-
   const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
 
   if (!workspace) {
     return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
+  const country: any = await findCounty({id: countryId, tenantId});
+
+  if (!country) {
+    return {
+      error: true,
+      message: await getTranslation('Invalid country selected!'),
+    };
+  }
+
   try {
-    const cities = await findCities({countryId, tenantId});
+    const cities = await findCities({countryId: country.id, tenantId});
     return {
       success: true,
       data: clone(cities),

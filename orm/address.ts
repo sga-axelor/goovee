@@ -258,6 +258,31 @@ export async function findCountries(tenantId: Tenant['id']) {
   return countries;
 }
 
+export async function findCounty({
+  id,
+  tenantId,
+}: {
+  id: ID;
+  tenantId: Tenant['id'];
+}) {
+  if (!tenantId || !id) return null;
+
+  try {
+    const client = await manager.getClient(tenantId);
+
+    const country = await client.aOSCountry.findOne({
+      where: {
+        id,
+      },
+    });
+
+    return country;
+  } catch (error) {
+    console.log('error:', error);
+    return null;
+  }
+}
+
 export async function findCities({
   countryId,
   tenantId,
