@@ -40,7 +40,7 @@
       "type": "String"
     },
     {
-      "name": "map",
+      "name": "isMap",
       "column": "isdirectory_map",
       "type": "Boolean"
     },
