@@ -1,0 +1,16 @@
+{
+  "name": "AOSPortalDirectoryCategory",
+  "table": "portal_directory_category",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "directoryCategoryTitle",
+      "type": "String"
+    },
+    {
+      "name": "directoryCategoryColorSelect",
+      "type": "String"
+    }
+  ]
+}

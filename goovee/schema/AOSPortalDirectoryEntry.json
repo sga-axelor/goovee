@@ -1,0 +1,44 @@
+{
+  "name": "AOSPortalDirectoryEntry",
+  "table": "portal_directory_entry",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "directoryEntryTitle",
+      "type": "String"
+    },
+    {
+      "name": "directoryEntryAddress",
+      "type": "String"
+    },
+    {
+      "name": "directoryEntryCity",
+      "type": "String"
+    },
+    {
+      "name": "directoryEntryZipcode",
+      "type": "String"
+    },
+    {
+      "name": "directoryEntryLinkedIn",
+      "type": "String"
+    },
+    {
+      "name": "directoryEntryX",
+      "type": "String"
+    },
+    {
+      "name": "directoryEntryWebsite",
+      "type": "String"
+    },
+    {
+      "name": "isdirectoryMap",
+      "type": "Boolean"
+    },
+    {
+      "name": "directoryEntryDescription",
+      "type": "String"
+    }
+  ]
+}
