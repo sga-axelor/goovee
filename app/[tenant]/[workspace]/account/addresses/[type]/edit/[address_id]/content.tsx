@@ -6,7 +6,7 @@ import {Country} from '@/types';
 import {UserType} from '@/lib/core/auth/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {AddressForm} from '@/app/[tenant]/[workspace]/account/address/common/ui/components';
+import {AddressForm} from '@/app/[tenant]/[workspace]/account/addresses/common/ui/components';
 
 function Content({
   address,

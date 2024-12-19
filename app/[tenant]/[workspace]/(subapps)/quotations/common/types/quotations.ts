@@ -120,11 +120,11 @@ export type InfoProps = {
 };
 
 export type ContactProps = {
-  clientPartner: {
+  clientPartner?: {
     fullName: string;
     id: ID;
   };
-  company: {
+  company?: {
     id: ID;
     name: string;
   };
@@ -137,9 +137,9 @@ export type ContactProps = {
       id: ID;
       name: string;
     };
-    firstName: string;
-    lastName: string;
-    companyName: string;
+    firstName?: string;
+    lastName?: string;
+    companyName?: string;
   };
   deliveryAddress: {
     id: ID;
@@ -150,8 +150,8 @@ export type ContactProps = {
       id: ID;
       name: string;
     };
-    firstName: string;
-    lastName: string;
-    companyName: string;
+    firstName?: string;
+    lastName?: string;
+    companyName?: string;
   };
 };

@@ -11,8 +11,6 @@ import {i18n} from '@/i18n';
 import type {ContactProps} from '@/subapps/quotations/common/types/quotations';
 
 export const ContactDetails = ({
-  clientPartner,
-  company,
   mainInvoicingAddress,
   deliveryAddress,
   showAddressSelectionButton,

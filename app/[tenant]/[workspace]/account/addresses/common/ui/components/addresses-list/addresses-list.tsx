@@ -10,7 +10,7 @@ import {i18n} from '@/i18n';
 import {ADDRESS_TYPE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {AddressCard} from '@/app/[tenant]/[workspace]/account/address/common/ui/components';
+import {AddressCard} from '@/app/[tenant]/[workspace]/account/addresses/common/ui/components';
 
 export const AddressesList = ({
   isFromQuotation,
@@ -22,7 +22,7 @@ export const AddressesList = ({
   onSelect,
 }: {
   isFromQuotation?: boolean;
-  currentAddress?: {id: string | number};
+  currentAddress?: {id: string | number} | null;
   addresses: {id: string | number; address: any}[];
   type: ADDRESS_TYPE;
   onCreate: (type: ADDRESS_TYPE) => void;

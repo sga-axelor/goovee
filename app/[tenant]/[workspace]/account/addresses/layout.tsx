@@ -1,5 +1,3 @@
-import type {Metadata} from 'next';
-
 // ---- CORE IMPORTS ---- //
 import {getTranslation} from '@/i18n/server';
 

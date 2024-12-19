@@ -5,20 +5,31 @@ import {notFound} from 'next/navigation';
 import {ADDRESS_TYPE, SUBAPP_PAGE} from '@/constants';
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
-import {workspacePathname} from '@/utils/workspace';
-import {findCountries} from '@/orm/address';
+import {findCountries, findPartnerAddress} from '@/orm/address';
 import {findPartnerByEmail, PartnerTypeMap} from '@/orm/partner';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 
-export default async function Page({params}: {params: any}) {
-  const {tenant, type} = params;
-
+export default async function Page({
+  params,
+}: {
+  params: {
+    id: string;
+    tenant: string;
+    workspace: string;
+    type: ADDRESS_TYPE;
+    address_id: string;
+  };
+}) {
+  const {tenant, type, address_id} = params;
   const {workspaceURI} = workspacePathname(params);
 
+  const REDIRECT_ADDRESS_URL = `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}`;
+
   if (![ADDRESS_TYPE.invoicing, ADDRESS_TYPE.delivery].includes(type)) {
-    redirect(`${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.address}`);
+    redirect(`${REDIRECT_ADDRESS_URL}`);
   }
 
   const session = await getSession();
@@ -41,5 +52,20 @@ export default async function Page({params}: {params: any}) {
 
   const countries: any = await findCountries(tenant).then(clone);
 
-  return <Content type={type} countries={countries} userType={userType} />;
+  const partnerAddress = await findPartnerAddress(address_id, tenant).then(
+    clone,
+  );
+
+  if (!partnerAddress) {
+    redirect(`${REDIRECT_ADDRESS_URL}`);
+  }
+
+  return (
+    <Content
+      type={type}
+      address={partnerAddress.address}
+      countries={countries}
+      userType={userType}
+    />
+  );
 }

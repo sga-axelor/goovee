@@ -4,6 +4,3 @@ export {ProductsList} from './products-list';
 export {ProductCard} from './product-card';
 export {Total} from './total';
 export {Columns} from './columns';
-export {PersonalInformation} from './personal-information';
-export {AddressInformation} from './address-information';
-export {AddressForm} from './address-form';

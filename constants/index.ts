@@ -88,7 +88,7 @@ export const SUBAPP_PAGE = {
   archived: '/archived',
   invoices: '/unpaid',
   checkout: `${SUBAPP_CODES.shop}/cart/checkout`,
-  address: 'address',
+  addresses: 'addresses',
   create: 'create',
   edit: 'edit',
   account: 'account',

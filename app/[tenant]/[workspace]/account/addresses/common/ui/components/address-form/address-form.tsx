@@ -21,12 +21,12 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {
   AddressInformation,
   PersonalInformation,
-} from '@/app/[tenant]/[workspace]/account/address/common/ui/components';
+} from '@/app/[tenant]/[workspace]/account/addresses/common/ui/components';
 import {
   fetchCities,
   createAddress,
   updateAddress,
-} from '@/app/[tenant]/[workspace]/account/address/common/actions/action';
+} from '@/app/[tenant]/[workspace]/account/addresses/common/actions/action';
 
 const personalInformationSchema = z.object({
   addressName: z.string().optional(),
@@ -173,7 +173,7 @@ export const AddressForm = ({
         if (quotation) queryParams.set('quotation', quotation);
 
         router.push(
-          `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.address}?${queryParams.toString()}`,
+          `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}?${queryParams.toString()}`,
         );
       }
 

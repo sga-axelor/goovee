@@ -162,30 +162,6 @@ export async function findDeliveryAddresses(
   return addresses;
 }
 
-export async function findAddress({
-  id,
-  tenantId,
-}: {
-  id: ID;
-  tenantId: Tenant['id'];
-}) {
-  if (!id) {
-    return {};
-  }
-  if (!id || !tenantId) return null;
-
-  const client = await manager.getClient(tenantId);
-  const whereConditions: any = {
-    id,
-  };
-
-  const address = await client.aOSAddress.findOne({
-    where: whereConditions,
-    select: addressFields.address,
-  });
-  return address;
-}
-
 export async function findInvoicingAddresses(
   partnerId: Partner['id'],
   tenantId: Tenant['id'],

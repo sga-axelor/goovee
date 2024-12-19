@@ -295,7 +295,7 @@ const Content = ({
 
   const handleAddressSelection = () => {
     router.push(
-      `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.address}?quotation=${quotation.id}`,
+      `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}?quotation=${quotation.id}`,
     );
   };
 
@@ -311,8 +311,6 @@ const Content = ({
             className={`${statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION ? 'lg:basis-3/4' : 'lg:basis-full'} flex flex-col gap-6 basis-full`}>
             <div className="flex flex-col gap-4  bg-card text-card-foreground p-6 rounded-lg">
               <ContactDetails
-                clientPartner={clientPartner}
-                company={company}
                 mainInvoicingAddress={mainInvoicingAddress}
                 deliveryAddress={deliveryAddress}
                 showAddressSelectionButton={
