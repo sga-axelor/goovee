@@ -195,7 +195,7 @@ export async function sendInvites({
         (config: any) => config?.portalWorkspace?.url === workspaceURL,
       );
 
-      if(memberAlready){
+      if (memberAlready) {
         continue; // don't send invite to contact if already a member
       }
 
