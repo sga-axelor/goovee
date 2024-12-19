@@ -7,16 +7,16 @@
     {
       "name": "title",
       "type": "String",
-      "column": "directoryCategoryTitle"
+      "column": "directory_category_title"
     },
     {
       "name": "color",
-      "column": "directoryCategoryColorSelect",
+      "column": "directory_category_color_select",
       "type": "String"
     },
     {
       "name": "icon",
-      "column": "directoryCategoryIcon",
+      "column": "directory_category_icon",
       "type": "String"
     }
   ]
