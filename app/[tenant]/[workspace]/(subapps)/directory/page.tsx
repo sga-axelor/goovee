@@ -41,6 +41,7 @@ import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
 import {Swipe} from './common/ui/components/swipe';
 import {getTranslation} from '@/lib/core/i18n/server';
+import {findDirectoryCategories} from './common/orm/directory-category';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -113,6 +114,11 @@ export default async function Page({
   }).then(clone);
 
   if (!workspace) notFound();
+
+  const categories = await findDirectoryCategories({
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
   // TODO: change it to direcotory app later
   const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
