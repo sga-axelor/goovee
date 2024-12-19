@@ -1,8 +1,13 @@
 import {notFound} from 'next/navigation';
 
+// ---- CORE IMPORTS ---- //
+import {getSession} from '@/auth';
+import {SEARCH_PARAMS} from '@/constants';
+import {getTranslation} from '@/i18n/server';
+
+// ---- LOCAL IMPORTS ---- //
 import Form from './form';
 import {findInviteById} from '../../common/orm/register';
-import {SEARCH_PARAMS} from '@/constants';
 
 export default async function Page({
   params,
@@ -22,8 +27,30 @@ export default async function Page({
 
   const invite = await findInviteById({id, tenantId});
 
-  if (!invite) {
+  if (!invite?.emailAddress?.address) {
     return notFound();
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (user) {
+    if (user.email !== invite.emailAddress.address) {
+      return (
+        <div className="container space-y-6 mt-8">
+          <h1 className="text-[2rem] font-bold">
+            {await getTranslation('Sign Up')}
+          </h1>
+          <div className="bg-white py-4 px-6">
+            <p>
+              {await getTranslation(
+                'You are currently loggedin with a different user. Logout to continue registration for the invite.',
+              )}
+            </p>
+          </div>
+        </div>
+      );
+    }
   }
 
   return <Form email={invite?.emailAddress?.address} inviteId={invite.id} />;
