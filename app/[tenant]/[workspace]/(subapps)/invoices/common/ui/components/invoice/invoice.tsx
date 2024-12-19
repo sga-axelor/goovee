@@ -19,21 +19,20 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
   const [isError, setIsError] = useState<boolean>(false);
   const {workspaceURL} = useWorkspace();
 
-  const getFile = async () => {
-    const data = await getPDF({id, workspaceURL});
-    if (data) {
-      const arrayBuffer = new Uint8Array(data);
-      const blob = new Blob([arrayBuffer], {type: 'application/pdf'});
-      setFile(blob);
-      setIsError(false);
-    } else {
-      setIsError(true);
-    }
-  };
-
   useEffect(() => {
+    const getFile = async () => {
+      const data = await getPDF({id, workspaceURL});
+      if (data) {
+        const arrayBuffer = new Uint8Array(data);
+        const blob = new Blob([arrayBuffer], {type: 'application/pdf'});
+        setFile(blob);
+        setIsError(false);
+      } else {
+        setIsError(true);
+      }
+    };
     getFile();
-  }, [id]);
+  }, [id, workspaceURL]);
 
   return (
     <>
