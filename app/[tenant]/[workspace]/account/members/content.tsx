@@ -430,9 +430,13 @@ function Invited({invites, availableApps}: any) {
                         className="size-6 text-destructive cursor-pointer"
                         onClick={openConfirmation(invite)}
                       />
-                      <AccordionTrigger
-                        className={cn({hidden: isAdminContact})}>
-                        <MdKeyboardArrowDown className="size-6 cursor-pointer" />
+
+                      <AccordionTrigger disabled={isAdminContact}>
+                        {isAdminContact ? (
+                          <div className="size-6" />
+                        ) : (
+                          <MdKeyboardArrowDown className="size-6 cursor-pointer" />
+                        )}
                       </AccordionTrigger>
                     </div>
                   </div>
