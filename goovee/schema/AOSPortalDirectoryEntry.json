@@ -5,39 +5,48 @@
   "synchronize": false,
   "fields": [
     {
-      "name": "directoryEntryTitle",
+      "name": "title",
+      "column": "directory_entry_title",
       "type": "String"
     },
     {
-      "name": "directoryEntryAddress",
+      "name": "address",
+      "column": "directory_entry_address",
       "type": "String"
     },
     {
-      "name": "directoryEntryCity",
+      "name": "city",
+      "column": "directory_entry_city",
       "type": "String"
     },
     {
-      "name": "directoryEntryZipcode",
+      "name": "zipcode",
+      "column": "directory_entry_zipcode",
       "type": "String"
     },
     {
-      "name": "directoryEntryLinkedIn",
+      "name": "linkedIn",
+      "column": "directory_entry_linkedIn",
       "type": "String"
     },
     {
-      "name": "directoryEntryX",
+      "name": "x",
+      "column": "directory_entry_x",
       "type": "String"
     },
     {
-      "name": "directoryEntryWebsite",
+      "name": "website",
+      "column": "directory_entry_website",
       "type": "String"
     },
     {
-      "name": "isdirectoryMap",
+      "name": "map",
+      "column": "isdirectoryMap",
       "type": "Boolean"
     },
     {
-      "name": "directoryEntryDescription",
+      "name": "description",
+      "column": "directory_entry_description",
       "type": "String"
     }
   ]
