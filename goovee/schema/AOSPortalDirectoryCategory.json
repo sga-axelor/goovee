@@ -5,17 +5,19 @@
   "synchronize": false,
   "fields": [
     {
-      "name": "directoryCategoryTitle",
+      "name": "title",
+      "type": "String",
+      "column": "directoryCategoryTitle"
+    },
+    {
+      "name": "color",
+      "column": "directoryCategoryColorSelect",
       "type": "String"
     },
     {
-      "name": "directoryCategoryColorSelect",
+      "name": "icon",
+      "column": "directoryCategoryIcon",
       "type": "String"
-    },
-    {
-      "name": "workspace",
-      "type": "ManyToOne",
-      "target": "AOSPortalWorkspace"
     }
   ]
 }
