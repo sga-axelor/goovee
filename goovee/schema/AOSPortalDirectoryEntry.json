@@ -26,12 +26,12 @@
     },
     {
       "name": "linkedIn",
-      "column": "directory_entry_linkedIn",
+      "column": "directory_entry_linked_in",
       "type": "String"
     },
     {
       "name": "x",
-      "column": "directory_entry_x",
+      "column": "directory_entryx",
       "type": "String"
     },
     {
@@ -41,7 +41,7 @@
     },
     {
       "name": "map",
-      "column": "isdirectoryMap",
+      "column": "isdirectory_map",
       "type": "Boolean"
     },
     {
