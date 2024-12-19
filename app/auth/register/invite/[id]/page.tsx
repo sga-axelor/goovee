@@ -8,6 +8,7 @@ import {getTranslation} from '@/i18n/server';
 // ---- LOCAL IMPORTS ---- //
 import Form from './form';
 import {findInviteById} from '../../common/orm/register';
+import Subscribe from './subscribe';
 
 export default async function Page({
   params,
@@ -49,6 +50,14 @@ export default async function Page({
             </p>
           </div>
         </div>
+      );
+    } else if (
+      user.email === invite.emailAddress.address &&
+      user.isContact &&
+      user.mainPartnerId === invite.partner?.id
+    ) {
+      return (
+        <Subscribe workspaceURL={invite.workspace.url} inviteId={invite.id} />
       );
     }
   }
