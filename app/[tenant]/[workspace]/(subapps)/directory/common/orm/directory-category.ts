@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
 
-import type {PortalWorkspace, User} from '@/types';
+import type {PortalWorkspace} from '@/types';
 import type {Tenant} from '@/tenant';
 
 export async function findDirectoryCategories({
@@ -16,16 +16,10 @@ export async function findDirectoryCategories({
   const c = await manager.getClient(tenantId);
 
   const directoryCategories = await c.aOSPortalDirectoryCategory.find({
-    where: {
-      workspace: {
-        id: workspace.id,
-      },
-    },
-
     select: {
       id: true,
-      directoryCategoryTitle: true,
-      directoryCategoryColorSelect: true,
+      title: true,
+      color: true,
     },
   });
   return directoryCategories;
