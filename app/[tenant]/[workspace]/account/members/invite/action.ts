@@ -191,6 +191,14 @@ export async function sendInvites({
         }
       }
 
+      const memberAlready = existingContact?.contactWorkspaceConfigSet?.find(
+        (config: any) => config?.portalWorkspace?.url === workspaceURL,
+      );
+
+      if(memberAlready){
+        continue; // don't send invite to contact if already a member
+      }
+
       const existingInvite = await findInviteForEmail({
         email,
         tenantId,
