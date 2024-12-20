@@ -1,13 +1,13 @@
 'use client';
 
-import {useState} from 'react';
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import {useSession} from 'next-auth/react';
-import {useRouter, useSearchParams} from 'next/navigation';
+import {notFound, useRouter, useSearchParams} from 'next/navigation';
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {MdOutlineVisibility, MdOutlineVisibilityOff} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {UserType} from '@/auth/types';
@@ -43,7 +43,7 @@ import {SEARCH_PARAMS} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {registerByEmail, subscribe} from '../actions';
+import {registerByGoogle, subscribe} from '../actions';
 
 const formSchema = z
   .object({
@@ -53,22 +53,13 @@ const formSchema = z
     companyNumber: z.string(),
     firstName: z.string(),
     name: z.string(),
-    email: z.string().min(1, {message: i18n.get('Email is required')}),
     phone: z.string(),
-    password: z.string().min(1, {message: i18n.get('Password is required')}),
-    confirmPassword: z
-      .string()
-      .min(1, {message: i18n.get('Confirm password is required')}),
     showProfileAsContactOnDirectory: z.boolean(),
     showNameOnDirectory: z.boolean(),
     showLinkOnDirectory: z.boolean(),
     showEmailOnDirectory: z.boolean(),
     showPhoneOnDirectory: z.boolean(),
     linkedInLink: z.string(),
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: i18n.get("Passwords don't match"),
-    path: ['confirmPassword'],
   })
   .refine(
     data => {
@@ -96,6 +87,9 @@ const formSchema = z
   );
 
 export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
+  const {data: session, update} = useSession();
+  const user = session?.user;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -105,10 +99,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
       companyNumber: '',
       firstName: '',
       name: '',
-      email: '',
       phone: '',
-      password: '',
-      confirmPassword: '',
       showProfileAsContactOnDirectory: false,
       showNameOnDirectory: false,
       showLinkOnDirectory: false,
@@ -117,9 +108,6 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
       linkedInLink: '',
     },
   });
-
-  const {data: session} = useSession();
-  const user = session?.user;
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -131,12 +119,20 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     false,
   );
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const {toast} = useToast();
 
-  const toggleShowPassword = () => setShowPassword(show => !show);
-  const toggleShowConfirmPassword = () => setShowConfirmPassword(show => !show);
+  if (!user) {
+    return (
+      <div className="container space-y-6 mt-8">
+        <h1 className="text-[2rem] font-bold">{i18n.get('Sign Up')}</h1>
+        <div className="bg-white py-4 px-6">
+          <p>
+            {i18n.get('Login with your gmail account to continue registration')}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const handleCancel = () => {
     router.replace('/');
@@ -146,7 +142,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     if (!(workspace && tenantId)) return;
 
     try {
-      const res: any = await registerByEmail({
+      const res: any = await registerByGoogle({
         ...values,
         workspaceURL: workspace?.url,
         tenantId,
@@ -157,7 +153,18 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
           variant: 'success',
           title: res.message,
         });
-        router.push(`/auth/login?${searchQuery}`);
+
+        await update({
+          ...res?.data,
+          email: user?.email,
+          tenantId,
+        });
+
+        router.push(
+          searchParams.get('callbackurl') ||
+            searchParams.get('workspaceURL') ||
+            '/',
+        );
       } else if (res.error) {
         toast({
           variant: 'destructive',
@@ -176,7 +183,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     if (!workspace) return;
 
     try {
-      const res = await subscribe({
+      const res: any = await subscribe({
         workspace,
         tenantId,
       });
@@ -376,89 +383,6 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 <div />
               )}
             </div>
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Email')}*</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value}
-                      placeholder={i18n.get('Enter email')}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Password')}*</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center gap-2 border border-input px-3 py-2">
-                      <Input
-                        {...field}
-                        className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
-                        type={showPassword ? 'text' : 'password'}
-                        value={field.value}
-                        placeholder={i18n.get('Enter password')}
-                      />
-                      {showPassword ? (
-                        <MdOutlineVisibility
-                          className="size-6 text-muted cursor-pointer"
-                          onClick={toggleShowPassword}
-                        />
-                      ) : (
-                        <MdOutlineVisibilityOff
-                          className="size-6 text-muted cursor-pointer"
-                          onClick={toggleShowPassword}
-                        />
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Confirm Password')}*</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center gap-2 border border-input px-3 py-2">
-                      <Input
-                        {...field}
-                        className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        value={field.value}
-                        placeholder={i18n.get('Enter password')}
-                      />
-                      {showConfirmPassword ? (
-                        <MdOutlineVisibility
-                          className="size-6 text-muted cursor"
-                          onClick={toggleShowConfirmPassword}
-                        />
-                      ) : (
-                        <MdOutlineVisibilityOff
-                          className="size-6 text-muted cursor"
-                          onClick={toggleShowConfirmPassword}
-                        />
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <div className="sr-only space-y-4">
               <h4 className="text-lg font-medium">{i18n.get('Directory')}</h4>
               <div>

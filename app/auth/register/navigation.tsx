@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import {signIn} from 'next-auth/react';
 import {useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -13,6 +14,12 @@ import type {PortalWorkspace} from '@/types';
 export default function Navigation({workspace}: {workspace?: PortalWorkspace}) {
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
+
+  const handleSignUpWithGoogle = async () => {
+    await signIn('google', {
+      callbackUrl: `/auth/register/google?${searchQuery}`,
+    });
+  };
 
   return (
     <div className="container space-y-6 mt-8">
@@ -41,7 +48,8 @@ export default function Navigation({workspace}: {workspace?: PortalWorkspace}) {
         <Button
           type="button"
           variant="outline-success"
-          className="w-full rounded-full">
+          className="w-full rounded-full"
+          onClick={handleSignUpWithGoogle}>
           <Image
             alt="Google"
             src="/images/google.svg"

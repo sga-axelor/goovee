@@ -2,7 +2,7 @@ import {getServerSession} from 'next-auth';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import {findPartnerByEmail, registerPartner} from '@/orm/partner';
+import {findPartnerByEmail} from '@/orm/partner';
 import {type Tenant} from '@/tenant';
 
 import google from './google';
@@ -20,7 +20,13 @@ export const authOptions: NextAuthOptions = {
         ));
 
       if (user) {
-        const {id, emailAddress, fullName: name, isContact, mainPartner} = user;
+        const {
+          id,
+          emailAddress,
+          fullName: name = '',
+          isContact,
+          mainPartner,
+        } = user;
 
         session.user = {
           id,
@@ -34,33 +40,41 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
-    async jwt({user, token}: any) {
-      if (user?.tenantId) {
-        token.tenantId = user.tenantId;
-      }
-      return token;
-    },
-    async signIn({account, profile, ...rest}: any) {
-      if (false && account.provider === 'google') {
-        const {given_name, family_name, email} = profile;
-        const exists = await findPartnerByEmail(email);
-        if (!exists) {
-          try {
-            const user = await registerPartner({
-              firstName: given_name,
-              name: family_name,
-              email,
-            });
+    async jwt({user, token, trigger, session}: any) {
+      if (
+        trigger === 'update' &&
+        session?.email &&
+        session?.id &&
+        session?.tenantId
+      ) {
+        /**
+         * Updating session after registering with Google Oauth
+         */
 
-            return Boolean(user);
-          } catch (err) {
-            return false;
-          }
-        } else {
-          return true;
+        const partner = await findPartnerByEmail(
+          session.email,
+          session.tenantId,
+        );
+
+        if (partner) {
+          const {id, name, isContact, mainPartner} = partner;
+
+          token.id = id;
+          token.name = name;
+          token.email = session.email;
+          token.isContact = isContact;
+          token.tenantId = session.tenantId;
+          token.mainPartnerId = isContact ? mainPartner?.id : undefined;
         }
       }
 
+      if (user?.tenantId) {
+        token.tenantId = user.tenantId;
+      }
+
+      return token;
+    },
+    async signIn({account, profile, ...rest}: any) {
       return true;
     },
   },
