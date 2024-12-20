@@ -1,10 +1,8 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import Link from 'next/link';
 import {useSession} from 'next-auth/react';
-import {notFound, useRouter, useSearchParams} from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
