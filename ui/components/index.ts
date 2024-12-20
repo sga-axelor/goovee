@@ -216,3 +216,4 @@ export {
 } from './tooltip';
 export {DynamicIcon} from './dynamic-icon';
 export {Icon} from './icon';
+export {BadgeList} from './badge-list';
