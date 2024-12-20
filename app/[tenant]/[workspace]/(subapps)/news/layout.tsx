@@ -62,9 +62,9 @@ export default async function Layout({
   }).then(clone);
 
   return (
-    <>
+    <div className="mb-4 md:mb-10">
       {children}
       <MobileMenuCategory categories={allCategories} />
-    </>
+    </div>
   );
 }

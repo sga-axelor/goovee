@@ -3,7 +3,6 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {Badge} from '@/ui/components/badge';
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
 import {i18n} from '@/i18n';
@@ -13,6 +12,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 // ---- LOCAL IMPORTS ---- //
 import {parseDate} from '@/subapps/news/common/utils';
 import {PUBLISHED_ON} from '@/subapps/news/common/constants';
+import {BadgeList} from '@/ui/components';
 
 export const NewsInfo = ({
   title,
@@ -40,15 +40,11 @@ export const NewsInfo = ({
   return (
     <div className="bg-white rounded-lg p-4 font-normal text-sm text-zinc-500 flex flex-col gap-4">
       <div className="flex flex-col gap-4">
-        <div className="flex gap-2">
-          {categorySet?.map(({id, name}) => (
-            <Badge
-              key={id}
-              className="px-2 p-1 rounded font-normal text-[8px] leading-[12px]">
-              {name}
-            </Badge>
-          ))}
-        </div>
+        <BadgeList
+          items={categorySet}
+          labelClassName="rounded font-normal text-[0.5rem]"
+          rootClassName="gap-2"
+        />
         <div className="text-2xl font-semibold text-black">{title}</div>
         <div
           className="h-[300px] w-full bg-no-repeat bg-center bg-cover"

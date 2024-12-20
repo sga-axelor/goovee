@@ -4,7 +4,7 @@ import React from 'react';
 import {MdChevronRight} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Badge, Separator} from '@/ui/components';
+import {BadgeList, Separator} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getPublishedLabel} from '@/utils/date';
@@ -48,23 +48,11 @@ export const FeedList = ({
                       }}></div>
                     <div className="w-full flex flex-col justify-between">
                       <div className="flex flex-col gap-1">
-                        <div className="flex gap-2">
-                          {categorySet?.map(
-                            ({
-                              name,
-                              id,
-                            }: {
-                              name: string;
-                              id: string | number;
-                            }) => (
-                              <Badge
-                                key={id}
-                                className="px-2 p-1 rounded font-normal text-[8px]">
-                                {name}
-                              </Badge>
-                            ),
-                          )}
-                        </div>
+                        <BadgeList
+                          items={categorySet}
+                          labelClassName="rounded font-normal text-[0.5rem]"
+                          rootClassName="gap-2"
+                        />
                         <div className="font-semibold text-base mb-2 line-clamp-2">
                           {title}
                         </div>

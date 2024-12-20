@@ -4,10 +4,10 @@ import React from 'react';
 import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
-import {Badge} from '@/ui/components/badge';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getPublishedLabel} from '@/utils/date';
+import {BadgeList} from '@/ui/components';
 
 export const NewsCard = ({
   news,
@@ -33,17 +33,11 @@ export const NewsCard = ({
         }}></div>
       <div className="py-2 px-4 flex flex-col justify-between flex-grow">
         <div className="flex flex-col gap-1">
-          <div className="flex gap-2">
-            {categorySet?.map(
-              ({name, id}: {name: string; id: string | number}) => (
-                <Badge
-                  key={id}
-                  className="px-2 p-1 rounded font-normal text-[8px]">
-                  {name}
-                </Badge>
-              ),
-            )}
-          </div>
+          <BadgeList
+            items={categorySet}
+            labelClassName="rounded font-normal text-[0.5rem]"
+            rootClassName="gap-2"
+          />
           <div className="font-semibold text-base mb-1 line-clamp-2">
             {title}
           </div>

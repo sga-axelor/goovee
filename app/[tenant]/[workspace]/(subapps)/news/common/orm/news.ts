@@ -73,9 +73,14 @@ export async function findNews({
         categorySet: {
           select: {
             name: true,
+            color: true,
             parentCategory: {
               name: true,
-              parentCategory: true,
+              color: true,
+              parentCategory: {
+                name: true,
+                color: true,
+              },
             },
           },
         },
