@@ -160,6 +160,7 @@ export default async function Page({
                 item={item}
                 url={`${workspaceURI}/directory/${item.id}`}
                 key={item.id}
+                tenant={tenant}
               />
             ))}
           </main>

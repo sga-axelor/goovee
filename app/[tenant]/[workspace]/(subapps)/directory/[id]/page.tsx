@@ -1,4 +1,6 @@
 import {notFound} from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -7,7 +9,7 @@ import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {FaLinkedin, FaInstagram} from 'react-icons/fa';
 import {Avatar, AvatarImage} from '@/ui/components';
-import {getProfilePic} from '@/utils/files';
+import {getImageURL, getProfilePic} from '@/utils/files';
 import {MdOutlineWeb} from 'react-icons/md';
 import {FaXTwitter} from 'react-icons/fa6';
 
@@ -17,7 +19,6 @@ import {Category} from '../common/ui/components/pills';
 import {getTranslation} from '@/lib/core/i18n/server';
 import {findEntryDetailById} from '../common/orm/directory-entry';
 import {findDirectoryContactById} from '../common/orm/directory-contact';
-import Link from 'next/link';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
 
@@ -28,7 +29,9 @@ type EntryDetailProps = {
   twitter?: string;
   website?: string;
   description?: string;
-  image?: string;
+  image?: {
+    id: string;
+  };
   linkedIn?: string;
   map?: boolean;
 };
@@ -76,7 +79,7 @@ export default async function Page({
   return (
     <div className="container flex flex-col gap-4 mt-4">
       <div className="flex flex-col gap-4 bg-card p-4">
-        <Details entryDetail={entryDetail} />
+        <Details entryDetail={entryDetail} tenant={tenant} />
         <Map className="h-80 w-full" markers={markers} />
       </div>
       <div className="bg-card p-4">
@@ -86,9 +89,24 @@ export default async function Page({
   );
 }
 
-async function Details({entryDetail}: {entryDetail: EntryDetailProps}) {
-  const {title, city, address, twitter, website, description, linkedIn, map} =
-    entryDetail;
+async function Details({
+  entryDetail,
+  tenant,
+}: {
+  entryDetail: EntryDetailProps;
+  tenant: string;
+}) {
+  const {
+    title,
+    city,
+    address,
+    twitter,
+    website,
+    description,
+    linkedIn,
+    map,
+    image,
+  } = entryDetail;
 
   const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
   return (
@@ -110,7 +128,13 @@ async function Details({entryDetail}: {entryDetail: EntryDetailProps}) {
         </div>
 
         {/* image */}
-        <div className="bg-yellow-200 w-[156px] h-[138px] rounded-r-lg"></div>
+        <Image
+          width={156}
+          height={138}
+          className="rounded-r-lg  object-cover"
+          src={getImageURL(image?.id, tenant, {noimage: true})}
+          alt="image"
+        />
       </div>
       <hr />
 

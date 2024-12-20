@@ -3,6 +3,8 @@ import Link from 'next/link';
 import {cn} from '@/utils/css';
 
 import {Category} from '../pills';
+import Image from 'next/image';
+import {getImageURL} from '@/utils/files';
 
 const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
 
@@ -13,13 +15,17 @@ export type CardProps = {
     address?: string;
     description?: string;
     city?: string;
+    image?: {
+      id: string;
+    };
   };
   url: string;
   small?: boolean;
+  tenant: string;
 };
 
 export function Card(props: CardProps) {
-  const {item, url, small} = props;
+  const {item, url, small, tenant} = props;
   return (
     <Link
       href={{pathname: url}}
@@ -38,11 +44,14 @@ export function Card(props: CardProps) {
         <p className="text-success text-sm"> {item.address}</p>
         <p className="text-xs line-clamp-3">{item.description}</p>
       </div>
-      <div
-        className={cn(
-          'bg-yellow-200 w-[150px] shrink-0 rounded-r-lg',
-          small && 'hidden',
-        )}></div>
+
+      <Image
+        width={150}
+        height={138}
+        className="rounded-r-lg  object-cover"
+        src={getImageURL(item?.image?.id, tenant, {noimage: true})}
+        alt="image"
+      />
     </Link>
   );
 }

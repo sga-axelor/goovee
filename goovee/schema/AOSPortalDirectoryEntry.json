@@ -48,6 +48,12 @@
       "name": "description",
       "column": "directory_entry_description",
       "type": "String"
+    },
+    {
+      "name": "image",
+      "column": "directory_entry_image",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
     }
   ]
 }
