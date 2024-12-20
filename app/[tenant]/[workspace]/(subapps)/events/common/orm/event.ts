@@ -258,6 +258,8 @@ export async function findRegisteredEvents({
   upComingEvents,
   pastEvents,
   onGoingEvents,
+  onlyCount = false,
+  skip,
 }: {
   search?: string;
   categoryids?: ID[];
@@ -269,12 +271,14 @@ export async function findRegisteredEvents({
   selectedDates?: any[];
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
-  upComingEvents: boolean;
-  pastEvents: boolean;
-  onGoingEvents: boolean;
+  upComingEvents?: boolean;
+  pastEvents?: boolean;
+  onGoingEvents?: boolean;
+  onlyCount?: boolean;
+  skip?: number;
 }) {
   if (!tenantId) {
-    return {events: [], pageInfo: {}};
+    return {events: [], pageInfo: {}, count: 0};
   }
   const session = await getSession();
   const user = session?.user;
@@ -310,59 +314,105 @@ export async function findRegisteredEvents({
   const yesterDayDateTime = new Date(
     new Date().getTime() - 24 * 60 * 60 * 1000,
   ).toISOString();
-  const skip = Number(limit) * Math.max(Number(page) - 1, 0);
   const orderBy: any = {eventStartDateTime: ORDER_BY.ASC};
-  const registerEvents = await client.aOSPortalParticipant.find({
-    where: {
-      registration: {
-        event: {
-          eventCategorySet: {
-            workspace: {
-              id: workspace?.id,
-            },
-            ...(categoryids?.length
-              ? {
-                  id: {
-                    in: categoryids,
-                  },
-                }
-              : {}),
-            ...(await filterPrivate({user, tenantId})),
+
+  const whereClause = {
+    registration: {
+      event: {
+        eventCategorySet: {
+          workspace: {
+            id: workspace?.id,
           },
-          ...(await filterPrivate({user, tenantId})),
-          ...(search
+          ...(categoryids?.length
             ? {
-                eventTitle: {
-                  like: `%${search}%`,
+                id: {
+                  in: categoryids,
                 },
               }
             : {}),
+          ...(await filterPrivate({user, tenantId})),
+        },
+        ...(await filterPrivate({user, tenantId})),
+        ...(search
+          ? {
+              eventTitle: {
+                like: `%${search}%`,
+              },
+            }
+          : {}),
 
-          ...(eventStartDateTimeCriteria
-            ? {OR: eventStartDateTimeCriteria}
-            : year
+        ...(eventStartDateTimeCriteria
+          ? {OR: eventStartDateTimeCriteria}
+          : year
+            ? {
+                OR: [
+                  {
+                    eventStartDateTime: {
+                      between: [startDate, endDate],
+                    },
+                  },
+                  {
+                    eventEndDateTime: {
+                      between: [startDate, endDate],
+                    },
+                  },
+                  {
+                    AND: [
+                      {
+                        eventStartDateTime: {
+                          le: startDate,
+                        },
+                      },
+                      {
+                        eventEndDateTime: {
+                          ge: endDate,
+                        },
+                      },
+                    ],
+                  },
+                ],
+              }
+            : {}),
+
+            ...(upComingEvents
+              ? {
+                  eventStartDateTime: {
+                    gt: currentDateTime,
+                  },
+                }
+              : {}),
+            ...(pastEvents
               ? {
                   OR: [
-                    {
-                      eventStartDateTime: {
-                        between: [startDate, endDate],
-                      },
-                    },
-                    {
-                      eventEndDateTime: {
-                        between: [startDate, endDate],
-                      },
-                    },
                     {
                       AND: [
                         {
                           eventStartDateTime: {
-                            le: startDate,
+                            lt: currentDateTime,
                           },
                         },
                         {
                           eventEndDateTime: {
-                            ge: endDate,
+                            lt: currentDateTime,
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      AND: [
+                        {
+                          eventAllDay: {
+                            eq: true,
+                          },
+                        },
+                        {
+                          eventStartDateTime: {
+                            lt: currentDateTime,
+                          },
+                        },
+                        {
+                          eventStartDateTime: {
+                            notBetween: [yesterDayDateTime, currentDateTime],
                           },
                         },
                       ],
@@ -370,135 +420,103 @@ export async function findRegisteredEvents({
                   ],
                 }
               : {}),
-          ...(upComingEvents
-            ? {
-                eventStartDateTime: {
-                  gt: currentDateTime,
-                },
-              }
-            : {}),
-          ...(pastEvents
-            ? {
-                OR: [
-                  {
-                    AND: [
-                      {
-                        eventStartDateTime: {
-                          lt: currentDateTime,
+            ...(onGoingEvents
+              ? {
+                  OR: [
+                    {
+                      AND: [
+                        {
+                          eventStartDateTime: {
+                            le: currentDateTime,
+                          },
                         },
-                      },
-                      {
-                        eventEndDateTime: {
-                          lt: currentDateTime,
+                        {
+                          eventEndDateTime: {
+                            ge: currentDateTime,
+                          },
                         },
-                      },
-                    ],
-                  },
-                  {
-                    AND: [
-                      {
-                        eventAllDay: {
-                          eq: true,
+                      ],
+                    },
+                    {
+                      AND: [
+                        {
+                          eventStartDateTime: {
+                            between: [yesterDayDateTime, currentDateTime],
+                          },
                         },
-                      },
-                      {
-                        eventStartDateTime: {
-                          lt: currentDateTime,
+                        {
+                          eventAllDay: {
+                            eq: true,
+                          },
                         },
-                      },
-                      {
-                        eventStartDateTime: {
-                          notBetween: [yesterDayDateTime, currentDateTime],
-                        },
-                      },
-                    ],
-                  },
-                ],
-              }
-            : {}),
-          ...(onGoingEvents
-            ? {
-                OR: [
-                  {
-                    AND: [
-                      {
-                        eventStartDateTime: {
-                          le: currentDateTime,
-                        },
-                      },
-                      {
-                        eventEndDateTime: {
-                          ge: currentDateTime,
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    AND: [
-                      {
-                        eventStartDateTime: {
-                          between: [yesterDayDateTime, currentDateTime],
-                        },
-                      },
-                      {
-                        eventAllDay: {
-                          eq: true,
-                        },
-                      },
-                    ],
-                  },
-                ],
-              }
-            : {}),
+                      ],
+                    },
+                  ],
+                }
+              : {}),
+      },
+    },
+    emailAddress: user?.email,
+  };
+  if (!onlyCount) {
+    const registerEvents = await client.aOSPortalParticipant.find({
+      where: whereClause,
+      orderBy: {
+        registration: {
+          event: orderBy,
         },
       },
-      emailAddress: user?.email,
-    },
-    orderBy: {
-      registration: {
-        event: orderBy,
-      },
-    },
-    take: limit,
-    ...(skip ? {skip} : {}),
-    select: {
-      registration: {
-        event: {
-          id: true,
-          eventTitle: true,
-          eventCategorySet: {
-            select: {
+      take: limit,
+      ...(skip ? {skip} : {}),
+      select: {
+        registration: {
+          event: {
+            id: true,
+            eventTitle: true,
+            eventCategorySet: {
+              select: {
+                id: true,
+                name: true,
+                color: true,
+              },
+            },
+            eventImage: {
+              id: true,
+              filePath: true,
+            },
+            eventDescription: true,
+            eventStartDateTime: true,
+            eventEndDateTime: true,
+            eventAllDay: true,
+            eventDegressiveNumberPartcipant: true,
+            eventAllowRegistration: true,
+            eventAllowMultipleRegistrations: true,
+            eventProduct: {
               id: true,
               name: true,
-              color: true,
+              salePrice: true,
             },
-          },
-          eventImage: {
-            id: true,
-            filePath: true,
-          },
-          eventDescription: true,
-          eventStartDateTime: true,
-          eventEndDateTime: true,
-          eventAllDay: true,
-          eventDegressiveNumberPartcipant: true,
-          eventAllowRegistration: true,
-          eventAllowMultipleRegistrations: true,
-          eventProduct: {
-            id: true,
-            name: true,
-            salePrice: true,
           },
         },
       },
-    },
-  });
+    });
 
-  const events = registerEvents?.map(item => item?.registration?.event);
+    const events = registerEvents?.map((item:any) => item?.registration?.event);
+    
   const pageInfo = getPageInfo({
-    count: registerEvents?.[0]?._count,
+    count: events?.[0]?._count,
     page,
     limit,
   });
-  return {events, pageInfo};
+    return {events, pageInfo,count: 0};
+  } else {
+    const eventCount = await client.aOSPortalParticipant.count({
+      where: whereClause,
+    });
+    return {
+      events:[],
+      pageInfo:null,
+      count:eventCount};
+  }
 }
+

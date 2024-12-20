@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
-import {clone} from '@/utils';
+import {clone, getPageInfo} from '@/utils';
 import {t} from '@/locale/server';
 import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
@@ -17,7 +17,6 @@ import {
   findEvents,
 } from '@/subapps/events/common/orm/event';
 import {findContact} from '@/subapps/events/common/orm/partner';
-
 import {
   findEventParticipant,
   registerParticipants,
@@ -28,6 +27,7 @@ import {
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
+import { LIMIT } from '@/subapps/events/common/constants';
 
 export async function getAllEvents({
   limit,
@@ -63,6 +63,7 @@ export async function getAllEvents({
   pastEvents?: boolean;
   onGoingEvents?: boolean;
 }) {
+  
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
   if (!(workspace && tenantId)) {
@@ -270,5 +271,112 @@ export async function fetchEventParticipants({
       error: true,
       message: await t('Something went wrong!'),
     };
+  }
+}
+
+export async function getAllRegisteredEvents({
+  limit=LIMIT,
+  page=1,
+  categories,
+  search,
+  day,
+  month,
+  year,
+  dates,
+  workspace,
+  tenantId,
+}: {
+  limit?: number;
+  page?: number;
+  categories?: any[];
+  filter?: string;
+  search?: string;
+  day?: string | number;
+  month?: number;
+  year?: number;
+  dates?: [Date | undefined];
+  workspace?: any;
+  tenantId?: any;
+}) {
+  
+  tenantId = headers().get(TENANT_HEADER) || tenantId;
+  const events={
+    ongoing:[],
+    upcoming: [] ,
+    past:[]
+   }
+
+  if (!(workspace && tenantId)) {
+    return {events, pageInfo: null};
+  }
+  const workspaceURL = workspace.url;
+  const result = await validate([
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
+  ]);
+
+  if (result.error) {
+    return {
+      events,
+      pageInfo:null,
+      result
+    };
+  }
+
+  try {
+      const arg ={
+        limit: limit,
+        page: page,
+        categoryids: categories,
+        day: day,
+        search: search,
+        month: month,
+        year: year,
+        selectedDates: dates,
+        workspace,
+        tenantId,
+      }
+      const onGoingEventsCount= await findRegisteredEvents({...arg,onGoingEvents:true,onlyCount:true})
+      const upcomingEventsCount= await findRegisteredEvents({...arg,upComingEvents:true,onlyCount:true})
+      const pastEventsCount= await findRegisteredEvents({...arg,pastEvents:true,onlyCount:true})
+      let upcomgingLimit = 0;
+      let pastlimit = 0;
+      let upcomingSkip  = 0;
+      let upcomingEvent ;
+      let pastevent;
+      let pastSkip=0;
+
+      const skip = Number(limit) * Math.max(Number(page) - 1, 0);
+
+      let ongoingEvent=  await findRegisteredEvents({...arg,onGoingEvents:true,skip,limit});
+
+      upcomgingLimit = (limit! - ongoingEvent?.events?.length!)  ||0;
+
+       if(upcomgingLimit > 0){
+        upcomingSkip = ongoingEvent.events?.length ===0  ? (skip- Number(onGoingEventsCount.count)): 0;
+        upcomingEvent= await  findRegisteredEvents({...arg,upComingEvents:true,skip:upcomingSkip,limit:upcomgingLimit});
+        pastlimit = upcomgingLimit - Number(upcomingEvent.events?.length);
+       }
+       if(pastlimit >0){
+         pastSkip =  upcomingEvent?.events?.length ==0?(upcomingSkip  - Number(upcomingEventsCount.count)):0;
+        pastevent = await findRegisteredEvents({...arg,pastEvents:true,skip:pastSkip,limit:pastlimit})
+       }
+
+      const pageInfo = getPageInfo({
+        count :Number(onGoingEventsCount.count) + Number(upcomingEventsCount.count) +Number(pastEventsCount.count),
+        page,
+        limit,
+      });
+      
+       return {
+        events:{
+          ongoing:ongoingEvent.events || [],
+          upcoming:upcomingEvent?.events || [],
+          past:pastevent?.events || []
+         },
+         pageInfo
+       }
+      } catch (err) {
+    console.log(err);
   }
 }

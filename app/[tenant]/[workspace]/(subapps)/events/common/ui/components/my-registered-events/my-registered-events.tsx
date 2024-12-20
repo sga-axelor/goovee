@@ -10,7 +10,7 @@ import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Category} from '@/subapps/events/common/ui/components';
+import type {Category, Event} from '@/subapps/events/common/ui/components';
 import {
   EventSelector,
   ShowEvents,
@@ -22,6 +22,8 @@ import {
   ONGOING_EVETNS,
   PAST_EVENTS,
 } from '@/subapps/events/common/constants';
+import { Pagination } from '@/ui/components';
+import { URL_PARAMS } from '@/constants';
 
 export const MyRegisteredEvents = ({
   categories,
@@ -29,12 +31,20 @@ export const MyRegisteredEvents = ({
   dateOfEvent,
   workspace,
   onlyRegisteredEvent,
+  onGoingEvents,
+  upcomingEvents,
+  pastEvents,
+  pageInfo: {page, pages, hasPrev, hasNext} = {},
 }: {
   categories: Category[];
   category: any[];
   dateOfEvent: string;
   workspace: PortalWorkspace;
   onlyRegisteredEvent: boolean;
+  onGoingEvents:Event[]
+  upcomingEvents:Event[]
+  pastEvents:Event[],
+  pageInfo: any;
 }) => {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
@@ -72,6 +82,21 @@ export const MyRegisteredEvents = ({
       {scroll: false},
     );
   };
+ 
+  const handlePreviousPage = () => {
+    if (!hasPrev) return;
+    update([{key: URL_PARAMS.page, value: Math.max(Number(page) - 1, 1)}]);
+  };
+
+  const handleNextPage = () => {
+    if (!hasNext) return;
+    update([{key: URL_PARAMS.page, value: Number(page) + 1}]);
+  };
+
+  const handlePage = (page: string | number) => {
+    update([{key: URL_PARAMS.page, value: page}]);
+  };
+
 
   const handleSearch = (searchKey: string) => {
     setSearch(searchKey);
@@ -104,17 +129,18 @@ export const MyRegisteredEvents = ({
             <EventSearch handleSearch={handleSearch} />
           </div>
           <div className="flex flex-col space-y-4 w-full">
-            <ShowEvents
+          <ShowEvents
               title={ONGOING_EVETNS}
+              events={onGoingEvents}
               dateOfEvent={dateOfEvent}
               category={category}
               searchQuery={search}
               workspace={workspace}
               workspaceURI={workspaceURI}
-              onlyRegisteredEvent={true}
-              onGoingEvents={true}
             />
-            <ShowEvents
+          <ShowEvents
+                        events={upcomingEvents}
+
               title={UPCOMING_EVENTS}
               dateOfEvent={dateOfEvent}
               category={category}
@@ -126,6 +152,7 @@ export const MyRegisteredEvents = ({
             />
             {showPastEvents && (
               <ShowEvents
+                events={pastEvents}
                 title={PAST_EVENTS}
                 dateOfEvent={dateOfEvent}
                 category={category}
@@ -136,6 +163,19 @@ export const MyRegisteredEvents = ({
                 pastEvents={true}
               />
             )}
+          <div className="w-full mt-10 flex items-center justify-center ml-auto">
+            {pages > 1 && (
+              <Pagination
+                page={page}
+                pages={pages}
+                disablePrev={!hasPrev}
+                disableNext={!hasNext}
+                onPrev={handlePreviousPage}
+                onNext={handleNextPage}
+                onPage={handlePage}
+              />
+            )}
+          </div>
           </div>
         </div>
       </div>
