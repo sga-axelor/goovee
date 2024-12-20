@@ -7,7 +7,13 @@ import {Category} from '../pills';
 const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
 
 export type CardProps = {
-  item: {id: string; name: string; address: string; description: string};
+  item: {
+    id: string;
+    title?: string;
+    address?: string;
+    description?: string;
+    city?: string;
+  };
   url: string;
   small?: boolean;
 };
@@ -28,7 +34,7 @@ export function Card(props: CardProps) {
             <Category name={item?.name} key={index} variant={item?.name} />
           ))}
         </div>
-        <h4 className="font-semibold">{item.name}</h4>
+        <h4 className="font-semibold">{item.title}</h4>
         <p className="text-success text-sm"> {item.address}</p>
         <p className="text-xs line-clamp-3">{item.description}</p>
       </div>

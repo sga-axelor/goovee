@@ -15,8 +15,30 @@ import {FaXTwitter} from 'react-icons/fa6';
 import {Map} from '../common/ui/components/map';
 import {Category} from '../common/ui/components/pills';
 import {getTranslation} from '@/lib/core/i18n/server';
+import {findEntryDetailById} from '../common/orm/directory-entry';
+import {findDirectoryContactById} from '../common/orm/directory-contact';
+import Link from 'next/link';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
+
+type EntryDetailProps = {
+  title?: string;
+  city?: string;
+  address?: string;
+  twitter?: string;
+  website?: string;
+  description?: string;
+  image?: string;
+  linkedIn?: string;
+  map?: boolean;
+};
+type ContactDetaillProps = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  linkedInLink?: string;
+};
 export default async function Page({
   params,
 }: {
@@ -38,26 +60,42 @@ export default async function Page({
 
   if (!workspace) notFound();
 
+  const [entryDetail, contactDetail] = await Promise.all([
+    findEntryDetailById({
+      id,
+      workspace,
+      tenantId: tenant,
+    }).then(clone),
+    findDirectoryContactById({
+      id,
+      workspace,
+      tenantId: tenant,
+    }).then(clone),
+  ]);
+
   return (
     <div className="container flex flex-col gap-4 mt-4">
       <div className="flex flex-col gap-4 bg-card p-4">
-        <Details />
+        <Details entryDetail={entryDetail} />
         <Map className="h-80 w-full" markers={markers} />
       </div>
       <div className="bg-card p-4">
-        <Contacts tenant={tenant} />
+        <Contacts tenant={tenant} contactDetail={contactDetail} />
       </div>
     </div>
   );
 }
 
-async function Details() {
+async function Details({entryDetail}: {entryDetail: EntryDetailProps}) {
+  const {title, city, address, twitter, website, description, linkedIn, map} =
+    entryDetail;
+
   const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
   return (
     <div>
       <div className="flex bg-card gap-5 justify-between">
         <div className="space-y-4 mt-4">
-          <h2 className="font-semibold text-xl">Entry Name</h2>
+          <h2 className="font-semibold text-xl">{title}</h2>
           {category.map((cat, idx) => (
             <Category
               name={cat?.name}
@@ -66,7 +104,9 @@ async function Details() {
               variant={cat?.name}
             />
           ))}
-          <p className="text-success text-base">43 Mainstreet - London</p>
+          <p className="text-success text-base">
+            {address} - {city}
+          </p>
         </div>
 
         {/* image */}
@@ -77,14 +117,7 @@ async function Details() {
       {/* directory description */}
 
       <div className="space-y-4 mt-5">
-        <p className="text-sm text-muted-foreground">
-          Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
-          mattis pharetra sed. Sem id morbi nunc consectetur ultrices. Magna id
-          nisi metus tortor pharetra nullam. Eget vestibulum nisi orci aliquam.
-          Convallis sed turpis et amet. Pharetra eget adipiscing vivamus mattis
-          lorem iaculis bibendum. Egestas lectus diam ultrices nibh scelerisque
-          nunc scelerisque at consectetur.
-        </p>
+        <p className="text-sm text-muted-foreground">{description}</p>
 
         <div>
           <span className="text-base font-semibold me-2">Info 1 :</span>
@@ -105,16 +138,35 @@ async function Details() {
         {await getTranslation('Social media')}
       </p>
       <div className="flex space-x-6">
-        <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
-        <FaXTwitter className="h-8 w-8" />
+        {linkedIn && (
+          <Link href={`${linkedIn}`}>
+            <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
+          </Link>
+        )}
+        {twitter && (
+          <Link href={`${twitter}`}>
+            <FaXTwitter className="h-8 w-8" />
+          </Link>
+        )}
         <FaInstagram className="h-8 w-8 text-palette-yellow-dark" />
-        <MdOutlineWeb className="h-8 w-8 text-gray-dark" />
+        {website && (
+          <Link href={`${website}`}>
+            <MdOutlineWeb className="h-8 w-8 text-gray-dark" />
+          </Link>
+        )}
       </div>
     </div>
   );
 }
 
-async function Contacts({tenant}: {tenant: string}) {
+async function Contacts({
+  tenant,
+  contactDetail,
+}: {
+  tenant: string;
+  contactDetail: ContactDetaillProps;
+}) {
+  const {firstName, lastName, email, phoneNumber, linkedInLink} = contactDetail;
   return (
     <div className="space-y-4">
       <h2 className="font-semibold text-xl">
@@ -127,20 +179,26 @@ async function Contacts({tenant}: {tenant: string}) {
             src={getProfilePic('', tenant)}
           />
         </Avatar>
-        <span className="font-semibold">Alfredo Keebler</span>
+        <span className="font-semibold">
+          {firstName} {lastName}
+        </span>
       </div>
       <div className="ms-4 space-y-4">
         <h4 className="font-semibold">{await getTranslation('Email')}</h4>
-        <a
-          className="text-sm text-muted-foreground"
-          href="mailto:alfredo.keebler@example.com">
-          alfredo.keebler@example.com
+        <a className="text-sm text-muted-foreground" href={`mailto:${email}`}>
+          {email}
         </a>
         <h4 className="font-semibold">{await getTranslation('Phone')}</h4>
-        <a className="text-sm text-muted-foreground" href="tel:+1-202-555-0170">
-          +1 (202) 555-0170
+        <a
+          className="text-sm text-muted-foreground"
+          href={`tel:${phoneNumber}`}>
+          {phoneNumber}
         </a>
-        <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
+        {linkedInLink && (
+          <Link href={`${linkedInLink}`}>
+            <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
+          </Link>
+        )}
       </div>
     </div>
   );

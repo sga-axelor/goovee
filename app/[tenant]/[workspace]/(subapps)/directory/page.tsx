@@ -41,7 +41,7 @@ import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
 import {Swipe} from './common/ui/components/swipe';
 import {getTranslation} from '@/lib/core/i18n/server';
-import {findDirectoryCategories} from './common/orm/directory-category';
+import {findDirectoryEntryList} from './common/orm/directory-entry';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -50,48 +50,6 @@ const markers = [
 ];
 
 const ITEMS_PER_PAGE = 3;
-const cardData = [
-  {
-    id: '1',
-    name: 'Entry Name',
-    address: '43 Mainstreet - London',
-    image: '',
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Neque diam integer Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi veritatis ex labore illum quos dolores, nam optio consectetur odit. Minus facilis illo, consequuntur dolor nam illum facere velit? Ipsum, illo! purus aenean porttitor morbi. Turpis. ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
-  },
-  {
-    id: '2',
-    name: 'Entry Name',
-    address: '43 Mainstreet - London',
-    image: '',
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
-  },
-  {
-    id: '3',
-    name: 'Entry Name',
-    address: '43 Mainstreet - London',
-    image: '',
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
-  },
-  {
-    id: '4',
-    name: 'Entry Name',
-    address: '43 Mainstreet - London',
-    image: '',
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
-  },
-  {
-    id: '5',
-    name: 'Entry Name',
-    address: '43 Mainstreet - London',
-    image: '',
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
-  },
-];
 
 export default async function Page({
   params,
@@ -115,16 +73,20 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const categories = await findDirectoryCategories({
+  // TODO: change it to direcotory app later
+  const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
+  const directortyEntryList = await findDirectoryEntryList({
+    page,
+    limit,
     workspace,
     tenantId: tenant,
   }).then(clone);
 
-  // TODO: change it to direcotory app later
-  const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
-
-  const data = cardData.slice((page - 1) * limit, page * limit);
-  const pages = getPages([{_count: cardData.length.toString()}], limit);
+  const data = directortyEntryList.slice((page - 1) * limit, page * limit);
+  const pages = getPages(
+    [{_count: directortyEntryList.length.toString()}],
+    limit,
+  );
   const imageURL = workspace.config.ticketHeroBgImage?.id
     ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id, tenant)})`
     : IMAGE_URL;
