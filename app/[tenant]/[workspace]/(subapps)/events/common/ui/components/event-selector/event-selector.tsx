@@ -15,6 +15,7 @@ import {
   Card,
 } from '@/ui/components';
 import {i18n} from '@/lib/core/i18n';
+import {getColorStyles} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import type {
@@ -22,7 +23,6 @@ import type {
   Category,
 } from '@/subapps/events/common/ui/components';
 import {Calendar} from '@/subapps/events/common/ui/components';
-import {getColorStyles} from '@/subapps/events/common/utils';
 import {CATEGORIES} from '@/subapps/events/common/constants';
 
 export const EventSelector = ({

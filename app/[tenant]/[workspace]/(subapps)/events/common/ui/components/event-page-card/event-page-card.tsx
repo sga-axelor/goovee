@@ -12,6 +12,7 @@ import {
   CardTitle,
   Button,
   Badge,
+  BadgeList,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -19,10 +20,7 @@ import {i18n} from '@/i18n';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  EventCardBadges,
-  EventDateCard,
-} from '@/subapps/events/common/ui/components';
+import {EventDateCard} from '@/subapps/events/common/ui/components';
 import {
   EDIT_MY_REGISTRATION,
   REGISTER_TAG,
@@ -53,7 +51,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
           endDate={eventDetails?.eventEndDateTime}
           eventAllDay={eventDetails?.eventAllDay}
         />
-        <EventCardBadges categories={eventDetails?.eventCategorySet} />
+        <BadgeList items={eventDetails?.eventCategorySet} />
       </CardHeader>
       <CardContent className="px-4 pb-4 space-y-4">
         <div className="relative h-[15.625rem]">

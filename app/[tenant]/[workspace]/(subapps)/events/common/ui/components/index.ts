@@ -11,8 +11,6 @@ export type {CategoriesProps} from './events';
 export {EventSelector} from './event-selector';
 export type {EventSelectorProps} from './event-selector';
 export {Calendar} from './calendar';
-export {EventCardBadges} from './event-card-badges';
-export type {EventCardBadgesProps} from './event-card-badges';
 
 export {EventCard} from './event-card';
 

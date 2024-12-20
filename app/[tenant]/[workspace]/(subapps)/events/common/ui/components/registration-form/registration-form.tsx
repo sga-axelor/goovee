@@ -24,13 +24,13 @@ import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  EventCardBadges,
   CustomSelect,
   EventDateCard,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
 import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
+import {BadgeList} from '@/ui/components';
 
 export const RegistrationForm = ({
   eventDetails,
@@ -234,7 +234,7 @@ export const RegistrationForm = ({
           endDate={eventDetails?.eventEndDateTime}
           eventAllDay={eventDetails?.eventAllDay}
         />
-        <EventCardBadges categories={eventDetails?.eventCategorySet} />
+        <BadgeList items={eventDetails?.eventCategorySet} />
         {eventDetails?.eventProduct?.salePrice && (
           <CardDescription className="my-6 text-xl font-semibold">
             {`${i18n.get('Price')} : ${parseFloat(eventDetails?.eventProduct?.salePrice).toFixed(2)}€`}

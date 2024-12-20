@@ -13,6 +13,7 @@ import {
   CardTitle,
   Button,
   Badge,
+  BadgeList,
 } from '@/ui/components';
 import {parseDate} from '@/utils/date';
 import {getImageURL} from '@/utils/files';
@@ -21,7 +22,6 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/i18n';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventCardBadges} from '@/subapps/events/common/ui/components';
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
 import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 import styles from './event-card.module.scss';
@@ -98,7 +98,7 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
              }
               `}
             </CardDescription>
-            <EventCardBadges categories={event.eventCategorySet} />
+            <BadgeList items={event.eventCategorySet} />
           </CardHeader>
           <CardContent className="p-0 mt-1">
             <div
