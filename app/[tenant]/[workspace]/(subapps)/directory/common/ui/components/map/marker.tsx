@@ -11,7 +11,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 const item = {
   id: '1',
-  name: 'Entry Name',
+  title: 'Entry Name',
   address: '43 Mainstreet - London',
   image: '',
   description:

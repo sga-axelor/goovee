@@ -42,11 +42,27 @@ import {Sort} from './common/ui/components/sort';
 import {Swipe} from './common/ui/components/swipe';
 import {getTranslation} from '@/lib/core/i18n/server';
 import {findDirectoryEntryList} from './common/orm/directory-entry';
+import {
+  findDirectoryCategories,
+  findDirectoryEntries,
+} from './common/orm/directory-category';
+import {colors} from './common/constants';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
   {lat: 48.85671, lng: 2.4475},
   {lat: 48.80671, lng: 2.4075},
+];
+
+const icons = [
+  MdAllInbox,
+  MdOutlineFoodBank,
+  MdMoney,
+  MdOutlineDiamond,
+  MdOutlineMedicalServices,
+  MdOutlineSmartphone,
+  MdOutlineSupervisedUserCircle,
+  TbTool,
 ];
 
 const ITEMS_PER_PAGE = 3;
@@ -73,6 +89,11 @@ export default async function Page({
 
   if (!workspace) notFound();
 
+  const categories = await findDirectoryCategories({
+    workspace,
+    tenantId: tenant,
+  });
+
   // TODO: change it to direcotory app later
   const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
   const directortyEntryList = await findDirectoryEntryList({
@@ -80,7 +101,12 @@ export default async function Page({
     limit,
     workspace,
     tenantId: tenant,
-  }).then(clone);
+  });
+
+  const entries = await findDirectoryEntries({
+    workspace,
+    tenantId: tenant,
+  });
 
   const data = directortyEntryList.slice((page - 1) * limit, page * limit);
   const pages = getPages(
@@ -91,48 +117,15 @@ export default async function Page({
     ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id, tenant)})`
     : IMAGE_URL;
 
-  const cards = [
-    {
-      icon: MdOutlineSupervisedUserCircle,
-      label: 'Services',
-      iconClassName: 'bg-palette-purple text-palette-purple-dark',
-    },
-    {
-      icon: MdOutlineDiamond,
-      label: 'Luxury',
-      iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
-    },
-    {
-      icon: MdOutlineFoodBank,
-      label: 'Agribusiness',
-      iconClassName: 'bg-palette-pink text-palette-pink-dark',
-    },
-    {
-      icon: MdAllInbox,
-      label: 'Wholesales',
-      iconClassName: 'text-success bg-success-light',
-    },
-    {
-      icon: TbTool,
-      label: 'Industry',
-      iconClassName: 'bg-palette-orange text-palette-orange-dark',
-    },
-    {
-      icon: MdMoney,
-      label: 'Bank',
-      iconClassName: 'bg-palette-blue text-palette-blue-dark',
-    },
-    {
-      icon: MdOutlineMedicalServices,
-      label: 'Medical',
-      iconClassName: 'bg-palette-red text-palette-red-dark',
-    },
-    {
-      icon: MdOutlineSmartphone,
-      label: 'Communication',
-      iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
-    },
-  ].map(props => <DirectoryCards {...props} key={props.label} />);
+  const cards = categories.map((category, i) => (
+    <DirectoryCards
+      key={category.id}
+      icon={icons[i] ?? MdOutlineSupervisedUserCircle}
+      label={category.title ?? ''}
+      iconClassName={colors[category.color as keyof typeof colors] ?? ''}
+    />
+  ));
+
   return (
     <>
       <Hero
@@ -158,7 +151,7 @@ export default async function Page({
         />
         <div className="flex has-[.expand]:flex-col gap-4 mt-4">
           <aside className="space-y-4">
-            <Map showExpand markers={markers} />
+            <Map showExpand locations={clone(entries)} />
             <Sort />
           </aside>
           <main className="grow flex flex-col gap-4">
