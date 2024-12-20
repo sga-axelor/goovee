@@ -70,7 +70,7 @@ export function generateCSSVariableString(options: Theme) {
     `;
 }
 
-export type ColorKey =
+export type Color =
   | 'indigo'
   | 'red'
   | 'blue'
@@ -94,8 +94,8 @@ export type ColorKey =
   | 'deeppurple'
   | 'default';
 
-export const colorDefinitions: Record<
-  ColorKey,
+export const colorPalette: Record<
+  Color,
   {base: string; light: string; dark: string}
 > = {
   indigo: {base: '#3f51b5', light: '#e8eaf6', dark: '#303f9f'},
@@ -122,17 +122,10 @@ export const colorDefinitions: Record<
   default: {base: '#bdbdbd', light: '#f5f5f5', dark: '#616161'},
 };
 
-export const getColorStyles = (color: ColorKey, isActive: boolean) => {
-  const {light, dark} = colorDefinitions[color] || colorDefinitions.default;
-  const backgroundColor = isActive ? dark : light;
-  const textColor =
-    color === 'white'
-      ? '#333333'
-      : color === 'black'
-        ? '#ffffff'
-        : isActive
-          ? '#ffffff'
-          : '#333333';
+export const generateColorStyles = (color: Color) => {
+  const {dark} = colorPalette[color] || colorPalette.default;
+  const backgroundColor = dark;
+  const textColor = color === 'white' ? '#333333' : '#ffffff';
 
   return {
     backgroundColor,

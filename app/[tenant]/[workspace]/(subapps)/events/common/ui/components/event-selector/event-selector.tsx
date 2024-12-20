@@ -15,7 +15,7 @@ import {
   Card,
 } from '@/ui/components';
 import {i18n} from '@/lib/core/i18n';
-import {getColorStyles} from '@/utils/css';
+import {generateColorStyles} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import type {
@@ -78,10 +78,7 @@ export const EventSelector = ({
           <CollapsibleContent className="space-y-4 mx-4">
             {categories.map((category: any) => {
               const isActive = selectedCategories.includes(category.id);
-              const {backgroundColor} = getColorStyles(
-                category.color,
-                isActive,
-              );
+              const {backgroundColor} = generateColorStyles(category.color);
 
               return (
                 <div className="flex items-center space-x-4" key={category.id}>

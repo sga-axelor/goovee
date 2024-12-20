@@ -2,7 +2,7 @@
 
 // ---- CORE IMPORTS ----//
 import {Badge} from '@/ui/components';
-import {cn, getColorStyles} from '@/utils/css';
+import {cn, generateColorStyles} from '@/utils/css';
 
 export const BadgeList = ({
   items,
@@ -20,7 +20,7 @@ export const BadgeList = ({
         rootClassName,
       )}>
       {items?.map((item: any) => {
-        const {backgroundColor, textColor} = getColorStyles(item.color, true);
+        const {backgroundColor, textColor} = generateColorStyles(item.color);
 
         return (
           <Badge
