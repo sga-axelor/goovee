@@ -41,7 +41,7 @@ export const RegistrationForm = ({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
-  const isLoggedIn = user?.emailAddress && true;
+  const isLoggedIn = !!user?.emailAddress;
 
   const basicPerson = useMemo(
     () => [
