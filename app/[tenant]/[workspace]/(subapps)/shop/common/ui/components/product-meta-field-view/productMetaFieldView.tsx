@@ -3,13 +3,7 @@ import React, {useState} from 'react';
 import {MdOutlineChevronRight} from 'react-icons/md';
 import {MetaFieldPicture} from '../MetafieldPicture';
 
-export function ProductMetaFieldView({
-  fields,
-  productAttrs,
-}: {
-  fields: any[];
-  productAttrs: string;
-}) {
+export function ProductMetaFieldView({fields}: {fields: any[]}) {
   const [expandedFields, setExpandedFields] = useState<{
     [key: string]: boolean;
   }>({});
@@ -81,8 +75,6 @@ export function ProductMetaFieldView({
       field.value
     ) {
       return renderFieldMTM(transFormedField);
-    } else if (field.type === 'json-many-to-many') {
-      return <div>coucou</div>;
     }
     return (
       <div className="flex">

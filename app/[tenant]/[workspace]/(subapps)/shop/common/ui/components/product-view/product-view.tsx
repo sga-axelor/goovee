@@ -125,6 +125,9 @@ export function ProductView({
               productAttrs={product.productAttrs}
               fields={metaFields}
             />
+            <span className="font-medium">
+              {i18n.get('Product description')}
+            </span>
             <p
               className="text-sm mb-0"
               dangerouslySetInnerHTML={{
