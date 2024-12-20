@@ -28,12 +28,19 @@ export function extractSearchParams({
 export async function isExistingUser({
   workspaceURL,
   tenantId,
+  user: userProp,
 }: {
   workspaceURL: string;
   tenantId: string;
+  user?: {
+    id: string;
+    email: string;
+    isContact: boolean;
+    mainPartnerId?: string;
+  } & any;
 }) {
   const session = await getSession();
-  const user = session?.user;
+  const user = userProp || session?.user;
 
   let userWorkspaces = [];
   if (user) {

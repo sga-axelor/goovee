@@ -4,16 +4,16 @@ import React, {useState} from 'react';
 import Link from 'next/link';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {signIn} from 'next-auth/react';
-import {FaGoogle} from 'react-icons/fa';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
 import {TextField, Checkbox, Label, Button, Separator} from '@/ui/components';
 import {SEARCH_PARAMS} from '@/constants';
+import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {revalidate} from './actions';
-import {useToast} from '@/ui/hooks';
 
 export default function Content({canRegister}: {canRegister?: boolean}) {
   const [values, setValues] = useState({email: '', password: ''});
@@ -65,7 +65,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
 
   const loginWithGoogle = async () => {
     await signIn('google', {
-      callbackUrl: redirection,
+      callbackUrl: `/auth/login/google?${searchQuery}`,
     });
   };
 
@@ -155,10 +155,16 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
         <Button
           type="button"
           variant="outline-success"
-          onClick={loginWithGoogle}
-          className="flex items-center justify-center gap-4 rounded-full w-full !border-primary !bg-primary-foreground">
-          <FaGoogle className="text-xl" />
-          <span className="font-medium">{i18n.get('Log In with Google')}</span>
+          className="w-full rounded-full"
+          onClick={loginWithGoogle}>
+          <Image
+            alt="Google"
+            src="/images/google.svg"
+            height={24}
+            width={24}
+            className="me-2"
+          />
+          {i18n.get('Log In with Google')}
         </Button>
       </div>
     </div>

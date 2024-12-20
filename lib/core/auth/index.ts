@@ -74,9 +74,6 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
-    async signIn({account, profile, ...rest}: any) {
-      return true;
-    },
   },
 };
 
