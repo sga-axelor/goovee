@@ -383,37 +383,41 @@ export async function findRegisteredEvents({
           : {}),
         ...(pastEvents
           ? {
-              OR: [
+              AND: [
                 {
-                  AND: [
+                  OR: [
                     {
-                      eventStartDateTime: {
-                        lt: currentDateTime,
-                      },
+                      AND: [
+                        {
+                          eventStartDateTime: {
+                            lt: currentDateTime,
+                          },
+                        },
+                        {
+                          eventEndDateTime: {
+                            lt: currentDateTime,
+                          },
+                        },
+                      ],
                     },
                     {
-                      eventEndDateTime: {
-                        lt: currentDateTime,
-                      },
-                    },
-                  ],
-                },
-                {
-                  AND: [
-                    {
-                      eventAllDay: {
-                        eq: true,
-                      },
-                    },
-                    {
-                      eventStartDateTime: {
-                        lt: currentDateTime,
-                      },
-                    },
-                    {
-                      eventStartDateTime: {
-                        notBetween: [yesterDayDateTime, currentDateTime],
-                      },
+                      AND: [
+                        {
+                          eventAllDay: {
+                            eq: true,
+                          },
+                        },
+                        {
+                          eventStartDateTime: {
+                            lt: currentDateTime,
+                          },
+                        },
+                        {
+                          eventStartDateTime: {
+                            notBetween: [yesterDayDateTime, currentDateTime],
+                          },
+                        },
+                      ],
                     },
                   ],
                 },
@@ -422,32 +426,36 @@ export async function findRegisteredEvents({
           : {}),
         ...(onGoingEvents
           ? {
-              OR: [
+              AND: [
                 {
-                  AND: [
+                  OR: [
                     {
-                      eventStartDateTime: {
-                        le: currentDateTime,
-                      },
+                      AND: [
+                        {
+                          eventStartDateTime: {
+                            le: currentDateTime,
+                          },
+                        },
+                        {
+                          eventEndDateTime: {
+                            ge: currentDateTime,
+                          },
+                        },
+                      ],
                     },
                     {
-                      eventEndDateTime: {
-                        ge: currentDateTime,
-                      },
-                    },
-                  ],
-                },
-                {
-                  AND: [
-                    {
-                      eventStartDateTime: {
-                        between: [yesterDayDateTime, currentDateTime],
-                      },
-                    },
-                    {
-                      eventAllDay: {
-                        eq: true,
-                      },
+                      AND: [
+                        {
+                          eventStartDateTime: {
+                            between: [yesterDayDateTime, currentDateTime],
+                          },
+                        },
+                        {
+                          eventAllDay: {
+                            eq: true,
+                          },
+                        },
+                      ],
                     },
                   ],
                 },
