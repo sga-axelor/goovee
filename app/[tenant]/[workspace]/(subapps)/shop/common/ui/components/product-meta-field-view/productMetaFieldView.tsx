@@ -22,13 +22,18 @@ export function ProductMetaFieldView({
   };
 
   const isImage = (type: string) => {
-    console.log('le type : ', type);
-    if (type === 'image/png') {
+    if (type === 'image/png' || type === 'image/jpg' || type === 'image/jpeg') {
       return true;
     }
   };
 
+  const transformValueToArray = (field: any) => ({
+    ...field,
+    value: Array.isArray(field.value) ? field.value : [field.value],
+  });
+
   const renderFieldMTM = (field: any) => {
+    console.log('field dans MTM : ', field);
     const fieldValue = field.value[0].value;
     if (fieldValue.fileType && isImage(fieldValue.fileType)) {
       return (
@@ -46,48 +51,21 @@ export function ProductMetaFieldView({
           </div>
           {expandedFields[field.title] && (
             <div className="ml-7 mt-2 space-y-4">
-              {Array.isArray(field.value) ? (
-                field.value.map((image, index) => (
-                  <MetaFieldPicture image={image.value} key={index} />
-                ))
-              ) : (
-                <MetaFieldPicture image={field.value.value} />
-              )}
-            </div>
-          )}
-        </div>
-      );
-    }
-  };
-
-  const renderFieldValueMTO = (field: any) => {
-    const fieldValue = field.value.value;
-    if (fieldValue.fileType && isImage(fieldValue.fileType)) {
-      return (
-        <div className="w-full">
-          <div
-            onClick={() => toggleField(field.title)}
-            className="flex items-center cursor-pointer gap-2">
-            <MdOutlineChevronRight
-              className={`transition-transform duration-200 ${
-                expandedFields[field.title] ? 'rotate-90' : ''
-              }`}
-              size={15}
-            />
-            <span className="font-medium">{field.title}</span>
-          </div>
-          {expandedFields[field.title] && (
-            <div className="ml-7 mt-2">
-              <MetaFieldPicture image={fieldValue} />
+              {field.value.map((image, index) => (
+                <MetaFieldPicture image={image.value} key={index} />
+              ))}
             </div>
           )}
         </div>
       );
     } else {
+      const concatValues = field.value
+        .map((item: any) => item.value)
+        .join(' - ');
       return (
         <div className="flex">
           <div>
-            <span className="font-medium">{field.title}</span> : {fieldValue}
+            <span className="font-medium">{field.title}</span> : {concatValues}
           </div>
         </div>
       );
@@ -96,23 +74,21 @@ export function ProductMetaFieldView({
 
   const renderFieldValue = (field: any) => {
     console.log('fieldfield', field);
-    if (field.type === 'json-many-to-one' && field.value) {
-      return renderFieldValueMTO(field);
+    const transFormedField = transformValueToArray(field);
+    if (
+      (field.type === 'json-many-to-many' ||
+        field.type === 'json-many-to-one') &&
+      field.value
+    ) {
+      return renderFieldMTM(transFormedField);
     } else if (field.type === 'json-many-to-many') {
-      return renderFieldMTM(field);
-    } else if (field.type === 'json-many-to-many') {
-      return (
-        <div className="flex">
-          <div>
-            <span className="font-medium">coucou</span> : coucou
-          </div>
-        </div>
-      );
+      return <div>coucou</div>;
     }
     return (
       <div className="flex">
         <div>
-          <span className="font-medium">{field.title}</span> : {field.value}
+          <span className="font-medium">{transFormedField.title}</span> :{' '}
+          {transFormedField.value}
         </div>
       </div>
     );

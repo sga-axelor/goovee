@@ -136,6 +136,7 @@ export interface Product extends Model {
   displaySalePrice: string;
   displayCostPrice: string;
   allowCustomNote?: boolean;
+  productAttrs: string;
 }
 
 export interface Currency extends Model {
