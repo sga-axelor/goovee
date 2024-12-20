@@ -12,18 +12,23 @@ type ContentProps = {
   category: any;
   date: any;
   workspace: any;
-  onGoingEvents:Event[]
-  upcomingEvents:Event[]
-  pastEvents:Event[]
+  onGoingEvents: Event[];
+  upcomingEvents: Event[];
+  pastEvents: Event[];
   pageInfo: any;
-
+  showPastEvents: boolean;
 };
 
-const Content = ({categories, category, date, workspace,
+const Content = ({
+  categories,
+  category,
+  date,
+  workspace,
   onGoingEvents,
   upcomingEvents,
   pastEvents,
-  pageInfo
+  pageInfo,
+  showPastEvents,
 }: ContentProps) => {
   return (
     <main className="h-full w-full">
@@ -37,7 +42,7 @@ const Content = ({categories, category, date, workspace,
         upcomingEvents={upcomingEvents}
         pastEvents={pastEvents}
         pageInfo={pageInfo}
-
+        showPastEvents={showPastEvents}
       />
     </main>
   );

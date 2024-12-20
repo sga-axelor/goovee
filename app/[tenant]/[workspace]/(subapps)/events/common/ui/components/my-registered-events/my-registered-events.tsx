@@ -22,8 +22,8 @@ import {
   ONGOING_EVETNS,
   PAST_EVENTS,
 } from '@/subapps/events/common/constants';
-import { Pagination } from '@/ui/components';
-import { URL_PARAMS } from '@/constants';
+import {Pagination} from '@/ui/components';
+import {URL_PARAMS} from '@/constants';
 
 export const MyRegisteredEvents = ({
   categories,
@@ -35,23 +35,26 @@ export const MyRegisteredEvents = ({
   upcomingEvents,
   pastEvents,
   pageInfo: {page, pages, hasPrev, hasNext} = {},
+  showPastEvents = false,
 }: {
   categories: Category[];
   category: any[];
   dateOfEvent: string;
   workspace: PortalWorkspace;
   onlyRegisteredEvent: boolean;
-  onGoingEvents:Event[]
-  upcomingEvents:Event[]
-  pastEvents:Event[],
+  onGoingEvents: Event[];
+  upcomingEvents: Event[];
+  pastEvents: Event[];
   pageInfo: any;
+  showPastEvents: boolean;
 }) => {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
-  const [showPastEvents, setShowPastEvents] = useState<boolean>(false);
+  const [enablePastEvents, setEnablePastEvents] =
+    useState<boolean>(showPastEvents);
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
 
@@ -65,6 +68,7 @@ export const MyRegisteredEvents = ({
       {key: 'category', value: updatedCategories},
       {key: 'page', value: 1},
       {key: 'date', value: convertDateToISO8601(date) || ''},
+      {key: 'pastevents', value: showPastEvents},
     ]);
 
     setSelectedCategory(updatedCategories);
@@ -78,11 +82,12 @@ export const MyRegisteredEvents = ({
         {key: 'category', value: selectedCategory},
         {key: 'page', value: 1},
         {key: 'date', value: convertDateToISO8601(d) || ''},
+        {key: 'pastevents', value: showPastEvents},
       ],
       {scroll: false},
     );
   };
- 
+
   const handlePreviousPage = () => {
     if (!hasPrev) return;
     update([{key: URL_PARAMS.page, value: Math.max(Number(page) - 1, 1)}]);
@@ -97,13 +102,21 @@ export const MyRegisteredEvents = ({
     update([{key: URL_PARAMS.page, value: page}]);
   };
 
-
   const handleSearch = (searchKey: string) => {
     setSearch(searchKey);
   };
 
-  const handleTooglePastEvents = () => {
-    setShowPastEvents(prev => !prev);
+  const handleTooglePastEvents = (checked: boolean) => {
+    setEnablePastEvents(checked);
+    update(
+      [
+        {key: 'category', value: selectedCategory},
+        {key: 'page', value: 1},
+        {key: 'date', value: convertDateToISO8601(date) || ''},
+        {key: 'pastevents', value: checked},
+      ],
+      {scroll: false},
+    );
   };
 
   return (
@@ -121,6 +134,7 @@ export const MyRegisteredEvents = ({
             categories={categories}
             workspace={workspace}
             onlyRegisteredEvent={onlyRegisteredEvent}
+            enablePastEvents={enablePastEvents}
             handleToogle={handleTooglePastEvents}
           />
         </div>
@@ -129,7 +143,7 @@ export const MyRegisteredEvents = ({
             <EventSearch handleSearch={handleSearch} />
           </div>
           <div className="flex flex-col space-y-4 w-full">
-          <ShowEvents
+            <ShowEvents
               title={ONGOING_EVETNS}
               events={onGoingEvents}
               dateOfEvent={dateOfEvent}
@@ -138,9 +152,8 @@ export const MyRegisteredEvents = ({
               workspace={workspace}
               workspaceURI={workspaceURI}
             />
-          <ShowEvents
-                        events={upcomingEvents}
-
+            <ShowEvents
+              events={upcomingEvents}
               title={UPCOMING_EVENTS}
               dateOfEvent={dateOfEvent}
               category={category}
@@ -163,19 +176,19 @@ export const MyRegisteredEvents = ({
                 pastEvents={true}
               />
             )}
-          <div className="w-full mt-10 flex items-center justify-center ml-auto">
-            {pages > 1 && (
-              <Pagination
-                page={page}
-                pages={pages}
-                disablePrev={!hasPrev}
-                disableNext={!hasNext}
-                onPrev={handlePreviousPage}
-                onNext={handleNextPage}
-                onPage={handlePage}
-              />
-            )}
-          </div>
+            <div className="w-full mt-10 flex items-center justify-center ml-auto">
+              {pages > 1 && (
+                <Pagination
+                  page={page}
+                  pages={pages}
+                  disablePrev={!hasPrev}
+                  disableNext={!hasNext}
+                  onPrev={handlePreviousPage}
+                  onNext={handleNextPage}
+                  onPage={handlePage}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -374,86 +374,86 @@ export async function findRegisteredEvents({
               }
             : {}),
 
-            ...(upComingEvents
-              ? {
-                  eventStartDateTime: {
-                    gt: currentDateTime,
-                  },
-                }
-              : {}),
-            ...(pastEvents
-              ? {
-                  OR: [
+        ...(upComingEvents
+          ? {
+              eventStartDateTime: {
+                gt: currentDateTime,
+              },
+            }
+          : {}),
+        ...(pastEvents
+          ? {
+              OR: [
+                {
+                  AND: [
                     {
-                      AND: [
-                        {
-                          eventStartDateTime: {
-                            lt: currentDateTime,
-                          },
-                        },
-                        {
-                          eventEndDateTime: {
-                            lt: currentDateTime,
-                          },
-                        },
-                      ],
+                      eventStartDateTime: {
+                        lt: currentDateTime,
+                      },
                     },
                     {
-                      AND: [
-                        {
-                          eventAllDay: {
-                            eq: true,
-                          },
-                        },
-                        {
-                          eventStartDateTime: {
-                            lt: currentDateTime,
-                          },
-                        },
-                        {
-                          eventStartDateTime: {
-                            notBetween: [yesterDayDateTime, currentDateTime],
-                          },
-                        },
-                      ],
+                      eventEndDateTime: {
+                        lt: currentDateTime,
+                      },
                     },
                   ],
-                }
-              : {}),
-            ...(onGoingEvents
-              ? {
-                  OR: [
+                },
+                {
+                  AND: [
                     {
-                      AND: [
-                        {
-                          eventStartDateTime: {
-                            le: currentDateTime,
-                          },
-                        },
-                        {
-                          eventEndDateTime: {
-                            ge: currentDateTime,
-                          },
-                        },
-                      ],
+                      eventAllDay: {
+                        eq: true,
+                      },
                     },
                     {
-                      AND: [
-                        {
-                          eventStartDateTime: {
-                            between: [yesterDayDateTime, currentDateTime],
-                          },
-                        },
-                        {
-                          eventAllDay: {
-                            eq: true,
-                          },
-                        },
-                      ],
+                      eventStartDateTime: {
+                        lt: currentDateTime,
+                      },
+                    },
+                    {
+                      eventStartDateTime: {
+                        notBetween: [yesterDayDateTime, currentDateTime],
+                      },
                     },
                   ],
-                }
-              : {}),
+                },
+              ],
+            }
+          : {}),
+        ...(onGoingEvents
+          ? {
+              OR: [
+                {
+                  AND: [
+                    {
+                      eventStartDateTime: {
+                        le: currentDateTime,
+                      },
+                    },
+                    {
+                      eventEndDateTime: {
+                        ge: currentDateTime,
+                      },
+                    },
+                  ],
+                },
+                {
+                  AND: [
+                    {
+                      eventStartDateTime: {
+                        between: [yesterDayDateTime, currentDateTime],
+                      },
+                    },
+                    {
+                      eventAllDay: {
+                        eq: true,
+                      },
+                    },
+                  ],
+                },
+              ],
+            }
+          : {}),
       },
     },
     emailAddress: user?.email,
@@ -501,22 +501,24 @@ export async function findRegisteredEvents({
       },
     });
 
-    const events = registerEvents?.map((item:any) => item?.registration?.event);
-    
-  const pageInfo = getPageInfo({
-    count: events?.[0]?._count,
-    page,
-    limit,
-  });
-    return {events, pageInfo,count: 0};
+    const events = registerEvents?.map(
+      (item: any) => item?.registration?.event,
+    );
+
+    const pageInfo = getPageInfo({
+      count: events?.[0]?._count,
+      page,
+      limit,
+    });
+    return {events, pageInfo, count: 0};
   } else {
     const eventCount = await client.aOSPortalParticipant.count({
       where: whereClause,
     });
     return {
-      events:[],
-      pageInfo:null,
-      count:eventCount};
+      events: [],
+      pageInfo: null,
+      count: eventCount,
+    };
   }
 }
-

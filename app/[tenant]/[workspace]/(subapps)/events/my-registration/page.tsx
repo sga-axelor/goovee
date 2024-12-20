@@ -16,6 +16,7 @@ import {getAllRegisteredEvents} from '../common/actions/actions';
 export default async function Page(context: any) {
   const params = context?.params;
   const page = context?.searchParams?.page || 1;
+  const showPastEvents = Boolean(context?.searchParams?.pastevents) || false;
 
   const {tenant} = params;
 
@@ -52,8 +53,8 @@ export default async function Page(context: any) {
     user,
   }).then(clone);
 
-  const {events,pageInfo}: any = await getAllRegisteredEvents({
-    limit:LIMIT,
+  const {events, pageInfo}: any = await getAllRegisteredEvents({
+    limit: LIMIT,
     page: page,
     categories: category,
     day: new Date(date).getDate() || undefined,
@@ -61,7 +62,8 @@ export default async function Page(context: any) {
     year: new Date(date).getFullYear() || undefined,
     workspace,
     tenantId: tenant,
-  }).then(clone)
+    showPastEvents,
+  }).then(clone);
 
   return (
     <Content
@@ -73,6 +75,7 @@ export default async function Page(context: any) {
       upcomingEvents={events.upcoming}
       pastEvents={events.past}
       pageInfo={pageInfo}
+      showPastEvents={showPastEvents}
     />
   );
 }

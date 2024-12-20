@@ -34,7 +34,8 @@ export const EventSelector = ({
   workspace,
   selectedCategories = [],
   onlyRegisteredEvent = false,
-  handleToogle,
+  enablePastEvents,
+  handleToogle = () => {},
 }: EventSelectorProps) => {
   const selectCategory = (category: Category) => {
     updateCateg(category);
@@ -63,12 +64,13 @@ export const EventSelector = ({
       {onlyRegisteredEvent && (
         <div className="flex items-center space-x-4 my-2">
           <Checkbox
-            id="pastevent"
+            id="pastevent-checkbox"
             className="data-[state=checked]:bg-success data-[state=checked]:border-none"
-            onCheckedChange={handleToogle}
+            onCheckedChange={checked => handleToogle(!!checked)}
+            checked={enablePastEvents}
           />
           <label
-            htmlFor="pastevent"
+            htmlFor="pastevent-checkbox"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             {i18n.get(SHOW_PAST_EVENTS)}
           </label>

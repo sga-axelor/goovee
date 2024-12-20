@@ -19,7 +19,7 @@ import {
   SOME_WENT_WRONG,
 } from '@/subapps/events/common/constants';
 
-export const ShowEvents = ( {
+export const ShowEvents = ({
   events = [],
   title = '',
   dateOfEvent,
@@ -44,20 +44,17 @@ export const ShowEvents = ( {
   onGoingEvents?: boolean;
   upComingEvents?: boolean;
 }) => {
-
   return (
     <>
-        {events.length > 0 && <p className="text-base font-semibold">{title}</p>}
-        {events.map((event, i) => (
-            <Link
-              href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
-              key={event.id}
-              passHref>
-              <EventCard event={event}  workspace={workspace} />
-            </Link>
-          
-        ))}
-
+      {events.length > 0 && <p className="text-base font-semibold">{title}</p>}
+      {events.map((event, i) => (
+        <Link
+          href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
+          key={event.id}
+          passHref>
+          <EventCard event={event} workspace={workspace} />
+        </Link>
+      ))}
     </>
   );
 };
