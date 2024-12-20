@@ -40,7 +40,7 @@ type ContactDetaillProps = {
   lastName?: string;
   email?: string;
   phoneNumber?: string;
-  linkedInLink?: string;
+  linkedinLink?: string;
 };
 export default async function Page({
   params,
@@ -190,7 +190,7 @@ async function Contacts({
   tenant: string;
   contactDetail: ContactDetaillProps;
 }) {
-  const {firstName, lastName, email, phoneNumber, linkedInLink} = contactDetail;
+  const {firstName, lastName, email, phoneNumber, linkedinLink} = contactDetail;
   return (
     <div className="space-y-4">
       <h2 className="font-semibold text-xl">
@@ -218,8 +218,8 @@ async function Contacts({
           href={`tel:${phoneNumber}`}>
           {phoneNumber}
         </a>
-        {linkedInLink && (
-          <Link href={`${linkedInLink}`}>
+        {linkedinLink && (
+          <Link href={`${linkedinLink}`}>
             <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
           </Link>
         )}
