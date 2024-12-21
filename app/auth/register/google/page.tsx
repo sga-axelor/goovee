@@ -38,7 +38,7 @@ export default async function Page({
   }
 
   /**
-   * Google Oauth Uses doesn't contain id or other information 
+   * Google Oauth Uses doesn't contain id or other information
    */
   const partner = await findPartnerByEmail(user.email, tenantId);
 
