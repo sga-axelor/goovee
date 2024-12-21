@@ -86,7 +86,6 @@ export default async function Shop({
       categories={parentcategories}
       featuredCategories={featuredCategories}
       workspace={workspace}
-      productPath={`${workspaceURI}/shop/product/`}
     />
   );
 }

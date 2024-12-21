@@ -27,12 +27,10 @@ export function FeaturedCategories({
   categories,
   featuredCategories,
   workspace,
-  productPath,
 }: {
   categories?: any;
   featuredCategories: Array<Category & {products: ComputedProduct[]}>;
   workspace: PortalWorkspace;
-  productPath: string;
 }) {
   const router = useRouter();
 
@@ -57,15 +55,15 @@ export function FeaturedCategories({
     router.refresh();
   };
 
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = (category: Category) => (product: Product) => {
     router.push(
-      `${productPath}/${encodeURIComponent(product.name)}-${product.id}`,
+      `${workspaceURI}/shop/category/${encodeURIComponent(category.name)}-${category.id}/product/${encodeURIComponent(product.name)}-${product.id}`,
     );
   };
 
   const handleCategoryClick = (category: any) => {
     router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
+      `${workspaceURI}/shop/category/${encodeURIComponent(category.name)}-${category.id}`,
     );
   };
 
@@ -144,7 +142,7 @@ export function FeaturedCategories({
                       quantity={quantity}
                       onAdd={handleAddProduct}
                       displayPrices={workspace?.config?.displayPrices}
-                      onClick={handleProductClick}
+                      onClick={handleProductClick(category)}
                     />
                   );
                 })}
