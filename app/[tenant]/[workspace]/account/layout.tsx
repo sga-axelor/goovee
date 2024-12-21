@@ -33,7 +33,7 @@ export default async function Layout({
       <h4 className="text-xl font-semibold">
         {await getTranslation('Profile Settings')}
       </h4>
-      <div className="grid grid-cols-[15%_1fr] bg-white rounded-md px-6 py-4 gap-4">
+      <div className="grid grid-cols-[15%_1fr] bg-white rounded-md pe-6 py-4 gap-4">
         <Sidebar isAdmin={Boolean(isAdmin)} />
         <div>{children}</div>
       </div>
