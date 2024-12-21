@@ -227,8 +227,9 @@ export async function sendInvites({
 
       mailService?.notify(
         inviteTemplate({
+          subject: workspace?.name || workspace.url,
           email,
-          link: `${process.env.NEXT_PUBLIC_HOST}/auth/register/invite/${invite.id}?${SEARCH_PARAMS.TENANT_ID}=${tenantId}`,
+          link: `${process.env.NEXT_PUBLIC_HOST}/auth/register/invite/${invite.id}/email?${SEARCH_PARAMS.TENANT_ID}=${tenantId}`,
         }),
       );
     } catch (err) {

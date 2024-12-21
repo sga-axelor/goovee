@@ -7,8 +7,8 @@ import {getTranslation} from '@/i18n/server';
 
 // ---- LOCAL IMPORTS ---- //
 import Form from './form';
-import {findInviteById} from '../../common/orm/register';
-import Subscribe from './subscribe';
+import {findInviteById} from '../../../common/orm/register';
+import Subscribe from '../subscribe';
 
 export default async function Page({
   params,

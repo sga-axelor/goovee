@@ -22,9 +22,14 @@ export default async function Page({
   const session = await getSession();
 
   const workspaceURISearchParam = searchParams?.workspaceURI;
+  const callbackurlSearchParam = searchParams?.callbackurl;
 
   const workspaceURI = workspaceURISearchParam
     ? decodeURIComponent(workspaceURISearchParam)
+    : '';
+
+  const callbackurl = callbackurlSearchParam
+    ? decodeURIComponent(callbackurlSearchParam)
     : '';
 
   const tenantIdSearchParam = searchParams?.[SEARCH_PARAMS.TENANT_ID];
@@ -38,7 +43,7 @@ export default async function Page({
   }
 
   if (session?.user) {
-    redirect('/');
+    redirect(callbackurl || workspaceURI || '/');
   }
 
   const workspaceURL = workspaceURI

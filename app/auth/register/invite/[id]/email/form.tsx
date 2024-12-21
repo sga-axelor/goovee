@@ -1,12 +1,13 @@
 'use client';
 
 import {useState} from 'react';
-import {useSession} from 'next-auth/react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {MdOutlineVisibility, MdOutlineVisibilityOff} from 'react-icons/md';
+import Image from 'next/image';
+import {signIn} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
@@ -21,10 +22,11 @@ import {
 } from '@/ui/components/form';
 import {Button} from '@/ui/components/button';
 import {Input} from '@/ui/components/input';
+import {Separator} from '@/ui/components';
 import {SEARCH_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ----//
-import {register} from './action';
+import {registerByEmail} from '../action';
 
 const formSchema = z
   .object({
@@ -71,17 +73,23 @@ export default function SignUp({
   const toggleShowPassword = () => setShowPassword(show => !show);
   const toggleShowConfirmPassword = () => setShowConfirmPassword(show => !show);
 
+  const handleSignUpWithGoogle = async () => {
+    await signIn('google', {
+      callbackUrl: `/auth/register/invite/${inviteId}/google?${searchQuery}`,
+    });
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!email) {
+    if (!(email && tenantId)) {
       toast({
-        title: i18n.get('Email is required.'),
+        title: i18n.get('Email and tenant is required.'),
         variant: 'destructive',
       });
       return;
     }
 
     try {
-      const res: any = await register({
+      const res: any = await registerByEmail({
         ...values,
         tenantId,
         inviteId,
@@ -239,11 +247,34 @@ export default function SignUp({
               )}
             />
 
-            <Button variant="success" className="w-full">
+            <Button variant="success" className="w-full rounded-full">
               {i18n.get('Sign Up')}
             </Button>
           </form>
         </Form>
+        <div className="flex items-center gap-4">
+          <div className="grow">
+            <Separator />
+          </div>
+          <h5 className="mb-0 font-medium text-[2rem]">{i18n.get('Or')}</h5>
+          <div className="grow">
+            <Separator />
+          </div>
+        </div>
+        <Button
+          type="button"
+          variant="outline-success"
+          className="w-full rounded-full"
+          onClick={handleSignUpWithGoogle}>
+          <Image
+            alt="Google"
+            src="/images/google.svg"
+            height={24}
+            width={24}
+            className="me-2"
+          />
+          {i18n.get('Sign Up with Google')}
+        </Button>
       </div>
     </div>
   );

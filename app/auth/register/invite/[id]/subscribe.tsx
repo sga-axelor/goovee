@@ -1,5 +1,7 @@
 'use client';
 
+import {useEffect} from 'react';
+import {useSession} from 'next-auth/react';
 import {useRouter, useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -17,17 +19,20 @@ import {useToast} from '@/ui/hooks';
 import {SEARCH_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {subscribe} from './action';
+import {fetchUpdatedSession, subscribe} from './action';
 
 export default function Subscribe({
   workspaceURL,
   inviteId,
+  updateSession,
 }: {
   workspaceURL: string;
   inviteId: string;
+  updateSession?: boolean;
 }) {
   const router = useRouter();
   const {toast} = useToast();
+  const {update} = useSession();
 
   const searchParams = useSearchParams();
   const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
@@ -40,7 +45,7 @@ export default function Subscribe({
     if (!workspaceURL) return;
 
     try {
-      const res = await subscribe({
+      const res: any = await subscribe({
         workspaceURL,
         inviteId,
         tenantId,
@@ -65,6 +70,19 @@ export default function Subscribe({
       });
     }
   };
+
+  useEffect(() => {
+    const init = async () => {
+      if (updateSession && tenantId) {
+        const session = await fetchUpdatedSession({tenantId});
+        if (session) {
+          await update(session);
+          router.refresh();
+        }
+      }
+    };
+    init();
+  }, []);
 
   return (
     <Dialog open onOpenChange={handleCancel}>

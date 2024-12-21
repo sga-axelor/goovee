@@ -1,11 +1,13 @@
 export const inviteTemplate = ({
   email,
   link,
+  subject,
 }: {
   email: string;
   link: string;
+  subject?: string;
 }) => ({
-  subject: `You're Invited to Join Goovee!`,
+  subject: [`You're Invited to Join Goovee!`, subject].join(' | '),
   to: email,
   html: inviteTemplateHTML({link}),
 });

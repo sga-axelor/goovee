@@ -22,6 +22,15 @@ function error(message: string) {
   };
 }
 
+type RegisterDTO = {
+  firstName: string;
+  name: string;
+  email: string;
+  password?: string;
+  tenantId: string;
+  inviteId: string;
+};
+
 export async function register({
   firstName,
   name,
@@ -29,8 +38,8 @@ export async function register({
   password,
   tenantId,
   inviteId,
-}: any) {
-  if (!(name && email && password && tenantId && inviteId)) {
+}: RegisterDTO) {
+  if (!(name && tenantId && inviteId)) {
     return error(await getTranslation('Bad request'));
   }
 
@@ -77,6 +86,8 @@ export async function register({
 
     const uri = `${workspace.url.replace(process.env.NEXT_PUBLIC_HOST, '')}`;
 
+    revalidatePath('/', 'layout');
+
     deleteInviteById({
       id: invite.id,
       tenantId,
@@ -88,12 +99,35 @@ export async function register({
       success: true,
       data: {
         contact,
-        query: `?callbackurl=${encodeURIComponent(uri)}&workspaceURI=${encodeURIComponent(uri)}&tenant=${tenantId}`,
+        query: `?callbackurl=${encodeURIComponent(`${invite.workspace?.url}/`)}&workspaceURI=${encodeURIComponent(`${uri}/`)}&tenant=${tenantId}`,
       },
     };
   } catch (err) {
     return error(await getTranslation('Error registering contact. Try again.'));
   }
+}
+
+export async function registerByEmail(data: RegisterDTO) {
+  const {email, password} = data;
+
+  if (!(email && password)) {
+    return error(await getTranslation('Bad request'));
+  }
+
+  return register(data);
+}
+
+export async function registerByGoogle(
+  data: Omit<RegisterDTO, 'password' | 'email'>,
+) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return error(await getTranslation('Login with google to register'));
+  }
+
+  return register({...data, email: user.email});
 }
 
 export async function subscribe({
@@ -170,5 +204,34 @@ export async function subscribe({
   return {
     success: true,
     message: await getTranslation('Subscribed successfully.'),
+  };
+}
+
+export async function fetchUpdatedSession({tenantId}: {tenantId: string}) {
+  if (!tenantId) {
+    return null;
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return null;
+  }
+
+  const partner = await findPartnerByEmail(user.email, tenantId);
+
+  if (!partner) {
+    return null;
+  }
+
+  const {id, isContact, mainPartner} = partner;
+
+  return {
+    id,
+    isContact,
+    mainPartnerId: isContact ? mainPartner?.id : undefined,
+    email: user.email,
+    tenantId,
   };
 }

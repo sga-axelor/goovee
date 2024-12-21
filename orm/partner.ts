@@ -210,12 +210,12 @@ export async function registerContact({
   name: string;
   firstName?: string;
   email: string;
-  password: string;
+  password?: string;
   tenantId: Tenant['id'];
   contactConfig?: any;
   partnerId: string;
 }) {
-  if (!(name && email && password && tenantId && partnerId)) {
+  if (!(name && email && tenantId && partnerId)) {
     return null;
   }
 
@@ -223,7 +223,7 @@ export async function registerContact({
 
   if (!client) return null;
 
-  const hashedPassword = await hash(password);
+  const hashedPassword = password && (await hash(password));
 
   const data: any = {
     partnerTypeSelect: PartnerTypeMap[UserType.individual],
