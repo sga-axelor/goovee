@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {PREFIX_CART_KEY} from '@/constants';
@@ -15,6 +16,12 @@ import {useWorkspace} from './workspace-context';
 import type {ComputedProduct, Product} from '@/types';
 
 const CartContext = React.createContext<any>({});
+
+const defaultcart = () => ({
+  items: [],
+  invoicingAddress: null,
+  deliveryAddress: null,
+});
 
 export default function CartContextProvider({
   children,
@@ -25,7 +32,10 @@ export default function CartContextProvider({
   const [loading, setLoading] = useState(true);
   const {workspaceURL, workspaceURI} = useWorkspace();
 
-  const CART_KEY = useMemo(
+  const {data: session} = useSession();
+  const user = session?.user;
+
+  const cartKey = useMemo(
     () => PREFIX_CART_KEY + '-' + workspaceURL,
     [workspaceURL],
   );
@@ -158,7 +168,7 @@ export default function CartContextProvider({
       const existing = await getProductQuantity(productId);
 
       if (!existing) {
-        return await addItem({productId, quantity});
+        return await addItem({productId, quantity} as any);
       }
 
       setCart((cart: any) => {
@@ -211,32 +221,89 @@ export default function CartContextProvider({
     [],
   );
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        let cart = await getitem(CART_KEY);
+  const mergeCart = useCallback(async (cartA: any, cartB: any) => {
+    if (cartA && cartB) {
+      const getProducts = (cart: any) => cart?.items.map((i: any) => i.product);
 
-        if (!cart) {
-          cart = {items: [], invoicingAddress: null, deliveryAddress: null};
+      const cartAProducts = getProducts(cartA);
+      const cartBProducts = getProducts(cartB);
+
+      const getproduct = (id: any, cart: any) =>
+        cart?.items.find((i: any) => String(i.product) === String(id));
+
+      const cart = {
+        ...cartA,
+        items: [],
+      };
+
+      Array.from(new Set([...cartAProducts, ...cartBProducts])).forEach(id => {
+        const cartAProduct = getproduct(id, cartA);
+        const cartBProduct = getproduct(id, cartB);
+        const cartAQuantity = cartAProduct?.quantity || 0;
+        const cartBQuantiy = cartBProduct?.quantity || 0;
+
+        const quantity = Math.max(Number(cartAQuantity), Number(cartBQuantiy));
+        const product = cartAProduct || cartBProduct;
+
+        if (product) {
+          cart.items.push({
+            ...product,
+            quantity,
+          });
         }
+      });
 
-        setCart(cart);
-      } catch (err) {
-      } finally {
-        setLoading(false);
+      return cart;
+    } else {
+      return cartA || cartB;
+    }
+  }, []);
+
+  const initialise = useCallback(async () => {
+    setLoading(true);
+
+    let cart;
+
+    const localCart = await getitem(cartKey).catch(() => {});
+
+    if (user) {
+      const userCartKey = user.id + '-' + cartKey;
+      let usercart = await getitem(userCartKey).catch(err => {
+        console.log(err);
+      });
+
+      if (!usercart) {
+        usercart = defaultcart();
       }
-    };
 
-    init();
-  }, [CART_KEY, workspaceURI]);
+      usercart = await mergeCart(usercart, localCart);
+      await setitem(cartKey, defaultcart()).catch(() => {});
+      cart = usercart;
+    }
+
+    if (!cart) {
+      cart = defaultcart();
+    }
+
+    setCart(cart);
+    setLoading(false);
+  }, [user, cartKey, mergeCart]);
 
   useEffect(() => {
+    if (loading) return;
     const updateCart = async () => {
-      await setitem(CART_KEY, cart);
+      let key: string = cartKey;
+      if (user) {
+        key = user.id + '-' + cartKey;
+      }
+      await setitem(key, cart);
     };
-
     updateCart();
-  }, [CART_KEY, cart]);
+  }, [cartKey, cart, user, loading]);
+
+  useEffect(() => {
+    initialise();
+  }, [initialise]);
 
   const value = useMemo(
     () => ({

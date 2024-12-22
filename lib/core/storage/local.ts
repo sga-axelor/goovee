@@ -19,3 +19,10 @@ export async function setitem(key: string, value: any) {
     return null;
   }
 }
+
+const local = {
+  getitem,
+  setitem,
+};
+
+export default local;
