@@ -7,6 +7,7 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace, findWorkspaces, findSubapps} from '@/orm/workspace';
 import {DEFAULT_THEME_OPTIONS} from '@/constants/theme';
+import {NAVIGATION} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Workspace from './workspace-context';
@@ -14,7 +15,7 @@ import CartContext from './cart-context';
 import Header from './header';
 import Sidebar from './sidebar';
 import MobileMenu from './mobile-menu';
-import {NAVIGATION} from '@/constants';
+import AnonymousSignOut from './anonymous-signout';
 
 const defaultTheme = {
   id: -1,
@@ -33,6 +34,15 @@ export default async function Layout({
   const session = await getSession();
   const user = session?.user;
 
+  const {workspaceURL, workspace} = workspacePathname(params);
+
+  if (user && !user?.id) {
+    /**
+     * Remove tenative login using oauth for registration
+     */
+    return <AnonymousSignOut callbackurl={workspaceURL} />;
+  }
+
   const workspaces = await findWorkspaces({
     url: process.env.NEXT_PUBLIC_HOST,
     user,
@@ -42,8 +52,6 @@ export default async function Layout({
   if (!workspaces?.length) {
     return notFound();
   }
-
-  const {workspace, workspaceURL} = workspacePathname(params);
 
   const hasWorkspaceAccess = workspaces.some(
     (workspace: any) => workspace.url === workspaceURL,
