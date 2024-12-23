@@ -44,7 +44,7 @@ export function SortBy({
   return (
     <div
       className={`${styles.sortby} hidden md:flex items-center gap-4 ${className}`}>
-      <p className="mb-0 shrink-0 text-sm">Sort By</p>
+      <p className="mb-0 shrink-0 text-sm">{i18n.get('Sort By')}</p>
 
       <Select
         defaultValue={value?.value}
@@ -59,7 +59,7 @@ export function SortBy({
             {Array.isArray(options) &&
               options?.map(o => (
                 <SelectItem key={o?.value} value={o?.value}>
-                  {o?.label}
+                  {i18n.get(o?.label)}
                 </SelectItem>
               ))}
           </SelectGroup>
@@ -112,7 +112,7 @@ export function MobileSortBy({
                   className={`${isactive ? 'bg-gray-100 font-bold' : ''} pointer`}
                   key={o.value}
                   onClick={() => onChange({value: o.value})}>
-                  {o.label}
+                  {i18n.get(o.label)}
                 </li>
               );
             })}
