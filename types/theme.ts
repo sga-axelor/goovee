@@ -44,3 +44,26 @@ export type Theme = {
   };
   radius?: string;
 };
+
+export type ColorPalette =
+  | 'indigo'
+  | 'red'
+  | 'blue'
+  | 'lightblue'
+  | 'cyan'
+  | 'teal'
+  | 'pink'
+  | 'green'
+  | 'lightgreen'
+  | 'lime'
+  | 'yellow'
+  | 'amber'
+  | 'orange'
+  | 'deeporange'
+  | 'brown'
+  | 'grey'
+  | 'bluegrey'
+  | 'black'
+  | 'white'
+  | 'purple'
+  | 'deeppurple';

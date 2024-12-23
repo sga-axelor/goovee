@@ -1,5 +1,5 @@
 import {twMerge} from 'tailwind-merge';
-import {Theme} from '@/types/theme';
+import {ColorPalette, Theme} from '@/types/theme';
 import {type ClassValue, clsx} from 'clsx';
 
 export function cn(...inputs: ClassValue[]) {
@@ -52,83 +52,88 @@ export function generateCSSVariableString(options: Theme) {
       --radius: ${options?.radius};
 
       --palette-purple: ${options?.colors?.palette?.purple?.default};
+      --palette-purple-light: ${options?.colors?.palette?.purple?.light};
       --palette-purple-dark: ${options?.colors?.palette?.purple?.dark};
 
       --palette-blue: ${options?.colors?.palette?.blue?.default};
+      --palette-blue-light: ${options?.colors?.palette?.blue?.light};
       --palette-blue-dark: ${options?.colors?.palette?.blue?.dark};
 
       --palette-yellow: ${options?.colors?.palette?.yellow?.default};
+      --palette-yellow-light: ${options?.colors?.palette?.yellow?.light};
       --palette-yellow-dark: ${options?.colors?.palette?.yellow?.dark};
 
       --palette-orange: ${options?.colors?.palette?.orange?.default};
+      --palette-orange-light: ${options?.colors?.palette?.orange?.light};
       --palette-orange-dark: ${options?.colors?.palette?.orange?.dark};
 
       --palette-pink: ${options?.colors?.palette?.pink?.default};
-      --palette-pink-dark: ${options?.colors?.palette?.pink?.dark}
+      --palette-pink-light: ${options?.colors?.palette?.pink?.light};
+      --palette-pink-dark: ${options?.colors?.palette?.pink?.dark};
 
+      --palette-indigo: ${options?.colors?.palette?.indigo?.default};
+      --palette-indigo-light: ${options?.colors?.palette?.indigo?.light};
+      --palette-indigo-dark: ${options?.colors?.palette?.indigo?.dark};
+
+      --palette-red: ${options?.colors?.palette?.red?.default};
+      --palette-red-light: ${options?.colors?.palette?.red?.light};
+      --palette-red-dark: ${options?.colors?.palette?.red?.dark};
+
+      --palette-lightblue: ${options?.colors?.palette?.lightblue?.default};
+      --palette-lightblue-light: ${options?.colors?.palette?.lightblue?.light};
+      --palette-lightblue-dark: ${options?.colors?.palette?.lightblue?.dark};
+
+      --palette-cyan: ${options?.colors?.palette?.cyan?.default};
+      --palette-cyan-light: ${options?.colors?.palette?.cyan?.light};
+      --palette-cyan-dark: ${options?.colors?.palette?.cyan?.dark};
+
+      --palette-teal: ${options?.colors?.palette?.teal?.default};
+      --palette-teal-light: ${options?.colors?.palette?.teal?.light};
+      --palette-teal-dark: ${options?.colors?.palette?.teal?.dark};
+
+      --palette-green: ${options?.colors?.palette?.green?.default};
+      --palette-green-light: ${options?.colors?.palette?.green?.light};
+      --palette-green-dark: ${options?.colors?.palette?.green?.dark};
+
+      --palette-lightgreen: ${options?.colors?.palette?.lightgreen?.default};
+      --palette-lightgreen-light: ${options?.colors?.palette?.lightgreen?.light};
+      --palette-lightgreen-dark: ${options?.colors?.palette?.lightgreen?.dark};
+
+      --palette-lime: ${options?.colors?.palette?.lime?.default};
+      --palette-lime-light: ${options?.colors?.palette?.lime?.light};
+      --palette-lime-dark: ${options?.colors?.palette?.lime?.dark};
+
+      --palette-amber: ${options?.colors?.palette?.amber?.default};
+      --palette-amber-light: ${options?.colors?.palette?.amber?.light};
+      --palette-amber-dark: ${options?.colors?.palette?.amber?.dark};
+
+      --palette-deeporange: ${options?.colors?.palette?.deeporange?.default};
+      --palette-deeporange-light: ${options?.colors?.palette?.deeporange?.light};
+      --palette-deeporange-dark: ${options?.colors?.palette?.deeporange?.dark};
+      
+      --palette-brown: ${options?.colors?.palette?.brown?.default};
+      --palette-brown-light: ${options?.colors?.palette?.brown?.light};
+      --palette-brown-dark: ${options?.colors?.palette?.brown?.dark};
+
+      --palette-grey: ${options?.colors?.palette?.grey?.default};
+      --palette-grey-light: ${options?.colors?.palette?.grey?.light};
+      --palette-grey-dark: ${options?.colors?.palette?.grey?.dark};
+
+      --palette-bluegrey: ${options?.colors?.palette?.bluegrey?.default};
+      --palette-bluegrey-light: ${options?.colors?.palette?.bluegrey?.light};
+      --palette-bluegrey-dark: ${options?.colors?.palette?.bluegrey?.dark};
+
+      --palette-black: ${options?.colors?.palette?.black?.default};
+      --palette-black-light: ${options?.colors?.palette?.black?.light};
+      --palette-black-dark: ${options?.colors?.palette?.black?.dark};
+
+      --palette-white: ${options?.colors?.palette?.white?.default};
+      --palette-white-light: ${options?.colors?.palette?.white?.light};
+      --palette-white-dark: ${options?.colors?.palette?.white?.dark};
+
+      --palette-deeppurple: ${options?.colors?.palette?.deeppurple?.default};
+      --palette-deeppurple-light: ${options?.colors?.palette?.deeppurple?.light};
+      --palette-deeppurple-dark: ${options?.colors?.palette?.deeppurple?.dark};
     }
     `;
 }
-
-export type Color =
-  | 'indigo'
-  | 'red'
-  | 'blue'
-  | 'lightblue'
-  | 'cyan'
-  | 'teal'
-  | 'pink'
-  | 'green'
-  | 'lightgreen'
-  | 'lime'
-  | 'yellow'
-  | 'amber'
-  | 'orange'
-  | 'deeporange'
-  | 'brown'
-  | 'grey'
-  | 'bluegrey'
-  | 'black'
-  | 'white'
-  | 'purple'
-  | 'deeppurple'
-  | 'default';
-
-export const colorPalette: Record<
-  Color,
-  {base: string; light: string; dark: string}
-> = {
-  indigo: {base: '#3f51b5', light: '#e8eaf6', dark: '#303f9f'},
-  red: {base: '#f44336', light: '#ffcdd2', dark: '#d32f2f'},
-  blue: {base: '#2196f3', light: '#bbdefb', dark: '#1976d2'},
-  lightblue: {base: '#03a9f4', light: '#b2ebf2', dark: '#0288d1'},
-  cyan: {base: '#00bcd4', light: '#80deea', dark: '#00838f'},
-  teal: {base: '#009688', light: '#80cbc4', dark: '#00796b'},
-  pink: {base: '#e91e63', light: '#f48fb1', dark: '#c2185b'},
-  green: {base: '#4caf50', light: '#c8e6c9', dark: '#388e3c'},
-  lightgreen: {base: '#8bc34a', light: '#dcedc8', dark: '#689f38'},
-  lime: {base: '#cddc39', light: '#e6ee9c', dark: '#a4c639'},
-  yellow: {base: '#ffeb3b', light: '#fff9c4', dark: '#fbc02d'},
-  amber: {base: '#ffc107', light: '#ffe082', dark: '#ff9800'},
-  orange: {base: '#ff9800', light: '#ffcc80', dark: '#f57c00'},
-  deeporange: {base: '#ff5722', light: '#ffccbc', dark: '#e64a19'},
-  brown: {base: '#795548', light: '#d7ccc8', dark: '#5d4037'},
-  grey: {base: '#9e9e9e', light: '#efefef', dark: '#757575'},
-  bluegrey: {base: '#607d8b', light: '#b0bec5', dark: '#455a64'},
-  black: {base: '#000000', light: '#333333', dark: '#000000'},
-  white: {base: '#ffffff', light: '#f5f5f5', dark: '#e0e0e0'},
-  purple: {base: '#9c27b0', light: '#e1bee7', dark: '#8e24aa'},
-  deeppurple: {base: '#673ab7', light: '#d1c4e9', dark: '#512da8'},
-  default: {base: '#bdbdbd', light: '#f5f5f5', dark: '#616161'},
-};
-
-export const generateColorStyles = (color: Color) => {
-  const {dark} = colorPalette[color] || colorPalette.default;
-  const backgroundColor = dark;
-  const textColor = color === 'white' ? '#333333' : '#ffffff';
-
-  return {
-    backgroundColor,
-    textColor,
-  };
-};

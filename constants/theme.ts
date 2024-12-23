@@ -1,4 +1,4 @@
-import type {Theme} from '@/types/theme';
+import type {ColorPalette, Theme} from '@/types/theme';
 
 export const DEFAULT_THEME_OPTIONS: Theme = {
   colors: {
@@ -45,25 +45,131 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
     palette: {
       purple: {
         default: '261 100% 97%',
+        light: '91 46% 83%',
         dark: '269 97% 35%',
       },
       blue: {
         default: '216 100% 91%',
+        light: '207 89% 86%',
         dark: '220 63% 47%',
       },
       yellow: {
         default: '37 100% 87%',
+        light: '54 100% 88%',
         dark: '36 100% 54%',
       },
       orange: {
         default: '16 100% 90%',
+        light: '36 100% 75%',
         dark: '16 96% 56%',
       },
       pink: {
         default: '337 74% 91%',
+        light: '340 82% 76%',
         dark: '335 100% 54%',
+      },
+      indigo: {
+        default: '231 48% 48%',
+        light: '231 44% 94',
+        dark: '232 54% 41%',
+      },
+      red: {
+        default: '4 90% 58%',
+        light: '354 100% 90%',
+        dark: '0 65% 51%',
+      },
+      lightblue: {
+        default: '199 98% 48%',
+        light: '187 71% 82%',
+        dark: '201 98% 41%',
+      },
+      cyan: {
+        default: '187 100% 42%',
+        light: '187 72% 71%',
+        dark: '185 100% 28%',
+      },
+      teal: {
+        default: '174 100% 29%',
+        light: '174 42% 65%',
+        dark: '173 100% 24%',
+      },
+      green: {
+        default: '122 39% 49%',
+        light: '122 37% 84%',
+        dark: '123 43% 39%',
+      },
+      lightgreen: {
+        default: '88 50% 53%',
+        light: '88 51% 86%',
+        dark: '92 48% 42%',
+      },
+      lime: {
+        default: '66 70% 54%',
+        light: '66 71% 77%',
+        dark: '74 55% 50%',
+      },
+
+      amber: {
+        default: '45 100% 51%',
+        light: '45 100% 75%',
+        dark: '36 100% 50%',
+      },
+      deeporange: {
+        default: '14 100% 57%',
+        light: '14 100% 87%',
+        dark: '14 80% 50%',
+      },
+      brown: {
+        default: '16 25% 38%',
+        light: '16 16% 81%',
+        dark: '14 26% 29%',
+      },
+      grey: {
+        default: '0 0% 62%',
+        light: '0 0% 94%',
+        dark: '0 0% 46%',
+      },
+      bluegrey: {
+        default: '200 18% 46%',
+        light: '200 15% 73%',
+        dark: '199 18% 33%',
+      },
+      black: {default: '0 0% 0%', light: '0 0% 20%', dark: '0 0% 0%'},
+      white: {
+        default: '0 0% 100%',
+        light: '0 0% 96%',
+        dark: '0 0% 88%',
+      },
+      deeppurple: {
+        default: '262 52% 47%',
+        light: '261 46% 84%',
+        dark: '258 58% 42%',
       },
     },
   },
   radius: '0.5rem',
+};
+
+export const PALETTE_COLORS: Record<ColorPalette, string> = {
+  indigo: 'indigo',
+  red: 'red',
+  blue: 'blue',
+  lightblue: 'lightblue',
+  cyan: 'cyan',
+  teal: 'teal',
+  pink: 'pink',
+  green: 'green',
+  lightgreen: 'lightgreen',
+  lime: 'lime',
+  yellow: 'yellow',
+  amber: 'amber',
+  orange: 'orange',
+  deeporange: 'deeporange',
+  brown: 'brown',
+  grey: 'grey',
+  bluegrey: 'bluegrey',
+  black: 'black',
+  white: 'white',
+  purple: 'purple',
+  deeppurple: 'deeppurple',
 };

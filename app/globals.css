@@ -47,19 +47,88 @@
     --gray-dark: 170 3% 36%;
 
     --palette-purple: 261 100% 97%;
+    --palette-purple-light: 91 46% 83%;
     --palette-purple-dark: 269 97% 35%;
 
     --palette-blue: 216 100% 91%;
+    --palette-blue-light: 207 89% 86%;
     --palette-blue-dark: 220 63% 47%;
 
     --palette-yellow: 37 100% 87%;
+    --palette-yellow-light: 54 100% 88%;
     --palette-yellow-dark: 36 100% 54%;
 
     --palette-orange: 16 100% 90%;
+    --palette-orange-light: 36 100% 75%;
     --palette-orange-dark: 16 96% 56%;
 
     --palette-pink: 337 74% 91%;
+    --palette-pink-light: 340 82% 76%;
     --palette-pink-dark: 335 100% 54%;
+
+    --palette-indigo: 231 48% 48%;
+    --palette-indigo-light: 231 44% 94;
+    --palette-indigo-dark: 232 54% 41%;
+
+    --palette-red: 4 90% 58%;
+    --palette-red-light: 354 100% 90%;
+    --palette-red-dark: 0 65% 51%;
+
+    --palette-lightblue: 199 98% 48%;
+    --palette-lightblue-light: 187 71% 82%;
+    --palette-lightblue-dark: 201 98% 41%;
+
+    --palette-cyan: 187 100% 42%;
+    --palette-cyan-light: 187 72% 71%;
+    --palette-cyan-dark: 185 100% 28%;
+
+    --palette-teal: 174 100% 29%;
+    --palette-teal-light: 174 42% 65%;
+    --palette-teal-dark: 173 100% 24%;
+
+    --palette-green: 122 39% 49%;
+    --palette-green-light: 122 37% 84%;
+    --palette-green-dark: 123 43% 39%;
+
+    --palette-lightgreen: 88 50% 53%;
+    --palette-lightgreen-light: 88 51% 86%;
+    --palette-lightgreen-dark: 92 48% 42%;
+
+    --palette-lime: 66 70% 54%;
+    --palette-lime-light: 66 71% 77%;
+    --palette-lime-dark: 74 55% 50%;
+
+    --palette-amber: 45 100% 51%;
+    --palette-amber-light: 45 100% 75%;
+    --palette-amber-dark: 36 100% 50%;
+
+    --palette-deeporange: 14 100% 57%;
+    --palette-deeporange-light: 14 100% 87%;
+    --palette-deeporange-dark: 14 80% 50%;
+
+    --palette-brown: 16 25% 38%;
+    --palette-brown-light: 16 16% 81%;
+    --palette-brown-dark: 14 26% 29%;
+
+    --palette-grey: 0 0% 62%;
+    --palette-grey-light: 0 0% 94%;
+    --palette-grey-dark: 0 0% 46%;
+
+    --palette-bluegrey: 200 18% 46%;
+    --palette-bluegrey-light: 200 15% 73%;
+    --palette-bluegrey-dark: 199 18% 33%;
+
+    --palette-black: 0 0% 0%;
+    --palette-black-light: 0 0% 20%;
+    --palette-black-dark: 0 0% 0%;
+
+    --palette-white: 0 0% 100%;
+    --palette-white-light: 0 0% 96%;
+    --palette-white-dark: 0 0% 88%;
+
+    --palette-deeppurple: 262 52% 47%;
+    --palette-deeppurple-light: 261 46% 84%;
+    --palette-deeppurple-dark: 258 58% 42%;
   }
 
   .dark {

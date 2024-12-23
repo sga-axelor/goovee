@@ -15,7 +15,7 @@ import {
   Card,
 } from '@/ui/components';
 import {i18n} from '@/lib/core/i18n';
-import {generateColorStyles} from '@/utils/css';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import type {
@@ -78,15 +78,18 @@ export const EventSelector = ({
           <CollapsibleContent className="space-y-4 mx-4">
             {categories.map((category: any) => {
               const isActive = selectedCategories.includes(category.id);
-              const {backgroundColor} = generateColorStyles(category.color);
 
               return (
                 <div className="flex items-center space-x-4" key={category.id}>
                   <Checkbox
                     id={category.id}
                     checked={isActive}
-                    className={`${isActive ? 'border-none' : ''}`}
-                    style={{backgroundColor: isActive ? backgroundColor : ''}}
+                    className={cn(
+                      '',
+                      isActive
+                        ? `border-none ${category?.color ? `!bg-palette-${category?.color}-dark` : `bg-black`}`
+                        : '',
+                    )}
                     onCheckedChange={() => selectCategory(category)}
                   />
                   <label
