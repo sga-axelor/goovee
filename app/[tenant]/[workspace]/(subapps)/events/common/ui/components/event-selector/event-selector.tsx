@@ -1,7 +1,10 @@
 'use client';
 
 import React, {useState} from 'react';
-import {ChevronDown, ChevronUp} from 'lucide-react';
+import {
+  MdOutlineKeyboardArrowUp,
+  MdOutlineKeyboardArrowDown,
+} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -65,9 +68,9 @@ export const EventSelector = ({
                   {i18n.get(CATEGORIES)}
                 </h2>
                 {isOpen ? (
-                  <ChevronUp className="h-4 w-4" />
+                  <MdOutlineKeyboardArrowUp className="h-4 w-4" />
                 ) : (
-                  <ChevronDown className="h-4 w-4" />
+                  <MdOutlineKeyboardArrowDown className="h-4 w-4" />
                 )}
               </div>
             </CollapsibleTrigger>
