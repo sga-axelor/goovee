@@ -243,6 +243,11 @@ export async function findOrder({
           exTaxTotal: true,
           discountAmount: true,
           inTaxTotal: true,
+          product: {
+            picture: {
+              id: true,
+            },
+          },
           taxLineSet: {
             select: {
               name: true,
@@ -287,7 +292,7 @@ export async function findOrder({
     saleOrderLineList: saleOrderLineList.map((list: any) => {
       return {
         ...list,
-        qty: getFormattedValue(list.qty, unit, currencySymbol),
+        qty: scale(list.qty, unit),
         price: getFormattedValue(list.price, unit, currencySymbol),
         exTaxTotal: getFormattedValue(list.exTaxTotal, unit, currencySymbol),
         discountAmount: scale(list.discountAmount, unit),

@@ -42,6 +42,11 @@
       "type": "ManyToMany",
       "name": "taxLineSet",
       "target": "AOSTaxLine"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "product",
+      "target": "AOSProduct"
     }
   ]
 }
