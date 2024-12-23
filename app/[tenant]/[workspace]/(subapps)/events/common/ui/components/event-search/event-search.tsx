@@ -20,7 +20,7 @@ export const EventSearch = ({
 
   useEffect(() => {
     debouncedFindQuery(searchQuery);
-  }, [searchQuery]);
+  }, [searchQuery, debouncedFindQuery]);
 
   return (
     <>

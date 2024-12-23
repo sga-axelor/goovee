@@ -1,11 +1,11 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {useSearchParams} from '@/ui/hooks';
+import {useSearchParams, useToast} from '@/ui/hooks';
 import {i18n} from '@/i18n';
 import {PortalWorkspace} from '@/types';
 
@@ -21,9 +21,16 @@ import {
   UPCOMING_EVENTS,
   ONGOING_EVETNS,
   PAST_EVENTS,
+  LIMIT,
+  NO_RESULT_FOUND,
 } from '@/subapps/events/common/constants';
 import {Pagination} from '@/ui/components';
 import {URL_PARAMS} from '@/constants';
+import {
+  SEARCHING,
+  SOME_WENT_WRONG,
+} from '@/subapps/events/common/constants';
+import {getAllRegisteredEvents} from "@/subapps/events/common/actions/actions";
 
 export const MyRegisteredEvents = ({
   categories,
@@ -34,7 +41,7 @@ export const MyRegisteredEvents = ({
   onGoingEvents,
   upcomingEvents,
   pastEvents,
-  pageInfo: {page, pages, hasPrev, hasNext} = {},
+  pageInfo,
   showPastEvents = false,
 }: {
   categories: Category[];
@@ -49,15 +56,24 @@ export const MyRegisteredEvents = ({
   showPastEvents: boolean;
 }) => {
   const [search, setSearch] = useState('');
+  const [pending, setPending] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
+  const [page, setPage] = useState<number>(1);
+
+  const [events, setEvents] = useState<any>({
+    ongoing: [],
+    upcoming: [],
+    past: [],
+  });
+  const [eventPageInfo, setEventPageInfo] = useState<any>();
   const [enablePastEvents, setEnablePastEvents] =
     useState<boolean>(showPastEvents);
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
-
+  const {toast} = useToast();
   const updateCateg = (category: Category) => {
     const updatedCategories = selectedCategory.some(
       (c: string) => c === category.id,
@@ -68,7 +84,7 @@ export const MyRegisteredEvents = ({
       {key: 'category', value: updatedCategories},
       {key: 'page', value: 1},
       {key: 'date', value: convertDateToISO8601(date) || ''},
-      {key: 'pastevents', value: showPastEvents},
+      {key: 'pastevents', value: enablePastEvents},
     ]);
 
     setSelectedCategory(updatedCategories);
@@ -82,27 +98,44 @@ export const MyRegisteredEvents = ({
         {key: 'category', value: selectedCategory},
         {key: 'page', value: 1},
         {key: 'date', value: convertDateToISO8601(d) || ''},
-        {key: 'pastevents', value: showPastEvents},
+        {key: 'pastevents', value: enablePastEvents},
       ],
       {scroll: false},
     );
   };
 
   const handlePreviousPage = () => {
-    if (!hasPrev) return;
-    update([{key: URL_PARAMS.page, value: Math.max(Number(page) - 1, 1)}]);
+    if (!eventPageInfo?.hasPrev) return;
+    if (!search)
+      update([
+        {
+          key: URL_PARAMS.page,
+          value: Math.max(Number(eventPageInfo?.page) - 1, 1),
+        },
+        {key: 'pastevents', value: enablePastEvents},
+      ]);
+    else setPage(prev => prev - 1);
   };
 
   const handleNextPage = () => {
-    if (!hasNext) return;
-    update([{key: URL_PARAMS.page, value: Number(page) + 1}]);
+    if (!eventPageInfo?.hasNext) return;
+    if (!search)
+      update([
+        {key: URL_PARAMS.page, value: Number(eventPageInfo?.page) + 1},
+        {key: 'pastevents', value: enablePastEvents},
+      ]);
+    else setPage(prev => prev + 1);
   };
 
   const handlePage = (page: string | number) => {
-    update([{key: URL_PARAMS.page, value: page}]);
+    update([
+      {key: URL_PARAMS.page, value: page},
+      {key: 'pastevents', value: enablePastEvents},
+    ]);
   };
 
   const handleSearch = (searchKey: string) => {
+    setPage(1);
     setSearch(searchKey);
   };
 
@@ -118,6 +151,58 @@ export const MyRegisteredEvents = ({
       {scroll: false},
     );
   };
+
+  useEffect(() => {
+    const findEvents = async () => {
+      try {
+        setPending(true);
+        const response: any = await getAllRegisteredEvents({
+          limit: LIMIT,
+          page,
+          categories: category,
+          search,
+          day: new Date(dateOfEvent).getDate() || undefined,
+          month: new Date(dateOfEvent).getMonth() + 1 || undefined,
+          year: new Date(dateOfEvent).getFullYear() || undefined,
+          workspace,
+          showPastEvents,
+        });
+        if (response?.error) {
+          toast({
+            variant: 'destructive',
+            description: i18n.get(response.error || SOME_WENT_WRONG),
+          });
+        }
+        if(search){
+          setEvents(response?.data?.events);
+          setEventPageInfo(response?.data?.pageInfo);
+        }else{
+      setEvents({
+        ongoing: onGoingEvents,
+        past: pastEvents,
+        upcoming: upcomingEvents,
+      });
+      setEventPageInfo(pageInfo);
+        }
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          description: i18n.get(SOME_WENT_WRONG),
+        });
+      } finally {
+        setPending(false);
+      }
+    };
+    if (search) findEvents();
+    else {
+      setEvents({
+        ongoing: onGoingEvents,
+        past: pastEvents,
+        upcoming: upcomingEvents,
+      });
+      setEventPageInfo(pageInfo);
+    }
+  }, [search, category, dateOfEvent, showPastEvents, pageInfo, page]);
 
   return (
     <div>
@@ -142,54 +227,48 @@ export const MyRegisteredEvents = ({
           <div className="mb-4 h-[54px]">
             <EventSearch handleSearch={handleSearch} />
           </div>
-          <div className="flex flex-col space-y-4 w-full">
-            <ShowEvents
-              title={ONGOING_EVETNS}
-              events={onGoingEvents}
-              dateOfEvent={dateOfEvent}
-              category={category}
-              searchQuery={search}
-              workspace={workspace}
-              workspaceURI={workspaceURI}
-            />
-            <ShowEvents
-              events={upcomingEvents}
-              title={UPCOMING_EVENTS}
-              dateOfEvent={dateOfEvent}
-              category={category}
-              searchQuery={search}
-              workspace={workspace}
-              workspaceURI={workspaceURI}
-              onlyRegisteredEvent={true}
-              upComingEvents={true}
-            />
-            {showPastEvents && (
+          {search && pending ? (
+            <p>{i18n.get(SEARCHING)}</p>
+          ) : (
+            <div className="flex flex-col space-y-4 w-full">
               <ShowEvents
-                events={pastEvents}
-                title={PAST_EVENTS}
-                dateOfEvent={dateOfEvent}
-                category={category}
-                searchQuery={search}
+                title={ONGOING_EVETNS}
+                events={events.ongoing}
                 workspace={workspace}
                 workspaceURI={workspaceURI}
-                onlyRegisteredEvent={true}
-                pastEvents={true}
               />
-            )}
-            <div className="w-full mt-10 flex items-center justify-center ml-auto">
-              {pages > 1 && (
-                <Pagination
-                  page={page}
-                  pages={pages}
-                  disablePrev={!hasPrev}
-                  disableNext={!hasNext}
-                  onPrev={handlePreviousPage}
-                  onNext={handleNextPage}
-                  onPage={handlePage}
+              <ShowEvents
+                events={events.upcoming}
+                title={UPCOMING_EVENTS}
+                workspace={workspace}
+                workspaceURI={workspaceURI}
+              />
+              {showPastEvents && (
+                <ShowEvents
+                  events={events.past}
+                  title={PAST_EVENTS}
+                  workspace={workspace}
+                  workspaceURI={workspaceURI}
                 />
               )}
+              <div className="w-full mt-10 flex items-center justify-center ml-auto">
+                {eventPageInfo?.pages > 1 && (
+                  <Pagination
+                    page={eventPageInfo.page}
+                    pages={eventPageInfo.pages}
+                    disablePrev={!eventPageInfo.hasPrev}
+                    disableNext={!eventPageInfo?.hasNext}
+                    onPrev={handlePreviousPage}
+                    onNext={handleNextPage}
+                    onPage={handlePage}
+                  />
+                )}
+                {
+                 !pending && eventPageInfo?.count ===0 && <p>{i18n.get(NO_RESULT_FOUND)}</p>
+                }
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

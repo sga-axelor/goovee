@@ -319,6 +319,7 @@ export async function findRegisteredEvents({
   const whereClause = {
     registration: {
       event: {
+        eventAllowRegistration: true,
         eventCategorySet: {
           workspace: {
             id: workspace?.id,

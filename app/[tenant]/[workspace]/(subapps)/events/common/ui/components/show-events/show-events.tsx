@@ -22,28 +22,14 @@ import {
 export const ShowEvents = ({
   events = [],
   title = '',
-  dateOfEvent,
-  category,
-  searchQuery,
   workspaceURI,
   workspace,
-  onlyRegisteredEvent = false,
-  pastEvents = false,
-  onGoingEvents = false,
-  upComingEvents = false,
 }: {
   events: Event[];
   title: String;
-  dateOfEvent: string;
-  category: any[];
-  searchQuery: string;
   workspaceURI: String;
   workspace: PortalWorkspace;
-  onlyRegisteredEvent?: boolean;
-  pastEvents?: boolean;
-  onGoingEvents?: boolean;
-  upComingEvents?: boolean;
-}) => {
+  }) => {
   return (
     <>
       {events.length > 0 && <p className="text-base font-semibold">{title}</p>}

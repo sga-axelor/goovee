@@ -53,7 +53,9 @@ export default async function Page(context: any) {
     user,
   }).then(clone);
 
-  const {events, pageInfo}: any = await getAllRegisteredEvents({
+  const {
+    data: {events, pageInfo},
+  }: any = await getAllRegisteredEvents({
     limit: LIMIT,
     page: page,
     categories: category,

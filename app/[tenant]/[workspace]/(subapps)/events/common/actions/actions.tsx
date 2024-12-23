@@ -403,12 +403,14 @@ export async function getAllRegisteredEvents({
     });
 
     return {
-      events: {
-        ongoing: ongoingEvent.events || [],
-        upcoming: upcomingEvent?.events || [],
-        past: pastevent?.events || [],
-      },
-      pageInfo,
+      data: clone({
+        events: {
+          ongoing: ongoingEvent.events || [],
+          upcoming: upcomingEvent?.events || [],
+          past: pastevent?.events || [],
+        },
+        pageInfo,
+      }),
     };
   } catch (err) {
     console.log(err);
