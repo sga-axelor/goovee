@@ -34,8 +34,7 @@ export function useAppLang() {
   const language = user?.language;
 
   useEffect(() => {
-    const locale =
-      language || navigator.language || navigator?.userLanguage;
+    const locale = language || navigator.language || navigator?.userLanguage;
     locale && setLocale(locale);
   }, [language]);
 
