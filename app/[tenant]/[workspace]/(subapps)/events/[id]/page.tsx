@@ -48,14 +48,14 @@ export default async function Page({
     user,
   }).then(clone);
 
+  if (!eventDetails) {
+    return notFound();
+  }
   const {isRegistered} = await fetchEventParticipants({
     id,
     workspace,
     user,
   });
-  if (!eventDetails) {
-    return notFound();
-  }
 
   return (
     <EventDetails
