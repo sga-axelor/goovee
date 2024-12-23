@@ -3,6 +3,7 @@ import {manager} from '@/tenant';
 
 import type {PortalWorkspace} from '@/types';
 import type {Tenant} from '@/tenant';
+import {getTranslation} from '@/lib/core/i18n/server';
 
 export async function findDirectoryCategories({
   workspace,
@@ -11,7 +12,9 @@ export async function findDirectoryCategories({
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
-  if (!(workspace && tenantId)) return [];
+  if (!(workspace && tenantId)) {
+    throw new Error(await getTranslation('Missing required parameters'));
+  }
 
   const c = await manager.getClient(tenantId);
 
@@ -31,7 +34,9 @@ export async function findDirectoryEntries({
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
-  if (!(workspace && tenantId)) return [];
+  if (!(workspace && tenantId)) {
+    throw new Error(await getTranslation('Missing required parameters'));
+  }
 
   const c = await manager.getClient(tenantId);
 
@@ -54,7 +59,9 @@ export async function findDirectoryEntry({
   tenantId: Tenant['id'];
   id: string;
 }) {
-  if (!(workspace && tenantId)) return {};
+  if (!(workspace && tenantId)) {
+    throw new Error(await getTranslation('Missing required parameters'));
+  }
 
   const c = await manager.getClient(tenantId);
 

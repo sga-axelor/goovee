@@ -3,6 +3,7 @@ import {manager} from '@/tenant';
 import type {ID, PortalWorkspace} from '@/types';
 import type {Tenant} from '@/tenant';
 import {ORDER_BY} from '@/constants';
+import {getTranslation} from '@/lib/core/i18n/server';
 
 export async function findEntryDetailById({
   id,
@@ -13,7 +14,10 @@ export async function findEntryDetailById({
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
-  if (!(id && workspace && tenantId)) return [];
+  if (!(id && workspace && tenantId)) {
+    throw new Error(await getTranslation('Missing required parameters'));
+  }
+
   const c = await manager.getClient(tenantId);
 
   const entryDetails = await c.aOSPortalDirectoryEntry.findOne({
@@ -27,7 +31,7 @@ export async function findEntryDetailById({
       zipcode: true,
       twitter: true,
       website: true,
-      map: true,
+      isMap: true,
       description: true,
       linkedIn: true,
       image: true,
@@ -47,7 +51,9 @@ export async function findDirectoryEntryList({
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
-  if (!(workspace && tenantId)) return [];
+  if (!(workspace && tenantId)) {
+    throw new Error(await getTranslation('Missing required parameters'));
+  }
   const c = await manager.getClient(tenantId);
   const entryDetailList = await c.aOSPortalDirectoryEntry.find({
     orderBy: {id: ORDER_BY.ASC} as any,
@@ -61,7 +67,7 @@ export async function findDirectoryEntryList({
       zipcode: true,
       twitter: true,
       website: true,
-      map: true,
+      isMap: true,
       description: true,
       linkedIn: true,
       image: true,

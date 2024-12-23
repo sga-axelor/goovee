@@ -33,8 +33,9 @@ type EntryDetailProps = {
     id: string;
   };
   linkedIn?: string;
-  map?: boolean;
+  isMap?: boolean;
 };
+
 type ContactDetaillProps = {
   firstName?: string;
   lastName?: string;
@@ -42,6 +43,7 @@ type ContactDetaillProps = {
   phoneNumber?: string;
   linkedinLink?: string;
 };
+
 export default async function Page({
   params,
 }: {
@@ -104,7 +106,7 @@ async function Details({
     website,
     description,
     linkedIn,
-    map,
+    isMap,
     image,
   } = entryDetail;
 
