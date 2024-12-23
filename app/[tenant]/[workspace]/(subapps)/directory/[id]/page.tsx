@@ -65,19 +65,13 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const [entryDetail, contactDetail] = await Promise.all([
-    findEntryDetailById({
-      id,
-      workspace,
-      tenantId: tenant,
-    }).then(clone),
-    findDirectoryContactById({
-      id,
-      workspace,
-      tenantId: tenant,
-    }).then(clone),
-  ]);
+  const entryDetail = await findEntryDetailById({
+    id,
+    workspace,
+    tenantId: tenant,
+  }).then(clone);
 
+  console.dir(entryDetail, {depth: null});
   return (
     <div className="container flex flex-col gap-4 mt-4">
       <div className="flex flex-col gap-4 bg-card p-4">
@@ -85,7 +79,9 @@ export default async function Page({
         <Map className="h-80 w-full" markers={markers} />
       </div>
       <div className="bg-card p-4">
-        <Contacts tenant={tenant} contactDetail={contactDetail} />
+        {entryDetail?.directoryContactSet?.map(contact => (
+          <Contacts key={contact.id} tenant={tenant} contactDetail={contact} />
+        ))}
       </div>
     </div>
   );

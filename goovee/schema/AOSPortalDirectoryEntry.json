@@ -54,6 +54,11 @@
       "column": "directory_entry_image",
       "type": "ManyToOne",
       "target": "AOSMetaFile"
+    },
+    {
+      "name": "directoryContactSet",
+      "type": "ManyToMany",
+      "target": "AOSPortalDirectoryContact"
     }
   ]
 }

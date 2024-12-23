@@ -35,6 +35,15 @@ export async function findEntryDetailById({
       description: true,
       linkedIn: true,
       image: true,
+      directoryContactSet: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          phoneNumber: true,
+          linkedinLink: true,
+        },
+      },
     },
   });
   return entryDetails;
