@@ -47,6 +47,7 @@ import {
   findDirectoryEntries,
 } from './common/orm/directory-category';
 import {colors} from './common/constants';
+import {getSkip} from '../ticketing/common/utils/search-param';
 
 const markers = [
   {lat: 48.85341, lng: 2.3488},
@@ -97,8 +98,8 @@ export default async function Page({
   // TODO: change it to direcotory app later
   const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
   const directortyEntryList = await findDirectoryEntryList({
-    page,
-    limit,
+    take: +limit,
+    skip: getSkip(limit, page),
     workspace,
     tenantId: tenant,
   });
@@ -108,11 +109,7 @@ export default async function Page({
     tenantId: tenant,
   });
 
-  const data = directortyEntryList.slice((page - 1) * limit, page * limit);
-  const pages = getPages(
-    [{_count: directortyEntryList.length.toString()}],
-    limit,
-  );
+  const pages = getPages(directortyEntryList, limit);
   const imageURL = workspace.config.ticketHeroBgImage?.id
     ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id, tenant)})`
     : IMAGE_URL;
@@ -155,7 +152,7 @@ export default async function Page({
             <Sort />
           </aside>
           <main className="grow flex flex-col gap-4">
-            {data.map(item => (
+            {directortyEntryList.map(item => (
               <Card
                 item={item}
                 url={`${workspaceURI}/directory/${item.id}`}

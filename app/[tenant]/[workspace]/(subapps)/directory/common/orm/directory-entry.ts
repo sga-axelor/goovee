@@ -37,22 +37,21 @@ export async function findEntryDetailById({
 }
 
 export async function findDirectoryEntryList({
-  page,
-  limit,
+  take,
+  skip,
   workspace,
   tenantId,
 }: {
-  page?: number;
-  limit?: number;
+  take?: number;
+  skip?: number;
   workspace?: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
   if (!(workspace && tenantId)) return [];
   const c = await manager.getClient(tenantId);
-  const skip = Number(limit) * Math.max(Number(page) - 1, 0);
   const entryDetailList = await c.aOSPortalDirectoryEntry.find({
     orderBy: {id: ORDER_BY.ASC} as any,
-    take: limit,
+    ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     select: {
       id: true,
