@@ -155,10 +155,11 @@ function Members({members, availableApps}: any) {
             const isOwner = isPartner;
             const currentUser = member.id === user?.id;
 
-            const roleLabel =
+            const roleLabel = i18n.get(
               RoleLabel[
                 isOwner ? Role.owner : isAdminContact ? Role.admin : Role.user
-              ];
+              ],
+            );
 
             return (
               <AccordionItem value={id} key={id} className="border-b">
@@ -421,7 +422,9 @@ function Invited({invites, availableApps}: any) {
                     <div className="flex justify-between basis-[40%]">
                       <p className="text-sm">{emailAddress?.address}</p>
                       <p className="text-sm">
-                        {RoleLabel[isAdminContact ? Role.admin : Role.user]}
+                        {i18n.get(
+                          RoleLabel[isAdminContact ? Role.admin : Role.user],
+                        )}
                       </p>
                     </div>
 

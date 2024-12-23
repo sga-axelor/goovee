@@ -40,6 +40,7 @@ export type User = {
   isContact?: boolean;
   mainPartnerId?: string;
   tenantId: Tenant['id'];
+  language?:string
 };
 
 export interface PortalWorkspace extends Model {

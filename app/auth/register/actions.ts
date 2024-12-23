@@ -5,7 +5,11 @@ import {revalidatePath} from 'next/cache';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {UserType} from '@/auth/types';
-import {findPartnerByEmail, registerPartner} from '@/orm/partner';
+import {
+  findPartnerByEmail,
+  findPartnerById,
+  registerPartner,
+} from '@/orm/partner';
 import {
   findDefaultPartnerWorkspaceConfig,
   findWorkspaceByURL,
@@ -249,10 +253,13 @@ export async function register({
       tenantId,
     });
 
+    const $partner =
+      partner?.id && (await findPartnerById(partner.id, tenantId));
+
     return {
       success: true,
       message: await getTranslation('Registered successfully'),
-      data: partner,
+      data: $partner,
     };
   } catch (err) {}
 

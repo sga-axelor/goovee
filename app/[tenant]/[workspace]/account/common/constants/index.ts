@@ -1,4 +1,3 @@
-import {i18n} from '@/i18n';
 import {Role} from '../types';
 
 export const ROUTES = {
@@ -13,45 +12,45 @@ export const ROUTES = {
 
 export const GLOBAL_MENU = [
   {
-    label: i18n.get('Personal settings'),
+    label: 'Personal settings',
     route: ROUTES.personal,
   },
   {
-    label: i18n.get('Preferences'),
+    label: 'Preferences',
     route: ROUTES.prefrences,
   },
   {
-    label: i18n.get('Password'),
+    label: 'Password',
     route: ROUTES.password,
   },
 
   {
-    label: i18n.get('Addresses'),
+    label: 'Addresses',
     route: ROUTES.addresses,
   },
 ];
 
 export const WORKSPACE_MENU = [
   {
-    label: i18n.get('Notifications'),
+    label: 'Notifications',
     route: ROUTES.notifications,
   },
   {
-    label: i18n.get('My apps'),
+    label: 'My apps',
     route: ROUTES.apps,
   },
 ];
 
 export const ADMIN_WORKSPACE_MENU = [
   {
-    label: i18n.get('Members'),
+    label: 'Members',
     route: ROUTES.members,
   },
   ...WORKSPACE_MENU,
 ];
 
 export const RoleLabel = {
-  [Role.admin]: i18n.get('Admin'),
-  [Role.user]: i18n.get('User'),
-  [Role.owner]: i18n.get('Owner'),
+  [Role.admin]: 'Admin',
+  [Role.user]: 'User',
+  [Role.owner]: 'Owner',
 };

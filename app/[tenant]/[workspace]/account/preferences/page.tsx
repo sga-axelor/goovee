@@ -35,7 +35,6 @@ import {
   fetchPreference,
   updatePreference,
 } from './action';
-import {useRouter} from 'next/navigation';
 
 const formSchema = z.object({
   defaultWorkspace: z.string().optional(),
@@ -46,7 +45,6 @@ export default function Page() {
   const {data: session} = useSession();
   const user = session?.user;
 
-  const router = useRouter();
   const {toast} = useToast();
   const {tenant, workspaceURL} = useWorkspace();
 
@@ -82,7 +80,9 @@ export default function Page() {
       });
     }
 
-    router.refresh();
+    setTimeout(() => {
+      window?.location?.reload();
+    }, 1000);
   };
 
   useEffect(() => {

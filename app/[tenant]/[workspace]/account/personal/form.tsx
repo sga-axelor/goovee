@@ -391,7 +391,7 @@ export default function Personal({
                     <FormControl>
                       <Input
                         {...field}
-                        value={(RoleLabel as any)[field.value]}
+                        value={i18n.get((RoleLabel as any)[field.value])}
                         readOnly
                       />
                     </FormControl>

@@ -31,7 +31,7 @@ function MenuItem({item}: {item: Item}) {
         ['bg-success-light text-success']: pathname.includes(item.route),
       })}>
       <Link key={item.route} href={`${workspaceURL}/account/${item.route}`}>
-        {item.label}
+        {i18n.get(item.label)}
       </Link>
     </div>
   );

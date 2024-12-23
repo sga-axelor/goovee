@@ -1,10 +1,15 @@
 'use server';
 
 import {cache} from 'react';
-import {TENANT_HEADER} from '@/middleware';
 import {headers} from 'next/headers';
-import {manager} from '@/tenant';
-import {type Tenant} from '@/tenant';
+
+// ---- CORE IMPORTS ---- //
+import {TENANT_HEADER} from '@/middleware';
+import {manager, type Tenant} from '@/tenant';
+import {DEFAULT_LANGUAGE_CODE} from '@/constants';
+import {getLanguageCodeFromAcceptLanguage} from '@/utils/locale';
+import {getSession} from '@/auth';
+import type {User} from '@/types';
 
 const getBundle = cache(async function getBundle(
   tenantId: Tenant['id'],
@@ -31,16 +36,41 @@ const getBundle = cache(async function getBundle(
 
 export async function getTranslation(
   key: string,
-  {tenantId, language}: {tenantId?: Tenant['id']; language?: string} = {
+  {
+    tenantId,
+    language,
+    user,
+  }: {tenantId?: Tenant['id']; language?: string; user?: User} = {
     tenantId: '',
     language: '',
   },
 ) {
-  tenantId = tenantId || (headers().get(TENANT_HEADER) as string);
+  if (!tenantId) {
+    tenantId = headers().get(TENANT_HEADER) as string;
+  }
 
   if (!tenantId) return key;
 
-  language = language || headers().get('Accept-Language') || 'en  ';
+  if (!user) {
+    const session = await getSession();
+    const $user = session?.user;
+    if ($user?.language) {
+      language = $user.language;
+    }
+  }
+
+  if (!language) {
+    const acceptLanguage = headers().get('Accept-Language')!;
+
+    if (acceptLanguage) {
+      const code = getLanguageCodeFromAcceptLanguage(acceptLanguage);
+      if (code) language = code;
+    }
+  }
+
+  if (!language) {
+    language = DEFAULT_LANGUAGE_CODE;
+  }
 
   const bundle = await getBundle(tenantId, language);
 

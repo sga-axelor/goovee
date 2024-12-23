@@ -193,3 +193,9 @@ export const USER_CREATED_FROM = 'portal';
 export const ALLOW_NO_REGISTRATION = 'no';
 export const ALLOW_ALL_REGISTRATION = 'yesForAll';
 export const ALLOW_AOS_ONLY_REGISTRATION = 'yesForAOS';
+
+/**
+ * LANGUAGE_CODE
+ */
+
+export const DEFAULT_LANGUAGE_CODE = 'en';

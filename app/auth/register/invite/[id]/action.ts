@@ -12,6 +12,7 @@ import {
 import {deleteInviteById} from '@/app/[tenant]/[workspace]/account/common/orm/invites';
 import {getSession} from '@/auth';
 import {PortalWorkspace} from '@/types';
+import {getLanguageCode} from '@/utils/locale';
 
 import {findInviteById} from '../../common/orm/register';
 
@@ -225,7 +226,7 @@ export async function fetchUpdatedSession({tenantId}: {tenantId: string}) {
     return null;
   }
 
-  const {id, isContact, mainPartner} = partner;
+  const {id, isContact, mainPartner, localization} = partner;
 
   return {
     id,
@@ -233,5 +234,6 @@ export async function fetchUpdatedSession({tenantId}: {tenantId: string}) {
     mainPartnerId: isContact ? mainPartner?.id : undefined,
     email: user.email,
     tenantId,
+    language: getLanguageCode(localization?.code),
   };
 }

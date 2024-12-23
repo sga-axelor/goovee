@@ -2,7 +2,9 @@ import {getServerSession} from 'next-auth';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
+import {getLanguageCode} from '@/utils/locale';
 import {findPartnerByEmail} from '@/orm/partner';
+import {DEFAULT_LANGUAGE_CODE} from '@/constants';
 import {type Tenant} from '@/tenant';
 
 import google from './google';
@@ -26,7 +28,12 @@ export const authOptions: NextAuthOptions = {
           fullName: name = '',
           isContact,
           mainPartner,
+          localization,
         } = user;
+
+        const language = localization
+          ? getLanguageCode(localization?.code)
+          : DEFAULT_LANGUAGE_CODE;
 
         session.user = {
           id,
@@ -35,6 +42,7 @@ export const authOptions: NextAuthOptions = {
           isContact,
           mainPartnerId: isContact ? mainPartner?.id : undefined,
           tenantId: token?.tenantId as Tenant['id'],
+          language,
         };
       }
 
