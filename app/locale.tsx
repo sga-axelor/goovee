@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-import {useParams, useRouter} from 'next/navigation';
+import {useParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {useAppLang} from '@/ui/hooks';
@@ -10,7 +10,6 @@ import {Loader} from '@/ui/components/loader';
 
 export default function Locale({children}: {children: React.ReactNode}) {
   const {dir, lang} = useAppLang();
-  // const router = useRouter();
   const params = useParams<{tenant: string}>();
   const [loading, setLoading] = useState(true);
 
