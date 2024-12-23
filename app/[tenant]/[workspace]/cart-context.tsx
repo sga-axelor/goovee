@@ -5,6 +5,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import {useSession} from 'next-auth/react';
@@ -30,7 +31,8 @@ export default function CartContextProvider({
 }) {
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const {workspaceURL, workspaceURI} = useWorkspace();
+  const {workspaceURL} = useWorkspace();
+  const shouldUpdateLocalStorage = useRef<boolean>(false);
 
   const {data: session} = useSession();
   const user = session?.user;
@@ -259,15 +261,18 @@ export default function CartContextProvider({
     }
   }, []);
 
+  const userId = user?.id;
+
   const initialise = useCallback(async () => {
+    shouldUpdateLocalStorage.current = false;
     setLoading(true);
 
     let cart;
 
     const localCart = await getitem(cartKey).catch(() => {});
 
-    if (user) {
-      const userCartKey = user.id + '-' + cartKey;
+    if (userId) {
+      const userCartKey = userId + '-' + cartKey;
       let usercart = await getitem(userCartKey).catch(err => {
         console.log(err);
       });
@@ -277,8 +282,12 @@ export default function CartContextProvider({
       }
 
       usercart = await mergeCart(usercart, localCart);
+
+      await setitem(userCartKey, usercart).catch(() => {});
       await setitem(cartKey, defaultcart()).catch(() => {});
       cart = usercart;
+    } else {
+      cart = localCart;
     }
 
     if (!cart) {
@@ -286,24 +295,31 @@ export default function CartContextProvider({
     }
 
     setCart(cart);
+    shouldUpdateLocalStorage.current = true;
     setLoading(false);
-  }, [user, cartKey, mergeCart]);
-
-  useEffect(() => {
-    if (loading) return;
-    const updateCart = async () => {
-      let key: string = cartKey;
-      if (user) {
-        key = user.id + '-' + cartKey;
-      }
-      await setitem(key, cart);
-    };
-    updateCart();
-  }, [cartKey, cart, user, loading]);
+  }, [userId, cartKey, mergeCart]);
 
   useEffect(() => {
     initialise();
   }, [initialise]);
+
+  useEffect(() => {
+    if (!shouldUpdateLocalStorage.current) return;
+
+    const updateCart = async () => {
+      let key: string = cartKey;
+      if (userId) {
+        key = userId + '-' + cartKey;
+      }
+      await setitem(key, cart);
+    };
+
+    const timer = setTimeout(() => {
+      updateCart();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [cartKey, cart, userId, loading]);
 
   const value = useMemo(
     () => ({

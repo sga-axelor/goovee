@@ -51,8 +51,6 @@ export function FeaturedCategories({
     toast({
       title: i18n.get('Added to cart'),
     });
-
-    router.refresh();
   };
 
   const handleProductClick = (category: Category) => (product: Product) => {
