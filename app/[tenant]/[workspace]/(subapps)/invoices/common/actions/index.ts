@@ -705,7 +705,7 @@ export async function getPDF({
   if (!tenant?.config?.aos?.url) {
     return {
       error: true,
-      message: 'Webservice not available',
+      message: await getTranslation('Webservice not available'),
       data: null,
     };
   }
@@ -713,7 +713,7 @@ export async function getPDF({
   if (!workspaceURL) {
     return {
       error: true,
-      message: getTranslation('Invalid workspace'),
+      message: await getTranslation('Invalid workspace'),
       data: null,
     };
   }
@@ -730,7 +730,7 @@ export async function getPDF({
   if (!workspace) {
     return {
       error: true,
-      message: 'Invalid workspace',
+      message: await getTranslation('Invalid workspace'),
       data: null,
     };
   }
@@ -743,7 +743,10 @@ export async function getPDF({
   });
 
   if (!app?.installed) {
-    return notFound();
+    return {
+      error: true,
+      message: await getTranslation('Subapp access denied!'),
+    };
   }
 
   const {role, isContactAdmin} = app;
@@ -760,6 +763,13 @@ export async function getPDF({
     tenantId,
     workspaceURL,
   });
+
+  if (!invoice) {
+    return {
+      error: true,
+      message: await getTranslation('Invoice not found'),
+    };
+  }
 
   const {aos} = tenant.config;
   const ws = `${aos.url}/ws/portal/invoice/print/${invoice.id}`;

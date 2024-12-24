@@ -21,16 +21,22 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
 
   useEffect(() => {
     const getFile = async () => {
-      const data = await getPDF({id, workspaceURL});
-      if (data) {
-        const arrayBuffer = new Uint8Array(data);
-        const blob = new Blob([arrayBuffer], {type: 'application/pdf'});
-        setFile(blob);
-        setIsError(false);
-      } else {
+      try {
+        const data = await getPDF({id, workspaceURL});
+        if (!data.error) {
+          const arrayBuffer = new Uint8Array(data);
+          const blob = new Blob([arrayBuffer], {type: 'application/pdf'});
+          setFile(blob);
+          setIsError(false);
+        } else {
+          setIsError(true);
+        }
+      } catch (error) {
+        console.error('Error fetching PDF:', error);
         setIsError(true);
       }
     };
+
     getFile();
   }, [id, workspaceURL]);
 
