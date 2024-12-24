@@ -1,6 +1,10 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
-import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+import {
+  DEFAULT_CURRENCY_SCALE,
+  DEFAULT_CURRENCY_SYMBOL,
+  DEFAULT_PAGE,
+} from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
 import type {Partner, PortalWorkspace} from '@/types';
 
@@ -9,25 +13,28 @@ import {ORDER_STATUS} from '@/subapps/orders/common/constants/orders';
 import type {Order} from '@/subapps/orders/common/types/orders';
 
 const fetchOrders = async ({
-  partnerId,
   archived = false,
-  page,
-  limit,
-  skip,
-  where,
+  params = {},
   tenantId,
   workspaceURL,
 }: {
-  partnerId?: Partner['id'];
   archived?: boolean;
-  limit?: string | number;
-  page?: string | number;
-  skip?: boolean | number;
-  where?: any;
+  params?: {
+    where?: object & {
+      clientPartner?: {
+        id: Partner['id'];
+      };
+    };
+    limit?: string | number;
+    page?: string | number;
+  };
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
 }) => {
-  if (!(partnerId && tenantId && workspaceURL)) return null;
+  const {page = DEFAULT_PAGE, limit, where = {}} = params;
+  const {id: clientPartnerId} = where.clientPartner || {};
+
+  if (!(clientPartnerId && tenantId && workspaceURL)) return null;
 
   const client = await manager.getClient(tenantId);
 
@@ -55,6 +62,7 @@ const fetchOrders = async ({
     whereClause.template = false;
     whereClause.statusSelect = ORDER_STATUS.CONFIRMED;
   }
+  const skip = getSkipInfo(limit, page);
 
   const $orders = await client.aOSOrder
     .find({
@@ -99,57 +107,41 @@ const fetchOrders = async ({
 };
 
 export async function findOngoingOrders({
-  partnerId,
-  where,
-  page = 1,
-  limit,
+  params,
   tenantId,
   workspaceURL,
 }: {
-  partnerId?: string | number;
-  page?: string | number;
-  limit?: string | number;
-  where?: any;
+  params?: any;
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
 }): Promise<any> {
-  const skip = getSkipInfo(limit, page);
-
   return await fetchOrders({
-    partnerId,
-    page,
-    limit,
-    skip,
-    where,
+    params,
     tenantId,
     workspaceURL,
   });
 }
 
 export async function findArchivedOrders({
-  partnerId,
-  page = 1,
-  limit,
-  where,
+  params,
   tenantId,
   workspaceURL,
 }: {
-  partnerId?: string | number;
-  page?: string | number;
-  limit?: string | number;
-  where?: any;
+  params?: {
+    where?: object & {
+      partner?: {
+        id: Partner['id'];
+      };
+    };
+    limit?: string | number;
+    page?: string | number;
+  };
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
 }): Promise<any> {
-  const skip = getSkipInfo(limit, page);
-
   return await fetchOrders({
-    partnerId,
     archived: true,
-    page,
-    limit,
-    skip,
-    where,
+    params,
     tenantId,
     workspaceURL,
   });

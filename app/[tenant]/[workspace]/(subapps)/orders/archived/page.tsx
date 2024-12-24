@@ -60,14 +60,21 @@ export default async function Page({
     isContactAdmin,
   });
 
-  const {orders, pageInfo} = await findArchivedOrders({
-    partnerId: session?.user?.id,
-    page,
-    limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    where,
+  const result = await findArchivedOrders({
+    params: {
+      where,
+      page,
+      limit: limit ? Number(limit) : DEFAULT_LIMIT,
+    },
     tenantId: tenant,
     workspaceURL,
   });
+
+  if (!result) {
+    return notFound();
+  }
+
+  const {orders, pageInfo} = result;
 
   return <Content orders={clone(orders)} pageInfo={pageInfo} />;
 }
