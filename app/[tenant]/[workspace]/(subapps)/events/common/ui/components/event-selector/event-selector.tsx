@@ -85,9 +85,8 @@ export const EventSelector = ({
                     id={category.id}
                     checked={isActive}
                     className={cn(
-                      '',
                       isActive
-                        ? `border-none ${category?.color ? `!bg-palette-${category?.color}-dark` : `bg-black`}`
+                        ? `border-none ${category?.color ? `!bg-palette-${category.color}-dark` : 'bg-black'}`
                         : '',
                     )}
                     onCheckedChange={() => selectCategory(category)}
