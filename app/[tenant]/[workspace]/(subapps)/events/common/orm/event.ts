@@ -311,9 +311,11 @@ export async function findRegisteredEvents({
     },
   }));
   const currentDateTime = new Date().toISOString();
-  const yesterDayDateTime = new Date(
-    new Date().getTime() - 24 * 60 * 60 * 1000,
-  ).toISOString();
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0); 
+  
+  const todayStartTime = todayStart.toISOString();
+  
   const orderBy: any = {eventStartDateTime: ORDER_BY.ASC};
 
   const whereClause = {
@@ -415,7 +417,7 @@ export async function findRegisteredEvents({
                         },
                         {
                           eventStartDateTime: {
-                            notBetween: [yesterDayDateTime, currentDateTime],
+                            notBetween: [todayStartTime, currentDateTime],
                           },
                         },
                       ],
@@ -448,7 +450,7 @@ export async function findRegisteredEvents({
                       AND: [
                         {
                           eventStartDateTime: {
-                            between: [yesterDayDateTime, currentDateTime],
+                            between: [todayStartTime, currentDateTime],
                           },
                         },
                         {
