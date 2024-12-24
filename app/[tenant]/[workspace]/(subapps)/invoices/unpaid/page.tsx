@@ -59,19 +59,25 @@ export default async function Invoices({
 
   const {role, isContactAdmin} = app;
 
-  const {invoices, pageInfo}: any = await findUnpaidInvoices({
+  const result: any = await findUnpaidInvoices({
     params: {
       where: getWhereClause({
         user,
         role,
         isContactAdmin,
       }),
+      page,
+      limit: limit ? Number(limit) : DEFAULT_LIMIT,
     },
     tenantId: tenant,
     workspaceURL,
-    page,
-    limit: limit ? Number(limit) : DEFAULT_LIMIT,
   });
+
+  if (!result) {
+    return notFound();
+  }
+
+  const {invoices, pageInfo} = result;
 
   return (
     <Content invoices={invoices} workspace={workspace} pageInfo={pageInfo} />

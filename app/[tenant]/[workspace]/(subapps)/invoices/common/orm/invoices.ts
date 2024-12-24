@@ -22,27 +22,26 @@ import {
 } from '@/subapps/invoices/common/constants/invoices';
 
 const fetchInvoices = async ({
-  params,
+  params = {},
   type,
   tenantId,
   workspaceURL,
-  page,
-  limit,
 }: {
   params?: {
-    where: object & {
-      partner: {
+    where?: object & {
+      partner?: {
         id: Partner['id'];
       };
     };
+    limit?: string | number;
+    page?: string | number;
   };
   type?: string;
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
-  limit?: string | number;
-  page?: string | number;
 }) => {
-  const {id: partnerId} = params?.where?.partner || {};
+  const {page = DEFAULT_PAGE, limit, where = {}} = params;
+  const {id: partnerId} = where.partner || {};
 
   if (!(partnerId && tenantId && workspaceURL)) return null;
 
@@ -109,38 +108,44 @@ export const findUnpaidInvoices = async ({
   params,
   tenantId,
   workspaceURL,
-  page = DEFAULT_PAGE,
-  limit,
 }: {
-  params?: any;
+  params?: {
+    where?: object & {
+      partner?: {
+        id: Partner['id'];
+      };
+    };
+    limit?: string | number;
+    page?: string | number;
+  };
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
-  page?: string | number;
-  limit?: string | number;
 }) => {
-  return await fetchInvoices({params, tenantId, workspaceURL, page, limit});
+  return await fetchInvoices({params, tenantId, workspaceURL});
 };
 
 export const findArchivedInvoices = async ({
   params,
   tenantId,
   workspaceURL,
-  page = DEFAULT_PAGE,
-  limit,
 }: {
-  params?: any;
+  params?: {
+    where?: object & {
+      partner?: {
+        id: Partner['id'];
+      };
+    };
+    limit?: string | number;
+    page?: string | number;
+  };
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
-  page?: string | number;
-  limit?: string | number;
 }) => {
   return await fetchInvoices({
     params,
     type: INVOICE.ARCHIVED,
     tenantId,
     workspaceURL,
-    page,
-    limit,
   });
 };
 
@@ -151,7 +156,13 @@ export const findInvoice = async ({
   workspaceURL,
 }: {
   id: Invoice['id'];
-  params?: any;
+  params?: {
+    where?: object & {
+      partner?: {
+        id: Partner['id'];
+      };
+    };
+  };
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
 }) => {
