@@ -19,7 +19,7 @@ import {
   Informations,
   Total,
   PaymentMethod,
-  Products,
+  ProductsList,
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
@@ -91,7 +91,10 @@ const Content = ({order}: {order: any}) => {
                 deliveryAddress={deliveryAddress}
                 saleOrderLineList={saleOrderLineList}
               />
-              <Products saleOrderLineList={saleOrderLineList} tenant={tenant} />
+              <ProductsList
+                saleOrderLineList={saleOrderLineList}
+                tenant={tenant}
+              />
               {false && <PaymentMethod />}
             </div>
             {false && <History />}
