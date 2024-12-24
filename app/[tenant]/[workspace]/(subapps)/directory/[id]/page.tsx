@@ -156,9 +156,11 @@ async function Details({
           </span>
         </div>
       </div>
-      <p className="font-semibold text-xl mt-5 mb-5">
-        {await getTranslation('Social media')}
-      </p>
+      {(linkedIn || twitter || instagram || website) && (
+        <p className="font-semibold text-xl mt-5 mb-5">
+          {await getTranslation('Social media')}
+        </p>
+      )}
       <div className="flex space-x-6">
         {linkedIn && (
           <Link href={`${linkedIn}`}>
