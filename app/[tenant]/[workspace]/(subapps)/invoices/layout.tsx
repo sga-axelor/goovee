@@ -1,6 +1,5 @@
 import React from 'react';
 import {notFound} from 'next/navigation';
-import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
