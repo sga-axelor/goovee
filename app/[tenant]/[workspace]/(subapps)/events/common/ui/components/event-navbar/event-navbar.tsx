@@ -18,7 +18,7 @@ type nav_link = {
   validate: boolean;
 };
 
-export const EventHeader = ({user}: {user?: User}) => {
+export const EventNavbar = ({user}: {user?: User}) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 

@@ -22,7 +22,7 @@ export const EVENTS_NAVBAR_LINKS = [
   {
     id: 2,
     title: 'My registrations',
-    redirectTo: '/my-registration',
+    redirectTo: '/my-registrations',
     validate: true,
   },
 ];

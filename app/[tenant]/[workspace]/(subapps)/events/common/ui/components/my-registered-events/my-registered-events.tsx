@@ -26,11 +26,8 @@ import {
 } from '@/subapps/events/common/constants';
 import {Pagination} from '@/ui/components';
 import {URL_PARAMS} from '@/constants';
-import {
-  SEARCHING,
-  SOME_WENT_WRONG,
-} from '@/subapps/events/common/constants';
-import {getAllRegisteredEvents} from "@/subapps/events/common/actions/actions";
+import {SEARCHING, SOME_WENT_WRONG} from '@/subapps/events/common/constants';
+import {getAllRegisteredEvents} from '@/subapps/events/common/actions/actions';
 
 export const MyRegisteredEvents = ({
   categories,
@@ -173,16 +170,16 @@ export const MyRegisteredEvents = ({
             description: i18n.get(response.error || SOME_WENT_WRONG),
           });
         }
-        if(search){
+        if (search) {
           setEvents(response?.data?.events);
           setEventPageInfo(response?.data?.pageInfo);
-        }else{
-      setEvents({
-        ongoing: onGoingEvents,
-        past: pastEvents,
-        upcoming: upcomingEvents,
-      });
-      setEventPageInfo(pageInfo);
+        } else {
+          setEvents({
+            ongoing: onGoingEvents,
+            past: pastEvents,
+            upcoming: upcomingEvents,
+          });
+          setEventPageInfo(pageInfo);
         }
       } catch (error) {
         toast({
@@ -263,9 +260,9 @@ export const MyRegisteredEvents = ({
                     onPage={handlePage}
                   />
                 )}
-                {
-                 !pending && eventPageInfo?.count ===0 && <p>{i18n.get(NO_RESULT_FOUND)}</p>
-                }
+                {!pending && eventPageInfo?.count === 0 && (
+                  <p>{i18n.get(NO_RESULT_FOUND)}</p>
+                )}
               </div>
             </div>
           )}

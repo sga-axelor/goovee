@@ -62,7 +62,7 @@ export const EventSelector = ({
         onlyRegisteredEvent={onlyRegisteredEvent}
       />
       {onlyRegisteredEvent && (
-        <div className="flex items-center space-x-4 my-2">
+        <div className="flex items-center space-x-4 my-2 ml-4">
           <Checkbox
             id="pastevent-checkbox"
             className="data-[state=checked]:bg-success data-[state=checked]:border-none"

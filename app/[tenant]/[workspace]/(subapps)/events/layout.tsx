@@ -10,7 +10,7 @@ import {findWorkspace, findSubappAccess} from '@/orm/workspace';
 // ---- LOCAL IMPORTS ---- //
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {
-  EventHeader,
+  EventNavbar,
   MobileMenuCategory,
 } from '@/subapps/events/common/ui/components';
 
@@ -57,7 +57,7 @@ export default async function Layout({
 
   return (
     <>
-      <EventHeader user={user} />
+      <EventNavbar user={user} />
       {children}
       <MobileMenuCategory categories={categories} />
     </>

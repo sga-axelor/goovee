@@ -29,7 +29,7 @@ export const ShowEvents = ({
   title: String;
   workspaceURI: String;
   workspace: PortalWorkspace;
-  }) => {
+}) => {
   return (
     <>
       {events.length > 0 && <p className="text-base font-semibold">{title}</p>}

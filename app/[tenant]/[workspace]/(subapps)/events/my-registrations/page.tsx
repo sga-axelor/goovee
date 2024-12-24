@@ -6,12 +6,12 @@ import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import NotFound from '@/app/not-found';
-import {LIMIT} from '@/subapps/events/common/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from '@/subapps/events/my-registration/content';
+import {LIMIT} from '@/subapps/events/common/constants';
+import Content from '@/app/[tenant]/[workspace]/(subapps)/events/my-registrations/content';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
-import {getAllRegisteredEvents} from '../common/actions/actions';
+import {getAllRegisteredEvents} from '@/subapps/events/common/actions/actions';
 
 export default async function Page(context: any) {
   const params = context?.params;

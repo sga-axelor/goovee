@@ -312,10 +312,10 @@ export async function findRegisteredEvents({
   }));
   const currentDateTime = new Date().toISOString();
   const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0); 
-  
+  todayStart.setHours(0, 0, 0, 0);
+
   const todayStartTime = todayStart.toISOString();
-  
+
   const orderBy: any = {eventStartDateTime: ORDER_BY.ASC};
 
   const whereClause = {
