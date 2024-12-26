@@ -46,7 +46,7 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
         <h4 className="text-xl font-medium mb-0">{i18n.get('Invoice')}</h4>
         <Separator />
         {file ? (
-          <DocViewer file={file} />
+          <DocViewer record={file} />
         ) : isError ? (
           <p>{i18n.get(UNABLE_TO_FIND_INVOICE)}</p>
         ) : (

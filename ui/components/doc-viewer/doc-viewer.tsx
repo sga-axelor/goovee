@@ -11,36 +11,31 @@ import {cn} from '@/utils/css';
 
 import styles from './doc-viewer.module.scss';
 
-type FileInput =
-  | Blob
-  | File
-  | {
-      id: string | number;
-      name: string;
-      type: string;
-    };
+export type URL = string;
+export type Record = {id: string | number; name: string; type: string};
+export type Document = File | Blob | URL | Record;
 
 export function DocViewer({
-  file,
-  record,
-  rootClassName,
+  record: document,
+  className,
+  useImageURL = false,
 }: {
-  file?: FileInput;
-  record?: {id: string | number};
-  rootClassName?: string;
+  record: Document;
+  className?: string;
+  useImageURL?: boolean;
 }) {
   const {tenant} = useWorkspace();
 
   const docs = (() => {
-    if (file instanceof Blob || file instanceof File) {
-      return [{uri: URL.createObjectURL(file)}];
+    if (document instanceof Blob || document instanceof File) {
+      return [{uri: URL.createObjectURL(document)}];
     }
-    if (file && 'id' in file) {
-      return [{uri: getImageURL(file.id, tenant)}];
+
+    if ((document as Record)?.id !== undefined) {
+      const download = useImageURL ? getImageURL : getDownloadURL;
+      return [{uri: download(document?.id, tenant)}];
     }
-    if (record && record.id) {
-      return [{uri: getDownloadURL(record.id, tenant)}];
-    }
+
     return [];
   })();
 
@@ -49,7 +44,7 @@ export function DocViewer({
   }
 
   return (
-    <div className={cn('overflow-auto', rootClassName)}>
+    <div className={cn('overflow-auto', className)}>
       <CyntlerDocViewer
         documents={docs}
         pluginRenderers={DocViewerRenderers}
