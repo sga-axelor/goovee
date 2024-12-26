@@ -59,6 +59,11 @@
       "name": "directoryContactSet",
       "type": "ManyToMany",
       "target": "AOSPortalDirectoryContact"
+    },
+    {
+      "name": "instagram",
+      "column": "directory_entry_instagram",
+      "type": "String"
     }
   ]
 }

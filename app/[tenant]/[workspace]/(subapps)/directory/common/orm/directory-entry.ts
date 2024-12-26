@@ -44,6 +44,7 @@ export async function findEntryDetailById({
           linkedinLink: true,
         },
       },
+      instagram: true,
     },
   });
   return entryDetails;
@@ -74,11 +75,8 @@ export async function findDirectoryEntryList({
       city: true,
       address: true,
       zipcode: true,
-      twitter: true,
-      website: true,
       isMap: true,
       description: true,
-      linkedIn: true,
       image: true,
     },
   });

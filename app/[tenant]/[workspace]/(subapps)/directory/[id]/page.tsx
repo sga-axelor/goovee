@@ -34,6 +34,7 @@ type EntryDetailProps = {
   };
   linkedIn?: string;
   isMap?: boolean;
+  instagram?: string;
 };
 
 type ContactDetaillProps = {
@@ -104,6 +105,7 @@ async function Details({
     linkedIn,
     isMap,
     image,
+    instagram,
   } = entryDetail;
 
   const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
