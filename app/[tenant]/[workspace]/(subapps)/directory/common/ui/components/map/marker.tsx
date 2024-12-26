@@ -27,7 +27,7 @@ export function Marker(props: MarkerProps) {
   const {position, small} = props;
   const {workspaceURI} = useWorkspace();
 
-  const url = `${workspaceURI}/directory/${item.id}`;
+  const url = `${workspaceURI}/directory/entry/${item.id}`;
   const [markerRef, marker] = useMarkerRef();
 
   const [show, setShow] = useState(false);

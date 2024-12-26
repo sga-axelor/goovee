@@ -43,7 +43,7 @@ const Content = ({
           {directortyEntryList?.map(item => (
             <Card
               item={item}
-              url={`${workspaceURI}/directory/${item.id}`}
+              url={`${workspaceURI}/directory/entry/${item.id}`}
               key={item.id}
               tenant={tenant}
             />
