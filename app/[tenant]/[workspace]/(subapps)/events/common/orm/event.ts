@@ -2,7 +2,14 @@ import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {formatDateToISOString} from '@/utils/date';
-import {DATE_FORMATS, ORDER_BY} from '@/constants';
+import {
+  DATE_FORMATS,
+  ORDER_BY,
+  DEFAULT_PAGE,
+  DAY,
+  MONTH,
+  YEAR,
+} from '@/constants';
 import {getPageInfo} from '@/utils';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
@@ -247,7 +254,7 @@ export async function findEvents({
 export async function findRegisteredEvents({
   search,
   categoryids,
-  page = 1,
+  page = DEFAULT_PAGE,
   limit,
   day,
   month,
@@ -286,14 +293,14 @@ export async function findRegisteredEvents({
 
   let date, predicate: any;
   if (day && month && year) {
-    predicate = 'day';
-    date = moment(`${day}-${month}-${year}`, 'DD-MM-YYYY');
+    predicate = DAY;
+    date = moment(`${day}-${month}-${year}`, DATE_FORMATS.DD_MM_YYYY);
   } else if (month && year) {
-    predicate = 'month';
-    date = moment(`${month}-${year}`, 'MM-YYYY');
+    predicate = MONTH;
+    date = moment(`${month}-${year}`, DATE_FORMATS.MM_YYYY);
   } else if (year) {
-    predicate = 'year';
-    date = moment(year, 'YYYY');
+    predicate = YEAR;
+    date = moment(year, DATE_FORMATS.YYYY);
   }
 
   let startDate, endDate;
@@ -305,8 +312,8 @@ export async function findRegisteredEvents({
   const eventStartDateTimeCriteria = selectedDates?.map((date: any) => ({
     eventStartDateTime: {
       between: [
-        moment(date).startOf('day').format(DATE_FORMATS.timestamp_with_seconds),
-        moment(date).endOf('day').format(DATE_FORMATS.timestamp_with_seconds),
+        moment(date).startOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
+        moment(date).endOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
       ],
     },
   }));
@@ -321,7 +328,6 @@ export async function findRegisteredEvents({
   const whereClause = {
     registration: {
       event: {
-        eventAllowRegistration: true,
         eventCategorySet: {
           workspace: {
             id: workspace?.id,

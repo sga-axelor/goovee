@@ -105,6 +105,9 @@ export const DATE_FORMATS = {
   full_month_day_year_12_hour: 'MMMM D YYYY - hA',
   custom: 'MMMM D YYYY - h:mm A',
   full_date: 'MMMM Do YYYY',
+  DD_MM_YYYY: 'DD-MM-YYYY',
+  MM_YYYY: 'MM_YYYY',
+  YYYY: 'YYYY',
   hours_12_hour: 'hA',
 };
 
@@ -127,6 +130,9 @@ export const IMAGE_URL = `url("/images/hero-bg.svg")`;
  * OTHERS
  */
 export const NO_RESULTS_FOUND = 'No results found.';
+export const DAY = 'day';
+export const MONTH = 'month';
+export const YEAR = 'year';
 
 /**
  * URL
@@ -136,6 +142,9 @@ export const URL_PARAMS = {
   sort: 'sort',
   search: 'search',
   searchid: 'searchid',
+  category: 'category',
+  pastevents: 'pastevents',
+  date: 'date',
 };
 
 /**
@@ -222,4 +231,11 @@ export const OUT_OF_STOCK_TYPE = {
   ALLOW_BUY_WITH_MESSAGE: 2,
   HIDE_PRODUCT_CANNOT_BUY: 3,
   DONT_ALLOW_BUY_WITH_MESSAGE: 4,
+};
+
+/**
+ * KEY_TYPES
+ */
+export const KEY = {
+  enter: 'Enter',
 };

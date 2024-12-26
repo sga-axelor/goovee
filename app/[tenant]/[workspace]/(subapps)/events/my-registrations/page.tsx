@@ -6,6 +6,7 @@ import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import NotFound from '@/app/not-found';
+import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {LIMIT} from '@/subapps/events/common/constants';
@@ -15,7 +16,7 @@ import {getAllRegisteredEvents} from '@/subapps/events/common/actions/actions';
 
 export default async function Page(context: any) {
   const params = context?.params;
-  const page = context?.searchParams?.page || 1;
+  const page = context?.searchParams?.page || DEFAULT_PAGE;
   const showPastEvents = Boolean(context?.searchParams?.pastevents) || false;
 
   const {tenant} = params;

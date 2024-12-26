@@ -25,7 +25,7 @@ import {
   NO_RESULT_FOUND,
 } from '@/subapps/events/common/constants';
 import {Pagination} from '@/ui/components';
-import {URL_PARAMS} from '@/constants';
+import {URL_PARAMS, DEFAULT_PAGE, KEY} from '@/constants';
 import {SEARCHING, SOME_WENT_WRONG} from '@/subapps/events/common/constants';
 import {getAllRegisteredEvents} from '@/subapps/events/common/actions/actions';
 
@@ -58,7 +58,7 @@ export const MyRegisteredEvents = ({
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(DEFAULT_PAGE);
 
   const [events, setEvents] = useState<any>({
     ongoing: [],
@@ -71,17 +71,17 @@ export const MyRegisteredEvents = ({
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
-  const updateCateg = (category: Category) => {
+  const handleCategory = (category: Category) => {
     const updatedCategories = selectedCategory.some(
       (c: string) => c === category.id,
     )
       ? selectedCategory.filter((i: string) => i !== category.id)
       : [...selectedCategory, category.id];
     update([
-      {key: 'category', value: updatedCategories},
-      {key: 'page', value: 1},
-      {key: 'date', value: convertDateToISO8601(date) || ''},
-      {key: 'pastevents', value: enablePastEvents},
+      {key: URL_PARAMS.category, value: updatedCategories},
+      {key: URL_PARAMS.page, value: DEFAULT_PAGE},
+      {key: URL_PARAMS.date, value: convertDateToISO8601(date) || ''},
+      {key: URL_PARAMS.pastevents, value: enablePastEvents},
     ]);
 
     setSelectedCategory(updatedCategories);
@@ -92,10 +92,10 @@ export const MyRegisteredEvents = ({
     setDate(newDate);
     update(
       [
-        {key: 'category', value: selectedCategory},
-        {key: 'page', value: 1},
-        {key: 'date', value: convertDateToISO8601(d) || ''},
-        {key: 'pastevents', value: enablePastEvents},
+        {key: URL_PARAMS.category, value: selectedCategory},
+        {key: URL_PARAMS.page, value: DEFAULT_PAGE},
+        {key: URL_PARAMS.date, value: convertDateToISO8601(d) || ''},
+        {key: URL_PARAMS.pastevents, value: enablePastEvents},
       ],
       {scroll: false},
     );
@@ -109,7 +109,7 @@ export const MyRegisteredEvents = ({
           key: URL_PARAMS.page,
           value: Math.max(Number(eventPageInfo?.page) - 1, 1),
         },
-        {key: 'pastevents', value: enablePastEvents},
+        {key: URL_PARAMS.pastevents, value: enablePastEvents},
       ]);
     else setPage(prev => prev - 1);
   };
@@ -119,7 +119,7 @@ export const MyRegisteredEvents = ({
     if (!search)
       update([
         {key: URL_PARAMS.page, value: Number(eventPageInfo?.page) + 1},
-        {key: 'pastevents', value: enablePastEvents},
+        {key: URL_PARAMS.pastevents, value: enablePastEvents},
       ]);
     else setPage(prev => prev + 1);
   };
@@ -127,12 +127,12 @@ export const MyRegisteredEvents = ({
   const handlePage = (page: string | number) => {
     update([
       {key: URL_PARAMS.page, value: page},
-      {key: 'pastevents', value: enablePastEvents},
+      {key: URL_PARAMS.pastevents, value: enablePastEvents},
     ]);
   };
 
   const handleSearch = (searchKey: string) => {
-    setPage(1);
+    setPage(DEFAULT_PAGE);
     setSearch(searchKey);
   };
 
@@ -140,18 +140,18 @@ export const MyRegisteredEvents = ({
     setEnablePastEvents(checked);
     update(
       [
-        {key: 'category', value: selectedCategory},
-        {key: 'page', value: 1},
-        {key: 'date', value: convertDateToISO8601(date) || ''},
-        {key: 'pastevents', value: checked},
+        {key: URL_PARAMS.category, value: selectedCategory},
+        {key: URL_PARAMS.page, value: DEFAULT_PAGE},
+        {key: URL_PARAMS.date, value: convertDateToISO8601(date) || ''},
+        {key: URL_PARAMS.pastevents, value: checked},
       ],
       {scroll: false},
     );
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    setPage(1);
-    if (e.key === 'Enter') {
+    setPage(DEFAULT_PAGE);
+    if (e.key === KEY.enter) {
       findEvents();
     }
   };
@@ -202,7 +202,7 @@ export const MyRegisteredEvents = ({
   }, [search, category, dateOfEvent, showPastEvents, pageInfo]);
 
   useEffect(() => {
-    if (search && page > 1) {
+    if (search && page > DEFAULT_PAGE) {
       findEvents();
     }
   }, [page]);
@@ -211,14 +211,14 @@ export const MyRegisteredEvents = ({
     <div>
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
         <div>
-          <h2 className="text-lg font-semibold text-start mb-4 h-[54px]">
+          <h2 className="text-lg font-semibold text-start mb-4 h-[3.4rem]">
             {i18n.get(MY_REGISTRATIONS)}
           </h2>
           <EventSelector
             selectedCategories={selectedCategory}
             date={date}
             setDate={updateDate}
-            updateCateg={updateCateg}
+            updateCateg={handleCategory}
             categories={categories}
             workspace={workspace}
             onlyRegisteredEvent={onlyRegisteredEvent}
@@ -227,7 +227,7 @@ export const MyRegisteredEvents = ({
           />
         </div>
         <div>
-          <div className="mb-4 h-[54px]">
+          <div className="mb-4 h-[3.4rem]">
             <EventSearch
               search={search}
               handleSearch={handleSearch}
@@ -259,7 +259,7 @@ export const MyRegisteredEvents = ({
                 />
               )}
               <div className="w-full mt-10 flex items-center justify-center ml-auto">
-                {eventPageInfo?.pages > 1 && (
+                {eventPageInfo?.pages > DEFAULT_PAGE && (
                   <Pagination
                     page={eventPageInfo.page}
                     pages={eventPageInfo.pages}

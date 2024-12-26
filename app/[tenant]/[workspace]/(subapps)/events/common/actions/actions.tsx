@@ -5,7 +5,7 @@ import {headers} from 'next/headers';
 // ---- CORE IMPORTS ----//
 import {clone, getPageInfo} from '@/utils';
 import {t} from '@/locale/server';
-import {SUBAPP_CODES} from '@/constants';
+import {DEFAULT_PAGE, SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
 import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getSession} from '@/auth';
@@ -80,18 +80,21 @@ export async function getAllEvents({
   }
 
   try {
+    const commonParams = {
+      limit,
+      page,
+      categoryids: categories,
+      day,
+      search,
+      month,
+      year,
+      selectedDates: dates,
+      workspace,
+      tenantId,
+    };
     if (onlyRegisteredEvent) {
       const {events, pageInfo} = await findRegisteredEvents({
-        limit: limit,
-        page: page,
-        categoryids: categories,
-        day: day,
-        search: search,
-        month: month,
-        year: year,
-        selectedDates: dates,
-        workspace,
-        tenantId,
+        ...commonParams,
         upComingEvents,
         pastEvents,
         onGoingEvents,
@@ -99,16 +102,7 @@ export async function getAllEvents({
       return {events, pageInfo};
     } else {
       const {events, pageInfo} = await findEvents({
-        limit: limit,
-        page: page,
-        categoryids: categories,
-        day: day,
-        search: search,
-        month: month,
-        year: year,
-        selectedDates: dates,
-        workspace,
-        tenantId,
+        ...commonParams,
         user,
       }).then(clone);
       return {events, pageInfo};
@@ -275,7 +269,7 @@ export async function fetchEventParticipants({
 
 export async function getAllRegisteredEvents({
   limit = LIMIT,
-  page = 1,
+  page = DEFAULT_PAGE,
   categories,
   search,
   day,
@@ -311,7 +305,7 @@ export async function getAllRegisteredEvents({
   }
   const workspaceURL = workspace.url;
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
+    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
@@ -325,13 +319,13 @@ export async function getAllRegisteredEvents({
 
   try {
     const arg = {
-      limit: limit,
-      page: page,
+      limit,
+      page,
       categoryids: categories,
-      day: day,
-      search: search,
-      month: month,
-      year: year,
+      day,
+      search,
+      month,
+      year,
       selectedDates: dates,
       workspace,
       tenantId,
