@@ -23,6 +23,7 @@ type ContentProps = {
   searchParams?: any;
   entries?: any;
 };
+
 const Content = ({
   workspaceURI,
   tenant,
@@ -49,11 +50,13 @@ const Content = ({
           ))}
         </main>
       </div>
-      <CardPagination
-        url={`${workspaceURI}/directory`}
-        pages={pages}
-        searchParams={searchParams}
-      />
+      {pages > 1 && (
+        <CardPagination
+          url={`${workspaceURI}/directory`}
+          pages={pages}
+          searchParams={searchParams}
+        />
+      )}
     </>
   );
 };

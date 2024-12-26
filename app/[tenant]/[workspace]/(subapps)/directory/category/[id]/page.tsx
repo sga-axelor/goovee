@@ -68,24 +68,21 @@ export default async function Page({
   if (!workspace) notFound();
   const {id} = params;
 
-  const SubCategory = await findDirectorySubCategoriesById({
+  const category = await findDirectorySubCategoriesById({
     id,
     workspaceId: workspace.id,
     tenantId: tenant,
   });
+  if (!category) notFound();
+
   const entries = await findDirectoryEntriesByCategoryId({
-    id,
-    workspaceId: workspace.id,
-    tenantId: tenant,
-  });
-  const categoryName = await findCategoryName({
     id,
     workspaceId: workspace.id,
     tenantId: tenant,
   });
 
   const pages = getPages(entries, limit);
-  const cards = SubCategory.map((category, i) => (
+  const cards = category.directoryCategorySet?.map((category, i) => (
     <DirectoryCards
       workspaceURI={workspaceURI}
       id={category.id}
@@ -101,17 +98,19 @@ export default async function Page({
       <div className="container mb-5">
         <div className="flex items-center justify-between mt-5">
           <p className="text-xl font-semibold">
-            {await getTranslation(`${categoryName?.title}`)}
+            {await getTranslation(category.title!)}
           </p>
           <Button variant="success" className="flex items-center">
             <MdOutlineNotificationAdd className="size-6 me-2" />
             <span>{await getTranslation('Subscribe')}</span>
           </Button>
         </div>
-        <Swipe
-          items={cards}
-          className="flex justify-center items-center mt-5 p-2 space-y-2"
-        />
+        {cards && cards?.length > 0 && (
+          <Swipe
+            items={cards}
+            className="flex justify-center items-center mt-5 p-2 space-y-2"
+          />
+        )}
         <Content
           workspaceURI={workspaceURI}
           directortyEntryList={entries}

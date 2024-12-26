@@ -77,21 +77,17 @@ export async function findDirectorySubCategoriesById({
 
   const c = await manager.getClient(tenantId);
 
-  const directoryCategories = await c.aOSPortalDirectoryCategory.findOne({
-    where: {
-      id,
-    },
+  const directoryCategory = await c.aOSPortalDirectoryCategory.findOne({
+    where: {id},
     select: {
+      title: true,
       directoryCategorySet: {
-        select: {
-          title: true,
-          color: true,
-        },
+        select: {title: true, color: true},
       },
     },
   });
 
-  return directoryCategories?.directoryCategorySet ?? [];
+  return directoryCategory;
 }
 
 export async function findDirectoryEntriesByCategoryId({

@@ -109,10 +109,12 @@ export default async function Page({
         tenantId={tenant}
       />
       <div className="container mb-5">
-        <Swipe
-          items={cards}
-          className="flex justify-center items-center mt-5 p-2 space-y-2"
-        />
+        {cards.length > 0 && (
+          <Swipe
+            items={cards}
+            className="flex justify-center items-center mt-5 p-2 space-y-2"
+          />
+        )}
         <Content
           workspaceURI={workspaceURI}
           directortyEntryList={directortyEntryList}

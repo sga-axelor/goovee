@@ -1,25 +1,25 @@
 import {notFound} from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import {MdOutlineWeb} from 'react-icons/md';
+import {FaXTwitter} from 'react-icons/fa6';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
+import {getTranslation} from '@/lib/core/i18n/server';
 import {workspacePathname} from '@/utils/workspace';
 import {FaLinkedin, FaInstagram} from 'react-icons/fa';
 import {Avatar, AvatarImage} from '@/ui/components';
 import {getImageURL, getProfilePic} from '@/utils/files';
-import {MdOutlineWeb} from 'react-icons/md';
-import {FaXTwitter} from 'react-icons/fa6';
 
 // ---- LOCAL IMPORTS ---- //
-import {Map} from '../common/ui/components/map';
-import {Category} from '../common/ui/components/pills';
-import {getTranslation} from '@/lib/core/i18n/server';
-import {findEntryDetailById} from '../common/orm/directory-entry';
-import {colors} from '../common/constants';
-import {ContactDetailProps, EntryDetailProps} from '../common/types';
+import {Map} from '../../common/ui/components/map';
+import {Category} from '../../common/ui/components/pills';
+import {findEntryDetailById} from '../../common/orm/directory-entry';
+import {colors} from '../../common/constants';
+import {ContactDetailProps, EntryDetailProps} from '../../common/types';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
 
