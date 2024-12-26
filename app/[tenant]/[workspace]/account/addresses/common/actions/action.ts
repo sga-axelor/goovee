@@ -9,7 +9,7 @@ import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {findCities, findCounty} from '@/orm/address';
+import {findCities, findCountry} from '@/orm/address';
 import {createPartnerAddress, updatePartnerAddress} from '@/orm/address';
 import {PartnerAddress} from '@/types';
 import {manager} from '@/tenant';
@@ -58,7 +58,7 @@ export const fetchCities = async ({
     return {error: true, message: await getTranslation('Invalid workspace')};
   }
 
-  const country: any = await findCounty({id: countryId, tenantId});
+  const country: any = await findCountry({id: countryId, tenantId});
 
   if (!country) {
     return {

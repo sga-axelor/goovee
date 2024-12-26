@@ -258,7 +258,7 @@ export async function findCountries(tenantId: Tenant['id']) {
   return countries;
 }
 
-export async function findCounty({
+export async function findCountry({
   id,
   tenantId,
 }: {
