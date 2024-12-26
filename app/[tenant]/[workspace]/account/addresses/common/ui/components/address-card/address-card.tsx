@@ -57,7 +57,7 @@ export const AddressCard = ({
       onClick={handleSelect}
       className={cn(
         'min-h-56 flex flex-col justify-between gap-4 rounded-lg p-4 border cursor-pointer hover:bg-success-light h-full',
-        isSelected ? 'bg-success-light border-black' : 'border-gray-800',
+        isSelected ? 'bg-success-light border-black' : 'border-gray-300',
       )}>
       <div className="flex flex-col gap-4">
         <div className="font-semibold text-base line-clamp-2">

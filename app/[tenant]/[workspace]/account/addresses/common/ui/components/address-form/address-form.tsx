@@ -225,9 +225,9 @@ export const AddressForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4">
-        <div className="font-medium text-xl">{title}</div>
+        className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
+          <div className="font-medium text-xl">{title}</div>
           <PersonalInformation form={form} isCompany={isCompany} />
           <AddressInformation
             countries={countries}
