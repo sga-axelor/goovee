@@ -50,8 +50,8 @@ const Content = ({order}: {order: any}) => {
 
   const handleInvoiceDownload = async () => {
     try {
-      const result = await getFile({
-        modelId: id,
+      const result: any = await getFile({
+        orderId: id,
         workspaceURL,
         modelName: RELATED_MODELS.SALE_ORDER_MODEL,
         subapp: SUBAPP_CODES.orders,
