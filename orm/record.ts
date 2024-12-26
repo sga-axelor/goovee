@@ -13,7 +13,9 @@ import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/new
 import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/common/orm/tickets';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
+
 import {getWhereClause as getQuotationsWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/utils/quotations';
+import {getWhereClause as getOrdersWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/utils/quotations';
 
 export async function findByID({
   subapp,
@@ -29,7 +31,12 @@ export async function findByID({
   withAuth?: boolean;
   workspaceURL: string;
   tenantId: Tenant['id'];
-}) {
+}): Promise<{
+  success?: boolean;
+  error?: boolean;
+  message?: string;
+  data?: any;
+}> {
   if (!subapp || !id) {
     return {
       error: true,
@@ -53,13 +60,12 @@ export async function findByID({
 
   const session = await getSession();
   const user = session?.user;
-  if (withAuth) {
-    if (!user) {
-      return {
-        error: true,
-        message: await getTranslation('Unauthorized'),
-      };
-    }
+
+  if (withAuth && !user) {
+    return {
+      error: true,
+      message: await getTranslation('Unauthorized User'),
+    };
   }
 
   const app = await findSubappAccess({
@@ -72,7 +78,7 @@ export async function findByID({
   if (!app) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await getTranslation('Unauthorized Access'),
     };
   }
 
@@ -89,16 +95,19 @@ export async function findByID({
     };
   }
 
+  const {role, isContactAdmin} = app;
   let response: any;
 
   switch (subapp) {
     case SUBAPP_CODES.events:
       response = await findEventByID({id, workspace, tenantId, user});
       break;
+
     case SUBAPP_CODES.news:
       const {news}: any = await findNews({id, workspace, tenantId, user});
       response = news?.[0];
       break;
+
     case SUBAPP_CODES.forum:
       const {posts = []}: any = await findPosts({
         whereClause: {id},
@@ -108,6 +117,7 @@ export async function findByID({
       });
       response = posts[0];
       break;
+
     case SUBAPP_CODES.ticketing:
       if (user) {
         response = await findTicketAccess({
@@ -117,29 +127,48 @@ export async function findByID({
             workspaceId: workspace.id.toString(),
             tenantId,
             isContact: user.isContact!,
-            role: app.role,
+            role,
           },
         });
       }
       break;
+
     case SUBAPP_CODES.orders:
-      response = await findOrder({id, tenantId, workspaceURL});
+      if (!user) {
+        return {
+          error: true,
+          message: await getTranslation('Unauthorized User'),
+        };
+      }
+      const orderWhereClause = getOrdersWhereClause({
+        user,
+        role,
+        isContactAdmin,
+      });
+      response = await findOrder({
+        id,
+        tenantId,
+        workspaceURL,
+        params: {where: orderWhereClause},
+      });
       break;
+
     case SUBAPP_CODES.quotations:
       if (!user) {
         return {
           error: true,
-          message: await getTranslation('Unauthorized'),
+          message: await getTranslation('Unauthorized User'),
         };
       }
-
-      const {role, isContactAdmin} = app;
-
-      const where = getQuotationsWhereClause({user, role, isContactAdmin});
+      const quotationWhereClause = getQuotationsWhereClause({
+        user,
+        role,
+        isContactAdmin,
+      });
       response = await findQuotation({
         id,
         tenantId,
-        params: {where},
+        params: {where: quotationWhereClause},
         workspaceURL,
       });
       break;
@@ -147,17 +176,18 @@ export async function findByID({
     default:
       return {
         error: true,
-        message: await getTranslation('Unknown type'),
+        message: await getTranslation('Unknown subapp type'),
       };
   }
 
-  if (!response)
+  if (!response) {
     return {
       error: true,
       message: await getTranslation(
         'Record not found: The requested data does not exist.',
       ),
     };
+  }
 
   return {success: true, data: response};
 }
