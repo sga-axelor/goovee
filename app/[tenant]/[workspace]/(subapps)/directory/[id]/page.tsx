@@ -18,7 +18,8 @@ import {Map} from '../common/ui/components/map';
 import {Category} from '../common/ui/components/pills';
 import {getTranslation} from '@/lib/core/i18n/server';
 import {findEntryDetailById} from '../common/orm/directory-entry';
-import {findDirectoryContactById} from '../common/orm/directory-contact';
+import {CategoryProps} from '../common/ui/components/card';
+import {colors} from '../common/constants';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
 
@@ -35,9 +36,10 @@ type EntryDetailProps = {
   linkedIn?: string;
   isMap?: boolean;
   instagram?: string;
+  directoryEntryCategorySet?: CategoryProps[];
 };
 
-type ContactDetaillProps = {
+type ContactDetailProps = {
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -106,20 +108,20 @@ async function Details({
     isMap,
     image,
     instagram,
+    directoryEntryCategorySet,
   } = entryDetail;
 
-  const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
   return (
     <div>
       <div className="flex bg-card gap-5 justify-between">
         <div className="space-y-4 mt-4">
           <h2 className="font-semibold text-xl">{title}</h2>
-          {category.map((cat, idx) => (
+          {directoryEntryCategorySet?.map((cat, idx) => (
             <Category
-              name={cat?.name}
+              name={cat?.title}
               key={idx}
-              className="me-3"
-              variant={cat?.name}
+              className={`me-3 ${colors[cat.color as keyof typeof colors] ?? ''}`}
+              variant={cat?.color}
             />
           ))}
           <p className="text-success text-base">
@@ -190,7 +192,7 @@ async function Contacts({
   contactDetail,
 }: {
   tenant: string;
-  contactDetail: ContactDetaillProps;
+  contactDetail: ContactDetailProps;
 }) {
   const {firstName, lastName, email, phoneNumber, linkedinLink} = contactDetail;
   return (
@@ -210,16 +212,26 @@ async function Contacts({
         </span>
       </div>
       <div className="ms-4 space-y-4">
-        <h4 className="font-semibold">{await getTranslation('Email')}</h4>
-        <a className="text-sm text-muted-foreground" href={`mailto:${email}`}>
-          {email}
-        </a>
-        <h4 className="font-semibold">{await getTranslation('Phone')}</h4>
-        <a
-          className="text-sm text-muted-foreground"
-          href={`tel:${phoneNumber}`}>
-          {phoneNumber}
-        </a>
+        {email && (
+          <>
+            <h4 className="font-semibold">{await getTranslation('Email')}</h4>
+            <a
+              className="text-sm text-muted-foreground"
+              href={`mailto:${email}`}>
+              {email}
+            </a>
+          </>
+        )}
+        {phoneNumber && (
+          <>
+            <h4 className="font-semibold">{await getTranslation('Phone')}</h4>
+            <a
+              className="text-sm text-muted-foreground"
+              href={`tel:${phoneNumber}`}>
+              {phoneNumber}
+            </a>
+          </>
+        )}
         {linkedinLink && (
           <Link href={`${linkedinLink}`}>
             <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />

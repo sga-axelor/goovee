@@ -5,9 +5,12 @@ import {cn} from '@/utils/css';
 import {Category} from '../pills';
 import Image from 'next/image';
 import {getImageURL} from '@/utils/files';
+import {colors} from '../../../constants';
 
-const category = [{name: 'service'}, {name: 'industry'}, {name: 'wholesale'}];
-
+export type CategoryProps = {
+  title?: string;
+  color?: string;
+};
 export type CardProps = {
   item: {
     id: string;
@@ -18,6 +21,7 @@ export type CardProps = {
     image?: {
       id: string;
     };
+    directoryEntryCategorySet?: CategoryProps[];
   };
   url: string;
   small?: boolean;
@@ -36,8 +40,13 @@ export function Card(props: CardProps) {
             'flex flex-wrap items-center gap-2 ',
             small && 'hidden',
           )}>
-          {category.map((item, index) => (
-            <Category name={item?.name} key={index} variant={item?.name} />
+          {item?.directoryEntryCategorySet?.map((item, index) => (
+            <Category
+              name={item?.title}
+              key={index}
+              variant={item?.color}
+              className={colors[item.color as keyof typeof colors] ?? ''}
+            />
           ))}
         </div>
         <h4 className="font-semibold">{item.title}</h4>

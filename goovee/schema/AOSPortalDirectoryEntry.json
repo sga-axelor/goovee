@@ -64,6 +64,11 @@
       "name": "instagram",
       "column": "directory_entry_instagram",
       "type": "String"
+    },
+    {
+      "name": "directoryEntryCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPortalDirectoryCategory"
     }
   ]
 }

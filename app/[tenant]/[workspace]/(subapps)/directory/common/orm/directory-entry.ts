@@ -45,6 +45,12 @@ export async function findEntryDetailById({
         },
       },
       instagram: true,
+      directoryEntryCategorySet: {
+        select: {
+          title: true,
+          color: true,
+        },
+      },
     },
   });
   return entryDetails;
@@ -78,6 +84,12 @@ export async function findDirectoryEntryList({
       isMap: true,
       description: true,
       image: true,
+      directoryEntryCategorySet: {
+        select: {
+          title: true,
+          color: true,
+        },
+      },
     },
   });
   return entryDetailList;
