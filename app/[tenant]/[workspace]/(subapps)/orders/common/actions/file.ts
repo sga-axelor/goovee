@@ -43,6 +43,9 @@ export async function getFile({
 
     const session = await getSession();
     const user = session?.user;
+    if (!user) {
+      return {error: true, message: await getTranslation('Unauthorized user.')};
+    }
 
     const appAcess = await findSubappAccess({
       code: SUBAPP_CODES.orders,
@@ -52,7 +55,10 @@ export async function getFile({
     });
 
     if (!appAcess) {
-      return {error: true, message: await getTranslation('Unauthorized')};
+      return {
+        error: true,
+        message: await getTranslation('Unauthorized App access.'),
+      };
     }
 
     const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
