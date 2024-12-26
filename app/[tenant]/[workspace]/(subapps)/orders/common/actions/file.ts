@@ -15,18 +15,18 @@ import {clone} from '@/utils';
 import {findByID} from '@/orm/record';
 
 export async function getFile({
-  modelId,
+  orderId,
   workspaceURL,
   modelName,
   subapp,
 }: {
-  modelId: number;
+  orderId: number;
   workspaceURL: string;
   modelName: string;
   subapp: SUBAPP_CODES;
 }) {
   try {
-    if (!modelId) {
+    if (!orderId) {
       return {
         error: true,
         message: await getTranslation('Order Id is missing!'),
@@ -67,7 +67,7 @@ export async function getFile({
       data: modelRecord,
     }: any = await findByID({
       subapp,
-      id: modelId,
+      id: orderId,
       workspaceURL,
       workspace,
       tenantId,
