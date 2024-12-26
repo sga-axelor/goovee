@@ -70,102 +70,104 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
   };
 
   return (
-    <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
-      <h5 className="mb-3 font-medium text-xl">{i18n.get('Log in')}</h5>
-      <form
-        className="bg-card text-card-foreground rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
-        onSubmit={handleSubmit}>
-        <div>
-          <TextField
-            label={i18n.get('Email')}
-            type="email"
-            name="email"
-            placeholder={i18n.get('Enter email')}
-            disabled={submitting}
-            value={values.email}
-            onChange={handleChange}
-          />
-          <TextField
-            label={i18n.get('Password')}
-            placeholder={i18n.get('Password')}
-            name="password"
-            type={showPassword ? 'text' : 'password'}
-            icons={[
-              {
-                icon: showPassword
-                  ? 'MdOutlineVisibility'
-                  : 'MdOutlineVisibilityOff',
-                onClick: toggleShowPassword,
-              },
-            ]}
-            disabled={submitting}
-            value={values.password}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Checkbox variant="success" id="terms" disabled={submitting} />
-            <Label htmlFor="terms" className="ml-2">
-              {i18n.get('Remember Me')}
-            </Label>
+    <div className="container space-y-6 mt-8">
+      <h1 className="text-[2rem] font-bold">{i18n.get('Log In')}</h1>
+      <div className="bg-white py-4 px-6 space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <TextField
+              label={i18n.get('Email')}
+              type="email"
+              name="email"
+              placeholder={i18n.get('Enter email')}
+              disabled={submitting}
+              value={values.email}
+              onChange={handleChange}
+            />
+            <TextField
+              label={i18n.get('Password')}
+              placeholder={i18n.get('Password')}
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              icons={[
+                {
+                  icon: showPassword
+                    ? 'MdOutlineVisibility'
+                    : 'MdOutlineVisibilityOff',
+                  onClick: toggleShowPassword,
+                },
+              ]}
+              disabled={submitting}
+              value={values.password}
+              onChange={handleChange}
+            />
           </div>
-          <Link
-            href={`/auth/forgot-password?${searchQuery}`}
-            aria-disabled={submitting}
-            className="flex underline text-success">
-            {i18n.get('Forgot Password ?')}
-          </Link>
-        </div>
-        <Button
-          variant="success"
-          type="submit"
-          disabled={submitting}
-          className="rounded-full">
-          {i18n.get('Log In')}
-        </Button>
-        {canRegister && (
-          <div className="text-success">
-            <p className="inline-flex text-lg mr-2 mb-0">
-              {i18n.get("Don't have an account yet ?")}
-            </p>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Checkbox variant="success" id="terms" disabled={submitting} />
+              <Label htmlFor="terms" className="ml-2">
+                {i18n.get('Remember Me')}
+              </Label>
+            </div>
             <Link
-              href={`/auth/register?${searchQuery}`}
+              href={`/auth/forgot-password?${searchQuery}`}
               aria-disabled={submitting}
-              className="inline-flex underline text-lg">
-              {i18n.get('Sign Up')}
+              className="flex underline text-success">
+              {i18n.get('Forgot Password ?')}
             </Link>
           </div>
-        )}
-        {searchParams.get('success') && (
-          <div className="text-success-dark">{searchParams.get('success')}</div>
-        )}
-      </form>
-      <div className="flex items-center gap-4 mt-4">
-        <div className="grow">
-          <Separator />
+          <Button
+            variant="success"
+            type="submit"
+            disabled={submitting}
+            className="rounded-full w-full">
+            {i18n.get('Log In')}
+          </Button>
+          {canRegister && (
+            <div className="text-success">
+              <p className="inline-flex text-lg mr-2 mb-0">
+                {i18n.get("Don't have an account yet ?")}
+              </p>
+              <Link
+                href={`/auth/register?${searchQuery}`}
+                aria-disabled={submitting}
+                className="inline-flex underline text-lg">
+                {i18n.get('Sign Up')}
+              </Link>
+            </div>
+          )}
+          {searchParams.get('success') && (
+            <div className="text-success-dark">
+              {searchParams.get('success')}
+            </div>
+          )}
+        </form>
+        <div className="flex items-center gap-4 mt-4">
+          <div className="grow">
+            <Separator />
+          </div>
+          <h5 className="mb-0 font-medium text-xl">{i18n.get('Or')}</h5>
+          <div className="grow">
+            <Separator />
+          </div>
         </div>
-        <h5 className="mb-0 font-medium text-xl">{i18n.get('Or')}</h5>
-        <div className="grow">
-          <Separator />
+        <div className="mt-4">
+          <Button
+            type="button"
+            variant="outline-success"
+            className="w-full rounded-full"
+            onClick={loginWithGoogle}>
+            <Image
+              alt="Google"
+              src="/images/google.svg"
+              height={24}
+              width={24}
+              className="me-2"
+            />
+            {i18n.get('Log In with Google')}
+          </Button>
         </div>
-      </div>
-      <div className="mt-4">
-        <Button
-          type="button"
-          variant="outline-success"
-          className="w-full rounded-full"
-          onClick={loginWithGoogle}>
-          <Image
-            alt="Google"
-            src="/images/google.svg"
-            height={24}
-            width={24}
-            className="me-2"
-          />
-          {i18n.get('Log In with Google')}
-        </Button>
       </div>
     </div>
   );
