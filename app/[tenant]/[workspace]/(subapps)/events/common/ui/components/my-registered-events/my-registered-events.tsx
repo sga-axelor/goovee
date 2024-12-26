@@ -149,49 +149,49 @@ export const MyRegisteredEvents = ({
     );
   };
 
-  useEffect(() => {
-    const findEvents = async () => {
-      try {
-        setPending(true);
-        const response: any = await getAllRegisteredEvents({
-          limit: LIMIT,
-          page,
-          categories: category,
-          search,
-          day: new Date(dateOfEvent).getDate() || undefined,
-          month: new Date(dateOfEvent).getMonth() + 1 || undefined,
-          year: new Date(dateOfEvent).getFullYear() || undefined,
-          workspace,
-          showPastEvents,
-        });
-        if (response?.error) {
-          toast({
-            variant: 'destructive',
-            description: i18n.get(response.error || SOME_WENT_WRONG),
-          });
-        }
-        if (search) {
-          setEvents(response?.data?.events);
-          setEventPageInfo(response?.data?.pageInfo);
-        } else {
-          setEvents({
-            ongoing: onGoingEvents,
-            past: pastEvents,
-            upcoming: upcomingEvents,
-          });
-          setEventPageInfo(pageInfo);
-        }
-      } catch (error) {
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setPage(1);
+    if (e.key === 'Enter') {
+      findEvents();
+    }
+  };
+
+  const findEvents = async () => {
+    try {
+      setPending(true);
+      const response: any = await getAllRegisteredEvents({
+        limit: LIMIT,
+        page,
+        categories: category,
+        search,
+        day: new Date(dateOfEvent).getDate() || undefined,
+        month: new Date(dateOfEvent).getMonth() + 1 || undefined,
+        year: new Date(dateOfEvent).getFullYear() || undefined,
+        workspace,
+        showPastEvents,
+      });
+      if (response?.error) {
         toast({
           variant: 'destructive',
-          description: i18n.get(SOME_WENT_WRONG),
+          description: i18n.get(response.error || SOME_WENT_WRONG),
         });
-      } finally {
-        setPending(false);
       }
-    };
-    if (search) findEvents();
-    else {
+      if (search) {
+        setEvents(response?.data?.events);
+        setEventPageInfo(response?.data?.pageInfo);
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        description: i18n.get(SOME_WENT_WRONG),
+      });
+    } finally {
+      setPending(false);
+    }
+  };
+
+  useEffect(() => {
+    if (search.length === 0) {
       setEvents({
         ongoing: onGoingEvents,
         past: pastEvents,
@@ -199,7 +199,13 @@ export const MyRegisteredEvents = ({
       });
       setEventPageInfo(pageInfo);
     }
-  }, [search, category, dateOfEvent, showPastEvents, pageInfo, page]);
+  }, [search, category, dateOfEvent, showPastEvents, pageInfo]);
+
+  useEffect(() => {
+    if (search && page > 1) {
+      findEvents();
+    }
+  }, [page]);
 
   return (
     <div>
@@ -222,7 +228,11 @@ export const MyRegisteredEvents = ({
         </div>
         <div>
           <div className="mb-4 h-[54px]">
-            <EventSearch handleSearch={handleSearch} />
+            <EventSearch
+              search={search}
+              handleSearch={handleSearch}
+              onKeyDown={handleSearchKeyDown}
+            />
           </div>
           {search && pending ? (
             <p>{i18n.get(SEARCHING)}</p>
