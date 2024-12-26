@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import Link from 'next/link';
 import {useSession} from 'next-auth/react';
 import {useRouter, useSearchParams} from 'next/navigation';
@@ -12,7 +12,7 @@ import {MdOutlineVisibility, MdOutlineVisibilityOff} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {UserType} from '@/auth/types';
 import {i18n} from '@/i18n';
-import {useToast} from '@/ui/hooks';
+import {useCountDown, useToast} from '@/ui/hooks';
 import {
   Form,
   FormControl,
@@ -40,6 +40,8 @@ import {Button} from '@/ui/components/button';
 import {Checkbox} from '@/ui/components/checkbox';
 import {Input} from '@/ui/components/input';
 import {SEARCH_PARAMS} from '@/constants';
+import {cn} from '@/utils/css';
+import {generateOTP} from '@/otp/actions';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -52,6 +54,7 @@ const formSchema = z
     indentificationNumber: z.string(),
     companyNumber: z.string(),
     firstName: z.string(),
+    otp: z.string().min(1, {message: i18n.get('OTP is required')}),
     name: z.string(),
     email: z.string().min(1, {message: i18n.get('Email is required')}),
     phone: z.string(),
@@ -106,6 +109,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
       firstName: '',
       name: '',
       email: '',
+      otp: '',
       phone: '',
       password: '',
       confirmPassword: '',
@@ -125,6 +129,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
   const searchParams = useSearchParams();
   const searchQuery = new URLSearchParams(searchParams).toString();
   const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
+  const {timeRemaining, isExpired, reset} = useCountDown(0);
 
   const showDirectoryControls = form.watch(
     'showProfileAsContactOnDirectory',
@@ -176,7 +181,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     if (!workspace) return;
 
     try {
-      const res = await subscribe({
+      const res: any = await subscribe({
         workspace,
         tenantId,
       });
@@ -197,6 +202,31 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
       toast({
         variant: 'destructive',
         title: i18n.get('Error subscribing, try again'),
+      });
+    }
+  };
+
+  const isCompany = form.watch('type') === UserType.company;
+  const email = form.watch('email');
+
+  const isValidEmail = useMemo(() => {
+    try {
+      z.string().email().parse(email);
+      return true;
+    } catch (err) {}
+    return false;
+  }, [email]);
+
+  const handleGenerateOTP = async () => {
+    if (!tenantId) return;
+
+    try {
+      await generateOTP({email, tenantId});
+      reset(1);
+    } catch (err) {
+      form.setError('email', {
+        type: 'custom',
+        message: i18n.get('Invalid email address'),
       });
     }
   };
@@ -225,8 +255,6 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
       </Dialog>
     );
   }
-
-  const isCompany = form.watch('type') === UserType.company;
 
   return (
     <div className="container space-y-6 mt-8">
@@ -376,25 +404,65 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 <div />
               )}
             </div>
+            <div className="grid grid-cols-2 gap-4 items-start">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.get('Email')}*</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value}
+                        placeholder={i18n.get('Enter email')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div
+                className={cn('grid grid-cols-2 gap-4 items-end', {
+                  'items-center': form.formState.errors.otp,
+                })}>
+                <FormField
+                  control={form.control}
+                  name="otp"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('OTP')}*</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          value={field.value}
+                          placeholder={i18n.get('Enter OTP')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Email')}*</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value}
-                      placeholder={i18n.get('Enter email')}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+                <Button
+                  variant="outline-success"
+                  type="button"
+                  disabled={!email || !isExpired || !isValidEmail}
+                  onClick={handleGenerateOTP}>
+                  {i18n.get('Generate OTP')}
+                </Button>
+              </div>
+            </div>
+            <div
+              className={cn('flex justify-end text-muted-foreground', {
+                hidden: isExpired,
+              })}>
+              <p>
+                {i18n.get('Resend OTP in ')}
+                {timeRemaining.minutes}:{timeRemaining.seconds}
+              </p>
+            </div>
             <FormField
               control={form.control}
               name="password"

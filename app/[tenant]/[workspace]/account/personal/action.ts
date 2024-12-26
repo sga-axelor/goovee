@@ -16,6 +16,9 @@ import {getTranslation} from '@/i18n/server';
 import {clone} from '@/utils';
 import {PartnerTypeMap, findPartnerByEmail, updatePartner} from '@/orm/partner';
 import {UserType} from '@/auth/types';
+import {generateOTP} from '@/otp/actions';
+import {findOne, isValid} from '@/otp/orm';
+import {Scope} from '@/otp/constants';
 
 const pump = promisify(pipeline);
 
@@ -172,6 +175,7 @@ export async function update({
   firstName,
   name,
   email,
+  otp,
 }: {
   companyName?: string;
   identificationNumber?: string;
@@ -179,6 +183,7 @@ export async function update({
   firstName?: string;
   name: string;
   email: string;
+  otp?: string;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
@@ -190,11 +195,45 @@ export async function update({
     return error(await getTranslation('Email is required'));
   }
 
+  const client = await manager.getClient(tenantId);
+
+  if (!client) {
+    return error(await getTranslation('Bad Request'));
+  }
+
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
     return error(await getTranslation('Unauthorized'));
+  }
+
+  if (user.email !== email) {
+    if (!otp) {
+      return error(await getTranslation('OTP is required'));
+    }
+
+    const otpResult = await findOne({
+      scope: Scope.EmailUpdate,
+      entity: email,
+      tenantId,
+    });
+
+    if (!otpResult) {
+      return error(
+        await getTranslation('Invalid OTP', {
+          tenantId,
+        }),
+      );
+    }
+
+    if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
+      return error(
+        await getTranslation('Invalid OTP', {
+          tenantId,
+        }),
+      );
+    }
   }
 
   const partner = await findPartnerByEmail(user.email, tenantId);
@@ -219,11 +258,25 @@ export async function update({
 
   const existingPartner = await findPartnerByEmail(email, tenantId);
 
-  if (existingPartner?.id !== partner.id) {
-    return error(await getTranslation('Email already exists'));
+  if (existingPartner) {
+    if (existingPartner.id !== partner.id)
+      return error(await getTranslation('Email already exists'));
   }
 
   try {
+    if (email !== partner?.emailAddress.address) {
+      const {id, version} = partner?.emailAddress;
+
+      await client.aOSEmailAddress.update({
+        data: {
+          id,
+          version,
+          name: email,
+          address: email,
+        },
+      });
+    }
+
     const updatedPartner = await updatePartner({
       data: {
         id: partner.id,
@@ -232,16 +285,6 @@ export async function update({
         fixedPhone: companyNumber,
         firstName,
         name: isCompany ? companyName : name,
-        ...(email !== partner?.emailAddress?.address
-          ? {
-              emailAddress: {
-                create: {
-                  name: email,
-                  address: email,
-                },
-              },
-            }
-          : {}),
       },
       tenantId,
     });
@@ -253,4 +296,17 @@ export async function update({
   } catch (err) {
     return error(await getTranslation('Error updating settings. Try again.'));
   }
+}
+
+export async function generateOTPForUpdate({email}: {email: string}) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(await getTranslation('TenantId is required'));
+  }
+  return generateOTP({
+    email,
+    scope: Scope.EmailUpdate,
+    tenantId,
+  });
 }

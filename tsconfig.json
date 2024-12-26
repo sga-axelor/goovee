@@ -33,7 +33,9 @@
       "@/tenant/*": ["./lib/core/tenant/*"],
       "@/storage/*": ["./lib/core/storage/*"],
       "@/notification": ["./lib/core/notification/index"],
-      "@/notification/*": ["./lib/core/notification/*"]
+      "@/notification/*": ["./lib/core/notification/*"],
+      "@/otp": ["./lib/core/otp/index"],
+      "@/otp/*": ["./lib/core/otp/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

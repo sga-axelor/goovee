@@ -1,6 +1,8 @@
 'use client';
 
-import {useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useSession} from 'next-auth/react';
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -30,14 +32,15 @@ import {
   AlertDialogAction,
 } from '@/ui/components/alert-dialog';
 import {UserType} from '@/auth/types';
-import {useToast} from '@/ui/hooks';
+import {useCountDown, useToast} from '@/ui/hooks';
 import {getInitials} from '@/utils/names';
 import {getDownloadURL} from '@/utils/files';
+import {cn} from '@/utils/css';
 import {useWorkspace} from '../../workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {Title} from '../common/ui/components';
-import {update, updateProfileImage} from './action';
+import {update, updateProfileImage, generateOTPForUpdate} from './action';
 import {RoleLabel} from '../common/constants';
 
 const formSchema = z
@@ -46,6 +49,8 @@ const formSchema = z
     firstName: z.string(),
     name: z.string(),
     email: z.string(),
+    editEmail: z.boolean().optional(),
+    otp: z.string().optional(),
     companyName: z.string(),
     identificationNumber: z.string(),
     companyNumber: z.string(),
@@ -80,6 +85,18 @@ const formSchema = z
       message: i18n.get('Name is required'),
       path: ['name'],
     },
+  )
+  .refine(
+    data => {
+      if (data.editEmail) {
+        if (!data.otp) return false;
+      }
+      return true;
+    },
+    {
+      message: i18n.get('OTP is required'),
+      path: ['otp'],
+    },
   );
 
 export default function Personal({
@@ -90,7 +107,7 @@ export default function Personal({
     companyNumber,
     firstName,
     name,
-    email,
+    email: emailProp,
     picture: pictureProp,
     fullName,
     role,
@@ -110,11 +127,15 @@ export default function Personal({
   };
 }) {
   const {toast} = useToast();
+  const {data: session, update: updateSession} = useSession();
   const {tenant} = useWorkspace();
   const [confirmation, setConfirmation] = useState<any>(false);
   const [picture, setPicture] = useState<any>(pictureProp);
   const [updatingPicture, setUpdatingPicture] = useState(false);
   const pictureInputRef = useRef<any>();
+  const router = useRouter();
+
+  const {timeRemaining, isExpired, reset} = useCountDown(0);
 
   const isCompany = type === UserType.company;
 
@@ -127,7 +148,8 @@ export default function Personal({
       companyNumber: companyNumber || '',
       firstName: firstName || '',
       name,
-      email,
+      email: emailProp,
+      otp: '',
       role,
       showProfileAsContactOnDirectory: false,
       showNameOnDirectory: false,
@@ -138,15 +160,45 @@ export default function Personal({
     },
   });
 
+  const email = form.watch('email');
+  const editEmail = form.watch('editEmail');
+
+  const updateEmailEdit = (value: boolean) => {
+    form.setValue('editEmail', value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const handleEmailEdit = () => {
+    updateEmailEdit(true);
+  };
+
+  const handleCancelEditEmail = () => {
+    updateEmailEdit(false);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const res = await update(values);
+      const res: any = await update(values);
 
       if ('success' in res) {
         toast({
           variant: 'success',
           title: res.message,
         });
+
+        if (editEmail) {
+          await updateSession({
+            email,
+            id: session?.user?.id,
+            tenantId: tenant,
+          });
+        }
+
+        handleCancelEditEmail();
+
+        router.refresh();
       } else {
         toast({
           variant: 'destructive',
@@ -218,6 +270,26 @@ export default function Personal({
       setPicture(result.data?.id);
     }
     setUpdatingPicture(false);
+  };
+
+  const isValidEmail = useMemo(() => {
+    try {
+      z.string().email().parse(email);
+      return true;
+    } catch (err) {}
+    return false;
+  }, [email]);
+
+  const handleGenerateOTP = async () => {
+    try {
+      await generateOTPForUpdate({email});
+      reset(1);
+    } catch (err) {
+      form.setError('email', {
+        type: 'custom',
+        message: i18n.get('Invalid email address'),
+      });
+    }
   };
 
   return (
@@ -308,23 +380,97 @@ export default function Personal({
                   <div />
                 )}
               </div>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.get('Email')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value}
-                        placeholder={i18n.get('Enter email')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+
+              <div
+                className={cn(
+                  'grid grid-cols-1 md:grid-cols-2 gap-4 items-start',
+                  {
+                    'items-end': !editEmail,
+                  },
+                )}>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.get('Email')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          disabled={!editEmail}
+                          value={field.value}
+                          placeholder={i18n.get('Enter email')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {!editEmail ? (
+                  <Button
+                    variant="outline-success"
+                    className="w-fit"
+                    type="button"
+                    onClick={handleEmailEdit}>
+                    {i18n.get('Update Email')}
+                  </Button>
+                ) : (
+                  <div
+                    className={cn(
+                      'grid grid-cols-1 md:grid-cols-2 gap-4 items-end',
+                      {
+                        'items-center': form.formState.errors.otp,
+                      },
+                    )}>
+                    <FormField
+                      control={form.control}
+                      name="otp"
+                      render={({field}) => (
+                        <FormItem>
+                          <FormLabel>{i18n.get('OTP')}*</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="password"
+                              value={field.value}
+                              placeholder={i18n.get('Enter OTP')}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline-success"
+                        type="button"
+                        disabled={!email || !isExpired || !isValidEmail}
+                        onClick={handleGenerateOTP}>
+                        {i18n.get('Generate OTP')}
+                      </Button>
+                      <Button
+                        variant="outline-destructive"
+                        type="button"
+                        onClick={handleCancelEditEmail}>
+                        {i18n.get('Cancel Email Update')}
+                      </Button>
+                    </div>
+                  </div>
                 )}
-              />
+              </div>
+              {editEmail && (
+                <div
+                  className={cn('flex justify-end text-muted-foreground', {
+                    hidden: isExpired,
+                  })}>
+                  <p>
+                    {i18n.get('Resend OTP in ')}
+                    {timeRemaining.minutes}:{timeRemaining.seconds}
+                  </p>
+                </div>
+              )}
               {isCompany && (
                 <>
                   <FormField

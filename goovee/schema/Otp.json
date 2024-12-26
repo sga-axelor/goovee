@@ -1,0 +1,28 @@
+{
+  "name": "Otp",
+  "table": "portal_otp",
+  "extends": "Model",
+  "synchronize": true,
+  "fields": [
+    {
+      "type": "String",
+      "name": "scope"
+    },
+    {
+      "type": "String",
+      "name": "entity"
+    },
+    {
+      "type": "String",
+      "name": "value"
+    },
+    {
+      "type": "DateTime",
+      "name": "expiresAt"
+    },
+    {
+      "type": "Boolean",
+      "name": "used"
+    }
+  ]
+}

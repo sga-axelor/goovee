@@ -19,6 +19,8 @@ import {getTranslation} from '@/i18n/server';
 import {manager, type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
 import {ALLOW_AOS_ONLY_REGISTRATION, ALLOW_NO_REGISTRATION} from '@/constants';
+import {findOne, isValid} from '@/otp/orm';
+import {Scope} from '@/otp/constants';
 
 function error(message: string) {
   return {
@@ -179,6 +181,7 @@ type RegisterDTO = {
   firstName?: string;
   name: string;
   email: string;
+  otp?: string;
   password?: string;
   confirmPassword?: string;
   workspaceURL?: string;
@@ -270,7 +273,7 @@ export async function register({
 }
 
 export async function registerByEmail(data: RegisterDTO) {
-  const {email, password, confirmPassword, tenantId} = data;
+  const {email, password, confirmPassword, otp, tenantId} = data;
 
   if (!tenantId) {
     return error(await getTranslation('Bad Request'));
@@ -290,11 +293,41 @@ export async function registerByEmail(data: RegisterDTO) {
     );
   }
 
+  if (!otp) {
+    return error(
+      await getTranslation('OTP is required', {
+        tenantId,
+      }),
+    );
+  }
+
+  const otpResult = await findOne({
+    scope: Scope.Registration,
+    entity: email,
+    tenantId,
+  });
+
+  if (!otpResult) {
+    return error(
+      await getTranslation('Invalid OTP', {
+        tenantId,
+      }),
+    );
+  }
+
+  if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
+    return error(
+      await getTranslation('Invalid OTP', {
+        tenantId,
+      }),
+    );
+  }
+
   return register(data);
 }
 
 export async function registerByGoogle(
-  data: Omit<RegisterDTO, 'password' | 'confirmPassword' | 'email'>,
+  data: Omit<RegisterDTO, 'password' | 'confirmPassword' | 'email' | 'otp'>,
 ) {
   const {tenantId} = data;
 
