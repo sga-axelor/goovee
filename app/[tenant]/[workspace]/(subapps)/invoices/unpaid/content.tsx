@@ -69,7 +69,7 @@ export default function Content({
   useEffect(() => {
     if (hasUpcomingInvoices) {
       toast({
-        variant: 'orange',
+        variant: 'warning',
         title: HEADING,
       });
     }
