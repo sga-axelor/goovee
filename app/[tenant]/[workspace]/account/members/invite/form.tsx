@@ -94,7 +94,7 @@ export default function InviteForm({
 
     if ('success' in result) {
       toast({
-        title: i18n.get('Invites send successfully'),
+        title: result.message || i18n.get('Invites send successfully'),
         variant: 'success',
       });
       router.replace(`${workspaceURL}/account/members`);

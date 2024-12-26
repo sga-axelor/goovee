@@ -179,14 +179,29 @@ export async function sendInvites({
 
   const partnerId = (user.isContact ? user.mainPartnerId : user.id) as any;
 
+  let emailsWithMemberAlready,
+    emailsWithDifferentPartner,
+    emailsWithExistingInvite,
+    emailsRegisteredAsPartner;
+  let invitesCount = 0;
+
   for (const email of emailAddresses) {
     try {
       z.string().email({message: 'Invalid email address'}).parse(email);
 
       const existingContact = await findPartnerByEmail(email, tenantId);
 
+      if (
+        !existingContact?.isContact &&
+        existingContact?.isRegisteredOnPortal
+      ) {
+        emailsRegisteredAsPartner = true;
+        continue; // don't send invite to email already registered as partner
+      }
+
       if (existingContact?.mainPartner) {
         if (existingContact.mainPartner.id !== partnerId) {
+          emailsWithDifferentPartner = true;
           continue; // don't send invite to contact with different partner
         }
       }
@@ -196,6 +211,7 @@ export async function sendInvites({
       );
 
       if (memberAlready) {
+        emailsWithMemberAlready = true;
         continue; // don't send invite to contact if already a member
       }
 
@@ -206,6 +222,7 @@ export async function sendInvites({
       });
 
       if (existingInvite) {
+        emailsWithExistingInvite = true;
         continue;
       }
 
@@ -222,6 +239,8 @@ export async function sendInvites({
         inviteError = true;
         continue;
       }
+
+      invitesCount += 1;
 
       const mailService = NotificationManager.getService(NotificationType.mail);
 
@@ -241,9 +260,44 @@ export async function sendInvites({
     return error(await getTranslation('Error sending invites, try again.'));
   } else {
     revalidatePath(`${workspace.url}/account/members`);
+
+    let message = '';
+
+    const isSuccess = invitesCount > 0;
+
+    if (isSuccess) {
+      message = await getTranslation('Invites send successfully.');
+    }
+
+    if (
+      emailsWithMemberAlready ||
+      emailsWithDifferentPartner ||
+      emailsWithExistingInvite ||
+      emailsRegisteredAsPartner
+    ) {
+      message += `\n ${await getTranslation('Some invites are not send for the following ')} ${await getTranslation('reason')} : `;
+
+      let errors = [];
+
+      emailsWithMemberAlready &&
+        errors.push(await getTranslation('Members already exists'));
+
+      emailsWithExistingInvite &&
+        errors.push(await getTranslation('Invites already exists'));
+
+      emailsWithDifferentPartner &&
+        errors.push(
+          await getTranslation('Registered under different partner already'),
+        );
+
+      emailsRegisteredAsPartner &&
+        errors.push(await getTranslation('Registered as partner already'));
+
+      message += errors.join(', ');
+    }
     return {
-      success: true,
-      message: await getTranslation('Invites send successfully.'),
+      ...(isSuccess ? {success: true} : {error: true}),
+      message,
     };
   }
 }
