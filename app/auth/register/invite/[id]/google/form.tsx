@@ -28,6 +28,7 @@ import {fetchUpdatedSession, registerByGoogle} from '../action';
 const formSchema = z.object({
   firstName: z.string(),
   name: z.string().min(1, {message: i18n.get('Last name is required.')}),
+  email: z.string().optional(),
 });
 
 export default function SignUp({
@@ -44,6 +45,7 @@ export default function SignUp({
     defaultValues: {
       firstName: '',
       name: '',
+      email,
     },
   });
 
@@ -116,7 +118,19 @@ export default function SignUp({
             <h2 className="text-xl font-medium">
               {i18n.get('Personal information')}
             </h2>
-
+            <FormField
+              control={form.control}
+              name="email"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Email')}</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value} disabled />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}

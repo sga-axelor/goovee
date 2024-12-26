@@ -50,6 +50,7 @@ const formSchema = z
     indentificationNumber: z.string(),
     companyNumber: z.string(),
     firstName: z.string(),
+    email: z.string().optional(),
     name: z.string(),
     phone: z.string(),
     showProfileAsContactOnDirectory: z.boolean(),
@@ -97,6 +98,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
       companyNumber: '',
       firstName: '',
       name: '',
+      email: user?.email,
       phone: '',
       showProfileAsContactOnDirectory: false,
       showNameOnDirectory: false,
@@ -338,6 +340,19 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
               </>
             )}
 
+            <FormField
+              control={form.control}
+              name="email"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>{i18n.get('Email')}</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value} disabled />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
