@@ -4,12 +4,11 @@ import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
-import {Loader, Separator} from '@/ui/components';
+import {DocViewer, Loader, Separator} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
-import {PdfViewer} from '@/subapps/invoices/common/ui/components';
 import {getPDF} from '@/subapps/invoices/common/actions';
 import {UNABLE_TO_FIND_INVOICE} from '@/subapps/invoices/common/constants/invoices';
 
@@ -47,7 +46,7 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
         <h4 className="text-xl font-medium mb-0">{i18n.get('Invoice')}</h4>
         <Separator />
         {file ? (
-          <PdfViewer file={file} id={id} />
+          <DocViewer file={file} />
         ) : isError ? (
           <p>{i18n.get(UNABLE_TO_FIND_INVOICE)}</p>
         ) : (

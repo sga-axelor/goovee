@@ -15,7 +15,6 @@ export {ThreadList} from './thread-list';
 export {Thread, ThreadHeader, ThreadBody, ThreadFooter} from './thread';
 export {ImageGallery} from './image-gallery';
 export {ThreadPopup} from './thread-popup';
-export {PdfViewer} from './pdf-viewer';
 export {InfiniteScroll} from './infinite-scroll';
 export {SearchItem} from './search-item';
 export {FilePreviewer} from './file-previewer';

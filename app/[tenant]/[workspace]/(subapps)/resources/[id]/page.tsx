@@ -9,12 +9,12 @@ import {parseDate} from '@/utils/date';
 import {getTranslation} from '@/i18n/server';
 import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
+import {DocViewer} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import DownloadIcon from './download-icon';
 import ImageViewer from './image-viewer';
 import HTMLViewer from './html-viewer';
-import DocViewer from './doc-viewer';
 import {findWorkspace} from '@/orm/workspace';
 
 const viewer: Record<string, React.JSXElementConstructor<any>> = {

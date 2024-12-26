@@ -221,3 +221,4 @@ export {TableList, SortableHeader, ExpandableTableRows} from './table-list';
 export {Chip} from './chip';
 export {ArrowSwitch} from './arrow-switch';
 export {DropdownSelector} from './dropdown-selector';
+export {DocViewer} from './doc-viewer';
