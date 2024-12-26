@@ -60,13 +60,21 @@ export default async function Page({
     isContactAdmin,
   });
 
-  const {quotations, pageInfo}: any = await fetchQuotations({
-    page: page || DEFAULT_PAGE,
-    limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    where,
+  const result: any = await fetchQuotations({
+    params: {
+      where,
+      page: page || DEFAULT_PAGE,
+      limit: limit ? Number(limit) : DEFAULT_LIMIT,
+    },
     tenantId: tenant,
     workspaceURL,
   });
+
+  if (!result) {
+    return notFound();
+  }
+
+  const {quotations, pageInfo} = result;
 
   return <Content quotations={clone(quotations)} pageInfo={pageInfo} />;
 }

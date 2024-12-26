@@ -3,6 +3,7 @@ import {type Tenant} from '@/tenant';
 import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
+  DEFAULT_PAGE,
   ORDER_BY,
 } from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
@@ -13,20 +14,28 @@ import {manager} from '@/tenant';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 
 export const fetchQuotations = async ({
-  page,
-  limit,
-  where,
+  params = {},
   tenantId,
   workspaceURL,
 }: {
   archived?: boolean;
-  limit?: string | number;
-  page?: string | number;
-  where?: any;
+  params?: {
+    where?: object & {
+      clientPartner?: {
+        id: ID;
+      };
+    };
+    limit?: string | number;
+    page?: string | number;
+  };
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
 }) => {
-  if (!(tenantId && workspaceURL)) return {quotations: [], pageInfo: {}};
+  const {page = DEFAULT_PAGE, limit, where = {}} = params;
+  const {id: clientPartnerId} = where.clientPartner || {};
+
+  if (!(clientPartnerId && tenantId && workspaceURL))
+    return {quotations: [], pageInfo: {}};
 
   const client = await manager.getClient(tenantId);
   const skip = getSkipInfo(limit, page);
