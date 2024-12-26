@@ -81,11 +81,23 @@ export default async function Page({
         <Details entryDetail={entryDetail} tenant={tenant} />
         <Map className="h-80 w-full" markers={markers} />
       </div>
-      <div className="bg-card p-4">
-        {entryDetail?.directoryContactSet?.map(contact => (
-          <Contacts key={contact.id} tenant={tenant} contactDetail={contact} />
-        ))}
-      </div>
+      {entryDetail?.directoryContactSet?.length > 0 && (
+        <>
+          <h2 className="font-semibold text-xl">
+            {await getTranslation(
+              `${entryDetail?.directoryContactSet?.length > 1 ? 'Contacts' : 'Contact'}`,
+            )}
+          </h2>
+
+          {entryDetail?.directoryContactSet?.map(contact => (
+            <Contacts
+              key={contact.id}
+              tenant={tenant}
+              contactDetail={contact}
+            />
+          ))}
+        </>
+      )}
     </div>
   );
 }
@@ -196,10 +208,7 @@ async function Contacts({
 }) {
   const {firstName, lastName, email, phoneNumber, linkedinLink} = contactDetail;
   return (
-    <div className="space-y-4">
-      <h2 className="font-semibold text-xl">
-        {await getTranslation('Contact')}
-      </h2>
+    <div className="bg-card space-y- p-4">
       <div className="flex items-center gap-2">
         <Avatar className="h-10 w-10">
           <AvatarImage
