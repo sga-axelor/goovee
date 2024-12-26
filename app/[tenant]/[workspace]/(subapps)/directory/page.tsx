@@ -23,16 +23,11 @@ import Content from '../directory/content';
 import {getPages} from '../ticketing/common/utils';
 import {getSkip} from '../ticketing/common/utils/search-param';
 import {colors} from './common/constants';
-import {findDirectoryCategories} from './common/orm/directory-category';
-import {findDirectoryEntryList} from './common/orm/directory-entry';
+import {findCategories} from './common/orm/directory-category';
+import {findEntries} from './common/orm/directory-entry';
 import {DirectoryCards} from './common/ui/components/category-card';
 import {Swipe} from './common/ui/components/swipe';
 import Hero from './hero';
-const markers = [
-  {lat: 48.85341, lng: 2.3488},
-  {lat: 48.85671, lng: 2.4475},
-  {lat: 48.80671, lng: 2.4075},
-];
 
 const icons = [
   materialIcon['MdAllInbox'],
@@ -69,14 +64,14 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const categories = await findDirectoryCategories({
+  const categories = await findCategories({
     workspaceId: workspace.id,
     tenantId: tenant,
   });
 
   // TODO: change it to direcotory app later
   const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
-  const directortyEntryList = await findDirectoryEntryList({
+  const directortyEntryList = await findEntries({
     take: +limit,
     skip: getSkip(limit, page),
     workspaceId: workspace.id,
@@ -117,7 +112,7 @@ export default async function Page({
         )}
         <Content
           workspaceURI={workspaceURI}
-          directortyEntryList={directortyEntryList}
+          items={directortyEntryList}
           tenant={tenant}
           pages={pages}
           searchParams={searchParams}

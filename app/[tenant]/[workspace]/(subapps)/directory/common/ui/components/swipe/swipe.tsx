@@ -34,5 +34,3 @@ export function Swipe({items, className}: SwipeProps) {
     </Swiper>
   );
 }
-
-export default Swipe;

@@ -2,24 +2,14 @@ import Link from 'next/link';
 
 import {cn} from '@/utils/css';
 
-import {Category} from '../pills';
-import Image from 'next/image';
 import {getImageURL} from '@/utils/files';
+import Image from 'next/image';
 import {colors} from '../../../constants';
-import {CategoryProps} from '../../../types';
+import {ListEntry} from '../../../orm';
+import {Category} from '../pills';
 
 export type CardProps = {
-  item: {
-    id?: string;
-    title?: string;
-    address?: string;
-    description?: string;
-    city?: string;
-    image?: {
-      id?: string;
-    };
-    directoryEntryCategorySet?: CategoryProps[];
-  };
+  item: ListEntry;
   url: string;
   small?: boolean;
   tenant: string;

@@ -1,25 +1,24 @@
-import {notFound} from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
-import {MdOutlineWeb} from 'react-icons/md';
+import Link from 'next/link';
+import {notFound} from 'next/navigation';
 import {FaXTwitter} from 'react-icons/fa6';
+import {MdOutlineWeb} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
-import {clone} from '@/utils';
 import {getTranslation} from '@/lib/core/i18n/server';
-import {workspacePathname} from '@/utils/workspace';
-import {FaLinkedin, FaInstagram} from 'react-icons/fa';
+import {findWorkspace} from '@/orm/workspace';
 import {Avatar, AvatarImage} from '@/ui/components';
+import {clone} from '@/utils';
 import {getImageURL, getProfilePic} from '@/utils/files';
+import {workspacePathname} from '@/utils/workspace';
+import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
+import {colors} from '../../common/constants';
+import {Entry, findEntry} from '../../common/orm';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
-import {findEntryDetailById} from '../../common/orm/directory-entry';
-import {colors} from '../../common/constants';
-import {ContactDetailProps, EntryDetailProps} from '../../common/types';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
 
@@ -44,31 +43,29 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const entryDetail = await findEntryDetailById({
+  const entry = await findEntry({
     id,
     workspaceId: workspace.id,
     tenantId: tenant,
   }).then(clone);
-  if (!entryDetail) {
-    notFound();
-  }
+  if (!entry) notFound();
 
-  console.dir(entryDetail, {depth: null});
+  console.dir(entry, {depth: null});
   return (
     <div className="container flex flex-col gap-4 mt-4">
       <div className="flex flex-col gap-4 bg-card p-4">
-        <Details entryDetail={entryDetail} tenant={tenant} />
+        <Details entryDetail={entry} tenant={tenant} />
         <Map className="h-80 w-full" markers={markers} />
       </div>
-      {entryDetail?.directoryContactSet?.length > 0 && (
+      {entry.directoryContactSet && entry.directoryContactSet?.length > 0 && (
         <>
           <h2 className="font-semibold text-xl">
             {await getTranslation(
-              `${entryDetail?.directoryContactSet?.length > 1 ? 'Contacts' : 'Contact'}`,
+              `${entry.directoryContactSet.length > 1 ? 'Contacts' : 'Contact'}`,
             )}
           </h2>
 
-          {entryDetail?.directoryContactSet?.map(contact => (
+          {entry.directoryContactSet.map(contact => (
             <Contacts
               key={contact.id}
               tenant={tenant}
@@ -85,7 +82,7 @@ async function Details({
   entryDetail,
   tenant,
 }: {
-  entryDetail: EntryDetailProps;
+  entryDetail: Entry;
   tenant: string;
 }) {
   const {
@@ -183,7 +180,7 @@ async function Contacts({
   contactDetail,
 }: {
   tenant: string;
-  contactDetail: ContactDetailProps;
+  contactDetail: NonNullable<Entry['directoryContactSet']>[number];
 }) {
   const {firstName, lastName, email, phoneNumber, linkedinLink} = contactDetail;
   return (

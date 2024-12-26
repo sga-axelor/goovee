@@ -4,8 +4,10 @@ import {ORDER_BY} from '@/constants';
 import {getTranslation} from '@/lib/core/i18n/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
+import {Expand} from '@/types/util';
 
-export async function findEntryDetailById({
+export type Entry = Expand<NonNullable<Awaited<ReturnType<typeof findEntry>>>>;
+export async function findEntry({
   id,
   workspaceId,
   tenantId,
@@ -20,10 +22,8 @@ export async function findEntryDetailById({
 
   const c = await manager.getClient(tenantId);
 
-  const entryDetails = await c.aOSPortalDirectoryEntry.findOne({
-    where: {
-      id,
-    },
+  const entry = await c.aOSPortalDirectoryEntry.findOne({
+    where: {id},
     select: {
       title: true,
       city: true,
@@ -45,33 +45,34 @@ export async function findEntryDetailById({
         },
       },
       instagram: true,
-      directoryEntryCategorySet: {
-        select: {
-          title: true,
-          color: true,
-        },
-      },
+      directoryEntryCategorySet: {select: {title: true, color: true}},
     },
   });
-  return entryDetails;
+  return entry;
 }
 
-export async function findDirectoryEntryList({
+export type ListEntry = Expand<
+  NonNullable<Awaited<ReturnType<typeof findEntries>>>[number]
+>;
+export async function findEntries({
   take,
   skip,
   workspaceId,
   tenantId,
+  categoryId,
 }: {
   take?: number;
   skip?: number;
   workspaceId?: string;
+  categoryId?: ID;
   tenantId: Tenant['id'];
 }) {
   if (!(workspaceId && tenantId)) {
     throw new Error(await getTranslation('Missing required parameters'));
   }
   const c = await manager.getClient(tenantId);
-  const entryDetailList = await c.aOSPortalDirectoryEntry.find({
+  const entries = await c.aOSPortalDirectoryEntry.find({
+    ...(categoryId && {where: {directoryEntryCategorySet: {id: categoryId}}}),
     orderBy: {id: ORDER_BY.ASC} as any,
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
@@ -83,13 +84,8 @@ export async function findDirectoryEntryList({
       zipcode: true,
       description: true,
       image: true,
-      directoryEntryCategorySet: {
-        select: {
-          title: true,
-          color: true,
-        },
-      },
+      directoryEntryCategorySet: {select: {title: true, color: true}},
     },
   });
-  return entryDetailList;
+  return entries;
 }

@@ -8,10 +8,8 @@ import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
 import {useMapsLibrary} from '@vis.gl/react-google-maps';
 
-import {Marker} from './marker';
-import {LatLng} from './types';
-import {Cloned} from '@/types/util';
 import {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
+import {Cloned} from '@/types/util';
 
 type MapProps = {
   className?: string;

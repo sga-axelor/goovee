@@ -1,4 +1,3 @@
-import {Card} from './common/ui/components/card';
 import {
   Pagination,
   PaginationContent,
@@ -7,17 +6,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/ui/components/pagination';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
-import {Map} from './common/ui/components/map';
-import {Sort} from './common/ui/components/sort';
 import {clone} from '@/utils';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {getPaginationButtons} from '../ticketing/common/utils';
-import {DirectoryEntryListProp} from './common/types';
+import type {ListEntry} from './common/orm';
+import {Card} from './common/ui/components/card';
+import {Map} from './common/ui/components/map';
+import {Sort} from './common/ui/components/sort';
 
 type ContentProps = {
   workspaceURI?: any;
-  directortyEntryList?: DirectoryEntryListProp[];
+  items?: ListEntry[];
   tenant?: any;
   pages?: any;
   searchParams?: any;
@@ -27,7 +27,7 @@ type ContentProps = {
 const Content = ({
   workspaceURI,
   tenant,
-  directortyEntryList,
+  items,
   pages,
   searchParams,
   entries,
@@ -40,7 +40,7 @@ const Content = ({
           <Sort />
         </aside>
         <main className="grow flex flex-col gap-4">
-          {directortyEntryList?.map(item => (
+          {items?.map(item => (
             <Card
               item={item}
               url={`${workspaceURI}/directory/entry/${item.id}`}

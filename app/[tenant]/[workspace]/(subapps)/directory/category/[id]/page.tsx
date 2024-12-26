@@ -1,10 +1,4 @@
 import {notFound} from 'next/navigation';
-
-// ---- CORE IMPORTS ---- //
-import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
-import {clone} from '@/utils';
-import {workspacePathname} from '@/utils/workspace';
 import * as materialIcon from 'react-icons/md';
 import {
   MdMoney,
@@ -17,20 +11,22 @@ import {
 } from 'react-icons/md';
 import {TbTool} from 'react-icons/tb';
 
+// ---- CORE IMPORTS ---- //
+import {getSession} from '@/auth';
+import {getTranslation} from '@/lib/core/i18n/server';
+import {findWorkspace} from '@/orm/workspace';
+import {Button} from '@/ui/components';
+import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
+
 // ---- LOCAL IMPORTS ---- //
 
-import {
-  findCategoryName,
-  findDirectoryEntriesByCategoryId,
-  findDirectorySubCategoriesById,
-} from '../../common/orm/directory-category';
-import {Swipe} from '../../common/ui/components/swipe';
-
-import {getTranslation} from '@/lib/core/i18n/server';
-import {Button} from '@/ui/components';
 import {getPages} from '../../../ticketing/common/utils';
 import {colors} from '../../common/constants';
+import {findCategory} from '../../common/orm';
+import {findEntries} from '../../common/orm/directory-entry';
 import {DirectoryCards} from '../../common/ui/components/category-card';
+import {Swipe} from '../../common/ui/components/swipe';
 import Content from '../../content';
 
 const icons = [
@@ -68,15 +64,15 @@ export default async function Page({
   if (!workspace) notFound();
   const {id} = params;
 
-  const category = await findDirectorySubCategoriesById({
+  const category = await findCategory({
     id,
     workspaceId: workspace.id,
     tenantId: tenant,
   });
   if (!category) notFound();
 
-  const entries = await findDirectoryEntriesByCategoryId({
-    id,
+  const entries = await findEntries({
+    categoryId: id,
     workspaceId: workspace.id,
     tenantId: tenant,
   });
@@ -113,7 +109,7 @@ export default async function Page({
         )}
         <Content
           workspaceURI={workspaceURI}
-          directortyEntryList={entries}
+          items={entries}
           entries={entries}
           tenant={tenant}
           pages={pages}
