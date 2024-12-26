@@ -18,6 +18,11 @@
       "name": "icon",
       "column": "directory_category_icon",
       "type": "String"
+    },
+    {
+      "name": "directoryCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPortalDirectoryCategory"
     }
   ]
 }

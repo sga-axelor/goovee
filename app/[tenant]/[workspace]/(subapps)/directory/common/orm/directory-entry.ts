@@ -1,20 +1,20 @@
 import {manager} from '@/tenant';
 
-import type {ID, PortalWorkspace} from '@/types';
-import type {Tenant} from '@/tenant';
 import {ORDER_BY} from '@/constants';
 import {getTranslation} from '@/lib/core/i18n/server';
+import type {Tenant} from '@/tenant';
+import type {ID} from '@/types';
 
 export async function findEntryDetailById({
   id,
-  workspace,
+  workspaceId,
   tenantId,
 }: {
   id: ID;
-  workspace?: PortalWorkspace;
+  workspaceId?: string;
   tenantId: Tenant['id'];
 }) {
-  if (!(id && workspace && tenantId)) {
+  if (!(id && workspaceId && tenantId)) {
     throw new Error(await getTranslation('Missing required parameters'));
   }
 
@@ -59,15 +59,15 @@ export async function findEntryDetailById({
 export async function findDirectoryEntryList({
   take,
   skip,
-  workspace,
+  workspaceId,
   tenantId,
 }: {
   take?: number;
   skip?: number;
-  workspace?: PortalWorkspace;
+  workspaceId?: string;
   tenantId: Tenant['id'];
 }) {
-  if (!(workspace && tenantId)) {
+  if (!(workspaceId && tenantId)) {
     throw new Error(await getTranslation('Missing required parameters'));
   }
   const c = await manager.getClient(tenantId);
@@ -81,7 +81,6 @@ export async function findDirectoryEntryList({
       city: true,
       address: true,
       zipcode: true,
-      isMap: true,
       description: true,
       image: true,
       directoryEntryCategorySet: {

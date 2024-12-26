@@ -18,34 +18,10 @@ import {Map} from '../common/ui/components/map';
 import {Category} from '../common/ui/components/pills';
 import {getTranslation} from '@/lib/core/i18n/server';
 import {findEntryDetailById} from '../common/orm/directory-entry';
-import {CategoryProps} from '../common/ui/components/card';
 import {colors} from '../common/constants';
+import {ContactDetailProps, EntryDetailProps} from '../common/types';
 
 const markers = [{lat: 48.85341, lng: 2.3488}];
-
-type EntryDetailProps = {
-  title?: string;
-  city?: string;
-  address?: string;
-  twitter?: string;
-  website?: string;
-  description?: string;
-  image?: {
-    id: string;
-  };
-  linkedIn?: string;
-  isMap?: boolean;
-  instagram?: string;
-  directoryEntryCategorySet?: CategoryProps[];
-};
-
-type ContactDetailProps = {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phoneNumber?: string;
-  linkedinLink?: string;
-};
 
 export default async function Page({
   params,
@@ -70,9 +46,12 @@ export default async function Page({
 
   const entryDetail = await findEntryDetailById({
     id,
-    workspace,
+    workspaceId: workspace.id,
     tenantId: tenant,
   }).then(clone);
+  if (!entryDetail) {
+    notFound();
+  }
 
   console.dir(entryDetail, {depth: null});
   return (

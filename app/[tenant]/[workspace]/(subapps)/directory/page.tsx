@@ -1,11 +1,8 @@
-import Link from 'next/link';
 import {notFound} from 'next/navigation';
-import {IconType} from 'react-icons';
 import {
-  MdAllInbox,
-  MdOutlineFoodBank,
   MdMoney,
   MdOutlineDiamond,
+  MdOutlineFoodBank,
   MdOutlineMedicalServices,
   MdOutlineSmartphone,
   MdOutlineSupervisedUserCircle,
@@ -17,38 +14,20 @@ import {getSession} from '@/auth';
 import {IMAGE_URL} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 
-import {MdOutlineNotificationAdd} from 'react-icons/md';
-
 // ---- LOCAL IMPORTS ---- //
-import Hero from './hero';
-import {Button} from '@/ui/components';
-import {Card} from './common/ui/components/card';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/ui/components/pagination';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
-import {getPages, getPaginationButtons} from '../ticketing/common/utils';
-import {Map} from './common/ui/components/map';
-import {Sort} from './common/ui/components/sort';
-import {Swipe} from './common/ui/components/swipe';
-import {getTranslation} from '@/lib/core/i18n/server';
-import {findDirectoryEntryList} from './common/orm/directory-entry';
-import {
-  findDirectoryCategories,
-  findDirectoryEntries,
-} from './common/orm/directory-category';
-import {colors} from './common/constants';
+import * as materialIcon from 'react-icons/md';
+import Content from '../directory/content';
+import {getPages} from '../ticketing/common/utils';
 import {getSkip} from '../ticketing/common/utils/search-param';
-
+import {colors} from './common/constants';
+import {findDirectoryCategories} from './common/orm/directory-category';
+import {findDirectoryEntryList} from './common/orm/directory-entry';
+import {DirectoryCards} from './common/ui/components/category-card';
+import {Swipe} from './common/ui/components/swipe';
+import Hero from './hero';
 const markers = [
   {lat: 48.85341, lng: 2.3488},
   {lat: 48.85671, lng: 2.4475},
@@ -56,7 +35,7 @@ const markers = [
 ];
 
 const icons = [
-  MdAllInbox,
+  materialIcon['MdAllInbox'],
   MdOutlineFoodBank,
   MdMoney,
   MdOutlineDiamond,
@@ -91,7 +70,7 @@ export default async function Page({
   if (!workspace) notFound();
 
   const categories = await findDirectoryCategories({
-    workspace,
+    workspaceId: workspace.id,
     tenantId: tenant,
   });
 
@@ -100,12 +79,7 @@ export default async function Page({
   const directortyEntryList = await findDirectoryEntryList({
     take: +limit,
     skip: getSkip(limit, page),
-    workspace,
-    tenantId: tenant,
-  });
-
-  const entries = await findDirectoryEntries({
-    workspace,
+    workspaceId: workspace.id,
     tenantId: tenant,
   });
 
@@ -116,6 +90,8 @@ export default async function Page({
 
   const cards = categories.map((category, i) => (
     <DirectoryCards
+      workspaceURI={workspaceURI}
+      id={category.id}
       key={category.id}
       icon={icons[i] ?? MdOutlineSupervisedUserCircle}
       label={category.title ?? ''}
@@ -133,127 +109,19 @@ export default async function Page({
         tenantId={tenant}
       />
       <div className="container mb-5">
-        <div className="flex items-center justify-between mt-5">
-          <p className="text-xl font-semibold">
-            {await getTranslation('Services')}
-          </p>
-          <Button variant="success" className="flex items-center">
-            <MdOutlineNotificationAdd className="size-6 me-2" />
-            <span>{await getTranslation('Subscribe')}</span>
-          </Button>
-        </div>
         <Swipe
           items={cards}
           className="flex justify-center items-center mt-5 p-2 space-y-2"
         />
-        <div className="flex has-[.expand]:flex-col gap-4 mt-4">
-          <aside className="space-y-4">
-            <Map showExpand locations={clone(entries)} />
-            <Sort />
-          </aside>
-          <main className="grow flex flex-col gap-4">
-            {directortyEntryList.map(item => (
-              <Card
-                item={item}
-                url={`${workspaceURI}/directory/${item.id}`}
-                key={item.id}
-                tenant={tenant}
-              />
-            ))}
-          </main>
-        </div>
-        <CardPagination
-          url={`${workspaceURI}/directory`}
+        <Content
+          workspaceURI={workspaceURI}
+          directortyEntryList={directortyEntryList}
+          tenant={tenant}
           pages={pages}
           searchParams={searchParams}
+          entries={directortyEntryList}
         />
       </div>
     </>
-  );
-}
-
-type CardPaginationProps = {
-  url: string;
-  searchParams: {page?: number; limit?: number};
-  pages: number;
-};
-
-function CardPagination({url, searchParams, pages}: CardPaginationProps) {
-  const {page = 1} = searchParams;
-
-  return (
-    <Pagination className="p-4">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious asChild>
-            <Link
-              replace
-              scroll={false}
-              className={+page <= 1 ? 'invisible' : ''}
-              href={{pathname: url, query: {...searchParams, page: +page - 1}}}>
-              <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">Previous</span>
-            </Link>
-          </PaginationPrevious>
-        </PaginationItem>
-        {getPaginationButtons({currentPage: +page, totalPages: pages}).map(
-          (value, i) =>
-            typeof value === 'string' ? (
-              <PaginationItem key={i}>
-                <span className="pagination-ellipsis">...</span>
-              </PaginationItem>
-            ) : (
-              <PaginationItem key={value}>
-                <PaginationLink isActive={+page === value} asChild>
-                  <Link
-                    replace
-                    scroll={false}
-                    href={{
-                      pathname: url,
-                      query: {...searchParams, page: value},
-                    }}>
-                    {value}
-                  </Link>
-                </PaginationLink>
-              </PaginationItem>
-            ),
-        )}
-        <PaginationItem>
-          <PaginationNext asChild>
-            <Link
-              replace
-              scroll={false}
-              className={+page >= pages ? 'invisible' : ''}
-              href={{pathname: url, query: {...searchParams, page: +page + 1}}}>
-              <span className="sr-only">Next</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </PaginationNext>
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  );
-}
-
-type DirectoryCardsProps = {
-  label: string;
-  icon: IconType;
-  iconClassName: string;
-};
-
-function DirectoryCards(props: DirectoryCardsProps) {
-  const {label, icon: Icon, iconClassName} = props;
-  return (
-    <Link href="">
-      <div
-        className={cn(
-          iconClassName,
-          'flex items-center justify-center  h-14 w-14 rounded-full m-auto',
-        )}>
-        <Icon className="h-10 w-10 " />
-      </div>
-
-      <p className="text-[0.8125rem] font-semibold text-center mt-1">{label}</p>
-    </Link>
   );
 }

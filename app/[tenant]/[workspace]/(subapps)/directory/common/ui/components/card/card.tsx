@@ -6,20 +6,17 @@ import {Category} from '../pills';
 import Image from 'next/image';
 import {getImageURL} from '@/utils/files';
 import {colors} from '../../../constants';
+import {CategoryProps} from '../../../types';
 
-export type CategoryProps = {
-  title?: string;
-  color?: string;
-};
 export type CardProps = {
   item: {
-    id: string;
+    id?: string;
     title?: string;
     address?: string;
     description?: string;
     city?: string;
     image?: {
-      id: string;
+      id?: string;
     };
     directoryEntryCategorySet?: CategoryProps[];
   };
