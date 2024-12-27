@@ -22,3 +22,10 @@ export const colors = {
   black: 'bg-black/30 text-black',
   white: 'bg-white/30 text-white',
 };
+
+export const orderByMap: Record<string, any> = {
+  'a-z': {title: 'ASC'},
+  'z-a': {title: 'DESC'},
+  newest: {createdOn: 'DESC'},
+  oldest: {createdOn: 'ASC'},
+};

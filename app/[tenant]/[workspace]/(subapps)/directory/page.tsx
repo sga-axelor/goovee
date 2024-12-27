@@ -28,7 +28,7 @@ import {findEntries} from './common/orm/directory-entry';
 import {DirectoryCards} from './common/ui/components/category-card';
 import {Swipe} from './common/ui/components/swipe';
 import Hero from './hero';
-import {getOrderBy} from './common/utils/orderByEntries';
+import {getOrderBy} from './common/utils';
 
 const icons = [
   materialIcon['MdAllInbox'],
