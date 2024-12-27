@@ -19,8 +19,8 @@ import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from '../directory/content';
-import {getPages} from '../ticketing/common/utils';
+import {Content} from '../directory/content';
+import {getPages} from '../ticketing/common/utils'; //TODO: extract ticketing imports to core everywhere
 import {getSkip} from '../ticketing/common/utils/search-param';
 import {colors} from './common/constants';
 import {findCategories} from './common/orm/directory-category';
@@ -112,7 +112,6 @@ export default async function Page({
         )}
         <Content
           workspaceURI={workspaceURI}
-          items={entries}
           tenant={tenant}
           pages={pages}
           searchParams={searchParams}

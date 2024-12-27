@@ -27,7 +27,7 @@ import {findCategory} from '../../common/orm';
 import {findEntries} from '../../common/orm/directory-entry';
 import {DirectoryCards} from '../../common/ui/components/category-card';
 import {Swipe} from '../../common/ui/components/swipe';
-import Content from '../../content';
+import {Content} from '../../content';
 
 const icons = [
   materialIcon['MdAllInbox'],
@@ -109,7 +109,6 @@ export default async function Page({
         )}
         <Content
           workspaceURI={workspaceURI}
-          items={entries}
           entries={entries}
           tenant={tenant}
           pages={pages}

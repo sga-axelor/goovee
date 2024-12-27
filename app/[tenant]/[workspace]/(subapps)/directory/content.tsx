@@ -14,24 +14,30 @@ import type {ListEntry} from './common/orm';
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
+import {getTranslation} from '@/lib/core/i18n/server';
 
 type ContentProps = {
   workspaceURI?: any;
-  items?: ListEntry[];
+  entries?: ListEntry[];
   tenant?: any;
   pages?: any;
   searchParams?: any;
-  entries?: any;
 };
 
-const Content = ({
+export async function Content({
   workspaceURI,
   tenant,
-  items,
   pages,
   searchParams,
   entries,
-}: ContentProps) => {
+}: ContentProps) {
+  if (!entries || entries.length === 0) {
+    return (
+      <h2 className="font-semibold text-xl text-center mt-5">
+        {await getTranslation('No entries found.')}
+      </h2>
+    );
+  }
   return (
     <>
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
@@ -40,7 +46,7 @@ const Content = ({
           <Sort />
         </aside>
         <main className="grow flex flex-col gap-4">
-          {items?.map(item => (
+          {entries.map(item => (
             <Card
               item={item}
               url={`${workspaceURI}/directory/entry/${item.id}`}
@@ -59,8 +65,7 @@ const Content = ({
       )}
     </>
   );
-};
-export default Content;
+}
 
 type CardPaginationProps = {
   url: string;
