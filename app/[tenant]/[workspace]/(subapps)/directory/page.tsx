@@ -69,7 +69,6 @@ export default async function Page({
     tenantId: tenant,
   });
 
-  // TODO: change it to direcotory app later
   const {page = 1, limit = ITEMS_PER_PAGE, sort} = searchParams;
   const entries = await findEntries({
     sort: sort,

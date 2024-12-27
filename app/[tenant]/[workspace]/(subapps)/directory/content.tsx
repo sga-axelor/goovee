@@ -19,10 +19,10 @@ import {getTranslation} from '@/lib/core/i18n/server';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 type ContentProps = {
-  workspaceURI?: any;
-  entries?: ListEntry[];
-  tenant?: any;
-  pages?: any;
+  workspaceURI: string;
+  entries: ListEntry[];
+  tenant: string;
+  pages: number;
   searchParams?: any;
 };
 
@@ -73,6 +73,7 @@ export async function Content({
 
   return (
     <>
+      {/* NOTE: expand class applied by the map , when it is expanded and when it is in mobile view */}
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
         <aside className="space-y-4">
           <Map showExpand entries={clone(entries)} />
