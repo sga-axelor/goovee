@@ -1,13 +1,12 @@
-import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
 import type {ReactNode} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
+import {SUBAPP_CODES} from '@/constants';
+import {getTranslation} from '@/lib/core/i18n/server';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-import {getTranslation} from '@/lib/core/i18n/server';
 
 export async function generateMetadata() {
   return {
