@@ -10,7 +10,7 @@ export const ArrowSwitch: React.FC<ArrowSwitchPops> = ({
   show = false,
   onClick,
 }) => {
-  let ComponentIcon = show ? MdArrowDropUp : MdArrowDropDown;
+  const ComponentIcon = show ? MdArrowDropUp : MdArrowDropDown;
 
   return <ComponentIcon onClick={onClick} />;
 };
