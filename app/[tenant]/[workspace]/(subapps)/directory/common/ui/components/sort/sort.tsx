@@ -1,6 +1,5 @@
 'use client';
 
-import {useRouter, usePathname, useSearchParams} from 'next/navigation';
 import {i18n} from '@/i18n';
 import {
   Select,
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components';
+import {useSearchParams} from '@/ui/hooks/use-search-params';
 import {cn} from '@/utils/css';
 
 const options = [
@@ -19,22 +19,12 @@ const options = [
 ];
 
 export function Sort() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const currentSearchParams = useSearchParams();
+  const {searchParams, update} = useSearchParams();
 
-  const currentValue = currentSearchParams.get('sort') || options[0].value;
+  const currentValue = searchParams.get('sort') || options[0].value;
 
   const handleSortChange = (value: string) => {
-    const params = new URLSearchParams(
-      Array.from(currentSearchParams.entries()),
-    );
-    params.set('sort', value);
-
-    const search = params.toString();
-    const query = search ? `?${search}` : '';
-
-    router.push(`${pathname}${query}`);
+    update([{key: 'sort', value}]);
   };
 
   return (
