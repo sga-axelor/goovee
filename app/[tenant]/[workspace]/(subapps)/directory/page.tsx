@@ -116,7 +116,7 @@ export default async function Page({
           tenant={tenant}
           pages={pages}
           searchParams={searchParams}
-          entries={clone(entries)}
+          entries={entries}
         />
       </div>
     </>
