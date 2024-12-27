@@ -40,14 +40,14 @@ const icons = [
   TbTool,
 ];
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 7;
 
 export default async function Page({
   params,
   searchParams,
 }: {
   params: {tenant: string; workspace: string};
-  searchParams: {page?: number; limit?: number};
+  searchParams: {page?: number; limit?: number; sort?: string | undefined};
 }) {
   const session = await getSession();
 
@@ -70,8 +70,9 @@ export default async function Page({
   });
 
   // TODO: change it to direcotory app later
-  const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
+  const {page = 1, limit = ITEMS_PER_PAGE, sort} = searchParams;
   const entries = await findEntries({
+    sort: sort,
     take: +limit,
     skip: getSkip(limit, page),
     workspaceId: workspace.id,
@@ -115,7 +116,7 @@ export default async function Page({
           tenant={tenant}
           pages={pages}
           searchParams={searchParams}
-          entries={entries}
+          entries={clone(entries)}
         />
       </div>
     </>

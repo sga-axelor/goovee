@@ -1,3 +1,4 @@
+'use client';
 import {
   Pagination,
   PaginationContent,
@@ -15,6 +16,7 @@ import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
 import {getTranslation} from '@/lib/core/i18n/server';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 type ContentProps = {
   workspaceURI?: any;
@@ -38,12 +40,43 @@ export async function Content({
       </h2>
     );
   }
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const currentSearchParams = useSearchParams();
+  const sort = currentSearchParams.get('sort');
+  const updateSearchParams = (
+    values: Array<{
+      key: string;
+      value?: string | number;
+    }>,
+  ) => {
+    const current = new URLSearchParams(
+      Array.from(currentSearchParams.entries()),
+    );
+    values.forEach(({key, value = ''}: any) => {
+      value = value && String(value)?.trim();
+      if (!value) {
+        current.delete(key);
+      } else {
+        current.set(key, value);
+      }
+    });
+    const search = current.toString();
+    const query = search ? `?${search}` : '';
+    router.push(`${pathname}${query}`);
+  };
+
+  const handleChangeSortBy = ({value}: any) => {
+    updateSearchParams([{key: 'sort', value}]);
+  };
+
   return (
     <>
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
         <aside className="space-y-4">
           <Map showExpand entries={clone(entries)} />
-          <Sort />
+          <Sort onChange={handleChangeSortBy} value={sort} />
         </aside>
         <main className="grow flex flex-col gap-4">
           {entries.map(item => (

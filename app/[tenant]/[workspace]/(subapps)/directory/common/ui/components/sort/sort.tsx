@@ -1,26 +1,29 @@
 'use client';
 import {i18n} from '@/i18n';
-import {cn} from '@/utils/css';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/ui/components';
-import {useState} from 'react';
+import {cn} from '@/utils/css';
 
 const options = [
-  {value: '1', label: i18n.get('A-Z')},
-  {value: '2', label: i18n.get('Z-A')},
-  {value: '3', label: i18n.get('Newest')},
-  {value: '4', label: i18n.get('Oldest')},
+  {value: 'a-z', label: i18n.get('A-Z')},
+  {value: 'z-a', label: i18n.get('Z-A')},
+  {value: 'newest', label: i18n.get('Newest')},
+  {value: 'oldest', label: i18n.get('Oldest')},
 ];
 
-export function Sort() {
-  const [sort, setSort] = useState(options[0].value);
+export function Sort({onChange, value: valueProp}: any) {
+  const value = options.find(o => o.value === valueProp);
   return (
-    <Select value={sort} onValueChange={setSort}>
+    <Select
+      defaultValue={value?.value ?? options[0].value}
+      onValueChange={e => {
+        onChange({value: e});
+      }}>
       <SelectTrigger className={cn('w-full text-xs text-foreground')}>
         <SelectValue placeholder={i18n.get('Select sort')} />
       </SelectTrigger>

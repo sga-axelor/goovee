@@ -60,20 +60,33 @@ export async function findEntries({
   workspaceId,
   tenantId,
   categoryId,
+  sort,
 }: {
   take?: number;
   skip?: number;
   workspaceId?: string;
   categoryId?: ID;
   tenantId: Tenant['id'];
+  sort?: string;
 }) {
   if (!(workspaceId && tenantId)) {
     throw new Error(await getTranslation('Missing required parameters'));
   }
   const c = await manager.getClient(tenantId);
+  const orderByMap: Record<string, any> = {
+    'a-z': {title: 'ASC'},
+    'z-a': {title: 'DESC'},
+    newest: {createdOn: 'DESC'},
+    oldest: {createdOn: 'ASC'},
+  };
+
+  let orderBy = orderByMap['a-z'];
+  if (sort && orderByMap[sort]) {
+    orderBy = orderByMap[sort];
+  }
   const entries = await c.aOSPortalDirectoryEntry.find({
     ...(categoryId && {where: {directoryEntryCategorySet: {id: categoryId}}}),
-    orderBy: {id: ORDER_BY.ASC} as any,
+    orderBy: orderBy as any,
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     select: {
@@ -84,6 +97,7 @@ export async function findEntries({
       zipcode: true,
       description: true,
       image: true,
+      createdOn: true,
       directoryEntryCategorySet: {select: {title: true, color: true}},
     },
   });
