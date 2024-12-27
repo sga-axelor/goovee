@@ -48,3 +48,7 @@ export const ORDER_STATUS = {
 export const ORDER_DELIVERY_STATUS = {
   DELIVERED: 3,
 };
+
+export const RELATED_MODELS = {
+  SALE_ORDER_MODEL: 'com.axelor.apps.sale.db.SaleOrder',
+};

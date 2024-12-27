@@ -7,7 +7,6 @@ import {Container} from '@/ui/components';
 import {i18n} from '@/i18n';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {download} from '@/utils/files';
-import {RELATED_MODELS} from '@/constants/models';
 import {useToast} from '@/ui/hooks';
 import {SUBAPP_CODES} from '@/constants';
 
@@ -22,7 +21,10 @@ import {
   ProductsList,
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
-import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
+import {
+  ORDER_TYPE,
+  RELATED_MODELS,
+} from '@/subapps/orders/common/constants/orders';
 import {getFile} from '@/subapps/orders/common/actions/file';
 
 const Content = ({order}: {order: any}) => {
