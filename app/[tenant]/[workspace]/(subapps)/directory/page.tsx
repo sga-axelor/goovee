@@ -79,8 +79,8 @@ export default async function Page({
   });
 
   const pages = getPages(directortyEntryList, limit);
-  const imageURL = workspace.config.ticketHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id, tenant)})`
+  const imageURL = workspace.config.directoryHeroBgImage?.id
+    ? `url(${getImageURL(workspace.config.directoryHeroBgImage.id, tenant)})`
     : IMAGE_URL;
 
   const cards = categories.map((category, i) => (
@@ -97,9 +97,9 @@ export default async function Page({
   return (
     <>
       <Hero
-        title={workspace.config.ticketHeroTitle}
-        description={workspace.config.ticketHeroDescription}
-        background={workspace.config.ticketHeroOverlayColorSelect}
+        title={workspace.config.directoryHeroTitle}
+        description={workspace.config.directoryHeroDescription}
+        background={workspace.config.directoryHeroOverlayColorSelect}
         image={imageURL}
         tenantId={tenant}
       />
