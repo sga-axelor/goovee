@@ -1,4 +1,6 @@
 'use client';
+
+import {useRouter, usePathname, useSearchParams} from 'next/navigation';
 import {i18n} from '@/i18n';
 import {
   Select,
@@ -16,14 +18,29 @@ const options = [
   {value: 'oldest', label: i18n.get('Oldest')},
 ];
 
-export function Sort({onChange, value: valueProp}: any) {
-  const value = options.find(o => o.value === valueProp);
+export function Sort() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const currentSearchParams = useSearchParams();
+
+  const currentValue = currentSearchParams.get('sort') || options[0].value;
+
+  const handleSortChange = (value: string) => {
+    const params = new URLSearchParams(
+      Array.from(currentSearchParams.entries()),
+    );
+    params.set('sort', value);
+
+    const search = params.toString();
+    const query = search ? `?${search}` : '';
+
+    router.push(`${pathname}${query}`);
+  };
+
   return (
     <Select
-      defaultValue={value?.value ?? options[0].value}
-      onValueChange={e => {
-        onChange({value: e});
-      }}>
+      defaultValue={currentValue}
+      onValueChange={e => handleSortChange(e)}>
       <SelectTrigger className={cn('w-full text-xs text-foreground')}>
         <SelectValue placeholder={i18n.get('Select sort')} />
       </SelectTrigger>

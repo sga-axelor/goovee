@@ -1,4 +1,4 @@
-'use client';
+import {getTranslation} from '@/lib/core/i18n/server';
 import {
   Pagination,
   PaginationContent,
@@ -15,8 +15,6 @@ import type {ListEntry} from './common/orm';
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
-import {getTranslation} from '@/lib/core/i18n/server';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 type ContentProps = {
   workspaceURI: string;
@@ -41,43 +39,13 @@ export async function Content({
     );
   }
 
-  const router = useRouter();
-  const pathname = usePathname();
-  const currentSearchParams = useSearchParams();
-  const sort = currentSearchParams.get('sort');
-  const updateSearchParams = (
-    values: Array<{
-      key: string;
-      value?: string | number;
-    }>,
-  ) => {
-    const current = new URLSearchParams(
-      Array.from(currentSearchParams.entries()),
-    );
-    values.forEach(({key, value = ''}: any) => {
-      value = value && String(value)?.trim();
-      if (!value) {
-        current.delete(key);
-      } else {
-        current.set(key, value);
-      }
-    });
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
-    router.push(`${pathname}${query}`);
-  };
-
-  const handleChangeSortBy = ({value}: any) => {
-    updateSearchParams([{key: 'sort', value}]);
-  };
-
   return (
     <>
       {/* NOTE: expand class applied by the map , when it is expanded and when it is in mobile view */}
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
         <aside className="space-y-4">
           <Map showExpand entries={clone(entries)} />
-          <Sort onChange={handleChangeSortBy} value={sort} />
+          <Sort />
         </aside>
         <main className="grow flex flex-col gap-4">
           {entries.map(item => (

@@ -60,30 +60,19 @@ export async function findEntries({
   workspaceId,
   tenantId,
   categoryId,
-  sort,
+  orderBy,
 }: {
   take?: number;
   skip?: number;
   workspaceId?: string;
   categoryId?: ID;
   tenantId: Tenant['id'];
-  sort?: string;
+  orderBy?: Record<string, any>;
 }) {
   if (!(workspaceId && tenantId)) {
     throw new Error(await getTranslation('Missing required parameters'));
   }
   const c = await manager.getClient(tenantId);
-  const orderByMap: Record<string, any> = {
-    'a-z': {title: 'ASC'},
-    'z-a': {title: 'DESC'},
-    newest: {createdOn: 'DESC'},
-    oldest: {createdOn: 'ASC'},
-  };
-
-  let orderBy = orderByMap['a-z'];
-  if (sort && orderByMap[sort]) {
-    orderBy = orderByMap[sort];
-  }
   const entries = await c.aOSPortalDirectoryEntry.find({
     ...(categoryId && {where: {directoryEntryCategorySet: {id: categoryId}}}),
     orderBy: orderBy as any,

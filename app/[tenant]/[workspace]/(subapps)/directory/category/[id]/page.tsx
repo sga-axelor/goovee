@@ -28,6 +28,7 @@ import {findEntries} from '../../common/orm/directory-entry';
 import {DirectoryCards} from '../../common/ui/components/category-card';
 import {Swipe} from '../../common/ui/components/swipe';
 import {Content} from '../../content';
+import {getOrderBy} from '../../common/utils/orderByEntries';
 
 const icons = [
   materialIcon['MdAllInbox'],
@@ -45,7 +46,7 @@ export default async function Page({
   searchParams,
 }: {
   params: {tenant: string; workspace: string; id: string};
-  searchParams: {page?: number; limit?: number};
+  searchParams: {page?: number; limit?: number; sort?: string | undefined};
 }) {
   const session = await getSession();
 
@@ -53,7 +54,7 @@ export default async function Page({
   // if (!session?.user) notFound();
 
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
-  const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
+  const {page = 1, limit = ITEMS_PER_PAGE, sort} = searchParams;
 
   const workspace = await findWorkspace({
     user: session?.user,
@@ -72,6 +73,7 @@ export default async function Page({
   if (!category) notFound();
 
   const entries = await findEntries({
+    orderBy: getOrderBy(sort),
     categoryId: id,
     workspaceId: workspace.id,
     tenantId: tenant,
