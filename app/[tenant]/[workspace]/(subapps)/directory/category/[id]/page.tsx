@@ -41,7 +41,7 @@ const icons = [
   MdOutlineSupervisedUserCircle,
   TbTool,
 ];
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7;
 export default async function Page({
   params,
   searchParams,
