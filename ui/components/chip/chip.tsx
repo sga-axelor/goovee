@@ -24,7 +24,7 @@ export function Chip({
   return (
     <Tag
       variant={variant}
-      className={cn('text-[10px] py-1 w-max', className)}
+      className={cn('text-[0.625rem] py-1 w-max', className)}
       outline={outline}>
       {value}
     </Tag>
