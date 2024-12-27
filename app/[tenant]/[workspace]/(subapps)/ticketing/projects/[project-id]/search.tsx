@@ -32,7 +32,8 @@ export function Search({
   inputClassName?: string;
   className?: string;
 }) {
-  const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const {workspaceURL, workspaceURI} = useWorkspace();
   const {toast} = useToast();
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
@@ -85,9 +86,6 @@ export function Search({
     },
     [fetchTickets],
   );
-
-  const router = useRouter();
-  const {workspaceURI} = useWorkspace();
 
   const handleRedirection = (ticketId: string) => {
     router.push(
