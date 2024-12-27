@@ -29,6 +29,7 @@ import {DirectoryCards} from '../../common/ui/components/category-card';
 import {Swipe} from '../../common/ui/components/swipe';
 import {Content} from '../../content';
 import {getOrderBy} from '../../common/utils';
+import {getSkip} from '../../../ticketing/common/utils/search-param';
 
 const icons = [
   materialIcon['MdAllInbox'],
@@ -74,6 +75,8 @@ export default async function Page({
 
   const entries = await findEntries({
     orderBy: getOrderBy(sort),
+    take: +limit,
+    skip: getSkip(limit, page),
     categoryId: id,
     workspaceId: workspace.id,
     tenantId: tenant,
