@@ -5,7 +5,7 @@ import {i18n} from '@/lib/core/i18n';
 import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
-import Sidebar from './sidebar';
+import Menubar from './menubar';
 
 export default function LayoutContent({
   children,
@@ -34,12 +34,12 @@ export default function LayoutContent({
         </>
       ) : (
         <>
-          <h4 className="text-xl font-semibold">
+          <h4 className="hidden lg:block text-xl font-semibold">
             {i18n.get('Profile Settings')}
           </h4>
-          <div className="grid grid-cols-[15%_1fr] bg-white rounded-md pe-6 py-4 gap-4">
-            <Sidebar isAdmin={isAdmin} />
-            <div className="overflow-auto">{children}</div>
+          <div className="grid grid-cols-1 lg:grid-cols-[15%_1fr] lg:bg-white rounded-md p-0 lg:pe-6 lg:py-4 gap-4">
+            <Menubar isAdmin={isAdmin} />
+            <div className="overflow-auto lg:p-0 lg:bg-inherit">{children}</div>
           </div>
         </>
       )}

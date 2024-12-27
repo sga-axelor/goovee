@@ -196,7 +196,7 @@ export default function InviteForm({
           />
         </div>
         {form.getValues('role') === 'user' && (
-          <div className="flex flex-col p-2 rounded-lg gap-2">
+          <div className="flex flex-col p-2 rounded-lg gap-2 bg-white lg:bg-inherit">
             <div className="grid grid-cols-[20%_20%_20%] items-center p-4 gap-6 border-b">
               <p className="text-xs font-bold">App</p>
               <p className="text-xs font-bold">Access</p>

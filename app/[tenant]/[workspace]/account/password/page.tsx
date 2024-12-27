@@ -60,77 +60,79 @@ export default function Page() {
   const isSubmitting = form.formState.isSubmitting;
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="space-y-20">
-          <div className="space-y-4">
-            <Title text={i18n.get('Personal Settings')} />
-            <FormField
-              control={form.control}
-              name="oldPassword"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Old Password')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      value={field.value}
-                      placeholder={i18n.get('Enter old password')}
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="newPassword"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('New Password')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      value={field.value}
-                      placeholder={i18n.get('Enter new password')}
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.get('Confirm Password')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      value={field.value}
-                      placeholder={i18n.get('Confirm new password')}
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+    <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="space-y-20">
+            <div className="space-y-4">
+              <Title text={i18n.get('Personal Settings')} />
+              <FormField
+                control={form.control}
+                name="oldPassword"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.get('Old Password')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        value={field.value}
+                        placeholder={i18n.get('Enter old password')}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.get('New Password')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        value={field.value}
+                        placeholder={i18n.get('Enter new password')}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.get('Confirm Password')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        value={field.value}
+                        placeholder={i18n.get('Confirm new password')}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-          <div className="space-y-4 text-end">
-            <Button variant="success" disabled={isSubmitting}>
-              {i18n.get('Change password')}
-            </Button>
+            <div className="space-y-4 text-end">
+              <Button variant="success" disabled={isSubmitting}>
+                {i18n.get('Change password')}
+              </Button>
+            </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </div>
   );
 }

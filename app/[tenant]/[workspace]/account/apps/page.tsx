@@ -35,5 +35,9 @@ export default async function Account({
     tenantId: tenant,
   });
 
-  return <Content subapps={subapps} />;
+  return (
+    <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
+      <Content subapps={subapps} />
+    </div>
+  );
 }

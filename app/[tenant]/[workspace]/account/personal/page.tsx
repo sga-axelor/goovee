@@ -74,5 +74,5 @@ export default async function Page({
     role,
   };
 
-  return <Form settings={settings as any} />;
+  return <div className="bg-white p-2 lg:p-0 lg:bg-inherit"><Form settings={settings as any} /></div>;
 }

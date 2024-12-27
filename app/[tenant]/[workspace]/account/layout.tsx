@@ -30,7 +30,7 @@ export default async function Layout({
     );
 
   return (
-    <div className="py-2 md:py-4 px-4 md:px-12 space-y-6 mb-20 !md:mb-6">
+    <div className="p-0 lg:space-y-6 mb-20 lg:py-4 lg:px-12 !lg:mb-6">
       <LayoutContent isAdmin={isAdmin}>{children}</LayoutContent>
     </div>
   );

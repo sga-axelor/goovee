@@ -149,34 +149,66 @@ export default function Page() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="space-y-4">
-          {!user?.isContact && (
+    <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="space-y-4">
+            {!user?.isContact && (
+              <FormField
+                control={form.control}
+                name="defaultWorkspace"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.get('Default Workspace')}</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={i18n.get(
+                              'Select your default workspace',
+                            )}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {workspaces.map((workspace: any) => (
+                          <SelectItem
+                            value={workspace.id?.toString()}
+                            key={workspace.id}>
+                            {workspace.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
-              name="defaultWorkspace"
+              name="localization"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Default Workspace')}</FormLabel>
+                  <FormLabel>{i18n.get('Language')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={i18n.get(
-                            'Select your default workspace',
-                          )}
+                          placeholder={i18n.get('Select your language')}
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {workspaces.map((workspace: any) => (
+                      {localizations.map((localization: any) => (
                         <SelectItem
-                          value={workspace.id?.toString()}
-                          key={workspace.id}>
-                          {workspace.name}
+                          value={localization.id}
+                          key={localization.id}>
+                          {localization.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -185,41 +217,13 @@ export default function Page() {
                 </FormItem>
               )}
             />
-          )}
-          <FormField
-            control={form.control}
-            name="localization"
-            render={({field}) => (
-              <FormItem>
-                <FormLabel>{i18n.get('Language')}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value?.toString()}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={i18n.get('Select your language')}
-                      />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {localizations.map((localization: any) => (
-                      <SelectItem value={localization.id} key={localization.id}>
-                        {localization.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
-          <div className="space-y-4 text-end">
-            <Button variant="success">{i18n.get('Save Preference')}</Button>
+            <div className="space-y-4 text-end">
+              <Button variant="success">{i18n.get('Save Preference')}</Button>
+            </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </div>
   );
 }

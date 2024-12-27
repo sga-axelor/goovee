@@ -37,10 +37,12 @@ export default async function Page({
   const $members = [...members?.partners, ...members?.contacts];
 
   return (
-    <Content
-      members={$members}
-      invites={invites}
-      availableApps={availableApps || []}
-    />
+    <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
+      <Content
+        members={$members}
+        invites={invites}
+        availableApps={availableApps || []}
+      />
+    </div>
   );
 }

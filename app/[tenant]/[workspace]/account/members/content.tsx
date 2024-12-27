@@ -164,8 +164,8 @@ function Members({members, availableApps}: any) {
             return (
               <AccordionItem value={id} key={id} className="border-b">
                 <div className="flex flex-col gap-2 py-2 px-4">
-                  <div className="grid grid-cols-4 items-center gap-6">
-                    <div className="flex items-center gap-[7.5rem]">
+                  <div className="grid grid-cols-4 items-center row-gap gap-x-6 gap-y-2">
+                    <div className="flex items-center col-span-2 lg:col-span-1 gap-[7.5rem]">
                       <div className="flex items-center gap-2">
                         <Avatar className="size-8">
                           <AvatarImage
@@ -179,17 +179,19 @@ function Members({members, availableApps}: any) {
                             {getInitials(fullName)}
                           </AvatarFallback>
                         </Avatar>
-                        <p className="text-sm">{fullName}</p>
+                        <p className="text-sm line-clamp-1">{fullName}</p>
                       </div>
                     </div>
-                    <p className="text-sm">{emailAddress?.address}</p>
+                    <p className="hidden lg:block text-sm">
+                      {emailAddress?.address}
+                    </p>
                     <p className="text-sm">{roleLabel}</p>
                     <div className="flex items-center gap-6 justify-self-end">
                       {isOwner || currentUser ? (
                         <div />
                       ) : (
                         <MdDeleteOutline
-                          className={'size-6 text-destructive cursor-pointer'}
+                          className="hidden lg:block size-6 text-destructive cursor-pointer"
                           onClick={openConfirmation(member)}
                         />
                       )}
@@ -204,6 +206,19 @@ function Members({members, availableApps}: any) {
                         )}
                       </AccordionTrigger>
                     </div>
+                    <p className="lg:hidden text-sm col-span-4">
+                      {emailAddress?.address}
+                    </p>
+                    {isOwner || currentUser ? null : (
+                      <div
+                        className="lg:hidden flex items-center gap-4 cursor-pointer col-span-4"
+                        onClick={openConfirmation(member)}>
+                        <p className="text-destructive">
+                          {i18n.get('Delete member')}
+                        </p>
+                        <MdDeleteOutline className="lg:hidden size-6 text-destructive cursor-pointer" />
+                      </div>
+                    )}
                   </div>
                   <AccordionContent
                     className={cn({hidden: isAdminContact || isOwner})}>
@@ -417,9 +432,9 @@ function Invited({invites, availableApps}: any) {
             const isAdminContact = contactWorkspaceConfig?.isAdmin;
             return (
               <AccordionItem value={id} key={id}>
-                <div className="flex flex-col gap-2 py-2 px-4">
+                <div className="flex flex-col gap-4 lg:gap-2 py-2 px-4">
                   <div className="flex items-center justify-between gap-6">
-                    <div className="flex justify-between basis-[40%]">
+                    <div className="flex justify-between basis-[60%] lg:basis-[40%]">
                       <p className="text-sm">{emailAddress?.address}</p>
                       <p className="text-sm">
                         {i18n.get(

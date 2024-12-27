@@ -24,20 +24,23 @@ export default function Page() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {};
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="space-y-20">
-          <div className="space-y-4">
-            <Title text={i18n.get('Notifications')} />
-          </div>
+    <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
+      {' '}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="space-y-20">
+            <div className="space-y-4">
+              <Title text={i18n.get('Notifications')} />
+            </div>
 
-          <div className="space-y-4 text-end sr-only">
-            <Button variant="success" disabled>
-              {i18n.get('Save settings')}
-            </Button>
+            <div className="space-y-4 text-end sr-only">
+              <Button variant="success" disabled>
+                {i18n.get('Save settings')}
+              </Button>
+            </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </div>
   );
 }

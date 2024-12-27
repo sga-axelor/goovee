@@ -8,5 +8,5 @@ export async function generateMetadata() {
 }
 
 export default function Layout({children}: {children: React.ReactNode}) {
-  return <>{children}</>;
+  return <div className="bg-white p-2 lg:p-0 lg:bg-inherit">{children}</div>;
 }

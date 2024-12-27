@@ -16,5 +16,9 @@ export default async function Page({
     tenantId: tenant,
   });
 
-  return <Form availableApps={availableApps || []} />;
+  return (
+    <div className="p-2 lg:p-0">
+      <Form availableApps={availableApps || []} />
+    </div>
+  );
 }
