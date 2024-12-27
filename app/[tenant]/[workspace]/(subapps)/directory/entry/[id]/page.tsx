@@ -20,8 +20,6 @@ import {Entry, findEntry} from '../../common/orm';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
 
-const markers = [{lat: 48.85341, lng: 2.3488}];
-
 export default async function Page({
   params,
 }: {
@@ -47,15 +45,14 @@ export default async function Page({
     id,
     workspaceId: workspace.id,
     tenantId: tenant,
-  }).then(clone);
+  });
   if (!entry) notFound();
 
-  console.dir(entry, {depth: null});
   return (
     <div className="container flex flex-col gap-4 mt-4">
       <div className="flex flex-col gap-4 bg-card p-4">
         <Details entryDetail={entry} tenant={tenant} />
-        <Map className="h-80 w-full" markers={markers} />
+        <Map className="h-80 w-full" entries={[clone(entry)]} />
       </div>
       {entry.directoryContactSet && entry.directoryContactSet?.length > 0 && (
         <>
@@ -66,11 +63,7 @@ export default async function Page({
           </h2>
 
           {entry.directoryContactSet.map(contact => (
-            <Contacts
-              key={contact.id}
-              tenant={tenant}
-              contactDetail={contact}
-            />
+            <Contact key={contact.id} tenant={tenant} contact={contact} />
           ))}
         </>
       )}
@@ -175,14 +168,14 @@ async function Details({
   );
 }
 
-async function Contacts({
+async function Contact({
   tenant,
-  contactDetail,
+  contact,
 }: {
   tenant: string;
-  contactDetail: NonNullable<Entry['directoryContactSet']>[number];
+  contact: NonNullable<Entry['directoryContactSet']>[number];
 }) {
-  const {firstName, lastName, email, phoneNumber, linkedinLink} = contactDetail;
+  const {firstName, lastName, email, phoneNumber, linkedinLink} = contact;
   return (
     <div className="bg-card space-y- p-4">
       <div className="flex items-center gap-2">

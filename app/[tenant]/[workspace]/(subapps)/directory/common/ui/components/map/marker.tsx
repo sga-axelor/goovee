@@ -5,27 +5,22 @@ import {
 } from '@vis.gl/react-google-maps';
 import {useCallback, useState} from 'react';
 
-import {LatLng} from './types';
-import {Card} from '../card';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {Cloned} from '@/types/util';
 
-const item = {
-  id: '1',
-  title: 'Entry Name',
-  address: '43 Mainstreet - London',
-  image: '',
-  description:
-    'Lorem ipsum dolor sit amet consectetur. Neque diam integer Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi veritatis ex labore illum quos dolores, nam optio consectetur odit. Minus facilis illo, consequuntur dolor nam illum facere velit? Ipsum, illo! purus aenean porttitor morbi. Turpis. ipsum dolor sit amet consectetur. Neque diam integer purus aenean porttitor morbi. Turpis.',
-};
+import type {Entry, ListEntry} from '../../../orm';
+import {Card} from '../card';
+import {LatLng} from './types';
 
 type MarkerProps = {
   position: LatLng;
   small: boolean;
+  item: Cloned<Entry> | Cloned<ListEntry>;
 };
 
 export function Marker(props: MarkerProps) {
-  const {position, small} = props;
-  const {workspaceURI} = useWorkspace();
+  const {position, small, item} = props;
+  const {workspaceURI, tenant} = useWorkspace();
 
   const url = `${workspaceURI}/directory/entry/${item.id}`;
   const [markerRef, marker] = useMarkerRef();
@@ -39,7 +34,7 @@ export function Marker(props: MarkerProps) {
       <MarkerComponent ref={markerRef} position={position} onClick={toggle} />
       {show && (
         <InfoWindow anchor={marker} onClose={handleClose} headerDisabled>
-          <Card item={item} url={url} small={small} />
+          <Card item={item} url={url} small={small} tenant={tenant} />
         </InfoWindow>
       )}
     </>

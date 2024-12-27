@@ -1,20 +1,25 @@
 'use client';
-import {APIProvider, Map as GMap} from '@vis.gl/react-google-maps';
+import {
+  APIProvider,
+  Map as GMap,
+  useMapsLibrary,
+} from '@vis.gl/react-google-maps';
 import {useEffect, useMemo, useState} from 'react';
 import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
 
+import {Cloned} from '@/types/util';
 import {Button} from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-import {useMapsLibrary} from '@vis.gl/react-google-maps';
 
-import {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
-import {Cloned} from '@/types/util';
+import type {Entry, ListEntry} from '../../../orm';
+import {LatLng} from './types';
+import {Marker} from './marker';
 
 type MapProps = {
   className?: string;
   showExpand?: boolean;
-  locations?: Cloned<AOSPortalDirectoryEntry[]>;
+  entries?: Cloned<Entry>[] | Cloned<ListEntry>[];
 };
 
 export function Map(props: MapProps) {
@@ -26,8 +31,9 @@ export function Map(props: MapProps) {
 }
 
 function MapContent(props: MapProps) {
-  const {className, showExpand, locations} = props;
+  const {className, showExpand, entries} = props;
   const [expand, setExpand] = useState(false);
+  const [latLngs, setLatLngs] = useState<LatLng[]>([]);
   const res = useResponsive();
   const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
   const full = small || expand;
@@ -42,13 +48,22 @@ function MapContent(props: MapProps) {
 
   useEffect(() => {
     async function init() {
-      if (!geocoder) return;
-      console.log({address: locations?.[0]?.address});
-      const latLng = await geocoder.geocode({address: locations?.[0]?.address});
-      console.log(latLng);
+      if (!geocoder || !entries) return;
+      const resPromises = entries.map(entry => {
+        return geocoder.geocode({address: entry?.address});
+      });
+      const res = await Promise.all(resPromises);
+      // TODO: handle race conditions
+      setLatLngs(
+        res.map((x, i) => ({
+          id: entries[i].id,
+          lat: x.results[0].geometry.location.lat(),
+          lng: x.results[0].geometry.location.lng(),
+        })),
+      );
     }
     init();
-  }, [geocoder, locations]);
+  }, [geocoder, entries]);
   return (
     <GMap
       className={cn(
@@ -69,9 +84,18 @@ function MapContent(props: MapProps) {
           <Icon size={18} />
         </Button>
       )}
-      {/* {markers?.map((marker, index) => ( */}
-      {/*   <Marker position={marker} key={index} small={small || !expand} /> */}
-      {/* ))} */}
+      {latLngs?.map((latLng, index) => {
+        const item = entries?.find(x => x.id === latLng.id);
+        if (!item) return null;
+        return (
+          <Marker
+            position={latLng}
+            key={index}
+            small={small || !expand}
+            item={item}
+          />
+        );
+      })}
     </GMap>
   );
 }

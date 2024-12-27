@@ -71,14 +71,14 @@ export default async function Page({
 
   // TODO: change it to direcotory app later
   const {page = 1, limit = ITEMS_PER_PAGE} = searchParams;
-  const directortyEntryList = await findEntries({
+  const entries = await findEntries({
     take: +limit,
     skip: getSkip(limit, page),
     workspaceId: workspace.id,
     tenantId: tenant,
   });
 
-  const pages = getPages(directortyEntryList, limit);
+  const pages = getPages(entries, limit);
   const imageURL = workspace.config.directoryHeroBgImage?.id
     ? `url(${getImageURL(workspace.config.directoryHeroBgImage.id, tenant)})`
     : IMAGE_URL;
@@ -112,11 +112,11 @@ export default async function Page({
         )}
         <Content
           workspaceURI={workspaceURI}
-          items={directortyEntryList}
+          items={entries}
           tenant={tenant}
           pages={pages}
           searchParams={searchParams}
-          entries={directortyEntryList}
+          entries={entries}
         />
       </div>
     </>

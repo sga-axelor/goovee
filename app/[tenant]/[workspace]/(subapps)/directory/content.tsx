@@ -36,7 +36,7 @@ const Content = ({
     <>
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
         <aside className="space-y-4">
-          <Map showExpand locations={clone(entries)} />
+          <Map showExpand entries={clone(entries)} />
           <Sort />
         </aside>
         <main className="grow flex flex-col gap-4">

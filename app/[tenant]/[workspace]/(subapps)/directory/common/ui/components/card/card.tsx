@@ -5,11 +5,11 @@ import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import Image from 'next/image';
 import {colors} from '../../../constants';
-import {ListEntry} from '../../../orm';
+import {Entry, ListEntry} from '../../../orm';
 import {Category} from '../pills';
 
 export type CardProps = {
-  item: ListEntry;
+  item: ListEntry | Entry;
   url: string;
   small?: boolean;
   tenant: string;
