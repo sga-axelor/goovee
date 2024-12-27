@@ -238,6 +238,23 @@
       "name": "defaultStockLocation",
       "type": "ManyToOne",
       "target": "AOSStockLocation"
+    },
+    {
+      "type": "String",
+      "name": "directoryHeroTitle"
+    },
+    {
+      "type": "String",
+      "name": "directoryHeroDescription"
+    },
+    {
+      "type": "String",
+      "name": "directoryHeroOverlayColorSelect"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "directoryHeroBgImage",
+      "target": "AOSMetaFile"
     }
   ]
 }

@@ -84,6 +84,13 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   noMoreStockSelect: true,
   outOfStockQty: true,
   defaultStockLocation: true,
+  directoryHeroTitle: true,
+  directoryHeroBgImage: {
+    id: true,
+    fileName: true,
+  },
+  directoryHeroDescription: true,
+  directoryHeroOverlayColorSelect: true,
 };
 
 export async function findWorkspaceMembers({
