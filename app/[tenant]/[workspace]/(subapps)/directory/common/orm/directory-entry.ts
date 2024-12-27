@@ -89,3 +89,42 @@ export async function findEntries({
   });
   return entries;
 }
+
+export type SearchEntry = Expand<
+  NonNullable<Awaited<ReturnType<typeof findEntries>>>[number]
+>;
+
+export async function findEntriesBySearch({
+  workspaceId,
+  tenantId,
+  categoryId,
+  search,
+}: {
+  workspaceId?: string;
+  categoryId?: ID;
+  search?: string;
+  tenantId: Tenant['id'];
+}) {
+  if (!(workspaceId && tenantId)) {
+    throw new Error(await getTranslation('Missing required parameters'));
+  }
+  const c = await manager.getClient(tenantId);
+  const entries = await c.aOSPortalDirectoryEntry.find({
+    take: 10,
+    where: {
+      ...(categoryId && {directoryEntryCategorySet: {id: categoryId}}),
+      ...(search && {
+        OR: [
+          {title: {like: `%${search}%`}},
+          {description: {like: `%${search}%`}},
+          {address: {like: `%${search}%`}},
+          {city: {like: `%${search}%`}},
+          {zipcode: {like: `%${search}%`}},
+          {directoryEntryCategorySet: {title: {like: `%${search}%`}}},
+        ],
+      }),
+    },
+    select: {title: true},
+  });
+  return entries;
+}

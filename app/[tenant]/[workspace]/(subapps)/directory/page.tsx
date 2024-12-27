@@ -1,4 +1,5 @@
 import {notFound} from 'next/navigation';
+import * as materialIcon from 'react-icons/md';
 import {
   MdMoney,
   MdOutlineDiamond,
@@ -18,7 +19,6 @@ import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import * as materialIcon from 'react-icons/md';
 import Content from '../directory/content';
 import {getPages} from '../ticketing/common/utils';
 import {getSkip} from '../ticketing/common/utils/search-param';

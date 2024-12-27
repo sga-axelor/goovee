@@ -1,7 +1,12 @@
 'use client';
+import {debounce} from 'lodash';
+import {ChangeEvent, useCallback, useMemo, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import type {ID} from '@goovee/orm';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/i18n';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   Command,
   CommandEmpty,
@@ -12,27 +17,49 @@ import {
 } from '@/ui/components/command';
 import {useToast} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-import {debounce} from 'lodash';
-import {ChangeEvent, useCallback, useMemo, useRef, useState} from 'react';
+import {Cloned} from '@/types/util';
+
+// ---- LOCAL IMPORTS ---- //
+import {searchEntries} from './common/actions';
+import type {SearchEntry} from './common/orm';
 
 export function Search({
   className,
   inputClassName,
+  categoryId,
 }: {
   inputClassName?: string;
   className?: string;
+  categoryId?: ID;
 }) {
+  const router = useRouter();
+  const {workspaceURL, workspaceURI} = useWorkspace();
   const {toast} = useToast();
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchResult, setSearchResult] = useState<Cloned<SearchEntry>[]>([]);
   const searchRef = useRef<string | undefined>();
 
   const fetchSearchResult = useMemo(
     () =>
       debounce(async (search: string) => {
         try {
+          const {error, message, data} = await searchEntries({
+            search,
+            workspaceURL,
+            categoryId,
+          });
+          if (searchRef.current !== search) return;
+          if (error) {
+            setSearchResult([]);
+            toast({
+              variant: 'destructive',
+              title: message,
+            });
+            return;
+          }
+          setSearchResult(data);
         } catch (e) {
           toast({
             variant: 'destructive',
@@ -44,7 +71,7 @@ export function Search({
           }
         }
       }, 500),
-    [toast],
+    [toast, workspaceURL, categoryId],
   );
 
   const handleSearch = useCallback(
@@ -59,7 +86,9 @@ export function Search({
     [fetchSearchResult],
   );
 
-  const handleRedirection = () => {};
+  const handleRedirection = (id: string) => {
+    router.push(`${workspaceURI}/directory/entry/${id}`);
+  };
 
   return (
     <div className={cn('w-full relative', className)}>
@@ -93,7 +122,7 @@ export function Search({
                     className="block py-2 sm:px-6 cursor-pointer">
                     <div className="leading-5 text-sm space-y-2 p-3">
                       <h3 className="font-semibold line-clamp-1">
-                        {result.fullName}
+                        {result.title}
                       </h3>
                     </div>
                   </CommandItem>
