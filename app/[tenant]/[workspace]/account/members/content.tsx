@@ -568,11 +568,18 @@ function Invited({invites, availableApps}: any) {
   );
 }
 
-export default function Content({members, invites, availableApps}: any) {
+export default function Content({
+  members,
+  invites,
+  availableApps,
+  canInviteMembers,
+}: any) {
   return (
     <div className="space-y-10">
       <Members members={members} availableApps={availableApps} />
-      <Invited invites={invites} availableApps={availableApps} />
+      {canInviteMembers && (
+        <Invited invites={invites} availableApps={availableApps} />
+      )}
     </div>
   );
 }

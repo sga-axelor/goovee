@@ -1,3 +1,8 @@
+import {notFound} from 'next/navigation';
+
+// ---- CORE IMPORTS ---- //
+import {getSession} from '@/auth';
+import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -9,11 +14,24 @@ export default async function Page({
 }: {
   params: {workspace: string; tenant: string};
 }) {
-  const {tenant, workspaceURL} = workspacePathname(params);
+  const {tenant: tenantId, workspaceURL} = workspacePathname(params);
+
+  const session = await getSession();
+  const user = session?.user!;
+
+  const workspace = await findWorkspace({
+    url: workspaceURL,
+    user,
+    tenantId,
+  });
+
+  if (!workspace?.config?.canInviteMembers) {
+    return notFound();
+  }
 
   const availableApps = await findAvailableSubapps({
     url: workspaceURL,
-    tenantId: tenant,
+    tenantId,
   });
 
   return (

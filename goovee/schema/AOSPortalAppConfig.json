@@ -209,6 +209,10 @@
     {
       "type": "String",
       "name": "socialMediaSelect"
+    },
+    {
+      "type": "Boolean",
+      "name": "canInviteMembers"
     }
   ]
 }

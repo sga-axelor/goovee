@@ -67,6 +67,7 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   enableNewsComment: true,
   enableEventComment: true,
   socialMediaSelect: true,
+  canInviteMembers: true,
 };
 
 export async function findWorkspaceMembers({

@@ -1,37 +1,52 @@
+import {notFound} from 'next/navigation';
+
+// ---- CORE IMPORTS ---- //
+import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {findAvailableSubapps, findMembers} from '../common/orm/members';
+import {findWorkspace} from '@/orm/workspace';
+
+// ---- LOCAL IMPORTS ---- //
 import Content from './content';
+import {findAvailableSubapps, findMembers} from '../common/orm/members';
 import {findInvites} from '../common/orm/invites';
-import {getSession} from '@/lib/core/auth';
 
 export default async function Page({
   params,
 }: {
   params: {workspace: string; tenant: string};
 }) {
-  const {tenant, workspaceURL} = workspacePathname(params);
+  const {tenant: tenantId, workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
-
   const user = session?.user!;
+
+  const workspace = await findWorkspace({
+    url: workspaceURL,
+    user,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return notFound();
+  }
 
   const partnerId = (user?.isContact ? user.mainPartnerId : user.id)!;
 
-  const members: any = await findMembers({
-    workspaceURL,
-    tenantId: tenant,
-    partnerId,
-  });
-
   const invites = await findInvites({
     workspaceURL,
-    tenantId: tenant,
+    tenantId,
     partnerId,
   });
 
   const availableApps = await findAvailableSubapps({
     url: workspaceURL,
-    tenantId: tenant,
+    tenantId,
+  });
+
+  const members: any = await findMembers({
+    workspaceURL,
+    tenantId,
+    partnerId,
   });
 
   const $members = [...members?.partners, ...members?.contacts];
@@ -42,6 +57,7 @@ export default async function Page({
         members={$members}
         invites={invites}
         availableApps={availableApps || []}
+        canInviteMembers={workspace?.config?.canInviteMembers}
       />
     </div>
   );
