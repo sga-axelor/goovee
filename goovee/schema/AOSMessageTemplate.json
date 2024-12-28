@@ -1,0 +1,29 @@
+{
+  "name": "AOSMessageTemplate",
+  "table": "message_template",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "localizationSet",
+      "target": "AOSLocalization"
+    },
+    {
+      "type": "String",
+      "name": "subject"
+    },
+    {
+      "type": "String",
+      "name": "content"
+    },
+    {
+      "type": "String",
+      "name": "language"
+    }
+  ]
+}
