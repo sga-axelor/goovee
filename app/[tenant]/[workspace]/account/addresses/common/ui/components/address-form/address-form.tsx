@@ -76,7 +76,7 @@ export const AddressForm = ({
   const {toast} = useToast();
   const router = useRouter();
   const {updateAddress: updateCartAddress} = useCart();
-  
+
   const {searchParams} = useSearchParams();
   const queryString = new URLSearchParams(searchParams).toString();
 
