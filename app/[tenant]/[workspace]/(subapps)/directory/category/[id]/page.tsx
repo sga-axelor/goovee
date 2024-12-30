@@ -21,15 +21,13 @@ import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 
-import {getPages} from '../../../ticketing/common/utils';
 import {colors} from '../../common/constants';
 import {findCategory} from '../../common/orm';
 import {findEntries} from '../../common/orm/directory-entry';
 import {DirectoryCards} from '../../common/ui/components/category-card';
 import {Swipe} from '../../common/ui/components/swipe';
+import {getOrderBy, getPages, getSkip} from '../../common/utils';
 import {Content} from '../../content';
-import {getOrderBy} from '../../common/utils';
-import {getSkip} from '../../../ticketing/common/utils/search-param';
 
 const icons = [
   materialIcon['MdAllInbox'],
