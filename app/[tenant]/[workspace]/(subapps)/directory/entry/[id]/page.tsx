@@ -158,7 +158,11 @@ async function Details({
             <FaXTwitter className="h-8 w-8" />
           </Link>
         )}
-        <FaInstagram className="h-8 w-8 text-palette-yellow-dark" />
+        {instagram && (
+          <Link href={`${instagram}`}>
+            <FaInstagram className="h-8 w-8 text-palette-yellow-dark" />
+          </Link>
+        )}
         {website && (
           <Link href={`${website}`}>
             <MdOutlineWeb className="h-8 w-8 text-gray-dark" />
