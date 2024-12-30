@@ -79,16 +79,16 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
             </AlertDialogTitle>
             <Separator className="mt-4" />
             <AlertDialogDescription className="text-black flex flex-col gap-6 !my-6">
-              <h4 className="text-xl font-semibold">
+              <span className="text-xl font-semibold">
                 {i18n.get(
                   `Are you sure you want to leave the workspace ${workspace.name}?`,
                 )}
-              </h4>
-              <div>
+              </span>
+              <span>
                 {i18n.get(
                   'If so, you will not be able to access this workspace anymore and will need to create a new account to join it.',
                 )}
-              </div>
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-10">
