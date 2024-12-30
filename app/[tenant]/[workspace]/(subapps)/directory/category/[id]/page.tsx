@@ -24,7 +24,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {colors} from '../../common/constants';
 import {findCategory} from '../../common/orm';
 import {findEntries} from '../../common/orm/directory-entry';
-import {DirectoryCards} from '../../common/ui/components/category-card';
+import {CategoryCard} from '../../common/ui/components/category-card';
 import {Swipe} from '../../common/ui/components/swipe';
 import {getOrderBy, getPages, getSkip} from '../../common/utils';
 import {Content} from '../../content';
@@ -82,7 +82,7 @@ export default async function Page({
 
   const pages = getPages(entries, limit);
   const cards = category.directoryCategorySet?.map((category, i) => (
-    <DirectoryCards
+    <CategoryCard
       workspaceURI={workspaceURI}
       id={category.id}
       key={category.id}

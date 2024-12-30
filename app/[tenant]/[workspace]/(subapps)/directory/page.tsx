@@ -22,7 +22,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {colors} from './common/constants';
 import {findCategories} from './common/orm/directory-category';
 import {findEntries} from './common/orm/directory-entry';
-import {DirectoryCards} from './common/ui/components/category-card';
+import {CategoryCard} from './common/ui/components/category-card';
 import {Swipe} from './common/ui/components/swipe';
 import {getOrderBy, getPages, getSkip} from './common/utils';
 import {Content} from './content';
@@ -83,7 +83,7 @@ export default async function Page({
     : IMAGE_URL;
 
   const cards = categories.map((category, i) => (
-    <DirectoryCards
+    <CategoryCard
       workspaceURI={workspaceURI}
       id={category.id}
       key={category.id}

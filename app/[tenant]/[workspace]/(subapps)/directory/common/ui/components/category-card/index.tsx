@@ -2,7 +2,7 @@ import {cn} from '@/utils/css';
 import Link from 'next/link';
 import {IconType} from 'react-icons';
 
-export type DirectoryCardsProps = {
+export type CategoryCardProps = {
   id: string;
   workspaceURI: string;
   label: string;
@@ -10,7 +10,7 @@ export type DirectoryCardsProps = {
   iconClassName: string;
 };
 
-export function DirectoryCards(props: DirectoryCardsProps) {
+export function CategoryCard(props: CategoryCardProps) {
   const {label, icon: Icon, iconClassName, workspaceURI, id} = props;
 
   return (
