@@ -29,3 +29,5 @@ export const sortOptions = [
   {value: 'newest', label: 'Newest', orderBy: {createdOn: 'DESC'}},
   {value: 'oldest', label: 'Oldest', orderBy: {createdOn: 'ASC'}},
 ];
+
+export const defaultSortOption = sortOptions[0];

@@ -10,12 +10,12 @@ import {
 } from '@/ui/components';
 import {useSearchParams} from '@/ui/hooks/use-search-params';
 import {cn} from '@/utils/css';
-import {sortOptions} from '../../../constants';
+import {defaultSortOption, sortOptions} from '../../../constants';
 
 export function Sort() {
   const {searchParams, update} = useSearchParams();
 
-  const currentValue = searchParams.get('sort') || sortOptions[0].value;
+  const currentValue = searchParams.get('sort') || defaultSortOption.value;
 
   const handleSortChange = (value: string) => {
     update([
