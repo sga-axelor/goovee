@@ -23,9 +23,9 @@ export const colors = {
   white: 'bg-white/30 text-white',
 };
 
-export const orderByMap: Record<string, any> = {
-  'a-z': {title: 'ASC'},
-  'z-a': {title: 'DESC'},
-  newest: {createdOn: 'DESC'},
-  oldest: {createdOn: 'ASC'},
-};
+export const sortOptions = [
+  {value: 'a-z', label: 'A-Z', orderBy: {title: 'ASC'}},
+  {value: 'z-a', label: 'Z-A', orderBy: {title: 'DESC'}},
+  {value: 'newest', label: 'Newest', orderBy: {createdOn: 'DESC'}},
+  {value: 'oldest', label: 'Oldest', orderBy: {createdOn: 'ASC'}},
+];

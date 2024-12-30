@@ -10,21 +10,18 @@ import {
 } from '@/ui/components';
 import {useSearchParams} from '@/ui/hooks/use-search-params';
 import {cn} from '@/utils/css';
-
-const options = [
-  {value: 'a-z', label: i18n.get('A-Z')},
-  {value: 'z-a', label: i18n.get('Z-A')},
-  {value: 'newest', label: i18n.get('Newest')},
-  {value: 'oldest', label: i18n.get('Oldest')},
-];
+import {sortOptions} from '../../../constants';
 
 export function Sort() {
   const {searchParams, update} = useSearchParams();
 
-  const currentValue = searchParams.get('sort') || options[0].value;
+  const currentValue = searchParams.get('sort') || sortOptions[0].value;
 
   const handleSortChange = (value: string) => {
-    update([{key: 'sort', value}]);
+    update([
+      {key: 'sort', value},
+      {key: 'page', value: '1'},
+    ]);
   };
 
   return (
@@ -35,12 +32,12 @@ export function Sort() {
         <SelectValue placeholder={i18n.get('Select sort')} />
       </SelectTrigger>
       <SelectContent className="w-full">
-        {options.map(option => (
+        {sortOptions.map(option => (
           <SelectItem
             key={option.value}
             value={option.value}
             className="text-xs">
-            {option.label}
+            {i18n.get(option.label)}
           </SelectItem>
         ))}
       </SelectContent>
