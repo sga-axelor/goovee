@@ -1,10 +1,12 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {MdOutlineRefresh} from 'react-icons/md';
+import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
+import {Button} from '@/ui/components/button';
+import {Dialog, DialogContent, DialogTitle} from '@/ui/components/dialog';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/i18n';
@@ -14,7 +16,8 @@ import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {requestQuotation} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
-import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
+import {AddressSelection} from '../../../common/ui/components/address-selection';
+import {MdOutlineRefresh} from 'react-icons/md';
 
 export default function Content({
   workspace,
@@ -23,51 +26,93 @@ export default function Content({
   workspace: PortalWorkspace;
   quotationSubapp?: boolean;
 }) {
+  const [requestingQuotation, setRequestingQuotation] = useState(false);
+
   const {clearCart, cart} = useCart();
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
-  useEffect(() => {
-    const request = async () => {
-      const res = await requestQuotation({
-        cart,
-        workspace,
+  const invoicingAddress = cart?.invoicingAddress;
+  const deliveryAddress = cart?.deliveryAddress;
+
+  const callbackURL = `${workspaceURL}/${SUBAPP_CODES.shop}/cart/request-quotation`;
+  const checkoutURL = `${workspaceURL}/${SUBAPP_CODES.shop}/cart`;
+
+  const handleRequestQuotation = async () => {
+    if (!(cart?.invoicingAddress && cart?.deliveryAddress)) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get(
+          'Kindly add invoicing and delivery address for your profile.',
+        ),
+      });
+      return;
+    }
+
+    setRequestingQuotation(true);
+
+    const res = await requestQuotation({
+      cart,
+      workspace,
+    });
+
+    if (res?.data) {
+      toast({
+        variant: 'success',
+        title: i18n.get('Quotation requested successfully'),
       });
 
-      if (res?.data) {
-        toast({
-          variant: 'success',
-          title: i18n.get('Quotation requested successfully'),
-        });
+      clearCart();
+      setRequestingQuotation(false);
 
-        clearCart();
-
-        if (quotationSubapp) {
-          router.replace(
-            `${workspaceURI}/${SUBAPP_CODES.quotations}/${res.data}`,
-          );
-        } else {
-          router.replace(`${workspaceURI}/shop`);
-        }
+      if (quotationSubapp) {
+        router.replace(
+          `${workspaceURI}/${SUBAPP_CODES.quotations}/${res.data}`,
+        );
       } else {
-        toast({
-          variant: 'destructive',
-          title: i18n.get('Error requesting quotation, try again !'),
-        });
-        router.replace(`${workspaceURI}/shop/cart`);
+        router.replace(`${workspaceURI}/shop`);
       }
-    };
-
-    request();
-  }, []);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Error requesting quotation, try again !'),
+      });
+      setRequestingQuotation(false);
+      router.replace(`${workspaceURI}/shop/cart`);
+    }
+  };
 
   return (
     <>
       <Dialog open>
         <DialogTitle></DialogTitle>
-        <DialogContent className="w-40 flex items-center justify-center">
-          <MdOutlineRefresh className="h-6 w-6 animate-spin" />
+        <DialogContent className="space-y-2" hideClose>
+          {!requestingQuotation ? (
+            <>
+              <AddressSelection
+                title={i18n.get('Addresses')}
+                callbackURL={callbackURL}
+              />
+              <div className="grid grid-cols-2 items-center gap-2">
+                <Link href={checkoutURL}>
+                  <Button variant="outline" className="w-full">
+                    {i18n.get('Cancel')}
+                  </Button>
+                </Link>
+                <Button
+                  variant="success"
+                  disabled={!(invoicingAddress && deliveryAddress)}
+                  onClick={handleRequestQuotation}>
+                  {i18n.get('Request')}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center">
+              <MdOutlineRefresh className="h-6 w-6 animate-spin" />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>
