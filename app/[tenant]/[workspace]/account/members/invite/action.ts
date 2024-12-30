@@ -137,6 +137,10 @@ export async function sendInvites({
     return error(await getTranslation('Bad Request'));
   }
 
+  if (!workspace.config?.canSendInvites) {
+    return error(await getTranslation('Unauthorized'));
+  }
+
   const isPartnerUser = await isPartner();
   const isAdminContactUser = await isAdminContact({workspaceURL, tenantId});
 
