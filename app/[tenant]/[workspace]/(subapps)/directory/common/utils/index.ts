@@ -16,3 +16,21 @@ export function getProfilePic(
     noimageSrc: '/images/user.png',
   });
 }
+
+export const getPages = (
+  records: {_count?: string}[],
+  limit: string | number,
+): number => {
+  const take = +limit;
+  if (take === 0) return 1;
+  const pages = Math.ceil(parseInt(records[0]?._count ?? '0') / take);
+  return pages || 1;
+};
+
+export const getSkip = (
+  limit: string | number,
+  page: string | number,
+): number => {
+  page = +page || 1;
+  return (page - 1) * +limit;
+};

@@ -20,15 +20,13 @@ import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {Content} from '../directory/content';
-import {getPages} from '../ticketing/common/utils'; //TODO: extract ticketing imports to core everywhere
-import {getSkip} from '../ticketing/common/utils/search-param';
 import {colors} from './common/constants';
 import {findCategories} from './common/orm/directory-category';
 import {findEntries} from './common/orm/directory-entry';
 import {DirectoryCards} from './common/ui/components/category-card';
 import {Swipe} from './common/ui/components/swipe';
+import {getOrderBy, getPages, getSkip} from './common/utils';
 import Hero from './hero';
-import {getOrderBy} from './common/utils';
 
 const icons = [
   materialIcon['MdAllInbox'],
