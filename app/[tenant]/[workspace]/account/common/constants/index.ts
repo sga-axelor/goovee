@@ -8,6 +8,7 @@ export const ROUTES = {
   members: 'members',
   notifications: 'notifications',
   apps: 'apps',
+  settings: 'settings',
 };
 
 export const GLOBAL_MENU = [
@@ -38,6 +39,10 @@ export const WORKSPACE_MENU = [
   {
     label: 'My apps',
     route: ROUTES.apps,
+  },
+  {
+    label: 'Settings',
+    route: ROUTES.settings,
   },
 ];
 
