@@ -28,7 +28,7 @@ export function Sort() {
     <Select
       defaultValue={currentValue}
       onValueChange={e => handleSortChange(e)}>
-      <SelectTrigger className={cn('min-w-[128px] text-xs text-foreground')}>
+      <SelectTrigger className={cn('lg:min-w-[128px] text-xs text-foreground')}>
         <SelectValue placeholder={i18n.get('Select sort')} />
       </SelectTrigger>
       <SelectContent className="w-full">
