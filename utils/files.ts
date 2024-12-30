@@ -1,6 +1,4 @@
-import type {Tenant} from '@/lib/core/tenant';
 import type {ID} from '@/types';
-import {Maybe} from '@/types/util';
 
 export function getFileSizeText(fileSize: number) {
   if (!fileSize) return '';
@@ -178,15 +176,4 @@ const iconColors: any = {
 
 export function getIconColor(icon: string) {
   return iconColors[icon];
-}
-
-export function getProfilePic(
-  id: Maybe<string>,
-  tenantId: Tenant['id'],
-): string {
-  if (!id) {
-    return '/images/user.png';
-  }
-
-  return getImageURL(id, tenantId!);
 }

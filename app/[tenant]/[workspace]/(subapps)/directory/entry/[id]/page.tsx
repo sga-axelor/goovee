@@ -10,7 +10,8 @@ import {getTranslation} from '@/lib/core/i18n/server';
 import {findWorkspace} from '@/orm/workspace';
 import {Avatar, AvatarImage} from '@/ui/components';
 import {clone} from '@/utils';
-import {getImageURL, getProfilePic} from '@/utils/files';
+import {getImageURL} from '@/utils/files';
+import {getProfilePic} from '../../common/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 
