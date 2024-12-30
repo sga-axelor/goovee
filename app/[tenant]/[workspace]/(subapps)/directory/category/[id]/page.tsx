@@ -113,6 +113,7 @@ export default async function Page({
           />
         )}
         <Content
+          url={`${workspaceURI}/directory/category/${id}`}
           workspaceURI={workspaceURI}
           entries={entries}
           tenant={tenant}

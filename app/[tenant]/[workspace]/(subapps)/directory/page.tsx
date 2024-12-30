@@ -112,6 +112,7 @@ export default async function Page({
           />
         )}
         <Content
+          url={`${workspaceURI}/directory`}
           workspaceURI={workspaceURI}
           tenant={tenant}
           pages={pages}

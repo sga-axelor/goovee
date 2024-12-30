@@ -18,6 +18,7 @@ import {Sort} from './common/ui/components/sort';
 
 type ContentProps = {
   workspaceURI: string;
+  url: string;
   entries: ListEntry[];
   tenant: string;
   pages: number;
@@ -30,6 +31,7 @@ export async function Content({
   pages,
   searchParams,
   entries,
+  url,
 }: ContentProps) {
   if (!entries || entries.length === 0) {
     return (
@@ -59,11 +61,7 @@ export async function Content({
         </main>
       </div>
       {pages > 1 && (
-        <CardPagination
-          url={`${workspaceURI}/directory`}
-          pages={pages}
-          searchParams={searchParams}
-        />
+        <CardPagination url={url} pages={pages} searchParams={searchParams} />
       )}
     </>
   );
