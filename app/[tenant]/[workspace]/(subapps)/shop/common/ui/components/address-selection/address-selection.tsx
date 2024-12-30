@@ -93,7 +93,7 @@ export function AddressSelection({
           <h3 className="text-lg font-semibold mb-4">
             {i18n.get('Invoicing and delivery address')}
           </h3>
-          <LinkButton>{i18n.get('Create an address')}</LinkButton>
+          <LinkButton>{i18n.get('Create or Select an address')}</LinkButton>
         </div>
       ) : sameDeliveryAndInvoicingAddress ? (
         <div className="border p-4 rounded-lg space-y-2">

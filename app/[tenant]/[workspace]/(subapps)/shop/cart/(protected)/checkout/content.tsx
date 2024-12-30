@@ -61,8 +61,18 @@ function Stripe({onApprove}: {onApprove: any}) {
   const {searchParams} = useSearchParams();
   const validateRef = useRef(false);
 
+  const noAddress = !(cart?.invoicingAddress && cart?.deliveryAddress);
+
   const handleCreateCheckoutSession = async () => {
     try {
+      if (noAddress) {
+        toast({
+          variant: 'destructive',
+          title: i18n.get('Select address to continue'),
+        });
+        return;
+      }
+
       const result = await createStripeCheckoutSession({
         cart,
         workspaceURL,
@@ -88,7 +98,7 @@ function Stripe({onApprove}: {onApprove: any}) {
   const handleValidateStripePayment = useCallback(
     async ({stripeSessionId}: {stripeSessionId: string}) => {
       try {
-        if (!stripeSessionId) {
+        if (!(stripeSessionId && cart?.items?.length)) {
           return;
         }
 
@@ -97,6 +107,7 @@ function Stripe({onApprove}: {onApprove: any}) {
           cart,
           workspaceURL,
         });
+
         if (result.error) {
           toast({
             variant: 'destructive',
@@ -153,8 +164,17 @@ function Paypal({onApprove}: {onApprove: any}) {
   const {cart, clearCart} = useCart();
   const {toast} = useToast();
   const {workspaceURL} = useWorkspace();
+  const noAddress = !(cart?.invoicingAddress && cart?.deliveryAddress);
 
   const handleCreatePaypalOrder = async (data: any, actions: any) => {
+    if (noAddress) {
+      toast({
+        variant: 'destructive',
+        title: i18n.get('Select address to continue'),
+      });
+      return;
+    }
+
     const result: any = await paypalCreateOrder({cart, workspaceURL});
 
     if (result.error) {
