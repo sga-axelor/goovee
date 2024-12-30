@@ -1,7 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
-import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
+import {Tenant} from '@/tenant';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,8 +19,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/ui/components/pagination';
+import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
+import {getPaginationButtons} from '@/utils/pagination';
 import {decodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 import type {ID} from '@goovee/orm';
@@ -31,7 +32,6 @@ import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
-import {Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {DEFAULT_SORT, sortKeyPathMap} from '../../../common/constants';
@@ -47,15 +47,14 @@ import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
 import {Filter} from '../../../common/ui/components/filter';
 import {TicketList} from '../../../common/ui/components/ticket-list';
-import {getPages, getPaginationButtons} from '../../../common/utils';
+import {getPages} from '../../../common/utils';
+import {ensureAuth} from '../../../common/utils/auth-helper';
 import {
   getOrderBy,
   getSkip,
   getWhere,
 } from '../../../common/utils/search-param';
 import Search from '../search';
-import {Skeleton} from '@/ui/components/skeleton';
-import {ensureAuth} from '../../../common/utils/auth-helper';
 
 const TICKETS_PER_PAGE = 10;
 export default async function Page({

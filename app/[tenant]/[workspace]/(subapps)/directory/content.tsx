@@ -1,3 +1,7 @@
+import {ChevronLeft, ChevronRight} from 'lucide-react';
+import Link from 'next/link';
+
+// ---- CORE IMPORTS ---- //
 import {getTranslation} from '@/lib/core/i18n/server';
 import {
   Pagination,
@@ -8,9 +12,9 @@ import {
   PaginationPrevious,
 } from '@/ui/components/pagination';
 import {clone} from '@/utils';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
-import Link from 'next/link';
-import {getPaginationButtons} from '../ticketing/common/utils';
+import {getPaginationButtons} from '@/utils/pagination';
+
+// ---- LOCAL IMPORTS ---- //
 import type {ListEntry} from './common/orm';
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
