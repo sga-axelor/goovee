@@ -19,13 +19,13 @@ import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {Content} from '../directory/content';
 import {colors} from './common/constants';
 import {findCategories} from './common/orm/directory-category';
 import {findEntries} from './common/orm/directory-entry';
 import {DirectoryCards} from './common/ui/components/category-card';
 import {Swipe} from './common/ui/components/swipe';
 import {getOrderBy, getPages, getSkip} from './common/utils';
+import {Content} from './content';
 import Hero from './hero';
 
 const icons = [
