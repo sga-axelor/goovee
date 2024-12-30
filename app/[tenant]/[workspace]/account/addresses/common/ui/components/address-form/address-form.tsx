@@ -76,7 +76,9 @@ export const AddressForm = ({
   const {toast} = useToast();
   const router = useRouter();
   const {updateAddress: updateCartAddress} = useCart();
+  
   const {searchParams} = useSearchParams();
+  const queryString = new URLSearchParams(searchParams).toString();
 
   const checkout = searchParams.get('checkout') === 'true';
   const quotation = searchParams.get('quotation') ?? '';
@@ -162,18 +164,14 @@ export const AddressForm = ({
       });
 
       if (result) {
-        const queryParams = new URLSearchParams();
         if (checkout) {
-          queryParams.set('checkout', 'true');
           updateCartAddress({
             addressType: type,
             address: result?.id,
           });
         }
-        if (quotation) queryParams.set('quotation', quotation);
-
         router.push(
-          `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}?${queryParams.toString()}`,
+          `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}?${queryString}`,
         );
       }
 

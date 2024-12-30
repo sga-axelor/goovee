@@ -38,6 +38,7 @@ function Content({
   deliveryAddresses,
   fromQuotation,
   fromCheckout,
+  callbackURL,
 }: ContentProps) {
   const [initiating, setInitiating] = useState(true);
   const [selectedAddresses, setSelectedAddresses] = useState({
@@ -54,33 +55,27 @@ function Content({
 
   const isSubAppActive = fromQuotation || fromCheckout;
 
+  const queryParams: any = {};
+
+  if (fromQuotation) {
+    queryParams.quotation = quotation.id;
+  } else if (fromCheckout) {
+    queryParams.checkout = true;
+  }
+
+  if (callbackURL) {
+    queryParams.callbackURL = callbackURL;
+  }
+
+  const queryString = new URLSearchParams(queryParams).toString();
+
   const handleCreate = (type: ADDRESS_TYPE) => {
-    const queryParams: any = {};
-
-    if (fromQuotation) {
-      queryParams.quotation = quotation.id;
-    } else if (fromCheckout) {
-      queryParams.checkout = true;
-    }
-
-    const queryString = new URLSearchParams(queryParams).toString();
-
     router.push(
       `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}/${type}/${SUBAPP_PAGE.create}${queryString ? `?${queryString}` : ''}`,
     );
   };
 
   const handleEdit = (type: ADDRESS_TYPE, id: string | number) => {
-    const queryParams: any = {};
-
-    if (fromQuotation) {
-      queryParams.quotation = quotation.id;
-    } else if (fromCheckout) {
-      queryParams.checkout = true;
-    }
-
-    const queryString = new URLSearchParams(queryParams).toString();
-
     router.push(
       `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}/${type}/${SUBAPP_PAGE.edit}/${id}${queryString ? `?${queryString}` : ''}`,
     );
@@ -138,7 +133,7 @@ function Content({
   const handleConfirm = () => {
     if (fromCheckout) {
       router.refresh();
-      router.push(`${workspaceURI}/${SUBAPP_PAGE.checkout}`);
+      router.push(callbackURL || `${workspaceURI}/${SUBAPP_PAGE.checkout}`);
     } else if (fromQuotation) {
       handleQuotationConfirm();
     }
