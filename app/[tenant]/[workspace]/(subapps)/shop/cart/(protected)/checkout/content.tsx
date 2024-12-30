@@ -35,12 +35,10 @@ import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/actions/cart';
+import {AddressSelection} from '@/subapps/shop/common/ui/components/address-selection';
 import styles from './content.module.scss';
 import {
   createStripeCheckoutSession,
-  findAddress,
-  findDeliveryAddress,
-  findInvoicingAddress,
   paypalCaptureOrder,
   paypalCreateOrder,
   validateStripePayment,
@@ -299,130 +297,7 @@ function Total({cart, shippingType, workspace}: any) {
     </div>
   );
 }
-function Contact() {
-  const [loading, setLoading] = useState(false);
-  const [invoicingAddress, setInvoicingAddress] = useState<any>(null);
-  const [deliveryAddress, setDeliveryAddress] = useState<any>(null);
 
-  const {cart, updateAddress} = useCart();
-
-  const {
-    invoicingAddress: cartInvoicingAddress,
-    deliveryAddress: cartDeliveryAddress,
-  } = cart || {};
-
-  const {workspaceURI} = useWorkspace();
-
-  const handleFetchAddresses = useCallback(async () => {
-    const [deliveryAddress, invoicingAddress] = await Promise.all([
-      cartDeliveryAddress
-        ? findAddress(cartDeliveryAddress)
-        : findDeliveryAddress(),
-      cartInvoicingAddress
-        ? findAddress(cartInvoicingAddress)
-        : findInvoicingAddress(),
-    ]);
-
-    if (invoicingAddress) {
-      setInvoicingAddress(invoicingAddress);
-      if (!cartInvoicingAddress) {
-        updateAddress({addressType: 'invoicing', address: invoicingAddress.id});
-      }
-    }
-
-    if (deliveryAddress) {
-      setDeliveryAddress(deliveryAddress);
-      if (!cartDeliveryAddress) {
-        updateAddress({type: 'delivery', address: deliveryAddress.id});
-      }
-    }
-  }, [cartInvoicingAddress, cartDeliveryAddress, updateAddress]);
-
-  useEffect(() => {
-    setLoading(true);
-    handleFetchAddresses().finally(() => {
-      setLoading(false);
-    });
-  }, [handleFetchAddresses]);
-
-  const noaddress = !invoicingAddress && !deliveryAddress;
-
-  const sameDeliveryAndInvoicingAddress =
-    invoicingAddress &&
-    deliveryAddress &&
-    invoicingAddress.id === deliveryAddress.id;
-
-  const LinkButton = ({children, ...props}: any) => (
-    <Link href={`${workspaceURI}/account/addresses?checkout=true`}>
-      <Button className="rounded-full" variant="outline" {...props}>
-        {children}
-      </Button>
-    </Link>
-  );
-
-  return (
-    <div className="bg-card text-card-foreground p-6 rounded-lg">
-      <Title className="text-xl font-medium" text={i18n.get('Contact')} />
-      <Separator className="my-4" />
-      {loading ? (
-        <Loader />
-      ) : noaddress ? (
-        <div className="border p-4 rounded-lg space-y-2">
-          <Title
-            className="text-lg font-semibold mb-4"
-            text={i18n.get('Invoicing and delivery address')}
-          />
-          <LinkButton>{i18n.get('Create an address')}</LinkButton>
-        </div>
-      ) : sameDeliveryAndInvoicingAddress ? (
-        <div className="border p-4 rounded-lg space-y-2">
-          <Title
-            className="text-lg font-semibold mb-4"
-            text={i18n.get('Invoicing and delivery address')}
-          />
-          <div>
-            <h5 className="font-bold text-xl">
-              {deliveryAddress?.address?.addressl2}
-            </h5>
-            <h6>{deliveryAddress?.address?.addressl4}</h6>
-            <h6>{deliveryAddress?.address?.addressl6}</h6>
-            <h6>{deliveryAddress?.address?.country?.name}</h6>
-          </div>
-          <LinkButton>{i18n.get('Choose another address')}</LinkButton>
-        </div>
-      ) : (
-        <div className="space-y-2 divide-y">
-          {[
-            {title: 'Delivery Address', address: deliveryAddress?.address},
-            {title: 'Invoicing Address', address: invoicingAddress?.address},
-          ].map(({title, address}) => (
-            <div key={title} className="border p-4 rounded-lg space-y-2">
-              <Title
-                className="text-lg font-semibold mb-4"
-                text={i18n.get(title)}
-              />
-              {address ? (
-                <>
-                  <div>
-                    <h5 className="font-bold text-xl">{address.addressl2}</h5>
-                    <h6>{address.addressl4}</h6>
-                    <h6>{address.addressl6}</h6>
-                    <h6>{address.country?.name}</h6>
-                  </div>
-                  <LinkButton>{i18n.get('Choose another address')}</LinkButton>
-                </>
-              ) : (
-                <LinkButton variant="default">
-                  {i18n.get('Create an address')}
-                </LinkButton>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 function Shipping({value, onChange}: {value: string; onChange: any}) {
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
@@ -596,7 +471,7 @@ export default function Content({
       <div className="grid lg:grid-cols-[1fr_25%] xl:grid-cols-[1fr_21%] grid-cols-1 gap-4">
         <div>
           <div className="flex flex-col gap-6">
-            <Contact />
+            <AddressSelection />
             <Shipping
               value={shippingType}
               onChange={handleChangeShippingType}

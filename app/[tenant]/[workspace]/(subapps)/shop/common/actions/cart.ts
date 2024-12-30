@@ -157,6 +157,8 @@ export async function requestOrder({
       workspaceId: workspace.id,
     };
 
+    console.log({aos: JSON.stringify({ws, payload}, null, 2)});
+
     const res = await axios.post(ws, payload, {
       auth: {
         username: aos.auth.username,
@@ -170,6 +172,7 @@ export async function requestOrder({
 
     return res?.data;
   } catch (err) {
+    console.error(err);
     return null;
   }
 }

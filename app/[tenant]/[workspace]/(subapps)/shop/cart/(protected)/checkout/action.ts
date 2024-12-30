@@ -6,14 +6,8 @@ import {headers} from 'next/headers';
 import type {Stripe} from 'stripe';
 
 // ---- CORE IMPORTS ---- //
-import {
-  findDefaultDeliveryAddress,
-  findDefaultInvoicingAddress,
-  findPartnerAddress,
-} from '@/orm/address';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
-import {clone} from '@/utils';
 import paypalhttpclient from '@/payment/paypal';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
@@ -27,39 +21,6 @@ import {PaymentOption, type ID} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findPartnerByEmail} from '@/orm/partner';
-
-export async function findInvoicingAddress() {
-  const session = await getSession();
-  const user = session?.user;
-
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!(user && tenantId)) return null;
-
-  return findDefaultInvoicingAddress(user.id, tenantId).then(clone);
-}
-
-export async function findDeliveryAddress() {
-  const session = await getSession();
-  const user = session?.user;
-
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!(user && tenantId)) return null;
-
-  return findDefaultDeliveryAddress(user.id, tenantId).then(clone);
-}
-
-export async function findAddress(id: ID) {
-  const session = await getSession();
-  const user = session?.user;
-
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!(user && tenantId)) return null;
-
-  return findPartnerAddress(id, tenantId).then(clone);
-}
 
 export async function createOrder({
   cart,
