@@ -1,5 +1,5 @@
+import type {ErrorResponse} from '@/types/action';
 import {VERSION_MISMATCH_ERROR} from '../constants';
-import type {ErrorResponse} from './types';
 
 export function handleError(e: unknown): ErrorResponse {
   if (e instanceof Error) {

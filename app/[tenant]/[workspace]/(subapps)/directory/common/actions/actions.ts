@@ -1,6 +1,7 @@
 'use server';
 import {headers} from 'next/headers';
 import type {ID} from '@goovee/orm';
+import {ActionResponse} from '@/types/action';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
@@ -12,7 +13,6 @@ import type {Cloned} from '@/types/util';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import type {ActionResponse} from '../../../ticketing/common/actions';
 import {findEntriesBySearch, type SearchEntry} from '../orm';
 
 export async function searchEntries({

@@ -9,6 +9,7 @@ import {t} from '@/locale/server';
 import {clone} from '@/utils';
 import type {ID} from '@goovee/orm';
 import type {Cloned} from '@/types/util';
+import type {ActionResponse} from '@/types/action';
 
 // ---- LOCAL IMPORTS ---- //
 import {MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
@@ -30,7 +31,7 @@ import {
 import {ensureAuth} from '../utils/auth-helper';
 import {CreateTicketSchema, UpdateTicketSchema} from '../utils/validators';
 import {handleError} from './helpers';
-import type {ActionConfig, ActionResponse, MutateProps} from './types';
+import type {ActionConfig, MutateProps} from './types';
 
 export type MutateResponse = {id: string; version: number};
 
