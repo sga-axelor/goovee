@@ -2,10 +2,11 @@ import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
 
 import {i18n} from '@/locale';
+import type {ActionResponse} from '@/types/action';
 import {ToastAction} from '@/ui/components';
 import {useToast} from '@/ui/hooks';
 
-import type {ActionConfig, ActionResponse} from '../actions';
+import type {ActionConfig} from '../actions';
 import {VERSION_MISMATCH_ERROR} from '../constants';
 
 export function useRetryAction<
@@ -28,7 +29,9 @@ export function useRetryAction<
   const router = useRouter();
   const handleSuccess = useCallback(
     async (
-      onSuccess?: (res: Extract<Awaited<R>, {success: true}>) => Promise<void>,
+      onSuccess?: (
+        res: Extract<Awaited<R>, {success: true}>['data'],
+      ) => Promise<void>,
       data?: Extract<Awaited<R>, {success: true}>['data'],
     ) => {
       toast({
@@ -47,7 +50,9 @@ export function useRetryAction<
     (
       message: string,
       retryProps: T,
-      onSuccess?: (res: Extract<Awaited<R>, {success: true}>) => Promise<void>,
+      onSuccess?: (
+        res: Extract<Awaited<R>, {success: true}>['data'],
+      ) => Promise<void>,
     ) => {
       if (message === VERSION_MISMATCH_ERROR) {
         const handleOverwrite = async () => {
@@ -102,7 +107,9 @@ export function useRetryAction<
   const actionHandler = useCallback(
     async (
       actionProps: T,
-      onSuccess?: (res: Extract<Awaited<R>, {success: true}>) => Promise<void>,
+      onSuccess?: (
+        res: Extract<Awaited<R>, {success: true}>['data'],
+      ) => Promise<void>,
     ): Promise<void> => {
       try {
         setLoading(true);
