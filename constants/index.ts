@@ -145,6 +145,7 @@ export const URL_PARAMS = {
   category: 'category',
   pastevents: 'pastevents',
   date: 'date',
+  query: 'query',
 };
 
 /**

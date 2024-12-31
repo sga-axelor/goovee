@@ -17,6 +17,7 @@ import {getAllRegisteredEvents} from '@/subapps/events/common/actions/actions';
 export default async function Page(context: any) {
   const params = context?.params;
   const page = context?.searchParams?.page || DEFAULT_PAGE;
+  const query = context?.searchParams?.query || '';
   const showPastEvents = Boolean(context?.searchParams?.pastevents) || false;
 
   const {tenant} = params;
@@ -60,6 +61,7 @@ export default async function Page(context: any) {
     limit: LIMIT,
     page: page,
     categories: category,
+    search: query,
     day: new Date(date).getDate() || undefined,
     month: new Date(date).getMonth() + 1 || undefined,
     year: new Date(date).getFullYear() || undefined,
@@ -73,6 +75,7 @@ export default async function Page(context: any) {
       category={category}
       categories={categories}
       date={date}
+      query={query}
       workspace={workspace}
       onGoingEvents={events.ongoing}
       upcomingEvents={events.upcoming}

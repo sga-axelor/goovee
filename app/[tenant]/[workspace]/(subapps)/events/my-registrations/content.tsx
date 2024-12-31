@@ -11,6 +11,7 @@ type ContentProps = {
   categories: Category[];
   category: any;
   date: any;
+  query?: string;
   workspace: any;
   onGoingEvents: Event[];
   upcomingEvents: Event[];
@@ -23,6 +24,7 @@ const Content = ({
   categories,
   category,
   date,
+  query,
   workspace,
   onGoingEvents,
   upcomingEvents,
@@ -36,6 +38,7 @@ const Content = ({
         categories={categories}
         category={category}
         dateOfEvent={date}
+        query={query}
         workspace={workspace}
         onlyRegisteredEvent={true}
         onGoingEvents={onGoingEvents}
