@@ -18,10 +18,13 @@ export function Sort() {
   const currentValue = searchParams.get('sort') || defaultSortOption.value;
 
   const handleSortChange = (value: string) => {
-    update([
-      {key: 'sort', value},
-      {key: 'page', value: '1'},
-    ]);
+    update(
+      [
+        {key: 'sort', value},
+        {key: 'page', value: '1'},
+      ],
+      {scroll: false},
+    );
   };
 
   return (
