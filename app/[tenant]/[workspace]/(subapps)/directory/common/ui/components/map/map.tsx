@@ -61,56 +61,57 @@ function MapContent(props: MapProps) {
     [full, className],
   );
 
-  useEffect(() => {
-    async function init() {
-      if (!geocoder || !entries) {
-        setLoading(false);
-        return;
-      }
-
-      //TODO: this is untested, re implement once api key is provided
-      // cahce the response instead of making a new request everytime
-      // a call back can provided instead of awaiting the promise
-      // check if multiple addresses can be provided at once,
-      const resPromises = entries.map(entry => {
-        return geocoder.geocode({address: entry?.address});
-      });
-      setLoading(true);
-      try {
-        const res = await Promise.all(resPromises);
-        // TODO: handle race conditions
-        setLatLngs(
-          res
-            .map((x, i) => {
-              if (!x.results[0].geometry.location) return null;
-              return {
-                id: entries[i].id,
-                lat: x.results[0].geometry.location.lat(),
-                lng: x.results[0].geometry.location.lng(),
-              };
-            })
-            .filter(Boolean) as LatLng[],
-        );
-      } catch (e) {
-        toast({
-          variant: 'destructive',
-          title:
-            e instanceof Error ? e.message : i18n.get('Something went wrong'),
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-    init();
-  }, [geocoder, entries, toast]);
-
-  if (loading) return <Skeleton className={mapClassName} />;
-  if (!latLngs.length) return <div className={cn(full && 'expand')} />; // NOTE: expand class is used make the parent parent component flex column
+  // useEffect(() => {
+  //   async function init() {
+  //     if (!geocoder || !entries) {
+  //       setLoading(false);
+  //       return;
+  //     }
+  //
+  //     //TODO: this is untested, re implement once api key is provided
+  //     // cahce the response instead of making a new request everytime
+  //     // a call back can provided instead of awaiting the promise
+  //     // check if multiple addresses can be provided at once,
+  //     const resPromises = entries.map(entry => {
+  //       return geocoder.geocode({address: entry?.address});
+  //     });
+  //     setLoading(true);
+  //     try {
+  //       const res = await Promise.all(resPromises);
+  //       // TODO: handle race conditions
+  //       setLatLngs(
+  //         res
+  //           .map((x, i) => {
+  //             if (!x.results[0].geometry.location) return null;
+  //             return {
+  //               id: entries[i].id,
+  //               lat: x.results[0].geometry.location.lat(),
+  //               lng: x.results[0].geometry.location.lng(),
+  //             };
+  //           })
+  //           .filter(Boolean) as LatLng[],
+  //       );
+  //     } catch (e) {
+  //       toast({
+  //         variant: 'destructive',
+  //         title:
+  //           e instanceof Error ? e.message : i18n.get('Something went wrong'),
+  //       });
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   init();
+  // }, [geocoder, entries, toast]);
+  //
+  // if (loading) return <Skeleton className={mapClassName} />;
+  // if (!latLngs.length) return <div className={cn(full && 'expand')} />; // NOTE: expand class is used make the parent parent component flex column
   return (
     <GMap
       className={mapClassName}
       reuseMaps={true}
-      defaultCenter={{lat: latLngs[0].lat, lng: latLngs[0].lng}}
+      // defaultCenter={{lat: latLngs[0].lat, lng: latLngs[0].lng}}
+      defaultCenter={{lat: 48.85341, lng: 2.3488}}
       defaultZoom={10}
       gestureHandling={'greedy'}
       disableDefaultUI={true}>
@@ -122,18 +123,18 @@ function MapContent(props: MapProps) {
           <Icon size={18} />
         </Button>
       )}
-      {latLngs?.map((latLng, index) => {
-        const item = entries?.find(x => x.id === latLng.id);
-        if (!item) return null;
-        return (
-          <Marker
-            position={latLng}
-            key={index}
-            small={small || !expand}
-            item={item}
-          />
-        );
-      })}
+      {/* {latLngs?.map((latLng, index) => { */}
+      {/*   const item = entries?.find(x => x.id === latLng.id); */}
+      {/*   if (!item) return null; */}
+      {/*   return ( */}
+      {/*     <Marker */}
+      {/*       position={latLng} */}
+      {/*       key={index} */}
+      {/*       small={small || !expand} */}
+      {/*       item={item} */}
+      {/*     /> */}
+      {/*   ); */}
+      {/* })} */}
     </GMap>
   );
 }
