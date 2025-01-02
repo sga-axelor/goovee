@@ -16,9 +16,12 @@ import {getAllRegisteredEvents} from '@/subapps/events/common/actions/actions';
 
 export default async function Page(context: any) {
   const params = context?.params;
-  const page = context?.searchParams?.page || DEFAULT_PAGE;
-  const query = context?.searchParams?.query || '';
-  const showPastEvents = Boolean(context?.searchParams?.pastevents) || false;
+  const {
+    page = DEFAULT_PAGE,
+    query = '',
+    pastevents,
+  } = context?.searchParams || {};
+  const showPastEvents = Boolean(pastevents);
 
   const {tenant} = params;
 
