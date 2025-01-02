@@ -15,6 +15,7 @@ import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
 import {getSession} from '@/auth';
+import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 
 export async function findEventByID({
   id,
@@ -100,7 +101,7 @@ export async function findEvents({
   month?: string | number;
   year?: string | number;
   selectedDates?: any[];
-  workspace?: PortalWorkspace;
+  workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
 }) {
@@ -248,7 +249,20 @@ export async function findEvents({
     page,
     limit,
   });
-  return {events, pageInfo};
+
+  const enrichedEvents = user
+    ? await Promise.all(
+        events?.map(async event => {
+          const reponse = await fetchEventParticipants({
+            id: event?.id,
+            workspace,
+            user,
+          });
+          return {...event, ...reponse};
+        }),
+      )
+    : events;
+  return {events: enrichedEvents, pageInfo};
 }
 
 export async function findRegisteredEvents({
@@ -276,7 +290,7 @@ export async function findRegisteredEvents({
   month?: string | number;
   year?: string | number;
   selectedDates?: any[];
-  workspace?: PortalWorkspace;
+  workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   upComingEvents?: boolean;
   pastEvents?: boolean;
@@ -521,13 +535,24 @@ export async function findRegisteredEvents({
     const events = registerEvents?.map(
       (item: any) => item?.registration?.event,
     );
+    const enrichedEvents = await Promise.all(
+      events?.map(async event => {
+        const reponse = await fetchEventParticipants({
+          id: event?.id,
+          workspace,
+          user,
+        });
+        return {...event, ...reponse};
+      }),
+    );
 
     const pageInfo = getPageInfo({
       count: events?.[0]?._count,
       page,
       limit,
     });
-    return {events, pageInfo, count: 0};
+
+    return {events: enrichedEvents, pageInfo, count: 0};
   } else {
     const eventCount = await client.aOSPortalParticipant.count({
       where: whereClause,

@@ -15,6 +15,7 @@ export interface Event {
   eventAllowRegistration: boolean;
   eventAllowMultipleRegistrations: boolean;
   eventAllDay: boolean;
+  isRegistered?: boolean;
   _count: number | undefined;
   _hasNext: boolean;
   eventProduct: {

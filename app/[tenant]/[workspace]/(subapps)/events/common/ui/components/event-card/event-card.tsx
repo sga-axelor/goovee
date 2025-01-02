@@ -1,8 +1,6 @@
 'use client';
 
 import {MdChevronRight} from 'react-icons/md';
-import {useEffect, useState} from 'react';
-import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -23,40 +21,13 @@ import {formatDate} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
-import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 import styles from './event-card.module.scss';
 
 export const EventCard = ({event, workspace}: EventCardProps) => {
-  const [isRegistered, setIsRegistered] = useState(false);
-
-  const {data: session} = useSession();
-  const {user} = session || {};
-
   const {tenant} = useWorkspace();
 
   const stripImages = (htmlContent: any = '') =>
     htmlContent?.replace(/<img[^>]*>/g, '');
-
-  useEffect(() => {
-    const checkRegistrationStatus = async () => {
-      if (!user || !event.id) return;
-
-      try {
-        const res = await fetchEventParticipants({
-          id: event.id,
-          workspace,
-          user,
-        });
-        setIsRegistered(res?.isRegistered);
-      } catch (error) {
-        console.error('Error fetching participants:', error);
-      }
-    };
-
-    if (event.eventAllowRegistration) {
-      checkRegistrationStatus();
-    }
-  }, [workspace, event.id, user, event.eventAllowRegistration]);
 
   return (
     <Card className="p-2 overflow-hidden cursor-pointer rounded-2xl flex gap-6 h-fit border-none shadow-none ">
@@ -73,7 +44,7 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
             <CardTitle className="flex flex-col xs:flex-row items-start justify-between w-full ">
               <p className="text-base font-semibold w-full flex justify-between">
                 {event.eventTitle}
-                {isRegistered && (
+                {event?.isRegistered && (
                   <Badge
                     variant="outline"
                     className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6 flex flex-none">
