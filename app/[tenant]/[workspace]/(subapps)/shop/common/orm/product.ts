@@ -358,7 +358,7 @@ export async function findProducts({
     })
     .then(clone);
 
-  const compute = (product: any, ws?: boolean, wsProduct?: any) => {
+  const compute = (product: any, ws?: boolean, wsProduct?: WSProduct) => {
     const productcompany =
       workspace?.config?.company?.id &&
       product?.productCompanyList?.find(
@@ -371,8 +371,16 @@ export async function findProducts({
 
     const getTax = (): ComputedProduct['tax'] => {
       if (ws) {
+        const wt = Number(
+          wsProduct?.prices.find(p => p.type === 'WT')?.price || 0,
+        );
+        const ati = Number(
+          wsProduct?.prices.find(p => p.type === 'ATI')?.price || 0,
+        );
+
         return {
-          value: Number(wsProduct?.tax?.value || DEFAULT_TAX_VALUE),
+          value:
+            wt && ati ? Number(((ati - wt) / wt) * 100) : DEFAULT_TAX_VALUE,
         };
       }
 
@@ -388,12 +396,12 @@ export async function findProducts({
 
     const getScale = (): ComputedProduct['scale'] => {
       if (ws) {
-        return (
-          wsProduct?.scale || {
-            unit: DEFAULT_UNIT_PRICE_SCALE,
-            currency: DEFAULT_CURRENCY_SCALE,
-          }
-        );
+        return {
+          unit: DEFAULT_UNIT_PRICE_SCALE,
+          currency:
+            wsProduct?.prices?.[0]?.price?.split('.')?.[1]?.length ||
+            DEFAULT_CURRENCY_SCALE,
+        };
       }
 
       return {
@@ -435,10 +443,8 @@ export async function findProducts({
       const unitScale = getScale().unit;
 
       if (ws) {
-        const $wt = wsProduct?.price?.discountedWT;
-        const $ati = wsProduct?.price?.discountedATI;
-        ati = Number($ati || 0);
-        wt = Number($wt || 0);
+        wt = wsProduct?.prices.find(p => p.type === 'WT')?.price || 0;
+        ati = wsProduct?.prices.find(p => p.type === 'ATI')?.price || 0;
       } else {
         const inati = product.inAti;
 
@@ -510,7 +516,7 @@ export async function findProducts({
 
   if (fromWS) {
     const productsFromWS = await findProductsFromWS({
-      productIds: $products.map((p: any) => p.id),
+      productList: $products.map(p => ({productId: p.id})),
       workspace,
       user,
       tenantId,
@@ -521,8 +527,8 @@ export async function findProducts({
 
     return {
       products: productsFromWS
-        .map((wsProduct: any) => {
-          const product = originalProduct(wsProduct?.product?.id);
+        .map(wsProduct => {
+          const product = originalProduct(wsProduct.productId);
           if (!product) return null;
           return compute(product, true, wsProduct);
         })
@@ -563,18 +569,25 @@ export async function findProduct({
   );
 }
 
+type WSProduct = {
+  productId: number;
+  prices: [{type: 'WT'; price: string}, {type: 'ATI'; price: string}];
+  currency: {currencyId: number; code: string; name: string; symbol: string};
+  unit: {name: string; labelToPrinting: string};
+};
+
 export async function findProductsFromWS({
   workspace,
   user,
-  productIds,
+  productList,
   tenantId,
 }: {
   workspace: PortalWorkspace;
   user?: User;
-  productIds: Array<Product['id']>;
+  productList: Array<{productId: Product['id']}>;
   tenantId: Tenant['id'];
-}) {
-  if (!workspace?.config?.company?.id && user && productIds && tenantId) {
+}): Promise<WSProduct[]> {
+  if (!workspace?.config?.company?.id && user && productList && tenantId) {
     return [];
   }
 
@@ -586,17 +599,16 @@ export async function findProductsFromWS({
 
   const {aos} = tenant.config;
 
-  const ws = `${aos.url}/ws/portal/products/productPrices`;
+  const ws = `${aos.url}/ws/aos/product/price`;
 
   try {
     const res = await axios
       .post(
         ws,
         {
+          productList,
           partnerId: user?.id,
           companyId: workspace?.config?.company?.id,
-          productIds,
-          taxSelect: 'both',
         },
         {
           auth: {
@@ -611,7 +623,7 @@ export async function findProductsFromWS({
       return [];
     }
 
-    return res?.data || [];
+    return res?.object || [];
   } catch (err) {
     return [];
   }
