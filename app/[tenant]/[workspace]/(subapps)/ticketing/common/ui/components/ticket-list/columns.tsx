@@ -13,14 +13,14 @@ import type {Column} from '../table-elements';
 export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   {
     key: 'ticketId',
-    label: i18n.t('Ticket ID'),
+    label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
     mobile: true,
   },
   {
     key: 'createdBy',
-    label: i18n.t('Created by'),
+    label: 'Created by',
     content: t =>
       t.createdByContact?.id
         ? t.createdByContact.simpleFullName
@@ -29,38 +29,38 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   },
   {
     key: 'subject',
-    label: i18n.t('Subject'),
+    label: 'Subject',
     content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
     getter: 'name',
     mobile: true,
   },
   {
     key: 'priority',
-    label: i18n.t('Priority'),
+    label: 'Priority',
     content: t => <Priority name={t.priority?.name} />,
     getter: 'priority.name',
   },
   {
     key: 'status',
-    label: i18n.t('Status'),
+    label: 'Status',
     content: t => <Status name={t.status?.name} />,
     getter: 'status.name',
   },
   {
     key: 'category',
-    label: i18n.t('Category'),
+    label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
     key: 'managedBy',
-    label: i18n.t('Managed by'),
+    label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',
-    label: i18n.t('Assigned to'),
+    label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
         ? t?.project?.company?.name
@@ -72,7 +72,7 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   },
   {
     key: 'updatedOn',
-    label: i18n.t('Updated'),
+    label: 'Updated',
     content: t => formatDate(t.updatedOn),
     getter: 'updatedOn',
   },
@@ -81,45 +81,45 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
 export const parentColumns: Column<Cloned<ParentTicket>>[] = [
   {
     key: 'ticketId',
-    label: i18n.t('Ticket ID'),
+    label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
     mobile: true,
   },
   {
     key: 'subject',
-    label: i18n.t('Subject'),
+    label: 'Subject',
     content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
     getter: 'name',
     mobile: true,
   },
   {
     key: 'priority',
-    label: i18n.t('Priority'),
+    label: 'Priority',
     content: t => <Priority name={t.priority?.name} />,
     getter: 'priority.name',
   },
   {
     key: 'status',
-    label: i18n.t('Status'),
+    label: 'Status',
     content: t => <Status name={t.status?.name} />,
     getter: 'status.name',
   },
   {
     key: 'category',
-    label: i18n.t('Category'),
+    label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
     key: 'managedBy',
-    label: i18n.t('Managed by'),
+    label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',
-    label: i18n.t('Assigned to'),
+    label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
         ? t?.project?.company?.name
@@ -131,7 +131,7 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
   },
   {
     key: 'updatedOn',
-    label: i18n.t('Updated'),
+    label: 'Updated',
     content: t => formatDate(t.updatedOn),
     getter: 'updatedOn',
   },
@@ -140,45 +140,45 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
 export const childColumns: Column<Cloned<ChildTicket>>[] = [
   {
     key: 'ticketId',
-    label: i18n.t('Ticket ID'),
+    label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
     mobile: true,
   },
   {
     key: 'subject',
-    label: i18n.t('Subject'),
+    label: 'Subject',
     content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
     getter: 'name',
     mobile: true,
   },
   {
     key: 'priority',
-    label: i18n.t('Priority'),
+    label: 'Priority',
     content: t => <Priority name={t.priority?.name} />,
     getter: 'priority.name',
   },
   {
     key: 'status',
-    label: i18n.t('Status'),
+    label: 'Status',
     content: t => <Status name={t.status?.name} />,
     getter: 'status.name',
   },
   {
     key: 'category',
-    label: i18n.t('Category'),
+    label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
     key: 'managedBy',
-    label: i18n.t('Managed by'),
+    label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',
-    label: i18n.t('Assigned to'),
+    label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
         ? t?.project?.company?.name
@@ -190,7 +190,7 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
   },
   {
     key: 'updatedOn',
-    label: i18n.t('Updated'),
+    label: 'Updated',
     content: t => formatDate(t.updatedOn),
     getter: 'updatedOn',
   },
@@ -199,20 +199,20 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
 export const relatedColumns: Column<Cloned<TicketLink>>[] = [
   {
     key: 'linkType',
-    label: i18n.t('Link type'),
+    label: 'Link type',
     content: l => <p className="font-medium">{l.projectTaskLinkType?.name}</p>,
     getter: 'projectTaskLinkType.name',
     mobile: true,
   },
   {
     key: 'ticketId',
-    label: i18n.t('Ticket ID'),
+    label: 'Ticket ID',
     content: ({relatedTask: t}) => <p className="font-medium">#{t?.id}</p>,
     getter: 'relatedTask.id',
   },
   {
     key: 'subject',
-    label: i18n.t('Subject'),
+    label: 'Subject',
     content: ({relatedTask: t}) => (
       <div className="max-w-40 line-clamp-2">{t?.name}</div>
     ),
@@ -221,25 +221,25 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
   },
   {
     key: 'priority',
-    label: i18n.t('Priority'),
+    label: 'Priority',
     content: ({relatedTask: t}) => <Priority name={t?.priority?.name} />,
     getter: 'relatedTask.priority.name',
   },
   {
     key: 'status',
-    label: i18n.t('Status'),
+    label: 'Status',
     content: ({relatedTask: t}) => <Status name={t?.status?.name} />,
     getter: 'relatedTask.status.name',
   },
   {
     key: 'managedBy',
-    label: i18n.t('Managed by'),
+    label: 'Managed by',
     content: ({relatedTask: t}) => t?.managedByContact?.simpleFullName,
     getter: 'relatedTask.managedByContact.simpleFullName',
   },
   {
     key: 'assignedTo',
-    label: i18n.t('Assigned to'),
+    label: 'Assigned to',
     content: ({relatedTask: t}) =>
       isWithProvider(t?.assignment)
         ? t?.project?.company?.name
@@ -251,7 +251,7 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
   },
   {
     key: 'updatedOn',
-    label: i18n.t('Updated'),
+    label: 'Updated',
     content: ({relatedTask: t}) => formatDate(t?.updatedOn),
     getter: 'relatedTask.updatedOn',
   },

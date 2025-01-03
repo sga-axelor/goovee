@@ -15,6 +15,7 @@ import {
 // ---- CORE IMPORTS ---- //
 import {cn} from '@/utils/css';
 import {Label} from '@/ui/components';
+import {i18n} from '@/locale';
 
 const Form = FormProvider;
 
@@ -148,7 +149,7 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({className, children, ...props}, ref) => {
   const {error, formMessageId} = useFormField();
-  const body = error ? String(error?.message) : children;
+  const body = error ? i18n.t(String(error?.message)) : children;
 
   if (!body) {
     return null;

@@ -85,35 +85,35 @@ export default async function Page({
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;
   const items = [
     {
-      label: 'All Tickets',
+      label: await t('All Tickets'),
       count: getAllTicketCount({projectId, auth}),
       icon: MdAllInbox,
       href: allTicketsURL,
       iconClassName: 'bg-palette-pink text-palette-pink-dark',
     },
     {
-      label: 'My tickets',
+      label: await t('My tickets'),
       count: getMyTicketCount({projectId, auth}),
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, myTickets: true})}`,
       icon: MdAllInbox,
       iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
     {
-      label: 'Managed tickets',
+      label: await t('Managed tickets'),
       count: getManagedTicketCount({projectId, auth}),
       icon: MdListAlt,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, managedBy: [auth.userId.toString()]})}`,
       iconClassName: 'bg-palette-purple text-palette-purple-dark',
     },
     {
-      label: 'Created tickets',
+      label: await t('Created tickets'),
       count: getCreatedTicketCount({projectId, auth}),
       icon: MdPending,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, createdBy: [auth.userId.toString()]})}`,
       iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
     {
-      label: 'Resolved tickets',
+      label: await t('Resolved tickets'),
       count: getResolvedTicketCount({projectId, auth}),
       icon: MdCheckCircleOutline,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status: statusCompleted})}`,

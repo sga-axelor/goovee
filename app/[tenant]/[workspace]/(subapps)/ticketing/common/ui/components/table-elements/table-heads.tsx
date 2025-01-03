@@ -1,10 +1,12 @@
+import {MouseEvent, ReactNode, useMemo} from 'react';
+import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
+
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
+import {i18n} from '@/locale';
 import {TableHead} from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-import {MouseEvent, ReactNode, useMemo} from 'react';
-import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Column} from './types';
@@ -51,7 +53,7 @@ export function TableHeads<T extends Record<string, any>>(
           {['cursor-pointer']: Boolean(sort)},
         )}>
         <div className="flex gap-1 items-center">
-          <div className="line-clamp-1">{column.label}</div>
+          <div className="line-clamp-1">{i18n.t(column.label)}</div>
           {icon}
         </div>
       </TableHead>
