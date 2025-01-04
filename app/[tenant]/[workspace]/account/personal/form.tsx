@@ -454,7 +454,7 @@ export default function Personal({
                         variant="outline-destructive"
                         type="button"
                         onClick={handleCancelEditEmail}>
-                        {i18n.get('Cancel Email Update')}
+                        {i18n.get('Cancel')}
                       </Button>
                     </div>
                   </div>

@@ -215,11 +215,6 @@
       "name": "canInviteMembers"
     },
     {
-      "type": "ManyToOne",
-      "name": "emailAccount",
-      "target": "AOSEmailAccount"
-    },
-    {
       "type": "OneToMany",
       "name": "otpTemplateList",
       "target": "AOSPortalEmailTemplate",

@@ -355,12 +355,7 @@ export async function generateOTPForUpdate({
     return error(await getTranslation('Bad Request'));
   }
 
-  if (
-    !(
-      workspace?.config?.emailAccount &&
-      workspace?.config?.otpTemplateList?.length
-    )
-  ) {
+  if (!workspace?.config?.otpTemplateList?.length) {
     return generateOTP({
       email,
       scope: Scope.EmailUpdate,
@@ -368,7 +363,7 @@ export async function generateOTPForUpdate({
     });
   } else {
     const {config} = workspace;
-    const {emailAccount, otpTemplateList} = config;
+    const {otpTemplateList} = config;
 
     const localization =
       $user?.localization?.code || partner?.localization?.code;
@@ -386,7 +381,6 @@ export async function generateOTPForUpdate({
       scope: Scope.Registration,
       tenantId,
       mailConfig: {
-        emailAccount,
         template: template?.template,
       },
     });

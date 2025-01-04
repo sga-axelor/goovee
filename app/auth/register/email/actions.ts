@@ -33,31 +33,14 @@ export async function generateOTP({
       tenantId,
     }));
 
-  if (
-    !(
-      defaultPartnerWorkspaceConfig?.portalAppConfig?.emailAccount &&
-      defaultPartnerWorkspaceConfig?.portalAppConfig?.otpTemplateList?.length
-    )
-  ) {
-    return coreGenerateOTP({
-      email,
-      scope: Scope.Registration,
-      tenantId,
-    });
-  } else {
-    const {portalAppConfig} = defaultPartnerWorkspaceConfig;
-    const {emailAccount, otpTemplateList} = portalAppConfig;
-
-    const template = otpTemplateList?.[0];
-
-    return coreGenerateOTP({
-      email,
-      scope: Scope.Registration,
-      tenantId,
-      mailConfig: {
-        emailAccount,
-        template: template?.template,
-      },
-    });
-  }
+  return coreGenerateOTP({
+    email,
+    scope: Scope.Registration,
+    tenantId,
+    mailConfig: {
+      template:
+        defaultPartnerWorkspaceConfig?.portalAppConfig?.otpTemplateList?.[0]
+          ?.template,
+    },
+  });
 }

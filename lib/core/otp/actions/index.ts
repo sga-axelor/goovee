@@ -8,7 +8,6 @@ import {
   isValidMailConfig,
   replacePlaceholders,
 } from '@/orm/email-template';
-import encryptor from '@/auth/encryptor';
 import {type Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
@@ -124,20 +123,10 @@ export async function generateOTP({
       throw new Error('Error creating otp');
     }
 
+    const mailService = NotificationManager.getService(NotificationType.mail);
+
     if (mailConfig && isValidMailConfig(mailConfig)) {
-      const {emailAccount, template} = mailConfig;
-      const {host, port, login, password} = emailAccount;
-      const mailService = NotificationManager.getService(
-        NotificationType.mail,
-        {
-          host,
-          port,
-          auth: {
-            user: login,
-            pass: encryptor.decrypt(password),
-          },
-        },
-      );
+      const {template} = mailConfig;
 
       result?.otp &&
         mailService?.notify({
@@ -154,8 +143,6 @@ export async function generateOTP({
           }),
         });
     } else {
-      const mailService = NotificationManager.getService(NotificationType.mail);
-
       result?.otp &&
         mailService?.notify(
           otpTemplate({

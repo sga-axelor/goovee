@@ -48,23 +48,19 @@ export async function generateOTP({
 
   const email = invite?.emailAddress?.address;
 
-  if (
-    !(workspace.config.emailAccount && workspace.config.otpTemplateList?.length)
-  ) {
+  if (!workspace.config.otpTemplateList?.length) {
     return coreGenerateOTP({
       email,
       scope: Scope.Registration,
       tenantId,
     });
   } else {
-    const {emailAccount, otpTemplateList} = workspace.config;
+    const {otpTemplateList} = workspace.config;
     const localization = invite.partner?.localization?.code;
 
     let template =
       localization &&
-      otpTemplateList.find(
-        (t: any) => t?.localization?.code === localization,
-      );
+      otpTemplateList.find((t: any) => t?.localization?.code === localization);
 
     if (!template) {
       template = otpTemplateList?.[0];
@@ -75,7 +71,6 @@ export async function generateOTP({
       scope: Scope.Registration,
       tenantId,
       mailConfig: {
-        emailAccount,
         template: template?.template,
       },
     });

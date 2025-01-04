@@ -17,7 +17,6 @@ import {
 import {findWorkspace} from '@/orm/workspace';
 import NotificationManager, {NotificationType} from '@/notification';
 import {SEARCH_PARAMS} from '@/constants';
-import encryptor from '@/auth/encryptor';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -204,11 +203,8 @@ export async function sendInvites({
 
   let mailConfig: any;
 
-  if (
-    workspace?.config?.emailAccount &&
-    workspace?.config?.invitationTemplateList?.length
-  ) {
-    const {emailAccount, invitationTemplateList} = workspace.config;
+  if (workspace?.config?.invitationTemplateList?.length) {
+    const {invitationTemplateList} = workspace.config;
     const localization = partner?.localization?.code;
 
     let template =
@@ -222,44 +218,30 @@ export async function sendInvites({
     }
 
     mailConfig = {
-      emailAccount,
       template: template?.template,
     };
   }
 
-  const sendTemplateMail = ({email, link, subject}: any) => {
-    const {emailAccount, template} = mailConfig;
-    const {host, port, login, password} = emailAccount;
-    const mailService = NotificationManager.getService(NotificationType.mail, {
-      host,
-      port,
-      auth: {
-        user: login,
-        pass: encryptor.decrypt(password),
-      },
-    });
-
-    mailService?.notify({
-      to: email,
-      subject: template?.subject || 'Greetings from Goovee',
-      html: replacePlaceholders({
-        content: template?.content,
-        values: {
-          context: {
-            link,
-            email,
-          },
-        },
-      }),
-    });
-  };
-
   function sendMail({email, link, subject}: any) {
-    if (mailConfig && isValidMailConfig(mailConfig)) {
-      sendTemplateMail({email, link, subject});
-    } else {
-      const mailService = NotificationManager.getService(NotificationType.mail);
+    const mailService = NotificationManager.getService(NotificationType.mail);
 
+    if (mailConfig && isValidMailConfig(mailConfig)) {
+      const {template} = mailConfig;
+
+      mailService?.notify({
+        to: email,
+        subject: template?.subject || 'Greetings from Goovee',
+        html: replacePlaceholders({
+          content: template?.content,
+          values: {
+            context: {
+              link,
+              email,
+            },
+          },
+        }),
+      });
+    } else {
       mailService?.notify(
         inviteTemplate({
           subject,

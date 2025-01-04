@@ -6,12 +6,6 @@ import {clone} from '@/utils';
 import type {ID} from '@/types';
 
 export type MailConfig = {
-  emailAccount: {
-    login: string;
-    password: string;
-    host: string;
-    port: string | number;
-  };
   template: {
     subject?: string;
     content: string;
@@ -19,16 +13,7 @@ export type MailConfig = {
 };
 
 export function isValidMailConfig(mailConfig: MailConfig): boolean {
-  const hasEmailAccount =
-    mailConfig?.emailAccount &&
-    mailConfig?.emailAccount?.login &&
-    mailConfig?.emailAccount?.password &&
-    mailConfig?.emailAccount?.host &&
-    mailConfig?.emailAccount?.port;
-
-  const hasTemplate = mailConfig?.template && mailConfig?.template?.content;
-
-  return Boolean(hasEmailAccount && hasTemplate);
+  return Boolean(mailConfig?.template && mailConfig?.template?.content);
 }
 
 export async function findOneById({
