@@ -9,10 +9,13 @@ export enum NotificationType {
 }
 
 export class NotificationManager {
-  static getService(type: NotificationType): NotificationService | null {
+  static getService(
+    type: NotificationType,
+    options?: any,
+  ): NotificationService | null {
     switch (type) {
       case NotificationType.mail:
-        return new MailNotificationService();
+        return new MailNotificationService(options);
       default:
         return null;
     }

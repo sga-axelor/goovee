@@ -1,0 +1,28 @@
+{
+  "name": "AOSPortalEmailTemplate",
+  "table": "portal_email_template",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "ManyToOne",
+      "name": "template",
+      "target": "AOSMessageTemplate"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "localization",
+      "target": "AOSLocalization"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "otpPortalConfig",
+      "target": "AOSPortalAppConfig"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "invitationPortalConfig",
+      "target": "AOSPortalAppConfig"
+    }
+  ]
+}

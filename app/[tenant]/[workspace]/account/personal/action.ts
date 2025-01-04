@@ -14,11 +14,18 @@ import {TENANT_HEADER} from '@/middleware';
 import {getFileSizeText} from '@/utils/files';
 import {getTranslation} from '@/i18n/server';
 import {clone} from '@/utils';
-import {PartnerTypeMap, findPartnerByEmail, updatePartner} from '@/orm/partner';
+import {
+  PartnerTypeMap,
+  findPartnerByEmail,
+  findPartnerById,
+  updatePartner,
+} from '@/orm/partner';
 import {UserType} from '@/auth/types';
 import {generateOTP} from '@/otp/actions';
 import {findOne, isValid} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
+import {findWorkspace} from '@/orm/workspace';
+import {type PortalWorkspace} from '@/types';
 
 const pump = promisify(pipeline);
 
@@ -298,15 +305,90 @@ export async function update({
   }
 }
 
-export async function generateOTPForUpdate({email}: {email: string}) {
+export async function generateOTPForUpdate({
+  email,
+  workspaceURL,
+}: {
+  email: string;
+  workspaceURL: PortalWorkspace['url'];
+}) {
+  if (!(email && workspaceURL)) {
+    return error(await getTranslation('Email and workspace is required'));
+  }
+
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await getTranslation('TenantId is required'));
   }
-  return generateOTP({
-    email,
-    scope: Scope.EmailUpdate,
-    tenantId,
-  });
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return error(await getTranslation('Unauthorized'));
+  }
+
+  const $user = await findPartnerById(user.id!, tenantId);
+
+  if (!$user) {
+    return error(await getTranslation('Bad Request'));
+  }
+
+  const partnerId = user.isContact ? user.mainPartnerId : user.id;
+
+  const partner = await findPartnerById(partnerId!, tenantId);
+
+  if (!partner) {
+    return error(await getTranslation('Bad Request'));
+  }
+
+  const workspace =
+    workspaceURL &&
+    (await findWorkspace({
+      url: workspaceURL,
+      tenantId,
+      user,
+    }));
+
+  if (!workspace) {
+    return error(await getTranslation('Bad Request'));
+  }
+
+  if (
+    !(
+      workspace?.config?.emailAccount &&
+      workspace?.config?.otpTemplateList?.length
+    )
+  ) {
+    return generateOTP({
+      email,
+      scope: Scope.EmailUpdate,
+      tenantId,
+    });
+  } else {
+    const {config} = workspace;
+    const {emailAccount, otpTemplateList} = config;
+
+    const localization =
+      $user?.localization?.code || partner?.localization?.code;
+
+    let template =
+      localization &&
+      otpTemplateList.find((t: any) => t?.localization?.code === localization);
+
+    if (!template) {
+      template = otpTemplateList?.[0];
+    }
+
+    return generateOTP({
+      email,
+      scope: Scope.Registration,
+      tenantId,
+      mailConfig: {
+        emailAccount,
+        template: template?.template,
+      },
+    });
+  }
 }

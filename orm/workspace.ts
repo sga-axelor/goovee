@@ -4,7 +4,7 @@ import {ID, Partner, User} from '@/types';
 import {clone} from '@/utils';
 import {SelectOptions} from '@goovee/orm';
 
-const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
+export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   name: true,
   company: {
     id: true,
@@ -68,6 +68,19 @@ const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   enableEventComment: true,
   socialMediaSelect: true,
   canInviteMembers: true,
+  emailAccount: true,
+  invitationTemplateList: {
+    select: {
+      localization: true,
+      template: true,
+    },
+  },
+  otpTemplateList: {
+    select: {
+      localization: true,
+      template: true,
+    },
+  },
 };
 
 export async function findWorkspaceMembers({

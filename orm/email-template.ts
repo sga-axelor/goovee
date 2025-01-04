@@ -1,42 +1,34 @@
+import lodash from 'lodash';
+
 // ---- CORE IMPORTS ----//
 import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
 import type {ID} from '@/types';
 
-export async function findAll({
-  localization,
-  tenantId,
-}: {
-  localization?: string;
-  tenantId: Tenant['id'];
-}) {
-  if (!tenantId) {
-    return [];
-  }
+export type MailConfig = {
+  emailAccount: {
+    login: string;
+    password: string;
+    host: string;
+    port: string | number;
+  };
+  template: {
+    subject?: string;
+    content: string;
+  };
+};
 
-  const client = await manager.getClient(tenantId);
+export function isValidMailConfig(mailConfig: MailConfig): boolean {
+  const hasEmailAccount =
+    mailConfig?.emailAccount &&
+    mailConfig?.emailAccount?.login &&
+    mailConfig?.emailAccount?.password &&
+    mailConfig?.emailAccount?.host &&
+    mailConfig?.emailAccount?.port;
 
-  if (!client) {
-    return [];
-  }
+  const hasTemplate = mailConfig?.template && mailConfig?.template?.content;
 
-  const templates = await client.aOSMessageTemplate
-    .find({
-      where: {
-        ...(localization
-          ? {
-              localizationSet: {
-                code: {
-                  like: localization,
-                },
-              },
-            }
-          : {}),
-      },
-    })
-    .then(clone);
-
-  return templates;
+  return Boolean(hasEmailAccount && hasTemplate);
 }
 
 export async function findOneById({
@@ -56,10 +48,16 @@ export async function findOneById({
     return [];
   }
 
-  const templates = await client.aOSMessageTemplate
+  const templates = await client.aOSPortalEmailTemplate
     .findOne({
       where: {
         id,
+      },
+      select: {
+        otpPortalConfig: true,
+        invitationPortalConfig: true,
+        localization: true,
+        template: true,
       },
     })
     .then(clone);
@@ -76,8 +74,8 @@ export function replacePlaceholders({
 }) {
   if (!(content && values)) return;
 
-  return content.replace(/\$\w+(\.\w+)*\$/g, (placeholder: string) => {
-    const key = placeholder.slice(1, -1);
-    return values[key] || placeholder;
+  return content.replace(/\$\{([^}]+)\}/g, (placeholder: string) => {
+    const key = placeholder.slice(2, -1);
+    return lodash.get(values, key, placeholder);
   });
 }

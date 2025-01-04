@@ -8,10 +8,16 @@ import {revalidatePath} from 'next/cache';
 import {getSession} from '@/auth';
 import {getTranslation} from '@/i18n/server';
 import {TENANT_HEADER} from '@/middleware';
-import {findPartnerByEmail, isAdminContact, isPartner} from '@/orm/partner';
+import {
+  findPartnerByEmail,
+  findPartnerById,
+  isAdminContact,
+  isPartner,
+} from '@/orm/partner';
 import {findWorkspace} from '@/orm/workspace';
 import NotificationManager, {NotificationType} from '@/notification';
 import {SEARCH_PARAMS} from '@/constants';
+import encryptor from '@/auth/encryptor';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -24,6 +30,7 @@ import {
 } from '../../common/orm/invites';
 import {InviteAppsConfig, Role} from '../../common/types';
 import {findAvailableSubapps} from '../../common/orm/members';
+import {isValidMailConfig, replacePlaceholders} from '@/orm/email-template';
 
 function error(message: string) {
   return {
@@ -183,11 +190,85 @@ export async function sendInvites({
 
   const partnerId = (user.isContact ? user.mainPartnerId : user.id) as any;
 
+  const partner = await findPartnerById(partnerId, tenantId);
+
+  if (!partner) {
+    return error(await getTranslation('Invalid partner'));
+  }
+
   let emailsWithMemberAlready,
     emailsWithDifferentPartner,
     emailsWithExistingInvite,
     emailsRegisteredAsPartner;
   let invitesCount = 0;
+
+  let mailConfig: any;
+
+  if (
+    workspace?.config?.emailAccount &&
+    workspace?.config?.invitationTemplateList?.length
+  ) {
+    const {emailAccount, invitationTemplateList} = workspace.config;
+    const localization = partner?.localization?.code;
+
+    let template =
+      localization &&
+      invitationTemplateList.find(
+        (t: any) => t?.localization?.code === localization,
+      );
+
+    if (!template) {
+      template = invitationTemplateList?.[0];
+    }
+
+    mailConfig = {
+      emailAccount,
+      template: template?.template,
+    };
+  }
+
+  const sendTemplateMail = ({email, link, subject}: any) => {
+    const {emailAccount, template} = mailConfig;
+    const {host, port, login, password} = emailAccount;
+    const mailService = NotificationManager.getService(NotificationType.mail, {
+      host,
+      port,
+      auth: {
+        user: login,
+        pass: encryptor.decrypt(password),
+      },
+    });
+
+    mailService?.notify({
+      to: email,
+      subject: template?.subject || 'Greetings from Goovee',
+      html: replacePlaceholders({
+        content: template?.content,
+        values: {
+          context: {
+            link,
+            email,
+          },
+        },
+      }),
+    });
+  };
+
+  function sendMail({email, link, subject}: any) {
+    if (mailConfig && isValidMailConfig(mailConfig)) {
+      sendTemplateMail({email, link, subject});
+    } else {
+      const mailService = NotificationManager.getService(NotificationType.mail);
+
+      mailService?.notify(
+        inviteTemplate({
+          subject,
+          email,
+          link,
+        }),
+      );
+    }
+  }
 
   for (const email of emailAddresses) {
     try {
@@ -246,15 +327,11 @@ export async function sendInvites({
 
       invitesCount += 1;
 
-      const mailService = NotificationManager.getService(NotificationType.mail);
-
-      mailService?.notify(
-        inviteTemplate({
-          subject: workspace?.name || workspace.url,
-          email,
-          link: `${process.env.NEXT_PUBLIC_HOST}/auth/register/invite/${invite.id}/email?${SEARCH_PARAMS.TENANT_ID}=${tenantId}`,
-        }),
-      );
+      sendMail({
+        subject: workspace?.name || workspace.url,
+        email,
+        link: `${process.env.NEXT_PUBLIC_HOST}/auth/register/invite/${invite.id}/email?${SEARCH_PARAMS.TENANT_ID}=${tenantId}`,
+      });
     } catch (err) {
       inviteError = true;
     }

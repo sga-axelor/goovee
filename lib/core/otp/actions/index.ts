@@ -3,6 +3,12 @@
 // ---- CORE IMPORTS ---- //
 import {getTranslation} from '@/i18n/server';
 import NotificationManager, {NotificationType} from '@/notification';
+import {
+  type MailConfig,
+  isValidMailConfig,
+  replacePlaceholders,
+} from '@/orm/email-template';
+import encryptor from '@/auth/encryptor';
 import {type Tenant} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
@@ -89,11 +95,13 @@ const otpTemplateHTML = ({otp}: {otp: string}) => `
 
 export async function generateOTP({
   email,
-  scope: scopeProp = Scope.Registration,
+  scope = Scope.Registration,
   tenantId,
+  mailConfig,
 }: {
   email: string;
   scope?: string;
+  mailConfig?: MailConfig;
   tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
@@ -107,7 +115,7 @@ export async function generateOTP({
   try {
     const result: any = await create({
       force: true,
-      scope: scopeProp,
+      scope,
       entity: email,
       tenantId,
     });
@@ -116,15 +124,46 @@ export async function generateOTP({
       throw new Error('Error creating otp');
     }
 
-    const mailService = NotificationManager.getService(NotificationType.mail);
-
-    result?.otp &&
-      mailService?.notify(
-        otpTemplate({
-          email,
-          otp: result.otp,
-        }),
+    if (mailConfig && isValidMailConfig(mailConfig)) {
+      const {emailAccount, template} = mailConfig;
+      const {host, port, login, password} = emailAccount;
+      const mailService = NotificationManager.getService(
+        NotificationType.mail,
+        {
+          host,
+          port,
+          auth: {
+            user: login,
+            pass: encryptor.decrypt(password),
+          },
+        },
       );
+
+      result?.otp &&
+        mailService?.notify({
+          to: email,
+          subject: template?.subject || 'Greetings from Goovee',
+          html: replacePlaceholders({
+            content: template?.content,
+            values: {
+              context: {
+                otp: result.otp,
+                email,
+              },
+            },
+          }),
+        });
+    } else {
+      const mailService = NotificationManager.getService(NotificationType.mail);
+
+      result?.otp &&
+        mailService?.notify(
+          otpTemplate({
+            email,
+            otp: result.otp,
+          }),
+        );
+    }
   } catch (err) {
     return error(
       await getTranslation('Error creating otp, try again.', {tenantId}),

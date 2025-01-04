@@ -128,7 +128,7 @@ export default function Personal({
 }) {
   const {toast} = useToast();
   const {data: session, update: updateSession} = useSession();
-  const {tenant} = useWorkspace();
+  const {tenant, workspaceURL} = useWorkspace();
   const [confirmation, setConfirmation] = useState<any>(false);
   const [picture, setPicture] = useState<any>(pictureProp);
   const [updatingPicture, setUpdatingPicture] = useState(false);
@@ -282,7 +282,7 @@ export default function Personal({
 
   const handleGenerateOTP = async () => {
     try {
-      await generateOTPForUpdate({email});
+      await generateOTPForUpdate({email, workspaceURL});
       reset(1);
     } catch (err) {
       form.setError('email', {

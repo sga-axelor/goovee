@@ -25,7 +25,7 @@ import {Input} from '@/ui/components/input';
 import {Separator} from '@/ui/components';
 import {SEARCH_PARAMS} from '@/constants';
 import {cn} from '@/utils/css';
-import {generateOTP} from '@/otp/actions';
+import {generateOTP} from './actions';
 
 // ---- LOCAL IMPORTS ----//
 import {registerByEmail} from '../action';
@@ -133,7 +133,7 @@ export default function SignUp({
     if (!tenantId) return;
 
     try {
-      await generateOTP({email, tenantId});
+      await generateOTP({inviteId, tenantId});
       reset(1);
     } catch (err) {
       form.setError('email', {

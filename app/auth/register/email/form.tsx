@@ -41,10 +41,10 @@ import {Checkbox} from '@/ui/components/checkbox';
 import {Input} from '@/ui/components/input';
 import {SEARCH_PARAMS} from '@/constants';
 import {cn} from '@/utils/css';
-import {generateOTP} from '@/otp/actions';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
+import {generateOTP} from './actions';
 import {registerByEmail, subscribe} from '../actions';
 
 const formSchema = z
@@ -221,7 +221,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     if (!tenantId) return;
 
     try {
-      await generateOTP({email, tenantId});
+      await generateOTP({email, tenantId, workspaceURL: workspace?.url});
       reset(1);
     } catch (err) {
       form.setError('email', {

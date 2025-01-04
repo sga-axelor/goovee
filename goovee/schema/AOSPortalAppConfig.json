@@ -213,6 +213,23 @@
     {
       "type": "Boolean",
       "name": "canInviteMembers"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "emailAccount",
+      "target": "AOSEmailAccount"
+    },
+    {
+      "type": "OneToMany",
+      "name": "otpTemplateList",
+      "target": "AOSPortalEmailTemplate",
+      "mappedBy": "otpPortalConfig"
+    },
+    {
+      "type": "OneToMany",
+      "name": "invitationTemplateList",
+      "target": "AOSPortalEmailTemplate",
+      "mappedBy": "invitationPortalConfig"
     }
   ]
 }
