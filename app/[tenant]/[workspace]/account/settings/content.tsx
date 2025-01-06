@@ -60,7 +60,7 @@ export default function Content({workspace}: {workspace: PortalWorkspace}) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-2 lg:p-0">
       <h2 className="text-xl font-medium">{i18n.get('Settings')}</h2>
       <div className="flex flex-col gap-2">
         <p className="mb-0 font-medium">{i18n.get('Leave the workspace')}</p>
