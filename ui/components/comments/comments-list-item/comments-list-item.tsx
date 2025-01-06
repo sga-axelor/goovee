@@ -202,6 +202,22 @@ export const CommentListItem = ({
             <div className="font-semibold text-sm">
               {partner?.simpleFullName}
             </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="text-[10px] leading-3">
+                    {i18n.get('Updated')}{' '}
+                    {getPublishedLabel(parentMailMessage?.createdOn)}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent align="start" className="px-4 py-1 text-[10px]">
+                  {parseDate(
+                    parentMailMessage?.createdOn,
+                    `MMMM Do YYYY, h:mm a`,
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div className="flex items-center gap-2">
             {toggle ? (
@@ -262,23 +278,21 @@ export const CommentListItem = ({
           {subapp === SUBAPP_CODES.forum
             ? renderAvatar(partner?.picture?.id)
             : null}
-          <div className="flex flex-col">
-            <div className="font-semibold text-sm leading-[21px]">
-              {partner?.simpleFullName}
-            </div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="text-[10px] leading-3">
-                    {i18n.t('Updated')} {getPublishedLabel(createdOn)}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent align="start" className="px-4 py-1 text-[10px]">
-                  {parseDate(createdOn, `MMMM Do YYYY, h:mm a`)}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <div className="font-semibold text-sm leading-[21px] ">
+            {partner?.simpleFullName}
           </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className="text-[10px] leading-3">
+                  {i18n.t('Updated')} {getPublishedLabel(createdOn)}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent align="start" className="px-4 py-1 text-[10px]">
+                {parseDate(createdOn, `MMMM Do YYYY, h:mm a`)}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         <div className="flex items-center gap-2">
           <Popover>
