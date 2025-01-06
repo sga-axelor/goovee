@@ -52,5 +52,5 @@ export default async function Layout({
 
   if (!subapp) return notFound();
 
-  return <div className="container !mb-20 md:mb-0">{children}</div>;
+  return <div className="!mb-20 md:mb-0">{children}</div>;
 }
