@@ -330,19 +330,27 @@ export async function getAllRegisteredEvents({
       workspace,
       tenantId,
     };
-    const onGoingEventsCount = await findRegisteredEvents({
-      ...arg,
-      onGoingEvents: true,
-      onlyCount: true,
-    });
-    const upcomingEventsCount = await findRegisteredEvents({
-      ...arg,
-      upComingEvents: true,
-      onlyCount: true,
-    });
-    const pastEventsCount = showPastEvents
-      ? await findRegisteredEvents({...arg, pastEvents: true, onlyCount: true})
-      : {count: 0};
+    const [onGoingEventsCount, upcomingEventsCount, pastEventsCount] =
+      await Promise.all([
+        findRegisteredEvents({
+          ...arg,
+          onGoingEvents: true,
+          onlyCount: true,
+        }),
+        findRegisteredEvents({
+          ...arg,
+          upComingEvents: true,
+          onlyCount: true,
+        }),
+        showPastEvents
+          ? findRegisteredEvents({
+              ...arg,
+              pastEvents: true,
+              onlyCount: true,
+            })
+          : {count: 0},
+      ]);
+
     let upcomgingLimit = 0;
     let pastlimit = 0;
     let upcomingSkip = 0;
