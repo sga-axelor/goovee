@@ -1,7 +1,7 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/core/i18n';
+import {i18n} from '@/locale';
 import {
   FormControl,
   FormField,
@@ -24,7 +24,7 @@ export function PersonalInformation({
   return (
     <div className="bg-white py-4 px-6 rounded-lg">
       <h4 className="font-medium text-xl mb-0">
-        {i18n.get('Personal information')}
+        {i18n.t('Personal information')}
       </h4>
       <Separator className="my-2" />
       <div className="flex flex-col gap-4">
@@ -33,12 +33,9 @@ export function PersonalInformation({
           name="personalInformation.addressName"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('Address name')}</FormLabel>
+              <FormLabel>{i18n.t('Address name')}</FormLabel>
               <FormControl>
-                <Input
-                  placeholder={i18n.get('Enter address name')}
-                  {...field}
-                />
+                <Input placeholder={i18n.t('Enter address name')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -49,9 +46,9 @@ export function PersonalInformation({
           name="personalInformation.firstName"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('First name')}</FormLabel>
+              <FormLabel>{i18n.t('First name')}</FormLabel>
               <FormControl>
-                <Input placeholder={i18n.get('Enter first name')} {...field} />
+                <Input placeholder={i18n.t('Enter first name')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -63,9 +60,9 @@ export function PersonalInformation({
             name="personalInformation.lastName"
             render={({field}) => (
               <FormItem>
-                <FormLabel>{i18n.get('Last name')}</FormLabel>
+                <FormLabel>{i18n.t('Last name')}</FormLabel>
                 <FormControl>
-                  <Input placeholder={i18n.get('Enter last name')} {...field} />
+                  <Input placeholder={i18n.t('Enter last name')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -80,10 +77,10 @@ export function PersonalInformation({
             name="personalInformation.companyName"
             render={({field}) => (
               <FormItem>
-                <FormLabel>{i18n.get('Company name')}</FormLabel>
+                <FormLabel>{i18n.t('Company name')}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder={i18n.get('Enter company name')}
+                    placeholder={i18n.t('Enter company name')}
                     {...field}
                   />
                 </FormControl>

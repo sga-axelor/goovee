@@ -1,7 +1,7 @@
 'use server';
 
 import {generateOTP as coreGenerateOTP} from '@/otp/actions';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {Scope} from '@/otp/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {type Tenant} from '@/tenant';
@@ -22,7 +22,7 @@ export async function generateOTP({
   tenantId: Tenant['id'];
 }) {
   if (!(inviteId && tenantId)) {
-    return error(await getTranslation('Invitation and Tenant is required'));
+    return error(await t('Invitation and Tenant is required'));
   }
 
   const invite = await findInviteById({
@@ -31,7 +31,7 @@ export async function generateOTP({
   });
 
   if (!(invite?.workspace && invite?.partner)) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const workspace = await findWorkspace({
@@ -43,7 +43,7 @@ export async function generateOTP({
   });
 
   if (!workspace?.config) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const email = invite?.emailAddress?.address;

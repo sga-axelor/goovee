@@ -13,7 +13,7 @@ import {
   Breadcrumbs,
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
@@ -50,14 +50,14 @@ export function ProductView({
     if (quantity < 1) {
       toast({
         variant: 'destructive',
-        description: i18n.get('Enter valid quantity'),
+        description: i18n.t('Enter valid quantity'),
       });
       return;
     }
     setUpdating(true);
     setCartQuantity(quantity);
     await updateQuantity({productId: product.id, quantity});
-    toast({title: i18n.get('Added to cart')});
+    toast({title: i18n.t('Added to cart')});
     setUpdating(false);
   };
 
@@ -106,7 +106,7 @@ export function ProductView({
           </div>
           <div className="rounded-lg border bg-card text-card-foreground p-4">
             <p className="text-xl font-semibold mb-12">
-              {i18n.getValueAttribute(product.name)}
+              {i18n.tattr(product.name)}
             </p>
             {workspace?.config?.displayPrices && (
               <>
@@ -125,7 +125,7 @@ export function ProductView({
               }}></p>
             {Boolean(cartQuantity) && product.allowCustomNote && (
               <div>
-                <Label>{i18n.get('Note')}</Label>
+                <Label>{i18n.t('Note')}</Label>
                 <textarea
                   className="border rounded-lg"
                   value={note}
@@ -148,7 +148,7 @@ export function ProductView({
               <div className="flex items-center justify-center gap-2">
                 <MdOutlineShoppingBasket className="text-2xl" />
                 <span className="text-sm font-medium mb-0">
-                  {i18n.get('Add to Cart')}
+                  {i18n.t('Add to Cart')}
                 </span>
               </div>
             </Button>

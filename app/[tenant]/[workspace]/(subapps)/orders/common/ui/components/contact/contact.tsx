@@ -4,7 +4,7 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {getCityName} from '@/utils';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 export const Contact = ({
   clientPartner,
@@ -17,12 +17,12 @@ export const Contact = ({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <h4 className="text-xl font-medium mb-0">{i18n.get('Contact')}</h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Contact')}</h4>
         <div className="flex flex-col gap-4 border rounded-lg p-4">
           <div className="flex gap-4">
             <div className="flex-1 flex flex-col gap-4">
               <h6 className="font-semibold text-base">
-                {i18n.get('Invoicing address')}
+                {i18n.t('Invoicing address')}
               </h6>
               <div className="flex flex-col gap-4">
                 <div className="font-semibold text-base">
@@ -38,7 +38,7 @@ export const Contact = ({
             </div>
             <div className="flex-1 flex flex-col gap-4">
               <h6 className="font-semibold text-base">
-                {i18n.get('Delivery address')}
+                {i18n.t('Delivery address')}
               </h6>
               <div className="flex flex-col gap-4">
                 <div className="font-semibold text-base">

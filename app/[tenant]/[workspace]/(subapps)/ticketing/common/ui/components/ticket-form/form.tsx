@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {RichTextEditor} from '@/ui/components';
 import {Button} from '@/ui/components/button';
 import {
@@ -138,12 +138,12 @@ export function TicketForm(props: TicketFormProps) {
               name="subject"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Subject')}*</FormLabel>
+                  <FormLabel>{i18n.t('Subject')}*</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value ?? ''}
-                      placeholder={i18n.get('Enter your subject')}
+                      placeholder={i18n.t('Enter your subject')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -156,14 +156,14 @@ export function TicketForm(props: TicketFormProps) {
               name="category"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Category')}*</FormLabel>
+                  <FormLabel>{i18n.t('Category')}*</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={i18n.get('Select your category')}
+                          placeholder={i18n.t('Select your category')}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -186,14 +186,14 @@ export function TicketForm(props: TicketFormProps) {
               name="priority"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Priority')}*</FormLabel>
+                  <FormLabel>{i18n.t('Priority')}*</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={i18n.get('Select your priority')}
+                          placeholder={i18n.t('Select your priority')}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -216,7 +216,7 @@ export function TicketForm(props: TicketFormProps) {
               name="managedBy"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Managed by')}*</FormLabel>
+                  <FormLabel>{i18n.t('Managed by')}*</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>
@@ -245,7 +245,7 @@ export function TicketForm(props: TicketFormProps) {
               render={({field}) => {
                 return (
                   <FormItem>
-                    <FormLabel>{i18n.get('Ticket description')}</FormLabel>
+                    <FormLabel>{i18n.t('Ticket description')}</FormLabel>
                     <FormControl>
                       <RichTextEditor
                         onChange={field.onChange}
@@ -267,7 +267,7 @@ export function TicketForm(props: TicketFormProps) {
                 className="w-30"
                 variant="success"
                 disabled={success}>
-                {i18n.get('Create a ticket')}
+                {i18n.t('Create a ticket')}
               </Button>
             </div>
           </div>

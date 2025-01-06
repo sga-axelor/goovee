@@ -7,7 +7,7 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Button} from '@/ui/components/button';
 import {Input} from '@/ui/components/input';
 import {
@@ -35,7 +35,7 @@ import {sendInvites} from './action';
 import {useWorkspace} from '../../../workspace-context';
 
 const formSchema = z.object({
-  emails: z.string().min(1, i18n.get('Emails cannot be empty')),
+  emails: z.string().min(1, i18n.t('Emails cannot be empty')),
   role: z.enum([Role.user, Role.admin]),
   apps: z.record(
     z.string(),
@@ -94,13 +94,13 @@ export default function InviteForm({
 
     if ('success' in result) {
       toast({
-        title: result.message || i18n.get('Invites send successfully'),
+        title: result.message || i18n.t('Invites send successfully'),
         variant: 'success',
       });
       router.replace(`${workspaceURL}/account/members`);
     } else {
       toast({
-        title: result.message || i18n.get('Error sending invites'),
+        title: result.message || i18n.t('Error sending invites'),
         variant: 'destructive',
       });
     }
@@ -118,13 +118,11 @@ export default function InviteForm({
           form.handleSubmit(onInviteSubmit)();
         }}>
         <div className="space-y-4">
-          <Title text={i18n.get('Invite new members')}></Title>
+          <Title text={i18n.t('Invite new members')}></Title>
           <div className="space-y-2">
-            <p className="text-base font-medium">
-              {i18n.get('Invite contact')}
-            </p>
+            <p className="text-base font-medium">{i18n.t('Invite contact')}</p>
             <small className="text-xs font-medium">
-              {i18n.get(
+              {i18n.t(
                 'The contact you invite must be people from your company as their account will be linked to your company.',
               )}
             </small>
@@ -139,7 +137,7 @@ export default function InviteForm({
                         {...field}
                         className="border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
                         value={field.value}
-                        placeholder={i18n.get(
+                        placeholder={i18n.t(
                           'Please write the emails of the people you want to invite on the portal',
                         )}></Input>
                       <Button
@@ -147,7 +145,7 @@ export default function InviteForm({
                         type="submit"
                         variant="success"
                         disabled={isSubmitting}>
-                        {i18n.get('Invite')}
+                        {i18n.t('Invite')}
                       </Button>
                     </div>
                   </FormControl>
@@ -163,9 +161,7 @@ export default function InviteForm({
             name="role"
             render={({field}) => (
               <FormItem>
-                <FormLabel className="font-medium">
-                  {i18n.get('Role')}
-                </FormLabel>
+                <FormLabel className="font-medium">{i18n.t('Role')}</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -177,7 +173,7 @@ export default function InviteForm({
                         <RadioGroupItem variant="success" value="admin" />
                       </FormControl>
                       <FormLabel className="font-medium text-sm">
-                        {i18n.get('Admin')}
+                        {i18n.t('Admin')}
                       </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-6 space-y-0">
@@ -185,7 +181,7 @@ export default function InviteForm({
                         <RadioGroupItem variant="success" value="user" />
                       </FormControl>
                       <FormLabel className="font-medium text-sm">
-                        {i18n.get('User')}
+                        {i18n.t('User')}
                       </FormLabel>
                     </FormItem>
                   </RadioGroup>
@@ -221,7 +217,7 @@ export default function InviteForm({
                           <FormControl>
                             <SelectTrigger className="text-xs">
                               <SelectValue
-                                placeholder={i18n.get('Select access')}
+                                placeholder={i18n.t('Select access')}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -258,7 +254,7 @@ export default function InviteForm({
                           <FormControl>
                             <SelectTrigger className="text-xs">
                               <SelectValue
-                                placeholder={i18n.get('Select authorization')}
+                                placeholder={i18n.t('Select authorization')}
                               />
                             </SelectTrigger>
                           </FormControl>

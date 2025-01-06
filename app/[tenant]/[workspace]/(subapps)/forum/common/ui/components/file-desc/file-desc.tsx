@@ -4,7 +4,7 @@ import React from 'react';
 import {MdOutlineEdit} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Input, Label} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
@@ -25,10 +25,10 @@ export const FileDesc = ({
   return (
     <div className="flex flex-col gap-2 xl:gap-4">
       <div>
-        <Label className="text-md">{i18n.get(FILE_TITLE)}</Label>
+        <Label className="text-md">{i18n.t(FILE_TITLE)}</Label>
         <Input
           name="fileTitle"
-          placeholder={i18n.get('Enter file title')}
+          placeholder={i18n.t('Enter file title')}
           className="mt-2 h-10 xl:h-12 shadow-none"
           value={fileDetails?.fileTitle}
           onChange={onChange}

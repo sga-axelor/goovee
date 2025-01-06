@@ -5,7 +5,7 @@ import {MdEast} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_CURRENCY_SCALE} from '@/constants';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {Button, Separator} from '@/ui/components';
 
@@ -38,26 +38,26 @@ export function Total({
       <div
         className="flex basis-full md:basis-1/4 flex-col bg-card text-card-foreground p-4 md:p-6 border rounded-lg border-card-foreground mt-6 md:mt-0"
         style={{height: 'fit-content'}}>
-        <h4 className="text-xl font-medium mb-0">{i18n.get('Total')}</h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Total')}</h4>
         <Separator className="my-3" />
         <div className="flex flex-col gap-4 mb-3">
           <div className="flex flex-col gap-[0.5rem]">
             <div className="flex items-center justify-between">
-              <p>{i18n.get('Total WT')}:</p>
+              <p>{i18n.t('Total WT')}:</p>
               <p>{exTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <h6 className="font-medium">{i18n.get('Total ATI')}:</h6>
+              <h6 className="font-medium">{i18n.t('Total ATI')}:</h6>
               <h6 className="font-medium">{inTaxTotal}</h6>
             </div>
             <div className="flex items-center justify-between">
-              <p>{i18n.get('Discount')}:</p>
+              <p>{i18n.t('Discount')}:</p>
               <p>{discount}%</p>
             </div>
           </div>
           <div className="flex items-center justify-between">
             <h4 className="text-xl font-medium mb-0">
-              {i18n.get('Total price')}:
+              {i18n.t('Total price')}:
             </h4>
             <h4 className="text-xl font-medium mb-0">{inTaxTotal}</h4>
           </div>
@@ -70,7 +70,7 @@ export function Total({
                 hidden: !allowInvoicePayment,
               },
             )}>
-            {i18n.get('Pay')} <MdEast className="text-2xl" />
+            {i18n.t('Pay')} <MdEast className="text-2xl" />
           </Button>
         </div>
       </div>

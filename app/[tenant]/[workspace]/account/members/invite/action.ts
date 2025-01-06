@@ -6,7 +6,7 @@ import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {
   findPartnerByEmail,
@@ -46,26 +46,26 @@ export async function deleteInvite({
   workspaceURL: string;
 }) {
   if (!(id && workspaceURL)) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const workspace = await findWorkspace({url: workspaceURL, user, tenantId});
 
   if (!workspace) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const isPartnerUser = await isPartner();
@@ -74,7 +74,7 @@ export async function deleteInvite({
   const canDelete = isPartnerUser || isAdminContactUser;
 
   if (!canDelete) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const invite = await findInviteById({id, tenantId});
@@ -82,7 +82,7 @@ export async function deleteInvite({
   const partnerId = (user?.isContact ? user.mainPartnerId : user.id)!;
 
   if (!(invite && invite?.partner?.id && invite.partner.id === partnerId)) {
-    return error(await getTranslation('Invalid invite'));
+    return error(await t('Invalid invite'));
   }
 
   try {
@@ -92,11 +92,11 @@ export async function deleteInvite({
     } else {
       return {
         success: true,
-        message: await getTranslation('Invite deleted successfully'),
+        message: await t('Invite deleted successfully'),
       };
     }
   } catch (err) {
-    return error(await getTranslation('Error deleting invite.'));
+    return error(await t('Error deleting invite.'));
   }
 }
 
@@ -112,7 +112,7 @@ export async function sendInvites({
   apps: InviteAppsConfig;
 }) {
   if (!(emails && workspaceURL && apps)) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   let emailAddresses = emails
@@ -121,30 +121,30 @@ export async function sendInvites({
     .filter(Boolean);
 
   if (!emailAddresses) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const workspace = await findWorkspace({url: workspaceURL, user, tenantId});
 
   if (!workspace) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   if (!workspace.config?.canInviteMembers) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const isPartnerUser = await isPartner();
@@ -153,13 +153,13 @@ export async function sendInvites({
   const canInviteMembers = isPartnerUser || isAdminContactUser;
 
   if (!canInviteMembers) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const isValidUser = await findPartnerByEmail(user.email, tenantId);
 
   if (!isValidUser) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   let availableApps = [];
@@ -170,7 +170,7 @@ export async function sendInvites({
       tenantId,
     });
   } catch (err) {
-    return error(await getTranslation('Error sending invites'));
+    return error(await t('Error sending invites'));
   }
 
   const filteredApps = Object.entries(apps).reduce((acc, [code, config]) => {
@@ -182,7 +182,7 @@ export async function sendInvites({
   }, {} as InviteAppsConfig);
 
   if (!Object.keys(filteredApps)?.length) {
-    return error(await getTranslation('No apps available.'));
+    return error(await t('No apps available.'));
   }
 
   let inviteError;
@@ -192,7 +192,7 @@ export async function sendInvites({
   const partner = await findPartnerById(partnerId, tenantId);
 
   if (!partner) {
-    return error(await getTranslation('Invalid partner'));
+    return error(await t('Invalid partner'));
   }
 
   let emailsWithMemberAlready,
@@ -320,7 +320,7 @@ export async function sendInvites({
   }
 
   if (inviteError) {
-    return error(await getTranslation('Error sending invites, try again.'));
+    return error(await t('Error sending invites, try again.'));
   } else {
     revalidatePath(`${workspace.url}/account/members`);
 
@@ -329,7 +329,7 @@ export async function sendInvites({
     const isSuccess = invitesCount > 0;
 
     if (isSuccess) {
-      message = await getTranslation('Invites send successfully.');
+      message = await t('Invites send successfully.');
     }
 
     if (
@@ -338,23 +338,20 @@ export async function sendInvites({
       emailsWithExistingInvite ||
       emailsRegisteredAsPartner
     ) {
-      message += `\n ${await getTranslation('Some invites are not send for the following ')} ${await getTranslation('reason')} : `;
+      message += `\n ${await t('Some invites are not send for the following ')} ${await t('reason')} : `;
 
       let errors = [];
 
-      emailsWithMemberAlready &&
-        errors.push(await getTranslation('Members already exists'));
+      emailsWithMemberAlready && errors.push(await t('Members already exists'));
 
       emailsWithExistingInvite &&
-        errors.push(await getTranslation('Invites already exists'));
+        errors.push(await t('Invites already exists'));
 
       emailsWithDifferentPartner &&
-        errors.push(
-          await getTranslation('Registered under different partner already'),
-        );
+        errors.push(await t('Registered under different partner already'));
 
       emailsRegisteredAsPartner &&
-        errors.push(await getTranslation('Registered as partner already'));
+        errors.push(await t('Registered as partner already'));
 
       message += errors.join(', ');
     }

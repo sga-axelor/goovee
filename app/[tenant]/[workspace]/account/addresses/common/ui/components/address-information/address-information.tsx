@@ -1,7 +1,7 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/lib/core/i18n';
+import {i18n} from '@/locale';
 import {
   Checkbox,
   DropdownSelector,
@@ -49,7 +49,7 @@ export function AddressInformation({
   return (
     <div className="bg-white py-4 px-6 rounded-lg">
       <h4 className="font-medium text-xl mb-0">
-        {i18n.get('Address information')}
+        {i18n.t('Address information')}
       </h4>
       <Separator className="my-2" />
       <div className="flex flex-col gap-4">
@@ -63,8 +63,8 @@ export function AddressInformation({
                   options={countries}
                   selectedValue={field.value}
                   isRequired={true}
-                  label={i18n.get('Country')}
-                  placeholder={i18n.get('Select a country')}
+                  label={i18n.t('Country')}
+                  placeholder={i18n.t('Select a country')}
                   labelClassName="mb-0"
                   rootClassName="space-y-2"
                   hasError={
@@ -93,12 +93,12 @@ export function AddressInformation({
           render={({field}) => (
             <FormItem>
               <FormLabel>
-                {i18n.get('Street name and number')}
+                {i18n.t('Street name and number')}
                 <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <Input
-                  placeholder={i18n.get('Enter street name and number')}
+                  placeholder={i18n.t('Enter street name and number')}
                   {...field}
                 />
               </FormControl>
@@ -111,10 +111,10 @@ export function AddressInformation({
           name="addressInformation.addressAddition"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('Address addition')}</FormLabel>
+              <FormLabel>{i18n.t('Address addition')}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder={i18n.get('Enter address addition')}
+                  placeholder={i18n.t('Enter address addition')}
                   {...field}
                 />
               </FormControl>
@@ -129,11 +129,11 @@ export function AddressInformation({
             render={({field}) => (
               <FormItem>
                 <FormLabel>
-                  {i18n.get('Zip code')}
+                  {i18n.t('Zip code')}
                   <span className="text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder={i18n.get('Enter zip code')} {...field} />
+                  <Input placeholder={i18n.t('Enter zip code')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,8 +149,8 @@ export function AddressInformation({
                     options={cities || []}
                     selectedValue={field.value}
                     isRequired={true}
-                    label={i18n.get('City')}
-                    placeholder={i18n.get('Select city')}
+                    label={i18n.t('City')}
+                    placeholder={i18n.t('Select city')}
                     labelClassName="mb-0"
                     rootClassName="space-y-2"
                     disabled={!country.id}
@@ -177,7 +177,7 @@ export function AddressInformation({
                   className={`${field.value ? '!bg-success !border-success' : ''}`}
                 />
                 <Label className="ml-2">
-                  {i18n.get('Use this address for both invoicing and delivery')}
+                  {i18n.t('Use this address for both invoicing and delivery')}
                 </Label>
               </div>
               <FormMessage />

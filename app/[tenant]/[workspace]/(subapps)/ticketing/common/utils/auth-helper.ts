@@ -1,7 +1,7 @@
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {AOSPortalTheme} from '@/goovee/.generated/models';
-import {getTranslation} from '@/lib/core/i18n/server';
+import {t} from '@/locale/server';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {Tenant} from '@/tenant';
 import {User} from '@/types';
@@ -48,7 +48,7 @@ export const ensureAuth = cache(async function ensureAuth(
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Workspace not provided.'),
+      message: await t('Workspace not provided.'),
     };
   }
 
@@ -59,7 +59,7 @@ export const ensureAuth = cache(async function ensureAuth(
   if (!user) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -73,7 +73,7 @@ export const ensureAuth = cache(async function ensureAuth(
   if (!subapp) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -86,7 +86,7 @@ export const ensureAuth = cache(async function ensureAuth(
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 

@@ -3,7 +3,7 @@
 import {revalidatePath} from 'next/cache';
 
 import {Tenant} from '@/tenant';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {
   findPartnerByEmail,
   registerContact,
@@ -12,7 +12,6 @@ import {
 import {deleteInviteById} from '@/app/[tenant]/[workspace]/account/common/orm/invites';
 import {getSession} from '@/auth';
 import {PortalWorkspace} from '@/types';
-import {getLanguageCode} from '@/utils/locale';
 import {findOne, isValid} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
 
@@ -44,23 +43,21 @@ export async function register({
   inviteId,
 }: RegisterDTO) {
   if (!(name && tenantId && inviteId)) {
-    return error(await getTranslation('Bad request'));
+    return error(await t('Bad request'));
   }
 
   const invite = await findInviteById({id: inviteId, tenantId});
 
   if (!invite) {
-    return error(await getTranslation('Invalid invite'));
+    return error(await t('Invalid invite'));
   }
 
   if (!invite?.partner?.id) {
-    return error(
-      await getTranslation('No partner available for the workspace'),
-    );
+    return error(await t('No partner available for the workspace'));
   }
 
   if (email !== invite.emailAddress?.address) {
-    return error(await getTranslation('Bad request'));
+    return error(await t('Bad request'));
   }
 
   const {workspace} = invite;
@@ -107,7 +104,7 @@ export async function register({
       },
     };
   } catch (err) {
-    return error(await getTranslation('Error registering contact. Try again.'));
+    return error(await t('Error registering contact. Try again.'));
   }
 }
 
@@ -115,16 +112,16 @@ export async function registerByEmail(data: RegisterDTO) {
   const {email, password, otp, tenantId} = data;
 
   if (!tenantId) {
-    return error(await getTranslation('TenantId is required'));
+    return error(await t('TenantId is required'));
   }
 
   if (!(email && password)) {
-    return error(await getTranslation('Bad request', {tenantId}));
+    return error(await t('Bad request', {tenantId}));
   }
 
   if (!otp) {
     return error(
-      await getTranslation('OTP is required.', {
+      await t('OTP is required.', {
         tenantId,
       }),
     );
@@ -138,7 +135,7 @@ export async function registerByEmail(data: RegisterDTO) {
 
   if (!otpResult) {
     return error(
-      await getTranslation('Invalid OTP', {
+      await t('Invalid OTP', {
         tenantId,
       }),
     );
@@ -146,7 +143,7 @@ export async function registerByEmail(data: RegisterDTO) {
 
   if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
     return error(
-      await getTranslation('Invalid OTP', {
+      await t('Invalid OTP', {
         tenantId,
       }),
     );
@@ -162,7 +159,7 @@ export async function registerByGoogle(
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Login with google to register'));
+    return error(await t('Login with google to register'));
   }
 
   return register({...data, email: user.email});
@@ -178,14 +175,14 @@ export async function subscribe({
   inviteId: string;
 }) {
   if (!(workspaceURL && inviteId && tenantId)) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const invite = await findInviteById({id: inviteId, tenantId});
@@ -200,19 +197,19 @@ export async function subscribe({
       invite.workspace.url === workspaceURL
     )
   ) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const contactConfig = invite?.contactAppPermissionList?.[0];
 
   if (!contactConfig) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const $user = await findPartnerByEmail(user.email, tenantId);
 
   if (!$user) {
-    return error(await getTranslation('User not found'));
+    return error(await t('User not found'));
   }
 
   const data = {
@@ -229,7 +226,7 @@ export async function subscribe({
 
     revalidatePath('/', 'layout');
   } catch (err) {
-    return error(await getTranslation('Error subscribing, try again.'));
+    return error(await t('Error subscribing, try again.'));
   }
 
   deleteInviteById({
@@ -241,7 +238,7 @@ export async function subscribe({
 
   return {
     success: true,
-    message: await getTranslation('Subscribed successfully.'),
+    message: await t('Subscribed successfully.'),
   };
 }
 
@@ -263,14 +260,9 @@ export async function fetchUpdatedSession({tenantId}: {tenantId: string}) {
     return null;
   }
 
-  const {id, isContact, mainPartner, localization} = partner;
-
   return {
-    id,
-    isContact,
-    mainPartnerId: isContact ? mainPartner?.id : undefined,
+    id: partner.id,
     email: user.email,
     tenantId,
-    language: getLanguageCode(localization?.code),
   };
 }

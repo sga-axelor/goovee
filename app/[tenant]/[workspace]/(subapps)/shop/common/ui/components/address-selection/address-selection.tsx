@@ -2,7 +2,7 @@
 
 import {useCallback, useEffect, useState} from 'react';
 
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
@@ -84,21 +84,21 @@ export function AddressSelection({
 
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
-      <h3 className="text-xl font-medium">{title || i18n.get('Contact')}</h3>
+      <h3 className="text-xl font-medium">{title || i18n.t('Contact')}</h3>
       <Separator className="my-4" />
       {loading ? (
         <Loader />
       ) : noaddress ? (
         <div className="border p-4 rounded-lg space-y-2">
           <h3 className="text-lg font-semibold mb-4">
-            {i18n.get('Invoicing and delivery address')}
+            {i18n.t('Invoicing and delivery address')}
           </h3>
-          <LinkButton>{i18n.get('Create or Select an address')}</LinkButton>
+          <LinkButton>{i18n.t('Create or Select an address')}</LinkButton>
         </div>
       ) : sameDeliveryAndInvoicingAddress ? (
         <div className="border p-4 rounded-lg space-y-2">
           <h3 className="text-lg font-semibold mb-4">
-            {i18n.get('Invoicing and delivery address')}
+            {i18n.t('Invoicing and delivery address')}
           </h3>
           <div>
             <h5 className="font-bold text-xl">
@@ -108,7 +108,7 @@ export function AddressSelection({
             <h6>{deliveryAddress?.address?.addressl6}</h6>
             <h6>{deliveryAddress?.address?.country?.name}</h6>
           </div>
-          <LinkButton>{i18n.get('Choose another address')}</LinkButton>
+          <LinkButton>{i18n.t('Choose another address')}</LinkButton>
         </div>
       ) : (
         <div className="space-y-2 divide-y">
@@ -117,7 +117,7 @@ export function AddressSelection({
             {title: 'Invoicing Address', address: invoicingAddress?.address},
           ].map(({title, address}) => (
             <div key={title} className="border p-4 rounded-lg space-y-2">
-              <h3 className="text-lg font-semibold mb-4">{i18n.get(title)}</h3>
+              <h3 className="text-lg font-semibold mb-4">{i18n.t(title)}</h3>
               {address ? (
                 <>
                   <div>
@@ -126,11 +126,11 @@ export function AddressSelection({
                     <h6>{address.addressl6}</h6>
                     <h6>{address.country?.name}</h6>
                   </div>
-                  <LinkButton>{i18n.get('Choose another address')}</LinkButton>
+                  <LinkButton>{i18n.t('Choose another address')}</LinkButton>
                 </>
               ) : (
                 <LinkButton variant="default">
-                  {i18n.get('Create or Select an address')}
+                  {i18n.t('Create or Select an address')}
                 </LinkButton>
               )}
             </div>

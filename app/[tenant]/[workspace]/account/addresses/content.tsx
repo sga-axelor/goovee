@@ -5,7 +5,7 @@ import {useEffect, useState, useTransition} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Button, Separator} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {ADDRESS_TYPE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
@@ -109,12 +109,12 @@ function Content({
         if (result.error) {
           toast({
             variant: 'destructive',
-            description: i18n.get(result?.message || ''),
+            description: i18n.t(result?.message || ''),
           });
         } else {
           toast({
             variant: 'success',
-            title: i18n.get('Address changes saved successfully!'),
+            title: i18n.t('Address changes saved successfully!'),
           });
           router.refresh();
           router.push(
@@ -124,7 +124,7 @@ function Content({
       } catch (error) {
         toast({
           variant: 'destructive',
-          title: i18n.get('Something went wrong while saving address!'),
+          title: i18n.t('Something went wrong while saving address!'),
         });
       }
     });
@@ -171,7 +171,7 @@ function Content({
         {isSubAppActive && (
           <>
             <h4 className="text-xl font-medium mb-0">
-              {i18n.get('Choose your address')}
+              {i18n.t('Choose your address')}
             </h4>
             <Separator className="my-2" />
           </>
@@ -180,7 +180,7 @@ function Content({
         <div className="border border-gray-400 p-4 rounded-lg flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <div className="font-semibold text-xl">
-              {i18n.get('Invoicing address')}
+              {i18n.t('Invoicing address')}
             </div>
             <AddressesList
               isFromQuotation={fromQuotation}
@@ -197,7 +197,7 @@ function Content({
 
           <div className="flex flex-col gap-4">
             <div className="font-semibold text-xl">
-              {i18n.get('Delivery address')}
+              {i18n.t('Delivery address')}
             </div>
             <AddressesList
               isFromQuotation={fromQuotation}
@@ -216,7 +216,7 @@ function Content({
           className="w-full bg-success hover:bg-success-dark py-1.5"
           onClick={handleConfirm}
           disabled={isPending}>
-          {isPending ? i18n.get('Processing...') : i18n.get('Confirm address')}
+          {isPending ? i18n.t('Processing...') : i18n.t('Confirm address')}
         </Button>
       )}
     </>

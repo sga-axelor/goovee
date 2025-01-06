@@ -6,7 +6,7 @@ import {Pagination} from 'swiper/modules';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {ADDRESS_TYPE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
@@ -66,7 +66,7 @@ export const AddressesList = ({
         className="w-fit h-9 bg-success hover:bg-success-dark flex items-center gap-2 rounded-md font-medium px-3 py-1.5"
         onClick={() => onCreate(type)}>
         <MdAdd className="w-6 h-6" />
-        {i18n.get('Create address')}
+        {i18n.t('Create address')}
       </Button>
     </div>
   );

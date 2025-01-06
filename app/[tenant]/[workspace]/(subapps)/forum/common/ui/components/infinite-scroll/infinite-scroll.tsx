@@ -5,7 +5,7 @@ import {useInView} from 'react-intersection-observer';
 import {useParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
 import {DEFAULT_LIMIT} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -63,7 +63,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
       if (response.error) {
         toast({
           variant: 'destructive',
-          title: i18n.get(response.message || 'An error occurred'),
+          title: i18n.t(response.message || 'An error occurred'),
         });
         return;
       }
@@ -100,7 +100,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
         <div
           ref={ref}
           className="col-span-1 mt-16 flex items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4">
-          <p>{i18n.get('Loading')}...</p>
+          <p>{i18n.t('Loading')}...</p>
         </div>
       )}
     </>

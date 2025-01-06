@@ -8,7 +8,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Form,
   FormControl,
@@ -65,7 +65,7 @@ export default function Content() {
 
   return (
     <div className="container space-y-6 mt-8">
-      <h1 className="text-[2rem] font-bold">{i18n.get('Forgot Password')}</h1>
+      <h1 className="text-[2rem] font-bold">{i18n.t('Forgot Password')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -74,12 +74,12 @@ export default function Content() {
               name="email"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Email')}*</FormLabel>
+                  <FormLabel>{i18n.t('Email')}*</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value}
-                      placeholder={i18n.get('Enter email')}
+                      placeholder={i18n.t('Enter email')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -87,17 +87,17 @@ export default function Content() {
               )}
             />
             <Button variant="success" className="w-full">
-              {i18n.get('Submit')}
+              {i18n.t('Submit')}
             </Button>
           </form>
         </Form>
 
         <div className="flex items-center">
           <Label className="mr-2 mb-0 inline-flex">
-            {i18n.get('Remember password')} ?
+            {i18n.t('Remember password')} ?
           </Label>
           <Link href={`/auth/login?${searchQuery}`} className="text-success">
-            {i18n.get('Log In')}
+            {i18n.t('Log In')}
           </Link>
         </div>
       </div>

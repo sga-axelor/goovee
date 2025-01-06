@@ -7,7 +7,7 @@ import {signOut, useSession} from 'next-auth/react';
 import {MdOutlineAccountCircle} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -94,15 +94,15 @@ export function Account({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {i18n.get('Do you want to logout?')}
+              {i18n.t('Do you want to logout?')}
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={closeConfirmation}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleLogout}>
-              {i18n.get('Continue')}
+              {i18n.t('Continue')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

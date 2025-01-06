@@ -12,7 +12,7 @@ import {
 import {CommentResponse, ID} from '@/types';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 interface UseCommentsProps {
   sortBy: string;
@@ -73,7 +73,7 @@ export function useComments({
           console.error('Response error:', response.error);
           toast({
             variant: 'destructive',
-            title: i18n.get(
+            title: i18n.t(
               response?.message || 'An error occurred while fetching comments.',
             ),
           });
@@ -82,7 +82,7 @@ export function useComments({
         console.error('Fetch error:', error);
         toast({
           variant: 'destructive',
-          title: i18n.get(
+          title: i18n.t(
             error.message || 'An error occurred while fetching comments.',
           ),
         });
@@ -116,7 +116,7 @@ export function useComments({
           handleRefresh();
           toast({
             variant: 'success',
-            title: i18n.get('Comment created successfully.'),
+            title: i18n.t('Comment created successfully.'),
           });
         } else {
           throw new Error(response.message || 'Error creating comment');
@@ -125,7 +125,7 @@ export function useComments({
         console.error('Submission error:', error);
         toast({
           variant: 'destructive',
-          title: i18n.get(error.message || 'An unexpected error occurred.'),
+          title: i18n.t(error.message || 'An unexpected error occurred.'),
         });
       }
     },

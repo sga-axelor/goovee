@@ -14,7 +14,7 @@ import {
   Checkbox,
   Card,
 } from '@/ui/components';
-import {i18n} from '@/lib/core/i18n';
+import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
@@ -65,7 +65,7 @@ export const EventSelector = ({
             <CollapsibleTrigger asChild>
               <div className="w-full flex justify-between items-center">
                 <h2 className="text-[18px] font-semibold">
-                  {i18n.get(CATEGORIES)}
+                  {i18n.t(CATEGORIES)}
                 </h2>
                 {isOpen ? (
                   <MdOutlineKeyboardArrowUp className="h-4 w-4" />

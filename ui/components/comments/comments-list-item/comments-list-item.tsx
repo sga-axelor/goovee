@@ -30,7 +30,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {getImageURL} from '@/utils/files';
 import {getPublishedLabel, parseDate} from '@/utils/date';
 import {
@@ -270,7 +270,7 @@ export const CommentListItem = ({
               <Tooltip>
                 <TooltipTrigger>
                   <div className="text-[10px] leading-3">
-                    {i18n.get('Updated')} {getPublishedLabel(createdOn)}
+                    {i18n.t('Updated')} {getPublishedLabel(createdOn)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent align="start" className="px-4 py-1 text-[10px]">
@@ -287,8 +287,8 @@ export const CommentListItem = ({
             </PopoverTrigger>
             <PopoverContent className="p-0 w-fit">
               <div className="flex flex-col gap-[10px] p-4 bg-white rounded-lg text-xs leading-[18px]">
-                <div className="cursor-pointer">{i18n.get(REPORT)}</div>
-                <div className="cursor-pointer">{i18n.get(NOT_INTERESTED)}</div>
+                <div className="cursor-pointer">{i18n.t(REPORT)}</div>
+                <div className="cursor-pointer">{i18n.t(NOT_INTERESTED)}</div>
               </div>
             </PopoverContent>
           </Popover>
@@ -318,7 +318,7 @@ export const CommentListItem = ({
                   className="flex items-center gap-1 cursor-pointer"
                   onClick={toggleCommentInput}>
                   <MdReply className="w-4 h-4" />
-                  <span className="text-[10px]">{i18n.get('Reply')}</span>
+                  <span className="text-[10px]">{i18n.t('Reply')}</span>
                 </div>
 
                 {parentCommentId === id && childMailMessages.length > 0 && (
@@ -332,7 +332,7 @@ export const CommentListItem = ({
                       onClick={toggleSubComments}>
                       <MdOutlineModeComment className="w-4 h-4 cursor-pointer" />
                       {childMailMessages.length}{' '}
-                      {i18n.get(
+                      {i18n.t(
                         childMailMessages.length > 1
                           ? COMMENTS.toLowerCase()
                           : COMMENT.toLowerCase(),
@@ -351,8 +351,8 @@ export const CommentListItem = ({
                 className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
                 placeholderText={
                   isLoggedIn
-                    ? i18n.get(COMMENT)
-                    : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
+                    ? i18n.t(COMMENT)
+                    : i18n.t(DISABLED_COMMENT_PLACEHOLDER)
                 }
                 onSubmit={handleCommentSubmit}
               />

@@ -15,7 +15,7 @@ import {
   findWorkspaceByURL,
   findWorkspaces,
 } from '@/orm/workspace';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
 import {ALLOW_AOS_ONLY_REGISTRATION, ALLOW_NO_REGISTRATION} from '@/constants';
@@ -40,11 +40,11 @@ export async function subscribe({
   const user = session?.user;
 
   if (!(workspace && tenantId)) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const url = workspace?.url;
@@ -54,7 +54,7 @@ export async function subscribe({
   const existing = userWorkspaces?.find((w: any) => w.id === workspace?.id);
 
   if (existing) {
-    return error(await getTranslation('Already subscribed'));
+    return error(await t('Already subscribed'));
   }
 
   const defaultPartnerWorkspaceConfig = await findDefaultPartnerWorkspaceConfig(
@@ -63,7 +63,7 @@ export async function subscribe({
 
   if (!defaultPartnerWorkspaceConfig) {
     return error(
-      await getTranslation(
+      await t(
         'Cannot subscribe, no default permissions available for the workspace',
       ),
     );
@@ -84,7 +84,7 @@ export async function subscribe({
   });
 
   if (!$user) {
-    return error(await getTranslation('Bad request'));
+    return error(await t('Bad request'));
   }
 
   if (!$user.isContact) {
@@ -107,16 +107,14 @@ export async function subscribe({
 
       return {
         success: true,
-        message: await getTranslation('Successfully subscribed'),
+        message: await t('Successfully subscribed'),
       };
     } catch (err) {}
   } else {
     const {mainPartner} = $user;
 
     if (!mainPartner?.id) {
-      return error(
-        await getTranslation('Partner not available for the contact'),
-      );
+      return error(await t('Partner not available for the contact'));
     }
     const partnerWorkspaces = await findWorkspaces({
       url,
@@ -131,9 +129,7 @@ export async function subscribe({
 
     if (!existsInPartner) {
       return error(
-        await getTranslation(
-          `Partner didn't have access to workspace, cannot subscribe`,
-        ),
+        await t(`Partner didn't have access to workspace, cannot subscribe`),
       );
     } else {
       try {
@@ -162,7 +158,7 @@ export async function subscribe({
 
         return {
           success: true,
-          message: await getTranslation('Successfully subscribed'),
+          message: await t('Successfully subscribed'),
         };
       } catch (err) {
         console.log(err);
@@ -170,7 +166,7 @@ export async function subscribe({
     }
   }
 
-  return error(await getTranslation('Error subscribing, try again.'));
+  return error(await t('Error subscribing, try again.'));
 }
 
 type RegisterDTO = {
@@ -201,29 +197,29 @@ export async function register({
   tenantId,
 }: RegisterDTO) {
   if (type === UserType.individual && !name) {
-    return error(await getTranslation('Name is required.', {tenantId}));
+    return error(await t('Name is required.', {tenantId}));
   }
 
   if (type === UserType.company && !companyName) {
-    return error(await getTranslation('Company name is required.', {tenantId}));
+    return error(await t('Company name is required.', {tenantId}));
   }
 
   if (!tenantId) {
-    return error(await getTranslation('Tenant is required.', {tenantId}));
+    return error(await t('Tenant is required.', {tenantId}));
   }
 
   if (!workspaceURL) {
-    return error(await getTranslation('Workspace is required.', {tenantId}));
+    return error(await t('Workspace is required.', {tenantId}));
   }
 
   const workspace = await findWorkspaceByURL({url: workspaceURL, tenantId});
 
   if (!workspace) {
-    return error(await getTranslation('Invalid workspace', {tenantId}));
+    return error(await t('Invalid workspace', {tenantId}));
   }
 
   if (workspace.allowRegistrationSelect === ALLOW_NO_REGISTRATION) {
-    return error(await getTranslation('Registration not allowed', {tenantId}));
+    return error(await t('Registration not allowed', {tenantId}));
   }
 
   const $partner = await findPartnerByEmail(email, tenantId);
@@ -232,13 +228,13 @@ export async function register({
     workspace.allowRegistrationSelect === ALLOW_AOS_ONLY_REGISTRATION &&
     !$partner
   ) {
-    return error(await getTranslation('Registration not allowed', {tenantId}));
+    return error(await t('Registration not allowed', {tenantId}));
   }
 
   if ($partner && $partner.isRegisteredOnPortal) {
     return {
       error: true,
-      message: await getTranslation('Email already exists', {tenantId}),
+      message: await t('Email already exists', {tenantId}),
     };
   }
 
@@ -261,14 +257,14 @@ export async function register({
 
     return {
       success: true,
-      message: await getTranslation('Registered successfully'),
+      message: await t('Registered successfully'),
       data: $partner,
     };
   } catch (err) {}
 
   return {
     error: true,
-    message: await getTranslation('Error registering, try again'),
+    message: await t('Error registering, try again'),
   };
 }
 
@@ -276,18 +272,16 @@ export async function registerByEmail(data: RegisterDTO) {
   const {email, password, confirmPassword, otp, tenantId} = data;
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   if (!(email && password && confirmPassword)) {
-    return error(
-      await getTranslation('Email and password are required.', {tenantId}),
-    );
+    return error(await t('Email and password are required.', {tenantId}));
   }
 
   if (password !== confirmPassword) {
     return error(
-      await getTranslation('Password and confirm password mismatch.', {
+      await t('Password and confirm password mismatch.', {
         tenantId,
       }),
     );
@@ -295,7 +289,7 @@ export async function registerByEmail(data: RegisterDTO) {
 
   if (!otp) {
     return error(
-      await getTranslation('OTP is required', {
+      await t('OTP is required', {
         tenantId,
       }),
     );
@@ -309,7 +303,7 @@ export async function registerByEmail(data: RegisterDTO) {
 
   if (!otpResult) {
     return error(
-      await getTranslation('Invalid OTP', {
+      await t('Invalid OTP', {
         tenantId,
       }),
     );
@@ -317,7 +311,7 @@ export async function registerByEmail(data: RegisterDTO) {
 
   if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
     return error(
-      await getTranslation('Invalid OTP', {
+      await t('Invalid OTP', {
         tenantId,
       }),
     );
@@ -332,16 +326,14 @@ export async function registerByGoogle(
   const {tenantId} = data;
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user?.email) {
-    return error(
-      await getTranslation('Login using google and try again.', {tenantId}),
-    );
+    return error(await t('Login using google and try again.', {tenantId}));
   }
 
   return register({...data, email: user.email});

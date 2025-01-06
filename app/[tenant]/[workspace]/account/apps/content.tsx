@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_PAGE} from '@/constants';
 import {Icon} from '@/ui/components';
@@ -41,9 +41,7 @@ export default function Content({subapps}: {subapps: any}) {
                         />
                       ) : null}
                     </div>
-                    <p className="text-lg font-semibold mb-0">
-                      {i18n.get(name)}
-                    </p>
+                    <p className="text-lg font-semibold mb-0">{i18n.t(name)}</p>
                   </div>
                 </div>
               </Link>

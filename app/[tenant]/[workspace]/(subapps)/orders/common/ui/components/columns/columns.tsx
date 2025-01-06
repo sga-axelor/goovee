@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Chip} from '@/ui/components';
 import {parseDate} from '@/utils/date';
 
@@ -9,7 +9,7 @@ import {getStatus} from '@/subapps/orders/common/utils/orders';
 export const OrderColumns = [
   {
     key: 'saleOrderSeq',
-    label: i18n.get('Order number'),
+    label: i18n.t('Order number'),
     sortable: true,
     mobile: true,
     getter: (row: any) => row.saleOrderSeq,
@@ -19,7 +19,7 @@ export const OrderColumns = [
   },
   {
     key: 'statusSelect',
-    label: i18n.get('Status'),
+    label: i18n.t('Status'),
     getter: (row: any) => row.statusSelect,
     content: (row: any) => {
       const {status, variant} = getStatus(row.statusSelect, row.deliveryState);
@@ -34,20 +34,20 @@ export const OrderColumns = [
   },
   {
     key: 'createdOn',
-    label: i18n.get('Created on'),
+    label: i18n.t('Created on'),
     sortable: true,
     getter: (row: any) => row.createdOn,
     content: (row: any) => parseDate(row.createdOn),
   },
   {
     key: 'exTaxTotal',
-    label: i18n.get('Total WT'),
+    label: i18n.t('Total WT'),
     getter: (row: any) => row.exTaxTotal,
     content: (row: any) => row.exTaxTotal,
   },
   {
     key: 'inTaxTotal',
-    label: i18n.get('Total ATI'),
+    label: i18n.t('Total ATI'),
     getter: (row: any) => row.inTaxTotal,
     mobile: true,
     content: (row: any) => row.inTaxTotal,

@@ -10,7 +10,7 @@ import {
 } from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Button,
   Input,
@@ -147,10 +147,10 @@ export const ImageUploader = ({
                       />
                     </div>
                     <h2 className="text-base lg:text-xl text-center">
-                      {i18n.get(CLICK_HERE_DRAG_DROP)}
+                      {i18n.t(CLICK_HERE_DRAG_DROP)}
                     </h2>
                     <span className="text-sm text-muted-foreground">
-                      {i18n.get(SUPPORTED_FILE_JPG_PNG)}
+                      {i18n.t(SUPPORTED_FILE_JPG_PNG)}
                     </span>
                   </label>
                 ) : (
@@ -163,7 +163,7 @@ export const ImageUploader = ({
                       </div>
                       <div>
                         <span className="text-base font-medium">
-                          {i18n.get(ALERTNATE_TEXT)}
+                          {i18n.t(ALERTNATE_TEXT)}
                         </span>
                         <Input
                           name="altText"
@@ -177,7 +177,7 @@ export const ImageUploader = ({
                     <div className="flex-1 border h-full rounded-sm p-2 flex flex-col justify-between m-2 xl:m-4 ">
                       <div>
                         <p className="p-3 text-muted-foreground">
-                          {selectedIndex + 1} {i18n.get(OUT_OF)} {images.length}
+                          {selectedIndex + 1} {i18n.t(OUT_OF)} {images.length}
                         </p>
                         <ScrollArea className="h-[22.5rem]">
                           <div className="flex flex-wrap justify-between p-2">
@@ -217,7 +217,7 @@ export const ImageUploader = ({
               <Button
                 className="bg-success w-full rounded-md h-10 mt-4 text-base"
                 onClick={handleUpload}>
-                {i18n.get(UPLOAD)}
+                {i18n.t(UPLOAD)}
               </Button>
             </div>
             <input

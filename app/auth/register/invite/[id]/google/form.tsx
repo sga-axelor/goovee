@@ -8,7 +8,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import {
   Form,
@@ -27,7 +27,7 @@ import {fetchUpdatedSession, registerByGoogle} from '../action';
 
 const formSchema = z.object({
   firstName: z.string(),
-  name: z.string().min(1, {message: i18n.get('Last name is required.')}),
+  name: z.string().min(1, {message: i18n.t('Last name is required.')}),
   email: z.string().optional(),
 });
 
@@ -73,7 +73,7 @@ export default function SignUp({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!tenantId) {
       toast({
-        title: i18n.get('TenantId is required.'),
+        title: i18n.t('TenantId is required.'),
         variant: 'destructive',
       });
       return;
@@ -91,7 +91,7 @@ export default function SignUp({
       if (res.success) {
         toast({
           variant: 'success',
-          title: i18n.get('Registration successfully done.'),
+          title: i18n.t('Registration successfully done.'),
         });
 
         router.push(`/auth/login${res?.data?.query}`);
@@ -104,26 +104,26 @@ export default function SignUp({
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error registering, try again'),
+        title: i18n.t('Error registering, try again'),
       });
     }
   };
 
   return (
     <div className="container space-y-6 mt-8">
-      <h1 className="text-[2rem] font-bold">{i18n.get('Sign Up')}</h1>
+      <h1 className="text-[2rem] font-bold">{i18n.t('Sign Up')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <h2 className="text-xl font-medium">
-              {i18n.get('Personal information')}
+              {i18n.t('Personal information')}
             </h2>
             <FormField
               control={form.control}
               name="email"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Email')}</FormLabel>
+                  <FormLabel>{i18n.t('Email')}</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value} disabled />
                   </FormControl>
@@ -137,12 +137,12 @@ export default function SignUp({
                 name="firstName"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('First name')}</FormLabel>
+                    <FormLabel>{i18n.t('First name')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         value={field.value}
-                        placeholder={i18n.get('Enter first Name')}
+                        placeholder={i18n.t('Enter first Name')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -154,12 +154,12 @@ export default function SignUp({
                 name="name"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('Last name')} *</FormLabel>
+                    <FormLabel>{i18n.t('Last name')} *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         value={field.value}
-                        placeholder={i18n.get('Enter Last Name')}
+                        placeholder={i18n.t('Enter Last Name')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -169,7 +169,7 @@ export default function SignUp({
             </div>
 
             <Button variant="success" className="w-full rounded-full">
-              {i18n.get('Sign Up')}
+              {i18n.t('Sign Up')}
             </Button>
           </form>
         </Form>

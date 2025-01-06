@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {
@@ -105,7 +105,7 @@ export default async function Page({
                 asChild
                 className="text-foreground-muted cursor-pointer truncate text-md">
                 <Link href={`${workspaceURI}/ticketing`}>
-                  {await getTranslation('Projects')}
+                  {await t('Projects')}
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -127,7 +127,7 @@ export default async function Page({
             <BreadcrumbItem>
               <BreadcrumbPage className="truncate text-lg font-semibold">
                 <h2 className="font-semibold text-xl">
-                  {await getTranslation('All tickets')}
+                  {await t('All tickets')}
                 </h2>
               </BreadcrumbPage>
             </BreadcrumbItem>
@@ -137,7 +137,7 @@ export default async function Page({
           <Link
             href={`${workspaceURI}/ticketing/projects/${projectId}/tickets/create`}>
             <MdAdd className="size-6" />
-            <span>{await getTranslation('Create a ticket')}</span>
+            <span>{await t('Create a ticket')}</span>
           </Link>
         </Button>
       </div>

@@ -28,7 +28,7 @@ import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
 import {useSearchParams, useToast} from '@/ui/hooks';
 import {getImageURL} from '@/utils/files';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {PaymentOption, type PortalWorkspace} from '@/types';
@@ -68,7 +68,7 @@ function Stripe({onApprove}: {onApprove: any}) {
       if (noAddress) {
         toast({
           variant: 'destructive',
-          title: i18n.get('Select address to continue'),
+          title: i18n.t('Select address to continue'),
         });
         return;
       }
@@ -90,7 +90,7 @@ function Stripe({onApprove}: {onApprove: any}) {
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error processing stripe payment, try again.'),
+        title: i18n.t('Error processing stripe payment, try again.'),
       });
     }
   };
@@ -116,7 +116,7 @@ function Stripe({onApprove}: {onApprove: any}) {
         } else {
           toast({
             variant: 'success',
-            title: i18n.get('Order requested successfully'),
+            title: i18n.t('Order requested successfully'),
           });
 
           clearCart();
@@ -125,7 +125,7 @@ function Stripe({onApprove}: {onApprove: any}) {
       } catch (err) {
         toast({
           variant: 'destructive',
-          title: i18n.get('Error processing stripe payment, try again.'),
+          title: i18n.t('Error processing stripe payment, try again.'),
         });
       }
     },
@@ -143,7 +143,7 @@ function Stripe({onApprove}: {onApprove: any}) {
     if (stripeError) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error processing stripe payment, try again.'),
+        title: i18n.t('Error processing stripe payment, try again.'),
       });
     } else if (stripeSessionId) {
       handleValidateStripePayment({stripeSessionId});
@@ -170,7 +170,7 @@ function Paypal({onApprove}: {onApprove: any}) {
     if (noAddress) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Select address to continue'),
+        title: i18n.t('Select address to continue'),
       });
       return;
     }
@@ -202,7 +202,7 @@ function Paypal({onApprove}: {onApprove: any}) {
     } else {
       toast({
         variant: 'success',
-        title: i18n.get('Order requested successfully'),
+        title: i18n.t('Order requested successfully'),
       });
 
       clearCart();
@@ -236,10 +236,7 @@ function Summary({cart}: any) {
   const {tenant} = useWorkspace();
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
-      <Title
-        className="text-xl font-semibold mb-6"
-        text={i18n.get('Summary')}
-      />
+      <Title className="text-xl font-semibold mb-6" text={i18n.t('Summary')} />
       <div className="flex flex-col gap-4 pt-4">
         {cart.items.map(
           ({
@@ -256,14 +253,14 @@ function Summary({cart}: any) {
               <div>
                 <Title
                   className="text-base font-medium line-clamp-1"
-                  text={i18n.getValueAttribute(product?.name)}></Title>
+                  text={i18n.tattr(product?.name)}></Title>
                 {note && (
                   <div>
-                    {i18n.get('Note')} : {note}
+                    {i18n.t('Note')} : {note}
                   </div>
                 )}
                 <div className="flex items-center gap-4">
-                  <p className="text-sm font-medium">{i18n.get('Quantity')}</p>
+                  <p className="text-sm font-medium">{i18n.t('Quantity')}</p>
                   <p className="border rounded px-4">{quantity}</p>
                 </div>
                 <Title
@@ -294,20 +291,20 @@ function Total({cart, shippingType, workspace}: any) {
       <Title className="text-xl font-semibold mb-6" text="Total" />
       <Separator className="my-4" />
       <div className="flex justify-between">
-        <p>{i18n.get('Products')}:</p>
+        <p>{i18n.t('Products')}:</p>
         <div>
           <p className="font-semibold text-right">{displayTotal}</p>
         </div>
       </div>
       <div className="flex items-center justify-between mt-4">
-        <p>{i18n.get('Shipping')}:</p>
+        <p>{i18n.t('Shipping')}:</p>
         <div>
           <p className="text-xs">{`${shipping} ${currencySymbol}`}</p>
         </div>
       </div>
       <Separator className="my-4" />
       <div className="flex items-center justify-between">
-        <p className="font-medium font-m">{i18n.get('Total price')}:</p>
+        <p className="font-medium font-m">{i18n.t('Total price')}:</p>
         <div>
           <p className="text-xl font-semibold">
             {`${totalWithShipping} ${currencySymbol}`}
@@ -321,10 +318,7 @@ function Total({cart, shippingType, workspace}: any) {
 function Shipping({value, onChange}: {value: string; onChange: any}) {
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
-      <Title
-        className="text-xl font-medium"
-        text={i18n.get('Shipping Method')}
-      />
+      <Title className="text-xl font-medium" text={i18n.t('Shipping Method')} />
       <Separator className="my-4" />
       <RadioGroup defaultValue={value}>
         <div className="border rounded-lg flex p-4 gap-4 items-center">
@@ -337,8 +331,8 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
               id="r1"
             />
             <Label className="font-medium !ml-4" htmlFor="r1">
-              {i18n.get('Regular Shipping')}{' '}
-              <small className="text-xs font-medium ml-1">{`5-10 ${i18n.get(
+              {i18n.t('Regular Shipping')}{' '}
+              <small className="text-xs font-medium ml-1">{`5-10 ${i18n.t(
                 'Business Days',
               )}`}</small>
             </Label>
@@ -357,8 +351,8 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
               id="r2"
             />
             <Label className="font-medium !ml-4" htmlFor="r1">
-              {i18n.get('Fast Shipping')}{' '}
-              <small className="text-xs font-medium ml-1">{`2-3 ${i18n.get(
+              {i18n.t('Fast Shipping')}{' '}
+              <small className="text-xs font-medium ml-1">{`2-3 ${i18n.t(
                 'Business Days',
               )}`}</small>
             </Label>
@@ -472,7 +466,7 @@ export default function Content({
   );
 
   if (loading) {
-    return <p>{i18n.get('Loading')}...</p>;
+    return <p>{i18n.t('Loading')}...</p>;
   }
 
   const confirmOrder = workspace?.config?.confirmOrder;
@@ -487,7 +481,7 @@ export default function Content({
 
   return (
     <>
-      <h4 className="mb-6 text-xl font-medium">{i18n.get('Confirm Cart')}</h4>
+      <h4 className="mb-6 text-xl font-medium">{i18n.t('Confirm Cart')}</h4>
       <div className="grid lg:grid-cols-[1fr_25%] xl:grid-cols-[1fr_21%] grid-cols-1 gap-4">
         <div>
           <div className="flex flex-col gap-6">
@@ -521,15 +515,15 @@ export default function Content({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {i18n.get('Do you want to confirm order?')}
+              {i18n.t('Do you want to confirm order?')}
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={closeConfirmation}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmOrder}>
-              {i18n.get('Continue')}
+              {i18n.t('Continue')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

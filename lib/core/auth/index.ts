@@ -2,9 +2,8 @@ import {getServerSession} from 'next-auth';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import {getLanguageCode} from '@/utils/locale';
 import {findPartnerByEmail} from '@/orm/partner';
-import {DEFAULT_LANGUAGE_CODE} from '@/constants';
+import {transformLocale} from '@/locale/utils';
 import {type Tenant} from '@/tenant';
 
 import google from './google';
@@ -31,10 +30,6 @@ export const authOptions: NextAuthOptions = {
           localization,
         } = user;
 
-        const language = localization
-          ? getLanguageCode(localization?.code)
-          : DEFAULT_LANGUAGE_CODE;
-
         session.user = {
           id,
           name,
@@ -42,7 +37,7 @@ export const authOptions: NextAuthOptions = {
           isContact,
           mainPartnerId: isContact ? mainPartner?.id : undefined,
           tenantId: token?.tenantId as Tenant['id'],
-          language,
+          locale: transformLocale(localization?.code),
         };
       }
 
@@ -65,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (partner) {
-          const {id, name, isContact, mainPartner} = partner;
+          const {id, name, isContact, mainPartner, localization} = partner;
 
           token.id = id;
           token.name = name;
@@ -73,6 +68,7 @@ export const authOptions: NextAuthOptions = {
           token.isContact = isContact;
           token.tenantId = session.tenantId;
           token.mainPartnerId = isContact ? mainPartner?.id : undefined;
+          token.locale = transformLocale(localization?.code);
         }
       }
 

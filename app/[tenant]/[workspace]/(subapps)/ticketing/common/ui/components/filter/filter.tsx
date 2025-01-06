@@ -1,6 +1,6 @@
 'use client';
 
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import type {Cloned} from '@/types/util';
 import {
   Badge,
@@ -153,7 +153,7 @@ export function Filter(props: FilterProps) {
             })}>
             <div className="flex items-center space-x-2">
               <FaFilter className="size-4" />
-              <span> {i18n.get('Filters')}</span>
+              <span> {i18n.t('Filters')}</span>
             </div>
             {filterCount > 0 && (
               <Badge
@@ -174,7 +174,7 @@ export function Filter(props: FilterProps) {
           {small && (
             <>
               <h3 className="text-xl font-semibold mb-2">
-                {i18n.get('Filters')}
+                {i18n.t('Filters')}
               </h3>
               <hr className="mb-2" />
             </>
@@ -208,7 +208,7 @@ export function Filter(props: FilterProps) {
                   variant="success"
                   type="submit"
                   className="w-full sticky bottom-0 text-xs">
-                  {i18n.get('Apply')}
+                  {i18n.t('Apply')}
                 </Button>
               </div>
             </form>
@@ -227,7 +227,7 @@ function ManagedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
       name="managedBy"
       render={({field}) => (
         <FormItem className="grow">
-          <FormLabel className="text-xs">{i18n.get('Managed by')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.t('Managed by')} :</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             values={field.value ?? []}
@@ -269,7 +269,7 @@ function CreatedByField(
       name="createdBy"
       render={({field}) => (
         <FormItem className="grow">
-          <FormLabel className="text-xs">{i18n.get('Created by')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.t('Created by')} :</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             values={field.value ?? []}
@@ -331,9 +331,7 @@ function MyTicketsField(props: FieldProps) {
               }}
             />
           </FormControl>
-          <FormLabel className="ms-4 text-xs">
-            {i18n.get('My Tickets')}
-          </FormLabel>
+          <FormLabel className="ms-4 text-xs">{i18n.t('My Tickets')}</FormLabel>
         </FormItem>
       )}
     />
@@ -356,9 +354,7 @@ function AssignedToField(
         name="assignment"
         render={({field}) => (
           <FormItem className="grow">
-            <FormLabel className="text-xs">
-              {i18n.get('Assigned To')} :
-            </FormLabel>
+            <FormLabel className="text-xs">{i18n.t('Assigned To')} :</FormLabel>
 
             <Select
               value={field.value ? field.value.toString() : ''}
@@ -373,7 +369,7 @@ function AssignedToField(
                       ['text-foreground']: field.value,
                     })}>
                     <SelectValue
-                      placeholder={i18n.get('Select assignee')}></SelectValue>
+                      placeholder={i18n.t('Select assignee')}></SelectValue>
                   </SelectTrigger>
                   {field.value && (
                     <RemoveIcon
@@ -413,7 +409,7 @@ function DatesField(props: FieldProps) {
           name="updatedOn.0"
           render={({field}) => (
             <FormItem className="grow">
-              <FormLabel className="text-xs">{i18n.get('From')} :</FormLabel>
+              <FormLabel className="text-xs">{i18n.t('From')} :</FormLabel>
               <FormControl>
                 <Input
                   type="date"
@@ -431,7 +427,7 @@ function DatesField(props: FieldProps) {
           name="updatedOn.1"
           render={({field}) => (
             <FormItem className="grow">
-              <FormLabel className="text-xs">{i18n.get('To')} :</FormLabel>
+              <FormLabel className="text-xs">{i18n.t('To')} :</FormLabel>
               <FormControl>
                 <Input
                   type="date"
@@ -462,7 +458,7 @@ function PriorityField(props: FieldProps & Pick<FilterProps, 'priorities'>) {
       name="priority"
       render={({field}) => (
         <FormItem>
-          <FormLabel className="text-xs">{i18n.get('Priority')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.t('Priority')} :</FormLabel>
           {priorities.map(priority => (
             <FormField
               key={priority.id}
@@ -514,7 +510,7 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
       name="status"
       render={({field}) => (
         <FormItem>
-          <FormLabel className="text-xs">{i18n.get('Status')} :</FormLabel>
+          <FormLabel className="text-xs">{i18n.t('Status')} :</FormLabel>
           <MultiSelector
             onValuesChange={field.onChange}
             className="space-y-0"

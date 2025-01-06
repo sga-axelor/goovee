@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@/ui/components/card';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   FormView,
   ArrayComponent,
@@ -204,7 +204,7 @@ export const RegistrationForm = ({
       if (response.success) {
         toast({
           variant: 'success',
-          title: i18n.get(SUCCESS_REGISTER_MESSAGE),
+          title: i18n.t(SUCCESS_REGISTER_MESSAGE),
         });
         router.push(
           `${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}`,
@@ -212,13 +212,13 @@ export const RegistrationForm = ({
       } else {
         toast({
           variant: 'destructive',
-          title: i18n.get(response.message),
+          title: i18n.t(response.message),
         });
       }
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error while adding comment'),
+        title: i18n.t('Error while adding comment'),
       });
     }
   };
@@ -237,7 +237,7 @@ export const RegistrationForm = ({
         <BadgeList items={eventDetails?.eventCategorySet} />
         {eventDetails?.eventProduct?.salePrice && (
           <CardDescription className="my-6 text-xl font-semibold">
-            {`${i18n.get('Price')} : ${parseFloat(eventDetails?.eventProduct?.salePrice).toFixed(2)}€`}
+            {`${i18n.t('Price')} : ${parseFloat(eventDetails?.eventProduct?.salePrice).toFixed(2)}€`}
           </CardDescription>
         )}
       </CardHeader>

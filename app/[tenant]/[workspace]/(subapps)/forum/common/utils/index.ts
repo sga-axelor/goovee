@@ -1,4 +1,4 @@
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {PortalWorkspace, User} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
 import {manager, type Tenant} from '@/tenant';

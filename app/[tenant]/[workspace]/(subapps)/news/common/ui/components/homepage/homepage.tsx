@@ -4,7 +4,7 @@ import React from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {HeroSearch, Search} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
@@ -62,9 +62,9 @@ export const Homepage = ({
   return (
     <div className="h-full flex flex-col">
       <HeroSearch
-        title={workspace?.config?.newsHeroTitle || i18n.get(BANNER_TITLES.news)}
+        title={workspace?.config?.newsHeroTitle || i18n.t(BANNER_TITLES.news)}
         description={
-          workspace?.config?.newsHeroDescription || i18n.get(BANNER_DESCRIPTION)
+          workspace?.config?.newsHeroDescription || i18n.t(BANNER_DESCRIPTION)
         }
         image={imageURL}
         background={workspace?.config?.newsHeroOverlayColorSelect || 'default'}
@@ -79,12 +79,12 @@ export const Homepage = ({
           <>
             <CategorySlider
               showTitle={categories.length}
-              title={i18n.get(CATEGORIES)}
+              title={i18n.t(CATEGORIES)}
               categories={categories}
             />
             <div>
               <LeadStories
-                title={i18n.get(LATEST_NEWS)}
+                title={i18n.t(LATEST_NEWS)}
                 news={latestNews}
                 onClick={handleClick}
               />
@@ -93,7 +93,7 @@ export const Homepage = ({
             <div className="flex flex-col lg:flex-row gap-6">
               {featuredNews?.length > 0 ? (
                 <FeedList
-                  title={i18n.get(FEATURED_NEWS)}
+                  title={i18n.t(FEATURED_NEWS)}
                   items={featuredNews}
                   onClick={handleClick}
                 />
@@ -124,7 +124,7 @@ export const Homepage = ({
           </>
         ) : (
           <div className="font-medium text-center flex items-center justify-center py-4 flex-1">
-            {i18n.get(NO_NEWS_AVAILABLE)}
+            {i18n.t(NO_NEWS_AVAILABLE)}
           </div>
         )}
       </div>

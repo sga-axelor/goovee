@@ -5,7 +5,7 @@ import {MdCheckCircleOutline, MdOutlineDisabledByDefault} from 'react-icons/md';
 import {LiaLongArrowAltRightSolid} from 'react-icons/lia';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Separator,
   Button,
@@ -68,27 +68,25 @@ export const Total = ({
   return (
     <>
       <div className="flex flex-col bg-card text-card-foreground px-6 py-4 rounded-lg border border-card-foreground">
-        <h4 className="text-xl font-medium mb-0">
-          {i18n.get('Offered price')}
-        </h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Offered price')}</h4>
         <Separator className="my-3" />
         <div className="flex flex-col gap-4 mb-2">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <p>{i18n.get('Total WT')}:</p>
+              <p>{i18n.t('Total WT')}:</p>
               <p>{exTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <p>{i18n.get('Total ATI')}:</p>
+              <p>{i18n.t('Total ATI')}:</p>
               <p>{inTaxTotal}</p>
             </div>
             <div className="flex items-center justify-between">
-              <p>{i18n.get('Discount')}:</p>
+              <p>{i18n.t('Discount')}:</p>
               <p>{totalDiscount}%</p>
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <h6 className="font-medium">{i18n.get('Total price')}:</h6>
+            <h6 className="font-medium">{i18n.t('Total price')}:</h6>
             <h4 className="text-xl font-medium">{inTaxTotal}</h4>
           </div>
           {statusSelect !== QUOTATION_STATUS.CANCELED_QUOTATION &&
@@ -99,7 +97,7 @@ export const Total = ({
                     <Button
                       className="flex items-center justify-center gap-3 rounded-full w-full font-normal"
                       onClick={openPaymentSelectionDialog}>
-                      {i18n.get('Pay')}{' '}
+                      {i18n.t('Pay')}{' '}
                       <LiaLongArrowAltRightSolid className="text-2xl" />
                     </Button>
                   </div>
@@ -109,7 +107,7 @@ export const Total = ({
                       className="text-success-foreground bg-success hover:bg-success-dark flex items-center justify-center gap-3 rounded-full w-full"
                       onClick={openConfirmation}>
                       <MdCheckCircleOutline className="text-2xl" />
-                      {i18n.get('Accept and sign')}
+                      {i18n.t('Accept and sign')}
                     </Button>
                   </div>
                 )}
@@ -117,7 +115,7 @@ export const Total = ({
                   <div className="flex justify-center">
                     <Button className="text-destructive-foreground bg-destructive hover:bg-error-dark flex items-center justify-center gap-3 rounded-full w-full font-normal">
                       <MdOutlineDisabledByDefault className="text-2xl" />
-                      {i18n.get('Reject')}
+                      {i18n.t('Reject')}
                     </Button>
                   </div>
                 )}
@@ -129,15 +127,15 @@ export const Total = ({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {i18n.get('Do you want to confirm quotation?')}
+              {i18n.t('Do you want to confirm quotation?')}
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={closeConfirmation}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmQuotation}>
-              {i18n.get('Continue')}
+              {i18n.t('Continue')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -147,14 +145,14 @@ export const Total = ({
         onOpenChange={closePaymentSelectionDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{i18n.get('Quotation Payment')}</AlertDialogTitle>
+            <AlertDialogTitle>{i18n.t('Quotation Payment')}</AlertDialogTitle>
           </AlertDialogHeader>
           <div className="p-4 flex flex-col gap-2">
             {renderPaymentOptions && renderPaymentOptions()}
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={closeConfirmation}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>

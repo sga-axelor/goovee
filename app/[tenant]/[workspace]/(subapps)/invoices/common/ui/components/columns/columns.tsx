@@ -3,7 +3,7 @@
 import {MdEast} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Button, Chip} from '@/ui/components';
 import {parseDate} from '@/utils/date';
 import {cn} from '@/utils/css';
@@ -14,7 +14,7 @@ import {getStatus} from '@/subapps/invoices/common/utils/invoices';
 export const Columns = [
   {
     key: 'invoiceId',
-    label: i18n.get('Invoice number'),
+    label: i18n.t('Invoice number'),
     sortable: true,
     mobile: true,
     getter: (row: any) => row.invoiceId,
@@ -22,7 +22,7 @@ export const Columns = [
   },
   {
     key: 'amountRemaining',
-    label: i18n.get('Status'),
+    label: i18n.t('Status'),
     getter: (row: any) => row.amountRemaining,
     content: (row: any) => {
       const {status, variant} = getStatus(row.amountRemaining);
@@ -37,20 +37,20 @@ export const Columns = [
   },
   {
     key: 'dueDate',
-    label: i18n.get('Due on'),
+    label: i18n.t('Due on'),
     sortable: true,
     getter: (row: any) => row.dueDate,
     content: (row: any) => parseDate(row.dueDate),
   },
   {
     key: 'exTaxTotal',
-    label: i18n.get('Total WT'),
+    label: i18n.t('Total WT'),
     getter: (row: any) => row.exTaxTotal,
     content: (row: any) => row.exTaxTotal,
   },
   {
     key: 'inTaxTotal',
-    label: i18n.get('Total ATI'),
+    label: i18n.t('Total ATI'),
     getter: (row: any) => row.inTaxTotal,
     mobile: true,
     content: (row: any) => row.inTaxTotal,
@@ -62,7 +62,7 @@ export const UnpaidColumns = (allowInvoicePayment?: boolean) => {
     ...Columns,
     {
       key: 'action',
-      label: i18n.get(''),
+      label: i18n.t(''),
       getter: () => 'action',
       content: () => (
         <Button
@@ -72,7 +72,7 @@ export const UnpaidColumns = (allowInvoicePayment?: boolean) => {
               hidden: !allowInvoicePayment,
             },
           )}>
-          {i18n.get('Pay')} <MdEast className="text-2xl" />
+          {i18n.t('Pay')} <MdEast className="text-2xl" />
         </Button>
       ),
     },

@@ -3,7 +3,7 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   TableCell,
   TableRow,
@@ -35,7 +35,7 @@ export const ProductsList = ({saleOrderLineList, tenant}: Props) => {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <h4 className="text-xl font-medium mb-0">{i18n.get('Products')}</h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Products')}</h4>
         <Separator />
         <div className="hidden lg:block">
           <StyledTable

@@ -9,7 +9,7 @@ import {Button} from '@/ui/components/button';
 import {Dialog, DialogContent, DialogTitle} from '@/ui/components/dialog';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import {SUBAPP_CODES} from '@/constants';
 import type {PortalWorkspace} from '@/types';
@@ -43,7 +43,7 @@ export default function Content({
     if (!(cart?.invoicingAddress && cart?.deliveryAddress)) {
       toast({
         variant: 'destructive',
-        title: i18n.get(
+        title: i18n.t(
           'Kindly add invoicing and delivery address for your profile.',
         ),
       });
@@ -60,7 +60,7 @@ export default function Content({
     if (res?.data) {
       toast({
         variant: 'success',
-        title: i18n.get('Quotation requested successfully'),
+        title: i18n.t('Quotation requested successfully'),
       });
 
       clearCart();
@@ -76,7 +76,7 @@ export default function Content({
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error requesting quotation, try again !'),
+        title: i18n.t('Error requesting quotation, try again !'),
       });
       setRequestingQuotation(false);
       router.replace(`${workspaceURI}/shop/cart`);
@@ -91,20 +91,20 @@ export default function Content({
           {!requestingQuotation ? (
             <>
               <AddressSelection
-                title={i18n.get('Addresses')}
+                title={i18n.t('Addresses')}
                 callbackURL={callbackURL}
               />
               <div className="grid grid-cols-2 items-center gap-2">
                 <Link href={checkoutURL}>
                   <Button variant="outline" className="w-full">
-                    {i18n.get('Cancel')}
+                    {i18n.t('Cancel')}
                   </Button>
                 </Link>
                 <Button
                   variant="success"
                   disabled={!(invoicingAddress && deliveryAddress)}
                   onClick={handleRequestQuotation}>
-                  {i18n.get('Request')}
+                  {i18n.t('Request')}
                 </Button>
               </div>
             </>

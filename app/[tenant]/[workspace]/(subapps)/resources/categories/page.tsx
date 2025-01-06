@@ -8,7 +8,7 @@ import {MdAdd} from 'react-icons/md';
 import {Button} from '@/ui/components/button';
 import {workspacePathname} from '@/utils/workspace';
 import {clone} from '@/utils';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 
@@ -89,7 +89,7 @@ export default async function Page({
     <main className="container p-4 mx-auto space-y-6">
       <div className="grid md:grid-cols-[1fr_auto] gap-2">
         <h2 className="font-semibold text-xl leading-8 grow">
-          {await getTranslation('Resource Category')}
+          {await t('Resource Category')}
         </h2>
         {user && (
           <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export default async function Page({
                 href={`${workspaceURI}/resources/categories/create?id=${id}`}>
                 <Button variant="success" className="flex items-center">
                   <MdAdd className="size-6" />
-                  <span>{await getTranslation('New Category')}</span>
+                  <span>{await t('New Category')}</span>
                 </Button>
               </Link>
             )}
@@ -106,7 +106,7 @@ export default async function Page({
               <Link href={`${workspaceURI}/resources/create?id=${id}`}>
                 <Button variant="success" className="flex items-center">
                   <MdAdd className="size-6" />
-                  <span>{await getTranslation('New Resource')}</span>
+                  <span>{await t('New Resource')}</span>
                 </Button>
               </Link>
             )}

@@ -3,7 +3,7 @@
 import {useState, useEffect} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   TextField,
   Button,
@@ -73,26 +73,26 @@ export function AddressForm({
     <form onSubmit={handleSubmit}>
       <div className="bg-white py-4 px-6">
         <TextField
-          label={i18n.get('Recipient details')}
+          label={i18n.t('Recipient details')}
           name="addressl2"
           value={values.addressl2}
           onChange={handleChange}
         />
         <TextField
-          label={i18n.get('N° and Street label')}
+          label={i18n.t('N° and Street label')}
           name="addressl4"
           value={values.addressl4}
           onChange={handleChange}
           required
         />
         <TextField
-          label={i18n.get('Address precision')}
+          label={i18n.t('Address precision')}
           name="addressl3"
           value={values.addressl3}
           onChange={handleChange}
         />
         <TextField
-          label={i18n.get('Zip/City')}
+          label={i18n.t('Zip/City')}
           name="addressl6"
           value={values.addressl6}
           onChange={handleChange}
@@ -100,7 +100,7 @@ export function AddressForm({
         />
 
         <div className="w-full mb-4">
-          <Label className="font-medium mb-1">{i18n.get('Country')}</Label>
+          <Label className="font-medium mb-1">{i18n.t('Country')}</Label>
           <Select
             onValueChange={o => {
               let selectedCountry = countries?.find(op => op.id === o);
@@ -132,12 +132,12 @@ export function AddressForm({
             checked={values.multipletype}
           />
           <Label className="ml-2">
-            {i18n.get('Use this address for both billing and delivery')}
+            {i18n.t('Use this address for both billing and delivery')}
           </Label>
         </div>
       </div>
       <Button type="submit" className="mt-6 rounded-full w-full">
-        {i18n.get('Save modifications')}
+        {i18n.t('Save modifications')}
       </Button>
     </form>
   );

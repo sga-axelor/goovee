@@ -6,7 +6,7 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
@@ -15,7 +15,7 @@ import {findCategories} from './common/orm/categories';
 
 export async function generateMetadata() {
   return {
-    title: await getTranslation('Shop'),
+    title: await t('Shop'),
   };
 }
 

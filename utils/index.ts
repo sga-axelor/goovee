@@ -1,4 +1,5 @@
-import {DEFAULT_CURRENCY_SYMBOL, DEFAULT_SCALE} from '@/constants';
+import {DEFAULT_SCALE} from '@/locale';
+import {DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 import type {Cloned} from '@/types/util';
 
 export function clone<T>(obj: T): Cloned<T> {

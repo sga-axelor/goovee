@@ -4,7 +4,7 @@ import {MdOutlineEdit} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {ADDRESS_TYPE} from '@/constants';
 
@@ -77,7 +77,7 @@ export const AddressCard = ({
             handleEdit();
           }}>
           <MdOutlineEdit className="w-6 h-6" />
-          {i18n.get('Edit')}
+          {i18n.t('Edit')}
         </Button>
       </div>
     </div>

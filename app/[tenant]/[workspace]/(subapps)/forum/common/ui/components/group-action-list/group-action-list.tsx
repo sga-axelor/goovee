@@ -23,7 +23,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 import {SUBAPP_CODES} from '@/constants';
@@ -79,7 +79,7 @@ export const GroupActionList = ({
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.get(response.message || 'An error occurred'),
+        title: i18n.t(response.message || 'An error occurred'),
       });
     }
   };
@@ -97,7 +97,7 @@ export const GroupActionList = ({
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.get(response.message || 'An error occurred'),
+        title: i18n.t(response.message || 'An error occurred'),
       });
     }
   };
@@ -112,7 +112,7 @@ export const GroupActionList = ({
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.get(response.message || 'An error occurred'),
+        title: i18n.t(response.message || 'An error occurred'),
       });
     }
   };
@@ -135,7 +135,7 @@ export const GroupActionList = ({
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.get(response.message || 'An error occurred'),
+        title: i18n.t(response.message || 'An error occurred'),
       });
     }
   };
@@ -147,7 +147,7 @@ export const GroupActionList = ({
   return (
     <div>
       <h1 className="font-semibold text-base leading-6 mb-6">
-        {i18n.get(title)}
+        {i18n.t(title)}
       </h1>
       <div className="flex flex-col gap-4">
         {groups?.map((group: any) => {
@@ -226,7 +226,7 @@ export const GroupActionList = ({
                               onClick={() =>
                                 handleNotifications(group, option.value)
                               }>
-                              {i18n.get(option.title)}
+                              {i18n.t(option.title)}
                             </div>
                           ))}
                         </div>

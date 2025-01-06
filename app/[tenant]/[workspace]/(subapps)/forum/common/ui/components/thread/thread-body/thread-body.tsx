@@ -3,7 +3,7 @@ import React, {useMemo} from 'react';
 import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Popover,
   PopoverContent,
@@ -90,8 +90,8 @@ export const ThreadBody = ({
             </PopoverTrigger>
             <PopoverContent className="p-0 w-fit">
               <div className="flex flex-col gap-2.5 p-4 bg-white rounded-lg text-xs leading-[1.125rem]">
-                <div className="cursor-pointer">{i18n.get(REPORT)}</div>
-                <div className="cursor-pointer">{i18n.get(NOT_INTERESTED)}</div>
+                <div className="cursor-pointer">{i18n.t(REPORT)}</div>
+                <div className="cursor-pointer">{i18n.t(NOT_INTERESTED)}</div>
               </div>
             </PopoverContent>
           </Popover>
@@ -111,7 +111,7 @@ export const ThreadBody = ({
                   onClick={toggleIsShowingMore}
                   className="text-gray-500 cursor-pointer flex items-center gap-2 justify-end w-fit">
                   <MdOutlineMoreHoriz className="w-4 h-4" />
-                  {isShowingMore ? i18n.get(SEE_LESS) : i18n.get(SEE_MORE)}
+                  {isShowingMore ? i18n.t(SEE_LESS) : i18n.t(SEE_MORE)}
                 </button>
               )}
             </span>

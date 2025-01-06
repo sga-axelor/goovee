@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Container, NavView, TableList} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useSortBy} from '@/ui/hooks';
 import {SUBAPP_CODES, SUBAPP_PAGE, URL_PARAMS} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -36,7 +36,7 @@ const Content = ({orders, pageInfo}: ContentProps) => {
 
   return (
     <>
-      <Container title={i18n.get('Orders')}>
+      <Container title={i18n.t('Orders')}>
         <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
           <div className="flex flex-col gap-4">
             <TableList

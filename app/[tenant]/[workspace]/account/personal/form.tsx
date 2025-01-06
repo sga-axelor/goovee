@@ -9,7 +9,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {MdFileUpload, MdDeleteOutline} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Avatar, AvatarImage, AvatarFallback} from '@/ui/components/avatar';
 import {Button} from '@/ui/components/button';
 import {Checkbox} from '@/ui/components/checkbox';
@@ -70,7 +70,7 @@ const formSchema = z
       return true;
     },
     {
-      message: i18n.get('Company name is required'),
+      message: i18n.t('Company name is required'),
       path: ['companyName'],
     },
   )
@@ -82,7 +82,7 @@ const formSchema = z
       return true;
     },
     {
-      message: i18n.get('Name is required'),
+      message: i18n.t('Name is required'),
       path: ['name'],
     },
   )
@@ -94,7 +94,7 @@ const formSchema = z
       return true;
     },
     {
-      message: i18n.get('OTP is required'),
+      message: i18n.t('OTP is required'),
       path: ['otp'],
     },
   );
@@ -208,7 +208,7 @@ export default function Personal({
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error registering, try again'),
+        title: i18n.t('Error registering, try again'),
       });
     }
   };
@@ -238,7 +238,7 @@ export default function Personal({
       toast({title: result.message, variant: 'destructive'});
     } else {
       toast({
-        title: i18n.get('Picture deleted successfully.'),
+        title: i18n.t('Picture deleted successfully.'),
         variant: 'success',
       });
       setPicture(null);
@@ -264,7 +264,7 @@ export default function Personal({
       toast({title: result.message, variant: 'destructive'});
     } else {
       toast({
-        title: i18n.get('Picture updated successfully.'),
+        title: i18n.t('Picture updated successfully.'),
         variant: 'success',
       });
       setPicture(result.data?.id);
@@ -287,7 +287,7 @@ export default function Personal({
     } catch (err) {
       form.setError('email', {
         type: 'custom',
-        message: i18n.get('Invalid email address'),
+        message: i18n.t('Invalid email address'),
       });
     }
   };
@@ -298,9 +298,9 @@ export default function Personal({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-10">
             <div className="space-y-4">
-              <Title text={i18n.get('Profile Settings')} />
+              <Title text={i18n.t('Profile Settings')} />
               <div className="space-y-4">
-                <FormLabel>{i18n.get('Picture')}</FormLabel>
+                <FormLabel>{i18n.t('Picture')}</FormLabel>
                 <div className="flex items-center justify-between">
                   <div>
                     <Avatar className="size-20">
@@ -320,7 +320,7 @@ export default function Personal({
                       onClick={openFileUpload}
                       disabled={updatingPicture}>
                       <MdFileUpload className="size-6" />
-                      {i18n.get('Upload a picture')}
+                      {i18n.t('Upload a picture')}
                     </Button>
                     <input
                       type="file"
@@ -334,7 +334,7 @@ export default function Personal({
                       onClick={openConfirmation}
                       disabled={updatingPicture}>
                       <MdDeleteOutline className="size-6" />
-                      {i18n.get('Delete')}
+                      {i18n.t('Delete')}
                     </Button>
                   </div>
                 </div>
@@ -346,12 +346,12 @@ export default function Personal({
                   name="firstName"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('First name')}</FormLabel>
+                      <FormLabel>{i18n.t('First name')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           value={field.value}
-                          placeholder={i18n.get('Enter first Name')}
+                          placeholder={i18n.t('Enter first Name')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -364,12 +364,12 @@ export default function Personal({
                     name="name"
                     render={({field}) => (
                       <FormItem>
-                        <FormLabel>{i18n.get('Last name')}</FormLabel>
+                        <FormLabel>{i18n.t('Last name')}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             value={field.value}
-                            placeholder={i18n.get('Enter Last Name')}
+                            placeholder={i18n.t('Enter Last Name')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -393,13 +393,13 @@ export default function Personal({
                   name="email"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('Email')}</FormLabel>
+                      <FormLabel>{i18n.t('Email')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           disabled={!editEmail}
                           value={field.value}
-                          placeholder={i18n.get('Enter email')}
+                          placeholder={i18n.t('Enter email')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -413,7 +413,7 @@ export default function Personal({
                     className="w-fit"
                     type="button"
                     onClick={handleEmailEdit}>
-                    {i18n.get('Update Email')}
+                    {i18n.t('Update Email')}
                   </Button>
                 ) : (
                   <div
@@ -428,13 +428,13 @@ export default function Personal({
                       name="otp"
                       render={({field}) => (
                         <FormItem>
-                          <FormLabel>{i18n.get('OTP')}*</FormLabel>
+                          <FormLabel>{i18n.t('OTP')}*</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               type="password"
                               value={field.value}
-                              placeholder={i18n.get('Enter OTP')}
+                              placeholder={i18n.t('Enter OTP')}
                             />
                           </FormControl>
                           <FormMessage />
@@ -448,13 +448,13 @@ export default function Personal({
                         type="button"
                         disabled={!email || !isExpired || !isValidEmail}
                         onClick={handleGenerateOTP}>
-                        {i18n.get('Generate OTP')}
+                        {i18n.t('Generate OTP')}
                       </Button>
                       <Button
                         variant="outline-destructive"
                         type="button"
                         onClick={handleCancelEditEmail}>
-                        {i18n.get('Cancel')}
+                        {i18n.t('Cancel')}
                       </Button>
                     </div>
                   </div>
@@ -466,7 +466,7 @@ export default function Personal({
                     hidden: isExpired,
                   })}>
                   <p>
-                    {i18n.get('Resend OTP in ')}
+                    {i18n.t('Resend OTP in ')}
                     {timeRemaining.minutes}:{timeRemaining.seconds}
                   </p>
                 </div>
@@ -478,12 +478,12 @@ export default function Personal({
                     name="companyName"
                     render={({field}) => (
                       <FormItem>
-                        <FormLabel>{i18n.get('Company name')}</FormLabel>
+                        <FormLabel>{i18n.t('Company name')}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             value={field.value}
-                            placeholder={i18n.get('Enter company name')}
+                            placeholder={i18n.t('Enter company name')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -495,14 +495,12 @@ export default function Personal({
                     name="identificationNumber"
                     render={({field}) => (
                       <FormItem>
-                        <FormLabel>
-                          {i18n.get('identification number')}
-                        </FormLabel>
+                        <FormLabel>{i18n.t('identification number')}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             value={field.value}
-                            placeholder={i18n.get('Enter company SIRET number')}
+                            placeholder={i18n.t('Enter company SIRET number')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -514,12 +512,12 @@ export default function Personal({
                     name="companyNumber"
                     render={({field}) => (
                       <FormItem>
-                        <FormLabel>{i18n.get('Company number')}</FormLabel>
+                        <FormLabel>{i18n.t('Company number')}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             value={field.value}
-                            placeholder={i18n.get('Enter company number')}
+                            placeholder={i18n.t('Enter company number')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -533,11 +531,11 @@ export default function Personal({
                 name="role"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('Role')}</FormLabel>
+                    <FormLabel>{i18n.t('Role')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        value={i18n.get((RoleLabel as any)[field.value])}
+                        value={i18n.t((RoleLabel as any)[field.value])}
                         readOnly
                       />
                     </FormControl>
@@ -547,7 +545,7 @@ export default function Personal({
               />
             </div>
             <div className="sr-only space-y-4">
-              <Title text={i18n.get('Directory')}></Title>
+              <Title text={i18n.t('Directory')}></Title>
               <div>
                 <FormField
                   control={form.control}
@@ -563,7 +561,7 @@ export default function Personal({
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel>
-                          {i18n.get(
+                          {i18n.t(
                             'Show my profile as a contact for my company on the portal directory',
                           )}
                         </FormLabel>
@@ -574,7 +572,7 @@ export default function Personal({
               </div>
               <div>
                 <p className="font-medium text-base">
-                  {i18n.get('Informations displayed in the directory:')}
+                  {i18n.t('Informations displayed in the directory:')}
                 </p>
               </div>
               <div className="flex gap-16">
@@ -591,7 +589,7 @@ export default function Personal({
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>{i18n.get('Name')}</FormLabel>
+                        <FormLabel>{i18n.t('Name')}</FormLabel>
                       </div>
                     </FormItem>
                   )}
@@ -609,7 +607,7 @@ export default function Personal({
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>{i18n.get('LinkedIn')}</FormLabel>
+                        <FormLabel>{i18n.t('LinkedIn')}</FormLabel>
                       </div>
                     </FormItem>
                   )}
@@ -627,7 +625,7 @@ export default function Personal({
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>{i18n.get('Email')}</FormLabel>
+                        <FormLabel>{i18n.t('Email')}</FormLabel>
                       </div>
                     </FormItem>
                   )}
@@ -645,7 +643,7 @@ export default function Personal({
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>{i18n.get('Phone')}</FormLabel>
+                        <FormLabel>{i18n.t('Phone')}</FormLabel>
                       </div>
                     </FormItem>
                   )}
@@ -657,12 +655,12 @@ export default function Personal({
                   name="linkedInLink"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('LinkedIn link')}</FormLabel>
+                      <FormLabel>{i18n.t('LinkedIn link')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           value={field.value}
-                          placeholder={i18n.get('Enter your linkedin link')}
+                          placeholder={i18n.t('Enter your linkedin link')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -672,7 +670,7 @@ export default function Personal({
               </div>
             </div>
             <div className="space-y-4 text-end">
-              <Button variant="success">{i18n.get('Save Settings')}</Button>
+              <Button variant="success">{i18n.t('Save Settings')}</Button>
             </div>
           </div>
         </form>
@@ -681,15 +679,15 @@ export default function Personal({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {i18n.get('Do you want to delete picture?')}
+              {i18n.t('Do you want to delete picture?')}
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={closeConfirmation}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDeletePicture}>
-              {i18n.get('Delete')}
+              {i18n.t('Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

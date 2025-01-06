@@ -4,7 +4,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {findPartnerByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
@@ -51,11 +51,10 @@ export default async function Page({
   if (!user) {
     return (
       <Description
-        title={await getTranslation('Log In', {tenantId})}
-        description={await getTranslation(
-          'Login with your gmail account to continue.',
-          {tenantId},
-        )}
+        title={await t('Log In', {tenantId})}
+        description={await t('Login with your gmail account to continue.', {
+          tenantId,
+        })}
       />
     );
   }
@@ -67,8 +66,8 @@ export default async function Page({
   ) {
     return (
       <Description
-        title={await getTranslation('Log In', {tenantId})}
-        description={await getTranslation('We cannot find your record.', {
+        title={await t('Log In', {tenantId})}
+        description={await t('We cannot find your record.', {
           tenantId,
         })}
       />
@@ -89,11 +88,10 @@ export default async function Page({
   if (!existing) {
     return (
       <Description
-        title={await getTranslation('Log In', {tenantId})}
-        description={await getTranslation(
-          'You are not a member of this workspace.',
-          {tenantId},
-        )}
+        title={await t('Log In', {tenantId})}
+        description={await t('You are not a member of this workspace.', {
+          tenantId,
+        })}
       />
     );
   }

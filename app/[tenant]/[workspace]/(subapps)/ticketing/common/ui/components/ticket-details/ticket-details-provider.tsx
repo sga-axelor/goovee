@@ -1,6 +1,6 @@
 'use client';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import type {Cloned} from '@/types/util';
 import {useToast} from '@/ui/hooks';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -75,21 +75,21 @@ export function TicketDetailsProvider(props: Props) {
   const {action: mutateAction, loading: isSubmitting} = useRetryAction(mutate);
   const {action: closeTicketAction, loading: isClosingTicket} = useRetryAction(
     closeTicket,
-    i18n.get('Ticket closed'),
+    i18n.t('Ticket closed'),
   );
 
   const company = ticket.project?.company?.name ?? '';
   const client = ticket.project?.clientPartner?.simpleFullName ?? '';
 
   const {action: cancelTicketAction, loading: isCancellingTicket} =
-    useRetryAction(cancelTicket, i18n.get('Ticket canceled'));
+    useRetryAction(cancelTicket, i18n.t('Ticket canceled'));
 
   const {action: updateAssignmentAction, loading: isUpdatingAssignment} =
     useRetryAction(
       updateAssignment,
       isWithProvider(ticket.assignment)
-        ? i18n.get('Ticket assigned to') + ' ' + client
-        : i18n.get('Ticket assigned to') + ' ' + company,
+        ? i18n.t('Ticket assigned to') + ' ' + client
+        : i18n.t('Ticket assigned to') + ' ' + company,
     );
 
   const {workspaceURL, workspaceURI} = useWorkspace();
@@ -149,7 +149,7 @@ export function TicketDetailsProvider(props: Props) {
       if (loading) {
         toast({
           variant: 'destructive',
-          title: i18n.get('Wait for previous action to finish'),
+          title: i18n.t('Wait for previous action to finish'),
         });
         return;
       }
@@ -159,7 +159,7 @@ export function TicketDetailsProvider(props: Props) {
       if (!isValid) {
         toast({
           variant: 'destructive',
-          title: i18n.get('Form is invalid'),
+          title: i18n.t('Form is invalid'),
         });
         return;
       }

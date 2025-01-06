@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
 import type {AOSProject} from '@/goovee/.generated/models';
 import type {ID} from '@goovee/orm';
@@ -24,7 +24,7 @@ export async function findProjects(
   const {where, take, orderBy, skip, auth} = props;
 
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -59,7 +59,7 @@ export async function findProjectsWithTaskCount(
 
 export async function findProject(id: ID, auth: AuthProps) {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -80,7 +80,7 @@ export async function findTicketCategories(
   tenantId: Tenant['id'],
 ): Promise<Category[]> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -100,7 +100,7 @@ export async function findTicketPriorities(
   tenantId: Tenant['id'],
 ): Promise<Priority[]> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -120,7 +120,7 @@ export async function findTicketStatuses(
   tenantId: Tenant['id'],
 ): Promise<Status[]> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -155,7 +155,7 @@ export async function findCompany(
   tenantId: Tenant['id'],
 ): Promise<Company | undefined> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -173,7 +173,7 @@ export async function findClientPartner(
   tenantId: Tenant['id'],
 ): Promise<ClientPartner | undefined> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -192,7 +192,7 @@ export async function findTicketDoneStatus(
   tenantId: Tenant['id'],
 ): Promise<string | undefined> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -208,7 +208,7 @@ export async function findTicketCancelledStatus(
   tenantId: Tenant['id'],
 ): Promise<string | undefined> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -225,7 +225,7 @@ export async function findContactPartners(
   tenantId: Tenant['id'],
 ): Promise<ContactPartner[]> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);

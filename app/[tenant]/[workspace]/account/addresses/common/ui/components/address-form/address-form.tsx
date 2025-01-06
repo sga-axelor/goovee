@@ -9,7 +9,7 @@ import {useEffect, useState} from 'react';
 // ---- CORE IMPORTS ---- //
 import {capitalise} from '@/utils';
 import {ADDRESS_TYPE, SUBAPP_PAGE} from '@/constants';
-import {i18n} from '@/lib/core/i18n';
+import {i18n} from '@/locale';
 import {Button, Form} from '@/ui/components';
 import {Country} from '@/types';
 import {useSearchParams, useToast} from '@/ui/hooks';
@@ -38,17 +38,17 @@ const personalInformationSchema = z.object({
 const addressInformationSchema = z.object({
   country: z.object({
     id: z.string().min(1, 'Country is required'),
-    name: z.string().min(1, i18n.get('Country name is required')),
+    name: z.string().min(1, i18n.t('Country name is required')),
   }),
-  streetName: z.string().min(1, i18n.get('Street name is required')),
+  streetName: z.string().min(1, i18n.t('Street name is required')),
   addressAddition: z.string().optional(),
   zip: z
     .string()
-    .min(1, i18n.get('Zip code is required'))
-    .regex(/^\d+$/, i18n.get('Zip code must contain only numbers')),
+    .min(1, i18n.t('Zip code is required'))
+    .regex(/^\d+$/, i18n.t('Zip code must contain only numbers')),
   city: z.object({
     id: z.string().min(1, 'City is required'),
-    name: z.string().min(1, i18n.get('City name is required')),
+    name: z.string().min(1, i18n.t('City name is required')),
   }),
   multipletype: z.boolean().default(false),
 });
@@ -70,7 +70,7 @@ export const AddressForm = ({
   userType: UserType;
 }) => {
   const [cities, setCities] = useState([]);
-  const title = i18n.get(`${capitalise(type)} Address`);
+  const title = i18n.t(`${capitalise(type)} Address`);
   const isCompany = userType === UserType.company;
 
   const {toast} = useToast();
@@ -178,8 +178,8 @@ export const AddressForm = ({
       toast({
         variant: result ? 'success' : 'destructive',
         title: result
-          ? i18n.get(`Address information saved successfully!`)
-          : i18n.get(
+          ? i18n.t(`Address information saved successfully!`)
+          : i18n.t(
               `Something went wrong while ${address ? 'saving' : 'creating'} the address!`,
             ),
       });
@@ -187,9 +187,7 @@ export const AddressForm = ({
       console.error('Error:', error);
       toast({
         variant: 'destructive',
-        title: i18n.get(
-          `Error while ${address ? 'saving' : 'creating'} address`,
-        ),
+        title: i18n.t(`Error while ${address ? 'saving' : 'creating'} address`),
       });
     }
   };
@@ -242,7 +240,7 @@ export const AddressForm = ({
             e.preventDefault();
             form.handleSubmit(onSubmit)();
           }}>
-          {address ? i18n.get('Save changes') : i18n.get('Create address')}
+          {address ? i18n.t('Save changes') : i18n.t('Create address')}
         </Button>
       </form>
     </Form>

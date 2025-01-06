@@ -1,7 +1,7 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   TableCell,
   TableRow,
@@ -52,25 +52,25 @@ export const ProductCard = ({
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">
-                    {i18n.get('Unit')}
+                    {i18n.t('Unit')}
                   </p>
                   <p className="text-base mb-0">{saleOrder?.unit?.name}</p>
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">
-                    {i18n.get('Unit power WT')}
+                    {i18n.t('Unit power WT')}
                   </p>
                   <p className="text-base mb-0">{saleOrder?.price}</p>
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">
-                    {i18n.get('Total WT')}
+                    {i18n.t('Total WT')}
                   </p>
                   <p className="text-base mb-0">{saleOrder?.price}</p>
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">
-                    {i18n.get('Tax')}
+                    {i18n.t('Tax')}
                   </p>
                   <p className="text-base mb-0">
                     {saleOrder?.taxLineSet[0]?.value} %
@@ -78,7 +78,7 @@ export const ProductCard = ({
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">
-                    {i18n.get('Discount')}
+                    {i18n.t('Discount')}
                   </p>
                   <p className="text-base mb-0">{saleOrder?.discountAmount}%</p>
                 </div>

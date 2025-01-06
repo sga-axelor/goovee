@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -31,7 +31,7 @@ export const SocialMedia = ({
   return (
     <div className="bg-white rounded-lg p-4 flex flex-col gap-4">
       <div className="text-xl font-semibold text-black">
-        {i18n.get(SHARE_ON_SOCIAL_MEDIA)}
+        {i18n.t(SHARE_ON_SOCIAL_MEDIA)}
       </div>
 
       <div className="flex gap-6">

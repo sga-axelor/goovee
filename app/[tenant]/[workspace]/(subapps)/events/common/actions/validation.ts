@@ -1,4 +1,4 @@
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import type {Tenant} from '@/tenant';
@@ -36,7 +36,7 @@ export async function withAuth(
   if (!session?.user?.id) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized', {tenantId}),
+      message: await t('Unauthorized', {tenantId}),
     };
   }
   return {error: null};
@@ -50,7 +50,7 @@ export function withSubapp(code: string, url: string, tenantId: Tenant['id']) {
     const subapp = await findSubappAccess({code, user, url, tenantId});
 
     if (!subapp) {
-      return error(await getTranslation('Unauthorized'));
+      return error(await t('Unauthorized'));
     }
 
     return {error: null};
@@ -77,7 +77,7 @@ export function withWorkspace(
     if (!workspace) {
       return {
         error: true,
-        message: await getTranslation('Invalid workspace', {tenantId}),
+        message: await t('Invalid workspace', {tenantId}),
       };
     }
 

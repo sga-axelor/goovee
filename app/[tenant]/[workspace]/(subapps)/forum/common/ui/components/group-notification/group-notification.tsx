@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Avatar,
   AvatarImage,
@@ -48,7 +48,7 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.get(response?.message || 'An error occurred'),
+        title: i18n.t(response?.message || 'An error occurred'),
       });
     }
   };
@@ -64,7 +64,7 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
               })}
             />
           </Avatar>
-          <span className="text-sm">{i18n.get(forumGroup.name)}</span>
+          <span className="text-sm">{i18n.t(forumGroup.name)}</span>
         </div>
         <RadioGroup
           className="grid grid-cols-4 text-center"

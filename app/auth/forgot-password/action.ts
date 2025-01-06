@@ -1,7 +1,7 @@
 'use server';
 
 import {hash} from '@/auth/utils';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {create as createOTP, findOne, isValid, markUsed} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
 import {findPartnerByEmail, updatePartner} from '@/orm/partner';
@@ -108,17 +108,17 @@ export async function forgotPassword({
   searchQuery: string;
 }) {
   if (!tenantId) {
-    return error(await getTranslation('TenantId is required'));
+    return error(await t('TenantId is required'));
   }
 
   if (!email) {
-    return error(await getTranslation('Email is required', {tenantId}));
+    return error(await t('Email is required', {tenantId}));
   }
 
   const partner = await findPartnerByEmail(email, tenantId);
 
   if (!partner?.isRegisteredOnPortal) {
-    return error(await getTranslation('You are not registered', {tenantId}));
+    return error(await t('You are not registered', {tenantId}));
   }
 
   try {
@@ -144,12 +144,10 @@ export async function forgotPassword({
 
     return {
       success: true,
-      message: await getTranslation('Reset link sent to your email'),
+      message: await t('Reset link sent to your email'),
     };
   } catch (err) {
-    return error(
-      await getTranslation('Error sending reset link. Try again.', {tenantId}),
-    );
+    return error(await t('Error sending reset link. Try again.', {tenantId}));
   }
 }
 
@@ -165,19 +163,17 @@ export async function resetPassword({
   tenantId: Tenant['id'];
 }) {
   if (!tenantId) {
-    return error(await getTranslation('TenantId is required'));
+    return error(await t('TenantId is required'));
   }
 
   if (!(email && password && otp)) {
-    return error(
-      await getTranslation('Email, password and otp is required', {tenantId}),
-    );
+    return error(await t('Email, password and otp is required', {tenantId}));
   }
 
   const partner = await findPartnerByEmail(email, tenantId);
 
   if (!partner?.isRegisteredOnPortal) {
-    return error(await getTranslation('You are not registered', {tenantId}));
+    return error(await t('You are not registered', {tenantId}));
   }
 
   try {
@@ -188,13 +184,13 @@ export async function resetPassword({
     });
 
     if (!result) {
-      return error(await getTranslation('Bad Request', {tenantId}));
+      return error(await t('Bad Request', {tenantId}));
     }
 
     const isValidOTP = await isValid({id: result.id, value: otp, tenantId});
 
     if (!isValidOTP) {
-      return error(await getTranslation('Invalid OTP', {tenantId}));
+      return error(await t('Invalid OTP', {tenantId}));
     }
 
     const hashedPassword = await hash(password);
@@ -212,11 +208,9 @@ export async function resetPassword({
 
     return {
       success: true,
-      message: await getTranslation('Password reset successfully.'),
+      message: await t('Password reset successfully.'),
     };
   } catch (err) {
-    return error(
-      await getTranslation('Error resetting password. Try again.', {tenantId}),
-    );
+    return error(await t('Error resetting password. Try again.', {tenantId}));
   }
 }

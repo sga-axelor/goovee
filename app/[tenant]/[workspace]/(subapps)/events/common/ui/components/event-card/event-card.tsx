@@ -19,7 +19,7 @@ import {parseDate} from '@/utils/date';
 import {getImageURL} from '@/utils/files';
 import {DATE_FORMATS} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
@@ -77,7 +77,7 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
                   <Badge
                     variant="outline"
                     className="text-[0.625rem] font-medium py-1 px-2 text-success border-success h-6 flex flex-none">
-                    {i18n.get('#Registered')}
+                    {i18n.t('#Registered')}
                   </Badge>
                 )}
               </p>
@@ -87,7 +87,7 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
                 event.eventStartDateTime,
                 DATE_FORMATS.full_month_day_year_12_hour,
               )}
-            ${event.eventEndDateTime && !event.eventAllDay ? i18n.get('to') : ''} 
+            ${event.eventEndDateTime && !event.eventAllDay ? i18n.t('to') : ''} 
              ${
                event.eventEndDateTime && !event.eventAllDay
                  ? parseDate(

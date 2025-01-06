@@ -6,7 +6,7 @@ import {useRouter} from 'next/navigation';
 import {MdDeleteOutline, MdKeyboardArrowDown} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Accordion,
   AccordionContent,
@@ -81,7 +81,7 @@ function Members({members, availableApps}: any) {
       if (result) {
         if ('error' in result) {
           toast({
-            title: i18n.get('Error updating invite'),
+            title: i18n.t('Error updating invite'),
             variant: 'destructive',
           });
         } else {
@@ -102,7 +102,7 @@ function Members({members, availableApps}: any) {
       if (result) {
         if ('error' in result) {
           toast({
-            title: i18n.get('Error updating invite'),
+            title: i18n.t('Error updating invite'),
             variant: 'destructive',
           });
         } else {
@@ -123,12 +123,12 @@ function Members({members, availableApps}: any) {
 
     if ('error' in result) {
       toast({
-        title: result.message || i18n.get('Error deleting member'),
+        title: result.message || i18n.t('Error deleting member'),
         variant: 'destructive',
       });
     } else {
       toast({
-        title: i18n.get('Member deleted.'),
+        title: i18n.t('Member deleted.'),
         variant: 'success',
       });
 
@@ -139,7 +139,7 @@ function Members({members, availableApps}: any) {
   return (
     <>
       <div className="space-y-4">
-        <h2 className="text-xl font-medium">{i18n.get('Members')}</h2>
+        <h2 className="text-xl font-medium">{i18n.t('Members')}</h2>
         <Accordion type="single" collapsible>
           {members.map((member: any) => {
             const {
@@ -155,7 +155,7 @@ function Members({members, availableApps}: any) {
             const isOwner = isPartner;
             const currentUser = member.id === user?.id;
 
-            const roleLabel = i18n.get(
+            const roleLabel = i18n.t(
               RoleLabel[
                 isOwner ? Role.owner : isAdminContact ? Role.admin : Role.user
               ],
@@ -214,7 +214,7 @@ function Members({members, availableApps}: any) {
                         className="lg:hidden flex items-center gap-4 cursor-pointer col-span-4"
                         onClick={openConfirmation(member)}>
                         <p className="text-destructive">
-                          {i18n.get('Delete member')}
+                          {i18n.t('Delete member')}
                         </p>
                         <MdDeleteOutline className="lg:hidden size-6 text-destructive cursor-pointer" />
                       </div>
@@ -243,7 +243,7 @@ function Members({members, availableApps}: any) {
                                 )}>
                                 <SelectTrigger className="text-xs w-16">
                                   <SelectValue
-                                    placeholder={i18n.get('Select access')}
+                                    placeholder={i18n.t('Select access')}
                                   />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -273,7 +273,7 @@ function Members({members, availableApps}: any) {
                                   disabled={!permission}>
                                   <SelectTrigger className="text-xs w-28">
                                     <SelectValue
-                                      placeholder={i18n.get(
+                                      placeholder={i18n.t(
                                         'Select authorization',
                                       )}
                                     />
@@ -315,15 +315,15 @@ function Members({members, availableApps}: any) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {i18n.get('Do you want to delete member?')}
+              {i18n.t('Do you want to delete member?')}
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={closeConfirmation}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteMember}>
-              {i18n.get('Delete')}
+              {i18n.t('Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -359,7 +359,7 @@ function Invited({invites, availableApps}: any) {
       if (result) {
         if ('error' in result) {
           toast({
-            title: i18n.get('Error updating invite'),
+            title: i18n.t('Error updating invite'),
             variant: 'destructive',
           });
         } else {
@@ -380,7 +380,7 @@ function Invited({invites, availableApps}: any) {
       if (result) {
         if ('error' in result) {
           toast({
-            title: i18n.get('Error updating invite'),
+            title: i18n.t('Error updating invite'),
             variant: 'destructive',
           });
         } else {
@@ -401,12 +401,12 @@ function Invited({invites, availableApps}: any) {
 
     if ('error' in result) {
       toast({
-        title: result.message || i18n.get('Error deleting invite'),
+        title: result.message || i18n.t('Error deleting invite'),
         variant: 'destructive',
       });
     } else {
       toast({
-        title: i18n.get('Invite deleted.'),
+        title: i18n.t('Invite deleted.'),
         variant: 'success',
       });
 
@@ -418,9 +418,9 @@ function Invited({invites, availableApps}: any) {
     <>
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-medium">{i18n.get('Invited')}</h2>
+          <h2 className="text-xl font-medium">{i18n.t('Invited')}</h2>
           <Link href={`${workspaceURI}/account/members/invite`}>
-            <Button variant="success">{i18n.get('Invite new members')}</Button>
+            <Button variant="success">{i18n.t('Invite new members')}</Button>
           </Link>
         </div>
         <Accordion type="single" collapsible>
@@ -437,7 +437,7 @@ function Invited({invites, availableApps}: any) {
                     <div className="flex justify-between basis-[60%] lg:basis-[40%]">
                       <p className="text-sm">{emailAddress?.address}</p>
                       <p className="text-sm">
-                        {i18n.get(
+                        {i18n.t(
                           RoleLabel[isAdminContact ? Role.admin : Role.user],
                         )}
                       </p>
@@ -479,7 +479,7 @@ function Invited({invites, availableApps}: any) {
                                 )}>
                                 <SelectTrigger className="text-xs w-16">
                                   <SelectValue
-                                    placeholder={i18n.get('Select access')}
+                                    placeholder={i18n.t('Select access')}
                                   />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -509,7 +509,7 @@ function Invited({invites, availableApps}: any) {
                                   )}>
                                   <SelectTrigger className="text-xs w-28">
                                     <SelectValue
-                                      placeholder={i18n.get(
+                                      placeholder={i18n.t(
                                         'Select authorization',
                                       )}
                                     />
@@ -551,15 +551,15 @@ function Invited({invites, availableApps}: any) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {i18n.get('Do you want to delete invite?')}
+              {i18n.t('Do you want to delete invite?')}
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={closeConfirmation}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteInvite}>
-              {i18n.get('Delete')}
+              {i18n.t('Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

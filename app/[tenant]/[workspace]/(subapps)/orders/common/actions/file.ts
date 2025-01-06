@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {manager} from '@/tenant';
 import {TENANT_HEADER} from '@/middleware';
 import {getSession} from '@/auth';
@@ -29,7 +29,7 @@ export async function getFile({
     if (!orderId) {
       return {
         error: true,
-        message: await getTranslation('Order Id is missing!'),
+        message: await t('Order Id is missing!'),
       };
     }
 
@@ -37,14 +37,14 @@ export async function getFile({
     if (!tenantId) {
       return {
         error: true,
-        message: await getTranslation('TenantId is required'),
+        message: await t('TenantId is required'),
       };
     }
 
     const session = await getSession();
     const user = session?.user;
     if (!user) {
-      return {error: true, message: await getTranslation('Unauthorized user.')};
+      return {error: true, message: await t('Unauthorized user.')};
     }
 
     const appAcess = await findSubappAccess({
@@ -57,14 +57,14 @@ export async function getFile({
     if (!appAcess) {
       return {
         error: true,
-        message: await getTranslation('Unauthorized App access.'),
+        message: await t('Unauthorized App access.'),
       };
     }
 
     const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
 
     if (!workspace) {
-      return {error: true, message: await getTranslation('Invalid workspace')};
+      return {error: true, message: await t('Invalid workspace')};
     }
 
     const {
@@ -82,7 +82,7 @@ export async function getFile({
     if (error) {
       return {
         error: true,
-        message: await getTranslation(message || 'Record not found.'),
+        message: await t(message || 'Record not found.'),
       };
     }
 
@@ -115,7 +115,7 @@ export async function getFile({
     console.error('Error in getFile:', error);
     return {
       error: true,
-      message: await getTranslation('An unexpected error occurred'),
+      message: await t('An unexpected error occurred'),
     };
   }
 }

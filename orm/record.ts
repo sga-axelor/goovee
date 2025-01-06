@@ -2,7 +2,7 @@
 import {SUBAPP_CODES} from '@/constants';
 import {ID, PortalWorkspace} from '@/types';
 import {type Tenant} from '@/tenant';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
@@ -40,21 +40,21 @@ export async function findByID({
   if (!subapp || !id) {
     return {
       error: true,
-      message: await getTranslation('Missing subapp or ID'),
+      message: await t('Missing subapp or ID'),
     };
   }
 
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -64,7 +64,7 @@ export async function findByID({
   if (withAuth && !user) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized User'),
+      message: await t('Unauthorized User'),
     };
   }
 
@@ -78,7 +78,7 @@ export async function findByID({
   if (!app) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized Access'),
+      message: await t('Unauthorized Access'),
     };
   }
 
@@ -91,7 +91,7 @@ export async function findByID({
   if (!$workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -137,7 +137,7 @@ export async function findByID({
       if (!user) {
         return {
           error: true,
-          message: await getTranslation('Unauthorized User'),
+          message: await t('Unauthorized User'),
         };
       }
       const orderWhereClause = getOrdersWhereClause({
@@ -157,7 +157,7 @@ export async function findByID({
       if (!user) {
         return {
           error: true,
-          message: await getTranslation('Unauthorized User'),
+          message: await t('Unauthorized User'),
         };
       }
       const quotationWhereClause = getQuotationsWhereClause({
@@ -176,16 +176,14 @@ export async function findByID({
     default:
       return {
         error: true,
-        message: await getTranslation('Unknown subapp type'),
+        message: await t('Unknown subapp type'),
       };
   }
 
   if (!response) {
     return {
       error: true,
-      message: await getTranslation(
-        'Record not found: The requested data does not exist.',
-      ),
+      message: await t('Record not found: The requested data does not exist.'),
     };
   }
 

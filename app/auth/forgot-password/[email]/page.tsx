@@ -9,7 +9,7 @@ import {MdOutlineVisibility, MdOutlineVisibilityOff} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {SEARCH_PARAMS} from '@/constants';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import {
   Form,
@@ -29,15 +29,13 @@ import {useState} from 'react';
 
 const formSchema = z
   .object({
-    email: z.string().email().min(1, i18n.get('Email is required')),
-    otp: z.string().min(1, i18n.get('OTP is required')),
-    password: z.string().min(1, i18n.get('Password is required')),
-    confirmPassword: z
-      .string()
-      .min(1, i18n.get('Confirm password is required')),
+    email: z.string().email().min(1, i18n.t('Email is required')),
+    otp: z.string().min(1, i18n.t('OTP is required')),
+    password: z.string().min(1, i18n.t('Password is required')),
+    confirmPassword: z.string().min(1, i18n.t('Confirm password is required')),
   })
   .refine(data => data.password === data.confirmPassword, {
-    message: i18n.get("Passwords don't match"),
+    message: i18n.t("Passwords don't match"),
     path: ['confirmPassword'],
   });
 
@@ -92,7 +90,7 @@ export default function Page({params}: {params: {email: string}}) {
 
   return (
     <div className="container space-y-6 mt-8">
-      <h1 className="text-[2rem] font-bold">{i18n.get('Forgot Password')}</h1>
+      <h1 className="text-[2rem] font-bold">{i18n.t('Forgot Password')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -101,13 +99,13 @@ export default function Page({params}: {params: {email: string}}) {
               name="email"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Email')}*</FormLabel>
+                  <FormLabel>{i18n.t('Email')}*</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value}
                       disabled
-                      placeholder={i18n.get('Enter email')}
+                      placeholder={i18n.t('Enter email')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -119,13 +117,13 @@ export default function Page({params}: {params: {email: string}}) {
               name="otp"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('OTP')}*</FormLabel>
+                  <FormLabel>{i18n.t('OTP')}*</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="password"
                       value={field.value}
-                      placeholder={i18n.get('Enter OTP')}
+                      placeholder={i18n.t('Enter OTP')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -137,7 +135,7 @@ export default function Page({params}: {params: {email: string}}) {
               name="password"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Password')}*</FormLabel>
+                  <FormLabel>{i18n.t('Password')}*</FormLabel>
                   <FormControl>
                     <div className="flex items-center gap-2 border border-input px-3 py-2">
                       <Input
@@ -145,7 +143,7 @@ export default function Page({params}: {params: {email: string}}) {
                         className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
                         type={showPassword ? 'text' : 'password'}
                         value={field.value}
-                        placeholder={i18n.get('Enter password')}
+                        placeholder={i18n.t('Enter password')}
                       />
                       {showPassword ? (
                         <MdOutlineVisibility
@@ -169,7 +167,7 @@ export default function Page({params}: {params: {email: string}}) {
               name="confirmPassword"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Confirm Password')}*</FormLabel>
+                  <FormLabel>{i18n.t('Confirm Password')}*</FormLabel>
                   <FormControl>
                     <div className="flex items-center gap-2 border border-input px-3 py-2">
                       <Input
@@ -177,7 +175,7 @@ export default function Page({params}: {params: {email: string}}) {
                         className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
                         type={showConfirmPassword ? 'text' : 'password'}
                         value={field.value}
-                        placeholder={i18n.get('Enter password')}
+                        placeholder={i18n.t('Enter password')}
                       />
                       {showConfirmPassword ? (
                         <MdOutlineVisibility
@@ -200,17 +198,17 @@ export default function Page({params}: {params: {email: string}}) {
               variant="success"
               className="w-full"
               disabled={form.formState.isSubmitting}>
-              {i18n.get('Submit')}
+              {i18n.t('Submit')}
             </Button>
           </form>
         </Form>
 
         <div className="flex items-center">
           <Label className="mr-2 mb-0 inline-flex">
-            {i18n.get('Remember password')} ?
+            {i18n.t('Remember password')} ?
           </Label>
           <Link href={`/auth/login?${searchQuery}`} className="text-success">
-            {i18n.get('Log In')}
+            {i18n.t('Log In')}
           </Link>
         </div>
       </div>

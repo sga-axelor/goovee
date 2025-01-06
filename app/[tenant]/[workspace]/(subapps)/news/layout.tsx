@@ -7,7 +7,7 @@ import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
 import MobileMenuCategory from '@/subapps/news/mobile-menu-category';
@@ -15,7 +15,7 @@ import {findCategories} from '@/subapps/news/common/orm/news';
 
 export async function generateMetadata() {
   return {
-    title: await getTranslation('News'),
+    title: await t('News'),
   };
 }
 

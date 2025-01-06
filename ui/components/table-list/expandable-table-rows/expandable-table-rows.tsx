@@ -11,7 +11,7 @@ import {
 import {MdArrowDropDown, MdArrowDropUp} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Collapsible,
   CollapsibleContent,
@@ -69,7 +69,7 @@ export function ExpandableTableRows<T extends Record<string, any>>({
       return (
         <TableRow>
           <TableCell colSpan={columns.length + 1} align="center">
-            {i18n.get('No records found')}
+            {i18n.t('No records found')}
           </TableCell>
         </TableRow>
       );

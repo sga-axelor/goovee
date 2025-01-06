@@ -14,7 +14,7 @@ import {
   CommandList,
 } from '@/ui/components/command';
 import {cn} from '@/utils/css';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {PortalWorkspace} from '@/types';
 
@@ -52,7 +52,7 @@ export function Search({workspace}: {workspace: PortalWorkspace}) {
             'absolute bg-white top-[60px] right-0 border border-grey-1 rounded-lg no-scrollbar text-main-black z-50 w-full p-0',
             open ? 'block' : 'hidden',
           )}>
-          <CommandEmpty>{i18n.get('No results found.')}</CommandEmpty>
+          <CommandEmpty>{i18n.t('No results found.')}</CommandEmpty>
           <CommandGroup className="p-2">
             {Boolean(files?.length)
               ? files.map(file => (

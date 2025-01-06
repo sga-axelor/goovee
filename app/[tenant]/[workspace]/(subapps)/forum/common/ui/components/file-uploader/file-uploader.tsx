@@ -5,7 +5,7 @@ import {MdClose} from 'react-icons/md';
 import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Button,
   ScrollArea,
@@ -109,9 +109,9 @@ export const FileUploader = ({
                         alt="Upload png"
                       />
                     </div>
-                    <h2>{i18n.get(CLICK_HERE_DRAG_DROP_FILE)}</h2>
+                    <h2>{i18n.t(CLICK_HERE_DRAG_DROP_FILE)}</h2>
                     <span className="text-muted-foreground">
-                      {i18n.get(SUPPORTED_FILE_PDF_DOC)}
+                      {i18n.t(SUPPORTED_FILE_PDF_DOC)}
                     </span>
                   </label>
                 ) : (
@@ -129,7 +129,7 @@ export const FileUploader = ({
                     onUpload(fileDetails);
                     handleClose();
                   }}>
-                  {i18n.get(UPLOAD)}
+                  {i18n.t(UPLOAD)}
                 </Button>
               </div>
             </div>

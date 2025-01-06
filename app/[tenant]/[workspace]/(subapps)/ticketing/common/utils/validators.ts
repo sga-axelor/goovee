@@ -1,15 +1,15 @@
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {z} from 'zod';
 import type {Expand} from '@/types/util';
 
 export const TicketFormSchema = z.object({
   subject: z
-    .string({required_error: i18n.get('Subject is required')})
+    .string({required_error: i18n.t('Subject is required')})
     .trim()
-    .min(1, {message: i18n.get('Subject is required')}),
-  category: z.string({required_error: i18n.get('Category is required')}),
-  priority: z.string({required_error: i18n.get('Priority is required')}),
-  managedBy: z.string({required_error: i18n.get('Managed by is required')}),
+    .min(1, {message: i18n.t('Subject is required')}),
+  category: z.string({required_error: i18n.t('Category is required')}),
+  priority: z.string({required_error: i18n.t('Priority is required')}),
+  managedBy: z.string({required_error: i18n.t('Managed by is required')}),
   description: z.string().optional(),
   parentId: z.string().optional(),
 });
@@ -35,17 +35,17 @@ export type CreateTicketInfo = z.infer<typeof CreateTicketSchema>;
 export type UpdateTicketInfo = z.infer<typeof UpdateTicketSchema>;
 
 export const RelatedTicketSchema = z.object({
-  linkType: z.string({required_error: i18n.get('Link type is required')}),
+  linkType: z.string({required_error: i18n.t('Link type is required')}),
   ticket: z.object(
     {id: z.string(), fullName: z.string().optional(), version: z.number()},
-    {required_error: i18n.get('Ticket is required')},
+    {required_error: i18n.t('Ticket is required')},
   ),
 });
 
 export const ChildTicketSchema = z.object({
   ticket: z.object(
     {id: z.string(), fullName: z.string().optional(), version: z.number()},
-    {required_error: i18n.get('Ticket is required')},
+    {required_error: i18n.t('Ticket is required')},
   ),
 });
 
@@ -61,14 +61,14 @@ export const FilterSchema = z.object({
       if (!start) {
         return ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: i18n.get('Start date is required.'),
+          message: i18n.t('Start date is required.'),
           path: [0],
         });
       }
       if (!end) {
         return ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: i18n.get('End date is required.'),
+          message: i18n.t('End date is required.'),
           path: [1],
         });
       }
@@ -76,7 +76,7 @@ export const FilterSchema = z.object({
       if (startDate >= endDate) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: i18n.get('Start date must be earlier than End date.'),
+          message: i18n.t('Start date must be earlier than End date.'),
         });
       }
     })

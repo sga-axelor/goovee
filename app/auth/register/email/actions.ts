@@ -1,7 +1,7 @@
 'use server';
 
 import {generateOTP as coreGenerateOTP} from '@/otp/actions';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {Scope} from '@/otp/constants';
 import {type Tenant} from '@/tenant';
 import {findDefaultPartnerWorkspaceConfig} from '@/orm/workspace';
@@ -23,7 +23,7 @@ export async function generateOTP({
   tenantId: Tenant['id'];
 }) {
   if (!(email && tenantId)) {
-    return error(await getTranslation('Email, Scope and Tenant is required'));
+    return error(await t('Email, Scope and Tenant is required'));
   }
 
   const defaultPartnerWorkspaceConfig =

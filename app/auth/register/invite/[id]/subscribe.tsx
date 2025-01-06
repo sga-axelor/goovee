@@ -5,7 +5,7 @@ import {useSession} from 'next-auth/react';
 import {useRouter, useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Dialog,
   DialogContent,
@@ -66,7 +66,7 @@ export default function Subscribe({
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error subscribing, try again'),
+        title: i18n.t('Error subscribing, try again'),
       });
     }
   };
@@ -88,19 +88,19 @@ export default function Subscribe({
     <Dialog open onOpenChange={handleCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{i18n.get('Already an user')}</DialogTitle>
+          <DialogTitle>{i18n.t('Already an user')}</DialogTitle>
           <DialogDescription>
-            {i18n.get(
+            {i18n.t(
               `You are already a user, do you want to subscribe to ${workspaceURL} ?`,
             )}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={handleCancel}>
-            {i18n.get('Cancel')}
+            {i18n.t('Cancel')}
           </Button>
           <Button type="button" onClick={handleSubscription}>
-            {i18n.get('Subscribe')}
+            {i18n.t('Subscribe')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -16,7 +16,7 @@ import {
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
@@ -42,7 +42,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
             <Badge
               variant="outline"
               className="text-[0.625rem] mb-[0.688rem] font-medium py-1 px-2 text-success border-success h-6">
-              {i18n.get(REGISTER_TAG)}
+              {i18n.t(REGISTER_TAG)}
             </Badge>
           )}
         </CardTitle>
@@ -70,7 +70,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
         <div className="border-l border-success space-y-4 text-base font-semibold px-4">
           {eventDetails?.eventPlace && (
             <p>
-              {i18n.get('Place')}:{' '}
+              {i18n.t('Place')}:{' '}
               <span className="font-normal break-words">
                 {eventDetails?.eventPlace}
               </span>
@@ -78,7 +78,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
           )}
           {eventDetails?.eventLink && (
             <p>
-              {i18n.get('Link')}:
+              {i18n.t('Link')}:
               <span className="font-normal break-words">
                 {eventDetails?.eventLink}
               </span>
@@ -87,7 +87,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
           {eventDetails?.eventProduct?.salePrice &&
             parseFloat(eventDetails?.eventProduct?.salePrice) > 0 && (
               <p>
-                {i18n.get('Price')}:
+                {i18n.t('Price')}:
                 <span className="font-semibold">
                   {' '}
                   {parseFloat(eventDetails.eventProduct.salePrice).toFixed(2)}€
@@ -107,8 +107,8 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
                 size="sm"
                 className="w-full text-base font-medium bg-success hover:bg-success-dark">
                 {!isRegistered
-                  ? i18n.get(REGISTER_TO_EVENT)
-                  : i18n.get(EDIT_MY_REGISTRATION)}
+                  ? i18n.t(REGISTER_TO_EVENT)
+                  : i18n.t(EDIT_MY_REGISTRATION)}
               </Button>
             </Link>
           }

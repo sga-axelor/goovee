@@ -11,7 +11,7 @@ import {
   Avatar,
   AvatarImage,
 } from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
@@ -28,7 +28,7 @@ export const ProductsList = ({saleOrderLineList, tenant}: any) => {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <h4 className="text-xl font-medium mb-0">{i18n.get('Products')}</h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Products')}</h4>
         <Separator />
         <div className="hidden lg:block">
           <StyledTable
@@ -39,7 +39,7 @@ export const ProductsList = ({saleOrderLineList, tenant}: any) => {
                 <TableCell
                   colSpan={PRODUCT_COLUMNS.length}
                   className="text-center">
-                  {i18n.get('No records available')}
+                  {i18n.t('No records available')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -76,7 +76,7 @@ export const ProductsList = ({saleOrderLineList, tenant}: any) => {
                 <TableCell
                   colSpan={PRODUCT_CARD_COLUMNS.length}
                   className="text-center">
-                  {i18n.get('No records available')}
+                  {i18n.t('No records available')}
                 </TableCell>
               </TableRow>
             ) : (

@@ -5,7 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Button} from '@/ui/components/button';
 import {Input} from '@/ui/components/input';
 import {
@@ -65,19 +65,19 @@ export default function Page() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-20">
             <div className="space-y-4">
-              <Title text={i18n.get('Personal Settings')} />
+              <Title text={i18n.t('Personal Settings')} />
               <FormField
                 control={form.control}
                 name="oldPassword"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('Old Password')}</FormLabel>
+                    <FormLabel>{i18n.t('Old Password')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
                         value={field.value}
-                        placeholder={i18n.get('Enter old password')}
+                        placeholder={i18n.t('Enter old password')}
                         disabled={isSubmitting}
                       />
                     </FormControl>
@@ -90,13 +90,13 @@ export default function Page() {
                 name="newPassword"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('New Password')}</FormLabel>
+                    <FormLabel>{i18n.t('New Password')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
                         value={field.value}
-                        placeholder={i18n.get('Enter new password')}
+                        placeholder={i18n.t('Enter new password')}
                         disabled={isSubmitting}
                       />
                     </FormControl>
@@ -109,13 +109,13 @@ export default function Page() {
                 name="confirmPassword"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('Confirm Password')}</FormLabel>
+                    <FormLabel>{i18n.t('Confirm Password')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
                         value={field.value}
-                        placeholder={i18n.get('Confirm new password')}
+                        placeholder={i18n.t('Confirm new password')}
                         disabled={isSubmitting}
                       />
                     </FormControl>
@@ -127,7 +127,7 @@ export default function Page() {
 
             <div className="space-y-4 text-end">
               <Button variant="success" disabled={isSubmitting}>
-                {i18n.get('Change password')}
+                {i18n.t('Change password')}
               </Button>
             </div>
           </div>

@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
 import {findWorkspace, findWorkspaceMembers} from '@/orm/workspace';
@@ -73,25 +73,25 @@ export async function updateInviteApplication({
   const canUpdateInvite = await canUpdate({workspaceURL});
 
   if (!canUpdateInvite) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const $invite = await findInviteById({id: invite.id, tenantId});
 
   if (!$invite) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
@@ -100,7 +100,7 @@ export async function updateInviteApplication({
   const partnerId = user?.isContact ? user.mainPartnerId : user.id;
 
   if (!($invite?.partner?.id && $invite.partner.id === partnerId)) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const availableApps = await findAvailableSubapps({
@@ -111,13 +111,13 @@ export async function updateInviteApplication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const contactConfig: any = $invite?.contactAppPermissionList?.[0];
 
   if (!contactConfig) {
-    return error(await getTranslation('Invalid operation'));
+    return error(await t('Invalid operation'));
   }
 
   const existingApp = contactConfig?.contactAppPermissionList.find(
@@ -161,7 +161,7 @@ export async function updateInviteApplication({
     };
   } catch (err) {
     console.log(err);
-    return error(await getTranslation('Error updating invite. Try again.'));
+    return error(await t('Error updating invite. Try again.'));
   }
 }
 
@@ -179,25 +179,25 @@ export async function updateInviteAuthentication({
   const canUpdateInvite = await canUpdate({workspaceURL});
 
   if (!canUpdateInvite) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const $invite = await findInviteById({id: invite.id, tenantId});
 
   if (!$invite) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
@@ -206,7 +206,7 @@ export async function updateInviteAuthentication({
   const partnerId = user?.isContact ? user.mainPartnerId : user.id;
 
   if (!($invite?.partner?.id && $invite.partner.id === partnerId)) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const availableApps = await findAvailableSubapps({
@@ -217,13 +217,13 @@ export async function updateInviteAuthentication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const contactConfig: any = $invite?.contactAppPermissionList?.[0];
 
   if (!contactConfig) {
-    return error(await getTranslation('Invalid operation'));
+    return error(await t('Invalid operation'));
   }
 
   const existingApp = contactConfig?.contactAppPermissionList.find(
@@ -231,7 +231,7 @@ export async function updateInviteAuthentication({
   );
 
   if (!existingApp) {
-    return error(await getTranslation('Invalid operation'));
+    return error(await t('Invalid operation'));
   }
 
   try {
@@ -257,7 +257,7 @@ export async function updateInviteAuthentication({
     };
   } catch (err) {
     console.log(err);
-    return error(await getTranslation('Error updating invite. Try again.'));
+    return error(await t('Error updating invite. Try again.'));
   }
 }
 
@@ -271,19 +271,19 @@ export async function deleteMember({
   const canUpdateInvite = await canUpdate({workspaceURL});
 
   if (!canUpdateInvite) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const adminContact = await isAdminContact({workspaceURL, tenantId});
@@ -302,13 +302,13 @@ export async function deleteMember({
   const partnerMember = members?.partners?.find(p => p.id === member.id);
 
   if (partnerMember && adminContact) {
-    return error(await getTranslation('Unauthorized')); // admin contact cannot remove partner
+    return error(await t('Unauthorized')); // admin contact cannot remove partner
   }
 
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member?.contactWorkspaceConfig?.id) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   try {
@@ -328,7 +328,7 @@ export async function deleteMember({
       data: updatedPartner,
     };
   } catch (err) {
-    return error(await getTranslation('Error updating member. Try again.'));
+    return error(await t('Error updating member. Try again.'));
   }
 }
 
@@ -346,19 +346,19 @@ export async function updateMemberApplication({
   const canUpdateInvite = await canUpdate({workspaceURL});
 
   if (!canUpdateInvite) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
@@ -377,13 +377,13 @@ export async function updateMemberApplication({
   const partnerMember = members?.partners?.find(p => p.id === member.id);
 
   if (partnerMember && adminContact) {
-    return error(await getTranslation('Unauthorized')); // admin contact cannot update partner
+    return error(await t('Unauthorized')); // admin contact cannot update partner
   }
 
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const availableApps = await findAvailableSubapps({
@@ -394,13 +394,13 @@ export async function updateMemberApplication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const contactConfig: any = $member?.contactWorkspaceConfig;
 
   if (!contactConfig) {
-    return error(await getTranslation('Invalid operation'));
+    return error(await t('Invalid operation'));
   }
 
   const existingApp = contactConfig?.contactAppPermissionList?.find(
@@ -454,7 +454,7 @@ export async function updateMemberApplication({
     };
   } catch (err) {
     console.log(err);
-    return error(await getTranslation('Error updating invite. Try again.'));
+    return error(await t('Error updating invite. Try again.'));
   }
 }
 
@@ -472,19 +472,19 @@ export async function updateMemberAuthentication({
   const canUpdateInvite = await canUpdate({workspaceURL});
 
   if (!canUpdateInvite) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
@@ -503,13 +503,13 @@ export async function updateMemberAuthentication({
   const partnerMember = members?.partners?.find(p => p.id === member.id);
 
   if (partnerMember && adminContact) {
-    return error(await getTranslation('Unauthorized')); // admin contact cannot update partner
+    return error(await t('Unauthorized')); // admin contact cannot update partner
   }
 
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const availableApps = await findAvailableSubapps({
@@ -520,13 +520,13 @@ export async function updateMemberAuthentication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const contactConfig: any = $member?.contactWorkspaceConfig;
 
   if (!contactConfig) {
-    return error(await getTranslation('Invalid operation'));
+    return error(await t('Invalid operation'));
   }
 
   const existingApp = contactConfig?.contactAppPermissionList?.find(
@@ -534,7 +534,7 @@ export async function updateMemberAuthentication({
   );
 
   if (!existingApp) {
-    return error(await getTranslation('Invalid operation'));
+    return error(await t('Invalid operation'));
   }
 
   try {
@@ -572,6 +572,6 @@ export async function updateMemberAuthentication({
     };
   } catch (err) {
     console.log(err);
-    return error(await getTranslation('Error updating invite. Try again.'));
+    return error(await t('Error updating invite. Try again.'));
   }
 }

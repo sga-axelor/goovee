@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 /**
  * CURRENCY
@@ -175,17 +175,17 @@ export const SORT_BY_OPTIONS = [
   {
     id: 1,
     key: SORT_TYPE.new,
-    label: i18n.get('New'),
+    label: i18n.t('New'),
   },
   {
     id: 2,
     key: SORT_TYPE.old,
-    label: i18n.get('Old'),
+    label: i18n.t('Old'),
   },
   {
     id: 3,
     key: SORT_TYPE.popular,
-    label: i18n.get('Popular'),
+    label: i18n.t('Popular'),
   },
 ];
 
@@ -198,12 +198,6 @@ export const USER_CREATED_FROM = 'portal';
 export const ALLOW_NO_REGISTRATION = 'no';
 export const ALLOW_ALL_REGISTRATION = 'yesForAll';
 export const ALLOW_AOS_ONLY_REGISTRATION = 'yesForAOS';
-
-/**
- * LANGUAGE_CODE
- */
-
-export const DEFAULT_LANGUAGE_CODE = 'en';
 
 /**
  * RESPONSIVE SIZES

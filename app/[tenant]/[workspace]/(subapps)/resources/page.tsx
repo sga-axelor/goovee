@@ -5,7 +5,7 @@ import {clone} from '@/utils';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -54,7 +54,7 @@ export default async function Page({
       <Hero workspace={workspace} tenantId={tenant} />
       <main className="container p-4 mx-auto space-y-6">
         <Categories items={folders} />
-        <h2 className="font-semibold text-xl">{i18n.get('New Resources')}</h2>
+        <h2 className="font-semibold text-xl">{i18n.t('New Resources')}</h2>
         <ResourceList resources={files} />
       </main>
     </>

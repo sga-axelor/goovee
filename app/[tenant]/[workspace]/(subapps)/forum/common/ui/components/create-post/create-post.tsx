@@ -13,7 +13,7 @@ import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Form,
   Button,
@@ -91,8 +91,8 @@ export const CreatePost = ({
   const formRef = useRef<HTMLFormElement>(null);
 
   const formSchema = z.object({
-    title: z.string().min(1, {message: i18n.get('Title is required')}),
-    groupId: z.string().min(1, {message: i18n.get('Group is required')}),
+    title: z.string().min(1, {message: i18n.t('Title is required')}),
+    groupId: z.string().min(1, {message: i18n.t('Group is required')}),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -155,20 +155,20 @@ export const CreatePost = ({
       if (result.success) {
         toast({
           variant: 'success',
-          title: i18n.get('Post added successfully.'),
+          title: i18n.t('Post added successfully.'),
         });
         onClose();
         router.refresh();
       } else {
         toast({
           variant: 'destructive',
-          title: i18n.get(result.message ?? i18n.get('Something went wrong!')),
+          title: i18n.t(result.message ?? i18n.t('Something went wrong!')),
         });
       }
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: i18n.get('An error occurred!'),
+        title: i18n.t('An error occurred!'),
       });
     } finally {
       setLoading(false);
@@ -188,11 +188,11 @@ export const CreatePost = ({
                   render={({field}) => (
                     <FormItem>
                       <FormLabel className="text-base font-medium text-foreground">
-                        {i18n.get(TITLE)}
+                        {i18n.t(TITLE)}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder={i18n.get(ENTER_TITLE)}
+                          placeholder={i18n.t(ENTER_TITLE)}
                           className="shadow-none h-11 text-black placeholder:text-muted-foreground"
                           {...field}
                         />
@@ -209,7 +209,7 @@ export const CreatePost = ({
                   render={({field}) => (
                     <FormItem>
                       <FormLabel className="text-base font-medium text-foreground">
-                        {i18n.get(CHOOSE_GROUP)}
+                        {i18n.t(CHOOSE_GROUP)}
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -218,7 +218,7 @@ export const CreatePost = ({
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue
-                              placeholder={i18n.get('Select a group')}
+                              placeholder={i18n.t('Select a group')}
                             />
                           </SelectTrigger>
                         </FormControl>
@@ -249,7 +249,7 @@ export const CreatePost = ({
               </div>
               <div className="mt-2">
                 <span className="text-base font-medium text-foreground">
-                  {i18n.get(CONTENT)}
+                  {i18n.t(CONTENT)}
                 </span>
                 <RichTextEditor onChange={handleContentChange} />
               </div>
@@ -295,7 +295,7 @@ export const CreatePost = ({
                 type="submit"
                 className="bg-success w-full mt-1 lg:mt-4"
                 disabled={loading}>
-                {loading ? i18n.get(PUBLISHING) : i18n.get(PUBLISH)}
+                {loading ? i18n.t(PUBLISHING) : i18n.t(PUBLISH)}
               </Button>
             </div>
           </div>

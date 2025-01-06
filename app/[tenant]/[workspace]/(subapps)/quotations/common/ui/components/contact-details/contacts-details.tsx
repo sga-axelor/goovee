@@ -5,7 +5,7 @@ import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components';
 import {getCityName} from '@/utils';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import type {ContactProps} from '@/subapps/quotations/common/types/quotations';
@@ -25,12 +25,12 @@ export const ContactDetails = ({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <h4 className="text-xl font-medium mb-0">{i18n.get('Contact')}</h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Contact')}</h4>
         <div className="flex flex-col gap-4 border rounded-lg p-4">
           <div className="flex gap-4">
             <div className="flex-1 flex flex-col gap-4">
               <h6 className="font-semibold text-base">
-                {i18n.get('Invoicing address')}
+                {i18n.t('Invoicing address')}
               </h6>
               <div className="flex flex-col gap-4">
                 {mainInvoicingAddress?.firstName ||
@@ -55,7 +55,7 @@ export const ContactDetails = ({
               </div>
             </div>
             <div className="flex-1 flex flex-col gap-4">
-              <h6 className="font-semibold">{i18n.get('Delivery address')}</h6>
+              <h6 className="font-semibold">{i18n.t('Delivery address')}</h6>
               <div className="flex flex-col gap-4">
                 {deliveryAddress?.firstName ||
                 deliveryAddress?.lastName ||
@@ -84,7 +84,7 @@ export const ContactDetails = ({
               <Button
                 className="bg-white border border-success text-success hover:bg-success hover:text-white rounded-md font-medium text-base py-1.5 px-3"
                 onClick={onAddressSelection}>
-                {i18n.get('Choose another address')}
+                {i18n.t('Choose another address')}
               </Button>
             </div>
           )}

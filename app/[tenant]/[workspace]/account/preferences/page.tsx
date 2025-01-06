@@ -8,7 +8,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useToast} from '@/ui/hooks/use-toast';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Button} from '@/ui/components/button';
 import {Loader} from '@/ui/components/loader';
 import {
@@ -70,12 +70,12 @@ export default function Page() {
 
     if ('error' in result) {
       toast({
-        title: result.message || i18n.get('Error updating preference'),
+        title: result.message || i18n.t('Error updating preference'),
         variant: 'destructive',
       });
     } else {
       toast({
-        title: i18n.get('Preference updated successfully'),
+        title: i18n.t('Preference updated successfully'),
         variant: 'success',
       });
     }
@@ -159,14 +159,14 @@ export default function Page() {
                 name="defaultWorkspace"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('Default Workspace')}</FormLabel>
+                    <FormLabel>{i18n.t('Default Workspace')}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value?.toString()}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
-                            placeholder={i18n.get(
+                            placeholder={i18n.t(
                               'Select your default workspace',
                             )}
                           />
@@ -192,14 +192,14 @@ export default function Page() {
               name="localization"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Language')}</FormLabel>
+                  <FormLabel>{i18n.t('Language')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={i18n.get('Select your language')}
+                          placeholder={i18n.t('Select your language')}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -219,7 +219,7 @@ export default function Page() {
             />
 
             <div className="space-y-4 text-end">
-              <Button variant="success">{i18n.get('Save Preference')}</Button>
+              <Button variant="success">{i18n.t('Save Preference')}</Button>
             </div>
           </div>
         </form>

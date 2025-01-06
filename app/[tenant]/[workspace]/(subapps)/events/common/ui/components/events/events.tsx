@@ -17,7 +17,7 @@ import {
   URL_PARAMS,
 } from '@/constants';
 import {useSearchParams, useToast} from '@/ui/hooks';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
 import {getImageURL} from '@/utils/files';
 
@@ -114,7 +114,7 @@ export const Events = ({
           if (response?.error) {
             toast({
               variant: 'destructive',
-              description: i18n.get(
+              description: i18n.t(
                 response.error || 'Something went wrong while searching!',
               ),
             });
@@ -125,7 +125,7 @@ export const Events = ({
         } catch (error) {
           toast({
             variant: 'destructive',
-            description: i18n.get('Something went wrong while searching!'),
+            description: i18n.t('Something went wrong while searching!'),
           });
           return [];
         }
@@ -140,11 +140,10 @@ export const Events = ({
     <>
       <HeroSearch
         title={
-          workspace?.config?.eventHeroTitle || i18n.get(BANNER_TITLES.events)
+          workspace?.config?.eventHeroTitle || i18n.t(BANNER_TITLES.events)
         }
         description={
-          workspace?.config?.eventHeroDescription ||
-          i18n.get(BANNER_DESCRIPTION)
+          workspace?.config?.eventHeroDescription || i18n.t(BANNER_DESCRIPTION)
         }
         image={imageURL}
         background={workspace?.config?.eventHeroOverlayColorSelect || 'default'}
@@ -175,8 +174,8 @@ export const Events = ({
             ))
           ) : (
             <>
-              <h5 className="text-lg font-bold">{i18n.get('No events')}</h5>
-              <p>{i18n.get('There are no events today')}</p>
+              <h5 className="text-lg font-bold">{i18n.t('No events')}</h5>
+              <p>{i18n.t('There are no events today')}</p>
             </>
           )}
           <div className="w-full mt-10 flex items-center justify-center ml-auto">

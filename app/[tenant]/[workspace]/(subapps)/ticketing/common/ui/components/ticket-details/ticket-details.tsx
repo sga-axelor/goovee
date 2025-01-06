@@ -1,6 +1,6 @@
 'use client';
 
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import type {Maybe} from '@/types/util';
 import {
   Button,
@@ -75,7 +75,7 @@ export function TicketDetails(props: Props) {
               type="submit"
               variant="success"
               disabled={!form.formState.isDirty || loading}>
-              {i18n.get('Save Changes')}
+              {i18n.t('Save Changes')}
             </Button>
             <div className="contents lg:hidden">
               {assignToButton}
@@ -95,7 +95,7 @@ export function TicketDetails(props: Props) {
                     <Input
                       {...field}
                       className="text-xl font-semibold h-11"
-                      placeholder={i18n.get('Enter your subject')}
+                      placeholder={i18n.t('Enter your subject')}
                       value={field.value ?? ''}
                     />
                   </FormControl>
@@ -106,9 +106,7 @@ export function TicketDetails(props: Props) {
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
                 <span>
-                  <span className="font-medium pe-2">
-                    {i18n.get('Status')}:
-                  </span>
+                  <span className="font-medium pe-2">{i18n.t('Status')}:</span>
                   <Status name={ticket.status?.name} />
                 </span>
                 <span className="hidden lg:inline-flex gap-4 ml-auto">
@@ -122,7 +120,7 @@ export function TicketDetails(props: Props) {
                 render={({field}) => (
                   <FormItem className="flex items-center gap-2 space-y-0">
                     <FormLabel className="font-medium text-md">
-                      {i18n.get('Category')}:
+                      {i18n.t('Category')}:
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -131,7 +129,7 @@ export function TicketDetails(props: Props) {
                         <SelectTrigger className="w-fit">
                           <SelectValue
                             asChild
-                            placeholder={i18n.get('Select your category')}>
+                            placeholder={i18n.t('Select your category')}>
                             <Category
                               name={
                                 categories.find(c => c.id == field.value)?.name
@@ -160,7 +158,7 @@ export function TicketDetails(props: Props) {
                 render={({field}) => (
                   <FormItem className="flex items-center gap-2 space-y-0">
                     <FormLabel className="font-medium text-md">
-                      {i18n.get('Priority')}:
+                      {i18n.t('Priority')}:
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -169,7 +167,7 @@ export function TicketDetails(props: Props) {
                         <SelectTrigger className="w-fit">
                           <SelectValue
                             asChild
-                            placeholder={i18n.get('Select your priority')}>
+                            placeholder={i18n.t('Select your priority')}>
                             <Priority
                               name={
                                 priorities.find(c => c.id == field.value)?.name
@@ -195,9 +193,7 @@ export function TicketDetails(props: Props) {
             </div>
             <hr />
             <p className="!mt-3.5">
-              <span className="font-medium pe-2">
-                {i18n.get('Created by')}:
-              </span>
+              <span className="font-medium pe-2">{i18n.t('Created by')}:</span>
 
               <span className="ms-2">
                 {ticket.createdByContact?.simpleFullName
@@ -206,9 +202,7 @@ export function TicketDetails(props: Props) {
               </span>
             </p>
             <p>
-              <span className="font-medium pe-2">
-                {i18n.get('Created on')}:
-              </span>
+              <span className="font-medium pe-2">{i18n.t('Created on')}:</span>
               {formatDate(ticket.createdOn)}
             </p>
             <hr />
@@ -218,7 +212,7 @@ export function TicketDetails(props: Props) {
                 <div>
                   <div className="flex items-center gap-2 space-y-0">
                     <span className="font-medium pe-2">
-                      {i18n.get('Assigned to')}:
+                      {i18n.t('Assigned to')}:
                     </span>
                     <div className="h-10 flex items-center">
                       {isWithProvider(ticket.assignment)
@@ -237,7 +231,7 @@ export function TicketDetails(props: Props) {
                   render={({field}) => (
                     <FormItem className="flex items-center gap-2 space-y-0">
                       <FormLabel className="font-medium text-md">
-                        {i18n.get('Managed by')}:
+                        {i18n.t('Managed by')}:
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -245,7 +239,7 @@ export function TicketDetails(props: Props) {
                         <FormControl>
                           <SelectTrigger className="w-fit">
                             <SelectValue
-                              placeholder={i18n.get('Select Assignee')}
+                              placeholder={i18n.t('Select Assignee')}
                             />
                           </SelectTrigger>
                         </FormControl>
@@ -272,7 +266,7 @@ export function TicketDetails(props: Props) {
             <hr />
             <div className="sm:flex items-center !mt-3.5">
               <p className="font-medium pe-2 mb-3 sm:mb-0">
-                {i18n.get('Progress')}: {getProgress(ticket.progress)}%
+                {i18n.t('Progress')}: {getProgress(ticket.progress)}%
               </p>
               <Progress
                 value={getProgress(ticket.progress)}
@@ -280,7 +274,7 @@ export function TicketDetails(props: Props) {
               />
             </div>
             <p>
-              <span className="font-medium pe-2"> {i18n.get('Version')}:</span>
+              <span className="font-medium pe-2"> {i18n.t('Version')}:</span>
               {ticket.targetVersion?.title}
             </p>
             <hr />
@@ -288,15 +282,15 @@ export function TicketDetails(props: Props) {
               ticket.invoicingType === INVOICING_TYPE.PACKAGE && (
                 <div className="flex gap-4">
                   <span className="font-medium">
-                    {i18n.get('Financial data')}:
+                    {i18n.t('Financial data')}:
                   </span>
                   <div className="flex flex-col">
-                    <span className="font-medium">{i18n.get('Qty')}</span>
+                    <span className="font-medium">{i18n.t('Qty')}</span>
                     <span>{ticket.quantity}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="font-medium">
-                      {i18n.get('Invoicing unit')}
+                      {i18n.t('Invoicing unit')}
                     </span>
                     <span>{ticket.invoicingUnit?.name}</span>
                   </div>
@@ -357,8 +351,8 @@ function AssignToButton({className}: {className?: string}) {
       disabled={loading}
       onClick={handleAssignment}>
       {isWithProvider(ticket.assignment)
-        ? i18n.get('Assign to') + ' ' + client
-        : i18n.get('Assign to') + ' ' + company}
+        ? i18n.t('Assign to') + ' ' + client
+        : i18n.t('Assign to') + ' ' + company}
     </Button>
   );
 }
@@ -373,20 +367,20 @@ function CancelTicket({className}: {className?: string}) {
           variant="destructive"
           disabled={loading}
           className={className}>
-          {i18n.get('Cancel ticket')}
+          {i18n.t('Cancel ticket')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{i18n.get('Are you sure?')}</DialogTitle>
+          <DialogTitle>{i18n.t('Are you sure?')}</DialogTitle>
           <DialogDescription>
-            {i18n.get('This action cannot be undone.')}
+            {i18n.t('This action cannot be undone.')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" size="sm" variant="outline">
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </Button>
           </DialogClose>
           <DialogClose asChild>
@@ -395,7 +389,7 @@ function CancelTicket({className}: {className?: string}) {
               size="sm"
               variant="destructive"
               onClick={handleCancelTicket}>
-              {i18n.get('OK')}
+              {i18n.t('OK')}
             </Button>
           </DialogClose>
         </DialogFooter>
@@ -414,21 +408,21 @@ function CloseTicket({className}: {className?: string}) {
           variant="success"
           disabled={loading}
           className={className}>
-          {i18n.get('Close ticket')}
+          {i18n.t('Close ticket')}
         </Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{i18n.get('Are you sure?')}</DialogTitle>
+          <DialogTitle>{i18n.t('Are you sure?')}</DialogTitle>
           <DialogDescription>
-            {i18n.get('This action cannot be undone.')}
+            {i18n.t('This action cannot be undone.')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" size="sm" variant="outline">
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </Button>
           </DialogClose>
           <DialogClose asChild>
@@ -437,7 +431,7 @@ function CloseTicket({className}: {className?: string}) {
               size="sm"
               variant="destructive"
               onClick={handleCloseTicket}>
-              {i18n.get('OK')}
+              {i18n.t('OK')}
             </Button>
           </DialogClose>
         </DialogFooter>

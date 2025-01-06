@@ -1,5 +1,5 @@
 'use client';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import type {Cloned} from '@/types/util';
 import {useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
@@ -29,8 +29,8 @@ export function RelatedTicketsHeader(props: {
 }) {
   return (
     <TicketLinkHeader
-      title={i18n.get('Related tickets')}
-      alertTitle={i18n.get('Link related ticket')}
+      title={i18n.t('Related tickets')}
+      alertTitle={i18n.t('Link related ticket')}
       alertContentRenderer={({closeAlert}) => (
         <TicketRelatedLinkForm {...props} onSubmit={closeAlert} />
       )}
@@ -46,8 +46,8 @@ export function ParentTicketsHeader(props: {
 }) {
   return (
     <TicketLinkHeader
-      title={i18n.get('Parent ticket')}
-      alertTitle={i18n.get('Link parent ticket')}
+      title={i18n.t('Parent ticket')}
+      alertTitle={i18n.t('Link parent ticket')}
       alertContentRenderer={({closeAlert}) => (
         <TicketParentLinkForm {...props} onSubmit={closeAlert} />
       )}
@@ -81,8 +81,8 @@ export function ChildTicketsHeader(props: {
 
   return (
     <TicketLinkHeader
-      title={i18n.get('Child tickets')}
-      dialogTitle={i18n.get('Create child ticket')}
+      title={i18n.t('Child tickets')}
+      dialogTitle={i18n.t('Create child ticket')}
       dialogContentRenderer={({closeDialog}) => (
         <TicketForm
           projectId={projectId.toString()}
@@ -96,13 +96,13 @@ export function ChildTicketsHeader(props: {
           onSuccess={() => {
             toast({
               variant: 'success',
-              title: i18n.get('Ticket created and linked'),
+              title: i18n.t('Ticket created and linked'),
             });
             closeDialog();
           }}
         />
       )}
-      alertTitle={i18n.get('Link child ticket')}
+      alertTitle={i18n.t('Link child ticket')}
       alertContentRenderer={({closeAlert}) => (
         <TicketChildLinkForm
           ticketId={ticketId}

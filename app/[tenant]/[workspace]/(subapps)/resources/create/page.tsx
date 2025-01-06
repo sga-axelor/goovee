@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
@@ -69,9 +69,7 @@ export default async function Page({
 
   return (
     <main className="container mx-auto mt-4 p-4 md:p-8 bg-white rounded space-y-2">
-      <h2 className="font-semibold text-lg">
-        {await getTranslation('Create a resource')}
-      </h2>
+      <h2 className="font-semibold text-lg">{await t('Create a resource')}</h2>
       <ResourceForm parent={parent} />
     </main>
   );

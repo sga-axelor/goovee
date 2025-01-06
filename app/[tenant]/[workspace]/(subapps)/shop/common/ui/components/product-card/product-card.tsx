@@ -6,7 +6,7 @@ import {MdAddShoppingCart} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {BackgroundImage, Button} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {useToast} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -34,7 +34,7 @@ export function ProductCard({
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
     toast({
-      title: i18n.get('Added to cart'),
+      title: i18n.t('Added to cart'),
     });
   };
 
@@ -64,7 +64,7 @@ export function ProductCard({
         </BackgroundImage>
         <div className="py-4 px-6">
           <h5 className="font-medium line-clamp-1">
-            {i18n.getValueAttribute(product.name)}
+            {i18n.tattr(product.name)}
           </h5>
           {displayPrices && (
             <>

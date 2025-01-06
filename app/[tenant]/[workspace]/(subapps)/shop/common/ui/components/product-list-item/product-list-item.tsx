@@ -7,7 +7,7 @@ import {Button, BackgroundImage} from '@/ui/components';
 import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import {useResponsive} from '@/ui/hooks';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {ComputedProduct, ID, Product} from '@/types';
 
@@ -58,7 +58,7 @@ export function ProductListItem({
             <div className="flex-col md:flex-row flex justify-between mb-6">
               <div>
                 <p className="font-medium mb-2 md:mb-0">
-                  {i18n.getValueAttribute(product.name)}
+                  {i18n.tattr(product.name)}
                 </p>
               </div>
               <div className="shrink-0 text-right">
@@ -92,7 +92,7 @@ export function ProductListItem({
             </div>
             {large && (
               <p className="text-sm font-medium mb-0 text-primary-foreground">
-                {i18n.get('Add to cart')}
+                {i18n.t('Add to cart')}
               </p>
             )}
           </Button>

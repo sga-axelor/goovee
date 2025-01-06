@@ -28,7 +28,7 @@ import {Textarea} from '@/ui/components/textarea';
 import {useToast} from '@/ui/hooks/use-toast';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {cn} from '@/utils/css';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {create} from './action';
@@ -69,7 +69,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
 
     if (result.success) {
       toast({
-        title: i18n.get('Category created successfully.'),
+        title: i18n.t('Category created successfully.'),
       });
       router.refresh();
       router.push(
@@ -78,7 +78,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error creating category'),
+        title: i18n.t('Error creating category'),
       });
     }
   };
@@ -98,10 +98,10 @@ export default function ResourceForm({parent, colors, icons}: any) {
           name="title"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('Category title')}*</FormLabel>
+              <FormLabel>{i18n.t('Category title')}*</FormLabel>
               <FormControl>
                 <Input
-                  placeholder={i18n.get('Enter Category title')}
+                  placeholder={i18n.t('Enter Category title')}
                   {...field}
                 />
               </FormControl>
@@ -110,7 +110,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
           )}
         />
         <FormItem>
-          <FormLabel>{i18n.get('Parent')}</FormLabel>
+          <FormLabel>{i18n.t('Parent')}</FormLabel>
           <FormControl>
             <Input
               className="shadow-none h-11 text-black placeholder:text-muted-foreground"
@@ -126,10 +126,10 @@ export default function ResourceForm({parent, colors, icons}: any) {
           name="description"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('Category description')}</FormLabel>
+              <FormLabel>{i18n.t('Category description')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder={i18n.get('Enter category description')}
+                  placeholder={i18n.t('Enter category description')}
                   {...field}
                 />
               </FormControl>
@@ -142,7 +142,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
           name="icon"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('Icon')}</FormLabel>
+              <FormLabel>{i18n.t('Icon')}</FormLabel>
               <FormControl>
                 <div className="border rounded-lg p-6 flex gap-6 flex-wrap">
                   {icons.map((icon: string, i: string) => {
@@ -171,11 +171,11 @@ export default function ResourceForm({parent, colors, icons}: any) {
           name="color"
           render={({field}) => (
             <FormItem>
-              <FormLabel>{i18n.get('Color')}</FormLabel>
+              <FormLabel>{i18n.t('Color')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={i18n.get('Select a color')} />
+                    <SelectValue placeholder={i18n.t('Select a color')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -192,7 +192,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
         />
 
         <Button type="submit" className="w-full" variant="success">
-          {i18n.get('Add new category')}
+          {i18n.t('Add new category')}
         </Button>
       </form>
     </Form>

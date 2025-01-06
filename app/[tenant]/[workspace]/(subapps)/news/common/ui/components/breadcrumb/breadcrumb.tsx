@@ -9,7 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/ui/components/breadcrumb';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
@@ -33,7 +33,7 @@ export const Breadcrumb = ({items, title}: {items: any; title: string}) => {
             <BreadcrumbLink
               href={`${workspaceURI}/news`}
               className="text-xs font-normal text-stone-400">
-              {i18n.get(NEWS)}
+              {i18n.t(NEWS)}
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-black" />

@@ -17,7 +17,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/ui/components/form';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {getFileSizeText} from '@/utils/files';
 import {cn} from '@/utils/css';
 
@@ -39,15 +39,15 @@ const formSchema = z.object({
       description: z.string(),
       file: z
         .any()
-        .refine(file => file, i18n.get('File is required.'))
+        .refine(file => file, i18n.t('File is required.'))
         .refine(
           file => file.size <= MAX_FILE_SIZE,
-          i18n.get(`Max file size is 20MB.`),
+          i18n.t(`Max file size is 20MB.`),
         ),
     }),
   ),
   content: z.string(),
-  text: z.string().min(1, {message: i18n.get('Comment is required')}),
+  text: z.string().min(1, {message: i18n.t('Comment is required')}),
 });
 
 export function CommentInput({
@@ -138,7 +138,7 @@ export function CommentInput({
                       'h-10 placeholder:text-sm placeholder:text-gray-dark',
                       className,
                     )}
-                    placeholder={i18n.get(placeholderText)}
+                    placeholder={i18n.t(placeholderText)}
                     {...field}
                   />
                 </FormControl>
@@ -161,15 +161,13 @@ export function CommentInput({
               className="px-6 py-1.5 h-9 text-base font-medium"
               variant="success"
               disabled={isSubmitting || disabled}>
-              {i18n.get('Send')}
+              {i18n.t('Send')}
             </Button>
           </div>
         </div>
         {fields?.length ? (
           <div className="flex flex-col gap-2">
-            <h4 className="text-base font-semibold">
-              {i18n.get('Attachments')}
-            </h4>
+            <h4 className="text-base font-semibold">{i18n.t('Attachments')}</h4>
             {fields.map((field, index) => (
               <div
                 key={`${field.file?.name}-${index}`}
@@ -185,7 +183,7 @@ export function CommentInput({
                     <FormItem className="inline-block">
                       <FormControl>
                         <Input
-                          placeholder={`${i18n.get('Enter attachment title')}`}
+                          placeholder={`${i18n.t('Enter attachment title')}`}
                           {...field}
                         />
                       </FormControl>
@@ -200,7 +198,7 @@ export function CommentInput({
                     <FormItem className="inline-block">
                       <FormControl>
                         <Input
-                          placeholder={i18n.get('Enter attachment description')}
+                          placeholder={i18n.t('Enter attachment description')}
                           {...field}
                         />
                       </FormControl>

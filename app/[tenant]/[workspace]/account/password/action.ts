@@ -5,7 +5,7 @@ import {headers} from 'next/headers';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {compare, hash} from '@/auth/utils';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {findPartnerByEmail} from '@/orm/partner';
 import {TENANT_HEADER} from '@/middleware';
 import {manager} from '@/tenant';
@@ -20,7 +20,7 @@ export async function changePassword({
   if (!(oldPassword && newPassword)) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -30,7 +30,7 @@ export async function changePassword({
   if (!user) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -39,7 +39,7 @@ export async function changePassword({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -48,7 +48,7 @@ export async function changePassword({
   if (!partner?.password) {
     return {
       error: true,
-      message: await getTranslation('Bad request.'),
+      message: await t('Bad request.'),
     };
   }
 
@@ -57,7 +57,7 @@ export async function changePassword({
   if (!isOldPasswordMatch) {
     return {
       error: true,
-      message: await getTranslation('Invalid old password'),
+      message: await t('Invalid old password'),
     };
   }
 
@@ -76,12 +76,12 @@ export async function changePassword({
   } catch (err) {
     return {
       error: true,
-      message: await getTranslation('Error setting new password. Try again.'),
+      message: await t('Error setting new password. Try again.'),
     };
   }
 
   return {
     success: true,
-    message: await getTranslation('Password changed successfully.'),
+    message: await t('Password changed successfully.'),
   };
 }

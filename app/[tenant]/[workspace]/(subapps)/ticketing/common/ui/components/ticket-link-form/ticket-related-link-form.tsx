@@ -1,5 +1,5 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import type {Cloned} from '@/types/util';
 import {
   Button,
@@ -65,7 +65,7 @@ export function TicketRelatedLinkForm({
   const {loading, submitFormWithAction} = useTicketDetails();
   const {action, loading: isSubmitting} = useRetryAction(
     createRelatedLink,
-    i18n.get('Link created'),
+    i18n.t('Link created'),
   );
 
   const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
@@ -147,7 +147,7 @@ export function TicketRelatedLinkForm({
           variant="success"
           className="ms-auto"
           disabled={loading || isSubmitting || form.formState.isSubmitting}>
-          {i18n.get('Create Link')}
+          {i18n.t('Create Link')}
         </Button>
       </form>
     </Form>
@@ -177,7 +177,7 @@ export function TicketChildLinkForm({
   const {loading, submitFormWithAction} = useTicketDetails();
   const {action, loading: isSubmitting} = useRetryAction(
     createChildLink,
-    i18n.get('Link created'),
+    i18n.t('Link created'),
   );
 
   const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
@@ -224,7 +224,7 @@ export function TicketChildLinkForm({
           variant="success"
           className="ms-auto"
           disabled={loading || form.formState.isSubmitting || isSubmitting}>
-          {i18n.get('Create Link')}
+          {i18n.t('Create Link')}
         </Button>
       </form>
     </Form>
@@ -253,7 +253,7 @@ export function TicketParentLinkForm({
   const {loading, submitFormWithAction} = useTicketDetails();
   const {action, loading: isSubmitting} = useRetryAction(
     createParentLink,
-    i18n.get('Link created'),
+    i18n.t('Link created'),
   );
 
   const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
@@ -305,7 +305,7 @@ export function TicketParentLinkForm({
           variant="success"
           className="ms-auto"
           disabled={loading || form.formState.isSubmitting || isSubmitting}>
-          {i18n.get('Create Link')}
+          {i18n.t('Create Link')}
         </Button>
       </form>
     </Form>

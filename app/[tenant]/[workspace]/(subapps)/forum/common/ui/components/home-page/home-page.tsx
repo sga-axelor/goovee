@@ -14,7 +14,7 @@ import {
   SUBAPP_CODES,
   URL_PARAMS,
 } from '@/constants';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -202,12 +202,12 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
       <HeroSearch
         title={
           selectedGroup?.name ??
-          (workspace?.config?.forumHeroTitle || i18n.get(BANNER_TITLES.forum))
+          (workspace?.config?.forumHeroTitle || i18n.t(BANNER_TITLES.forum))
         }
         description={
           selectedGroup?.description ??
           (workspace?.config?.forumHeroDescription ||
-            i18n.get(BANNER_DESCRIPTION))
+            i18n.t(BANNER_DESCRIPTION))
         }
         image={imageURL}
         groupImg={selectedGroup?.image?.id}
@@ -222,7 +222,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
         <div className="h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
           <div>
             <h1 className="font-semibold text-xl leading-[1.875rem]">
-              {i18n.get(GROUPS)}
+              {i18n.t(GROUPS)}
             </h1>
           </div>
           <GroupSearch onChange={handleGroupSearch} />
@@ -259,9 +259,9 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
               }`}>
               {isLoggedIn
                 ? isMember
-                  ? i18n.get(START_A_POST)
-                  : i18n.get(JOIN_GROUP_TO_POST)
-                : i18n.get(DISABLED_SEARCH_PLACEHOLDER)}
+                  ? i18n.t(START_A_POST)
+                  : i18n.t(JOIN_GROUP_TO_POST)
+                : i18n.t(DISABLED_SEARCH_PLACEHOLDER)}
             </Button>
             {false && (
               <Button

@@ -5,7 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Button} from '@/ui/components/button';
 
 import {Form} from '@/ui/components/form';
@@ -30,12 +30,12 @@ export default function Page() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-20">
             <div className="space-y-4">
-              <Title text={i18n.get('Notifications')} />
+              <Title text={i18n.t('Notifications')} />
             </div>
 
             <div className="space-y-4 text-end sr-only">
               <Button variant="success" disabled>
-                {i18n.get('Save settings')}
+                {i18n.t('Save settings')}
               </Button>
             </div>
           </div>

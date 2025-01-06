@@ -5,7 +5,7 @@ import {MdOutlineNotificationAdd} from 'react-icons/md';
 import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
 import {Pagination} from '@/ui/components';
 import {URL_PARAMS} from '@/constants';
@@ -91,7 +91,7 @@ const Content = ({
               title={category}
               categories={categories}
               showButton={true}
-              buttonText={i18n.get(SUBSCRIBE)}
+              buttonText={i18n.t(SUBSCRIBE)}
               buttonIcon={MdOutlineNotificationAdd}
             />
             {Number(page) === 1 && (
@@ -100,7 +100,7 @@ const Content = ({
             <div className="flex flex-col lg:flex-row gap-6">
               {featuredNews?.length > 0 && (
                 <FeedList
-                  title={i18n.get(FEATURED_NEWS)}
+                  title={i18n.t(FEATURED_NEWS)}
                   items={featuredNews}
                   onClick={handleClick}
                 />
@@ -182,7 +182,7 @@ const Content = ({
         ) : (
           <>
             <div className="font-medium text-center flex items-center justify-center h-full py-4">
-              {i18n.get(NO_NEWS_AVAILABLE)}
+              {i18n.t(NO_NEWS_AVAILABLE)}
             </div>
           </>
         )}

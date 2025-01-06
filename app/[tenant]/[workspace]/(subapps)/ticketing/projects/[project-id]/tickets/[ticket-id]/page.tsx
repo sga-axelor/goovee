@@ -5,7 +5,7 @@ import {FaChevronRight} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
 import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {type Tenant} from '@/tenant';
 import {
   Breadcrumb,
@@ -103,7 +103,7 @@ export default async function Page({
               asChild
               className="text-foreground-muted cursor-pointer truncate text-md">
               <Link href={`${workspaceURI}/ticketing`}>
-                {await getTranslation('Projects')}
+                {await t('Projects')}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -124,9 +124,7 @@ export default async function Page({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild className="cursor-pointer text-md">
-              <Link href={allTicketsURL}>
-                {await getTranslation('All tickets')}
-              </Link>
+              <Link href={allTicketsURL}>{await t('All tickets')}</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator>
@@ -177,7 +175,7 @@ export default async function Page({
       </TicketDetailsProvider>
       <div className="rounded-md border bg-card p-4 mt-5">
         <h4 className="text-xl font-semibold border-b">
-          {await getTranslation('Comments')}
+          {await t('Comments')}
         </h4>
         <Comments
           record={ticket}

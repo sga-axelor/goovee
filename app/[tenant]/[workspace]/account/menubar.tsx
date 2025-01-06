@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
@@ -27,7 +27,7 @@ function MenuItem({item}: {item: Item}) {
   return (
     <div
       key={item.route}
-      title={i18n.get(item.label)}
+      title={i18n.t(item.label)}
       className={cn(
         'line-clamp-1 text-center p-1 font-medium text-sm lg:line-clamp-none lg:text-left lg:font-normal lg:ps-8 rounded-sm cursor-pointer',
         {
@@ -35,7 +35,7 @@ function MenuItem({item}: {item: Item}) {
         },
       )}>
       <Link key={item.route} href={`${workspaceURL}/account/${item.route}`}>
-        {i18n.get(item.label)}
+        {i18n.t(item.label)}
       </Link>
     </div>
   );
@@ -59,9 +59,9 @@ function Menu({title, items}: {title: string; items: Item[]}) {
 export default function Sidebar({isAdmin}: {isAdmin: boolean}) {
   return (
     <div className="space-y-4 p-2 bg-white lg:bg-inherit lg:border-e lg:space-y-10 lg:px-0 lg:py-2">
-      <Menu title={i18n.get('Global')} items={GLOBAL_MENU} />
+      <Menu title={i18n.t('Global')} items={GLOBAL_MENU} />
       <Menu
-        title={i18n.get('Workspace')}
+        title={i18n.t('Workspace')}
         items={isAdmin ? ADMIN_WORKSPACE_MENU : WORKSPACE_MENU}
       />
     </div>

@@ -12,7 +12,7 @@ import paypalhttpclient from '@/payment/paypal';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
 import {stripe} from '@/payment/stripe';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {TENANT_HEADER} from '@/middleware';
 import {manager, type Tenant} from '@/tenant';
@@ -189,7 +189,7 @@ export async function paypalCaptureOrder({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Invalid tenant'),
+      message: await t('Invalid tenant'),
     };
   }
 
@@ -230,14 +230,14 @@ export async function paypalCaptureOrder({
   if (!workspace?.config?.confirmOrder) {
     return {
       error: true,
-      message: await getTranslation('Not allowed'),
+      message: await t('Not allowed'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: await getTranslation('Online payment is not available'),
+      message: await t('Online payment is not available'),
     };
   }
 
@@ -248,7 +248,7 @@ export async function paypalCaptureOrder({
   if (!allowPaypal) {
     return {
       error: true,
-      message: await getTranslation('Paypal is not available'),
+      message: await t('Paypal is not available'),
     };
   }
 
@@ -298,21 +298,21 @@ export async function paypalCreateOrder({
   if (!session) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -321,7 +321,7 @@ export async function paypalCreateOrder({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Invalid tenant'),
+      message: await t('Invalid tenant'),
     };
   }
 
@@ -336,7 +336,7 @@ export async function paypalCreateOrder({
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -350,21 +350,21 @@ export async function paypalCreateOrder({
   if (!hasShopAccess) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
   if (!workspace?.config?.confirmOrder) {
     return {
       error: true,
-      message: await getTranslation('Not allowed'),
+      message: await t('Not allowed'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: await getTranslation('Online payment is not available'),
+      message: await t('Online payment is not available'),
     };
   }
 
@@ -375,7 +375,7 @@ export async function paypalCreateOrder({
   if (!allowPaypal) {
     return {
       error: true,
-      message: await getTranslation('Paypal is not available'),
+      message: await t('Paypal is not available'),
     };
   }
 
@@ -412,7 +412,7 @@ export async function paypalCreateOrder({
   if (response.statusCode !== 201) {
     return {
       error: true,
-      message: await getTranslation('Error processing payment. Try again'),
+      message: await t('Error processing payment. Try again'),
     };
   }
 
@@ -431,21 +431,21 @@ export async function createStripeCheckoutSession({
   if (!session) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -454,7 +454,7 @@ export async function createStripeCheckoutSession({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Invalid tenant'),
+      message: await t('Invalid tenant'),
     };
   }
 
@@ -469,7 +469,7 @@ export async function createStripeCheckoutSession({
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -483,21 +483,21 @@ export async function createStripeCheckoutSession({
   if (!hasShopAccess) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
   if (!workspace?.config?.confirmOrder) {
     return {
       error: true,
-      message: await getTranslation('Not allowed'),
+      message: await t('Not allowed'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: await getTranslation('Online payment is not available'),
+      message: await t('Online payment is not available'),
     };
   }
 
@@ -508,7 +508,7 @@ export async function createStripeCheckoutSession({
   if (!allowStripe) {
     return {
       error: true,
-      message: await getTranslation('Stripe is not available'),
+      message: await t('Stripe is not available'),
     };
   }
 
@@ -566,21 +566,21 @@ export async function validateStripePayment({
   if (!session) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -591,7 +591,7 @@ export async function validateStripePayment({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Invalid tenant'),
+      message: await t('Invalid tenant'),
     };
   }
 
@@ -604,7 +604,7 @@ export async function validateStripePayment({
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -618,21 +618,21 @@ export async function validateStripePayment({
   if (!hasShopAccess) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
   if (!workspace?.config?.confirmOrder) {
     return {
       error: true,
-      message: await getTranslation('Not allowed'),
+      message: await t('Not allowed'),
     };
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return {
       error: true,
-      message: await getTranslation('Online payment is not available'),
+      message: await t('Online payment is not available'),
     };
   }
 
@@ -643,14 +643,14 @@ export async function validateStripePayment({
   if (!allowStripe) {
     return {
       error: true,
-      message: await getTranslation('Stripe is not available'),
+      message: await t('Stripe is not available'),
     };
   }
 
   if (!stripeSessionId) {
     return {
       error: true,
-      message: await getTranslation('Bad Request'),
+      message: await t('Bad Request'),
     };
   }
 
@@ -660,7 +660,7 @@ export async function validateStripePayment({
   if (!stripeSession) {
     return {
       error: true,
-      message: await getTranslation('Invalid stripe session'),
+      message: await t('Invalid stripe session'),
     };
   }
 
@@ -672,7 +672,7 @@ export async function validateStripePayment({
   ) {
     return {
       error: true,
-      message: await getTranslation('Payment not successfull'),
+      message: await t('Payment not successfull'),
     };
   }
 
@@ -682,7 +682,7 @@ export async function validateStripePayment({
   if (!lineItems) {
     return {
       error: true,
-      message: await getTranslation('Payment not successfull'),
+      message: await t('Payment not successfull'),
     };
   }
 
@@ -699,7 +699,7 @@ export async function validateStripePayment({
   if (stripeTotal && cartTotal && stripeTotal !== cartTotal) {
     return {
       error: true,
-      message: await getTranslation('Payment amount mistmatch'),
+      message: await t('Payment amount mistmatch'),
     };
   }
 

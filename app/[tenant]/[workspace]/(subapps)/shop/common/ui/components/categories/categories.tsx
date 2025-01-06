@@ -2,7 +2,7 @@ import {Fragment, useRef, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Separator,
   NavigationMenu,
@@ -91,7 +91,7 @@ const Category = ({
                       },
                     )}>
                     <p className="px-2 text-foreground border-foreground font-medium">
-                      {i18n.get(item.name)}
+                      {i18n.t(item.name)}
                     </p>
                   </NavigationMenuTrigger>
                 </div>
@@ -116,7 +116,7 @@ const Category = ({
             },
           )}
           onClick={handleClick}>
-          {i18n.get(item.name)}
+          {i18n.t(item.name)}
         </p>
       )}
     </div>

@@ -104,6 +104,9 @@ dependencies:
   date-fns:
     specifier: ^3.6.0
     version: 3.6.0
+  dayjs:
+    specifier: ^1.11.13
+    version: 1.11.13
   dlx:
     specifier: ^0.2.1
     version: 0.2.1

@@ -27,7 +27,7 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {computeTotal} from '@/utils/cart';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {SEARCH_PARAMS} from '@/constants';
 import type {Cart, Product, PortalWorkspace} from '@/types';
 
@@ -91,7 +91,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
     if (Number(newValue) < 1) {
       toast({
         variant: 'destructive',
-        description: i18n.get('Enter valid quantity'),
+        description: i18n.t('Enter valid quantity'),
       });
     }
     setQuantity(Number(newValue));
@@ -117,13 +117,11 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             href={`${workspaceURI}/shop/product/${encodeURIComponent(
               product.name,
             )}-${product.id}`}>
-            <h6 className="font-medium mb-2">
-              {i18n.getValueAttribute(product.name)}
-            </h6>
+            <h6 className="font-medium mb-2">{i18n.tattr(product.name)}</h6>
           </Link>
           {product.allowCustomNote && (
             <div>
-              <Label>{i18n.get('Note')}</Label>
+              <Label>{i18n.t('Note')}</Label>
               <textarea
                 className="border rounded-lg"
                 value={note}
@@ -132,7 +130,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             </div>
           )}
           <div className="flex flex-col mt-auto">
-            <p className="mb-2 font-semibold">{i18n.get('Quantity')}</p>
+            <p className="mb-2 font-semibold">{i18n.t('Quantity')}</p>
             <Quantity
               value={quantity}
               disabled={updating}
@@ -216,19 +214,19 @@ function CartSummary({
     <div className="p-4 bg-card text-card-foreground rounded-lg">
       {workspace?.config?.displayPrices && (
         <>
-          <p className="text-xl font-semibold mb-6">{i18n.get('Total')}</p>
+          <p className="text-xl font-semibold mb-6">{i18n.t('Total')}</p>
           <Separator className="mb-2" />
           <div className="flex justify-between">
-            <p className="mb-4">{i18n.get('Products')}</p>
+            <p className="mb-4">{i18n.t('Products')}</p>
             <p className="font-semibold mb-4">{displayTotal}</p>
           </div>
           <div className="flex justify-between">
-            <p className="mb-4">{i18n.get('Shipping')}</p>
-            <p className="text-xs mb-4">{i18n.get('To be determined')}</p>
+            <p className="mb-4">{i18n.t('Shipping')}</p>
+            <p className="text-xs mb-4">{i18n.t('To be determined')}</p>
           </div>
           <Separator className="my-2" />
           <div className="flex justify-between my-4">
-            <p className="font-medium">{i18n.get('Total Price')}</p>
+            <p className="font-medium">{i18n.t('Total Price')}</p>
             <p className="text-xl font-semibold mb-0">{displayTotal}</p>
           </div>
         </>
@@ -240,7 +238,7 @@ function CartSummary({
               href={`${workspaceURI}/shop/cart/checkout`}
               className="no-underline text-inherit">
               <Button className="w-full rounded-full mb-4" disabled={noitem}>
-                {i18n.get('Checkout')}
+                {i18n.t('Checkout')}
               </Button>
             </Link>
           )}
@@ -250,7 +248,7 @@ function CartSummary({
               className="w-full rounded-full mb-4"
               disabled={noitem}
               onClick={onRequestQuotation}>
-              {i18n.get('Request Quotation')}
+              {i18n.t('Request Quotation')}
             </Button>
           )}
         </>
@@ -261,7 +259,7 @@ function CartSummary({
             pathname,
           )}&workspaceURI=${encodeURIComponent(workspaceURI)}&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}`}>
           <Button className="mb-4 w-full rounded-full">
-            {i18n.get('Login for checkout')}
+            {i18n.t('Login for checkout')}
           </Button>
         </Link>
       )}
@@ -272,7 +270,7 @@ function CartSummary({
           <Link
             href={`${workspaceURI}/shop`}
             className="no-underline text-inherit">
-            {i18n.get('Continue Shopping')}
+            {i18n.t('Continue Shopping')}
           </Link>
         </Button>
       </div>
@@ -318,14 +316,14 @@ export default function Content({
 
   const openProductConfirmation = async (product: Product) => {
     openConfirmation({
-      title: `${i18n.get('Do you want to remove')} ${product?.name}?`,
+      title: `${i18n.t('Do you want to remove')} ${product?.name}?`,
       onContinue: () => handleRemoveProduct(product),
     });
   };
 
   const openQuotationConfirmation = () => {
     openConfirmation({
-      title: i18n.get('Do you want to request quotation?'),
+      title: i18n.t('Do you want to request quotation?'),
       onContinue: handleRequestQuotation,
     });
   };
@@ -397,12 +395,12 @@ export default function Content({
   );
 
   if (loading) {
-    return <p>{i18n.get('Loading')}...</p>;
+    return <p>{i18n.t('Loading')}...</p>;
   }
 
   return (
     <>
-      <h4 className="mb-6 text-xl font-medium">{i18n.get('Cart')}</h4>
+      <h4 className="mb-6 text-xl font-medium">{i18n.t('Cart')}</h4>
       <div className="grid mb-[5rem] lg:mb-0 lg:grid-cols-[1fr_25%] xl:grid-cols-[1fr_21%] grid-cols-1 gap-4">
         {cart?.items?.length ? (
           <CartItems
@@ -412,7 +410,7 @@ export default function Content({
             workspace={workspace}
           />
         ) : (
-          <p className="text-xl font-bold">{i18n.get('Your cart is empty.')}</p>
+          <p className="text-xl font-bold">{i18n.t('Your cart is empty.')}</p>
         )}
         <CartSummary
           cart={$cart}
@@ -428,14 +426,14 @@ export default function Content({
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={closeConfirmation}>
-                {i18n.get('Cancel')}
+                {i18n.t('Cancel')}
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => {
                   confirmationDialog?.onContinue();
                   closeConfirmation();
                 }}>
-                {i18n.get('Continue')}
+                {i18n.t('Continue')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

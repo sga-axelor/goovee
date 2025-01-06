@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import Select, {SingleValue, MultiValue} from 'react-select';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {createDefaultValues} from '@/ui/form';
 import type {Field} from '@/ui/form';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -91,7 +91,7 @@ export const CustomSelect = ({
       } else {
         toast({
           variant: 'destructive',
-          title: i18n.get(
+          title: i18n.t(
             data?.message || 'Error while fetching updated comments.',
           ),
         });
@@ -122,7 +122,7 @@ export const CustomSelect = ({
     <Select
       isMulti
       options={filteredOptions}
-      placeholder={i18n.get('Select a user')}
+      placeholder={i18n.t('Select a user')}
       value={form.watch(field.name) ?? []}
       onChange={handleChange}
       onInputChange={handleInputChange}

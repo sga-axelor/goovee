@@ -8,7 +8,7 @@ import {Pagination} from 'swiper/modules';
 
 import {Button} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {Categories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components/categories';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -49,7 +49,7 @@ export function FeaturedCategories({
     });
 
     toast({
-      title: i18n.get('Added to cart'),
+      title: i18n.t('Added to cart'),
     });
   };
 
@@ -100,7 +100,7 @@ export function FeaturedCategories({
                         href={item.href || '#'}
                         target="_blank"
                         rel="noopener noreferrer">
-                        {i18n.get(item?.buttonLabel || 'Shop products')}
+                        {i18n.t(item?.buttonLabel || 'Shop products')}
                       </a>
                     </Button>
                   </div>

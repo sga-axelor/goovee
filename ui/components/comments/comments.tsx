@@ -17,7 +17,7 @@ import {
   DropdownToggle,
   Separator,
 } from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   COMMENT,
   COMMENTS,
@@ -95,7 +95,7 @@ export function Comments({
       disabled={isDisabled}
       className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
       placeholderText={
-        isLoggedIn ? i18n.get(COMMENT) : i18n.get(DISABLED_COMMENT_PLACEHOLDER)
+        isLoggedIn ? i18n.t(COMMENT) : i18n.t(DISABLED_COMMENT_PLACEHOLDER)
       }
       onSubmit={onCreate}
     />
@@ -115,8 +115,8 @@ export function Comments({
               <span className="text-sm">
                 {totalCommentThreadCount}{' '}
                 {totalCommentThreadCount > 1
-                  ? i18n.get(COMMENTS.toLowerCase())
-                  : i18n.get(COMMENT.toLowerCase())}
+                  ? i18n.t(COMMENTS.toLowerCase())
+                  : i18n.t(COMMENT.toLowerCase())}
               </span>
             )}
           </div>
@@ -140,7 +140,7 @@ export function Comments({
             {!hideSortBy && (
               <div className="w-full flex gap-4 items-center">
                 <DropdownToggle
-                  title={i18n.get('Sort by')}
+                  title={i18n.t('Sort by')}
                   labelClassName="text-xs"
                   value={sortBy}
                   options={SORT_BY_OPTIONS}
@@ -174,7 +174,7 @@ export function Comments({
                     onClick={toggleComments}>
                     <MdClose className="w-4 h-4" />
                     <span className="text-xs font-semibold leading-[18px]">
-                      {i18n.get('Close comments')}
+                      {i18n.t('Close comments')}
                     </span>
                   </div>
                 )}
@@ -184,7 +184,7 @@ export function Comments({
                     onClick={loadMore}>
                     <MdAdd className="w-4 h-4" />
                     <span className="text-xs font-semibold leading-[18px]">
-                      {i18n.get('See more')}
+                      {i18n.t('See more')}
                     </span>
                   </div>
                 )}

@@ -4,7 +4,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {TENANT_HEADER} from '@/middleware';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -25,14 +25,14 @@ export const fetchCities = async ({
   if (!countryId) {
     return {
       error: true,
-      message: await getTranslation('Country Id is required'),
+      message: await t('Country Id is required'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Workspace not provided.'),
+      message: await t('Workspace not provided.'),
     };
   }
 
@@ -41,7 +41,7 @@ export const fetchCities = async ({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -49,13 +49,13 @@ export const fetchCities = async ({
   const user = session?.user;
 
   if (!user) {
-    return {error: true, message: await getTranslation('Unauthorized')};
+    return {error: true, message: await t('Unauthorized')};
   }
 
   const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
 
   if (!workspace) {
-    return {error: true, message: await getTranslation('Invalid workspace')};
+    return {error: true, message: await t('Invalid workspace')};
   }
 
   const country: any = await findCountry({id: countryId, tenantId});
@@ -63,7 +63,7 @@ export const fetchCities = async ({
   if (!country) {
     return {
       error: true,
-      message: await getTranslation('Invalid country selected!'),
+      message: await t('Invalid country selected!'),
     };
   }
 
@@ -77,9 +77,7 @@ export const fetchCities = async ({
     console.error('Error fetching cities:', error);
     return {
       error: true,
-      message: await getTranslation(
-        'An unexpected error occurred while fetching cities',
-      ),
+      message: await t('An unexpected error occurred while fetching cities'),
     };
   }
 };
@@ -128,21 +126,21 @@ export async function confirmAddresses({
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Workspace not provided.'),
+      message: await t('Workspace not provided.'),
     };
   }
 
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Bad request.'),
+      message: await t('Bad request.'),
     };
   }
 
   if (!record) {
     return {
       error: true,
-      message: await getTranslation('Invalid record.'),
+      message: await t('Invalid record.'),
     };
   }
 
@@ -151,7 +149,7 @@ export async function confirmAddresses({
   if (!session) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -166,7 +164,7 @@ export async function confirmAddresses({
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -180,7 +178,7 @@ export async function confirmAddresses({
   if (!subapp) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -200,7 +198,7 @@ export async function confirmAddresses({
   if (error) {
     return {
       error: true,
-      message: await getTranslation(message || 'Record not found.'),
+      message: await t(message || 'Record not found.'),
     };
   }
 
@@ -233,9 +231,7 @@ export async function confirmAddresses({
   } catch (error) {
     return {
       error: true,
-      message: await getTranslation(
-        'Something went wrong while saving address!',
-      ),
+      message: await t('Something went wrong while saving address!'),
     };
   }
 }

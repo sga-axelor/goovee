@@ -4,7 +4,7 @@ import {headers} from 'next/headers';
 import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
 import {findPartnerWorkspaceConfig, findWorkspace} from '@/orm/workspace';
@@ -17,7 +17,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -26,7 +26,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -35,13 +35,13 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
   if (!user) {
     return {
       error: true,
-      message: await getTranslation('Unauthorised user.'),
+      message: await t('Unauthorised user.'),
     };
   }
 
   const workspace = await findWorkspace({url: workspaceURL, user, tenantId});
   if (!workspace) {
-    return {error: true, message: await getTranslation('Invalid workspace')};
+    return {error: true, message: await t('Invalid workspace')};
   }
 
   const $user: any = await findPartnerByEmail(user.email, tenantId);
@@ -49,7 +49,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
   if (!$user) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
   const isContact = user?.isContact;
@@ -57,7 +57,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return {error: true, message: await getTranslation('Invalid tenant')};
+    return {error: true, message: await t('Invalid tenant')};
   }
 
   try {
@@ -82,7 +82,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
         .then(contact => contact?.contactWorkspaceConfigSet?.[0]);
 
       if (!contactConfig) {
-        return {error: true, message: await getTranslation('Bad Request')};
+        return {error: true, message: await t('Bad Request')};
       }
 
       result = await updatePartner({
@@ -114,7 +114,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
         .then(partner => partner?.partnerWorkspaceSet?.[0]);
 
       if (!partnerWorkspace) {
-        return {error: true, message: await getTranslation('Bad Request')};
+        return {error: true, message: await t('Bad Request')};
       }
 
       result = await client.aOSPartner
@@ -136,9 +136,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
   } catch (err) {
     return {
       error: true,
-      message: await getTranslation(
-        'Some error occured while leaving the workspace.',
-      ),
+      message: await t('Some error occured while leaving the workspace.'),
     };
   }
 }

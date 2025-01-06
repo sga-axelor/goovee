@@ -4,7 +4,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {ORDER_BY, SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -25,7 +25,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Bad Request'),
+      message: await t('Bad Request'),
     };
   }
 
@@ -39,7 +39,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!subapp) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -52,7 +52,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 

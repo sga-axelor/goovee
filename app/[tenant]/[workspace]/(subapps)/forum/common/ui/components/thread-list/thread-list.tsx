@@ -4,7 +4,7 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {DropdownToggle, Separator} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
 import {SORT_BY_OPTIONS, URL_PARAMS} from '@/constants';
 
@@ -28,21 +28,21 @@ export const ThreadList = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       <div className="w-full flex gap-4 items-center">
-        <div>{i18n.get('Thread')}</div>
+        <div>{i18n.t('Thread')}</div>
         <Separator
           style={{
             flexShrink: 1,
           }}
         />
         <DropdownToggle
-          title={i18n.get('Sort by')}
+          title={i18n.t('Sort by')}
           value={sort}
           options={SORT_BY_OPTIONS}
           onSelect={handleSortBy}
         />
       </div>
       {!posts?.length ? (
-        <div>{i18n.get('No posts available.')}</div>
+        <div>{i18n.t('No posts available.')}</div>
       ) : (
         <div className="flex flex-col gap-4">
           <InfiniteScroll initialPosts={posts} pageInfo={pageInfo} />

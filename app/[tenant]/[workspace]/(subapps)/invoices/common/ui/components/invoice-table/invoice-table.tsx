@@ -3,7 +3,7 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -65,9 +65,9 @@ function TableFooter({
       {/* Row 4 */}
       <div></div>
       <div className="border-b py-2 text-right">
-        <p className="mb-0">{i18n.get('Subtotal')}</p>
-        <p className="mb-0">{i18n.get('Discount')}</p>
-        <p className="mb-0">{i18n.get('Tax')}</p>
+        <p className="mb-0">{i18n.t('Subtotal')}</p>
+        <p className="mb-0">{i18n.t('Discount')}</p>
+        <p className="mb-0">{i18n.t('Tax')}</p>
       </div>
       <div className="border-b py-2 text-right">
         <p className="mb-0">{exTaxTotal}</p>
@@ -77,8 +77,8 @@ function TableFooter({
       {/* Row 5 */}
       <div></div>
       <div className="!border-b-[0.1875rem] border-solid !border-palette-purple py-2 text-right">
-        <p className="mb-0">{i18n.get('Total')}</p>
-        <p className="mb-0">{i18n.get('Deposit Requested')}</p>
+        <p className="mb-0">{i18n.t('Total')}</p>
+        <p className="mb-0">{i18n.t('Deposit Requested')}</p>
       </div>
       <div className="!border-b-[0.1875rem] border-solid !border-palette-purple py-2 text-right">
         <p className="mb-0">{inTaxTotal}</p>
@@ -88,7 +88,7 @@ function TableFooter({
       </div>
       {/* Row 6 */}
       <div></div>
-      <h6 className="text-right py-2 font-bold">{i18n.get('Deposit Due')}</h6>
+      <h6 className="text-right py-2 font-bold">{i18n.t('Deposit Due')}</h6>
       <h6 className="text-right py-2 font-bold">
         {amountRemaining.value} {amountRemaining.symbol}
       </h6>

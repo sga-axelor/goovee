@@ -5,7 +5,7 @@ import {usePathname, useRouter} from 'next/navigation';
 import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {COMMENTS, SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {Comments} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
@@ -87,7 +87,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
           )}
           {attachmentList?.length > 0 && (
             <AttachmentList
-              title={i18n.get(RELATED_FILES)}
+              title={i18n.t(RELATED_FILES)}
               items={attachmentList}
               width="w-full"
             />
@@ -95,7 +95,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
 
           {relatedNewsSet?.length > 0 && (
             <FeedList
-              title={i18n.get(RELATED_NEWS)}
+              title={i18n.t(RELATED_NEWS)}
               items={relatedNewsSet}
               width="w-full"
               onClick={handleClick}
@@ -103,7 +103,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
           )}
           {recommendedNews?.length > 0 && (
             <FeedList
-              title={i18n.get(RECOMMENDED_NEWS)}
+              title={i18n.t(RECOMMENDED_NEWS)}
               items={recommendedNews}
               width="w-full"
               onClick={handleClick}
@@ -116,7 +116,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
         <div className="w-full mb-24 lg:mb-4">
           <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
             <div>
-              <div className="text-xl font-semibold">{i18n.get(COMMENTS)}</div>
+              <div className="text-xl font-semibold">{i18n.t(COMMENTS)}</div>
             </div>
 
             <Comments

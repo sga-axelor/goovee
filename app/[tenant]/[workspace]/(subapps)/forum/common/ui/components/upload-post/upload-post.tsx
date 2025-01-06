@@ -1,7 +1,7 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
@@ -26,7 +26,7 @@ export const UploadPost = ({
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className={`max-w-screen-lg h-fit p-1 xl:p-4`}>
           <DialogTitle className="hidden">
-            {i18n.get(MAKE_A_NEW_POST)}
+            {i18n.t(MAKE_A_NEW_POST)}
           </DialogTitle>
           <CreatePost
             groups={groups}

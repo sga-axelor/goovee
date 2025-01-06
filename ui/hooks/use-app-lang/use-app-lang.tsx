@@ -1,9 +1,8 @@
-import {useEffect, useMemo, useState} from 'react';
-import {useSession} from 'next-auth/react';
+import {useMemo} from 'react';
 
 // ---- CORE IMPORTS ---- //
+import {DEFAULT_LOCALE} from '@/locale';
 import {toTitleCase} from '@/utils/names';
-import {DEFAULT_LANGUAGE_CODE} from '@/constants';
 
 const RTL_LANGS = [
   'ar', // Arabic
@@ -27,25 +26,14 @@ function toLangTag(lang: string) {
 const isRTL = (lang: string) =>
   RTL_LANGS.some(x => lang === x || lang.startsWith(`${x}-`));
 
-export function useAppLang() {
-  const [locale, setLocale] = useState(DEFAULT_LANGUAGE_CODE);
-  const {data: session} = useSession();
-  const user = session?.user;
-  const language = user?.language;
-
-  useEffect(() => {
-    const locale = language || navigator.language || navigator?.userLanguage;
-    locale && setLocale(locale);
-  }, [language]);
+export function useAppLang(opts: {locale?: string}) {
+  const locale = opts?.locale ?? DEFAULT_LOCALE;
 
   const lang = useMemo(() => toLangTag(locale), [locale]);
   const dir = useMemo(() => (isRTL(lang) ? 'rtl' : 'ltr'), [lang]);
 
-  return useMemo(
-    () => ({
-      dir,
-      lang,
-    }),
-    [lang, dir],
-  );
+  return {
+    dir,
+    lang,
+  };
 }

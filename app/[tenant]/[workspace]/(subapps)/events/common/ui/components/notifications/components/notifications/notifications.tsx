@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {NotificationCard} from '@/subapps/events/common/ui/components/notifications/components';
@@ -68,12 +68,12 @@ export const Notifications = () => {
     <Card className="border-none shadow-none rounded-none lg:rounded-lg ">
       <CardHeader className="p-4 border-b border-grey-1">
         <CardTitle className="flex items-center justify-between">
-          <p className="text-base font-semibold">{i18n.get('Notifications')}</p>
+          <p className="text-base font-semibold">{i18n.t('Notifications')}</p>
           <div className="flex items-center gap-x-2">
             <Button
               className="text-[0.688rem] font-normal leading-6 tracking-normal"
               variant="outline">
-              {i18n.get('Mark as all read')}
+              {i18n.t('Mark as all read')}
             </Button>
             <MdOutlineSettings />
           </div>
@@ -94,7 +94,7 @@ export const Notifications = () => {
           <div className="relative flex py-4 items-center">
             <div className="flex-grow border-t dark:border-white border-grey-4"></div>
             <span className="flex-shrink mx-4 text-[0.688rem] font-medium ">
-              {i18n.get('Already read')}
+              {i18n.t('Already read')}
             </span>
             <div className="flex-grow border-t dark:border-white border-grey-4"></div>
           </div>

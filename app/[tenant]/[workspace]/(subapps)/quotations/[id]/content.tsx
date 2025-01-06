@@ -15,7 +15,7 @@ import {
   Button,
   Comments,
 } from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   DEFAULT_CURRENCY_CODE,
@@ -67,7 +67,7 @@ function Stripe({onApprove, quotation}: any) {
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error processing stripe payment, try again.'),
+        title: i18n.t('Error processing stripe payment, try again.'),
       });
     }
   };
@@ -93,7 +93,7 @@ function Stripe({onApprove, quotation}: any) {
         } else {
           toast({
             variant: 'success',
-            title: i18n.get('Quotation paid successfully'),
+            title: i18n.t('Quotation paid successfully'),
           });
 
           onApprove?.(result?.order);
@@ -101,7 +101,7 @@ function Stripe({onApprove, quotation}: any) {
       } catch (err) {
         toast({
           variant: 'destructive',
-          title: i18n.get('Error processing stripe payment, try again.'),
+          title: i18n.t('Error processing stripe payment, try again.'),
         });
       }
     },
@@ -121,7 +121,7 @@ function Stripe({onApprove, quotation}: any) {
     if (stripeError) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error processing stripe payment, try again.'),
+        title: i18n.t('Error processing stripe payment, try again.'),
       });
     } else if (stripeSessionId) {
       handleValidateStripePayment({stripeSessionId});
@@ -170,7 +170,7 @@ function Paypal({onApprove, quotation}: any) {
     } else {
       toast({
         variant: 'success',
-        title: i18n.get('Quotation paid successfully'),
+        title: i18n.t('Quotation paid successfully'),
       });
 
       onApprove?.(result?.order);
@@ -253,14 +253,14 @@ const Content = ({
       }
 
       toast({
-        title: i18n.get('Quotation confirmed'),
+        title: i18n.t('Quotation confirmed'),
         variant: 'success',
       });
 
       redirectOrder(result?.order);
     } catch (err) {
       toast({
-        title: i18n.get('Error confirming quotation'),
+        title: i18n.t('Error confirming quotation'),
         variant: 'destructive',
       });
     }
@@ -276,7 +276,7 @@ const Content = ({
 
   const renderPaymentOptions = () => {
     if (!(allowPaypal && allowStripe)) {
-      return <p>{i18n.get('No payment options available.')}</p>;
+      return <p>{i18n.t('No payment options available.')}</p>;
     }
 
     return (
@@ -299,7 +299,7 @@ const Content = ({
 
   return (
     <>
-      <Container title={`${i18n.get('Quotation')} ${saleOrderSeq}`}>
+      <Container title={`${i18n.t('Quotation')} ${saleOrderSeq}`}>
         <Informations
           endOfValidityDate={endOfValidityDate}
           statusSelect={statusSelect}
@@ -339,7 +339,7 @@ const Content = ({
         </div>
         <div className="rounded-md border bg-card p-4 mt-5">
           <h4 className="text-xl font-semibold border-b">
-            {i18n.get('Comments')}
+            {i18n.t('Comments')}
           </h4>
           <Comments
             record={{id: quotation.id}}

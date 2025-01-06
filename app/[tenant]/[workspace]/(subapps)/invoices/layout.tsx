@@ -6,11 +6,11 @@ import {getSession} from '@/auth';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 
 export async function generateMetadata() {
   return {
-    title: await getTranslation('Invoices'),
+    title: await t('Invoices'),
   };
 }
 

@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {StyledAlert, TextField, Button} from '@/ui/components';
 
 export default function Content() {
@@ -19,15 +19,13 @@ export default function Content() {
 
   return (
     <div className="mx-auto p-4 sm:p-6 max-w-[74.0625rem] w-full">
-      <h5 className="mb-3 font-medium text-xl">
-        {i18n.get('Change password')}
-      </h5>
+      <h5 className="mb-3 font-medium text-xl">{i18n.t('Change password')}</h5>
       <form
         className="bg-card text-card-foreground rounded-lg py-4 px-6 sm:px-4 grid grid-cols-1 gap-4"
         onSubmit={handleSubmit}>
         <div>
           <TextField
-            label={i18n.get('New Password')}
+            label={i18n.t('New Password')}
             name="password"
             placeholder="Password"
             type={showPassword ? 'text' : 'password'}
@@ -41,7 +39,7 @@ export default function Content() {
             ]}
           />
           <TextField
-            label={i18n.get('Confirm Password')}
+            label={i18n.t('Confirm Password')}
             name="confirmPassword"
             placeholder="Password"
             type={showConfirmPassword ? 'text' : 'password'}
@@ -55,22 +53,22 @@ export default function Content() {
             ]}
           />
           <Button type="submit" className="rounded-full">
-            {i18n.get('Submit')}
+            {i18n.t('Submit')}
           </Button>
         </div>
         <StyledAlert
           variant="error"
           show={true}
-          heading={i18n.get('Your passwords do not match, please try again.')}
-          description={i18n.get(
+          heading={i18n.t('Your passwords do not match, please try again.')}
+          description={i18n.t(
             'The description line of a sticky alert. Helpful component that is designed to be placed near to alert context.',
           )}
         />
         <StyledAlert
           variant="success"
           show={true}
-          heading={i18n.get('Your password has been successfully updated.')}
-          description={i18n.get('Add text here if necessary.')}
+          heading={i18n.t('Your password has been successfully updated.')}
+          description={i18n.t('Add text here if necessary.')}
         />
       </form>
     </div>

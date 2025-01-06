@@ -2,7 +2,7 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {download} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
@@ -32,7 +32,7 @@ export function CommentAttachments({attachments}: CommentAttachmentsProps) {
 
   return (
     <div className="px-4 text-xs mb-1">
-      <div className="font-semibold"> {i18n.get('Files')}:</div>
+      <div className="font-semibold"> {i18n.t('Files')}:</div>
       <ul className="list-disc">
         {attachments?.map(attachment => (
           <li

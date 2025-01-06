@@ -3,7 +3,7 @@
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {Container, TableList} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSortBy} from '@/ui/hooks';
@@ -30,7 +30,7 @@ const Content = (props: Props) => {
 
   return (
     <>
-      <Container title={i18n.get('Quotations')}>
+      <Container title={i18n.t('Quotations')}>
         <div className="flex flex-col gap-4">
           <TableList
             columns={Columns}

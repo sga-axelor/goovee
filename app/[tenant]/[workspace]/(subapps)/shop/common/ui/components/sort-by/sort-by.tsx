@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {MdSort} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Select,
   SelectContent,
@@ -44,7 +44,7 @@ export function SortBy({
   return (
     <div
       className={`${styles.sortby} hidden md:flex items-center gap-4 ${className}`}>
-      <p className="mb-0 shrink-0 text-sm">{i18n.get('Sort By')}</p>
+      <p className="mb-0 shrink-0 text-sm">{i18n.t('Sort By')}</p>
 
       <Select
         defaultValue={value?.value}
@@ -59,7 +59,7 @@ export function SortBy({
             {Array.isArray(options) &&
               options?.map(o => (
                 <SelectItem key={o?.value} value={o?.value}>
-                  {i18n.get(o?.label)}
+                  {i18n.t(o?.label)}
                 </SelectItem>
               ))}
           </SelectGroup>
@@ -100,7 +100,7 @@ export function MobileSortBy({
         <PopoverTrigger asChild>
           <div className="flex">
             <MdSort className="text-2xl" />
-            <p className="text-sm mb-0 font-bold">{i18n.get('Sort By')}</p>
+            <p className="text-sm mb-0 font-bold">{i18n.t('Sort By')}</p>
           </div>
         </PopoverTrigger>
         <PopoverContent className="w-80">
@@ -112,7 +112,7 @@ export function MobileSortBy({
                   className={`${isactive ? 'bg-gray-100 font-bold' : ''} pointer`}
                   key={o.value}
                   onClick={() => onChange({value: o.value})}>
-                  {i18n.get(o.label)}
+                  {i18n.t(o.label)}
                 </li>
               );
             })}

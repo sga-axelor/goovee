@@ -1,4 +1,4 @@
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {
   Alert,
   AlertDescription,
@@ -58,7 +58,7 @@ export function TicketLinkHeader({
               variant="success"
               onClick={openAlert}>
               <MdLink className="size-6 lg:me-1" />
-              <span className="hidden lg:inline">{i18n.get('Link')}</span>
+              <span className="hidden lg:inline">{i18n.t('Link')}</span>
             </Button>
           )}
           {dialogContentRenderer && (
@@ -66,7 +66,7 @@ export function TicketLinkHeader({
               <DialogTrigger asChild>
                 <Button size="sm" type="button" variant="success">
                   <MdAdd className="size-6 lg:me-1" />
-                  <span className="hidden lg:inline">{i18n.get('New')}</span>
+                  <span className="hidden lg:inline">{i18n.t('New')}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-h-full container overflow-y-auto">

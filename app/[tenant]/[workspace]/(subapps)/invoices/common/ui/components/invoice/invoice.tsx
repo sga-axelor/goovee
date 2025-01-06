@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {DocViewer, Loader, Separator} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
@@ -43,12 +43,12 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
     <>
       <div
         className={`${isUnpaid ? 'md:basis-9/12' : 'md:basis-full'} flex flex-col basis-full bg-card text-card-foreground px-6 py-4 gap-4 rounded-lg`}>
-        <h4 className="text-xl font-medium mb-0">{i18n.get('Invoice')}</h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Invoice')}</h4>
         <Separator />
         {file ? (
           <DocViewer record={file} />
         ) : isError ? (
-          <p>{i18n.get(UNABLE_TO_FIND_INVOICE)}</p>
+          <p>{i18n.t(UNABLE_TO_FIND_INVOICE)}</p>
         ) : (
           <Loader />
         )}

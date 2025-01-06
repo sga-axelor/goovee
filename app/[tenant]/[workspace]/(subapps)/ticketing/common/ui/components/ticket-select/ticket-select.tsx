@@ -1,5 +1,5 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import type {Cloned} from '@/types/util';
 import {
   Button,
@@ -71,7 +71,7 @@ export function TicketSelect({
       } catch (e) {
         toast({
           variant: 'destructive',
-          title: i18n.get('Something went wrong'),
+          title: i18n.t('Something went wrong'),
         });
       } finally {
         if (searchRef.current === search) {
@@ -139,13 +139,13 @@ export function TicketSelect({
   const panel = (
     <Command shouldFilter={false}>
       <CommandInput
-        placeholder={i18n.get('Search tickets')}
+        placeholder={i18n.t('Search tickets')}
         onValueChange={handleSearch}
         loading={loading}
       />
       <CommandList>
         <CommandEmpty>
-          {loading ? i18n.get('Searching...') : i18n.get('No results found.')}
+          {loading ? i18n.t('Searching...') : i18n.t('No results found.')}
         </CommandEmpty>
         <CommandGroup>
           {tickets.map(option => (
@@ -166,7 +166,7 @@ export function TicketSelect({
     <Controller open={open} onOpenChange={handleOpenChange}>
       <Trigger asChild>
         <Button variant="outline" className={className} ref={buttonRef}>
-          {value ? value.fullName : i18n.get('Select ticket')}
+          {value ? value.fullName : i18n.t('Select ticket')}
         </Button>
       </Trigger>
       <Content

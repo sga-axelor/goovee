@@ -6,7 +6,7 @@ import {useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {type PortalWorkspace} from '@/types';
 import {Container, NavView, TableList} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSortBy, useToast} from '@/ui/hooks';
 import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
@@ -77,7 +77,7 @@ export default function Content({
 
   return (
     <>
-      <Container title={i18n.get('Invoices')}>
+      <Container title={i18n.t('Invoices')}>
         <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
           <div className="flex flex-col gap-4">
             <TableList

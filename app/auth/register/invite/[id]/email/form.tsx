@@ -10,7 +10,7 @@ import Image from 'next/image';
 import {signIn} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useCountDown, useToast} from '@/ui/hooks';
 import {
   Form,
@@ -33,16 +33,16 @@ import {registerByEmail} from '../action';
 const formSchema = z
   .object({
     firstName: z.string(),
-    name: z.string().min(1, {message: i18n.get('Last name is required.')}),
-    email: z.string().min(1, {message: i18n.get('Email is required')}),
-    otp: z.string().min(1, {message: i18n.get('OTP is required')}),
-    password: z.string().min(1, {message: i18n.get('Password is required')}),
+    name: z.string().min(1, {message: i18n.t('Last name is required.')}),
+    email: z.string().min(1, {message: i18n.t('Email is required')}),
+    otp: z.string().min(1, {message: i18n.t('OTP is required')}),
+    password: z.string().min(1, {message: i18n.t('Password is required')}),
     confirmPassword: z
       .string()
-      .min(1, {message: i18n.get('Confirm password is required')}),
+      .min(1, {message: i18n.t('Confirm password is required')}),
   })
   .refine(data => data.password === data.confirmPassword, {
-    message: i18n.get("Passwords don't match"),
+    message: i18n.t("Passwords don't match"),
     path: ['confirmPassword'],
   });
 
@@ -87,7 +87,7 @@ export default function SignUp({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!(email && tenantId)) {
       toast({
-        title: i18n.get('Email and tenant is required.'),
+        title: i18n.t('Email and tenant is required.'),
         variant: 'destructive',
       });
       return;
@@ -103,7 +103,7 @@ export default function SignUp({
       if (res.success) {
         toast({
           variant: 'success',
-          title: i18n.get('Registration successfully done.'),
+          title: i18n.t('Registration successfully done.'),
         });
 
         router.push(`/auth/login${res?.data?.query}`);
@@ -116,7 +116,7 @@ export default function SignUp({
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error registering, try again'),
+        title: i18n.t('Error registering, try again'),
       });
     }
   };
@@ -138,19 +138,19 @@ export default function SignUp({
     } catch (err) {
       form.setError('email', {
         type: 'custom',
-        message: i18n.get('Invalid email address'),
+        message: i18n.t('Invalid email address'),
       });
     }
   };
 
   return (
     <div className="container space-y-6 mt-8">
-      <h1 className="text-[2rem] font-bold">{i18n.get('Sign Up')}</h1>
+      <h1 className="text-[2rem] font-bold">{i18n.t('Sign Up')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <h2 className="text-xl font-medium">
-              {i18n.get('Personal information')}
+              {i18n.t('Personal information')}
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
@@ -159,12 +159,12 @@ export default function SignUp({
                 name="firstName"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('First name')}</FormLabel>
+                    <FormLabel>{i18n.t('First name')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         value={field.value}
-                        placeholder={i18n.get('Enter first Name')}
+                        placeholder={i18n.t('Enter first Name')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -176,12 +176,12 @@ export default function SignUp({
                 name="name"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('Last name')} *</FormLabel>
+                    <FormLabel>{i18n.t('Last name')} *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         value={field.value}
-                        placeholder={i18n.get('Enter Last Name')}
+                        placeholder={i18n.t('Enter Last Name')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -196,12 +196,12 @@ export default function SignUp({
                 name="email"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('Email')}*</FormLabel>
+                    <FormLabel>{i18n.t('Email')}*</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         value={field.value}
-                        placeholder={i18n.get('Enter email')}
+                        placeholder={i18n.t('Enter email')}
                         disabled
                       />
                     </FormControl>
@@ -218,13 +218,13 @@ export default function SignUp({
                   name="otp"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('OTP')}*</FormLabel>
+                      <FormLabel>{i18n.t('OTP')}*</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           type="password"
                           value={field.value}
-                          placeholder={i18n.get('Enter OTP')}
+                          placeholder={i18n.t('Enter OTP')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -237,7 +237,7 @@ export default function SignUp({
                   type="button"
                   disabled={!email || !isExpired || !isValidEmail}
                   onClick={handleGenerateOTP}>
-                  {i18n.get('Generate OTP')}
+                  {i18n.t('Generate OTP')}
                 </Button>
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function SignUp({
                 hidden: isExpired,
               })}>
               <p>
-                {i18n.get('Resend OTP in ')}
+                {i18n.t('Resend OTP in ')}
                 {timeRemaining.minutes}:{timeRemaining.seconds}
               </p>
             </div>
@@ -256,7 +256,7 @@ export default function SignUp({
               name="password"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Password')}*</FormLabel>
+                  <FormLabel>{i18n.t('Password')}*</FormLabel>
                   <FormControl>
                     <div className="flex items-center gap-2 border border-input px-3 py-2">
                       <Input
@@ -264,7 +264,7 @@ export default function SignUp({
                         className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
                         type={showPassword ? 'text' : 'password'}
                         value={field.value}
-                        placeholder={i18n.get('Enter password')}
+                        placeholder={i18n.t('Enter password')}
                       />
                       {showPassword ? (
                         <MdOutlineVisibility
@@ -288,7 +288,7 @@ export default function SignUp({
               name="confirmPassword"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Confirm Password')}*</FormLabel>
+                  <FormLabel>{i18n.t('Confirm Password')}*</FormLabel>
                   <FormControl>
                     <div className="flex items-center gap-2 border border-input px-3 py-2">
                       <Input
@@ -296,7 +296,7 @@ export default function SignUp({
                         className="h-auto border-0 ring-0 py-0 px-0 focus-visible:ring-transparent"
                         type={showConfirmPassword ? 'text' : 'password'}
                         value={field.value}
-                        placeholder={i18n.get('Enter password')}
+                        placeholder={i18n.t('Enter password')}
                       />
                       {showConfirmPassword ? (
                         <MdOutlineVisibility
@@ -317,7 +317,7 @@ export default function SignUp({
             />
 
             <Button variant="success" className="w-full rounded-full">
-              {i18n.get('Sign Up')}
+              {i18n.t('Sign Up')}
             </Button>
           </form>
         </Form>
@@ -325,7 +325,7 @@ export default function SignUp({
           <div className="grow">
             <Separator />
           </div>
-          <h5 className="mb-0 font-medium text-[2rem]">{i18n.get('Or')}</h5>
+          <h5 className="mb-0 font-medium text-[2rem]">{i18n.t('Or')}</h5>
           <div className="grow">
             <Separator />
           </div>
@@ -342,7 +342,7 @@ export default function SignUp({
             width={24}
             className="me-2"
           />
-          {i18n.get('Sign Up with Google')}
+          {i18n.t('Sign Up with Google')}
         </Button>
       </div>
     </div>

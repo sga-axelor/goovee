@@ -1,7 +1,7 @@
 import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
 
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {ToastAction} from '@/ui/components';
 import {useToast} from '@/ui/hooks';
 
@@ -33,7 +33,7 @@ export function useRetryAction<
     ) => {
       toast({
         variant: 'success',
-        title: successMessage ?? i18n.get('Saved successfully'),
+        title: successMessage ?? i18n.t('Saved successfully'),
       });
       if (onSuccess && data) {
         await onSuccess(data);
@@ -64,7 +64,7 @@ export function useRetryAction<
           } catch (e) {
             toast({
               variant: 'destructive',
-              title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
+              title: e instanceof Error ? e.message : i18n.t('Unknown Error'),
             });
             return;
           } finally {
@@ -76,16 +76,16 @@ export function useRetryAction<
         };
         return toast({
           variant: 'destructive',
-          title: i18n.get('Record has been modified by someone else'),
+          title: i18n.t('Record has been modified by someone else'),
           className: 'flex gap-4 flex-col',
           duration: 10000,
           action: (
             <div className="flex gap-4">
               <ToastAction altText="Overwrite" onClick={handleOverwrite}>
-                {i18n.get('Overwrite')}
+                {i18n.t('Overwrite')}
               </ToastAction>
               <ToastAction altText="Discard" onClick={handleDiscard}>
-                {i18n.get('Discard')}
+                {i18n.t('Discard')}
               </ToastAction>
             </div>
           ),
@@ -115,7 +115,7 @@ export function useRetryAction<
       } catch (e) {
         toast({
           variant: 'destructive',
-          title: e instanceof Error ? e.message : i18n.get('Unknown Error'),
+          title: e instanceof Error ? e.message : i18n.t('Unknown Error'),
         });
         return;
       } finally {

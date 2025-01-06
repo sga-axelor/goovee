@@ -1,9 +1,9 @@
 // ---- CORE IMPORTS ---- //
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 
 export async function generateMetadata() {
   return {
-    title: await getTranslation('Address'),
+    title: await t('Address'),
   };
 }
 

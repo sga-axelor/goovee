@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import {useSearchParams} from 'next/navigation';
 import {Button} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 export default function NotFound() {
   const searchParams = useSearchParams();
@@ -11,13 +11,13 @@ export default function NotFound() {
 
   const message = searchParamMessage
     ? decodeURIComponent(searchParamMessage)
-    : i18n.get('Could not find the requested resource');
+    : i18n.t('Could not find the requested resource');
 
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="space-y-2">
         <div className="space-y-1">
-          <h2 className="text-3xl">404 | {i18n.get('Not Found')}</h2>
+          <h2 className="text-3xl">404 | {i18n.t('Not Found')}</h2>
           <p className="text-muted-foreground">{message}</p>
         </div>
         <div>

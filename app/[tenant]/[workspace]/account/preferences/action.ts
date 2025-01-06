@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
 import {findContactWorkspaces, findPartnerWorkspaces} from '@/orm/workspace';
@@ -36,14 +36,14 @@ export async function updatePreference({
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   try {
     const partner = await findPartnerByEmail(user.email, tenantId);
 
     if (!partner) {
-      return error(await getTranslation('Invalid partner'));
+      return error(await t('Invalid partner'));
     }
 
     if (localization) {
@@ -56,7 +56,7 @@ export async function updatePreference({
       );
 
       if (!isValidLocalization) {
-        return error(await getTranslation('Invalid localization'));
+        return error(await t('Invalid localization'));
       }
     }
 
@@ -70,7 +70,7 @@ export async function updatePreference({
       );
 
       if (!partnerWorkspace) {
-        return error(await getTranslation('Invalid default workspace'));
+        return error(await t('Invalid default workspace'));
       }
     }
 
@@ -87,9 +87,7 @@ export async function updatePreference({
     });
 
     if (!updatedPartner?.id) {
-      return error(
-        await getTranslation('Error updating preferences. Try again.'),
-      );
+      return error(await t('Error updating preferences. Try again.'));
     }
 
     return {
@@ -97,9 +95,7 @@ export async function updatePreference({
       data: updatedPartner,
     };
   } catch (err) {
-    return error(
-      await getTranslation('Error updating preferences. Try again.'),
-    );
+    return error(await t('Error updating preferences. Try again.'));
   }
 }
 
@@ -114,7 +110,7 @@ export async function fetchPreference() {
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   try {
@@ -128,7 +124,7 @@ export async function fetchPreference() {
       },
     };
   } catch (err) {
-    return error(await getTranslation('Error getting workspaces. Try again.'));
+    return error(await t('Error getting workspaces. Try again.'));
   }
 }
 
@@ -143,7 +139,7 @@ export async function fetchWorkspaces() {
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   try {
@@ -163,7 +159,7 @@ export async function fetchWorkspaces() {
       data: workspaces,
     };
   } catch (err) {
-    return error(await getTranslation('Error getting workspaces. Try again.'));
+    return error(await t('Error getting workspaces. Try again.'));
   }
 }
 
@@ -178,7 +174,7 @@ export async function fetchLocalizations() {
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   try {
@@ -190,8 +186,6 @@ export async function fetchLocalizations() {
       data: localizations,
     };
   } catch (err) {
-    return error(
-      await getTranslation('Error getting localizations. Try again.'),
-    );
+    return error(await t('Error getting localizations. Try again.'));
   }
 }

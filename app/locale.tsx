@@ -1,44 +1,41 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
-import {useParams} from 'next/navigation';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {useAppLang} from '@/ui/hooks';
-import {i18n} from '@/i18n';
-import {Loader} from '@/ui/components/loader';
+import {i18n, l10n} from '@/locale';
+import {useParams} from 'next/navigation';
 
 export default function Locale({children}: {children: React.ReactNode}) {
-  const {dir, lang} = useAppLang();
-  const params = useParams<{tenant: string}>();
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState<boolean>(true);
+  const params = useParams();
   const tenant = params?.tenant;
 
+  const {data: session} = useSession();
+  const user = session?.user;
+  const locale = user?.locale;
+
+  const {dir, lang} = useAppLang({locale});
+
+  const init = useCallback(async (locale?: string, tenant?: string) => {
+    setLoading(true);
+    await l10n.init(locale);
+    await i18n.load(l10n.getLocale(), tenant);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
-    if (!tenant) {
-      setLoading(false);
-      return;
-    }
+    init(locale, tenant as string);
+  }, [init, locale, tenant]);
 
-    const load = async () => {
-      setLoading(true);
-      try {
-        await i18n.load(lang, tenant);
-        document.documentElement.lang = lang;
-        document.documentElement.dir = dir;
-      } catch (err) {
-      } finally {
-        setLoading(false);
-      }
-    };
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = dir;
+  }, [dir, lang]);
 
-    load();
-  }, [dir, lang, tenant]);
-
-  if (loading) {
-    return <Loader />;
-  }
+  if (loading) return null;
 
   return <>{children}</>;
 }

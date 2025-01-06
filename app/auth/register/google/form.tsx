@@ -9,7 +9,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 
 // ---- CORE IMPORTS ---- //
 import {UserType} from '@/auth/types';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import {
   Form,
@@ -68,7 +68,7 @@ const formSchema = z
       return true;
     },
     {
-      message: i18n.get('Company name is required'),
+      message: i18n.t('Company name is required'),
       path: ['companyName'],
     },
   )
@@ -80,7 +80,7 @@ const formSchema = z
       return true;
     },
     {
-      message: i18n.get('Name is required'),
+      message: i18n.t('Name is required'),
       path: ['name'],
     },
   );
@@ -124,10 +124,10 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
   if (!user) {
     return (
       <div className="container space-y-6 mt-8">
-        <h1 className="text-[2rem] font-bold">{i18n.get('Sign Up')}</h1>
+        <h1 className="text-[2rem] font-bold">{i18n.t('Sign Up')}</h1>
         <div className="bg-white py-4 px-6">
           <p>
-            {i18n.get('Login with your gmail account to continue registration')}
+            {i18n.t('Login with your gmail account to continue registration')}
           </p>
         </div>
       </div>
@@ -174,7 +174,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error registering, try again'),
+        title: i18n.t('Error registering, try again'),
       });
     }
   };
@@ -203,7 +203,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.get('Error subscribing, try again'),
+        title: i18n.t('Error subscribing, try again'),
       });
     }
   };
@@ -213,19 +213,19 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
       <Dialog open onOpenChange={handleCancel}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{i18n.get('Already an user')}</DialogTitle>
+            <DialogTitle>{i18n.t('Already an user')}</DialogTitle>
             <DialogDescription>
-              {i18n.get(
+              {i18n.t(
                 `You are already a user, do you want to subscribe to ${workspace?.url} ?`,
               )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleCancel}>
-              {i18n.get('Cancel')}
+              {i18n.t('Cancel')}
             </Button>
             <Button type="button" onClick={handleSubscription}>
-              {i18n.get('Subscribe')}
+              {i18n.t('Subscribe')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -237,37 +237,37 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
 
   return (
     <div className="container space-y-6 mt-8">
-      <h1 className="text-[2rem] font-bold">{i18n.get('Sign Up')}</h1>
+      <h1 className="text-[2rem] font-bold">{i18n.t('Sign Up')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <h2 className="text-xl font-medium">
-              {i18n.get('Personal information')}
+              {i18n.t('Personal information')}
             </h2>
             <FormField
               control={form.control}
               name="type"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Type')}</FormLabel>
+                  <FormLabel>{i18n.t('Type')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={i18n.get('Select your account type')}
+                          placeholder={i18n.t('Select your account type')}
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {[
                         {
-                          label: i18n.get('Company'),
+                          label: i18n.t('Company'),
                           value: UserType.company,
                         },
                         {
-                          label: i18n.get('Private Individual'),
+                          label: i18n.t('Private Individual'),
                           value: UserType.individual,
                         },
                       ].map(type => (
@@ -289,14 +289,14 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                   render={({field}) => (
                     <FormItem>
                       <FormLabel>
-                        {i18n.get('Company name')}
+                        {i18n.t('Company name')}
                         {isCompany && '*'}
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           value={field.value}
-                          placeholder={i18n.get('Enter company name')}
+                          placeholder={i18n.t('Enter company name')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -308,12 +308,12 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                   name="indentificationNumber"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('Identification number')}</FormLabel>
+                      <FormLabel>{i18n.t('Identification number')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           value={field.value}
-                          placeholder={i18n.get('Enter company SIRET number')}
+                          placeholder={i18n.t('Enter company SIRET number')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -325,12 +325,12 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                   name="companyNumber"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.get('Company number')}</FormLabel>
+                      <FormLabel>{i18n.t('Company number')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           value={field.value}
-                          placeholder={i18n.get('Enter company number')}
+                          placeholder={i18n.t('Enter company number')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -345,7 +345,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
               name="email"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>{i18n.get('Email')}</FormLabel>
+                  <FormLabel>{i18n.t('Email')}</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value} disabled />
                   </FormControl>
@@ -359,12 +359,12 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 name="firstName"
                 render={({field}) => (
                   <FormItem>
-                    <FormLabel>{i18n.get('First name')}</FormLabel>
+                    <FormLabel>{i18n.t('First name')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         value={field.value}
-                        placeholder={i18n.get('Enter first Name')}
+                        placeholder={i18n.t('Enter first Name')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -378,14 +378,14 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                   render={({field}) => (
                     <FormItem>
                       <FormLabel>
-                        {i18n.get('Last name')}
+                        {i18n.t('Last name')}
                         {!isCompany && '*'}
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           value={field.value}
-                          placeholder={i18n.get('Enter Last Name')}
+                          placeholder={i18n.t('Enter Last Name')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -397,7 +397,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
               )}
             </div>
             <div className="sr-only space-y-4">
-              <h4 className="text-lg font-medium">{i18n.get('Directory')}</h4>
+              <h4 className="text-lg font-medium">{i18n.t('Directory')}</h4>
               <div>
                 <FormField
                   control={form.control}
@@ -413,7 +413,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel>
-                          {i18n.get(
+                          {i18n.t(
                             'Show my profile as a contact for my company on the portal directory',
                           )}
                         </FormLabel>
@@ -426,7 +426,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 <>
                   <div>
                     <p className="font-medium text-base">
-                      {i18n.get('Informations displayed in the directory:')}
+                      {i18n.t('Informations displayed in the directory:')}
                     </p>
                   </div>
                   <div className="flex gap-16">
@@ -443,7 +443,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>{i18n.get('Name')}</FormLabel>
+                            <FormLabel>{i18n.t('Name')}</FormLabel>
                           </div>
                         </FormItem>
                       )}
@@ -461,7 +461,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>{i18n.get('LinkedIn')}</FormLabel>
+                            <FormLabel>{i18n.t('LinkedIn')}</FormLabel>
                           </div>
                         </FormItem>
                       )}
@@ -479,7 +479,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>{i18n.get('Email')}</FormLabel>
+                            <FormLabel>{i18n.t('Email')}</FormLabel>
                           </div>
                         </FormItem>
                       )}
@@ -497,7 +497,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>{i18n.get('Phone')}</FormLabel>
+                            <FormLabel>{i18n.t('Phone')}</FormLabel>
                           </div>
                         </FormItem>
                       )}
@@ -509,12 +509,12 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                       name="linkedInLink"
                       render={({field}) => (
                         <FormItem>
-                          <FormLabel>{i18n.get('LinkedIn link')}</FormLabel>
+                          <FormLabel>{i18n.t('LinkedIn link')}</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               value={field.value}
-                              placeholder={i18n.get('Enter your linkedin link')}
+                              placeholder={i18n.t('Enter your linkedin link')}
                             />
                           </FormControl>
                           <FormMessage />
@@ -526,12 +526,12 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
               )}
             </div>
             <Button variant="success" className="w-full">
-              {i18n.get('Sign Up')}
+              {i18n.t('Sign Up')}
             </Button>
             <p className="text-success">
-              {i18n.get('Already have an account')} ?{' '}
+              {i18n.t('Already have an account')} ?{' '}
               <Link href={`/auth/login?${searchQuery}`}>
-                <span className="underline">{i18n.get('Log In')}</span>
+                <span className="underline">{i18n.t('Log In')}</span>
               </Link>
             </p>
           </form>

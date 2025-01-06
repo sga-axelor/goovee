@@ -1,7 +1,7 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 export const Tab = ({
   tab,
@@ -25,7 +25,7 @@ export const Tab = ({
       }`}
       onClick={handleClick}>
       <Icon className="w-6 h-6" />
-      {i18n.get(tab.title)}
+      {i18n.t(tab.title)}
     </div>
   );
 };

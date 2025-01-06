@@ -12,7 +12,7 @@ import {manager} from '@/lib/core/tenant';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
 import {getFileSizeText} from '@/utils/files';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {clone} from '@/utils';
 import {
   PartnerTypeMap,
@@ -48,26 +48,26 @@ export async function updateProfileImage(formData: FormData) {
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('TenantId is required'));
+    return error(await t('TenantId is required'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const partner = await findPartnerByEmail(user.email, tenantId);
 
   if (!partner) {
-    return error(await getTranslation('Invalid partner'));
+    return error(await t('Invalid partner'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await getTranslation('Invalid tenant'));
+    return error(await t('Invalid tenant'));
   }
 
   let uploadedPicture = null;
@@ -94,9 +94,7 @@ export async function updateProfileImage(formData: FormData) {
         })
         .then(clone);
     } catch (err) {
-      return error(
-        await getTranslation('Error updating profile picture. Try again.'),
-      );
+      return error(await t('Error updating profile picture. Try again.'));
     }
   }
 
@@ -120,9 +118,7 @@ export async function updateProfileImage(formData: FormData) {
       tenantId,
     });
   } catch (err) {
-    return error(
-      await getTranslation('Error updating profile picture. Try again.'),
-    );
+    return error(await t('Error updating profile picture. Try again.'));
   }
 
   return {
@@ -135,20 +131,20 @@ export async function fetchPersonalSettings() {
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('TenantId is required'));
+    return error(await t('TenantId is required'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const partner = await findPartnerByEmail(user.email, tenantId);
 
   if (!partner) {
-    return error(await getTranslation('Invalid partner'));
+    return error(await t('Invalid partner'));
   }
 
   const {
@@ -195,29 +191,29 @@ export async function update({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('TenantId is required'));
+    return error(await t('TenantId is required'));
   }
 
   if (!email) {
-    return error(await getTranslation('Email is required'));
+    return error(await t('Email is required'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   if (user.email !== email) {
     if (!otp) {
-      return error(await getTranslation('OTP is required'));
+      return error(await t('OTP is required'));
     }
 
     const otpResult = await findOne({
@@ -228,7 +224,7 @@ export async function update({
 
     if (!otpResult) {
       return error(
-        await getTranslation('Invalid OTP', {
+        await t('Invalid OTP', {
           tenantId,
         }),
       );
@@ -236,7 +232,7 @@ export async function update({
 
     if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
       return error(
-        await getTranslation('Invalid OTP', {
+        await t('Invalid OTP', {
           tenantId,
         }),
       );
@@ -246,7 +242,7 @@ export async function update({
   const partner = await findPartnerByEmail(user.email, tenantId);
 
   if (!partner) {
-    return error(await getTranslation('Invalid partner'));
+    return error(await t('Invalid partner'));
   }
 
   const isCompany =
@@ -256,18 +252,18 @@ export async function update({
     partner.partnerTypeSelect === PartnerTypeMap[UserType.individual];
 
   if (isCompany && !companyName) {
-    return error(await getTranslation('Company Name is required'));
+    return error(await t('Company Name is required'));
   }
 
   if (isPrivateIndividual && !name) {
-    return error(await getTranslation('Last Name is required'));
+    return error(await t('Last Name is required'));
   }
 
   const existingPartner = await findPartnerByEmail(email, tenantId);
 
   if (existingPartner) {
     if (existingPartner.id !== partner.id)
-      return error(await getTranslation('Email already exists'));
+      return error(await t('Email already exists'));
   }
 
   try {
@@ -298,10 +294,10 @@ export async function update({
 
     return {
       success: true,
-      message: await getTranslation('Settings updated successfully.'),
+      message: await t('Settings updated successfully.'),
     };
   } catch (err) {
-    return error(await getTranslation('Error updating settings. Try again.'));
+    return error(await t('Error updating settings. Try again.'));
   }
 }
 
@@ -313,26 +309,26 @@ export async function generateOTPForUpdate({
   workspaceURL: PortalWorkspace['url'];
 }) {
   if (!(email && workspaceURL)) {
-    return error(await getTranslation('Email and workspace is required'));
+    return error(await t('Email and workspace is required'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await getTranslation('TenantId is required'));
+    return error(await t('TenantId is required'));
   }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    return error(await getTranslation('Unauthorized'));
+    return error(await t('Unauthorized'));
   }
 
   const $user = await findPartnerById(user.id!, tenantId);
 
   if (!$user) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const partnerId = user.isContact ? user.mainPartnerId : user.id;
@@ -340,7 +336,7 @@ export async function generateOTPForUpdate({
   const partner = await findPartnerById(partnerId!, tenantId);
 
   if (!partner) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   const workspace =
@@ -352,7 +348,7 @@ export async function generateOTPForUpdate({
     }));
 
   if (!workspace) {
-    return error(await getTranslation('Bad Request'));
+    return error(await t('Bad Request'));
   }
 
   if (!workspace?.config?.otpTemplateList?.length) {

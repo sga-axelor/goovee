@@ -9,7 +9,7 @@ import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace, findSubappAccess} from '@/orm/workspace';
@@ -63,7 +63,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!workspaceURL) {
     return {
       error: true,
-      message: await getTranslation('Workspace not provided.'),
+      message: await t('Workspace not provided.'),
     };
   }
 
@@ -72,7 +72,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('Invalid Tenant'),
+      message: await t('Invalid Tenant'),
     };
   }
 
@@ -83,7 +83,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!parentId) {
     return {
       error: true,
-      message: await getTranslation('Parent is required'),
+      message: await t('Parent is required'),
     };
   }
 
@@ -94,7 +94,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!user) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -108,7 +108,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!subapp) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 
@@ -121,7 +121,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Invalid workspace'),
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -135,7 +135,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!parent) {
     return {
       error: true,
-      message: await getTranslation('Bad request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -154,7 +154,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   if (!(isDirectory && canModify)) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized'),
+      message: await t('Unauthorized'),
     };
   }
 

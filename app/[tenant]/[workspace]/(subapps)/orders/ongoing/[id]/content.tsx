@@ -4,7 +4,7 @@ import React from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Container} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {download} from '@/utils/files';
 import {useToast} from '@/ui/hooks';
@@ -62,7 +62,7 @@ const Content = ({order}: {order: any}) => {
       if (result?.error) {
         toast({
           variant: 'destructive',
-          description: i18n.get(result.message),
+          description: i18n.t(result.message),
         });
         return;
       }
@@ -75,7 +75,7 @@ const Content = ({order}: {order: any}) => {
 
   return (
     <>
-      <Container title={`${i18n.get('Order number')} ${saleOrderSeq}`}>
+      <Container title={`${i18n.t('Order number')} ${saleOrderSeq}`}>
         <Informations
           createdOn={createdOn}
           shipmentMode={shipmentMode}

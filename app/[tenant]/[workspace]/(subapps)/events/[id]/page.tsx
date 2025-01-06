@@ -5,7 +5,7 @@ import {findEventByID} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
@@ -14,8 +14,8 @@ import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 
 export async function generateMetadata() {
   return {
-    title: await getTranslation('Event'),
-    description: await getTranslation('Event website'),
+    title: await t('Event'),
+    description: await t('Event website'),
   };
 }
 

@@ -6,7 +6,7 @@ import {MdHistory, MdWeb} from 'react-icons/md';
 import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {clone} from '@/utils';
 import {parseDate} from '@/utils/date';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
 import {DocViewer} from '@/ui/components';
@@ -64,7 +64,7 @@ export default async function Page({
   if (!Viewer) {
     // eslint-disable-next-line react/display-name
     Viewer = async () => (
-      <p>{await getTranslation('No viewer available for this file type.')}</p>
+      <p>{await t('No viewer available for this file type.')}</p>
     );
   }
 
@@ -88,19 +88,14 @@ export default async function Page({
         </div>
         <div className="flex items-start gap-4 text-xs leading-4">
           <p className="grow">
-            {await getTranslation('Posted on')} {date}{' '}
-            {await getTranslation('by')} {author}
+            {await t('Posted on')} {date} {await t('by')} {author}
           </p>
           <p className="pe-2">
-            <span className="font-semibold">
-              {await getTranslation('Size')}:{' '}
-            </span>
+            <span className="font-semibold">{await t('Size')}: </span>
             {size}
           </p>
           <p className="hidden">
-            <span className="font-semibold">
-              {await getTranslation('Views')}:{' '}
-            </span>
+            <span className="font-semibold">{await t('Views')}: </span>
             43
           </p>
         </div>

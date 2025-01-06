@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {SEARCH_PARAMS} from '@/constants';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {findPartnerByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
@@ -49,12 +49,10 @@ export default async function Page({
     if (user.email !== invite.emailAddress.address) {
       return (
         <div className="container space-y-6 mt-8">
-          <h1 className="text-[2rem] font-bold">
-            {await getTranslation('Sign Up')}
-          </h1>
+          <h1 className="text-[2rem] font-bold">{await t('Sign Up')}</h1>
           <div className="bg-white py-4 px-6">
             <p>
-              {await getTranslation(
+              {await t(
                 'You are currently loggedin with a different user. Logout to continue registration for the invite.',
               )}
             </p>

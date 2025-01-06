@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {IMAGE_URL} from '@/constants';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {HeroSearch} from '@/ui/components';
 import {
   Pagination,
@@ -49,7 +49,7 @@ export default async function Page({
     redirect(`${workspaceURI}/ticketing/projects/${projects[0].id}`);
   }
   if (!projects.length) {
-    <h3>{await getTranslation('No projects found')}</h3>;
+    <h3>{await t('No projects found')}</h3>;
   }
 
   const imageURL = workspace.config.ticketHeroBgImage?.id
@@ -59,13 +59,10 @@ export default async function Page({
   return (
     <>
       <HeroSearch
-        title={
-          workspace.config.ticketHeroTitle ||
-          (await getTranslation('Ticketing'))
-        }
+        title={workspace.config.ticketHeroTitle || (await t('Ticketing'))}
         description={
           workspace.config.ticketHeroDescription ||
-          (await getTranslation(
+          (await t(
             'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam',
           ))
         }
@@ -79,11 +76,11 @@ export default async function Page({
       <div className="container py-6 space-y-6">
         {projects.length === 0 ? (
           <h2 className="font-semibold text-xl text-center">
-            {await getTranslation('No projects found')}
+            {await t('No projects found')}
           </h2>
         ) : (
           <h2 className="font-semibold text-xl">
-            {await getTranslation('Choose your project')}
+            {await t('Choose your project')}
           </h2>
         )}
 
@@ -99,8 +96,8 @@ export default async function Page({
                 <p className="text-[12px] font-medium mt-2">
                   {project.taskCount}{' '}
                   {project.taskCount === 1
-                    ? await getTranslation('ticket')
-                    : await getTranslation('tickets')}
+                    ? await t('ticket')
+                    : await t('tickets')}
                 </p>
               </div>
             </Link>

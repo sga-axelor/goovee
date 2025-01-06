@@ -12,7 +12,7 @@ import {MdOutlineList} from 'react-icons/md';
 import {Breadcrumbs, Pagination, TextField} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
 
@@ -36,7 +36,7 @@ function MobileFilters() {
   return (
     <div className="flex items-center gap-2 text-foreground">
       <MdOutlineFilterAlt className="text-xl" />
-      <p className="mb-0 font-bold">{i18n.get('Filters')}</p>
+      <p className="mb-0 font-bold">{i18n.t('Filters')}</p>
     </div>
   );
 }
@@ -101,7 +101,7 @@ export function ProductList({
     });
 
     toast({
-      title: i18n.get('Added to cart'),
+      title: i18n.t('Added to cart'),
     });
 
     router.refresh();
@@ -233,7 +233,7 @@ export function ProductList({
                 );
               })
             ) : (
-              <div>{i18n.get('No product available.')}</div>
+              <div>{i18n.t('No product available.')}</div>
             )}
           </div>
         </div>

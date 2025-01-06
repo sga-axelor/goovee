@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {getToken} from 'next-auth/jwt';
-import {i18n} from '@/i18n';
+import {t} from '@/locale/server';
 
 export const TENANT_HEADER = 'x-tenant-id';
 export const WORKSPACE_HEADER = 'x-workspace-id';
@@ -57,9 +57,8 @@ export default async function middleware(req: NextRequest) {
 
   if (tenantMismatch)
     return notFound(req, {
-      message: i18n.get(
+      message:
         'You are already loggedin to a tenant. For accessing different tenant, you need to logout first.',
-      ),
     });
 
   const headers = new Headers(req.headers);

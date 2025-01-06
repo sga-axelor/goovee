@@ -2,7 +2,7 @@
 
 // ---- CORE IMPORTS ---- //
 import {HeroSearch} from '@/ui/components';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
@@ -29,11 +29,11 @@ export const Hero = ({
       <HeroSearch
         title={
           workspace?.config?.resourcesHeroTitle ||
-          i18n.get(BANNER_TITLES.resources)
+          i18n.t(BANNER_TITLES.resources)
         }
         description={
           workspace?.config?.resourcesHeroDescription ||
-          i18n.get(BANNER_DESCRIPTION)
+          i18n.t(BANNER_DESCRIPTION)
         }
         image={imageURL}
         background={

@@ -3,7 +3,7 @@ import axios from 'axios';
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_BY, SUBAPP_CODES} from '@/constants';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {addComment} from '@/orm/comment';
 import {manager, type Tenant} from '@/tenant';
 import {sql} from '@/utils/template-string';
@@ -54,7 +54,7 @@ export async function findTicketAccess({
   select?: SelectOptions<AOSProjectTask>;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -93,7 +93,7 @@ export async function createTicket({
   } = data;
 
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -114,7 +114,7 @@ export async function createTicket({
   });
 
   if (!project) {
-    throw new Error(await getTranslation('Project not found'));
+    throw new Error(await t('Project not found'));
   }
 
   if (parentId) {
@@ -125,13 +125,11 @@ export async function createTicket({
     });
 
     if (!parentTicket) {
-      throw new Error(await getTranslation('Parent ticket not found'));
+      throw new Error(await t('Parent ticket not found'));
     }
 
     if (parentTicket?.project?.id !== projectId) {
-      throw new Error(
-        await getTranslation('Parent ticket not in this project'),
-      );
+      throw new Error(await t('Parent ticket not in this project'));
     }
   }
 
@@ -283,12 +281,12 @@ export async function updateTicketByWS({
 
   if (!(await findTicketAccess({recordId: id, auth}))) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   const aos = process.env.NEXT_PUBLIC_AOS_URL;
 
-  if (!aos) throw new Error(await getTranslation('Rest API URL not set'));
+  if (!aos) throw new Error(await t('Rest API URL not set'));
 
   const ws = `${aos}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
 
@@ -324,7 +322,7 @@ export async function updateTicketByWS({
       e.name = VERSION_MISMATCH_ERROR;
       throw e;
     }
-    throw new Error(await getTranslation('Failed to update ticket'));
+    throw new Error(await t('Failed to update ticket'));
   }
 
   return res.data;
@@ -365,7 +363,7 @@ export async function updateTicket({
   const oldTicket = await findTicketAccess({recordId: id, select, auth});
   if (!oldTicket) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   const ticket = await client.aOSProjectTask.update({
@@ -474,7 +472,7 @@ export async function getAllTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -494,7 +492,7 @@ export async function getMyTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -517,7 +515,7 @@ export async function getManagedTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -538,7 +536,7 @@ export async function getCreatedTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -558,7 +556,7 @@ export async function getResolvedTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -578,7 +576,7 @@ export async function findTickets(
   const {projectId, take, skip, where, orderBy, auth} = props;
 
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -617,7 +615,7 @@ export async function findRelatedTicketLinks(
   tenantId: Tenant['id'],
 ): Promise<TicketLink[] | undefined> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -657,7 +655,7 @@ export async function findChildTickets(
   tenantId: Tenant['id'],
 ): Promise<ChildTicket[]> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -694,7 +692,7 @@ export async function findParentTicket(
   tenantId: Tenant['id'],
 ): Promise<ParentTicket | undefined> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -736,7 +734,7 @@ export async function findTicket({
   auth: AuthProps;
 }): Promise<Ticket | null> {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -781,7 +779,7 @@ export async function findTicketVersion(
   tenantId: Tenant['id'],
 ): Promise<number> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -806,7 +804,7 @@ export async function findTicketsBySearch(props: {
   const {search, projectId, excludeList, auth} = props;
 
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -965,7 +963,7 @@ export async function createChildTicketLink({
 
   if (!currentTicket || !linkTicket) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   const parentTickets = await findParentTicketIds(
@@ -974,7 +972,7 @@ export async function createChildTicketLink({
   );
 
   if (parentTickets.includes(linkTicketId.toString())) {
-    throw new Error(await getTranslation('Circular dependency'));
+    throw new Error(await t('Circular dependency'));
   }
 
   const ticket = await client.aOSProjectTask.update({
@@ -997,7 +995,7 @@ export async function deleteChildTicketLink({
   auth: AuthProps;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId} = data;
@@ -1011,7 +1009,7 @@ export async function deleteChildTicketLink({
 
   if (!currentTicket || !linkTicket) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   const ticket = await client.aOSProjectTask.update({
@@ -1034,7 +1032,7 @@ export async function createParentTicketLink({
   auth: AuthProps;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId} = data;
@@ -1048,13 +1046,13 @@ export async function createParentTicketLink({
 
   if (!currentTicket || !linkTicket) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   const childTickets = await findChildTicketIds(currentTicketId, auth.tenantId);
 
   if (childTickets.includes(linkTicketId.toString())) {
-    throw new Error(await getTranslation('Circular dependency'));
+    throw new Error(await t('Circular dependency'));
   }
 
   const ticket = await client.aOSProjectTask.update({
@@ -1076,7 +1074,7 @@ export async function deleteParentTicketLink({
   auth: AuthProps;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId} = data;
@@ -1090,7 +1088,7 @@ export async function deleteParentTicketLink({
 
   if (!currentTicket || !linkTicket) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   const ticket = await client.aOSProjectTask.update({
@@ -1109,7 +1107,7 @@ export async function findTicketLinkTypes(
   tenantId: Tenant['id'],
 ): Promise<LinkType[]> {
   if (!tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -1138,7 +1136,7 @@ export async function createRelatedTicketLink({
   auth: AuthProps;
 }): Promise<[string, string]> {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId, linkType} = data;
@@ -1166,13 +1164,13 @@ export async function createRelatedTicketLink({
 
   if (!currentTicket || !linkTicket) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   if (currentTicket.project?.id !== linkTicket.project?.id) {
     // This is enabled as per #85205
     // remove this check to enable cross project linking
-    throw new Error(await getTranslation('Cross project linking not allowed'));
+    throw new Error(await t('Cross project linking not allowed'));
   }
 
   const type = await client.aOSProjectTaskLinkType.findOne({
@@ -1181,7 +1179,7 @@ export async function createRelatedTicketLink({
   });
 
   if (!type) {
-    throw new Error(await getTranslation('Invalid link type'));
+    throw new Error(await t('Invalid link type'));
   }
   const currentTicketLinkTypes = currentTicket.project?.projectTaskLinkTypeSet;
   const linkTicketLinkTypes = linkTicket.project?.projectTaskLinkTypeSet;
@@ -1196,7 +1194,7 @@ export async function createRelatedTicketLink({
     if (!hasTypeAccess) {
       //NOTE: this message is copied from backend
       throw new Error(
-        `${await getTranslation('Please configure the project')} "${currentTicket.project?.name}" ${await getTranslation('with project task link type')} "${type.name}" ${await getTranslation('if you want to create this link')}.`,
+        `${await t('Please configure the project')} "${currentTicket.project?.name}" ${await t('with project task link type')} "${type.name}" ${await t('if you want to create this link')}.`,
       );
     }
   }
@@ -1208,7 +1206,7 @@ export async function createRelatedTicketLink({
     );
     if (!hasTypeAccess) {
       throw new Error(
-        `${await getTranslation('Please configure the project')} "${linkTicket.project?.name}" ${await getTranslation('with project task link type')} "${oppositeType.name}" ${await getTranslation('if you want to create this link')}.`,
+        `${await t('Please configure the project')} "${linkTicket.project?.name}" ${await t('with project task link type')} "${oppositeType.name}" ${await t('if you want to create this link')}.`,
       );
     }
   }
@@ -1257,7 +1255,7 @@ export async function deleteRelatedTicketLink({
   auth: AuthProps;
 }): Promise<ID> {
   if (!auth.tenantId) {
-    throw new Error(await getTranslation('TenantId is required.'));
+    throw new Error(await t('TenantId is required.'));
   }
 
   const {currentTicketId, linkTicketId, linkId} = data;
@@ -1271,7 +1269,7 @@ export async function deleteRelatedTicketLink({
 
   if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {
     // To make sure the user has access to the ticket.
-    throw new Error(await getTranslation('Ticket not found'));
+    throw new Error(await t('Ticket not found'));
   }
 
   const link = await client.aOSProjectTaskLink.findOne({
@@ -1280,7 +1278,7 @@ export async function deleteRelatedTicketLink({
   });
 
   if (!link) {
-    throw new Error(await getTranslation('Link does not exist'));
+    throw new Error(await t('Link does not exist'));
   }
 
   const linksToDelete = [linkId];

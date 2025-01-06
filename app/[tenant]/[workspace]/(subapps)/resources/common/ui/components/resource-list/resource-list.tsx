@@ -6,7 +6,7 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {parseDate} from '@/utils/date';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {download, getFileTypeIcon, getIconColor} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {cn} from '@/utils/css';
@@ -88,14 +88,14 @@ export function ResourceList({resources}: any) {
               </div>
               {resource?.metaFile?.description && (
                 <p className="leading-4 text-xs line-clamp-2">
-                  {i18n.get('Description')}: {resource?.metaFile?.description}
+                  {i18n.t('Description')}: {resource?.metaFile?.description}
                 </p>
               )}
             </div>
           );
         })
       ) : (
-        <p className="py-2 px-4">{i18n.get('No resources available.')}</p>
+        <p className="py-2 px-4">{i18n.t('No resources available.')}</p>
       )}
     </div>
   );

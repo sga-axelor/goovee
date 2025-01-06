@@ -5,7 +5,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {TENANT_HEADER} from '@/middleware';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {clone} from '@/utils';
 import type {ID} from '@goovee/orm';
 import type {Cloned} from '@/types/util';
@@ -43,7 +43,7 @@ export async function mutate(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -103,7 +103,7 @@ export async function updateAssignment(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -152,7 +152,7 @@ export async function closeTicket(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -168,7 +168,7 @@ export async function closeTicket(
     if (!status) {
       return {
         error: true,
-        message: await getTranslation('Done status not configured'),
+        message: await t('Done status not configured'),
       };
     }
 
@@ -204,7 +204,7 @@ export async function cancelTicket(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -219,7 +219,7 @@ export async function cancelTicket(
     if (!status) {
       return {
         error: true,
-        message: await getTranslation('Cancelled status not configured'),
+        message: await t('Cancelled status not configured'),
       };
     }
 
@@ -258,7 +258,7 @@ export async function createRelatedLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -291,7 +291,7 @@ export async function createChildLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -320,7 +320,7 @@ export async function createParentLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -353,7 +353,7 @@ export async function deleteChildLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -386,7 +386,7 @@ export async function deleteParentLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -418,7 +418,7 @@ export async function deleteRelatedLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 
@@ -453,7 +453,7 @@ export async function searchTickets({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
 

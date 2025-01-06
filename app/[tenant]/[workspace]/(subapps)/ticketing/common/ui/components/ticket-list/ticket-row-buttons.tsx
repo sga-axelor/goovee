@@ -1,5 +1,5 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
 import {useRouter} from 'next/navigation';
@@ -49,7 +49,7 @@ export function RemoveLinkButton({
 
         toast({
           variant: 'success',
-          title: i18n.get('Link removed'),
+          title: i18n.t('Link removed'),
         });
 
         router.refresh();
@@ -63,7 +63,7 @@ export function RemoveLinkButton({
         }
         toast({
           variant: 'destructive',
-          title: i18n.get('An error occurred'),
+          title: i18n.t('An error occurred'),
         });
       } finally {
         setLoading(false);
@@ -113,7 +113,7 @@ export function RemoveChildButton({
 
         toast({
           variant: 'success',
-          title: i18n.get('Link removed'),
+          title: i18n.t('Link removed'),
         });
 
         router.refresh();
@@ -127,7 +127,7 @@ export function RemoveChildButton({
         }
         toast({
           variant: 'destructive',
-          title: i18n.get('An error occurred'),
+          title: i18n.t('An error occurred'),
         });
       } finally {
         setLoading(false);
@@ -177,7 +177,7 @@ export function RemoveParentButton({
 
         toast({
           variant: 'success',
-          title: i18n.get('Link removed'),
+          title: i18n.t('Link removed'),
         });
 
         router.refresh();
@@ -191,7 +191,7 @@ export function RemoveParentButton({
         }
         toast({
           variant: 'destructive',
-          title: i18n.get('An error occurred'),
+          title: i18n.t('An error occurred'),
         });
       } finally {
         setLoading(false);
