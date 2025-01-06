@@ -132,7 +132,6 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
     revalidatePath(`${workspace.url}/${SUBAPP_PAGE.account}`);
     return {
       success: true,
-      data: result,
     };
   } catch (err) {
     return {
