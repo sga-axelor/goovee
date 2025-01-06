@@ -352,7 +352,6 @@ const Content = ({
             hideSortBy
             inputPosition="top"
             sortByProp={SORT_TYPE.new}
-            key={Math.random()}
           />
         </div>
       </Container>
