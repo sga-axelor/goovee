@@ -6,7 +6,7 @@ import {useState, useEffect} from 'react';
 import {convertDateToISO8601} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSearchParams} from '@/ui/hooks';
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -169,7 +169,7 @@ export const MyRegisteredEvents = ({
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
         <div>
           <h2 className="text-lg font-semibold text-start mb-4 h-[3.4rem]">
-            {i18n.get(MY_REGISTRATIONS)}
+            {i18n.t(MY_REGISTRATIONS)}
           </h2>
           <EventSelector
             selectedCategories={selectedCategory}
@@ -224,7 +224,7 @@ export const MyRegisteredEvents = ({
                   onPage={handlePage}
                 />
               )}
-              {count === 0 && <p>{i18n.get(NO_RESULT_FOUND)}</p>}
+              {count === 0 && <p>{i18n.t(NO_RESULT_FOUND)}</p>}
             </div>
           </div>
         </div>
