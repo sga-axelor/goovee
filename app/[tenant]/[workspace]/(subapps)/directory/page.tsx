@@ -28,17 +28,6 @@ import {getOrderBy, getPages, getSkip} from './common/utils';
 import {Content} from './content';
 import Hero from './hero';
 
-const icons = [
-  materialIcon['MdAllInbox'],
-  MdOutlineFoodBank,
-  MdMoney,
-  MdOutlineDiamond,
-  MdOutlineMedicalServices,
-  MdOutlineSmartphone,
-  MdOutlineSupervisedUserCircle,
-  TbTool,
-];
-
 const ITEMS_PER_PAGE = 7;
 
 export default async function Page({
@@ -87,7 +76,7 @@ export default async function Page({
       workspaceURI={workspaceURI}
       id={category.id}
       key={category.id}
-      icon={icons[i] ?? MdOutlineSupervisedUserCircle}
+      icon={category.icon}
       label={category.title ?? ''}
       iconClassName={colors[category.color as keyof typeof colors] ?? ''}
     />

@@ -29,16 +29,6 @@ import {Swipe} from '../../common/ui/components/swipe';
 import {getOrderBy, getPages, getSkip} from '../../common/utils';
 import {Content} from '../../content';
 
-const icons = [
-  materialIcon['MdAllInbox'],
-  MdOutlineFoodBank,
-  MdMoney,
-  MdOutlineDiamond,
-  MdOutlineMedicalServices,
-  MdOutlineSmartphone,
-  MdOutlineSupervisedUserCircle,
-  TbTool,
-];
 const ITEMS_PER_PAGE = 7;
 export default async function Page({
   params,
@@ -81,12 +71,12 @@ export default async function Page({
   });
 
   const pages = getPages(entries, limit);
-  const cards = category.directoryCategorySet?.map((category, i) => (
+  const cards = category.directoryCategorySet?.map(category => (
     <CategoryCard
       workspaceURI={workspaceURI}
       id={category.id}
       key={category.id}
-      icon={icons[i] ?? materialIcon.MdOutlineSupervisedUserCircle}
+      icon={category.icon}
       label={category.title ?? ''}
       iconClassName={colors[category.color as keyof typeof colors] ?? ''}
     />
