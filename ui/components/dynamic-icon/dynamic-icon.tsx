@@ -2,7 +2,7 @@
 
 import {useMemo} from 'react';
 import dynamic from 'next/dynamic';
-import {MdDownloading} from 'react-icons/md';
+import {MdDownloading, MdOutlineError} from 'react-icons/md';
 
 const loading = () => <MdDownloading className="text-muted" />;
 
@@ -21,12 +21,18 @@ export function DynamicIcon({
     switch (library) {
       case 'md':
         return dynamic(
-          () => import(`react-icons/md`).then((mod: any) => mod?.[`Md${name}`]),
+          () =>
+            import(`react-icons/md`).then(
+              (mod: any) => mod?.[`Md${name}`] ?? MdOutlineError,
+            ),
           {loading, ssr: false},
         );
       case 'bs':
         return dynamic(
-          () => import(`react-icons/bs`).then((mod: any) => mod?.[`Bs${name}`]),
+          () =>
+            import(`react-icons/bs`).then(
+              (mod: any) => mod?.[`Bs${name}`] ?? MdOutlineError,
+            ),
           {loading, ssr: false},
         );
       default:
