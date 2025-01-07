@@ -6,7 +6,7 @@ import {ActionResponse} from '@/types/action';
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/lib/core/auth';
-import {getTranslation} from '@/lib/core/i18n/server';
+import {t} from '@/lib/core/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import type {Cloned} from '@/types/util';
@@ -29,7 +29,7 @@ export async function searchEntries({
   if (!tenantId) {
     return {
       error: true,
-      message: await getTranslation('TenantId is required.'),
+      message: await t('TenantId is required.'),
     };
   }
   const session = await getSession();
@@ -38,7 +38,7 @@ export async function searchEntries({
   // if (!session?.user) {
   //   return {
   //     error: true,
-  //     message: await getTranslation('User not found.'),
+  //     message: await t('User not found.'),
   //   };
   // }
 
@@ -51,7 +51,7 @@ export async function searchEntries({
   if (!workspace) {
     return {
       error: true,
-      message: await getTranslation('Workspace not found.'),
+      message: await t('Workspace not found.'),
     };
   }
 
@@ -64,7 +64,7 @@ export async function searchEntries({
   if (!subapp) {
     return {
       error: true,
-      message: await getTranslation('Subapp not found.'),
+      message: await t('Subapp not found.'),
     };
   }
 

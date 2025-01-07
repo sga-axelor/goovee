@@ -1,6 +1,6 @@
 'use client';
 
-import {i18n} from '@/i18n';
+import {i18n} from '@/lib/core/locale';
 import {
   Select,
   SelectContent,
@@ -10,6 +10,7 @@ import {
 } from '@/ui/components';
 import {useSearchParams} from '@/ui/hooks/use-search-params';
 import {cn} from '@/utils/css';
+
 import {defaultSortOption, sortOptions} from '../../../constants';
 
 export function Sort() {
@@ -32,7 +33,7 @@ export function Sort() {
       defaultValue={currentValue}
       onValueChange={e => handleSortChange(e)}>
       <SelectTrigger className={cn('lg:min-w-[128px] text-xs text-foreground')}>
-        <SelectValue placeholder={i18n.get('Select sort')} />
+        <SelectValue placeholder={i18n.t('Select sort')} />
       </SelectTrigger>
       <SelectContent className="w-full">
         {sortOptions.map(option => (
@@ -40,7 +41,7 @@ export function Sort() {
             key={option.value}
             value={option.value}
             className="text-xs">
-            {i18n.get(option.label)}
+            {i18n.t(option.label)}
           </SelectItem>
         ))}
       </SelectContent>

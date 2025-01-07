@@ -2,7 +2,7 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
-import {getTranslation} from '@/lib/core/i18n/server';
+import {t} from '@/lib/core/locale/server';
 import {
   Pagination,
   PaginationContent,
@@ -40,7 +40,7 @@ export async function Content({
   if (!entries || entries.length === 0) {
     return (
       <h2 className="font-semibold text-xl text-center mt-5">
-        {await getTranslation('No entries found.')}
+        {await t('No entries found.')}
       </h2>
     );
   }

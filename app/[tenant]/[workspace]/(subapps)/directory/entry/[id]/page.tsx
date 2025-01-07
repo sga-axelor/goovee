@@ -6,7 +6,7 @@ import {MdOutlineWeb} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {getTranslation} from '@/lib/core/i18n/server';
+import {t} from '@/lib/core/locale/server';
 import {findWorkspace} from '@/orm/workspace';
 import {Avatar, AvatarImage} from '@/ui/components';
 import {clone} from '@/utils';
@@ -58,7 +58,7 @@ export default async function Page({
       {entry.directoryContactSet && entry.directoryContactSet?.length > 0 && (
         <>
           <h2 className="font-semibold text-xl">
-            {await getTranslation(
+            {await t(
               `${entry.directoryContactSet.length > 1 ? 'Contacts' : 'Contact'}`,
             )}
           </h2>
@@ -144,7 +144,7 @@ async function Details({
       </div>
       {(linkedIn || twitter || instagram || website) && (
         <p className="font-semibold text-xl mt-5 mb-5">
-          {await getTranslation('Social media')}
+          {await t('Social media')}
         </p>
       )}
       <div className="flex space-x-6">
@@ -205,7 +205,7 @@ async function Contact({
       <div className="ms-4 space-y-4">
         {emailAddress && (
           <>
-            <h4 className="font-semibold">{await getTranslation('Email')}</h4>
+            <h4 className="font-semibold">{await t('Email')}</h4>
             <a
               className="text-sm text-muted-foreground"
               href={`mailto:${emailAddress.address}`}>
@@ -214,9 +214,7 @@ async function Contact({
           </>
         )}
         <>
-          <h4 className="font-semibold">
-            {await getTranslation('Phone number')}
-          </h4>
+          <h4 className="font-semibold">{await t('Phone number')}</h4>
           {fixedPhone && (
             <a
               className="text-sm text-muted-foreground"

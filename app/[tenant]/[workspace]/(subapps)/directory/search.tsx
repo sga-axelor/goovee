@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import type {ID} from '@goovee/orm';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   Command,
@@ -63,7 +63,7 @@ export function Search({
         } catch (e) {
           toast({
             variant: 'destructive',
-            title: i18n.get('Something went wrong'),
+            title: i18n.t('Something went wrong'),
           });
         } finally {
           if (searchRef.current === search) {
@@ -110,7 +110,7 @@ export function Search({
             open ? 'block' : 'hidden',
           )}>
           <CommandEmpty>
-            {loading ? i18n.get('Searching...') : i18n.get('No results found.')}
+            {loading ? i18n.t('Searching...') : i18n.t('No results found.')}
           </CommandEmpty>
           <CommandGroup className="p-2">
             {Boolean(searchResult?.length)

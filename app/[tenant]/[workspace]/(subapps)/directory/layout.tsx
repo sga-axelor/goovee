@@ -4,13 +4,13 @@ import type {ReactNode} from 'react';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
-import {getTranslation} from '@/lib/core/i18n/server';
+import {t} from '@/lib/core/locale/server';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
 export async function generateMetadata() {
   return {
-    title: await getTranslation('Directory'),
+    title: await t('Directory'),
   };
 }
 

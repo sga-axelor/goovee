@@ -1,11 +1,11 @@
 'use client';
+import type {ID} from '@goovee/orm';
+import type {VariantProps} from 'class-variance-authority';
 
 // ---- CORE IMPORTS ---- //
 import {IMAGE_URL} from '@/constants';
-import {i18n} from '@/i18n';
+import {i18n} from '@/lib/core/locale';
 import {HeroSearch} from '@/ui/components';
-import type {ID} from '@goovee/orm';
-import {VariantProps} from 'class-variance-authority';
 import {BannerVariants} from '@/ui/components/banner';
 
 // ---- LOCAL IMPORTS ---- //
@@ -29,10 +29,10 @@ export const Hero = ({
 
   return (
     <HeroSearch
-      title={title || i18n.get('Directory')}
+      title={title || i18n.t('Directory')}
       description={
         description ||
-        i18n.get(
+        i18n.t(
           'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam',
         )
       }

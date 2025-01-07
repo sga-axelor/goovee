@@ -13,7 +13,7 @@ import {TbTool} from 'react-icons/tb';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {getTranslation} from '@/lib/core/i18n/server';
+import {t} from '@/lib/core/locale/server';
 import {findWorkspace} from '@/orm/workspace';
 import {Button} from '@/ui/components';
 import {clone} from '@/utils';
@@ -89,7 +89,7 @@ export default async function Page({
           <p className="text-xl font-semibold">{category.title}</p>
           <Button variant="success" className="flex items-center">
             <MdOutlineNotificationAdd className="size-6 me-2" />
-            <span>{await getTranslation('Subscribe')}</span>
+            <span>{await t('Subscribe')}</span>
           </Button>
         </div>
         {cards && cards?.length > 0 && (

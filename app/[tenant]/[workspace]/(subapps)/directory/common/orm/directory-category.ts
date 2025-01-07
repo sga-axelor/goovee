@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
 
-import {getTranslation} from '@/lib/core/i18n/server';
+import {t} from '@/lib/core/locale/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
 import {Expand} from '@/types/util';
@@ -17,7 +17,7 @@ export async function findCategories({
   tenantId: Tenant['id'];
 }) {
   if (!(workspaceId && tenantId)) {
-    throw new Error(await getTranslation('Missing required parameters'));
+    throw new Error(await t('Missing required parameters'));
   }
 
   const c = await manager.getClient(tenantId);
@@ -42,7 +42,7 @@ export async function findCategory({
   tenantId: Tenant['id'];
 }) {
   if (!(workspaceId && tenantId)) {
-    throw new Error(await getTranslation('Missing required parameters'));
+    throw new Error(await t('Missing required parameters'));
   }
 
   const c = await manager.getClient(tenantId);
