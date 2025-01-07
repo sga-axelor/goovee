@@ -26,10 +26,6 @@ export async function findEntry({
     select: {
       title: true,
       address: {
-        zip: true,
-        city: {name: true},
-        country: {name: true},
-        streetName: true,
         latit: true,
         longit: true,
         formattedFullName: true,
@@ -45,6 +41,8 @@ export async function findEntry({
           simpleFullName: true,
           emailAddress: {address: true},
           fixedPhone: true,
+          mobilePhone: true,
+          linkedinLink: true,
         },
       },
       instagram: true,
@@ -87,10 +85,6 @@ export async function findEntries({
       title: true,
       isMap: true,
       address: {
-        zip: true,
-        city: {name: true},
-        country: {name: true},
-        streetName: true,
         formattedFullName: true,
         latit: true,
         longit: true,

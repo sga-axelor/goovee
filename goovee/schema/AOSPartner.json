@@ -122,6 +122,14 @@
       "name": "portalUserPreferenceList",
       "target": "AOSPortalUserPreference",
       "mappedBy": "partner"
+    },
+    {
+      "type": "String",
+      "name": "mobilePhone"
+    },
+    {
+      "type": "String",
+      "name": "linkedinLink"
     }
   ]
 }

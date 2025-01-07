@@ -18,9 +18,9 @@ import {getProfilePic} from '../../common/utils';
 // ---- LOCAL IMPORTS ---- //
 import {colors} from '../../common/constants';
 import {Entry, findEntry} from '../../common/orm';
+import {findModelFields} from '../../common/orm/meta-json-fields';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
-import {findModelFields} from '../../common/orm/meta-json-fields';
 
 export default async function Page({
   params,
@@ -181,7 +181,8 @@ async function Contact({
   tenant: string;
   contact: NonNullable<Entry['directoryContactSet']>[number];
 }) {
-  const {simpleFullName, emailAddress, fixedPhone} = contact;
+  const {simpleFullName, emailAddress, fixedPhone, linkedinLink, mobilePhone} =
+    contact;
   return (
     <div className="bg-card space-y- p-4">
       <div className="flex items-center gap-2">
@@ -204,24 +205,32 @@ async function Contact({
             </a>
           </>
         )}
-        {fixedPhone && (
-          <>
-            <h4 className="font-semibold">{await getTranslation('Phone')}</h4>
+        <>
+          <h4 className="font-semibold">
+            {await getTranslation('Phone number')}
+          </h4>
+          {fixedPhone && (
             <a
               className="text-sm text-muted-foreground"
               href={`tel:${fixedPhone}`}>
               {fixedPhone}
             </a>
-          </>
+          )}
+          <br />
+          {mobilePhone && (
+            <a
+              className="text-sm text-muted-foreground"
+              href={`tel:${mobilePhone}`}>
+              {mobilePhone}
+            </a>
+          )}
+        </>
+
+        {linkedinLink && (
+          <Link href={`${linkedinLink}`}>
+            <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
+          </Link>
         )}
-        {
-          //TODO: add linkedin link
-        }
-        {/* {linkedinLink && ( */}
-        {/*   <Link href={`${linkedinLink}`}> */}
-        {/*     <FaLinkedin className="h-8 w-8 text-palette-blue-dark" /> */}
-        {/*   </Link> */}
-        {/* )} */}
       </div>
     </div>
   );
