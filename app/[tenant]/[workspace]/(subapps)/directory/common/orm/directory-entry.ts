@@ -1,6 +1,5 @@
 import {manager} from '@/tenant';
 
-import {ORDER_BY} from '@/constants';
 import {getTranslation} from '@/lib/core/i18n/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
@@ -33,6 +32,7 @@ export async function findEntry({
         streetName: true,
         latit: true,
         longit: true,
+        formattedFullName: true,
       },
       twitter: true,
       website: true,
@@ -90,6 +90,7 @@ export async function findEntries({
         city: {name: true},
         country: {name: true},
         streetName: true,
+        formattedFullName: true,
         latit: true,
         longit: true,
       },

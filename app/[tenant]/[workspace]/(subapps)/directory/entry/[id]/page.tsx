@@ -11,9 +11,9 @@ import {findWorkspace} from '@/orm/workspace';
 import {Avatar, AvatarImage} from '@/ui/components';
 import {clone} from '@/utils';
 import {getImageURL} from '@/utils/files';
-import {getProfilePic} from '../../common/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {FaInstagram, FaLinkedin} from 'react-icons/fa';
+import {getProfilePic} from '../../common/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {colors} from '../../common/constants';
@@ -104,19 +104,14 @@ async function Details({
               variant={cat?.color}
             />
           ))}
-          <p className="text-success text-base">
-            {
-              //TODO: use full address
-            }
-            {address?.streetName}
-          </p>
+          <p className="text-success text-base">{address?.formattedFullName}</p>
         </div>
 
         {/* image */}
         <Image
           width={156}
           height={138}
-          className="rounded-r-lg  object-cover"
+          className="rounded-r-lg h-[138px]"
           src={getImageURL(image?.id, tenant, {noimage: true})}
           alt="image"
         />
