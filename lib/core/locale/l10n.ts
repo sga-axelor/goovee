@@ -11,7 +11,7 @@ import calendar from 'dayjs/plugin/calendar';
 import kebabCase from 'lodash/kebabCase';
 
 import {DEFAULT_LOCALE, DEFAULT_DATE_FORMAT} from '@/locale/contants';
-import {limitScale} from '@/locale/formatters';
+import {limitScale} from '@/locale/utils';
 
 dayjs.extend(localizedFormat);
 dayjs.extend(customParseFormat);

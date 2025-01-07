@@ -1,3 +1,5 @@
+import {MAX_SCALE, MIN_SCALE} from '@/locale/contants';
+
 export function translate(
   translations: Record<string, string>,
   text: string,
@@ -42,4 +44,31 @@ export function getLocaleFromAcceptLanguage(
 
 export function transformLocale(locale: string) {
   return locale?.replaceAll('_', '-');
+}
+
+export function limitScale(value?: number) {
+  if (value == null) {
+    return value;
+  }
+
+  if (value < MIN_SCALE) {
+    return MIN_SCALE;
+  }
+
+  if (value > MAX_SCALE) {
+    return MAX_SCALE;
+  }
+
+  return value;
+}
+
+// const lang = l10n.getLocale().split(/-|_/)[0];
+export function addCurrency(value: string, symbol: string, language: string) {
+  if (value && symbol) {
+    if (language === 'fr') {
+      return value.endsWith(symbol) ? value : value + ' ' + symbol;
+    }
+    return value.startsWith(symbol) ? value : symbol + ' ' + value;
+  }
+  return value;
 }

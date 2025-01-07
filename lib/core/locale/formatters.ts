@@ -1,7 +1,8 @@
 import padStart from 'lodash/padStart';
 import {i18n} from '@/locale/i18n';
 import {dayjs, l10n} from '@/locale/l10n';
-import {DEFAULT_SCALE, MAX_SCALE, MIN_SCALE} from '@/locale/contants';
+import {DEFAULT_SCALE} from '@/locale/contants';
+import {addCurrency} from '@/locale/utils';
 
 /**
  * Numbers
@@ -12,33 +13,6 @@ type NumberOpts = {
   currency?: string;
   type?: 'DECIMAL' | 'INTEGER';
 };
-
-export function limitScale(value?: number) {
-  if (value == null) {
-    return value;
-  }
-
-  if (value < MIN_SCALE) {
-    return MIN_SCALE;
-  }
-
-  if (value > MAX_SCALE) {
-    return MAX_SCALE;
-  }
-
-  return value;
-}
-
-export function addCurrency(value: string, symbol: string) {
-  if (value && symbol) {
-    const lang = l10n.getLocale().split(/-|_/)[0];
-    if (lang === 'fr') {
-      return value.endsWith(symbol) ? value : value + ' ' + symbol;
-    }
-    return value.startsWith(symbol) ? value : symbol + ' ' + value;
-  }
-  return value;
-}
 
 export function formatNumber(
   value: string | number,
@@ -61,6 +35,7 @@ export function formatNumber(
   }
 
   const num = +value;
+  const lang = l10n.getLocale().split(/-|_/)[0];
 
   if (num === 0 || num) {
     const opts: Intl.NumberFormatOptions = {};
@@ -79,14 +54,14 @@ export function formatNumber(
           minimumFractionDigits: opts.minimumFractionDigits,
           maximumFractionDigits: opts.maximumFractionDigits,
         });
-        return addCurrency(result, currency);
+        return addCurrency(result, currency, lang);
       }
       throw e;
     }
   }
 
   if (typeof value === 'string' && currency) {
-    return addCurrency(value, currency);
+    return addCurrency(value, currency, lang);
   }
 
   return value;
