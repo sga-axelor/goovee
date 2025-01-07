@@ -10,16 +10,14 @@ import type {Cloned} from '@/types/util';
 
 import type {Entry, ListEntry} from '../../../orm';
 import {Card} from '../card';
-import {LatLng} from './types';
 
 type MarkerProps = {
-  position: LatLng;
   small: boolean;
   item: Cloned<Entry> | Cloned<ListEntry>;
 };
 
 export function Marker(props: MarkerProps) {
-  const {position, small, item} = props;
+  const {small, item} = props;
   const {workspaceURI, tenant} = useWorkspace();
 
   const url = `${workspaceURI}/directory/entry/${item.id}`;
@@ -29,9 +27,17 @@ export function Marker(props: MarkerProps) {
   const toggle = useCallback(() => setShow(show => !show), []);
   const handleClose = useCallback(() => setShow(false), []);
 
+  console.log(item.address);
   return (
     <>
-      <MarkerComponent ref={markerRef} position={position} onClick={toggle} />
+      <MarkerComponent
+        ref={markerRef}
+        position={{
+          lat: Number(item.address?.latit || 0),
+          lng: Number(item.address?.longit || 0),
+        }}
+        onClick={toggle}
+      />
       {show && (
         <InfoWindow anchor={marker} onClose={handleClose} headerDisabled>
           <Card item={item} url={url} small={small} tenant={tenant} />

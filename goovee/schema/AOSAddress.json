@@ -69,6 +69,14 @@
     {
       "type": "String",
       "name": "department"
+    },
+    {
+      "type": "Decimal",
+      "name": "latit"
+    },
+    {
+      "type": "Decimal",
+      "name": "longit"
     }
   ]
 }

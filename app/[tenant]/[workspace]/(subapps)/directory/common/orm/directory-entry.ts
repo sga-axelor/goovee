@@ -31,6 +31,8 @@ export async function findEntry({
         city: {name: true},
         country: {name: true},
         streetName: true,
+        latit: true,
+        longit: true,
       },
       twitter: true,
       website: true,
@@ -82,11 +84,14 @@ export async function findEntries({
     select: {
       id: true,
       title: true,
+      isMap: true,
       address: {
         zip: true,
         city: {name: true},
         country: {name: true},
         streetName: true,
+        latit: true,
+        longit: true,
       },
       description: true,
       image: {id: true},

@@ -53,7 +53,9 @@ export default async function Page({
     <div className="container flex flex-col gap-4 mt-4">
       <div className="flex flex-col gap-4 bg-card p-4">
         <Details entryDetail={entry} tenant={tenant} />
-        <Map className="h-80 w-full" entries={[clone(entry)]} />
+        {entry.isMap && entry.address?.longit && entry.address?.latit && (
+          <Map className="h-80 w-full" entries={[clone(entry)]} />
+        )}
       </div>
       {entry.directoryContactSet && entry.directoryContactSet?.length > 0 && (
         <>

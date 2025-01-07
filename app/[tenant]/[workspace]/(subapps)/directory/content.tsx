@@ -50,7 +50,14 @@ export async function Content({
       {/* NOTE: expand class applied by the map , when it is expanded and when it is in mobile view */}
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
         <aside className="space-y-4">
-          <Map showExpand entries={clone(entries)} />
+          <Map
+            showExpand
+            entries={clone(
+              entries.filter(
+                x => x.address?.longit && x.address?.latit && x.isMap,
+              ),
+            )}
+          />
           <Sort />
         </aside>
         <main className="grow flex flex-col gap-4">
