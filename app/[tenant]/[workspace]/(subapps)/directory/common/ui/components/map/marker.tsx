@@ -27,7 +27,6 @@ export function Marker(props: MarkerProps) {
   const toggle = useCallback(() => setShow(show => !show), []);
   const handleClose = useCallback(() => setShow(false), []);
 
-  console.log(item.address);
   return (
     <>
       <MarkerComponent

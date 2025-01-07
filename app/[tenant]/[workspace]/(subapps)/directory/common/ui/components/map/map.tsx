@@ -3,6 +3,7 @@ import {APIProvider, Map as GMap} from '@vis.gl/react-google-maps';
 import {useMemo, useState} from 'react';
 import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
 
+import {RESPONSIVE_SIZES} from '@/constants';
 import {Cloned} from '@/types/util';
 import {Button} from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
@@ -28,16 +29,20 @@ export function Map(props: MapProps) {
 function MapContent(props: MapProps) {
   const {className, showExpand, entries} = props;
   const [expand, setExpand] = useState(false);
+  const mapEntries = useMemo(
+    () => entries.filter(x => x.address?.longit && x.address?.latit && x.isMap),
+    [entries],
+  );
   const res = useResponsive();
-  const small = (['xs', 'sm', 'md'] as const).some(x => res[x]);
+  const small = RESPONSIVE_SIZES.some(x => res[x]);
   const full = small || expand;
 
   const defaultCenter = useMemo(
     () => ({
-      lat: Number(entries[0]?.address?.latit || 0),
-      lng: Number(entries[0]?.address?.longit || 0),
+      lat: Number(mapEntries[0]?.address?.latit || 0),
+      lng: Number(mapEntries[0]?.address?.longit || 0),
     }),
-    [entries],
+    [mapEntries],
   );
 
   const Icon = expand ? MdCloseFullscreen : MdOpenInFull;
@@ -53,8 +58,7 @@ function MapContent(props: MapProps) {
     [full, className],
   );
 
-  // if (loading) return <Skeleton className={mapClassName} />;
-  if (!entries.length) return <div className={cn(full && 'expand')} />; // NOTE: expand class is used make the parent parent component flex column
+  if (!mapEntries.length) return <div className={cn(full && 'expand')} />; // NOTE: expand class is used make the parent parent component flex column
   return (
     <GMap
       className={mapClassName}
@@ -71,9 +75,8 @@ function MapContent(props: MapProps) {
           <Icon size={18} />
         </Button>
       )}
-      {entries?.map((item, index) => {
-        if (!item.address?.longit || !item.address?.latit) return null;
-        return <Marker key={index} small={small || !expand} item={item} />;
+      {mapEntries?.map(item => {
+        return <Marker key={item.id} small={small || !expand} item={item} />;
       })}
     </GMap>
   );
