@@ -1,10 +1,9 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
-import type {ID, Participant, PortalWorkspace, User} from '@/types';
-import {t} from '@/locale/server';
+import {getTranslation, t} from '@/locale/server';
 import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
-import {filterPrivate} from '@/orm/filter';
+import type {ID, Participant, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
@@ -76,9 +75,10 @@ export async function findEventParticipant({
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
-  if (!id) return error(await t('Event ID is missing!'));
+  if (!tenantId)
+    return error(await getTranslation({}, 'Tenant ID is missing!'));
 
-  if (!tenantId) return error(await t('Tenant ID is missing!'));
+  if (!id) return error(await t('Event ID is missing!'));
 
   const session = await getSession();
   const user = session?.user;
@@ -87,7 +87,7 @@ export async function findEventParticipant({
   if (!event) {
     return {
       error: true,
-      message: await t('Event is invalid!', {tenantId}),
+      message: await getTranslation({tenant: tenantId}, 'Event is invalid!'),
     };
   }
 

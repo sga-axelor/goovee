@@ -1,4 +1,4 @@
-import {t} from '@/locale/server';
+import {getTranslation, t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import type {Tenant} from '@/tenant';
@@ -36,7 +36,7 @@ export async function withAuth(
   if (!session?.user?.id) {
     return {
       error: true,
-      message: await t('Unauthorized', {tenantId}),
+      message: await getTranslation({tenant: tenantId}, 'Unauthorized'),
     };
   }
   return {error: null};
@@ -77,7 +77,7 @@ export function withWorkspace(
     if (!workspace) {
       return {
         error: true,
-        message: await t('Invalid workspace', {tenantId}),
+        message: await getTranslation({tenant: tenantId}, 'Invalid workspace'),
       };
     }
 

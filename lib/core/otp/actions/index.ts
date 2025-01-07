@@ -1,7 +1,7 @@
 'use server';
 
 // ---- CORE IMPORTS ---- //
-import {t} from '@/locale/server';
+import {getTranslation} from '@/locale/server';
 import NotificationManager, {NotificationType} from '@/notification';
 import {
   type MailConfig,
@@ -108,7 +108,7 @@ export async function generateOTP({
   }
 
   if (!email) {
-    return error(await t('Email is required', {tenantId}));
+    return error(await getTranslation({tenant: tenantId}, 'Email is required'));
   }
 
   try {
@@ -152,6 +152,11 @@ export async function generateOTP({
         );
     }
   } catch (err) {
-    return error(await t('Error creating otp, try again.', {tenantId}));
+    return error(
+      await getTranslation(
+        {tenant: tenantId},
+        'Error creating otp, try again.',
+      ),
+    );
   }
 }
