@@ -130,9 +130,7 @@ export async function findEntriesBySearch({
         OR: [
           {title: {like: `%${search}%`}},
           {description: {like: `%${search}%`}},
-          {address: {like: `%${search}%`}},
-          {city: {like: `%${search}%`}},
-          {zipcode: {like: `%${search}%`}},
+          {address: {formattedFullName: {like: `%${search}%`}}},
           {directoryEntryCategorySet: {title: {like: `%${search}%`}}},
         ],
       }),
