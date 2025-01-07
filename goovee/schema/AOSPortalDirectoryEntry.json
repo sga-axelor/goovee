@@ -60,6 +60,10 @@
       "name": "directoryEntryCategorySet",
       "type": "ManyToMany",
       "target": "AOSPortalDirectoryCategory"
+    },
+    {
+      "name": "attrs",
+      "type": "String"
     }
   ]
 }

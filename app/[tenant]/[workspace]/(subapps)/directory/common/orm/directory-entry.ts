@@ -49,6 +49,7 @@ export async function findEntry({
       },
       instagram: true,
       directoryEntryCategorySet: {select: {title: true, color: true}},
+      attrs: true,
     },
   });
   return entry;

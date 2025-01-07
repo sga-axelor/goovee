@@ -20,6 +20,7 @@ import {colors} from '../../common/constants';
 import {Entry, findEntry} from '../../common/orm';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
+import {findModelFields} from '../../common/orm/meta-json-fields';
 
 export default async function Page({
   params,
@@ -89,7 +90,25 @@ async function Details({
     image,
     instagram,
     directoryEntryCategorySet,
+    attrs,
   } = entryDetail;
+
+  const customFields = (
+    await findModelFields({
+      modelName: 'com.axelor.apps.portal.db.DirectoryEntry',
+      modelField: 'attrs',
+      tenantId: tenant,
+    })
+  ).map(field => {
+    const fieldValue =
+      typeof attrs === 'object' && attrs != null ? attrs[field.name] : null;
+    return (
+      <div key={field.id}>
+        <span className="text-base font-semibold me-2">{field.title}:</span>
+        <span className="text-sm text-muted-foreground">{fieldValue}</span>
+      </div>
+    );
+  });
 
   return (
     <div>
@@ -122,21 +141,7 @@ async function Details({
 
       <div className="space-y-4 mt-5">
         <p className="text-sm text-muted-foreground">{description}</p>
-
-        <div>
-          <span className="text-base font-semibold me-2">Info 1 :</span>
-          <span className="text-sm text-muted-foreground">
-            Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
-            mattis pharetra sed.
-          </span>
-        </div>
-        <div>
-          <span className="text-base font-semibold me-2">Info 2 :</span>
-          <span className="text-sm text-muted-foreground">
-            Lorem ipsum dolor sit amet consectetur. Vitae nec pulvinar bibendum
-            mattis pharetra sed.
-          </span>
-        </div>
+        {customFields}
       </div>
       {(linkedIn || twitter || instagram || website) && (
         <p className="font-semibold text-xl mt-5 mb-5">
