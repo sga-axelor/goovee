@@ -37,7 +37,12 @@ export function Card(props: CardProps) {
           ))}
         </div>
         <h4 className="font-semibold line-clamp-1">{item.title}</h4>
-        <p className="text-success text-sm line-clamp-3">{item.address}</p>
+        <p className="text-success text-sm line-clamp-3">
+          {
+            //TODO: show full address
+          }
+          {item.address?.streetName}
+        </p>
         <p className="text-xs line-clamp-3">{item.description}</p>
       </div>
 

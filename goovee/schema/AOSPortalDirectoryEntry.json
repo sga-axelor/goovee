@@ -12,17 +12,8 @@
     {
       "name": "address",
       "column": "directory_entry_address",
-      "type": "String"
-    },
-    {
-      "name": "city",
-      "column": "directory_entry_city",
-      "type": "String"
-    },
-    {
-      "name": "zipcode",
-      "column": "directory_entry_zipcode",
-      "type": "String"
+      "type": "ManyToOne",
+      "target": "AOSAddress"
     },
     {
       "name": "linkedIn",
@@ -58,7 +49,7 @@
     {
       "name": "directoryContactSet",
       "type": "ManyToMany",
-      "target": "AOSPortalDirectoryContact"
+      "target": "AOSPartner"
     },
     {
       "name": "instagram",

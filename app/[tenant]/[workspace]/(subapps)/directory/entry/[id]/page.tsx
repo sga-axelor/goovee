@@ -81,7 +81,6 @@ async function Details({
 }) {
   const {
     title,
-    city,
     address,
     twitter,
     website,
@@ -107,7 +106,10 @@ async function Details({
             />
           ))}
           <p className="text-success text-base">
-            {address} - {city}
+            {
+              //TODO: use full address
+            }
+            {address?.streetName}
           </p>
         </div>
 
@@ -180,7 +182,7 @@ async function Contact({
   tenant: string;
   contact: NonNullable<Entry['directoryContactSet']>[number];
 }) {
-  const {firstName, lastName, email, phoneNumber, linkedinLink} = contact;
+  const {simpleFullName, emailAddress, fixedPhone} = contact;
   return (
     <div className="bg-card space-y- p-4">
       <div className="flex items-center gap-2">
@@ -190,36 +192,37 @@ async function Contact({
             src={getProfilePic('', tenant)}
           />
         </Avatar>
-        <span className="font-semibold">
-          {firstName} {lastName}
-        </span>
+        <span className="font-semibold">{simpleFullName}</span>
       </div>
       <div className="ms-4 space-y-4">
-        {email && (
+        {emailAddress && (
           <>
             <h4 className="font-semibold">{await getTranslation('Email')}</h4>
             <a
               className="text-sm text-muted-foreground"
-              href={`mailto:${email}`}>
-              {email}
+              href={`mailto:${emailAddress.address}`}>
+              {emailAddress.address}
             </a>
           </>
         )}
-        {phoneNumber && (
+        {fixedPhone && (
           <>
             <h4 className="font-semibold">{await getTranslation('Phone')}</h4>
             <a
               className="text-sm text-muted-foreground"
-              href={`tel:${phoneNumber}`}>
-              {phoneNumber}
+              href={`tel:${fixedPhone}`}>
+              {fixedPhone}
             </a>
           </>
         )}
-        {linkedinLink && (
-          <Link href={`${linkedinLink}`}>
-            <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
-          </Link>
-        )}
+        {
+          //TODO: add linkedin link
+        }
+        {/* {linkedinLink && ( */}
+        {/*   <Link href={`${linkedinLink}`}> */}
+        {/*     <FaLinkedin className="h-8 w-8 text-palette-blue-dark" /> */}
+        {/*   </Link> */}
+        {/* )} */}
       </div>
     </div>
   );
