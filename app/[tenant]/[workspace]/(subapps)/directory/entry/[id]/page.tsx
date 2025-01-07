@@ -13,7 +13,6 @@ import {clone} from '@/utils';
 import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 import {FaInstagram, FaLinkedin} from 'react-icons/fa';
-import {getProfilePic} from '../../common/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {colors} from '../../common/constants';
@@ -181,15 +180,24 @@ async function Contact({
   tenant: string;
   contact: NonNullable<Entry['directoryContactSet']>[number];
 }) {
-  const {simpleFullName, emailAddress, fixedPhone, linkedinLink, mobilePhone} =
-    contact;
+  const {
+    simpleFullName,
+    emailAddress,
+    fixedPhone,
+    linkedinLink,
+    mobilePhone,
+    picture,
+  } = contact;
   return (
     <div className="bg-card space-y- p-4">
       <div className="flex items-center gap-2">
         <Avatar className="h-10 w-10">
           <AvatarImage
             className="object-cover"
-            src={getProfilePic('', tenant)}
+            src={getImageURL(picture?.id, tenant, {
+              noimage: true,
+              noimageSrc: '/images/user.png',
+            })}
           />
         </Avatar>
         <span className="font-semibold">{simpleFullName}</span>

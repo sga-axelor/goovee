@@ -43,6 +43,9 @@ export async function findEntry({
           fixedPhone: true,
           mobilePhone: true,
           linkedinLink: true,
+          picture: {
+            id: true,
+          },
         },
       },
       instagram: true,
