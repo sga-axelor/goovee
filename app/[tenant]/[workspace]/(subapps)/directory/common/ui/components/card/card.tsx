@@ -48,6 +48,7 @@ export function Card(props: CardProps) {
 
       <Image
         width={150}
+        height={138}
         className="rounded-r-lg h-[138px]"
         src={getImageURL(item?.image?.id, tenant, {noimage: true})}
         alt="image"
