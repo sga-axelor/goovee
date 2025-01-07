@@ -6,6 +6,7 @@ import {
   DEFAULT_PAGE,
 } from '@/constants';
 import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
+import {formatDate, formatNumber} from '@/locale/server/formatters';
 import type {Partner, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -83,16 +84,28 @@ const fetchOrders = async ({
       return [];
     });
 
-  const orders = $orders.map((order: any) => {
+  const orders: any = [];
+
+  for (const order of $orders) {
     const {inTaxTotal, exTaxTotal, currency} = order;
     const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
     const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
-    return {
+
+    const $order = {
       ...order,
-      exTaxTotal: getFormattedValue(exTaxTotal, unit, currencySymbol),
-      inTaxTotal: getFormattedValue(inTaxTotal, unit, currencySymbol),
+      createdOn: await formatDate(order?.createdOn!),
+      exTaxTotal: await formatNumber(exTaxTotal, {
+        scale: unit,
+        currency: currencySymbol,
+      }),
+      inTaxTotal: await formatNumber(inTaxTotal, {
+        scale: unit,
+        currency: currencySymbol,
+      }),
     };
-  });
+
+    orders.push($order);
+  }
 
   const pageInfo = getPageInfo({
     count: orders?.[0]?._count,
@@ -262,7 +275,7 @@ export async function findOrder({
 
   const {currency, exTaxTotal, inTaxTotal, saleOrderLineList} = order;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
-  const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+  const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
   const sumOfDiscounts = saleOrderLineList.reduce(
     (total: number, {discountAmount}: any) => {
@@ -277,20 +290,41 @@ export async function findOrder({
           currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE,
         );
 
+  const $saleOrderLineList: any = [];
+
+  for (const list of saleOrderLineList || []) {
+    const line = {
+      ...list,
+      qty: await formatNumber(list.qty, {scale}),
+      price: await formatNumber(list.price, {
+        scale,
+        currency: currencySymbol,
+      }),
+      exTaxTotal: await formatNumber(list.exTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+      discountAmount: await formatNumber(list.discountAmount, scale),
+      inTaxTotal: await formatNumber(list.inTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+    };
+    $saleOrderLineList.push(line);
+  }
+
   return {
     ...order,
-    exTaxTotal: getFormattedValue(exTaxTotal, unit, currencySymbol),
-    inTaxTotal: getFormattedValue(inTaxTotal, unit, currencySymbol),
-    saleOrderLineList: saleOrderLineList.map((list: any) => {
-      return {
-        ...list,
-        qty: scale(list.qty, unit),
-        price: getFormattedValue(list.price, unit, currencySymbol),
-        exTaxTotal: getFormattedValue(list.exTaxTotal, unit, currencySymbol),
-        discountAmount: scale(list.discountAmount, unit),
-        inTaxTotal: getFormattedValue(list.inTaxTotal, unit, currencySymbol),
-      };
+    createdOn: await formatDate(order?.createdOn!),
+    exTaxTotal: await formatNumber(exTaxTotal, {
+      scale,
+      currency: currencySymbol,
     }),
+    inTaxTotal: await formatNumber(inTaxTotal, {
+      scale,
+      currency: currencySymbol,
+    }),
+    saleOrderLineList: $saleOrderLineList,
     totalDiscount,
   };
 }

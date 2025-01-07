@@ -36,7 +36,7 @@ export const Informations = ({
             <h5 className="text-lg font-semibold mb-0 pr-1">
               {i18n.t('Created on')}:
             </h5>
-            <p>{parseDate(createdOn)}</p>
+            <p>{createdOn}</p>
           </div>
           <div className="flex items-center gap-2">
             <h5 className="text-lg font-semibold mb-0 pr-1">

@@ -37,7 +37,7 @@ export const OrderColumns = [
     label: i18n.t('Created on'),
     sortable: true,
     getter: (row: any) => row.createdOn,
-    content: (row: any) => parseDate(row.createdOn),
+    content: (row: any) => row.createdOn,
   },
   {
     key: 'exTaxTotal',
