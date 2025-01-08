@@ -116,7 +116,7 @@ async function Details({
       <div className="flex bg-card gap-5 justify-between">
         <div className="space-y-4 mt-4">
           <h2 className="font-semibold text-xl">{title}</h2>
-          {directoryEntryCategorySet?.map((cat) => (
+          {directoryEntryCategorySet?.map(cat => (
             <Category
               name={cat?.title}
               key={cat.id}
