@@ -1,14 +1,4 @@
 import {notFound} from 'next/navigation';
-import * as materialIcon from 'react-icons/md';
-import {
-  MdMoney,
-  MdOutlineDiamond,
-  MdOutlineFoodBank,
-  MdOutlineMedicalServices,
-  MdOutlineSmartphone,
-  MdOutlineSupervisedUserCircle,
-} from 'react-icons/md';
-import {TbTool} from 'react-icons/tb';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -71,7 +61,7 @@ export default async function Page({
     ? `url(${getImageURL(workspace.config.directoryHeroBgImage.id, tenant)})`
     : IMAGE_URL;
 
-  const cards = categories.map((category, i) => (
+  const cards = categories.map(category => (
     <CategoryCard
       workspaceURI={workspaceURI}
       id={category.id}
