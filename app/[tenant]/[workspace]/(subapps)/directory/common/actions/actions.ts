@@ -1,7 +1,7 @@
 'use server';
 import {headers} from 'next/headers';
 import type {ID} from '@goovee/orm';
-import {ActionResponse} from '@/types/action';
+import type {ActionResponse} from '@/types/action';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
