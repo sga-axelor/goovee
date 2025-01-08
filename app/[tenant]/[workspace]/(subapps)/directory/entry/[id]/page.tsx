@@ -17,8 +17,8 @@ import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 // ---- LOCAL IMPORTS ---- //
 import {colors} from '../../common/constants';
 import {findEntry} from '../../common/orm';
-import type {Entry} from '../../common/types';
 import {findModelFields} from '../../common/orm/meta-json-fields';
+import type {Entry} from '../../common/types';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
 import {cn} from '@/utils/css';
@@ -190,7 +190,7 @@ async function Contact({
     picture,
   } = contact;
   return (
-    <div className="bg-card space-y- p-4 rounded-lg">
+    <div className="bg-card space-y-4 p-4 rounded-lg">
       <div className="flex items-center gap-2">
         <Avatar className="h-10 w-10">
           <AvatarImage
@@ -207,29 +207,29 @@ async function Contact({
         {emailAddress && (
           <>
             <h4 className="font-semibold">{await t('Email')}</h4>
-            <a
-              className="text-sm text-muted-foreground"
+            <Link
+              className="text-sm text-muted-foreground hover:underline hover:!text-palette-blue-dark"
               href={`mailto:${emailAddress.address}`}>
               {emailAddress.address}
-            </a>
+            </Link>
           </>
         )}
         <>
           <h4 className="font-semibold">{await t('Phone number')}</h4>
           {fixedPhone && (
-            <a
-              className="text-sm text-muted-foreground"
+            <Link
+              className="text-sm text-muted-foreground hover:underline hover:!text-palette-blue-dark"
               href={`tel:${fixedPhone}`}>
               {fixedPhone}
-            </a>
+            </Link>
           )}
           <br />
           {mobilePhone && (
-            <a
-              className="text-sm text-muted-foreground"
+            <Link
+              className="text-sm text-muted-foreground hover:underline hover:!text-palette-blue-dark"
               href={`tel:${mobilePhone}`}>
               {mobilePhone}
-            </a>
+            </Link>
           )}
         </>
 
