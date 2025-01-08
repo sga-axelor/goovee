@@ -103,6 +103,7 @@ async function Details({
   ).map(field => {
     const fieldValue =
       typeof attrs === 'object' && attrs != null ? attrs[field.name] : null;
+    if (!fieldValue) return null;
     return (
       <div key={field.id}>
         <span className="text-base font-semibold me-2">{field.title}:</span>
