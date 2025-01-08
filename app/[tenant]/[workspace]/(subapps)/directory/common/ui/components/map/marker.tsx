@@ -8,7 +8,7 @@ import {useCallback, useState} from 'react';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {Cloned} from '@/types/util';
 
-import type {Entry, ListEntry} from '../../../orm';
+import type {Entry, ListEntry} from '../../../types';
 import {Card} from '../card';
 
 type MarkerProps = {

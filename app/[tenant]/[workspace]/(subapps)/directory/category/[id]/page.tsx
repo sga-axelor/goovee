@@ -1,15 +1,5 @@
 import {notFound} from 'next/navigation';
-import * as materialIcon from 'react-icons/md';
-import {
-  MdMoney,
-  MdOutlineDiamond,
-  MdOutlineFoodBank,
-  MdOutlineMedicalServices,
-  MdOutlineNotificationAdd,
-  MdOutlineSmartphone,
-  MdOutlineSupervisedUserCircle,
-} from 'react-icons/md';
-import {TbTool} from 'react-icons/tb';
+import {MdOutlineNotificationAdd} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';

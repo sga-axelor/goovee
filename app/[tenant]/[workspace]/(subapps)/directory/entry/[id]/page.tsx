@@ -16,7 +16,8 @@ import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
 import {colors} from '../../common/constants';
-import {Entry, findEntry} from '../../common/orm';
+import {findEntry} from '../../common/orm';
+import type {Entry} from '../../common/types';
 import {findModelFields} from '../../common/orm/meta-json-fields';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';

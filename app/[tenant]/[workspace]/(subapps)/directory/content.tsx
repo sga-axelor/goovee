@@ -15,7 +15,7 @@ import {clone} from '@/utils';
 import {getPaginationButtons} from '@/utils/pagination';
 
 // ---- LOCAL IMPORTS ---- //
-import type {ListEntry} from './common/orm';
+import type {ListEntry} from './common/types';
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';

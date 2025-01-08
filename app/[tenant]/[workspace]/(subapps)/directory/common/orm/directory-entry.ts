@@ -3,9 +3,7 @@ import {manager} from '@/tenant';
 import {t} from '@/lib/core/locale/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
-import {Expand} from '@/types/util';
 
-export type Entry = Expand<NonNullable<Awaited<ReturnType<typeof findEntry>>>>;
 export async function findEntry({
   id,
   workspaceId,
@@ -56,9 +54,6 @@ export async function findEntry({
   return entry;
 }
 
-export type ListEntry = Expand<
-  NonNullable<Awaited<ReturnType<typeof findEntries>>>[number]
->;
 export async function findEntries({
   take,
   skip,
@@ -99,10 +94,6 @@ export async function findEntries({
   });
   return entries;
 }
-
-export type SearchEntry = Expand<
-  NonNullable<Awaited<ReturnType<typeof findEntries>>>[number]
->;
 
 export async function findEntriesBySearch({
   workspaceId,

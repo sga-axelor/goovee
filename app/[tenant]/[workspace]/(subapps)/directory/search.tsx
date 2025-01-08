@@ -21,7 +21,7 @@ import {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {searchEntries} from './common/actions';
-import type {SearchEntry} from './common/orm';
+import type {SearchEntry} from './common/types';
 
 export function Search({
   className,

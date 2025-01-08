@@ -1,14 +1,9 @@
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
-
 import {t} from '@/lib/core/locale/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
-import {Expand} from '@/types/util';
 
-export type ListCategory = Expand<
-  NonNullable<Awaited<ReturnType<typeof findCategories>>>[number]
->;
 export async function findCategories({
   workspaceId,
   tenantId,
@@ -29,9 +24,6 @@ export async function findCategories({
   return directoryCategories;
 }
 
-export type Category = Expand<
-  NonNullable<Awaited<ReturnType<typeof findCategory>>>
->;
 export async function findCategory({
   id,
   workspaceId,

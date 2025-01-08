@@ -13,7 +13,8 @@ import type {Cloned} from '@/types/util';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEntriesBySearch, type SearchEntry} from '../orm';
+import {findEntriesBySearch} from '../orm';
+import type {SearchEntry} from '../types';
 
 export async function searchEntries({
   search,

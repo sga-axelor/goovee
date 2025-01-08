@@ -5,7 +5,7 @@ import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import Image from 'next/image';
 import {colors} from '../../../constants';
-import {Entry, ListEntry} from '../../../orm';
+import type {Entry, ListEntry} from '../../../types';
 import {Category} from '../pills';
 
 export type CardProps = {

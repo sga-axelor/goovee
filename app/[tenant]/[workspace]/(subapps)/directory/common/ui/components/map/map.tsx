@@ -9,7 +9,7 @@ import {Button} from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
 
-import type {Entry, ListEntry} from '../../../orm';
+import type {Entry, ListEntry} from '../../../types';
 import {Marker} from './marker';
 import {calculateZoom} from './utils';
 
