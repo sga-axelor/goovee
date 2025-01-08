@@ -1,4 +1,4 @@
-import {i18n} from '@/locale';
+import {formatDate} from '@/lib/core/locale/formatters';
 import type {Cloned} from '@/types/util';
 import type {
   ChildTicket,
@@ -6,7 +6,7 @@ import type {
   TicketLink,
   TicketListTicket,
 } from '../../../types';
-import {formatDate, isWithProvider} from '../../../utils';
+import {isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 import type {Column} from '../table-elements';
 
@@ -73,7 +73,7 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   {
     key: 'updatedOn',
     label: 'Updated',
-    content: t => formatDate(t.updatedOn),
+    content: t => formatDate(t?.updatedOn!),
     getter: 'updatedOn',
   },
 ];
@@ -132,7 +132,7 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
   {
     key: 'updatedOn',
     label: 'Updated',
-    content: t => formatDate(t.updatedOn),
+    content: t => formatDate(t?.updatedOn!),
     getter: 'updatedOn',
   },
 ];
@@ -191,7 +191,7 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
   {
     key: 'updatedOn',
     label: 'Updated',
-    content: t => formatDate(t.updatedOn),
+    content: t => formatDate(t?.updatedOn!),
     getter: 'updatedOn',
   },
 ];
@@ -252,7 +252,7 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
   {
     key: 'updatedOn',
     label: 'Updated',
-    content: ({relatedTask: t}) => formatDate(t?.updatedOn),
+    content: ({relatedTask: t}) => formatDate(t?.updatedOn!),
     getter: 'relatedTask.updatedOn',
   },
 ];

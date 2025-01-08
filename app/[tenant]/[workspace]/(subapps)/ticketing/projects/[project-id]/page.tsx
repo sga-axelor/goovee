@@ -28,6 +28,7 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
+import {formatNumber} from '@/lib/core/locale/server/formatters';
 import {cn} from '@/utils/css';
 import {DEFAULT_SORT, sortKeyPathMap} from '../../common/constants';
 import {findProject, findTicketStatuses} from '../../common/orm/projects';
@@ -199,7 +200,7 @@ async function TicketCard(props: TicketCardProps) {
         <Icon className="h-6 w-6" />
       </div>
       <div className="grow flex flex-col justify-between">
-        <h3 className="text-[28px] font-semibold">{count}</h3>
+        <h3 className="text-[28px] font-semibold">{formatNumber(count)}</h3>
         <p className="text-sm font-semibold">{label}</p>
       </div>
     </Link>

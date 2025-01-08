@@ -1,5 +1,7 @@
 'use client';
 
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {formatDate} from '@/lib/core/locale/formatters';
 import {i18n} from '@/locale';
 import type {Maybe} from '@/types/util';
 import {
@@ -35,10 +37,9 @@ import type {
   Category as TCategory,
   Priority as TPriority,
 } from '../../../types';
-import {formatDate, isWithProvider} from '../../../utils';
+import {isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 import {useTicketDetails} from './ticket-details-provider';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 type Props = {
   categories: TCategory[];
@@ -203,7 +204,7 @@ export function TicketDetails(props: Props) {
             </p>
             <p>
               <span className="font-medium pe-2">{i18n.t('Created on')}:</span>
-              {formatDate(ticket.createdOn)}
+              {formatDate(ticket?.createdOn!)}
             </p>
             <hr />
 
@@ -260,7 +261,7 @@ export function TicketDetails(props: Props) {
               </div>
               <p>
                 <span className="font-medium pe-2">Expected on:</span>
-                {formatDate(ticket.taskEndDate)}
+                {formatDate(ticket?.taskEndDate!)}
               </p>
             </div>
             <hr />
