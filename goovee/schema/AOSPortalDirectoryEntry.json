@@ -64,6 +64,11 @@
     {
       "name": "attrs",
       "type": "String"
+    },
+    {
+      "name": "workspace",
+      "type": "ManyToOne",
+      "target": "AOSPortalWorkspace"
     }
   ]
 }

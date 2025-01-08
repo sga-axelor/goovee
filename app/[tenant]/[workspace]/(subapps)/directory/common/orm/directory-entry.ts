@@ -20,7 +20,12 @@ export async function findEntry({
   const c = await manager.getClient(tenantId);
 
   const entry = await c.aOSPortalDirectoryEntry.findOne({
-    where: {id},
+    where: {
+      id: id,
+      workspace: {
+        id: workspaceId,
+      },
+    },
     select: {
       title: true,
       address: {
@@ -74,7 +79,12 @@ export async function findEntries({
   }
   const c = await manager.getClient(tenantId);
   const entries = await c.aOSPortalDirectoryEntry.find({
-    ...(categoryId && {where: {directoryEntryCategorySet: {id: categoryId}}}),
+    ...(categoryId && {
+      where: {
+        directoryEntryCategorySet: {id: categoryId},
+        workspace: {id: workspaceId},
+      },
+    }),
     orderBy: orderBy as any,
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
@@ -113,7 +123,10 @@ export async function findEntriesBySearch({
   const entries = await c.aOSPortalDirectoryEntry.find({
     take: 10,
     where: {
-      ...(categoryId && {directoryEntryCategorySet: {id: categoryId}}),
+      ...(categoryId && {
+        directoryEntryCategorySet: {id: categoryId},
+        workspace: {id: workspaceId},
+      }),
       ...(search && {
         OR: [
           {title: {like: `%${search}%`}},
