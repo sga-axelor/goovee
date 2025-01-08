@@ -51,14 +51,14 @@ export default async function Page({
   if (!entry) notFound();
 
   return (
-    <div className="container flex flex-col gap-4 mt-4">
-      <div className="flex flex-col gap-4 bg-card p-4">
+    <div className="container flex flex-col gap-4 mt-4 mb-5">
+      <div className="flex flex-col gap-4 bg-card p-4 rounded-lg">
         <Details entryDetail={entry} tenant={tenant} />
         <Map className="h-80 w-full" entries={[clone(entry)]} />
       </div>
       {entry.directoryContactSet && entry.directoryContactSet?.length > 0 && (
         <>
-          <h2 className="font-semibold text-xl">
+          <h2 className="font-semibold text-xl pl-4">
             {await t(
               `${entry.directoryContactSet.length > 1 ? 'Contacts' : 'Contact'}`,
             )}
@@ -190,7 +190,7 @@ async function Contact({
     picture,
   } = contact;
   return (
-    <div className="bg-card space-y- p-4">
+    <div className="bg-card space-y- p-4 rounded-lg">
       <div className="flex items-center gap-2">
         <Avatar className="h-10 w-10">
           <AvatarImage
