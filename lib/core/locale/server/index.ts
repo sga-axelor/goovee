@@ -10,8 +10,12 @@ import {translate} from '@/locale/utils';
 const getTranslations = cache(async function getBundle(
   locale = DEFAULT_LOCALE,
   tenant: string,
+  keys?: string[],
 ) {
-  return await findTranslations(locale, tenant);
+  if (!keys) {
+    return {};
+  }
+  return await findTranslations(locale, tenant, keys);
 });
 
 export async function getTranslation(
@@ -44,7 +48,7 @@ export async function getTranslation(
     locale = DEFAULT_LOCALE;
   }
 
-  const translations = await getTranslations(locale, tenant);
+  const translations = await getTranslations(locale, tenant, [key]);
 
   return translate(translations, key, ...interpolations);
 }

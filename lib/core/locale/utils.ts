@@ -46,6 +46,10 @@ export function transformLocale(locale: string) {
   return locale?.replaceAll('_', '-');
 }
 
+export function findLocaleLanguage(locale: string) {
+  return locale?.split('-')?.[0];
+}
+
 export function limitScale(value?: number) {
   if (value == null) {
     return value;
