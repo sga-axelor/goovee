@@ -1,0 +1,12 @@
+{
+  "name": "AOSMetaModel",
+  "table": "meta_model",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "fullName"
+    }
+  ]
+}
