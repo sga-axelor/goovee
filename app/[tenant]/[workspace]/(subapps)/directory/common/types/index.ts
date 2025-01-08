@@ -63,7 +63,7 @@ export type Entry = {
     };
     mobilePhone?: string;
     linkedinLink?: string;
-  };
+  }[];
   instagram?: string;
   directoryEntryCategorySet?: {
     id: string;
