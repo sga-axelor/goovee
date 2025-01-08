@@ -1,6 +1,7 @@
+import Link from 'next/link';
+
 import {DynamicIcon} from '@/ui/components';
 import {cn} from '@/utils/css';
-import Link from 'next/link';
 
 export type CategoryCardProps = {
   id: string;

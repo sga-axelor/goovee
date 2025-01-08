@@ -21,6 +21,7 @@ import type {Entry} from '../../common/types';
 import {findModelFields} from '../../common/orm/meta-json-fields';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
+import {cn} from '@/utils/css';
 
 export default async function Page({
   params,
@@ -115,12 +116,11 @@ async function Details({
       <div className="flex bg-card gap-5 justify-between">
         <div className="space-y-4 mt-4">
           <h2 className="font-semibold text-xl">{title}</h2>
-          {directoryEntryCategorySet?.map((cat, idx) => (
+          {directoryEntryCategorySet?.map((cat) => (
             <Category
               name={cat?.title}
-              key={idx}
-              className={`me-3 ${colors[cat.color as keyof typeof colors] ?? ''}`}
-              variant={cat?.color}
+              key={cat.id}
+              className={cn('me-3', colors[cat.color as keyof typeof colors])}
             />
           ))}
           <p className="text-success text-base">{address?.formattedFullName}</p>

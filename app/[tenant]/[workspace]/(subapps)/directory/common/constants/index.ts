@@ -19,8 +19,8 @@ export const colors = {
   brown: 'bg-amber-700/30 text-amber-700', // Closest to brown
   grey: 'bg-gray-500/30 text-gray-500',
   bluegrey: 'bg-slate-500/30 text-slate-500',
-  black: 'bg-black/30 text-black',
-  white: 'bg-white/30 text-white',
+  black: 'bg-black/20 text-black',
+  white: 'bg-black/80 text-white',
 };
 
 export const sortOptions = [

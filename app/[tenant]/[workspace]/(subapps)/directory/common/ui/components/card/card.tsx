@@ -1,9 +1,9 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import {cn} from '@/utils/css';
-
 import {getImageURL} from '@/utils/files';
-import Image from 'next/image';
+
 import {colors} from '../../../constants';
 import type {Entry, ListEntry} from '../../../types';
 import {Category} from '../pills';
@@ -27,11 +27,10 @@ export function Card(props: CardProps) {
             'flex flex-wrap items-center gap-2 ',
             small && 'hidden',
           )}>
-          {item?.directoryEntryCategorySet?.map((item, index) => (
+          {item?.directoryEntryCategorySet?.map(item => (
             <Category
               name={item?.title}
-              key={index}
-              variant={item?.color}
+              key={item.id}
               className={colors[item.color as keyof typeof colors] ?? ''}
             />
           ))}
