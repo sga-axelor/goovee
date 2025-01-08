@@ -4,11 +4,6 @@ import {getImageURL} from '@/utils/files';
 
 import {ASSIGNMENT} from '../constants';
 
-export const formatDate = (date: Maybe<Date | string>): string => {
-  if (!date) return '';
-  return new Date(date).toLocaleDateString();
-};
-
 export function getProfilePic(
   id: Maybe<string>,
   tenantId: Tenant['id'],
