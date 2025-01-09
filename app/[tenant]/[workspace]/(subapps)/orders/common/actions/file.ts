@@ -11,22 +11,31 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {filterPrivate} from '@/orm/filter';
 import {clone} from '@/utils';
-
 import {findByID} from '@/orm/record';
 
+// ---- LOCAL IMPORTS ----//
+
+import {INVOICE_TYPE} from '@/subapps/orders/common/constants/orders';
+import {
+  findCustomerDelivery,
+  findInvoice,
+} from '@/subapps/orders/common/orm/orders';
+
 export async function getFile({
-  orderId,
+  id,
   workspaceURL,
   modelName,
   subapp,
+  type,
 }: {
-  orderId: number;
+  id: number;
   workspaceURL: string;
   modelName: string;
   subapp: SUBAPP_CODES;
+  type: string;
 }) {
   try {
-    if (!orderId) {
+    if (!id) {
       return {
         error: true,
         message: await t('Order Id is missing!'),
@@ -61,29 +70,56 @@ export async function getFile({
       };
     }
 
+    const {role, isContactAdmin} = appAcess;
+
     const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
 
     if (!workspace) {
       return {error: true, message: await t('Invalid workspace')};
     }
 
-    const {
-      error,
-      message,
-      data: modelRecord,
-    }: any = await findByID({
-      subapp,
-      id: orderId,
-      workspaceURL,
-      workspace,
-      tenantId,
-    });
+    let record;
+    switch (type) {
+      case INVOICE_TYPE.order:
+        record = await findByID({
+          subapp,
+          id,
+          workspaceURL,
+          workspace,
+          tenantId,
+        });
 
-    if (error) {
-      return {
-        error: true,
-        message: await t(message || 'Record not found.'),
-      };
+        if (record.error) {
+          return {
+            error: true,
+            message: await t(record.message || 'Record not found.'),
+          };
+        }
+        break;
+      case INVOICE_TYPE.invoice:
+        record = await findInvoice({
+          id,
+          tenantId,
+          workspaceURL,
+          user,
+          role,
+          isContactAdmin,
+        });
+
+        break;
+      case INVOICE_TYPE.customers_delivery:
+        record = await findCustomerDelivery({
+          id,
+          tenantId,
+          workspaceURL,
+        });
+        break;
+
+      default:
+        return {
+          error: true,
+          message: await t('An unexpected error occurred'),
+        };
     }
 
     const client = await manager.getClient(tenantId);
@@ -92,7 +128,7 @@ export async function getFile({
       .findOne({
         where: {
           isDirectory: false,
-          relatedId: modelRecord.id,
+          relatedId: record?.data.id,
           relatedModel: modelName,
           parent: {
             relatedModel: modelName,

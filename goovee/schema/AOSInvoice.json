@@ -70,6 +70,14 @@
       "name": "currency",
       "target": "AOSCurrency"
     },
-    {"name": "saleOrder", "type": "ManyToOne", "target": "AOSOrder"}
+    {
+      "type": "ManyToOne",
+      "name": "saleOrder",
+      "target": "AOSOrder"
+    },
+    {
+      "name": "statusSelect",
+      "type": "Int"
+    }
   ]
 }

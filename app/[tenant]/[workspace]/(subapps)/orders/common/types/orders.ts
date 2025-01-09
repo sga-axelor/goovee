@@ -43,3 +43,9 @@ export type SaleOrder = {
   exTaxTotal: number;
   inTaxTotal: number;
 };
+
+export type Invoice = {
+  id: ID;
+  invoiceId: string;
+  invoiceDate: string;
+};

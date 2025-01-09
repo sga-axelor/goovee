@@ -7,3 +7,4 @@ export {History} from './history';
 export {ContactUs} from './contact-us';
 export {ProductCard} from './product-card';
 export {OrderColumns} from './columns';
+export {ExpandableCard} from './expandable-card';

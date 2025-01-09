@@ -13,9 +13,11 @@ import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/new
 import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/common/orm/tickets';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
+import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 
 import {getWhereClause as getQuotationsWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/utils/quotations';
 import {getWhereClause as getOrdersWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/utils/quotations';
+import {getWhereClause as getInvoicesWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/invoices/common/utils/invoices';
 
 export async function findByID({
   subapp,
@@ -175,6 +177,25 @@ export async function findByID({
       });
       break;
 
+    case SUBAPP_CODES.invoices:
+      if (!user) {
+        return {
+          error: true,
+          message: await t('Unauthorized User'),
+        };
+      }
+      const invoiceWhereClause = getInvoicesWhereClause({
+        user,
+        role,
+        isContactAdmin,
+      });
+      response = await findInvoice({
+        id,
+        tenantId,
+        workspaceURL,
+        params: {where: invoiceWhereClause},
+      });
+      break;
     default:
       return {
         error: true,

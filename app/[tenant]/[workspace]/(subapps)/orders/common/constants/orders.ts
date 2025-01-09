@@ -48,4 +48,28 @@ export const ORDER_DELIVERY_STATUS = {
 
 export const RELATED_MODELS = {
   SALE_ORDER_MODEL: 'com.axelor.apps.sale.db.SaleOrder',
+  INVOICE: 'com.axelor.apps.account.db.Invoice',
+  CUSTOMERS_DELIVERY: 'com.axelor.apps.stock.db.StockMove',
 };
+
+export const INVOICE_TYPE = {
+  order: 'order',
+  invoice: 'invoice',
+  customers_delivery: 'customers_delivery',
+};
+
+export const INVOICE_STATUS = {
+  VENTILATED: 3,
+  UNPAID: 0,
+};
+
+export const CUSTOMERS_DELIVERY_STATUS = {
+  DRAFT: 1,
+  PLANNED: 2,
+  REALIZED: 3,
+};
+
+export const INVOICE = 'Invoice';
+export const ORDER_NUMBER = 'Order number';
+export const CUSTOMER_DELIVERY = 'Customer delivery';
+export const DOWNLOAD_PDF = 'Download pdf';

@@ -70,3 +70,35 @@ export function getWhereClause({
 
   return where;
 }
+
+export function getInvoicesWhereClause({
+  user,
+  role,
+  isContactAdmin,
+}: {
+  user: User;
+  role: any;
+  isContactAdmin?: boolean;
+}) {
+  if (!user) return {};
+
+  const {id, mainPartnerId, isContact} = user;
+
+  let where: any = {
+    partner: {
+      id: isContact ? mainPartnerId : id,
+    },
+  };
+
+  if (isContact) {
+    where.contactPartner = {
+      id,
+    };
+  }
+
+  if (isContactAdmin || role === ROLE.TOTAL) {
+    delete where.contactPartner;
+  }
+
+  return where;
+}

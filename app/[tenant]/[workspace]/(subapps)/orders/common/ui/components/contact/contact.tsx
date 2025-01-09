@@ -47,7 +47,7 @@ export const Contact = ({
                 <div className="text-sm leading-[1.313rem]">
                   <p>{deliveryAddress?.addressl4}</p>
                   <p>{deliveryAddressCity}</p>
-                  <p>{deliveryAddress.zip}</p>
+                  <p>{deliveryAddress?.zip}</p>
                   <p>{deliveryAddress?.country?.name}</p>
                 </div>
               </div>

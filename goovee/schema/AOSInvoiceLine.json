@@ -28,6 +28,11 @@
     {
       "type": "Decimal",
       "name": "discountAmount"
+    },
+    {
+      "name": "saleOrderLine",
+      "type": "ManyToOne",
+      "target": "AOSSaleOrderLine"
     }
   ]
 }

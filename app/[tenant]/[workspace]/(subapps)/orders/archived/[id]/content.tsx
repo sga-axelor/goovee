@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Container} from '@/ui/components';
@@ -19,15 +19,22 @@ import {
   Total,
   PaymentMethod,
   ProductsList,
+  ExpandableCard,
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {
   ORDER_TYPE,
   RELATED_MODELS,
+  INVOICE_TYPE,
+  ORDER_NUMBER,
+  INVOICE,
+  CUSTOMER_DELIVERY,
 } from '@/subapps/orders/common/constants/orders';
 import {getFile} from '@/subapps/orders/common/actions/file';
 
 const Content = ({order}: {order: any}) => {
+  const [loading, setLoading] = useState<{[key: string]: boolean}>({});
+
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -43,6 +50,8 @@ const Content = ({order}: {order: any}) => {
     saleOrderLineList,
     totalDiscount,
     id,
+    invoices,
+    customerDeliveries,
   } = order;
   const {status, variant} = getStatus(statusSelect, deliveryState);
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
@@ -50,14 +59,14 @@ const Content = ({order}: {order: any}) => {
   const {workspaceURL, tenant} = useWorkspace();
   const {toast} = useToast();
 
-  const handleInvoiceDownload = async () => {
+  const handleDownload = async (
+    params: any,
+    uniqueKey: string,
+    errorMessage: string,
+  ) => {
+    setLoading(prev => ({...prev, [uniqueKey]: true}));
     try {
-      const result: any = await getFile({
-        orderId: id,
-        workspaceURL,
-        modelName: RELATED_MODELS.SALE_ORDER_MODEL,
-        subapp: SUBAPP_CODES.orders,
-      });
+      const result: any = await getFile(params);
 
       if (result?.error) {
         toast({
@@ -69,21 +78,69 @@ const Content = ({order}: {order: any}) => {
 
       download(result, tenant);
     } catch (error) {
-      console.error('Unexpected error during invoice download:', error);
+      console.error(errorMessage, error);
+      toast({
+        variant: 'destructive',
+        description: i18n.t(
+          'An unexpected error occurred. Please try again later.',
+        ),
+      });
+    } finally {
+      setLoading(prev => ({...prev, [uniqueKey]: false}));
     }
   };
 
+  const handleOrderInvoiceDownload = () =>
+    handleDownload(
+      {
+        id: id,
+        workspaceURL,
+        modelName: RELATED_MODELS.SALE_ORDER_MODEL,
+        subapp: SUBAPP_CODES.orders,
+        type: INVOICE_TYPE.order,
+      },
+      `orderInvoice-${id}`,
+      'Unexpected error during order invoice download:',
+    );
+
+  const handleInvoiceDownload = (record: any) =>
+    handleDownload(
+      {
+        id: record.id,
+        workspaceURL,
+        modelName: RELATED_MODELS.INVOICE,
+        subapp: SUBAPP_CODES.orders,
+        type: INVOICE_TYPE.invoice,
+      },
+      `invoice-${record.id}`,
+      'Unexpected error during invoice download:',
+    );
+
+  const handleCustomerDeliveryPDFDownload = (record: any) =>
+    handleDownload(
+      {
+        id: record.id,
+        workspaceURL,
+        modelName: RELATED_MODELS.INVOICE,
+        subapp: SUBAPP_CODES.orders,
+        type: INVOICE_TYPE.customers_delivery,
+      },
+      `customerDelivery-${record.id}`,
+      'Unexpected error during customer delivery download:',
+    );
+
   return (
     <>
-      <Container title={`${i18n.t('Order number')} ${saleOrderSeq}`}>
+      <Container title={`${i18n.t(ORDER_NUMBER)} ${saleOrderSeq}`}>
         <Informations
           createdOn={createdOn}
           shipmentMode={shipmentMode}
           status={status}
           variant={variant}
-          onDownload={handleInvoiceDownload}
+          onDownload={handleOrderInvoiceDownload}
+          isDisabled={loading[`orderInvoice-${id}`] || false}
         />
-        <div className="flex flex-col-reverse lg:flex-row gap-6 lg:gap-4">
+        <div className="flex flex-col-reverse xl:flex-row gap-6 xl:gap-4">
           <div className="flex flex-col gap-6 basis-full md:basis-3/4">
             <div className="flex flex-col gap-4  bg-card text-card-foreground p-6 rounded-lg">
               <Contact
@@ -101,11 +158,25 @@ const Content = ({order}: {order: any}) => {
             {false && <History />}
             {showContactUs && <ContactUs />}
           </div>
-          <div className="flex flex-col gap-6 basis-full lg:basis-1/4">
+          <div className="flex flex-col gap-6 basis-full md:basis-1/4">
             <Total
               exTaxTotal={exTaxTotal}
               inTaxTotal={inTaxTotal}
               totalDiscount={totalDiscount}
+            />
+            <ExpandableCard
+              title={i18n.t(INVOICE)}
+              records={invoices}
+              isDisabled={record => loading[`invoice-${record.id}`] || false}
+              onDownload={handleInvoiceDownload}
+            />
+            <ExpandableCard
+              title={i18n.t(CUSTOMER_DELIVERY)}
+              records={customerDeliveries}
+              isDisabled={record =>
+                loading[`customerDelivery-${record.id}`] || false
+              }
+              onDownload={handleCustomerDeliveryPDFDownload}
             />
           </div>
         </div>

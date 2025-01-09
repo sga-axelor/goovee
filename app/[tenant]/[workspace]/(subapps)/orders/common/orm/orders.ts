@@ -5,13 +5,20 @@ import {
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
 } from '@/constants';
-import {getPageInfo, getSkipInfo} from '@/utils';
+import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
-import type {Partner, PortalWorkspace} from '@/types';
+import type {Partner, PortalWorkspace, User} from '@/types';
+import {ID} from '@goovee/orm';
+import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
-import {ORDER_STATUS} from '@/subapps/orders/common/constants/orders';
-import type {Order} from '@/subapps/orders/common/types/orders';
+import {
+  CUSTOMERS_DELIVERY_STATUS,
+  INVOICE_STATUS,
+  ORDER_STATUS,
+} from '@/subapps/orders/common/constants/orders';
+import type {Invoice, Order} from '@/subapps/orders/common/types/orders';
+import {getInvoicesWhereClause} from '@/subapps/orders/common/utils/orders';
 
 const fetchOrders = async ({
   archived = false,
@@ -164,47 +171,39 @@ export async function findOrder({
   id,
   tenantId,
   workspaceURL,
-  params,
-  archived,
+  params = {},
+  archived = false,
+  invoicesParams = {},
 }: {
   id: Order['id'];
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
   params?: any;
   archived?: boolean;
+  invoicesParams?: any;
 }) {
-  if (!(tenantId && workspaceURL)) return null;
+  if (!tenantId && !workspaceURL) return null;
 
   const client = await manager.getClient(tenantId);
 
-  const whereClause = {
+  const baseWhereClause: any = {
     id,
-    ...params?.where,
-    portalWorkspace: {
-      url: workspaceURL,
-    },
+    ...params.where,
+    portalWorkspace: {url: workspaceURL},
   };
 
   if (archived) {
-    whereClause.OR = [
-      {
-        archived: {
-          eq: true,
-        },
-      },
-      {
-        statusSelect: {
-          eq: ORDER_STATUS.CLOSED,
-        },
-      },
+    baseWhereClause.OR = [
+      {archived: {eq: true}},
+      {statusSelect: {eq: ORDER_STATUS.CLOSED}},
     ];
   } else {
-    whereClause.template = false;
-    whereClause.statusSelect = ORDER_STATUS.CONFIRMED;
+    baseWhereClause.template = false;
+    baseWhereClause.statusSelect = ORDER_STATUS.CONFIRMED;
   }
 
-  const order: any = await client.aOSOrder.findOne({
-    where: whereClause,
+  const order = await client.aOSOrder.findOne({
+    where: baseWhereClause,
     select: {
       saleOrderSeq: true,
       inTaxTotal: true,
@@ -273,9 +272,71 @@ export async function findOrder({
     return null;
   }
 
-  const {currency, exTaxTotal, inTaxTotal, saleOrderLineList} = order;
-  const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
-  const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+  const saleOrderLineIds = order?.saleOrderLineList?.map(
+    (line: any) => line.id,
+  );
+
+  const invoices = await client.aOSInvoice
+    .find({
+      where: {
+        ...invoicesParams?.where,
+        portalWorkspace: {url: workspaceURL},
+        OR: [
+          {saleOrder: {id: order.id}},
+          {
+            AND: [
+              {saleOrder: {id: null}},
+              {
+                invoiceLineList: {
+                  saleOrderLine: {id: {in: saleOrderLineIds}},
+                },
+              },
+            ],
+          },
+        ],
+        statusSelect: {eq: INVOICE_STATUS.VENTILATED},
+      },
+      select: {
+        invoiceId: true,
+        createdOn: true,
+        saleOrder: true,
+        invoiceLineList: {
+          select: {
+            saleOrderLine: {saleOrder: true},
+          },
+        },
+      },
+    })
+    .catch(err => {
+      console.error('Error fetching invoices:', err);
+      return [];
+    });
+
+  const customerDeliveries = await client.aOSStockMove
+    .find({
+      where: {
+        saleOrderSet: {id: order.id},
+        statusSelect: CUSTOMERS_DELIVERY_STATUS.REALIZED,
+      },
+      select: {
+        stockMoveSeq: true,
+        createdOn: true,
+      },
+    })
+    .catch(err => {
+      console.error('Error fetching customer deliveries:', err);
+      return [];
+    });
+
+  const {
+    currency,
+    exTaxTotal = '0',
+    inTaxTotal = '0',
+    saleOrderLineList = [],
+  } = order;
+
+  const currencySymbol = currency?.symbol || DEFAULT_CURRENCY_SYMBOL;
+  const scale = currency?.numberOfDecimals ?? DEFAULT_CURRENCY_SCALE;
 
   const sumOfDiscounts = saleOrderLineList.reduce(
     (total: number, {discountAmount}: any) => {
@@ -283,12 +344,14 @@ export async function findOrder({
     },
     0,
   );
+
   const totalDiscount =
     sumOfDiscounts === 0
       ? 0
-      : ((100 * sumOfDiscounts) / (sumOfDiscounts + +exTaxTotal)).toFixed(
-          currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE,
-        );
+      : (
+          (100 * sumOfDiscounts) /
+          (sumOfDiscounts + parseFloat(exTaxTotal))
+        ).toFixed(scale);
 
   const $saleOrderLineList: any = [];
 
@@ -325,6 +388,122 @@ export async function findOrder({
       currency: currencySymbol,
     }),
     saleOrderLineList: $saleOrderLineList,
+    invoices: invoices.map(({invoiceId, ...rest}) => ({
+      ...rest,
+      number: invoiceId,
+    })),
+    customerDeliveries: customerDeliveries.map(({stockMoveSeq, ...rest}) => ({
+      ...rest,
+      number: stockMoveSeq,
+    })),
     totalDiscount,
   };
+}
+
+export async function findInvoice({
+  id,
+  tenantId,
+  workspaceURL,
+  user,
+  role,
+  isContactAdmin,
+}: {
+  id: Invoice['id'];
+  tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
+  user: User;
+  role: string;
+  isContactAdmin: boolean;
+}): Promise<{
+  success?: boolean;
+  error?: boolean;
+  message?: string;
+  data?: any;
+}> {
+  if (!(tenantId && workspaceURL))
+    return {
+      error: true,
+      message: await t('Invalid TenantId & workspace'),
+    };
+
+  if (!user) {
+    return {error: true, message: await t('Unauthorized user.')};
+  }
+
+  const invoiceWhereClause = getInvoicesWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
+  const client = await manager.getClient(tenantId);
+
+  const invoice: any = await client.aOSInvoice
+    .findOne({
+      where: {
+        id,
+        ...invoiceWhereClause,
+        portalWorkspace: {
+          url: workspaceURL,
+        },
+      },
+      select: {
+        id: true,
+        invoiceId: true,
+      },
+    })
+    .then(clone);
+
+  if (!invoice) {
+    return {
+      error: true,
+      message: await t('Record not found: The requested data does not exist.'),
+    };
+  }
+
+  return {success: true, data: invoice};
+}
+
+export async function findCustomerDelivery({
+  id,
+  workspaceURL,
+  tenantId,
+}: {
+  id: ID;
+  workspaceURL: string;
+  tenantId: Tenant['id'];
+}): Promise<{
+  success?: boolean;
+  error?: boolean;
+  message?: string;
+  data?: any;
+}> {
+  if (!tenantId && !workspaceURL)
+    return {
+      error: true,
+      message: await t('Invalid TenantId & workspace'),
+    };
+
+  const client = await manager.getClient(tenantId);
+
+  const customerDeliveries: any = await client.aOSStockMove
+    .findOne({
+      where: {
+        id,
+        statusSelect: CUSTOMERS_DELIVERY_STATUS.REALIZED,
+      },
+      select: {
+        id: true,
+        stockMoveSeq: true,
+      },
+    })
+    .then(clone);
+
+  if (!customerDeliveries) {
+    return {
+      error: true,
+      message: await t('Record not found: The requested data does not exist.'),
+    };
+  }
+
+  return {success: true, data: customerDeliveries};
 }

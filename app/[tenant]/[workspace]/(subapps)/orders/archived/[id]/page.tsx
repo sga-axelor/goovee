@@ -11,7 +11,10 @@ import {User} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
-import {getWhereClause} from '@/subapps/orders/common/utils/orders';
+import {
+  getInvoicesWhereClause,
+  getWhereClause,
+} from '@/subapps/orders/common/utils/orders';
 
 export default async function Page({
   params,
@@ -56,6 +59,12 @@ export default async function Page({
     isContactAdmin,
   });
 
+  const invoicesWhereClasuse = getInvoicesWhereClause({
+    user,
+    role,
+    isContactAdmin,
+  });
+
   const order = await findOrder({
     id,
     tenantId: tenant,
@@ -64,6 +73,7 @@ export default async function Page({
     },
     workspaceURL,
     archived: true,
+    invoicesParams: {where: invoicesWhereClasuse},
   });
 
   if (!order) {
