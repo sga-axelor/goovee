@@ -20,7 +20,6 @@ const findGeneralTranslations = cache(async function findGeneralTranslations(
     return {};
   }
 
-  let data: Record<string, string> = {};
   const locales = path.resolve(process.cwd(), 'public', 'locales');
 
   const readFile = async (l: string) => {
@@ -46,14 +45,23 @@ const findGeneralTranslations = cache(async function findGeneralTranslations(
     }
   };
 
-  if (lang !== locale && includeLanguage()) {
-    data = {...data, ...(await readwritecache(lang))};
-  }
+  let data: Record<string, string | undefined | null> = {};
 
-  data = {...data, ...(await readwritecache(locale))};
+  await Promise.all([
+    ...(lang !== locale && includeLanguage() ? [readwritecache(lang)] : []),
+    readwritecache(locale),
+  ]).then(([langTranslations, localeTranslations]) => {
+    data = Object.assign(data, langTranslations, localeTranslations);
+  });
 
   if (keys) {
-    keys.reduce((a, k) => ({...a, [k]: data[k]}), {});
+    keys.reduce(
+      (a, k) => {
+        a[k] = data[k];
+        return a;
+      },
+      {} as Record<string, string | null | undefined>,
+    );
   }
 
   return data;
@@ -68,19 +76,25 @@ const findTenantTranslations = cache(async function findTenantTranslations(
     return {};
   }
 
-  let data: Record<string, string> = {};
+  let data: Record<string, string | undefined | null> = {};
 
   const find = async (locale: string) => {
     try {
       const client = await manager.getClient(tenant);
       return client.aOSMetaTranslation
-        .find({where: {language: locale, ...(keys ? {key: {in: keys}} : {})}})
-        .then(t => {
-          console.log('t.length', t.length, keys);
-          return t;
+        .find({
+          where: {language: locale, ...(keys ? {key: {in: keys}} : {})},
         })
         .then(t =>
-          t?.reduce((a, t) => (t?.key ? {...a, [t.key]: t.value} : a), {}),
+          t.reduce(
+            (acc, i) => {
+              if (i.key) {
+                acc[i.key] = i.value;
+              }
+              return acc;
+            },
+            {} as Record<string, string | null | undefined>,
+          ),
         );
     } catch (err) {
       console.error(err);
@@ -110,13 +124,13 @@ export const findTranslations = cache(async function findTranslations(
     return {};
   }
 
-  let data: Record<string, string> = {};
-
-  data = {...data, ...(await findGeneralTranslations(locale, keys))};
-
-  if (tenant) {
-    data = {...data, ...(await findTenantTranslations(locale, tenant, keys))};
-  }
+  let data: Record<string, string | undefined | null> = {};
+  await Promise.all([
+    findGeneralTranslations(locale, keys),
+    ...(tenant ? [findTenantTranslations(locale, tenant, keys)] : []),
+  ]).then(([generalTranslations, tenantTranslations]) => {
+    data = Object.assign(data, generalTranslations, tenantTranslations);
+  });
 
   return data;
 });
