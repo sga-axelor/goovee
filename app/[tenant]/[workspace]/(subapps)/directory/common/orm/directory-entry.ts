@@ -79,12 +79,12 @@ export async function findEntries({
   }
   const c = await manager.getClient(tenantId);
   const entries = await c.aOSPortalDirectoryEntry.find({
-    ...(categoryId && {
-      where: {
+    where: {
+      workspace: {id: workspaceId},
+      ...(categoryId && {
         directoryEntryCategorySet: {id: categoryId},
-        workspace: {id: workspaceId},
-      },
-    }),
+      }),
+    },
     orderBy: orderBy as any,
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
