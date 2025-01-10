@@ -4,12 +4,15 @@ import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import {NotificationService} from '.';
 
 const defaultTransporter = nodemailer.createTransport({
-  service: process.env.MAIL_SERVICE,
+  pool: true,
+  host: process.env.MAIL_HOST,
+  port: process.env.MAIL_PORT,
+  secure: process.env.MAIL_SECURE === 'true',
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASSWORD,
   },
-});
+} as any);
 
 export class MailNotificationService implements NotificationService {
   private transporter: Transporter;
@@ -27,12 +30,14 @@ export class MailNotificationService implements NotificationService {
     }
 
     const {to, subject, text, html} = data;
+    const from = process.env.MAIL_EMAIL || process.env.MAIL_USER;
 
     const mailOptions = {
       to,
       subject,
       text,
       html,
+      from,
     };
 
     try {
