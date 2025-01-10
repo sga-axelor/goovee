@@ -6,8 +6,9 @@ import {
   DEFAULT_PAGE,
 } from '@/constants';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
-import type {Partner, PortalWorkspace} from '@/types';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
+import type {Partner, PortalWorkspace, User} from '@/types';
+import {filterPrivate} from '@/orm/filter';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
@@ -300,3 +301,41 @@ export const findInvoice = async ({
     invoiceLineList: $invoiceLineList,
   };
 };
+
+export async function fetchFile({
+  relatedId,
+  user,
+  tenantId,
+}: {
+  relatedId: number;
+  user?: User;
+  tenantId: Tenant['id'];
+}) {
+  const client = await manager.getClient(tenantId);
+
+  const file = await client.aOSDMSFile.findOne({
+    where: {
+      relatedId,
+      isDirectory: false,
+      ...(await filterPrivate({
+        tenantId,
+        user,
+      })),
+    },
+    select: {
+      fileName: true,
+      contentType: true,
+      content: true,
+      createdBy: true,
+      createdOn: true,
+      metaFile: true,
+      permissionSelect: true,
+      isPrivate: true,
+      partnerSet: true,
+      partnerCategorySet: true,
+      isDirectory: true,
+    },
+  });
+
+  return file;
+}

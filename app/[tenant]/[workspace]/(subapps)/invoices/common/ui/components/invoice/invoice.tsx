@@ -9,27 +9,27 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
-import {getPDF} from '@/subapps/invoices/common/actions';
+import {getInvoicePDF} from '@/subapps/invoices/common/actions';
 import {UNABLE_TO_FIND_INVOICE} from '@/subapps/invoices/common/constants/invoices';
+import {SUBAPP_CODES} from '@/constants';
 
 export function Invoice({invoice, isUnpaid}: InvoiceProps) {
   const {id} = invoice;
-  const [file, setFile] = useState<Blob | null>(null);
+  const [file, setFile] = useState<any>(null);
   const [isError, setIsError] = useState<boolean>(false);
   const {workspaceURL} = useWorkspace();
 
   useEffect(() => {
     const getFile = async () => {
       try {
-        const data = await getPDF({id, workspaceURL});
-        if (!data.error) {
-          const arrayBuffer = new Uint8Array(data);
-          const blob = new Blob([arrayBuffer], {type: 'application/pdf'});
-          setFile(blob);
-          setIsError(false);
-        } else {
-          setIsError(true);
+        const res = await getInvoicePDF({
+          id,
+          workspaceURL,
+          subapp: SUBAPP_CODES.invoices,
+        });
+        if (res?.error) {
         }
+        setFile(res.data);
       } catch (error) {
         console.error('Error fetching PDF:', error);
         setIsError(true);

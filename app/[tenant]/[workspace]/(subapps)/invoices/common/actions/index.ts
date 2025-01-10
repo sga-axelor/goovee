@@ -2,7 +2,6 @@
 import paypal from '@paypal/checkout-server-sdk';
 import type {Stripe} from 'stripe';
 import {headers} from 'next/headers';
-import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
@@ -18,14 +17,14 @@ import {stripe} from '@/payment/stripe';
 import {PaymentOption, User} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
-import {scale} from '@/utils';
+import {clone, scale} from '@/utils';
 import {TENANT_HEADER} from '@/middleware';
-import {ID} from '@/types';
+import {findByID} from '@/orm/record';
 import {manager} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
-import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
+import {fetchFile, findInvoice} from '@/subapps/invoices/common/orm/invoices';
 
 export async function paypalCaptureOrder({
   orderId,
@@ -675,13 +674,20 @@ export async function validateStripePayment({
   };
 }
 
-export async function getPDF({
+export async function getInvoicePDF({
   id,
   workspaceURL,
+  subapp,
 }: {
-  id: ID;
+  id: string;
   workspaceURL: string;
-}) {
+  subapp: SUBAPP_CODES;
+}): Promise<{
+  success?: boolean;
+  error?: boolean;
+  message?: string;
+  data?: any;
+}> {
   if (!id) {
     return {
       error: true,
@@ -748,41 +754,28 @@ export async function getPDF({
     };
   }
 
-  const {role, isContactAdmin} = app;
-
-  const invoice = await findInvoice({
+  const record = await findByID({
+    subapp,
     id,
-    params: {
-      where: getWhereClause({
-        user: user as User,
-        role,
-        isContactAdmin,
-      }),
-    },
+    workspace,
     tenantId,
     workspaceURL,
   });
 
-  if (!invoice) {
+  const file = await fetchFile({
+    relatedId: record?.data?.id,
+    tenantId,
+    user,
+  }).then(clone);
+
+  if (!file) {
     return {
       error: true,
       message: await t('Invoice not found'),
     };
   }
-
-  const {aos} = tenant.config;
-  const ws = `${aos.url}/ws/portal/invoice/print/${invoice.id}`;
-
-  try {
-    const res = await axios.get(ws, {
-      responseType: 'arraybuffer',
-      auth: {
-        username: aos.auth.username,
-        password: aos.auth.password,
-      },
-    });
-    return res?.data;
-  } catch (error) {
-    console.error('Error', error);
-  }
+  return {
+    success: true,
+    data: file,
+  };
 }
