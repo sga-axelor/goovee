@@ -317,6 +317,7 @@ export async function findOrder({
       where: {
         saleOrderSet: {id: order.id},
         statusSelect: CUSTOMERS_DELIVERY_STATUS.REALIZED,
+        portalWorkspace: {url: workspaceURL},
       },
       select: {
         stockMoveSeq: true,
@@ -490,6 +491,9 @@ export async function findCustomerDelivery({
       where: {
         id,
         statusSelect: CUSTOMERS_DELIVERY_STATUS.REALIZED,
+        portalWorkspace: {
+          url: workspaceURL,
+        },
       },
       select: {
         id: true,

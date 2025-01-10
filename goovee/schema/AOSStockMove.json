@@ -12,6 +12,11 @@
     {
       "name": "statusSelect",
       "type": "Int"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalWorkspace",
+      "target": "AOSPortalWorkspace"
     }
   ]
 }
