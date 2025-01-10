@@ -3,26 +3,26 @@ import React, {useMemo} from 'react';
 import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {DATE_FORMATS, NOT_INTERESTED, REPORT} from '@/constants';
 import {i18n} from '@/locale';
 import {
+  Avatar,
+  AvatarImage,
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Avatar,
-  AvatarImage,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-import {DATE_FORMATS, NOT_INTERESTED, REPORT} from '@/constants';
-import {parseDate} from '@/utils/date';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
+import {formatDate} from '@/lib/core/locale/formatters';
+import {SEE_LESS, SEE_MORE} from '@/subapps/forum/common/constants';
+import type {Post} from '@/subapps/forum/common/types/forum';
 import {
   FilePreviewer,
   ImageGallery,
 } from '@/subapps/forum/common/ui/components';
-import {SEE_MORE, SEE_LESS} from '@/subapps/forum/common/constants';
-import type {Post} from '@/subapps/forum/common/types/forum';
 import {useTruncatedElement} from '@/subapps/forum/common/ui/hooks/use-truncatedElement';
 
 interface MetaFile {
@@ -79,7 +79,7 @@ export const ThreadBody = ({
                 {author?.simpleFullName}
               </div>
               <div className="text-xs">
-                {parseDate(postDateT, DATE_FORMATS.full_date)}
+                {formatDate(postDateT, {dateFormat: DATE_FORMATS.full_date})}
               </div>
             </div>
           </div>

@@ -1,8 +1,8 @@
-import {t} from '@/locale/server';
+import {getTranslation} from '@/locale/server';
+import {findPartnerByEmail} from '@/orm/partner';
+import {manager, type Tenant} from '@/tenant';
 import {PortalWorkspace, User} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
-import {manager, type Tenant} from '@/tenant';
-import {findPartnerByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import {Post} from '@/subapps/forum/common/types/forum';
@@ -66,7 +66,7 @@ export async function getPopularQuery({
   if (!workspaceID) {
     return {
       error: true,
-      message: getTranslation('Invalid workspace', {tenantId}),
+      message: getTranslation({tenant: tenantId}, 'Invalid workspace'),
     };
   }
   const client = await manager.getClient(tenantId);

@@ -3,6 +3,7 @@
 import React, {useEffect, useState} from 'react';
 
 // ---- LOCAL IMPORTS ---- //
+import {formatNumber} from '@/lib/core/locale/formatters';
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
 
 interface ImageItem {
@@ -48,7 +49,7 @@ export const ImagePreviewer: React.FC<ImagePreviewerProps> = ({images}) => {
             style={{backgroundImage: url ? `url(${url})` : 'none'}}></div>
           {index === 2 && showOverlay && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-5xl font-semibold">
-              +{images.length - 3}
+              +{formatNumber(images.length - 3)}
             </div>
           )}
         </div>

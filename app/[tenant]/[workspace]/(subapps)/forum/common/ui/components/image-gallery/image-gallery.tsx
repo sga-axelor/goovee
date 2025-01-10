@@ -3,13 +3,14 @@
 import {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
-import {ThreadPopup} from '@/subapps/forum/common/ui/components';
-import type {Post} from '@/subapps/forum/common/types/forum';
+import {formatNumber} from '@/lib/core/locale/formatters';
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
+import type {Post} from '@/subapps/forum/common/types/forum';
+import {ThreadPopup} from '@/subapps/forum/common/ui/components';
 
 export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
   const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
@@ -40,7 +41,7 @@ export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
               }}></div>
             {index === 2 && showOverlay && (
               <div className="absolute inset-0 flex items-center cursor-pointer justify-center bg-black bg-opacity-50 text-white text-5xl font-semibold">
-                +{images.length - 3}
+                +{formatNumber(images.length - 3)}
               </div>
             )}
           </div>
