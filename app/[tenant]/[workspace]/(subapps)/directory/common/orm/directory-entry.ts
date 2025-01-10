@@ -123,9 +123,9 @@ export async function findEntriesBySearch({
   const entries = await c.aOSPortalDirectoryEntry.find({
     take: 10,
     where: {
+      workspace: {id: workspaceId},
       ...(categoryId && {
         directoryEntryCategorySet: {id: categoryId},
-        workspace: {id: workspaceId},
       }),
       ...(search && {
         OR: [
