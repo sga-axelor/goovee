@@ -78,15 +78,13 @@ function Members({members, availableApps}: any) {
         workspaceURL,
       });
 
-      if (result) {
-        if ('error' in result) {
-          toast({
-            title: i18n.t('Error updating invite'),
-            variant: 'destructive',
-          });
-        } else {
-          router.refresh();
-        }
+      if (!result || 'error' in result) {
+        toast({
+          title: i18n.t('Error updating invite'),
+          variant: 'destructive',
+        });
+      } else {
+        router.refresh();
       }
     };
 
@@ -99,15 +97,13 @@ function Members({members, availableApps}: any) {
         workspaceURL,
       });
 
-      if (result) {
-        if ('error' in result) {
-          toast({
-            title: i18n.t('Error updating invite'),
-            variant: 'destructive',
-          });
-        } else {
-          router.refresh();
-        }
+      if (!result || 'error' in result) {
+        toast({
+          title: i18n.t('Error updating invite'),
+          variant: 'destructive',
+        });
+      } else {
+        router.refresh();
       }
     };
 
@@ -121,7 +117,7 @@ function Members({members, availableApps}: any) {
         workspaceURL,
       })) || ({error: true} as any);
 
-    if ('error' in result) {
+    if (!result || 'error' in result) {
       toast({
         title: result.message || i18n.t('Error deleting member'),
         variant: 'destructive',

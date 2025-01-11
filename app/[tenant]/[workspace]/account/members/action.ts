@@ -1,6 +1,7 @@
 'use server';
 
 import {headers} from 'next/headers';
+import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
@@ -565,6 +566,8 @@ export async function updateMemberAuthentication({
         },
       })
       .then(clone);
+
+    revalidatePath(`${workspaceURL}/account/members`);
 
     return {
       success: true,
