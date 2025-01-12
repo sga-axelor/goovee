@@ -10,7 +10,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {ProductView} from '@/subapps/shop/common/ui/components';
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
-import {findModelFields} from '@/subapps/events/common/orm/meta-json-field';
+import {findModelFields} from '@/orm/modelFields';
 import {
   BASE_PRODUCT_MODEL,
   PRODUCT_ATTRS,
@@ -85,7 +85,7 @@ export default async function Page({
 
   const metaFieldsValues = await transformMetaFields(
     metaFields,
-    computedProduct.product.productAttrs,
+    computedProduct?.product?.productAttrs,
     tenant,
   );
 

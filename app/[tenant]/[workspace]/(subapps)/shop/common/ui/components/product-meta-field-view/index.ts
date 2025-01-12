@@ -1,1 +1,1 @@
-export * from './productMetaFieldView';
+export * from './product-meta-field-view';

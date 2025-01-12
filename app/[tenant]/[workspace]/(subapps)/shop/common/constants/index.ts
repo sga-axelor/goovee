@@ -27,3 +27,5 @@ export const SORT_BY_OPTIONS = [
 
 export const BASE_PRODUCT_MODEL = 'com.axelor.apps.base.db.Product';
 export const PRODUCT_ATTRS = 'productAttrs';
+export const JSONManyToOne = 'json-many-to-one';
+export const JSONManyToMany = 'json-many-to-many';

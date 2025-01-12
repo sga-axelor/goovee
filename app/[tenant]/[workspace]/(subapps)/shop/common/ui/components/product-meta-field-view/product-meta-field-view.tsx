@@ -1,7 +1,8 @@
 'use client';
 import React, {useState} from 'react';
 import {MdOutlineChevronRight} from 'react-icons/md';
-import {MetaFieldPicture} from '../MetafieldPicture';
+import {MetaFieldPicture} from '../meta-field-picture';
+import {JSONManyToOne, JSONManyToMany} from '@/subapps/shop/common/constants';
 
 export function ProductMetaFieldView({fields}: {fields: any[]}) {
   const [expandedFields, setExpandedFields] = useState<{
@@ -27,7 +28,6 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
   });
 
   const renderFieldMTM = (field: any) => {
-    console.log('field dans MTM : ', field);
     const fieldValue = field.value[0].value;
     if (fieldValue.fileType && isImage(fieldValue.fileType)) {
       return (
@@ -67,11 +67,9 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
   };
 
   const renderFieldValue = (field: any) => {
-    console.log('fieldfield', field);
     const transFormedField = transformValueToArray(field);
     if (
-      (field.type === 'json-many-to-many' ||
-        field.type === 'json-many-to-one') &&
+      (field.type === JSONManyToMany || field.type === JSONManyToOne) &&
       field.value
     ) {
       return renderFieldMTM(transFormedField);
