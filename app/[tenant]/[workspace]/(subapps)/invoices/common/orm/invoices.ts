@@ -9,6 +9,7 @@ import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
 import type {Partner, PortalWorkspace, User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
+import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
@@ -312,6 +313,12 @@ export async function fetchFile({
   tenantId: Tenant['id'];
 }) {
   const client = await manager.getClient(tenantId);
+  if (!client) {
+    return {
+      error: true,
+      message: await t('Bad Request'),
+    };
+  }
 
   const file = await client.aOSDMSFile.findOne({
     where: {
