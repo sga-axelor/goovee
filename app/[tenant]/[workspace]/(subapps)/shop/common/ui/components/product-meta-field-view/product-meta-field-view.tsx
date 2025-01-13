@@ -2,7 +2,10 @@
 import React, {useState} from 'react';
 import {MdOutlineChevronRight} from 'react-icons/md';
 import {MetaFieldPicture} from '../meta-field-picture';
-import {JSONManyToOne, JSONManyToMany} from '@/subapps/shop/common/constants';
+import {
+  JSON_MANY_TO_ONE,
+  JSON_MANY_TO_MANY,
+} from '@/subapps/shop/common/constants';
 
 export function ProductMetaFieldView({fields}: {fields: any[]}) {
   const [expandedFields, setExpandedFields] = useState<{
@@ -69,7 +72,7 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
   const renderFieldValue = (field: any) => {
     const transFormedField = transformValueToArray(field);
     if (
-      (field.type === JSONManyToMany || field.type === JSONManyToOne) &&
+      (field.type === JSON_MANY_TO_MANY || field.type === JSON_MANY_TO_ONE) &&
       field.value
     ) {
       return renderFieldMTM(transFormedField);

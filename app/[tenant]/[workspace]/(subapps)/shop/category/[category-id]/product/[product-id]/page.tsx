@@ -10,12 +10,12 @@ import {workspacePathname} from '@/utils/workspace';
 import {ProductView} from '@/subapps/shop/common/ui/components';
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
-import {findModelFields} from '@/orm/modelFields';
+import {findModelFields} from '@/orm/model-fields';
 import {
   BASE_PRODUCT_MODEL,
   PRODUCT_ATTRS,
 } from '@/subapps/shop/common/constants';
-import {transformMetaFields} from '../../../../common/actions/meta-field-value';
+import {transformMetaFields} from '@/subapps/shop/common/utils/meta-field-value';
 
 export default async function Page({
   params,

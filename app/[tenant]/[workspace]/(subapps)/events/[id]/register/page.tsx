@@ -10,7 +10,7 @@ import {findPartnerByEmail} from '@/orm/partner';
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/events/[id]/register/content';
 import {findEventByID} from '@/subapps/events/common/orm/event';
-import {findModelFields} from '@/orm/modelFields';
+import {findModelFields} from '@/orm/model-fields';
 import {
   PORTAL_PARTICIPANT_MODEL,
   CONTACT_ATTRS,
