@@ -1,32 +1,25 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/locale';
 
-const HEADING = i18n.t(
-  'You have unpaid invoices arriving soon to their limit date.',
-);
+const HEADING = 'You have unpaid invoices arriving soon to their limit date.';
 
 const ITEMS = [
   {
     id: '1',
-    title: i18n.t('Unpaid invoices'),
+    title: 'Unpaid invoices',
     href: 'unpaid',
   },
   {
     id: '2',
-    title: i18n.t('Archived invoices'),
+    title: 'Archived invoices',
     href: 'archived',
   },
 ];
 
-const INVOICE_COLUMNS = [
-  i18n.t('Description'),
-  i18n.t('Rate'),
-  i18n.t('Qty'),
-  i18n.t('Amount'),
-];
+const INVOICE_COLUMNS = ['Description', 'Rate', 'Qty', 'Amount'];
+
 const INVOICE_TYPE = {
-  UNPAID: i18n.t('Unpaid'),
-  PAID: i18n.t('Paid'),
+  UNPAID: 'Unpaid',
+  PAID: 'Paid',
 };
 
 const INVOICE = {

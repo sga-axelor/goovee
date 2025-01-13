@@ -21,7 +21,7 @@ function TableHeader({columns}: TableHeaderProps) {
         <div
           key={i}
           className={`${i === 0 ? 'text-left' : 'text-right'} header mb-4 uppercase !text-palette-purple-dark font-bold`}>
-          {column}
+          {i18n.t(column)}
         </div>
       ))}
     </>

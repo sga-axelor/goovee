@@ -5,14 +5,9 @@ import {
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
 } from '@/constants';
-import {
-  clone,
-  getFormattedValue,
-  getPageInfo,
-  getSkipInfo,
-  scale,
-} from '@/utils';
+import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import type {Partner, PortalWorkspace} from '@/types';
+import {formatDate, formatNumber} from '@/locale/server/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
@@ -85,16 +80,28 @@ const fetchInvoices = async ({
     })
     .then(clone);
 
-  const invoices = ($invoices || []).map((invoice: any) => {
-    const {currency, exTaxTotal, inTaxTotal} = invoice;
+  const invoices: any = [];
+
+  for (const invoice of $invoices) {
+    const {currency, exTaxTotal, inTaxTotal, dueDate, invoiceDate} = invoice;
     const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
-    const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
-    return {
+    const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+    const $invoice = {
       ...invoice,
-      exTaxTotal: getFormattedValue(exTaxTotal, unit, currencySymbol),
-      inTaxTotal: getFormattedValue(inTaxTotal, unit, currencySymbol),
+      dueDate: await formatDate(dueDate!),
+      invoiceDate: await formatDate(invoiceDate!),
+      exTaxTotal: await formatNumber(exTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+      inTaxTotal: await formatNumber(inTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
     };
-  });
+
+    invoices.push($invoice);
+  }
 
   const pageInfo = getPageInfo({
     count: invoices?.[0]?._count,
@@ -248,26 +255,43 @@ export const findInvoice = async ({
     amountRemaining,
     taxTotal,
     invoiceLineList,
+    dueDate,
+    invoiceDate,
   } = invoice;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
-  const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+  const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+
+  const $invoiceLineList: any = [];
+  for (const list of invoiceLineList) {
+    const line = {
+      ...list,
+      exTaxTotal: await formatNumber(list?.exTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+      price: await formatNumber(list?.price, {scale, currency: currencySymbol}),
+      qty: await formatNumber(list.qty, {scale}),
+    };
+    $invoiceLineList.push(line);
+  }
 
   return {
     ...invoice,
-    exTaxTotal: getFormattedValue(exTaxTotal, unit, currencySymbol),
-    inTaxTotal: getFormattedValue(inTaxTotal, unit, currencySymbol),
+    dueDate: await formatDate(dueDate!),
+    invoiceDate: await formatDate(invoiceDate!),
+    exTaxTotal: await formatNumber(exTaxTotal, {
+      scale,
+      currency: currencySymbol,
+    }),
+    inTaxTotal: await formatNumber(inTaxTotal, {
+      scale,
+      currency: currencySymbol,
+    }),
     amountRemaining: {
-      value: scale(amountRemaining, unit),
+      value: await formatNumber(amountRemaining, {scale}),
       symbol: currencySymbol,
     },
-    taxTotal: getFormattedValue(taxTotal, unit, currencySymbol),
-    invoiceLineList: invoiceLineList.map((list: any) => {
-      return {
-        ...list,
-        exTaxTotal: getFormattedValue(list.exTaxTotal, unit, currencySymbol),
-        price: getFormattedValue(list.price, unit, currencySymbol),
-        qty: getFormattedValue(list.qty, unit, currencySymbol),
-      };
-    }),
+    taxTotal: await formatNumber(taxTotal, {scale, currency: currencySymbol}),
+    invoiceLineList: $invoiceLineList,
   };
 };

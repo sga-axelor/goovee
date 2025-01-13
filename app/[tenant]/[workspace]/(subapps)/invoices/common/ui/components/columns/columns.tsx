@@ -5,7 +5,6 @@ import {MdEast} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {Button, Chip} from '@/ui/components';
-import {parseDate} from '@/utils/date';
 import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
@@ -28,7 +27,7 @@ export const Columns = [
       const {status, variant} = getStatus(row.amountRemaining);
       return (
         <Chip
-          value={status}
+          value={i18n.t(status)}
           className="font-normal text-sm"
           variant={variant}
         />
@@ -40,7 +39,7 @@ export const Columns = [
     label: i18n.t('Due on'),
     sortable: true,
     getter: (row: any) => row.dueDate,
-    content: (row: any) => parseDate(row.dueDate),
+    content: (row: any) => row.dueDate,
   },
   {
     key: 'exTaxTotal',

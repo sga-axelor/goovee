@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Tabs, TabsList, TabsTrigger} from './tabs';
+import {i18n} from '@/locale';
 
 interface StyledTabItem {
   id: string;
@@ -33,7 +34,7 @@ export const StyledTabs = ({
                 key={t?.id}
                 value={t?.id}
                 onClick={() => onTabChange?.(t)}>
-                {t?.title}
+                {i18n.t(String(t?.title))}
               </TabsTrigger>
             ))}
         </TabsList>

@@ -3,7 +3,6 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils/date';
 import {Tag, Separator} from '@/ui/components';
 import {i18n} from '@/locale';
 
@@ -67,7 +66,7 @@ export default function Content({invoice, workspace}: any) {
               <h5 className="text-lg font-semibold pr-1">
                 {isUnpaid ? `${i18n.t('Due date:')}` : `${i18n.t('Paid on:')}`}
               </h5>
-              <p>{parseDate(isUnpaid ? dueDate : invoiceDate)}</p>
+              <p>{isUnpaid ? dueDate : invoiceDate}</p>
             </div>
           </div>
         </div>
