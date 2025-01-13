@@ -32,7 +32,6 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/locale';
 import {getImageURL} from '@/utils/files';
-import {getPublishedLabel, parseDate} from '@/utils/date';
 import {
   COMMENT,
   COMMENTS,
@@ -42,7 +41,11 @@ import {
   SORT_TYPE,
   SUBAPP_CODES,
 } from '@/constants';
-
+import {
+  formatDate,
+  formatNumber,
+  formatRelativeTime,
+} from '@/lib/core/locale/formatters';
 import type {Comment} from '@/orm/comment';
 import {type Tenant} from '@/tenant';
 
@@ -203,11 +206,10 @@ export const CommentListItem = ({
               {partner?.simpleFullName}
             </div>
             <TooltipComponent
-              triggerText={`${i18n.t('Updated')} ${getPublishedLabel(parentMailMessage?.createdOn)}`}
-              tooltipText={parseDate(
-                parentMailMessage?.createdOn,
-                `MMMM Do YYYY, h:mm a`,
-              )}
+              triggerText={`${i18n.t('Updated')} ${formatRelativeTime(parentMailMessage?.createdOn)}`}
+              tooltipText={formatDate(parentMailMessage?.createdOn, {
+                dateFormat: `MMMM DD YYYY, h:mm a`,
+              })}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -273,8 +275,10 @@ export const CommentListItem = ({
             {partner?.simpleFullName}
           </div>
           <TooltipComponent
-            triggerText={`${i18n.t('Updated')} ${getPublishedLabel(createdOn)}`}
-            tooltipText={parseDate(createdOn, `MMMM Do YYYY, h:mm a`)}
+            triggerText={`${i18n.t('Updated')} ${formatRelativeTime(createdOn)}`}
+            tooltipText={formatDate(createdOn, {
+              dateFormat: `MMMM DD YYYY, h:mm a`,
+            })}
           />
         </div>
         <div className="flex items-center gap-2">
@@ -328,7 +332,7 @@ export const CommentListItem = ({
                       className={`flex items-center gap-1 text-[10px] ${childMailMessages.length ? 'cursor-pointer' : 'cursor-default'}`}
                       onClick={toggleSubComments}>
                       <MdOutlineModeComment className="w-4 h-4 cursor-pointer" />
-                      {childMailMessages.length}{' '}
+                      {formatNumber(childMailMessages.length)}{' '}
                       {i18n.t(
                         childMailMessages.length > 1
                           ? COMMENTS.toLowerCase()
