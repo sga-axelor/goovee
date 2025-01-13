@@ -6,9 +6,10 @@ import {
   DEFAULT_PAGE,
   ORDER_BY,
 } from '@/constants';
-import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
+import {getPageInfo, getSkipInfo} from '@/utils';
 import type {ID, PortalWorkspace} from '@/types';
 import {manager} from '@/tenant';
+import {formatDate, formatNumber} from '@/locale/server/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
@@ -84,8 +85,18 @@ export const fetchQuotations = async ({
     limit,
   });
 
+  const $quotations: any = [];
+
+  for (const quotation of quotations) {
+    const $quotation = {
+      ...quotation,
+      createdOn: await formatDate(quotation?.createdOn!),
+    };
+    $quotations.push($quotation);
+  }
+
   return {
-    quotations,
+    quotations: $quotations,
     pageInfo,
   };
 };
@@ -186,7 +197,7 @@ export async function findQuotation({
 
   const {currency, saleOrderLineList, exTaxTotal, inTaxTotal} = quotation;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
-  const unit = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+  const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
   const sumOfDiscounts = saleOrderLineList.reduce(
     (total: number, {discountAmount}: any) => {
@@ -201,20 +212,39 @@ export async function findQuotation({
           currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE,
         );
 
+  const $saleOrderLineList: any = [];
+
+  for (const list of saleOrderLineList || []) {
+    const line = {
+      ...list,
+      qty: await formatNumber(list.qty, {scale}),
+      price: await formatNumber(list.price, {scale, currency: currencySymbol}),
+      exTaxTotal: await formatNumber(list.exTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+      discountAmount: await formatNumber(list.discountAmount, {scale}),
+      inTaxTotal: await formatNumber(list.inTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+    };
+    $saleOrderLineList.push(line);
+  }
+
   return {
     ...quotation,
-    displayExTaxTotal: getFormattedValue(exTaxTotal, unit, currencySymbol),
-    displayInTaxTotal: getFormattedValue(inTaxTotal, unit, currencySymbol),
-    saleOrderLineList: saleOrderLineList.map((list: any) => {
-      return {
-        ...list,
-        qty: scale(list.qty, unit),
-        price: getFormattedValue(list.price, unit, currencySymbol),
-        exTaxTotal: getFormattedValue(list.exTaxTotal, unit, currencySymbol),
-        discountAmount: scale(list.discountAmount, unit),
-        inTaxTotal: getFormattedValue(list.inTaxTotal, unit, currencySymbol),
-      };
+    endOfValidityDate: await formatDate(quotation?.endOfValidityDate),
+    displayExTaxTotal: await formatNumber(exTaxTotal, {
+      scale,
+      currency: currencySymbol,
     }),
+    displayInTaxTotal: await formatNumber(inTaxTotal, {
+      scale,
+      currency: currencySymbol,
+    }),
+    saleOrderLineList: $saleOrderLineList,
+
     totalDiscount,
   };
 }

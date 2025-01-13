@@ -4,7 +4,6 @@ import {MdEast} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
-import {parseDate} from '@/utils/date';
 import {Button, Chip} from '@/ui/components';
 import {cn} from '@/utils/css';
 
@@ -34,7 +33,7 @@ export const Columns = [
       const {status, variant} = getStatus(row.statusSelect);
       return (
         <Chip
-          value={status}
+          value={i18n.t(status)}
           className="font-normal text-sm"
           variant={variant}
         />
@@ -46,7 +45,7 @@ export const Columns = [
     label: i18n.t('Created on'),
     sortable: true,
     getter: (row: any) => row.createdOn,
-    content: (row: any) => parseDate(row.createdOn),
+    content: (row: any) => row.createdOn,
   },
   {
     key: 'action',

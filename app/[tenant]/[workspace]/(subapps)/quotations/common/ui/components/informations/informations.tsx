@@ -4,7 +4,6 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Separator, Button, Chip} from '@/ui/components';
-import {parseDate} from '@/utils/date';
 import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
@@ -19,7 +18,7 @@ export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
   const DateInfoRow = (label: string, date: any) => (
     <div className="flex items-center gap-1">
       <h5 className="text-base font-medium mb-0">{i18n.t(label)}:</h5>
-      <p className="text-sm">{date ? parseDate(date) : '--/--/----'}</p>
+      <p className="text-sm">{date || '--/--/----'}</p>
     </div>
   );
 

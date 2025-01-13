@@ -70,7 +70,7 @@ export default function Content({
     if (hasUpcomingInvoices) {
       toast({
         variant: 'warning',
-        title: HEADING,
+        title: i18n.t(HEADING),
       });
     }
   }, [hasUpcomingInvoices, toast]);

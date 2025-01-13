@@ -88,7 +88,7 @@ function Stripe({onApprove, quotation}: any) {
         if (result.error) {
           toast({
             variant: 'destructive',
-            title: result.message,
+            title: i18n.t(result.message),
           });
         } else {
           toast({

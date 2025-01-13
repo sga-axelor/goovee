@@ -11,6 +11,7 @@ import {
   TableFooter,
   TableHeader,
 } from '@/ui/components';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import type {TableHeadProps, TableProps} from './types';
@@ -32,7 +33,7 @@ export const StyledHead = ({columns, className}: TableHeadProps) => {
                   ? '0 0.5rem 0.5rem 0'
                   : '',
           }}>
-          {column.label}
+          {i18n.t(column.label)}
         </TableHead>
       ))}
     </TableRow>
