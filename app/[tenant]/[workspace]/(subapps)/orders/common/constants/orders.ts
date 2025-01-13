@@ -1,43 +1,40 @@
-// ---- CORE IMPORTS ---- //
-import {i18n} from '@/locale';
-
 export const ITEMS = [
   {
     id: '1',
-    title: i18n.t('Ongoing orders'),
+    title: 'Ongoing orders',
     href: 'ongoing',
   },
   {
     id: '2',
-    title: i18n.t('Archived orders'),
+    title: 'Archived orders',
     href: 'archived',
   },
 ];
 
 export const PRODUCT_COLUMNS = [
-  {key: 'productName', label: i18n.t('Product number')},
-  {key: 'qty', label: i18n.t('Quantity')},
-  {key: 'unit', label: i18n.t('Unit')},
-  {key: 'price', label: i18n.t('Unit Price Wt')},
-  {key: 'exTaxTotal', label: i18n.t('Totoal Wt')},
-  {key: 'tax', label: i18n.t('Tax')},
-  {key: 'discountAmount', label: i18n.t('Discount')},
-  {key: 'inTaxTotal', label: i18n.t('Total ATI')},
+  {key: 'productName', label: 'Product number'},
+  {key: 'qty', label: 'Quantity'},
+  {key: 'unit', label: 'Unit'},
+  {key: 'price', label: 'Unit Price Wt'},
+  {key: 'exTaxTotal', label: 'Total Wt'},
+  {key: 'tax', label: 'Tax'},
+  {key: 'discountAmount', label: 'Discount'},
+  {key: 'inTaxTotal', label: 'Total ATI'},
 ];
-//
+
 export const PRODUCT_CARD_COLUMNS = [
-  {key: 'productName', label: i18n.t('Product number')},
-  {key: 'qty', label: i18n.t('Quantity')},
-  {key: 'inTaxTotal', label: i18n.t('Total ATI')},
+  {key: 'productName', label: 'Product number'},
+  {key: 'qty', label: 'Quantity'},
+  {key: 'inTaxTotal', label: 'Total ATI'},
   {key: 'dropdown', label: ''},
 ];
 
 export const ORDER_TYPE = {
-  CONFIRMED: i18n.t('Confirmed'),
-  SHIPPED: i18n.t('Shipped'),
-  DELIVERED: i18n.t('Delivered'),
-  CLOSED: i18n.t('Closed'),
-  UNKNOWN: i18n.t('Unknown'),
+  CONFIRMED: 'Confirmed',
+  SHIPPED: 'Shipped',
+  DELIVERED: 'Delivered',
+  CLOSED: 'Closed',
+  UNKNOWN: 'Unknown',
 };
 
 export const ORDER_STATUS = {

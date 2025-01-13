@@ -5,7 +5,6 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Separator, Button, Tag} from '@/ui/components';
-import {parseDate} from '@/utils/date';
 import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
@@ -29,7 +28,7 @@ export const Informations = ({
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <h5 className="text-lg font-semibold mb-0">{i18n.t('Status')}:</h5>
-            <Tag variant={variant}>{status}</Tag>
+            <Tag variant={variant}>{i18n.t(status)}</Tag>
             <div></div>
           </div>
           <div className="flex items-center gap-2">

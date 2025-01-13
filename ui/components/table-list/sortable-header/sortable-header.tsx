@@ -9,6 +9,7 @@ import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
 import {ORDER_BY, RESPONSIVE_SIZES} from '@/constants';
 import {Column} from '@/ui/components/table-list/types';
+import {i18n} from '@/locale';
 
 type SortableHeaderProps = {
   columns: Column[];
@@ -55,7 +56,9 @@ export function SortableHeader({columns, sort}: SortableHeaderProps) {
                 {'cursor-pointer': canSort},
               )}>
               <div className="flex gap-1 items-center">
-                <span className="line-clamp-1">{column.label}</span>
+                <span className="line-clamp-1">
+                  {i18n.t(String(column.label))}
+                </span>
                 {SortIcon && <SortIcon className="h-4 w-4 ms-auto" />}
               </div>
             </TableHead>

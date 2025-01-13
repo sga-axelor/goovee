@@ -1,7 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {Chip} from '@/ui/components';
-import {parseDate} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/orders/common/utils/orders';
@@ -26,7 +25,7 @@ export const OrderColumns = [
       return (
         <Chip
           className="font-normal text-sm"
-          value={status}
+          value={i18n.t(status)}
           variant={variant}
         />
       );

@@ -5,7 +5,7 @@ import {
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
 } from '@/constants';
-import {getFormattedValue, getPageInfo, getSkipInfo, scale} from '@/utils';
+import {getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
 import type {Partner, PortalWorkspace} from '@/types';
 
