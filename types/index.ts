@@ -63,7 +63,6 @@ export interface PortalAppConfig extends Model {
   byNewest: boolean;
   company: Company;
   confirmOrder: boolean;
-  displayOutOfStock: boolean;
   displayPrices: boolean;
   displayTwoPrices: string;
   mainPrice: string;
@@ -111,6 +110,9 @@ export interface PortalAppConfig extends Model {
   enableNewsComment?: boolean;
   enableEventComment?: boolean;
   socialMediaSelect?: string;
+  noMoreStockSelect?: number;
+  outOfStockQty?: string;
+  defaultStockLocation?: any;
 }
 
 export interface PortalApp extends Model {
@@ -137,6 +139,12 @@ export interface Product extends Model {
   displayCostPrice: string;
   allowCustomNote?: boolean;
   productAttrs: string;
+  outOfStockConfig?: {
+    canBuy: boolean;
+    noMoreStockSelect: number;
+    outOfStock: boolean;
+    showMessage: boolean;
+  };
 }
 
 export interface Currency extends Model {

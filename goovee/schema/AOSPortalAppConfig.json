@@ -54,10 +54,6 @@
     },
     {
       "type": "Boolean",
-      "name": "displayOutOfStock"
-    },
-    {
-      "type": "Boolean",
       "name": "displayPrices"
     },
     {
@@ -225,6 +221,19 @@
       "name": "invitationTemplateList",
       "target": "AOSPortalEmailTemplate",
       "mappedBy": "invitationPortalConfig"
+    },
+    {
+      "name": "noMoreStockSelect",
+      "type": "Int"
+    },
+    {
+      "name": "outOfStockQty",
+      "type": "Decimal"
+    },
+    {
+      "name": "defaultStockLocation",
+      "type": "ManyToOne",
+      "target": "AOSStockLocation"
     }
   ]
 }

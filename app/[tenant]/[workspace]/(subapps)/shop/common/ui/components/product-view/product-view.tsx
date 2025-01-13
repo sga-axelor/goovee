@@ -47,6 +47,11 @@ export function ProductView({
   const [note, setNote] = useState('');
   const {toast} = useToast();
 
+  const {outOfStockConfig} = product;
+  const isOutOfStock = outOfStockConfig?.outOfStock;
+  const showMessage = outOfStockConfig?.showMessage;
+  const canBuy = outOfStockConfig?.canBuy;
+
   const handleAddToCart = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
@@ -108,9 +113,16 @@ export function ProductView({
             />
           </div>
           <div className="rounded-lg border bg-card text-card-foreground p-4">
-            <p className="text-xl font-semibold mb-12">
-              {i18n.tattr(product.name)}
-            </p>
+            <div className="flex flex-col gap-2 mb-6">
+              <p className="text-xl font-semibold">
+                {i18n.tattr(product.name)}
+              </p>
+              {showMessage && isOutOfStock && (
+                <p className="text-base font-semibold mt-0 mb-0 text-destructive">
+                  {i18n.t('Out of stock')}
+                </p>
+              )}
+            </div>
             {workspace?.config?.displayPrices && (
               <>
                 {price.displayTwoPrices && (
@@ -150,16 +162,18 @@ export function ProductView({
                 disabled={updating}
               />
             </div>
-            <Button
-              onClick={handleAddToCart}
-              className="w-full rounded-full mt-4">
-              <div className="flex items-center justify-center gap-2">
-                <MdOutlineShoppingBasket className="text-2xl" />
-                <span className="text-sm font-medium mb-0">
-                  {i18n.t('Add to Cart')}
-                </span>
-              </div>
-            </Button>
+            {canBuy && (
+              <Button
+                onClick={handleAddToCart}
+                className="w-full rounded-full mt-4">
+                <div className="flex items-center justify-center gap-2">
+                  <MdOutlineShoppingBasket className="text-2xl" />
+                  <span className="text-sm font-medium mb-0">
+                    {i18n.t('Add to Cart')}
+                  </span>
+                </div>
+              </Button>
+            )}
           </div>
         </div>
       </div>

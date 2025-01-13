@@ -24,7 +24,7 @@ export default async function Shop({
   const session = await getSession();
   const user = session?.user;
 
-  const {workspaceURL, workspaceURI} = workspacePathname(params);
+  const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user,
@@ -75,6 +75,7 @@ export default async function Shop({
         workspace,
         user,
         tenantId: tenant,
+        categoryids: [category.id],
       }).then(clone);
 
       category.products = res?.products;

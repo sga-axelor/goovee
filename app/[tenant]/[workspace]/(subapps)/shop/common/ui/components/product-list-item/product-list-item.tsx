@@ -30,6 +30,11 @@ export function ProductListItem({
   const {displayTwoPrices, displayPrimary, displaySecondary} = price;
   const {tenant} = useWorkspace();
 
+  const {outOfStockConfig} = product;
+  const isOutOfStock = outOfStockConfig?.outOfStock;
+  const showMessage = outOfStockConfig?.showMessage;
+  const canBuy = outOfStockConfig?.canBuy;
+
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
   };
@@ -60,6 +65,11 @@ export function ProductListItem({
                 <p className="font-medium mb-2 md:mb-0">
                   {i18n.tattr(product.name)}
                 </p>
+                {showMessage && isOutOfStock && (
+                  <p className="text-xs font-semibold mt-0 mb-0 text-destructive">
+                    {i18n.t('Out of stock')}
+                  </p>
+                )}
               </div>
               <div className="shrink-0 text-right">
                 {displayPrices && (
@@ -83,20 +93,22 @@ export function ProductListItem({
               }}></p>
           </>
         </div>
-        <div className="flex justify-end">
-          <Button
-            onClick={handleAdd}
-            className="flex gap-2 items-center rounded-full w-12 md:w-auto h-12 md:h-auto">
-            <div className="inline-flex">
-              <MdAddShoppingCart className="text-2xl" />
-            </div>
-            {large && (
-              <p className="text-sm font-medium mb-0 text-primary-foreground">
-                {i18n.t('Add to cart')}
-              </p>
-            )}
-          </Button>
-        </div>
+        {canBuy && (
+          <div className="flex justify-end">
+            <Button
+              onClick={handleAdd}
+              className="flex gap-2 items-center rounded-full w-12 md:w-auto h-12 md:h-auto">
+              <div className="inline-flex">
+                <MdAddShoppingCart className="text-2xl" />
+              </div>
+              {large && (
+                <p className="text-sm font-medium mb-0 text-primary-foreground">
+                  {i18n.t('Add to cart')}
+                </p>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

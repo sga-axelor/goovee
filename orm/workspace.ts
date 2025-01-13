@@ -80,6 +80,9 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
       template: true,
     },
   },
+  noMoreStockSelect: true,
+  outOfStockQty: true,
+  defaultStockLocation: true,
 };
 
 export async function findWorkspaceMembers({

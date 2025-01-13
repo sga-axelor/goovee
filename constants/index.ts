@@ -212,3 +212,13 @@ export enum ADDRESS_TYPE {
   invoicing = 'invoicing',
   delivery = 'delivery',
 }
+
+/**
+ * OUT OF STOCK
+ */
+export const OUT_OF_STOCK_TYPE = {
+  ALLOW_BUY_WITH_NO_MESSAGE: 1,
+  ALLOW_BUY_WITH_MESSAGE: 2,
+  HIDE_PRODUCT_CANNOT_BUY: 3,
+  DONT_ALLOW_BUY_WITH_MESSAGE: 4,
+};

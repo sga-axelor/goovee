@@ -31,6 +31,11 @@ export function ProductCard({
   const {toast} = useToast();
   const {tenant} = useWorkspace();
 
+  const {outOfStockConfig} = product;
+  const isOutOfStock = outOfStockConfig?.outOfStock;
+  const showMessage = outOfStockConfig?.showMessage;
+  const canBuy = outOfStockConfig?.canBuy;
+
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
     toast({
@@ -76,13 +81,19 @@ export function ProductCard({
           )}
         </div>
       </div>
-      <div className="flex items-start justify-end p-6 pt-0">
-        <span className="hidden text-xs font-medium mt-0 mb-0 text-destructive">
-          Only 6 left
-        </span>
-        <Button onClick={handleAdd} className="rounded-full h-12 w-12 p-2">
-          <MdAddShoppingCart className="text-2xl" />
-        </Button>
+      <div className="flex items-start justify-between p-6 pt-0">
+        {showMessage && isOutOfStock && (
+          <span className="text-xs font-bold mt-0 mb-0 text-destructive">
+            {i18n.t('Out of stock')}
+          </span>
+        )}
+        {canBuy && (
+          <Button
+            onClick={handleAdd}
+            className="rounded-full h-12 w-12 p-2 ml-auto">
+            <MdAddShoppingCart className="text-2xl" />
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -113,6 +113,10 @@
     {
       "name": "productAttrs",
       "type": "String"
+    },
+    {
+      "name": "stockManaged",
+      "type": "Boolean"
     }
   ]
 }

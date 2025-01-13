@@ -7,8 +7,10 @@ import {clone, scale} from '@/utils';
 import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
+  DEFAULT_PAGE,
   DEFAULT_TAX_VALUE,
   DEFAULT_UNIT_PRICE_SCALE,
+  OUT_OF_STOCK_TYPE,
 } from '@/constants';
 import type {
   Product,
@@ -41,12 +43,159 @@ function getPageInfo({
   };
 }
 
+const getProductFields = ({
+  fromWS,
+  workspace,
+}: {
+  fromWS: boolean;
+  workspace: PortalWorkspace;
+}) => {
+  const productFields = {
+    name: true,
+    code: true,
+    inAti: true,
+    description: true,
+    saleCurrency: {
+      symbol: true,
+    },
+    salePrice: true,
+    featured: true,
+    createdOn: true,
+    picture: {
+      id: true,
+    },
+    productAttrs: true,
+    allowCustomNote: true,
+    portalImageList: {
+      select: {
+        picture: {
+          id: true,
+        },
+      },
+    },
+    ...(fromWS
+      ? {}
+      : {
+          productCompanyList: {
+            select: {
+              salePrice: true,
+              company: {
+                id: true,
+                name: true,
+                currency: {
+                  code: true,
+                  numberOfDecimals: true,
+                  symbol: true,
+                },
+              },
+            },
+          } as any,
+          productFamily: {
+            name: true,
+            accountManagementList: {
+              where: {
+                company: {
+                  id: workspace?.config?.company?.id,
+                },
+              },
+              select: {
+                name: true,
+                saleTaxSet: {
+                  select: {
+                    name: true,
+                    activeTaxLine: {
+                      name: true,
+                      value: true,
+                    },
+                  },
+                },
+              },
+            },
+          } as any,
+        }),
+  };
+
+  return productFields;
+};
+
+const getWhereClause = async ({
+  ids,
+  search,
+  categoryids,
+  associateWorkspace,
+  workspace,
+  tenantId,
+  user,
+}: {
+  ids?: Product['id'][];
+  search?: string;
+  categoryids?: (string | number)[];
+  associateWorkspace?: boolean;
+  tenantId: Tenant['id'];
+  workspace: PortalWorkspace;
+  user?: User;
+}) => {
+  const whereClause = {
+    ...(ids?.length
+      ? {
+          id: {
+            in: ids,
+          },
+        }
+      : {}),
+    ...(search
+      ? {
+          name: {
+            like: `%${search}%`,
+          },
+        }
+      : {}),
+    ...(categoryids?.length
+      ? {
+          portalCategorySet: {
+            id: {
+              in: categoryids,
+            },
+          },
+        }
+      : {}),
+    ...(associateWorkspace
+      ? {
+          portalWorkspace: {
+            id: workspace.id,
+          },
+        }
+      : {}),
+    ...(await filterPrivate({tenantId, user})),
+  };
+
+  return whereClause;
+};
+
+function getSortOrder(sort?: string) {
+  switch (sort) {
+    case 'byMostExpensive':
+      return {salePrice: 'DESC'};
+    case 'byLessExpensive':
+      return {salePrice: 'ASC'};
+    case 'byZToA':
+      return {name: 'DESC'};
+    case 'byFeature':
+      return {featured: 'DESC'};
+    case 'byNewest':
+      return {createdOn: 'DESC'};
+    case 'byAToZ':
+    default:
+      return {name: 'ASC'};
+  }
+}
+
 export async function findProducts({
   ids,
   search,
   sort,
   categoryids,
-  page = 1,
+  page = DEFAULT_PAGE,
   limit,
   workspace,
   user,
@@ -68,140 +217,138 @@ export async function findProducts({
 
   const client = await manager.getClient(tenantId);
 
-  let orderBy;
-
-  switch (sort) {
-    case 'byMostExpensive':
-      orderBy = {salePrice: 'DESC'};
-      break;
-    case 'byLessExpensive':
-      orderBy = {salePrice: 'ASC'};
-      break;
-    case 'byZToA':
-      orderBy = {name: 'DESC'};
-      break;
-    case 'byFeature':
-      orderBy = {featured: 'DESC'};
-      break;
-    case 'byNewest':
-      orderBy = {createdOn: 'DESC'};
-      break;
-    case 'byAToZ':
-    default:
-      orderBy = {name: 'ASC'};
-  }
-
+  const orderBy = getSortOrder(sort);
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
 
-  const fromWS = workspace?.config?.priceAfterLogin === 'fromWS';
+  const {
+    priceAfterLogin,
+    defaultStockLocation,
+    noMoreStockSelect,
+    outOfStockQty,
+  } = workspace.config || {};
 
-  let $products = await client.aOSProduct
-    .find({
-      where: {
-        ...(ids?.length
-          ? {
-              id: {
-                in: ids,
-              },
-            }
-          : {}),
-        ...(search
-          ? {
-              name: {
-                like: `%${search}%`,
-              },
-            }
-          : {}),
-        ...(categoryids?.length
-          ? {
-              portalCategorySet: {
-                id: {
-                  in: categoryids,
-                },
-              },
-            }
-          : {}),
-        ...(associateWorkspace
-          ? {
-              portalWorkspace: {
-                id: workspace.id,
-              },
-            }
-          : {}),
-        ...(await filterPrivate({tenantId, user})),
-      },
-      orderBy: orderBy as any,
-      take: limit as any,
-      ...(skip ? {skip} : {}),
-      select: {
-        name: true,
-        code: true,
-        inAti: true,
-        description: true,
-        saleCurrency: {
-          symbol: true,
-        },
-        salePrice: true,
-        featured: true,
-        createdOn: true,
-        picture: {
-          id: true,
-        },
-        productAttrs: true,
-        allowCustomNote: true,
-        portalImageList: {
-          select: {
-            picture: {
-              id: true,
-            },
+  const fromWS = priceAfterLogin === 'fromWS';
+  const outOfStockAction =
+    noMoreStockSelect ?? OUT_OF_STOCK_TYPE.HIDE_PRODUCT_CANNOT_BUY;
+
+  const productFields = getProductFields({fromWS, workspace});
+
+  const $filters: any = await getWhereClause({
+    ids,
+    search,
+    categoryids,
+    associateWorkspace,
+    workspace,
+    tenantId,
+    user,
+  });
+
+  let $products: any[] = [];
+
+  try {
+    const isHideOutOfStockProducts =
+      outOfStockAction === OUT_OF_STOCK_TYPE.HIDE_PRODUCT_CANNOT_BUY;
+
+    const availableStockProductsIds = defaultStockLocation
+      ? await findProductsFromStockLocation({
+          tenantId,
+          workspace,
+          categoryids,
+          associateWorkspace,
+          user,
+          outOfStockQty,
+        })
+      : [];
+
+    if (isHideOutOfStockProducts) {
+      const updatedFilters = {
+        AND: [
+          {
+            ...$filters,
           },
-        },
-        ...(fromWS
-          ? {}
-          : {
-              productCompanyList: {
-                select: {
-                  salePrice: true,
-                  company: {
-                    id: true,
-                    name: true,
-                    currency: {
-                      code: true,
-                      numberOfDecimals: true,
-                      symbol: true,
-                    },
-                  },
-                },
-              } as any,
-              productFamily: {
-                name: true,
-                accountManagementList: {
-                  where: {
-                    company: {
-                      id: workspace?.config?.company?.id,
-                    },
-                  },
-                  select: {
-                    name: true,
-                    saleTaxSet: {
-                      select: {
-                        name: true,
-                        activeTaxLine: {
-                          name: true,
-                          value: true,
-                        },
+          {
+            OR: [
+              ...(availableStockProductsIds?.length
+                ? [
+                    {
+                      id: {
+                        in: availableStockProductsIds,
                       },
                     },
-                  },
+                  ]
+                : []),
+              {
+                stockManaged: {
+                  eq: false,
                 },
-              } as any,
-            }),
-      },
-    })
-    .catch((err: any) => {
-      console.log(err);
-      return [];
-    });
+              },
+            ],
+          },
+        ],
+      };
+
+      $products = await client.aOSProduct
+        .find({
+          where: updatedFilters,
+          orderBy: orderBy as any,
+          take: limit as any,
+          ...(skip ? {skip} : {}),
+          select: productFields,
+        })
+        .then(products =>
+          products.map(product => ({
+            ...product,
+            outOfStockConfig: {
+              outOfStock: false,
+              showMessage: false,
+              canBuy: true,
+            },
+          })),
+        );
+    } else {
+      $products = await client.aOSProduct
+        .find({
+          where: $filters,
+          orderBy: orderBy as any,
+          take: limit as any,
+          ...(skip ? {skip} : {}),
+          select: productFields,
+        })
+        .then(products =>
+          products.map(product => {
+            const isAvailable = availableStockProductsIds.some(
+              stockProductId => stockProductId === product.id,
+            );
+
+            const canBuy =
+              isAvailable ||
+              [
+                OUT_OF_STOCK_TYPE.ALLOW_BUY_WITH_NO_MESSAGE,
+                OUT_OF_STOCK_TYPE.ALLOW_BUY_WITH_MESSAGE,
+              ].includes(outOfStockAction);
+
+            const showMessage =
+              !isAvailable &&
+              [
+                OUT_OF_STOCK_TYPE.ALLOW_BUY_WITH_MESSAGE,
+                OUT_OF_STOCK_TYPE.DONT_ALLOW_BUY_WITH_MESSAGE,
+              ].includes(outOfStockAction);
+
+            return {
+              ...product,
+              outOfStockConfig: {
+                outOfStock: !isAvailable,
+                showMessage,
+                canBuy,
+              },
+            };
+          }),
+        );
+    }
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    $products = [];
+  }
 
   const appbase = await client.aOSAppBase
     .findOne({
@@ -363,14 +510,14 @@ export async function findProducts({
 
   if (fromWS) {
     const productsFromWS = await findProductsFromWS({
-      productIds: $products.map(p => p.id),
+      productIds: $products.map((p: any) => p.id),
       workspace,
       user,
       tenantId,
     });
 
     const originalProduct = (id: any) =>
-      $products.find(p => Number(p.id) === Number(id));
+      $products.find((p: any) => Number(p.id) === Number(id));
 
     return {
       products: productsFromWS
@@ -466,6 +613,67 @@ export async function findProductsFromWS({
 
     return res?.data || [];
   } catch (err) {
+    return [];
+  }
+}
+
+export async function findProductsFromStockLocation({
+  tenantId,
+  workspace,
+  categoryids,
+  associateWorkspace,
+  user,
+  outOfStockQty,
+}: {
+  tenantId: Tenant['id'];
+  categoryids?: (string | number)[];
+  associateWorkspace?: boolean;
+  workspace: PortalWorkspace;
+  user?: User;
+  outOfStockQty: any;
+}): Promise<string[]> {
+  if (!workspace?.config?.defaultStockLocation || !tenantId) return [];
+
+  try {
+    const client = await manager.getClient(tenantId);
+    if (!client) return [];
+
+    const {defaultStockLocation} = workspace.config;
+
+    const filters = {
+      AND: [
+        {
+          stockLocation: {id: defaultStockLocation.id},
+        },
+        {
+          product: {
+            ...(categoryids?.length
+              ? {
+                  portalCategorySet: {id: {in: categoryids}},
+                }
+              : {}),
+            ...(associateWorkspace
+              ? {
+                  portalWorkspace: {id: workspace.id},
+                }
+              : {}),
+            ...(await filterPrivate({tenantId, user})),
+          },
+        },
+        {
+          currentQty: {ge: outOfStockQty},
+        },
+      ],
+    };
+
+    const products = await client.aOSStockLocationLine.find({
+      where: filters,
+      select: {product: true},
+    });
+
+    return products?.map((item: any) => item.product.id) || [];
+  } catch (error) {
+    console.error('Error fetching products from stock location:', error);
     return [];
   }
 }
