@@ -7,7 +7,7 @@ import {
 } from '@/constants';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
-import type {Partner, PortalWorkspace, User} from '@/types';
+import type {Partner, PortalWorkspace} from '@/types';
 import {ID} from '@goovee/orm';
 import {t} from '@/locale/server';
 
@@ -18,7 +18,6 @@ import {
   ORDER_STATUS,
 } from '@/subapps/orders/common/constants/orders';
 import type {Invoice, Order} from '@/subapps/orders/common/types/orders';
-import {getInvoicesWhereClause} from '@/subapps/orders/common/utils/orders';
 
 const fetchOrders = async ({
   archived = false,
@@ -405,16 +404,18 @@ export async function findInvoice({
   id,
   tenantId,
   workspaceURL,
-  user,
-  role,
-  isContactAdmin,
+  params,
 }: {
   id: Invoice['id'];
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
-  user: User;
-  role: string;
-  isContactAdmin: boolean;
+  params?: {
+    where?: object & {
+      partner?: {
+        id: Partner['id'];
+      };
+    };
+  };
 }): Promise<{
   success?: boolean;
   error?: boolean;
@@ -427,22 +428,13 @@ export async function findInvoice({
       message: await t('Invalid TenantId & workspace'),
     };
 
-  if (!user) {
-    return {error: true, message: await t('Unauthorized user.')};
-  }
-
-  const invoiceWhereClause = getInvoicesWhereClause({
-    user,
-    role,
-    isContactAdmin,
-  });
   const client = await manager.getClient(tenantId);
 
   const invoice: any = await client.aOSInvoice
     .findOne({
       where: {
         id,
-        ...invoiceWhereClause,
+        ...params?.where,
         portalWorkspace: {
           url: workspaceURL,
         },
@@ -486,7 +478,7 @@ export async function findCustomerDelivery({
 
   const client = await manager.getClient(tenantId);
 
-  const customerDeliveries: any = await client.aOSStockMove
+  const customerDelivery: any = await client.aOSStockMove
     .findOne({
       where: {
         id,
@@ -502,12 +494,12 @@ export async function findCustomerDelivery({
     })
     .then(clone);
 
-  if (!customerDeliveries) {
+  if (!customerDelivery) {
     return {
       error: true,
       message: await t('Record not found: The requested data does not exist.'),
     };
   }
 
-  return {success: true, data: customerDeliveries};
+  return {success: true, data: customerDelivery};
 }

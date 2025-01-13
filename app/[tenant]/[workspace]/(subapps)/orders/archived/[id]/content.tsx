@@ -90,8 +90,8 @@ const Content = ({order}: {order: any}) => {
     }
   };
 
-  const handleOrderInvoiceDownload = () =>
-    handleDownload(
+  const handleOrderInvoiceDownload = async () =>
+    await handleDownload(
       {
         id: id,
         workspaceURL,
@@ -103,8 +103,8 @@ const Content = ({order}: {order: any}) => {
       'Unexpected error during order invoice download:',
     );
 
-  const handleInvoiceDownload = (record: any) =>
-    handleDownload(
+  const handleInvoiceDownload = async (record: any) =>
+    await handleDownload(
       {
         id: record.id,
         workspaceURL,
@@ -116,8 +116,8 @@ const Content = ({order}: {order: any}) => {
       'Unexpected error during invoice download:',
     );
 
-  const handleCustomerDeliveryPDFDownload = (record: any) =>
-    handleDownload(
+  const handleCustomerDeliveryPDFDownload = async (record: any) =>
+    await handleDownload(
       {
         id: record.id,
         workspaceURL,

@@ -33,6 +33,10 @@ export function ExpandableCard({
   onDownload: (record: any) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  if (!records?.length) {
+    return;
+  }
   return (
     <div>
       <Collapsible
@@ -76,7 +80,7 @@ export function ExpandableCard({
                   variant="outline"
                   className="w-full flex items-center gap-2 bg-white hover:bg-white text-success hover:text-success border-success font-medium text-base"
                   disabled={isButtonDisabled}
-                  onClick={() => onDownload(record)}>
+                  onClick={async () => await onDownload(record)}>
                   <MdOutlineFileDownload className="h-6 w-6" />
                   {i18n.t(DOWNLOAD_PDF)}
                 </Button>
