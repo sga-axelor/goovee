@@ -85,7 +85,7 @@ export default async function Page({
         {cards.length > 0 && (
           <Swipe
             items={cards}
-            className="flex justify-center items-center mt-5 p-2 space-y-2"
+            className="flex justify-center items-center mt-5 p-2 space-y-2 hover:bg-slate-100 hover:shadow-md transition-all duration-300"
           />
         )}
         <Content

@@ -15,11 +15,11 @@ export function CategoryCard(props: CategoryCardProps) {
   const {label, icon, iconClassName, workspaceURI, id} = props;
 
   return (
-    <Link href={`${workspaceURI}/directory/category/${id}`}>
+    <Link href={`${workspaceURI}/directory/category/${id}`} className="block">
       <div
         className={cn(
-          iconClassName,
           'flex items-center justify-center  h-14 w-14 rounded-full m-auto',
+          iconClassName,
         )}>
         {icon && <DynamicIcon className="h-10 w-10 " icon={`md-${icon}`} />}
       </div>

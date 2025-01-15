@@ -17,10 +17,11 @@ export type CardProps = {
 
 export function Card(props: CardProps) {
   const {item, url, small, tenant} = props;
+
   return (
     <Link
       href={{pathname: url}}
-      className="flex bg-card rounded-lg gap-1 justify-between">
+      className="flex bg-card rounded-lg gap-1 justify-between hover:bg-slate-100 hover:shadow-md transition-all duration-300">
       <div className="p-3 space-y-2 grow">
         <div
           className={cn(
