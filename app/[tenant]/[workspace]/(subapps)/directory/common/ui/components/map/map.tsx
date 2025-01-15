@@ -4,13 +4,15 @@ import {useCallback, useMemo, useState} from 'react';
 import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
 
 import {RESPONSIVE_SIZES} from '@/constants';
-import {useResponsive} from '@/ui/hooks';
-import {cn} from '@/utils/css';
+import type {Cloned} from '@/types/util';
 import {Button} from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
+import {useResponsive} from '@/ui/hooks';
+import {cn} from '@/utils/css';
 
-import type {MapProps} from './types';
+import type {Entry, ListEntry, MapConfig} from '../../../types';
 import {calculateZoom} from './utils';
+import {MAP_SELECT} from '../../../constants';
 
 const MAP_HEIGHT = 320; // h-80
 const MAP_WIDTH = 384; // w-96
@@ -25,10 +27,15 @@ const OpenMap = dynamic(() => import('./open-map').then(mod => mod.Map), {
   loading: MapSkeleton,
 });
 
-export function Map(props: MapProps) {
-  const isGoogleMap = false;
+export type MapProps = {
+  className?: string;
+  showExpand?: boolean;
+  entries: Cloned<Entry>[] | Cloned<ListEntry>[];
+  config: MapConfig;
+};
 
-  const {className, showExpand, entries} = props;
+export function Map(props: MapProps) {
+  const {className, showExpand, entries, config} = props;
   const [expand, setExpand] = useState(false);
   const mapEntries = useMemo(
     () => entries.filter(x => x.address?.longit && x.address?.latit && x.isMap),
@@ -68,7 +75,9 @@ export function Map(props: MapProps) {
     setExpand(expand => !expand);
   }, []);
 
-  const MapComponent = isGoogleMap ? GoogleMap : OpenMap;
+  const MapComponent =
+    config.map === MAP_SELECT.GoogleMaps ? GoogleMap : OpenMap;
+
   const Icon = expand ? MdCloseFullscreen : MdOpenInFull;
   return (
     // NOTE: expand class is applied when the map is expanded and when it is in mobile view
@@ -80,6 +89,7 @@ export function Map(props: MapProps) {
               full ? 'h-[min(45rem,80dvh)] w-full' : 'h-80 w-96',
               className,
             )}
+            apiKey={config.apiKey}
             items={mapEntries}
             zoom={defaultZoom}
             center={defaultCenter}

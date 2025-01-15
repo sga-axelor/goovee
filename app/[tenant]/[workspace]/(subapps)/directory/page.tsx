@@ -91,6 +91,7 @@ export default async function Page({
         <Content
           url={`${workspaceURI}/directory`}
           workspaceURI={workspaceURI}
+          workspaceId={workspace.id}
           tenant={tenant}
           pages={pages}
           searchParams={searchParams}

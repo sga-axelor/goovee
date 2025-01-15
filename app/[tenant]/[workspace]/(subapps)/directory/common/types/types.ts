@@ -90,3 +90,8 @@ export type SearchEntry = {
   version: number;
   title?: string;
 } & Pagination;
+
+export type MapConfig = {
+  map: number;
+  apiKey?: string;
+};

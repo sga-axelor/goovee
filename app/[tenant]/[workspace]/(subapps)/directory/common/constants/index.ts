@@ -31,3 +31,8 @@ export const sortOptions = [
 ];
 
 export const defaultSortOption = sortOptions[0];
+
+export enum MAP_SELECT {
+  GoogleMaps = 1,
+  OpenStreetMap = 2,
+}

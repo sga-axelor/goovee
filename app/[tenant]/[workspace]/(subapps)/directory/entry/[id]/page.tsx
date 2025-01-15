@@ -16,7 +16,7 @@ import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
 import {colors} from '../../common/constants';
-import {findEntry} from '../../common/orm';
+import {findEntry, findMapConfig} from '../../common/orm';
 import {findModelFields} from '../../common/orm/meta-json-fields';
 import type {Entry} from '../../common/types';
 import {Map} from '../../common/ui/components/map';
@@ -51,11 +51,16 @@ export default async function Page({
   });
   if (!entry) notFound();
 
+  const config = await findMapConfig({
+    workspaceId: workspace.id,
+    tenantId: tenant,
+  });
+
   return (
     <div className="container flex flex-col gap-4 mt-4 mb-5">
       <div className="flex flex-col gap-4 bg-card p-4 rounded-lg">
         <Details entryDetail={entry} tenant={tenant} />
-        <Map className="h-80 w-full" entries={[clone(entry)]} />
+        <Map className="h-80 w-full" entries={[clone(entry)]} config={config} />
       </div>
       {entry.directoryContactSet && entry.directoryContactSet?.length > 0 && (
         <>

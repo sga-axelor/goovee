@@ -15,6 +15,7 @@ import {clone} from '@/utils';
 import {getPaginationButtons} from '@/utils/pagination';
 
 // ---- LOCAL IMPORTS ---- //
+import {findMapConfig} from './common/orm';
 import type {ListEntry} from './common/types';
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
@@ -27,6 +28,7 @@ type ContentProps = {
   tenant: string;
   pages: number;
   searchParams?: any;
+  workspaceId: string;
 };
 
 export async function Content({
@@ -36,6 +38,7 @@ export async function Content({
   searchParams,
   entries,
   url,
+  workspaceId,
 }: ContentProps) {
   if (!entries || entries.length === 0) {
     return (
@@ -45,12 +48,14 @@ export async function Content({
     );
   }
 
+  const mapConfig = await findMapConfig({workspaceId, tenantId: tenant});
+
   return (
     <>
       {/* NOTE: expand class applied by the map , when it is expanded and when it is in mobile view */}
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
         <aside className="space-y-4">
-          <Map showExpand entries={clone(entries)} />
+          <Map showExpand entries={clone(entries)} config={mapConfig} />
           <Sort />
         </aside>
         <main className="grow flex flex-col gap-4">

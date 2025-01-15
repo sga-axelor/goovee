@@ -13,13 +13,13 @@ import type {Cloned} from '@/types/util';
 
 import type {Entry, ListEntry} from '../../../types';
 import {Card} from '../card';
-
-import {MapContentProps} from './types';
+import type {MapContentProps} from './types';
 
 export function Map(props: MapContentProps) {
+  const {apiKey, ...rest} = props;
   return (
-    <APIProvider apiKey="">
-      <MapContent {...props} />
+    <APIProvider apiKey={apiKey ?? ''}>
+      <MapContent {...rest} />
     </APIProvider>
   );
 }
