@@ -8,9 +8,10 @@ import {Separator} from '@/ui/components/separator';
 import {i18n} from '@/locale';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {formatDate} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
-import {parseDate} from '@/subapps/news/common/utils';
+import {getFormatString} from '@/subapps/news/common/utils';
 import {PUBLISHED_ON} from '@/subapps/news/common/constants';
 import {BadgeList} from '@/ui/components';
 
@@ -67,7 +68,10 @@ export const NewsInfo = ({
                   {author?.simpleFullName}
                 </div>
                 <div className="text-xs font-normal text-palette-mediumGray leading-[18px]">
-                  {i18n.t(PUBLISHED_ON)} {parseDate(publicationDateTime)}
+                  {i18n.t(PUBLISHED_ON)}{' '}
+                  {formatDate(publicationDateTime, {
+                    dateFormat: getFormatString(publicationDateTime),
+                  })}
                 </div>
               </div>
             </div>

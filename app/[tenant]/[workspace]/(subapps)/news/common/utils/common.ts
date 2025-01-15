@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export function parseDate(dateString: any) {
+export function getFormatString(dateString: any) {
   const date = moment(dateString);
   const currentYear = moment().year();
   const dateYear = date.year();
@@ -13,7 +13,7 @@ export function parseDate(dateString: any) {
 
   formatString += ', h:mm A';
 
-  return date.format(formatString);
+  return formatString;
 }
 
 export function transformCategories(categories: any[]): any[] {

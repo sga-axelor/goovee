@@ -7,7 +7,7 @@ import {MdChevronRight} from 'react-icons/md';
 import {BadgeList, Separator} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {getPublishedLabel} from '@/utils/date';
+import {formatRelativeTime} from '@/lib/core/locale/formatters';
 
 export const FeedList = ({
   title,
@@ -58,7 +58,7 @@ export const FeedList = ({
                         </div>
                       </div>
                       <div className="font-medium text-[10px] text-zinc-500">
-                        {getPublishedLabel(publicationDateTime)}
+                        {formatRelativeTime(publicationDateTime)}
                       </div>
                     </div>
                   </div>

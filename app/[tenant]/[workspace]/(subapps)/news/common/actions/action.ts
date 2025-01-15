@@ -76,21 +76,21 @@ export async function findRecommendedNews({
   if (!user) {
     return {
       error: true,
-      message: getTranslation('Unauthorized'),
+      message: t('Unauthorized'),
     };
   }
 
   if (!tenantId) {
     return {
       error: true,
-      message: getTranslation('Bad Request'),
+      message: t('Bad Request'),
     };
   }
 
   if (!workspace) {
     return {
       error: true,
-      message: getTranslation('Invalid workspace'),
+      message: t('Invalid workspace'),
     };
   }
 

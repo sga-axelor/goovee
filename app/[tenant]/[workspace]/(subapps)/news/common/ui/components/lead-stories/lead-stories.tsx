@@ -5,7 +5,7 @@ import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {getPublishedLabel} from '@/utils/date';
+import {formatRelativeTime} from '@/lib/core/locale/formatters';
 import {BadgeList} from '@/ui/components';
 
 export const LeadStories = ({
@@ -65,7 +65,7 @@ export const LeadStories = ({
                       </div>
                     </div>
                     <div className="font-medium text-[10px]">
-                      {getPublishedLabel(publicationDateTime)}
+                      {formatRelativeTime(publicationDateTime)}
                     </div>
                   </div>
                 </div>
@@ -109,7 +109,7 @@ export const LeadStories = ({
                       {description}
                     </div>
                     <div className="flex-1 content-end font-medium text-[10px] mt-1 text-zinc-500">
-                      {getPublishedLabel(publicationDateTime)}
+                      {formatRelativeTime(publicationDateTime)}
                     </div>
                   </div>
                 </div>
