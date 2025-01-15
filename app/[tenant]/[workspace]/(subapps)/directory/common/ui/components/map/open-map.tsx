@@ -1,7 +1,8 @@
-import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
 import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
 
-import {Button} from '@/ui/components';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+
+import {Card} from '../card';
 import type {MapContentProps} from './types';
 
 import 'leaflet-defaulticon-compatibility';
@@ -9,19 +10,10 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import 'leaflet/dist/leaflet.css';
 
 export function Map(props: MapContentProps) {
-  const {
-    className,
-    center,
-    zoom,
-    expand,
-    showExpand,
-    toggleExpand,
-    items,
-    small,
-  } = props;
+  const {className, center, zoom, items, small} = props;
+  const {workspaceURI, tenant} = useWorkspace();
   const key = className + center.lat + center.lng + zoom;
 
-  const Icon = expand ? MdCloseFullscreen : MdOpenInFull;
   return (
     <MapContainer
       key={key}
@@ -33,16 +25,8 @@ export function Map(props: MapContentProps) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {showExpand && !small && (
-        <Button
-          style={{zIndex: 10000}}
-          variant="ghost"
-          className="bg-accent absolute top-2 right-2"
-          onClick={toggleExpand}>
-          <Icon size={18} />
-        </Button>
-      )}
       {items?.map(item => {
+        const url = `${workspaceURI}/directory/entry/${item.id}`;
         return (
           <Marker
             key={item.id}
@@ -50,8 +34,10 @@ export function Map(props: MapContentProps) {
               Number(item.address?.latit),
               Number(item.address?.longit),
             ]}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
+            <Popup
+              {...(!small && {minWidth: 500})}
+              className="[&_.leaflet-popup-content]:m-0">
+              <Card item={item} url={url} small={small} tenant={tenant} />
             </Popup>
           </Marker>
         );

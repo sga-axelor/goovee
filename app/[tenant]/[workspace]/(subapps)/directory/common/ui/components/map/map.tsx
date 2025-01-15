@@ -7,6 +7,9 @@ import {Map as GoogleMap} from './google-map';
 import {Map as OpenMap} from './open-map';
 import type {MapProps} from './types';
 import {calculateZoom} from './utils';
+import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
+
+import {Button} from '@/ui/components';
 
 const MAP_HEIGHT = 320; // h-80
 const MAP_WIDTH = 384; // w-96
@@ -50,34 +53,38 @@ export function Map(props: MapProps) {
     return {defaultCenter, defaultZoom};
   }, [mapEntries]);
 
-  const mapClassName = useMemo(
-    () =>
-      cn(
-        'relative',
-        // NOTE: expand class is applied when the map is expanded and when it is in mobile view
-        full ? 'expand h-[min(45rem,80dvh)] w-full' : 'h-80 w-96',
-        className,
-      ),
-    [full, className],
-  );
-
   const toggleExpand = useCallback(() => {
     setExpand(expand => !expand);
   }, []);
 
-  if (!mapEntries.length) return <div className={cn(full && 'expand')} />; // NOTE: expand class is used make the parent parent component flex column
-
-  const Map = isGoogleMap ? GoogleMap : OpenMap;
+  const MapComponent = isGoogleMap ? GoogleMap : OpenMap;
+  const Icon = expand ? MdCloseFullscreen : MdOpenInFull;
   return (
-    <Map
-      className={mapClassName}
-      items={mapEntries}
-      zoom={defaultZoom}
-      center={defaultCenter}
-      expand={expand}
-      showExpand={!!showExpand}
-      toggleExpand={toggleExpand}
-      small={small}
-    />
+    // NOTE: expand class is applied when the map is expanded and when it is in mobile view
+    <div className={cn('relative', full && 'expand')}>
+      {!!mapEntries.length && (
+        <>
+          <MapComponent
+            className={cn(
+              full ? 'h-[min(45rem,80dvh)] w-full' : 'h-80 w-96',
+              className,
+            )}
+            items={mapEntries}
+            zoom={defaultZoom}
+            center={defaultCenter}
+            small={small || !expand}
+          />
+          {showExpand && !small && (
+            <Button
+              style={{zIndex: 10000}}
+              variant="ghost"
+              className="bg-accent absolute top-2 right-2"
+              onClick={toggleExpand}>
+              <Icon size={18} />
+            </Button>
+          )}
+        </>
+      )}
+    </div>
   );
 }

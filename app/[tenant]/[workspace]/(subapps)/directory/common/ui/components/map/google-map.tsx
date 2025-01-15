@@ -1,10 +1,19 @@
 'use client';
-import {APIProvider, Map as GMap} from '@vis.gl/react-google-maps';
-import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
+import {
+  APIProvider,
+  Map as GMap,
+  InfoWindow,
+  Marker as MarkerComponent,
+  useMarkerRef,
+} from '@vis.gl/react-google-maps';
+import {useCallback, useState} from 'react';
 
-import {Button} from '@/ui/components';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {Cloned} from '@/types/util';
 
-import {Marker} from './marker';
+import type {Entry, ListEntry} from '../../../types';
+import {Card} from '../card';
+
 import {MapContentProps} from './types';
 
 export function Map(props: MapContentProps) {
@@ -16,18 +25,8 @@ export function Map(props: MapContentProps) {
 }
 
 function MapContent(props: MapContentProps) {
-  const {
-    className,
-    center,
-    zoom,
-    expand,
-    showExpand,
-    toggleExpand,
-    items,
-    small,
-  } = props;
+  const {className, center, zoom, items, small} = props;
 
-  const Icon = expand ? MdCloseFullscreen : MdOpenInFull;
   return (
     <GMap
       className={className}
@@ -36,17 +35,44 @@ function MapContent(props: MapContentProps) {
       defaultZoom={zoom}
       gestureHandling="greedy"
       disableDefaultUI={true}>
-      {showExpand && !small && (
-        <Button
-          variant="ghost"
-          className="bg-accent absolute top-2 right-2"
-          onClick={toggleExpand}>
-          <Icon size={18} />
-        </Button>
-      )}
       {items?.map(item => {
-        return <Marker key={item.id} small={small || !expand} item={item} />;
+        return <Marker key={item.id} small={small} item={item} />;
       })}
     </GMap>
+  );
+}
+
+type MarkerProps = {
+  small: boolean;
+  item: Cloned<Entry> | Cloned<ListEntry>;
+};
+
+export function Marker(props: MarkerProps) {
+  const {small, item} = props;
+  const {workspaceURI, tenant} = useWorkspace();
+
+  const url = `${workspaceURI}/directory/entry/${item.id}`;
+  const [markerRef, marker] = useMarkerRef();
+
+  const [show, setShow] = useState(false);
+  const toggle = useCallback(() => setShow(show => !show), []);
+  const handleClose = useCallback(() => setShow(false), []);
+
+  return (
+    <>
+      <MarkerComponent
+        ref={markerRef}
+        position={{
+          lat: Number(item.address?.latit || 0),
+          lng: Number(item.address?.longit || 0),
+        }}
+        onClick={toggle}
+      />
+      {show && (
+        <InfoWindow anchor={marker} onClose={handleClose} headerDisabled>
+          <Card item={item} url={url} small={small} tenant={tenant} />
+        </InfoWindow>
+      )}
+    </>
   );
 }

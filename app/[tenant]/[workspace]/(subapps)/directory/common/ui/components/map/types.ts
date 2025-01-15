@@ -11,9 +11,6 @@ export type MapContentProps = {
   className: string;
   center: {lat: number; lng: number};
   zoom: number;
-  showExpand: boolean;
-  expand: boolean;
-  toggleExpand: () => void;
   items: Cloned<Entry>[] | Cloned<ListEntry>[];
   small: boolean;
 };
