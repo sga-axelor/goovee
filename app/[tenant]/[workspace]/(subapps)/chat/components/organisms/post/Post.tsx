@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {MenuReaction} from '../../molecules';
 import {FilePreview, EmojiItem} from '../../atoms';
 import {MarkdownRenderer} from '../../atoms';
+import {i18n} from '@/locale';
 
 interface Reaction {
   count: number;
@@ -73,7 +74,7 @@ export const Post = ({
       onMouseLeave={() => setIsHovered(false)}>
       {post.root_id && _previousPost && (
         <div className="mb-2 p-2 bg-gray-200 rounded-md text-sm">
-          <p className="font-semibold">En réponse à :</p>
+          <p className="font-semibold">{i18n.t('in response to :')}</p>
           {_previousPost.message && (
             <MarkdownRenderer content={_previousPost.message} />
           )}

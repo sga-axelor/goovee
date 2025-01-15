@@ -7,6 +7,7 @@ import {InputMessage} from '../../molecules';
 import {GroupPost} from '../groupPost/groupPost';
 import {User, File} from '../../../types/types';
 import {focusInputMessage} from '../../../utils/focusOnInput';
+import {i18n} from '@/locale';
 
 export const ChannelView = ({
   channel,
@@ -221,7 +222,7 @@ export const ChannelView = ({
   const isSendEnabled = messageText.trim() !== '' || selectedFiles.length > 0;
 
   if (!channel) {
-    return <div>Chargement du canal</div>;
+    return <div>{i18n.t('Channel loading')}</div>;
   }
 
   return (
@@ -266,7 +267,7 @@ export const ChannelView = ({
           className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-full cursor-pointer flex items-center shadow-lg"
           onClick={handleScrollToBottom}>
           <ChevronDown size={20} className="mr-2" />
-          Nouveau message
+          {i18n.t('New message')}
         </div>
       )}
 

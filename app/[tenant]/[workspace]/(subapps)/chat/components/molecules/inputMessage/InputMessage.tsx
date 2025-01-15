@@ -13,11 +13,14 @@ import {
 import {MarkdownRenderer, FormattingToolbar, EmojiPopup} from '../../atoms';
 import {Post} from '../../../types/types';
 import {emojis} from '../../../constants/emojis';
+import {i18n} from '@/locale';
 
 const fileNameToUnicode = (fileName: string): string => {
   const codePoint = parseInt(fileName.split('.')[0], 16);
   return String.fromCodePoint(codePoint);
 };
+
+const inputMessagePlaceHolder = i18n.t('Write a message');
 
 export const InputMessage = ({
   messageText,
@@ -168,7 +171,9 @@ export const InputMessage = ({
     <div className="p-4 border-t">
       {postReply && (
         <div className="mb-2 p-2 bg-gray-200 rounded-lg flex justify-between items-center">
-          <div className="truncate">Réponse à : {postReply.message}</div>
+          <div className="truncate">
+            {i18n.t('Response to')} {postReply.message}
+          </div>
           <X
             size={16}
             className="text-gray-500 cursor-pointer"
@@ -181,7 +186,7 @@ export const InputMessage = ({
           {!showPreview ? (
             <textarea
               ref={textareaRef}
-              placeholder="Écrire un message..."
+              placeholder={inputMessagePlaceHolder}
               className="flex-grow bg-transparent focus:outline-none resize-none overflow-y-auto"
               value={messageText}
               onChange={e => setMessageText(e.target.value)}

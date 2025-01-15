@@ -4,6 +4,7 @@ import React from 'react';
 import {X} from 'lucide-react';
 import {File} from '../../../types/types';
 import {focusInputMessage} from '../../../utils/focusOnInput';
+import {i18n} from '@/locale';
 
 export const DocumentList = ({
   selectedFiles,
@@ -15,7 +16,7 @@ export const DocumentList = ({
   return (
     <div className="mt-1 p-4">
       <h4 className="text-sm font-semibold text-gray-700">
-        Fichiers sélectionnés:
+        {i18n.t('Selected files')}
       </h4>
       <ul className="list-disc pl-5">
         {selectedFiles.map((file, index) => (
