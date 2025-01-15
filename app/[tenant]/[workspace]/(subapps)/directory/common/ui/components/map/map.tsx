@@ -87,7 +87,7 @@ export function Map(props: MapProps) {
           />
           {showExpand && !small && (
             <Button
-              style={{zIndex: 10000}}
+              style={{zIndex: 1000}}
               variant="ghost"
               className="bg-accent absolute top-2 right-2"
               onClick={toggleExpand}>

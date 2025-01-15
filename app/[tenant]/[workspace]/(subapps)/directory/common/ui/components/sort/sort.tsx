@@ -35,7 +35,7 @@ export function Sort() {
       <SelectTrigger className={cn('lg:min-w-[128px] text-xs text-foreground')}>
         <SelectValue placeholder={i18n.t('Select sort')} />
       </SelectTrigger>
-      <SelectContent className="w-full">
+      <SelectContent className="w-full" style={{zIndex: 1000}}>
         {sortOptions.map(option => (
           <SelectItem
             key={option.value}
