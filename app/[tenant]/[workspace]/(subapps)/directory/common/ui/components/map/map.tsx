@@ -1,18 +1,29 @@
 'use client';
+import dynamic from 'next/dynamic';
+import {useCallback, useMemo, useState} from 'react';
+import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
+
 import {RESPONSIVE_SIZES} from '@/constants';
 import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-import {useCallback, useMemo, useState} from 'react';
-import {Map as GoogleMap} from './google-map';
-import {Map as OpenMap} from './open-map';
+import {Button} from '@/ui/components';
+import {Skeleton} from '@/ui/components/skeleton';
+
 import type {MapProps} from './types';
 import {calculateZoom} from './utils';
-import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
-
-import {Button} from '@/ui/components';
 
 const MAP_HEIGHT = 320; // h-80
 const MAP_WIDTH = 384; // w-96
+
+const GoogleMap = dynamic(() => import('./google-map').then(mod => mod.Map), {
+  ssr: false,
+  loading: MapSkeleton,
+});
+
+const OpenMap = dynamic(() => import('./open-map').then(mod => mod.Map), {
+  ssr: false,
+  loading: MapSkeleton,
+});
 
 export function Map(props: MapProps) {
   const isGoogleMap = false;
@@ -87,4 +98,8 @@ export function Map(props: MapProps) {
       )}
     </div>
   );
+}
+
+function MapSkeleton() {
+  return <Skeleton className="h-80 w-96" />;
 }
