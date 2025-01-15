@@ -17,6 +17,7 @@ import {
   Input,
 } from '@/ui/components';
 import {sortFields, mapFieldType, createFormSchema} from '@/ui/form';
+import {i18n} from '@/locale';
 
 export const FormView = ({
   fields: _fields,
@@ -82,7 +83,7 @@ export const FormView = ({
               <FormLabel
                 className="text-sm font-normal cursor-pointer"
                 style={{margin: 0}}>
-                {item.title}
+                {i18n.t(item.title)}
               </FormLabel>
             </FormItem>
           );
@@ -92,7 +93,7 @@ export const FormView = ({
           return (
             <FormItem>
               <FormLabel className="text-base font-medium leading-6">
-                {item.title}
+                {i18n.t(item.title)}
               </FormLabel>
               <FormControl>
                 <Input
@@ -130,7 +131,7 @@ export const FormView = ({
         <Button
           className="text-base font-medium leading-6 p-3 w-full bg-success hover:bg-success-dark"
           type="submit">
-          {submitTitle}
+          {i18n.t(submitTitle)}
         </Button>
       </form>
     </Form>

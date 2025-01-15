@@ -2,7 +2,7 @@
 
 // ---- CORE IMPORTS ---- //
 import {DATE_FORMATS} from '@/constants';
-import {parseDate} from '@/utils/date';
+import {formatDate} from '@/locale/formatters';
 
 export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
   const {id, eventTitle, eventStartDateTime, eventDescription} = result;
@@ -16,10 +16,9 @@ export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
             {eventTitle}
           </p>
           <p className="text-sm font-normal text-main-black min-w-fit">
-            {parseDate(
-              eventStartDateTime,
-              DATE_FORMATS.full_month_day_year_12_hour,
-            )}
+            {formatDate(eventStartDateTime, {
+              dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
+            })}
           </p>
         </div>
         <div

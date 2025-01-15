@@ -6,7 +6,8 @@ import {useEffect, useState} from 'react';
 // ---- CORE IMPORTS ---- //
 import {Card} from '@/ui/components';
 import {DATE_FORMATS} from '@/constants';
-import {parseDate} from '@/utils/date';
+import {i18n} from '@/locale';
+import {formatDate} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
@@ -27,18 +28,16 @@ export const EventDateCard = ({
 
   useEffect(() => {
     if (startDate) {
-      const dateTime = parseDate(
-        startDate,
-        DATE_FORMATS.full_month_day_year_12_hour,
-      ).split('-');
+      const dateTime = formatDate(startDate, {
+        dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
+      }).split('-');
       setStartDateTime({startDay: dateTime[0], startTime: dateTime[1]});
     }
 
     if (endDate && !eventAllDay) {
-      const dateTime = parseDate(
-        endDate,
-        DATE_FORMATS.full_month_day_year_12_hour,
-      ).split('-');
+      const dateTime = formatDate(endDate, {
+        dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
+      }).split('-');
       setEndDateTime({endDay: dateTime[0], endTime: dateTime[1]});
     }
   }, [startDate, endDate, eventAllDay]);
@@ -48,12 +47,16 @@ export const EventDateCard = ({
       <div className="flex items-center gap-x-2">
         <MdOutlineCalendarMonth className="w-6 h-6 text-success" />
         <div className="flex">
-          <p className="text-base">
+          <p className=" flex text-base gap-2">
             <span className="font-semibold">{startDateTime.startDay}</span>{' '}
-            {startDateTime.startTime}
-            {eventAllDay || !endDateTime.endDay ? ' ' : ' to '}
+            {i18n.t(startDateTime.startTime)}
+            {eventAllDay || !endDateTime.endDay ? (
+              ' '
+            ) : (
+              <span className="mx-2">{i18n.t('to')}</span>
+            )}
             <span className="font-semibold">{endDateTime.endDay}</span>{' '}
-            {endDateTime.endTime}
+            {i18n.t(endDateTime.endTime)}
           </p>
         </div>
       </div>

@@ -18,6 +18,7 @@ import {
   buttonVariants,
 } from '@/ui/components';
 import {dateIsExist} from '@/utils/date';
+import {i18n} from '@/lib/core/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
@@ -91,7 +92,7 @@ const CustomCaptionLayout: React.FC<{
             <p className="font-semibold text-main-black dark:text-grey-1 leading-8 flex items-center gap-x-2">
               {selectedMonth !== undefined && selectedYear !== undefined && (
                 <>
-                  {months[selectedMonth]} {selectedYear}
+                  {i18n.t(months[selectedMonth])} {selectedYear}
                 </>
               )}
               <MdOutlineArrowDropDown />
