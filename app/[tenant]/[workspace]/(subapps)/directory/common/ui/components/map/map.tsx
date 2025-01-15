@@ -1,36 +1,19 @@
 'use client';
-import {APIProvider, Map as GMap} from '@vis.gl/react-google-maps';
-import {useMemo, useState} from 'react';
-import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
-
 import {RESPONSIVE_SIZES} from '@/constants';
-import {Cloned} from '@/types/util';
-import {Button} from '@/ui/components';
 import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-
-import type {Entry, ListEntry} from '../../../types';
-import {Marker} from './marker';
+import {useCallback, useMemo, useState} from 'react';
+import {Map as GoogleMap} from './google-map';
+import {Map as OpenMap} from './open-map';
+import type {MapProps} from './types';
 import {calculateZoom} from './utils';
-
-type MapProps = {
-  className?: string;
-  showExpand?: boolean;
-  entries: Cloned<Entry>[] | Cloned<ListEntry>[];
-};
-
-export function Map(props: MapProps) {
-  return (
-    <APIProvider apiKey="">
-      <MapContent {...props} />
-    </APIProvider>
-  );
-}
 
 const MAP_HEIGHT = 320; // h-80
 const MAP_WIDTH = 384; // w-96
 
-function MapContent(props: MapProps) {
+export function Map(props: MapProps) {
+  const isGoogleMap = false;
+
   const {className, showExpand, entries} = props;
   const [expand, setExpand] = useState(false);
   const mapEntries = useMemo(
@@ -67,8 +50,6 @@ function MapContent(props: MapProps) {
     return {defaultCenter, defaultZoom};
   }, [mapEntries]);
 
-  const Icon = expand ? MdCloseFullscreen : MdOpenInFull;
-
   const mapClassName = useMemo(
     () =>
       cn(
@@ -80,26 +61,23 @@ function MapContent(props: MapProps) {
     [full, className],
   );
 
+  const toggleExpand = useCallback(() => {
+    setExpand(expand => !expand);
+  }, []);
+
   if (!mapEntries.length) return <div className={cn(full && 'expand')} />; // NOTE: expand class is used make the parent parent component flex column
+
+  const Map = isGoogleMap ? GoogleMap : OpenMap;
   return (
-    <GMap
+    <Map
       className={mapClassName}
-      reuseMaps={true}
-      defaultCenter={defaultCenter}
-      defaultZoom={defaultZoom}
-      gestureHandling="greedy"
-      disableDefaultUI={true}>
-      {showExpand && !small && (
-        <Button
-          variant="ghost"
-          className="bg-accent absolute top-2 right-2"
-          onClick={() => setExpand(expand => !expand)}>
-          <Icon size={18} />
-        </Button>
-      )}
-      {mapEntries?.map(item => {
-        return <Marker key={item.id} small={small || !expand} item={item} />;
-      })}
-    </GMap>
+      items={mapEntries}
+      zoom={defaultZoom}
+      center={defaultCenter}
+      expand={expand}
+      showExpand={!!showExpand}
+      toggleExpand={toggleExpand}
+      small={small}
+    />
   );
 }
