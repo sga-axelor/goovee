@@ -27,7 +27,10 @@ export async function findModelFields({
 
   for (const _f of fields) {
     if (_f.selection != null) {
-      const options = await findSelectionItems(_f.selection);
+      const options = await findSelectionItems({
+        selectionName: _f.selection,
+        tenantId,
+      });
       result.push({..._f, selectionOptions: options});
     } else {
       result.push(_f);
