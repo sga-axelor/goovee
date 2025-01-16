@@ -16,7 +16,7 @@ import {getPaginationButtons} from '@/utils/pagination';
 
 // ---- LOCAL IMPORTS ---- //
 import {findMapConfig} from './common/orm';
-import type {ListEntry} from './common/types';
+import type {ListEntry, SearchParams} from './common/types';
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {Sort} from './common/ui/components/sort';
@@ -27,7 +27,7 @@ type ContentProps = {
   entries: ListEntry[];
   tenant: string;
   pages: number;
-  searchParams?: any;
+  searchParams: SearchParams;
   workspaceId: string;
 };
 
@@ -78,7 +78,7 @@ export async function Content({
 
 type CardPaginationProps = {
   url: string;
-  searchParams: {page?: number; limit?: number};
+  searchParams: SearchParams;
   pages: number;
 };
 

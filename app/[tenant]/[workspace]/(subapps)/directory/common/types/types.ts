@@ -95,3 +95,5 @@ export type MapConfig = {
   map: number;
   apiKey?: string;
 };
+
+export type SearchParams = {page?: string; limit?: string; sort?: string};

@@ -14,6 +14,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {colors} from '../../common/constants';
 import {findCategory} from '../../common/orm';
 import {findEntries} from '../../common/orm/directory-entry';
+import type {SearchParams} from '../../common/types';
 import {CategoryCard} from '../../common/ui/components/category-card';
 import {Swipe} from '../../common/ui/components/swipe';
 import {getOrderBy, getPages, getSkip} from '../../common/utils';
@@ -25,7 +26,7 @@ export default async function Page({
   searchParams,
 }: {
   params: {tenant: string; workspace: string; id: string};
-  searchParams: {page?: number; limit?: number; sort?: string | undefined};
+  searchParams: SearchParams;
 }) {
   const session = await getSession();
 
