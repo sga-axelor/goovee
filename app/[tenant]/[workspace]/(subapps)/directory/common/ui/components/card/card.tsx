@@ -7,6 +7,7 @@ import {getImageURL} from '@/utils/files';
 import {colors} from '../../../constants';
 import type {Entry, ListEntry} from '../../../types';
 import {Category} from '../pills';
+import {InnerHTML} from '../inner-html';
 
 export type CardProps = {
   item: ListEntry | Entry;
@@ -38,7 +39,12 @@ export function Card(props: CardProps) {
         <p className="text-success text-sm line-clamp-3">
           {item.address?.formattedFullName}
         </p>
-        {!small && <p className="text-xs line-clamp-3">{item.description}</p>}
+        {!small && (
+          <InnerHTML
+            className="text-xs line-clamp-3"
+            content={item.description}
+          />
+        )}
       </div>
       {!small && (
         <Image

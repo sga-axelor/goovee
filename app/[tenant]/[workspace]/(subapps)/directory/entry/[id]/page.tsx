@@ -22,6 +22,7 @@ import type {Entry} from '../../common/types';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
 import {cn} from '@/utils/css';
+import {InnerHTML} from '../../common/ui/components/inner-html';
 
 export default async function Page({
   params,
@@ -146,7 +147,7 @@ async function Details({
       {/* directory description */}
 
       <div className="space-y-4 mt-5">
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <InnerHTML content={description} />
         {customFields}
       </div>
       {(linkedIn || twitter || instagram || website) && (
