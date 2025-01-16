@@ -6,13 +6,13 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findSubappAccess} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import type {Partner} from '@/types';
+import {PartnerKey, type Partner} from '@/types';
 import {findDeliveryAddresses, findInvoicingAddresses} from '@/orm/address';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
-import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
 
 interface PageParams {
   params: {id: string; tenant: string; workspace: string};
@@ -52,10 +52,11 @@ async function fetchQuotationData(
   }
 
   const {role, isContactAdmin} = subapp;
-  const where = getWhereClause({
+  const where = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
   const quotation: any = await findQuotation({
