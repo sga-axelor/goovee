@@ -1,22 +1,20 @@
 'use server';
 
 import axios from 'axios';
-import paypal from '@paypal/checkout-server-sdk';
 import {headers} from 'next/headers';
-import type {Stripe} from 'stripe';
 
 // ---- CORE IMPORTS ---- //
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
-import paypalhttpclient from '@/payment/paypal';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {computeTotal} from '@/utils/cart';
-import {stripe} from '@/payment/stripe';
 import {t} from '@/locale/server';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {TENANT_HEADER} from '@/middleware';
 import {manager, type Tenant} from '@/tenant';
-import {PaymentOption, type ID} from '@/types';
+import {PaymentOption} from '@/types';
+import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
+import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
@@ -252,38 +250,31 @@ export async function paypalCaptureOrder({
     };
   }
 
-  const PaypalClient = paypalhttpclient();
+  try {
+    const response = await findPaypalOrder({id: orderId});
 
-  const request = new paypal.orders.OrdersCaptureRequest(orderId);
+    const {result} = response;
 
-  const response = await PaypalClient.execute(request);
+    const purchase = result?.purchase_units?.[0];
 
-  if (!response) {
+    const {total} = computeTotal({cart, workspace});
+
+    if (
+      Number(purchase?.payments?.captures?.[0]?.amount?.value) !== Number(total)
+    ) {
+      return {
+        error: true,
+        message: 'Amount mismatched',
+      };
+    }
+
+    return createOrder({cart, workspaceURL, tenantId});
+  } catch (err) {
     return {
       error: true,
-      message: 'Error processing payment. Try again.',
+      message: await t((err as any)?.message),
     };
   }
-
-  const {result} = response;
-
-  const purchase = result?.purchase_units?.[0];
-
-  const {total, currency} = computeTotal({
-    cart,
-    workspace,
-  });
-
-  if (
-    Number(purchase?.payments?.captures?.[0]?.amount?.value) !== Number(total)
-  ) {
-    return {
-      error: true,
-      message: 'Amount mismatched',
-    };
-  }
-
-  return createOrder({cart, workspaceURL, tenantId});
 }
 
 export async function paypalCreateOrder({
@@ -386,37 +377,20 @@ export async function paypalCreateOrder({
 
   const payer = await findPartnerByEmail(user?.email, tenantId);
 
-  const PaypalClient = paypalhttpclient();
+  try {
+    const response = await createPaypalOrder({
+      amount: total,
+      currency: currency?.code,
+      email: payer?.emailAddress?.address,
+    });
 
-  const request = new paypal.orders.OrdersCreateRequest();
-
-  request.headers['Prefer'] = 'return=representation';
-
-  request.requestBody({
-    intent: 'CAPTURE',
-    payer: {
-      email_address: payer?.emailAddress?.address,
-    } as any,
-    purchase_units: [
-      {
-        amount: {
-          currency_code: currency?.code || DEFAULT_CURRENCY_CODE,
-          value: total + '',
-        },
-      },
-    ],
-  });
-
-  const response = await PaypalClient.execute(request);
-
-  if (response.statusCode !== 201) {
+    return {success: true, order: response?.result};
+  } catch (err) {
     return {
       error: true,
-      message: await t('Error processing payment. Try again'),
+      message: await t((err as any)?.message),
     };
   }
-
-  return {success: true, order: response?.result};
 }
 
 export async function createStripeCheckoutSession({
@@ -521,35 +495,31 @@ export async function createStripeCheckoutSession({
 
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
 
-  const checkoutSession: Stripe.Checkout.Session =
-    await stripe.checkout.sessions.create({
-      mode: 'payment',
-      submit_type: 'pay',
-      client_reference_id: payer?.id,
-      customer_email: payer?.emailAddress?.address,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: currencyCode,
-            product_data: {
-              name: 'Cart Checkout',
-            },
-            unit_amount: formatAmountForStripe(
-              Number(total || 0),
-              currencyCode,
-            ),
-          },
-        },
-      ],
-      success_url: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_error=true`,
+  try {
+    const session = await createStripeOrder({
+      customer: {
+        id: payer?.id!,
+        email: payer?.emailAddress?.address!,
+      },
+      name: 'Cart Checkout',
+      amount: total as string,
+      currency: currencyCode,
+      url: {
+        success: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_session_id={CHECKOUT_SESSION_ID}`,
+        error: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_error=true`,
+      },
     });
 
-  return {
-    client_secret: checkoutSession.client_secret,
-    url: checkoutSession.url,
-  };
+    return {
+      client_secret: session.client_secret,
+      url: session.url,
+    };
+  } catch (err) {
+    return {
+      error: true,
+      message: await t((err as any)?.message),
+    };
+  }
 }
 
 export async function validateStripePayment({
@@ -654,35 +624,13 @@ export async function validateStripePayment({
     };
   }
 
-  const stripeSession =
-    await stripe.checkout.sessions.retrieve(stripeSessionId);
-
-  if (!stripeSession) {
+  let stripeSession;
+  try {
+    stripeSession = await findStripeOrder({id: stripeSessionId});
+  } catch (err) {
     return {
       error: true,
-      message: await t('Invalid stripe session'),
-    };
-  }
-
-  if (
-    !(
-      (stripeSession.status as string) === 'complete' &&
-      stripeSession.payment_status === 'paid'
-    )
-  ) {
-    return {
-      error: true,
-      message: await t('Payment not successfull'),
-    };
-  }
-
-  const lineItems =
-    await stripe.checkout.sessions.listLineItems(stripeSessionId);
-
-  if (!lineItems) {
-    return {
-      error: true,
-      message: await t('Payment not successfull'),
+      message: await t((err as any)?.message),
     };
   }
 
@@ -693,10 +641,10 @@ export async function validateStripePayment({
 
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
 
-  const stripeTotal = lineItems?.data?.[0]?.amount_total;
+  const paymentTotal = stripeSession?.lines?.data?.[0]?.amount_total;
   const cartTotal = formatAmountForStripe(Number(total || 0), currencyCode);
 
-  if (stripeTotal && cartTotal && stripeTotal !== cartTotal) {
+  if (paymentTotal && cartTotal && paymentTotal !== cartTotal) {
     return {
       error: true,
       message: await t('Payment amount mistmatch'),

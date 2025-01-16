@@ -30,7 +30,7 @@ import {useSearchParams, useToast} from '@/ui/hooks';
 import {getImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
+import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -215,7 +215,7 @@ function Paypal({onApprove}: {onApprove: any}) {
     <PayPalScriptProvider
       options={{
         clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
-        currency: 'EUR',
+        currency: DEFAULT_CURRENCY_CODE,
         intent: 'capture',
         disableFunding: 'card',
       }}>
