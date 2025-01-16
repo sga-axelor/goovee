@@ -6,10 +6,12 @@ import {useRouter} from 'next/navigation';
 import {Separator} from '@/ui/components/separator';
 import {SUBAPP_CODES} from '@/constants';
 import {User} from '@/types';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {EVENTS_NAVBAR_LINKS} from '@/subapps/events/common/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import Link from 'next/link';
 
 type nav_link = {
   id: number;
@@ -22,11 +24,7 @@ export const EventNavbar = ({user}: {user?: User}) => {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const handleRoute = (redirectTo: string) => {
-    router.push(`${workspaceURI}/${SUBAPP_CODES.events}${redirectTo}`);
-  };
-
-  const filteredLinks = EVENTS_NAVBAR_LINKS.filter(
+  const filteredLinks: nav_link[] = EVENTS_NAVBAR_LINKS.filter(
     link => !(link.validate && !user?.email),
   );
 
@@ -35,11 +33,12 @@ export const EventNavbar = ({user}: {user?: User}) => {
       <div className="h-8 flex gap-10 overflow-x-auto items-center justify-end">
         {filteredLinks.map((item: nav_link, i: number) => (
           <React.Fragment key={item.id}>
-            <div
-              onClick={() => handleRoute(item.redirectTo)}
-              className="font-medium text-base cursor-pointer">
-              {item.title}
-            </div>
+            <Link
+              href={`${workspaceURI}/${SUBAPP_CODES.events}${item.redirectTo}`}>
+              <div className="font-medium text-base cursor-pointer">
+                {i18n.t(item.title)}
+              </div>
+            </Link>
             {i !== filteredLinks.length - 1 && (
               <Separator className="bg-black w-[2px]" orientation="vertical" />
             )}

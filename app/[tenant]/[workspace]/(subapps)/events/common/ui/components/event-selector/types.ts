@@ -14,6 +14,4 @@ export interface EventSelectorProps {
   workspace: PortalWorkspace;
   selectedCategories?: string[];
   onlyRegisteredEvent?: boolean;
-  handleToogle?: (x: boolean) => void;
-  enablePastEvents?: boolean;
 }

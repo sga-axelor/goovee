@@ -1,6 +1,8 @@
 'use client';
 
 import {useState, useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {convertDateToISO8601} from '@/utils/date';
@@ -8,24 +10,25 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
+import {Pagination} from '@/ui/components';
+import {URL_PARAMS, DEFAULT_PAGE, KEY, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Category, Event} from '@/subapps/events/common/ui/components';
 import {
   EventSelector,
-  ShowEvents,
   EventSearch,
+  TabsList,
+  EventCard,
 } from '@/subapps/events/common/ui/components';
 import {
   MY_REGISTRATIONS,
-  UPCOMING_EVENTS,
-  ONGOING_EVETNS,
-  PAST_EVENTS,
   NO_RESULT_FOUND,
+  EVENT_TAB_ITEMS,
+  EVENTS,
 } from '@/subapps/events/common/constants';
-import {Pagination} from '@/ui/components';
-import {URL_PARAMS, DEFAULT_PAGE, KEY} from '@/constants';
 
+type TabItem = (typeof EVENT_TAB_ITEMS)[number];
 export const MyRegisteredEvents = ({
   categories,
   category,
@@ -33,11 +36,9 @@ export const MyRegisteredEvents = ({
   query = '',
   workspace,
   onlyRegisteredEvent,
-  onGoingEvents,
-  upcomingEvents,
-  pastEvents,
-  pageInfo: {page, pages, hasPrev, hasNext, count} = {},
-  showPastEvents = false,
+  events,
+  pageInfo: {page, pages, hasPrev, hasNext} = {},
+  eventType = '',
 }: {
   categories: Category[];
   category: any[];
@@ -45,21 +46,19 @@ export const MyRegisteredEvents = ({
   query?: string;
   workspace: PortalWorkspace;
   onlyRegisteredEvent: boolean;
-  onGoingEvents: Event[];
-  upcomingEvents: Event[];
-  pastEvents: Event[];
+  events: Event[];
   pageInfo: any;
-  showPastEvents: boolean;
+  eventType: string;
 }) => {
   const [search, setSearch] = useState(query);
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
-  const [enablePastEvents, setEnablePastEvents] =
-    useState<boolean>(showPastEvents);
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
+  const router = useRouter();
+
   const handleCategory = (category: Category) => {
     const updatedCategories = selectedCategory.some(
       (c: string) => c === category.id,
@@ -70,7 +69,6 @@ export const MyRegisteredEvents = ({
       {key: URL_PARAMS.category, value: updatedCategories},
       {key: URL_PARAMS.page, value: DEFAULT_PAGE},
       {key: URL_PARAMS.date, value: convertDateToISO8601(date) || ''},
-      {key: URL_PARAMS.pastevents, value: enablePastEvents},
       {key: URL_PARAMS.query, value: search},
     ]);
 
@@ -85,7 +83,6 @@ export const MyRegisteredEvents = ({
         {key: URL_PARAMS.category, value: selectedCategory},
         {key: URL_PARAMS.page, value: DEFAULT_PAGE},
         {key: URL_PARAMS.date, value: convertDateToISO8601(d) || ''},
-        {key: URL_PARAMS.pastevents, value: enablePastEvents},
         {key: URL_PARAMS.query, value: search},
       ],
       {scroll: false},
@@ -99,7 +96,6 @@ export const MyRegisteredEvents = ({
         key: URL_PARAMS.page,
         value: Math.max(Number(page) - 1, 1),
       },
-      {key: URL_PARAMS.pastevents, value: enablePastEvents},
       {key: URL_PARAMS.query, value: search},
     ]);
   };
@@ -108,7 +104,6 @@ export const MyRegisteredEvents = ({
     if (!hasNext) return;
     update([
       {key: URL_PARAMS.page, value: Number(page) + 1},
-      {key: URL_PARAMS.pastevents, value: enablePastEvents},
       {key: URL_PARAMS.query, value: search},
     ]);
   };
@@ -116,7 +111,6 @@ export const MyRegisteredEvents = ({
   const handlePage = (page: string | number) => {
     update([
       {key: URL_PARAMS.page, value: page},
-      {key: URL_PARAMS.pastevents, value: enablePastEvents},
       {key: URL_PARAMS.query, value: search},
     ]);
   };
@@ -125,27 +119,12 @@ export const MyRegisteredEvents = ({
     setSearch(searchKey);
   };
 
-  const handleTooglePastEvents = (checked: boolean) => {
-    setEnablePastEvents(checked);
-    update(
-      [
-        {key: URL_PARAMS.category, value: selectedCategory},
-        {key: URL_PARAMS.page, value: DEFAULT_PAGE},
-        {key: URL_PARAMS.date, value: convertDateToISO8601(date) || ''},
-        {key: URL_PARAMS.pastevents, value: checked},
-        {key: URL_PARAMS.query, value: search},
-      ],
-      {scroll: false},
-    );
-  };
-
   const updateSearchQuery = () => {
     update(
       [
         {key: URL_PARAMS.category, value: selectedCategory},
         {key: URL_PARAMS.page, value: DEFAULT_PAGE},
         {key: URL_PARAMS.date, value: convertDateToISO8601(date) || ''},
-        {key: URL_PARAMS.pastevents, value: enablePastEvents},
         {key: URL_PARAMS.query, value: search},
       ],
       {scroll: false},
@@ -164,6 +143,11 @@ export const MyRegisteredEvents = ({
     }
   }, [search]);
 
+  const handleTabChange = (t: TabItem) => {
+    router.push(
+      `${workspaceURI}/${SUBAPP_CODES.events}/${EVENTS.MY_REGISTRATIONS}/${t.label}`,
+    );
+  };
   return (
     <div>
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
@@ -179,8 +163,6 @@ export const MyRegisteredEvents = ({
             categories={categories}
             workspace={workspace}
             onlyRegisteredEvent={onlyRegisteredEvent}
-            enablePastEvents={enablePastEvents}
-            handleToogle={handleTooglePastEvents}
           />
         </div>
         <div>
@@ -191,42 +173,39 @@ export const MyRegisteredEvents = ({
               onKeyDown={handleSearchKeyDown}
             />
           </div>
-          <div className="flex flex-col space-y-4 w-full">
-            <ShowEvents
-              title={ONGOING_EVETNS}
-              events={onGoingEvents}
-              workspace={workspace}
-              workspaceURI={workspaceURI}
-            />
-            <ShowEvents
-              events={upcomingEvents}
-              title={UPCOMING_EVENTS}
-              workspace={workspace}
-              workspaceURI={workspaceURI}
-            />
-            {showPastEvents && (
-              <ShowEvents
-                events={pastEvents}
-                title={PAST_EVENTS}
-                workspace={workspace}
-                workspaceURI={workspaceURI}
-              />
-            )}
-            <div className="w-full mt-10 flex items-center justify-center ml-auto">
-              {pages > DEFAULT_PAGE && (
-                <Pagination
-                  page={page}
-                  pages={pages}
-                  disablePrev={!hasPrev}
-                  disableNext={!hasNext}
-                  onPrev={handlePreviousPage}
-                  onNext={handleNextPage}
-                  onPage={handlePage}
-                />
-              )}
-              {count === 0 && <p>{i18n.t(NO_RESULT_FOUND)}</p>}
-            </div>
-          </div>
+          <TabsList
+            activeTab={
+              EVENT_TAB_ITEMS.find(item => item.label === eventType)!.id
+            }
+            items={EVENT_TAB_ITEMS}
+            onTabChange={handleTabChange}>
+            <>
+              <div className="flex flex-col space-y-4 w-full">
+                {events.map((event, i) => (
+                  <Link
+                    href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
+                    key={event.id}
+                    passHref>
+                    <EventCard event={event} workspace={workspace} />
+                  </Link>
+                ))}
+              </div>
+              <div className="w-full mt-10 flex items-center justify-center ml-auto">
+                {pages > DEFAULT_PAGE && (
+                  <Pagination
+                    page={page}
+                    pages={pages}
+                    disablePrev={!hasPrev}
+                    disableNext={!hasNext}
+                    onPrev={handlePreviousPage}
+                    onNext={handleNextPage}
+                    onPage={handlePage}
+                  />
+                )}
+                {events.length === 0 && <p>{i18n.t(NO_RESULT_FOUND)}</p>}
+              </div>
+            </>
+          </TabsList>
         </div>
       </div>
     </div>

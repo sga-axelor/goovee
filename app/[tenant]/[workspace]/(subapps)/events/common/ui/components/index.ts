@@ -39,4 +39,4 @@ export {SearchItem} from './search-item';
 export {EventNavbar} from './event-navbar';
 export {MyRegisteredEvents} from './my-registered-events';
 export {EventSearch} from './event-search';
-export {ShowEvents} from './show-events';
+export {TabsList} from './tab-list';

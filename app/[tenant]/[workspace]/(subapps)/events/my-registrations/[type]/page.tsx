@@ -9,21 +9,19 @@ import NotFound from '@/app/not-found';
 import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {LIMIT} from '@/subapps/events/common/constants';
-import Content from '@/app/[tenant]/[workspace]/(subapps)/events/my-registrations/content';
+import {EVENT_TAB_ITEMS, LIMIT} from '@/subapps/events/common/constants';
+import Content from '@/app/[tenant]/[workspace]/(subapps)/events/my-registrations/[type]/content';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
-import {getAllRegisteredEvents} from '@/subapps/events/common/actions/actions';
+import {findEvents} from '@/subapps/events/common/orm/event';
 
 export default async function Page(context: any) {
   const params = context?.params;
-  const {
-    page = DEFAULT_PAGE,
-    query = '',
-    pastevents,
-  } = context?.searchParams || {};
-  const showPastEvents = Boolean(pastevents);
+  const {page = DEFAULT_PAGE, query = ''} = context?.searchParams || {};
 
-  const {tenant} = params;
+  const {tenant, type} = params;
+
+  if (!EVENT_TAB_ITEMS.map(item => item.label).includes(type))
+    return <NotFound />;
 
   const session = await getSession();
   const user = session?.user;
@@ -58,19 +56,19 @@ export default async function Page(context: any) {
     user,
   }).then(clone);
 
-  const {
-    data: {events, pageInfo},
-  }: any = await getAllRegisteredEvents({
+  const {events, pageInfo}: any = await findEvents({
     limit: LIMIT,
     page: page,
-    categories: category,
+    categoryids: category,
     search: query,
     day: new Date(date).getDate() || undefined,
     month: new Date(date).getMonth() + 1 || undefined,
     year: new Date(date).getFullYear() || undefined,
     workspace,
     tenantId: tenant,
-    showPastEvents,
+    onlyRegisteredEvent: true,
+    eventType: type,
+    user,
   }).then(clone);
 
   return (
@@ -79,12 +77,10 @@ export default async function Page(context: any) {
       categories={categories}
       date={date}
       query={query}
+      events={events}
       workspace={workspace}
-      onGoingEvents={events.ongoing}
-      upcomingEvents={events.upcoming}
-      pastEvents={events.past}
       pageInfo={pageInfo}
-      showPastEvents={showPastEvents}
+      eventType={type}
     />
   );
 }

@@ -13,11 +13,9 @@ type ContentProps = {
   date: any;
   query?: string;
   workspace: any;
-  onGoingEvents: Event[];
-  upcomingEvents: Event[];
-  pastEvents: Event[];
+  events: Event[];
   pageInfo: any;
-  showPastEvents: boolean;
+  eventType: string;
 };
 
 const Content = ({
@@ -26,11 +24,9 @@ const Content = ({
   date,
   query,
   workspace,
-  onGoingEvents,
-  upcomingEvents,
-  pastEvents,
+  events,
   pageInfo,
-  showPastEvents,
+  eventType,
 }: ContentProps) => {
   return (
     <main className="h-full w-full">
@@ -41,11 +37,9 @@ const Content = ({
         query={query}
         workspace={workspace}
         onlyRegisteredEvent={true}
-        onGoingEvents={onGoingEvents}
-        upcomingEvents={upcomingEvents}
-        pastEvents={pastEvents}
+        events={events}
         pageInfo={pageInfo}
-        showPastEvents={showPastEvents}
+        eventType={eventType}
       />
     </main>
   );

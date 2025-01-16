@@ -143,7 +143,6 @@ export const URL_PARAMS = {
   search: 'search',
   searchid: 'searchid',
   category: 'category',
-  pastevents: 'pastevents',
   date: 'date',
   query: 'query',
 };

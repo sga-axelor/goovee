@@ -22,17 +22,34 @@ export const EVENTS_NAVBAR_LINKS = [
   {
     id: 2,
     title: 'My registrations',
-    redirectTo: '/my-registrations',
+    redirectTo: '/my-registrations/upcoming',
     validate: true,
   },
 ];
 
 export const MY_REGISTRATIONS = 'My registrations';
-export const SEARCHING = 'Searching the results...';
-export const ONGOING_EVETNS = 'Ongoing events';
-export const UPCOMING_EVENTS = 'Upcoming events';
-export const PAST_EVENTS = 'Past events';
 export const NO_EVENT = 'No event';
 export const NO_RESULT_FOUND = 'No events found';
-export const SHOW_PAST_EVENTS = 'Show past events';
 export const SOME_WENT_WRONG = 'Something went wrong';
+export const EVENTS = {
+  MY_REGISTRATIONS: 'my-registrations',
+};
+
+export const EVENT_TAB_ITEMS = [
+  {
+    id: '0',
+    title: 'Upcoming events',
+    label: 'upcoming',
+  },
+
+  {
+    id: '1',
+    title: 'Ongoing events',
+    label: 'ongoing',
+  },
+  {
+    id: '2',
+    title: 'Past events',
+    label: 'past',
+  },
+];

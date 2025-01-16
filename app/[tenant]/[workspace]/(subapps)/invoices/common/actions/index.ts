@@ -3,7 +3,6 @@ import paypal from '@paypal/checkout-server-sdk';
 import type {Stripe} from 'stripe';
 import {headers} from 'next/headers';
 import axios from 'axios';
-import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';

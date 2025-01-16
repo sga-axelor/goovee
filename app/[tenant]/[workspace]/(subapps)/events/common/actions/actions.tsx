@@ -11,11 +11,7 @@ import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  findRegisteredEvents,
-  findEventByID,
-  findEvents,
-} from '@/subapps/events/common/orm/event';
+import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
 import {findContact} from '@/subapps/events/common/orm/partner';
 import {
   findEventParticipant,
@@ -42,9 +38,7 @@ export async function getAllEvents({
   tenantId,
   user,
   onlyRegisteredEvent = false,
-  upComingEvents = false,
-  pastEvents = false,
-  onGoingEvents = false,
+  eventType = '',
 }: {
   limit?: number;
   page?: number;
@@ -59,9 +53,7 @@ export async function getAllEvents({
   tenantId?: any;
   user?: User;
   onlyRegisteredEvent?: boolean;
-  upComingEvents?: boolean;
-  pastEvents?: boolean;
-  onGoingEvents?: boolean;
+  eventType?: string;
 }) {
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
@@ -78,9 +70,8 @@ export async function getAllEvents({
   if (result.error) {
     return result;
   }
-
   try {
-    const commonParams = {
+    const {events, pageInfo} = await findEvents({
       limit,
       page,
       categoryids: categories,
@@ -91,22 +82,11 @@ export async function getAllEvents({
       selectedDates: dates,
       workspace,
       tenantId,
-    };
-    if (onlyRegisteredEvent) {
-      const {events, pageInfo} = await findRegisteredEvents({
-        ...commonParams,
-        upComingEvents,
-        pastEvents,
-        onGoingEvents,
-      }).then(clone);
-      return {events, pageInfo};
-    } else {
-      const {events, pageInfo} = await findEvents({
-        ...commonParams,
-        user,
-      }).then(clone);
-      return {events, pageInfo};
-    }
+      user,
+      onlyRegisteredEvent,
+      eventType,
+    }).then(clone);
+    return {events, pageInfo};
   } catch (err) {
     console.log(err);
   }
@@ -264,157 +244,5 @@ export async function fetchEventParticipants({
       error: true,
       message: await t('Something went wrong!'),
     };
-  }
-}
-
-export async function getAllRegisteredEvents({
-  limit = LIMIT,
-  page = DEFAULT_PAGE,
-  categories,
-  search,
-  day,
-  month,
-  year,
-  dates,
-  workspace,
-  tenantId,
-  showPastEvents,
-}: {
-  limit?: number;
-  page?: number;
-  categories?: any[];
-  filter?: string;
-  search?: string;
-  day?: string | number;
-  month?: number;
-  year?: number;
-  dates?: [Date | undefined];
-  workspace?: any;
-  tenantId?: any;
-  showPastEvents: boolean;
-}) {
-  tenantId = headers().get(TENANT_HEADER) || tenantId;
-  const events = {
-    ongoing: [],
-    upcoming: [],
-    past: [],
-  };
-
-  if (!(workspace && tenantId)) {
-    return {events, pageInfo: null};
-  }
-  const workspaceURL = workspace.url;
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: true}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return {
-      events,
-      pageInfo: null,
-      result,
-    };
-  }
-
-  try {
-    const arg = {
-      limit,
-      page,
-      categoryids: categories,
-      day,
-      search,
-      month,
-      year,
-      selectedDates: dates,
-      workspace,
-      tenantId,
-    };
-    const [onGoingEventsCount, upcomingEventsCount, pastEventsCount] =
-      await Promise.all([
-        findRegisteredEvents({
-          ...arg,
-          onGoingEvents: true,
-          onlyCount: true,
-        }),
-        findRegisteredEvents({
-          ...arg,
-          upComingEvents: true,
-          onlyCount: true,
-        }),
-        showPastEvents
-          ? findRegisteredEvents({
-              ...arg,
-              pastEvents: true,
-              onlyCount: true,
-            })
-          : {count: 0},
-      ]);
-
-    let upcomgingLimit = 0;
-    let pastlimit = 0;
-    let upcomingSkip = 0;
-    let upcomingEvent;
-    let pastevent;
-    let pastSkip = 0;
-
-    const skip = Number(limit) * Math.max(Number(page) - 1, 0);
-
-    let ongoingEvent = await findRegisteredEvents({
-      ...arg,
-      onGoingEvents: true,
-      skip,
-      limit,
-    });
-
-    upcomgingLimit = limit! - ongoingEvent?.events?.length! || 0;
-
-    if (upcomgingLimit > 0) {
-      upcomingSkip =
-        ongoingEvent.events?.length === 0
-          ? skip - Number(onGoingEventsCount.count)
-          : 0;
-      upcomingEvent = await findRegisteredEvents({
-        ...arg,
-        upComingEvents: true,
-        skip: upcomingSkip,
-        limit: upcomgingLimit,
-      });
-      pastlimit = upcomgingLimit - Number(upcomingEvent.events?.length);
-    }
-    if (showPastEvents && pastlimit > 0) {
-      pastSkip =
-        upcomingEvent?.events?.length == 0
-          ? upcomingSkip - Number(upcomingEventsCount.count)
-          : 0;
-      pastevent = await findRegisteredEvents({
-        ...arg,
-        pastEvents: true,
-        skip: pastSkip,
-        limit: pastlimit,
-      });
-    }
-
-    const pageInfo = getPageInfo({
-      count:
-        Number(onGoingEventsCount.count) +
-        Number(upcomingEventsCount.count) +
-        Number(pastEventsCount.count),
-      page,
-      limit,
-    });
-
-    return {
-      data: clone({
-        events: {
-          ongoing: ongoingEvent.events || [],
-          upcoming: upcomingEvent?.events || [],
-          past: pastevent?.events || [],
-        },
-        pageInfo,
-      }),
-    };
-  } catch (err) {
-    console.log(err);
   }
 }

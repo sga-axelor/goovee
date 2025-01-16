@@ -7,7 +7,7 @@ import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {getAllEvents} from '@/subapps/events/common/actions/actions';
+import {findEvents} from '@/subapps/events/common/orm/event';
 import Content from '@/subapps/events/content';
 import {LIMIT} from '@/subapps/events/common/constants';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
@@ -41,24 +41,23 @@ export default async function Page(context: any) {
 
   const date = context?.searchParams?.date || undefined;
 
-  const {events, pageInfo}: any = await getAllEvents({
+  const {events, pageInfo}: any = await findEvents({
     limit: LIMIT,
     page: page,
-    categories: category,
+    categoryids: category,
     day: new Date(date).getDate() || undefined,
     month: new Date(date).getMonth() + 1 || undefined,
     year: new Date(date).getFullYear() || undefined,
     workspace,
     tenantId: tenant,
     user,
-  });
+  }).then(clone);
 
   const categories: any = await findEventCategories({
     workspace,
     tenantId: tenant,
     user,
   }).then(clone);
-
   return (
     <Content
       category={category}
