@@ -119,7 +119,7 @@ const CustomCaptionLayout: React.FC<{
                       isMonthSelectable(newYear, index) && selectMonth(index)
                     }
                     className={`font-semibold mx-auto text-sm cursor-pointer py-2 w-fit ${isMonthSelectable(newYear, index) ? '' : 'cursor-default text-grey-1 dark:text-grey-3'}`}>
-                    {month}
+                    {i18n.t(month)}
                   </DropdownMenuItem>
                 ))}
               </div>
