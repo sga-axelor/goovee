@@ -2,7 +2,7 @@
 import {manager, type Tenant} from '@/tenant';
 import {User} from '@/types';
 import {clone} from '@/utils';
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {filterPrivate} from '@/orm/filter';
 
 export async function findFile({
@@ -58,7 +58,7 @@ export async function findFile({
 
     return {
       error: true,
-      message: await getTranslation('An unexpected error occurred'),
+      message: await t('An unexpected error occurred'),
     };
   }
 }

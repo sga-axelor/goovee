@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
-import {getTranslation} from '@/i18n/server';
+import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -36,14 +36,14 @@ export async function getFile({
     if (!id) {
       return {
         error: true,
-        message: await getTranslation('Id is missing!'),
+        message: await t('Id is missing!'),
       };
     }
 
     if (!workspaceURL) {
       return {
         error: true,
-        message: await getTranslation('Invalid workspace'),
+        message: await t('Invalid workspace'),
         data: null,
       };
     }
@@ -52,19 +52,19 @@ export async function getFile({
     if (!tenantId) {
       return {
         error: true,
-        message: await getTranslation('TenantId is required'),
+        message: await t('TenantId is required'),
       };
     }
 
     const session = await getSession();
     const user = session?.user;
     if (!user) {
-      return {error: true, message: await getTranslation('Unauthorized user.')};
+      return {error: true, message: await t('Unauthorized user.')};
     }
 
     const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
     if (!workspace) {
-      return {error: true, message: await getTranslation('Invalid workspace')};
+      return {error: true, message: await t('Invalid workspace')};
     }
 
     let record: any;
@@ -80,7 +80,7 @@ export async function getFile({
     if (record.error) {
       return {
         error: true,
-        message: await getTranslation(record.message || 'Record not found.'),
+        message: await t(record.message || 'Record not found.'),
       };
     }
 
@@ -98,7 +98,7 @@ export async function getFile({
     console.error('Error in getFile:', error);
     return {
       error: true,
-      message: await getTranslation('An unexpected error occurred'),
+      message: await t('An unexpected error occurred'),
     };
   }
 }
@@ -121,7 +121,7 @@ async function fetchRecordByType({
   if (!appAccess) {
     return {
       error: true,
-      message: await getTranslation('Unauthorized App access.'),
+      message: await t('Unauthorized App access.'),
     };
   }
 
@@ -146,7 +146,7 @@ async function fetchRecordByType({
     case INVOICE_ENTITY_TYPE.CUSTOMER_DELIVERY:
       return await findCustomerDelivery({id, tenantId, workspaceURL});
     default:
-      return {error: true, message: 'Invalid invoice type'};
+      return {error: true, message: await t('Invalid invoice type')};
   }
 }
 
