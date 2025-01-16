@@ -6,11 +6,12 @@ import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES, DEFAULT_LIMIT} from '@/constants';
+import {getWhereClauseForEntity} from '@/utils/filters';
+import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findUnpaidInvoices} from '@/subapps/invoices/common/orm/invoices';
-import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
 
 export default async function Invoices({
   params,
@@ -59,13 +60,16 @@ export default async function Invoices({
 
   const {role, isContactAdmin} = app;
 
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
+
   const result: any = await findUnpaidInvoices({
     params: {
-      where: getWhereClause({
-        user,
-        role,
-        isContactAdmin,
-      }),
+      where: invoicesWhereClause,
       page,
       limit: limit ? Number(limit) : DEFAULT_LIMIT,
     },

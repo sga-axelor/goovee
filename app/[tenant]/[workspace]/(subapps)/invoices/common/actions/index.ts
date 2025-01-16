@@ -14,16 +14,15 @@ import {
 } from '@/constants';
 import paypalhttpclient from '@/payment/paypal';
 import {stripe} from '@/payment/stripe';
-import {PaymentOption, User} from '@/types';
+import {PartnerKey, PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {clone, scale} from '@/utils';
 import {TENANT_HEADER} from '@/middleware';
 import {findByID} from '@/orm/record';
-import {manager} from '@/tenant';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
-import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
 import {fetchFile, findInvoice} from '@/subapps/invoices/common/orm/invoices';
 
 export async function paypalCaptureOrder({
@@ -82,14 +81,23 @@ export async function paypalCaptureOrder({
     };
   }
 
-  const {id, isContact, mainPartnerId} = user;
-  const {role} = subapp;
+  const {id} = user;
+  const {role, isContactAdmin} = subapp;
 
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
+
+  // TODO: Here, we are passing user id. Is that correct?
   const $invoice = await findInvoice({
     id,
     params: {
-      where: getWhereClause(isContact, role, id, mainPartnerId),
+      where: invoicesWhereClause,
     },
+    workspaceURL,
     tenantId,
   });
 
@@ -245,14 +253,23 @@ export async function paypalCreateOrder({
     };
   }
 
-  const {id, isContact, mainPartnerId} = user;
-  const {role} = subapp;
+  const {id} = user;
+  const {role, isContactAdmin} = subapp;
 
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
+
+  // TODO: Same as above. User id?
   const $invoice = await findInvoice({
     id,
     params: {
-      where: getWhereClause(isContact, role, id, mainPartnerId),
+      where: invoicesWhereClause,
     },
+    workspaceURL,
     tenantId,
   });
 
@@ -399,14 +416,21 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  const {id, isContact, mainPartnerId} = user;
-  const {role} = subapp;
+  const {id} = user;
+  const {role, isContactAdmin} = subapp;
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
 
   const $invoice = await findInvoice({
     id,
     params: {
-      where: getWhereClause(isContact, role, id, mainPartnerId),
+      where: invoicesWhereClause,
     },
+    workspaceURL,
     tenantId,
   });
 
@@ -551,14 +575,23 @@ export async function validateStripePayment({
     };
   }
 
-  const {id, isContact, mainPartnerId} = user;
-  const {role} = subapp;
+  const {id} = user;
+  const {role, isContactAdmin} = subapp;
+
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
 
   const $invoice = await findInvoice({
     id,
     params: {
-      where: getWhereClause(isContact, role, id, mainPartnerId),
+      where: invoicesWhereClause,
     },
+    workspaceURL,
+
     tenantId,
   });
 
@@ -747,7 +780,7 @@ export async function getInvoicePDF({
     tenantId,
   });
 
-  if (!app?.installed) {
+  if (!app) {
     return {
       error: true,
       message: await t('Subapp access denied!'),

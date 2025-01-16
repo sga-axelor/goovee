@@ -6,11 +6,12 @@ import {getSession} from '@/auth';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
+import {getWhereClauseForEntity} from '@/utils/filters';
+import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findArchivedInvoices} from '@/subapps/invoices/common/orm/invoices';
-import {getWhereClause} from '@/subapps/invoices/common/utils/invoices';
 
 export default async function Invoices({
   params,
@@ -57,14 +58,16 @@ export default async function Invoices({
   }
 
   const {role, isContactAdmin} = app;
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
 
   const result: any = await findArchivedInvoices({
     params: {
-      where: getWhereClause({
-        user,
-        role,
-        isContactAdmin,
-      }),
+      where: invoicesWhereClause,
       page,
       limit: limit ? Number(limit) : DEFAULT_LIMIT,
     },
