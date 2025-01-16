@@ -5,7 +5,7 @@ import {i18n} from '@/locale';
 
 interface StyledTabItem {
   id: string;
-  title?: React.ReactNode;
+  title: string;
   href?: string;
 }
 
@@ -34,7 +34,7 @@ export const StyledTabs = ({
                 key={t?.id}
                 value={t?.id}
                 onClick={() => onTabChange?.(t)}>
-                {i18n.t(String(t?.title))}
+                {i18n.t(t?.title)}
               </TabsTrigger>
             ))}
         </TabsList>
