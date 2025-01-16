@@ -4,6 +4,7 @@ import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
+  RELATED_MODELS,
 } from '@/constants';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
@@ -323,6 +324,10 @@ export async function fetchFile({
   const file = await client.aOSDMSFile.findOne({
     where: {
       relatedId,
+      relatedModel: RELATED_MODELS.INVOICE,
+      parent: {
+        relatedModel: RELATED_MODELS.INVOICE,
+      },
       isDirectory: false,
       ...(await filterPrivate({
         tenantId,

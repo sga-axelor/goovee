@@ -8,7 +8,7 @@ import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {download} from '@/utils/files';
 import {useToast} from '@/ui/hooks';
-import {SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES, RELATED_MODELS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -24,7 +24,6 @@ import {
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {
   ORDER_TYPE,
-  RELATED_MODELS,
   INVOICE_TYPE,
 } from '@/subapps/orders/common/constants/orders';
 import {getFile} from '@/subapps/orders/common/actions/file';
@@ -93,7 +92,7 @@ const Content = ({order}: {order: any}) => {
       {
         id,
         workspaceURL,
-        modelName: RELATED_MODELS.SALE_ORDER_MODEL,
+        modelName: RELATED_MODELS.SALE_ORDER,
         subapp: SUBAPP_CODES.orders,
         type: INVOICE_TYPE.order,
       },
@@ -119,7 +118,7 @@ const Content = ({order}: {order: any}) => {
       {
         id: record.id,
         workspaceURL,
-        modelName: RELATED_MODELS.CUSTOMERS_DELIVERY,
+        modelName: RELATED_MODELS.STOCK_MOVE,
         subapp: SUBAPP_CODES.orders,
         type: INVOICE_TYPE.customers_delivery,
       },

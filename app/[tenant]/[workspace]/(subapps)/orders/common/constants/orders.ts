@@ -46,12 +46,6 @@ export const ORDER_DELIVERY_STATUS = {
   DELIVERED: 3,
 };
 
-export const RELATED_MODELS = {
-  SALE_ORDER_MODEL: 'com.axelor.apps.sale.db.SaleOrder',
-  INVOICE: 'com.axelor.apps.account.db.Invoice',
-  CUSTOMERS_DELIVERY: 'com.axelor.apps.stock.db.StockMove',
-};
-
 export const INVOICE_TYPE = {
   order: 'order',
   invoice: 'invoice',

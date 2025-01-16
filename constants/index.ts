@@ -215,3 +215,12 @@ export const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
   [SUBAPP_CODES.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
   [SUBAPP_CODES.quotations]: 'com.axelor.apps.sale.db.SaleOrder',
 };
+
+/**
+ * MODELS
+ */
+export const RELATED_MODELS = {
+  SALE_ORDER: 'com.axelor.apps.sale.db.SaleOrder',
+  INVOICE: 'com.axelor.apps.account.db.Invoice',
+  STOCK_MOVE: 'com.axelor.apps.stock.db.StockMove',
+};
