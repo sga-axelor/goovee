@@ -1,28 +1,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
+import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 import {FaXTwitter} from 'react-icons/fa6';
 import {MdOutlineWeb} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {t} from '@/lib/core/locale/server';
+import {findModelFields} from '@/orm/model-fields';
 import {findWorkspace} from '@/orm/workspace';
 import {Avatar, AvatarImage} from '@/ui/components';
 import {clone} from '@/utils';
+import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
-import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 
 // ---- LOCAL IMPORTS ---- //
 import {colors} from '../../common/constants';
 import {findEntry, findMapConfig} from '../../common/orm';
-import {findModelFields} from '../../common/orm/meta-json-fields';
 import type {Entry} from '../../common/types';
+import {InnerHTML} from '../../common/ui/components/inner-html';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
-import {cn} from '@/utils/css';
-import {InnerHTML} from '../../common/ui/components/inner-html';
 
 export default async function Page({
   params,
@@ -106,17 +106,19 @@ async function Details({
       modelField: 'attrs',
       tenantId: tenant,
     })
-  ).map(field => {
-    const fieldValue =
-      typeof attrs === 'object' && attrs != null ? attrs[field.name] : null;
-    if (!fieldValue) return null;
-    return (
-      <div key={field.id}>
-        <span className="text-base font-semibold me-2">{field.title}:</span>
-        <span className="text-sm text-muted-foreground">{fieldValue}</span>
-      </div>
-    );
-  });
+  )
+    .filter(field => field.type === 'string')
+    .map(field => {
+      const fieldValue =
+        typeof attrs === 'object' && attrs != null ? attrs[field.name] : null;
+      if (!fieldValue) return null;
+      return (
+        <div key={field.id}>
+          <span className="text-base font-semibold me-2">{field.title}:</span>
+          <span className="text-sm text-muted-foreground">{fieldValue}</span>
+        </div>
+      );
+    });
 
   return (
     <div>
