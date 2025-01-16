@@ -1,10 +1,11 @@
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
-import {ID, PortalWorkspace} from '@/types';
+import {ID, PartnerKey, PortalWorkspace} from '@/types';
 import {type Tenant} from '@/tenant';
 import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 //---- LOCAL SUBAPP SPECIFIC FIND METHODS ---- //
 import {findEvent} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
@@ -14,10 +15,6 @@ import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/c
 import {findOrder} from '@/subapps/orders/common/orm/orders';
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
-
-import {getWhereClause as getQuotationsWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/utils/quotations';
-import {getWhereClause as getOrdersWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/utils/quotations';
-import {getWhereClause as getInvoicesWhereClause} from '@/app/[tenant]/[workspace]/(subapps)/invoices/common/utils/invoices';
 
 export async function findByID({
   subapp,
@@ -144,10 +141,11 @@ export async function findByID({
           message: await t('Unauthorized User'),
         };
       }
-      const orderWhereClause = getOrdersWhereClause({
+      const orderWhereClause = getWhereClauseForEntity({
         user,
         role,
         isContactAdmin,
+        partnerKey: PartnerKey.CLIENT_PARTNER,
       });
       response = await findOrder({
         id,
@@ -164,10 +162,11 @@ export async function findByID({
           message: await t('Unauthorized User'),
         };
       }
-      const quotationWhereClause = getQuotationsWhereClause({
+      const quotationWhereClause = getWhereClauseForEntity({
         user,
         role,
         isContactAdmin,
+        partnerKey: PartnerKey.CLIENT_PARTNER,
       });
       response = await findQuotation({
         id,
@@ -184,10 +183,11 @@ export async function findByID({
           message: await t('Unauthorized User'),
         };
       }
-      const invoiceWhereClause = getInvoicesWhereClause({
+      const invoiceWhereClause = getWhereClauseForEntity({
         user,
         role,
         isContactAdmin,
+        partnerKey: PartnerKey.PARTNER,
       });
       response = await findInvoice({
         id,
