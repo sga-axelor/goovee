@@ -42,14 +42,15 @@ export function Card(props: CardProps) {
         </p>
         <p className="text-xs line-clamp-3">{item.description}</p>
       </div>
-
-      <Image
-        width={150}
-        height={138}
-        className="rounded-r-lg h-[138px]"
-        src={getImageURL(item?.image?.id, tenant, {noimage: true})}
-        alt="image"
-      />
+      {!small && (
+        <Image
+          width={150}
+          height={138}
+          className="rounded-r-lg h-[138px]"
+          src={getImageURL(item?.image?.id, tenant, {noimage: true})}
+          alt="image"
+        />
+      )}
     </Link>
   );
 }
