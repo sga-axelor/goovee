@@ -11,7 +11,7 @@ export const ContactUs = () => {
   return (
     <>
       <div className="flex flex-col gap-4 bg-card text-card-foreground p-6 rounded-lg">
-        <h4 className="text-xl font-medium mb-0">{i18n.t('ContactUs')}</h4>
+        <h4 className="text-xl font-medium mb-0">{i18n.t('Contact us')}</h4>
         <Separator />
         <Button
           variant="outline"
