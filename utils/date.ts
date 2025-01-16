@@ -8,6 +8,9 @@ export function parseDate(
   dateString: any,
   format: string = DATE_FORMATS.us_date,
 ) {
+  if (!dateString) {
+    return null;
+  }
   return moment(dateString).format(format);
 }
 
