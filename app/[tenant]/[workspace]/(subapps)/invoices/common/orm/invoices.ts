@@ -4,13 +4,10 @@ import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
-  RELATED_MODELS,
 } from '@/constants';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
-import type {Partner, PortalWorkspace, User} from '@/types';
-import {filterPrivate} from '@/orm/filter';
-import {t} from '@/locale/server';
+import type {Partner, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
@@ -303,51 +300,3 @@ export const findInvoice = async ({
     invoiceLineList: $invoiceLineList,
   };
 };
-
-export async function fetchFile({
-  relatedId,
-  user,
-  tenantId,
-}: {
-  relatedId: number;
-  user?: User;
-  tenantId: Tenant['id'];
-}) {
-  const client = await manager.getClient(tenantId);
-  if (!client) {
-    return {
-      error: true,
-      message: await t('Bad Request'),
-    };
-  }
-
-  const file = await client.aOSDMSFile.findOne({
-    where: {
-      relatedId,
-      relatedModel: RELATED_MODELS.INVOICE,
-      parent: {
-        relatedModel: RELATED_MODELS.INVOICE,
-      },
-      isDirectory: false,
-      ...(await filterPrivate({
-        tenantId,
-        user,
-      })),
-    },
-    select: {
-      fileName: true,
-      contentType: true,
-      content: true,
-      createdBy: true,
-      createdOn: true,
-      metaFile: true,
-      permissionSelect: true,
-      isPrivate: true,
-      partnerSet: true,
-      partnerCategorySet: true,
-      isDirectory: true,
-    },
-  });
-
-  return file;
-}

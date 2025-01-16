@@ -46,12 +46,6 @@ export const ORDER_DELIVERY_STATUS = {
   DELIVERED: 3,
 };
 
-export const INVOICE_TYPE = {
-  order: 'order',
-  invoice: 'invoice',
-  customers_delivery: 'customers_delivery',
-};
-
 export const INVOICE_STATUS = {
   VENTILATED: 3,
   UNPAID: 0,

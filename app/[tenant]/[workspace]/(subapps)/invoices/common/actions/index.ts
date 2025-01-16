@@ -17,13 +17,12 @@ import {stripe} from '@/payment/stripe';
 import {PartnerKey, PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
-import {clone, scale} from '@/utils';
+import {scale} from '@/utils';
 import {TENANT_HEADER} from '@/middleware';
-import {findByID} from '@/orm/record';
 import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
-import {fetchFile, findInvoice} from '@/subapps/invoices/common/orm/invoices';
+import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 
 export async function paypalCaptureOrder({
   orderId,
@@ -91,7 +90,6 @@ export async function paypalCaptureOrder({
     partnerKey: PartnerKey.PARTNER,
   });
 
-  // TODO: Here, we are passing user id. Is that correct?
   const $invoice = await findInvoice({
     id,
     params: {
@@ -263,7 +261,6 @@ export async function paypalCreateOrder({
     partnerKey: PartnerKey.PARTNER,
   });
 
-  // TODO: Same as above. User id?
   const $invoice = await findInvoice({
     id,
     params: {
@@ -704,111 +701,5 @@ export async function validateStripePayment({
   return {
     success: true,
     invoice: $invoice,
-  };
-}
-
-export async function getInvoicePDF({
-  id,
-  workspaceURL,
-  subapp,
-}: {
-  id: string;
-  workspaceURL: string;
-  subapp: SUBAPP_CODES;
-}): Promise<{
-  success?: boolean;
-  error?: boolean;
-  message?: string;
-  data?: any;
-}> {
-  if (!id) {
-    return {
-      error: true,
-      message: await t('Invalid Invoice Id'),
-      data: null,
-    };
-  }
-
-  const tenantId = headers().get(TENANT_HEADER);
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await t('Bad Request'),
-      data: null,
-    };
-  }
-
-  const tenant = await manager.getTenant(tenantId);
-
-  if (!tenant?.config?.aos?.url) {
-    return {
-      error: true,
-      message: await t('Webservice not available'),
-      data: null,
-    };
-  }
-
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-      data: null,
-    };
-  }
-
-  const session = await getSession();
-  const user = session?.user;
-
-  const workspace = await findWorkspace({
-    url: workspaceURL,
-    user,
-    tenantId,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-      data: null,
-    };
-  }
-
-  const app = await findSubappAccess({
-    code: SUBAPP_CODES.invoices,
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!app) {
-    return {
-      error: true,
-      message: await t('Subapp access denied!'),
-    };
-  }
-
-  const record = await findByID({
-    subapp,
-    id,
-    workspace,
-    tenantId,
-    workspaceURL,
-  });
-
-  const file = await fetchFile({
-    relatedId: record?.data?.id,
-    tenantId,
-    user,
-  }).then(clone);
-
-  if (!file) {
-    return {
-      error: true,
-      message: await t('Invoice not found'),
-    };
-  }
-  return {
-    success: true,
-    data: file,
   };
 }

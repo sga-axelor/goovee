@@ -7,62 +7,73 @@ import {i18n} from '@/locale';
 import {DocViewer, Loader, Separator} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
-import {SUBAPP_CODES} from '@/constants';
+import {INVOICE_ENTITY_TYPE, RELATED_MODELS, SUBAPP_CODES} from '@/constants';
+import {getFile} from '@/app/actions/file';
 
 // ---- LOCAL IMPORTS ---- //
 import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
-import {getInvoicePDF} from '@/subapps/invoices/common/actions';
 import {UNABLE_TO_FIND_INVOICE} from '@/subapps/invoices/common/constants/invoices';
 
 export function Invoice({invoice, isUnpaid}: InvoiceProps) {
-  const {id} = invoice;
   const [file, setFile] = useState<any>(null);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
   useEffect(() => {
-    const getFile = async () => {
+    if (!invoice?.id || !workspaceURL) return;
+
+    const fetchFile = async () => {
+      setLoading(true);
       try {
-        const res: any = await getInvoicePDF({
-          id,
+        const result = await getFile({
+          id: invoice.id,
           workspaceURL,
           subapp: SUBAPP_CODES.invoices,
+          modelName: RELATED_MODELS.INVOICE,
+          type: INVOICE_ENTITY_TYPE.INVOICE,
         });
-        if (res?.error) {
+
+        if (result?.error || !result?.data) {
           toast({
             variant: 'destructive',
             description: i18n.t(
-              res?.message ?? 'Something went wrong while fetching the file!',
+              result?.message ??
+                'Something went wrong while fetching the file!',
             ),
           });
-          return;
+        } else {
+          setFile(result.data);
         }
-        setFile(res.data);
       } catch (error) {
-        console.error('Error fetching PDF:', error);
-        setIsError(true);
+        toast({
+          variant: 'destructive',
+          description: i18n.t('An unexpected error occurred!'),
+        });
+      } finally {
+        setLoading(false);
       }
     };
 
-    getFile();
-  }, [id, toast, workspaceURL]);
+    fetchFile();
+  }, [invoice?.id, workspaceURL, toast]);
 
   return (
-    <>
-      <div
-        className={`${isUnpaid ? 'md:basis-9/12' : 'md:basis-full'} flex flex-col basis-full bg-card text-card-foreground px-6 py-4 gap-4 rounded-lg`}>
-        <h4 className="text-xl font-medium mb-0">{i18n.t('Invoice')}</h4>
-        <Separator />
-        {file ? (
-          <DocViewer record={file} />
-        ) : isError ? (
-          <p>{i18n.t(UNABLE_TO_FIND_INVOICE)}</p>
-        ) : (
-          <Loader />
-        )}
-      </div>
-    </>
+    <div
+      className={`${
+        isUnpaid ? 'md:basis-9/12' : 'md:basis-full'
+      } flex flex-col basis-full bg-card text-card-foreground px-6 py-4 gap-4 rounded-lg`}>
+      <h4 className="text-xl font-medium mb-0">{i18n.get('Invoice')}</h4>
+      <Separator />
+      {loading ? (
+        <Loader />
+      ) : file ? (
+        <DocViewer record={file} />
+      ) : (
+        <p>{i18n.t(UNABLE_TO_FIND_INVOICE)}</p>
+      )}
+    </div>
   );
 }
+
 export default Invoice;

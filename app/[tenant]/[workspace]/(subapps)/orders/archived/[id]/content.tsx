@@ -8,7 +8,8 @@ import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {download} from '@/utils/files';
 import {useToast} from '@/ui/hooks';
-import {SUBAPP_CODES, RELATED_MODELS} from '@/constants';
+import {SUBAPP_CODES, RELATED_MODELS, INVOICE_ENTITY_TYPE} from '@/constants';
+import {getFile} from '@/app/actions/file';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -24,12 +25,10 @@ import {
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {
   ORDER_TYPE,
-  INVOICE_TYPE,
   ORDER_NUMBER,
   INVOICE,
   CUSTOMER_DELIVERY,
 } from '@/subapps/orders/common/constants/orders';
-import {getFile} from '@/subapps/orders/common/actions/file';
 
 const Content = ({order}: {order: any}) => {
   const [loading, setLoading] = useState<{[key: string]: boolean}>({});
@@ -75,9 +74,8 @@ const Content = ({order}: {order: any}) => {
         return;
       }
 
-      download(result, tenant);
+      download(result.data, tenant);
     } catch (error) {
-      console.error(errorMessage, error);
       toast({
         variant: 'destructive',
         description: i18n.t(
@@ -96,7 +94,7 @@ const Content = ({order}: {order: any}) => {
         workspaceURL,
         modelName: RELATED_MODELS.SALE_ORDER,
         subapp: SUBAPP_CODES.orders,
-        type: INVOICE_TYPE.order,
+        type: INVOICE_ENTITY_TYPE.ORDER,
       },
       `orderInvoice-${id}`,
       'Unexpected error during order invoice download:',
@@ -109,7 +107,7 @@ const Content = ({order}: {order: any}) => {
         workspaceURL,
         modelName: RELATED_MODELS.INVOICE,
         subapp: SUBAPP_CODES.orders,
-        type: INVOICE_TYPE.invoice,
+        type: INVOICE_ENTITY_TYPE.INVOICE,
       },
       `invoice-${record.id}`,
       'Unexpected error during invoice download:',
@@ -122,7 +120,7 @@ const Content = ({order}: {order: any}) => {
         workspaceURL,
         modelName: RELATED_MODELS.INVOICE,
         subapp: SUBAPP_CODES.orders,
-        type: INVOICE_TYPE.customers_delivery,
+        type: INVOICE_ENTITY_TYPE.CUSTOMER_DELIVERY,
       },
       `customerDelivery-${record.id}`,
       'Unexpected error during customer delivery download:',

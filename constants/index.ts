@@ -224,3 +224,9 @@ export const RELATED_MODELS = {
   INVOICE: 'com.axelor.apps.account.db.Invoice',
   STOCK_MOVE: 'com.axelor.apps.stock.db.StockMove',
 };
+
+export const INVOICE_ENTITY_TYPE = {
+  ORDER: 'order',
+  INVOICE: 'invoice',
+  CUSTOMER_DELIVERY: 'customer_delivery',
+};
