@@ -23,24 +23,22 @@ export function Card(props: CardProps) {
       href={{pathname: url}}
       className="flex bg-card rounded-lg gap-1 justify-between hover:bg-slate-100 hover:shadow-md transition-all duration-300">
       <div className="p-3 space-y-2 grow">
-        <div
-          className={cn(
-            'flex flex-wrap items-center gap-2 ',
-            small && 'hidden',
-          )}>
-          {item?.directoryEntryCategorySet?.map(item => (
-            <Category
-              name={item?.title}
-              key={item.id}
-              className={colors[item.color as keyof typeof colors] ?? ''}
-            />
-          ))}
-        </div>
+        {!small && (
+          <div className={cn('flex flex-wrap items-center gap-2 ')}>
+            {item?.directoryEntryCategorySet?.map(item => (
+              <Category
+                name={item?.title}
+                key={item.id}
+                className={colors[item.color as keyof typeof colors] ?? ''}
+              />
+            ))}
+          </div>
+        )}
         <h4 className="font-semibold line-clamp-1">{item.title}</h4>
         <p className="text-success text-sm line-clamp-3">
           {item.address?.formattedFullName}
         </p>
-        <p className="text-xs line-clamp-3">{item.description}</p>
+        {!small && <p className="text-xs line-clamp-3">{item.description}</p>}
       </div>
       {!small && (
         <Image
