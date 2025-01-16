@@ -12,14 +12,15 @@ import {SUBAPP_CODES} from '@/constants';
 import {filterPrivate} from '@/orm/filter';
 import {clone} from '@/utils';
 import {findByID} from '@/orm/record';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ----//
-
 import {INVOICE_TYPE} from '@/subapps/orders/common/constants/orders';
 import {
   findCustomerDelivery,
   findInvoice,
 } from '@/subapps/orders/common/orm/orders';
+import {PartnerKey} from '@/types';
 
 export async function getFile({
   id,
@@ -97,13 +98,17 @@ export async function getFile({
         }
         break;
       case INVOICE_TYPE.invoice:
+        const invoiceWhereClause = getWhereClauseForEntity({
+          user,
+          role,
+          isContactAdmin,
+          partnerKey: PartnerKey.PARTNER,
+        });
         record = await findInvoice({
           id,
           tenantId,
           workspaceURL,
-          user,
-          role,
-          isContactAdmin,
+          params: {where: invoiceWhereClause},
         });
 
         break;

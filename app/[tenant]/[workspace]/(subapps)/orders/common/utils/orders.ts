@@ -1,7 +1,3 @@
-// ---- CORE IMPORTS ---- //
-import {ROLE} from '@/constants';
-import type {User} from '@/types';
-
 // ---- LOCAL IMPORTS ---- //
 import {
   ORDER_DELIVERY_STATUS,
@@ -37,68 +33,4 @@ export function getStatus(
       variant: 'default',
     };
   }
-}
-
-export function getWhereClause({
-  user,
-  role,
-  isContactAdmin,
-}: {
-  user: User;
-  role: any;
-  isContactAdmin?: boolean;
-}) {
-  if (!user) return {};
-
-  const {id, mainPartnerId, isContact} = user;
-
-  let where: any = {
-    clientPartner: {
-      id: isContact ? mainPartnerId : id,
-    },
-  };
-
-  if (isContact) {
-    where.contactPartner = {
-      id,
-    };
-  }
-
-  if (isContactAdmin || role === ROLE.TOTAL) {
-    delete where.contactPartner;
-  }
-
-  return where;
-}
-
-export function getInvoicesWhereClause({
-  user,
-  role,
-  isContactAdmin,
-}: {
-  user: User;
-  role: any;
-  isContactAdmin?: boolean;
-}) {
-  if (!user) return {};
-
-  const {id, mainPartnerId, isContact} = user;
-
-  let where: any = {
-    partner: {
-      id: isContact ? mainPartnerId : id,
-    },
-  };
-
-  if (isContact) {
-    where.contactPartner = {
-      id,
-    };
-  }
-
-  if (isContactAdmin || role === ROLE.TOTAL) {
-    delete where.contactPartner;
-  }
-
-  return where;
 }

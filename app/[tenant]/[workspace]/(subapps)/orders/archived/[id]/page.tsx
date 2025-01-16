@@ -6,15 +6,12 @@ import {getSession} from '@/auth';
 import {findSubapp, findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import {User} from '@/types';
+import {PartnerKey, User} from '@/types';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
-import {
-  getInvoicesWhereClause,
-  getWhereClause,
-} from '@/subapps/orders/common/utils/orders';
 
 export default async function Page({
   params,
@@ -53,16 +50,18 @@ export default async function Page({
 
   const {role, isContactAdmin} = app;
 
-  const where = getWhereClause({
+  const where = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
-  const invoicesWhereClasuse = getInvoicesWhereClause({
+  const invoicesWhereClasuse = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
   });
 
   const order = await findOrder({

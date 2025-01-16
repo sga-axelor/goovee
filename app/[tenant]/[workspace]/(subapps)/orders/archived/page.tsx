@@ -6,12 +6,12 @@ import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
 import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
 import {clone} from '@/utils';
-import {User} from '@/types';
+import {PartnerKey, User} from '@/types';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findArchivedOrders} from '@/subapps/orders/common/orm/orders';
-import {getWhereClause} from '@/subapps/orders/common/utils/orders';
 
 export default async function Page({
   params,
@@ -54,10 +54,11 @@ export default async function Page({
 
   const {role, isContactAdmin} = app;
 
-  const where = getWhereClause({
+  const where = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
   const result = await findArchivedOrders({

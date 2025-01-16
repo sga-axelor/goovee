@@ -4,14 +4,14 @@ import {notFound} from 'next/navigation';
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
-import {User} from '@/types';
+import {PartnerKey, User} from '@/types';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findOngoingOrders} from '@/subapps/orders/common/orm/orders';
-import {getWhereClause} from '@/subapps/orders/common/utils/orders';
 
 export default async function Page({
   params,
@@ -53,10 +53,11 @@ export default async function Page({
 
   const {role, isContactAdmin} = app;
 
-  const where = getWhereClause({
+  const where = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
   const result = await findOngoingOrders({
