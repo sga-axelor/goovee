@@ -7,7 +7,6 @@ import {
   QUOTATION_TYPE,
   SECONDS,
 } from '@/subapps/quotations/common/constants/quotations';
-import type {User} from '@/types';
 
 type Variant = 'blue' | 'yellow' | 'destructive' | 'default';
 
