@@ -297,3 +297,8 @@ export interface CommentResponse {
   message?: string;
   data?: any;
 }
+
+export enum PartnerKey {
+  CLIENT_PARTNER = 'clientPartner',
+  PARTNER = 'partner',
+}
