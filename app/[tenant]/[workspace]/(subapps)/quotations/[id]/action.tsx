@@ -15,14 +15,14 @@ import {
 } from '@/constants';
 import paypalhttpclient from '@/payment/paypal';
 import {stripe} from '@/payment/stripe';
-import {PaymentOption} from '@/types';
+import {PartnerKey, PaymentOption} from '@/types';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {scale} from '@/utils';
 import {TENANT_HEADER} from '@/middleware';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
-import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
 
 export async function confirmQuotation({
@@ -81,10 +81,11 @@ export async function confirmQuotation({
 
   const {role, isContactAdmin} = subapp;
 
-  const where = getWhereClause({
+  const where = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
   const quotation = await findQuotation({

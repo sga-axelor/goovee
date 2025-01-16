@@ -6,12 +6,12 @@ import {getSession} from '@/auth';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {DEFAULT_LIMIT, DEFAULT_PAGE, SUBAPP_CODES} from '@/constants';
-import type {User} from '@/types';
+import {PartnerKey, type User} from '@/types';
+import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {fetchQuotations} from '@/subapps/quotations/common/orm/quotations';
-import {getWhereClause} from '@/subapps/quotations/common/utils/quotations';
 
 export default async function Page({
   params,
@@ -54,10 +54,11 @@ export default async function Page({
 
   const {role, isContactAdmin} = app;
 
-  const where = getWhereClause({
+  const where = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
   const result: any = await fetchQuotations({

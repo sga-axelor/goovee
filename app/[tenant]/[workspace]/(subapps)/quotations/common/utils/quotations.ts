@@ -1,6 +1,3 @@
-// ---- CORE IMPORTS ---- //
-import {ROLE} from '@/constants';
-
 // ---- LOCAL IMPORTS ---- //
 import {
   DAYS,
@@ -60,35 +57,3 @@ export const updateDocument = (date1: any, date2: any) => {
 
   return update;
 };
-
-export function getWhereClause({
-  user,
-  role,
-  isContactAdmin,
-}: {
-  user: User;
-  role: any;
-  isContactAdmin?: boolean;
-}) {
-  if (!user) return {};
-
-  const {id, mainPartnerId, isContact} = user;
-
-  let where: any = {
-    clientPartner: {
-      id: isContact ? mainPartnerId : id,
-    },
-  };
-
-  if (isContact) {
-    where.contactPartner = {
-      id,
-    };
-  }
-
-  if (isContactAdmin || role === ROLE.TOTAL) {
-    delete where.contactPartner;
-  }
-
-  return where;
-}
