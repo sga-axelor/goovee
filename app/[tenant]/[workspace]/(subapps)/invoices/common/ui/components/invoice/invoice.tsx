@@ -6,28 +6,37 @@ import React, {useEffect, useState} from 'react';
 import {i18n} from '@/locale';
 import {DocViewer, Loader, Separator} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useToast} from '@/ui/hooks';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
 import {getInvoicePDF} from '@/subapps/invoices/common/actions';
 import {UNABLE_TO_FIND_INVOICE} from '@/subapps/invoices/common/constants/invoices';
-import {SUBAPP_CODES} from '@/constants';
 
 export function Invoice({invoice, isUnpaid}: InvoiceProps) {
   const {id} = invoice;
   const [file, setFile] = useState<any>(null);
   const [isError, setIsError] = useState<boolean>(false);
   const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
 
   useEffect(() => {
     const getFile = async () => {
       try {
-        const res = await getInvoicePDF({
+        const res: any = await getInvoicePDF({
           id,
           workspaceURL,
           subapp: SUBAPP_CODES.invoices,
         });
         if (res?.error) {
+          toast({
+            variant: 'destructive',
+            description: i18n.t(
+              res?.message ?? 'Something went wrong while fetching the file!',
+            ),
+          });
+          return;
         }
         setFile(res.data);
       } catch (error) {
@@ -37,7 +46,7 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
     };
 
     getFile();
-  }, [id, workspaceURL]);
+  }, [id, toast, workspaceURL]);
 
   return (
     <>
