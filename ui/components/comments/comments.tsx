@@ -11,6 +11,7 @@ import {
 
 // ---- CORE IMPORTS ---- //
 import {useComments} from '@/ui/hooks';
+import {cn} from '@/utils/css';
 import {
   CommentInput,
   CommentsList,
@@ -43,6 +44,7 @@ interface CommentsProps {
   sortByProp?: string;
   disabled?: boolean;
   hideSortBy?: boolean;
+  inputContainerClassName?: string;
 }
 
 export function Comments({
@@ -60,6 +62,7 @@ export function Comments({
   sortByProp,
   disabled = false,
   hideSortBy = false,
+  inputContainerClassName = '',
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
@@ -122,7 +125,7 @@ export function Comments({
           </div>
         </div>
       )}
-      <div className={`${showTopBorder ? 'border-t' : ''}`}>
+      <div className={cn({'border-t': showTopBorder}, inputContainerClassName)}>
         {showCommentInputOnTop && (
           <div className="flex items-center gap-6 py-2">
             {showReactions && (

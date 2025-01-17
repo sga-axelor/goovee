@@ -33,6 +33,7 @@ export const ThreadFooter = ({
       seeMore={true}
       disabled={disabled}
       showReactions={false}
+      inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
     />
   );
 };
