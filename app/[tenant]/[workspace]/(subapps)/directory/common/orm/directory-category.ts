@@ -21,6 +21,7 @@ export async function findCategories({
   const c = await manager.getClient(tenantId);
 
   const directoryCategories = await c.aOSPortalDirectoryCategory.find({
+    orderBy: {title: 'ASC'},
     select: {title: true, color: true, icon: true},
   });
 
