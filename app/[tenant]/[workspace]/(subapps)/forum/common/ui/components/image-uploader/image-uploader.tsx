@@ -19,6 +19,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/ui/components';
+import {formatNumber} from '@/lib/core/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -29,7 +30,6 @@ import {
   UPLOAD,
 } from '@/subapps/forum/common/constants';
 import {ImageViewer} from '@/subapps/forum/common/ui/components';
-import {formatNumber} from '@/lib/core/locale/formatters';
 
 interface ImageItem {
   file: File;
@@ -178,8 +178,7 @@ export const ImageUploader = ({
                     <div className="flex-1 border h-full rounded-sm p-2 flex flex-col justify-between m-2 xl:m-4 ">
                       <div>
                         <p className="p-3 text-muted-foreground">
-                          {formatNumber(selectedIndex + 1)}
-                          {i18n.t(OUT_OF)} {formatNumber(images.length)}
+                          {`${formatNumber(selectedIndex + 1)} ${i18n.t(OUT_OF)} ${formatNumber(images.length)}`}
                         </p>
                         <ScrollArea className="h-[22.5rem]">
                           <div className="flex flex-wrap justify-between p-2">

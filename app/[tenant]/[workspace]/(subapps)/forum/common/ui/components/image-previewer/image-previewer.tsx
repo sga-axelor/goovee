@@ -2,8 +2,10 @@
 
 import React, {useEffect, useState} from 'react';
 
-// ---- LOCAL IMPORTS ---- //
+// ---- CORE IMPORTS ---- //
 import {formatNumber} from '@/lib/core/locale/formatters';
+
+// ---- LOCAL IMPORTS ---- //
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
 
 interface ImageItem {

@@ -14,9 +14,9 @@ import {
   PopoverTrigger,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
+import {formatDate} from '@/lib/core/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
-import {formatDate} from '@/lib/core/locale/formatters';
 import {SEE_LESS, SEE_MORE} from '@/subapps/forum/common/constants';
 import type {Post} from '@/subapps/forum/common/types/forum';
 import {

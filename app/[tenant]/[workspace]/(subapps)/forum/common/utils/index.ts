@@ -66,7 +66,7 @@ export async function getPopularQuery({
   if (!workspaceID) {
     return {
       error: true,
-      message: getTranslation({tenant: tenantId}, 'Invalid workspace'),
+      message: await getTranslation({tenant: tenantId}, 'Invalid workspace'),
     };
   }
   const client = await manager.getClient(tenantId);

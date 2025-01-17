@@ -156,7 +156,7 @@ export async function pinGroup({
     console.log('error >>>', error);
     return {
       error: true,
-      message: 'Some error occurred',
+      message: await t('Some error occurred'),
     };
   }
 }
@@ -236,7 +236,7 @@ export async function exitGroup({
     console.log('error >>>', error);
     return {
       error: true,
-      message: 'Some error occurred',
+      message: await t('Some error occurred'),
     };
   }
 }
@@ -324,7 +324,7 @@ export async function joinGroup({
     console.log('error >>>', error);
     return {
       error: true,
-      message: 'Some error occurred',
+      message: await t('Some error occurred'),
     };
   }
 }
@@ -410,7 +410,7 @@ export async function addGroupNotification({
     console.log('error >>>', error);
     return {
       error: true,
-      message: 'Some error occurred',
+      message: await t('Some error occurred'),
     };
   }
 }

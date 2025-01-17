@@ -5,6 +5,7 @@ import {ID, User} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {PortalWorkspace} from '@/types';
 import {filterPrivate} from '@/orm/filter';
+import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
 import {getPopularQuery} from '@/subapps/forum/common/utils';
@@ -328,11 +329,11 @@ export async function findMemberGroupById({
   user?: User;
 }) {
   if (!(workspaceID && tenantId)) {
-    return {error: true, message: 'Bad Request'};
+    return {error: true, message: await t('Bad Request')};
   }
 
   if (!(id || groupID)) {
-    return {error: true, message: 'Reccord ID not found'};
+    return {error: true, message: await t('Reccord ID not found')};
   }
   const client = await manager.getClient(tenantId);
   const group = await client.aOSPortalForumGroupMember.findOne({
