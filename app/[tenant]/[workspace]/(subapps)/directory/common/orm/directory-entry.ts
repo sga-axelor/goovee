@@ -1,9 +1,11 @@
 import {manager} from '@/tenant';
-
 import {t} from '@/lib/core/locale/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
-import {Entry, SearchEntry} from '../types';
+import type {OrderByOptions} from '@goovee/orm';
+import type {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
+
+import type {Entry, SearchEntry} from '../types';
 
 export async function findEntry({
   id,
@@ -62,7 +64,7 @@ export async function findEntries({
   workspaceId?: string;
   categoryId?: ID;
   tenantId: Tenant['id'];
-  orderBy?: Record<string, any>;
+  orderBy?: OrderByOptions<AOSPortalDirectoryEntry>;
 }): Promise<Entry[]> {
   if (!(workspaceId && tenantId)) {
     throw new Error(await t('Missing required parameters'));
@@ -73,7 +75,7 @@ export async function findEntries({
       workspace: {id: workspaceId},
       ...(categoryId && {directoryEntryCategorySet: {id: categoryId}}),
     },
-    orderBy: orderBy as any,
+    orderBy,
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     select: {

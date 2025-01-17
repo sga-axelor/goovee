@@ -1,3 +1,6 @@
+import {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
+import {OrderByOptions} from '@goovee/orm';
+
 type Pagination = {
   _count?: string;
   _cursor?: string;
@@ -97,3 +100,9 @@ export type MapConfig = {
 };
 
 export type SearchParams = {page?: string; limit?: string; sort?: string};
+
+export type SortOption = {
+  value: string;
+  label: string;
+  orderBy: OrderByOptions<AOSPortalDirectoryEntry>;
+};

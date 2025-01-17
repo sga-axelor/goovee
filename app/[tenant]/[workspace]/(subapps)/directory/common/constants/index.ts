@@ -1,3 +1,5 @@
+import type {SortOption} from '../types';
+
 export const colors = {
   default: 'bg-secondary',
   red: 'bg-red-500/30 text-red-500',
@@ -23,7 +25,7 @@ export const colors = {
   white: 'bg-black/80 text-white',
 };
 
-export const sortOptions = [
+export const sortOptions: SortOption[] = [
   {value: 'a-z', label: 'A-Z', orderBy: {title: 'ASC'}},
   {value: 'z-a', label: 'Z-A', orderBy: {title: 'DESC'}},
   {value: 'newest', label: 'Newest', orderBy: {createdOn: 'DESC'}},
