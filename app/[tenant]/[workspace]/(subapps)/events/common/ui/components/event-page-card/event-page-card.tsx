@@ -71,7 +71,9 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
       <CardContent className="px-4 pb-4 space-y-4">
         <div className="relative h-[15.625rem]">
           <Image
-            src={getImageURL(eventDetails?.eventImage?.id, tenant)}
+            src={getImageURL(eventDetails?.eventImage?.id, tenant, {
+              noimage: true,
+            })}
             alt={`${eventDetails.eventTitle} image`}
             fill
             className="rounded-lg mx-auto object-cover"

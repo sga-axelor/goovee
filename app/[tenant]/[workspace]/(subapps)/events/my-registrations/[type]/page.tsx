@@ -5,7 +5,6 @@ import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-import NotFound from '@/app/not-found';
 import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
@@ -20,14 +19,15 @@ export default async function Page(context: any) {
 
   const {tenant, type} = params;
 
-  if (!EVENT_TAB_ITEMS.map(item => item.label).includes(type))
-    return <NotFound />;
+  if (!EVENT_TAB_ITEMS.some(item => item.label === type)) {
+    return notFound();
+  }
 
   const session = await getSession();
   const user = session?.user;
 
   if (!user?.email) {
-    return <NotFound />;
+    return notFound();
   }
 
   const {workspaceURL} = workspacePathname(params);

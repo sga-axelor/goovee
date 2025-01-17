@@ -34,7 +34,7 @@ export const EventCard = ({event, workspace}: EventCardProps) => {
       <div
         className="w-[150px] h-[150px] rounded-lg bg-center bg-cover flex-shrink-0"
         style={{
-          backgroundImage: `url(${getImageURL(event?.eventImage?.id, tenant)})`,
+          backgroundImage: `url(${getImageURL(event?.eventImage?.id, tenant, {noimage: true})})`,
         }}></div>
 
       <div className="flex w-full gap-10 py-2">

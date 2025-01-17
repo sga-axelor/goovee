@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import {useRouter} from 'next/navigation';
+import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {Separator} from '@/ui/components/separator';
@@ -11,7 +12,6 @@ import {i18n} from '@/locale';
 // ---- LOCAL IMPORTS ---- //
 import {EVENTS_NAVBAR_LINKS} from '@/subapps/events/common/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import Link from 'next/link';
 
 type nav_link = {
   id: number;

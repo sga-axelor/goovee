@@ -3,9 +3,9 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
-import {clone, getPageInfo} from '@/utils';
+import {clone} from '@/utils';
 import {t} from '@/locale/server';
-import {DEFAULT_PAGE, SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES} from '@/constants';
 import {TENANT_HEADER} from '@/middleware';
 import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getSession} from '@/auth';
@@ -23,7 +23,6 @@ import {
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
-import {LIMIT} from '@/subapps/events/common/constants';
 
 export async function getAllEvents({
   limit,
@@ -38,7 +37,6 @@ export async function getAllEvents({
   tenantId,
   user,
   onlyRegisteredEvent = false,
-  eventType = '',
 }: {
   limit?: number;
   page?: number;
@@ -53,7 +51,6 @@ export async function getAllEvents({
   tenantId?: any;
   user?: User;
   onlyRegisteredEvent?: boolean;
-  eventType?: string;
 }) {
   tenantId = headers().get(TENANT_HEADER) || tenantId;
 
@@ -84,7 +81,6 @@ export async function getAllEvents({
       tenantId,
       user,
       onlyRegisteredEvent,
-      eventType,
     }).then(clone);
     return {events, pageInfo};
   } catch (err) {

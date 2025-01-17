@@ -35,21 +35,27 @@ export const EVENTS = {
   MY_REGISTRATIONS: 'my-registrations',
 };
 
+export const EVENT_TYPE = {
+  UPCOMING: 'upcoming',
+  ONGOING: 'ongoing',
+  PAST: 'past',
+};
+
 export const EVENT_TAB_ITEMS = [
   {
     id: '0',
     title: 'Upcoming events',
-    label: 'upcoming',
+    label: EVENT_TYPE.UPCOMING,
   },
 
   {
     id: '1',
     title: 'Ongoing events',
-    label: 'ongoing',
+    label: EVENT_TYPE.ONGOING,
   },
   {
     id: '2',
     title: 'Past events',
-    label: 'past',
+    label: EVENT_TYPE.PAST,
   },
 ];

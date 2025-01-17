@@ -17,12 +17,124 @@ import type {ID, PortalWorkspace, User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
 
 // ---- LOCAL IMPORTS ---- //
-import {EVENT_TAB_ITEMS} from '@/subapps/events/common/constants';
 import {
   validate,
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
+import {EVENT_TYPE} from '@/subapps/events/common/constants';
+
+const buildDateFilters = ({
+  eventStartDateTimeCriteria,
+  year,
+  startDate,
+  endDate,
+}: any) => {
+  if (eventStartDateTimeCriteria) {
+    return {OR: eventStartDateTimeCriteria};
+  }
+
+  if (year) {
+    return {
+      OR: [
+        {
+          eventStartDateTime: {
+            between: [startDate, endDate],
+          },
+        },
+        {
+          eventEndDateTime: {
+            between: [startDate, endDate],
+          },
+        },
+        {
+          AND: [
+            {
+              eventStartDateTime: {
+                le: startDate,
+              },
+            },
+            {
+              eventEndDateTime: {
+                ge: endDate,
+              },
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  return {};
+};
+
+const buildEventTypeFilters = ({
+  eventType,
+  todayStartTime,
+  currentDateTime,
+}: {
+  eventType: string;
+  todayStartTime: string;
+  currentDateTime: string;
+}) => {
+  switch (eventType) {
+    case EVENT_TYPE.UPCOMING:
+      return {eventStartDateTime: {gt: currentDateTime}};
+    case EVENT_TYPE.ONGOING:
+      return {
+        AND: [
+          {
+            OR: [
+              {
+                AND: [
+                  {eventStartDateTime: {le: currentDateTime}},
+                  {eventEndDateTime: {ge: currentDateTime}},
+                ],
+              },
+              {
+                AND: [
+                  {
+                    eventStartDateTime: {
+                      between: [todayStartTime, currentDateTime],
+                    },
+                  },
+                  {eventAllDay: {eq: true}},
+                ],
+              },
+            ],
+          },
+        ],
+      };
+    case EVENT_TYPE.PAST:
+      return {
+        AND: [
+          {
+            OR: [
+              {
+                AND: [
+                  {eventStartDateTime: {lt: currentDateTime}},
+                  {eventEndDateTime: {lt: currentDateTime}},
+                ],
+              },
+              {
+                AND: [
+                  {eventAllDay: {eq: true}},
+                  {eventStartDateTime: {lt: currentDateTime}},
+                  {
+                    eventStartDateTime: {
+                      notBetween: [todayStartTime, currentDateTime],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+    default:
+      return {};
+  }
+};
 
 export async function findEventByID({
   id,
@@ -202,127 +314,13 @@ export async function findEvents({
           },
         }
       : {}),
-
-    ...(eventStartDateTimeCriteria
-      ? {OR: eventStartDateTimeCriteria}
-      : year
-        ? {
-            OR: [
-              {
-                eventStartDateTime: {
-                  between: [startDate, endDate],
-                },
-              },
-              {
-                eventEndDateTime: {
-                  between: [startDate, endDate],
-                },
-              },
-              {
-                AND: [
-                  {
-                    eventStartDateTime: {
-                      le: startDate,
-                    },
-                  },
-                  {
-                    eventEndDateTime: {
-                      ge: endDate,
-                    },
-                  },
-                ],
-              },
-            ],
-          }
-        : {}),
-    ...(eventType === EVENT_TAB_ITEMS[0].label
-      ? {
-          eventStartDateTime: {
-            gt: currentDateTime,
-          },
-        }
-      : {}),
-    ...(eventType === EVENT_TAB_ITEMS[1].label
-      ? {
-          AND: [
-            {
-              OR: [
-                {
-                  AND: [
-                    {
-                      eventStartDateTime: {
-                        le: currentDateTime,
-                      },
-                    },
-                    {
-                      eventEndDateTime: {
-                        ge: currentDateTime,
-                      },
-                    },
-                  ],
-                },
-                {
-                  AND: [
-                    {
-                      eventStartDateTime: {
-                        between: [todayStartTime, currentDateTime],
-                      },
-                    },
-                    {
-                      eventAllDay: {
-                        eq: true,
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        }
-      : {}),
-
-    ...(eventType === EVENT_TAB_ITEMS[2].label
-      ? {
-          AND: [
-            {
-              OR: [
-                {
-                  AND: [
-                    {
-                      eventStartDateTime: {
-                        lt: currentDateTime,
-                      },
-                    },
-                    {
-                      eventEndDateTime: {
-                        lt: currentDateTime,
-                      },
-                    },
-                  ],
-                },
-                {
-                  AND: [
-                    {
-                      eventAllDay: {
-                        eq: true,
-                      },
-                    },
-                    {
-                      eventStartDateTime: {
-                        lt: currentDateTime,
-                      },
-                    },
-                    {
-                      eventStartDateTime: {
-                        notBetween: [todayStartTime, currentDateTime],
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        }
+    ...buildDateFilters({eventStartDateTimeCriteria, year, startDate, endDate}),
+    ...(eventType
+      ? buildEventTypeFilters({
+          eventType,
+          todayStartTime,
+          currentDateTime,
+        })
       : {}),
     ...(onlyRegisteredEvent
       ? {

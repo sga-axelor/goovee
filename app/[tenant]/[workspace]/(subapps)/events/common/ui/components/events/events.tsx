@@ -54,7 +54,7 @@ export const Events = ({
   const {user} = session || {};
 
   const imageURL = workspace?.config?.eventHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant)})`
+    ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant, {noimage: true})})`
     : IMAGE_URL;
   const {toast} = useToast();
 
