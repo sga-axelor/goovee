@@ -3,6 +3,7 @@ import {manager} from '@/tenant';
 import {t} from '@/lib/core/locale/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
+import {Entry, SearchEntry} from '../types';
 
 export async function findEntry({
   id,
@@ -12,7 +13,7 @@ export async function findEntry({
   id: ID;
   workspaceId?: string;
   tenantId: Tenant['id'];
-}) {
+}): Promise<Entry | null> {
   if (!(id && workspaceId && tenantId)) {
     throw new Error(await t('Missing required parameters'));
   }
@@ -20,19 +21,10 @@ export async function findEntry({
   const c = await manager.getClient(tenantId);
 
   const entry = await c.aOSPortalDirectoryEntry.findOne({
-    where: {
-      id: id,
-      workspace: {
-        id: workspaceId,
-      },
-    },
+    where: {id: id, workspace: {id: workspaceId}},
     select: {
       title: true,
-      address: {
-        latit: true,
-        longit: true,
-        formattedFullName: true,
-      },
+      address: {latit: true, longit: true, formattedFullName: true},
       twitter: true,
       website: true,
       isMap: true,
@@ -46,9 +38,7 @@ export async function findEntry({
           fixedPhone: true,
           mobilePhone: true,
           linkedinLink: true,
-          picture: {
-            id: true,
-          },
+          picture: {id: true},
         },
       },
       instagram: true,
@@ -73,7 +63,7 @@ export async function findEntries({
   categoryId?: ID;
   tenantId: Tenant['id'];
   orderBy?: Record<string, any>;
-}) {
+}): Promise<Entry[]> {
   if (!(workspaceId && tenantId)) {
     throw new Error(await t('Missing required parameters'));
   }
@@ -81,9 +71,7 @@ export async function findEntries({
   const entries = await c.aOSPortalDirectoryEntry.find({
     where: {
       workspace: {id: workspaceId},
-      ...(categoryId && {
-        directoryEntryCategorySet: {id: categoryId},
-      }),
+      ...(categoryId && {directoryEntryCategorySet: {id: categoryId}}),
     },
     orderBy: orderBy as any,
     ...(take ? {take} : {}),
@@ -92,11 +80,7 @@ export async function findEntries({
       id: true,
       title: true,
       isMap: true,
-      address: {
-        formattedFullName: true,
-        latit: true,
-        longit: true,
-      },
+      address: {formattedFullName: true, latit: true, longit: true},
       description: true,
       image: {id: true},
       directoryEntryCategorySet: {select: {title: true, color: true}},
@@ -115,7 +99,7 @@ export async function findEntriesBySearch({
   categoryId?: ID;
   search?: string;
   tenantId: Tenant['id'];
-}) {
+}): Promise<SearchEntry[]> {
   if (!(workspaceId && tenantId)) {
     throw new Error(await t('Missing required parameters'));
   }
@@ -124,9 +108,7 @@ export async function findEntriesBySearch({
     take: 10,
     where: {
       workspace: {id: workspaceId},
-      ...(categoryId && {
-        directoryEntryCategorySet: {id: categoryId},
-      }),
+      ...(categoryId && {directoryEntryCategorySet: {id: categoryId}}),
       ...(search && {
         OR: [
           {title: {like: `%${search}%`}},

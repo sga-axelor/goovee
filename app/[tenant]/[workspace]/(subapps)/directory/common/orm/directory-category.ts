@@ -4,13 +4,16 @@ import {t} from '@/lib/core/locale/server';
 import type {Tenant} from '@/tenant';
 import type {ID} from '@/types';
 
+// ---- LOCAL IMPORTS ---- //
+import type {Category, ListCategory} from '../types';
+
 export async function findCategories({
   workspaceId,
   tenantId,
 }: {
   workspaceId?: string;
   tenantId: Tenant['id'];
-}) {
+}): Promise<ListCategory[]> {
   if (!(workspaceId && tenantId)) {
     throw new Error(await t('Missing required parameters'));
   }
@@ -32,7 +35,7 @@ export async function findCategory({
   id: ID;
   workspaceId?: string;
   tenantId: Tenant['id'];
-}) {
+}): Promise<Category | null> {
   if (!(workspaceId && tenantId)) {
     throw new Error(await t('Missing required parameters'));
   }
