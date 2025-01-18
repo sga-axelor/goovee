@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/ui/components';
-import {formatNumber} from '@/lib/core/locale/formatters';
+import {formatNumber} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {

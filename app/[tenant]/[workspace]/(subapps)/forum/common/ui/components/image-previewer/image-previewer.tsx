@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {formatNumber} from '@/lib/core/locale/formatters';
+import {formatNumber} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';

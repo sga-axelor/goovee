@@ -5,7 +5,7 @@ import {useState} from 'react';
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getImageURL} from '@/utils/files';
-import {formatNumber} from '@/lib/core/locale/formatters';
+import {formatNumber} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
