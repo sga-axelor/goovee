@@ -153,22 +153,22 @@ async function Details({
       )}
       <div className="flex space-x-6">
         {linkedIn && (
-          <Link href={`${linkedIn}`}>
+          <Link href={linkedIn} target="_blank" rel="noreferrer">
             <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
           </Link>
         )}
         {twitter && (
-          <Link href={`${twitter}`}>
+          <Link href={twitter} target="_blank" rel="noreferrer">
             <FaXTwitter className="h-8 w-8" />
           </Link>
         )}
         {instagram && (
-          <Link href={`${instagram}`}>
+          <Link href={instagram} target="_blank" rel="noreferrer">
             <FaInstagram className="h-8 w-8 text-palette-yellow-dark" />
           </Link>
         )}
         {website && (
-          <Link href={`${website}`}>
+          <Link href={website} target="_blank" rel="noreferrer">
             <MdOutlineWeb className="h-8 w-8 text-gray-dark" />
           </Link>
         )}
@@ -237,7 +237,7 @@ async function Contact({
         </>
 
         {linkedinLink && (
-          <Link href={`${linkedinLink}`}>
+          <Link href={linkedinLink} target="_blank" rel="noreferrer">
             <FaLinkedin className="h-8 w-8 text-palette-blue-dark" />
           </Link>
         )}
