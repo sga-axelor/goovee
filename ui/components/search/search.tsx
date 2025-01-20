@@ -14,7 +14,7 @@ import {
   CommandList,
 } from '@/ui/components/command';
 import {NO_RESULTS_FOUND} from '@/constants';
-import {i18n} from '@/lib/core/locale';
+import {i18n} from '@/locale';
 
 export const Search = ({
   findQuery,

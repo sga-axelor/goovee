@@ -105,6 +105,7 @@ export const DATE_FORMATS = {
   full_month_day_year_12_hour: 'MMMM D YYYY - hA',
   custom: 'MMMM D YYYY - h:mm A',
   full_date: 'MMMM Do YYYY',
+  hours_12_hour: 'hA',
 };
 
 /**

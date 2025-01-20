@@ -7,7 +7,7 @@ import {useEffect, useState} from 'react';
 import {Card} from '@/ui/components';
 import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/locale';
-import {formatDate} from '@/locale/formatters';
+import {formatDate, formatTime} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
@@ -28,17 +28,33 @@ export const EventDateCard = ({
 
   useEffect(() => {
     if (startDate) {
-      const dateTime = formatDate(startDate, {
-        dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
-      }).split('-');
-      setStartDateTime({startDay: dateTime[0], startTime: dateTime[1]});
+      const formattedStartDate = formatDate(startDate, {
+        dateFormat: DATE_FORMATS.full_date,
+      });
+      const formattedStartTime = formatTime(startDate, {
+        timeFormat: DATE_FORMATS.hours_12_hour,
+        seconds: false,
+      });
+
+      setStartDateTime({
+        startDay: formattedStartDate,
+        startTime: formattedStartTime,
+      });
     }
 
     if (endDate && !eventAllDay) {
-      const dateTime = formatDate(endDate, {
-        dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
-      }).split('-');
-      setEndDateTime({endDay: dateTime[0], endTime: dateTime[1]});
+      const formattedEndDate = formatDate(endDate, {
+        dateFormat: DATE_FORMATS.full_date,
+      });
+      const formattedEndTime = formatTime(endDate, {
+        timeFormat: DATE_FORMATS.hours_12_hour,
+        seconds: false,
+      });
+
+      setEndDateTime({
+        endDay: formattedEndDate,
+        endTime: formattedEndTime,
+      });
     }
   }, [startDate, endDate, eventAllDay]);
 

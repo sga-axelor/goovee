@@ -18,7 +18,7 @@ import {
   buttonVariants,
 } from '@/ui/components';
 import {dateIsExist} from '@/utils/date';
-import {i18n} from '@/lib/core/locale';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
