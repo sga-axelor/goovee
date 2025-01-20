@@ -45,17 +45,12 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const entry = await findEntry({
-    id,
-    workspaceId: workspace.id,
-    tenantId: tenant,
-  });
-  if (!entry) notFound();
+  const [entry, config] = await Promise.all([
+    findEntry({id, workspaceId: workspace.id, tenantId: tenant}),
+    findMapConfig({workspaceId: workspace.id, tenantId: tenant}),
+  ]);
 
-  const config = await findMapConfig({
-    workspaceId: workspace.id,
-    tenantId: tenant,
-  });
+  if (!entry) notFound();
 
   return (
     <div className="container flex flex-col gap-4 mt-4 mb-5">
@@ -67,7 +62,7 @@ export default async function Page({
         <>
           <h2 className="font-semibold text-xl pl-4">
             {await t(
-              `${entry.directoryContactSet.length > 1 ? 'Contacts' : 'Contact'}`,
+              entry.directoryContactSet.length > 1 ? 'Contacts' : 'Contact',
             )}
           </h2>
 

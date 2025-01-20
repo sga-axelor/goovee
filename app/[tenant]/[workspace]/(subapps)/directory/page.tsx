@@ -43,19 +43,21 @@ export default async function Page({
 
   if (!workspace) notFound();
 
-  const categories = await findCategories({
-    workspaceId: workspace.id,
-    tenantId: tenant,
-  });
-
   const {page = 1, limit = ITEMS_PER_PAGE, sort} = searchParams;
-  const entries = await findEntries({
-    orderBy: getOrderBy(sort),
-    take: +limit,
-    skip: getSkip(limit, page),
-    workspaceId: workspace.id,
-    tenantId: tenant,
-  });
+
+  const [categories, entries] = await Promise.all([
+    findCategories({
+      workspaceId: workspace.id,
+      tenantId: tenant,
+    }),
+    findEntries({
+      orderBy: getOrderBy(sort),
+      take: +limit,
+      skip: getSkip(limit, page),
+      workspaceId: workspace.id,
+      tenantId: tenant,
+    }),
+  ]);
 
   const pages = getPages(entries, limit);
   const imageURL = workspace.config.directoryHeroBgImage?.id

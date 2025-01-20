@@ -65,22 +65,22 @@ export default async function Page({
   if (error) notFound();
   const {auth} = info;
 
-  const project = await findProject(projectId, auth);
+  const [project, tickets, statuses] = await Promise.all([
+    findProject(projectId, auth),
+    findTickets({
+      projectId,
+      take: Number(limit),
+      skip: getSkip(limit, page),
+      orderBy: getOrderBy(sort, sortKeyPathMap),
+      where: {status: {isCompleted: false}},
+      auth,
+    }).then(clone),
+    findTicketStatuses(projectId, tenant),
+  ]);
 
   if (!project) notFound();
-  const tickets = await findTickets({
-    projectId,
-    take: Number(limit),
-    skip: getSkip(limit, page),
-    orderBy: getOrderBy(sort, sortKeyPathMap),
-    where: {status: {isCompleted: false}},
-    auth,
-  }).then(clone);
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
-
-  const statuses = await findTicketStatuses(projectId, tenant);
-
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const statusCompleted = statuses.filter(s => s.isCompleted).map(s => s.id);
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;

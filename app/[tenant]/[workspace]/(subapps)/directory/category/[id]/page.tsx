@@ -45,21 +45,18 @@ export default async function Page({
   if (!workspace) notFound();
   const {id} = params;
 
-  const category = await findCategory({
-    id,
-    workspaceId: workspace.id,
-    tenantId: tenant,
-  });
+  const [category, entries] = await Promise.all([
+    findCategory({id, workspaceId: workspace.id, tenantId: tenant}),
+    findEntries({
+      orderBy: getOrderBy(sort),
+      take: +limit,
+      skip: getSkip(limit, page),
+      categoryId: id,
+      workspaceId: workspace.id,
+      tenantId: tenant,
+    }),
+  ]);
   if (!category) notFound();
-
-  const entries = await findEntries({
-    orderBy: getOrderBy(sort),
-    take: +limit,
-    skip: getSkip(limit, page),
-    categoryId: id,
-    workspaceId: workspace.id,
-    tenantId: tenant,
-  });
 
   const pages = getPages(entries, limit);
   const cards = category.directoryCategorySet?.map(category => (

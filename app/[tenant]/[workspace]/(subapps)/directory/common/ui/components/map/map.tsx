@@ -6,13 +6,13 @@ import {MdCloseFullscreen, MdOpenInFull} from 'react-icons/md';
 import {RESPONSIVE_SIZES} from '@/constants';
 import type {Cloned} from '@/types/util';
 import {Button} from '@/ui/components';
-import {Skeleton} from '@/ui/components/skeleton';
 import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
 
-import type {Entry, ListEntry, MapConfig} from '../../../types';
-import {calculateZoom} from './utils';
 import {MAP_SELECT} from '../../../constants';
+import type {Entry, ListEntry, MapConfig} from '../../../types';
+import {MapSkeleton} from './map-skeleton';
+import {calculateZoom} from './utils';
 
 const MAP_HEIGHT = 320; // h-80
 const MAP_WIDTH = 384; // w-96
@@ -108,8 +108,4 @@ export function Map(props: MapProps) {
       )}
     </div>
   );
-}
-
-function MapSkeleton() {
-  return <Skeleton className="h-80 w-96" />;
 }
