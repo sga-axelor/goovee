@@ -1,11 +1,11 @@
-import moment from 'moment';
+import {dayjs} from '@/locale';
 
 export function getFormatString(dateString: any) {
-  const date = moment(dateString);
-  const currentYear = moment().year();
+  const date = dayjs(dateString);
+  const currentYear = dayjs().year();
   const dateYear = date.year();
 
-  let formatString = 'MMMM Do';
+  let formatString = 'MMMM DD';
 
   if (dateYear !== currentYear) {
     formatString += ', YYYY';

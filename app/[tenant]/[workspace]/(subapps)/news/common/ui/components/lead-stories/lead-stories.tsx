@@ -5,7 +5,7 @@ import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {formatRelativeTime} from '@/lib/core/locale/formatters';
+import {formatRelativeTime} from '@/locale/formatters';
 import {BadgeList} from '@/ui/components';
 
 export const LeadStories = ({
