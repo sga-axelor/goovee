@@ -7,7 +7,7 @@ import {MdChevronRight} from 'react-icons/md';
 import {BadgeList, Separator} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {formatRelativeTime} from '@/lib/core/locale/formatters';
+import {formatRelativeTime} from '@/locale/formatters';
 
 export const FeedList = ({
   title,
