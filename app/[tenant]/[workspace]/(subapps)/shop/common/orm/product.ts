@@ -528,6 +528,10 @@ export async function findProducts({
     return {
       products: productsFromWS
         .map(wsProduct => {
+          if (isProductError(wsProduct)) {
+            console.error(wsProduct);
+            return null;
+          }
           const product = originalProduct(wsProduct.productId);
           if (!product) return null;
           return compute(product, true, wsProduct);
@@ -574,7 +578,22 @@ type WSProduct = {
   prices: [{type: 'WT'; price: string}, {type: 'ATI'; price: string}];
   currency: {currencyId: number; code: string; name: string; symbol: string};
   unit: {name: string; labelToPrinting: string};
+  errorMessage?: never;
 };
+
+type WSError = {
+  productId: number;
+  errorMessage: string;
+  prices?: never;
+  currency?: never;
+  unit?: never;
+};
+
+type WSObject = WSProduct | WSError;
+
+function isProductError(obj: WSObject): obj is WSError {
+  return !!obj.errorMessage;
+}
 
 export async function findProductsFromWS({
   workspace,
@@ -586,7 +605,7 @@ export async function findProductsFromWS({
   user?: User;
   productList: Array<{productId: Product['id']}>;
   tenantId: Tenant['id'];
-}): Promise<WSProduct[]> {
+}): Promise<WSObject[]> {
   if (!workspace?.config?.company?.id && user && productList && tenantId) {
     return [];
   }
