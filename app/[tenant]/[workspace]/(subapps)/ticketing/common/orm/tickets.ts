@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // ---- LOCAL IMPORTS ---- //
-import {ORDER_BY, SUBAPP_CODES} from '@/constants';
+import {MAIL_MESSAGE_TYPE, ORDER_BY, SUBAPP_CODES} from '@/constants';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
 import {addComment} from '@/orm/comment';
@@ -250,11 +250,8 @@ export async function createTicket({
       subapp: SUBAPP_CODES.ticketing,
       model: {id: ticket.id},
       subject: `Record Created by ${auth.simpleFullName}`,
-      messageBody: {
-        title: 'Record Created',
-        tracks: tracks,
-        tags: [],
-      },
+      messageBody: {title: 'Record Created', tracks: tracks, tags: []},
+      messageType: MAIL_MESSAGE_TYPE.notification,
       tenantId: auth.tenantId,
     });
     if (error) console.error(message);
@@ -461,11 +458,8 @@ export async function updateTicket({
       subapp: SUBAPP_CODES.ticketing,
       model: {id: ticket.id},
       subject: `Record Updated by ${auth.simpleFullName}`,
-      messageBody: {
-        title: 'Record Updated',
-        tracks: tracks,
-        tags: [],
-      },
+      messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
+      messageType: MAIL_MESSAGE_TYPE.notification,
       tenantId: auth.tenantId,
     });
   } catch (e) {

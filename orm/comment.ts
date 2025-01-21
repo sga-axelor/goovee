@@ -312,6 +312,7 @@ export async function addComment({
   messageBody,
   tenantId,
   subject,
+  messageType = MAIL_MESSAGE_TYPE.comment,
 }: {
   subapp: SUBAPP_CODES;
   model: {id: string | number} | null;
@@ -326,6 +327,7 @@ export async function addComment({
     tags: any[];
   };
   subject?: string;
+  messageType?: MAIL_MESSAGE_TYPE;
   tenantId: Tenant['id'];
 }) {
   try {
@@ -430,7 +432,7 @@ export async function addComment({
         isPublicNote: true,
         createdOn: timestamp as unknown as Date,
         updatedOn: timestamp as unknown as Date,
-        type: MAIL_MESSAGE_TYPE, //TODO: check this later
+        type: messageType,
         ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
         ...(messageBody && {body, publicBody: body}),
         subject: subject ?? `${user.simpleFullName} added a comment`,
