@@ -106,7 +106,7 @@ export const DATE_FORMATS = {
   custom: 'MMMM D YYYY - h:mm A',
   full_date: 'MMMM Do YYYY',
   DD_MM_YYYY: 'DD-MM-YYYY',
-  MM_YYYY: 'MM_YYYY',
+  MM_YYYY: 'MM-YYYY',
   YYYY: 'YYYY',
   hours_12_hour: 'hA',
 };

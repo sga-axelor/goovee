@@ -2,6 +2,7 @@ import moment from 'moment';
 
 // ---- CORE IMPORTS ---- //
 import {DATE_FORMATS} from '@/constants';
+import {dayjs} from '@/locale';
 
 export function parseDate(
   dateString: any,
@@ -11,7 +12,7 @@ export function parseDate(
 }
 
 export function formatDateToISOString(mdate: any) {
-  return moment(mdate).utc().format(DATE_FORMATS.iso_8601_utc_timestamp);
+  return dayjs(mdate).utc().format(DATE_FORMATS.iso_8601_utc_timestamp);
 }
 
 export function getCurrentDateTime() {
@@ -46,3 +47,7 @@ export const dateIsExist = (dateToCheck: Date, datesArray: Date[]) => {
 
   return false;
 };
+
+export function formatToTwoDigits(val: String | number) {
+  return String(val).padStart(2, '0');
+}

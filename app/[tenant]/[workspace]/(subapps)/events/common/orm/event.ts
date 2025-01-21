@@ -1,7 +1,5 @@
-import moment from 'moment';
-
 // ---- CORE IMPORTS ---- //
-import {formatDateToISOString} from '@/utils/date';
+import {formatDateToISOString, formatToTwoDigits} from '@/utils/date';
 import {
   DATE_FORMATS,
   ORDER_BY,
@@ -15,6 +13,7 @@ import {getPageInfo} from '@/utils';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
+import {dayjs} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -256,13 +255,16 @@ export async function findEvents({
   let date, predicate: any;
   if (day && month && year) {
     predicate = DAY;
-    date = moment(`${day}-${month}-${year}`, DATE_FORMATS.DD_MM_YYYY);
+    date = dayjs(
+      `${formatToTwoDigits(day)}-${formatToTwoDigits(month)}-${year}`,
+      DATE_FORMATS.DD_MM_YYYY,
+    );
   } else if (month && year) {
     predicate = MONTH;
-    date = moment(`${month}-${year}`, DATE_FORMATS.MM_YYYY);
+    date = dayjs(`${formatToTwoDigits(month)}-${year}`, DATE_FORMATS.MM_YYYY);
   } else if (year) {
     predicate = YEAR;
-    date = moment(year, DATE_FORMATS.YYYY);
+    date = dayjs(year, DATE_FORMATS.YYYY);
   }
 
   let startDate, endDate;
@@ -274,17 +276,13 @@ export async function findEvents({
   const eventStartDateTimeCriteria = selectedDates?.map((date: any) => ({
     eventStartDateTime: {
       between: [
-        moment(date).startOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
-        moment(date).endOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
+        dayjs(date).startOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
+        dayjs(date).endOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
       ],
     },
   }));
-
-  const currentDateTime = new Date().toISOString();
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-
-  const todayStartTime = todayStart.toISOString();
+  const currentDateTime = dayjs().toISOString();
+  const todayStartTime = dayjs().startOf(DAY).toISOString();
   const whereClause = {
     eventCategorySet: {
       workspace: {
