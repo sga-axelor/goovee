@@ -36,6 +36,7 @@ export const ThreadFooter = ({
       disabled={disabled}
       showReactions={false}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
+      showCommentOnCreations={true}
     />
   ) : (
     <div />

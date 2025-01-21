@@ -45,6 +45,7 @@ interface CommentsProps {
   disabled?: boolean;
   hideSortBy?: boolean;
   inputContainerClassName?: string;
+  showCommentOnCreations?: boolean;
 }
 
 export function Comments({
@@ -63,16 +64,21 @@ export function Comments({
   disabled = false,
   hideSortBy = false,
   inputContainerClassName = '',
+  showCommentOnCreations = false,
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
 
+  const handleShowComment = () => {
+    showCommentOnCreations && setShowComments(true);
+  };
   const {comments, total, totalCommentThreadCount, loadMore, onCreate} =
     useComments({
       model: {id: record.id},
       subapp,
       sortBy,
       seeMore,
+      handleShowComment,
     });
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;

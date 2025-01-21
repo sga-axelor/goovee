@@ -46,7 +46,7 @@ export const DropdownToggle = memo(
     };
 
     return (
-      <div className="flex items-center gap-2 text-base flex-shrink-0">
+      <div className="flex items-center gap-2 text-base flex-shrink-0 pr-2">
         <Label className={cn('!shrink-0', labelClassName)}>{title}:</Label>
 
         <Select defaultValue={value} onValueChange={handleSelect}>

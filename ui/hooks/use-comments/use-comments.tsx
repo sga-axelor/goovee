@@ -19,6 +19,7 @@ interface UseCommentsProps {
   model: {id: ID};
   subapp: SUBAPP_CODES;
   seeMore?: boolean;
+  handleShowComment: () => void;
 }
 
 interface CommentFetchParams {
@@ -37,6 +38,7 @@ export function useComments({
   model,
   subapp,
   seeMore,
+  handleShowComment = () => {},
 }: UseCommentsProps) {
   const [comments, setComments] = useState<any[]>([]);
   const [page, setPage] = useState(DEFAULT_PAGE);
@@ -96,6 +98,7 @@ export function useComments({
   const handleRefresh = useCallback(async () => {
     await getComments({page, sortBy});
     setLoading(false);
+    handleShowComment();
   }, [getComments, page, sortBy]);
 
   const handleComment = useCallback(

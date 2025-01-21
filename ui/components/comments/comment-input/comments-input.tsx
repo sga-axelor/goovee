@@ -9,7 +9,7 @@ import {MdAttachFile, MdDelete} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {Button, Input} from '@/ui/components';
+import {Button, Input, Textarea} from '@/ui/components';
 import {
   Form,
   FormControl,
@@ -32,23 +32,35 @@ type CommentProps = {
 
 const MAX_FILE_SIZE = 20000000; // 20 MB
 
-const formSchema = z.object({
-  attachments: z.array(
-    z.object({
-      title: z.string(),
-      description: z.string(),
-      file: z
-        .any()
-        .refine(file => file, i18n.t('File is required.'))
-        .refine(
-          file => file.size <= MAX_FILE_SIZE,
-          i18n.t(`Max file size is 20MB.`),
-        ),
-    }),
-  ),
-  content: z.string(),
-  text: z.string().min(1, {message: i18n.t('Comment is required')}),
-});
+const formSchema = z
+  .object({
+    attachments: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        file: z
+          .any()
+          .refine(file => file, i18n.t('File is required.'))
+          .refine(
+            file => file.size <= MAX_FILE_SIZE,
+            i18n.t(`Max file size is 20MB.`),
+          ),
+      }),
+    ),
+    content: z.string(),
+    text: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const hasFile = data.attachments.length > 0 ? true : false;
+
+    if (!hasFile && (!data.text || data.text.trim().length === 0)) {
+      ctx.addIssue({
+        path: ['text'],
+        message: i18n.t('Comment is required'),
+        code: 'custom',
+      });
+    }
+  });
 
 export function CommentInput({
   disabled = false,
@@ -76,7 +88,7 @@ export function CommentInput({
     setIsSubmitting(true);
 
     const formData = new FormData();
-    formData.append('text', values.text);
+    formData.append('text', values.text || ' ');
     formData.append('content', values.content);
 
     if (values.attachments && values.attachments.length > 0) {
@@ -125,14 +137,14 @@ export function CommentInput({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6 w-full">
         <div
-          className={`flex items-center relative gap-4 ${disabled ? 'pointer-events-none' : ''}`}>
+          className={`flex relative gap-4 ${disabled ? 'pointer-events-none' : ''}`}>
           <FormField
             control={form.control}
             name="text"
             render={({field}) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Input
+                  <Textarea
                     autoFocus={autoFocus}
                     className={cn(
                       'h-10 placeholder:text-sm placeholder:text-gray-dark',
@@ -147,7 +159,7 @@ export function CommentInput({
             )}
           />
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-end gap-4 h-[5rem] ">
             {showAttachmentIcon && (
               <div {...getRootProps({className: 'dropzone'})}>
                 <input {...getInputProps()} />
