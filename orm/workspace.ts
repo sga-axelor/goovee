@@ -412,6 +412,7 @@ export async function findWorkspace({
       url: true,
       defaultTheme: true,
       navigationSelect: true,
+      user: {id: true},
     },
   });
 
@@ -457,12 +458,14 @@ export async function findWorkspace({
     version,
     defaultTheme: theme,
     navigationSelect = 'leftSide',
+    user: workspaceUser,
   } = workspace;
 
   return {
     id,
     name,
     version,
+    workspaceUser,
     theme,
     url,
     config,

@@ -249,7 +249,12 @@ export async function createTicket({
       workspaceURL,
       subapp: SUBAPP_CODES.ticketing,
       model: {id: ticket.id},
-      messageBody: {title: 'Record Created', tracks: tracks, tags: []},
+      subject: `Record Created by ${auth.simpleFullName}`,
+      messageBody: {
+        title: 'Record Created',
+        tracks: tracks,
+        tags: [],
+      },
       tenantId: auth.tenantId,
     });
     if (error) console.error(message);
@@ -455,7 +460,12 @@ export async function updateTicket({
       workspaceURL,
       subapp: SUBAPP_CODES.ticketing,
       model: {id: ticket.id},
-      messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
+      subject: `Record Updated by ${auth.simpleFullName}`,
+      messageBody: {
+        title: 'Record Updated',
+        tracks: tracks,
+        tags: [],
+      },
       tenantId: auth.tenantId,
     });
   } catch (e) {

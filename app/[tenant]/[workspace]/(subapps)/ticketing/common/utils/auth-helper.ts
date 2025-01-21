@@ -11,6 +11,7 @@ import {cache} from 'react';
 
 export type UserAuthProps = {
   userId: ID;
+  simpleFullName: string;
   isContact: boolean;
   isContactAdmin: boolean;
   role?: 'total' | 'restricted';
@@ -98,6 +99,7 @@ export const ensureAuth = cache(async function ensureAuth(
       workspace,
       auth: {
         userId: user.id,
+        simpleFullName: user.simpleFullName,
         workspaceId: workspace.id,
         isContact: user.isContact!,
         tenantId,

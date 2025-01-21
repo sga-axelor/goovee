@@ -91,8 +91,8 @@ export const CommentListItem = ({
     note = '',
     createdBy,
     parentMailMessage,
+    partner,
   } = comment || {};
-  const {partner} = createdBy || {};
 
   const parseJson = (data: any) => {
     try {
@@ -193,17 +193,17 @@ export const CommentListItem = ({
   const renderParentMessage = () => {
     if (!parentMailMessage?.id) return null;
 
-    const partner = parentMailMessage.createdBy?.partner;
+    const {partner, createdBy} = parentMailMessage;
 
     return (
       <div className="p-2 border-l-2 border-success bg-success-light rounded-sm">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            {subapp === SUBAPP_CODES.forum
+            {subapp === SUBAPP_CODES.forum && partner?.picture
               ? renderAvatar(partner?.picture?.id)
               : null}
             <div className="font-semibold text-sm">
-              {partner?.simpleFullName}
+              {partner?.simpleFullName || createdBy?.fullName}
             </div>
             <TooltipComponent
               triggerText={`${i18n.t('Updated')} ${formatRelativeTime(parentMailMessage?.createdOn)}`}
@@ -268,11 +268,11 @@ export const CommentListItem = ({
     <div className="flex flex-col gap-1" key={id} id={`comment-${id}`}>
       <div className="flex gap-2 justify-between items-center border-b-2 border-dotted">
         <div className="flex items-center gap-2">
-          {subapp === SUBAPP_CODES.forum
+          {subapp === SUBAPP_CODES.forum && partner?.picture
             ? renderAvatar(partner?.picture?.id)
             : null}
           <div className="font-semibold text-sm leading-[21px] ">
-            {partner?.simpleFullName}
+            {partner?.simpleFullName ?? createdBy?.fullName}
           </div>
           <TooltipComponent
             triggerText={`${i18n.t('Updated')} ${formatRelativeTime(createdOn)}`}

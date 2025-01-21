@@ -36,6 +36,7 @@ export interface Model {
 export type User = {
   id: ID;
   name: string;
+  simpleFullName: string;
   email: string;
   isContact?: boolean;
   mainPartnerId?: string;

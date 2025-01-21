@@ -25,6 +25,7 @@ export const authOptions: NextAuthOptions = {
           id,
           emailAddress,
           fullName: name = '',
+          simpleFullName = '',
           isContact,
           mainPartner,
           localization,
@@ -35,6 +36,7 @@ export const authOptions: NextAuthOptions = {
           name,
           email: emailAddress?.address,
           isContact,
+          simpleFullName,
           mainPartnerId: isContact ? mainPartner?.id : undefined,
           tenantId: token?.tenantId as Tenant['id'],
           locale: transformLocale(localization?.code),
@@ -60,10 +62,18 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (partner) {
-          const {id, name, isContact, mainPartner, localization} = partner;
+          const {
+            id,
+            name,
+            isContact,
+            mainPartner,
+            localization,
+            simpleFullName,
+          } = partner;
 
           token.id = id;
           token.name = name;
+          token.simpleFullName = simpleFullName;
           token.email = session.email;
           token.isContact = isContact;
           token.tenantId = session.tenantId;

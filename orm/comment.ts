@@ -311,6 +311,7 @@ export async function addComment({
   parentId = null,
   messageBody,
   tenantId,
+  subject,
 }: {
   subapp: SUBAPP_CODES;
   model: {id: string | number} | null;
@@ -324,6 +325,7 @@ export async function addComment({
     tracks: any[];
     tags: any[];
   };
+  subject?: string;
   tenantId: Tenant['id'];
 }) {
   try {
@@ -344,15 +346,6 @@ export async function addComment({
       };
     }
 
-    const aosUser = await findUserForPartner({partnerId: user.id, tenantId});
-
-    if (!aosUser) {
-      return {
-        error: true,
-        message: await t('Cannot create comment. Configuration Error.'),
-      };
-    }
-
     const workspace = await findWorkspace({
       user,
       url: workspaceURL,
@@ -363,6 +356,15 @@ export async function addComment({
       return {
         error: true,
         message: await t('Invalid workspace'),
+      };
+    }
+
+    const {workspaceUser} = workspace;
+
+    if (!workspaceUser) {
+      return {
+        error: true,
+        message: await t('Workspace user is missing'),
       };
     }
 
@@ -397,9 +399,7 @@ export async function addComment({
     let parent;
     if (parentId) {
       parent = await client.aOSMailMessage.findOne({
-        where: {
-          id: {eq: parentId},
-        },
+        where: {id: {eq: parentId}},
         select: {id: true},
       });
       if (!parent) {
@@ -423,32 +423,25 @@ export async function addComment({
     const body = JSON.stringify(messageBody);
     const response = await client.aOSMailMessage.create({
       data: {
+        partner: {select: {id: user.id}},
         relatedId: modelRecord.id,
         relatedModel: modelName,
-        ...(subapp === SUBAPP_CODES.quotations
-          ? {
-              body: note,
-            }
-          : {note}),
+        ...(subapp === SUBAPP_CODES.quotations ? {body: note} : {note}),
         isPublicNote: true,
         createdOn: timestamp as unknown as Date,
         updatedOn: timestamp as unknown as Date,
         type: MAIL_MESSAGE_TYPE, //TODO: check this later
         ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
         ...(messageBody && {body, publicBody: body}),
-        subject: messageBody?.title ?? COMMENT_TRACKING,
-        author: {select: {id: aosUser.id}},
-        createdBy: {select: {id: aosUser.id}},
+        subject: subject ?? `${user.simpleFullName} added a comment`,
+        author: {select: {id: workspaceUser.id}},
+        createdBy: {select: {id: workspaceUser.id}},
         //relatedName: TODO: Add this later
         ...(attachments?.length > 0 && {
           mailMessageFileList: {
             create: attachments.map((attachment: any) => ({
               description: attachment?.description || '',
-              attachmentFile: {
-                select: {
-                  id: attachment.id,
-                },
-              },
+              attachmentFile: {select: {id: attachment.id}},
               createdOn: timestamp,
               updatedOn: timestamp,
             })),
@@ -563,9 +556,7 @@ export async function findComments({
     let orderBy: any = null;
     switch (sort) {
       case SORT_TYPE.old:
-        orderBy = {
-          createdOn: ORDER_BY.ASC,
-        };
+        orderBy = {createdOn: ORDER_BY.ASC};
         break;
       case SORT_TYPE.popular:
         const results: any = await getPopularCommentsBySorting({
@@ -591,9 +582,7 @@ export async function findComments({
           totalCommentThreadCount,
         };
       default:
-        orderBy = {
-          createdOn: ORDER_BY.DESC,
-        };
+        orderBy = {createdOn: ORDER_BY.DESC};
     }
 
     const commentFields = {
@@ -601,30 +590,11 @@ export async function findComments({
       publicBody: true,
       body: true,
       createdOn: true,
-      author: {
-        id: true,
-        name: true,
-        partner: {
-          picture: true,
-          simpleFullName: true,
-        },
-      },
+      partner: {picture: true, simpleFullName: true},
       mailMessageFileList: {
-        select: {
-          attachmentFile: {
-            id: true,
-            fileName: true,
-          },
-        },
+        select: {attachmentFile: {id: true, fileName: true}},
       },
-      createdBy: {
-        id: true,
-        name: true,
-        partner: {
-          picture: true,
-          simpleFullName: true,
-        },
-      },
+      createdBy: {id: true, fullName: true},
     } as const;
 
     const getWhereConditions = () => {

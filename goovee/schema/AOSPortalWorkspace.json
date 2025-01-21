@@ -23,6 +23,12 @@
     },
     {
       "type": "ManyToOne",
+      "name": "user",
+      "target": "AOSUser",
+      "column": "user_id"
+    },
+    {
+      "type": "ManyToOne",
       "name": "defaultPartnerWorkspace",
       "target": "AOSPartnerPortalWorkspace",
       "column": "default_partner_workspace"

@@ -171,7 +171,6 @@ export const SEARCH_PARAMS = {
  * COMMENT
  */
 export const DEFAULT_COMMENTS_LIMIT = 3;
-export const COMMENT_TRACKING = 'User created a comment';
 export const MAIL_MESSAGE_TYPE = 'notification';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';

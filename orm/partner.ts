@@ -14,6 +14,7 @@ import type {AOSPartner} from '@/goovee/.generated/models';
 const partnerFields = {
   firstName: true,
   fullName: true,
+  simpleFullName: true,
   fixedPhone: true,
   isContact: true,
   name: true,

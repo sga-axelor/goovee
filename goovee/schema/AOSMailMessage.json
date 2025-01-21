@@ -47,6 +47,11 @@
     },
     {
       "type": "ManyToOne",
+      "name": "partner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
       "name": "createdBy",
       "target": "AOSUser"
     },
