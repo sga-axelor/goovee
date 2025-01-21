@@ -348,25 +348,3 @@ export async function registerPartner({
   const partner = await client.aOSPartner.create({data}).then(clone);
   return partner;
 }
-
-export async function findUserForPartner({
-  partnerId,
-  tenantId,
-}: {
-  partnerId: ID;
-  tenantId: Tenant['id'];
-}) {
-  if (!(partnerId && tenantId)) return null;
-
-  const client = await manager.getClient(tenantId);
-
-  const user = await client.aOSUser.findOne({
-    where: {
-      partner: {
-        id: partnerId,
-      },
-    },
-  });
-
-  return user;
-}

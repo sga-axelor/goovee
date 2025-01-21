@@ -13,13 +13,11 @@ import {getFileSizeText, parseFormData} from '@/utils/files';
 import {clone, getSkipInfo} from '@/utils';
 import {ID, PortalWorkspace} from '@/types';
 import {
-  COMMENT_TRACKING,
   MAIL_MESSAGE_TYPE,
   ORDER_BY,
   SORT_TYPE,
   SUBAPP_CODES,
 } from '@/constants';
-import {findUserForPartner} from '@/orm/partner';
 import {findByID} from '@/orm/record';
 
 const pump = promisify(pipeline);
@@ -304,7 +302,7 @@ export async function upload(
 
 export async function addComment({
   subapp,
-  model = null,
+  model,
   note,
   workspaceURL,
   attachments = [],
@@ -315,7 +313,7 @@ export async function addComment({
   messageType = MAIL_MESSAGE_TYPE.comment,
 }: {
   subapp: SUBAPP_CODES;
-  model: {id: string | number} | null;
+  model: {id: string | number};
   workspaceURL: string;
   note?: string;
   attachments?: any;
@@ -383,7 +381,7 @@ export async function addComment({
       data: modelRecord,
     }: any = await findByID({
       subapp,
-      id: model?.id,
+      id: model.id,
       workspaceURL,
       workspace,
       tenantId,
