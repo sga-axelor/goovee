@@ -38,8 +38,16 @@ const Content = ({
   const isMember = useMemo(() => memberGroups.length !== 0, [memberGroups]);
 
   const value = useMemo(
-    () => ({memberGroups, nonMemberGroups, user, posts, pageInfo, isMember}),
-    [memberGroups, nonMemberGroups, user, posts, pageInfo, isMember],
+    () => ({
+      memberGroups,
+      nonMemberGroups,
+      user,
+      posts,
+      pageInfo,
+      isMember,
+      workspace,
+    }),
+    [memberGroups, nonMemberGroups, user, posts, pageInfo, isMember, workspace],
   );
 
   const handleMenuClick = (link: string) => {

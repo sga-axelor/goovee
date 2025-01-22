@@ -19,10 +19,12 @@ export const ThreadFooter = ({
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
 }) => {
-  const {isMember} = useForum();
+  const {isMember, workspace} = useForum();
   const disabled = useMemo(() => !isMember, [isMember]);
 
-  return (
+  const enableComment = workspace.config?.enableComment;
+
+  return enableComment ? (
     <Comments
       record={post}
       subapp={SUBAPP_CODES.forum}
@@ -30,11 +32,13 @@ export const ThreadFooter = ({
       hideCloseComments={hideCloseComments}
       inputPosition="top"
       usePopUpStyles={usePopUpStyles}
-      seeMore={true}
+      seeMore
       disabled={disabled}
       showReactions={false}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
     />
+  ) : (
+    <div />
   );
 };
 
