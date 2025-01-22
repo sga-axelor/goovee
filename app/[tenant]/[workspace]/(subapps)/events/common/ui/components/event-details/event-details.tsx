@@ -20,6 +20,7 @@ export function EventDetails({
   isRegistered: boolean;
 }) {
   const eventId = eventDetails.id;
+  const enableComment = workspace.config?.enableComment;
   const enableEventComment = workspace.config?.enableEventComment;
 
   return (
@@ -29,7 +30,9 @@ export function EventDetails({
         workspace={workspace}
         isRegistered={isRegistered}
       />
-      {enableEventComment && <CommentsSection eventId={eventId} />}
+      {enableComment && enableEventComment && (
+        <CommentsSection eventId={eventId} />
+      )}
     </div>
   );
 }
