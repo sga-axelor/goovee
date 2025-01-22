@@ -224,6 +224,8 @@ const Content = ({
   const router = useRouter();
   const {workspaceURL, workspaceURI, tenant} = useWorkspace();
 
+  const enableComment = workspace.config?.enableComment;
+
   const redirectOrder = (order?: {id: string}) => {
     if (orderSubapp && order) {
       router.replace(`${workspaceURI}/${SUBAPP_CODES.quotations}/${order?.id}`);
@@ -337,23 +339,25 @@ const Content = ({
             </div>
           )}
         </div>
-        <div className="rounded-md border bg-card p-4 mt-5">
-          <h4 className="text-xl font-semibold border-b">
-            {i18n.t('Comments')}
-          </h4>
-          <Comments
-            record={{id: quotation.id}}
-            subapp={SUBAPP_CODES.quotations}
-            showCommentsByDefault
-            showTopBorder={false}
-            showReactions={false}
-            hideCloseComments
-            hideCommentsHeader
-            hideSortBy
-            inputPosition="top"
-            sortByProp={SORT_TYPE.new}
-          />
-        </div>
+        {enableComment && (
+          <div className="rounded-md border bg-card p-4 mt-5">
+            <h4 className="text-xl font-semibold border-b">
+              {i18n.t('Comments')}
+            </h4>
+            <Comments
+              record={{id: quotation.id}}
+              subapp={SUBAPP_CODES.quotations}
+              showCommentsByDefault
+              showTopBorder={false}
+              showReactions={false}
+              hideCloseComments
+              hideCommentsHeader
+              hideSortBy
+              inputPosition="top"
+              sortByProp={SORT_TYPE.new}
+            />
+          </div>
+        )}
       </Container>
       <Dialog open={confirmingQuotation}>
         <DialogTitle></DialogTitle>
