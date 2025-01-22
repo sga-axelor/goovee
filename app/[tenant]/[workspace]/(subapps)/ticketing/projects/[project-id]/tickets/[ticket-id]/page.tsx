@@ -77,7 +77,7 @@ export default async function Page({
 
   const {error, info} = await ensureAuth(workspaceURL, tenant);
   if (error) notFound();
-  const {auth} = info;
+  const {auth, workspace} = info;
 
   const [ticket, statuses, categories, priorities, contacts] =
     await Promise.all([
@@ -173,24 +173,27 @@ export default async function Page({
           </div>
         </>
       </TicketDetailsProvider>
-      <div className="rounded-md border bg-card p-4 mt-5">
-        <h4 className="text-xl font-semibold border-b">
-          {await t('Comments')}
-        </h4>
-        <Comments
-          record={ticket}
-          subapp={SUBAPP_CODES.ticketing}
-          showCommentsByDefault
-          showTopBorder={false}
-          showReactions={false}
-          hideSortBy
-          hideCloseComments
-          hideCommentsHeader
-          inputPosition="top"
-          sortByProp={SORT_TYPE.new}
-          key={Math.random()}
-        />
-      </div>
+
+      {workspace.config.enableComment && (
+        <div className="rounded-md border bg-card p-4 mt-5">
+          <h4 className="text-xl font-semibold border-b">
+            {await t('Comments')}
+          </h4>
+          <Comments
+            record={ticket}
+            subapp={SUBAPP_CODES.ticketing}
+            showCommentsByDefault
+            showTopBorder={false}
+            showReactions={false}
+            hideSortBy
+            hideCloseComments
+            hideCommentsHeader
+            inputPosition="top"
+            sortByProp={SORT_TYPE.new}
+            key={Math.random()}
+          />
+        </div>
+      )}
     </div>
   );
 }
