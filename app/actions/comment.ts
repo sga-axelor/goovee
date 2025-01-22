@@ -7,7 +7,7 @@ import {t} from '@/locale/server';
 import {addComment, findComments, upload} from '@/orm/comment';
 import {TENANT_HEADER} from '@/middleware';
 import {getSession} from '@/auth';
-import {type SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 
 export async function createComment(formData: any, valueString: string) {
@@ -62,6 +62,18 @@ export async function createComment(formData: any, valueString: string) {
     };
   }
   if (!workspace.config.enableComment) {
+    return {
+      error: true,
+      message: await t('Comments are not enabled'),
+    };
+  }
+
+  const subappCommentConfig: any = {
+    [SUBAPP_CODES.events]: workspace.config?.enableEventComment,
+    [SUBAPP_CODES.news]: workspace.config?.enableNewsComment,
+  };
+
+  if (subappCommentConfig[subapp] === false) {
     return {
       error: true,
       message: await t('Comments are not enabled'),
@@ -153,6 +165,19 @@ export async function fetchComments({
       message: await t('Comments are not enabled'),
     };
   }
+
+  const subappCommentConfig: any = {
+    [SUBAPP_CODES.events]: workspace.config?.enableEventComment,
+    [SUBAPP_CODES.news]: workspace.config?.enableNewsComment,
+  };
+
+  if (subappCommentConfig[subapp] === false) {
+    return {
+      error: true,
+      message: await t('Comments are not enabled'),
+    };
+  }
+
   try {
     const response = await findComments({
       model,
