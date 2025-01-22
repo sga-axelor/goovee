@@ -49,6 +49,25 @@ export async function createComment(formData: any, valueString: string) {
     };
   }
 
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: await t('Invalid workspace'),
+    };
+  }
+  if (!workspace.config.enableComment) {
+    return {
+      error: true,
+      message: await t('Comments are not enabled'),
+    };
+  }
+
   if (values?.attachments?.length) {
     try {
       const response: any = await upload(formData, workspaceURL, tenantId);
@@ -128,6 +147,12 @@ export async function fetchComments({
     return {error: true, message: await t('Invalid workspace')};
   }
 
+  if (!workspace.config.enableComment) {
+    return {
+      error: true,
+      message: await t('Comments are not enabled'),
+    };
+  }
   try {
     const response = await findComments({
       model,
