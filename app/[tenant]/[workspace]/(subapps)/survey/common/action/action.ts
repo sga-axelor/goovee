@@ -3,7 +3,7 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -23,7 +23,7 @@ export const getAllSurveys = async ({
   if (!workspace) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: i18n.t('Unauthorized'),
     };
   }
   const workspaceURL = workspace?.url;
@@ -33,7 +33,7 @@ export const getAllSurveys = async ({
   if (!user) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: i18n.t('Unauthorized'),
     };
   }
 
@@ -42,7 +42,7 @@ export const getAllSurveys = async ({
   if (!tenantId) {
     return {
       error: true,
-      message: i18n.get('Bad Request'),
+      message: i18n.t('Bad Request'),
     };
   }
 
@@ -56,7 +56,7 @@ export const getAllSurveys = async ({
   if (!subapp) {
     return {
       error: true,
-      message: i18n.get('Unauthorized'),
+      message: i18n.t('Unauthorized'),
     };
   }
 
@@ -69,7 +69,7 @@ export const getAllSurveys = async ({
   if (!$workspace) {
     return {
       error: true,
-      message: i18n.get('Invalid workspace'),
+      message: i18n.t('Invalid workspace'),
     };
   }
   const surveys = await findSurveys({workspace, tenantId, limit});

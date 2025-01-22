@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/i18n';
+import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {Response, Survey} from '@/subapps/survey/common/types';
@@ -13,7 +13,7 @@ import {
 export const surveyColumns = [
   {
     key: 'name',
-    label: i18n.get('Name'),
+    label: i18n.t('Name'),
     sortable: true,
     mobile: true,
     getter: (row: Survey) => row.name,
@@ -21,7 +21,7 @@ export const surveyColumns = [
   },
   {
     key: 'statusSelect',
-    label: i18n.get('Status'),
+    label: i18n.t('Status'),
     mobile: true,
     getter: (row: Survey) => row.statusSelect,
     content: (row: Survey) => (
@@ -30,7 +30,7 @@ export const surveyColumns = [
   },
   {
     key: 'type',
-    label: i18n.get('Type'),
+    label: i18n.t('Type'),
     getter: (row: Survey) => row.typeSelect,
     content: (row: any) => (
       <Chip value={getSurveyTypeName(row.typeSelect)} outline={true} />
@@ -38,7 +38,7 @@ export const surveyColumns = [
   },
   {
     key: 'category',
-    label: i18n.get('Category'),
+    label: i18n.t('Category'),
     getter: (row: Survey) => row.category?.name,
     content: (row: any) => (
       <Chip value={row.category?.name} variant="purple" className="rounded" />
@@ -46,7 +46,7 @@ export const surveyColumns = [
   },
   {
     key: 'publicationDatetime',
-    label: i18n.get('Publication date'),
+    label: i18n.t('Publication date'),
     getter: (row: Survey) => row.publicationDatetime,
     content: (row: any) => row.publicationDatetime,
   },
@@ -55,7 +55,7 @@ export const surveyColumns = [
 export const partnerResponseColumns = [
   {
     key: 'survey',
-    label: i18n.get('Survey'),
+    label: i18n.t('Survey'),
     sortable: true,
     mobile: true,
     getter: (row: Response) => row.attrs?.surveyConfig?.name,
@@ -63,7 +63,7 @@ export const partnerResponseColumns = [
   },
   {
     key: 'statusSelect',
-    label: i18n.get('Survey status'),
+    label: i18n.t('Survey status'),
     getter: (row: Response) => row.attrs?.surveyConfig?.statusSelect,
     content: (row: Response) => (
       <Chip
@@ -74,7 +74,7 @@ export const partnerResponseColumns = [
   },
   {
     key: 'category',
-    label: i18n.get('Category'),
+    label: i18n.t('Category'),
     getter: (row: Response) => row.attrs?.surveyConfig?.category?.name,
     content: (row: Response) => (
       <Chip
@@ -86,13 +86,13 @@ export const partnerResponseColumns = [
   },
   {
     key: 'publicationDatetime',
-    label: i18n.get('Publication date'),
+    label: i18n.t('Publication date'),
     getter: (row: Response) => row.attrs?.surveyConfig?.publicationDatetime,
     content: (row: Response) => row.attrs?.surveyConfig?.publicationDatetime,
   },
   {
     key: 'attrsStatusSelect',
-    label: i18n.get('Response status'),
+    label: i18n.t('Response status'),
     mobile: true,
     getter: (row: Response) => row.attrs?.statusSelect,
     content: (row: Response) => (

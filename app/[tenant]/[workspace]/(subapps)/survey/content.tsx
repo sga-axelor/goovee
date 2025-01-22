@@ -10,7 +10,7 @@ import {
   DEFAULT_LIMIT,
   URL_PARAMS,
 } from '@/constants';
-import {i18n} from '@/lib/core/i18n';
+import {i18n} from '@/locale';
 import {Search, TableList} from '@/ui/components';
 import {useSortBy} from '@/ui/hooks';
 import {PortalWorkspace} from '@/types';
@@ -81,8 +81,8 @@ export default function Content({
       if (result?.error) {
         toast({
           variant: 'destructive',
-          title: i18n.get(
-            result.message ?? i18n.get('Something went wrong while searching!'),
+          title: i18n.t(
+            result.message ?? 'Something went wrong while searching!',
           ),
         });
       }
@@ -91,7 +91,7 @@ export default function Content({
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: i18n.get(
+        title: i18n.t(
           error instanceof Error ? error.message : 'Unknown error occurred',
         ),
       });
@@ -126,7 +126,7 @@ export default function Content({
         {renderSearch()}
 
         <div className="flex flex-col gap-4">
-          <h2 className="font-semibold text-xl">{i18n.get('Open Surveys')}</h2>
+          <h2 className="font-semibold text-xl">{i18n.t('Open Surveys')}</h2>
 
           <TableList
             columns={surveyColumns}
@@ -141,7 +141,7 @@ export default function Content({
 
         <div className="flex flex-col gap-4">
           <h2 className="font-semibold text-xl">
-            {i18n.get('Partner Responses')}
+            {i18n.t('Partner Responses')}
           </h2>
           <TableList
             columns={partnerResponseColumns}
