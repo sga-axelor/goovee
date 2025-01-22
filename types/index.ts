@@ -223,6 +223,7 @@ export type ComputedProduct = {
     displayTwoPrices?: boolean;
   };
   currency: Currency;
+  errorMessage?: string;
 };
 
 export type MetaFile = {

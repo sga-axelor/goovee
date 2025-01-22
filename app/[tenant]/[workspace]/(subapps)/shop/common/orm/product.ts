@@ -41,14 +41,8 @@ function getPageInfo({
   };
 }
 
-const getProductFields = ({
-  fromWS,
-  workspace,
-}: {
-  fromWS: boolean;
-  workspace: PortalWorkspace;
-}) => {
-  const productFields = {
+const getProductFields = ({workspace}: {workspace: PortalWorkspace}) =>
+  ({
     name: true,
     code: true,
     inAti: true,
@@ -71,50 +65,43 @@ const getProductFields = ({
         },
       },
     },
-    ...(fromWS
-      ? {}
-      : {
-          productCompanyList: {
+    productCompanyList: {
+      select: {
+        salePrice: true,
+        company: {
+          id: true,
+          name: true,
+          currency: {
+            code: true,
+            numberOfDecimals: true,
+            symbol: true,
+          },
+        },
+      },
+    },
+    productFamily: {
+      name: true,
+      accountManagementList: {
+        where: {
+          company: {
+            id: workspace?.config?.company?.id,
+          },
+        },
+        select: {
+          name: true,
+          saleTaxSet: {
             select: {
-              salePrice: true,
-              company: {
-                id: true,
+              name: true,
+              activeTaxLine: {
                 name: true,
-                currency: {
-                  code: true,
-                  numberOfDecimals: true,
-                  symbol: true,
-                },
+                value: true,
               },
             },
-          } as any,
-          productFamily: {
-            name: true,
-            accountManagementList: {
-              where: {
-                company: {
-                  id: workspace?.config?.company?.id,
-                },
-              },
-              select: {
-                name: true,
-                saleTaxSet: {
-                  select: {
-                    name: true,
-                    activeTaxLine: {
-                      name: true,
-                      value: true,
-                    },
-                  },
-                },
-              },
-            },
-          } as any,
-        }),
-  };
-
-  return productFields;
-};
+          },
+        },
+      },
+    },
+  }) as const;
 
 const getWhereClause = async ({
   ids,
@@ -229,7 +216,7 @@ export async function findProducts({
   const outOfStockAction =
     noMoreStockSelect ?? OUT_OF_STOCK_TYPE.HIDE_PRODUCT_CANNOT_BUY;
 
-  const productFields = getProductFields({fromWS, workspace});
+  const productFields = getProductFields({workspace});
 
   const $filters: any = await getWhereClause({
     ids,
@@ -356,7 +343,17 @@ export async function findProducts({
     })
     .then(clone);
 
-  const compute = (product: any, ws?: boolean, wsProduct?: WSProduct) => {
+  const compute = ({
+    product,
+    ws,
+    wsProduct,
+    errorMessage,
+  }: {
+    product: any;
+    ws?: boolean;
+    wsProduct?: WSProduct;
+    errorMessage?: string;
+  }) => {
     const productcompany =
       workspace?.config?.company?.id &&
       product?.productCompanyList?.find(
@@ -495,6 +492,7 @@ export async function findProducts({
       tax: getTax(),
       scale: getScale(),
       currency: getCurrency(),
+      errorMessage,
     };
   };
 
@@ -526,20 +524,19 @@ export async function findProducts({
     return {
       products: productsFromWS
         .map(wsProduct => {
-          if (isProductError(wsProduct)) {
-            console.error(wsProduct);
-            return null;
-          }
           const product = originalProduct(wsProduct.productId);
           if (!product) return null;
-          return compute(product, true, wsProduct);
+          if (isProductError(wsProduct)) {
+            return compute({product, errorMessage: wsProduct.errorMessage});
+          }
+          return compute({product, ws: true, wsProduct});
         })
         .filter(Boolean),
       pageInfo,
     };
   } else {
     return {
-      products: $products.map((product: any) => compute(product)),
+      products: $products.map((product: any) => compute({product})),
       pageInfo,
     };
   }
