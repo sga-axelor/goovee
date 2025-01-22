@@ -52,6 +52,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
   const enableSocialMediaSharing = workspace.config?.enableSocialMediaSharing;
   const enableNewsComment = workspace.config?.enableNewsComment;
   const availableSocials = workspace.config?.socialMediaSelect;
+  const enableComment = workspace.config?.enableComment;
 
   const handleClick = (slug: string) => {
     const urlRoute = pathname.split('/article/')[0];
@@ -112,7 +113,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
         </div>
       </div>
 
-      {enableNewsComment && (
+      {enableComment && enableNewsComment && (
         <div className="w-full mb-24 lg:mb-4">
           <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
             <div>
