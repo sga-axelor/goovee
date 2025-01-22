@@ -99,7 +99,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
 
   if (!item.computedProduct) return null;
 
-  const {product, price} = item.computedProduct;
+  const {product, price, errorMessage} = item.computedProduct;
 
   return (
     <div
@@ -119,6 +119,11 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
             )}-${product.id}`}>
             <h6 className="font-medium mb-2">{i18n.tattr(product.name)}</h6>
           </Link>
+          {errorMessage && (
+            <p className="text-sm font-medium mb-2 text-destructive">
+              {i18n.t('Price may be incorrect')}
+            </p>
+          )}
           {product.allowCustomNote && (
             <div>
               <Label>{i18n.t('Note')}</Label>

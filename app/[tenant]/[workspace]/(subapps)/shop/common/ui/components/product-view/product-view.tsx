@@ -38,7 +38,7 @@ export function ProductView({
 }) {
   const router = useRouter();
   const {workspaceURI, tenant} = useWorkspace();
-  const {product, price} = computedProduct;
+  const {product, price, errorMessage} = computedProduct;
   const [updating, setUpdating] = useState(false);
   const {quantity, increment, decrement, setQuantity} = useQuantity();
   const {updateQuantity, getProductQuantity, getProductNote, setProductNote} =
@@ -120,6 +120,11 @@ export function ProductView({
               {showMessage && isOutOfStock && (
                 <p className="text-base font-semibold mt-0 mb-0 text-destructive">
                   {i18n.t('Out of stock')}
+                </p>
+              )}
+              {errorMessage && (
+                <p className="text-base font-semibold mt-0 mb-0 text-destructive">
+                  {i18n.t('Price may be incorrect')}
                 </p>
               )}
             </div>

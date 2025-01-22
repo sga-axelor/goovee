@@ -26,7 +26,7 @@ export function ProductListItem({
   onClick,
   displayPrices,
 }: ProductListItemProps) {
-  const {product, price} = computedProduct;
+  const {product, price, errorMessage} = computedProduct;
   const {displayTwoPrices, displayPrimary, displaySecondary} = price;
   const {tenant} = useWorkspace();
 
@@ -68,6 +68,11 @@ export function ProductListItem({
                 {showMessage && isOutOfStock && (
                   <p className="text-xs font-semibold mt-0 mb-0 text-destructive">
                     {i18n.t('Out of stock')}
+                  </p>
+                )}
+                {errorMessage && (
+                  <p className="text-xs font-semibold mt-0 mb-0 text-destructive">
+                    {i18n.t('Price may be incorrect')}
                   </p>
                 )}
               </div>

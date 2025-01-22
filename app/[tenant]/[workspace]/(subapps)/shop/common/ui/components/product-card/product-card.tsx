@@ -26,7 +26,7 @@ export function ProductCard({
   onClick,
   displayPrices,
 }: ProductCardProps) {
-  const {product, price} = computedProduct;
+  const {product, price, errorMessage} = computedProduct;
   const {displayTwoPrices, displayPrimary, displaySecondary} = price;
   const {toast} = useToast();
   const {tenant} = useWorkspace();
@@ -82,11 +82,18 @@ export function ProductCard({
         </div>
       </div>
       <div className="flex items-start justify-between p-6 pt-0">
-        {showMessage && isOutOfStock && (
-          <span className="text-xs font-bold mt-0 mb-0 text-destructive">
-            {i18n.t('Out of stock')}
-          </span>
-        )}
+        <div>
+          {showMessage && isOutOfStock && (
+            <p className="text-xs font-bold mt-0 mb-0 text-destructive">
+              {i18n.t('Out of stock')}
+            </p>
+          )}
+          {errorMessage && (
+            <p className="text-xs font-bold mt-0 mb-0 text-destructive">
+              {i18n.t('Price may be incorrect')}
+            </p>
+          )}
+        </div>
         {canBuy && (
           <Button
             onClick={handleAdd}
