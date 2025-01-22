@@ -195,6 +195,10 @@
       "name": "enableEventComment"
     },
     {
+      "type": "Boolean",
+      "name": "enableComment"
+    },
+    {
       "name": "enableSocialMediaSharing",
       "type": "Boolean"
     },

@@ -64,6 +64,7 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   allowGuestEventRegistration: true,
   enableRecommendedNews: true,
   enableSocialMediaSharing: true,
+  enableComment: true,
   enableNewsComment: true,
   enableEventComment: true,
   socialMediaSelect: true,
