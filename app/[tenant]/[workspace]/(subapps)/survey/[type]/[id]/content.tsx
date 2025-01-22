@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect} from 'react';
-import {SurveyViewer} from '@axelor/react-survey-components';
+import {SurveyViewer} from '@axelor-ent/survey-react-components';
 
 import {ensureAuth} from '@/subapps/survey/common/utils/auth-helper';
 

@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@axelor/react-survey-components':
-    specifier: file:../axelor-survey-react
-    version: file:../axelor-survey-react(react-dom@18.3.1)
+  '@axelor-ent/survey-react-components':
+    specifier: 0.1.0
+    version: 0.1.0(react-dom@18.3.1)
   '@cyntler/react-doc-viewer':
     specifier: ^1.17.0
     version: 1.17.0(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)
@@ -331,6 +331,19 @@ packages:
   /@antfu/ni@0.21.12:
     resolution: {integrity: sha512-2aDL3WUv8hMJb2L3r/PIQWsTLyq7RQr3v9xD16fiz6O8ys1xEyLhhTOv8gxtZvJiTzjTF5pHoArvRdesGL1DMQ==}
     hasBin: true
+    dev: false
+
+  /@axelor-ent/survey-react-components@0.1.0(react-dom@18.3.1):
+    resolution: {integrity: sha512-i9gGcTftji5zhapkdwiy4V5COqhg5W0byO0MnvfFm34scdy31P/VzBeY3fjIl58IQ+FurPTJhSXzFhIb8D6s4A==}
+    dependencies:
+      react: 18.3.1
+      survey-core: 1.12.9
+      survey-creator-core: 1.12.9(survey-core@1.12.9)
+      survey-creator-react: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)(survey-creator-core@1.12.9)(survey-react-ui@1.12.9)
+      survey-react-ui: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)
+    transitivePeerDependencies:
+      - ace-builds
+      - react-dom
     dev: false
 
   /@babel/code-frame@7.26.2:
@@ -9617,19 +9630,4 @@ packages:
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
-    dev: false
-
-  file:../axelor-survey-react(react-dom@18.3.1):
-    resolution: {directory: ../axelor-survey-react, type: directory}
-    id: file:../axelor-survey-react
-    name: '@axelor/react-survey-components'
-    dependencies:
-      react: 18.3.1
-      survey-core: 1.12.9
-      survey-creator-core: 1.12.9(survey-core@1.12.9)
-      survey-creator-react: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)(survey-creator-core@1.12.9)(survey-react-ui@1.12.9)
-      survey-react-ui: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)
-    transitivePeerDependencies:
-      - ace-builds
-      - react-dom
     dev: false

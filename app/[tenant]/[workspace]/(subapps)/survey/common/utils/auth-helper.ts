@@ -1,4 +1,4 @@
-import {requester} from '@axelor/react-survey-components';
+import {requester} from '@axelor-ent/survey-react-components';
 
 export async function ensureAuth() {
   await requester.registerConfig(process.env.NEXT_PUBLIC_AOS_URL ?? '', {
