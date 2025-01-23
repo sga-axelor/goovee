@@ -135,6 +135,9 @@ export async function fetchComments({
   page,
   subapp,
   workspaceURL,
+  ids,
+  notinids,
+  skip,
 }: any) {
   const session = await getSession();
 
@@ -178,6 +181,9 @@ export async function fetchComments({
       subapp,
       workspaceURL,
       tenantId,
+      ids,
+      notinids,
+      skip,
     });
     return response.error
       ? {error: true, message: 'Error while fetching comments.'}

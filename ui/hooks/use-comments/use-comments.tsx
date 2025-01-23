@@ -19,11 +19,7 @@ interface UseCommentsProps {
   model: {id: ID};
   subapp: SUBAPP_CODES;
   seeMore?: boolean;
-}
-
-interface CommentFetchParams {
-  page: number;
-  sortBy: string;
+  shouldPaginateByPage?: boolean;
 }
 
 interface HandleCommentParams {
@@ -37,6 +33,7 @@ export function useComments({
   model,
   subapp,
   seeMore,
+  shouldPaginateByPage = true,
 }: UseCommentsProps) {
   const [comments, setComments] = useState<any[]>([]);
   const [page, setPage] = useState(DEFAULT_PAGE);
@@ -49,7 +46,7 @@ export function useComments({
   const {toast} = useToast();
 
   const getComments = useCallback(
-    async ({page, sortBy}: CommentFetchParams) => {
+    async ({recentlyadded, existingcomments, page, sortBy}: any) => {
       setFetching(true);
       try {
         const response: any = await fetchComments({
@@ -57,8 +54,23 @@ export function useComments({
           subapp,
           sort: sortBy,
           limit: seeMore ? DEFAULT_COMMENTS_LIMIT : undefined,
-          page,
           workspaceURL,
+          ...(shouldPaginateByPage
+            ? {page}
+            : {
+                skip: recentlyadded
+                  ? existingcomments?.length + 1
+                  : existingcomments?.length,
+                notinids: [
+                  ...recentlyadded?.id,
+                  ...existingcomments
+                    .map((c: any) => [
+                      c.id,
+                      ...c.childMailMessages?.map((i: any) => i.id),
+                    ])
+                    .flat(),
+                ],
+              }),
         });
 
         if (response.success) {
@@ -90,13 +102,21 @@ export function useComments({
         setFetching(false);
       }
     },
-    [model.id, subapp, seeMore, workspaceURL, toast],
+    [model.id, subapp, seeMore, workspaceURL, toast, shouldPaginateByPage],
   );
 
-  const handleRefresh = useCallback(async () => {
-    await getComments({page, sortBy});
-    setLoading(false);
-  }, [getComments, page, sortBy]);
+  const handleRefresh = useCallback(
+    async ({recentlyadded}: any) => {
+      await getComments({
+        recentlyadded,
+        existingcomments: comments,
+        page,
+        sortBy,
+      });
+      setLoading(false);
+    },
+    [getComments, comments, page, sortBy],
+  );
 
   const handleComment = useCallback(
     async ({formData, values, parent = null}: HandleCommentParams) => {
@@ -112,8 +132,33 @@ export function useComments({
           }),
         );
 
+        const recentlyadded = response?.data;
+
         if (response.success) {
-          handleRefresh();
+          if (!shouldPaginateByPage && recentlyadded) {
+            const result: any = await fetchComments({
+              model: {id: model.id},
+              subapp,
+              ids: [recentlyadded.id],
+              workspaceURL,
+            }).then((result: any) => result?.[0]);
+
+            if (!parent) {
+              setComments(existing => [result, ...existing]);
+            } else {
+              setComments(existing => [
+                ...existing.map(ex =>
+                  ex.id === parent
+                    ? {
+                        ...ex,
+                        childMailMessages: [result, ...ex.childMailMessage],
+                      }
+                    : ex,
+                ),
+              ]);
+            }
+          }
+          handleRefresh({recentlyadded});
           toast({
             variant: 'success',
             title: i18n.t('Comment created successfully.'),
