@@ -1,17 +1,17 @@
 'use client';
 
-import React from 'react';
 import {useRouter} from 'next/navigation';
+import React from 'react';
 import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils/date';
-import {i18n} from '@/locale';
-import {download, getFileTypeIcon, getIconColor} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
+import {download, getFileTypeIcon, getIconColor} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
+import {formatDate} from '@/lib/core/locale/formatters';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
 
 export function ResourceList({resources}: any) {
@@ -32,7 +32,7 @@ export function ResourceList({resources}: any) {
       {resources?.length ? (
         resources?.map((resource: any, index: number) => {
           const author = resource.createdBy?.name || '--';
-          const date = parseDate(resource?.createdOn) || '--';
+          const date = formatDate(resource?.createdOn) || '--';
           const size = resource?.metaFile?.sizeText || '--';
 
           const icon = getFileTypeIcon(resource.metaFile?.fileType);

@@ -4,7 +4,9 @@ import {useRouter} from 'next/navigation';
 import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {parseDate} from '@/utils/date';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/locale';
+import type {PortalWorkspace} from '@/types';
 import {
   Command,
   CommandEmpty,
@@ -14,13 +16,11 @@ import {
   CommandList,
 } from '@/ui/components/command';
 import {cn} from '@/utils/css';
-import {i18n} from '@/locale';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {getFileTypeIcon, getIconColor} from '@/utils/files';
+import {formatDate} from '@/lib/core/locale/formatters';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components';
+import {getFileTypeIcon, getIconColor} from '@/utils/files';
 import {findDmsFiles} from './action';
 
 export function Search({workspace}: {workspace: PortalWorkspace}) {
@@ -85,7 +85,7 @@ function ResourceItem({resource}: any) {
   };
 
   const author = resource.createdBy?.name || '--';
-  const date = parseDate(resource?.createdOn) || '--';
+  const date = formatDate(resource?.createdOn) || '--';
   const size = resource?.metaFile?.sizeText || '--';
 
   const icon = isDirectory

@@ -1,21 +1,21 @@
-import React from 'react';
 import {notFound} from 'next/navigation';
+import React from 'react';
 import {MdHistory, MdWeb} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {fetchFile} from '@/subapps/resources/common/orm/dms';
-import {clone} from '@/utils';
-import {parseDate} from '@/utils/date';
-import {t} from '@/locale/server';
-import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
+import {t} from '@/locale/server';
+import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {DocViewer} from '@/ui/components';
+import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import DownloadIcon from './download-icon';
-import ImageViewer from './image-viewer';
-import HTMLViewer from './html-viewer';
+import {formatDate} from '@/lib/core/locale/server/formatters';
 import {findWorkspace} from '@/orm/workspace';
+import DownloadIcon from './download-icon';
+import HTMLViewer from './html-viewer';
+import ImageViewer from './image-viewer';
 
 const viewer: Record<string, React.JSXElementConstructor<any>> = {
   'application/pdf': DocViewer,
@@ -69,7 +69,7 @@ export default async function Page({
   }
 
   const name = file?.fileName || '--';
-  const date = parseDate(file?.createdOn) || '--';
+  const date = formatDate(file?.createdOn!) || '--';
   const author = file?.createdBy?.name || '--';
   const size = file?.metaFile?.sizeText || '--';
 
