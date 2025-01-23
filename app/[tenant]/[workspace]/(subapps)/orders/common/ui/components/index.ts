@@ -8,3 +8,4 @@ export {ContactUs} from './contact-us';
 export {ProductCard} from './product-card';
 export {OrderColumns} from './columns';
 export {ExpandableCard} from './expandable-card';
+export {DownlaodButton} from './download-button';

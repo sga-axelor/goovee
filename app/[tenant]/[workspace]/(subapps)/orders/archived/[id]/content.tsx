@@ -21,6 +21,7 @@ import {
   PaymentMethod,
   ProductsList,
   ExpandableCard,
+  DownlaodButton,
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {
@@ -28,6 +29,7 @@ import {
   ORDER_NUMBER,
   INVOICE,
   CUSTOMER_DELIVERY,
+  DOWNLOAD_PDF,
 } from '@/subapps/orders/common/constants/orders';
 
 const Content = ({order}: {order: any}) => {
@@ -161,24 +163,75 @@ const Content = ({order}: {order: any}) => {
               inTaxTotal={inTaxTotal}
               totalDiscount={totalDiscount}
             />
-            <ExpandableCard
-              title={i18n.t(INVOICE)}
-              records={invoices}
-              isDisabled={record => loading[`invoice-${record.id}`] || false}
-              onDownload={handleInvoiceDownload}
-            />
-            <ExpandableCard
-              title={i18n.t(CUSTOMER_DELIVERY)}
-              records={customerDeliveries}
-              isDisabled={record =>
-                loading[`customerDelivery-${record.id}`] || false
-              }
-              onDownload={handleCustomerDeliveryPDFDownload}
-            />
+
+            {invoices?.length ? (
+              <ExpandableCard title={i18n.t(INVOICE)}>
+                {invoices.map((record: any) => {
+                  const isDisabled = loading[`invoice-${record.id}`] || false;
+
+                  return (
+                    <div key={record.id} className="flex flex-col gap-4 mb-4">
+                      <div className="flex flex-col gap-2 text-sm">
+                        <div className="flex gap-4 justify-between">
+                          <div className="font-medium">{i18n.t('Number')}:</div>
+                          <div>{record.invoiceId}</div>
+                        </div>
+                        <div className="flex gap-4 justify-between">
+                          <div className="font-medium">
+                            {i18n.t('Created on')}:
+                          </div>
+                          <div>{record.createdOn}</div>
+                        </div>
+                      </div>
+
+                      <DownlaodButton
+                        disabled={isDisabled}
+                        record={record}
+                        title={i18n.t(DOWNLOAD_PDF)}
+                        onDownload={handleInvoiceDownload}
+                      />
+                    </div>
+                  );
+                })}
+              </ExpandableCard>
+            ) : null}
+
+            {customerDeliveries.length ? (
+              <ExpandableCard title={i18n.t(CUSTOMER_DELIVERY)}>
+                {customerDeliveries.map((record: any) => {
+                  const isDisabled =
+                    loading[`customerDelivery-${record.id}`] || false;
+
+                  return (
+                    <div key={record.id} className="flex flex-col gap-4 mb-4">
+                      <div className="flex flex-col gap-2 text-sm">
+                        <div className="flex gap-4 justify-between">
+                          <div className="font-medium">{i18n.t('Number')}:</div>
+                          <div>{record.stockMoveSeq}</div>
+                        </div>
+                        <div className="flex gap-4 justify-between">
+                          <div className="font-medium">
+                            {i18n.t('Created on')}:
+                          </div>
+                          <div>{record.createdOn}</div>
+                        </div>
+                      </div>
+                      <DownlaodButton
+                        disabled={isDisabled}
+                        record={record}
+                        title={i18n.t(DOWNLOAD_PDF)}
+                        onDownload={handleCustomerDeliveryPDFDownload}
+                      />
+                    </div>
+                  );
+                })}
+              </ExpandableCard>
+            ) : null}
           </div>
         </div>
       </Container>
     </>
   );
 };
+
 export default Content;

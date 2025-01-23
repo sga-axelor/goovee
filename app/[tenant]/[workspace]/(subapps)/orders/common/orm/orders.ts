@@ -184,7 +184,9 @@ export async function findOrder({
   if (!tenantId && !workspaceURL) return null;
 
   const client = await manager.getClient(tenantId);
-
+  if (!client) {
+    return null;
+  }
   const baseWhereClause: any = {
     id,
     ...params.where,
@@ -210,76 +212,51 @@ export async function findOrder({
       createdOn: true,
       statusSelect: true,
       deliveryState: true,
-      shipmentMode: {
-        name: true,
-      },
-      clientPartner: {
-        fullName: true,
-      },
-      company: {
-        name: true,
-      },
+      shipmentMode: {name: true},
+      clientPartner: {fullName: true},
+      company: {name: true},
       mainInvoicingAddress: {
         zip: true,
         addressl4: true,
         addressl6: true,
-        country: {
-          name: true,
-        },
+        country: {name: true},
       },
       deliveryAddress: {
         zip: true,
         addressl4: true,
         addressl6: true,
-        country: {
-          name: true,
-        },
+        country: {name: true},
       },
       saleOrderLineList: {
         select: {
+          id: true,
           productName: true,
           qty: true,
-          unit: {
-            name: true,
-          },
+          unit: {name: true},
           price: true,
           exTaxTotal: true,
           discountAmount: true,
           inTaxTotal: true,
-          product: {
-            picture: {
-              id: true,
-            },
-          },
-          taxLineSet: {
-            select: {
-              name: true,
-              value: true,
-            },
-          },
+          product: {picture: {id: true}},
+          taxLineSet: {select: {name: true, value: true}},
         },
       },
-      currency: {
-        code: true,
-        numberOfDecimals: true,
-        symbol: true,
-      },
+      currency: {code: true, numberOfDecimals: true, symbol: true},
     },
   });
 
-  if (!order) {
-    return null;
-  }
+  if (!order) return null;
 
   const saleOrderLineIds = order?.saleOrderLineList?.map(
     (line: any) => line.id,
   );
 
-  const invoices = await client.aOSInvoice
-    .find({
-      where: {
+  const [invoices, customerDeliveries] = await Promise.all([
+    findInvoices({
+      workspaceURL,
+      tenantId,
+      whereClause: {
         ...invoicesParams?.where,
-        portalWorkspace: {url: workspaceURL},
         OR: [
           {saleOrder: {id: order.id}},
           {
@@ -293,40 +270,16 @@ export async function findOrder({
             ],
           },
         ],
-        statusSelect: {eq: INVOICE_STATUS.VENTILATED},
       },
-      select: {
-        invoiceId: true,
-        createdOn: true,
-        saleOrder: true,
-        invoiceLineList: {
-          select: {
-            saleOrderLine: {saleOrder: true},
-          },
-        },
-      },
-    })
-    .catch(err => {
-      console.error('Error fetching invoices:', err);
-      return [];
-    });
-
-  const customerDeliveries = await client.aOSStockMove
-    .find({
-      where: {
+    }),
+    findCustomerDeliveries({
+      workspaceURL,
+      tenantId,
+      whereClause: {
         saleOrderSet: {id: order.id},
-        statusSelect: CUSTOMERS_DELIVERY_STATUS.REALIZED,
-        portalWorkspace: {url: workspaceURL},
       },
-      select: {
-        stockMoveSeq: true,
-        createdOn: true,
-      },
-    })
-    .catch(err => {
-      console.error('Error fetching customer deliveries:', err);
-      return [];
-    });
+    }),
+  ]);
 
   const {
     currency,
@@ -353,28 +306,12 @@ export async function findOrder({
           (sumOfDiscounts + parseFloat(exTaxTotal))
         ).toFixed(scale);
 
-  const $saleOrderLineList: any = [];
-
-  for (const list of saleOrderLineList || []) {
-    const line = {
-      ...list,
-      qty: await formatNumber(list.qty, {scale}),
-      price: await formatNumber(list.price, {
-        scale,
-        currency: currencySymbol,
-      }),
-      exTaxTotal: await formatNumber(list.exTaxTotal, {
-        scale,
-        currency: currencySymbol,
-      }),
-      discountAmount: await formatNumber(list.discountAmount, scale),
-      inTaxTotal: await formatNumber(list.inTaxTotal, {
-        scale,
-        currency: currencySymbol,
-      }),
-    };
-    $saleOrderLineList.push(line);
-  }
+  const [$saleOrderLineList, $invoices, $customerDeliveries] =
+    await Promise.all([
+      processSaleOrderLineList(saleOrderLineList, scale, currencySymbol),
+      processInvoices(invoices),
+      processCustomerDeliveries(customerDeliveries),
+    ]);
 
   return {
     ...order,
@@ -388,16 +325,60 @@ export async function findOrder({
       currency: currencySymbol,
     }),
     saleOrderLineList: $saleOrderLineList,
-    invoices: invoices.map(({invoiceId, ...rest}) => ({
-      ...rest,
-      number: invoiceId,
-    })),
-    customerDeliveries: customerDeliveries.map(({stockMoveSeq, ...rest}) => ({
-      ...rest,
-      number: stockMoveSeq,
-    })),
+    invoices: $invoices,
+    customerDeliveries: $customerDeliveries,
     totalDiscount,
   };
+}
+
+export async function findInvoices({
+  ids,
+  workspaceURL,
+  tenantId,
+  whereClause = null,
+}: {
+  ids?: ID[];
+  workspaceURL: string;
+  tenantId: Tenant['id'];
+  whereClause?: any;
+}) {
+  if (!tenantId && !workspaceURL) return null;
+
+  const client = await manager.getClient(tenantId);
+  if (!client) {
+    return null;
+  }
+
+  const result: any = await client.aOSInvoice
+    .find({
+      where: {
+        ...whereClause,
+        ...(ids
+          ? {
+              id: {
+                in: ids,
+              },
+            }
+          : {}),
+        portalWorkspace: {url: workspaceURL},
+        statusSelect: {eq: INVOICE_STATUS.VENTILATED},
+      },
+      select: {
+        invoiceId: true,
+        createdOn: true,
+        saleOrder: true,
+        invoiceLineList: {
+          select: {saleOrderLine: {saleOrder: true}},
+        },
+      },
+    })
+    .then(clone)
+    .catch(err => {
+      console.error('Error fetching invoices:', err);
+      return null;
+    });
+
+  return result;
 }
 
 export async function findInvoice({
@@ -416,90 +397,162 @@ export async function findInvoice({
       };
     };
   };
-}): Promise<{
-  success?: boolean;
-  error?: boolean;
-  message?: string;
-  data?: any;
-}> {
+}) {
+  if (!id) {
+    return null;
+  }
+
   if (!(tenantId && workspaceURL))
     return {
       error: true,
       message: await t('Invalid TenantId & workspace'),
     };
-
-  const client = await manager.getClient(tenantId);
-
-  const invoice: any = await client.aOSInvoice
-    .findOne({
-      where: {
-        id,
-        ...params?.where,
-        portalWorkspace: {
-          url: workspaceURL,
-        },
-      },
-      select: {
-        id: true,
-        invoiceId: true,
-      },
+  const result = await findInvoices({
+    ids: [id],
+    workspaceURL,
+    tenantId,
+    whereClause: {
+      ...params?.where,
+    },
+  })
+    .then((invoices: any) => {
+      return {
+        success: true,
+        data: invoices && invoices[0],
+      };
     })
-    .then(clone);
-
-  if (!invoice) {
-    return {
-      error: true,
-      message: await t('Record not found: The requested data does not exist.'),
-    };
-  }
-
-  return {success: true, data: invoice};
+    .catch(error => {
+      console.log('error >>>', error);
+      return {
+        error: true,
+        data: null,
+      };
+    });
+  return result;
 }
 
-export async function findCustomerDelivery({
-  id,
+export async function findCustomerDeliveries({
+  ids,
   workspaceURL,
   tenantId,
+  whereClause = null,
 }: {
-  id: ID;
+  ids?: ID[];
   workspaceURL: string;
   tenantId: Tenant['id'];
-}): Promise<{
-  success?: boolean;
-  error?: boolean;
-  message?: string;
-  data?: any;
-}> {
-  if (!tenantId && !workspaceURL)
-    return {
-      error: true,
-      message: await t('Invalid TenantId & workspace'),
-    };
+  whereClause?: any;
+}) {
+  if (!tenantId && !workspaceURL) return null;
 
   const client = await manager.getClient(tenantId);
+  if (!client) {
+    return null;
+  }
 
-  const customerDelivery: any = await client.aOSStockMove
-    .findOne({
+  const result: any = await client.aOSStockMove
+    .find({
       where: {
-        id,
+        ...whereClause,
+        ...(ids?.length
+          ? {
+              id: {
+                in: ids,
+              },
+            }
+          : {}),
         statusSelect: CUSTOMERS_DELIVERY_STATUS.REALIZED,
-        portalWorkspace: {
-          url: workspaceURL,
-        },
+        portalWorkspace: {url: workspaceURL},
       },
       select: {
         id: true,
         stockMoveSeq: true,
+        createdOn: true,
       },
     })
-    .then(clone);
+    .then(clone)
+    .catch(error => {
+      console.log('error >>>', error);
+      return null;
+    });
+  return result;
+}
 
-  if (!customerDelivery) {
-    return {
-      error: true,
-      message: await t('Record not found: The requested data does not exist.'),
-    };
+export async function findCustomerDelivery({
+  id,
+  tenantId,
+  workspaceURL,
+}: {
+  id: ID;
+  tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
+}) {
+  if (!id) {
+    return null;
   }
 
-  return {success: true, data: customerDelivery};
+  if (!workspaceURL) {
+    return null;
+  }
+  const result = await findCustomerDeliveries({
+    ids: [id],
+    workspaceURL,
+    tenantId,
+  })
+    .then((deliveries: any) => {
+      return {
+        success: true,
+        data: deliveries && deliveries[0],
+      };
+    })
+    .catch(error => {
+      console.log('error >>>', error);
+      return {
+        error: true,
+        data: null,
+      };
+    });
+  return result;
+}
+
+async function processSaleOrderLineList(
+  saleOrderLineList: any[],
+  scale: number,
+  currencySymbol: string,
+) {
+  return Promise.all(
+    saleOrderLineList.map(async line => ({
+      ...line,
+      qty: await formatNumber(line.qty, {scale}),
+      price: await formatNumber(line.price, {scale, currency: currencySymbol}),
+      exTaxTotal: await formatNumber(line.exTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+      discountAmount: await formatNumber(line.discountAmount, {scale}),
+      inTaxTotal: await formatNumber(line.inTaxTotal, {
+        scale,
+        currency: currencySymbol,
+      }),
+    })),
+  );
+}
+
+async function processInvoices(invoices: any[]) {
+  return Promise.all(
+    invoices.map(async ({invoiceId, createdOn, ...rest}) => ({
+      ...rest,
+      invoiceId,
+      createdOn: await formatDate(createdOn!),
+    })),
+  );
+}
+
+async function processCustomerDeliveries(customerDeliveries: any[]) {
+  return Promise.all(
+    customerDeliveries.map(async ({stockMoveSeq, createdOn, ...rest}) => ({
+      ...rest,
+      stockMoveSeq,
+      createdOn: await formatDate(createdOn!),
+    })),
+  );
 }

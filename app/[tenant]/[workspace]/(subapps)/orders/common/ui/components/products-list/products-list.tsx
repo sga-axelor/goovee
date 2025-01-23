@@ -34,7 +34,7 @@ export const ProductsList = ({saleOrderLineList, tenant}: any) => {
           <StyledTable
             headStyle="bg-foreground !text-background !rounded-none !px-4"
             columns={PRODUCT_COLUMNS}>
-            {saleOrderLineList?.length === 0 ? (
+            {!saleOrderLineList?.length ? (
               <TableRow>
                 <TableCell
                   colSpan={PRODUCT_COLUMNS.length}
@@ -71,7 +71,7 @@ export const ProductsList = ({saleOrderLineList, tenant}: any) => {
           <StyledTable
             headStyle="bg-foreground !text-background !rounded-none !text-sm !px-4"
             columns={PRODUCT_CARD_COLUMNS}>
-            {saleOrderLineList?.length === 0 ? (
+            {!saleOrderLineList?.length ? (
               <TableRow>
                 <TableCell
                   colSpan={PRODUCT_CARD_COLUMNS.length}
