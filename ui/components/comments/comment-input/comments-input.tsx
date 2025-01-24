@@ -9,7 +9,7 @@ import {MdAttachFile, MdDelete} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {Button, Input, Textarea} from '@/ui/components';
+import {Button, Input, AutosizeTextarea} from '@/ui/components';
 import {
   Form,
   FormControl,
@@ -144,12 +144,20 @@ export function CommentInput({
             render={({field}) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Textarea
+                  <AutosizeTextarea
                     autoFocus={autoFocus}
+                    minHeight={30}
+                    maxHeight={300}
                     className={cn(
-                      'h-10 placeholder:text-sm placeholder:text-gray-dark',
+                      'placeholder:text-sm placeholder:text-gray-dark',
                       className,
                     )}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        form.handleSubmit(handleSubmit)();
+                      }
+                    }}
                     placeholder={i18n.t(placeholderText)}
                     {...field}
                   />
@@ -159,7 +167,7 @@ export function CommentInput({
             )}
           />
 
-          <div className="flex items-end gap-4 h-[5rem] ">
+          <div className="flex items-end gap-4">
             {showAttachmentIcon && (
               <div {...getRootProps({className: 'dropzone'})}>
                 <input {...getInputProps()} />

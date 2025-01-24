@@ -222,3 +222,4 @@ export {Chip} from './chip';
 export {ArrowSwitch} from './arrow-switch';
 export {DropdownSelector} from './dropdown-selector';
 export {DocViewer} from './doc-viewer';
+export {AutosizeTextarea} from './textarea-auto-size';
