@@ -414,7 +414,7 @@ const updatePreferenceConfigs: any = {
 export async function updatePartnerPreference(params: UpdateParams) {
   let preference = await findOrCreatePartnerPreference(params);
 
-  const {code, tenantId, record, activateNotification} = params;
+  const {code, tenantId, record, activateNotification = false} = params;
   const client = await manager.getClient(tenantId);
 
   if (!record) {
@@ -439,7 +439,7 @@ export async function updatePartnerPreference(params: UpdateParams) {
   );
 
   const data: any = {
-    activateNotification: record.activateNotification,
+    activateNotification: record.activateNotification || false,
   };
 
   if (existing) {

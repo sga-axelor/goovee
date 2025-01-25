@@ -1,46 +1,81 @@
-'use client';
-
-import {z} from 'zod';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
+import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/locale';
-import {Button} from '@/ui/components/button';
-
-import {Form} from '@/ui/components/form';
+import {getSession} from '@/auth';
+import {Separator} from '@/ui/components/separator';
+import {SUBAPP_CODES} from '@/constants';
+import {findPreferences} from '@/orm/preference';
+import {workspacePathname} from '@/utils/workspace';
+import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
 import {Title} from '../common/ui/components';
+import {Preference} from './preference';
 
-const formSchema = z.object({});
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string};
+}) {
+  const {tenant: tenantId} = params;
+  const {workspaceURL: url} = workspacePathname(params);
 
-export default function Page() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {},
-  });
+  const session = await getSession();
+  const user = session?.user;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {};
+  if (!user) {
+    return notFound();
+  }
+
+  const [
+    eventsPreference,
+    newsPreference,
+    resourcesPreference,
+    forumPreference,
+  ] = await Promise.allSettled(
+    [
+      SUBAPP_CODES.events,
+      SUBAPP_CODES.news,
+      SUBAPP_CODES.resources,
+      SUBAPP_CODES.forum,
+    ].map(code =>
+      findPreferences({
+        code,
+        tenantId,
+        url,
+        user,
+      }),
+    ),
+  ).then(results => results.map(r => r.status === 'fulfilled' && r.value));
 
   return (
     <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
-      {' '}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-20">
-            <div className="space-y-4">
-              <Title text={i18n.t('Notifications')} />
-            </div>
-
-            <div className="space-y-4 text-end sr-only">
-              <Button variant="success" disabled>
-                {i18n.t('Save settings')}
-              </Button>
-            </div>
-          </div>
-        </form>
-      </Form>
+      <div className="space-y-20">
+        <div className="space-y-4">
+          <Title text={await t('Notifications')} />
+          <Separator />
+          <Preference
+            title={await t('Events')}
+            code={SUBAPP_CODES.events}
+            preference={eventsPreference}
+          />
+          <Preference
+            title={await t('News')}
+            code={SUBAPP_CODES.news}
+            preference={newsPreference}
+          />
+          <Preference
+            title={await t('Resources')}
+            code={SUBAPP_CODES.resources}
+            preference={resourcesPreference}
+          />
+          <Preference
+            title={await t('Forum')}
+            code={SUBAPP_CODES.forum}
+            preference={forumPreference}
+          />
+        </div>
+      </div>
     </div>
   );
 }
