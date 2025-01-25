@@ -1,0 +1,22 @@
+{
+  "name": "AOSPortalForumNotificationConfig",
+  "table": "portal_portal_forum_notification_config",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "Boolean",
+      "name": "activateNotification"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "forumGroup",
+      "target": "AOSPortalForumGroup"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalUserPreference",
+      "target": "AOSPortalUserPreference"
+    }
+  ]
+}

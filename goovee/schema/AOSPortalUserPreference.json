@@ -1,0 +1,51 @@
+{
+  "name": "AOSPortalUserPreference",
+  "table": "portal_portal_user_preference",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "Boolean",
+      "name": "activateNotification"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "app",
+      "target": "AOSPortalApp"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "partner",
+      "target": "AOSPartner"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "workspace",
+      "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "OneToMany",
+      "name": "resourceNotificationConfigs",
+      "target": "AOSPortalResourceNotificationConfig",
+      "mappedBy": "portalUserPreference"
+    },
+    {
+      "type": "OneToMany",
+      "name": "forumNotificationConfigs",
+      "target": "AOSPortalForumNotificationConfig",
+      "mappedBy": "portalUserPreference"
+    },
+    {
+      "type": "OneToMany",
+      "name": "eventNotificationConfigs",
+      "target": "AOSPortalEventNotificationConfig",
+      "mappedBy": "portalUserPreference"
+    },
+    {
+      "type": "OneToMany",
+      "name": "newsNotificationConfigs",
+      "target": "AOSPortalNewsNotificationConfig",
+      "mappedBy": "portalUserPreference"
+    }
+  ]
+}

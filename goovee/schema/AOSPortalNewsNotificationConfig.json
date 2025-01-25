@@ -1,0 +1,22 @@
+{
+  "name": "AOSPortalNewsNotificationConfig",
+  "table": "portal_portal_news_notification_config",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "Boolean",
+      "name": "activateNotification"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "newsCategory",
+      "target": "AOSPortalNewsCategory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalUserPreference",
+      "target": "AOSPortalUserPreference"
+    }
+  ]
+}

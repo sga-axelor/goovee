@@ -1,0 +1,22 @@
+{
+  "name": "AOSPortalEventNotificationConfig",
+  "table": "portal_portal_event_notification_config",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "Boolean",
+      "name": "activateNotification"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "eventCategory",
+      "target": "AOSPortalEventCategory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "portalUserPreference",
+      "target": "AOSPortalUserPreference"
+    }
+  ]
+}
