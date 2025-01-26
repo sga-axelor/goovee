@@ -47,7 +47,6 @@ interface CommentsProps {
   disabled?: boolean;
   hideSortBy?: boolean;
   inputContainerClassName?: string;
-  showCommentOnCreations?: boolean;
 }
 
 export function Comments({
@@ -66,7 +65,6 @@ export function Comments({
   disabled = false,
   hideSortBy = false,
   inputContainerClassName = '',
-  showCommentOnCreations = false,
 }: CommentsProps) {
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
@@ -94,9 +92,9 @@ export function Comments({
   const handleCreate = useCallback(
     async (props: CreateProps) => {
       await onCreate(props);
-      showCommentOnCreations && setShowComments(true);
+      setShowComments(true);
     },
-    [onCreate, showCommentOnCreations],
+    [onCreate],
   );
 
   const handleSortBy = useCallback((value: string) => {

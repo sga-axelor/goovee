@@ -58,7 +58,7 @@ interface CommentListItemProps {
   disabled: boolean;
   isTopLevel?: boolean;
   sortBy?: any;
-  onSubmit?: (data: any) => void;
+  onSubmit?: (data: any) => Promise<void>;
   tenantId: Tenant['id'];
 }
 
@@ -147,13 +147,17 @@ export const CommentListItem = ({
 
   const toggleCommentInput = () => setShowCommentInput(prev => !prev);
 
-  const handleCommentSubmit = (data: any) => {
+  const handleCommentSubmit = async (data: any) => {
     if (onSubmit) {
       try {
-        onSubmit({...data, parent: parentMailMessage?.id || parentCommentId});
+        await onSubmit({
+          ...data,
+          parent: parentMailMessage?.id || parentCommentId,
+        });
       } catch (error) {
         console.error('Error submitting comment:', error);
       } finally {
+        setShowSubComments(true);
         setShowCommentInput(false);
       }
     } else {

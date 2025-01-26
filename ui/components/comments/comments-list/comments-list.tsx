@@ -17,7 +17,7 @@ interface CommentsListProps {
   subapp: SUBAPP_CODES;
   disabled?: boolean;
   sortBy: any;
-  onSubmit?: (comment: any) => void;
+  onSubmit?: (comment: any) => Promise<void>;
   tenantId: Tenant['id'];
 }
 
