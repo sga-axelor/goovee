@@ -22,12 +22,14 @@ import {i18n} from '@/locale';
 import {
   COMMENT,
   COMMENTS,
+  DEFAULT_COMMENTS_LIMIT,
   DISABLED_COMMENT_PLACEHOLDER,
   SORT_BY_OPTIONS,
   SORT_TYPE,
   type SUBAPP_CODES,
 } from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {CreateProps} from '@/ui/hooks/use-comments';
 
 interface CommentsProps {
   record: any;
@@ -69,16 +71,13 @@ export function Comments({
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
 
-  const handleShowComment = () => {
-    showCommentOnCreations && setShowComments(true);
-  };
-  const {comments, total, totalCommentThreadCount, loadMore, onCreate} =
+  const {comments, totalCommentThreadCount, loadMore, onCreate, hasMore} =
     useComments({
       model: {id: record.id},
       subapp,
       sortBy,
-      seeMore,
-      handleShowComment,
+      limit: seeMore ? DEFAULT_COMMENTS_LIMIT : undefined,
+      newCommentOnTop: inputPosition === 'top',
     });
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;
@@ -91,6 +90,14 @@ export function Comments({
       setShowComments(prev => !prev);
     }
   };
+
+  const handleCreate = useCallback(
+    async (props: CreateProps) => {
+      await onCreate(props);
+      showCommentOnCreations && setShowComments(true);
+    },
+    [onCreate, showCommentOnCreations],
+  );
 
   const handleSortBy = useCallback((value: string) => {
     if (value) setSortBy(value);
@@ -106,7 +113,7 @@ export function Comments({
       placeholderText={
         isLoggedIn ? i18n.t(COMMENT) : i18n.t(DISABLED_COMMENT_PLACEHOLDER)
       }
-      onSubmit={onCreate}
+      onSubmit={handleCreate}
     />
   );
 
@@ -170,7 +177,7 @@ export function Comments({
               showReactions={showReactions}
               subapp={subapp}
               sortBy={sortBy}
-              onSubmit={onCreate}
+              onSubmit={handleCreate}
               tenantId={tenant}
             />
 
@@ -187,7 +194,7 @@ export function Comments({
                     </span>
                   </div>
                 )}
-                {comments.length < total && (
+                {hasMore && (
                   <div
                     className={`flex items-center gap-2 cursor-pointer`}
                     onClick={loadMore}>

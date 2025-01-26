@@ -20,6 +20,8 @@ import {
 } from '@/constants';
 import {findByID} from '@/orm/record';
 import {sql} from '@/utils/template-string';
+import {QueryOptions, SelectOptions, WhereOptions} from '@goovee/orm';
+import {AOSMailMessage} from '@/goovee/.generated/models';
 
 const pump = promisify(pipeline);
 
@@ -37,22 +39,51 @@ const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
   [SUBAPP_CODES.quotations]: 'com.axelor.apps.sale.db.SaleOrder',
 };
 
+function getSelectFields(
+  childConditions?: Omit<QueryOptions<AOSMailMessage>, 'select'>,
+) {
+  const commentFields = {
+    note: true,
+    publicBody: true,
+    body: true,
+    createdOn: true,
+    partner: {picture: true, simpleFullName: true},
+    mailMessageFileList: {
+      select: {attachmentFile: {id: true, fileName: true}},
+    },
+    createdBy: {id: true, fullName: true},
+  } as const;
+
+  const select = {
+    ...commentFields,
+    parentMailMessage: commentFields,
+    isPublicNote: true,
+    childMailMessages: {
+      ...childConditions,
+      select: commentFields,
+    } as {select: typeof commentFields},
+  };
+  return select;
+}
+
 export async function getPopularCommentsBySorting({
-  page,
+  skip = 0,
   limit,
   workspace,
   modelRecord,
   tenantId,
   modelName,
   subapp,
+  exclude,
 }: {
-  page?: string | number;
+  skip?: number;
   limit?: number;
   workspace: PortalWorkspace;
   modelRecord: any;
   tenantId: Tenant['id'];
   subapp: SUBAPP_CODES;
   modelName: string;
+  exclude?: string[];
 }) {
   if (!workspace) {
     return {error: true, message: await t('Invalid workspace')};
@@ -65,11 +96,16 @@ export async function getPopularCommentsBySorting({
     };
   }
 
-  const skip = getSkipInfo(limit, page);
-
   const client = await manager.getClient(tenantId);
 
-  const comments: any = await client.$raw(
+  const params = [
+    modelRecord.id, // $1
+    limit, // $2
+    skip, // $3
+    modelName, // $4
+  ];
+  let query = client.$raw.bind(
+    null,
     sql`
       WITH
         mailMessageFileListData AS (
@@ -118,6 +154,8 @@ export async function getPopularCommentsBySorting({
             AND mail_message.related_model = $4
             AND mail_message.related_id = $1 ${subapp === SUBAPP_CODES.forum
         ? 'AND mail_message.parent_mail_message IS NULL'
+        : ''} ${exclude && exclude.length
+        ? `AND mail_message.id NOT IN (${exclude.map((_, i) => '$' + (i + 1 + params.length)).join(',')})`
         : ''}
         ),
         childCommentsData AS (
@@ -197,11 +235,14 @@ export async function getPopularCommentsBySorting({
       OFFSET
         $3
     `,
-    modelRecord.id,
-    limit,
-    skip,
-    modelName,
+    ...params,
   );
+
+  if (exclude?.length) {
+    query = query.bind(null, ...exclude);
+  }
+
+  const comments: any = await query();
 
   return {
     success: true,
@@ -475,9 +516,17 @@ export async function addComment({
       },
     });
 
+    const data = await client.aOSMailMessage.find({
+      where: {id: {in: [response.id].concat(parent ? [parent.id] : [])}},
+      select: getSelectFields(),
+    });
+
     return {
       success: true,
-      data: clone(response),
+      data: [
+        data.find(d => d.id === response.id),
+        parent && data.find(d => d.id === parent.id),
+      ],
     };
   } catch (error) {
     console.log('error >>>', error);
@@ -495,19 +544,21 @@ export type Comment = NonNullable<
 export async function findComments({
   model,
   limit,
-  page,
+  skip,
   sort,
   workspaceURL,
   subapp,
   tenantId,
+  exclude,
 }: {
   model: {id: ID} | null;
   limit?: number;
-  page?: number;
+  skip?: number;
   sort?: any;
   workspaceURL: string;
   subapp: SUBAPP_CODES;
   tenantId: Tenant['id'];
+  exclude?: string[];
 }) {
   if (!tenantId) {
     return {
@@ -575,7 +626,6 @@ export async function findComments({
     };
   }
 
-  const skip = getSkipInfo(limit, page);
   const client = await manager.getClient(tenantId);
   try {
     let orderBy: any = null;
@@ -585,13 +635,14 @@ export async function findComments({
         break;
       case SORT_TYPE.popular:
         const results: any = await getPopularCommentsBySorting({
-          page,
+          skip,
           limit,
           workspace,
           modelRecord,
           tenantId,
           modelName,
           subapp,
+          exclude,
         });
         const {
           comments = [],
@@ -610,25 +661,14 @@ export async function findComments({
         orderBy = {createdOn: ORDER_BY.DESC};
     }
 
-    const commentFields = {
-      note: true,
-      publicBody: true,
-      body: true,
-      createdOn: true,
-      partner: {picture: true, simpleFullName: true},
-      mailMessageFileList: {
-        select: {attachmentFile: {id: true, fileName: true}},
-      },
-      createdBy: {id: true, fullName: true},
-    } as const;
-
     const getWhereConditions = () => {
-      const baseConditions = {
+      const baseConditions: WhereOptions<AOSMailMessage> = {
         relatedId: modelRecord.id,
         relatedModel: modelName,
+        ...(exclude && exclude.length && {id: {notIn: exclude}}),
       };
 
-      const subappConditions = {
+      const subappConditions: WhereOptions<AOSMailMessage> = {
         ...(subapp !== SUBAPP_CODES.quotations && {
           OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
         }),
@@ -645,20 +685,14 @@ export async function findComments({
       orderBy,
       take: limit,
       ...(skip ? {skip} : {}),
-      select: {
-        ...commentFields,
-        parentMailMessage: commentFields,
-        isPublicNote: true,
-        childMailMessages: {
-          orderBy,
-          where: {
-            relatedId: modelRecord.id,
-            relatedModel: modelName,
-            isPublicNote: true,
-          },
-          select: commentFields,
-        } as {select: typeof commentFields},
-      },
+      select: getSelectFields({
+        orderBy,
+        where: {
+          relatedId: modelRecord.id,
+          relatedModel: modelName,
+          isPublicNote: true,
+        },
+      }),
     });
 
     comments = comments?.map(comment => {

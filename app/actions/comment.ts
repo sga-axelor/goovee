@@ -10,6 +10,7 @@ import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {getCommentConfigForSubapp} from '@/utils/comment';
+import {clone} from '@/utils';
 
 export async function createComment(formData: any, valueString: string) {
   const session = await getSession();
@@ -116,7 +117,7 @@ export async function createComment(formData: any, valueString: string) {
       return {
         success: true,
         message: 'Comment created successfully.',
-        data: response,
+        data: clone(response.data),
       };
     }
   } catch (error) {
@@ -132,9 +133,10 @@ export async function fetchComments({
   model,
   sort,
   limit,
-  page,
+  skip,
   subapp,
   workspaceURL,
+  exclude,
 }: any) {
   const session = await getSession();
 
@@ -174,14 +176,15 @@ export async function fetchComments({
       model,
       sort,
       limit,
-      page,
+      skip,
       subapp,
       workspaceURL,
       tenantId,
+      exclude,
     });
     return response.error
       ? {error: true, message: 'Error while fetching comments.'}
-      : response;
+      : clone(response);
   } catch (error) {
     console.error('Error while fetching comments:', error);
     return {

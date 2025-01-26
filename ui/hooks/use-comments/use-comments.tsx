@@ -1,84 +1,74 @@
 'use client';
 
-import {useState, useEffect, useCallback, useMemo} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {createComment, fetchComments} from '@/app/actions/comment';
-import {
-  DEFAULT_COMMENTS_LIMIT,
-  DEFAULT_PAGE,
-  type SUBAPP_CODES,
-} from '@/constants';
-import {CommentResponse, ID} from '@/types';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {useToast} from '@/ui/hooks';
+import {createComment, fetchComments} from '@/app/actions/comment';
+import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
+import {ID} from '@/types';
+import {useToast} from '@/ui/hooks';
 
-interface UseCommentsProps {
+export type UseCommentsProps = {
   sortBy: string;
   model: {id: ID};
   subapp: SUBAPP_CODES;
-  seeMore?: boolean;
-  handleShowComment: () => void;
-}
+  limit?: number;
+  newCommentOnTop?: boolean;
+  // enableQuotes?: boolean;
+  // enableReplies?: boolean;
+};
 
-interface CommentFetchParams {
-  page: number;
-  sortBy: string;
-}
-
-interface HandleCommentParams {
+export type CreateProps = {
   formData: any;
   values: any;
   parent?: number | null;
-}
+};
 
-export function useComments({
-  sortBy: sortByProp,
-  model,
-  subapp,
-  seeMore,
-  handleShowComment = () => {},
-}: UseCommentsProps) {
+export function useComments(props: UseCommentsProps) {
+  const {sortBy, model, subapp, limit, newCommentOnTop} = props;
   const [comments, setComments] = useState<any[]>([]);
-  const [page, setPage] = useState(DEFAULT_PAGE);
-  const [sortBy, setSortBy] = useState(sortByProp);
-  const [loading, setLoading] = useState(true);
+  const [createdCommentIds, setCreatedCommentIds] = useState<Set<string>>(
+    new Set(),
+  );
   const [total, setTotal] = useState(0);
   const [fetching, setFetching] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [totalCommentThreadCount, setTotalCommentThreadCount] = useState(0);
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
+  const [skip, setSkip] = useState(0);
 
-  const getComments = useCallback(
-    async ({page, sortBy}: CommentFetchParams) => {
+  const loadComments = useCallback(
+    async (options?: {reset?: boolean; skip?: number; exclude?: string[]}) => {
+      const {reset = true, skip = 0, exclude} = options || {};
+      console.log('loading with skip =', skip);
       setFetching(true);
       try {
         const response: any = await fetchComments({
           model: {id: model.id},
           subapp,
           sort: sortBy,
-          limit: seeMore ? DEFAULT_COMMENTS_LIMIT : undefined,
-          page,
+          limit,
+          skip,
           workspaceURL,
+          exclude,
         });
 
         if (response.success) {
           const {data = [], total, totalCommentThreadCount} = response;
 
-          setComments(prevComments =>
-            page > 1 ? [...prevComments, ...data] : data,
-          );
           setTotal(total || 0);
           setTotalCommentThreadCount(totalCommentThreadCount);
-        } else {
-          console.error('Response error:', response.error);
-          toast({
-            variant: 'destructive',
-            title: i18n.t(
-              response?.message || 'An error occurred while fetching comments.',
-            ),
-          });
+          if (reset) {
+            setSkip(limit || 0);
+            setComments(data);
+            setCreatedCommentIds(new Set());
+          } else {
+            setComments(prevComments => [...prevComments, ...data]);
+            if (limit) setSkip(skip => skip + limit);
+          }
         }
       } catch (error: any) {
         console.error('Fetch error:', error);
@@ -92,19 +82,19 @@ export function useComments({
         setFetching(false);
       }
     },
-    [model.id, subapp, seeMore, workspaceURL, toast],
+    [model.id, sortBy, subapp, toast, workspaceURL, limit],
   );
 
-  const handleRefresh = useCallback(async () => {
-    await getComments({page, sortBy});
-    setLoading(false);
-    handleShowComment();
-  }, [getComments, page, sortBy]);
+  const loadMore = useCallback(() => {
+    if (fetching || creating) return;
+    loadComments({reset: false, skip, exclude: Array.from(createdCommentIds)});
+  }, [loadComments, skip, fetching, creating, createdCommentIds]);
 
-  const handleComment = useCallback(
-    async ({formData, values, parent = null}: HandleCommentParams) => {
+  const handleCreate = useCallback(
+    async ({formData, values, parent = null}: CreateProps) => {
+      setCreating(true);
       try {
-        const response: CommentResponse = await createComment(
+        const response = await createComment(
           formData,
           JSON.stringify({
             values,
@@ -114,68 +104,81 @@ export function useComments({
             subapp,
           }),
         );
-
-        if (response.success) {
-          handleRefresh();
-          toast({
-            variant: 'success',
-            title: i18n.t('Comment created successfully.'),
-          });
-        } else {
+        if (!response.success) {
           throw new Error(response.message || 'Error creating comment');
         }
+
+        toast({
+          variant: 'success',
+          title: i18n.t('Comment created successfully.'),
+        });
+
+        const [comment, parentComment] = response.data;
+        setComments(prevComments => {
+          const replaced = replaceParent(prevComments, parentComment);
+          if (parentComment && subapp === SUBAPP_CODES.forum) return replaced;
+          if (newCommentOnTop) replaced.unshift(comment);
+          else replaced.push(comment);
+          return replaced;
+        });
+        setTotal(prevTotal =>
+          parentComment && subapp === SUBAPP_CODES.forum
+            ? prevTotal
+            : prevTotal + 1,
+        );
+        setTotalCommentThreadCount(prevTotalCommentThreadCount =>
+          parentComment && subapp === SUBAPP_CODES.forum
+            ? prevTotalCommentThreadCount
+            : prevTotalCommentThreadCount + 1,
+        );
+        setCreatedCommentIds(prevCreatedCommentIds =>
+          new Set(prevCreatedCommentIds).add(comment.id),
+        );
       } catch (error: any) {
         console.error('Submission error:', error);
         toast({
           variant: 'destructive',
           title: i18n.t(error.message || 'An unexpected error occurred.'),
         });
+      } finally {
+        setCreating(false);
       }
     },
-    [workspaceURL, model.id, subapp, handleRefresh, toast],
+    [workspaceURL, model.id, subapp, toast, newCommentOnTop],
   );
-
-  useEffect(() => {
-    setPage(DEFAULT_PAGE);
-    setSortBy(sortByProp);
-  }, [sortByProp]);
-
-  useEffect(() => {
-    getComments({page, sortBy}).finally(() => setLoading(false));
-  }, [page, sortBy]);
 
   const hasMore = useMemo(() => comments.length < total, [comments, total]);
 
-  const loadMore = useCallback(() => {
-    if (hasMore) {
-      setPage((prevPage: number) => prevPage + 1);
-    }
-  }, [hasMore]);
+  useEffect(() => {
+    loadComments();
+  }, [loadComments]);
 
+  console.log(comments);
   return useMemo(
     () => ({
       comments,
       total,
       hasMore,
-      fetching,
-      loading,
-      totalCommentThreadCount,
-      getComments,
       loadMore,
-      onCreate: handleComment,
-      onRefresh: handleRefresh,
+      fetching,
+      creating,
+      totalCommentThreadCount,
+      onCreate: handleCreate,
     }),
     [
+      loadMore,
       comments,
       total,
       hasMore,
       fetching,
-      loading,
+      creating,
       totalCommentThreadCount,
-      getComments,
-      loadMore,
-      handleComment,
-      handleRefresh,
+      handleCreate,
     ],
   );
+}
+
+function replaceParent(comments: {id: unknown}[], parent?: {id: unknown}) {
+  if (!parent) return [...comments];
+  return comments.map(c => (String(c.id) !== String(parent.id) ? c : parent));
 }
