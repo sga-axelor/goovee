@@ -4,6 +4,7 @@ import {useMemo} from 'react';
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
 import {Comments} from '@/ui/components';
+import {isCommentEnabled} from '@/utils/comment';
 
 // ---- LOCAL IMPORTS ---- //
 import {useForum} from '@/subapps/forum/common/ui/context';
@@ -23,7 +24,10 @@ export const ThreadFooter = ({
   const {isMember, workspace} = useForum();
   const disabled = useMemo(() => !isMember, [isMember]);
 
-  const enableComment = workspace.config?.enableComment;
+  const enableComment = isCommentEnabled({
+    subapp: SUBAPP_CODES.forum,
+    workspace,
+  });
 
   return enableComment ? (
     <Comments

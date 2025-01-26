@@ -1,6 +1,6 @@
 import {manager, type Tenant} from '@/tenant';
 import {AOSPortalAppConfig} from '@/goovee/.generated/models';
-import {ID, Partner, User} from '@/types';
+import {ID, Partner, PortalWorkspace, User} from '@/types';
 import {clone} from '@/utils';
 import {SelectOptions} from '@goovee/orm';
 
@@ -396,7 +396,7 @@ export async function findWorkspace({
   url?: string;
   user?: User;
   tenantId: Tenant['id'];
-}) {
+}): Promise<PortalWorkspace | null> {
   if (!(url && tenantId)) return null;
 
   const client = await manager.getClient(tenantId);

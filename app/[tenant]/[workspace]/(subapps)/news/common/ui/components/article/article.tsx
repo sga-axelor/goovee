@@ -9,6 +9,7 @@ import {i18n} from '@/locale';
 import {COMMENTS, SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {Comments} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
+import {isCommentEnabled} from '@/utils/comment';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -50,9 +51,11 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
   const isDisabled = !session ? true : false;
 
   const enableSocialMediaSharing = workspace.config?.enableSocialMediaSharing;
-  const enableNewsComment = workspace.config?.enableNewsComment;
   const availableSocials = workspace.config?.socialMediaSelect;
-  const enableComment = workspace.config?.enableComment;
+  const enableComment = isCommentEnabled({
+    subapp: SUBAPP_CODES.news,
+    workspace,
+  });
 
   const handleClick = (slug: string) => {
     const urlRoute = pathname.split('/article/')[0];
@@ -113,7 +116,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
         </div>
       </div>
 
-      {enableComment && enableNewsComment && (
+      {enableComment && (
         <div className="w-full mb-24 lg:mb-4">
           <div className="p-4 bg-white flex flex-col gap-4 rounded-lg">
             <div>

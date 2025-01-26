@@ -50,6 +50,8 @@ export interface PortalWorkspace extends Model {
   theme?: Theme;
   config?: PortalAppConfig;
   apps?: PortalApp[];
+  workspaceUser?: Model;
+  navigationSelect?: string;
 }
 
 export interface PortalAppConfig extends Model {

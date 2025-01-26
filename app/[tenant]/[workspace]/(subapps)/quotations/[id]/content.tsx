@@ -24,6 +24,7 @@ import {
   SUBAPP_PAGE,
 } from '@/constants';
 import {PaymentOption, type PortalWorkspace} from '@/types';
+import {isCommentEnabled} from '@/utils/comment';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -224,7 +225,10 @@ const Content = ({
   const router = useRouter();
   const {workspaceURL, workspaceURI, tenant} = useWorkspace();
 
-  const enableComment = workspace.config?.enableComment;
+  const enableComment = isCommentEnabled({
+    subapp: SUBAPP_CODES.quotations,
+    workspace,
+  });
 
   const redirectOrder = (order?: {id: string}) => {
     if (orderSubapp && order) {

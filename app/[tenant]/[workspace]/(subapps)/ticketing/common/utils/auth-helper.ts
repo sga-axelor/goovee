@@ -1,10 +1,9 @@
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
-import {AOSPortalTheme} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {Tenant} from '@/tenant';
-import {User} from '@/types';
+import type {PortalWorkspace, User} from '@/types';
 import {Maybe} from '@/types/util';
 import type {ID} from '@goovee/orm';
 import {cache} from 'react';
@@ -17,7 +16,7 @@ export type UserAuthProps = {
   role?: 'total' | 'restricted';
 };
 
-export type WorkspaceAuthProps = {workspaceId: string};
+export type WorkspaceAuthProps = {workspaceId: ID};
 export type TenantAuthProps = {tenantId: Tenant['id']};
 export type AuthProps = UserAuthProps & WorkspaceAuthProps & TenantAuthProps;
 
@@ -33,16 +32,7 @@ export const ensureAuth = cache(async function ensureAuth(
         auth: AuthProps;
         user: User;
         subapp: any;
-        workspace: {
-          id: string;
-          name: string | undefined;
-          version: number;
-          theme: AOSPortalTheme | undefined;
-          url: string;
-          config: any;
-          apps: any[];
-          navigationSelect: string;
-        };
+        workspace: PortalWorkspace;
       };
     }
 > {

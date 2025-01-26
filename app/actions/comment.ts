@@ -9,7 +9,7 @@ import {TENANT_HEADER} from '@/middleware';
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
-import {getCommentConfigForSubapp} from '@/utils/comment';
+import {isCommentEnabled} from '@/utils/comment';
 import {clone} from '@/utils';
 
 export async function createComment(formData: any, valueString: string) {
@@ -63,17 +63,11 @@ export async function createComment(formData: any, valueString: string) {
       message: await t('Invalid workspace'),
     };
   }
-  if (!workspace.config.enableComment) {
+
+  if (!isCommentEnabled({subapp, workspace})) {
     return {
       error: true,
       message: await t('Comments are not enabled'),
-    };
-  }
-
-  if (!getCommentConfigForSubapp({subapp, workspace})) {
-    return {
-      error: true,
-      message: await t(`Comments are not enabled for ${subapp}`),
     };
   }
 
@@ -157,17 +151,10 @@ export async function fetchComments({
     return {error: true, message: await t('Invalid workspace')};
   }
 
-  if (!workspace.config.enableComment) {
+  if (!isCommentEnabled({subapp, workspace})) {
     return {
       error: true,
       message: await t('Comments are not enabled'),
-    };
-  }
-
-  if (!getCommentConfigForSubapp({subapp, workspace})) {
-    return {
-      error: true,
-      message: await t(`Comments are not enabled for ${subapp}`),
     };
   }
 

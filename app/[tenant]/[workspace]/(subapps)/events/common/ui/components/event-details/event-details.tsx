@@ -2,6 +2,8 @@
 
 // ---- CORE IMPORTS ---- //
 import {PortalWorkspace} from '@/types';
+import {isCommentEnabled} from '@/utils/comment';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -20,9 +22,11 @@ export function EventDetails({
   isRegistered: boolean;
 }) {
   const eventId = eventDetails.id;
-  const enableComment = workspace.config?.enableComment;
-  const enableEventComment = workspace.config?.enableEventComment;
 
+  const enableComment = isCommentEnabled({
+    subapp: SUBAPP_CODES.events,
+    workspace,
+  });
   return (
     <div className="flex flex-col gap-6 pt-6 px-4 lg:px-[6.25rem] pb-24 lg:pb-6">
       <EventPageCard
@@ -30,9 +34,7 @@ export function EventDetails({
         workspace={workspace}
         isRegistered={isRegistered}
       />
-      {enableComment && enableEventComment && (
-        <CommentsSection eventId={eventId} />
-      )}
+      {enableComment && <CommentsSection eventId={eventId} />}
     </div>
   );
 }
