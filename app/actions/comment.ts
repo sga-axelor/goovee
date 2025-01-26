@@ -11,6 +11,7 @@ import {SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {isCommentEnabled} from '@/utils/comment';
 import {clone} from '@/utils';
+import {ID} from '@/types';
 
 export async function createComment(formData: any, valueString: string) {
   const session = await getSession();
@@ -29,7 +30,7 @@ export async function createComment(formData: any, valueString: string) {
   const {
     values,
     workspaceURL,
-    modelID,
+    recordId,
     subapp,
     parentId,
     messageBody = null,
@@ -37,7 +38,7 @@ export async function createComment(formData: any, valueString: string) {
     values?: any;
     workspaceURL: string;
     subapp: SUBAPP_CODES;
-    modelID: string | number;
+    recordId: ID;
     parentId?: any;
     messageBody?: any;
   };
@@ -94,7 +95,7 @@ export async function createComment(formData: any, valueString: string) {
     const response: any = await addComment({
       subapp,
       workspaceURL,
-      model: {id: modelID},
+      recordId,
       note: values?.text,
       attachments,
       parentId,
@@ -124,7 +125,7 @@ export async function createComment(formData: any, valueString: string) {
 }
 
 export async function fetchComments({
-  model,
+  recordId,
   sort,
   limit,
   skip,
@@ -160,7 +161,7 @@ export async function fetchComments({
 
   try {
     const response = await findComments({
-      model,
+      recordId,
       sort,
       limit,
       skip,

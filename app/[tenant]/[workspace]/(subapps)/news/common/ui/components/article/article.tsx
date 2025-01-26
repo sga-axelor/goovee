@@ -124,7 +124,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
             </div>
 
             <Comments
-              record={{id: news.id}}
+              recordId={news.id}
               subapp={SUBAPP_CODES.news}
               showCommentsByDefault={true}
               disabled={isDisabled}

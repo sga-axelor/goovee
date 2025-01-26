@@ -181,7 +181,7 @@ export default async function Page({
             {await t('Comments')}
           </h4>
           <Comments
-            record={ticket}
+            recordId={ticket.id}
             subapp={SUBAPP_CODES.ticketing}
             showCommentsByDefault
             showTopBorder={false}

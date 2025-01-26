@@ -29,9 +29,10 @@ import {
 } from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {CreateProps} from '@/ui/hooks/use-comments';
+import type {ID} from '@/types';
 
 interface CommentsProps {
-  record: any;
+  recordId: ID;
   subapp: SUBAPP_CODES;
   hideCommentsHeader?: boolean;
   hideCommentsFooter?: boolean;
@@ -49,7 +50,7 @@ interface CommentsProps {
 }
 
 export function Comments({
-  record,
+  recordId,
   subapp,
   hideCommentsHeader = false,
   hideCommentsFooter = false,
@@ -70,7 +71,7 @@ export function Comments({
 
   const {comments, totalCommentThreadCount, loadMore, onCreate, hasMore} =
     useComments({
-      model: {id: record.id},
+      recordId,
       subapp,
       sortBy,
       limit,
@@ -167,7 +168,7 @@ export function Comments({
             )}
 
             <CommentsList
-              record={record}
+              recordId={recordId}
               disabled={isDisabled}
               comments={comments}
               usePopUpStyles={usePopUpStyles}

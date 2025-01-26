@@ -48,9 +48,10 @@ import {
 } from '@/locale/formatters';
 import type {Comment} from '@/orm/comment';
 import {type Tenant} from '@/tenant';
+import type {ID} from '@/types';
 
 interface CommentListItemProps {
-  record: any;
+  recordId: ID;
   parentCommentId: string;
   comment: Comment;
   showReactions: boolean;
@@ -66,7 +67,7 @@ interface CommentListItemProps {
 // only the top level commment will have childComments, and parentComment,
 // child comment will only have info that is needed to display the comment.
 export const CommentListItem = ({
-  record,
+  recordId,
   parentCommentId,
   comment,
   showReactions,
@@ -175,7 +176,7 @@ export const CommentListItem = ({
     return childMailMessages.map((childComment: any) => (
       <CommentListItem
         key={childComment.id}
-        record={record}
+        recordId={recordId}
         parentCommentId={parentCommentId}
         comment={childComment}
         showReactions={showReactions}

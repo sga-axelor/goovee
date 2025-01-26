@@ -3,12 +3,13 @@
 // ---- CORE IMPORTS ---- //
 import {type SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
+import type {ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {CommentListItem} from '../comments-list-item';
 
 interface CommentsListProps {
-  record: any;
+  recordId: ID;
   comments: Array<{
     id: string;
   }>;
@@ -22,7 +23,7 @@ interface CommentsListProps {
 }
 
 export const CommentsList: React.FC<CommentsListProps> = ({
-  record,
+  recordId,
   comments,
   usePopUpStyles = false,
   showReactions = true,
@@ -39,7 +40,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
         <CommentListItem
           key={comment.id}
           disabled={disabled}
-          record={record}
+          recordId={recordId}
           parentCommentId={comment.id}
           comment={comment}
           showReactions={showReactions}

@@ -12,12 +12,10 @@ import {useToast} from '@/ui/hooks';
 
 export type UseCommentsProps = {
   sortBy: string;
-  model: {id: ID};
+  recordId: ID;
   subapp: SUBAPP_CODES;
   limit?: number;
   newCommentOnTop?: boolean;
-  // enableQuotes?: boolean;
-  // enableReplies?: boolean;
 };
 
 export type CreateProps = {
@@ -27,7 +25,7 @@ export type CreateProps = {
 };
 
 export function useComments(props: UseCommentsProps) {
-  const {sortBy, model, subapp, limit, newCommentOnTop} = props;
+  const {sortBy, recordId, subapp, limit, newCommentOnTop} = props;
   const [comments, setComments] = useState<any[]>([]);
   const [createdCommentIds, setCreatedCommentIds] = useState<Set<string>>(
     new Set(),
@@ -43,11 +41,10 @@ export function useComments(props: UseCommentsProps) {
   const loadComments = useCallback(
     async (options?: {reset?: boolean; skip?: number; exclude?: string[]}) => {
       const {reset = true, skip = 0, exclude} = options || {};
-      console.log('loading with skip =', skip);
       setFetching(true);
       try {
-        const response: any = await fetchComments({
-          model: {id: model.id},
+        const response = await fetchComments({
+          recordId,
           subapp,
           sort: sortBy,
           limit,
@@ -82,7 +79,7 @@ export function useComments(props: UseCommentsProps) {
         setFetching(false);
       }
     },
-    [model.id, sortBy, subapp, toast, workspaceURL, limit],
+    [recordId, sortBy, subapp, toast, workspaceURL, limit],
   );
 
   const loadMore = useCallback(() => {
@@ -99,7 +96,7 @@ export function useComments(props: UseCommentsProps) {
           JSON.stringify({
             values,
             workspaceURL,
-            modelID: model.id,
+            recordId,
             parentId: parent,
             subapp,
           }),
@@ -144,7 +141,7 @@ export function useComments(props: UseCommentsProps) {
         setCreating(false);
       }
     },
-    [workspaceURL, model.id, subapp, toast, newCommentOnTop],
+    [workspaceURL, recordId, subapp, toast, newCommentOnTop],
   );
 
   const hasMore = useMemo(() => comments.length < total, [comments, total]);

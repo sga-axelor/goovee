@@ -15,7 +15,7 @@ export const CommentsSection = ({eventId}: CommentSectionProps) => {
       <h2 className="text-xl font-semibold">{i18n.t('Comments')}</h2>
 
       <Comments
-        record={{id: eventId}}
+        recordId={eventId}
         subapp={SUBAPP_CODES.events}
         showCommentsByDefault={true}
         inputPosition="bottom"

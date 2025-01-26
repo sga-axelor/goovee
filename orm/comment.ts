@@ -368,7 +368,7 @@ export async function upload(
 
 export async function addComment({
   subapp,
-  model,
+  recordId,
   note,
   workspaceURL,
   attachments = [],
@@ -379,7 +379,7 @@ export async function addComment({
   messageType = MAIL_MESSAGE_TYPE.comment,
 }: {
   subapp: SUBAPP_CODES;
-  model: {id: string | number};
+  recordId: ID;
   workspaceURL: string;
   note?: string;
   attachments?: any;
@@ -434,20 +434,13 @@ export async function addComment({
       };
     }
 
-    if (!model?.id) {
-      return {
-        error: true,
-        message: await t('Model is missing'),
-      };
-    }
-
     const {
       error,
       message,
       data: modelRecord,
     }: any = await findByID({
       subapp,
-      id: model.id,
+      id: recordId,
       workspaceURL,
       workspace,
       tenantId,
@@ -542,7 +535,7 @@ export type Comment = NonNullable<
 >[number];
 
 export async function findComments({
-  model,
+  recordId,
   limit,
   skip,
   sort,
@@ -551,7 +544,7 @@ export async function findComments({
   tenantId,
   exclude,
 }: {
-  model: {id: ID} | null;
+  recordId: ID;
   limit?: number;
   skip?: number;
   sort?: any;
@@ -582,13 +575,6 @@ export async function findComments({
     };
   }
 
-  if (!model?.id) {
-    return {
-      error: true,
-      message: await t('Model is missing'),
-    };
-  }
-
   const shouldUseAuth = (subapp: SUBAPP_CODES) =>
     ![
       SUBAPP_CODES.forum,
@@ -603,7 +589,7 @@ export async function findComments({
     data: modelRecord,
   }: any = await findByID({
     subapp,
-    id: model?.id,
+    id: recordId,
     workspaceURL,
     workspace,
     withAuth: shouldUseAuth(subapp),

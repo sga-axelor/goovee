@@ -349,7 +349,7 @@ const Content = ({
               {i18n.t('Comments')}
             </h4>
             <Comments
-              record={{id: quotation.id}}
+              recordId={quotation.id}
               subapp={SUBAPP_CODES.quotations}
               showCommentsByDefault
               showTopBorder={false}

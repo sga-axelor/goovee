@@ -31,7 +31,7 @@ export const ThreadFooter = ({
 
   return enableComment ? (
     <Comments
-      record={post}
+      recordId={post.id}
       subapp={SUBAPP_CODES.forum}
       showCommentsByDefault={showCommentsByDefault}
       hideCloseComments={hideCloseComments}

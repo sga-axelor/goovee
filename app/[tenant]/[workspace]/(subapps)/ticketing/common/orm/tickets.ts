@@ -248,7 +248,7 @@ export async function createTicket({
     const {error, message} = await addComment({
       workspaceURL,
       subapp: SUBAPP_CODES.ticketing,
-      model: {id: ticket.id},
+      recordId: ticket.id,
       subject: `Record Created by ${auth.simpleFullName}`,
       messageBody: {title: 'Record Created', tracks: tracks, tags: []},
       messageType: MAIL_MESSAGE_TYPE.notification,
@@ -456,7 +456,7 @@ export async function updateTicket({
     await addComment({
       workspaceURL,
       subapp: SUBAPP_CODES.ticketing,
-      model: {id: ticket.id},
+      recordId: ticket.id,
       subject: `Record Updated by ${auth.simpleFullName}`,
       messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
       messageType: MAIL_MESSAGE_TYPE.notification,
