@@ -123,10 +123,8 @@ export function useComments(props: UseCommentsProps) {
             ? prevTotal
             : prevTotal + 1,
         );
-        setTotalCommentThreadCount(prevTotalCommentThreadCount =>
-          parentComment && subapp === SUBAPP_CODES.forum
-            ? prevTotalCommentThreadCount
-            : prevTotalCommentThreadCount + 1,
+        setTotalCommentThreadCount(
+          prevTotalCommentThreadCount => prevTotalCommentThreadCount + 1,
         );
         setCreatedCommentIds(prevCreatedCommentIds =>
           new Set(prevCreatedCommentIds).add(comment.id),
