@@ -135,55 +135,65 @@ export function CommentInput({
       <form
         ref={formRef}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-6 w-full">
-        <div
-          className={`flex relative gap-4 ${disabled ? 'pointer-events-none' : ''}`}>
-          <FormField
-            control={form.control}
-            name="text"
-            render={({field}) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <AutosizeTextarea
-                    autoFocus={autoFocus}
-                    minHeight={30}
-                    maxHeight={300}
-                    className={cn(
-                      'placeholder:text-sm placeholder:text-gray-dark',
-                      className,
-                    )}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        form.handleSubmit(handleSubmit)();
-                      }
-                    }}
-                    placeholder={i18n.t(placeholderText)}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        className="space-y-4 w-full">
+        <div>
+          <div
+            className={cn(
+              'flex relative items-center gap-4',
+              disabled && 'pointer-events-none',
+            )}>
+            <FormField
+              control={form.control}
+              name="text"
+              render={({field}) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <AutosizeTextarea
+                      autoFocus={autoFocus}
+                      minHeight={30}
+                      maxHeight={300}
+                      className={cn(
+                        'placeholder:text-sm placeholder:text-gray-dark',
+                        className,
+                      )}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          form.handleSubmit(handleSubmit)();
+                        }
+                      }}
+                      placeholder={i18n.t(placeholderText)}
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-          <div className="flex items-end gap-4">
-            {showAttachmentIcon && (
-              <div {...getRootProps({className: 'dropzone'})}>
-                <input {...getInputProps()} />
-                <MdAttachFile
-                  className={`size-6 ${disabled ? `text-gray-dark cursor-none` : `text-black cursor-pointer`} `}
-                />
-              </div>
-            )}
-            <Button
-              type="submit"
-              className="px-6 py-1.5 h-9 text-base font-medium"
-              variant="success"
-              disabled={isSubmitting || disabled}>
-              {i18n.t('Send')}
-            </Button>
+            <div className="flex items-start gap-4">
+              {showAttachmentIcon && (
+                <div
+                  {...getRootProps({
+                    className: 'dropzone self-stretch flex items-center',
+                  })}>
+                  <input {...getInputProps()} />
+                  <MdAttachFile
+                    className={`size-6 ${disabled ? `text-gray-dark cursor-none` : `text-black cursor-pointer`} `}
+                  />
+                </div>
+              )}
+              <Button
+                type="submit"
+                className="px-6 py-1.5 h-9 text-base font-medium"
+                variant="success"
+                disabled={isSubmitting || disabled}>
+                {i18n.t('Send')}
+              </Button>
+            </div>
           </div>
+          <FormMessage className="px-2 py-1">
+            {form.formState.errors.text?.message}
+          </FormMessage>
         </div>
         {fields?.length ? (
           <div className="flex flex-col gap-2">
