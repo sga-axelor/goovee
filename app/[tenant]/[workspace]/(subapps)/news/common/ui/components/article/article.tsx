@@ -131,7 +131,6 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
               inputPosition="bottom"
               hideCommentsHeader={true}
               hideSortBy={true}
-              showReactions={false}
               showTopBorder={false}
               hideCloseComments={true}
               sortByProp={SORT_TYPE.old}

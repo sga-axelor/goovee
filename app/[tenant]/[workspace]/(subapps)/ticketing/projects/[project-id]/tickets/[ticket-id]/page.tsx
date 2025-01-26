@@ -185,7 +185,6 @@ export default async function Page({
             subapp={SUBAPP_CODES.ticketing}
             showCommentsByDefault
             showTopBorder={false}
-            showReactions={false}
             hideSortBy
             hideCloseComments
             hideCommentsHeader

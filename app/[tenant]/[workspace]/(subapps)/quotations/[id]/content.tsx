@@ -353,7 +353,6 @@ const Content = ({
               subapp={SUBAPP_CODES.quotations}
               showCommentsByDefault
               showTopBorder={false}
-              showReactions={false}
               hideCloseComments
               hideCommentsHeader
               hideSortBy

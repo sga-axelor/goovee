@@ -38,7 +38,6 @@ export const ThreadFooter = ({
       inputPosition="top"
       usePopUpStyles={usePopUpStyles}
       disabled={disabled}
-      showReactions={false}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
       limit={COMMENTS_PER_LOAD}
     />

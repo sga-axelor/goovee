@@ -21,7 +21,6 @@ export const CommentsSection = ({eventId}: CommentSectionProps) => {
         inputPosition="bottom"
         hideCommentsHeader={true}
         hideSortBy={true}
-        showReactions={false}
         showTopBorder={false}
         hideCloseComments={true}
         sortByProp={SORT_TYPE.old}

@@ -31,7 +31,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {CreateProps} from '@/ui/hooks/use-comments';
 import type {ID} from '@/types';
 
-interface CommentsProps {
+type CommentsProps = {
   recordId: ID;
   subapp: SUBAPP_CODES;
   hideCommentsHeader?: boolean;
@@ -47,25 +47,26 @@ interface CommentsProps {
   hideSortBy?: boolean;
   inputContainerClassName?: string;
   limit?: number;
-}
+};
 
-export function Comments({
-  recordId,
-  subapp,
-  hideCommentsHeader = false,
-  hideCommentsFooter = false,
-  showCommentsByDefault,
-  showReactions = true,
-  inputPosition = 'bottom',
-  limit,
-  hideCloseComments = false,
-  usePopUpStyles = false,
-  showTopBorder = true,
-  sortByProp,
-  disabled = false,
-  hideSortBy = false,
-  inputContainerClassName = '',
-}: CommentsProps) {
+export function Comments(props: CommentsProps) {
+  const {
+    recordId,
+    subapp,
+    hideCommentsHeader = false,
+    hideCommentsFooter = false,
+    showCommentsByDefault,
+    showReactions,
+    inputPosition = 'bottom',
+    limit,
+    hideCloseComments = false,
+    usePopUpStyles = false,
+    showTopBorder = true,
+    sortByProp,
+    disabled = false,
+    hideSortBy = false,
+    inputContainerClassName = '',
+  } = props;
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
 
