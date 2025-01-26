@@ -7,6 +7,7 @@ import {Comments} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {useForum} from '@/subapps/forum/common/ui/context';
+import {COMMENTS_PER_LOAD} from '@/subapps/forum/common/constants';
 
 export const ThreadFooter = ({
   post,
@@ -32,10 +33,10 @@ export const ThreadFooter = ({
       hideCloseComments={hideCloseComments}
       inputPosition="top"
       usePopUpStyles={usePopUpStyles}
-      seeMore
       disabled={disabled}
       showReactions={false}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
+      limit={COMMENTS_PER_LOAD}
     />
   ) : (
     <div />

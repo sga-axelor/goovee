@@ -22,7 +22,6 @@ import {i18n} from '@/locale';
 import {
   COMMENT,
   COMMENTS,
-  DEFAULT_COMMENTS_LIMIT,
   DISABLED_COMMENT_PLACEHOLDER,
   SORT_BY_OPTIONS,
   SORT_TYPE,
@@ -39,7 +38,6 @@ interface CommentsProps {
   showCommentsByDefault?: boolean;
   showReactions?: boolean;
   inputPosition?: 'top' | 'bottom';
-  seeMore?: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
   showTopBorder?: boolean;
@@ -47,6 +45,7 @@ interface CommentsProps {
   disabled?: boolean;
   hideSortBy?: boolean;
   inputContainerClassName?: string;
+  limit?: number;
 }
 
 export function Comments({
@@ -57,7 +56,7 @@ export function Comments({
   showCommentsByDefault,
   showReactions = true,
   inputPosition = 'bottom',
-  seeMore,
+  limit,
   hideCloseComments = false,
   usePopUpStyles = false,
   showTopBorder = true,
@@ -74,7 +73,7 @@ export function Comments({
       model: {id: record.id},
       subapp,
       sortBy,
-      limit: seeMore ? DEFAULT_COMMENTS_LIMIT : undefined,
+      limit,
       newCommentOnTop: inputPosition === 'top',
     });
   const {data: session} = useSession();

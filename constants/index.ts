@@ -170,7 +170,6 @@ export const SEARCH_PARAMS = {
 /**
  * COMMENT
  */
-export const DEFAULT_COMMENTS_LIMIT = 3;
 export enum MAIL_MESSAGE_TYPE {
   notification = 'notification',
   comment = 'comment',

@@ -164,3 +164,5 @@ export const GROUPS_ORDER_BY = {
 };
 
 export const MAX_IMAGES_BEFORE_OVERLAY = 3;
+
+export const COMMENTS_PER_LOAD = 3;
