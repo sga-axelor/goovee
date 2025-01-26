@@ -351,13 +351,12 @@ const Content = ({
             <Comments
               recordId={quotation.id}
               subapp={SUBAPP_CODES.quotations}
+              sortBy={SORT_TYPE.new}
               showCommentsByDefault
-              showTopBorder={false}
+              hideTopBorder
               hideCloseComments
               hideCommentsHeader
               hideSortBy
-              inputPosition="top"
-              sortByProp={SORT_TYPE.new}
             />
           </div>
         )}

@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components';
+import {i18n} from '@/locale';
 interface Option {
   key: string;
   label: string;
@@ -62,7 +63,7 @@ export const DropdownToggle = memo(
                 key={option.key}
                 className={cn(optionClassName)}
                 value={option.key}>
-                {option.label}
+                {i18n.t(option.label)}
               </SelectItem>
             ))}
           </SelectContent>

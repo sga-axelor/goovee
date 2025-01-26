@@ -181,16 +181,15 @@ export default async function Page({
             {await t('Comments')}
           </h4>
           <Comments
+            key={Math.random()}
             recordId={ticket.id}
             subapp={SUBAPP_CODES.ticketing}
+            sortBy={SORT_TYPE.new}
             showCommentsByDefault
-            showTopBorder={false}
+            hideTopBorder
             hideSortBy
             hideCloseComments
             hideCommentsHeader
-            inputPosition="top"
-            sortByProp={SORT_TYPE.new}
-            key={Math.random()}
           />
         </div>
       )}

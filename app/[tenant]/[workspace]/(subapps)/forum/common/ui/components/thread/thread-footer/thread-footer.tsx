@@ -35,7 +35,6 @@ export const ThreadFooter = ({
       subapp={SUBAPP_CODES.forum}
       showCommentsByDefault={showCommentsByDefault}
       hideCloseComments={hideCloseComments}
-      inputPosition="top"
       usePopUpStyles={usePopUpStyles}
       disabled={disabled}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}

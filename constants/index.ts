@@ -1,6 +1,3 @@
-// ---- CORE IMPORTS ---- //
-import {i18n} from '@/locale';
-
 /**
  * CURRENCY
  */
@@ -178,11 +175,12 @@ export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
 export const DISABLED_COMMENT_PLACEHOLDER =
   'You need to log in to comment posts';
-export const SORT_TYPE = {
-  new: 'new',
-  old: 'old',
-  popular: 'popular',
-};
+
+export enum SORT_TYPE {
+  new = 'new',
+  old = 'old',
+  popular = 'popular',
+}
 
 export const REPORT = 'Report';
 export const NOT_INTERESTED = 'Not interested';
@@ -190,17 +188,17 @@ export const SORT_BY_OPTIONS = [
   {
     id: 1,
     key: SORT_TYPE.new,
-    label: i18n.t('New'),
+    label: 'New',
   },
   {
     id: 2,
     key: SORT_TYPE.old,
-    label: i18n.t('Old'),
+    label: 'Old',
   },
   {
     id: 3,
     key: SORT_TYPE.popular,
-    label: i18n.t('Popular'),
+    label: 'Popular',
   },
 ];
 

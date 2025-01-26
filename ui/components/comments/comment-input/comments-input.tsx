@@ -65,7 +65,7 @@ const formSchema = z
 export function CommentInput({
   disabled = false,
   className = '',
-  placeholderText = 'Enter text here*',
+  placeholderText = i18n.t('Enter text here') + '*',
   showAttachmentIcon = true,
   onSubmit,
   autoFocus = false,
@@ -81,8 +81,6 @@ export function CommentInput({
       attachments: [],
     },
   });
-
-  const router = useRouter();
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
@@ -178,7 +176,10 @@ export function CommentInput({
                   })}>
                   <input {...getInputProps()} />
                   <MdAttachFile
-                    className={`size-6 ${disabled ? `text-gray-dark cursor-none` : `text-black cursor-pointer`} `}
+                    className={cn(
+                      'size-6 text-black cursor-pointer',
+                      disabled && 'text-gray-dark cursor-none',
+                    )}
                   />
                 </div>
               )}
@@ -195,7 +196,7 @@ export function CommentInput({
             {form.formState.errors.text?.message}
           </FormMessage>
         </div>
-        {fields?.length ? (
+        {!!fields?.length && (
           <div className="flex flex-col gap-2">
             <h4 className="text-base font-semibold">{i18n.t('Attachments')}</h4>
             {fields.map((field, index) => (
@@ -242,7 +243,7 @@ export function CommentInput({
               </div>
             ))}
           </div>
-        ) : null}
+        )}
       </form>
     </Form>
   );

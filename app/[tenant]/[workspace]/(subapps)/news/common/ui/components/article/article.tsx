@@ -126,14 +126,14 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
             <Comments
               recordId={news.id}
               subapp={SUBAPP_CODES.news}
-              showCommentsByDefault={true}
               disabled={isDisabled}
               inputPosition="bottom"
-              hideCommentsHeader={true}
-              hideSortBy={true}
-              showTopBorder={false}
-              hideCloseComments={true}
-              sortByProp={SORT_TYPE.old}
+              sortBy={SORT_TYPE.old}
+              showCommentsByDefault
+              hideCommentsHeader
+              hideSortBy
+              hideTopBorder
+              hideCloseComments
             />
           </div>
         </div>

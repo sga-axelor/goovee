@@ -26,7 +26,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   recordId,
   comments,
   usePopUpStyles = false,
-  showReactions = true,
+  showReactions,
   subapp,
   disabled = false,
   onSubmit,

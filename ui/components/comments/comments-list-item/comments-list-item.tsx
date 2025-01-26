@@ -32,6 +32,7 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/locale';
 import {getImageURL} from '@/utils/files';
+import {cn} from '@/utils/css';
 import {
   COMMENT,
   COMMENTS,
@@ -54,7 +55,7 @@ interface CommentListItemProps {
   recordId: ID;
   parentCommentId: string;
   comment: Comment;
-  showReactions: boolean;
+  showReactions?: boolean;
   subapp: SUBAPP_CODES;
   disabled: boolean;
   isTopLevel?: boolean;
@@ -171,8 +172,9 @@ export const CommentListItem = ({
       !showSubComments ||
       parentCommentId !== id ||
       !childMailMessages?.length
-    )
+    ) {
       return null;
+    }
     return childMailMessages.map((childComment: any) => (
       <CommentListItem
         key={childComment.id}
@@ -244,7 +246,10 @@ export const CommentListItem = ({
         </div>
         <div>
           <div
-            className={`text-sm w-full font-normal ${toggle ? '' : 'line-clamp-1'}`}
+            className={cn(
+              'text-sm w-full font-normal',
+              !toggle && 'line-clamp-1',
+            )}
             dangerouslySetInnerHTML={{__html: parentMailMessage.note ?? ''}}
           />
         </div>
@@ -334,7 +339,10 @@ export const CommentListItem = ({
                       className="h-6 bg-black"
                     />
                     <div
-                      className={`flex items-center gap-1 text-[10px] ${childMailMessages.length ? 'cursor-pointer' : 'cursor-default'}`}
+                      className={cn(
+                        'flex items-center gap-1 text-[10px]',
+                        childMailMessages.length && 'cursor-pointer',
+                      )}
                       onClick={toggleSubComments}>
                       <MdOutlineModeComment className="w-4 h-4 cursor-pointer" />
                       {formatNumber(childMailMessages.length)}{' '}
@@ -354,7 +362,10 @@ export const CommentListItem = ({
               <CommentInput
                 autoFocus
                 disabled={isDisabled}
-                className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
+                className={cn(
+                  'placeholder:text-sm placeholder:text-gray border bg-white',
+                  disabled && 'bg-gray-light placeholder:text-gray-dark',
+                )}
                 placeholderText={
                   isLoggedIn
                     ? i18n.t(COMMENT)

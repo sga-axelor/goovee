@@ -34,41 +34,42 @@ import type {ID} from '@/types';
 type CommentsProps = {
   recordId: ID;
   subapp: SUBAPP_CODES;
+  inputPosition?: 'top' | 'bottom';
+  inputContainerClassName?: string;
+  limit?: number;
+  sortBy?: SORT_TYPE;
   hideCommentsHeader?: boolean;
   hideCommentsFooter?: boolean;
   showCommentsByDefault?: boolean;
   showReactions?: boolean;
-  inputPosition?: 'top' | 'bottom';
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
-  showTopBorder?: boolean;
-  sortByProp?: string;
+  hideTopBorder?: boolean;
   disabled?: boolean;
   hideSortBy?: boolean;
-  inputContainerClassName?: string;
-  limit?: number;
 };
 
 export function Comments(props: CommentsProps) {
   const {
     recordId,
     subapp,
-    hideCommentsHeader = false,
-    hideCommentsFooter = false,
+    hideCommentsHeader,
+    hideCommentsFooter,
     showCommentsByDefault,
     showReactions,
-    inputPosition = 'bottom',
+    inputPosition = 'top',
     limit,
-    hideCloseComments = false,
-    usePopUpStyles = false,
-    showTopBorder = true,
-    sortByProp,
-    disabled = false,
-    hideSortBy = false,
-    inputContainerClassName = '',
+    hideCloseComments,
+    usePopUpStyles,
+    hideTopBorder,
+    sortBy: sortByProp = SORT_TYPE.new,
+    disabled,
+    hideSortBy,
+    inputContainerClassName,
   } = props;
+  const inputOnTop = inputPosition === 'top';
   const [showComments, setShowComments] = useState(showCommentsByDefault);
-  const [sortBy, setSortBy] = useState(sortByProp || SORT_TYPE.new);
+  const [sortBy, setSortBy] = useState<SORT_TYPE>(sortByProp);
 
   const {comments, totalCommentThreadCount, loadMore, onCreate, hasMore} =
     useComments({
@@ -99,16 +100,16 @@ export function Comments(props: CommentsProps) {
   );
 
   const handleSortBy = useCallback((value: string) => {
-    if (value) setSortBy(value);
+    if (value) setSortBy(value as SORT_TYPE);
   }, []);
-
-  const showCommentInputOnTop = inputPosition === 'top';
-  const showCommentInputOnBottom = !showCommentInputOnTop;
 
   const renderCommentInput = () => (
     <CommentInput
       disabled={isDisabled}
-      className={`placeholder:text-sm placeholder:text-gray border ${!isDisabled ? 'bg-white' : 'bg-gray-light placeholder:text-gray-dark'}`}
+      className={cn(
+        'placeholder:text-sm placeholder:text-gray border bg-white',
+        disabled && 'bg-gray-light placeholder:text-gray-dark',
+      )}
       placeholderText={
         isLoggedIn ? i18n.t(COMMENT) : i18n.t(DISABLED_COMMENT_PLACEHOLDER)
       }
@@ -123,7 +124,10 @@ export function Comments(props: CommentsProps) {
           {/* TODO: Add reactions preview */}
           <div />
           <div
-            className={`flex gap-2 items-center ${totalCommentThreadCount ? 'cursor-pointer' : 'cursor-default'}`}
+            className={cn(
+              'flex gap-2 items-center',
+              totalCommentThreadCount && 'cursor-pointer',
+            )}
             onClick={toggleComments}>
             <MdOutlineModeComment className="w-6 h-6" />
             {totalCommentThreadCount > 0 && (
@@ -137,12 +141,17 @@ export function Comments(props: CommentsProps) {
           </div>
         </div>
       )}
-      <div className={cn({'border-t': showTopBorder}, inputContainerClassName)}>
-        {showCommentInputOnTop && (
+      <div
+        className={cn({'border-t': !hideTopBorder}, inputContainerClassName)}>
+        {inputOnTop && (
           <div className="flex items-center gap-6 py-2">
             {showReactions && (
               <div
-                className={`${!isDisabled ? 'cursor-pointer' : 'bg-gray-light text-gray-dark p-2 rounded-lg cursor-not-allowed'}`}>
+                className={cn(
+                  'cursor-pointer',
+                  isDisabled &&
+                    'bg-gray-light text-gray-dark p-2 rounded-lg cursor-not-allowed',
+                )}>
                 <MdOutlineThumbUp className="w-6 h-6" />
               </div>
             )}
@@ -151,7 +160,10 @@ export function Comments(props: CommentsProps) {
         )}
         {showComments && comments?.length ? (
           <div
-            className={`border-t flex flex-col gap-4 ${usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4'}`}>
+            className={cn(
+              'border-t flex flex-col gap-4',
+              usePopUpStyles ? 'py-4 px-4 md:px-0' : 'p-4',
+            )}>
             {!hideSortBy && (
               <div className="w-full flex gap-4 items-center">
                 <DropdownToggle
@@ -182,7 +194,10 @@ export function Comments(props: CommentsProps) {
 
             {!hideCommentsFooter && (
               <div
-                className={`flex items-center ${hideCloseComments ? 'justify-end' : 'justify-between'}`}>
+                className={cn(
+                  'flex items-center justify-between',
+                  hideCloseComments && 'justify-end',
+                )}>
                 {!hideCloseComments && (
                   <div
                     className="flex items-center gap-2 cursor-pointer"
@@ -195,7 +210,7 @@ export function Comments(props: CommentsProps) {
                 )}
                 {hasMore && (
                   <div
-                    className={`flex items-center gap-2 cursor-pointer`}
+                    className="flex items-center gap-2 cursor-pointer"
                     onClick={loadMore}>
                     <MdAdd className="w-4 h-4" />
                     <span className="text-xs font-semibold leading-[18px]">
@@ -209,7 +224,7 @@ export function Comments(props: CommentsProps) {
         ) : (
           <></>
         )}
-        {showCommentInputOnBottom && renderCommentInput()}
+        {!inputOnTop && renderCommentInput()}
       </div>
     </div>
   );

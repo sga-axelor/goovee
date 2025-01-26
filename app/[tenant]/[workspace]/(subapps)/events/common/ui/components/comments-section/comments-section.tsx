@@ -17,13 +17,13 @@ export const CommentsSection = ({eventId}: CommentSectionProps) => {
       <Comments
         recordId={eventId}
         subapp={SUBAPP_CODES.events}
-        showCommentsByDefault={true}
         inputPosition="bottom"
-        hideCommentsHeader={true}
-        hideSortBy={true}
-        showTopBorder={false}
-        hideCloseComments={true}
-        sortByProp={SORT_TYPE.old}
+        sortBy={SORT_TYPE.old}
+        showCommentsByDefault
+        hideCommentsHeader
+        hideSortBy
+        hideTopBorder
+        hideCloseComments
       />
     </Card>
   );
