@@ -50,7 +50,7 @@ export async function getTranslation(
 
   const translations = await getTranslations(locale, tenant, [key]);
 
-  return translate(translations, key, ...interpolations);
+  return translate(translations as any, key, ...interpolations);
 }
 
 export const t = getTranslation.bind(null, {});
