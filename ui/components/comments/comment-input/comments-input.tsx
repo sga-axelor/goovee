@@ -134,12 +134,8 @@ export function CommentInput({
         ref={formRef}
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 w-full">
-        <div>
-          <div
-            className={cn(
-              'flex relative items-center gap-4',
-              disabled && 'pointer-events-none',
-            )}>
+        <div className={cn(disabled && 'pointer-events-none')}>
+          <div className="flex items-end rounded-md border border-input bg-white pr-3 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
             <FormField
               control={form.control}
               name="text"
@@ -148,10 +144,10 @@ export function CommentInput({
                   <FormControl>
                     <AutosizeTextarea
                       autoFocus={autoFocus}
-                      minHeight={30}
+                      minHeight={32}
                       maxHeight={300}
                       className={cn(
-                        'placeholder:text-sm placeholder:text-gray-dark',
+                        'placeholder:text-sm placeholder:text-gray-dark border-none focus-visible:outline-none focus-visible:!ring-0 focus-visible:ring-none resize-none',
                         className,
                       )}
                       onKeyDown={e => {
@@ -168,7 +164,7 @@ export function CommentInput({
               )}
             />
 
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-4 pb-1">
               {showAttachmentIcon && (
                 <div
                   {...getRootProps({
