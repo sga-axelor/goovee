@@ -32,12 +32,14 @@ export default async function Page({
     newsPreference,
     resourcesPreference,
     forumPreference,
+    ticketingPreference,
   ] = await Promise.allSettled(
     [
       SUBAPP_CODES.events,
       SUBAPP_CODES.news,
       SUBAPP_CODES.resources,
       SUBAPP_CODES.forum,
+      SUBAPP_CODES.ticketing,
     ].map(code =>
       findPreferences({
         code,
@@ -73,6 +75,12 @@ export default async function Page({
             title={await t('Forum')}
             code={SUBAPP_CODES.forum}
             preference={forumPreference}
+          />
+          <Preference
+            title={await t('Ticketing')}
+            code={SUBAPP_CODES.ticketing}
+            preference={ticketingPreference}
+            hideSubscription={true}
           />
         </div>
       </div>

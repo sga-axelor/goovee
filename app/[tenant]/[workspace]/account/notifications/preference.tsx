@@ -16,10 +16,12 @@ export function Preference({
   preference,
   title,
   code,
+  hideSubscription,
 }: {
   preference: any;
   title: string;
   code: PortalApp['code'];
+  hideSubscription?: boolean;
 }) {
   const {tenant, workspaceURL: url} = useWorkspace();
   const {toast} = useToast();
@@ -71,7 +73,7 @@ export function Preference({
           variant="success"
         />
       </div>
-      {preference?.activateNotification && (
+      {!hideSubscription && preference?.activateNotification && (
         <div className="space-y-2">
           {preference?.subscriptions?.map((subscription: any, i: number) => (
             <div

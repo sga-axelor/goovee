@@ -371,11 +371,55 @@ async function findForumPreferences(params: Params) {
   };
 }
 
+async function findTickets(params: Params) {
+  const {user, tenantId, url} = params;
+  const client = await manager.getClient(tenantId);
+
+  const tickets = await client.aOSProjectTask
+    .find({
+      where: {
+        project: {portalWorkspace: {url}},
+        typeSelect: 'ticket',
+        isPrivate: false,
+        OR: [
+          {managedByContact: {id: user.id}},
+          {createdByContact: {id: user.id}},
+        ],
+      },
+      select: {id: true, fullName: true, name: true},
+    })
+    .then(result =>
+      result?.map(({id, fullName, name}) => ({id, name: fullName || name})),
+    )
+    .catch(() => []);
+
+  return tickets;
+}
+
+async function findTicketingPreferences(params: Params) {
+  const tickets = await findTickets(params);
+  const preference = await findPartnerPreference(params);
+
+  return {
+    ...pick(preference, 'id', 'version', 'activateNotification'),
+    code: params.code,
+    subscriptions: tickets.map(t => ({
+      ...t,
+      config: {
+        id: t.id,
+        name: t.name,
+      },
+      activateNotification: true,
+    })),
+  };
+}
+
 const preferences: any = {
   [SUBAPP_CODES.events]: findEventsPreferences,
   [SUBAPP_CODES.news]: findNewsPreferences,
   [SUBAPP_CODES.resources]: findResourcesPreferences,
   [SUBAPP_CODES.forum]: findForumPreferences,
+  [SUBAPP_CODES.ticketing]: findTicketingPreferences,
 };
 
 export async function findPreferences(params: Params) {
@@ -519,11 +563,22 @@ async function updateForumPreferences(params: UpdateParams) {
   return updatePartnerPreference(params);
 }
 
+async function updateTicketingPreferences(params: UpdateParams) {
+  const {record} = params;
+
+  if (record?.id) {
+    return;
+  }
+
+  return updatePartnerPreference(params);
+}
+
 const updatePreferenceHandlers: any = {
   [SUBAPP_CODES.events]: updateEventsPreferences,
   [SUBAPP_CODES.news]: updateNewsPreferences,
   [SUBAPP_CODES.resources]: updateResourcesPreferences,
   [SUBAPP_CODES.forum]: updateForumPreferences,
+  [SUBAPP_CODES.ticketing]: updateTicketingPreferences,
 };
 
 export async function updatePreferences(params: UpdateParams) {

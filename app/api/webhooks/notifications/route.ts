@@ -138,9 +138,12 @@ async function sendNotifications(data: {
         url: workspaceUrl,
       });
 
-      const isSubscribed = preference?.subscriptions.find(
-        (s: any) => Number(s.id) === Number(record.id),
-      )?.activateNotification;
+      const isSubscribed =
+        preference &&
+        preference.activateNotification &&
+        preference.subscriptions.find(
+          (s: any) => Number(s.id) === Number(record.id),
+        )?.activateNotification;
 
       if (isSubscribed) {
         subscribers.push(user);
