@@ -76,6 +76,22 @@
       "target": "AOSOrder"
     },
     {
+      "name": "invoicePaymentList",
+      "type": "OneToMany",
+      "target": "AOSInvoicePayment",
+      "mappedBy": "invoice"
+    },
+    {
+      "name": "amountPaid",
+      "type": "Decimal"
+    },
+    {
+      "name": "invoiceTermList",
+      "type": "OneToMany",
+      "target": "AOSInvoiceTerm",
+      "mappedBy": "invoice"
+    },
+    {
       "name": "statusSelect",
       "type": "Int"
     }

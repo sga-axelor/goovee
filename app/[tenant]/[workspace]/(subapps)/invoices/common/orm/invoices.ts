@@ -14,6 +14,7 @@ import type {Invoice} from '@/subapps/invoices/common/types/invoices';
 import {
   INVOICE,
   INVOICE_CATEGORY,
+  INVOICE_STATUS,
 } from '@/subapps/invoices/common/constants/invoices';
 
 const fetchInvoices = async ({
@@ -51,17 +52,20 @@ const fetchInvoices = async ({
         },
       },
       {saleOrder: {portalWorkspace: {url: workspaceURL}}},
+      ...(type === INVOICE.ARCHIVED
+        ? [{archived: true}, {amountRemaining: {eq: 0}}]
+        : []),
     ],
+    ...(type === INVOICE.ARCHIVED
+      ? {
+          operationTypeSelect: INVOICE_CATEGORY.SALE_INVOICE,
+        }
+      : {
+          amountRemaining: {ne: 0},
+        }),
+    statusSelect: {eq: INVOICE_STATUS.VENTILATED},
   };
 
-  if (type === INVOICE.ARCHIVED) {
-    whereClause.archived = true;
-    whereClause.operationTypeSelect = INVOICE_CATEGORY.SALE_INVOICE;
-  } else {
-    whereClause.amountRemaining = {
-      ne: 0,
-    };
-  }
   const skip = getSkipInfo(limit, page);
 
   const $invoices = await client.aOSInvoice
@@ -245,6 +249,13 @@ export const findInvoice = async ({
           numberOfDecimals: true,
           symbol: true,
         },
+        invoicePaymentList: {
+          select: {
+            paymentDate: true,
+            amount: true,
+          },
+        },
+        invoiceTermList: true,
       },
     })
     .then(clone);
@@ -262,6 +273,7 @@ export const findInvoice = async ({
     invoiceLineList,
     dueDate,
     invoiceDate,
+    invoicePaymentList,
   } = invoice;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
@@ -280,6 +292,18 @@ export const findInvoice = async ({
     $invoiceLineList.push(line);
   }
 
+  const $invoicePaymentList: any = [];
+  for (const list of invoicePaymentList || []) {
+    const line = {
+      ...list,
+      amount: await formatNumber(list.amount, {
+        scale,
+        currency: currencySymbol,
+      }),
+    };
+    $invoicePaymentList.push(line);
+  }
+
   return {
     ...invoice,
     dueDate: await formatDate(dueDate!),
@@ -295,8 +319,13 @@ export const findInvoice = async ({
     amountRemaining: {
       value: await formatNumber(amountRemaining, {scale}),
       symbol: currencySymbol,
+      formattedValue: await formatNumber(amountRemaining, {
+        scale,
+        currency: currencySymbol,
+      }),
     },
     taxTotal: await formatNumber(taxTotal, {scale, currency: currencySymbol}),
     invoiceLineList: $invoiceLineList,
+    invoicePaymentList: $invoicePaymentList,
   };
 };

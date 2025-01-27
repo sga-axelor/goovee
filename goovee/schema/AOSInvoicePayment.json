@@ -1,0 +1,21 @@
+{
+  "name": "AOSInvoicePayment",
+  "table": "account_invoice_payment",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "ManyToOne",
+      "name": "invoice",
+      "target": "AOSInvoice"
+    },
+    {
+      "name": "amount",
+      "type": "Decimal"
+    },
+    {
+      "name": "paymentDate",
+      "type": "Date"
+    }
+  ]
+}
