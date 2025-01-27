@@ -5,6 +5,11 @@
   "synchronize": false,
   "fields": [
     {
+      "type": "ManyToOne",
+      "name": "invoice",
+      "target": "AOSInvoice"
+    },
+    {
       "name": "name",
       "type": "String"
     }
