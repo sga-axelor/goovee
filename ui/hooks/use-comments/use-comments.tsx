@@ -148,7 +148,6 @@ export function useComments(props: UseCommentsProps) {
     loadComments();
   }, [loadComments]);
 
-  console.log(comments);
   return useMemo(
     () => ({
       comments,
