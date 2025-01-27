@@ -4,7 +4,7 @@ import {notFound} from 'next/navigation';
 import {getSession} from '@/auth';
 import {Separator} from '@/ui/components/separator';
 import {SUBAPP_CODES} from '@/constants';
-import {findPreferences} from '@/orm/preference';
+import {findPreferences} from '@/orm/notification';
 import {workspacePathname} from '@/utils/workspace';
 import {t} from '@/locale/server';
 

@@ -2,7 +2,7 @@
 
 import {getSession} from '@/auth';
 import {t} from '@/locale/server';
-import {updatePreferences} from '@/orm/preference';
+import {updatePreferences} from '@/orm/notification';
 import {revalidatePath} from 'next/cache';
 
 const error = (message: string) => {

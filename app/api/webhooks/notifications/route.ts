@@ -1,7 +1,7 @@
 import {NextResponse} from 'next/server';
 
 import {manager} from '@/tenant';
-import {findPreferences} from '@/orm/preference';
+import {findPreferences} from '@/orm/notification';
 import NotificationManager, {NotificationType} from '@/notification';
 import {getTranslation} from '@/locale/server';
 import {transformLocale} from '@/locale/utils';
