@@ -259,6 +259,7 @@
     {
       "type": "String",
       "name": "nonPublicEmailNotFoundMessage"
-    }
+    },
+    {"name": "canPayInvoice", "type": "String"}
   ]
 }
