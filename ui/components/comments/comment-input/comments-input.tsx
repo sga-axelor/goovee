@@ -1,8 +1,8 @@
 'use client';
 
-import React, {useRef, useState} from 'react';
+import React, {ReactNode, useRef, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
-import {useForm, useFieldArray} from 'react-hook-form';
+import {useForm, useFieldArray, UseFormReturn} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {MdAttachFile, MdDelete} from 'react-icons/md';
@@ -20,6 +20,8 @@ import {
 import {i18n} from '@/locale';
 import {getFileSizeText} from '@/utils/files';
 import {cn} from '@/utils/css';
+import {Expand} from '@/types/util';
+import {AutosizeTextAreaProps} from '../../textarea-auto-size';
 
 type CommentProps = {
   disabled?: boolean;
@@ -135,59 +137,56 @@ export function CommentInput({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 w-full">
         <div className={cn(disabled && 'pointer-events-none')}>
-          <div className="flex items-end rounded-md border border-input bg-white pr-1 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-            <FormField
-              control={form.control}
-              name="text"
-              render={({field}) => (
-                <FormItem className="w-full">
-                  <FormControl>
-                    <AutosizeTextarea
-                      autoFocus={autoFocus}
-                      minHeight={32}
-                      maxHeight={300}
-                      className={cn(
-                        'placeholder:text-sm placeholder:text-gray-dark border-none focus-visible:outline-none focus-visible:!ring-0 focus-visible:ring-none resize-none',
-                        className,
-                      )}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          form.handleSubmit(handleSubmit)();
-                        }
-                      }}
-                      placeholder={i18n.t(placeholderText)}
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <div className="flex items-start gap-4 pb-1">
-              {showAttachmentIcon && (
-                <div
-                  {...getRootProps({
-                    className: 'dropzone self-stretch flex items-center',
-                  })}>
-                  <input {...getInputProps()} />
-                  <MdAttachFile
-                    className={cn(
-                      'size-6 text-black cursor-pointer',
-                      disabled && 'text-gray-dark cursor-none',
-                    )}
+          <FormField
+            control={form.control}
+            name="text"
+            render={({field}) => (
+              <FormItem>
+                <FormControl>
+                  <TextArea
+                    autoFocus={autoFocus}
+                    minHeight={32}
+                    maxHeight={300}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        form.handleSubmit(handleSubmit)();
+                      }
+                    }}
+                    placeholder={i18n.t(placeholderText)}
+                    dummyValue={form.watch('text') || ''}
+                    endAdornment={
+                      <div className="flex items-start gap-4 pb-1">
+                        {showAttachmentIcon && (
+                          <div
+                            {...getRootProps({
+                              className:
+                                'dropzone self-stretch flex items-center',
+                            })}>
+                            <input {...getInputProps()} />
+                            <MdAttachFile
+                              className={cn(
+                                'size-6 text-black cursor-pointer',
+                                disabled && 'text-gray-dark cursor-none',
+                              )}
+                            />
+                          </div>
+                        )}
+                        <Button
+                          type="submit"
+                          className="px-6 py-1.5 h-9 text-base font-medium"
+                          variant="success"
+                          disabled={isSubmitting || disabled}>
+                          {i18n.t('Send')}
+                        </Button>
+                      </div>
+                    }
+                    {...field}
                   />
-                </div>
-              )}
-              <Button
-                type="submit"
-                className="px-6 py-1.5 h-9 text-base font-medium"
-                variant="success"
-                disabled={isSubmitting || disabled}>
-                {i18n.t('Send')}
-              </Button>
-            </div>
-          </div>
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <FormMessage className="px-2 py-1">
             {form.formState.errors.text?.message}
           </FormMessage>
@@ -246,3 +245,32 @@ export function CommentInput({
 }
 
 export default CommentInput;
+
+function TextArea(
+  props: AutosizeTextAreaProps & {
+    endAdornment: ReactNode;
+    dummyValue: string;
+  },
+) {
+  const {endAdornment, className, dummyValue, ...rest} = props;
+  return (
+    <div
+      className={cn(
+        'flex items-end flex-wrap rounded-md border border-input bg-white pr-1 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+      )}>
+      <div className="flex flex-col grow">
+        <AutosizeTextarea
+          className={cn(
+            'placeholder:text-sm placeholder:text-gray-dark border-none focus-visible:outline-none focus-visible:!ring-0 focus-visible:ring-none resize-none',
+            className,
+          )}
+          {...rest}
+        />
+        <span className="px-3 invisible h-0 !m-0 whitespace-pre-wrap">
+          {dummyValue}
+        </span>
+      </div>
+      <div className="ml-auto">{endAdornment}</div>
+    </div>
+  );
+}
