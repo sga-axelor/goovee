@@ -162,6 +162,26 @@ export async function findOrCreatePartnerPreference(params: UpdateParams) {
   return preference;
 }
 
+const routes = {
+  [SUBAPP_CODES.events]: ({url, id}: {url: string; id: string}) =>
+    `${url}/${[SUBAPP_CODES.events]}?category=${id}&page=1`,
+  [SUBAPP_CODES.news]: ({url, slug}: {url: string; slug: string}) =>
+    `${url}/${[SUBAPP_CODES.news]}/${slug}`,
+  [SUBAPP_CODES.resources]: ({url, id}: {url: string; id: string}) =>
+    `${url}/${[SUBAPP_CODES.resources]}/categories?id=${id}`,
+  [SUBAPP_CODES.forum]: ({url, id}: {url: string; id: string}) =>
+    `${url}/${[SUBAPP_CODES.forum]}/group/id=${id}`,
+  [SUBAPP_CODES.ticketing]: ({
+    url,
+    id,
+    pid,
+  }: {
+    url: string;
+    id: string;
+    pid: string;
+  }) => `${url}/${[SUBAPP_CODES.ticketing]}/projects/${pid}/tickets/${id}`,
+};
+
 async function findEventsCategories(params: Params) {
   const {user, tenantId, url} = params;
   const client = await manager.getClient(tenantId);
@@ -176,6 +196,12 @@ async function findEventsCategories(params: Params) {
         name: true,
       },
     })
+    .then((categories: any) =>
+      categories?.map((c: any) => ({
+        ...c,
+        route: routes[SUBAPP_CODES.events]({url, id: c.id}),
+      })),
+    )
     .catch(() => []);
 
   return categories;
@@ -193,18 +219,11 @@ async function findEventsPreferences(params: Params) {
   return {
     ...pick(preference, 'id', 'version', 'activateNotification'),
     code: params.code,
-    subscriptions: categories.map(c => {
+    subscriptions: categories.map((c: any) => {
       const subscription = getSubscription(c);
       return {
         ...c,
-        ...(subscription?.activateNotification
-          ? {
-              activateNotification: true,
-              config: pick(subscription, 'id', 'version'),
-            }
-          : {
-              activateNotification: false,
-            }),
+        activateNotification: Boolean(subscription?.activateNotification),
       };
     }),
   };
@@ -222,8 +241,15 @@ async function findNewsCategories(params: Params) {
       },
       select: {
         name: true,
+        slug: true,
       },
     })
+    .then((categories: any) =>
+      categories?.map((c: any) => ({
+        ...c,
+        route: routes[SUBAPP_CODES.news]({url, slug: c.slug}),
+      })),
+    )
     .catch(() => []);
 
   return categories;
@@ -242,18 +268,11 @@ async function findNewsPreferences(params: Params) {
   return {
     ...pick(preference, 'id', 'version', 'activateNotification'),
     code: params.code,
-    subscriptions: categories.map(c => {
+    subscriptions: categories.map((c: any) => {
       const subscription = getSubscription(c);
       return {
         ...c,
-        ...(subscription?.activateNotification
-          ? {
-              activateNotification: true,
-              config: pick(subscription, 'id', 'version'),
-            }
-          : {
-              activateNotification: false,
-            }),
+        activateNotification: Boolean(subscription?.activateNotification),
       };
     }),
   };
@@ -278,7 +297,13 @@ async function findResourcesFolders(params: Params) {
         parent: true,
       },
     })
-    .then(result => result?.map(i => ({...i, name: i.fileName})))
+    .then(result =>
+      result?.map(i => ({
+        ...i,
+        name: i.fileName,
+        route: routes[SUBAPP_CODES.resources]({url, id: i.id}),
+      })),
+    )
     .catch(() => []);
 
   return folders;
@@ -301,14 +326,7 @@ async function findResourcesPreferences(params: Params) {
       const subscription = getSubscription(c);
       return {
         ...c,
-        ...(subscription?.activateNotification
-          ? {
-              activateNotification: true,
-              config: pick(subscription, 'id', 'version'),
-            }
-          : {
-              activateNotification: false,
-            }),
+        activateNotification: Boolean(subscription?.activateNotification),
       };
     }),
   };
@@ -335,7 +353,12 @@ async function findForumGroups(params: Params) {
         },
       },
     })
-    .then(result => result?.map(i => i.forumGroup))
+    .then(result =>
+      result?.map(i => ({
+        ...i.forumGroup,
+        route: routes[SUBAPP_CODES.forum]({url, id: i.id}),
+      })),
+    )
     .catch(() => []);
 
   return groups;
@@ -358,14 +381,7 @@ async function findForumPreferences(params: Params) {
       const subscription = getSubscription(c);
       return {
         ...c,
-        ...(subscription?.activateNotification
-          ? {
-              activateNotification: true,
-              config: pick(subscription, 'id', 'version'),
-            }
-          : {
-              activateNotification: false,
-            }),
+        activateNotification: Boolean(subscription?.activateNotification),
       };
     }),
   };
@@ -386,10 +402,14 @@ async function findTickets(params: Params) {
           {createdByContact: {id: user.id}},
         ],
       },
-      select: {id: true, fullName: true, name: true},
+      select: {id: true, fullName: true, name: true, project: {id: true}},
     })
     .then(result =>
-      result?.map(({id, fullName, name}) => ({id, name: fullName || name})),
+      result?.map(({id, fullName, name, project}) => ({
+        id,
+        name: fullName || name,
+        route: routes[SUBAPP_CODES.ticketing]({url, id, pid: project?.id}),
+      })),
     )
     .catch(() => []);
 
@@ -517,7 +537,7 @@ async function updateEventsPreferences(params: UpdateParams) {
   const {record} = params;
 
   if (record?.id) {
-    const category = categories.find(c => c.id === record.id);
+    const category = categories.find((c: any) => c.id === record.id);
     if (!category) return null;
   }
 
@@ -530,7 +550,7 @@ async function updateNewsPreferences(params: UpdateParams) {
   const {record} = params;
 
   if (record?.id) {
-    const category = categories.find(c => c.id === record.id);
+    const category = categories.find((c: any) => c.id === record.id);
     if (!category) return null;
   }
 

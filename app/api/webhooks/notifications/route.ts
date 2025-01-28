@@ -53,7 +53,7 @@ const BATCH_SIZE = 10;
 
 async function processBatch(
   data: any[],
-  action: (data: string) => Promise<void>,
+  action: (data: any) => Promise<void>,
   batchSize: number = BATCH_SIZE,
 ): Promise<void> {
   const chunks = chunkArray(data, batchSize);
@@ -71,15 +71,81 @@ function chunkArray<T>(array: T[], size: number): T[][] {
   return result;
 }
 
+async function notificationTemplate({user, tenantId, app, entity}: any) {
+  return `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>${await getTranslation(
+          {locale: user.locale, tenant: tenantId},
+          '{0} - Notifications from Goovee',
+          app.name,
+        )}</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                background-color: #f9f9f9;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                text-align: center;
+                max-width: 600px;
+                margin: 0 auto;
+                background: #ffffff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                margin-bottom: 20px;
+            }
+            .link {
+                display: inline-block;
+                color: #58d59d !important;
+                text-decoration: none;
+                font-size: 16px;
+            }
+            .footer {
+                font-size: 14px;
+                color: #666666;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>${await getTranslation(
+                  {locale: user.locale, tenant: tenantId},
+                  `You have received new notification from Goovee {0}`,
+                  app.name,
+                )}
+                </h1>
+            </div>
+            <a href="${entity?.route}" target="_blank" class="link">
+              ${entity?.route}
+            </a>
+            <div class="footer">
+                <p>Best regards,<br>The Goovee Team</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+}
+
 async function sendMail({
   user,
   tenantId,
   mail,
   app,
+  entity,
 }: {
   user: any;
   tenantId: string;
   mail?: {subject?: string; body?: string};
+  entity: {id: string; version: number; route: string};
   app: PortalApp;
 }) {
   const mailService = NotificationManager.getService(NotificationType.mail);
@@ -93,13 +159,8 @@ async function sendMail({
         '{0} - Notifications from Goovee',
         app.name,
       )),
-    content:
-      mail?.body ||
-      (await getTranslation(
-        {locale: user.locale, tenant: tenantId},
-        'You have received new notification from Goovee {0}',
-        app.name,
-      )),
+    html:
+      mail?.body || (await notificationTemplate({user, tenantId, app, entity})),
   });
 }
 
@@ -138,22 +199,25 @@ async function sendNotifications(data: {
         url: workspaceUrl,
       });
 
-      const isSubscribed =
-        preference &&
-        preference.activateNotification &&
-        preference.subscriptions.find(
-          (s: any) => Number(s.id) === Number(record.id),
-        )?.activateNotification;
+      if (!preference?.activateNotification) return;
+
+      const entity = preference.subscriptions.find(
+        (s: any) => Number(s.id) === Number(record.id),
+      );
+
+      const isSubscribed = entity?.activateNotification;
 
       if (isSubscribed) {
-        subscribers.push(user);
+        subscribers.push({user, entity});
       }
     };
 
     const app: any = await findAppByCode({code, tenantId});
 
     processBatch(users, checkSubscription).then(() =>
-      processBatch(subscribers, user => sendMail({user, tenantId, mail, app})),
+      processBatch(subscribers, ({user, entity}: {user: any; entity: any}) =>
+        sendMail({user, tenantId, mail, entity, app}),
+      ),
     );
   } catch (err) {}
 }
