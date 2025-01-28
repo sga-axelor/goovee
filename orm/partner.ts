@@ -239,6 +239,7 @@ export async function registerContact({
     isContact: true,
     isCustomer: true,
     fullName: `${name} ${firstName || ''}`,
+    simpleFullName: `${name} ${firstName || ''}`,
     createdFromSelect: USER_CREATED_FROM,
     isRegisteredOnPortal: true,
     isActivatedOnPortal: true,
