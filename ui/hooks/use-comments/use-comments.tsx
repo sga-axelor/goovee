@@ -27,20 +27,16 @@ export type CreateProps = {
 export function useComments(props: UseCommentsProps) {
   const {sortBy, recordId, subapp, limit, newCommentOnTop} = props;
   const [comments, setComments] = useState<any[]>([]);
-  const [createdCommentIds, setCreatedCommentIds] = useState<Set<string>>(
-    new Set(),
-  );
   const [total, setTotal] = useState(0);
   const [fetching, setFetching] = useState(false);
   const [creating, setCreating] = useState(false);
   const [totalCommentThreadCount, setTotalCommentThreadCount] = useState(0);
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
-  const [skip, setSkip] = useState(0);
 
   const loadComments = useCallback(
-    async (options?: {reset?: boolean; skip?: number; exclude?: string[]}) => {
-      const {reset = true, skip = 0, exclude} = options || {};
+    async (options?: {reset?: boolean; exclude?: string[]}) => {
+      const {reset = true, exclude} = options || {};
       setFetching(true);
       try {
         const response = await fetchComments({
@@ -48,7 +44,6 @@ export function useComments(props: UseCommentsProps) {
           subapp,
           sort: sortBy,
           limit,
-          skip,
           workspaceURL,
           exclude,
         });
@@ -56,16 +51,11 @@ export function useComments(props: UseCommentsProps) {
         if (response.success) {
           const {data = [], total, totalCommentThreadCount} = response;
 
-          setTotal(total || 0);
+          setTotal((total || 0) + (exclude?.length || 0));
           setTotalCommentThreadCount(totalCommentThreadCount);
-          if (reset) {
-            setSkip(limit || 0);
-            setComments(data);
-            setCreatedCommentIds(new Set());
-          } else {
-            setComments(prevComments => [...prevComments, ...data]);
-            if (limit) setSkip(skip => skip + limit);
-          }
+          setComments(prevComments =>
+            reset ? data : [...prevComments, ...data],
+          );
         }
       } catch (error: any) {
         console.error('Fetch error:', error);
@@ -84,8 +74,8 @@ export function useComments(props: UseCommentsProps) {
 
   const loadMore = useCallback(() => {
     if (fetching || creating) return;
-    loadComments({reset: false, skip, exclude: Array.from(createdCommentIds)});
-  }, [loadComments, skip, fetching, creating, createdCommentIds]);
+    loadComments({reset: false, exclude: comments.map(c => c.id)});
+  }, [loadComments, fetching, creating, comments]);
 
   const handleCreate = useCallback(
     async ({formData, values, parent = null}: CreateProps) => {
@@ -125,9 +115,6 @@ export function useComments(props: UseCommentsProps) {
         );
         setTotalCommentThreadCount(
           prevTotalCommentThreadCount => prevTotalCommentThreadCount + 1,
-        );
-        setCreatedCommentIds(prevCreatedCommentIds =>
-          new Set(prevCreatedCommentIds).add(comment.id),
         );
       } catch (error: any) {
         console.error('Submission error:', error);
