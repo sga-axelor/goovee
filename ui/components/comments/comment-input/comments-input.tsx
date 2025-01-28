@@ -135,7 +135,7 @@ export function CommentInput({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 w-full">
         <div className={cn(disabled && 'pointer-events-none')}>
-          <div className="flex items-end rounded-md border border-input bg-white pr-3 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+          <div className="flex items-end rounded-md border border-input bg-white pr-1 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
             <FormField
               control={form.control}
               name="text"
