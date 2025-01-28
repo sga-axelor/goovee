@@ -46,6 +46,7 @@ const Content = ({
       pageInfo,
       selectedGroup,
       isMember,
+      workspace,
     }),
     [
       memberGroups,
@@ -55,6 +56,7 @@ const Content = ({
       pageInfo,
       selectedGroup,
       isMember,
+      workspace,
     ],
   );
 
