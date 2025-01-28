@@ -22,7 +22,7 @@ export type Response = {
       category: {
         name: string;
       };
-      publicationDatetime: 'string';
+      publicationDatetime: string;
     };
     partner: {
       name: string;

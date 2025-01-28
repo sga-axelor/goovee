@@ -25,7 +25,7 @@ export const surveyColumns = [
     mobile: true,
     getter: (row: Survey) => row.statusSelect,
     content: (row: Survey) => (
-      <Chip value={getStatusName(row.statusSelect)} outline={true} />
+      <Chip value={i18n.t(getStatusName(row.statusSelect))} outline={true} />
     ),
   },
   {
@@ -33,7 +33,7 @@ export const surveyColumns = [
     label: i18n.t('Type'),
     getter: (row: Survey) => row.typeSelect,
     content: (row: any) => (
-      <Chip value={getSurveyTypeName(row.typeSelect)} outline={true} />
+      <Chip value={i18n.t(getSurveyTypeName(row.typeSelect))} outline={true} />
     ),
   },
   {
@@ -67,7 +67,7 @@ export const partnerResponseColumns = [
     getter: (row: Response) => row.attrs?.surveyConfig?.statusSelect,
     content: (row: Response) => (
       <Chip
-        value={getStatusName(row.attrs?.surveyConfig?.statusSelect)}
+        value={i18n.t(getStatusName(row.attrs?.surveyConfig?.statusSelect))}
         outline={true}
       />
     ),
@@ -97,7 +97,7 @@ export const partnerResponseColumns = [
     getter: (row: Response) => row.attrs?.statusSelect,
     content: (row: Response) => (
       <Chip
-        value={getResponseStatusName(row.attrs?.statusSelect)}
+        value={i18n.t(getResponseStatusName(row.attrs?.statusSelect))}
         outline={true}
       />
     ),
