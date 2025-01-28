@@ -482,9 +482,6 @@ export async function findComments({
   workspaceURL,
   subapp,
   tenantId,
-  ids,
-  notinids,
-  skip,
 }: {
   model: {id: ID} | null;
   limit?: number;
@@ -493,9 +490,6 @@ export async function findComments({
   workspaceURL: string;
   subapp: SUBAPP_CODES;
   tenantId: Tenant['id'];
-  skip?: number;
-  ids?: ID[];
-  notinids?: ID[];
 }) {
   if (!tenantId) {
     return {
@@ -563,7 +557,7 @@ export async function findComments({
     };
   }
 
-  skip = skip || getSkipInfo(limit, page);
+  const skip = getSkipInfo(limit, page);
   const client = await manager.getClient(tenantId);
   try {
     let orderBy: any = null;
@@ -648,24 +642,7 @@ export async function findComments({
         }),
       };
 
-      return {
-        ...(notinids?.length
-          ? {
-              id: {
-                nin: notinids,
-              },
-            }
-          : {}),
-        ...(ids?.length
-          ? {
-              id: {
-                in: ids,
-              },
-            }
-          : {}),
-        ...baseConditions,
-        ...subappConditions,
-      };
+      return {...baseConditions, ...subappConditions};
     };
 
     let comments = await client.aOSMailMessage.find({
