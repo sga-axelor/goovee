@@ -35,7 +35,7 @@ import {create} from './action';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components';
 
 const formSchema = z.object({
-  title: z.string().min(1, {message: 'Title is required'}),
+  title: z.string().min(1, {message: i18n.t('Title is required')}),
   description: z.string(),
   icon: z.string(),
   color: z.string(),

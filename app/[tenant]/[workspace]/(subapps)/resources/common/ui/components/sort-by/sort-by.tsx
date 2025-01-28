@@ -10,20 +10,21 @@ import {
   SelectValue,
 } from '@/ui/components/select';
 import {cn} from '@/utils/css';
+import {i18n} from '@/locale';
 
 export function SortBy({className}: {className?: string}) {
   return (
     <div className={cn('flex items-center space-x-2', className)}>
       <Label htmlFor="terms" className="shrink-0">
-        Sort By:{' '}
+        {i18n.t('Sort By')}:{' '}
       </Label>
       <Select>
         <SelectTrigger className="grow sm:grow-0 sm:w-[180px]">
           <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="new">New</SelectItem>
-          <SelectItem value="popular">Popular</SelectItem>
+          <SelectItem value="new">{i18n.t('New')}</SelectItem>
+          <SelectItem value="popular">{i18n.t('Popular')}</SelectItem>
         </SelectContent>
       </Select>
     </div>

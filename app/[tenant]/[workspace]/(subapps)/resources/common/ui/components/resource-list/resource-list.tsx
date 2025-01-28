@@ -9,9 +9,9 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {download, getFileTypeIcon, getIconColor} from '@/utils/files';
+import {formatDate} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
-import {formatDate} from '@/lib/core/locale/formatters';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
 
 export function ResourceList({resources}: any) {

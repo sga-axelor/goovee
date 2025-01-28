@@ -2,10 +2,10 @@
 import {manager, type Tenant} from '@/tenant';
 import {clone} from '@/utils';
 import type {PortalWorkspace, User} from '@/types';
+import {filterPrivate} from '@/orm/filter';
 
 // ---- LOCAL IMPORTS ---- //
 import {COLORS, ICONS} from '@/subapps/resources/common/constants';
-import {filterPrivate} from '@/orm/filter';
 
 export async function fetchFolders({
   workspace,
@@ -42,7 +42,7 @@ export async function fetchFolders({
     },
     orderBy: {
       updatedOn: 'DESC',
-    },
+    } as any,
     take: params?.take,
   });
 
@@ -143,7 +143,7 @@ export async function fetchLatestFiles({
     },
     orderBy: {
       updatedOn: 'DESC',
-    },
+    } as any,
     take: 10,
   });
 
@@ -244,7 +244,7 @@ export async function fetchExplorerCategories({
     categories.forEach((category: any) => {
       const {parent} = category;
       if (parent?.id) {
-        map[parent.id].children.push(category);
+        map[parent.id]?.children.push(category);
       }
     });
 

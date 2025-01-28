@@ -173,7 +173,7 @@ export async function create(formData: FormData, workspaceURL: string) {
   } catch (err) {
     return {
       error: true,
-      message: 'Error creating category',
+      message: await t('Error creating category'),
     };
   }
 }

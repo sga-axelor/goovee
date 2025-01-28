@@ -9,10 +9,10 @@ import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {DocViewer} from '@/ui/components';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
+import {formatDate} from '@/locale/server/formatters';
+import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {formatDate} from '@/lib/core/locale/server/formatters';
-import {findWorkspace} from '@/orm/workspace';
 import DownloadIcon from './download-icon';
 import HTMLViewer from './html-viewer';
 import ImageViewer from './image-viewer';
