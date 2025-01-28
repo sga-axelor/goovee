@@ -18,7 +18,7 @@ import {
 import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
-import {formatDate} from '@/lib/core/locale/formatters';
+import {formatDate} from '@/locale/formatters';
 import {DynamicIcon} from '@/subapps/resources/common/ui/components';
 import {getFileTypeIcon, getIconColor} from '@/utils/files';
 import {findDmsFiles} from './action';

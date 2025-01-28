@@ -1,7 +1,7 @@
 'use client';
 
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {formatDate} from '@/lib/core/locale/formatters';
+import {formatDate} from '@/locale/formatters';
 import {i18n} from '@/locale';
 import type {Maybe} from '@/types/util';
 import {

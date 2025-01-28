@@ -28,7 +28,7 @@ import {
 } from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {formatNumber} from '@/lib/core/locale/server/formatters';
+import {formatNumber} from '@/locale/server/formatters';
 import {cn} from '@/utils/css';
 import {DEFAULT_SORT, sortKeyPathMap} from '../../common/constants';
 import {findProject, findTicketStatuses} from '../../common/orm/projects';

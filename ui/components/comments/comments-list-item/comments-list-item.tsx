@@ -45,7 +45,7 @@ import {
   formatDate,
   formatNumber,
   formatRelativeTime,
-} from '@/lib/core/locale/formatters';
+} from '@/locale/formatters';
 import type {Comment} from '@/orm/comment';
 import {type Tenant} from '@/tenant';
 

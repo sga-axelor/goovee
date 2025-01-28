@@ -1,4 +1,4 @@
-import {formatDate} from '@/lib/core/locale/formatters';
+import {formatDate} from '@/locale/formatters';
 import type {Cloned} from '@/types/util';
 import type {
   ChildTicket,
