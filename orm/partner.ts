@@ -308,6 +308,7 @@ export async function registerPartner({
     isContact: isContact || false,
     isCustomer: true,
     fullName: `${name} ${firstName || ''}`,
+    simpleFullName: `${name} ${firstName || ''}`,
     createdFromSelect: USER_CREATED_FROM,
     isRegisteredOnPortal: true,
     isActivatedOnPortal: true,

@@ -210,7 +210,9 @@ export const CommentListItem = ({
               ? renderAvatar(partner?.picture?.id)
               : null}
             <div className="font-semibold text-sm">
-              {partner ? partner.simpleFullName : createdBy?.fullName}
+              {partner
+                ? (partner.simpleFullName ?? partner.name)
+                : createdBy?.fullName}
             </div>
             <TooltipComponent
               triggerText={`${i18n.t('Updated')} ${formatRelativeTime(parentMailMessage?.createdOn)}`}
@@ -282,7 +284,9 @@ export const CommentListItem = ({
             ? renderAvatar(partner?.picture?.id)
             : null}
           <div className="font-semibold text-sm leading-[21px] ">
-            {partner ? partner.simpleFullName : createdBy?.fullName}
+            {partner
+              ? (partner.simpleFullName ?? partner.name)
+              : createdBy?.fullName}
           </div>
           <TooltipComponent
             triggerText={`${i18n.t('Updated')} ${formatRelativeTime(createdOn)}`}

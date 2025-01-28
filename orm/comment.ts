@@ -47,7 +47,7 @@ function getSelectFields(
     publicBody: true,
     body: true,
     createdOn: true,
-    partner: {picture: true, simpleFullName: true},
+    partner: {picture: true, simpleFullName: true, name: true},
     mailMessageFileList: {
       select: {attachmentFile: {id: true, fileName: true}},
     },
@@ -140,7 +140,9 @@ export async function getPopularCommentsBySorting({
               'picture',
               JSON_BUILD_OBJECT('id', partner.picture),
               'simpleFullName',
-              partner.simple_full_name
+              partner.simple_full_name,
+              'name',
+              partner.name
             ) AS partner
           FROM
             mail_message
@@ -178,7 +180,9 @@ export async function getPopularCommentsBySorting({
                   'picture',
                   JSON_BUILD_OBJECT('id', childPartner.picture),
                   'simpleFullName',
-                  childPartner.simple_full_name
+                  childPartner.simple_full_name,
+                  'name',
+                  partner.name
                 ),
                 'createdBy',
                 JSON_BUILD_OBJECT(
