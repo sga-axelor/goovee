@@ -5,6 +5,8 @@ import {MetaFieldPicture} from '../meta-field-picture';
 import {
   JSON_MANY_TO_ONE,
   JSON_MANY_TO_MANY,
+  MANY_TO_ONE,
+  MANY_T0_MANY,
 } from '@/subapps/shop/common/constants';
 
 export function ProductMetaFieldView({fields}: {fields: any[]}) {
@@ -31,7 +33,7 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
   });
 
   const renderFieldMTM = (field: any) => {
-    const fieldValue = field.value[0].value;
+    const fieldValue = field.value[0]?.value ?? field.value[0];
     if (fieldValue.fileType && isImage(fieldValue.fileType)) {
       return (
         <div className="w-full">
@@ -49,7 +51,7 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
           {expandedFields[field.title] && (
             <div className="ml-7 mt-2 space-y-4">
               {field.value.map((image, index) => (
-                <MetaFieldPicture image={image.value} key={index} />
+                <MetaFieldPicture image={image.value ?? image} key={index} />
               ))}
             </div>
           )}
@@ -69,12 +71,18 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
     }
   };
 
+  const isManyTo = (type: string) => {
+    return (
+      type === JSON_MANY_TO_MANY ||
+      type === JSON_MANY_TO_ONE ||
+      type === MANY_T0_MANY ||
+      type === MANY_TO_ONE
+    );
+  };
+
   const renderFieldValue = (field: any) => {
     const transFormedField = transformValueToArray(field);
-    if (
-      (field.type === JSON_MANY_TO_MANY || field.type === JSON_MANY_TO_ONE) &&
-      field.value
-    ) {
+    if (isManyTo(field.type) && field.value) {
       return renderFieldMTM(transFormedField);
     }
     return (
