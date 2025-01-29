@@ -182,7 +182,7 @@ export async function getPopularCommentsBySorting({
                   'simpleFullName',
                   childPartner.simple_full_name,
                   'name',
-                  partner.name
+                  childPartner.name
                 ),
                 'createdBy',
                 JSON_BUILD_OBJECT(
