@@ -47,7 +47,7 @@ export const RegistrationForm = ({
     () => [
       {
         name: 'name',
-        title: 'Name',
+        title: i18n.t('Name'),
         type: 'string',
         widget: null,
         helper: 'Enter name',
@@ -59,10 +59,10 @@ export const RegistrationForm = ({
       },
       {
         name: 'surname',
-        title: 'Surname',
+        title: i18n.t('Surname'),
         type: 'string',
         widget: null,
-        helper: 'Enter surname',
+        helper: i18n.t('Enter surname'),
         hidden: false,
         required: true,
         readonly: false,
@@ -83,10 +83,10 @@ export const RegistrationForm = ({
       },
       {
         name: 'emailAddress',
-        title: 'Email',
+        title: i18n.t('Email'),
         type: 'string',
         widget: 'email',
-        helper: 'Enter email',
+        helper: i18n.t('Enter email'),
         hidden: false,
         required: true,
         readonly: isLoggedIn,
@@ -95,10 +95,10 @@ export const RegistrationForm = ({
       },
       {
         name: 'phone',
-        title: 'Phone',
+        title: i18n.t('Phone'),
         type: 'string',
         widget: 'phone',
-        helper: 'Enter phone number',
+        helper: i18n.t('Enter phone number'),
         hidden: false,
         required: true,
         readonly: false,
@@ -144,7 +144,7 @@ export const RegistrationForm = ({
       ...participantForm,
       {
         name: 'addOtherPeople',
-        title: 'Register other people to this event',
+        title: i18n.t('Register other people to this event'),
         type: 'boolean',
         widget: null,
         helper: null,
