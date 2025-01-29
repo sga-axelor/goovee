@@ -12,6 +12,7 @@ import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 import {findModelFields} from '@/orm/model-fields';
+import {transformMetaFields} from '@/subapps/shop/common/utils/meta-field-value';
 import {
   BASE_PRODUCT_MODEL,
   PRODUCT_ATTRS,
@@ -62,6 +63,12 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
+  const metaFieldsValues = await transformMetaFields(
+    metaFields,
+    computedProduct?.product?.productAttrs,
+    tenant,
+  );
+
   if (!computedProduct) redirect(`${workspaceURI}/shop`);
 
   let breadcrumbs: any = [];
@@ -79,7 +86,7 @@ export default async function Page({
       workspace={workspace}
       breadcrumbs={breadcrumbs}
       categories={parentcategories}
-      metaFields={metaFields}
+      metaFields={metaFieldsValues}
     />
   );
 }

@@ -89,9 +89,11 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
 
   return (
     <div className="py-4 space-y-1 text-sm">
-      {fields.map((field, index) => (
-        <div key={index}>{renderFieldValue(field)}</div>
-      ))}
+      {fields
+        .filter(field => field.value)
+        .map((field, index) => (
+          <div key={index}>{renderFieldValue(field)}</div>
+        ))}
     </div>
   );
 }
