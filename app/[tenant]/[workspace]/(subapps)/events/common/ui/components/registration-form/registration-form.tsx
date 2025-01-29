@@ -70,6 +70,18 @@ export const RegistrationForm = ({
         defaultValue: user?.name || '',
       },
       {
+        name: 'company',
+        title: 'Company',
+        type: 'string',
+        widget: null,
+        helper: i18n.t('Enter company name'),
+        hidden: false,
+        required: false,
+        readonly: false,
+        order: 3,
+        defaultValue: '',
+      },
+      {
         name: 'emailAddress',
         title: 'Email',
         type: 'string',
@@ -78,7 +90,7 @@ export const RegistrationForm = ({
         hidden: false,
         required: true,
         readonly: isLoggedIn,
-        order: 3,
+        order: 4,
         defaultValue: user?.emailAddress?.address || '',
       },
       {
@@ -90,7 +102,7 @@ export const RegistrationForm = ({
         hidden: false,
         required: true,
         readonly: false,
-        order: 4,
+        order: 5,
         defaultValue: user?.fixedPhone || '',
       },
     ],
@@ -186,6 +198,7 @@ export const RegistrationForm = ({
   const onSubmit = async (values: any) => {
     try {
       const result = extractCustomData(values, 'contactAttrs', metaFields);
+
       if (isLoggedIn) result.emailAddress = user?.emailAddress?.address;
       if (!result.addOtherPeople) {
         result.otherPeople = [];
