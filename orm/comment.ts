@@ -49,9 +49,13 @@ export type Track = {
   oldValue?: string;
 };
 
-function getSelectFields(
-  childConditions?: Omit<QueryOptions<AOSMailMessage>, 'select'>,
-) {
+function getSelectFields({
+  showRepliesInMainList,
+  childConditions,
+}: {
+  showRepliesInMainList?: boolean;
+  childConditions?: Omit<QueryOptions<AOSMailMessage>, 'select'>;
+} = {}) {
   const commentFields = {
     note: true,
     publicBody: true,
@@ -66,7 +70,7 @@ function getSelectFields(
 
   const select = {
     ...commentFields,
-    parentMailMessage: commentFields,
+    ...(showRepliesInMainList && {parentMailMessage: commentFields}),
     isPublicNote: true,
     childMailMessages: {
       ...childConditions,
@@ -82,16 +86,16 @@ export async function getPopularCommentsBySorting({
   recordId,
   tenantId,
   modelName,
-  subapp,
   exclude,
+  showRepliesInMainList,
 }: {
   recordId: ID;
   skip?: number;
   limit?: number;
   tenantId: Tenant['id'];
-  subapp: SUBAPP_CODES;
   modelName: string;
   exclude?: ID[];
+  showRepliesInMainList?: boolean;
 }): Promise<FindCommentsData> {
   if (!tenantId || !recordId) {
     throw new Error(await t('TenantId  and RecordId are required'));
@@ -175,9 +179,10 @@ export async function getPopularCommentsBySorting({
               OR mail_message.is_public_note = TRUE
             )
             AND mail_message.related_model = $4
-            AND mail_message.related_id = $1 ${subapp === SUBAPP_CODES.forum
-        ? 'AND mail_message.parent_mail_message IS NULL'
-        : ''} ${exclude && exclude.length
+            AND mail_message.related_id = $1 ${showRepliesInMainList
+        ? ''
+        : 'AND mail_message.parent_mail_message IS NULL'} ${exclude &&
+      exclude.length
         ? `AND mail_message.id NOT IN (${exclude.map((_, i) => '$' + (i + 1 + params.length)).join(',')})`
         : ''}
         ),
@@ -353,6 +358,7 @@ export async function addComment({
   tenantId,
   subject,
   messageType = MAIL_MESSAGE_TYPE.comment,
+  showRepliesInMainList,
 }: {
   subapp: SUBAPP_CODES;
   userId: ID;
@@ -370,6 +376,7 @@ export async function addComment({
   subject: string;
   messageType?: MAIL_MESSAGE_TYPE;
   tenantId: Tenant['id'];
+  showRepliesInMainList?: boolean;
 }): Promise<[Comment, Comment | undefined]> {
   const client = await manager.getClient(tenantId);
 
@@ -417,13 +424,21 @@ export async function addComment({
   });
 
   const data = await client.aOSMailMessage.find({
-    where: {id: {in: [response.id].concat(parent ? [parent.id] : [])}},
-    select: getSelectFields(),
+    where: {
+      id: {
+        in: [response.id].concat(
+          parent && showRepliesInMainList ? [parent.id] : [],
+        ),
+      },
+    },
+    select: getSelectFields({showRepliesInMainList}),
   });
 
   const comment = CommentSchema.parse(data.find(d => d.id === response.id));
   const parentComment =
-    parent && CommentSchema.parse(data.find(d => d.id === parent.id));
+    showRepliesInMainList && parent
+      ? CommentSchema.parse(data.find(d => d.id === parent.id))
+      : undefined;
 
   return [comment, parentComment];
 }
@@ -479,7 +494,7 @@ export const CommentSchema = MailMessageSchema.extend({
   isPublicNote: z.boolean().nullish(),
   parentMailMessage: MailMessageSchema.nullish(),
   childMailMessages: z.array(MailMessageSchema).nullish(),
-  _count: z.string().nullish(),
+  _count: z.string().or(z.number()).nullish(),
   _cursor: z.string().nullish(),
   _hasNext: z.boolean().nullish(),
   _hasPrev: z.boolean().nullish(),
@@ -503,6 +518,7 @@ export async function findComments({
   subapp,
   tenantId,
   exclude,
+  showRepliesInMainList,
 }: {
   recordId: ID;
   modelName: string;
@@ -512,6 +528,7 @@ export async function findComments({
   subapp: SUBAPP_CODES;
   tenantId: Tenant['id'];
   exclude?: ID[];
+  showRepliesInMainList?: boolean;
 }): Promise<FindCommentsData> {
   if (!tenantId || !recordId) {
     throw new Error(await t('TenantId  and RecordId are required.'));
@@ -530,8 +547,8 @@ export async function findComments({
         skip,
         limit,
         tenantId,
-        subapp,
         exclude,
+        showRepliesInMainList,
       });
 
       return results;
@@ -550,7 +567,7 @@ export async function findComments({
       ...(subapp !== SUBAPP_CODES.quotations && {
         OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
       }),
-      ...(subapp === SUBAPP_CODES.forum && {
+      ...(!showRepliesInMainList && {
         parentMailMessage: {id: {eq: null}},
       }),
     };
@@ -564,11 +581,14 @@ export async function findComments({
     take: limit,
     ...(skip ? {skip} : {}),
     select: getSelectFields({
-      orderBy,
-      where: {
-        relatedId: Number(recordId),
-        relatedModel: modelName,
-        isPublicNote: true,
+      showRepliesInMainList,
+      childConditions: {
+        orderBy,
+        where: {
+          relatedId: Number(recordId),
+          relatedModel: modelName,
+          isPublicNote: true,
+        },
       },
     }),
   });

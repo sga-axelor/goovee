@@ -134,6 +134,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
               hideSortBy
               hideTopBorder
               hideCloseComments
+              showRepliesInMainList
             />
           </div>
         </div>

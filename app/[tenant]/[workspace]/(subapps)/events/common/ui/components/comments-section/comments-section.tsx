@@ -24,6 +24,7 @@ export const CommentsSection = ({eventId}: CommentSectionProps) => {
         hideSortBy
         hideTopBorder
         hideCloseComments
+        showRepliesInMainList
       />
     </Card>
   );

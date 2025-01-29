@@ -20,6 +20,7 @@ export type UseCommentsProps = {
   subapp: SUBAPP_CODES;
   limit?: number;
   newCommentOnTop?: boolean;
+  showRepliesInMainList?: boolean;
 };
 
 export type CreateProps = {
@@ -28,7 +29,14 @@ export type CreateProps = {
 };
 
 export function useComments(props: UseCommentsProps) {
-  const {sortBy, recordId, subapp, limit, newCommentOnTop} = props;
+  const {
+    sortBy,
+    recordId,
+    subapp,
+    limit,
+    newCommentOnTop,
+    showRepliesInMainList,
+  } = props;
   const [comments, setComments] = useState<Cloned<Comment>[]>([]);
   const [total, setTotal] = useState(0);
   const [fetching, setFetching] = useState(false);
@@ -49,6 +57,7 @@ export function useComments(props: UseCommentsProps) {
           limit,
           workspaceURL,
           exclude,
+          showRepliesInMainList,
         });
 
         if (error) {
@@ -71,7 +80,15 @@ export function useComments(props: UseCommentsProps) {
         setFetching(false);
       }
     },
-    [recordId, sortBy, subapp, toast, workspaceURL, limit],
+    [
+      recordId,
+      sortBy,
+      subapp,
+      toast,
+      workspaceURL,
+      limit,
+      showRepliesInMainList,
+    ],
   );
 
   const loadMore = useCallback(() => {
@@ -89,6 +106,7 @@ export function useComments(props: UseCommentsProps) {
           recordId,
           parentId: parent,
           subapp,
+          showRepliesInMainList: showRepliesInMainList,
         });
 
         const {error, message, data} = await createComment(formData);
@@ -132,7 +150,14 @@ export function useComments(props: UseCommentsProps) {
         setCreating(false);
       }
     },
-    [workspaceURL, recordId, subapp, toast, newCommentOnTop],
+    [
+      workspaceURL,
+      recordId,
+      subapp,
+      toast,
+      newCommentOnTop,
+      showRepliesInMainList,
+    ],
   );
 
   const hasMore = useMemo(() => comments.length < total, [comments, total]);

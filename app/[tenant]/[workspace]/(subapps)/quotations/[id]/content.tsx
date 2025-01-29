@@ -357,6 +357,7 @@ const Content = ({
               hideCloseComments
               hideCommentsHeader
               hideSortBy
+              showRepliesInMainList
             />
           </div>
         )}

@@ -46,6 +46,7 @@ type CommentsProps = {
   hideTopBorder?: boolean;
   disabled?: boolean;
   hideSortBy?: boolean;
+  showRepliesInMainList?: boolean;
 };
 
 export function Comments(props: CommentsProps) {
@@ -65,6 +66,7 @@ export function Comments(props: CommentsProps) {
     disabled,
     hideSortBy,
     inputContainerClassName,
+    showRepliesInMainList,
   } = props;
   const inputOnTop = inputPosition === 'top';
   const [showComments, setShowComments] = useState(showCommentsByDefault);
@@ -77,6 +79,7 @@ export function Comments(props: CommentsProps) {
       sortBy,
       limit,
       newCommentOnTop: inputPosition === 'top',
+      showRepliesInMainList: showRepliesInMainList,
     });
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;

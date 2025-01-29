@@ -31,6 +31,7 @@ export type CreateCommentProps = {
   recordId: ID;
   parentId?: ID;
   subapp: SUBAPP_CODES;
+  showRepliesInMainList?: boolean;
 };
 
 export async function createComment(
@@ -56,9 +57,14 @@ export async function createComment(
     };
   }
 
-  const {data, workspaceURL, recordId, parentId, subapp} = unpackFromFormData(
-    formData,
-  ) as CreateCommentProps;
+  const {
+    data,
+    workspaceURL,
+    recordId,
+    parentId,
+    subapp,
+    showRepliesInMainList,
+  } = unpackFromFormData(formData) as CreateCommentProps;
 
   const workspace = await findWorkspace({
     user,
@@ -137,6 +143,7 @@ export async function createComment(
       parentId,
       tenantId,
       subject: `${user.simpleFullName || user.name} added a comment`,
+      showRepliesInMainList,
     });
 
     return {
@@ -162,6 +169,7 @@ export async function fetchComments({
   subapp,
   workspaceURL,
   exclude,
+  showRepliesInMainList,
 }: {
   recordId: ID;
   sort?: SORT_TYPE;
@@ -170,6 +178,7 @@ export async function fetchComments({
   subapp: SUBAPP_CODES;
   workspaceURL: string;
   exclude?: ID[];
+  showRepliesInMainList?: boolean;
 }): ActionResponse<Cloned<FindCommentsData>> {
   const session = await getSession();
 
@@ -240,6 +249,7 @@ export async function fetchComments({
       subapp,
       tenantId,
       exclude,
+      showRepliesInMainList,
     });
     return {
       success: true,

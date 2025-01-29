@@ -190,6 +190,7 @@ export default async function Page({
             hideSortBy
             hideCloseComments
             hideCommentsHeader
+            showRepliesInMainList
           />
         </div>
       )}
