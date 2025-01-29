@@ -1,5 +1,3 @@
-'use client';
-
 import {zodResolver} from '@hookform/resolvers/zod';
 import {forwardRef, ReactNode, useRef, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
@@ -23,13 +21,14 @@ import type {
 } from '@/ui/components/textarea-auto-size';
 import {cn} from '@/utils/css';
 import {getFileSizeText} from '@/utils/files';
+import type {CreateProps} from '@/ui/hooks/use-comments';
 
 type CommentProps = {
   disabled?: boolean;
   placeholderText?: string;
   showAttachmentIcon?: boolean;
   className?: string;
-  onSubmit: any;
+  onSubmit: (props: CreateProps) => Promise<void>;
   autoFocus?: boolean;
 };
 
@@ -50,7 +49,6 @@ const formSchema = z
           ),
       }),
     ),
-    content: z.string(),
     text: z.string().optional(),
   })
   .superRefine((data, ctx) => {
@@ -64,6 +62,8 @@ const formSchema = z
       });
     }
   });
+
+export type CommentData = z.infer<typeof formSchema>;
 
 export function CommentInput({
   disabled = false,
@@ -80,7 +80,6 @@ export function CommentInput({
     resolver: zodResolver(formSchema),
     defaultValues: {
       text: '',
-      content: '',
       attachments: [],
     },
   });
@@ -88,28 +87,7 @@ export function CommentInput({
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append('text', values.text || ' ');
-    formData.append('content', values.content);
-
-    if (values.attachments && values.attachments.length > 0) {
-      values.attachments.forEach((attachment, index) => {
-        if (attachment.title) {
-          formData.append(`attachments[${index}][title]`, attachment.title);
-        }
-        if (attachment.description) {
-          formData.append(
-            `attachments[${index}][description]`,
-            attachment.description,
-          );
-        }
-        if (attachment.file) {
-          formData.append(`attachments[${index}][file]`, attachment.file);
-        }
-      });
-    }
-
-    await onSubmit({formData, values});
+    await onSubmit({data: values});
     setIsSubmitting(false);
 
     form.reset();

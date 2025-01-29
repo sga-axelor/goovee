@@ -5,30 +5,19 @@ import React from 'react';
 import {i18n} from '@/locale';
 import {download} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {MailMessageFile} from '@/orm/comment';
 
-interface Attachment {
-  id: string;
-  attachmentFile?: {
-    id: string | number;
-    fileName?: string;
-  };
-}
-
-interface CommentAttachmentsProps {
-  attachments: Attachment[];
-}
+type CommentAttachmentsProps = {
+  attachments: MailMessageFile[];
+};
 
 export function CommentAttachments({attachments}: CommentAttachmentsProps) {
   const {tenant} = useWorkspace();
 
-  const handleDownload = async (attachment: Attachment) => {
+  const handleDownload = async (attachment: MailMessageFile) => {
     const {attachmentFile} = attachment;
     download(attachmentFile, tenant, {isMeta: true});
   };
-
-  if (!attachments?.length) {
-    return;
-  }
 
   return (
     <div className="px-4 text-xs mb-1">

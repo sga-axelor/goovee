@@ -50,6 +50,7 @@ import {
 import type {Comment} from '@/orm/comment';
 import {type Tenant} from '@/tenant';
 import type {ID} from '@/types';
+import {CreateProps} from '@/ui/hooks/use-comments';
 
 interface CommentListItemProps {
   recordId: ID;
@@ -59,8 +60,8 @@ interface CommentListItemProps {
   subapp: SUBAPP_CODES;
   disabled: boolean;
   isTopLevel?: boolean;
-  sortBy?: any;
-  onSubmit?: (data: any) => Promise<void>;
+  sortBy?: SORT_TYPE;
+  onSubmit?: (data: CreateProps) => Promise<void>;
   tenantId: Tenant['id'];
 }
 
@@ -127,7 +128,7 @@ export const CommentListItem = ({
   const isLoggedIn = Boolean(session?.user?.id);
   const isDisabled = !isLoggedIn || disabled;
 
-  const scrollToComment = (id: string) => {
+  const scrollToComment = (id: ID) => {
     const element = document.querySelector(`#comment-${id}`);
     if (element) {
       element.classList.add(
@@ -144,12 +145,12 @@ export const CommentListItem = ({
   };
 
   const toggleSubComments = () => {
-    if (childMailMessages?.length > 0) setShowSubComments(prev => !prev);
+    if (!!childMailMessages?.length) setShowSubComments(prev => !prev);
   };
 
   const toggleCommentInput = () => setShowCommentInput(prev => !prev);
 
-  const handleCommentSubmit = async (data: any) => {
+  const handleCommentSubmit = async (data: CreateProps) => {
     if (onSubmit) {
       try {
         await onSubmit({
@@ -191,7 +192,7 @@ export const CommentListItem = ({
     ));
   };
 
-  const renderAvatar = (pictureId: string | undefined) => (
+  const renderAvatar = (pictureId: ID | undefined) => (
     <Avatar className="rounded-full h-6 w-6">
       <AvatarImage src={getImageURL(pictureId, tenantId, {noimage: true})} />
     </Avatar>
@@ -215,8 +216,8 @@ export const CommentListItem = ({
                 : createdBy?.fullName}
             </div>
             <TooltipComponent
-              triggerText={`${i18n.t('Updated')} ${formatRelativeTime(parentMailMessage?.createdOn)}`}
-              tooltipText={formatDate(parentMailMessage?.createdOn, {
+              triggerText={`${i18n.t('Updated')} ${formatRelativeTime(parentMailMessage?.createdOn!)}`}
+              tooltipText={formatDate(parentMailMessage?.createdOn!, {
                 dateFormat: `MMMM DD YYYY, h:mm a`,
               })}
             />
@@ -289,8 +290,8 @@ export const CommentListItem = ({
               : createdBy?.fullName}
           </div>
           <TooltipComponent
-            triggerText={`${i18n.t('Updated')} ${formatRelativeTime(createdOn)}`}
-            tooltipText={formatDate(createdOn, {
+            triggerText={`${i18n.t('Updated')} ${formatRelativeTime(createdOn!)}`}
+            tooltipText={formatDate(createdOn!, {
               dateFormat: `MMMM DD YYYY, h:mm a`,
             })}
           />
@@ -317,13 +318,15 @@ export const CommentListItem = ({
           />
         )}
         {tracks.length > 0 && <CommentTracks tracks={tracks} title={title} />}
-        <CommentAttachments attachments={mailMessageFileList} />
+        {!!mailMessageFileList?.length && (
+          <CommentAttachments attachments={mailMessageFileList} />
+        )}
 
         <div className="flex flex-col">
           {renderParentMessage()}
           <div
             className="text-sm w-full font-normal"
-            dangerouslySetInnerHTML={{__html: note}}
+            dangerouslySetInnerHTML={{__html: note ?? ''}}
           />
           <div className="flex items-center gap-6 mt-1 mb-2">
             {showReactions && renderReactions()}
@@ -336,7 +339,7 @@ export const CommentListItem = ({
                   <span className="text-[10px]">{i18n.t('Reply')}</span>
                 </div>
 
-                {parentCommentId === id && childMailMessages.length > 0 && (
+                {parentCommentId === id && !!childMailMessages?.length && (
                   <>
                     <Separator
                       orientation="vertical"

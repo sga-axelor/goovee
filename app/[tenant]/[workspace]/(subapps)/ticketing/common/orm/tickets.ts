@@ -4,7 +4,7 @@ import axios from 'axios';
 import {MAIL_MESSAGE_TYPE, ORDER_BY, SUBAPP_CODES} from '@/constants';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
-import {addComment, ModelMap} from '@/orm/comment';
+import {addComment, type ModelMap, type Track} from '@/orm/comment';
 import {manager, type Tenant} from '@/tenant';
 import {sql} from '@/utils/template-string';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';
@@ -33,13 +33,6 @@ import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
-};
-
-type Track = {
-  name: string;
-  title: string;
-  value: string;
-  oldValue?: string;
 };
 
 export async function findTicketAccess({

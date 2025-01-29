@@ -21,16 +21,20 @@ import {ID} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {findByID} from '@/orm/record';
 import {Cloned} from '@/types/util';
-import type {Comment} from '@/orm/comment';
+import type {Attachment, Comment} from '@/orm/comment';
+import {CommentData} from '@/ui/components/comments/comment-input/comments-input';
+import {unpackFromFormData} from '@/utils/formdata';
 
-type Attachement = {
-  id: ID;
-  description?: string;
+export type CreateCommentProps = {
+  data: CommentData;
+  workspaceURL: string;
+  recordId: ID;
+  parentId?: ID;
+  subapp: SUBAPP_CODES;
 };
 
 export async function createComment(
-  formData: any,
-  valueString: string,
+  formData: FormData,
 ): ActionResponse<Cloned<[Comment, Comment | undefined]>> {
   const session = await getSession();
 
@@ -43,24 +47,6 @@ export async function createComment(
     };
   }
 
-  let attachments: Attachement[] = [];
-
-  const {
-    values,
-    workspaceURL,
-    recordId,
-    subapp,
-    parentId,
-    messageBody = null,
-  } = JSON.parse(valueString) as {
-    values?: any;
-    workspaceURL: string;
-    subapp: SUBAPP_CODES;
-    recordId: ID;
-    parentId?: any;
-    messageBody?: any;
-  };
-
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -69,6 +55,10 @@ export async function createComment(
       message: await t('TenantId is required.'),
     };
   }
+
+  const {data, workspaceURL, recordId, parentId, subapp} = unpackFromFormData(
+    formData,
+  ) as CreateCommentProps;
 
   const workspace = await findWorkspace({
     user,
@@ -123,9 +113,10 @@ export async function createComment(
     };
   }
 
-  if (values?.attachments?.length) {
+  let attachments: Attachment[] = [];
+  if (data?.attachments?.length) {
     try {
-      attachments = await upload(formData, tenantId);
+      attachments = await upload(data.attachments, tenantId);
     } catch (e) {
       return {
         error: true,
@@ -135,23 +126,22 @@ export async function createComment(
   }
 
   try {
-    const data = await addComment({
+    const res = await addComment({
       modelName,
       userId: user.id,
       workspaceUserId: workspaceUser.id,
       subapp,
       recordId,
-      note: values?.text,
+      note: data?.text,
       attachments,
       parentId,
-      messageBody,
       tenantId,
       subject: `${user.simpleFullName || user.name} added a comment`,
     });
 
     return {
       success: true,
-      data: clone(data),
+      data: clone(res),
     };
   } catch (e) {
     return {

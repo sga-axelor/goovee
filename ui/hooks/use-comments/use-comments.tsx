@@ -11,6 +11,8 @@ import {ID} from '@/types';
 import type {Cloned} from '@/types/util';
 import {useToast} from '@/ui/hooks';
 import type {Comment} from '@/orm/comment';
+import type {CommentData} from '@/ui/components/comments/comment-input/comments-input';
+import {packIntoFormData} from '@/utils/formdata';
 
 export type UseCommentsProps = {
   sortBy: SORT_TYPE;
@@ -21,9 +23,8 @@ export type UseCommentsProps = {
 };
 
 export type CreateProps = {
-  formData: any;
-  values: any;
-  parent?: number | null;
+  data: CommentData;
+  parent?: ID;
 };
 
 export function useComments(props: UseCommentsProps) {
@@ -79,19 +80,18 @@ export function useComments(props: UseCommentsProps) {
   }, [loadComments, fetching, creating, comments]);
 
   const handleCreate = useCallback(
-    async ({formData, values, parent = null}: CreateProps) => {
+    async ({data: commentData, parent}: CreateProps) => {
       setCreating(true);
       try {
-        const {error, message, data} = await createComment(
-          formData,
-          JSON.stringify({
-            values,
-            workspaceURL,
-            recordId,
-            parentId: parent,
-            subapp,
-          }),
-        );
+        const formData = packIntoFormData({
+          data: commentData,
+          workspaceURL,
+          recordId,
+          parentId: parent,
+          subapp,
+        });
+
+        const {error, message, data} = await createComment(formData);
         if (error) {
           toast({
             variant: 'destructive',

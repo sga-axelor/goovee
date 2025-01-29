@@ -19,6 +19,7 @@ import {ID} from '@/types';
 import {getCurrentDateTime} from '@/utils/date';
 import {getFileSizeText, parseFormData} from '@/utils/files';
 import {sql} from '@/utils/template-string';
+import {CommentData} from '@/ui/components/comments/comment-input/comments-input';
 
 const pump = promisify(pipeline);
 
@@ -34,6 +35,18 @@ export const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
   [SUBAPP_CODES.events]: 'com.axelor.apps.portal.db.PortalEvent',
   [SUBAPP_CODES.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
   [SUBAPP_CODES.quotations]: 'com.axelor.apps.sale.db.SaleOrder',
+};
+
+export type Attachment = {
+  id: ID;
+  description?: string;
+};
+
+export type Track = {
+  name: string;
+  title: string;
+  value: string;
+  oldValue?: string;
 };
 
 function getSelectFields(
@@ -271,29 +284,25 @@ export async function getPopularCommentsBySorting({
   };
 }
 
-export async function upload(formData: FormData, tenantId: Tenant['id']) {
+export async function upload(
+  attachements: CommentData['attachments'],
+  tenantId: Tenant['id'],
+) {
   if (!tenantId) {
     throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
 
-  //TODO: why to we need to check for text?
-  // const text = formData.get('text');
-  // if (!text) {
-  //   return {
-  //     error: true,
-  //     message: await t('Text is required'),
-  //   };
-  // }
-
-  const parsedFormData: any[] = parseFormData(formData);
-
   const getTimestampFilename = (name: string) => {
     return `${new Date().getTime()}-${name}`;
   };
 
-  const create = async ({file, title, description}: any) => {
+  const create = async ({
+    file,
+    title,
+    description,
+  }: CommentData['attachments'][number]) => {
     const name = title || file.name;
     const timestampFilename = getTimestampFilename(name);
 
@@ -320,7 +329,7 @@ export async function upload(formData: FormData, tenantId: Tenant['id']) {
   };
 
   const data = await Promise.all(
-    parsedFormData.map(({title, description, file}: any) =>
+    attachements.map(({title, description, file}) =>
       create({
         title: title ? `${title}${path.extname(file.name)}` : file.name,
         description,
@@ -339,7 +348,7 @@ export async function addComment({
   note,
   workspaceUserId,
   attachments = [],
-  parentId = null,
+  parentId,
   messageBody,
   tenantId,
   subject,
@@ -351,11 +360,11 @@ export async function addComment({
   workspaceUserId: ID;
   modelName: string;
   note?: string;
-  attachments?: any;
-  parentId?: any;
+  attachments?: Attachment[];
+  parentId?: ID;
   messageBody?: {
     title: string;
-    tracks: any[];
+    tracks: Track[];
     tags: any[];
   };
   subject: string;
@@ -430,11 +439,15 @@ const AttachmentFileSchema = z.object({
   fileName: z.string().nullish(),
 });
 
+export type AttachmentFile = z.infer<typeof AttachmentFileSchema>;
+
 const MailMessageFileSchema = z.object({
   id: z.string().or(z.number()),
   version: z.number(),
   attachmentFile: AttachmentFileSchema.nullish(),
 });
+
+export type MailMessageFile = z.infer<typeof MailMessageFileSchema>;
 
 const UserSchema = z.object({
   id: z.string().or(z.number()),
@@ -447,6 +460,7 @@ const PartnerSchema = z.object({
   version: z.number(),
   picture: PictureSchema.nullish(),
   simpleFullName: z.string().nullish(),
+  name: z.string().nullish(),
 });
 
 const MailMessageSchema = z.object({
