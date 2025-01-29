@@ -1,21 +1,13 @@
-'use client';
-
-import React from 'react';
 import {MdArrowRightAlt} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
+import type {Track} from '@/orm/comment';
 
-interface Track {
-  title: string;
-  oldValue?: string;
-  value: string;
-}
-
-interface CommentTracksProps {
+type CommentTracksProps = {
   tracks: Track[];
   title: string;
-}
+};
 
 export function CommentTracks({tracks, title}: CommentTracksProps) {
   return (
@@ -49,5 +41,3 @@ export function CommentTracks({tracks, title}: CommentTracksProps) {
     </div>
   );
 }
-
-export default CommentTracks;

@@ -4,7 +4,7 @@ import axios from 'axios';
 import {MAIL_MESSAGE_TYPE, ORDER_BY, SUBAPP_CODES} from '@/constants';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
-import {addComment, type ModelMap, type Track} from '@/orm/comment';
+import {addComment, ModelMap, type Track} from '@/orm/comment';
 import {manager, type Tenant} from '@/tenant';
 import {sql} from '@/utils/template-string';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';

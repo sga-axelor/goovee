@@ -1,5 +1,3 @@
-'use client';
-
 import {useMemo, useState} from 'react';
 import {useSession} from 'next-auth/react';
 import {
@@ -21,9 +19,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  CommentTracks,
-  CommentAttachments,
-  CommentInput,
   Separator,
   TooltipProvider,
   Tooltip,
@@ -51,6 +46,9 @@ import type {Comment} from '@/orm/comment';
 import {type Tenant} from '@/tenant';
 import type {ID} from '@/types';
 import {CreateProps} from '@/ui/hooks/use-comments';
+
+import {CommentTracks, CommentAttachments} from '../comments-list';
+import {CommentInput} from '../comment-input/';
 
 interface CommentListItemProps {
   recordId: ID;
@@ -407,5 +405,3 @@ const TooltipComponent = ({
     </Tooltip>
   </TooltipProvider>
 );
-
-export default CommentListItem;

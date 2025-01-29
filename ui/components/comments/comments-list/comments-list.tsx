@@ -1,18 +1,15 @@
-'use client';
-
 // ---- CORE IMPORTS ---- //
 import {type SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {ID} from '@/types';
+import type {Comment} from '@/orm/comment';
 
 // ---- LOCAL IMPORTS ---- //
 import {CommentListItem} from '../comments-list-item';
 
-interface CommentsListProps {
+type CommentsListProps = {
   recordId: ID;
-  comments: Array<{
-    id: string;
-  }>;
+  comments: Comment[];
   usePopUpStyles?: boolean;
   showReactions?: boolean;
   subapp: SUBAPP_CODES;
@@ -20,9 +17,9 @@ interface CommentsListProps {
   sortBy: any;
   onSubmit?: (comment: any) => Promise<void>;
   tenantId: Tenant['id'];
-}
+};
 
-export const CommentsList: React.FC<CommentsListProps> = ({
+export const CommentsList = ({
   recordId,
   comments,
   usePopUpStyles = false,
@@ -32,7 +29,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({
   onSubmit,
   sortBy,
   tenantId,
-}) => {
+}: CommentsListProps) => {
   return (
     <div
       className={`flex flex-col gap-2${usePopUpStyles ? ' h-full overflow-auto px-2' : ''}`}>
@@ -53,5 +50,3 @@ export const CommentsList: React.FC<CommentsListProps> = ({
     </div>
   );
 };
-
-export default CommentsList;

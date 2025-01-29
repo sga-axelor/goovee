@@ -224,8 +224,6 @@ export function CommentInput({
   );
 }
 
-export default CommentInput;
-
 const TextArea = forwardRef<
   AutosizeTextAreaRef,
   AutosizeTextAreaProps & {endAdornment: ReactNode; dummyValue: string}

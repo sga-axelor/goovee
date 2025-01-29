@@ -1,9 +1,9 @@
+import type {QueryOptions, WhereOptions} from '@goovee/orm';
 import fs from 'fs';
 import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
 import {z} from 'zod';
-import type {QueryOptions, WhereOptions} from '@goovee/orm';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -16,10 +16,10 @@ import {AOSMailMessage} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
 import {ID} from '@/types';
-import {getCurrentDateTime} from '@/utils/date';
-import {getFileSizeText, parseFormData} from '@/utils/files';
-import {sql} from '@/utils/template-string';
 import {CommentData} from '@/ui/components/comments/comment-input/comments-input';
+import {getCurrentDateTime} from '@/utils/date';
+import {getFileSizeText} from '@/utils/files';
+import {sql} from '@/utils/template-string';
 
 const pump = promisify(pipeline);
 
@@ -384,7 +384,7 @@ export async function addComment({
     }
   }
 
-  const timestamp = getCurrentDateTime();
+  const timestamp = new Date();
 
   const body = JSON.stringify(messageBody);
   const response = await client.aOSMailMessage.create({
@@ -394,8 +394,8 @@ export async function addComment({
       relatedModel: modelName,
       ...(subapp === SUBAPP_CODES.quotations ? {body: note} : {note}),
       isPublicNote: true,
-      createdOn: timestamp as unknown as Date,
-      updatedOn: timestamp as unknown as Date,
+      createdOn: timestamp,
+      updatedOn: timestamp,
       type: messageType,
       ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
       ...(messageBody && {body, publicBody: body}),
@@ -493,6 +493,7 @@ export type FindCommentsData = {
   total: number;
   totalCommentThreadCount: number;
 };
+
 export async function findComments({
   recordId,
   modelName,
@@ -586,7 +587,7 @@ export async function findComments({
   });
 
   return {
-    comments,
+    comments: CommentsSchema.parse(comments),
     total: Number(comments?.[0]?._count || comments?.length),
     totalCommentThreadCount: Number(totalCommentThreadCount),
   };

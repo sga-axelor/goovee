@@ -7,11 +7,11 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {createComment, fetchComments} from '@/app/actions/comment';
 import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
+import type {Comment} from '@/orm/comment';
 import {ID} from '@/types';
 import type {Cloned} from '@/types/util';
-import {useToast} from '@/ui/hooks';
-import type {Comment} from '@/orm/comment';
 import type {CommentData} from '@/ui/components/comments/comment-input/comments-input';
+import {useToast} from '@/ui/hooks';
 import {packIntoFormData} from '@/utils/formdata';
 
 export type UseCommentsProps = {

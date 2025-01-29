@@ -12,12 +12,8 @@ import {
 // ---- CORE IMPORTS ---- //
 import {useComments} from '@/ui/hooks';
 import {cn} from '@/utils/css';
-import {
-  CommentInput,
-  CommentsList,
-  DropdownToggle,
-  Separator,
-} from '@/ui/components';
+import {DropdownToggle, Separator} from '@/ui/components';
+
 import {i18n} from '@/locale';
 import {
   COMMENT,
@@ -30,6 +26,9 @@ import {
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {CreateProps} from '@/ui/hooks/use-comments';
 import type {ID} from '@/types';
+
+import {CommentInput} from './comment-input/';
+import {CommentsList} from './comments-list/';
 
 type CommentsProps = {
   recordId: ID;
@@ -229,5 +228,3 @@ export function Comments(props: CommentsProps) {
     </div>
   );
 }
-
-export default Comments;

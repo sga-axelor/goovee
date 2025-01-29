@@ -1,6 +1,3 @@
-'use client';
-import React from 'react';
-
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {download} from '@/utils/files';
@@ -35,5 +32,3 @@ export function CommentAttachments({attachments}: CommentAttachmentsProps) {
     </div>
   );
 }
-
-export default CommentAttachments;
