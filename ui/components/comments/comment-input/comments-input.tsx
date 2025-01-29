@@ -1,6 +1,6 @@
 'use client';
 
-import React, {ReactNode, useRef, useState} from 'react';
+import React, {forwardRef, ReactNode, useRef, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {useForm, useFieldArray, UseFormReturn} from 'react-hook-form';
 import {z} from 'zod';
@@ -21,7 +21,10 @@ import {i18n} from '@/locale';
 import {getFileSizeText} from '@/utils/files';
 import {cn} from '@/utils/css';
 import {Expand} from '@/types/util';
-import {AutosizeTextAreaProps} from '../../textarea-auto-size';
+import {
+  AutosizeTextAreaProps,
+  AutosizeTextAreaRef,
+} from '../../textarea-auto-size';
 
 type CommentProps = {
   disabled?: boolean;
@@ -246,12 +249,10 @@ export function CommentInput({
 
 export default CommentInput;
 
-function TextArea(
-  props: AutosizeTextAreaProps & {
-    endAdornment: ReactNode;
-    dummyValue: string;
-  },
-) {
+const TextArea = forwardRef<
+  AutosizeTextAreaRef,
+  AutosizeTextAreaProps & {endAdornment: ReactNode; dummyValue: string}
+>((props, ref) => {
   const {endAdornment, className, dummyValue, ...rest} = props;
   return (
     <div
@@ -260,6 +261,7 @@ function TextArea(
       )}>
       <div className="flex flex-col grow">
         <AutosizeTextarea
+          ref={ref}
           className={cn(
             'placeholder:text-sm placeholder:text-gray-dark border-none focus-visible:outline-none focus-visible:!ring-0 focus-visible:ring-none resize-none',
             className,
@@ -273,4 +275,6 @@ function TextArea(
       <div className="ml-auto">{endAdornment}</div>
     </div>
   );
-}
+});
+
+TextArea.displayName = 'TextArea';
