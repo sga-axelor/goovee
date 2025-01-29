@@ -124,9 +124,11 @@ export async function findByID({
           recordId: id,
           auth: {
             userId: user.id,
+            simpleFullName: user.simpleFullName,
             workspaceId: workspace.id.toString(),
             tenantId,
             isContact: user.isContact!,
+            isContactAdmin: app.isContactAdmin,
             role,
           },
         });

@@ -108,6 +108,19 @@ export interface PortalAppConfig extends Model {
   resourcesHeroBgImage: {
     id: string;
   };
+  directoryHeroTitle: string;
+  directoryHeroDescription: string;
+  directoryHeroOverlayColorSelect: OverlayColor;
+  directoryHeroBgImage: {
+    id: string;
+  };
+  ticketHeroTitle: string;
+  ticketHeroDescription: string;
+  ticketHeroOverlayColorSelect: OverlayColor;
+  ticketHeroBgImage: {
+    id: string;
+  };
+  ticketStatusChangeMethod: string;
   allowGuestEventRegistration?: boolean;
   enableSocialMediaSharing?: boolean;
   enableComment?: boolean;

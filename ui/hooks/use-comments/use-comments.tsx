@@ -5,13 +5,15 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {createComment, fetchComments} from '@/app/actions/comment';
-import {SUBAPP_CODES} from '@/constants';
+import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
 import {ID} from '@/types';
+import type {Cloned} from '@/types/util';
 import {useToast} from '@/ui/hooks';
+import type {Comment} from '@/orm/comment';
 
 export type UseCommentsProps = {
-  sortBy: string;
+  sortBy: SORT_TYPE;
   recordId: ID;
   subapp: SUBAPP_CODES;
   limit?: number;
@@ -26,7 +28,7 @@ export type CreateProps = {
 
 export function useComments(props: UseCommentsProps) {
   const {sortBy, recordId, subapp, limit, newCommentOnTop} = props;
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<Cloned<Comment>[]>([]);
   const [total, setTotal] = useState(0);
   const [fetching, setFetching] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -35,11 +37,11 @@ export function useComments(props: UseCommentsProps) {
   const {toast} = useToast();
 
   const loadComments = useCallback(
-    async (options?: {reset?: boolean; exclude?: string[]}) => {
+    async (options?: {reset?: boolean; exclude?: ID[]}) => {
       const {reset = true, exclude} = options || {};
       setFetching(true);
       try {
-        const response = await fetchComments({
+        const {error, message, data} = await fetchComments({
           recordId,
           subapp,
           sort: sortBy,
@@ -48,22 +50,21 @@ export function useComments(props: UseCommentsProps) {
           exclude,
         });
 
-        if (response.success) {
-          const {data = [], total, totalCommentThreadCount} = response;
-
-          setTotal((total || 0) + (exclude?.length || 0));
-          setTotalCommentThreadCount(totalCommentThreadCount);
-          setComments(prevComments =>
-            reset ? data : [...prevComments, ...data],
-          );
+        if (error) {
+          toast({variant: 'destructive', title: message});
+          return;
         }
-      } catch (error: any) {
-        console.error('Fetch error:', error);
+        const {comments, total, totalCommentThreadCount} = data;
+        setTotal((total || 0) + (exclude?.length || 0));
+        setTotalCommentThreadCount(totalCommentThreadCount);
+        setComments(prevComments =>
+          reset ? comments : [...prevComments, ...comments],
+        );
+      } catch (e) {
         toast({
           variant: 'destructive',
-          title: i18n.t(
-            error.message || 'An error occurred while fetching comments.',
-          ),
+          title:
+            e instanceof Error ? e.message : i18n.t('Failed to load comments.'),
         });
       } finally {
         setFetching(false);
@@ -81,7 +82,7 @@ export function useComments(props: UseCommentsProps) {
     async ({formData, values, parent = null}: CreateProps) => {
       setCreating(true);
       try {
-        const response = await createComment(
+        const {error, message, data} = await createComment(
           formData,
           JSON.stringify({
             values,
@@ -91,16 +92,15 @@ export function useComments(props: UseCommentsProps) {
             subapp,
           }),
         );
-        if (!response.success) {
-          throw new Error(response.message || 'Error creating comment');
+        if (error) {
+          toast({
+            variant: 'destructive',
+            title: i18n.t(message),
+          });
+          return;
         }
 
-        toast({
-          variant: 'success',
-          title: i18n.t('Comment created successfully.'),
-        });
-
-        const [comment, parentComment] = response.data;
+        const [comment, parentComment] = data;
         setComments(prevComments => {
           const replaced = replaceParent(prevComments, parentComment);
           if (parentComment && subapp === SUBAPP_CODES.forum) return replaced;
@@ -116,11 +116,17 @@ export function useComments(props: UseCommentsProps) {
         setTotalCommentThreadCount(
           prevTotalCommentThreadCount => prevTotalCommentThreadCount + 1,
         );
-      } catch (error: any) {
-        console.error('Submission error:', error);
+        toast({
+          variant: 'success',
+          title: i18n.t('Comment created successfully.'),
+        });
+      } catch (e) {
         toast({
           variant: 'destructive',
-          title: i18n.t(error.message || 'An unexpected error occurred.'),
+          title:
+            e instanceof Error
+              ? e.message
+              : i18n.t('An unexpected error occurred.'),
         });
       } finally {
         setCreating(false);
@@ -159,7 +165,10 @@ export function useComments(props: UseCommentsProps) {
   );
 }
 
-function replaceParent(comments: {id: unknown}[], parent?: {id: unknown}) {
+function replaceParent<T extends {id: ID}>(
+  comments: T[],
+  parent?: NoInfer<T>,
+): T[] {
   if (!parent) return [...comments];
   return comments.map(c => (String(c.id) !== String(parent.id) ? c : parent));
 }

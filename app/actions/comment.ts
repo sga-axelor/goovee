@@ -4,16 +4,34 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
-import {addComment, findComments, upload} from '@/orm/comment';
+import {
+  addComment,
+  findComments,
+  FindCommentsData,
+  ModelMap,
+  upload,
+} from '@/orm/comment';
 import {TENANT_HEADER} from '@/middleware';
 import {getSession} from '@/auth';
-import {SUBAPP_CODES} from '@/constants';
+import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {isCommentEnabled} from '@/utils/comment';
 import {clone} from '@/utils';
 import {ID} from '@/types';
+import {ActionResponse} from '@/types/action';
+import {findByID} from '@/orm/record';
+import {Cloned} from '@/types/util';
+import type {Comment} from '@/orm/comment';
 
-export async function createComment(formData: any, valueString: string) {
+type Attachement = {
+  id: ID;
+  description?: string;
+};
+
+export async function createComment(
+  formData: any,
+  valueString: string,
+): ActionResponse<Cloned<[Comment, Comment | undefined]>> {
   const session = await getSession();
 
   const user = session?.user;
@@ -25,7 +43,7 @@ export async function createComment(formData: any, valueString: string) {
     };
   }
 
-  let attachments: string[] = [];
+  let attachments: Attachement[] = [];
 
   const {
     values,
@@ -65,6 +83,15 @@ export async function createComment(formData: any, valueString: string) {
     };
   }
 
+  const {workspaceUser} = workspace;
+
+  if (!workspaceUser) {
+    return {
+      error: true,
+      message: await t('Workspace user is missing'),
+    };
+  }
+
   if (!isCommentEnabled({subapp, workspace})) {
     return {
       error: true,
@@ -72,54 +99,67 @@ export async function createComment(formData: any, valueString: string) {
     };
   }
 
+  const modelName = ModelMap[subapp];
+
+  if (!modelName) {
+    return {
+      error: true,
+      message: await t('Invalid model type'),
+    };
+  }
+
+  const {error, message} = await findByID({
+    subapp,
+    id: recordId,
+    workspaceURL,
+    workspace,
+    tenantId,
+  });
+
+  if (error) {
+    return {
+      error: true,
+      message: await t(message || 'Record not found.'),
+    };
+  }
+
   if (values?.attachments?.length) {
     try {
-      const response: any = await upload(formData, workspaceURL, tenantId);
-      if (!response) {
-        return {
-          error: true,
-          message: response.message || 'Error while uploading attachment.',
-        };
-      }
-      attachments = response.data;
-    } catch (error: any) {
-      console.error('Submission error:', error);
+      attachments = await upload(formData, tenantId);
+    } catch (e) {
       return {
         error: true,
-        message: 'An unexpected error occurred.',
+        message: await t('An error occurred while processing the attachments.'),
       };
     }
   }
 
   try {
-    const response: any = await addComment({
+    const data = await addComment({
+      modelName,
+      userId: user.id,
+      workspaceUserId: workspaceUser.id,
       subapp,
-      workspaceURL,
       recordId,
       note: values?.text,
       attachments,
       parentId,
       messageBody,
       tenantId,
+      subject: `${user.simpleFullName || user.name} added a comment`,
     });
 
-    if (response.error) {
-      return {
-        error: true,
-        message: response.message ?? 'Error creating comment.',
-      };
-    } else {
-      return {
-        success: true,
-        message: 'Comment created successfully.',
-        data: clone(response.data),
-      };
-    }
-  } catch (error) {
-    console.error('Error submitting comment:', error);
+    return {
+      success: true,
+      data: clone(data),
+    };
+  } catch (e) {
     return {
       error: true,
-      message: 'An unexpected error occurred while creating the comment.',
+      message:
+        e instanceof Error
+          ? e.message
+          : 'An unexpected error occurred while creating the comment.',
     };
   }
 }
@@ -132,7 +172,15 @@ export async function fetchComments({
   subapp,
   workspaceURL,
   exclude,
-}: any) {
+}: {
+  recordId: ID;
+  sort?: SORT_TYPE;
+  limit?: number;
+  skip?: number;
+  subapp: SUBAPP_CODES;
+  workspaceURL: string;
+  exclude?: ID[];
+}): ActionResponse<Cloned<FindCommentsData>> {
   const session = await getSession();
 
   const user = session?.user;
@@ -159,20 +207,54 @@ export async function fetchComments({
     };
   }
 
+  const shouldUseAuth = (subapp: SUBAPP_CODES) =>
+    ![
+      SUBAPP_CODES.forum,
+      SUBAPP_CODES.events,
+      SUBAPP_CODES.news,
+      SUBAPP_CODES.quotations,
+    ].includes(subapp);
+
+  const {error, message} = await findByID({
+    subapp,
+    id: recordId,
+    workspaceURL,
+    workspace,
+    withAuth: shouldUseAuth(subapp),
+    tenantId,
+  });
+
+  if (error) {
+    return {
+      error: true,
+      message: await t(message || 'Record not found.'),
+    };
+  }
+
+  const modelName = ModelMap[subapp];
+
+  if (!modelName) {
+    return {
+      error: true,
+      message: await t('Invalid model type'),
+    };
+  }
+
   try {
-    const response = await findComments({
+    const data = await findComments({
       recordId,
+      modelName,
       sort,
       limit,
       skip,
       subapp,
-      workspaceURL,
       tenantId,
       exclude,
     });
-    return response.error
-      ? {error: true, message: 'Error while fetching comments.'}
-      : clone(response);
+    return {
+      success: true,
+      data: clone(data),
+    };
   } catch (error) {
     console.error('Error while fetching comments:', error);
     return {

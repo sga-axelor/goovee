@@ -4,7 +4,7 @@ import axios from 'axios';
 import {MAIL_MESSAGE_TYPE, ORDER_BY, SUBAPP_CODES} from '@/constants';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
-import {addComment} from '@/orm/comment';
+import {addComment, ModelMap} from '@/orm/comment';
 import {manager, type Tenant} from '@/tenant';
 import {sql} from '@/utils/template-string';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';
@@ -75,11 +75,11 @@ export async function findTicketAccess({
 
 export async function createTicket({
   data,
-  workspaceURL,
+  workspaceUserId,
   auth,
 }: {
   data: CreateTicketInfo;
-  workspaceURL: string;
+  workspaceUserId?: ID;
   auth: AuthProps;
 }) {
   const {
@@ -185,76 +185,79 @@ export async function createTicket({
     },
   });
 
-  const tracks: Track[] = [
-    {name: 'name', title: 'Subject', value: ticket.name},
-    {
-      name: 'assignment',
-      title: 'Assignment',
-      value: ticket.assignment?.toString() ?? '',
-    },
-    {name: 'typeSelect', title: 'Type', value: ticket.typeSelect ?? ''},
-    {name: 'isPrivate', title: 'Private', value: String(ticket.isPrivate)},
-    {name: 'progress', title: 'Progress', value: ticket.progress ?? ''},
-    {name: 'project', title: 'Project', value: ticket.project?.name ?? ''},
-    {
-      name: 'taskDate',
-      title: 'Task Date',
-      value: String(ticket.taskDate) ?? '', //NOTE: ORM type is Date , but it is sending string,
-    },
-    {
-      name: 'invoicingType',
-      title: 'Invoicing Type',
-      value: String(ticket.invoicingType),
-    },
-    {
-      name: 'createdByContact',
-      title: 'Created by',
-      value: ticket.createdByContact?.name ?? '',
-    },
-  ];
-
-  if (category) {
-    tracks.push({
-      name: 'projectTaskCategory',
-      title: 'Category',
-      value: ticket.projectTaskCategory?.name ?? '',
-    });
-  }
-
-  if (priority) {
-    tracks.push({
-      name: 'priority',
-      title: 'Priority',
-      value: ticket.priority?.name ?? '',
-    });
-  }
-
-  if (defaultStatus) {
-    tracks.push({
-      name: 'status',
-      title: 'Status',
-      value: ticket.status?.name ?? '',
-    });
-  }
-
-  if (managedBy) {
-    tracks.push({
-      name: 'managedByContact',
-      title: 'Managed by',
-      value: ticket.managedByContact?.name ?? '',
-    });
-  }
   try {
-    const {error, message} = await addComment({
-      workspaceURL,
-      subapp: SUBAPP_CODES.ticketing,
-      recordId: ticket.id,
-      subject: `Record Created by ${auth.simpleFullName}`,
-      messageBody: {title: 'Record Created', tracks: tracks, tags: []},
-      messageType: MAIL_MESSAGE_TYPE.notification,
-      tenantId: auth.tenantId,
-    });
-    if (error) console.error(message);
+    if (workspaceUserId) {
+      const tracks: Track[] = [
+        {name: 'name', title: 'Subject', value: ticket.name},
+        {
+          name: 'assignment',
+          title: 'Assignment',
+          value: ticket.assignment?.toString() ?? '',
+        },
+        {name: 'typeSelect', title: 'Type', value: ticket.typeSelect ?? ''},
+        {name: 'isPrivate', title: 'Private', value: String(ticket.isPrivate)},
+        {name: 'progress', title: 'Progress', value: ticket.progress ?? ''},
+        {name: 'project', title: 'Project', value: ticket.project?.name ?? ''},
+        {
+          name: 'taskDate',
+          title: 'Task Date',
+          value: String(ticket.taskDate) ?? '', //NOTE: ORM type is Date , but it is sending string,
+        },
+        {
+          name: 'invoicingType',
+          title: 'Invoicing Type',
+          value: String(ticket.invoicingType),
+        },
+        {
+          name: 'createdByContact',
+          title: 'Created by',
+          value: ticket.createdByContact?.name ?? '',
+        },
+      ];
+
+      if (category) {
+        tracks.push({
+          name: 'projectTaskCategory',
+          title: 'Category',
+          value: ticket.projectTaskCategory?.name ?? '',
+        });
+      }
+
+      if (priority) {
+        tracks.push({
+          name: 'priority',
+          title: 'Priority',
+          value: ticket.priority?.name ?? '',
+        });
+      }
+
+      if (defaultStatus) {
+        tracks.push({
+          name: 'status',
+          title: 'Status',
+          value: ticket.status?.name ?? '',
+        });
+      }
+
+      if (managedBy) {
+        tracks.push({
+          name: 'managedByContact',
+          title: 'Managed by',
+          value: ticket.managedByContact?.name ?? '',
+        });
+      }
+      addComment({
+        modelName: ModelMap[SUBAPP_CODES.ticketing]!,
+        userId: auth.userId,
+        workspaceUserId: workspaceUserId,
+        subapp: SUBAPP_CODES.ticketing,
+        recordId: ticket.id,
+        subject: `Record Created by ${auth.simpleFullName}`,
+        messageBody: {title: 'Record Created', tracks: tracks, tags: []},
+        messageType: MAIL_MESSAGE_TYPE.notification,
+        tenantId: auth.tenantId,
+      });
+    }
   } catch (e) {
     console.error('Error adding comment');
     console.error(e);
@@ -333,10 +336,10 @@ export async function updateTicketByWS({
 export async function updateTicket({
   data,
   auth,
-  workspaceURL,
+  workspaceUserId,
 }: {
   data: UpdateTicketInfo;
-  workspaceURL: string;
+  workspaceUserId?: ID;
   auth: AuthProps;
 }) {
   const {
@@ -388,80 +391,86 @@ export async function updateTicket({
     },
   });
 
-  const tracks: Track[] = [];
-
-  if (subject != null && oldTicket.name !== ticket.name) {
-    tracks.push({
-      name: 'name',
-      title: 'Subject',
-      value: ticket.name,
-      ...(oldTicket.name && {oldValue: oldTicket.name}),
-    });
-  }
-  if (
-    category &&
-    oldTicket.projectTaskCategory?.name !== ticket.projectTaskCategory?.name
-  ) {
-    tracks.push({
-      name: 'projectTaskCategory',
-      title: 'Category',
-      value: ticket.projectTaskCategory?.name ?? '',
-      ...(oldTicket.projectTaskCategory?.name && {
-        oldValue: oldTicket.projectTaskCategory.name,
-      }),
-    });
-  }
-  if (priority && oldTicket.priority?.name !== ticket.priority?.name) {
-    tracks.push({
-      name: 'priority',
-      title: 'Priority',
-      value: ticket.priority?.name ?? '',
-      ...(oldTicket.priority?.name && {oldValue: oldTicket.priority.name}),
-    });
-  }
-
-  if (status && oldTicket.status?.name !== ticket.status?.name) {
-    tracks.push({
-      name: 'status',
-      title: 'Status',
-      value: ticket.status?.name ?? '',
-      ...(oldTicket.status?.name && {oldValue: oldTicket.status.name}),
-    });
-  }
-
-  if (assignment && oldTicket.assignment !== ticket.assignment) {
-    tracks.push({
-      name: 'assignment',
-      title: 'Assignment',
-      value: ticket.assignment?.toString() ?? '',
-      ...(oldTicket.assignment && {oldValue: oldTicket.assignment.toString()}),
-    });
-  }
-
-  if (
-    managedBy &&
-    oldTicket.managedByContact?.name !== ticket.managedByContact?.name
-  ) {
-    tracks.push({
-      name: 'managedByContact',
-      title: 'Managed by',
-      value: ticket.managedByContact?.name ?? '',
-      ...(oldTicket.managedByContact?.name && {
-        oldValue: oldTicket.managedByContact.name,
-      }),
-    });
-  }
-
   try {
-    await addComment({
-      workspaceURL,
-      subapp: SUBAPP_CODES.ticketing,
-      recordId: ticket.id,
-      subject: `Record Updated by ${auth.simpleFullName}`,
-      messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
-      messageType: MAIL_MESSAGE_TYPE.notification,
-      tenantId: auth.tenantId,
-    });
+    if (workspaceUserId) {
+      const tracks: Track[] = [];
+
+      if (subject != null && oldTicket.name !== ticket.name) {
+        tracks.push({
+          name: 'name',
+          title: 'Subject',
+          value: ticket.name,
+          ...(oldTicket.name && {oldValue: oldTicket.name}),
+        });
+      }
+      if (
+        category &&
+        oldTicket.projectTaskCategory?.name !== ticket.projectTaskCategory?.name
+      ) {
+        tracks.push({
+          name: 'projectTaskCategory',
+          title: 'Category',
+          value: ticket.projectTaskCategory?.name ?? '',
+          ...(oldTicket.projectTaskCategory?.name && {
+            oldValue: oldTicket.projectTaskCategory.name,
+          }),
+        });
+      }
+      if (priority && oldTicket.priority?.name !== ticket.priority?.name) {
+        tracks.push({
+          name: 'priority',
+          title: 'Priority',
+          value: ticket.priority?.name ?? '',
+          ...(oldTicket.priority?.name && {oldValue: oldTicket.priority.name}),
+        });
+      }
+
+      if (status && oldTicket.status?.name !== ticket.status?.name) {
+        tracks.push({
+          name: 'status',
+          title: 'Status',
+          value: ticket.status?.name ?? '',
+          ...(oldTicket.status?.name && {oldValue: oldTicket.status.name}),
+        });
+      }
+
+      if (assignment && oldTicket.assignment !== ticket.assignment) {
+        tracks.push({
+          name: 'assignment',
+          title: 'Assignment',
+          value: ticket.assignment?.toString() ?? '',
+          ...(oldTicket.assignment && {
+            oldValue: oldTicket.assignment.toString(),
+          }),
+        });
+      }
+
+      if (
+        managedBy &&
+        oldTicket.managedByContact?.name !== ticket.managedByContact?.name
+      ) {
+        tracks.push({
+          name: 'managedByContact',
+          title: 'Managed by',
+          value: ticket.managedByContact?.name ?? '',
+          ...(oldTicket.managedByContact?.name && {
+            oldValue: oldTicket.managedByContact.name,
+          }),
+        });
+      }
+
+      addComment({
+        modelName: ModelMap[SUBAPP_CODES.ticketing]!,
+        userId: auth.userId,
+        workspaceUserId: workspaceUserId,
+        subapp: SUBAPP_CODES.ticketing,
+        recordId: ticket.id,
+        subject: `Record Updated by ${auth.simpleFullName}`,
+        messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
+        messageType: MAIL_MESSAGE_TYPE.notification,
+        tenantId: auth.tenantId,
+      });
+    }
   } catch (e) {
     console.log('Error adding comment');
     console.error(e);

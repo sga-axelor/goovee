@@ -2,26 +2,23 @@ import fs from 'fs';
 import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
+import {z} from 'zod';
+import type {QueryOptions, WhereOptions} from '@goovee/orm';
 
 // ---- CORE IMPORTS ---- //
-import {manager, type Tenant} from '@/tenant';
-import {t} from '@/locale/server';
-import {getSession} from '@/auth';
-import {findWorkspace} from '@/orm/workspace';
-import {getCurrentDateTime} from '@/utils/date';
-import {getFileSizeText, parseFormData} from '@/utils/files';
-import {clone, getSkipInfo} from '@/utils';
-import {ID, PortalWorkspace} from '@/types';
 import {
   MAIL_MESSAGE_TYPE,
   ORDER_BY,
   SORT_TYPE,
   SUBAPP_CODES,
 } from '@/constants';
-import {findByID} from '@/orm/record';
-import {sql} from '@/utils/template-string';
-import {QueryOptions, SelectOptions, WhereOptions} from '@goovee/orm';
 import {AOSMailMessage} from '@/goovee/.generated/models';
+import {t} from '@/locale/server';
+import {manager, type Tenant} from '@/tenant';
+import {ID} from '@/types';
+import {getCurrentDateTime} from '@/utils/date';
+import {getFileSizeText, parseFormData} from '@/utils/files';
+import {sql} from '@/utils/template-string';
 
 const pump = promisify(pipeline);
 
@@ -31,7 +28,7 @@ if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
 }
 
-const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
+export const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
   [SUBAPP_CODES.forum]: 'com.axelor.apps.portal.db.ForumPost',
   [SUBAPP_CODES.news]: 'com.axelor.apps.portal.db.PortalNews',
   [SUBAPP_CODES.events]: 'com.axelor.apps.portal.db.PortalEvent',
@@ -69,37 +66,28 @@ function getSelectFields(
 export async function getPopularCommentsBySorting({
   skip = 0,
   limit,
-  workspace,
-  modelRecord,
+  recordId,
   tenantId,
   modelName,
   subapp,
   exclude,
 }: {
+  recordId: ID;
   skip?: number;
   limit?: number;
-  workspace: PortalWorkspace;
-  modelRecord: any;
   tenantId: Tenant['id'];
   subapp: SUBAPP_CODES;
   modelName: string;
-  exclude?: string[];
-}) {
-  if (!workspace) {
-    return {error: true, message: await t('Invalid workspace')};
-  }
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await t('TenantId is required.'),
-    };
+  exclude?: ID[];
+}): Promise<FindCommentsData> {
+  if (!tenantId || !recordId) {
+    throw new Error(await t('TenantId  and RecordId are required'));
   }
 
   const client = await manager.getClient(tenantId);
 
   const params = [
-    modelRecord.id, // $1
+    recordId, // $1
     limit, // $2
     skip, // $3
     modelName, // $4
@@ -115,8 +103,17 @@ export async function getPopularCommentsBySorting({
               JSON_BUILD_OBJECT(
                 'id',
                 mailMessageFile.id,
+                'version',
+                mailMessageFile.version,
                 'attachmentFile',
-                JSON_BUILD_OBJECT('id', metaFile.id, 'fileName', metaFile.file_name)
+                JSON_BUILD_OBJECT(
+                  'id',
+                  metaFile.id,
+                  'version',
+                  metaFile.version,
+                  'fileName',
+                  metaFile.file_name
+                )
               )
             ) AS mailMessageFileList
           FROM
@@ -128,17 +125,27 @@ export async function getPopularCommentsBySorting({
         comments AS (
           SELECT
             mail_message.id AS id,
+            mail_message.version AS VERSION,
             mail_message.note AS note,
             mail_message.public_body AS publicBody,
             mail_message.created_on AS createdOn,
             mail_message.is_public_note AS isPublicNote,
             mail_message.parent AS parentComment,
-            JSON_BUILD_OBJECT('id', author.id, 'fullName', author.full_name) AS createdBy,
+            JSON_BUILD_OBJECT(
+              'id',
+              author.id,
+              'version',
+              author.version,
+              'fullName',
+              author.full_name
+            ) AS createdBy,
             JSON_BUILD_OBJECT(
               'id',
               partner.id,
+              'version',
+              partner.version,
               'picture',
-              JSON_BUILD_OBJECT('id', partner.picture),
+              JSON_BUILD_OBJECT('id', picture.id, 'version', picture.version),
               'simpleFullName',
               partner.simple_full_name,
               'name',
@@ -148,6 +155,7 @@ export async function getPopularCommentsBySorting({
             mail_message
             LEFT JOIN auth_user AS author ON mail_message.created_by = author.id
             LEFT JOIN base_partner AS partner ON mail_message.partner = partner.id
+            LEFT JOIN meta_file AS picture ON partner.picture = picture.id
           WHERE
             (
               mail_message.public_body IS NOT NULL
@@ -167,6 +175,8 @@ export async function getPopularCommentsBySorting({
               JSON_BUILD_OBJECT(
                 'id',
                 childComment.id,
+                'version',
+                childComment.version,
                 'note',
                 childComment.note,
                 'publicBody',
@@ -177,8 +187,10 @@ export async function getPopularCommentsBySorting({
                 JSON_BUILD_OBJECT(
                   'id',
                   childPartner.id,
+                  'version',
+                  childPartner.version,
                   'picture',
-                  JSON_BUILD_OBJECT('id', childPartner.picture),
+                  JSON_BUILD_OBJECT('id', picture.id, 'version', picture.version),
                   'simpleFullName',
                   childPartner.simple_full_name,
                   'name',
@@ -188,6 +200,8 @@ export async function getPopularCommentsBySorting({
                 JSON_BUILD_OBJECT(
                   'id',
                   childAuthor.id,
+                  'version',
+                  childAuthor.version,
                   'fullName',
                   childAuthor.full_name
                 ),
@@ -202,6 +216,7 @@ export async function getPopularCommentsBySorting({
             mail_message AS childComment
             LEFT JOIN auth_user AS childAuthor ON childComment.created_by = childAuthor.id
             LEFT JOIN base_partner AS childPartner ON childComment.partner = childPartner.id
+            LEFT JOIN meta_file AS picture ON childPartner.picture = picture.id
             LEFT JOIN mailMessageFileListData AS mf ON childComment.id = mf.id
           WHERE
             childComment.is_public_note = TRUE
@@ -212,6 +227,7 @@ export async function getPopularCommentsBySorting({
         )
       SELECT
         c.id AS id,
+        c.version AS VERSION,
         c.note,
         c.createdOn AS "createdOn",
         c.isPublicNote AS "isPublicNote",
@@ -249,132 +265,79 @@ export async function getPopularCommentsBySorting({
   const comments: any = await query();
 
   return {
-    success: true,
-    comments,
+    comments: CommentsSchema.parse(comments || []),
     total: Number(comments?.[0]?._count), // only parent comments counts
     totalCommentThreadCount: Number(comments?.[0]?._threadCount), // total count of comments ( parent + child comments )
   };
 }
 
-export async function upload(
-  formData: FormData,
-  workspaceURL: string,
-  tenantId: Tenant['id'],
-) {
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Workspace not provided.'),
-    };
-  }
-
+export async function upload(formData: FormData, tenantId: Tenant['id']) {
   if (!tenantId) {
-    return {
-      error: true,
-      message: await t('TenantId is required.'),
-    };
+    throw new Error(await t('TenantId is required.'));
   }
 
   const client = await manager.getClient(tenantId);
 
-  const text = formData.get('text');
+  //TODO: why to we need to check for text?
+  // const text = formData.get('text');
+  // if (!text) {
+  //   return {
+  //     error: true,
+  //     message: await t('Text is required'),
+  //   };
+  // }
 
-  if (!text) {
-    return {
-      error: true,
-      message: await t('Text is required'),
-    };
-  }
-
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: await t('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-    };
-  }
-
-  const parsedFormData = parseFormData(formData);
+  const parsedFormData: any[] = parseFormData(formData);
 
   const getTimestampFilename = (name: string) => {
     return `${new Date().getTime()}-${name}`;
   };
 
   const create = async ({file, title, description}: any) => {
-    try {
-      const name = title || file.name;
-      const timestampFilename = getTimestampFilename(name);
+    const name = title || file.name;
+    const timestampFilename = getTimestampFilename(name);
 
-      await pump(
-        file.stream(),
-        fs.createWriteStream(path.resolve(storage, timestampFilename)),
-      );
-
-      const metaFile = await client.aOSMetaFile.create({
-        data: {
-          fileName: name,
-          filePath: timestampFilename,
-          fileType: file.type,
-          fileSize: file.size,
-          sizeText: getFileSizeText(file.size),
-          description,
-        },
-      });
-
-      return {
-        id: Number(metaFile.id),
-        description: metaFile.description,
-      };
-    } catch (err) {
-      console.error('Error creating file metadata:', err);
-      return null;
-    }
-  };
-
-  try {
-    const response = await Promise.all(
-      parsedFormData.map(({title, description, file}: any) =>
-        create({
-          title: title ? `${title}${path.extname(file.name)}` : file.name,
-          description,
-          file,
-        }),
-      ),
+    await pump(
+      file.stream(),
+      fs.createWriteStream(path.resolve(storage, timestampFilename)),
     );
 
+    const metaFile = await client.aOSMetaFile.create({
+      data: {
+        fileName: name,
+        filePath: timestampFilename,
+        fileType: file.type,
+        fileSize: file.size,
+        sizeText: getFileSizeText(file.size),
+        description,
+      },
+    });
+
     return {
-      success: true,
-      data: clone(response),
+      id: Number(metaFile.id),
+      description: metaFile.description,
     };
-  } catch (err) {
-    console.error('Error processing attachments:', err);
-    return {
-      error: true,
-      message: await t('An error occurred while processing the attachments.'),
-    };
-  }
+  };
+
+  const data = await Promise.all(
+    parsedFormData.map(({title, description, file}: any) =>
+      create({
+        title: title ? `${title}${path.extname(file.name)}` : file.name,
+        description,
+        file,
+      }),
+    ),
+  );
+  return data;
 }
 
 export async function addComment({
   subapp,
   recordId,
+  modelName,
+  userId,
   note,
-  workspaceURL,
+  workspaceUserId,
   attachments = [],
   parentId = null,
   messageBody,
@@ -383,332 +346,234 @@ export async function addComment({
   messageType = MAIL_MESSAGE_TYPE.comment,
 }: {
   subapp: SUBAPP_CODES;
+  userId: ID;
   recordId: ID;
-  workspaceURL: string;
+  workspaceUserId: ID;
+  modelName: string;
   note?: string;
   attachments?: any;
   parentId?: any;
-  relatedModel?: string;
   messageBody?: {
     title: string;
     tracks: any[];
     tags: any[];
   };
-  subject?: string;
+  subject: string;
   messageType?: MAIL_MESSAGE_TYPE;
   tenantId: Tenant['id'];
-}) {
-  try {
-    const session = await getSession();
-    const user = session?.user;
+}): Promise<[Comment, Comment | undefined]> {
+  const client = await manager.getClient(tenantId);
 
-    if (!user) {
-      return {
-        error: true,
-        message: await t('Unauthorized'),
-      };
-    }
-
-    if (!tenantId) {
-      return {
-        error: true,
-        message: await t('TenantId is required.'),
-      };
-    }
-
-    const workspace = await findWorkspace({
-      user,
-      url: workspaceURL,
-      tenantId,
+  let parent;
+  if (parentId) {
+    parent = await client.aOSMailMessage.findOne({
+      where: {id: {eq: parentId}, relatedId: Number(recordId)},
+      select: {id: true},
     });
-
-    if (!workspace) {
-      return {
-        error: true,
-        message: await t('Invalid workspace'),
-      };
+    if (!parent) {
+      throw new Error(await t('Invalid parent'));
     }
-
-    const {workspaceUser} = workspace;
-
-    if (!workspaceUser) {
-      return {
-        error: true,
-        message: await t('Workspace user is missing'),
-      };
-    }
-
-    const {
-      error,
-      message,
-      data: modelRecord,
-    }: any = await findByID({
-      subapp,
-      id: recordId,
-      workspaceURL,
-      workspace,
-      tenantId,
-    });
-
-    if (error) {
-      return {
-        error: true,
-        message: await t(message || 'Record not found.'),
-      };
-    }
-
-    const client = await manager.getClient(tenantId);
-
-    let parent;
-    if (parentId) {
-      parent = await client.aOSMailMessage.findOne({
-        where: {id: {eq: parentId}},
-        select: {id: true},
-      });
-      if (!parent) {
-        return {
-          error: true,
-          message: await t('Invalid parent comment Id.'),
-        };
-      }
-    }
-
-    const timestamp = getCurrentDateTime();
-    const modelName = ModelMap[subapp];
-
-    if (!modelName) {
-      return {
-        error: true,
-        message: await t('Invalid model type'),
-      };
-    }
-
-    const body = JSON.stringify(messageBody);
-    const response = await client.aOSMailMessage.create({
-      data: {
-        partner: {select: {id: user.id}},
-        relatedId: modelRecord.id,
-        relatedModel: modelName,
-        ...(subapp === SUBAPP_CODES.quotations ? {body: note} : {note}),
-        isPublicNote: true,
-        createdOn: timestamp as unknown as Date,
-        updatedOn: timestamp as unknown as Date,
-        type: messageType,
-        ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
-        ...(messageBody && {body, publicBody: body}),
-        subject: subject ?? `${user.simpleFullName} added a comment`,
-        author: {select: {id: workspaceUser.id}},
-        createdBy: {select: {id: workspaceUser.id}},
-        //relatedName: TODO: Add this later
-        ...(attachments?.length > 0 && {
-          mailMessageFileList: {
-            create: attachments.map((attachment: any) => ({
-              description: attachment?.description || '',
-              attachmentFile: {select: {id: attachment.id}},
-              createdOn: timestamp,
-              updatedOn: timestamp,
-            })),
-          },
-        }),
-      },
-    });
-
-    const data = await client.aOSMailMessage.find({
-      where: {id: {in: [response.id].concat(parent ? [parent.id] : [])}},
-      select: getSelectFields(),
-    });
-
-    return {
-      success: true,
-      data: [
-        data.find(d => d.id === response.id),
-        parent && data.find(d => d.id === parent.id),
-      ],
-    };
-  } catch (error) {
-    console.log('error >>>', error);
-    return {
-      error: true,
-      message: 'An unexpected error occurred.',
-    };
   }
+
+  const timestamp = getCurrentDateTime();
+
+  const body = JSON.stringify(messageBody);
+  const response = await client.aOSMailMessage.create({
+    data: {
+      partner: {select: {id: userId}},
+      relatedId: Number(recordId),
+      relatedModel: modelName,
+      ...(subapp === SUBAPP_CODES.quotations ? {body: note} : {note}),
+      isPublicNote: true,
+      createdOn: timestamp as unknown as Date,
+      updatedOn: timestamp as unknown as Date,
+      type: messageType,
+      ...(parent && {parentMailMessage: {select: {id: parent.id}}}),
+      ...(messageBody && {body, publicBody: body}),
+      subject: subject,
+      author: {select: {id: workspaceUserId}},
+      createdBy: {select: {id: workspaceUserId}},
+      //relatedName: TODO: Add this later
+      ...(attachments?.length > 0 && {
+        mailMessageFileList: {
+          create: attachments.map((attachment: any) => ({
+            description: attachment?.description || '',
+            attachmentFile: {select: {id: attachment.id}},
+            createdOn: timestamp,
+            updatedOn: timestamp,
+          })),
+        },
+      }),
+    },
+  });
+
+  const data = await client.aOSMailMessage.find({
+    where: {id: {in: [response.id].concat(parent ? [parent.id] : [])}},
+    select: getSelectFields(),
+  });
+
+  const comment = CommentSchema.parse(data.find(d => d.id === response.id));
+  const parentComment =
+    parent && CommentSchema.parse(data.find(d => d.id === parent.id));
+
+  return [comment, parentComment];
 }
 
-export type Comment = NonNullable<
-  Awaited<ReturnType<typeof findComments>>['data']
->[number];
+const PictureSchema = z.object({
+  id: z.string().or(z.number()),
+  version: z.number(),
+});
 
+const AttachmentFileSchema = z.object({
+  id: z.string().or(z.number()),
+  version: z.number(),
+  fileName: z.string().nullish(),
+});
+
+const MailMessageFileSchema = z.object({
+  id: z.string().or(z.number()),
+  version: z.number(),
+  attachmentFile: AttachmentFileSchema.nullish(),
+});
+
+const UserSchema = z.object({
+  id: z.string().or(z.number()),
+  version: z.number(),
+  fullName: z.string().nullish(),
+});
+
+const PartnerSchema = z.object({
+  id: z.string().or(z.number()),
+  version: z.number(),
+  picture: PictureSchema.nullish(),
+  simpleFullName: z.string().nullish(),
+});
+
+const MailMessageSchema = z.object({
+  id: z.string().or(z.number()),
+  version: z.number(),
+  body: z.string().nullish(),
+  publicBody: z.string().nullish(),
+  createdOn: z.union([z.date(), z.string()]).nullish(),
+  partner: PartnerSchema.nullish(),
+  createdBy: UserSchema.nullish(),
+  note: z.string().nullish(),
+  mailMessageFileList: z.array(MailMessageFileSchema).nullish(),
+});
+
+export const CommentSchema = MailMessageSchema.extend({
+  isPublicNote: z.boolean().nullish(),
+  parentMailMessage: MailMessageSchema.nullish(),
+  childMailMessages: z.array(MailMessageSchema).nullish(),
+  _count: z.string().nullish(),
+  _cursor: z.string().nullish(),
+  _hasNext: z.boolean().nullish(),
+  _hasPrev: z.boolean().nullish(),
+});
+
+export type Comment = z.infer<typeof CommentSchema>;
+export const CommentsSchema = z.array(CommentSchema);
+
+export type FindCommentsData = {
+  comments: Comment[];
+  total: number;
+  totalCommentThreadCount: number;
+};
 export async function findComments({
   recordId,
+  modelName,
   limit,
   skip,
   sort,
-  workspaceURL,
   subapp,
   tenantId,
   exclude,
 }: {
   recordId: ID;
+  modelName: string;
   limit?: number;
   skip?: number;
   sort?: any;
-  workspaceURL: string;
   subapp: SUBAPP_CODES;
   tenantId: Tenant['id'];
-  exclude?: string[];
-}) {
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await t('TenantId is required'),
-    };
-  }
-
-  const session = await getSession();
-
-  const workspace = await findWorkspace({
-    user: session?.user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-    };
-  }
-
-  const shouldUseAuth = (subapp: SUBAPP_CODES) =>
-    ![
-      SUBAPP_CODES.forum,
-      SUBAPP_CODES.events,
-      SUBAPP_CODES.news,
-      SUBAPP_CODES.quotations,
-    ].includes(subapp);
-
-  const {
-    error,
-    message,
-    data: modelRecord,
-  }: any = await findByID({
-    subapp,
-    id: recordId,
-    workspaceURL,
-    workspace,
-    withAuth: shouldUseAuth(subapp),
-    tenantId,
-  });
-
-  if (error) {
-    return {
-      error: true,
-      message: await t(message || 'Record not found.'),
-    };
-  }
-
-  const modelName = ModelMap[subapp];
-
-  if (!modelName) {
-    return {
-      error: true,
-      message: await t('Invalid model type'),
-    };
+  exclude?: ID[];
+}): Promise<FindCommentsData> {
+  if (!tenantId || !recordId) {
+    throw new Error(await t('TenantId  and RecordId are required.'));
   }
 
   const client = await manager.getClient(tenantId);
-  try {
-    let orderBy: any = null;
-    switch (sort) {
-      case SORT_TYPE.old:
-        orderBy = {createdOn: ORDER_BY.ASC};
-        break;
-      case SORT_TYPE.popular:
-        const results: any = await getPopularCommentsBySorting({
-          skip,
-          limit,
-          workspace,
-          modelRecord,
-          tenantId,
-          modelName,
-          subapp,
-          exclude,
-        });
-        const {
-          comments = [],
-          total,
-          totalCommentThreadCount,
-          success,
-        } = results;
+  let orderBy: any = null;
+  switch (sort) {
+    case SORT_TYPE.old:
+      orderBy = {createdOn: ORDER_BY.ASC};
+      break;
+    case SORT_TYPE.popular:
+      const results = await getPopularCommentsBySorting({
+        recordId,
+        modelName,
+        skip,
+        limit,
+        tenantId,
+        subapp,
+        exclude,
+      });
 
-        return {
-          data: clone(comments),
-          total,
-          success,
-          totalCommentThreadCount,
-        };
-      default:
-        orderBy = {createdOn: ORDER_BY.DESC};
-    }
-
-    const getWhereConditions = () => {
-      const baseConditions: WhereOptions<AOSMailMessage> = {
-        relatedId: modelRecord.id,
-        relatedModel: modelName,
-        ...(exclude && exclude.length && {id: {notIn: exclude}}),
-      };
-
-      const subappConditions: WhereOptions<AOSMailMessage> = {
-        ...(subapp !== SUBAPP_CODES.quotations && {
-          OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
-        }),
-        ...(subapp === SUBAPP_CODES.forum && {
-          parentMailMessage: {id: {eq: null}},
-        }),
-      };
-
-      return {...baseConditions, ...subappConditions};
-    };
-
-    let comments = await client.aOSMailMessage.find({
-      where: getWhereConditions(),
-      orderBy,
-      take: limit,
-      ...(skip ? {skip} : {}),
-      select: getSelectFields({
-        orderBy,
-        where: {
-          relatedId: modelRecord.id,
-          relatedModel: modelName,
-          isPublicNote: true,
-        },
-      }),
-    });
-
-    comments = comments?.map(comment => {
-      if (!comment.isPublicNote) return {...comment, note: undefined};
-      return comment;
-    });
-
-    const totalCommentThreadCount = await client.aOSMailMessage.count({
-      where: {
-        relatedId: modelRecord.id,
-        relatedModel: modelName,
-        OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
-      },
-    });
-
-    return {
-      success: true,
-      data: clone(comments),
-      total: comments?.[0]?._count || comments?.length,
-      totalCommentThreadCount,
-    };
-  } catch (error) {
-    console.log('error >>>', error);
-    return {
-      error: true,
-      message: await t('Something went wromng'),
-    };
+      return results;
+    default:
+      orderBy = {createdOn: ORDER_BY.DESC};
   }
+
+  const getWhereConditions = () => {
+    const baseConditions: WhereOptions<AOSMailMessage> = {
+      relatedId: Number(recordId),
+      relatedModel: modelName,
+      ...(exclude && exclude.length && {id: {notIn: exclude}}),
+    };
+
+    const subappConditions: WhereOptions<AOSMailMessage> = {
+      ...(subapp !== SUBAPP_CODES.quotations && {
+        OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+      }),
+      ...(subapp === SUBAPP_CODES.forum && {
+        parentMailMessage: {id: {eq: null}},
+      }),
+    };
+
+    return {...baseConditions, ...subappConditions};
+  };
+
+  let comments = await client.aOSMailMessage.find({
+    where: getWhereConditions(),
+    orderBy,
+    take: limit,
+    ...(skip ? {skip} : {}),
+    select: getSelectFields({
+      orderBy,
+      where: {
+        relatedId: Number(recordId),
+        relatedModel: modelName,
+        isPublicNote: true,
+      },
+    }),
+  });
+
+  comments = comments?.map(comment => {
+    if (!comment.isPublicNote) return {...comment, note: undefined};
+    return comment;
+  });
+
+  const totalCommentThreadCount = await client.aOSMailMessage.count({
+    where: {
+      relatedId: Number(recordId),
+      relatedModel: modelName,
+      OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+    },
+  });
+
+  return {
+    comments,
+    total: Number(comments?.[0]?._count || comments?.length),
+    totalCommentThreadCount: Number(totalCommentThreadCount),
+  };
 }

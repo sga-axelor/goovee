@@ -56,20 +56,28 @@ export async function mutate(
 
   if (error) return {error: true, message};
 
-  const {auth} = info;
+  const {auth, workspace} = info;
 
   try {
     let ticket;
     if (action.type === MUTATE_TYPE.CREATE) {
       const createData = CreateTicketSchema.parse(action.data);
-      ticket = await createTicket({data: createData, workspaceURL, auth});
+      ticket = await createTicket({
+        data: createData,
+        workspaceUserId: workspace.workspaceUser?.id,
+        auth,
+      });
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
       if (force) {
         const version = await findTicketVersion(updateData.id, tenantId);
         updateData.version = version;
       }
-      ticket = await updateTicket({data: updateData, workspaceURL, auth});
+      ticket = await updateTicket({
+        data: updateData,
+        workspaceUserId: workspace.workspaceUser?.id,
+        auth,
+      });
     }
 
     if (ticket.project?.id) {

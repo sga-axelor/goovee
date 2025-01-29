@@ -1,15 +1,15 @@
 'use client';
 
-import React, {forwardRef, ReactNode, useRef, useState} from 'react';
-import {useDropzone} from 'react-dropzone';
-import {useForm, useFieldArray, UseFormReturn} from 'react-hook-form';
-import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {forwardRef, ReactNode, useRef, useState} from 'react';
+import {useDropzone} from 'react-dropzone';
+import {useFieldArray, useForm} from 'react-hook-form';
 import {MdAttachFile, MdDelete} from 'react-icons/md';
-import {useRouter} from 'next/navigation';
+import {z} from 'zod';
 
 // ---- CORE IMPORTS ---- //
-import {Button, Input, AutosizeTextarea} from '@/ui/components';
+import {i18n} from '@/locale';
+import {AutosizeTextarea, Button, Input} from '@/ui/components';
 import {
   Form,
   FormControl,
@@ -17,14 +17,12 @@ import {
   FormItem,
   FormMessage,
 } from '@/ui/components/form';
-import {i18n} from '@/locale';
-import {getFileSizeText} from '@/utils/files';
-import {cn} from '@/utils/css';
-import {Expand} from '@/types/util';
-import {
+import type {
   AutosizeTextAreaProps,
   AutosizeTextAreaRef,
-} from '../../textarea-auto-size';
+} from '@/ui/components/textarea-auto-size';
+import {cn} from '@/utils/css';
+import {getFileSizeText} from '@/utils/files';
 
 type CommentProps = {
   disabled?: boolean;
@@ -147,6 +145,7 @@ export function CommentInput({
               <FormItem>
                 <FormControl>
                   <TextArea
+                    className={className}
                     autoFocus={autoFocus}
                     minHeight={32}
                     maxHeight={300}
