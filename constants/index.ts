@@ -164,44 +164,8 @@ export const SEARCH_PARAMS = {
   TENANT_ID: 'tenant',
 };
 
-/**
- * COMMENT
- */
-export enum MAIL_MESSAGE_TYPE {
-  notification = 'notification',
-  comment = 'comment',
-}
-export const COMMENT = 'Comment';
-export const COMMENTS = 'Comments';
-export const DISABLED_COMMENT_PLACEHOLDER =
-  'You need to log in to comment posts';
-
-export enum SORT_TYPE {
-  new = 'new',
-  old = 'old',
-  popular = 'popular',
-}
-
 export const REPORT = 'Report';
 export const NOT_INTERESTED = 'Not interested';
-export const SORT_BY_OPTIONS = [
-  {
-    id: 1,
-    key: SORT_TYPE.new,
-    label: 'New',
-  },
-  {
-    id: 2,
-    key: SORT_TYPE.old,
-    label: 'Old',
-  },
-  {
-    id: 3,
-    key: SORT_TYPE.popular,
-    label: 'Popular',
-  },
-];
-
 /**
  * REGISTRATION
  */
@@ -241,4 +205,12 @@ export const OUT_OF_STOCK_TYPE = {
  */
 export const KEY = {
   enter: 'Enter',
+};
+
+export const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
+  [SUBAPP_CODES.forum]: 'com.axelor.apps.portal.db.ForumPost',
+  [SUBAPP_CODES.news]: 'com.axelor.apps.portal.db.PortalNews',
+  [SUBAPP_CODES.events]: 'com.axelor.apps.portal.db.PortalEvent',
+  [SUBAPP_CODES.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
+  [SUBAPP_CODES.quotations]: 'com.axelor.apps.sale.db.SaleOrder',
 };

@@ -4,15 +4,22 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {createComment, fetchComments} from '@/app/actions/comment';
-import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
-import type {Comment} from '@/orm/comment';
 import {ID} from '@/types';
 import type {Cloned} from '@/types/util';
-import type {CommentData} from '@/ui/components/comments/comment-input/comments-input';
 import {useToast} from '@/ui/hooks';
 import {packIntoFormData} from '@/utils/formdata';
+
+// ---- LOCAL IMPORTS ---- //
+import {SORT_TYPE} from '../constants';
+import type {
+  Comment,
+  CreateComment,
+  CreateCommentProps,
+  CreateProps,
+  FetchComments,
+} from '../types';
 
 export type UseCommentsProps = {
   sortBy: SORT_TYPE;
@@ -20,28 +27,26 @@ export type UseCommentsProps = {
   subapp: SUBAPP_CODES;
   limit?: number;
   newCommentOnTop?: boolean;
-  showRepliesInMainList?: boolean;
-};
-
-export type CreateProps = {
-  data: CommentData;
-  parent?: ID;
+  showRepliesInMainThread?: boolean;
+  fetchComments: FetchComments;
+  createComment: CreateComment;
 };
 
 export function useComments(props: UseCommentsProps) {
   const {
     sortBy,
     recordId,
-    subapp,
     limit,
     newCommentOnTop,
-    showRepliesInMainList,
+    showRepliesInMainThread,
+    fetchComments,
+    createComment,
   } = props;
   const [comments, setComments] = useState<Cloned<Comment>[]>([]);
-  const [total, setTotal] = useState(0);
+  const [totalMainThread, setTotalMainThread] = useState(0);
   const [fetching, setFetching] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [totalCommentThreadCount, setTotalCommentThreadCount] = useState(0);
+  const [totalComments, setTotalComments] = useState(0);
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
@@ -52,12 +57,11 @@ export function useComments(props: UseCommentsProps) {
       try {
         const {error, message, data} = await fetchComments({
           recordId,
-          subapp,
           sort: sortBy,
           limit,
           workspaceURL,
           exclude,
-          showRepliesInMainList,
+          showRepliesInMainThread,
         });
 
         if (error) {
@@ -65,8 +69,8 @@ export function useComments(props: UseCommentsProps) {
           return;
         }
         const {comments, total, totalCommentThreadCount} = data;
-        setTotal((total || 0) + (exclude?.length || 0));
-        setTotalCommentThreadCount(totalCommentThreadCount);
+        setTotalMainThread((total || 0) + (exclude?.length || 0));
+        setTotalComments(totalCommentThreadCount);
         setComments(prevComments =>
           reset ? comments : [...prevComments, ...comments],
         );
@@ -83,11 +87,11 @@ export function useComments(props: UseCommentsProps) {
     [
       recordId,
       sortBy,
-      subapp,
       toast,
       workspaceURL,
       limit,
-      showRepliesInMainList,
+      showRepliesInMainThread,
+      fetchComments,
     ],
   );
 
@@ -100,14 +104,14 @@ export function useComments(props: UseCommentsProps) {
     async ({data: commentData, parent}: CreateProps) => {
       setCreating(true);
       try {
-        const formData = packIntoFormData({
+        const createCommentProps: CreateCommentProps = {
           data: commentData,
           workspaceURL,
           recordId,
           parentId: parent,
-          subapp,
-          showRepliesInMainList: showRepliesInMainList,
-        });
+          showRepliesInMainThread,
+        };
+        const formData = packIntoFormData(createCommentProps);
 
         const {error, message, data} = await createComment(formData);
         if (error) {
@@ -119,21 +123,18 @@ export function useComments(props: UseCommentsProps) {
         }
 
         const [comment, parentComment] = data;
+        const isMainThread = !parentComment;
+        const isNewComment = isMainThread || showRepliesInMainThread;
         setComments(prevComments => {
-          const replaced = replaceParent(prevComments, parentComment);
-          if (parentComment && subapp === SUBAPP_CODES.forum) return replaced;
-          if (newCommentOnTop) replaced.unshift(comment);
-          else replaced.push(comment);
+          const replaced = copyAndReplaceParent(prevComments, parentComment);
+          if (isNewComment) {
+            if (newCommentOnTop) replaced.unshift(comment);
+            else replaced.push(comment);
+          }
           return replaced;
         });
-        setTotal(prevTotal =>
-          parentComment && subapp === SUBAPP_CODES.forum
-            ? prevTotal
-            : prevTotal + 1,
-        );
-        setTotalCommentThreadCount(
-          prevTotalCommentThreadCount => prevTotalCommentThreadCount + 1,
-        );
+        setTotalMainThread(p => (isNewComment ? p + 1 : p));
+        setTotalComments(p => p + 1);
         toast({
           variant: 'success',
           title: i18n.t('Comment created successfully.'),
@@ -153,14 +154,17 @@ export function useComments(props: UseCommentsProps) {
     [
       workspaceURL,
       recordId,
-      subapp,
       toast,
       newCommentOnTop,
-      showRepliesInMainList,
+      showRepliesInMainThread,
+      createComment,
     ],
   );
 
-  const hasMore = useMemo(() => comments.length < total, [comments, total]);
+  const hasMore = useMemo(
+    () => comments.length < totalMainThread,
+    [comments, totalMainThread],
+  );
 
   useEffect(() => {
     loadComments();
@@ -169,28 +173,28 @@ export function useComments(props: UseCommentsProps) {
   return useMemo(
     () => ({
       comments,
-      total,
+      totalMainThread,
       hasMore,
       loadMore,
       fetching,
       creating,
-      totalCommentThreadCount,
+      totalComments,
       onCreate: handleCreate,
     }),
     [
       loadMore,
       comments,
-      total,
+      totalMainThread,
       hasMore,
       fetching,
       creating,
-      totalCommentThreadCount,
+      totalComments,
       handleCreate,
     ],
   );
 }
 
-function replaceParent<T extends {id: ID}>(
+function copyAndReplaceParent<T extends {id: ID}>(
   comments: T[],
   parent?: NoInfer<T>,
 ): T[] {

@@ -1,7 +1,7 @@
 'use client';
 
-import React, {useCallback, useState} from 'react';
 import {useSession} from 'next-auth/react';
+import {useCallback, useState} from 'react';
 import {
   MdAdd,
   MdClose,
@@ -10,27 +10,33 @@ import {
 } from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {useComments} from '@/ui/hooks';
-import {cn} from '@/utils/css';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {type SUBAPP_CODES} from '@/constants';
 import {DropdownToggle, Separator} from '@/ui/components';
-
+import {cn} from '@/utils/css';
 import {i18n} from '@/locale';
+import type {ID} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   COMMENT,
   COMMENTS,
   DISABLED_COMMENT_PLACEHOLDER,
   SORT_BY_OPTIONS,
   SORT_TYPE,
-  type SUBAPP_CODES,
-} from '@/constants';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {CreateProps} from '@/ui/hooks/use-comments';
-import type {ID} from '@/types';
+} from '../constants';
+import type {
+  CreateComment,
+  CreateProps,
+  FetchComments,
+  TrackingField,
+  CommentField,
+} from '../types';
+import {CommentInput} from './comment-input';
+import {CommentsList} from './comments-list';
+import {useComments} from '../hooks';
 
-import {CommentInput} from './comment-input/';
-import {CommentsList} from './comments-list/';
-
-type CommentsProps = {
+export type CommentsProps = {
   recordId: ID;
   subapp: SUBAPP_CODES;
   inputPosition?: 'top' | 'bottom';
@@ -46,7 +52,12 @@ type CommentsProps = {
   hideTopBorder?: boolean;
   disabled?: boolean;
   hideSortBy?: boolean;
-  showRepliesInMainList?: boolean;
+  showRepliesInMainThread?: boolean;
+  fetchComments: FetchComments;
+  createComment: CreateComment;
+  trackingField: TrackingField;
+  commentField: CommentField;
+  disableReply?: boolean;
 };
 
 export function Comments(props: CommentsProps) {
@@ -66,21 +77,27 @@ export function Comments(props: CommentsProps) {
     disabled,
     hideSortBy,
     inputContainerClassName,
-    showRepliesInMainList,
+    showRepliesInMainThread,
+    fetchComments,
+    createComment,
+    trackingField,
+    commentField,
+    disableReply,
   } = props;
   const inputOnTop = inputPosition === 'top';
   const [showComments, setShowComments] = useState(showCommentsByDefault);
   const [sortBy, setSortBy] = useState<SORT_TYPE>(sortByProp);
 
-  const {comments, totalCommentThreadCount, loadMore, onCreate, hasMore} =
-    useComments({
-      recordId,
-      subapp,
-      sortBy,
-      limit,
-      newCommentOnTop: inputPosition === 'top',
-      showRepliesInMainList: showRepliesInMainList,
-    });
+  const {comments, totalComments, loadMore, onCreate, hasMore} = useComments({
+    recordId,
+    subapp,
+    sortBy,
+    limit,
+    newCommentOnTop: inputPosition === 'top',
+    showRepliesInMainThread: showRepliesInMainThread,
+    fetchComments,
+    createComment,
+  });
   const {data: session} = useSession();
   const isLoggedIn = !!session?.user?.id;
   const isDisabled = !isLoggedIn || disabled;
@@ -128,14 +145,14 @@ export function Comments(props: CommentsProps) {
           <div
             className={cn(
               'flex gap-2 items-center',
-              totalCommentThreadCount && 'cursor-pointer',
+              totalComments && 'cursor-pointer',
             )}
             onClick={toggleComments}>
             <MdOutlineModeComment className="w-6 h-6" />
-            {totalCommentThreadCount > 0 && (
+            {totalComments > 0 && (
               <span className="text-sm">
-                {totalCommentThreadCount}{' '}
-                {totalCommentThreadCount > 1
+                {totalComments}{' '}
+                {totalComments > 1
                   ? i18n.t(COMMENTS.toLowerCase())
                   : i18n.t(COMMENT.toLowerCase())}
               </span>
@@ -192,6 +209,9 @@ export function Comments(props: CommentsProps) {
               sortBy={sortBy}
               onSubmit={handleCreate}
               tenantId={tenant}
+              commentField={commentField}
+              trackingField={trackingField}
+              disableReply={disableReply}
             />
 
             {!hideCommentsFooter && (

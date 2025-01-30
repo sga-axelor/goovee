@@ -6,10 +6,9 @@ import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
-import {COMMENTS, SORT_TYPE, SUBAPP_CODES} from '@/constants';
-import {Comments} from '@/ui/components';
+import {COMMENTS, Comments, isCommentEnabled, SORT_TYPE} from '@/comments';
+import {SUBAPP_CODES} from '@/constants';
 import {PortalWorkspace} from '@/types';
-import {isCommentEnabled} from '@/utils/comment';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -24,6 +23,10 @@ import {
   RELATED_NEWS,
   RELATED_FILES,
 } from '@/subapps/news/common/constants';
+import {
+  createComment,
+  fetchComments,
+} from '@/subapps/news/common/actions/action';
 
 interface ArticleProps {
   news: any;
@@ -134,7 +137,11 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
               hideSortBy
               hideTopBorder
               hideCloseComments
-              showRepliesInMainList
+              showRepliesInMainThread
+              trackingField="publicBody"
+              commentField="note"
+              createComment={createComment}
+              fetchComments={fetchComments}
             />
           </div>
         </div>

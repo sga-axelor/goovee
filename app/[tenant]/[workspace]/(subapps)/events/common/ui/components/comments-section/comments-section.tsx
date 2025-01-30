@@ -3,11 +3,15 @@
 // ---- CORE IMPORTS ---- //
 import {Card} from '@/ui/components';
 import {i18n} from '@/locale';
-import {Comments} from '@/ui/components';
-import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
+import {SORT_TYPE, Comments} from '@/comments';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import type {CommentSectionProps} from '@/subapps/events/common/ui/components';
+import {
+  fetchComments,
+  createComment,
+} from '@/subapps/events/common/actions/actions';
 
 export const CommentsSection = ({eventId}: CommentSectionProps) => {
   return (
@@ -24,7 +28,11 @@ export const CommentsSection = ({eventId}: CommentSectionProps) => {
         hideSortBy
         hideTopBorder
         hideCloseComments
-        showRepliesInMainList
+        showRepliesInMainThread
+        createComment={createComment}
+        fetchComments={fetchComments}
+        trackingField="publicBody"
+        commentField="note"
       />
     </Card>
   );

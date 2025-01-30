@@ -19,6 +19,8 @@ export type UserAuthProps = {
 export type WorkspaceAuthProps = {workspaceId: ID};
 export type TenantAuthProps = {tenantId: Tenant['id']};
 export type AuthProps = UserAuthProps & WorkspaceAuthProps & TenantAuthProps;
+export type PortalWorkspaceWithConfig = Omit<PortalWorkspace, 'config'> &
+  Required<Pick<PortalWorkspace, 'config'>>;
 
 export const ensureAuth = cache(async function ensureAuth(
   workspaceURL: Maybe<string>,
@@ -32,7 +34,7 @@ export const ensureAuth = cache(async function ensureAuth(
         auth: AuthProps;
         user: User;
         subapp: any;
-        workspace: PortalWorkspace;
+        workspace: PortalWorkspaceWithConfig;
       };
     }
 > {
@@ -74,7 +76,7 @@ export const ensureAuth = cache(async function ensureAuth(
     tenantId,
   });
 
-  if (!workspace) {
+  if (!workspace?.config) {
     return {
       error: true,
       message: await t('Invalid workspace'),
@@ -86,7 +88,7 @@ export const ensureAuth = cache(async function ensureAuth(
     info: {
       user,
       subapp,
-      workspace,
+      workspace: workspace as PortalWorkspaceWithConfig,
       auth: {
         userId: user.id,
         simpleFullName: user.simpleFullName,

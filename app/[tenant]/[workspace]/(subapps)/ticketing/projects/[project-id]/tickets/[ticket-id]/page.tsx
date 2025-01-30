@@ -1,10 +1,12 @@
+import type {ID} from '@goovee/orm';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
-import {SORT_TYPE, SUBAPP_CODES} from '@/constants';
+import {Comments, isCommentEnabled, SORT_TYPE} from '@/comments';
+import {SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {type Tenant} from '@/tenant';
 import {
@@ -14,16 +16,14 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  Comments,
 } from '@/ui/components';
+import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
-import {isCommentEnabled} from '@/utils/comment';
 import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
-import type {ID} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
-import {Skeleton} from '@/ui/components/skeleton';
+import {createComment, fetchComments} from '../../../../common/actions';
 import {
   findContactPartners,
   findTicketCategories,
@@ -190,7 +190,11 @@ export default async function Page({
             hideSortBy
             hideCloseComments
             hideCommentsHeader
-            showRepliesInMainList
+            showRepliesInMainThread
+            trackingField="publicBody"
+            commentField="note"
+            createComment={createComment}
+            fetchComments={fetchComments}
           />
         </div>
       )}

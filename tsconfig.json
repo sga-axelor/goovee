@@ -35,7 +35,9 @@
       "@/notification": ["./lib/core/notification/index"],
       "@/notification/*": ["./lib/core/notification/*"],
       "@/otp": ["./lib/core/otp/index"],
-      "@/otp/*": ["./lib/core/otp/*"]
+      "@/otp/*": ["./lib/core/otp/*"],
+      "@/comments": ["./lib/core/comments/index"],
+      "@/comments/*": ["./lib/core/comments/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

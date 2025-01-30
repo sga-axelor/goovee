@@ -1,5 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import {ORDER_BY, SORT_TYPE} from '@/constants';
+import {ORDER_BY} from '@/constants';
+import {SORT_TYPE} from '@/comments';
 import {manager, type Tenant} from '@/tenant';
 import {ID, User} from '@/types';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';

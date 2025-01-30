@@ -21,7 +21,10 @@ import type {
 } from '@/ui/components/textarea-auto-size';
 import {cn} from '@/utils/css';
 import {getFileSizeText} from '@/utils/files';
-import type {CreateProps} from '@/ui/hooks/use-comments';
+
+import type {CreateProps} from '../../types';
+import {formSchema} from '../../utils';
+import {MAX_FILE_SIZE} from '../../constants';
 
 type CommentProps = {
   disabled?: boolean;
@@ -31,39 +34,6 @@ type CommentProps = {
   onSubmit: (props: CreateProps) => Promise<void>;
   autoFocus?: boolean;
 };
-
-const MAX_FILE_SIZE = 20000000; // 20 MB
-
-const formSchema = z
-  .object({
-    attachments: z.array(
-      z.object({
-        title: z.string(),
-        description: z.string(),
-        file: z
-          .any()
-          .refine(file => file, i18n.t('File is required.'))
-          .refine(
-            file => file.size <= MAX_FILE_SIZE,
-            i18n.t(`Max file size is 20MB.`),
-          ),
-      }),
-    ),
-    text: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    const hasFile = data.attachments.length > 0 ? true : false;
-
-    if (!hasFile && (!data.text || data.text.trim().length === 0)) {
-      ctx.addIssue({
-        path: ['text'],
-        message: i18n.t('Comment is required'),
-        code: 'custom',
-      });
-    }
-  });
-
-export type CommentData = z.infer<typeof formSchema>;
 
 export function CommentInput({
   disabled = false,

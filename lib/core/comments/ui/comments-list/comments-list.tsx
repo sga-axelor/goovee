@@ -2,10 +2,15 @@
 import {type SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {ID} from '@/types';
-import type {Comment} from '@/orm/comment';
 
 // ---- LOCAL IMPORTS ---- //
 import {CommentListItem} from '../comments-list-item';
+import type {
+  Comment,
+  CommentField,
+  CreateProps,
+  TrackingField,
+} from '../../types';
 
 type CommentsListProps = {
   recordId: ID;
@@ -15,8 +20,11 @@ type CommentsListProps = {
   subapp: SUBAPP_CODES;
   disabled?: boolean;
   sortBy: any;
-  onSubmit?: (comment: any) => Promise<void>;
+  onSubmit?: (comment: CreateProps) => Promise<void>;
   tenantId: Tenant['id'];
+  commentField: CommentField;
+  trackingField: TrackingField;
+  disableReply?: boolean;
 };
 
 export const CommentsList = ({
@@ -29,6 +37,9 @@ export const CommentsList = ({
   onSubmit,
   sortBy,
   tenantId,
+  commentField,
+  trackingField,
+  disableReply,
 }: CommentsListProps) => {
   return (
     <div
@@ -45,6 +56,9 @@ export const CommentsList = ({
           sortBy={sortBy}
           onSubmit={onSubmit}
           tenantId={tenantId}
+          commentField={commentField}
+          trackingField={trackingField}
+          disableReply={disableReply}
         />
       ))}
     </div>

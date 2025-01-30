@@ -3,12 +3,15 @@ import {useMemo} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
-import {Comments} from '@/ui/components';
-import {isCommentEnabled} from '@/utils/comment';
+import {isCommentEnabled, Comments} from '@/comments';
 
 // ---- LOCAL IMPORTS ---- //
 import {useForum} from '@/subapps/forum/common/ui/context';
 import {COMMENTS_PER_LOAD} from '@/subapps/forum/common/constants';
+import {
+  fetchComments,
+  createComment,
+} from '@/subapps/forum/common/action/action';
 
 export const ThreadFooter = ({
   post,
@@ -39,6 +42,10 @@ export const ThreadFooter = ({
       disabled={disabled}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
       limit={COMMENTS_PER_LOAD}
+      trackingField="publicBody"
+      commentField="note"
+      fetchComments={fetchComments}
+      createComment={createComment}
     />
   ) : (
     <div />

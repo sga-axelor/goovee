@@ -2,7 +2,7 @@
 
 // ---- CORE IMPORTS ---- //
 import {PortalWorkspace} from '@/types';
-import {isCommentEnabled} from '@/utils/comment';
+import {isCommentEnabled} from '@/comments';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //

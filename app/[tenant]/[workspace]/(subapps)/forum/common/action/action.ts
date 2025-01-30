@@ -10,7 +10,7 @@ import {revalidatePath} from 'next/cache';
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
 import {clone} from '@/utils';
-import {SUBAPP_CODES} from '@/constants';
+import {ModelMap, SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/auth';
@@ -19,6 +19,15 @@ import {getCurrentDateTime} from '@/utils/date';
 import {manager} from '@/tenant';
 import {TENANT_HEADER} from '@/middleware';
 import {filterPrivate} from '@/orm/filter';
+import {
+  CreateComment,
+  CreateCommentPropsSchema,
+  FetchComments,
+  FetchCommentsPropsSchema,
+  isCommentEnabled,
+} from '@/comments';
+import {zodParseFormData} from '@/utils/formdata';
+import {addComment, findComments} from '@/comments/orm';
 
 //----LOCAL IMPORTS -----//
 import {
@@ -745,3 +754,150 @@ export async function fetchGroupsByMembers({
     user,
   });
 }
+
+export const createComment: CreateComment = async formData => {
+  const session = await getSession();
+  const user = session?.user;
+  if (!user) {
+    return {error: true, message: await t('Unauthorized')};
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) {
+    return {error: true, message: await t('TenantId is required.')};
+  }
+
+  const {workspaceURL, ...rest} = zodParseFormData(
+    formData,
+    CreateCommentPropsSchema,
+  );
+
+  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+  if (!workspace) {
+    return {error: true, message: await t('Invalid workspace')};
+  }
+
+  const {workspaceUser} = workspace;
+  if (!workspaceUser) {
+    return {error: true, message: await t('Workspace user is missing')};
+  }
+
+  if (!isCommentEnabled({subapp: SUBAPP_CODES.forum, workspace})) {
+    return {error: true, message: await t('Comments are not enabled')};
+  }
+
+  const modelName = ModelMap[SUBAPP_CODES.forum];
+  if (!modelName) {
+    return {error: true, message: await t('Invalid model type')};
+  }
+
+  const app = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!app?.installed) {
+    return {error: true, message: await t('Unauthorized Access')};
+  }
+
+  const {posts = []}: any = await findPosts({
+    whereClause: {id: rest.recordId},
+    workspaceID: workspace.id,
+    tenantId,
+    user,
+  });
+
+  if (!posts.length) {
+    return {error: true, message: await t('Record not found')};
+  }
+
+  try {
+    const res = await addComment({
+      modelName,
+      userId: user.id,
+      workspaceUserId: workspaceUser.id,
+      tenantId,
+      commentField: 'note',
+      trackingField: 'publicBody',
+      subject: `${user.simpleFullName || user.name} added a comment`,
+      ...rest,
+    });
+
+    return {success: true, data: clone(res)};
+  } catch (e) {
+    return {
+      error: true,
+      message:
+        e instanceof Error
+          ? e.message
+          : await t('An unexpected error occurred while fetching comments.'),
+    };
+  }
+};
+
+export const fetchComments: FetchComments = async props => {
+  const {workspaceURL, ...rest} = FetchCommentsPropsSchema.parse(props);
+
+  const session = await getSession();
+  const user = session?.user;
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {error: true, message: await t('TenantId is required.')};
+  }
+
+  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+  if (!workspace) {
+    return {error: true, message: await t('Invalid workspace')};
+  }
+
+  if (!isCommentEnabled({subapp: SUBAPP_CODES.forum, workspace})) {
+    return {error: true, message: await t('Comments are not enabled')};
+  }
+
+  const modelName = ModelMap[SUBAPP_CODES.forum];
+  if (!modelName) {
+    return {error: true, message: await t('Invalid model type')};
+  }
+
+  const app = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+  if (!app?.installed) {
+    return {error: true, message: await t('Unauthorized Access')};
+  }
+
+  const {posts = []}: any = await findPosts({
+    whereClause: {id: rest.recordId},
+    workspaceID: workspace.id,
+    tenantId,
+    user,
+  });
+  if (!posts.length) {
+    return {error: true, message: await t('Record not found')};
+  }
+
+  try {
+    const data = await findComments({
+      modelName,
+      tenantId,
+      commentField: 'note',
+      trackingField: 'publicBody',
+      ...rest,
+    });
+    return {success: true, data: clone(data)};
+  } catch (e) {
+    return {
+      error: true,
+      message:
+        e instanceof Error
+          ? e.message
+          : await t('An unexpected error occurred while fetching comments.'),
+    };
+  }
+};

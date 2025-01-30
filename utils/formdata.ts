@@ -1,3 +1,5 @@
+import {ZodSchema} from 'zod';
+
 export function packIntoFormData(data: unknown): FormData {
   const formData = new FormData();
 
@@ -37,4 +39,13 @@ export function unpackFromFormData(formData: FormData): unknown {
   } catch (e) {
     return data;
   }
+}
+
+export function zodParseFormData<T>(
+  formData: FormData,
+  schema: ZodSchema<T>,
+): T {
+  const data = unpackFromFormData(formData);
+  const parsed = schema.parse(data);
+  return parsed;
 }

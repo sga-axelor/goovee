@@ -1,25 +1,30 @@
-import type {QueryOptions, WhereOptions} from '@goovee/orm';
+import type {QueryOptions} from '@goovee/orm';
 import fs from 'fs';
 import path from 'path';
 import {pipeline} from 'stream';
 import {promisify} from 'util';
-import {z} from 'zod';
 
 // ---- CORE IMPORTS ---- //
-import {
-  MAIL_MESSAGE_TYPE,
-  ORDER_BY,
-  SORT_TYPE,
-  SUBAPP_CODES,
-} from '@/constants';
+import {ORDER_BY} from '@/constants';
 import {AOSMailMessage} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
-import {ID} from '@/types';
-import {CommentData} from '@/ui/components/comments/comment-input/comments-input';
-import {getCurrentDateTime} from '@/utils/date';
+import type {ID} from '@/types';
 import {getFileSizeText} from '@/utils/files';
 import {sql} from '@/utils/template-string';
+
+// ---- LOCAL IMPORTS ---- //
+import {MAIL_MESSAGE_TYPE, SORT_TYPE} from '../constants';
+import type {
+  AddCommentProps,
+  Comment,
+  CommentAttachment,
+  CommentField,
+  FindCommentsData,
+  FindCommentsProps,
+  TrackingField,
+} from '../types';
+import {CommentSchema, CommentsSchema} from '../utils';
 
 const pump = promisify(pipeline);
 
@@ -29,65 +34,45 @@ if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
 }
 
-export const ModelMap: Partial<Record<SUBAPP_CODES, string>> = {
-  [SUBAPP_CODES.forum]: 'com.axelor.apps.portal.db.ForumPost',
-  [SUBAPP_CODES.news]: 'com.axelor.apps.portal.db.PortalNews',
-  [SUBAPP_CODES.events]: 'com.axelor.apps.portal.db.PortalEvent',
-  [SUBAPP_CODES.ticketing]: 'com.axelor.apps.project.db.ProjectTask',
-  [SUBAPP_CODES.quotations]: 'com.axelor.apps.sale.db.SaleOrder',
-};
-
-export type Attachment = {
-  id: ID;
-  description?: string;
-};
-
-export type Track = {
-  name: string;
-  title: string;
-  value: string;
-  oldValue?: string;
-};
-
 function getSelectFields({
-  showRepliesInMainList,
+  showRepliesInMainThread,
+  trackingField,
   childConditions,
+  commentField,
 }: {
-  showRepliesInMainList?: boolean;
+  showRepliesInMainThread?: boolean;
   childConditions?: Omit<QueryOptions<AOSMailMessage>, 'select'>;
-} = {}) {
+  trackingField: TrackingField;
+  commentField: CommentField;
+}) {
   const commentFields = {
-    note: true,
-    publicBody: true,
-    body: true,
+    [commentField]: true,
+    [trackingField]: true,
     createdOn: true,
     partner: {picture: true, simpleFullName: true, name: true},
-    mailMessageFileList: {
-      select: {attachmentFile: {id: true, fileName: true}},
-    },
+    mailMessageFileList: {select: {attachmentFile: {id: true, fileName: true}}},
     createdBy: {id: true, fullName: true},
   } as const;
 
   const select = {
     ...commentFields,
-    ...(showRepliesInMainList && {parentMailMessage: commentFields}),
+    ...(showRepliesInMainThread && {parentMailMessage: commentFields}),
     isPublicNote: true,
-    childMailMessages: {
-      ...childConditions,
-      select: commentFields,
-    } as {select: typeof commentFields},
+    childMailMessages: {...childConditions, select: commentFields} as {
+      select: typeof commentFields;
+    },
   };
   return select;
 }
 
-export async function getPopularCommentsBySorting({
+async function getPopularCommentsBySorting({
   skip = 0,
   limit,
   recordId,
   tenantId,
   modelName,
   exclude,
-  showRepliesInMainList,
+  showRepliesInMainThread,
 }: {
   recordId: ID;
   skip?: number;
@@ -95,7 +80,7 @@ export async function getPopularCommentsBySorting({
   tenantId: Tenant['id'];
   modelName: string;
   exclude?: ID[];
-  showRepliesInMainList?: boolean;
+  showRepliesInMainThread?: boolean;
 }): Promise<FindCommentsData> {
   if (!tenantId || !recordId) {
     throw new Error(await t('TenantId  and RecordId are required'));
@@ -179,7 +164,7 @@ export async function getPopularCommentsBySorting({
               OR mail_message.is_public_note = TRUE
             )
             AND mail_message.related_model = $4
-            AND mail_message.related_id = $1 ${showRepliesInMainList
+            AND mail_message.related_id = $1 ${showRepliesInMainThread
         ? ''
         : 'AND mail_message.parent_mail_message IS NULL'} ${exclude &&
       exclude.length
@@ -289,25 +274,30 @@ export async function getPopularCommentsBySorting({
   };
 }
 
-export async function upload(
-  attachements: CommentData['attachments'],
-  tenantId: Tenant['id'],
-) {
+type Attachment = {
+  id: ID;
+  description?: string;
+};
+
+async function upload({
+  attachments,
+  tenantId,
+}: {
+  attachments: CommentAttachment[];
+  tenantId: Tenant['id'];
+}): Promise<Attachment[]> {
   if (!tenantId) {
     throw new Error(await t('TenantId is required.'));
   }
 
+  if (!attachments.length) return [];
   const client = await manager.getClient(tenantId);
 
   const getTimestampFilename = (name: string) => {
     return `${new Date().getTime()}-${name}`;
   };
 
-  const create = async ({
-    file,
-    title,
-    description,
-  }: CommentData['attachments'][number]) => {
+  const create = async ({file, title, description}: CommentAttachment) => {
     const name = title || file.name;
     const timestampFilename = getTimestampFilename(name);
 
@@ -334,7 +324,7 @@ export async function upload(
   };
 
   const data = await Promise.all(
-    attachements.map(({title, description, file}) =>
+    attachments?.map(({title, description, file}) =>
       create({
         title: title ? `${title}${path.extname(file.name)}` : file.name,
         description,
@@ -345,39 +335,24 @@ export async function upload(
   return data;
 }
 
-export async function addComment({
-  subapp,
-  recordId,
-  modelName,
-  userId,
-  note,
-  workspaceUserId,
-  attachments = [],
-  parentId,
-  messageBody,
-  tenantId,
-  subject,
-  messageType = MAIL_MESSAGE_TYPE.comment,
-  showRepliesInMainList,
-}: {
-  subapp: SUBAPP_CODES;
-  userId: ID;
-  recordId: ID;
-  workspaceUserId: ID;
-  modelName: string;
-  note?: string;
-  attachments?: Attachment[];
-  parentId?: ID;
-  messageBody?: {
-    title: string;
-    tracks: Track[];
-    tags: any[];
-  };
-  subject: string;
-  messageType?: MAIL_MESSAGE_TYPE;
-  tenantId: Tenant['id'];
-  showRepliesInMainList?: boolean;
-}): Promise<[Comment, Comment | undefined]> {
+export async function addComment(
+  props: AddCommentProps,
+): Promise<[Comment, Comment | undefined]> {
+  const {
+    recordId,
+    modelName,
+    userId,
+    workspaceUserId,
+    data,
+    parentId,
+    messageBody,
+    tenantId,
+    subject,
+    messageType = MAIL_MESSAGE_TYPE.comment,
+    showRepliesInMainThread,
+    trackingField,
+    commentField,
+  } = props;
   const client = await manager.getClient(tenantId);
 
   let parent;
@@ -391,6 +366,11 @@ export async function addComment({
     }
   }
 
+  let attachments: Attachment[] = [];
+  if (data?.attachments?.length) {
+    attachments = await upload({attachments: data.attachments, tenantId});
+  }
+
   const timestamp = new Date();
 
   const body = JSON.stringify(messageBody);
@@ -399,7 +379,7 @@ export async function addComment({
       partner: {select: {id: userId}},
       relatedId: Number(recordId),
       relatedModel: modelName,
-      ...(subapp === SUBAPP_CODES.quotations ? {body: note} : {note}),
+      [commentField]: data?.text,
       isPublicNote: true,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -412,8 +392,8 @@ export async function addComment({
       //relatedName: TODO: Add this later
       ...(attachments?.length > 0 && {
         mailMessageFileList: {
-          create: attachments.map((attachment: any) => ({
-            description: attachment?.description || '',
+          create: attachments.map(attachment => ({
+            description: attachment.description,
             attachmentFile: {select: {id: attachment.id}},
             createdOn: timestamp,
             updatedOn: timestamp,
@@ -423,113 +403,38 @@ export async function addComment({
     },
   });
 
-  const data = await client.aOSMailMessage.find({
-    where: {
-      id: {
-        in: [response.id].concat(
-          parent && showRepliesInMainList ? [parent.id] : [],
-        ),
-      },
-    },
-    select: getSelectFields({showRepliesInMainList}),
+  const comments = await client.aOSMailMessage.find({
+    where: {id: {in: [response.id].concat(parent ? [parent.id] : [])}},
+    select: getSelectFields({
+      showRepliesInMainThread,
+      trackingField,
+      commentField,
+    }),
   });
 
-  const comment = CommentSchema.parse(data.find(d => d.id === response.id));
+  const comment = CommentSchema.parse(comments.find(d => d.id === response.id));
   const parentComment =
-    showRepliesInMainList && parent
-      ? CommentSchema.parse(data.find(d => d.id === parent.id))
-      : undefined;
+    parent && CommentSchema.parse(comments.find(d => d.id === parent.id));
 
   return [comment, parentComment];
 }
 
-const PictureSchema = z.object({
-  id: z.string().or(z.number()),
-  version: z.number(),
-});
+export async function findComments(
+  props: FindCommentsProps,
+): Promise<FindCommentsData> {
+  const {
+    recordId,
+    modelName,
+    limit,
+    skip,
+    sort,
+    tenantId,
+    exclude,
+    showRepliesInMainThread,
+    trackingField,
+    commentField,
+  } = props;
 
-const AttachmentFileSchema = z.object({
-  id: z.string().or(z.number()),
-  version: z.number(),
-  fileName: z.string().nullish(),
-});
-
-export type AttachmentFile = z.infer<typeof AttachmentFileSchema>;
-
-const MailMessageFileSchema = z.object({
-  id: z.string().or(z.number()),
-  version: z.number(),
-  attachmentFile: AttachmentFileSchema.nullish(),
-});
-
-export type MailMessageFile = z.infer<typeof MailMessageFileSchema>;
-
-const UserSchema = z.object({
-  id: z.string().or(z.number()),
-  version: z.number(),
-  fullName: z.string().nullish(),
-});
-
-const PartnerSchema = z.object({
-  id: z.string().or(z.number()),
-  version: z.number(),
-  picture: PictureSchema.nullish(),
-  simpleFullName: z.string().nullish(),
-  name: z.string().nullish(),
-});
-
-const MailMessageSchema = z.object({
-  id: z.string().or(z.number()),
-  version: z.number(),
-  body: z.string().nullish(),
-  publicBody: z.string().nullish(),
-  createdOn: z.union([z.date(), z.string()]).nullish(),
-  partner: PartnerSchema.nullish(),
-  createdBy: UserSchema.nullish(),
-  note: z.string().nullish(),
-  mailMessageFileList: z.array(MailMessageFileSchema).nullish(),
-});
-
-export const CommentSchema = MailMessageSchema.extend({
-  isPublicNote: z.boolean().nullish(),
-  parentMailMessage: MailMessageSchema.nullish(),
-  childMailMessages: z.array(MailMessageSchema).nullish(),
-  _count: z.string().or(z.number()).nullish(),
-  _cursor: z.string().nullish(),
-  _hasNext: z.boolean().nullish(),
-  _hasPrev: z.boolean().nullish(),
-});
-
-export type Comment = z.infer<typeof CommentSchema>;
-export const CommentsSchema = z.array(CommentSchema);
-
-export type FindCommentsData = {
-  comments: Comment[];
-  total: number;
-  totalCommentThreadCount: number;
-};
-
-export async function findComments({
-  recordId,
-  modelName,
-  limit,
-  skip,
-  sort,
-  subapp,
-  tenantId,
-  exclude,
-  showRepliesInMainList,
-}: {
-  recordId: ID;
-  modelName: string;
-  limit?: number;
-  skip?: number;
-  sort?: any;
-  subapp: SUBAPP_CODES;
-  tenantId: Tenant['id'];
-  exclude?: ID[];
-  showRepliesInMainList?: boolean;
-}): Promise<FindCommentsData> {
   if (!tenantId || !recordId) {
     throw new Error(await t('TenantId  and RecordId are required.'));
   }
@@ -548,7 +453,7 @@ export async function findComments({
         limit,
         tenantId,
         exclude,
-        showRepliesInMainList,
+        showRepliesInMainThread,
       });
 
       return results;
@@ -556,32 +461,23 @@ export async function findComments({
       orderBy = {createdOn: ORDER_BY.DESC};
   }
 
-  const getWhereConditions = () => {
-    const baseConditions: WhereOptions<AOSMailMessage> = {
+  let comments = await client.aOSMailMessage.find({
+    where: {
       relatedId: Number(recordId),
       relatedModel: modelName,
+      OR: [{[trackingField]: {ne: null}}, {isPublicNote: true}],
       ...(exclude && exclude.length && {id: {notIn: exclude}}),
-    };
-
-    const subappConditions: WhereOptions<AOSMailMessage> = {
-      ...(subapp !== SUBAPP_CODES.quotations && {
-        OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
-      }),
-      ...(!showRepliesInMainList && {
+      ...(!showRepliesInMainThread && {
         parentMailMessage: {id: {eq: null}},
       }),
-    };
-
-    return {...baseConditions, ...subappConditions};
-  };
-
-  let comments = await client.aOSMailMessage.find({
-    where: getWhereConditions(),
+    },
     orderBy,
     take: limit,
     ...(skip ? {skip} : {}),
     select: getSelectFields({
-      showRepliesInMainList,
+      trackingField,
+      commentField,
+      showRepliesInMainThread,
       childConditions: {
         orderBy,
         where: {

@@ -13,18 +13,12 @@ import {
   DialogTitle,
   DialogContent,
   Button,
-  Comments,
 } from '@/ui/components';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {
-  DEFAULT_CURRENCY_CODE,
-  SORT_TYPE,
-  SUBAPP_CODES,
-  SUBAPP_PAGE,
-} from '@/constants';
+import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
+import {isCommentEnabled, SORT_TYPE, Comments} from '@/comments';
 import {PaymentOption, type PortalWorkspace} from '@/types';
-import {isCommentEnabled} from '@/utils/comment';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -42,6 +36,10 @@ import {
   paypalCreateOrder,
   validateStripePayment,
 } from './action';
+import {
+  fetchComments,
+  createComment,
+} from '@/subapps/quotations/common/actions';
 
 function Stripe({onApprove, quotation}: any) {
   const {workspaceURL} = useWorkspace();
@@ -357,7 +355,11 @@ const Content = ({
               hideCloseComments
               hideCommentsHeader
               hideSortBy
-              showRepliesInMainList
+              showRepliesInMainThread
+              createComment={createComment}
+              fetchComments={fetchComments}
+              trackingField="body"
+              commentField="body"
             />
           </div>
         )}

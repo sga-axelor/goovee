@@ -2,17 +2,18 @@ import {MdArrowRightAlt} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
-import type {Track} from '@/orm/comment';
+
+import type {TrackObject} from '../../types';
 
 type CommentTracksProps = {
-  tracks: Track[];
-  title: string;
+  data: TrackObject;
 };
 
-export function CommentTracks({tracks, title}: CommentTracksProps) {
+export function CommentTracks({data}: CommentTracksProps) {
+  const {title, tracks} = data;
   return (
     <div className="px-4 text-xs mb-1">
-      <div className="font-semibold mb-1 -ml-9">{i18n.t(title)}</div>
+      {title && <div className="font-semibold mb-1 -ml-9">{i18n.t(title)}</div>}
       <ul className="list-disc">
         {tracks?.map(({title, oldValue, value}, index) => {
           if (title === 'comment.note') return;

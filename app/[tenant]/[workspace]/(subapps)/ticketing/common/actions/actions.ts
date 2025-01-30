@@ -10,6 +10,16 @@ import {clone} from '@/utils';
 import type {ID} from '@goovee/orm';
 import type {Cloned} from '@/types/util';
 import type {ActionResponse} from '@/types/action';
+import {addComment, findComments} from '@/comments/orm';
+import {
+  CreateComment,
+  CreateCommentPropsSchema,
+  FetchComments,
+  FetchCommentsPropsSchema,
+  isCommentEnabled,
+} from '@/comments';
+import {zodParseFormData} from '@/utils/formdata';
+import {ModelMap, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
@@ -23,6 +33,7 @@ import {
   deleteChildTicketLink,
   deleteParentTicketLink,
   deleteRelatedTicketLink,
+  findTicketAccess,
   findTicketsBySearch,
   findTicketVersion,
   updateTicket,
@@ -121,6 +132,7 @@ export async function updateAssignment(
   if (error) return {error: true, message};
 
   const {workspace, auth} = info;
+  const {workspaceUser} = workspace;
 
   try {
     const updateData = UpdateTicketSchema.parse({
@@ -137,7 +149,7 @@ export async function updateAssignment(
         ? updateTicketByWS
         : updateTicket;
 
-    await update({data: updateData, workspaceURL, auth});
+    await update({data: updateData, workspaceUserId: workspaceUser?.id, auth});
     return {success: true, data: true};
   } catch (e) {
     return handleError(e);
@@ -170,6 +182,7 @@ export async function closeTicket(
   if (error) return {error: true, message};
 
   const {workspace, auth} = info;
+  const {workspaceUser} = workspace;
 
   try {
     const status = await findTicketDoneStatus(tenantId);
@@ -193,7 +206,7 @@ export async function closeTicket(
         ? updateTicketByWS
         : updateTicket;
 
-    await update({data: updateData, workspaceURL, auth});
+    await update({data: updateData, workspaceUserId: workspaceUser?.id, auth});
 
     return {success: true, data: true};
   } catch (e) {
@@ -222,6 +235,7 @@ export async function cancelTicket(
   if (error) return {error: true, message};
 
   const {workspace, auth} = info;
+  const {workspaceUser} = workspace;
 
   try {
     const status = await findTicketCancelledStatus(tenantId);
@@ -244,7 +258,7 @@ export async function cancelTicket(
         ? updateTicketByWS
         : updateTicket;
 
-    await update({data: updateData, workspaceURL, auth});
+    await update({data: updateData, workspaceUserId: workspaceUser?.id, auth});
 
     return {success: true, data: true};
   } catch (e) {
@@ -482,3 +496,128 @@ export async function searchTickets({
 
   return {success: true, data: clone(tickets)};
 }
+
+export const createComment: CreateComment = async formData => {
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) {
+    return {error: true, message: await t('TenantId is required.')};
+  }
+
+  const {workspaceURL, ...rest} = zodParseFormData(
+    formData,
+    CreateCommentPropsSchema,
+  );
+
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+
+  if (error) {
+    return {error: true, message};
+  }
+  const {auth, workspace, user} = info;
+
+  const {workspaceUser} = workspace;
+
+  if (!workspaceUser) {
+    return {error: true, message: await t('Workspace user is missing')};
+  }
+
+  if (!isCommentEnabled({subapp: SUBAPP_CODES.ticketing, workspace})) {
+    return {error: true, message: await t('Comments are not enabled')};
+  }
+
+  const modelName = ModelMap[SUBAPP_CODES.ticketing];
+  if (!modelName) {
+    return {error: true, message: await t('Invalid model type')};
+  }
+
+  const ticket = findTicketAccess({
+    recordId: rest.recordId,
+    auth,
+  });
+
+  if (!ticket) {
+    return {error: true, message: await t('Record not found')};
+  }
+
+  try {
+    const res = await addComment({
+      modelName,
+      userId: auth.userId,
+      workspaceUserId: workspaceUser.id,
+      tenantId,
+      commentField: 'note',
+      trackingField: 'publicBody',
+      subject: `${user.simpleFullName || user.name} added a comment`,
+      ...rest,
+    });
+
+    return {success: true, data: clone(res)};
+  } catch (e) {
+    return {
+      error: true,
+      message:
+        e instanceof Error
+          ? e.message
+          : await t('An unexpected error occurred while fetching comments.'),
+    };
+  }
+};
+
+export const fetchComments: FetchComments = async props => {
+  const {workspaceURL, ...rest} = FetchCommentsPropsSchema.parse(props);
+
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) {
+    return {error: true, message: await t('TenantId is required.')};
+  }
+
+  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+
+  if (error) {
+    return {error: true, message};
+  }
+  const {auth, workspace} = info;
+
+  const {workspaceUser} = workspace;
+
+  if (!workspaceUser) {
+    return {error: true, message: await t('Workspace user is missing')};
+  }
+
+  if (!isCommentEnabled({subapp: SUBAPP_CODES.ticketing, workspace})) {
+    return {error: true, message: await t('Comments are not enabled')};
+  }
+
+  const modelName = ModelMap[SUBAPP_CODES.ticketing];
+  if (!modelName) {
+    return {error: true, message: await t('Invalid model type')};
+  }
+
+  const ticket = findTicketAccess({
+    recordId: rest.recordId,
+    auth,
+  });
+
+  if (!ticket) {
+    return {error: true, message: await t('Record not found')};
+  }
+
+  try {
+    const data = await findComments({
+      modelName,
+      tenantId,
+      commentField: 'note',
+      trackingField: 'publicBody',
+      ...rest,
+    });
+    return {success: true, data: clone(data)};
+  } catch (e) {
+    return {
+      error: true,
+      message:
+        e instanceof Error
+          ? e.message
+          : await t('An unexpected error occurred while fetching comments.'),
+    };
+  }
+};

@@ -3,14 +3,12 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
-import {t} from '@/locale/server';
 import {getSession} from '@/auth';
-import {ModelMap, ORDER_BY, SUBAPP_CODES} from '@/constants';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {ModelMap, SUBAPP_CODES} from '@/constants';
+import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
-import {type Tenant} from '@/tenant';
-import type {PortalWorkspace} from '@/types';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {clone} from '@/utils';
 import {addComment, findComments} from '@/comments/orm';
 import {
   CreateComment,
@@ -22,99 +20,8 @@ import {
 import {zodParseFormData} from '@/utils/formdata';
 
 // ---- LOCAL IMPORTS ---- //
-import {findNews} from '@/subapps/news/common/orm/news';
-import {DEFAULT_NEWS_ASIDE_LIMIT} from '@/subapps/news/common/constants';
-
-export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
-  const session = await getSession();
-  const user = session?.user;
-
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await t('Bad Request'),
-    };
-  }
-
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.news,
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!subapp) {
-    return {
-      error: true,
-      message: await t('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
-    tenantId,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-    };
-  }
-
-  const {news}: any = await findNews({workspace, tenantId, user}).then(clone);
-
-  return news;
-}
-
-export async function findRecommendedNews({
-  workspace,
-  tenantId,
-  categoryIds,
-}: {
-  workspace: PortalWorkspace;
-  tenantId: Tenant['id'];
-  categoryIds: string[];
-}) {
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: await t('Unauthorized'),
-    };
-  }
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await t('Bad Request'),
-    };
-  }
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-    };
-  }
-
-  const {news}: any = await findNews({
-    workspace,
-    tenantId,
-    limit: DEFAULT_NEWS_ASIDE_LIMIT,
-    orderBy: {
-      publicationDateTime: ORDER_BY.DESC,
-    },
-    categoryIds,
-    user,
-  }).then(clone);
-  return news;
-}
+import {getWhereClause} from '../utils/quotations';
+import {findQuotation} from '../orm/quotations';
 
 export const createComment: CreateComment = async formData => {
   const session = await getSession();
@@ -143,17 +50,17 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Workspace user is missing')};
   }
 
-  if (!isCommentEnabled({subapp: SUBAPP_CODES.news, workspace})) {
+  if (!isCommentEnabled({subapp: SUBAPP_CODES.quotations, workspace})) {
     return {error: true, message: await t('Comments are not enabled')};
   }
 
-  const modelName = ModelMap[SUBAPP_CODES.news];
+  const modelName = ModelMap[SUBAPP_CODES.quotations];
   if (!modelName) {
     return {error: true, message: await t('Invalid model type')};
   }
 
   const app = await findSubappAccess({
-    code: SUBAPP_CODES.news,
+    code: SUBAPP_CODES.quotations,
     user,
     url: workspaceURL,
     tenantId,
@@ -161,14 +68,21 @@ export const createComment: CreateComment = async formData => {
   if (!app?.installed) {
     return {error: true, message: await t('Unauthorized Access')};
   }
+  const {role, isContactAdmin} = app;
 
-  const {news}: any = await findNews({
-    id: rest.recordId,
-    workspace,
-    tenantId,
+  const quotationWhereClause = getWhereClause({
     user,
+    role,
+    isContactAdmin,
   });
-  if (!news?.length) {
+
+  const quotation = await findQuotation({
+    id: rest.recordId,
+    tenantId,
+    params: {where: quotationWhereClause},
+    workspaceURL,
+  });
+  if (!quotation) {
     return {error: true, message: await t('Record not found')};
   }
 
@@ -178,8 +92,8 @@ export const createComment: CreateComment = async formData => {
       userId: user.id,
       workspaceUserId: workspaceUser.id,
       tenantId,
-      commentField: 'note',
-      trackingField: 'publicBody',
+      commentField: 'body',
+      trackingField: 'body',
       subject: `${user.simpleFullName || user.name} added a comment`,
       ...rest,
     });
@@ -199,8 +113,10 @@ export const createComment: CreateComment = async formData => {
 export const fetchComments: FetchComments = async props => {
   const {workspaceURL, ...rest} = FetchCommentsPropsSchema.parse(props);
   const session = await getSession();
-
   const user = session?.user;
+  if (!user) {
+    return {error: true, message: await t('Unauthorized')};
+  }
 
   const tenantId = headers().get(TENANT_HEADER);
 
@@ -217,17 +133,17 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Invalid workspace')};
   }
 
-  if (!isCommentEnabled({subapp: SUBAPP_CODES.news, workspace})) {
+  if (!isCommentEnabled({subapp: SUBAPP_CODES.quotations, workspace})) {
     return {error: true, message: await t('Comments are not enabled')};
   }
 
-  const modelName = ModelMap[SUBAPP_CODES.news];
+  const modelName = ModelMap[SUBAPP_CODES.quotations];
   if (!modelName) {
     return {error: true, message: await t('Invalid model type')};
   }
 
   const app = await findSubappAccess({
-    code: SUBAPP_CODES.news,
+    code: SUBAPP_CODES.quotations,
     user,
     url: workspaceURL,
     tenantId,
@@ -236,13 +152,21 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const {news}: any = await findNews({
-    id: rest.recordId,
-    workspace,
-    tenantId,
+  const {role, isContactAdmin} = app;
+
+  const quotationWhereClause = getWhereClause({
     user,
+    role,
+    isContactAdmin,
   });
-  if (!news?.length) {
+
+  const quotation = await findQuotation({
+    id: rest.recordId,
+    tenantId,
+    params: {where: quotationWhereClause},
+    workspaceURL,
+  });
+  if (!quotation) {
     return {error: true, message: await t('Record not found')};
   }
 
@@ -250,8 +174,8 @@ export const fetchComments: FetchComments = async props => {
     const data = await findComments({
       modelName,
       tenantId,
-      commentField: 'note',
-      trackingField: 'publicBody',
+      commentField: 'body',
+      trackingField: 'body',
       ...rest,
     });
     return {success: true, data: clone(data)};

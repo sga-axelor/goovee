@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-// ---- LOCAL IMPORTS ---- //
-import {MAIL_MESSAGE_TYPE, ORDER_BY, SUBAPP_CODES} from '@/constants';
+// ---- CORE IMPORTS ---- //
+import {MAIL_MESSAGE_TYPE, type Track} from '@/comments';
+import {addComment} from '@/comments/orm';
+import {ModelMap, ORDER_BY, SUBAPP_CODES} from '@/constants';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
-import {addComment, ModelMap, type Track} from '@/orm/comment';
 import {manager, type Tenant} from '@/tenant';
 import {sql} from '@/utils/template-string';
 import type {Entity, ID, SelectOptions} from '@goovee/orm';
@@ -243,12 +244,13 @@ export async function createTicket({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
         userId: auth.userId,
         workspaceUserId: workspaceUserId,
-        subapp: SUBAPP_CODES.ticketing,
         recordId: ticket.id,
         subject: `Record Created by ${auth.simpleFullName}`,
         messageBody: {title: 'Record Created', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
         tenantId: auth.tenantId,
+        trackingField: 'publicBody',
+        commentField: 'note',
       });
     }
   } catch (e) {
@@ -456,12 +458,13 @@ export async function updateTicket({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
         userId: auth.userId,
         workspaceUserId: workspaceUserId,
-        subapp: SUBAPP_CODES.ticketing,
         recordId: ticket.id,
         subject: `Record Updated by ${auth.simpleFullName}`,
         messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
         tenantId: auth.tenantId,
+        trackingField: 'publicBody',
+        commentField: 'note',
       });
     }
   } catch (e) {

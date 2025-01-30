@@ -2,7 +2,8 @@
 import {i18n} from '@/locale';
 import {download} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {MailMessageFile} from '@/orm/comment';
+
+import type {MailMessageFile} from '../../types';
 
 type CommentAttachmentsProps = {
   attachments: MailMessageFile[];

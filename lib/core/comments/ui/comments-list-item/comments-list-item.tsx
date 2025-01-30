@@ -1,18 +1,27 @@
-import {useMemo, useState} from 'react';
 import {useSession} from 'next-auth/react';
+import {useMemo, useState} from 'react';
 import {
-  MdOutlineModeComment,
-  MdOutlineThumbUp,
   MdFavoriteBorder,
-  MdOutlineMoreHoriz,
-  MdKeyboardArrowUp,
   MdKeyboardArrowDown,
-  MdReply,
-  MdOutlineSouth,
+  MdKeyboardArrowUp,
   MdNorth,
+  MdOutlineModeComment,
+  MdOutlineMoreHoriz,
+  MdOutlineSouth,
+  MdOutlineThumbUp,
+  MdReply,
 } from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
+import {NOT_INTERESTED, REPORT, SUBAPP_CODES} from '@/constants';
+import {i18n} from '@/locale';
+import {
+  formatDate,
+  formatNumber,
+  formatRelativeTime,
+} from '@/locale/formatters';
+import {type Tenant} from '@/tenant';
+import type {ID} from '@/types';
 import {
   Avatar,
   AvatarImage,
@@ -20,35 +29,30 @@ import {
   PopoverContent,
   PopoverTrigger,
   Separator,
-  TooltipProvider,
   Tooltip,
-  TooltipTrigger,
   TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from '@/ui/components';
-import {i18n} from '@/locale';
-import {getImageURL} from '@/utils/files';
 import {cn} from '@/utils/css';
+import {getImageURL} from '@/utils/files';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   COMMENT,
   COMMENTS,
   DISABLED_COMMENT_PLACEHOLDER,
-  NOT_INTERESTED,
-  REPORT,
   SORT_TYPE,
-  SUBAPP_CODES,
-} from '@/constants';
-import {
-  formatDate,
-  formatNumber,
-  formatRelativeTime,
-} from '@/locale/formatters';
-import type {Comment} from '@/orm/comment';
-import {type Tenant} from '@/tenant';
-import type {ID} from '@/types';
-import {CreateProps} from '@/ui/hooks/use-comments';
-
-import {CommentTracks, CommentAttachments} from '../comments-list';
-import {CommentInput} from '../comment-input/';
+} from '../../constants';
+import type {
+  Comment,
+  CommentField,
+  CreateProps,
+  TrackingField,
+  TrackObject,
+} from '../../types';
+import {CommentInput} from '../comment-input';
+import {CommentAttachments, CommentTracks} from '../comments-list';
 
 interface CommentListItemProps {
   recordId: ID;
@@ -61,11 +65,11 @@ interface CommentListItemProps {
   sortBy?: SORT_TYPE;
   onSubmit?: (data: CreateProps) => Promise<void>;
   tenantId: Tenant['id'];
+  commentField: CommentField;
+  trackingField: TrackingField;
+  disableReply?: boolean;
 }
 
-// NOTE: comments are not recursive,
-// only the top level commment will have childComments, and parentComment,
-// child comment will only have info that is needed to display the comment.
 export const CommentListItem = ({
   recordId,
   parentCommentId,
@@ -77,6 +81,9 @@ export const CommentListItem = ({
   sortBy,
   onSubmit,
   tenantId,
+  commentField,
+  trackingField,
+  disableReply,
 }: CommentListItemProps) => {
   const [showSubComments, setShowSubComments] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -84,43 +91,26 @@ export const CommentListItem = ({
 
   const {
     createdOn,
-    publicBody,
-    body,
     childMailMessages = [],
     id,
     mailMessageFileList = [],
-    note = '',
     createdBy,
     parentMailMessage,
     partner,
   } = comment || {};
 
-  const parseJson = (data: any) => {
-    try {
-      const parsed = JSON.parse(data);
+  const commentFiedValue = comment[commentField];
+  const trackingFieldValue = comment[trackingField];
 
-      if (typeof parsed === 'object' && parsed !== null) {
-        return parsed;
-      }
-
-      return {title: '', tracks: []};
-    } catch {
-      if (typeof data === 'string') {
-        return {value: data};
-      }
-      return {title: '', tracks: []};
-    }
-  };
-
-  const {
-    title = '',
-    tracks = [],
-    value = '',
-  } = useMemo(() => {
-    const dataToParse = subapp === SUBAPP_CODES.quotations ? body : publicBody;
-    const result = parseJson(dataToParse ?? '');
-    return result;
-  }, [subapp, body, publicBody]);
+  const commentToDisplay = useMemo(() => {
+    const value = parseJson(commentFiedValue);
+    if (typeof value === 'string') return value;
+    return null;
+  }, [commentFiedValue]);
+  const trackingToDisplay = useMemo(
+    () => parseJson(trackingFieldValue),
+    [trackingFieldValue],
+  );
 
   const {data: session} = useSession();
   const isLoggedIn = Boolean(session?.user?.id);
@@ -186,6 +176,9 @@ export const CommentListItem = ({
         disabled={isDisabled}
         onSubmit={onSubmit}
         tenantId={tenantId}
+        commentField={commentField}
+        trackingField={trackingField}
+        disableReply={disableReply}
       />
     ));
   };
@@ -200,7 +193,11 @@ export const CommentListItem = ({
     if (!parentMailMessage?.id) return null;
 
     const {partner, createdBy} = parentMailMessage;
-
+    const parentCommentFieldValue = parentMailMessage[commentField];
+    const parentCommentToDisplay = parseJson(parentCommentFieldValue);
+    if (!parentCommentToDisplay || typeof parentCommentToDisplay !== 'string') {
+      return null;
+    }
     return (
       <div className="p-2 border-l-2 border-success bg-success-light rounded-sm">
         <div className="flex justify-between items-center">
@@ -251,7 +248,7 @@ export const CommentListItem = ({
               'text-sm w-full font-normal',
               !toggle && 'line-clamp-1',
             )}
-            dangerouslySetInnerHTML={{__html: parentMailMessage.note ?? ''}}
+            dangerouslySetInnerHTML={{__html: parentCommentToDisplay ?? ''}}
           />
         </div>
       </div>
@@ -309,26 +306,24 @@ export const CommentListItem = ({
         </div>
       </div>
       <div className={`${isTopLevel ? 'ml-3 pl-10' : 'pl-8'}`}>
-        {value && (
-          <div
-            className="text-sm w-full font-normal"
-            dangerouslySetInnerHTML={{__html: value}}
-          />
+        {trackingToDisplay && isTrackObject(trackingToDisplay) && (
+          <CommentTracks data={trackingToDisplay} />
         )}
-        {tracks.length > 0 && <CommentTracks tracks={tracks} title={title} />}
         {!!mailMessageFileList?.length && (
           <CommentAttachments attachments={mailMessageFileList} />
         )}
 
         <div className="flex flex-col">
           {renderParentMessage()}
-          <div
-            className="text-sm w-full font-normal"
-            dangerouslySetInnerHTML={{__html: note ?? ''}}
-          />
+          {commentToDisplay && (
+            <div
+              className="text-sm w-full font-normal"
+              dangerouslySetInnerHTML={{__html: commentToDisplay}}
+            />
+          )}
           <div className="flex items-center gap-6 mt-1 mb-2">
             {showReactions && renderReactions()}
-            {note && (
+            {commentToDisplay && !disableReply && (
               <div className="flex gap-6 items-center">
                 <div
                   className="flex items-center gap-1 cursor-pointer"
@@ -380,7 +375,7 @@ export const CommentListItem = ({
               />
             </div>
           )}
-          {renderChildComments()}
+          {!disableReply && renderChildComments()}
         </div>
       </div>
     </div>
@@ -405,3 +400,25 @@ const TooltipComponent = ({
     </Tooltip>
   </TooltipProvider>
 );
+
+const parseJson = (data: unknown): string | TrackObject | null => {
+  try {
+    if (typeof data !== 'string') return null;
+    const parsed = JSON.parse(data);
+
+    if (typeof parsed === 'object' && parsed !== null) {
+      return parsed as TrackObject;
+    }
+
+    return {title: '', tracks: []};
+  } catch {
+    if (typeof data === 'string') {
+      return data;
+    }
+    return null;
+  }
+};
+
+const isTrackObject = (data: unknown): data is TrackObject => {
+  return typeof data === 'object' && data !== null;
+};
