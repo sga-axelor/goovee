@@ -12,6 +12,7 @@
     "generate": "goovee generate"
   },
   "dependencies": {
+    "@axelor-ent/survey-react-components": "0.1.0",
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@goovee/orm": "beta",
     "@hookform/resolvers": "^3.9.1",

@@ -1,0 +1,23 @@
+{
+  "name": "AOSSurveyConfig",
+  "table": "survey_survey_config",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {"name": "statusSelect", "type": "Int"},
+    {
+      "name": "typeSelect",
+      "type": "Int"
+    },
+    {"name": "category", "type": "ManyToOne", "target": "AOSSurveyCategory"},
+    {"name": "publicationDatetime", "type": "Date"},
+    {"name": "canAnswerBeModified", "type": "Boolean"},
+    {"name": "config", "type": "JSON"},
+    {"name": "themeConfig", "type": "JSON"},
+    {"name": "customModel", "type": "OneToOne", "target": "AOSMetaJsonModel"}
+  ]
+}

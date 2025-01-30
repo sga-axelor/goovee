@@ -17,6 +17,7 @@ import {
   MdOutlineForum,
   MdListAlt,
   MdFolder,
+  MdOutlinePoll,
 } from 'react-icons/md';
 
 interface IconMapping {
@@ -36,6 +37,7 @@ interface IconMapping {
   forum: IconType;
   ticketing: IconType;
   directory: IconType;
+  survey: IconType;
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
@@ -56,6 +58,7 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
     forum: MdOutlineForum,
     ticketing: MdListAlt,
     directory: MdFolder,
+    survey: MdOutlinePoll,
   };
 
   const icon = iconMapping[type];

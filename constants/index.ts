@@ -69,6 +69,7 @@ export enum SUBAPP_CODES {
   ticketing = 'ticketing',
   chat = 'chat',
   directory = 'directory',
+  survey = 'survey',
 }
 
 /**
@@ -93,6 +94,8 @@ export const SUBAPP_PAGE = {
   create: 'create',
   edit: 'edit',
   account: 'account',
+  openSurvey: 'open',
+  responseSurvey: 'response',
 };
 
 /**
