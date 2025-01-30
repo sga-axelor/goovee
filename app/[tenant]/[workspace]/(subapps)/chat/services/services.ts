@@ -8,8 +8,6 @@ import {
   getUnreadChannel,
 } from '../api';
 
-import {formatDate} from '@/locale/server/formatters';
-
 const characters =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -101,17 +99,6 @@ export const getChannelInfosByChannelId = async (
     token,
     options,
   );
-
-  // const posts: any[] = []
-
-  // for (const post of $posts) {
-  //   const $post = {
-  //     ...post,
-  //     create_at: await formatDate(post?.create_at)
-  //   }
-
-  //   posts.push($post)
-  // }
 
   posts.sort((a: any, b: any) => {
     return a.create_at - b.create_at;
