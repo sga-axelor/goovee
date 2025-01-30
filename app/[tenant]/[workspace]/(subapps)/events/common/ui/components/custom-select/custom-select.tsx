@@ -80,7 +80,7 @@ export const CustomSelect = ({
     form.setValue(field.name, selected);
   };
 
-  const handleInputChange = async (input: string = ' ') => {
+  const handleInputChange = async (input: string = '') => {
     setInputValue(input.toLocaleLowerCase());
 
     try {
@@ -91,9 +91,7 @@ export const CustomSelect = ({
       } else {
         toast({
           variant: 'destructive',
-          title: i18n.t(
-            data?.message || 'Error while fetching updated comments.',
-          ),
+          title: i18n.t(data?.message || 'Error while fetching contacts.'),
         });
       }
     } catch (error) {

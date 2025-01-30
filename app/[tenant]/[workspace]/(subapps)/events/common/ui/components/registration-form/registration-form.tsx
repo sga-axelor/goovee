@@ -41,7 +41,9 @@ export const RegistrationForm = ({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
+
   const isLoggedIn = !!user?.emailAddress;
+  const showContactsList = isLoggedIn && !user.isContact;
 
   const basicPerson = useMemo(
     () => [
@@ -153,24 +155,28 @@ export const RegistrationForm = ({
         readonly: false,
         order: 100,
       },
-      {
-        name: 'users',
-        title: null,
-        type: 'array',
-        widget: 'custom',
-        helper: null,
-        hidden: false,
-        hideIf: (formState: any) => !formState?.addOtherPeople,
-        required: false,
-        readonly: false,
-        order: 110,
-        customComponent: (props: any) =>
-          CustomSelect({
-            ...props,
-            arrayName: 'otherPeople',
-            subSchema: externalParticipantForm,
-          }),
-      },
+      ...(showContactsList
+        ? [
+            {
+              name: 'users',
+              title: null,
+              type: 'array',
+              widget: 'custom',
+              helper: null,
+              hidden: false,
+              hideIf: (formState: any) => !formState?.addOtherPeople,
+              required: false,
+              readonly: false,
+              order: 110,
+              customComponent: (props: any) =>
+                CustomSelect({
+                  ...props,
+                  arrayName: 'otherPeople',
+                  subSchema: externalParticipantForm,
+                }),
+            },
+          ]
+        : []),
       {
         name: 'otherPeople',
         title: 'Other people',

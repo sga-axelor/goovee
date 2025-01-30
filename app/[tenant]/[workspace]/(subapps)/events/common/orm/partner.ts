@@ -1,6 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
 import {manager, type Tenant} from '@/tenant';
+import {getSession} from '@/lib/core/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -9,12 +10,12 @@ import {
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
 
-export async function findContact({
-  search,
+export async function findContacts({
+  search = '',
   workspaceURL,
   tenantId,
 }: {
-  search: string;
+  search?: string;
   workspaceURL: string;
   tenantId: Tenant['id'];
 }) {
@@ -27,23 +28,41 @@ export async function findContact({
     return response;
   }
 
+  const session = await getSession();
+  const user = session?.user;
+  if (!user) {
+    return null;
+  }
+
+  const partnerId = user.isContact ? user.mainPartnerId : user.id;
+
   const c = await manager.getClient(tenantId);
 
-  const result = await c.aOSPartner.find({
-    where: {
-      AND: [
-        {
-          simpleFullName: {
-            like: `%${search.toLowerCase()}%`,
+  const whereClause = {
+    ...(search
+      ? [
+          {
+            simpleFullName: {
+              like: `%${search.toLowerCase()}%`,
+            },
           },
-        },
-        {
-          isContact: {
-            eq: true,
-          },
-        },
-      ],
+        ]
+      : []),
+    isContact: true,
+    isRegisteredOnPortal: true,
+    isActivatedOnPortal: true,
+    mainPartner: {
+      id: partnerId,
     },
+    contactWorkspaceConfigSet: {
+      portalWorkspace: {
+        url: workspaceURL,
+      },
+    },
+  };
+
+  const result = await c.aOSPartner.find({
+    where: whereClause,
     select: {
       id: true,
       name: true,

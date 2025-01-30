@@ -12,7 +12,7 @@ import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
-import {findContact} from '@/subapps/events/common/orm/partner';
+import {findContacts} from '@/subapps/events/common/orm/partner';
 import {
   findEventParticipant,
   registerParticipants,
@@ -165,6 +165,13 @@ export async function fetchContacts({
     return error(await t('Bad Request'));
   }
 
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return error(await t('Unauthorized'));
+  }
+
   const result = await validate([
     withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
@@ -175,7 +182,7 @@ export async function fetchContacts({
   }
 
   try {
-    const result = await findContact({search, workspaceURL, tenantId}).then(
+    const result = await findContacts({search, workspaceURL, tenantId}).then(
       clone,
     );
     return result;
