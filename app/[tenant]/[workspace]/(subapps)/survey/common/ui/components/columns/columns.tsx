@@ -84,21 +84,16 @@ export const partnerResponseColumns = [
     ),
   },
   {
-    key: 'publicationDatetime',
-    label: i18n.t('Publication date'),
-    getter: (row: Response) => row.attrs?.surveyConfig?.publicationDatetime,
-    content: (row: Response) => row.attrs?.surveyConfig?.publicationDatetime,
-  },
-  {
-    key: 'attrsStatusSelect',
-    label: i18n.t('Response status'),
-    mobile: true,
-    getter: (row: Response) => row.attrs?.statusSelect,
-    content: (row: Response) => (
-      <Chip
-        value={i18n.t(getResponseStatusName(row.attrs?.statusSelect))}
-        outline={true}
-      />
-    ),
+    key: 'responseDate',
+    label: i18n.t('Response date'),
+    sortable: true,
+    getter: (row: Response) =>
+      formatDate(row.updatedOn ?? row.createdOn, {
+        dateFormat: DATE_FORMATS.DD_MM_YYYY,
+      }),
+    content: (row: Response) =>
+      formatDate(row.updatedOn ?? row.createdOn, {
+        dateFormat: DATE_FORMATS.DD_MM_YYYY,
+      }),
   },
 ];

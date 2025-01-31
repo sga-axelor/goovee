@@ -30,4 +30,6 @@ export type Response = {
       fullName: string;
     };
   };
+  updatedOn?: string;
+  createdOn: string;
 };

@@ -125,6 +125,8 @@ export async function findMetaModelRecords({
       ...(skip ? {skip} : {}),
       select: {
         attrs: true,
+        createdOn: true,
+        updatedOn: true,
       },
     })
     .catch((error: any) => console.log('error >>>', error));
