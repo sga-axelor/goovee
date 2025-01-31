@@ -21,6 +21,8 @@ export interface Event {
   eventProduct: {
     salePrice: string;
   } | null;
+  defaultPrice: string;
+  displayAtiPrice: string;
 }
 export interface EventsProps {
   events: Event[];

@@ -8,12 +8,15 @@ import {
   MONTH,
   YEAR,
   SUBAPP_CODES,
+  DEFAULT_CURRENCY_SYMBOL,
+  DEFAULT_CURRENCY_SCALE,
 } from '@/constants';
 import {getPageInfo} from '@/utils';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
 import {dayjs} from '@/locale';
+import {formatNumber} from '@/locale/server/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -22,6 +25,7 @@ import {
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
 import {EVENT_TYPE} from '@/subapps/events/common/constants';
+import {findProductsFromWS} from '@/subapps/events/common/orm/product';
 
 const buildDateFilters = ({
   eventStartDateTimeCriteria,
@@ -190,10 +194,49 @@ export async function findEventByID({
           numberOfDecimals: true,
         },
       },
+      defaultPrice: true,
+      facilityList: true,
     },
   });
 
-  return event;
+  const {eventProduct, defaultPrice}: any = event;
+  const {saleCurrency, id: productId} = eventProduct || {};
+  console.log('eventProduct >>>', eventProduct);
+
+  // const productsFromWS = await findProductsFromWS({
+  //   productList: [{productId}],
+  //   workspace,
+  //   user,
+  //   tenantId,
+  // });
+  // console.log('productsFromWS >>>', JSON.stringify(productsFromWS));
+
+  const currencySymbol = saleCurrency?.symbol || DEFAULT_CURRENCY_SYMBOL;
+  const scale = saleCurrency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+
+  const displayAtiPrice = '';
+
+  return {
+    ...event,
+    defaultPrice: await formatNumber(defaultPrice, {
+      currency: currencySymbol,
+      scale,
+    }),
+    displayAtiPrice,
+    facilityList: event?.facilityList
+      ? await Promise.all(
+          event.facilityList.map(async facility => {
+            return {
+              ...facility,
+              price: await formatNumber(facility.price, {
+                currency: currencySymbol,
+                scale,
+              }),
+            };
+          }),
+        )
+      : [],
+  };
 }
 
 export async function findEvents({

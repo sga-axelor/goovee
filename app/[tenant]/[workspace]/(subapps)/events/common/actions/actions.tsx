@@ -175,13 +175,6 @@ export async function fetchContacts({
     return error(await t('Bad Request'));
   }
 
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
-    return error(await t('Unauthorized'));
-  }
-
   const result = await validate([
     withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),

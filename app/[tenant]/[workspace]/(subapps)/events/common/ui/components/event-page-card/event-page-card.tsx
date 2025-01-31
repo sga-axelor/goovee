@@ -30,8 +30,9 @@ import {
 } from '@/subapps/events/common/constants';
 
 export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
-  const {workspaceURI, tenant} = useWorkspace();
+  const {defaultPrice, displayAtiPrice} = eventDetails || {};
 
+  const {workspaceURI, tenant} = useWorkspace();
   const [isRegistrationAllow, setIsRegistrationAllow] =
     useState<boolean>(false);
   const allowGuestEventRegistration =
@@ -101,16 +102,18 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
               </span>
             </p>
           )}
-          {eventDetails?.eventProduct?.salePrice &&
-            parseFloat(eventDetails?.eventProduct?.salePrice) > 0 && (
-              <p>
-                {i18n.t('Price')}:
-                <span className="font-semibold">
-                  {' '}
-                  {parseFloat(eventDetails.eventProduct.salePrice).toFixed(2)}€
-                </span>
+          {defaultPrice && (
+            <div>
+              <p className="text-xl font-semibold text-black">
+                {i18n.t('Price')}:{' '}
+                <span className="text-success">{defaultPrice}</span>
               </p>
-            )}
+              <p className="text-xs font-medium text-black">
+                {i18n.t('Price with tax')}:{' '}
+                <span className="text-success">{displayAtiPrice}</span>
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
       {isRegistrationAllow && (

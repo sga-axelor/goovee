@@ -8,7 +8,7 @@ import icalgen, {
 import {isSameDay} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import {Event} from '@/subapps/events/common/ui/components';
+import type {Event} from '@/subapps/events/common/ui/components';
 
 export const datesBetweenTwoDates = (data: Event[]): Date[] => {
   const Dates: Date[] = [];

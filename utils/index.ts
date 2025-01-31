@@ -67,3 +67,9 @@ export function getPageInfo({
 export function getSkipInfo(limit?: string | number, page?: string | number) {
   return Number(limit) * Math.max(Number(page) - 1, 0);
 }
+
+export function extractNumericValue(value?: string | null): number {
+  if (!value) return 0;
+  const numericValue = parseFloat(value.replace(/[^0-9.]/g, ''));
+  return isNaN(numericValue) ? 0 : numericValue;
+}
