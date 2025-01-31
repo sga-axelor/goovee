@@ -103,6 +103,20 @@ export const CommentSchema = MailMessageSchema.extend({
 
 export const CommentsSchema = z.array(CommentSchema);
 
+const TrackSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  value: z.string(),
+  oldValue: z.string().optional(),
+});
+
+export const TrackObjectSchema = z.object({
+  title: z.string().optional(),
+  tracks: z.array(TrackSchema).optional(),
+});
+
+export type TrackObject = z.infer<typeof TrackObjectSchema>;
+export type Track = z.infer<typeof TrackSchema>;
 export type Comment = z.infer<typeof CommentSchema>;
 export type Picture = z.infer<typeof PictureSchema>;
 export type AttachmentFile = z.infer<typeof AttachmentFileSchema>;

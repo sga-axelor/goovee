@@ -10,6 +10,7 @@ import type {
   Comment,
   CommentData,
   FetchCommentsProps,
+  Track,
 } from '../utils/validators';
 
 export type {
@@ -24,22 +25,12 @@ export type {
   Partner,
   Picture,
   User,
+  TrackObject,
+  Track,
 } from '../utils/validators';
 
 export type TrackingField = 'body' | 'publicBody';
 export type CommentField = 'note' | 'body';
-
-export type Track = {
-  name: string;
-  title: string;
-  value: string;
-  oldValue?: string;
-};
-
-export type TrackObject = {
-  title?: string;
-  tracks?: Track[];
-};
 
 export type CreateComment = (
   formData: FormData,

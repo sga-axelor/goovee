@@ -49,8 +49,8 @@ import type {
   CommentField,
   CreateProps,
   TrackingField,
-  TrackObject,
 } from '../../types';
+import {isTrackObject, parseCommentContent} from '../../utils/helpers';
 import {CommentInput} from '../comment-input';
 import {CommentAttachments, CommentTracks} from '../comments-list';
 
@@ -103,12 +103,12 @@ export const CommentListItem = ({
   const trackingFieldValue = comment[trackingField];
 
   const commentToDisplay = useMemo(() => {
-    const value = parseJson(commentFiedValue);
+    const value = parseCommentContent(commentFiedValue);
     if (typeof value === 'string') return value;
     return null;
   }, [commentFiedValue]);
   const trackingToDisplay = useMemo(
-    () => parseJson(trackingFieldValue),
+    () => parseCommentContent(trackingFieldValue),
     [trackingFieldValue],
   );
 
@@ -194,7 +194,7 @@ export const CommentListItem = ({
 
     const {partner, createdBy} = parentMailMessage;
     const parentCommentFieldValue = parentMailMessage[commentField];
-    const parentCommentToDisplay = parseJson(parentCommentFieldValue);
+    const parentCommentToDisplay = parseCommentContent(parentCommentFieldValue);
     if (!parentCommentToDisplay || typeof parentCommentToDisplay !== 'string') {
       return null;
     }
@@ -400,25 +400,3 @@ const TooltipComponent = ({
     </Tooltip>
   </TooltipProvider>
 );
-
-const parseJson = (data: unknown): string | TrackObject | null => {
-  try {
-    if (typeof data !== 'string') return null;
-    const parsed = JSON.parse(data);
-
-    if (typeof parsed === 'object' && parsed !== null) {
-      return parsed as TrackObject;
-    }
-
-    return {title: '', tracks: []};
-  } catch {
-    if (typeof data === 'string') {
-      return data;
-    }
-    return null;
-  }
-};
-
-const isTrackObject = (data: unknown): data is TrackObject => {
-  return typeof data === 'object' && data !== null;
-};
