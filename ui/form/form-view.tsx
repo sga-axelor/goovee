@@ -70,14 +70,16 @@ export const FormView = ({
         }
 
         if (item.type === 'boolean') {
+          const value = form.watch(key);
+
           return (
             <FormItem className="flex items-center gap-6">
               <FormControl>
                 <Checkbox
-                  checked={form.watch(item.name)}
-                  onCheckedChange={() =>
-                    form.setValue(item.name, !form.watch(item.name))
-                  }
+                  className={value ? '!bg-success !border-success' : ''}
+                  checked={value}
+                  disabled={item.readonly}
+                  onCheckedChange={() => form.setValue(key, !value)}
                 />
               </FormControl>
               <FormLabel
