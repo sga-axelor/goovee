@@ -360,6 +360,7 @@ const Content = ({
               fetchComments={fetchComments}
               trackingField="body"
               commentField="body"
+              disableReply
             />
           </div>
         )}
