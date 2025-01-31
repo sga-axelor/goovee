@@ -30,11 +30,11 @@ export function FacilitiesView({
 
   return (
     <div className="flex flex-wrap gap-4 items-center">
-      {list.map(({facility, price}, idx) => {
+      {list.map(({facility, formattedPrice}, idx) => {
         return renderItem(
           {
             name: facility,
-            title: `${facility} (${isSecondary ? '+ ' : ''}${price})`,
+            title: `${facility} (${isSecondary ? '+ ' : ''}${formattedPrice})`,
             type: 'boolean',
             readonly: !isSecondary,
           },

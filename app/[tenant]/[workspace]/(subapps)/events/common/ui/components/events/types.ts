@@ -27,6 +27,7 @@ export interface Event {
     {
       id: number;
       price: number;
+      formattedPrice: string;
       facility: string;
     },
   ];

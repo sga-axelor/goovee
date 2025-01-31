@@ -21,17 +21,18 @@ import {
 } from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
 import {SUBAPP_CODES} from '@/constants';
+import {BadgeList} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   CustomSelect,
   EventDateCard,
+  FacilitiesPriceView,
   FacilitiesView,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
 import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
-import {BadgeList} from '@/ui/components';
 
 export const RegistrationForm = ({
   eventDetails,
@@ -310,11 +311,21 @@ export const RegistrationForm = ({
       </CardHeader>
       <CardContent className="px-4 pb-4 pt-2 space-y-6">
         <FormView
-          fields={
-            eventAllowMultipleRegistrations
+          fields={[
+            ...(eventAllowMultipleRegistrations
               ? multipleRegistrationForm
-              : participantForm
-          }
+              : participantForm),
+            {
+              name: 'facilitiesPrice',
+              title: null,
+              type: 'array',
+              widget: 'custom',
+              hidden: !facilityList.length,
+              customComponent: (props: any) => (
+                <FacilitiesPriceView {...props} list={facilityList} />
+              ),
+            },
+          ]}
           onSubmit={onSubmit}
           submitTitle={buttonTitle}
         />

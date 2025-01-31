@@ -41,3 +41,4 @@ export {MyRegisteredEvents} from './my-registered-events';
 export {EventSearch} from './event-search';
 export {TabsList} from './tab-list';
 export {FacilitiesView} from './facilities-view';
+export {FacilitiesPriceView} from './facilities-price-view';

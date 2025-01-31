@@ -228,7 +228,7 @@ export async function findEventByID({
           event.facilityList.map(async facility => {
             return {
               ...facility,
-              price: await formatNumber(facility.price, {
+              formattedPrice: await formatNumber(facility.price, {
                 currency: currencySymbol,
                 scale,
               }),
