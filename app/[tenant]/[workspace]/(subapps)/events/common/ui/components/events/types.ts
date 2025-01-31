@@ -36,6 +36,7 @@ export interface Event {
       facility: string;
     },
   ];
+  slug: string;
 }
 export interface EventsProps {
   events: Event[];

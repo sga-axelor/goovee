@@ -11,7 +11,7 @@ import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEventByID, findEvents} from '@/subapps/events/common/orm/event';
+import {findEvent, findEvents} from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
 import {
   findEventParticipant,
@@ -129,7 +129,12 @@ export async function register({
   const session = await getSession();
   const user = session?.user;
 
-  const event = await findEventByID({id: eventId, workspace, tenantId, user});
+  const event = await findEvent({
+    id: eventId,
+    workspace,
+    tenantId,
+    user,
+  });
   if (!event) return error(await t('Event not found!'));
 
   try {
@@ -196,11 +201,11 @@ export async function fetchContacts({
 }
 
 export async function fetchEventParticipants({
-  id,
+  slug,
   workspace,
   user,
 }: {
-  id: ID;
+  slug: string;
   workspace: PortalWorkspace;
   user?: User;
 }) {
@@ -211,7 +216,7 @@ export async function fetchEventParticipants({
       isRegistered: false,
     };
   }
-  if (!id) {
+  if (!slug) {
     return error(await t('Invalid Event.'));
   }
 
@@ -235,7 +240,7 @@ export async function fetchEventParticipants({
   }
   try {
     const result: any = await findEventParticipant({
-      id,
+      slug,
       workspace,
       tenantId,
     }).then(clone);

@@ -12,7 +12,7 @@ import {
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
-import {findEventByID} from '@/subapps/events/common/orm/event';
+import {findEvent} from '@/subapps/events/common/orm/event';
 
 export async function registerParticipants({
   eventId,
@@ -75,23 +75,23 @@ export async function registerParticipants({
 }
 
 export async function findEventParticipant({
-  id,
+  slug,
   workspace,
   tenantId,
 }: {
-  id: ID;
+  slug: string;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
 }) {
   if (!tenantId)
     return error(await getTranslation({}, 'Tenant ID is missing!'));
 
-  if (!id) return error(await t('Event ID is missing!'));
+  if (!slug) return error(await t('Event ID is missing!'));
 
   const session = await getSession();
   const user = session?.user;
 
-  const event = await findEventByID({id, workspace, tenantId, user});
+  const event = await findEvent({slug, workspace, tenantId, user});
   if (!event) {
     return {
       error: true,
@@ -105,7 +105,7 @@ export async function findEventParticipant({
     where: {
       registration: {
         event: {
-          id: event.id,
+          slug: event.slug,
         },
       },
       emailAddress: user?.email,

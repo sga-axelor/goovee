@@ -7,7 +7,7 @@ import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 
 //---- LOCAL SUBAPP SPECIFIC FIND METHODS ---- //
-import {findEventByID} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
+import {findEvent} from '@/app/[tenant]/[workspace]/(subapps)/events/common/orm/event';
 import {findPosts} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/orm/forum';
 import {findNews} from '@/app/[tenant]/[workspace]/(subapps)/news/common/orm/news';
 import {findTicketAccess} from '@/app/[tenant]/[workspace]/(subapps)/ticketing/common/orm/tickets';
@@ -100,7 +100,7 @@ export async function findByID({
 
   switch (subapp) {
     case SUBAPP_CODES.events:
-      response = await findEventByID({id, workspace, tenantId, user});
+      response = await findEvent({id, workspace, tenantId, user});
       break;
 
     case SUBAPP_CODES.news:

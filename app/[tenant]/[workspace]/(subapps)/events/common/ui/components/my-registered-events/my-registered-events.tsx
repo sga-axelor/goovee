@@ -183,8 +183,8 @@ export const MyRegisteredEvents = ({
               <div className="flex flex-col space-y-4 w-full">
                 {events.map((event, i) => (
                   <Link
-                    href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
-                    key={event.id}
+                    href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`}
+                    key={event.slug}
                     passHref>
                     <EventCard event={event} workspace={workspace} />
                   </Link>

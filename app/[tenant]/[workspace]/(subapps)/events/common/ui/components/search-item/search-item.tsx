@@ -5,12 +5,12 @@ import {DATE_FORMATS} from '@/constants';
 import {formatDate} from '@/locale/formatters';
 
 export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
-  const {id, eventTitle, eventStartDateTime, eventDescription} = result;
+  const {eventTitle, eventStartDateTime, eventDescription, slug} = result;
   const stripImages = (htmlContent: any = '') =>
     htmlContent?.replace(/<img[^>]*>/g, '');
   return (
     <>
-      <div onClick={() => onClick(id)} className="space-y-2 cursor-pointer">
+      <div onClick={() => onClick(slug)} className="space-y-2 cursor-pointer">
         <div className="flex items-start justify-between">
           <p className="text-sm font-semibold text-main-black pr-2">
             {eventTitle}

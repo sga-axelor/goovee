@@ -8,8 +8,8 @@ import {findWorkspace} from '@/orm/workspace';
 import {findPartnerByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from '@/subapps/events/[id]/register/content';
-import {findEventByID} from '@/subapps/events/common/orm/event';
+import Content from '@/app/[tenant]/[workspace]/(subapps)/events/[slug]/register/content';
+import {findEvent} from '@/subapps/events/common/orm/event';
 import {findModelFields} from '@/orm/model-fields';
 import {
   PORTAL_PARTICIPANT_MODEL,
@@ -19,9 +19,9 @@ import {
 export default async function Page({
   params,
 }: {
-  params: {id: string; tenant: string; workspace: string};
+  params: {slug: string; tenant: string; workspace: string};
 }) {
-  const {id, tenant} = params;
+  const {slug, tenant} = params;
 
   const session = await getSession();
   const user: any = session?.user;
@@ -38,8 +38,8 @@ export default async function Page({
     return notFound();
   }
 
-  const eventDetails = await findEventByID({
-    id,
+  const eventDetails = await findEvent({
+    slug,
     workspace,
     tenantId: tenant,
     user,
@@ -48,6 +48,7 @@ export default async function Page({
   if (!eventDetails) {
     return notFound();
   }
+
   const metaFields = await findModelFields({
     modelName: PORTAL_PARTICIPANT_MODEL,
     modelField: CONTACT_ATTRS,

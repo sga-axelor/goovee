@@ -94,6 +94,10 @@
     {
       "name": "defaultPrice",
       "type": "Int"
+    },
+    {
+      "name": "slug",
+      "type": "String"
     }
   ]
 }

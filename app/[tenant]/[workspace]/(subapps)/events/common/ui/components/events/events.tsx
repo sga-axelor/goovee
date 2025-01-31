@@ -103,8 +103,8 @@ export const Events = ({
     update([{key: URL_PARAMS.page, value: page}]);
   };
 
-  const handlClick = (id: string | number) => {
-    router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${id}`);
+  const handlClick = (slug: string | number) => {
+    router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${slug}`);
   };
   const renderSearch = () => (
     <Search
@@ -166,8 +166,8 @@ export const Events = ({
           {events && events.length > 0 ? (
             events.map(event => (
               <Link
-                href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.id}`}
-                key={event.id}
+                href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`}
+                key={event.slug}
                 passHref>
                 <EventCard event={event} key={event.id} workspace={workspace} />
               </Link>

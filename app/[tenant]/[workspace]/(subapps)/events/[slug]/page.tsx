@@ -1,7 +1,7 @@
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {findEventByID} from '@/subapps/events/common/orm/event';
+import {findEvent} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
@@ -22,9 +22,9 @@ export async function generateMetadata() {
 export default async function Page({
   params,
 }: {
-  params: {id: string; tenant: string; workspace: string};
+  params: {slug: string; tenant: string; workspace: string};
 }) {
-  const {id, tenant} = params;
+  const {slug, tenant} = params;
 
   const session = await getSession();
   const user = session?.user;
@@ -41,8 +41,8 @@ export default async function Page({
     return notFound();
   }
 
-  const eventDetails: any = await findEventByID({
-    id,
+  const eventDetails: any = await findEvent({
+    slug,
     workspace,
     tenantId: tenant,
     user,
@@ -52,7 +52,7 @@ export default async function Page({
     return notFound();
   }
   const {isRegistered} = await fetchEventParticipants({
-    id,
+    slug,
     workspace,
     user,
   });

@@ -120,7 +120,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
         <CardFooter className="px-4 pb-4">
           {
             <Link
-              href={`${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}/register`}
+              href={`${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.slug}/register`}
               className="w-full">
               <Button
                 size="sm"

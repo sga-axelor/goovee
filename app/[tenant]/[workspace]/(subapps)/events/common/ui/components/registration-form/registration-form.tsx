@@ -54,6 +54,7 @@ export const RegistrationForm = ({
     eventAllowMultipleRegistrations = false,
     id: eventId,
     eventProduct = null,
+    slug,
   } = eventDetails || {};
 
   const router = useRouter();
@@ -276,7 +277,7 @@ export const RegistrationForm = ({
           variant: 'success',
           title: i18n.t(SUCCESS_REGISTER_MESSAGE),
         });
-        router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${eventId}`);
+        router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${slug}`);
       } else {
         toast({
           variant: 'destructive',
@@ -286,7 +287,7 @@ export const RegistrationForm = ({
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.t('Error while adding comment'),
+        title: i18n.t('Error while register to event'),
       });
     }
   };

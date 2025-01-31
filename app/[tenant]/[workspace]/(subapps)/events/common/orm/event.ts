@@ -139,24 +139,27 @@ const buildEventTypeFilters = ({
   }
 };
 
-export async function findEventByID({
+export async function findEvent({
   id,
+  slug,
   workspace,
   tenantId,
   user,
 }: {
-  id: ID;
+  id?: ID;
+  slug?: string;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
 }) {
-  if (!(id && workspace && tenantId)) return null;
+  if (!((slug || id) && workspace && tenantId)) return null;
 
   const c = await manager.getClient(tenantId);
 
   const event = await c.aOSPortalEvent.findOne({
     where: {
-      id,
+      ...(id ? {id} : {}),
+      ...(slug ? {slug} : {}),
       ...(await filterPrivate({user, tenantId})),
       eventCategorySet: {
         ...(await filterPrivate({user, tenantId})),
@@ -196,6 +199,7 @@ export async function findEventByID({
       },
       defaultPrice: true,
       facilityList: true,
+      slug: true,
     },
   });
 
@@ -422,6 +426,7 @@ export async function findEvents({
             },
           },
         },
+        slug: true,
       },
     } as any)
     .then(events =>
