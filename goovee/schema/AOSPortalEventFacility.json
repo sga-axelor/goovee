@@ -1,0 +1,21 @@
+{
+  "name": "AOSPortalEventFacility",
+  "table": "portal_portal_event_facility",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "event",
+      "type": "ManyToOne",
+      "target": "AOSPortalEvent"
+    },
+    {
+      "name": "facility",
+      "type": "String"
+    },
+    {
+      "name": "price",
+      "type": "Int"
+    }
+  ]
+}

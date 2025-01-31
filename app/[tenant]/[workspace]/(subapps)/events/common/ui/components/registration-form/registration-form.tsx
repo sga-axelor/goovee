@@ -26,6 +26,7 @@ import {SUBAPP_CODES} from '@/constants';
 import {
   CustomSelect,
   EventDateCard,
+  FacilitiesView,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
@@ -38,12 +39,27 @@ export const RegistrationForm = ({
   workspace,
   user,
 }: EventPageCardProps) => {
+  const {
+    defaultPrice = null,
+    displayAtiPrice = null,
+    facilityList = [],
+    eventTitle = '',
+    eventStartDateTime,
+    eventEndDateTime,
+    eventAllDay = false,
+    eventCategorySet = [],
+    eventAllowMultipleRegistrations = false,
+    id: eventId,
+  } = eventDetails || {};
+
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
 
   const isLoggedIn = !!user?.emailAddress;
   const showContactsList = isLoggedIn && !user.isContact;
+
+  const buttonTitle = i18n.t(`Register${defaultPrice ? ' and pay' : ''}`);
 
   const basicPerson = useMemo(
     () => [
@@ -52,7 +68,7 @@ export const RegistrationForm = ({
         title: i18n.t('Name'),
         type: 'string',
         widget: null,
-        helper: 'Enter name',
+        helper: i18n.t('Enter name'),
         hidden: false,
         required: true,
         readonly: false,
@@ -107,6 +123,17 @@ export const RegistrationForm = ({
         order: 5,
         defaultValue: user?.fixedPhone || '',
       },
+      {
+        name: 'facilities',
+        title: null,
+        type: 'array',
+        widget: 'custom',
+        hidden: !facilityList.length,
+        order: 6,
+        customComponent: (props: any) => (
+          <FacilitiesView {...props} list={facilityList} />
+        ),
+      },
     ],
     [
       isLoggedIn,
@@ -114,6 +141,7 @@ export const RegistrationForm = ({
       user.firstName,
       user?.fixedPhone,
       user?.name,
+      facilityList,
     ],
   );
 
@@ -194,11 +222,24 @@ export const RegistrationForm = ({
             addTitle: 'Add a new person that does not have an account',
           }),
         subSchema: externalParticipantForm.map(field =>
-          field.name === 'emailAddress' ? {...field, readonly: false} : field,
+          field.name === 'emailAddress'
+            ? {...field, readonly: false}
+            : field.name === 'facilities'
+              ? {
+                  ...field,
+                  customComponent: (props: any) => (
+                    <FacilitiesView
+                      {...props}
+                      list={facilityList}
+                      isSecondary
+                    />
+                  ),
+                }
+              : field,
         ),
       },
     ],
-    [participantForm, externalParticipantForm],
+    [participantForm, showContactsList, externalParticipantForm, facilityList],
   );
 
   const onSubmit = async (values: any) => {
@@ -215,7 +256,7 @@ export const RegistrationForm = ({
       }
 
       const response = await register({
-        eventId: eventDetails?.id,
+        eventId,
         values: result,
         workspace,
       });
@@ -225,9 +266,7 @@ export const RegistrationForm = ({
           variant: 'success',
           title: i18n.t(SUCCESS_REGISTER_MESSAGE),
         });
-        router.push(
-          `${workspaceURI}/${SUBAPP_CODES.events}/${eventDetails?.id}`,
-        );
+        router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${eventId}`);
       } else {
         toast({
           variant: 'destructive',
@@ -246,34 +285,38 @@ export const RegistrationForm = ({
     <Card className="w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
         <CardTitle>
-          <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
+          <p className="text-xl font-semibold">{eventTitle}</p>
         </CardTitle>
         <EventDateCard
-          startDate={eventDetails?.eventStartDateTime}
-          endDate={eventDetails?.eventEndDateTime}
-          eventAllDay={eventDetails?.eventAllDay}
+          startDate={eventStartDateTime}
+          endDate={eventEndDateTime}
+          eventAllDay={eventAllDay}
         />
-        <BadgeList items={eventDetails?.eventCategorySet} />
-        {eventDetails?.eventProduct?.salePrice && (
-          <CardDescription className="my-6 text-xl font-semibold">
-            {`${i18n.t('Price')} : ${parseFloat(eventDetails?.eventProduct?.salePrice).toFixed(2)}€`}
+        <BadgeList items={eventCategorySet} />
+        {defaultPrice && (
+          <CardDescription className="my-6 text-xl font-semibold text-black">
+            <div>
+              <p className="text-xl font-semibold text-black">
+                {i18n.t('Price')}:{' '}
+                <span className="text-success">{defaultPrice}</span>
+              </p>
+              <p className="text-xs font-medium text-black">
+                {i18n.t('Price with tax')}:{' '}
+                <span className="text-success">{displayAtiPrice}</span>
+              </p>
+            </div>
           </CardDescription>
         )}
       </CardHeader>
-      <CardContent className="px-4 pb-4 pt-2">
+      <CardContent className="px-4 pb-4 pt-2 space-y-6">
         <FormView
           fields={
-            eventDetails?.eventAllowMultipleRegistrations
+            eventAllowMultipleRegistrations
               ? multipleRegistrationForm
               : participantForm
           }
           onSubmit={onSubmit}
-          submitTitle={
-            'Register' +
-            (parseFloat(eventDetails?.eventProduct?.salePrice ?? '0') > 0
-              ? ' and pay'
-              : '')
-          }
+          submitTitle={buttonTitle}
         />
       </CardContent>
     </Card>

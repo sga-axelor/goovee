@@ -23,6 +23,13 @@ export interface Event {
   } | null;
   defaultPrice: string;
   displayAtiPrice: string;
+  facilityList: [
+    {
+      id: number;
+      price: number;
+      facility: string;
+    },
+  ];
 }
 export interface EventsProps {
   events: Event[];

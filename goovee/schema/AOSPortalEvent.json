@@ -86,6 +86,12 @@
       "target": "AOSRegistration"
     },
     {
+      "name": "facilityList",
+      "type": "OneToMany",
+      "mappedBy": "event",
+      "target": "AOSPortalEventFacility"
+    },
+    {
       "name": "defaultPrice",
       "type": "Int"
     }
