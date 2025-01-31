@@ -9,7 +9,7 @@ import {getSession} from '@/auth';
 import {t} from '@/lib/core/locale/server';
 import {findModelFields} from '@/orm/model-fields';
 import {findWorkspace} from '@/orm/workspace';
-import {Avatar, AvatarImage} from '@/ui/components';
+import {Avatar, AvatarImage, InnerHTML} from '@/ui/components';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
@@ -19,7 +19,6 @@ import {workspacePathname} from '@/utils/workspace';
 import {colors} from '../../common/constants';
 import {findEntry, findMapConfig} from '../../common/orm';
 import type {Entry} from '../../common/types';
-import {InnerHTML} from '../../common/ui/components/inner-html';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
 

@@ -2,11 +2,11 @@ import Link from 'next/link';
 
 import {cn} from '@/utils/css';
 import {getImageURL} from '@/utils/files';
+import {InnerHTML} from '@/ui/components';
 
 import {colors} from '../../../constants';
 import type {Entry, ListEntry} from '../../../types';
 import {Category} from '../pills';
-import {InnerHTML} from '../inner-html';
 
 export type CardProps = {
   item: ListEntry | Entry;

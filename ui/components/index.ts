@@ -199,7 +199,7 @@ export {HeroSearch} from './hero-search';
 export {Search} from './search';
 export {RichTextEditor} from './rich-text-editor';
 export {DropdownToggle} from './dropdown-toggle';
-
+export {InnerHTML} from './inner-html';
 export {
   Tooltip,
   TooltipTrigger,

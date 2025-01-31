@@ -25,6 +25,7 @@ import type {ID} from '@/types';
 import {
   Avatar,
   AvatarImage,
+  InnerHTML,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -243,12 +244,12 @@ export const CommentListItem = ({
           </div>
         </div>
         <div>
-          <div
+          <InnerHTML
             className={cn(
               'text-sm w-full font-normal',
               !toggle && 'line-clamp-1',
             )}
-            dangerouslySetInnerHTML={{__html: parentCommentToDisplay ?? ''}}
+            content={parentCommentToDisplay}
           />
         </div>
       </div>
@@ -316,9 +317,9 @@ export const CommentListItem = ({
         <div className="flex flex-col">
           {renderParentMessage()}
           {commentToDisplay && (
-            <div
+            <InnerHTML
               className="text-sm w-full font-normal"
-              dangerouslySetInnerHTML={{__html: commentToDisplay}}
+              content={commentToDisplay}
             />
           )}
           <div className="flex items-center gap-6 mt-1 mb-2">
