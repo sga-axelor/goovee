@@ -6,10 +6,7 @@ import {formatDate} from '@/locale/formatters';
 // ---- LOCAL IMPORTS ---- //
 import {Response, Survey} from '@/subapps/survey/common/types';
 import {Chip} from '@/subapps/survey/common/ui/components';
-import {
-  getResponseStatusName,
-  getStatusName,
-} from '@/subapps/survey/common/utils';
+import {getStatusName} from '@/subapps/survey/common/utils';
 
 export const surveyColumns = [
   {
