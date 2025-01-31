@@ -27,7 +27,7 @@ export async function findSurveys({
 
   const skip = getSkipInfo(limit, page);
 
-  const surveys = await client.aOSSurveyConfig
+  let surveys = await client.aOSSurveyConfig
     .find({
       where: {
         typeSelect: SURVEY_TYPE.PUBLIC,
@@ -54,6 +54,29 @@ export async function findSurveys({
     })
     .then(clone)
     .catch((error: any) => console.log('error >>>', error));
+
+  const session = await getSession();
+  const user = session?.user;
+
+  if (Array.isArray(surveys) && user) {
+    let result = [];
+    for (const _survey of surveys) {
+      const responses = await client.aOSMetaJsonRecord
+        .find({
+          where: {
+            AND: [
+              {attrs: {path: 'partner.id', eq: user.id}},
+              {attrs: {path: 'surveyConfig.id', eq: _survey.id}},
+            ],
+          },
+        })
+        .catch((error: any) => console.log('error >>>', error));
+
+      result.push({..._survey, nbResponses: responses?.length ?? 0});
+    }
+
+    surveys = result;
+  }
 
   const pageInfo = getPageInfo({
     count: surveys?.[0]?._count,

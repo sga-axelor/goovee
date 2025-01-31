@@ -9,6 +9,7 @@ export type Survey = {
   target: string;
   publicationDatetime: string;
   customModel: string;
+  nbResponses?: number;
 };
 
 export type Response = {

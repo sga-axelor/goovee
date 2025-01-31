@@ -7,7 +7,6 @@ import {Chip} from '@/subapps/survey/common/ui/components';
 import {
   getResponseStatusName,
   getStatusName,
-  getSurveyTypeName,
 } from '@/subapps/survey/common/utils';
 
 export const surveyColumns = [
@@ -18,23 +17,6 @@ export const surveyColumns = [
     mobile: true,
     getter: (row: Survey) => row.name,
     content: (row: any) => row.name,
-  },
-  {
-    key: 'statusSelect',
-    label: i18n.t('Status'),
-    mobile: true,
-    getter: (row: Survey) => row.statusSelect,
-    content: (row: Survey) => (
-      <Chip value={i18n.t(getStatusName(row.statusSelect))} outline={true} />
-    ),
-  },
-  {
-    key: 'type',
-    label: i18n.t('Type'),
-    getter: (row: Survey) => row.typeSelect,
-    content: (row: any) => (
-      <Chip value={i18n.t(getSurveyTypeName(row.typeSelect))} outline={true} />
-    ),
   },
   {
     key: 'category',
@@ -49,6 +31,14 @@ export const surveyColumns = [
     label: i18n.t('Publication date'),
     getter: (row: Survey) => row.publicationDatetime,
     content: (row: any) => row.publicationDatetime,
+  },
+  {
+    key: 'nbResponses',
+    label: i18n.t('Number of responses'),
+    getter: (row: Survey) => row.nbResponses,
+    content: (row: any) => (
+      <Chip value={row.nbResponses} variant="success" className="rounded" />
+    ),
   },
 ];
 
