@@ -1,5 +1,7 @@
 // ---- CORE IMPORTS ---- //
+import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/locale';
+import {formatDate} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {Response, Survey} from '@/subapps/survey/common/types';
@@ -29,8 +31,15 @@ export const surveyColumns = [
   {
     key: 'publicationDatetime',
     label: i18n.t('Publication date'),
-    getter: (row: Survey) => row.publicationDatetime,
-    content: (row: any) => row.publicationDatetime,
+    sortable: true,
+    getter: (row: Survey) =>
+      formatDate(row.publicationDatetime, {
+        dateFormat: DATE_FORMATS.DD_MM_YYYY,
+      }),
+    content: (row: any) =>
+      formatDate(row.publicationDatetime, {
+        dateFormat: DATE_FORMATS.DD_MM_YYYY,
+      }),
   },
   {
     key: 'nbResponses',
