@@ -14,7 +14,7 @@
       "name": "jsonModel"
     },
     {
-      "type": "String",
+      "type": "JSON",
       "name": "attrs"
     }
   ]
