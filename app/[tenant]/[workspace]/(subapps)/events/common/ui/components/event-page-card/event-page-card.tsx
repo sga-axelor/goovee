@@ -29,10 +29,10 @@ import {
   REGISTER_TO_EVENT,
 } from '@/subapps/events/common/constants';
 
-export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
+export const EventPageCard = ({eventDetails, workspace}: any) => {
   const {defaultPrice, displayAtiPrice} = eventDetails || {};
-
   const {workspaceURI, tenant} = useWorkspace();
+
   const [isRegistrationAllow, setIsRegistrationAllow] =
     useState<boolean>(false);
   const allowGuestEventRegistration =
@@ -54,7 +54,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
       <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
         <CardTitle className="w-full flex items-center justify-between">
           <p className="text-xl font-semibold">{eventDetails?.eventTitle}</p>
-          {isRegistered && (
+          {eventDetails?.isRegistered && (
             <Badge
               variant="outline"
               className="text-[0.625rem] mb-[0.688rem] font-medium py-1 px-2 text-success border-success h-6">
@@ -125,7 +125,7 @@ export const EventPageCard = ({eventDetails, workspace, isRegistered}: any) => {
               <Button
                 size="sm"
                 className="w-full text-base font-medium bg-success hover:bg-success-dark">
-                {!isRegistered
+                {!eventDetails.isRegistered
                   ? i18n.t(REGISTER_TO_EVENT)
                   : i18n.t(EDIT_MY_REGISTRATION)}
               </Button>

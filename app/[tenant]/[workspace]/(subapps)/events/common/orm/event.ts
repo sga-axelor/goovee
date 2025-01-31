@@ -156,52 +156,76 @@ export async function findEvent({
 
   const c = await manager.getClient(tenantId);
 
-  const event = await c.aOSPortalEvent.findOne({
-    where: {
-      ...(id ? {id} : {}),
-      ...(slug ? {slug} : {}),
-      ...(await filterPrivate({user, tenantId})),
-      eventCategorySet: {
+  const event = await c.aOSPortalEvent
+    .findOne({
+      where: {
+        ...(id ? {id} : {}),
+        ...(slug ? {slug} : {}),
         ...(await filterPrivate({user, tenantId})),
-      },
-    },
-    select: {
-      id: true,
-      eventTitle: true,
-      eventCategorySet: {
-        select: {
-          id: true,
-          name: true,
-          color: true,
+        eventCategorySet: {
+          ...(await filterPrivate({user, tenantId})),
         },
       },
-      eventImage: {
+      select: {
         id: true,
-      },
-      eventDescription: true,
-      eventPlace: true,
-      eventLink: true,
-      eventStartDateTime: true,
-      eventEndDateTime: true,
-      eventAllDay: true,
-      eventDegressiveNumberPartcipant: true,
-      eventAllowRegistration: true,
-      eventAllowMultipleRegistrations: true,
-      eventProduct: {
-        name: true,
-        code: true,
-        salePrice: true,
-        saleCurrency: {
-          code: true,
-          symbol: true,
-          numberOfDecimals: true,
+        eventTitle: true,
+        eventCategorySet: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+          },
         },
+        eventImage: {
+          id: true,
+        },
+        eventDescription: true,
+        eventPlace: true,
+        eventLink: true,
+        eventStartDateTime: true,
+        eventEndDateTime: true,
+        eventAllDay: true,
+        eventDegressiveNumberPartcipant: true,
+        eventAllowRegistration: true,
+        eventAllowMultipleRegistrations: true,
+        eventProduct: {
+          name: true,
+          code: true,
+          salePrice: true,
+          saleCurrency: {
+            code: true,
+            symbol: true,
+            numberOfDecimals: true,
+          },
+        },
+        registrationList: {
+          select: {
+            participantList: {
+              where: {
+                ...(user?.email ? {emailAddress: user?.email} : {}),
+              },
+              select: {
+                emailAddress: true,
+              },
+            },
+          },
+        },
+        slug: true,
       },
       defaultPrice: true,
       facilityList: true,
       slug: true,
-    },
-  });
+    })
+    .then(event => {
+      const isRegistered = user?.email
+        ? Boolean(
+            event?.registrationList.find(
+              (r: any) => r.participantList.length > 0,
+            ),
+          )
+        : false;
+      return {...event, isRegistered};
+    });
 
   const {eventProduct, defaultPrice}: any = event;
   const {saleCurrency, id: productId} = eventProduct || {};
@@ -434,11 +458,9 @@ export async function findEvents({
         ...event,
         isRegistered: user?.email
           ? Boolean(
-              event.registrationList.find((r: any) =>
-                r.participantList.find(
-                  (p: any) => p.emailAddress === user?.email,
-                ),
-              )?.participantList.length,
+              event.registrationList.find(
+                (r: any) => r.participantList.length > 0,
+              ),
             )
           : false,
       })),

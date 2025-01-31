@@ -10,7 +10,6 @@ import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDetails} from '@/subapps/events/common/ui/components';
-import {fetchEventParticipants} from '@/subapps/events/common/actions/actions';
 
 export async function generateMetadata() {
   return {
@@ -51,17 +50,6 @@ export default async function Page({
   if (!eventDetails) {
     return notFound();
   }
-  const {isRegistered} = await fetchEventParticipants({
-    slug,
-    workspace,
-    user,
-  });
 
-  return (
-    <EventDetails
-      eventDetails={eventDetails}
-      workspace={workspace}
-      isRegistered={isRegistered}
-    />
-  );
+  return <EventDetails eventDetails={eventDetails} workspace={workspace} />;
 }

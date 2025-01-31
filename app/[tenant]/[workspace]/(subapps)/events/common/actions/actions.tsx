@@ -13,10 +13,7 @@ import {getSession} from '@/auth';
 // ---- LOCAL IMPORTS ---- //
 import {findEvent, findEvents} from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
-import {
-  findEventParticipant,
-  registerParticipants,
-} from '@/subapps/events/common/orm/registration';
+import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {
   validate,
@@ -200,64 +197,6 @@ export async function fetchContacts({
   }
 }
 
-export async function fetchEventParticipants({
-  slug,
-  workspace,
-  user,
-}: {
-  slug: string;
-  workspace: PortalWorkspace;
-  user?: User;
-}) {
-  const tenantId = headers().get(TENANT_HEADER);
-
-  if (!user?.email) {
-    return {
-      isRegistered: false,
-    };
-  }
-  if (!slug) {
-    return error(await t('Invalid Event.'));
-  }
-
-  if (!tenantId) {
-    return error(await t('Bad Request'));
-  }
-
-  if (!workspace) {
-    return {error: true, message: await t('Invalid workspace')};
-  }
-
-  const workspaceURL = workspace?.url;
-
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-  try {
-    const result: any = await findEventParticipant({
-      slug,
-      workspace,
-      tenantId,
-    }).then(clone);
-
-    const emailAddress = result?.emailAddress;
-    return {
-      isRegistered: emailAddress === user.email,
-    };
-  } catch (err) {
-    console.log(err);
-    return {
-      error: true,
-      message: await t('Something went wrong!'),
-    };
-  }
-}
-
 export const createComment: CreateComment = async formData => {
   const session = await getSession();
   const user = session?.user;
@@ -304,7 +243,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const event = await findEventByID({
+  const event = await findEvent({
     id: rest.recordId,
     workspace,
     tenantId,
@@ -378,7 +317,7 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const event = await findEventByID({
+  const event = await findEvent({
     id: rest.recordId,
     workspace,
     tenantId,
