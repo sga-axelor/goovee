@@ -20,8 +20,13 @@ export interface Event {
   _hasNext: boolean;
   eventProduct: {
     salePrice: string;
+    saleCurrency: {
+      numberOfDecimals: number;
+      symbol: string;
+    };
   } | null;
-  defaultPrice: string;
+  defaultPrice: number;
+  formattedDefaultPrice: string;
   displayAtiPrice: string;
   facilityList: [
     {

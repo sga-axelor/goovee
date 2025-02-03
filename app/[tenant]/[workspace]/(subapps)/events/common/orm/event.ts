@@ -218,7 +218,8 @@ export async function findEventByID({
 
   return {
     ...event,
-    defaultPrice: await formatNumber(defaultPrice, {
+    defaultPrice,
+    formattedDefaultPrice: await formatNumber(defaultPrice, {
       currency: currencySymbol,
       scale,
     }),

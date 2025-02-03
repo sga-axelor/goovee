@@ -42,6 +42,7 @@ export const RegistrationForm = ({
 }: EventPageCardProps) => {
   const {
     defaultPrice = null,
+    formattedDefaultPrice = null,
     displayAtiPrice = null,
     facilityList = [],
     eventTitle = '',
@@ -51,6 +52,7 @@ export const RegistrationForm = ({
     eventCategorySet = [],
     eventAllowMultipleRegistrations = false,
     id: eventId,
+    eventProduct = null,
   } = eventDetails || {};
 
   const router = useRouter();
@@ -60,7 +62,9 @@ export const RegistrationForm = ({
   const isLoggedIn = !!user?.emailAddress;
   const showContactsList = isLoggedIn && !user.isContact;
 
-  const buttonTitle = i18n.t(`Register${defaultPrice ? ' and pay' : ''}`);
+  const buttonTitle = i18n.t(
+    `Register${defaultPrice || !facilityList?.length ? ' and pay' : ''}`,
+  );
 
   const basicPerson = useMemo(
     () => [
@@ -90,7 +94,7 @@ export const RegistrationForm = ({
       },
       {
         name: 'company',
-        title: 'Company',
+        title: i18n.t('Company'),
         type: 'string',
         widget: null,
         helper: i18n.t('Enter company name'),
@@ -132,7 +136,13 @@ export const RegistrationForm = ({
         hidden: !facilityList.length,
         order: 6,
         customComponent: (props: any) => (
-          <FacilitiesView {...props} list={facilityList} />
+          <FacilitiesView
+            {...props}
+            list={facilityList}
+            onFacilityChange={(selectedFacilities: any) => {
+              props.form.setValue('facilities', selectedFacilities);
+            }}
+          />
         ),
       },
     ],
@@ -294,12 +304,12 @@ export const RegistrationForm = ({
           eventAllDay={eventAllDay}
         />
         <BadgeList items={eventCategorySet} />
-        {defaultPrice && (
+        {eventProduct && (
           <CardDescription className="my-6 text-xl font-semibold text-black">
             <div>
               <p className="text-xl font-semibold text-black">
                 {i18n.t('Price')}:{' '}
-                <span className="text-success">{defaultPrice}</span>
+                <span className="text-success">{formattedDefaultPrice}</span>
               </p>
               <p className="text-xs font-medium text-black">
                 {i18n.t('Price with tax')}:{' '}
@@ -322,7 +332,12 @@ export const RegistrationForm = ({
               widget: 'custom',
               hidden: !facilityList.length,
               customComponent: (props: any) => (
-                <FacilitiesPriceView {...props} list={facilityList} />
+                <FacilitiesPriceView
+                  {...props}
+                  list={facilityList}
+                  eventPrice={eventProduct ? defaultPrice : 0}
+                  currency={eventProduct?.saleCurrency}
+                />
               ),
             },
           ]}

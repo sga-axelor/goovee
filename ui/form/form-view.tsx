@@ -82,9 +82,7 @@ export const FormView = ({
                   onCheckedChange={() => form.setValue(key, !value)}
                 />
               </FormControl>
-              <FormLabel
-                className="text-sm font-normal cursor-pointer"
-                style={{margin: 0}}>
+              <FormLabel className="text-sm font-normal cursor-pointer !mt-0">
                 {i18n.t(item.title)}
               </FormLabel>
             </FormItem>
