@@ -12,7 +12,6 @@ import {
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
-import {findEvent} from '@/subapps/events/common/orm/event';
 
 export async function registerParticipants({
   eventId,

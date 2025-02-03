@@ -46,6 +46,10 @@
       "name": "subscriptionSet",
       "type": "ManyToMany",
       "target": "AOSPortalEventFacility"
+    },
+    {
+      "name": "sequence",
+      "type": "Int"
     }
   ]
 }

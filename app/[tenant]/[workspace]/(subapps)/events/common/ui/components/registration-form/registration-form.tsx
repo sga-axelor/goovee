@@ -258,11 +258,17 @@ export const RegistrationForm = ({
       const result = extractCustomData(values, 'contactAttrs', metaFields);
 
       if (isLoggedIn) result.emailAddress = user?.emailAddress?.address;
+
+      result.sequence = 0;
+
       if (!result.addOtherPeople) {
         result.otherPeople = [];
       } else {
-        result.otherPeople = result.otherPeople.map((_i: any) =>
-          extractCustomData(_i, 'contactAttrs', metaFields),
+        result.otherPeople = result.otherPeople.map(
+          (person: any, index: number) => ({
+            ...extractCustomData(person, 'contactAttrs', metaFields),
+            sequence: index + 1,
+          }),
         );
       }
 
