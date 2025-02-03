@@ -98,6 +98,18 @@
     {
       "name": "slug",
       "type": "String"
+    },
+    {
+      "name": "isPublic",
+      "type": "Boolean"
+    },
+    {
+      "name": "isLoginNotNeeded",
+      "type": "Boolean"
+    },
+    {
+      "name": "isHidden",
+      "type": "Boolean"
     }
   ]
 }
