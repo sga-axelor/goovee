@@ -219,6 +219,7 @@ export async function findEvent({
       },
     })
     .then(event => {
+      if (!event) return null;
       const isRegistered = user?.email
         ? Boolean(
             event?.registrationList?.find(
@@ -229,6 +230,7 @@ export async function findEvent({
       return {...event, isRegistered};
     });
 
+  if (!event) return null;
   const {eventProduct, defaultPrice}: any = event;
   const {saleCurrency, id: productId} = eventProduct || {};
   console.log('eventProduct >>>', eventProduct);
