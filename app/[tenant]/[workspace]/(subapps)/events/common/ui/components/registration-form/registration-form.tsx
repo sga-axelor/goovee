@@ -29,6 +29,7 @@ import {
   EventDateCard,
   FacilitiesPriceView,
   FacilitiesView,
+  EmailFormField,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {register} from '@/subapps/events/common/actions/actions';
@@ -106,15 +107,19 @@ export const RegistrationForm = ({
       },
       {
         name: 'emailAddress',
-        title: i18n.t('Email'),
         type: 'string',
-        widget: 'email',
-        helper: i18n.t('Enter email'),
-        hidden: false,
-        required: true,
-        readonly: isLoggedIn,
+        widget: 'custom',
         order: 4,
         defaultValue: user?.emailAddress?.address || '',
+        required: true,
+        customComponent: (props: any) => (
+          <EmailFormField
+            {...props}
+            title={i18n.t('Email')}
+            placeholder={i18n.t('Enter email')}
+            disabled={isLoggedIn}
+          />
+        ),
       },
       {
         name: 'phone',

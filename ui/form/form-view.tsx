@@ -63,7 +63,7 @@ export const FormView = ({
           return React.createElement(item.customComponent, {
             key: `custom.${key}`,
             formKey: key,
-            form: form,
+            form,
             field: item,
             renderItem: renderItem,
           });
