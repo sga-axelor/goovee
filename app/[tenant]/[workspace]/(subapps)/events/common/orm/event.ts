@@ -407,17 +407,19 @@ export async function findEvents({
           },
         }
       : {
-          OR: [{isHidden: false}, {isHidden: null}].concat(
-            user?.email
-              ? ({
-                  registrationList: {
-                    participantList: {
-                      emailAddress: user?.email,
-                    },
-                  },
-                } as any)
-              : [],
-          ),
+          AND: [
+            {
+              OR: [{isHidden: false}, {isHidden: null}].concat(
+                user?.email
+                  ? ({
+                      registrationList: {
+                        participantList: {emailAddress: user?.email},
+                      },
+                    } as any)
+                  : [],
+              ),
+            },
+          ],
         }),
   };
 
