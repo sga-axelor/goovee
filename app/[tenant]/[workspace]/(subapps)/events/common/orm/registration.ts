@@ -44,7 +44,15 @@ export async function registerParticipants({
 
   const participantList = participants.reduce(
     (acc: any, value) => {
-      acc.create.push(value);
+      const {subscriptionSet, ...rest} = value;
+
+      acc.create.push({
+        ...rest,
+        subscriptionSet: {
+          create: subscriptionSet || [],
+        },
+      });
+
       return acc;
     },
     {
