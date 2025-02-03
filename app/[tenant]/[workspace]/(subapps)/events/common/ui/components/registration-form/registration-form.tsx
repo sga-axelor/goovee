@@ -32,7 +32,10 @@ import {
   EmailFormField,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
-import {register} from '@/subapps/events/common/actions/actions';
+import {
+  isValidParticipant,
+  register,
+} from '@/subapps/events/common/actions/actions';
 import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
 
 export const RegistrationForm = ({
@@ -119,6 +122,13 @@ export const RegistrationForm = ({
             title={i18n.t('Email')}
             placeholder={i18n.t('Enter email')}
             disabled={isLoggedIn}
+            onValidation={(email: string) => {
+              return isValidParticipant({
+                email,
+                eventId,
+                workspaceURL: workspace.url,
+              });
+            }}
           />
         ),
       },

@@ -13,38 +13,20 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/locale';
 
-export async function validateEmailAPI(email: string) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const isValidFormat = emailRegex.test(email);
-
-      if (!isValidFormat) {
-        resolve({success: false, message: i18n.t('Invalid email format.')});
-      } else if (Math.random() > 0.3) {
-        resolve({success: true});
-      } else {
-        resolve({
-          success: false,
-          message: i18n.t('Email is already registered.'),
-        });
-      }
-    }, 1000);
-  });
-}
-
 export function EmailFormField({
   title,
   placeholder,
   disabled,
   formKey,
   form,
+  onValidation,
 }: {
   title: string;
   placeholder: string;
   disabled?: boolean;
   formKey: string;
   form: UseFormReturn<any>;
+  onValidation: any;
 }) {
   const {setValue, watch, setError, clearErrors} = form;
   const [validating, setValidating] = useState(false);
@@ -56,8 +38,7 @@ export function EmailFormField({
     clearErrors(formKey);
 
     try {
-      const response: any = await validateEmailAPI(email);
-
+      const response: any = await onValidation({email});
       if (response?.success) {
         setValue(formKey, email, {shouldValidate: true});
       } else {
