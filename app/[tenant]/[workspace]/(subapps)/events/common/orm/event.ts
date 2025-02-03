@@ -211,15 +211,17 @@ export async function findEvent({
           },
         },
         slug: true,
+        defaultPrice: true,
+        facilityList: true,
+        isPublic: true,
+        isHidden: true,
+        isLoginNotNeeded: true,
       },
-      defaultPrice: true,
-      facilityList: true,
-      slug: true,
     })
     .then(event => {
       const isRegistered = user?.email
         ? Boolean(
-            event?.registrationList.find(
+            event?.registrationList?.find(
               (r: any) => r.participantList.length > 0,
             ),
           )
