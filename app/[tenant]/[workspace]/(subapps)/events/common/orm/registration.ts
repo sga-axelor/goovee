@@ -1,45 +1,24 @@
 // ---- CORE IMPORTS ---- //
+import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
-import type {ID, Participant, PortalWorkspace, User} from '@/types';
-import {getTranslation, t} from '@/locale/server';
-import {SUBAPP_CODES} from '@/constants';
-import {getSession} from '@/auth';
+import type {ID, Participant} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
-import {
-  validate,
-  withSubapp,
-  withWorkspace,
-} from '@/subapps/events/common/actions/validation';
 
 export async function registerParticipants({
   eventId,
-  workspaceURL,
-  values,
+  participants,
   tenantId,
 }: {
   eventId: ID;
   workspaceURL: string;
-  values: Participant | Participant[];
+  participants: Participant[];
   tenantId: Tenant['id'];
 }) {
-  if (!eventId) return error(await t('Event ID is missing!'));
-
   if (!tenantId) return error(await t('Tenant ID is missing!'));
 
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-
   const c = await manager.getClient(tenantId);
-
-  const participants = Array.isArray(values) ? values : [values];
 
   const participantList = participants.reduce(
     (acc: any, value) => {
@@ -70,5 +49,5 @@ export async function registerParticipants({
     },
   });
 
-  return {success: true, data: registration};
+  return registration;
 }

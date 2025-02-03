@@ -3,14 +3,29 @@
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
-import {clone} from '@/utils';
-import {t} from '@/locale/server';
+import {getSession} from '@/auth';
 import {ModelMap, SUBAPP_CODES} from '@/constants';
+import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import type {ID, Participant, PortalWorkspace, User} from '@/types';
-import {getSession} from '@/auth';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
+import {
+  CreateComment,
+  CreateCommentPropsSchema,
+  FetchComments,
+  FetchCommentsPropsSchema,
+  isCommentEnabled,
+} from '@/comments';
+import {addComment, findComments} from '@/comments/orm';
+import {createPartner, findPartnerByEmail} from '@/orm/partner';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {
+  validate,
+  withSubapp,
+  withWorkspace,
+} from '@/subapps/events/common/actions/validation';
 import {
   findEvent,
   findEventConfig,
@@ -23,27 +38,8 @@ import {
   error,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils';
-import {
-  validate,
-  withSubapp,
-  withWorkspace,
-} from '@/subapps/events/common/actions/validation';
-import {addComment, findComments} from '@/comments/orm';
-import {
-  CreateComment,
-  CreateCommentPropsSchema,
-  FetchComments,
-  FetchCommentsPropsSchema,
-  isCommentEnabled,
-} from '@/comments';
-import {zodParseFormData} from '@/utils/formdata';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ActionResponse} from '@/types/action';
-import {
-  createPartner,
-  findPartnerByEmail,
-  findPartnerById,
-} from '@/orm/partner';
+import {zodParseFormData} from '@/utils/formdata';
 
 export async function getAllEvents({
   limit,
@@ -187,20 +183,23 @@ export async function register({
       return error(await t('Some email is already registered to this event'));
     }
 
-    const res = await registerParticipants({
+    const registration = await registerParticipants({
       eventId,
       workspaceURL,
-      values: otherPeople,
+      participants: otherPeople,
       tenantId,
-    }).then(clone);
-    if (res.error) return res;
+    });
+
     const partnerPromises = partnerParticipantList
       .filter(({partner}) => !partner)
       .map(({participant}) => {
         return createPartner();
       });
     await Promise.all(partnerPromises);
-    return res;
+    return {
+      success: true,
+      data: clone(registration),
+    };
   } catch (err) {
     console.log(err);
     return error(await t('Something went wrong!'));
