@@ -400,7 +400,7 @@ export async function findEvents({
             },
           },
         }
-      : {}),
+      : {isHidden: false}),
   };
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
