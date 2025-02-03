@@ -21,9 +21,9 @@ export const GridView = ({
   localPageLimit = DEFAULT_PAGE_LIMIT,
 }: {
   style?: React.CSSProperties;
-  columns: Column[];
+  columns: Partial<Column>[];
   data: any[];
-  handleRowClick: (record: any) => void;
+  handleRowClick?: (record: any) => void;
   pageInfo?: {
     count: number;
     limit: number;

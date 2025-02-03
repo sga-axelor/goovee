@@ -1,0 +1,28 @@
+{
+  "name": "AOSStudioResource",
+  "table": "studio_resource",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "name": "name",
+      "type": "String"
+    },
+    {
+      "name": "type",
+      "type": "String"
+    },
+    {
+      "name": "content",
+      "type": "String"
+    },
+    {
+      "name": "schemaModel",
+      "type": "String"
+    },
+    {
+      "name": "schemaType",
+      "type": "String"
+    }
+  ]
+}

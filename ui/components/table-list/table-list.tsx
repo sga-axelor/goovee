@@ -96,7 +96,8 @@ export function TableList({
           disableNext={!hasNext}
           onPrev={handlePreviousPage}
           onNext={handleNextPage}
-          onPage={handlePage}
+          onPage={handlePageChange}
+          redirect={handlePage == null}
         />
       )}
     </>

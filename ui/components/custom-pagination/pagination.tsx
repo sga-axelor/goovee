@@ -22,6 +22,7 @@ type PaginationProps = {
   onPage?: any;
   onPrev?: any;
   onNext?: any;
+  redirect?: boolean;
 };
 
 export const Pagination = ({
@@ -32,6 +33,7 @@ export const Pagination = ({
   onPrev,
   onNext,
   onPage,
+  redirect = true,
 }: PaginationProps) => {
   const currentPage = Number(page) || 1;
   const totalPages = Number(pages) || 1;
@@ -85,6 +87,7 @@ export const Pagination = ({
     <PaginationItem key={pageNumber}>
       <PaginationLink
         isActive={pageNumber === currentPage}
+        href={redirect ? '#' : undefined}
         className={cn(
           'cursor-pointer',
           pageNumber === currentPage

@@ -1,29 +1,20 @@
 'use client';
-import {useMemo} from 'react';
 
 import {FormView} from '@/ui/form';
-import {formatSchema} from '../../utils';
 
 export const GenericForm = ({
-  content,
-  metaFields,
+  fields,
+  panels,
 }: {
-  content: any;
-  metaFields: any[];
+  fields: any[];
+  panels?: any[];
 }) => {
-  const {fields, panels} = useMemo(
-    () => formatSchema(content?.items, metaFields),
-    [content, metaFields],
-  );
-
   return (
     <FormView
       fields={fields}
       panels={panels}
-      onSubmit={() => {
-        return new Promise(resolve => resolve());
-      }}
-      submitTitle="Test"
+      onSubmit={console.log as any}
+      submitTitle={'Hello'}
     />
   );
 };

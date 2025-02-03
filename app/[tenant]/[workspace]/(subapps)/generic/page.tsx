@@ -1,32 +1,18 @@
 import React from 'react';
 
 // ---- LOCAL IMPORTS ---- //
+import {getGenericFormContent, getGenericGridContent} from '@/ui/generic-views';
 import {GenericForm, GenericGrid} from './common/components';
-import {FORM_VIEW, GRID_VIEW} from './common/fake-data';
-import {findFieldsOfModel} from './common/orm/meta-field';
-import {workspacePathname} from '@/utils/workspace';
-import {clone} from '@/utils';
 
-export default async function Page({
-  params,
-}: {
-  params: {tenant: string; workspace: string};
-}) {
-  const {tenant} = workspacePathname(params);
-
-  const metaFields = await findFieldsOfModel({
-    name: FORM_VIEW.schema.model,
-    tenantId: tenant,
-  }).then(clone);
+export default async function Page({}) {
+  const formContent = await getGenericFormContent('product-form');
+  const gridContent = await getGenericGridContent('product-grid');
 
   return (
     <div>
-      <GenericForm
-        content={FORM_VIEW.schema}
-        metaFields={metaFields as any[]}
-      />
+      <GenericForm {...formContent} />
       <GenericGrid
-        content={GRID_VIEW.schema}
+        {...gridContent}
         data={[
           {
             code: 'laptop-touchscreen',
