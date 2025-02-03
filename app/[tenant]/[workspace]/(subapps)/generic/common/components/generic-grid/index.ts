@@ -1,2 +1,1 @@
-export {GenericForm} from './generic-form';
 export {GenericGrid} from './generic-grid';

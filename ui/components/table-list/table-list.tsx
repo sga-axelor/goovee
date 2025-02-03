@@ -9,45 +9,54 @@ import type {Column, SortState} from '@/ui/components/table-list/types';
 import {ExpandableTableRows, SortableHeader} from '@/ui/components/table-list';
 
 type TableListProps = {
+  style?: React.CSSProperties;
   columns: Column[];
   rows: any[];
   sort: SortState;
-  pageInfo: any;
-  pageParamKey: string;
+  pageInfo?: any;
+  pageParamKey?: string;
+  handlePage?: (page: number) => void;
   onSort: ({key, getter}: {key: string; getter: any}) => void;
   onRowClick?: (record: any) => void;
 };
 
 export function TableList({
+  style,
   columns,
   rows,
   sort,
   pageInfo,
   pageParamKey,
+  handlePage,
   onRowClick,
   onSort,
 }: TableListProps) {
   const memoizedColumns = useMemo(() => columns, [columns]);
 
-  const {page, pages, hasPrev, hasNext} = pageInfo || {};
+  const {page, pages = 0, hasPrev, hasNext} = pageInfo || {};
   const {update} = useSearchParams();
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      if (handlePage != null) {
+        handlePage(page);
+        return;
+      }
+
+      update([{key: pageParamKey, value: page}]);
+    },
+    [handlePage, update, pageParamKey],
+  );
 
   const handlePreviousPage = useCallback(() => {
     if (!hasPrev) return;
-    update([{key: pageParamKey, value: Math.max(Number(page) - 1, 1)}]);
-  }, [hasPrev, page, update, pageParamKey]);
+    handlePageChange(Math.max(Number(page) - 1, 1));
+  }, [hasPrev, handlePageChange, page]);
 
   const handleNextPage = useCallback(() => {
     if (!hasNext) return;
-    update([{key: pageParamKey, value: Number(page) + 1}]);
-  }, [hasNext, page, update, pageParamKey]);
-
-  const handlePage = useCallback(
-    (page: string | number) => {
-      update([{key: pageParamKey, value: page}]);
-    },
-    [update, pageParamKey],
-  );
+    handlePageChange(Number(page) + 1);
+  }, [hasNext, handlePageChange, page]);
 
   const handleSortToggle = useCallback(
     (column: Column) => {
@@ -62,7 +71,7 @@ export function TableList({
 
   return (
     <>
-      <Table className="rounded-lg bg-card text-card-foreground">
+      <Table className="rounded-lg bg-card text-card-foreground" style={style}>
         <SortableHeader
           columns={memoizedColumns}
           sort={{

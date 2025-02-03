@@ -62,3 +62,62 @@ export const FORM_VIEW = {
     ],
   },
 };
+
+export const GRID_VIEW = {
+  type: 'VIEW',
+  schema: {
+    name: 'product-production-stock-grid',
+    title: 'Produits',
+    model: 'com.axelor.apps.base.db.Product',
+    orderBy: 'code,name',
+    type: 'grid',
+    editIcon: true,
+    rowHeight: 80,
+    items: [
+      {
+        type: 'field',
+        name: 'code',
+        width: '120',
+        bind: '{{code|unaccent|uppercase}}',
+        autoTitle: 'Code',
+      },
+      {
+        type: 'field',
+        name: 'category',
+        target: 'com.axelor.apps.base.db.ProductCategory',
+        targetName: 'name',
+        formView: 'product-category-form',
+        gridView: 'product-category-grid',
+        autoTitle: 'Catégorie produit',
+      },
+      {
+        type: 'field',
+        name: 'name',
+        width: '300',
+        autoTitle: 'Nom',
+      },
+      {
+        type: 'field',
+        name: 'createdBy',
+        target: 'com.axelor.auth.db.User',
+        targetName: 'name',
+        formView: 'user-form',
+        gridView: 'user-grid',
+        autoTitle: 'User',
+      },
+      {
+        type: 'field',
+        name: 'color',
+        width: '100',
+        autoTitle: 'Color',
+      },
+      {
+        type: 'field',
+        name: 'notes',
+        width: '400',
+        widget: 'html',
+        autoTitle: 'Notes',
+      },
+    ],
+  },
+};

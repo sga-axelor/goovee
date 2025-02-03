@@ -1,4 +1,7 @@
+import React from 'react';
+
 import type {Field, Panel} from '@/ui/form';
+import {Column} from '@/ui/grid';
 
 const getFieldType = (field: any) => {
   if (field?.relationship != null) {
@@ -57,4 +60,45 @@ export const formatSchema = (
   });
 
   return {fields, panels};
+};
+
+const getContent = (
+  record: any,
+  field?: string,
+  targetName?: string,
+): string => {
+  if (record == null) {
+    return '-';
+  }
+
+  if (field == null) {
+    return typeof record === 'string' ? record : '-';
+  }
+
+  const value = record[field];
+
+  return getContent(value, targetName);
+};
+
+export const formatColumns = (schema: any): {columns: Column[]} => {
+  let columns: Column[] = [];
+
+  schema.forEach((_item: any) => {
+    if (_item.type === 'field') {
+      const name = _item.name;
+
+      columns.push({
+        key: name,
+        label: !!_item.showTitle ? undefined : _item.autoTitle,
+        content: (record: any) => (
+          <p className="font-medium">
+            {getContent(record, name, _item.targetName)}
+          </p>
+        ),
+        hidden: _item.hidden ?? false,
+      });
+    }
+  });
+
+  return {columns};
 };

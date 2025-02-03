@@ -2,7 +2,7 @@
 import {useMemo} from 'react';
 
 import {FormView} from '@/ui/form';
-import {formatSchema} from '../../utils/format.helpers';
+import {formatSchema} from '../../utils';
 
 export const GenericForm = ({
   content,
