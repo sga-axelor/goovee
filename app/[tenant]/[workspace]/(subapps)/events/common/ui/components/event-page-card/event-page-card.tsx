@@ -32,22 +32,15 @@ import {
 export const EventPageCard = ({eventDetails, workspace}: any) => {
   const {defaultPrice, displayAtiPrice} = eventDetails || {};
   const {workspaceURI, tenant} = useWorkspace();
-
-  const [isRegistrationAllow, setIsRegistrationAllow] =
-    useState<boolean>(false);
-  const allowGuestEventRegistration =
-    workspace.config?.allowGuestEventRegistration;
-  const eventAllowRegistration = eventDetails?.eventAllowRegistration;
   const {data: session} = useSession();
   const user = session?.user;
 
-  useEffect(() => {
-    if (eventAllowRegistration && (user || allowGuestEventRegistration)) {
-      setIsRegistrationAllow(true);
-    } else {
-      setIsRegistrationAllow(false);
-    }
-  }, [eventAllowRegistration, allowGuestEventRegistration, user]);
+  const allowGuestEventRegistration =
+    workspace.config?.allowGuestEventRegistration;
+  const eventAllowRegistration = eventDetails?.eventAllowRegistration;
+
+  const isRegistrationAllow =
+    eventAllowRegistration && (user || allowGuestEventRegistration);
 
   return (
     <Card className="w-full rounded-2xl border-none shadow-none">

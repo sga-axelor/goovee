@@ -49,6 +49,14 @@ export default async function Page({
     return notFound();
   }
 
+  const allowGuestEventRegistration =
+    workspace.config?.allowGuestEventRegistration;
+  const eventAllowRegistration = eventDetails?.eventAllowRegistration;
+
+  const isRegistrationAllow =
+    eventAllowRegistration && (user || allowGuestEventRegistration);
+  if (!isRegistrationAllow) notFound();
+
   const metaFields = await findModelFields({
     modelName: PORTAL_PARTICIPANT_MODEL,
     modelField: CONTACT_ATTRS,
