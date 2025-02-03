@@ -11,7 +11,7 @@ import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 const getParticipantsNames = (participants: any[]): string =>
   participants.map((_p: any) => `${_p.name} ${_p.surname}`).join(', ');
 
-export function FacilitiesPriceView({
+export function SubscriptionsPriceView({
   form,
   list,
   currency,
@@ -32,31 +32,32 @@ export function FacilitiesPriceView({
   const rootName = form.watch('name');
   const rootSurname = form.watch('surname');
 
-  const mainParticipant = {
-    name: rootName || '',
-    surname: rootSurname || '',
-    facilities: list,
-  };
-
   const secondaryParticipants = otherPeople.map((p: any) => ({
     ...p,
-    facilities: p.facilities || [],
+    subscriptionSet: p.subscriptionSet || [],
   }));
 
-  const participants = [mainParticipant, ...secondaryParticipants];
+  const participants = useMemo(() => {
+    const mainParticipant = {
+      name: rootName || '',
+      surname: rootSurname || '',
+      subscriptionSet: list,
+    };
+    return [mainParticipant, ...secondaryParticipants];
+  }, [list, rootName, rootSurname, secondaryParticipants]);
 
   const totalPrice = useMemo(() => {
-    const facilitiesTotal = participants?.reduce((total, participant) => {
+    const subscriptionsTotal = participants?.reduce((total, participant) => {
       return (
         total +
-        participant.facilities.reduce(
-          (sum: number, facility: any) => sum + facility.price,
+        participant.subscriptionSet.reduce(
+          (sum: number, subscription: any) => sum + subscription.price,
           0,
         )
       );
     }, 0);
 
-    return facilitiesTotal + (eventPrice || 0);
+    return subscriptionsTotal + (eventPrice || 0);
   }, [participants, eventPrice]);
 
   const validParticipants = useMemo(() => {
@@ -93,20 +94,20 @@ export function FacilitiesPriceView({
           </div>
 
           <div className="flex flex-col pl-4 border-success border-l">
-            {list?.map((facility: any) => {
-              const facilityUsers = participants?.filter((p: any) =>
-                p.facilities.some((f: any) => f.id === facility.id),
+            {list?.map((subscription: any) => {
+              const subscriptionUsers = participants?.filter((p: any) =>
+                p.subscriptionSet.some((f: any) => f.id === subscription.id),
               );
 
               return (
-                <div key={facility.id}>
+                <div key={subscription.id}>
                   <div className="font-semibold text-normal">
-                    {facility.facility}:{' '}
+                    {subscription.facility}:{' '}
                     <span className="font-normal">
-                      {formatNumber(facilityUsers?.length)}{' '}
-                      {facilityUsers?.length > 0 && (
+                      {formatNumber(subscriptionUsers?.length)}{' '}
+                      {subscriptionUsers?.length > 0 && (
                         <span className="text-slate-500">
-                          ({getParticipantsNames(facilityUsers)})
+                          ({getParticipantsNames(subscriptionUsers)})
                         </span>
                       )}
                     </span>
@@ -119,7 +120,7 @@ export function FacilitiesPriceView({
       ) : (
         <div className="text-gray-500 text-sm">
           {i18n.t(
-            'Please enter participant details to see facilities and pricing.',
+            'Please enter participant details to see subscriptions and pricing.',
           )}
         </div>
       )}
@@ -127,4 +128,4 @@ export function FacilitiesPriceView({
   );
 }
 
-export default FacilitiesPriceView;
+export default SubscriptionsPriceView;

@@ -27,8 +27,8 @@ import {BadgeList} from '@/ui/components';
 import {
   CustomSelect,
   EventDateCard,
-  FacilitiesPriceView,
-  FacilitiesView,
+  SubscriptionsPriceView,
+  SubscriptionsView,
   EmailFormField,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
@@ -94,7 +94,7 @@ export const RegistrationForm = ({
         defaultValue: user?.name || '',
       },
       {
-        name: 'company',
+        name: 'companyName',
         title: i18n.t('Company'),
         type: 'string',
         widget: null,
@@ -134,20 +134,14 @@ export const RegistrationForm = ({
         defaultValue: user?.fixedPhone || '',
       },
       {
-        name: 'facilities',
+        name: 'subscriptionSet',
         title: null,
         type: 'array',
         widget: 'custom',
         hidden: !facilityList.length,
         order: 6,
         customComponent: (props: any) => (
-          <FacilitiesView
-            {...props}
-            list={facilityList}
-            onFacilityChange={(selectedFacilities: any) => {
-              props.form.setValue('facilities', selectedFacilities);
-            }}
-          />
+          <SubscriptionsView {...props} list={facilityList} />
         ),
       },
     ],
@@ -240,11 +234,11 @@ export const RegistrationForm = ({
         subSchema: externalParticipantForm.map(field =>
           field.name === 'emailAddress'
             ? {...field, readonly: false}
-            : field.name === 'facilities'
+            : field.name === 'subscriptionSet'
               ? {
                   ...field,
                   customComponent: (props: any) => (
-                    <FacilitiesView
+                    <SubscriptionsView
                       {...props}
                       list={facilityList}
                       isSecondary
@@ -337,7 +331,7 @@ export const RegistrationForm = ({
               widget: 'custom',
               hidden: !facilityList.length,
               customComponent: (props: any) => (
-                <FacilitiesPriceView
+                <SubscriptionsPriceView
                   {...props}
                   list={facilityList}
                   eventPrice={eventProduct ? defaultPrice : 0}

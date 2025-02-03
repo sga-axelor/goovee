@@ -40,6 +40,6 @@ export {EventNavbar} from './event-navbar';
 export {MyRegisteredEvents} from './my-registered-events';
 export {EventSearch} from './event-search';
 export {TabsList} from './tab-list';
-export {FacilitiesView} from './facilities-view';
-export {FacilitiesPriceView} from './facilities-price-view';
+export {SubscriptionsView} from './subscriptions-view';
+export {SubscriptionsPriceView} from './subscriptions-price-view';
 export {EmailFormField} from './email-form-field';

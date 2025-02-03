@@ -11,7 +11,7 @@ import {
   FormLabel,
 } from '@/ui/components';
 
-export function FacilitiesView({
+export function SubscriptionsView({
   formKey,
   form,
   list,
@@ -30,27 +30,27 @@ export function FacilitiesView({
     }
   }, [form, list, formKey, isSecondary]);
 
-  const handleFacilityToggle = (facility: any) => {
-    const currentFacilities = form.getValues(formKey) || [];
+  const handleSubscriptionToggle = (subscription: any) => {
+    const currentSubscriptions = form.getValues(formKey) || [];
 
     if (isSecondary) {
-      const isSelected = currentFacilities.some(
-        (f: any) => f.id === facility.id,
+      const isSelected = currentSubscriptions.some(
+        (f: any) => f.id === subscription.id,
       );
-      const updatedFacilities = isSelected
-        ? currentFacilities.filter((f: any) => f.id !== facility.id)
-        : [...currentFacilities, facility];
+      const updatedSubscriptions = isSelected
+        ? currentSubscriptions.filter((f: any) => f.id !== subscription.id)
+        : [...currentSubscriptions, subscription];
 
-      form.setValue(formKey, updatedFacilities, {shouldValidate: true});
+      form.setValue(formKey, updatedSubscriptions, {shouldValidate: true});
     }
   };
 
   return (
     <div className="flex flex-wrap gap-4 items-center">
-      {list.map((facility, idx) => {
+      {list.map((subscription, idx) => {
         const selectedFacilities = form.watch(formKey) || [];
         const isChecked = isSecondary
-          ? selectedFacilities.some((f: any) => f.id === facility.id)
+          ? selectedFacilities.some((f: any) => f.id === subscription.id)
           : true;
 
         return (
@@ -63,12 +63,14 @@ export function FacilitiesView({
                 <FormControl>
                   <Checkbox
                     checked={isChecked}
-                    onCheckedChange={() => handleFacilityToggle(facility)}
+                    onCheckedChange={() =>
+                      handleSubscriptionToggle(subscription)
+                    }
                     disabled={!isSecondary}
                   />
                 </FormControl>
                 <FormLabel className="text-sm font-normal !mt-0">
-                  {facility.facility} ({facility.formattedPrice})
+                  {subscription.facility} ({subscription.formattedPrice})
                 </FormLabel>
               </FormItem>
             )}
@@ -79,4 +81,4 @@ export function FacilitiesView({
   );
 }
 
-export default FacilitiesView;
+export default SubscriptionsView;

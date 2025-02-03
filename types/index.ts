@@ -271,6 +271,7 @@ export type Participant = {
   emailAddress: string;
   phone: string;
   contact?: any;
+  subscriptionSet?: any[];
 };
 
 export type Comment = {
