@@ -47,17 +47,14 @@ export function SubscriptionsPriceView({
   }, [list, rootName, rootSurname, secondaryParticipants]);
 
   const totalPrice = useMemo(() => {
-    const subscriptionsTotal = participants?.reduce((total, participant) => {
-      return (
-        total +
-        participant.subscriptionSet.reduce(
-          (sum: number, subscription: any) => sum + subscription.price,
-          0,
-        )
+    return participants?.reduce((total, participant) => {
+      const participantSubscriptionsTotal = participant.subscriptionSet.reduce(
+        (sum: number, subscription: any) => sum + subscription.price,
+        0,
       );
-    }, 0);
 
-    return subscriptionsTotal + (eventPrice || 0);
+      return total + participantSubscriptionsTotal + eventPrice;
+    }, 0);
   }, [participants, eventPrice]);
 
   const validParticipants = useMemo(() => {
