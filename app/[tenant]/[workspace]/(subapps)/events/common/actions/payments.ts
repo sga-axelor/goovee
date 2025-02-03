@@ -12,7 +12,7 @@ import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {manager, type Tenant} from '@/tenant';
 import {findEventParticipant} from '../orm/registration';
-import {findEventByID} from '../orm/event';
+import {findEvent} from '../orm/event';
 // import {PaymentOption} from '@/types';
 // import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 // import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
@@ -64,7 +64,7 @@ export async function createInvoice({
     };
   }
 
-  const event = await findEventByID({
+  const event = await findEvent({
     id: eventId,
     workspace,
     tenantId,
