@@ -26,6 +26,7 @@ import {
 } from '@/subapps/events/common/actions/validation';
 import {EVENT_TYPE} from '@/subapps/events/common/constants';
 import {findProductsFromWS} from '@/subapps/events/common/orm/product';
+import {Expand, ExpandRecursively} from '@/types/util';
 
 const buildDateFilters = ({
   eventStartDateTimeCriteria,
@@ -216,6 +217,7 @@ export async function findEvent({
         isPublic: true,
         isHidden: true,
         isLoginNotNeeded: true,
+        isPrivate: true,
       },
     })
     .then(event => {
@@ -404,7 +406,19 @@ export async function findEvents({
             },
           },
         }
-      : {OR: [{isHidden: false}, {isHidden: null}]}),
+      : {
+          OR: [{isHidden: false}, {isHidden: null}].concat(
+            user?.email
+              ? ({
+                  registrationList: {
+                    participantList: {
+                      emailAddress: user?.email,
+                    },
+                  },
+                } as any)
+              : [],
+          ),
+        }),
   };
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
@@ -455,6 +469,9 @@ export async function findEvents({
           },
         },
         slug: true,
+        isPublic: true,
+        isHidden: true,
+        isLoginNotNeeded: true,
       },
     } as any)
     .then(events =>
@@ -481,4 +498,56 @@ export async function findEvents({
   });
 
   return {events, pageInfo};
+}
+
+export type EventConfig = {
+  id: string;
+  version: number;
+  isPrivate?: boolean;
+  registrationList?: {
+    id: string;
+    version: number;
+    participantList?: {
+      id: string;
+      version: number;
+      emailAddress?: string;
+    }[];
+  }[];
+  isPublic?: boolean;
+  isLoginNotNeeded?: boolean;
+  isHidden?: boolean;
+};
+
+export async function findEventConfig({
+  id,
+  tenantId,
+}: {
+  id: ID;
+  tenantId: Tenant['id'];
+}): Promise<EventConfig | null> {
+  if (!(id && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) return null;
+
+  const eventConfig = await client.aOSPortalEvent.findOne({
+    where: {id},
+    select: {
+      isPrivate: true,
+      isHidden: true,
+      isLoginNotNeeded: true,
+      isPublic: true,
+      registrationList: {
+        select: {
+          participantList: {
+            select: {
+              emailAddress: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  return eventConfig;
 }

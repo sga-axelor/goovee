@@ -11,10 +11,18 @@ import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEvent, findEvents} from '@/subapps/events/common/orm/event';
+import {
+  findEvent,
+  findEventConfig,
+  findEvents,
+} from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
-import {error} from '@/subapps/events/common/utils';
+import {
+  canEmailBeRegistered,
+  error,
+  isAlreadyRegistered,
+} from '@/subapps/events/common/utils';
 import {
   validate,
   withSubapp,
@@ -30,6 +38,12 @@ import {
 } from '@/comments';
 import {zodParseFormData} from '@/utils/formdata';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {ActionResponse} from '@/types/action';
+import {
+  createPartner,
+  findPartnerByEmail,
+  findPartnerById,
+} from '@/orm/partner';
 
 export async function getAllEvents({
   limit,
@@ -115,49 +129,78 @@ export async function register({
   if (!workspace) return error(await t('Workspace is missing!'));
 
   const workspaceURL = workspace.url;
+
+  const event = await findEventConfig({
+    id: eventId,
+    tenantId,
+  });
+
+  if (!event) return error(await t('Event not found'));
+
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
+    withWorkspace(workspaceURL, tenantId, {
+      checkAuth:
+        event.isPrivate || (!event.isPublic && !event.isLoginNotNeeded),
+    }),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
   if (result.error) {
     return result;
   }
-  const session = await getSession();
-  const user = session?.user;
-
-  const event = await findEvent({
-    id: eventId,
-    workspace,
-    tenantId,
-    user,
-  });
-  if (!event) return error(await t('Event not found!'));
 
   try {
     const {otherPeople, ...rest} = values;
-
-    if (otherPeople.length === 0) {
-      rest.emailAddress = rest.emailAddress.toLowerCase();
-      return await registerParticipants({
-        eventId,
-        workspaceURL,
-        values: rest,
-        tenantId,
-      }).then(clone);
-    }
     otherPeople.push(rest);
     otherPeople.forEach((element: Participant) => {
       if (element.emailAddress) {
         element.emailAddress = element.emailAddress.toLowerCase();
       }
     });
-    return await registerParticipants({
+
+    if (
+      otherPeople.every((participant: Participant) => participant.emailAddress)
+    ) {
+      return error(await t('Email is required'));
+    }
+
+    const promises = (otherPeople as Participant[]).map(participant =>
+      findPartnerByEmail(participant.emailAddress, tenantId).then(res => ({
+        participant,
+        partner: res,
+      })),
+    );
+
+    const partnerParticipantList = await Promise.all(promises);
+
+    const canAllEmailBeRegistered = partnerParticipantList.every(({partner}) =>
+      canEmailBeRegistered({event, partner}),
+    );
+    if (!canAllEmailBeRegistered) {
+      return error(await t('Not all email can be registered to this event'));
+    }
+    const isAnyEmailAlreadyRegistered = partnerParticipantList.some(
+      ({participant}) =>
+        isAlreadyRegistered({event, email: participant.emailAddress}),
+    );
+    if (isAnyEmailAlreadyRegistered) {
+      return error(await t('Some email is already registered to this event'));
+    }
+
+    const res = await registerParticipants({
       eventId,
       workspaceURL,
       values: otherPeople,
       tenantId,
     }).then(clone);
+    if (res.error) return res;
+    const partnerPromises = partnerParticipantList
+      .filter(({partner}) => !partner)
+      .map(({participant}) => {
+        return createPartner();
+      });
+    await Promise.all(partnerPromises);
+    return res;
   } catch (err) {
     console.log(err);
     return error(await t('Something went wrong!'));
@@ -195,6 +238,55 @@ export async function fetchContacts({
     console.log(err);
     return error(await t('Something went wrong!'));
   }
+}
+
+export async function isValidParticipant(props: {
+  workspaceURL: string;
+  eventId: ID;
+  email: string;
+}): ActionResponse<true> {
+  const {workspaceURL, eventId, email} = props;
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(await t('Bad Request'));
+  }
+  if (!email) {
+    return error(await t('Email is required'));
+  }
+
+  const result = await validate([
+    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+
+  const partner = await findPartnerByEmail(email, tenantId);
+
+  const event = await findEventConfig({
+    id: eventId,
+    tenantId,
+  });
+
+  if (!event) {
+    return error(await t('Event not found!'));
+  }
+
+  if (!canEmailBeRegistered({event, partner})) {
+    return error(await t('This email can not be registered to this event'));
+  }
+
+  if (isAlreadyRegistered({event, email})) {
+    return error(await t('This email is already registered to this event'));
+  }
+
+  return {
+    success: true,
+    data: true,
+  };
 }
 
 export const createComment: CreateComment = async formData => {

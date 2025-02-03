@@ -6,6 +6,8 @@ import icalgen, {
 
 // ---- CORE IMPORTS ---- //
 import {isSameDay} from '@/utils/date';
+import type {ErrorResponse} from '@/types/action';
+import type {ID} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event} from '@/subapps/events/common/ui/components';
@@ -35,7 +37,7 @@ export const datesBetweenTwoDates = (data: Event[]): Date[] => {
   return uniqueDates;
 };
 
-export function error(message: string) {
+export function error(message: string): ErrorResponse {
   return {
     error: true,
     message,
@@ -61,4 +63,56 @@ export function ical(
 
   calendar.createEvent(details);
   return calendar.toString();
+}
+
+export function canEmailBeRegistered({
+  event,
+  partner,
+}: {
+  event: {
+    isPrivate?: boolean;
+    isPublic?: boolean;
+  };
+  partner?: {
+    id?: ID;
+    isRegisteredOnPortal?: boolean;
+    isActivatedOnPortal?: boolean;
+    canSubscribeNoPublicEvent?: boolean;
+  } | null;
+}): boolean {
+  if (event.isPrivate) {
+    if (
+      !partner?.id ||
+      !partner.isRegisteredOnPortal ||
+      !partner.isActivatedOnPortal
+    ) {
+      return false;
+    }
+  }
+  if (!event.isPublic) {
+    if (!partner?.id || !partner.canSubscribeNoPublicEvent) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function isAlreadyRegistered({
+  event,
+  email,
+}: {
+  event: {
+    registrationList?: {
+      participantList?: {
+        emailAddress?: string;
+      }[];
+    }[];
+  };
+  email: string;
+}) {
+  return event.registrationList?.some(registration => {
+    return registration?.participantList?.some(
+      participant => participant?.emailAddress === email,
+    );
+  });
 }
