@@ -18,7 +18,7 @@ export function SubscriptionsView({
   form,
   list,
   isSecondary = false,
-  eventPrice = 0,
+  eventPrice,
 }: {
   formKey: string;
   form: any;
@@ -56,21 +56,23 @@ export function SubscriptionsView({
 
   return (
     <div className="flex flex-wrap gap-4 items-center">
-      <FormField
-        control={form.control}
-        name={`${formKey}_eventPrice`}
-        render={() => (
-          <FormItem className="flex items-center gap-2">
-            <FormControl>
-              <Checkbox checked={isEventChecked} disabled={true} />
-            </FormControl>
-            <FormLabel className="text-sm font-normal !mt-0">
-              {i18n.t('Event')} ({isSecondary ? '+' : ''}
-              {eventPrice})
-            </FormLabel>
-          </FormItem>
-        )}
-      />
+      {eventPrice ? (
+        <FormField
+          control={form.control}
+          name={`${formKey}_eventPrice`}
+          render={() => (
+            <FormItem className="flex items-center gap-2">
+              <FormControl>
+                <Checkbox checked={isEventChecked} disabled={true} />
+              </FormControl>
+              <FormLabel className="text-sm font-normal !mt-0">
+                {i18n.t('Event')} ({isSecondary ? '+' : ''}
+                {eventPrice})
+              </FormLabel>
+            </FormItem>
+          )}
+        />
+      ) : null}
 
       {list.map((subscription, idx) => {
         const isChecked = selectedSubscriptions.some(

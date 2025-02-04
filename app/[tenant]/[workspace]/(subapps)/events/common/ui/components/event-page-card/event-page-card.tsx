@@ -30,7 +30,7 @@ import {
 } from '@/subapps/events/common/constants';
 
 export const EventPageCard = ({eventDetails, workspace}: any) => {
-  const {displayAtiPrice, formattedDefaultPrice, eventProduct} =
+  const {displayAtiPrice, formattedDefaultPrice, defaultPrice} =
     eventDetails || {};
   const {workspaceURI, tenant} = useWorkspace();
   const {data: session} = useSession();
@@ -96,7 +96,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
               </span>
             </p>
           )}
-          {eventProduct && (
+          {defaultPrice ? (
             <div>
               <p className="text-xl font-semibold text-black">
                 {i18n.t('Price')}:{' '}
@@ -107,7 +107,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
                 <span className="text-success">{displayAtiPrice}</span>
               </p>
             </div>
-          )}
+          ) : null}
         </div>
       </CardContent>
       {isRegistrationAllow && (

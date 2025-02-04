@@ -68,7 +68,7 @@ export const RegistrationForm = ({
   const showContactsList = isLoggedIn && !user.isContact;
 
   const buttonTitle = i18n.t(
-    `Register${defaultPrice || !facilityList?.length ? ' and pay' : ''}`,
+    `Register${defaultPrice || facilityList?.length ? ' and pay' : ''}`,
   );
 
   const basicPerson = useMemo(
@@ -145,7 +145,7 @@ export const RegistrationForm = ({
           <SubscriptionsView
             {...props}
             list={facilityList}
-            eventPrice={formattedDefaultPrice}
+            eventPrice={defaultPrice ?? 0}
           />
         ),
       },
@@ -159,7 +159,7 @@ export const RegistrationForm = ({
       isLoggedIn,
       eventId,
       workspace.url,
-      formattedDefaultPrice,
+      defaultPrice,
     ],
   );
 
@@ -256,7 +256,7 @@ export const RegistrationForm = ({
                       {...props}
                       list={facilityList}
                       isSecondary
-                      eventPrice={formattedDefaultPrice}
+                      eventPrice={defaultPrice ?? 0}
                     />
                   ),
                 }
@@ -271,7 +271,7 @@ export const RegistrationForm = ({
       eventId,
       workspace.url,
       facilityList,
-      formattedDefaultPrice,
+      defaultPrice,
     ],
   );
 
@@ -332,7 +332,7 @@ export const RegistrationForm = ({
           eventAllDay={eventAllDay}
         />
         <BadgeList items={eventCategorySet} />
-        {eventProduct && (
+        {defaultPrice ? (
           <CardDescription className="my-6 text-xl font-semibold text-black">
             <div>
               <p className="text-xl font-semibold text-black">
@@ -345,7 +345,7 @@ export const RegistrationForm = ({
               </p>
             </div>
           </CardDescription>
-        )}
+        ) : null}
       </CardHeader>
       <CardContent className="px-4 pb-4 pt-2 space-y-6">
         <FormView
@@ -363,7 +363,7 @@ export const RegistrationForm = ({
                 <SubscriptionsPriceView
                   {...props}
                   list={facilityList}
-                  eventPrice={eventProduct ? defaultPrice : 0}
+                  eventPrice={defaultPrice ?? 0}
                   currency={eventProduct?.saleCurrency}
                 />
               ),
