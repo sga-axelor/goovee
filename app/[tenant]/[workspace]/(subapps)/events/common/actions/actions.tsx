@@ -159,8 +159,9 @@ export async function register({
   }
 
   if (event.isPrivate || (!event.isPublic && !event.isLoginNotNeeded)) {
-    if (!user)
+    if (!user) {
       return error(await t('Guest registration is not allowed for this event'));
+    }
   }
 
   try {
