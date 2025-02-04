@@ -116,21 +116,11 @@ export const RegistrationForm = ({
         order: 4,
         defaultValue: user?.emailAddress?.address || '',
         required: true,
-        customComponent: (props: any) => (
-          <EmailFormField
-            {...props}
-            title={i18n.t('Email')}
-            placeholder={i18n.t('Enter email')}
-            disabled={isLoggedIn}
-            onValidation={(email: string) => {
-              return isValidParticipant({
-                email,
-                eventId,
-                workspaceURL: workspace.url,
-              });
-            }}
-          />
-        ),
+        customComponent: getEmailFieldComponent({
+          isDisabled: isLoggedIn,
+          eventId,
+          workspaceURL: workspace.url,
+        }),
       },
       {
         name: 'phone',
@@ -251,7 +241,13 @@ export const RegistrationForm = ({
           }),
         subSchema: externalParticipantForm.map(field =>
           field.name === 'emailAddress'
-            ? {...field, readonly: false}
+            ? {
+                ...field,
+                customComponent: getEmailFieldComponent({
+                  eventId,
+                  workspaceURL: workspace.url,
+                }),
+              }
             : field.name === 'subscriptionSet'
               ? {
                   ...field,
@@ -272,6 +268,8 @@ export const RegistrationForm = ({
       participantForm,
       showContactsList,
       externalParticipantForm,
+      eventId,
+      workspace.url,
       facilityList,
       formattedDefaultPrice,
     ],
@@ -378,4 +376,33 @@ export const RegistrationForm = ({
       </CardContent>
     </Card>
   );
+};
+
+const getEmailFieldComponent = ({
+  isDisabled = false,
+  eventId,
+  workspaceURL,
+}: {
+  isDisabled?: boolean;
+  eventId: string | number;
+  workspaceURL: string;
+}) => {
+  const EmailComponent = (props: any) => (
+    <EmailFormField
+      {...props}
+      title={i18n.t('Email')}
+      placeholder={i18n.t('Enter email')}
+      disabled={isDisabled}
+      onValidation={(email: string) => {
+        return isValidParticipant({
+          email,
+          eventId,
+          workspaceURL,
+        });
+      }}
+    />
+  );
+
+  EmailComponent.displayName = 'EmailFieldComponent';
+  return EmailComponent;
 };

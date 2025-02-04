@@ -16,7 +16,7 @@ import {i18n} from '@/locale';
 export function EmailFormField({
   title,
   placeholder,
-  disabled,
+  disabled = false,
   formKey,
   form,
   onValidation,
