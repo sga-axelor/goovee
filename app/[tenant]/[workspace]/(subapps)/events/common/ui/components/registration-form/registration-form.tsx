@@ -145,7 +145,7 @@ export const RegistrationForm = ({
           <SubscriptionsView
             {...props}
             list={facilityList}
-            eventPrice={defaultPrice ?? 0}
+            eventPrice={defaultPrice ? formattedDefaultPrice : 0}
           />
         ),
       },
@@ -159,6 +159,7 @@ export const RegistrationForm = ({
       isLoggedIn,
       eventId,
       workspace.url,
+      formattedDefaultPrice,
       defaultPrice,
     ],
   );
@@ -256,7 +257,7 @@ export const RegistrationForm = ({
                       {...props}
                       list={facilityList}
                       isSecondary
-                      eventPrice={defaultPrice ?? 0}
+                      eventPrice={defaultPrice ? formattedDefaultPrice : 0}
                     />
                   ),
                 }
@@ -272,6 +273,7 @@ export const RegistrationForm = ({
       workspace.url,
       facilityList,
       defaultPrice,
+      formattedDefaultPrice,
     ],
   );
 
