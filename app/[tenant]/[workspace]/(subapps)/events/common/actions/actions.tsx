@@ -104,41 +104,32 @@ export async function getAllEvents({
   }
 }
 
-export async function register({
+export async function validateRegistration({
   eventId,
   values,
-  workspace: {url: workspaceURL},
+  workspaceURL,
 }: {
   eventId: any;
   values: any;
-  workspace: PortalWorkspace;
+  workspaceURL: string;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!eventId) return error(await t('Event ID is missing!'));
-
   if (!values) return error(await t('Values are missing!'));
-
   if (!tenantId) return error(await t('Tenant ID is missing!'));
-
   if (!workspaceURL) return error(await t('Workspace is missing!'));
 
   const session = await getSession();
   const user = session?.user;
 
   const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
-
-  if (!workspace) {
-    return error(await t('Invalid workspace'));
-  }
+  if (!workspace) return error(await t('Invalid workspace'));
 
   const result = await validate([
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
-
-  if (result.error) {
-    return result;
-  }
+  if (result.error) return result;
 
   if (!workspace.config?.allowGuestEventRegistration && !user) {
     return error(
@@ -148,11 +139,7 @@ export async function register({
     );
   }
 
-  const event = await findEventConfig({
-    id: eventId,
-    tenantId,
-  });
-
+  const event = await findEventConfig({id: eventId, tenantId});
   if (!event) return error(await t('Event not found'));
   if (!event.eventAllowRegistration) {
     return error(await t('Registration not started for this event'));
@@ -167,9 +154,10 @@ export async function register({
   try {
     const {otherPeople, ...rest} = values;
     otherPeople.push(rest);
-    otherPeople.forEach((element: Participant) => {
-      if (element.emailAddress) {
-        element.emailAddress = element.emailAddress.toLowerCase();
+
+    otherPeople.forEach((participant: Participant) => {
+      if (participant.emailAddress) {
+        participant.emailAddress = participant.emailAddress.toLowerCase();
       }
     });
 
@@ -180,7 +168,7 @@ export async function register({
     }
 
     const canRegisterList = await Promise.all(
-      (otherPeople as Participant[]).map(participant =>
+      otherPeople.map((participant: Participant) =>
         canEmailBeRegistered({
           event,
           email: participant.emailAddress,
@@ -193,18 +181,44 @@ export async function register({
     if (!canAllEmailBeRegistered) {
       return error(await t('Not all email can be registered to this event'));
     }
-    const isAnyEmailAlreadyRegistered = (otherPeople as Participant[]).some(
-      participant =>
+
+    const isAnyEmailAlreadyRegistered = otherPeople.some(
+      (participant: Participant) =>
         isAlreadyRegistered({event, email: participant.emailAddress}),
     );
     if (isAnyEmailAlreadyRegistered) {
       return error(await t('Some email is already registered to this event'));
     }
 
+    return {
+      success: true,
+      validatedParticipants: otherPeople,
+      event,
+      workspaceURL,
+      tenantId,
+    };
+  } catch (err) {
+    console.error(err);
+    return error(await t('Something went wrong during validation!'));
+  }
+}
+
+export async function registerParticipantsAction({
+  eventId,
+  validatedParticipants,
+  workspaceURL,
+  tenantId,
+}: {
+  validatedParticipants: Participant[];
+  eventId: any;
+  workspaceURL: string;
+  tenantId: string;
+}) {
+  try {
     const registration = await registerParticipants({
       eventId,
       workspaceURL,
-      participants: otherPeople,
+      participants: validatedParticipants,
       tenantId,
     });
 
@@ -214,14 +228,42 @@ export async function register({
     //     return createPartner();
     //   });
     // await Promise.all(partnerPromises);
+
     return {
       success: true,
       data: clone(registration),
     };
   } catch (err) {
-    console.log(err);
-    return error(await t('Something went wrong!'));
+    console.error(err);
+    return error(await t('Something went wrong during registration!'));
   }
+}
+
+export async function register({
+  eventId,
+  values,
+  workspace: {url: workspaceURL},
+}: {
+  eventId: any;
+  values: any;
+  workspace: PortalWorkspace;
+}) {
+  const validationResult = await validateRegistration({
+    eventId,
+    values,
+    workspaceURL,
+  });
+
+  if (!validationResult.success) {
+    return validationResult;
+  }
+
+  return await registerParticipantsAction({
+    eventId,
+    validatedParticipants: validationResult.validatedParticipants,
+    workspaceURL: validationResult.workspaceURL,
+    tenantId: validationResult.tenantId,
+  });
 }
 
 export async function fetchContacts({
