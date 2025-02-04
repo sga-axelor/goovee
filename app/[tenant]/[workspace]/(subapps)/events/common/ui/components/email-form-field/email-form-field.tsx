@@ -38,7 +38,7 @@ export function EmailFormField({
     clearErrors(formKey);
 
     try {
-      const response: any = await onValidation({email});
+      const response: any = await onValidation(email);
       if (response?.success) {
         setValue(formKey, email, {shouldValidate: true});
       } else {
