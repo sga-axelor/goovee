@@ -1,6 +1,7 @@
 'use client';
 
-import {useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
+import {useWatch} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
@@ -32,6 +33,17 @@ export function SubscriptionsPriceView({
   const rootName = form.watch('name');
   const rootSurname = form.watch('surname');
 
+  const subscriptionSet = useMemo(
+    () => form.watch('subscriptionSet') || [],
+    [form.watch('subscriptionSet')],
+  );
+
+  const selectedMainSubscriptions = useMemo(() => {
+    return list.filter(subscription =>
+      subscriptionSet.some((s: any) => s.id === subscription.id),
+    );
+  }, [subscriptionSet, list]);
+
   const secondaryParticipants = otherPeople.map((p: any) => ({
     ...p,
     subscriptionSet: p.subscriptionSet || [],
@@ -41,10 +53,10 @@ export function SubscriptionsPriceView({
     const mainParticipant = {
       name: rootName || '',
       surname: rootSurname || '',
-      subscriptionSet: list,
+      subscriptionSet: selectedMainSubscriptions,
     };
     return [mainParticipant, ...secondaryParticipants];
-  }, [list, rootName, rootSurname, secondaryParticipants]);
+  }, [selectedMainSubscriptions, rootName, rootSurname, secondaryParticipants]);
 
   const totalPrice = useMemo(() => {
     return participants?.reduce((total, participant) => {

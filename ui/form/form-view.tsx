@@ -23,10 +23,12 @@ export const FormView = ({
   fields: _fields,
   onSubmit,
   submitTitle,
+  mode = 'onSubmit',
 }: {
   fields: any[];
   onSubmit: (values: any) => Promise<void>;
   submitTitle: string;
+  mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
 }) => {
   const fields = useMemo(() => sortFields(_fields), [_fields]);
 
@@ -47,9 +49,11 @@ export const FormView = ({
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
+    mode,
   });
 
   const formState = form.watch();
+  const {isValid, isSubmitting, isSubmitted} = form.formState;
 
   const visibleFields = useMemo(
     () => fields.filter(_f => !_f.hidden && !_f.hideIf?.(formState)),
@@ -130,7 +134,8 @@ export const FormView = ({
         {visibleFields.map(_i => renderItem(_i, _i.name))}
         <Button
           className="text-base font-medium leading-6 p-3 w-full bg-success hover:bg-success-dark"
-          type="submit">
+          type="submit"
+          disabled={isSubmitting || (isSubmitted && !isValid)}>
           {i18n.t(submitTitle)}
         </Button>
       </form>

@@ -152,17 +152,24 @@ export const RegistrationForm = ({
         hidden: !facilityList.length,
         order: 6,
         customComponent: (props: any) => (
-          <SubscriptionsView {...props} list={facilityList} />
+          <SubscriptionsView
+            {...props}
+            list={facilityList}
+            eventPrice={formattedDefaultPrice}
+          />
         ),
       },
     ],
     [
-      isLoggedIn,
-      user?.emailAddress?.address,
       user.firstName,
-      user?.fixedPhone,
       user?.name,
+      user?.emailAddress?.address,
+      user?.fixedPhone,
       facilityList,
+      isLoggedIn,
+      eventId,
+      workspace.url,
+      formattedDefaultPrice,
     ],
   );
 
@@ -253,6 +260,7 @@ export const RegistrationForm = ({
                       {...props}
                       list={facilityList}
                       isSecondary
+                      eventPrice={formattedDefaultPrice}
                     />
                   ),
                 }
@@ -260,7 +268,13 @@ export const RegistrationForm = ({
         ),
       },
     ],
-    [participantForm, showContactsList, externalParticipantForm, facilityList],
+    [
+      participantForm,
+      showContactsList,
+      externalParticipantForm,
+      facilityList,
+      formattedDefaultPrice,
+    ],
   );
 
   const onSubmit = async (values: any) => {
@@ -357,8 +371,9 @@ export const RegistrationForm = ({
               ),
             },
           ]}
-          onSubmit={onSubmit}
           submitTitle={buttonTitle}
+          mode={'onChange'}
+          onSubmit={onSubmit}
         />
       </CardContent>
     </Card>

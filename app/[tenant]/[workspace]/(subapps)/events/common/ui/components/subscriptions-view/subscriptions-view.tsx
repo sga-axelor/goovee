@@ -10,48 +10,72 @@ import {
   FormItem,
   FormLabel,
 } from '@/ui/components';
+import {i18n} from '@/locale';
+import {cn} from '@/utils/css';
 
 export function SubscriptionsView({
   formKey,
   form,
   list,
   isSecondary = false,
+  eventPrice = 0,
 }: {
   formKey: string;
   form: any;
   list: any[];
   isSecondary?: boolean;
+  eventPrice?: number;
 }) {
   useEffect(() => {
     const currentValues = form.getValues(formKey);
 
-    if (!Array.isArray(currentValues) || currentValues.length === 0) {
-      form.setValue(formKey, isSecondary ? [] : list, {shouldValidate: true});
+    if (!Array.isArray(currentValues)) {
+      form.setValue(formKey, [], {shouldValidate: true});
     }
-  }, [form, list, formKey, isSecondary]);
+
+    form.setValue(`${formKey}_eventPrice`, true, {shouldValidate: true});
+  }, [form, formKey]);
+
+  const selectedSubscriptions = form.watch(formKey) || [];
 
   const handleSubscriptionToggle = (subscription: any) => {
-    const currentSubscriptions = form.getValues(formKey) || [];
+    const isSelected = selectedSubscriptions.some(
+      (f: any) => f.id === subscription.id,
+    );
 
-    if (isSecondary) {
-      const isSelected = currentSubscriptions.some(
-        (f: any) => f.id === subscription.id,
-      );
-      const updatedSubscriptions = isSelected
-        ? currentSubscriptions.filter((f: any) => f.id !== subscription.id)
-        : [...currentSubscriptions, subscription];
-
-      form.setValue(formKey, updatedSubscriptions, {shouldValidate: true});
-    }
+    form.setValue(
+      formKey,
+      isSelected
+        ? selectedSubscriptions.filter((f: any) => f.id !== subscription.id)
+        : [...selectedSubscriptions, subscription],
+      {shouldValidate: true, shouldDirty: true},
+    );
   };
+
+  const isEventChecked = form.watch(`${formKey}_eventPrice`);
 
   return (
     <div className="flex flex-wrap gap-4 items-center">
+      <FormField
+        control={form.control}
+        name={`${formKey}_eventPrice`}
+        render={() => (
+          <FormItem className="flex items-center gap-2">
+            <FormControl>
+              <Checkbox checked={isEventChecked} disabled={true} />
+            </FormControl>
+            <FormLabel className="text-sm font-normal !mt-0">
+              {i18n.t('Event')} ({isSecondary ? '+' : ''}
+              {eventPrice})
+            </FormLabel>
+          </FormItem>
+        )}
+      />
+
       {list.map((subscription, idx) => {
-        const selectedFacilities = form.watch(formKey) || [];
-        const isChecked = isSecondary
-          ? selectedFacilities.some((f: any) => f.id === subscription.id)
-          : true;
+        const isChecked = selectedSubscriptions.some(
+          (f: any) => f.id === subscription.id,
+        );
 
         return (
           <FormField
@@ -63,14 +87,17 @@ export function SubscriptionsView({
                 <FormControl>
                   <Checkbox
                     checked={isChecked}
+                    className={cn(
+                      isChecked ? `!border-success !bg-success` : '',
+                    )}
                     onCheckedChange={() =>
                       handleSubscriptionToggle(subscription)
                     }
-                    disabled={!isSecondary}
                   />
                 </FormControl>
                 <FormLabel className="text-sm font-normal !mt-0">
-                  {subscription.facility} ({subscription.formattedPrice})
+                  {subscription.facility} ({isSecondary ? '+' : ''}
+                  {subscription.formattedPrice})
                 </FormLabel>
               </FormItem>
             )}
