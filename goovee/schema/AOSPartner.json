@@ -22,6 +22,10 @@
     },
     {
       "type": "Boolean",
+      "name": "isProspect"
+    },
+    {
+      "type": "Boolean",
       "name": "isRegisteredOnPortal"
     },
     {

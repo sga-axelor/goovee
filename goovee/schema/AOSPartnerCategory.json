@@ -11,6 +11,12 @@
     {
       "name": "code",
       "type": "String"
+    },
+    {
+      "name": "partners",
+      "type": "OneToMany",
+      "target": "AOSPartner",
+      "mappedBy": "partnerCategory"
     }
   ]
 }

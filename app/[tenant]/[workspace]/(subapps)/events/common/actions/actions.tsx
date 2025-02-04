@@ -19,7 +19,6 @@ import {
   isCommentEnabled,
 } from '@/comments';
 import {addComment, findComments} from '@/comments/orm';
-import {createPartner, findPartnerByEmail} from '@/orm/partner';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {
   validate,
@@ -33,11 +32,11 @@ import {
 } from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
+import {error} from '@/subapps/events/common/utils';
 import {
   canEmailBeRegistered,
-  error,
   isAlreadyRegistered,
-} from '@/subapps/events/common/utils';
+} from '@/subapps/events/common/utils/registration';
 import {ActionResponse} from '@/types/action';
 import {zodParseFormData} from '@/utils/formdata';
 
@@ -160,23 +159,22 @@ export async function register({
       return error(await t('Email is required'));
     }
 
-    const promises = (otherPeople as Participant[]).map(participant =>
-      findPartnerByEmail(participant.emailAddress, tenantId).then(res => ({
-        participant,
-        partner: res,
-      })),
+    const canRegisterList = await Promise.all(
+      (otherPeople as Participant[]).map(participant =>
+        canEmailBeRegistered({
+          event,
+          email: participant.emailAddress,
+          tenantId,
+        }),
+      ),
     );
 
-    const partnerParticipantList = await Promise.all(promises);
-
-    const canAllEmailBeRegistered = partnerParticipantList.every(({partner}) =>
-      canEmailBeRegistered({event, partner}),
-    );
+    const canAllEmailBeRegistered = canRegisterList.every(Boolean);
     if (!canAllEmailBeRegistered) {
       return error(await t('Not all email can be registered to this event'));
     }
-    const isAnyEmailAlreadyRegistered = partnerParticipantList.some(
-      ({participant}) =>
+    const isAnyEmailAlreadyRegistered = (otherPeople as Participant[]).some(
+      participant =>
         isAlreadyRegistered({event, email: participant.emailAddress}),
     );
     if (isAnyEmailAlreadyRegistered) {
@@ -190,12 +188,12 @@ export async function register({
       tenantId,
     });
 
-    const partnerPromises = partnerParticipantList
-      .filter(({partner}) => !partner)
-      .map(({participant}) => {
-        return createPartner();
-      });
-    await Promise.all(partnerPromises);
+    // const partnerPromises = partnerParticipantList
+    //   .filter(({partner}) => !partner)
+    //   .map(({participant}) => {
+    //     return createPartner();
+    //   });
+    // await Promise.all(partnerPromises);
     return {
       success: true,
       data: clone(registration),
@@ -263,8 +261,6 @@ export async function isValidParticipant(props: {
     return result;
   }
 
-  const partner = await findPartnerByEmail(email, tenantId);
-
   const event = await findEventConfig({
     id: eventId,
     tenantId,
@@ -274,7 +270,7 @@ export async function isValidParticipant(props: {
     return error(await t('Event not found!'));
   }
 
-  if (!canEmailBeRegistered({event, partner})) {
+  if (!(await canEmailBeRegistered({event, email, tenantId}))) {
     return error(await t('This email can not be registered to this event'));
   }
 

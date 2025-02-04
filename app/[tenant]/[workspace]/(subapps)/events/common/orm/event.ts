@@ -27,6 +27,8 @@ import {
 import {EVENT_TYPE} from '@/subapps/events/common/constants';
 import {findProductsFromWS} from '@/subapps/events/common/orm/product';
 import {Expand, ExpandRecursively} from '@/types/util';
+import {isAborted} from 'zod';
+import {isRequiredArgument} from 'graphql';
 
 const buildDateFilters = ({
   eventStartDateTimeCriteria,
@@ -509,15 +511,28 @@ export type EventConfig = {
   registrationList?: {
     id: string;
     version: number;
-    participantList?: {
-      id: string;
-      version: number;
-      emailAddress?: string;
-    }[];
+    participantList?: {id: string; version: number; emailAddress?: string}[];
   }[];
   isPublic?: boolean;
   isLoginNotNeeded?: boolean;
   isHidden?: boolean;
+  partnerCategorySet?: {partners?: EventConfigPartner[]}[];
+  partnerSet?: EventConfigPartner[];
+};
+
+export type EventConfigPartner = {
+  isProspect?: boolean;
+  isContact?: boolean;
+  isCustomer?: boolean;
+  contactPartnerSet?: {
+    emailAddress?: {address?: string};
+    isRegisteredOnPortal?: boolean;
+    isActivatedOnPortal?: boolean;
+  }[];
+  emailAddress?: {id: string; version: number; address?: string};
+  isActivatedOnPortal?: boolean;
+  canSubscribeNoPublicEvent?: boolean;
+  isRegisteredOnPortal?: boolean;
 };
 
 export async function findEventConfig({
@@ -533,6 +548,23 @@ export async function findEventConfig({
 
   if (!client) return null;
 
+  const partnersFields = {
+    emailAddress: {address: true},
+    isProspect: true,
+    isContact: true,
+    isCustomer: true,
+    isRegisteredOnPortal: true,
+    isActivatedOnPortal: true,
+    canSubscribeNoPublicEvent: true,
+    contactPartnerSet: {
+      select: {
+        emailAddress: {address: true},
+        isRegisteredOnPortal: true,
+        isActivatedOnPortal: true,
+      },
+    },
+  };
+
   const eventConfig = await client.aOSPortalEvent.findOne({
     where: {id},
     select: {
@@ -540,16 +572,51 @@ export async function findEventConfig({
       isHidden: true,
       isLoginNotNeeded: true,
       isPublic: true,
+      partnerCategorySet: {select: {partners: {select: partnersFields}}},
+      partnerSet: {select: partnersFields},
       registrationList: {
-        select: {
-          participantList: {
-            select: {
-              emailAddress: true,
-            },
-          },
-        },
+        select: {participantList: {select: {emailAddress: true}}},
       },
     },
   });
+
   return eventConfig;
+}
+
+export type PartnerForEvent = {
+  id: string;
+  version: number;
+  isRegisteredOnPortal?: boolean;
+  emailAddress?: {id: string; version: number; address?: string};
+  isActivatedOnPortal?: boolean;
+  canSubscribeNoPublicEvent?: boolean;
+};
+
+export async function findPartnerByEmailForEvent(
+  email: string,
+  tenantId: Tenant['id'],
+): Promise<PartnerForEvent | null> {
+  if (!(email && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) return null;
+
+  const partner = await client.aOSPartner.findOne({
+    where: {
+      emailAddress: {
+        address: {
+          eq: email,
+        },
+      },
+    },
+    select: {
+      id: true,
+      isRegisteredOnPortal: true,
+      isActivatedOnPortal: true,
+      canSubscribeNoPublicEvent: true,
+      emailAddress: {address: true},
+    },
+  });
+  return partner;
 }
