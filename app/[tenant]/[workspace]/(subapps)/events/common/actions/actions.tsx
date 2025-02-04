@@ -155,7 +155,7 @@ export async function register({
     });
 
     if (
-      otherPeople.every((participant: Participant) => participant.emailAddress)
+      !otherPeople.every((participant: Participant) => participant.emailAddress)
     ) {
       return error(await t('Email is required'));
     }
