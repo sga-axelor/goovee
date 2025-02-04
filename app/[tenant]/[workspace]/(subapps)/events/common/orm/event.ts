@@ -518,6 +518,7 @@ export type EventConfig = {
   isHidden?: boolean;
   partnerCategorySet?: {partners?: EventConfigPartner[]}[];
   partnerSet?: EventConfigPartner[];
+  eventAllowRegistration?: boolean;
 };
 
 export type EventConfigPartner = {
@@ -572,6 +573,7 @@ export async function findEventConfig({
       isHidden: true,
       isLoginNotNeeded: true,
       isPublic: true,
+      eventAllowRegistration: true,
       partnerCategorySet: {select: {partners: {select: partnersFields}}},
       partnerSet: {select: partnersFields},
       registrationList: {

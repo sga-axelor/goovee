@@ -107,7 +107,7 @@ export async function getAllEvents({
 export async function register({
   eventId,
   values,
-  workspace,
+  workspace: {url: workspaceURL},
 }: {
   eventId: any;
   values: any;
@@ -121,9 +121,32 @@ export async function register({
 
   if (!tenantId) return error(await t('Tenant ID is missing!'));
 
-  if (!workspace) return error(await t('Workspace is missing!'));
+  if (!workspaceURL) return error(await t('Workspace is missing!'));
 
-  const workspaceURL = workspace.url;
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+
+  if (!workspace) {
+    return error(await t('Invalid workspace'));
+  }
+
+  const result = await validate([
+    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
+  ]);
+
+  if (result.error) {
+    return result;
+  }
+
+  if (!workspace.config?.allowGuestEventRegistration && !user) {
+    return error(
+      await t(
+        'Guest registration is not allowed for this workspace, Please login',
+      ),
+    );
+  }
 
   const event = await findEventConfig({
     id: eventId,
@@ -131,17 +154,13 @@ export async function register({
   });
 
   if (!event) return error(await t('Event not found'));
+  if (!event.eventAllowRegistration) {
+    return error(await t('Registration not started for this event'));
+  }
 
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {
-      checkAuth:
-        event.isPrivate || (!event.isPublic && !event.isLoginNotNeeded),
-    }),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return result;
+  if (event.isPrivate || (!event.isPublic && !event.isLoginNotNeeded)) {
+    if (!user)
+      return error(await t('Guest registration is not allowed for this event'));
   }
 
   try {
