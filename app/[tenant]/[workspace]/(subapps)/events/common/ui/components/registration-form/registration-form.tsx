@@ -218,6 +218,7 @@ export const RegistrationForm = ({
               customComponent: (props: any) =>
                 CustomSelect({
                   ...props,
+                  eventId,
                   arrayName: 'otherPeople',
                   subSchema: externalParticipantForm,
                 }),

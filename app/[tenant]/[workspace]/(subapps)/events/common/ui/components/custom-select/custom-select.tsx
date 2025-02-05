@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-import Select, {SingleValue, MultiValue} from 'react-select';
+import Select, {MultiValue} from 'react-select';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
@@ -11,7 +11,10 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks/use-toast';
 
 // ---- LOCAL IMPORTS ---- //
-import {fetchContacts} from '@/subapps/events/common/actions/actions';
+import {
+  fetchContacts,
+  isValidParticipant,
+} from '@/subapps/events/common/actions/actions';
 import type {OptionType} from '@/subapps/events/common/ui/components/custom-select/types';
 
 function formatItems(array: any) {
@@ -30,12 +33,14 @@ export const CustomSelect = ({
   renderItem,
   arrayName,
   subSchema,
+  eventId,
 }: {
   form: any;
   field: Field;
   renderItem: (item: Field, idx: number) => React.JSX.Element;
   arrayName: string;
   subSchema: Field[];
+  eventId: string;
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -43,9 +48,7 @@ export const CustomSelect = ({
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
-  const handleChange = (
-    selected: MultiValue<OptionType> | SingleValue<OptionType> | null,
-  ) => {
+  const handleChange = async (selected: MultiValue<OptionType>) => {
     const _current = form.getValues(arrayName) ?? [];
     const selectedUsers: any = selected ?? [];
     const customParticipants = _current.filter(
@@ -55,29 +58,46 @@ export const CustomSelect = ({
           selectedUsers.find((_s: any) => _s.id === valueId) != null),
     );
 
-    selectedUsers.forEach((_s: any) => {
+    const invalidParticipants: string[] = [];
+    for await (const _s of selectedUsers) {
       if (
         customParticipants.find(
           ({valueId, fromParticipant}: any) =>
             fromParticipant && valueId === _s.id,
         ) == null
       ) {
-        customParticipants.push({
-          ...createDefaultValues(subSchema),
-          ..._s,
-          valueId: _s.id,
-          fromParticipant: true,
-          name: _s.firstName,
-          surname: _s.name,
-          emailAddress: _s.emailAddress?.address,
-          phone: _s.fixedPhone,
-          company: _s.mainPartner,
+        const {error, message} = await isValidParticipant({
+          email: _s.emailAddress?.address,
+          eventId,
+          workspaceURL,
         });
+        if (error) {
+          toast({
+            variant: 'destructive',
+            title: message,
+          });
+          invalidParticipants.push(_s.id);
+        } else {
+          customParticipants.push({
+            ...createDefaultValues(subSchema),
+            ..._s,
+            valueId: _s.id,
+            fromParticipant: true,
+            name: _s.firstName,
+            surname: _s.name,
+            emailAddress: _s.emailAddress?.address,
+            phone: _s.fixedPhone,
+            company: _s.mainPartner,
+          });
+        }
       }
-    });
+    }
 
     form.setValue(arrayName, customParticipants);
-    form.setValue(field.name, selected);
+    form.setValue(
+      field.name,
+      selected.filter(({value}) => !invalidParticipants.includes(value)),
+    );
   };
 
   const handleInputChange = async (input: string = '') => {
