@@ -32,7 +32,7 @@ import {
 } from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
 import {
-  createEventPartners,
+  getEventContacts,
   registerParticipants,
 } from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
@@ -234,11 +234,6 @@ export async function registerParticipantsAction({
     const registration = await registerParticipants({
       eventId,
       workspaceURL,
-      participants: validatedParticipants,
-      tenantId,
-    });
-
-    await createEventPartners({
       participants: validatedParticipants,
       tenantId,
     });
