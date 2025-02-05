@@ -130,6 +130,7 @@ export interface PortalAppConfig extends Model {
   noMoreStockSelect?: number;
   outOfStockQty?: string;
   defaultStockLocation?: any;
+  nonPublicEmailNotFoundMessage?: string;
 }
 
 export interface PortalApp extends Model {

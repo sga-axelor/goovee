@@ -91,6 +91,7 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   },
   directoryHeroDescription: true,
   directoryHeroOverlayColorSelect: true,
+  nonPublicEmailNotFoundMessage: true,
 };
 
 export async function findWorkspaceMembers({

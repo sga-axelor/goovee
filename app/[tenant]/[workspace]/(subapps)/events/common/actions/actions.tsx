@@ -186,7 +186,16 @@ export async function validateRegistration({
 
     const canAllEmailBeRegistered = canRegisterList.every(Boolean);
     if (!canAllEmailBeRegistered) {
-      return error(await t('Not all email can be registered to this event'));
+      if (
+        !event.isPublic &&
+        !event.isPrivate &&
+        workspace.config?.nonPublicEmailNotFoundMessage?.trim()
+      ) {
+        return error(await t(workspace.config.nonPublicEmailNotFoundMessage));
+      }
+      return error(
+        await t('one or more email can not be registered to this event'),
+      );
     }
 
     const isAnyEmailAlreadyRegistered = otherPeople.some(

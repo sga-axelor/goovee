@@ -255,6 +255,10 @@
       "type": "ManyToOne",
       "name": "directoryHeroBgImage",
       "target": "AOSMetaFile"
+    },
+    {
+      "type": "String",
+      "name": "nonPublicEmailNotFoundMessage"
     }
   ]
 }
