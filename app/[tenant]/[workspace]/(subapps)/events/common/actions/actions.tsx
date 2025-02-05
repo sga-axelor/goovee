@@ -31,7 +31,10 @@ import {
   findEvents,
 } from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
-import {registerParticipants} from '@/subapps/events/common/orm/registration';
+import {
+  createEventPartners,
+  registerParticipants,
+} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {
   canEmailBeRegistered,
@@ -147,7 +150,11 @@ export async function validateRegistration({
 
   if (event.isPrivate || (!event.isPublic && !event.isLoginNotNeeded)) {
     if (!user) {
-      return error(await t('Guest registration is not allowed for this event'));
+      return error(
+        await t(
+          'Guest registration is not allowed for this event, Please login',
+        ),
+      );
     }
   }
 
@@ -222,12 +229,10 @@ export async function registerParticipantsAction({
       tenantId,
     });
 
-    // const partnerPromises = partnerParticipantList
-    //   .filter(({partner}) => !partner)
-    //   .map(({participant}) => {
-    //     return createPartner();
-    //   });
-    // await Promise.all(partnerPromises);
+    await createEventPartners({
+      participants: validatedParticipants,
+      tenantId,
+    });
 
     return {
       success: true,

@@ -5,6 +5,9 @@ import type {ID, Participant} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
+import {PartnerTypeMap} from '@/orm/partner';
+import {UserType} from '@/lib/core/auth/types';
+import {USER_CREATED_FROM} from '@/constants';
 
 export async function registerParticipants({
   eventId,
@@ -50,4 +53,47 @@ export async function registerParticipants({
   });
 
   return registration;
+}
+
+export async function createEventPartners({
+  participants,
+  tenantId,
+}: {
+  participants: Participant[];
+  tenantId: Tenant['id'];
+}) {
+  const partners = await Promise.all(
+    participants.map(async participant => {
+      const {emailAddress, name, surname, companyName} = participant;
+      const c = await manager.getClient(tenantId);
+      if (!emailAddress) return;
+      const partner = await c.aOSPartner.findOne({
+        where: {
+          emailAddress: {
+            address: emailAddress,
+          },
+        },
+      });
+      if (partner) return;
+      return c.aOSPartner.create({
+        data: {
+          partnerTypeSelect: PartnerTypeMap[UserType.individual],
+          emailAddress: {create: {address: emailAddress, name: emailAddress}},
+          name: surname,
+          firstName: name,
+          fullName: `${surname} ${name || ''}`.trim(),
+          simpleFullName: `${surname} ${name || ''}`.trim(),
+          isContact: true,
+          isCustomer: false,
+          isProspect: false,
+          createdFromSelect: USER_CREATED_FROM,
+          isRegisteredOnPortal: false,
+          isActivatedOnPortal: false,
+          isPublicPartner: true,
+          portalCompanyName: companyName,
+        },
+      });
+    }),
+  );
+  return partners.filter(Boolean);
 }

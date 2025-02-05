@@ -272,6 +272,7 @@ export type Participant = {
   phone: string;
   contact?: any;
   subscriptionSet?: any[];
+  companyName?: string;
 };
 
 export type Comment = {

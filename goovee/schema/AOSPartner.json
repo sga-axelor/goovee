@@ -138,6 +138,14 @@
     {
       "type": "Boolean",
       "name": "canSubscribeNoPublicEvent"
+    },
+    {
+      "type": "Boolean",
+      "name": "isPublicPartner"
+    },
+    {
+      "type": "String",
+      "name": "portalCompanyName"
     }
   ]
 }
