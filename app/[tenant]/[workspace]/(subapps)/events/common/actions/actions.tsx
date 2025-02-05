@@ -192,8 +192,8 @@ export async function validateRegistration({
 
     return {
       success: true,
-      validatedParticipants: otherPeople,
-      event,
+      validatedParticipants: clone(otherPeople),
+      event: clone(event),
       workspaceURL,
       tenantId,
     };
