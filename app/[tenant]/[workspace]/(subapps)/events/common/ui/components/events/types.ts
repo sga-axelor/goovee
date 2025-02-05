@@ -27,7 +27,9 @@ export interface Event {
   } | null;
   defaultPrice: number;
   formattedDefaultPrice: string;
+  formattedDefaultPriceAti: string;
   displayAtiPrice: string;
+  displayAti: string;
   facilityList: [
     {
       id: number;

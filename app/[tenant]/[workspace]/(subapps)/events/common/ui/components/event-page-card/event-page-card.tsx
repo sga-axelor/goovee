@@ -30,7 +30,7 @@ import {
 } from '@/subapps/events/common/constants';
 
 export const EventPageCard = ({eventDetails, workspace}: any) => {
-  const {displayAtiPrice, formattedDefaultPrice, defaultPrice} =
+  const {formattedDefaultPriceAti, formattedDefaultPrice, defaultPrice} =
     eventDetails || {};
   const {workspaceURI, tenant} = useWorkspace();
   const {data: session} = useSession();
@@ -104,7 +104,9 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
               </p>
               <p className="text-xs font-medium text-black">
                 {i18n.t('Price with tax')}:{' '}
-                <span className="text-success">{displayAtiPrice}</span>
+                <span className="text-success font-medium">
+                  {formattedDefaultPriceAti}
+                </span>
               </p>
             </div>
           ) : null}

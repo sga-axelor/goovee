@@ -26,9 +26,6 @@ import {
 } from '@/subapps/events/common/actions/validation';
 import {EVENT_TYPE} from '@/subapps/events/common/constants';
 import {findProductsFromWS} from '@/subapps/events/common/orm/product';
-import {Expand, ExpandRecursively} from '@/types/util';
-import {isAborted} from 'zod';
-import {isRequiredArgument} from 'graphql';
 
 const buildDateFilters = ({
   eventStartDateTimeCriteria,
@@ -236,43 +233,72 @@ export async function findEvent({
 
   if (!event) return null;
   const {eventProduct, defaultPrice}: any = event;
-  const {saleCurrency, id: productId} = eventProduct || {};
-  console.log('eventProduct >>>', eventProduct);
+  const {saleCurrency} = eventProduct || {};
 
-  // const productsFromWS = await findProductsFromWS({
-  //   productList: [{productId}],
-  //   workspace,
-  //   user,
-  //   tenantId,
-  // });
-  // console.log('productsFromWS >>>', JSON.stringify(productsFromWS));
+  const productsFromWS = await findProductsFromWS({
+    workspaceURL: workspace.url,
+    tenantId,
+    eventId: event.id,
+  });
+
+  const displayWt = productsFromWS?.priceWT || defaultPrice;
+  const displayAti = productsFromWS?.priceATI || defaultPrice;
 
   const currencySymbol = saleCurrency?.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = saleCurrency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
-  const displayAtiPrice = '';
+  const formattedDefaultPrice = await formatNumber(displayWt, {
+    currency: currencySymbol,
+    scale,
+  });
+
+  const formattedDefaultPriceAti = await formatNumber(displayAti, {
+    currency: currencySymbol,
+    scale,
+  });
+
+  const updatedFacilityList = event?.facilityList?.map(async facility => {
+    const matchingFacility = productsFromWS?.facilityPricingList?.find(
+      (f: any) => Number(f.id) === Number(facility.id),
+    );
+
+    const facilityWt = matchingFacility
+      ? matchingFacility.priceWT
+      : facility.price;
+
+    const facilityAti = matchingFacility
+      ? matchingFacility.priceATI
+      : facility.price;
+
+    const formattedPriceWt = await formatNumber(facilityWt, {
+      currency: currencySymbol,
+      scale,
+    });
+
+    const formattedPriceAti = await formatNumber(facilityAti, {
+      currency: currencySymbol,
+      scale,
+    });
+    return {
+      ...facility,
+      displayWt: facilityWt,
+      displayAti: facilityAti,
+      formattedPrice: await formatNumber(facilityWt, {
+        currency: currencySymbol,
+        scale,
+      }),
+      formattedPriceWt,
+      formattedPriceAti,
+    };
+  });
 
   return {
     ...event,
-    defaultPrice,
-    formattedDefaultPrice: await formatNumber(defaultPrice, {
-      currency: currencySymbol,
-      scale,
-    }),
-    displayAtiPrice,
-    facilityList: event?.facilityList
-      ? await Promise.all(
-          event.facilityList.map(async facility => {
-            return {
-              ...facility,
-              formattedPrice: await formatNumber(facility.price, {
-                currency: currencySymbol,
-                scale,
-              }),
-            };
-          }),
-        )
-      : [],
+    displayWt,
+    displayAti,
+    formattedDefaultPrice,
+    formattedDefaultPriceAti,
+    facilityList: await Promise.all(updatedFacilityList || []),
   };
 }
 

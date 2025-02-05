@@ -47,7 +47,8 @@ export const RegistrationForm = ({
   const {
     defaultPrice = null,
     formattedDefaultPrice = null,
-    displayAtiPrice = null,
+    formattedDefaultPriceAti = null,
+    displayAti,
     facilityList = [],
     eventTitle = '',
     eventStartDateTime,
@@ -145,7 +146,7 @@ export const RegistrationForm = ({
           <SubscriptionsView
             {...props}
             list={facilityList}
-            eventPrice={defaultPrice ? formattedDefaultPrice : 0}
+            eventPrice={defaultPrice ? formattedDefaultPriceAti : 0}
           />
         ),
       },
@@ -159,7 +160,7 @@ export const RegistrationForm = ({
       isLoggedIn,
       eventId,
       workspace.url,
-      formattedDefaultPrice,
+      formattedDefaultPriceAti,
       defaultPrice,
     ],
   );
@@ -258,7 +259,7 @@ export const RegistrationForm = ({
                       {...props}
                       list={facilityList}
                       isSecondary
-                      eventPrice={defaultPrice ? formattedDefaultPrice : 0}
+                      eventPrice={defaultPrice ? formattedDefaultPriceAti : 0}
                     />
                   ),
                 }
@@ -274,15 +275,13 @@ export const RegistrationForm = ({
       workspace.url,
       facilityList,
       defaultPrice,
-      formattedDefaultPrice,
+      formattedDefaultPriceAti,
     ],
   );
 
   const onSubmit = async (values: any) => {
     try {
       const result = extractCustomData(values, 'contactAttrs', metaFields);
-
-      if (isLoggedIn) result.emailAddress = user?.emailAddress?.address;
 
       result.sequence = 0;
 
@@ -344,7 +343,9 @@ export const RegistrationForm = ({
               </p>
               <p className="text-xs font-medium text-black">
                 {i18n.t('Price with tax')}:{' '}
-                <span className="text-success">{displayAtiPrice}</span>
+                <span className="text-success font-semibold">
+                  {formattedDefaultPriceAti}
+                </span>
               </p>
             </div>
           </CardDescription>
@@ -366,7 +367,7 @@ export const RegistrationForm = ({
                 <SubscriptionsPriceView
                   {...props}
                   list={facilityList}
-                  eventPrice={defaultPrice ?? 0}
+                  eventPrice={Number(displayAti) ?? 0}
                   currency={eventProduct?.saleCurrency}
                 />
               ),

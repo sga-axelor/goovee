@@ -99,7 +99,7 @@ export function SubscriptionsView({
                 </FormControl>
                 <FormLabel className="text-sm font-normal !mt-0">
                   {subscription.facility} ({isSecondary ? '+' : ''}
-                  {subscription.formattedPrice})
+                  {subscription.formattedPriceAti})
                 </FormLabel>
               </FormItem>
             )}

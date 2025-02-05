@@ -61,7 +61,8 @@ export function SubscriptionsPriceView({
   const totalPrice = useMemo(() => {
     return participants?.reduce((total, participant) => {
       const participantSubscriptionsTotal = participant.subscriptionSet.reduce(
-        (sum: number, subscription: any) => sum + subscription.price,
+        (sum: number, subscription: any) =>
+          sum + Number(subscription.displayAti),
         0,
       );
 
