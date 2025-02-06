@@ -160,7 +160,7 @@ export async function findEvent({
     .findOne({
       where: {
         ...(id ? {id} : {}),
-        ...(slug ? {slug} : {}),
+        ...(slug ? {slug} : {slug: {ne: null}}),
         ...(await filterPrivate({user, tenantId})),
         eventCategorySet: {
           ...(await filterPrivate({user, tenantId})),
@@ -394,6 +394,7 @@ export async function findEvents({
   const currentDateTime = dayjs().toISOString();
   const todayStartTime = dayjs().startOf(DAY).toISOString();
   const whereClause = {
+    slug: {ne: null},
     eventCategorySet: {
       workspace: {
         id: workspace?.id,
@@ -597,7 +598,7 @@ export async function findEventConfig({
   };
 
   const eventConfig = await client.aOSPortalEvent.findOne({
-    where: {id},
+    where: {id, slug: {ne: null}},
     select: {
       isPrivate: true,
       isHidden: true,
