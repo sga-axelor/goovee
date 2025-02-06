@@ -111,7 +111,7 @@ export function EventPayments({
   }
 
   return (
-    <>
+    <div>
       {allowStripe && (
         <Stripe
           amount={total}
@@ -127,7 +127,7 @@ export function EventPayments({
           onApprove={redirectToEvents}
         />
       )}
-    </>
+    </div>
   );
 }
 
