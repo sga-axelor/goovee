@@ -8,6 +8,7 @@ import {ModelMap, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import type {ID, Participant, PortalWorkspace, User} from '@/types';
+import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
@@ -20,6 +21,7 @@ import {
 } from '@/comments';
 import {addComment, findComments} from '@/comments/orm';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {createInvoice} from '@/subapps/events/common/actions/payments';
 import {
   validate,
   withSubapp,
@@ -31,16 +33,12 @@ import {
   findEvents,
 } from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
-import {
-  getEventContacts,
-  registerParticipants,
-} from '@/subapps/events/common/orm/registration';
+import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {
   canEmailBeRegistered,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
-import {ActionResponse} from '@/types/action';
 import {zodParseFormData} from '@/utils/formdata';
 
 export async function getAllEvents({
@@ -224,19 +222,31 @@ export async function registerParticipantsAction({
   validatedParticipants,
   workspaceURL,
   tenantId,
+  isPaid,
 }: {
   validatedParticipants: Participant[];
   eventId: any;
   workspaceURL: string;
   tenantId: string;
+  isPaid?: boolean;
 }) {
   try {
-    const registration = await registerParticipants({
+    const registration: any = await registerParticipants({
       eventId,
       workspaceURL,
       participants: validatedParticipants,
       tenantId,
     });
+
+    if (registration && isPaid) {
+      // TODO: handle invoice result and show error messages
+      const invoiceResult = await createInvoice({
+        workspaceURL,
+        tenantId,
+        registrationId: registration?.id,
+        eventId,
+      });
+    }
 
     return {
       success: true,
@@ -252,10 +262,14 @@ export async function register({
   eventId,
   values,
   workspace: {url: workspaceURL},
+  isPaid = false,
 }: {
   eventId: any;
   values: any;
-  workspace: PortalWorkspace;
+  workspace: {
+    url: PortalWorkspace['url'];
+  };
+  isPaid?: boolean;
 }) {
   const validationResult = await validateRegistration({
     eventId,
@@ -272,6 +286,7 @@ export async function register({
     validatedParticipants: validationResult.validatedParticipants,
     workspaceURL: validationResult.workspaceURL,
     tenantId: validationResult.tenantId,
+    isPaid,
   });
 }
 

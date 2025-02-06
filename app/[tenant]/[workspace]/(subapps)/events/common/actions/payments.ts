@@ -1,18 +1,25 @@
 'use server';
 
 import axios from 'axios';
+import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {findWorkspace} from '@/orm/workspace';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
-import {ID} from '@/types';
+import {ID, PaymentOption} from '@/types';
+import {TENANT_HEADER} from '@/middleware';
+import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
+import {isPaymentOptionAvailable} from '@/utils/payment';
+import {findPartnerByEmail} from '@/orm/partner';
+import {createStripeOrder} from '@/lib/core/payment/stripe/actions';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEvent} from '@/subapps/events/common/orm/event';
 import {findEventRegistration} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
+import {register} from '@/subapps/events/common/actions/actions';
 
 export async function createInvoice({
   workspaceURL,
@@ -95,4 +102,207 @@ export async function createInvoice({
       ),
     );
   }
+}
+
+export async function createStripeCheckoutSession({
+  record,
+  amount,
+  workspaceURL,
+  email,
+}: {
+  record: any;
+  amount: number;
+  workspaceURL: string;
+  email: string;
+}) {
+  if (!record?.id || !amount) {
+    return error(await t('Missing required fields.'));
+  }
+
+  if (!workspaceURL) {
+    return error(await t('Bad request.'));
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(await t('Invalid tenant.'));
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return error(await t('Invalid workspace.'));
+  }
+
+  const hasEventAccess = await findSubappAccess({
+    code: SUBAPP_CODES.events,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+  if (!hasEventAccess) {
+    return error(await t('Unauthorized app access!'));
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return error(await t('Online payment is not available.'));
+  }
+  const paymentOptionSet = workspace?.config?.paymentOptionSet;
+
+  const allowStripe = isPaymentOptionAvailable(
+    paymentOptionSet,
+    PaymentOption.stripe,
+  );
+
+  if (!allowStripe) {
+    return error(await t('Stripe is not available.'));
+  }
+
+  const event = await findEvent({
+    id: record.id,
+    tenantId,
+    workspace,
+  });
+
+  if (!event) {
+    return error(await t('Invalid event'));
+  }
+
+  const currency = event.currency;
+
+  let emailAddress;
+  let payerId;
+  if (user) {
+    const payer = await findPartnerByEmail(user.email, tenantId);
+    emailAddress = payer?.emailAddress?.address!;
+    payerId = payer?.id!;
+  } else {
+    emailAddress = email;
+    payerId = email;
+  }
+  const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
+
+  try {
+    const session = await createStripeOrder({
+      customer: {
+        id: payerId,
+        email: emailAddress,
+      },
+      name: await t('Event Registration'),
+      amount: String(amount) as string,
+      currency: currencyCode,
+      url: {
+        success: `${workspaceURL}/${SUBAPP_CODES.events}/${event.slug}/register?stripe_session_id={CHECKOUT_SESSION_ID}`,
+        error: `${workspaceURL}/${SUBAPP_CODES.events}/${event.slug}/register?stripe_error=true`,
+      },
+    });
+    return {
+      client_secret: session.client_secret,
+      url: session.url,
+    };
+  } catch (err) {
+    console.log('Stripe checkout session error:', err);
+    return {
+      error: true,
+      message: await t((err as any)?.message),
+    };
+  }
+}
+
+export async function validateStripePayment({
+  stripeSessionId,
+  values,
+  workspaceURL,
+  record,
+}: {
+  stripeSessionId: string;
+  values: any;
+  workspaceURL: string;
+  record: {
+    id: string | number;
+  };
+}) {
+  if (!record?.id || !values) {
+    return error(await t('Missing required values!'));
+  }
+
+  if (!workspaceURL) {
+    return error(await t('Workspace not provided!'));
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(await t('Invalid tenant'));
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return error(await t('Invalid workspace'));
+  }
+
+  const hasEventsAccess = await findSubappAccess({
+    code: SUBAPP_CODES.events,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+
+  if (!hasEventsAccess) {
+    return error(await t('Unauthorized App access!'));
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return error(await t('Online payment is not available'));
+  }
+
+  const paymentOptionSet = workspace?.config?.paymentOptionSet;
+
+  const allowStripe = isPaymentOptionAvailable(
+    paymentOptionSet,
+    PaymentOption.stripe,
+  );
+
+  if (!allowStripe) {
+    return error(await t('Stripe is not available.'));
+  }
+
+  if (!stripeSessionId) {
+    return error(await t('Bad Request'));
+  }
+  const resgistration = await register({
+    eventId: record.id,
+    values,
+    workspace: {
+      url: workspaceURL,
+    },
+    isPaid: true,
+  });
+
+  if (!resgistration || resgistration?.error) {
+    return error(
+      await t(
+        resgistration.message ||
+          'Something went wrong while event registration.',
+      ),
+    );
+  }
+
+  return {success: true, data: resgistration.data};
 }

@@ -78,6 +78,10 @@ export function SubscriptionsPriceView({
 
   const hasParticipants = validParticipants?.length > 0;
 
+  useEffect(() => {
+    form.setValue('totalPrice', totalPrice);
+  }, [totalPrice, form]);
+
   return (
     <div className="flex flex-col gap-6">
       <Separator className="bg-zinc-300" />

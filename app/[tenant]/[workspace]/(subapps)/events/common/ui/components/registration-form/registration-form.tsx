@@ -30,6 +30,7 @@ import {
   SubscriptionsPriceView,
   SubscriptionsView,
   EmailFormField,
+  EventPayments,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {
@@ -67,10 +68,8 @@ export const RegistrationForm = ({
 
   const isLoggedIn = !!user?.emailAddress;
   const showContactsList = isLoggedIn && !user.isContact;
-
-  const buttonTitle = i18n.t(
-    `Register${defaultPrice || facilityList?.length ? ' and pay' : ''}`,
-  );
+  const canPay = defaultPrice || facilityList?.length;
+  const buttonTitle = i18n.t(`Register${canPay ? ' and pay' : ''}`);
 
   const basicPerson = useMemo(
     () => [
@@ -299,7 +298,7 @@ export const RegistrationForm = ({
       const response = await register({
         eventId,
         values: result,
-        workspace,
+        workspace: {url: workspace.url},
       });
 
       if (response.success) {
@@ -376,6 +375,18 @@ export const RegistrationForm = ({
           submitTitle={buttonTitle}
           mode={'onChange'}
           onSubmit={onSubmit}
+          submitButton={
+            canPay
+              ? ({form}: any) => (
+                  <EventPayments
+                    workspace={workspace}
+                    eventId={eventId}
+                    form={form}
+                    metaFields={metaFields}
+                  />
+                )
+              : null
+          }
         />
       </CardContent>
     </Card>
