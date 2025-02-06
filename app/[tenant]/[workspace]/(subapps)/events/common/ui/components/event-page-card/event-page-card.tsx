@@ -24,7 +24,6 @@ import {SUBAPP_CODES} from '@/constants';
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCard} from '@/subapps/events/common/ui/components';
 import {
-  EDIT_MY_REGISTRATION,
   REGISTER_TAG,
   REGISTER_TO_EVENT,
 } from '@/subapps/events/common/constants';
@@ -112,7 +111,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
           ) : null}
         </div>
       </CardContent>
-      {isRegistrationAllow && (
+      {isRegistrationAllow && !eventDetails.isRegistered && (
         <CardFooter className="px-4 pb-4">
           {
             <Link
@@ -121,9 +120,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
               <Button
                 size="sm"
                 className="w-full text-base font-medium bg-success hover:bg-success-dark">
-                {!eventDetails.isRegistered
-                  ? i18n.t(REGISTER_TO_EVENT)
-                  : i18n.t(EDIT_MY_REGISTRATION)}
+                {i18n.t(REGISTER_TO_EVENT)}
               </Button>
             </Link>
           }
