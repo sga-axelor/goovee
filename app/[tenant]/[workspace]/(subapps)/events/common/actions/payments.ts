@@ -49,7 +49,6 @@ export async function createInvoice({
     }
 
     const event = await findEvent({id: eventId, workspace, tenantId, user});
-
     if (!event) {
       return error(await t('Event not found.'));
     }
@@ -66,6 +65,7 @@ export async function createInvoice({
     }
 
     const payload = {
+      currencyCode: event?.currency?.code,
       partnerWorkspaceId: workspace.id,
       registrationId: eventRegistration.id,
     };

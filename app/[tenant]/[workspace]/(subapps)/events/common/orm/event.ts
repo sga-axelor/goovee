@@ -299,6 +299,10 @@ export async function findEvent({
     formattedDefaultPrice,
     formattedDefaultPriceAti,
     facilityList: await Promise.all(updatedFacilityList || []),
+    currency: {
+      id: productsFromWS?.currencyId,
+      code: productsFromWS?.currencyCode,
+    },
   };
 }
 
