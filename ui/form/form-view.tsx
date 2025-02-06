@@ -24,11 +24,13 @@ export const FormView = ({
   onSubmit,
   submitTitle,
   mode = 'onSubmit',
+  submitButton,
 }: {
   fields: any[];
   onSubmit: (values: any) => Promise<void>;
   submitTitle: string;
   mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
+  submitButton?: any;
 }) => {
   const fields = useMemo(() => sortFields(_fields), [_fields]);
 
@@ -130,14 +132,20 @@ export const FormView = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
+      <form className="space-y-6 w-full">
         {visibleFields.map(_i => renderItem(_i, _i.name))}
-        <Button
-          className="text-base font-medium leading-6 p-3 w-full bg-success hover:bg-success-dark"
-          type="submit"
-          disabled={isSubmitting || (isSubmitted && !isValid)}>
-          {i18n.t(submitTitle)}
-        </Button>
+        {(submitButton && React.createElement(submitButton, {form})) || (
+          <Button
+            className="text-base font-medium leading-6 p-3 w-full bg-success hover:bg-success-dark"
+            type="submit"
+            onClick={e => {
+              e.preventDefault();
+              form.handleSubmit(onSubmit)();
+            }}
+            disabled={isSubmitting || (isSubmitted && !isValid)}>
+            {i18n.t(submitTitle)}
+          </Button>
+        )}
       </form>
     </Form>
   );
