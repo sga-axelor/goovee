@@ -172,6 +172,14 @@ export async function validateRegistration({
       return error(await t('Email is required'));
     }
 
+    if (
+      !event.isPublic &&
+      !new Set(otherPeople.map((p: Participant) => p.emailAddress)).size ===
+        otherPeople.length
+    ) {
+      return error(await t('Individual email address must be unique'));
+    }
+
     const canRegisterList = await Promise.all(
       otherPeople.map((participant: Participant) =>
         canEmailBeRegistered({
