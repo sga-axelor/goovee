@@ -60,6 +60,7 @@ export const RegistrationForm = ({
     id: eventId,
     eventProduct = null,
     slug,
+    isPrivate = false,
   } = eventDetails || {};
 
   const router = useRouter();
@@ -239,7 +240,9 @@ export const RegistrationForm = ({
         customComponent: (props: any) =>
           ArrayComponent({
             ...props,
-            addTitle: 'Add a new person that does not have an account',
+            ...(!isPrivate && {
+              addTitle: 'Add a new person that does not have an account',
+            }),
           }),
         subSchema: externalParticipantForm.map(field =>
           field.name === 'emailAddress'
@@ -275,6 +278,7 @@ export const RegistrationForm = ({
       facilityList,
       defaultPrice,
       formattedDefaultPriceAti,
+      isPrivate,
     ],
   );
 

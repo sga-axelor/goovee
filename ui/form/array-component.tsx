@@ -86,13 +86,17 @@ export const ArrayComponent = ({
   return (
     <div className="space-y-6">
       {(form.watch(field.name) ?? []).map(renderArrayItem)}
-      <Button
-        type="button"
-        className={`bg-success-light hover:bg-success p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full group`}
-        onClick={addItem}>
-        <MdAdd className="w-6 h-6 text-success group-hover:text-white" />
-        <p className="text-sm font-normal text-center text-black">{addTitle}</p>
-      </Button>
+      {addTitle && (
+        <Button
+          type="button"
+          className={`bg-success-light hover:bg-success p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full group`}
+          onClick={addItem}>
+          <MdAdd className="w-6 h-6 text-success group-hover:text-white" />
+          <p className="text-sm font-normal text-center text-black">
+            {addTitle}
+          </p>
+        </Button>
+      )}
     </div>
   );
 };

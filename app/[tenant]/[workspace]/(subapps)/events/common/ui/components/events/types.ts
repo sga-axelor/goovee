@@ -39,6 +39,10 @@ export interface Event {
     },
   ];
   slug: string;
+  isPrivate: boolean;
+  isHidden: boolean;
+  isPublic: boolean;
+  isLoginNotNeeded: boolean;
 }
 export interface EventsProps {
   events: Event[];
