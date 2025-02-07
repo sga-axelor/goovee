@@ -10,7 +10,6 @@ export interface Event {
   };
   eventEndDateTime: string;
   eventDescription: string;
-  eventDegressiveNumberPartcipant: number;
   eventCategorySet: [Category];
   eventAllowRegistration: boolean;
   eventAllowMultipleRegistrations: boolean;
@@ -43,6 +42,8 @@ export interface Event {
   isHidden: boolean;
   isPublic: boolean;
   isLoginNotNeeded: boolean;
+  maxParticipantPerEvent: number;
+  maxParticipantPerRegistration: number;
 }
 export interface EventsProps {
   events: Event[];

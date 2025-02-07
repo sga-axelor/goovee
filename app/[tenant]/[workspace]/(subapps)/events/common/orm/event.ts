@@ -152,7 +152,6 @@ export async function findEvent({
         eventStartDateTime: true,
         eventEndDateTime: true,
         eventAllDay: true,
-        eventDegressiveNumberPartcipant: true,
         eventAllowRegistration: true,
         eventAllowMultipleRegistrations: true,
         eventProduct: {
@@ -412,7 +411,6 @@ export async function findEvents({
         eventStartDateTime: true,
         eventEndDateTime: true,
         eventAllDay: true,
-        eventDegressiveNumberPartcipant: true,
         eventAllowRegistration: true,
         eventAllowMultipleRegistrations: true,
         eventProduct: {id: true, name: true, salePrice: true},
@@ -471,6 +469,8 @@ export type EventConfig = {
   partnerCategorySet?: {partners?: EventConfigPartner[]}[];
   partnerSet?: EventConfigPartner[];
   eventAllowRegistration?: boolean;
+  maxParticipantPerEvent?: number;
+  maxParticipantPerRegistration?: number;
 };
 
 export type EventConfigPartner = {
@@ -531,6 +531,8 @@ export async function findEventConfig({
       registrationList: {
         select: {participantList: {select: {emailAddress: true}}},
       },
+      maxParticipantPerEvent: true,
+      maxParticipantPerRegistration: true,
     },
   });
 

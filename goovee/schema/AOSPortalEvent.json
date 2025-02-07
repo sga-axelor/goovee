@@ -39,10 +39,6 @@
       "type": "String"
     },
     {
-      "name": "eventDegressiveNumberPartcipant",
-      "type": "Int"
-    },
-    {
       "name": "eventAllowRegistration",
       "type": "Boolean"
     },
@@ -110,6 +106,18 @@
     {
       "name": "isHidden",
       "type": "Boolean"
+    },
+    {
+      "name": "maxParticipantPerEvent",
+      "type": "Int"
+    },
+    {
+      "name": "maxParticipantPerEvent",
+      "type": "Int"
+    },
+    {
+      "name": "maxParticipantPerRegistration",
+      "type": "Int"
     }
   ]
 }
