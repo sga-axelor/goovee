@@ -8,9 +8,6 @@ import {error} from '@/subapps/events/common/utils';
 import {PartnerTypeMap} from '@/orm/partner';
 import {UserType} from '@/lib/core/auth/types';
 import {USER_CREATED_FROM} from '@/constants';
-import {ExpandRecursively} from '@/types/util';
-import {CreateArgs, CreateOptions} from '@goovee/orm';
-import {AOSPortalParticipant} from '@/goovee/.generated/models';
 
 export async function registerParticipants({
   eventId,
