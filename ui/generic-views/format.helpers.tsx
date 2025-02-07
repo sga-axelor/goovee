@@ -21,7 +21,10 @@ export async function getGenericFormContent(viewName: string) {
     schemaType: 'form',
   });
 
-  return formatSchema(schema?.items ?? [], metaFields ?? []);
+  return {
+    ...formatSchema(schema?.items ?? [], metaFields ?? []),
+    model: schema?.model,
+  };
 }
 
 export const formatSchema = (
@@ -74,7 +77,7 @@ export const formatSchema = (
 
 export async function getGenericGridContent(
   viewName: string,
-): Promise<{columns: Partial<Column>[]}> {
+): Promise<{columns: Partial<Column>[]; model?: string}> {
   const {schema} = await findView({name: viewName, schemaType: 'grid'});
 
   let columns: Partial<Column>[] = [];
@@ -92,5 +95,5 @@ export async function getGenericGridContent(
     }
   });
 
-  return {columns};
+  return {columns, model: schema?.model};
 }
