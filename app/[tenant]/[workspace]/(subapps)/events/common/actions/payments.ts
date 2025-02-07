@@ -15,6 +15,7 @@ import {isPaymentOptionAvailable} from '@/utils/payment';
 import {findPartnerByEmail} from '@/orm/partner';
 import {createStripeOrder} from '@/lib/core/payment/stripe/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
+import NotificationManager, {NotificationType} from '@/notification';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEvent} from '@/subapps/events/common/orm/event';
@@ -269,6 +270,15 @@ export async function validateStripePayment({
     return error(await t('Unauthorized App access!'));
   }
 
+  const event = await findEvent({
+    id: record.id,
+    tenantId,
+    workspace,
+  });
+  if (!event) {
+    return error(await t('Invalid event!'));
+  }
+
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return error(await t('Online payment is not available'));
   }
@@ -287,13 +297,12 @@ export async function validateStripePayment({
   if (!stripeSessionId) {
     return error(await t('Bad Request'));
   }
-  const resgistration = await register({
+  const resgistration: any = await register({
     eventId: record.id,
     values,
     workspace: {
       url: workspaceURL,
     },
-    isPaid: true,
   });
 
   if (!resgistration || resgistration?.error) {
@@ -305,9 +314,22 @@ export async function validateStripePayment({
     );
   }
 
-  // TODO: Add the invoice creation action here
+  const invoiceResult = await createInvoice({
+    workspaceURL,
+    tenantId,
+    registrationId: resgistration?.id,
+    eventId: event.id,
+  });
 
-  return {success: true, data: resgistration.data};
+  if (invoiceResult?.error) {
+    console.log('Invoice error:', invoiceResult.message);
+  }
+  // TODO: If invoice generatiion successfull, get the invoice and attach it to the mail for the main particiapnt
+
+  return {
+    success: true,
+    data: resgistration.data,
+  };
 }
 
 export async function paypalCaptureOrder({
@@ -363,6 +385,15 @@ export async function paypalCaptureOrder({
     return error(await t('Unauthorized App access!'));
   }
 
+  const event = await findEvent({
+    id: record.id,
+    tenantId,
+    workspace,
+  });
+  if (!event) {
+    return error(await t('Invalid event!'));
+  }
+
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return error(await t('Online payment is not available'));
   }
@@ -391,12 +422,11 @@ export async function paypalCaptureOrder({
     }
 
     const resgistration = await register({
-      eventId: record.id,
+      eventId: event.id,
       values,
       workspace: {
         url: workspaceURL,
       },
-      isPaid: true,
     });
 
     if (!resgistration || resgistration?.error) {
@@ -408,7 +438,17 @@ export async function paypalCaptureOrder({
       );
     }
 
-    // TODO: Add the invoice creation action here
+    const invoiceResult = await createInvoice({
+      workspaceURL,
+      tenantId,
+      registrationId: resgistration?.id,
+      eventId: event.id,
+    });
+
+    if (invoiceResult?.error) {
+      console.log('Invoice error:', invoiceResult.message);
+    }
+    // TODO: If invoice generatiion successfull, get the invoice and attach it to the mail for the main particiapnt
 
     return {success: true, data: resgistration.data};
   } catch (err) {

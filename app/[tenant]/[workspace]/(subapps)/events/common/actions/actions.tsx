@@ -270,13 +270,11 @@ export async function registerParticipantsAction({
   validatedParticipants,
   workspaceURL,
   tenantId,
-  isPaid,
 }: {
   validatedParticipants: Participant[];
   eventId: any;
   workspaceURL: string;
   tenantId: string;
-  isPaid?: boolean;
 }) {
   try {
     const registration: any = await registerParticipants({
@@ -285,16 +283,6 @@ export async function registerParticipantsAction({
       participants: validatedParticipants,
       tenantId,
     });
-
-    if (registration && isPaid) {
-      // TODO: handle invoice result and show error messages
-      const invoiceResult = await createInvoice({
-        workspaceURL,
-        tenantId,
-        registrationId: registration?.id,
-        eventId,
-      });
-    }
 
     return {
       success: true,
@@ -310,14 +298,12 @@ export async function register({
   eventId,
   values,
   workspace: {url: workspaceURL},
-  isPaid = false,
 }: {
   eventId: any;
   values: any;
   workspace: {
     url: PortalWorkspace['url'];
   };
-  isPaid?: boolean;
 }) {
   const validationResult = await validateRegistration({
     eventId,
@@ -334,8 +320,9 @@ export async function register({
     validatedParticipants: validationResult.validatedParticipants,
     workspaceURL: validationResult.workspaceURL,
     tenantId: validationResult.tenantId,
-    isPaid,
   });
+
+  // TODO: Add email generation for registered user
 }
 
 export async function fetchContacts({
