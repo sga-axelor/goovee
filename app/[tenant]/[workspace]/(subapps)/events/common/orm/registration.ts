@@ -115,3 +115,31 @@ export async function getEventContacts({
   );
   return partners.filter(Boolean) as EventContact[];
 }
+
+export async function findEventRegistration({
+  workspaceURL,
+  tenantId,
+  id,
+  eventId,
+}: {
+  workspaceURL: string;
+  tenantId: Tenant['id'];
+  id: ID;
+  eventId: ID;
+}) {
+  if (![workspaceURL, tenantId, id, eventId].every(Boolean)) {
+    return null;
+  }
+
+  const client = await manager.getClient(tenantId);
+  if (!client) return null;
+
+  const result = await client.aOSRegistration.findOne({
+    where: {
+      id,
+      event: {id: eventId},
+    },
+  });
+
+  return result;
+}
