@@ -78,7 +78,7 @@ export const CustomSelect = ({
           });
           invalidParticipants.push(_s.id);
         } else {
-          customParticipants.push({
+          customParticipants.unshift({
             ...createDefaultValues(subSchema),
             ..._s,
             valueId: _s.id,
