@@ -9,11 +9,10 @@ import {extractCustomData} from '@/ui/form';
 import {useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {getitem, setitem} from '@/storage/local';
-import {Stripe} from '@/ui/components/payment/stripe';
 import {PREFIX_EVENT_FORM_KEY, SUBAPP_CODES} from '@/constants';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {Paypal} from '@/ui/components/payment/paypal';
+import {Paypal, Stripe} from '@/ui/components/payment';
 
 // ---- LOCAL IMPORTS ---- //
 import {validateRegistration} from '@/subapps/events/common/actions/actions';
