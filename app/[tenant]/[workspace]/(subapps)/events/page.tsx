@@ -9,7 +9,7 @@ import {workspacePathname} from '@/utils/workspace';
 // ---- LOCAL IMPORTS ---- //
 import {findEvents} from '@/subapps/events/common/orm/event';
 import Content from '@/subapps/events/content';
-import {LIMIT} from '@/subapps/events/common/constants';
+import {EVENT_TYPE, LIMIT} from '@/subapps/events/common/constants';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 
 export default async function Page(context: any) {
@@ -45,9 +45,15 @@ export default async function Page(context: any) {
     limit: LIMIT,
     page: page,
     categoryids: category,
-    day: new Date(date).getDate() || undefined,
-    month: new Date(date).getMonth() + 1 || undefined,
-    year: new Date(date).getFullYear() || undefined,
+    ...(date
+      ? {
+          day: new Date(date).getDate() || undefined,
+          month: new Date(date).getMonth() + 1 || undefined,
+          year: new Date(date).getFullYear() || undefined,
+        }
+      : {
+          eventType: EVENT_TYPE.UPCOMING,
+        }),
     workspace,
     tenantId: tenant,
     user,
