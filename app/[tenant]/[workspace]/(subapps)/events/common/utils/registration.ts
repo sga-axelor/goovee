@@ -4,6 +4,7 @@ import {
   type EventConfigPartner,
   findPartnerByEmailForEvent,
 } from '../orm/event';
+import {endOfDay} from 'date-fns';
 
 export function isAlreadyRegistered({
   event,
@@ -105,4 +106,16 @@ export function getTotalRegisteredParticipants(event: EventConfig): number {
   return event.registrationList.reduce((acc, registration) => {
     return acc + (registration.participantList?.length || 0);
   }, 0);
+}
+
+export function hasEventEnded(event: {
+  eventStartDateTime?: Date | string | null;
+  eventEndDateTime?: Date | string | null;
+  eventAllDay?: boolean;
+}): boolean {
+  const startDate = new Date(event.eventStartDateTime ?? '');
+  const endDate = new Date(event.eventEndDateTime ?? '');
+  const now = Date.now();
+  if (event.eventAllDay) return now > endOfDay(startDate).getTime();
+  return now > endDate.getTime();
 }

@@ -39,6 +39,7 @@ import {error} from '@/subapps/events/common/utils';
 import {
   canEmailBeRegistered,
   getTotalRegisteredParticipants,
+  hasEventEnded,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
 import {zodParseFormData} from '@/utils/formdata';
@@ -149,13 +150,7 @@ export async function validateRegistration({
     return error(await t('Registration not started for this event'));
   }
 
-  const startDate = new Date(event.eventStartDateTime ?? '');
-  const endDate = new Date(event.eventEndDateTime ?? '');
-  const now = Date.now();
-  if (
-    now > endDate.getTime() ||
-    (event.eventAllDay && now > endOfDay(startDate).getTime())
-  ) {
+  if (hasEventEnded(event)) {
     return error(await t('Event has already ended'));
   }
 
