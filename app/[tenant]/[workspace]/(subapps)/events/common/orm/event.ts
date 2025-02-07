@@ -26,6 +26,11 @@ import {
 } from '@/subapps/events/common/actions/validation';
 import {EVENT_TYPE} from '@/subapps/events/common/constants';
 import {findProductsFromWS} from '@/subapps/events/common/orm/product';
+import {
+  AOSPortalEvent,
+  AOSPortalEventCategory,
+} from '@/goovee/.generated/models';
+import {and} from '@/utils/orm';
 
 const buildDateFilters = ({
   eventStartDateTimeCriteria,
@@ -40,35 +45,15 @@ const buildDateFilters = ({
   if (year) {
     return {
       OR: [
+        {eventStartDateTime: {between: [startDate, endDate]}},
+        {eventEndDateTime: {between: [startDate, endDate]}},
         {
-          eventStartDateTime: {
-            between: [startDate, endDate],
-          },
-        },
-        {
-          eventEndDateTime: {
-            between: [startDate, endDate],
-          },
-        },
-        {
-          AND: [
-            {
-              eventStartDateTime: {
-                le: startDate,
-              },
-            },
-            {
-              eventEndDateTime: {
-                ge: endDate,
-              },
-            },
-          ],
+          eventStartDateTime: {le: startDate},
+          eventEndDateTime: {ge: endDate},
         },
       ],
     };
   }
-
-  return {};
 };
 
 const buildEventTypeFilters = ({
@@ -85,57 +70,39 @@ const buildEventTypeFilters = ({
       return {eventStartDateTime: {gt: currentDateTime}};
     case EVENT_TYPE.ONGOING:
       return {
-        AND: [
+        OR: [
           {
-            OR: [
-              {
-                AND: [
-                  {eventStartDateTime: {le: currentDateTime}},
-                  {eventEndDateTime: {ge: currentDateTime}},
-                ],
-              },
-              {
-                AND: [
-                  {
-                    eventStartDateTime: {
-                      between: [todayStartTime, currentDateTime],
-                    },
-                  },
-                  {eventAllDay: {eq: true}},
-                ],
-              },
-            ],
+            eventStartDateTime: {le: currentDateTime},
+            eventEndDateTime: {ge: currentDateTime},
+          },
+          {
+            eventStartDateTime: {between: [todayStartTime, currentDateTime]},
+            eventAllDay: {eq: true},
           },
         ],
       };
     case EVENT_TYPE.PAST:
       return {
-        AND: [
+        OR: [
           {
-            OR: [
+            eventStartDateTime: {lt: currentDateTime},
+            eventEndDateTime: {lt: currentDateTime},
+          },
+          {
+            eventAllDay: {eq: true},
+            AND: [
+              {eventStartDateTime: {lt: currentDateTime}},
               {
-                AND: [
-                  {eventStartDateTime: {lt: currentDateTime}},
-                  {eventEndDateTime: {lt: currentDateTime}},
-                ],
-              },
-              {
-                AND: [
-                  {eventAllDay: {eq: true}},
-                  {eventStartDateTime: {lt: currentDateTime}},
-                  {
-                    eventStartDateTime: {
-                      notBetween: [todayStartTime, currentDateTime],
-                    },
-                  },
-                ],
+                eventStartDateTime: {
+                  notBetween: [todayStartTime, currentDateTime],
+                },
               },
             ],
           },
         ],
       };
     default:
-      return {};
+      return;
   }
 };
 
@@ -399,61 +366,32 @@ export async function findEvents({
       workspace: {
         id: workspace?.id,
       },
-      ...(categoryids?.length
-        ? {
-            id: {
-              in: categoryids,
-            },
-          }
-        : {}),
-      ...(await filterPrivate({user, tenantId})),
+      ...and<AOSPortalEventCategory>([
+        categoryids?.length && {id: {in: categoryids}},
+        await filterPrivate({user, tenantId}),
+      ]),
     },
-    ...(await filterPrivate({user, tenantId})),
-    ...(ids?.length
-      ? {
-          id: {
-            in: ids,
+    ...and<AOSPortalEvent>([
+      await filterPrivate({user, tenantId}),
+      ids?.length && {id: {in: ids}},
+      search && {eventTitle: {like: `%${search}%`}},
+      buildDateFilters({eventStartDateTimeCriteria, year, startDate, endDate}),
+      eventType &&
+        buildEventTypeFilters({eventType, todayStartTime, currentDateTime}),
+      onlyRegisteredEvent
+        ? {registrationList: {participantList: {emailAddress: user?.email}}}
+        : {
+            OR: [{isHidden: false}, {isHidden: null}].concat(
+              user?.email
+                ? ({
+                    registrationList: {
+                      participantList: {emailAddress: user?.email},
+                    },
+                  } as any)
+                : [],
+            ),
           },
-        }
-      : {}),
-    ...(search
-      ? {
-          eventTitle: {
-            like: `%${search}%`,
-          },
-        }
-      : {}),
-    ...buildDateFilters({eventStartDateTimeCriteria, year, startDate, endDate}),
-    ...(eventType
-      ? buildEventTypeFilters({
-          eventType,
-          todayStartTime,
-          currentDateTime,
-        })
-      : {}),
-    ...(onlyRegisteredEvent
-      ? {
-          registrationList: {
-            participantList: {
-              emailAddress: user?.email,
-            },
-          },
-        }
-      : {
-          AND: [
-            {
-              OR: [{isHidden: false}, {isHidden: null}].concat(
-                user?.email
-                  ? ({
-                      registrationList: {
-                        participantList: {emailAddress: user?.email},
-                      },
-                    } as any)
-                  : [],
-              ),
-            },
-          ],
-        }),
+    ]),
   };
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
@@ -468,17 +406,8 @@ export async function findEvents({
       select: {
         id: true,
         eventTitle: true,
-        eventCategorySet: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-          },
-        },
-        eventImage: {
-          id: true,
-          filePath: true,
-        },
+        eventCategorySet: {select: {id: true, name: true, color: true}},
+        eventImage: {id: true, filePath: true},
         eventDescription: true,
         eventStartDateTime: true,
         eventEndDateTime: true,
@@ -486,20 +415,12 @@ export async function findEvents({
         eventDegressiveNumberPartcipant: true,
         eventAllowRegistration: true,
         eventAllowMultipleRegistrations: true,
-        eventProduct: {
-          id: true,
-          name: true,
-          salePrice: true,
-        },
+        eventProduct: {id: true, name: true, salePrice: true},
         registrationList: {
           select: {
             participantList: {
-              where: {
-                ...(user?.email ? {emailAddress: user?.email} : {}),
-              },
-              select: {
-                emailAddress: true,
-              },
+              where: {...(user?.email ? {emailAddress: user?.email} : {})},
+              select: {emailAddress: true},
             },
           },
         },
