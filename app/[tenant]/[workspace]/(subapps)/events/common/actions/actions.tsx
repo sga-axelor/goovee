@@ -1,7 +1,6 @@
 'use server';
 
 import {headers} from 'next/headers';
-import {endOfDay} from 'date-fns';
 
 // ---- CORE IMPORTS ----//
 import {getSession} from '@/auth';
