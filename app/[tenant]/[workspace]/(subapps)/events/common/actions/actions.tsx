@@ -4,14 +4,6 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
 import {getSession} from '@/auth';
-import {ModelMap, SUBAPP_CODES} from '@/constants';
-import {t} from '@/locale/server';
-import {TENANT_HEADER} from '@/middleware';
-import type {ID, Participant, PortalWorkspace, User} from '@/types';
-import {ActionResponse} from '@/types/action';
-import {clone} from '@/utils';
-
-// ---- LOCAL IMPORTS ---- //
 import {
   CreateComment,
   CreateCommentPropsSchema,
@@ -20,7 +12,16 @@ import {
   isCommentEnabled,
 } from '@/comments';
 import {addComment, findComments} from '@/comments/orm';
+import {ModelMap, SUBAPP_CODES} from '@/constants';
+import {t} from '@/locale/server';
+import {TENANT_HEADER} from '@/middleware';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import type {ID, Participant, PortalWorkspace, User} from '@/types';
+import {ActionResponse} from '@/types/action';
+import {clone} from '@/utils';
+import {zodParseFormData} from '@/utils/formdata';
+
+// ---- LOCAL IMPORTS ---- //
 import {createInvoice} from '@/subapps/events/common/actions/payments';
 import {
   validate,
@@ -41,7 +42,6 @@ import {
   hasEventEnded,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
-import {zodParseFormData} from '@/utils/formdata';
 
 export async function getAllEvents({
   limit,
