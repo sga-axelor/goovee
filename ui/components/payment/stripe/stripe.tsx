@@ -1,56 +1,55 @@
 'use client';
+
 import {useCallback, useEffect, useRef} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components';
 import {i18n} from '@/locale';
 import {useSearchParams, useToast} from '@/ui/hooks';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {getitem, setitem} from '@/storage/local';
-
-// ---- LOCAL IMPORTS ---- //
-import {
-  createStripeCheckoutSession,
-  validateStripePayment,
-} from '@/app/[tenant]/[workspace]/(subapps)/events/common/actions/payments';
 
 type StripeProps = {
-  record: {
-    id: string | number;
-  };
   disabled?: boolean;
-  amount: number;
-  onApprove: (result: any) => void;
+  successMessage?: string;
+  errorMessage?: string;
   onValidate: () => Promise<boolean>;
+  onCreateCheckOutSession: () => Promise<{
+    url?: string | null;
+    error?: boolean;
+    message?: string;
+    client_secret?: string | null;
+  }>;
+  shouldValidateData: () => Promise<boolean>;
+  onValidateSession: (params: {stripeSessionId: string}) => Promise<any>;
+  onApprove?: (result: any) => void;
+  onPaymentSuccess?: () => any;
 };
 
 export function Stripe({
-  record,
-  amount,
   disabled,
-  onApprove,
+  successMessage = 'Payment successful!',
+  errorMessage = 'Error processing payment, try again.',
   onValidate,
+  onCreateCheckOutSession,
+  shouldValidateData,
+  onValidateSession,
+  onPaymentSuccess,
+  onApprove,
 }: StripeProps) {
   const {toast} = useToast();
-  const {workspaceURL} = useWorkspace();
   const {searchParams} = useSearchParams();
   const validateRef = useRef(false);
 
   const handleCreateCheckoutSession = async (event: any) => {
     event.preventDefault();
 
-    try {
+    if (onValidate) {
       const isValid = await onValidate();
       if (!isValid) {
         return;
       }
-      const formValues: any = await getitem('values').catch(() => {});
-      const result = await createStripeCheckoutSession({
-        record,
-        amount,
-        workspaceURL,
-        email: formValues.emailAddress,
-      });
+    }
+    try {
+      const result = await onCreateCheckOutSession();
 
       if (result.error) {
         toast({
@@ -63,6 +62,7 @@ export function Stripe({
       const {url} = result;
       window.location.assign(url as string);
     } catch (err) {
+      console.error('Error while creating checkout session:', err);
       toast({
         variant: 'destructive',
         title: i18n.t('Error processing stripe payment, try again.'),
@@ -72,31 +72,30 @@ export function Stripe({
 
   const handleValidateStripePayment = useCallback(
     async ({stripeSessionId}: {stripeSessionId: string}) => {
-      const formValues: any = await getitem('values').catch(() => {});
+      const isValid = shouldValidateData ? await shouldValidateData() : true;
 
-      if (!(stripeSessionId && formValues)) {
+      if (!(stripeSessionId && isValid)) {
         return;
       }
+
       try {
-        const result: any = await validateStripePayment({
+        const result: any = await onValidateSession({
           stripeSessionId,
-          workspaceURL,
-          values: formValues,
-          record,
         });
         if (result.error) {
           toast({
             variant: 'destructive',
-            title: i18n.t(
-              result.message || 'Event resgitration is not successfull!',
-            ),
+            title: i18n.t(result.message || errorMessage),
           });
         } else {
           toast({
             variant: 'success',
-            title: i18n.t('Event Registration is successfull!'),
+            title: i18n.t(successMessage),
           });
-          await setitem('values', null);
+          if (onPaymentSuccess) {
+            onPaymentSuccess();
+          }
+
           onApprove?.(result);
         }
       } catch (err) {
@@ -106,7 +105,15 @@ export function Stripe({
         });
       }
     },
-    [workspaceURL, record, toast, onApprove],
+    [
+      errorMessage,
+      successMessage,
+      shouldValidateData,
+      onValidateSession,
+      toast,
+      onPaymentSuccess,
+      onApprove,
+    ],
   );
 
   useEffect(() => {
