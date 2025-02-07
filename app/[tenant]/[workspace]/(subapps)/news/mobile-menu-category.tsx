@@ -4,21 +4,12 @@ import {useCallback, useEffect, useState} from 'react';
 import {
   MdChevronLeft,
   MdChevronRight,
-  MdOutlineCalendarMonth,
+  MdOutlineNewspaper,
 } from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Sheet,
-  SheetContent,
-  Portal,
-} from '@/ui/components';
-import {cn} from '@/utils/css';
+import {Sheet, SheetContent, Portal} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {Category} from '@/types';
 
@@ -44,7 +35,7 @@ export function MobileCategories({
   };
   return (
     <>
-      <MdOutlineCalendarMonth
+      <MdOutlineNewspaper
         className="cursor-pointer h-6 w-6"
         onClick={openSidebar}
       />
