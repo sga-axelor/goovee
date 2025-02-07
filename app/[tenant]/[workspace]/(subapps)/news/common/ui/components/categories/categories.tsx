@@ -3,10 +3,10 @@
 import {MdChevronRight} from 'react-icons/md';
 import React, {useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import ReactDOM from 'react-dom';
 
 // ---- CORE IMPORTS ---- //
 import {Separator} from '@/ui/components/separator';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {Category} from '@/subapps/news/common/types';
@@ -46,7 +46,7 @@ export const Categories = ({categories}: {categories: any[]}) => {
   return (
     <div
       ref={categoriesRef}
-      className="hidden md:flex justify-center gap-5 px-6 py-4 relative overflow-x-auto bg-white">
+      className="hidden md:flex justify-start gap-5 bg-white">
       <Menu
         items={categoryHierarchy}
         openSubMenu={openSubMenu}
@@ -80,20 +80,19 @@ const MenuItem = ({
   return (
     <div
       ref={itemRef}
-      className="relative"
       onMouseEnter={() => onHover(item.id)}
+      className="px-12 py-4"
       onMouseLeave={onLeave}>
-      <span className="cursor-pointer" onClick={() => handleRoute(item.slug)}>
+      <span className="cursor-pointer " onClick={() => handleRoute(item.slug)}>
         {item.name}
       </span>
-      {isOpen && item.items.length > 0 && itemRef.current && (
+      {isOpen && item.items.length > 0 && (
         <SubMenu
           item={item}
           onHover={onHover}
           openSubSubMenu={openSubSubMenu}
           setOpenSubSubMenu={setOpenSubSubMenu}
           handleRoute={handleRoute}
-          parentRect={itemRef.current.getBoundingClientRect()}
         />
       )}
     </div>
@@ -138,7 +137,7 @@ const Menu = ({
   };
 
   return (
-    <div className="menu flex gap-10 overflow-x-auto items-center">
+    <div className="flex items-center ">
       {items.map((item, i) => (
         <React.Fragment key={item.id}>
           <MenuItem
@@ -151,7 +150,10 @@ const Menu = ({
             handleRoute={handleRoute}
           />
           {i !== items.length - 1 && (
-            <Separator className="bg-black w-[2px]" orientation="vertical" />
+            <Separator
+              className="bg-black w-[2px] !h-8"
+              orientation="vertical"
+            />
           )}
         </React.Fragment>
       ))}
@@ -165,58 +167,66 @@ const SubMenu = ({
   setOpenSubSubMenu,
   handleRoute,
   onHover,
-  parentRect,
 }: {
   item: any;
   openSubSubMenu: number | null;
   setOpenSubSubMenu: (id: any) => void;
   handleRoute: (slug: string, parentSlug?: string) => void;
   onHover?: any;
-  parentRect: DOMRect;
 }) => {
-  const handleClick = (childId: number) => {
+  const [child, setChild] = useState<any>(null);
+
+  const handleClick = (child: any) => {
     onHover(item.id);
-    setOpenSubSubMenu((prev: any) => (prev === childId ? null : childId));
+    setOpenSubSubMenu((prev: any) => (prev === child.id ? null : child.id));
+
+    setChild(child);
   };
 
-  return ReactDOM.createPortal(
-    <div
-      className="min-w-[295px] absolute z-10 bg-white flex flex-col gap-12 py-6 px-4"
-      style={{top: `${parentRect.bottom}px`, left: `${parentRect.left}px`}}>
-      {item.items.map((child: any) => {
-        const categoryLength = child.items.length;
-        return (
-          <div key={child.id} className="flex w-full">
-            <li className="z-20 flex w-full relative">
-              <div className="w-full flex gap-12 items-center justify-between">
-                <div
-                  className="font-normal text-base cursor-pointer"
-                  onClick={() => handleRoute(child.slug, item.slug)}>
-                  {child.name}
+  useEffect(() => {
+    setOpenSubSubMenu(null);
+    setChild(null);
+  }, [item]);
+
+  return (
+    <div className="w-full absolute left-0 top-14 bg-background flex flex-row  gap-12 z-50 border-t">
+      <div
+        className={cn(
+          'flex flex-col gap-6 px-10 py-6 bg-gray-50',
+          openSubSubMenu ? 'w-fit' : 'w-full',
+        )}>
+        {item.items.map((child: any) => {
+          const categoryLength = child.items.length;
+          return (
+            <React.Fragment key={child.id}>
+              <li className="z-20 flex w-[25rem]">
+                <div className="w-full flex gap-12 items-center justify-between">
+                  <div
+                    className="font-normal text-base cursor-pointer"
+                    onClick={() => handleRoute(child.slug, item.slug)}>
+                    {child.name}
+                  </div>
+                  {categoryLength > 0 && (
+                    <MdChevronRight
+                      className="text-2xl cursor-pointer"
+                      onClick={() => handleClick(child)}
+                    />
+                  )}
                 </div>
-                {categoryLength > 0 && (
-                  <MdChevronRight
-                    className="text-2xl cursor-pointer"
-                    onClick={() => handleClick(child.id)}
-                  />
-                )}
-              </div>
-            </li>
-            {openSubSubMenu === child.id && categoryLength > 0 && (
-              <div className="relative left-4 -top-6">
-                <SubSubMenu
-                  item={child}
-                  topParentSlug={item.slug}
-                  handleRoute={handleRoute}
-                  setOpenSubSubMenu={setOpenSubSubMenu}
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>,
-    document.body,
+              </li>
+            </React.Fragment>
+          );
+        })}
+      </div>
+      {openSubSubMenu === child?.id && (
+        <SubSubMenu
+          item={child}
+          topParentSlug={item.slug}
+          handleRoute={handleRoute}
+          setOpenSubSubMenu={setOpenSubSubMenu}
+        />
+      )}
+    </div>
   );
 };
 
@@ -233,13 +243,13 @@ const SubSubMenu = ({
 }) => {
   return (
     <div
-      className="min-w-[200px] outline-1 outline-slate-800 bg-white absolute left-full top-0 z-10 flex flex-col gap-12 py-6 px-4 border border-slate-50"
-      onMouseEnter={() => setOpenSubSubMenu(item.id)}
-      onMouseLeave={() => setOpenSubSubMenu(null)}>
-      {item.items.map((subChild: any) => (
+      className={'bg-white flex-1 flex flex-col gap-6 py-6 px-4'}
+      onMouseEnter={() => setOpenSubSubMenu(item.id)}>
+      <div className="font-medium text-base ">{item.name}</div>
+      {item?.items?.map((subChild: any) => (
         <div
           key={subChild.id}
-          className="flex gap-12 items-center justify-between relative">
+          className="flex gap-6 items-center justify-between relative">
           <div
             className="font-normal text-sm cursor-pointer"
             onClick={() =>

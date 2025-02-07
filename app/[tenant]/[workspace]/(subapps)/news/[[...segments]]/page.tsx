@@ -104,7 +104,7 @@ export default async function Page({
     return (
       <div
         className={`flex flex-col h-full flex-1 ${styles['news-container']}`}>
-        <div className="hidden lg:block">
+        <div className="hidden lg:block relative">
           <Categories categories={allCategories} />
         </div>
         <Homepage
@@ -119,7 +119,7 @@ export default async function Page({
 
   return (
     <div className={`flex flex-col h-full flex-1 ${styles['news-container']}`}>
-      <div className="hidden lg:block">
+      <div className="hidden lg:block relative">
         <Categories categories={allCategories} />
       </div>
       <CategoryPage
