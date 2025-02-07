@@ -29,7 +29,7 @@ export class MailNotificationService implements NotificationService {
       throw new Error('Recipient is required');
     }
 
-    const {to, subject, text, html} = data;
+    const {to, subject, text, html, attachments} = data;
     const from = process.env.MAIL_EMAIL || process.env.MAIL_USER;
 
     const mailOptions = {
@@ -38,6 +38,7 @@ export class MailNotificationService implements NotificationService {
       text,
       html,
       from,
+      attachments,
     };
 
     try {
