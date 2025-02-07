@@ -274,6 +274,7 @@ export type Participant = {
   contact?: any;
   subscriptionSet?: any[];
   companyName?: string;
+  sequence: number;
 };
 
 export type Comment = {

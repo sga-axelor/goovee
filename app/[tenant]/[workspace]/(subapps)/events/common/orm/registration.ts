@@ -81,7 +81,8 @@ export async function getEventContacts({
 }): Promise<EventContact[]> {
   const partners = await Promise.all(
     participants.map(async participant => {
-      const {emailAddress, name, surname, companyName, phone} = participant;
+      const {emailAddress, name, surname, companyName, phone, sequence} =
+        participant;
       if (!emailAddress) return;
       const c = await manager.getClient(tenantId);
       const partner = await c.aOSPartner.findOne({
@@ -98,8 +99,8 @@ export async function getEventContacts({
           firstName: name,
           fullName: `${surname} ${name || ''}`.trim(),
           simpleFullName: `${surname} ${name || ''}`.trim(),
-          isContact: true,
-          isCustomer: false,
+          isContact: sequence > 0 ? true : false,
+          isCustomer: sequence === 0 ? true : false,
           isProspect: false,
           createdFromSelect: USER_CREATED_FROM,
           isRegisteredOnPortal: false,
