@@ -14,6 +14,7 @@ import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {findPartnerByEmail} from '@/orm/partner';
 import {createStripeOrder} from '@/lib/core/payment/stripe/actions';
+import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEvent} from '@/subapps/events/common/orm/event';
@@ -238,14 +239,14 @@ export async function validateStripePayment({
     return error(await t('Workspace not provided!'));
   }
 
-  const session = await getSession();
-  const user = session?.user;
-
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Invalid tenant'));
   }
+
+  const session = await getSession();
+  const user = session?.user;
 
   const workspace = await findWorkspace({
     user,
@@ -304,5 +305,216 @@ export async function validateStripePayment({
     );
   }
 
+  // TODO: Add the invoice creation action here
+
   return {success: true, data: resgistration.data};
+}
+
+export async function paypalCaptureOrder({
+  orderId,
+  workspaceURL,
+  amount,
+  values,
+  record,
+}: {
+  orderId: string;
+  workspaceURL: string;
+  amount: any;
+  values: any;
+  record: {
+    id: string | number;
+  };
+}) {
+  if (!orderId) {
+    return error(await t('Bad request'));
+  }
+
+  if (!workspaceURL) {
+    return error(await t('Workspace not provided!'));
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(await t('Invalid tenant'));
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return error(await t('Invalid workspace'));
+  }
+
+  const hasEventsAccess = await findSubappAccess({
+    code: SUBAPP_CODES.events,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+
+  if (!hasEventsAccess) {
+    return error(await t('Unauthorized App access!'));
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return error(await t('Online payment is not available'));
+  }
+
+  const paymentOptionSet = workspace?.config?.paymentOptionSet;
+
+  const allowPaypal = isPaymentOptionAvailable(
+    paymentOptionSet,
+    PaymentOption.paypal,
+  );
+
+  if (!allowPaypal) {
+    return error(await t('Paypal is not available'));
+  }
+
+  try {
+    const response = await findPaypalOrder({id: orderId});
+
+    const {result} = response;
+    const purchase = result?.purchase_units?.[0];
+    if (
+      Number(purchase?.payments?.captures?.[0]?.amount?.value) !==
+      Number(amount)
+    ) {
+      return error(await t('Amount mismatched'));
+    }
+
+    const resgistration = await register({
+      eventId: record.id,
+      values,
+      workspace: {
+        url: workspaceURL,
+      },
+      isPaid: true,
+    });
+
+    if (!resgistration || resgistration?.error) {
+      return error(
+        await t(
+          resgistration.message ||
+            'Something went wrong while event registration.',
+        ),
+      );
+    }
+
+    // TODO: Add the invoice creation action here
+
+    return {success: true, data: resgistration.data};
+  } catch (err) {
+    return error(await t((err as any)?.message));
+  }
+}
+
+export async function paypalCreateOrder({
+  values,
+  workspaceURL,
+  record,
+  amount,
+  email,
+}: {
+  values: any;
+  workspaceURL: string;
+  record: {
+    id: string | number;
+  };
+  amount: string | number;
+  email: string;
+}) {
+  if (!record?.id || !values) {
+    return error(await t('Missing required values!'));
+  }
+
+  if (!workspaceURL) {
+    return error(await t('Workspace not provided!'));
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return error(await t('Invalid tenant'));
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return error(await t('Invalid workspace'));
+  }
+
+  const hasEventsAccess = await findSubappAccess({
+    code: SUBAPP_CODES.events,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+
+  if (!hasEventsAccess) {
+    return error(await t('Unauthorized App access!'));
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return error(await t('Online payment is not available'));
+  }
+
+  const paymentOptionSet = workspace?.config?.paymentOptionSet;
+
+  const allowPaypal = isPaymentOptionAvailable(
+    paymentOptionSet,
+    PaymentOption.paypal,
+  );
+
+  if (!allowPaypal) {
+    return error(await t('Paypal is not available'));
+  }
+
+  const event = await findEvent({
+    id: record.id,
+    tenantId,
+    workspace,
+  });
+
+  if (!event) {
+    return error(await t('Invalid event'));
+  }
+
+  const currency = event.currency;
+
+  let emailAddress;
+  if (user) {
+    const payer = await findPartnerByEmail(user.email, tenantId);
+    emailAddress = payer?.emailAddress?.address!;
+  } else {
+    emailAddress = email;
+  }
+  const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
+  try {
+    const response = await createPaypalOrder({
+      amount,
+      currency: currencyCode,
+      email: emailAddress,
+    });
+    return {success: true, order: response?.result};
+  } catch (err) {
+    return {
+      error: true,
+      message: await t((err as any)?.message),
+    };
+  }
 }

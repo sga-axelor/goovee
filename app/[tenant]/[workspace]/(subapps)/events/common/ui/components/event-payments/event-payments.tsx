@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback} from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -13,9 +13,14 @@ import {Stripe} from '@/ui/components/payment/stripe';
 import {SUBAPP_CODES} from '@/constants';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {Paypal} from '@/ui/components/payment/paypal';
 
 // ---- LOCAL IMPORTS ---- //
 import {validateRegistration} from '@/subapps/events/common/actions/actions';
+import {
+  paypalCaptureOrder,
+  paypalCreateOrder,
+} from '@/app/[tenant]/[workspace]/(subapps)/events/common/actions/payments';
 
 export function EventPayments({
   workspace,
@@ -39,7 +44,7 @@ export function EventPayments({
   const {workspaceURI} = useWorkspace();
 
   const redirectToEvents = useCallback(
-    (result: any) => {
+    async (result: any) => {
       if (result) {
         router.replace(`${workspaceURI}/${SUBAPP_CODES.events}`);
       }
@@ -52,19 +57,30 @@ export function EventPayments({
     PaymentOption.stripe,
   );
 
+  const allowPaypal = isPaymentOptionAvailable(
+    paymentOptionSet,
+    PaymentOption.paypal,
+  );
+
   async function handleFormValidation({
     form,
     eventId,
     metaFields,
     workspace,
+    paymentOption,
   }: {
     form: any;
     eventId: ID;
     metaFields: any;
     workspace: any;
+    paymentOption?: PaymentOption;
   }): Promise<boolean> {
     try {
       const isValidForm = await form.trigger();
+      const isEmailValid = await form.trigger('emailAddress');
+      if (!isEmailValid) {
+        return false;
+      }
 
       if (!isValidForm) {
         return false;
@@ -98,7 +114,10 @@ export function EventPayments({
         });
         return false;
       }
-      await setitem('values', result).catch(() => {});
+      if (paymentOption === PaymentOption.stripe) {
+        // TODO: use keys as per cart here too
+        await setitem('values', result).catch(() => {});
+      }
       return true;
     } catch (error) {
       console.error('validation error:', error);
@@ -112,6 +131,46 @@ export function EventPayments({
 
   return (
     <div>
+      {allowPaypal && (
+        <Paypal
+          onValidate={async () => {
+            const isValid = await handleFormValidation({
+              form,
+              eventId,
+              metaFields,
+              workspace,
+            });
+            return isValid ? true : false;
+          }}
+          createOrder={async () => {
+            const formValues: any = form.getValues();
+            return await paypalCreateOrder({
+              workspaceURL: workspace.url,
+              values: formValues,
+              record: {
+                id: eventId,
+              },
+              amount: total,
+              email: formValues.emailAddress,
+            });
+          }}
+          captureOrder={async order => {
+            const formValues: any = form.getValues();
+            return await paypalCaptureOrder({
+              orderId: order.id,
+              workspaceURL: workspace.url,
+              values: formValues,
+              record: {
+                id: eventId,
+              },
+              amount: total,
+            });
+          }}
+          onApprove={redirectToEvents}
+          successMessage="Event registration completed successfully."
+          errorMessage="Failed to process event registration."
+        />
+      )}
       {allowStripe && (
         <Stripe
           amount={total}
@@ -122,6 +181,7 @@ export function EventPayments({
               eventId,
               metaFields,
               workspace,
+              paymentOption: PaymentOption.stripe,
             })
           }
           onApprove={redirectToEvents}
