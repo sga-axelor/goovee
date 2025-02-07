@@ -1,6 +1,7 @@
 'use server';
 
 import {headers} from 'next/headers';
+import {endOfDay} from 'date-fns';
 
 // ---- CORE IMPORTS ----//
 import {getSession} from '@/auth';
@@ -143,8 +144,19 @@ export async function validateRegistration({
 
   const event = await findEventConfig({id: eventId, tenantId});
   if (!event) return error(await t('Event not found'));
+
   if (!event.eventAllowRegistration) {
     return error(await t('Registration not started for this event'));
+  }
+
+  const startDate = new Date(event.eventStartDateTime ?? '');
+  const endDate = new Date(event.eventEndDateTime ?? '');
+  const now = Date.now();
+  if (
+    now > endDate.getTime() ||
+    (event.eventAllDay && now > endOfDay(startDate).getTime())
+  ) {
+    return error(await t('Event has already ended'));
   }
 
   if (event.isPrivate || (!event.isPublic && !event.isLoginNotNeeded)) {
