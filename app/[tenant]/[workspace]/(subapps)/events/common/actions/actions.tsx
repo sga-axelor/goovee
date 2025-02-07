@@ -37,6 +37,7 @@ import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {
   canEmailBeRegistered,
+  getTotalRegisteredParticipants,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
 import {zodParseFormData} from '@/utils/formdata';
@@ -157,31 +158,65 @@ export async function validateRegistration({
   }
 
   try {
-    const {otherPeople, ...rest} = values;
+    const {otherPeople: _otherPeople, ...rest} = values;
+
+    if (!event.eventAllowMultipleRegistrations && _otherPeople?.length) {
+      return error(await t('Multiple registrations not allowed'));
+    }
+
+    const otherPeople: Participant[] = _otherPeople;
     otherPeople.push(rest);
 
-    otherPeople.forEach((participant: Participant) => {
+    const totalRegisteredParticipants = getTotalRegisteredParticipants(event);
+    const maxParticipantPerEvent = event.maxParticipantPerEvent || 0;
+    if (totalRegisteredParticipants >= maxParticipantPerEvent) {
+      return error(
+        await t('Max participants reached. No more registrations allowed'),
+      );
+    }
+    if (
+      totalRegisteredParticipants + otherPeople.length >
+      maxParticipantPerEvent
+    ) {
+      const slotsLeft = maxParticipantPerEvent - totalRegisteredParticipants;
+      return error(
+        await t(
+          slotsLeft === 1
+            ? `Only ${slotsLeft} slot left`
+            : `Only ${slotsLeft} slots left`,
+        ),
+      );
+    }
+
+    const maxParticipantPerRegistration =
+      event.maxParticipantPerRegistration || 0;
+    if (otherPeople.length > maxParticipantPerRegistration) {
+      return error(
+        await t(
+          `You can only register up to ${maxParticipantPerRegistration} people`,
+        ),
+      );
+    }
+
+    otherPeople.forEach(participant => {
       if (participant.emailAddress) {
         participant.emailAddress = participant.emailAddress.toLowerCase();
       }
     });
 
-    if (
-      !otherPeople.every((participant: Participant) => participant.emailAddress)
-    ) {
+    if (!otherPeople.every(participant => participant.emailAddress)) {
       return error(await t('Email is required'));
     }
 
     if (
       !event.isPublic &&
-      !new Set(otherPeople.map((p: Participant) => p.emailAddress)).size ===
-        otherPeople.length
+      new Set(otherPeople.map(p => p.emailAddress)).size !== otherPeople.length
     ) {
       return error(await t('Individual email address must be unique'));
     }
 
     const canRegisterList = await Promise.all(
-      otherPeople.map((participant: Participant) =>
+      otherPeople.map(participant =>
         canEmailBeRegistered({
           event,
           email: participant.emailAddress,
@@ -204,9 +239,8 @@ export async function validateRegistration({
       );
     }
 
-    const isAnyEmailAlreadyRegistered = otherPeople.some(
-      (participant: Participant) =>
-        isAlreadyRegistered({event, email: participant.emailAddress}),
+    const isAnyEmailAlreadyRegistered = otherPeople.some(participant =>
+      isAlreadyRegistered({event, email: participant.emailAddress}),
     );
     if (isAnyEmailAlreadyRegistered) {
       return error(await t('Some email is already registered to this event'));

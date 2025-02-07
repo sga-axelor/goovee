@@ -9,7 +9,7 @@ export function isAlreadyRegistered({
   event,
   email,
 }: {
-  event: {registrationList?: {participantList?: {emailAddress?: string}[]}[]};
+  event: EventConfig;
   email: string;
 }) {
   return event.registrationList?.some(registration => {
@@ -98,4 +98,11 @@ export function isPortalUser(partner: {
   isActivatedOnPortal?: boolean;
 }): boolean {
   return !!(partner.isRegisteredOnPortal && partner.isActivatedOnPortal);
+}
+
+export function getTotalRegisteredParticipants(event: EventConfig): number {
+  if (!event.registrationList) return 0;
+  return event.registrationList.reduce((acc, registration) => {
+    return acc + (registration.participantList?.length || 0);
+  }, 0);
 }

@@ -469,6 +469,7 @@ export type EventConfig = {
   partnerCategorySet?: {partners?: EventConfigPartner[]}[];
   partnerSet?: EventConfigPartner[];
   eventAllowRegistration?: boolean;
+  eventAllowMultipleRegistrations?: boolean;
   maxParticipantPerEvent?: number;
   maxParticipantPerRegistration?: number;
 };
@@ -526,6 +527,7 @@ export async function findEventConfig({
       isLoginNotNeeded: true,
       isPublic: true,
       eventAllowRegistration: true,
+      eventAllowMultipleRegistrations: true,
       partnerCategorySet: {select: {partners: {select: partnersFields}}},
       partnerSet: {select: partnersFields},
       registrationList: {
