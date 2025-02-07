@@ -69,6 +69,7 @@
       "type": "ManyToOne",
       "name": "currency",
       "target": "AOSCurrency"
-    }
+    },
+    {"name": "saleOrder", "type": "ManyToOne", "target": "AOSOrder"}
   ]
 }

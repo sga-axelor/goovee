@@ -44,9 +44,14 @@ const fetchInvoices = async ({
 
   const whereClause: any = {
     ...params?.where,
-    portalWorkspace: {
-      url: workspaceURL,
-    },
+    OR: [
+      {
+        portalWorkspace: {
+          url: workspaceURL,
+        },
+      },
+      {saleOrder: {portalWorkspace: {url: workspaceURL}}},
+    ],
   };
 
   if (type === INVOICE.ARCHIVED) {
