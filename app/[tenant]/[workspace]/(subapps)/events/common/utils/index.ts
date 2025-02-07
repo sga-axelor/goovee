@@ -16,6 +16,18 @@ export const datesBetweenTwoDates = (data: Event[]): Date[] => {
 
   data.forEach((event: Event) => {
     const startDate = new Date(event.eventStartDateTime);
+
+    if (event.eventAllDay) {
+      Dates.push(
+        new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate(),
+        ),
+      );
+      return;
+    }
+
     const endDate = new Date(event.eventEndDateTime);
     for (
       let d = new Date(startDate);
