@@ -34,6 +34,7 @@ export const CustomSelect = ({
   arrayName,
   subSchema,
   eventId,
+  maxSelections,
 }: {
   form: any;
   field: Field;
@@ -41,6 +42,7 @@ export const CustomSelect = ({
   arrayName: string;
   subSchema: Field[];
   eventId: string;
+  maxSelections?: number;
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -66,16 +68,23 @@ export const CustomSelect = ({
             fromParticipant && valueId === _s.id,
         ) == null
       ) {
+        if (maxSelections && maxSelections <= customParticipants.length + 1) {
+          toast({
+            variant: 'destructive',
+            title: i18n.t(
+              'Registrations are limited to {0} participants only.',
+              String(maxSelections),
+            ),
+          });
+          return;
+        }
         const {error, message} = await isValidParticipant({
           email: _s.emailAddress?.address,
           eventId,
           workspaceURL,
         });
         if (error) {
-          toast({
-            variant: 'destructive',
-            title: message,
-          });
+          toast({variant: 'destructive', title: message});
           invalidParticipants.push(_s.id);
         } else {
           customParticipants.unshift({

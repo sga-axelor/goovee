@@ -136,16 +136,8 @@ export async function findEvent({
       select: {
         id: true,
         eventTitle: true,
-        eventCategorySet: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-          },
-        },
-        eventImage: {
-          id: true,
-        },
+        eventCategorySet: {select: {id: true, name: true, color: true}},
+        eventImage: {id: true},
         eventDescription: true,
         eventPlace: true,
         eventLink: true,
@@ -158,21 +150,13 @@ export async function findEvent({
           name: true,
           code: true,
           salePrice: true,
-          saleCurrency: {
-            code: true,
-            symbol: true,
-            numberOfDecimals: true,
-          },
+          saleCurrency: {code: true, symbol: true, numberOfDecimals: true},
         },
         registrationList: {
           select: {
             participantList: {
-              where: {
-                ...(user?.email ? {emailAddress: user?.email} : {}),
-              },
-              select: {
-                emailAddress: true,
-              },
+              where: {...(user?.email ? {emailAddress: user?.email} : {})},
+              select: {emailAddress: true},
             },
           },
         },
@@ -183,6 +167,7 @@ export async function findEvent({
         isHidden: true,
         isLoginNotNeeded: true,
         isPrivate: true,
+        maxParticipantPerRegistration: true,
       },
     })
     .then(event => {
@@ -470,8 +455,8 @@ export type EventConfig = {
   partnerSet?: EventConfigPartner[];
   eventAllowRegistration?: boolean;
   eventAllowMultipleRegistrations?: boolean;
-  eventEndDateTime?: string;
-  eventStartDateTime?: string;
+  eventEndDateTime?: string | Date;
+  eventStartDateTime?: string | Date;
   eventAllDay?: boolean;
   maxParticipantPerEvent?: number;
   maxParticipantPerRegistration?: number;

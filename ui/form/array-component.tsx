@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useMemo} from 'react';
+import React, {ReactNode, useCallback, useMemo} from 'react';
 import {MdAdd, MdOutlineDelete} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -13,12 +13,12 @@ export const ArrayComponent = ({
   form,
   field,
   renderItem,
-  addTitle,
+  renderAddMore,
 }: {
   form: any;
   field: Field;
   renderItem: (item: any, idx: any) => React.JSX.Element;
-  addTitle?: string;
+  renderAddMore?: ({addItem}: {addItem: () => void}) => ReactNode;
 }) => {
   const childrenForm = useMemo(
     () => sortFields(field.subSchema),
@@ -90,17 +90,7 @@ export const ArrayComponent = ({
   return (
     <div className="space-y-6">
       {(form.watch(field.name) ?? []).map(renderArrayItem)}
-      {addTitle && (
-        <Button
-          type="button"
-          className={`bg-success-light hover:bg-success p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full group`}
-          onClick={addItem}>
-          <MdAdd className="w-6 h-6 text-success group-hover:text-white" />
-          <p className="text-sm font-normal text-center text-black">
-            {addTitle}
-          </p>
-        </Button>
-      )}
+      {renderAddMore?.({addItem})}
     </div>
   );
 };

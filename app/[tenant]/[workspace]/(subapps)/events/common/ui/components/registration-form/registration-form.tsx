@@ -2,6 +2,7 @@
 
 import {useMemo} from 'react';
 import {useRouter} from 'next/navigation';
+import {MdAdd} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -21,7 +22,7 @@ import {
 } from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
 import {SUBAPP_CODES} from '@/constants';
-import {BadgeList} from '@/ui/components';
+import {BadgeList, Button} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -61,6 +62,7 @@ export const RegistrationForm = ({
     eventProduct = null,
     slug,
     isPrivate = false,
+    maxParticipantPerRegistration,
   } = eventDetails || {};
 
   const router = useRouter();
@@ -220,6 +222,7 @@ export const RegistrationForm = ({
                 CustomSelect({
                   ...props,
                   eventId,
+                  maxSelections: maxParticipantPerRegistration,
                   arrayName: 'otherPeople',
                   subSchema: externalParticipantForm,
                 }),
@@ -240,9 +243,35 @@ export const RegistrationForm = ({
         customComponent: (props: any) =>
           ArrayComponent({
             ...props,
-            ...(!isPrivate && {
-              addTitle: 'Add a new person that does not have an account',
-            }),
+            renderAddMore: ({addItem}) => {
+              if (isPrivate) return null;
+              return (
+                <Button
+                  type="button"
+                  className={`bg-success-light hover:bg-success p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full group`}
+                  onClick={() => {
+                    const current =
+                      props.form.getValues(props.field.name)?.length || 0;
+                    const max = maxParticipantPerRegistration;
+                    if (max && max <= current + 1) {
+                      toast({
+                        variant: 'destructive',
+                        title: i18n.t(
+                          'Registrations are limited to {0} participants only.',
+                          String(max),
+                        ),
+                      });
+                      return;
+                    }
+                    addItem();
+                  }}>
+                  <MdAdd className="w-6 h-6 text-success group-hover:text-white" />
+                  <p className="text-sm font-normal text-center text-black">
+                    {i18n.t('Add a new person that does not have an account')}
+                  </p>
+                </Button>
+              );
+            },
           }),
         subSchema: externalParticipantForm.map(field =>
           field.name === 'emailAddress'
@@ -279,6 +308,8 @@ export const RegistrationForm = ({
       defaultPrice,
       formattedDefaultPriceAti,
       isPrivate,
+      maxParticipantPerRegistration,
+      toast,
     ],
   );
 
