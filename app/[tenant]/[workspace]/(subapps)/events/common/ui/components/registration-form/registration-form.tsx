@@ -47,7 +47,7 @@ export const RegistrationForm = ({
   user,
 }: EventPageCardProps) => {
   const {
-    defaultPrice = null,
+    defaultPrice = null || 0,
     formattedDefaultPrice = null,
     formattedDefaultPriceAti = null,
     displayAti,
@@ -72,7 +72,6 @@ export const RegistrationForm = ({
   const isLoggedIn = !!user?.emailAddress;
   const showContactsList = isLoggedIn && !user.isContact;
   const canPay = defaultPrice || facilityList?.length;
-  const buttonTitle = i18n.t(`Register${canPay ? ' and pay' : ''}`);
 
   const basicPerson = useMemo(
     () => [
@@ -396,7 +395,7 @@ export const RegistrationForm = ({
               title: null,
               type: 'array',
               widget: 'custom',
-              hidden: !facilityList.length,
+              hidden: !canPay,
               customComponent: (props: any) => (
                 <SubscriptionsPriceView
                   {...props}
@@ -407,7 +406,7 @@ export const RegistrationForm = ({
               ),
             },
           ]}
-          submitTitle={buttonTitle}
+          submitTitle={i18n.t('Register')}
           mode={'onChange'}
           onSubmit={onSubmit}
           submitButton={
