@@ -87,7 +87,7 @@ export function mailTemplate({
                   <ul class="facility-list">${subscriptionDetails}</ul>`
               : ''
           }
-          <p>${eventDescription}</p>
+          ${eventDescription ? `<p>${eventDescription}</p>` : ''}
           <p>We look forward to seeing you there!</p>
         </div>
       </div>
