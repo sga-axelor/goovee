@@ -7,6 +7,7 @@ import icalgen, {
 // ---- CORE IMPORTS ---- //
 import type {ErrorResponse} from '@/types/action';
 import {isSameDay} from '@/utils/date';
+import {Participant} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event} from '@/subapps/events/common/ui/components';
@@ -75,3 +76,22 @@ export function ical(
   calendar.createEvent(details);
   return calendar.toString();
 }
+
+export const generateIcs = (event: any, participants: Participant[]) => {
+  const attendees: any = participants.map(participant => ({
+    email: participant.emailAddress,
+    name: `${participant.name} ${participant.surname}`,
+    rsvp: true,
+    role: 'REQ-PARTICIPANT',
+    status: 'NEEDS-ACTION',
+  }));
+
+  return ical({
+    start: event.eventStartDateTime,
+    end: event.eventEndDateTime,
+    summary: event.eventTitle,
+    location: event.eventPlace,
+    description: event.eventDescription,
+    attendees,
+  });
+};

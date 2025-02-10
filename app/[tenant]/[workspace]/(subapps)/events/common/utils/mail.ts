@@ -14,6 +14,7 @@ export function mailTemplate({
     eventAllDay,
     formattedEventStartDateTime,
     formattedEventEndDateTime,
+    eventDescription,
   } = event;
 
   const {name, surname, subscriptionSet = []} = participant;
@@ -86,6 +87,7 @@ export function mailTemplate({
                   <ul class="facility-list">${subscriptionDetails}</ul>`
               : ''
           }
+          <p>${eventDescription}</p>
           <p>We look forward to seeing you there!</p>
         </div>
       </div>
