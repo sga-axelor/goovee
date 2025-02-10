@@ -147,18 +147,20 @@ export function EventPayments({
           }}
           createOrder={async () => {
             const formValues: any = form.getValues();
+
             return await paypalCreateOrder({
               workspaceURL,
               values: formValues,
               record: {
                 id: eventId,
               },
-              amount: total,
+              amount: formValues.totalPrice,
               email: formValues.emailAddress,
             });
           }}
           captureOrder={async orderID => {
             const formValues: any = form.getValues();
+
             return await paypalCaptureOrder({
               orderID,
               workspaceURL,
@@ -166,7 +168,7 @@ export function EventPayments({
               record: {
                 id: eventId,
               },
-              amount: total,
+              amount: formValues.totalPrice,
             });
           }}
           onApprove={redirectToEvents}
@@ -176,14 +178,16 @@ export function EventPayments({
       )}
       {allowStripe && (
         <Stripe
-          onValidate={async () =>
-            await handleFormValidation({
+          onValidate={async () => {
+            const isValid = await handleFormValidation({
               form,
               eventId,
               metaFields,
               paymentOption: PaymentOption.stripe,
-            })
-          }
+            });
+
+            return !!isValid;
+          }}
           onCreateCheckOutSession={async () => {
             const formValues: any = await getitem(eventFormKey).catch(() => {});
 

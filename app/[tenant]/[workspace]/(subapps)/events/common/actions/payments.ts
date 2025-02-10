@@ -471,7 +471,7 @@ export async function paypalCreateOrder({
   amount: string | number;
   email: string;
 }) {
-  if (!record?.id || !values) {
+  if (!record?.id || !values || !amount || !email) {
     return error(await t('Missing required values!'));
   }
 
