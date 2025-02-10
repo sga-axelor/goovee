@@ -39,6 +39,7 @@ export function EventPayments({
   const paymentOptionSet = config?.paymentOptionSet;
   const workspaceURL = workspace?.url;
 
+  const isValid = form.formState.isValid;
   const total = form.watch('totalPrice');
 
   const {toast} = useToast();
@@ -137,6 +138,7 @@ export function EventPayments({
     <div className="flex flex-col">
       {allowPaypal && (
         <Paypal
+          disabled={!isValid}
           onValidate={async () => {
             const isValid = await handleFormValidation({
               form,
@@ -178,6 +180,7 @@ export function EventPayments({
       )}
       {allowStripe && (
         <Stripe
+          disabled={!isValid}
           onValidate={async () => {
             const isValid = await handleFormValidation({
               form,
