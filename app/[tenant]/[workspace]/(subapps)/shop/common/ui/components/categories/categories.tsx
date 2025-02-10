@@ -1,16 +1,10 @@
-import {Fragment, useRef, useState} from 'react';
+import React, {Fragment, useEffect, useRef, useState} from 'react';
+import {MdChevronRight} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/locale';
-import {
-  Separator,
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/ui/components';
+import {Separator} from '@/ui/components';
 import {cn} from '@/utils/css';
 import type {Category} from '@/types';
 
@@ -21,22 +15,54 @@ export const Categories = ({
   items?: Category[];
   onClick?: any;
 }) => {
-  const level = 0;
   const res: any = useResponsive();
   const large = ['lg', 'xl', 'xxl'].some(x => res[x]);
+  const [activeCategory, setActiveCategory] = useState<any>(null);
+  const categoriesRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      categoriesRef.current &&
+      !categoriesRef.current.contains(event.target as Node)
+    ) {
+      setActiveCategory(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return large ? (
-    <div className="mx-auto flex items-center gap-5 mb-0 px-6 py-4 bg-background text-foreground">
+    <div
+      ref={categoriesRef}
+      className="px-6 flex items-center gap-5 mb-0  bg-background text-foreground"
+      onMouseLeave={() => setActiveCategory(null)}>
       {items.map((category, index) => {
         return (
           <Fragment key={index}>
             {index !== 0 && (
               <Separator
-                className="bg-black w-[2px] shrink-0 h-auto self-stretch"
+                className="bg-black w-[2px] !h-8"
                 orientation="vertical"
               />
             )}
-            <Category item={category} level={level} onClick={onClick} />
+            <div>
+              <div
+                className="px-4 py-4 cursor-pointer"
+                onClick={() => onClick(category)}
+                onMouseEnter={() => setActiveCategory(category)}>
+                <span>{category.name}</span>
+              </div>
+            </div>
+            {activeCategory && activeCategory.items.length > 0 && (
+              <div className="w-full absolute left-0 top-14 bg-background flex flex-row  gap-12 z-50 border-t">
+                <Menu category={activeCategory} onClick={onClick} level={0} />
+              </div>
+            )}
           </Fragment>
         );
       })}
@@ -45,110 +71,69 @@ export const Categories = ({
 };
 export default Categories;
 
-const Category = ({
-  item,
-  level,
+const Menu = ({
+  category,
   onClick,
+  parentTitle = false,
+  level,
 }: {
-  item: Category;
-  level: number;
+  category: Category | null;
   onClick?: any;
-}) => {
-  const [open, setOpen] = useState(false);
-  let ref = useRef();
-  const [target, setTarget] = useState<any>(null);
-
-  const toggleDropdown = () => {
-    handleClick();
-    setOpen(prev => !prev);
-  };
-
-  const handleDropdownClick = () => {
-    toggleDropdown();
-  };
-  const handleClick = () => {
-    onClick && onClick(item);
-  };
-
-  return (
-    <div
-      {...{ref: ref as any}}
-      className="shrink-0 relative flex items-center z-[9]">
-      {item.items?.length ? (
-        <>
-          <NavigationMenu>
-            <NavigationMenuList className="mb-0 px-0">
-              <NavigationMenuItem>
-                <div
-                  onClick={handleDropdownClick}
-                  ref={setTarget}
-                  className="flex items-center justify-center cursor-pointer text-foreground font-medium">
-                  <NavigationMenuTrigger
-                    className={cn(
-                      'text-base h-auto px-0 bg-transparent hover:bg-transparent',
-                      {
-                        'py-0': level === 0,
-                      },
-                    )}>
-                    <p className="px-2 text-foreground border-foreground font-medium">
-                      {i18n.t(item.name)}
-                    </p>
-                  </NavigationMenuTrigger>
-                </div>
-
-                <Dropdown
-                  level={level}
-                  items={item.items}
-                  open={open}
-                  onClick={onClick}
-                  target={target}
-                />
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </>
-      ) : (
-        <p
-          className={cn(
-            'cursor-pointer text-foreground border-foreground border-solid first-border font-medium pl-4',
-            {
-              'pl-0': level === 0,
-            },
-          )}
-          onClick={handleClick}>
-          {i18n.t(item.name)}
-        </p>
-      )}
-    </div>
-  );
-};
-const Dropdown = ({
-  items,
-  open,
-  level,
-  onClick,
-  target,
-}: {
-  items: Category[];
-  open: boolean;
+  parentTitle?: boolean;
   level: number;
-  onClick: any;
-  target: any;
 }) => {
-  level = level + 1;
+  const [childMenu, setChileMenu] = useState<Category | null>(null);
+
+  const handleClick = (item: any) => {
+    setChileMenu(prev => (prev?.id === item.id ? null : item));
+  };
+
+  useEffect(() => {
+    setChileMenu(null);
+  }, [category]);
 
   return (
-    <NavigationMenuContent>
-      <div className="!min-w-[12.5rem]">
-        {items.map((category: Category, index: number) => (
-          <Category
-            item={category}
-            key={index}
-            level={level}
-            onClick={onClick}
-          />
-        ))}
+    <React.Fragment>
+      <div
+        className={cn(
+          'flex flex-col gap-6 px-4 py-6 pl-10 ',
+          level === 0 && 'w-full bg-gray-50',
+          !childMenu ? 'w-full' : 'w-fit',
+        )}>
+        {parentTitle && category && (
+          <div className="font-medium text-base">{i18n.t(category.name)}</div>
+        )}
+        {category?.items?.map((child: any) => {
+          const categoryLength = child.items.length;
+          return (
+            <React.Fragment key={child.id}>
+              <li className="z-20 flex ">
+                <div className="w-[25rem] flex gap-12 items-center justify-between ">
+                  <div
+                    className="font-normal text-base cursor-pointer"
+                    onClick={() => onClick(child)}>
+                    {i18n.t(child.name)}
+                  </div>
+                  {categoryLength > 0 && (
+                    <MdChevronRight
+                      className="text-2xl cursor-pointer"
+                      onClick={() => handleClick(child)}
+                    />
+                  )}
+                </div>
+              </li>
+            </React.Fragment>
+          );
+        })}
       </div>
-    </NavigationMenuContent>
+      {childMenu?.items && childMenu.items.length > 0 && (
+        <Menu
+          category={childMenu}
+          onClick={onClick}
+          parentTitle={true}
+          level={level + 1}
+        />
+      )}
+    </React.Fragment>
   );
 };

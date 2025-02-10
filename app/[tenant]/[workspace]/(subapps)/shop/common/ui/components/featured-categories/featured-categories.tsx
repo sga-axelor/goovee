@@ -69,7 +69,9 @@ export function FeaturedCategories({
 
   return (
     <div>
-      <Categories items={categories} onClick={handleCategoryClick} />
+      <div className="relative">
+        <Categories items={categories} onClick={handleCategoryClick} />
+      </div>
       {carouselList?.length ? (
         <Swiper
           modules={[Pagination]}

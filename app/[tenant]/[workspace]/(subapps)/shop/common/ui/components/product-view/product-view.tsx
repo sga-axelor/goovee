@@ -95,7 +95,9 @@ export function ProductView({
 
   return (
     <div>
-      <Categories items={categories} onClick={handleCategoryClick} />
+      <div className="relative">
+        <Categories items={categories} onClick={handleCategoryClick} />
+      </div>
       <div className="container py-2">
         <div className="my-10">
           <Breadcrumbs

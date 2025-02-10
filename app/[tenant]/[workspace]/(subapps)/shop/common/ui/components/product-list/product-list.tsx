@@ -148,7 +148,7 @@ export function ProductList({
 
   return (
     <div>
-      <div className="flex items-center bg-white">
+      <div className="flex items-center bg-white relative">
         <div className="grow w-100 max-w-full">
           <Categories items={categories} onClick={handleCategoryClick} />
         </div>
