@@ -15,7 +15,6 @@ import {isPaymentOptionAvailable} from '@/utils/payment';
 import {findPartnerByEmail} from '@/orm/partner';
 import {createStripeOrder} from '@/lib/core/payment/stripe/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
-import NotificationManager, {NotificationType} from '@/notification';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEvent} from '@/subapps/events/common/orm/event';
@@ -74,7 +73,7 @@ export async function createInvoice({
     }
 
     const payload = {
-      currencyCode: event?.currency?.code,
+      currencyCode: event.currency.code,
       partnerWorkspaceId: workspace.id,
       registrationId: eventRegistration.id,
     };
@@ -313,18 +312,18 @@ export async function validateStripePayment({
       ),
     );
   }
+  const {data} = resgistration;
 
   const invoiceResult = await createInvoice({
     workspaceURL,
     tenantId,
-    registrationId: resgistration?.id,
+    registrationId: data.id,
     eventId: event.id,
   });
 
   if (invoiceResult?.error) {
-    console.log('Invoice error:', invoiceResult.message);
+    console.error('Invoice error:', invoiceResult.message);
   }
-  // TODO: If invoice generatiion successfull, get the invoice and attach it to the mail for the main particiapnt
 
   return {
     success: true,
@@ -333,13 +332,13 @@ export async function validateStripePayment({
 }
 
 export async function paypalCaptureOrder({
-  orderId,
+  orderID,
   workspaceURL,
   amount,
   values,
   record,
 }: {
-  orderId: string;
+  orderID: string;
   workspaceURL: string;
   amount: any;
   values: any;
@@ -347,7 +346,7 @@ export async function paypalCaptureOrder({
     id: string | number;
   };
 }) {
-  if (!orderId) {
+  if (!orderID) {
     return error(await t('Bad request'));
   }
 
@@ -410,7 +409,7 @@ export async function paypalCaptureOrder({
   }
 
   try {
-    const response = await findPaypalOrder({id: orderId});
+    const response = await findPaypalOrder({id: orderID});
 
     const {result} = response;
     const purchase = result?.purchase_units?.[0];
@@ -438,17 +437,18 @@ export async function paypalCaptureOrder({
       );
     }
 
+    const {data} = resgistration;
+
     const invoiceResult = await createInvoice({
       workspaceURL,
       tenantId,
-      registrationId: resgistration?.id,
+      registrationId: data.id,
       eventId: event.id,
     });
 
     if (invoiceResult?.error) {
-      console.log('Invoice error:', invoiceResult.message);
+      console.error('Invoice error:', invoiceResult.message);
     }
-    // TODO: If invoice generatiion successfull, get the invoice and attach it to the mail for the main particiapnt
 
     return {success: true, data: resgistration.data};
   } catch (err) {

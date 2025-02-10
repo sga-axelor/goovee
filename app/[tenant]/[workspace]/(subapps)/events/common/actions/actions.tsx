@@ -22,7 +22,6 @@ import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
 
 // ---- LOCAL IMPORTS ---- //
-import {createInvoice} from '@/subapps/events/common/actions/payments';
 import {
   validate,
   withSubapp,
@@ -164,7 +163,7 @@ export async function validateRegistration({
   }
 
   try {
-    const {otherPeople: _otherPeople, ...rest} = values;
+    const {otherPeople: _otherPeople = [], ...rest} = values;
 
     if (!event.eventAllowMultipleRegistrations && _otherPeople?.length) {
       return error(await t('Multiple registrations not allowed'));
@@ -315,14 +314,18 @@ export async function register({
     return validationResult;
   }
 
-  return await registerParticipantsAction({
+  const registrationResult = await registerParticipantsAction({
     eventId,
     validatedParticipants: validationResult.validatedParticipants,
     workspaceURL: validationResult.workspaceURL,
     tenantId: validationResult.tenantId,
   });
 
-  // TODO: Add email generation for registered user
+  // TODO: send mail
+  if (registrationResult) {
+  }
+
+  return registrationResult;
 }
 
 export async function fetchContacts({

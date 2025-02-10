@@ -19,7 +19,7 @@ type PaypalProps = {
     error?: any;
     message?: string;
   }>;
-  captureOrder: (order: {id: string}) => Promise<any>;
+  captureOrder: (orderID: string) => Promise<any>;
   successMessage?: string;
   errorMessage?: string;
 };

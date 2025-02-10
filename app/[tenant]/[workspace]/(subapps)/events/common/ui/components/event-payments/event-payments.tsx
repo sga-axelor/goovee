@@ -157,10 +157,10 @@ export function EventPayments({
               email: formValues.emailAddress,
             });
           }}
-          captureOrder={async order => {
+          captureOrder={async orderID => {
             const formValues: any = form.getValues();
             return await paypalCaptureOrder({
-              orderId: order.id,
+              orderID,
               workspaceURL,
               values: formValues,
               record: {
