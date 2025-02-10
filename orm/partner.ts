@@ -351,8 +351,3 @@ export async function registerPartner({
   const partner = await client.aOSPartner.create({data}).then(clone);
   return partner;
 }
-
-export async function createPartner() {
-  //TODO: implement
-  return null;
-}
