@@ -20,6 +20,7 @@ import type {ID, Participant, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
+import NotificationManager, {NotificationType} from '@/notification';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -41,6 +42,7 @@ import {
   hasEventEnded,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
+import {mailTemplate} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/mail';
 
 export async function getAllEvents({
   limit,
@@ -321,8 +323,13 @@ export async function register({
     tenantId: validationResult.tenantId,
   });
 
-  // TODO: send mail
   if (registrationResult) {
+    await generateRegistrationMailAction({
+      eventId,
+      participants: validationResult.validatedParticipants,
+      workspaceURL: validationResult.workspaceURL,
+      tenantId: validationResult.tenantId,
+    });
   }
 
   return registrationResult;
@@ -555,5 +562,63 @@ export const fetchComments: FetchComments = async props => {
           ? e.message
           : await t('An unexpected error occurred while fetching comments.'),
     };
+  }
+};
+
+export const generateRegistrationMailAction = async ({
+  eventId,
+  participants,
+  workspaceURL,
+  tenantId,
+}: {
+  participants: Participant[];
+  eventId: any;
+  workspaceURL: string;
+  tenantId: string;
+}) => {
+  if (![eventId, participants.length, workspaceURL, tenantId].every(Boolean)) {
+    console.error(
+      'Missing required parameters: eventId, participants, workspaceURL, or tenantId.',
+    );
+    return;
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const event = await findEvent({
+    id: eventId,
+    workspace: {url: workspaceURL},
+    tenantId,
+    user,
+  });
+
+  if (!event) {
+    console.error(`Event with ID ${eventId} not available.`);
+    return;
+  }
+
+  const mailService = NotificationManager.getService(NotificationType.mail);
+
+  if (!mailService) {
+    console.error('Mail service is not available.');
+    return;
+  }
+
+  const subject = `🎉 You're Registered for an Upcoming Event!`;
+
+  try {
+    await Promise.all(
+      participants.map(participant =>
+        mailService.notify({
+          to: participant.emailAddress,
+          subject,
+          html: mailTemplate({event, participant}),
+        }),
+      ),
+    );
+    console.log('Registration emails sent successfully.');
+  } catch (error) {
+    console.error('Error sending registration emails:', error);
   }
 };

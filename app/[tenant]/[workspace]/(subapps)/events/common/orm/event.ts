@@ -16,7 +16,7 @@ import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
 import {dayjs} from '@/locale';
-import {formatNumber} from '@/locale/server/formatters';
+import {formatDate, formatNumber} from '@/locale/server/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -129,7 +129,9 @@ export async function findEvent({
 }: {
   id?: ID;
   slug?: string;
-  workspace: PortalWorkspace;
+  workspace: {
+    url: PortalWorkspace['url'];
+  };
   tenantId: Tenant['id'];
   user?: User;
 }) {
@@ -268,6 +270,8 @@ export async function findEvent({
       id: productsFromWS?.currencyId,
       code: productsFromWS?.currencyCode,
     },
+    formattedEventStartDateTime: await formatDate(event.eventStartDateTime!),
+    formattedEventEndDateTime: await formatDate(event.eventEndDateTime!),
   };
 }
 
