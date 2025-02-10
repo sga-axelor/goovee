@@ -1,3 +1,9 @@
+import icalgen, {
+  ICalCalendarMethod,
+  ICalEvent,
+  ICalEventData,
+} from 'ical-generator';
+
 // ---- CORE IMPORTS ---- //
 import {isSameDay} from '@/utils/date';
 
@@ -34,4 +40,25 @@ export function error(message: string) {
     error: true,
     message,
   };
+}
+
+export function ical(
+  details: ICalEvent | ICalEventData,
+  options: {
+    name?: string;
+    method?: ICalCalendarMethod;
+    timezone?: string;
+  } = {},
+): string {
+  const {name, method, timezone} = options;
+  const calendar = icalgen({name: name || 'Calendar'});
+
+  calendar.method(method || ICalCalendarMethod.REQUEST);
+
+  if (timezone) {
+    calendar.timezone(timezone);
+  }
+
+  calendar.createEvent(details);
+  return calendar.toString();
 }
