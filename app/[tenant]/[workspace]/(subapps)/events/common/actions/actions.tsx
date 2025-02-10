@@ -383,8 +383,13 @@ export async function isValidParticipant(props: {
     return error(await t('Email is required'));
   }
 
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+  if (!workspace) return error(await t('Invalid workspace'));
+
   const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
     withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
   ]);
 
@@ -402,6 +407,13 @@ export async function isValidParticipant(props: {
   }
 
   if (!(await canEmailBeRegistered({event, email, tenantId}))) {
+    if (
+      !event.isPublic &&
+      !event.isPrivate &&
+      workspace.config?.nonPublicEmailNotFoundMessage?.trim()
+    ) {
+      return error(await t(workspace.config.nonPublicEmailNotFoundMessage));
+    }
     return error(await t('This email can not be registered to this event'));
   }
 
