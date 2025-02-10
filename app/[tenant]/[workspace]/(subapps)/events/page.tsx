@@ -51,9 +51,7 @@ export default async function Page(context: any) {
           month: new Date(date).getMonth() + 1 || undefined,
           year: new Date(date).getFullYear() || undefined,
         }
-      : {
-          eventType: EVENT_TYPE.UPCOMING,
-        }),
+      : {eventType: EVENT_TYPE.ACTIVE}),
     workspace,
     tenantId: tenant,
     user,

@@ -66,6 +66,20 @@ const buildEventTypeFilters = ({
   currentDateTime: string;
 }) => {
   switch (eventType) {
+    case EVENT_TYPE.ACTIVE:
+      return {
+        OR: [
+          {
+            eventStartDateTime: {le: currentDateTime},
+            eventEndDateTime: {ge: currentDateTime},
+          },
+          {
+            eventStartDateTime: {between: [todayStartTime, currentDateTime]},
+            eventAllDay: {eq: true},
+          },
+          {eventStartDateTime: {gt: currentDateTime}},
+        ],
+      };
     case EVENT_TYPE.UPCOMING:
       return {eventStartDateTime: {gt: currentDateTime}};
     case EVENT_TYPE.ONGOING:

@@ -38,6 +38,7 @@ export const EVENT_TYPE = {
   UPCOMING: 'upcoming',
   ONGOING: 'ongoing',
   PAST: 'past',
+  ACTIVE: 'active', // either ongoing or upcoming
 };
 
 export const EVENT_TAB_ITEMS = [
