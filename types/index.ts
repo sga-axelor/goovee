@@ -52,6 +52,9 @@ export interface PortalWorkspace extends Model {
   apps?: PortalApp[];
   workspaceUser?: Model;
   navigationSelect?: string;
+  currentWorkspace?: {
+    id: ID;
+  };
 }
 
 export interface PortalAppConfig extends Model {

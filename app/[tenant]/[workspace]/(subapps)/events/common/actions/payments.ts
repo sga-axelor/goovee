@@ -51,9 +51,13 @@ export async function createInvoice({
     const user = session?.user;
 
     const workspace = await findWorkspace({url: workspaceURL, user, tenantId});
-
     if (!workspace) {
       return error(await t('Invalid workspace.'));
+    }
+
+    const partnerWorkspaceId = workspace?.currentWorkspace?.id;
+    if (!partnerWorkspaceId) {
+      return error(await t('Partner workspace id is missing.'));
     }
 
     const event = await findEvent({id: eventId, workspace, tenantId, user});
@@ -74,7 +78,7 @@ export async function createInvoice({
 
     const payload = {
       currencyCode: event.currency.code,
-      partnerWorkspaceId: workspace.id,
+      partnerWorkspaceId,
       registrationId: eventRegistration.id,
     };
 
