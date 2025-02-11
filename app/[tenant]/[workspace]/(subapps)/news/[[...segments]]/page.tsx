@@ -120,6 +120,7 @@ export default async function Page({
         limit={limit}
         workspace={workspace}
         tenantId={tenant}
+        workspaceURL={workspaceURL}
         isRecommendationEnable={isRecommendationEnable}
       />
     </div>
@@ -132,6 +133,7 @@ async function CategoryPage({
   limit,
   workspace,
   tenantId,
+  workspaceURL,
   isRecommendationEnable,
 }: {
   segments: string[];
@@ -139,6 +141,7 @@ async function CategoryPage({
   limit?: string | number;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  workspaceURL: string;
   isRecommendationEnable: boolean;
 }) {
   if (!tenantId) {
@@ -165,7 +168,7 @@ async function CategoryPage({
     let recommendedNews = [];
     if (isRecommendationEnable) {
       recommendedNews = await findRecommendedNews({
-        workspace,
+        workspaceURL,
         tenantId,
         categoryIds,
       });

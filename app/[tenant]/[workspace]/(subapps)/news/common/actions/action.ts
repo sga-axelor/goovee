@@ -10,7 +10,6 @@ import {ModelMap, ORDER_BY, SUBAPP_CODES} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {TENANT_HEADER} from '@/middleware';
 import {type Tenant} from '@/tenant';
-import type {PortalWorkspace} from '@/types';
 import {addComment, findComments} from '@/comments/orm';
 import {
   CreateComment,
@@ -71,21 +70,18 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
 }
 
 export async function findRecommendedNews({
-  workspace,
+  workspaceURL,
   tenantId,
   categoryIds,
 }: {
-  workspace: PortalWorkspace;
+  workspaceURL: string;
   tenantId: Tenant['id'];
   categoryIds: string[];
 }) {
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
+  if (!workspaceURL) {
     return {
       error: true,
-      message: await t('Unauthorized'),
+      message: await t('Bad request'),
     };
   }
 
@@ -95,6 +91,29 @@ export async function findRecommendedNews({
       message: await t('Bad Request'),
     };
   }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.news,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!subapp) {
+    return {
+      error: true,
+      message: await t('Unauthorized'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
 
   if (!workspace) {
     return {
