@@ -5,7 +5,6 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {ID, PaymentOption, PortalWorkspace} from '@/types';
-import {extractCustomData} from '@/ui/form';
 import {useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {getitem, setitem} from '@/storage/local';
@@ -22,6 +21,7 @@ import {
   paypalCreateOrder,
   validateStripePayment,
 } from '@/app/[tenant]/[workspace]/(subapps)/events/common/actions/payments';
+import {mapParticipants} from '@/subapps/events/common/utils';
 
 export function EventPayments({
   workspace,
@@ -70,6 +70,11 @@ export function EventPayments({
     PaymentOption.paypal,
   );
 
+  function getMappedParticipants(form: any, metaFields: any) {
+    const values = form.getValues();
+    return mapParticipants(values, metaFields);
+  }
+
   async function handleFormValidation({
     form,
     eventId,
@@ -92,20 +97,7 @@ export function EventPayments({
         return false;
       }
 
-      const values = form.getValues();
-      const result = extractCustomData(values, 'contactAttrs', metaFields);
-      result.sequence = 0;
-
-      if (!result.addOtherPeople) {
-        result.otherPeople = [];
-      } else {
-        result.otherPeople = result.otherPeople.map(
-          (person: any, index: number) => ({
-            ...extractCustomData(person, 'contactAttrs', metaFields),
-            sequence: index + 1,
-          }),
-        );
-      }
+      const result = getMappedParticipants(form, metaFields);
 
       const validationResult = await validateRegistration({
         eventId,
@@ -148,7 +140,7 @@ export function EventPayments({
             return !!isValid;
           }}
           createOrder={async () => {
-            const formValues: any = form.getValues();
+            const formValues = getMappedParticipants(form, metaFields);
 
             return await paypalCreateOrder({
               workspaceURL,
@@ -161,7 +153,7 @@ export function EventPayments({
             });
           }}
           captureOrder={async orderID => {
-            const formValues: any = form.getValues();
+            const formValues = getMappedParticipants(form, metaFields);
 
             return await paypalCaptureOrder({
               orderID,

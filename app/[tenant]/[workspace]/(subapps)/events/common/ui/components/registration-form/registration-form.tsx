@@ -14,12 +14,7 @@ import {
 } from '@/ui/components/card';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
-import {
-  FormView,
-  ArrayComponent,
-  extractCustomData,
-  formatStudioFields,
-} from '@/ui/form';
+import {FormView, ArrayComponent, formatStudioFields} from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
 import {SUBAPP_CODES} from '@/constants';
 import {BadgeList, Button} from '@/ui/components';
@@ -39,6 +34,7 @@ import {
   register,
 } from '@/subapps/events/common/actions/actions';
 import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
+import {mapParticipants} from '@/subapps/events/common/utils';
 
 export const RegistrationForm = ({
   eventDetails,
@@ -314,21 +310,7 @@ export const RegistrationForm = ({
 
   const onSubmit = async (values: any) => {
     try {
-      const result = extractCustomData(values, 'contactAttrs', metaFields);
-
-      result.sequence = 0;
-
-      if (!result.addOtherPeople) {
-        result.otherPeople = [];
-      } else {
-        result.otherPeople = result.otherPeople.map(
-          (person: any, index: number) => ({
-            ...extractCustomData(person, 'contactAttrs', metaFields),
-            sequence: index + 1,
-          }),
-        );
-      }
-
+      const result = mapParticipants(values, metaFields);
       const response = await register({
         eventId,
         values: result,
@@ -340,7 +322,7 @@ export const RegistrationForm = ({
           variant: 'success',
           title: i18n.t(SUCCESS_REGISTER_MESSAGE),
         });
-        router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${slug}`);
+        router.push(`${workspaceURI}/${SUBAPP_CODES.events}`);
       } else {
         toast({
           variant: 'destructive',

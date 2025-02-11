@@ -8,6 +8,7 @@ import icalgen, {
 import type {ErrorResponse} from '@/types/action';
 import {isSameDay} from '@/utils/date';
 import {Participant} from '@/types';
+import {extractCustomData} from '@/ui/form';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event} from '@/subapps/events/common/ui/components';
@@ -95,3 +96,19 @@ export const generateIcs = (event: any, participants: Participant[]) => {
     attendees,
   });
 };
+
+export function mapParticipants(formValues: any, metaFields: any) {
+  const data = extractCustomData(formValues, 'contactAttrs', metaFields);
+  data.sequence = 0;
+
+  if (!data.addOtherPeople) {
+    data.otherPeople = [];
+  } else {
+    data.otherPeople = data.otherPeople.map((person: any, index: number) => ({
+      ...extractCustomData(person, 'contactAttrs', metaFields),
+      sequence: index + 1,
+    }));
+  }
+
+  return data;
+}
