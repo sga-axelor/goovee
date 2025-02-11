@@ -17,7 +17,10 @@ import {
   HEADING,
   INVOICE,
 } from '@/subapps/invoices/common/constants/invoices';
-import {UnpaidColumns} from '@/subapps/invoices/common/ui/components';
+import {
+  AlertToast,
+  UnpaidColumns,
+} from '@/subapps/invoices/common/ui/components';
 
 export default function Content({
   invoices = [],
@@ -66,18 +69,10 @@ export default function Content({
     [allowInvoicePayment],
   );
 
-  useEffect(() => {
-    if (hasUpcomingInvoices) {
-      toast({
-        variant: 'warning',
-        title: i18n.t(HEADING),
-      });
-    }
-  }, [hasUpcomingInvoices, toast]);
-
   return (
     <>
       <Container title={i18n.t('Invoices')}>
+        <AlertToast show={hasUpcomingInvoices} title={HEADING} variant="info" />
         <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
           <div className="flex flex-col gap-4">
             <TableList

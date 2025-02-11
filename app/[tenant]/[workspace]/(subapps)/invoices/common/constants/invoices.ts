@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 
-const HEADING = 'You have unpaid invoices arriving soon to their limit date.';
+const HEADING = 'You have unpaid invoices arriving soon to their due date.';
 
 const ITEMS = [
   {
