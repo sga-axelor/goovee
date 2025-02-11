@@ -134,6 +134,7 @@ export interface PortalAppConfig extends Model {
   outOfStockQty?: string;
   defaultStockLocation?: any;
   nonPublicEmailNotFoundMessage?: string;
+  enableRecommendedNews?: boolean;
 }
 
 export interface PortalApp extends Model {

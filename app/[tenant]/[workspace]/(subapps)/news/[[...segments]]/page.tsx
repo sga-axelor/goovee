@@ -4,10 +4,7 @@ import {notFound} from 'next/navigation';
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
-import {
-  findDefaultPartnerWorkspaceConfig,
-  findWorkspace,
-} from '@/orm/workspace';
+import {findWorkspace} from '@/orm/workspace';
 import {ORDER_BY} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
@@ -70,14 +67,9 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
-  let isRecommendationEnable = false;
-  if (workspaceURL) {
-    const {portalAppConfig} = await findDefaultPartnerWorkspaceConfig({
-      url: workspaceURL,
-      tenantId: tenant,
-    });
-    isRecommendationEnable = portalAppConfig?.enableRecommendedNews;
-  }
+  const isRecommendationEnable =
+    workspace.config?.enableRecommendedNews || false;
+
   if (homepage) {
     const {news: latestNews}: any = await findNews({
       orderBy: {publicationDateTime: ORDER_BY.DESC},
