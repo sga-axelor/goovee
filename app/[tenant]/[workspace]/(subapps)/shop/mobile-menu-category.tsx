@@ -9,7 +9,7 @@ import {
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {Sheet, SheetContent, Portal} from '@/ui/components';
+import {Sheet, SheetContent, Portal, MobileMenu} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {Category} from '@/types';
 
@@ -28,8 +28,14 @@ export function MobileCategories({
   const openSidebar = useCallback(() => setOpen(true), []);
   const closeSidebar = useCallback(() => setOpen(false), []);
 
-  const handleItemClick = (category: any) => {
-    onClick && onClick(category);
+  const handleItemClick = ({
+    category,
+    url,
+  }: {
+    category: Category;
+    url: string | null;
+  }) => {
+    onClick && onClick({category, url});
     closeSidebar();
   };
 
@@ -41,7 +47,7 @@ export function MobileCategories({
       />
       <Sheet open={open} onOpenChange={closeSidebar}>
         <SheetContent side="left" className="bg-white divide-y divide-grey-1">
-          <RenderCategory
+          <MobileMenu
             category={categories}
             parent={null}
             onItemClick={handleItemClick}
@@ -52,84 +58,19 @@ export function MobileCategories({
   );
 }
 
-export const RenderCategory = ({
-  category,
-  parent,
-  handleBack = () => {},
-  onItemClick,
-}: {
-  category: any[];
-  parent: string | null;
-  handleBack?: () => void;
-  onItemClick: any;
-}) => {
-  const [activeCategories, setActiveCategories] = useState<any[]>([]);
-  const [activeParent, setActiveParent] = useState(null);
-
-  const handleClick = (category: any) => {
-    setActiveParent(category.name);
-    setActiveCategories(category.items);
-  };
-
-  const handleGoBack = () => {
-    setActiveCategories([]);
-    setActiveParent(null);
-  };
-
-  return (
-    <>
-      <div className="w-full h-full absolute left-0 top-0 my-10  z-10 bg-background border-none">
-        <div className="flex flex-col">
-          {parent && (
-            <div
-              onClick={handleBack}
-              className="flex flex-row cursor-pointer border-b px-4 md:px-6 py-6">
-              <div>
-                <MdChevronLeft width={32} height={32} />
-              </div>
-              <p className="leading-4 line-clamp-1 ml-4 font-semibold text-start">
-                {parent}
-              </p>
-            </div>
-          )}
-          {category?.map(item => (
-            <div
-              key={item.id}
-              className="w-full flex justify-between py-6 px-4 md:px-6 border-b ">
-              <div onClick={() => onItemClick(item)} className="cursor-pointer">
-                <p className="leading-4 line-clamp-1 text-start">{item.name}</p>
-              </div>
-              {item?.items?.length > 0 && (
-                <div
-                  onClick={() => handleClick(item)}
-                  className="cursor-pointer">
-                  <MdChevronRight />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {activeCategories.length > 0 && (
-        <RenderCategory
-          category={activeCategories}
-          parent={activeParent}
-          handleBack={handleGoBack}
-          onItemClick={onItemClick}
-        />
-      )}
-    </>
-  );
-};
-
 export default function MobileMenuCategory({categories}: any) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
   const [container, setContainer] = useState<any>(null);
 
-  const handleCategoryClick = (category: any) => {
+  const handleCategoryClick = ({
+    category,
+    url,
+  }: {
+    category: Category;
+    url?: string;
+  }) => {
     router.push(
       `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
