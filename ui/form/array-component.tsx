@@ -94,5 +94,3 @@ export const ArrayComponent = ({
     </div>
   );
 };
-
-export default ArrayComponent;

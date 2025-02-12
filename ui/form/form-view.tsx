@@ -150,5 +150,3 @@ export const FormView = ({
     </Form>
   );
 };
-
-export default FormView;

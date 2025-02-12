@@ -83,5 +83,3 @@ export const SelectionPicker = ({
     />
   ) : null;
 };
-
-export default SelectionPicker;
