@@ -196,7 +196,7 @@ export async function validateRegistration({
     }
 
     const maxParticipantPerRegistration =
-      event.maxParticipantPerRegistration || 0;
+      event.maxParticipantPerRegistration || 1;
     if (otherPeople.length > maxParticipantPerRegistration) {
       return error(
         await t(
