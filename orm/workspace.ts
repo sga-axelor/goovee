@@ -296,7 +296,7 @@ export async function findPartnerWorkspaceConfig({
   return {
     config: partnerWorkspaceConfig?.portalAppConfig,
     apps: partnerWorkspaceConfig?.apps,
-    currentWorkspace: {id: partnerWorkspaceConfig.id},
+    workspacePermissionConfig: {id: partnerWorkspaceConfig.id},
   };
 }
 
@@ -387,7 +387,7 @@ export async function findDefaultGuestWorkspaceConfig({
   return {
     config: defaultGuestWorkspaceConfig?.portalAppConfig,
     apps: defaultGuestWorkspaceConfig?.apps,
-    currentWorkspace: {id: workspace?.defaultGuestWorkspace?.id},
+    workspacePermissionConfig: {id: workspace?.defaultGuestWorkspace?.id},
   };
 }
 
@@ -446,7 +446,7 @@ export async function findWorkspace({
     }
   }
 
-  const currentWorkspace = workspaceConfig?.currentWorkspace;
+  const workspacePermissionConfig = workspaceConfig?.workspacePermissionConfig;
   let config = workspaceConfig?.config;
   let apps: any[] = workspaceConfig?.apps;
 
@@ -475,7 +475,7 @@ export async function findWorkspace({
     config,
     apps,
     navigationSelect,
-    currentWorkspace,
+    workspacePermissionConfig,
   };
 }
 

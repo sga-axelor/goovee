@@ -55,7 +55,7 @@ export async function createInvoice({
       return error(await t('Invalid workspace.'));
     }
 
-    const partnerWorkspaceId = workspace?.currentWorkspace?.id;
+    const partnerWorkspaceId = workspace?.workspacePermissionConfig?.id;
     if (!partnerWorkspaceId) {
       return error(await t('Partner workspace id is missing.'));
     }
