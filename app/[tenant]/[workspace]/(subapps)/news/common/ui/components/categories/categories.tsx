@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {useRouter} from 'next/navigation';
-// ---- LOCAL IMPORTS ---- //
+// ---- CORE IMPORTS ---- //
 
 import {NavbarCategoryMenu} from '@/ui/components';
 

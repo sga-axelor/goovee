@@ -1,11 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useState} from 'react';
-import {
-  MdChevronLeft,
-  MdChevronRight,
-  MdOutlineCalendarMonth,
-} from 'react-icons/md';
+import {MdOutlineCalendarMonth} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -46,7 +42,9 @@ export function MobileCategories({
         onClick={openSidebar}
       />
       <Sheet open={open} onOpenChange={closeSidebar}>
-        <SheetContent side="left" className="bg-white divide-y divide-grey-1">
+        <SheetContent
+          side="left"
+          className="bg-white divide-y divide-grey-1 w-full sm:w-3/4">
           <MobileCategoryMenu
             category={categories}
             parent={null}
