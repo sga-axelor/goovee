@@ -39,12 +39,12 @@ export function EmailFormField({
       if (!email.trim()) return;
 
       setValidating(true);
-      clearErrors(formKey);
 
       try {
         const response: any = await onValidation(email);
         if (response?.success) {
           setValue(formKey, email, {shouldValidate: true});
+          clearErrors(formKey);
         } else {
           setError(formKey, {
             type: 'manual',

@@ -55,7 +55,9 @@ export const FormView = ({
   });
 
   const formState = form.watch();
-  const {isValid, isSubmitting, isSubmitted} = form.formState;
+  const {isSubmitting} = form.formState;
+  const isValid =
+    form.formState.isValid && !Object.keys(form.formState.errors || {}).length;
 
   const visibleFields = useMemo(
     () => fields.filter(_f => !_f.hidden && !_f.hideIf?.(formState)),
@@ -142,7 +144,7 @@ export const FormView = ({
               e.preventDefault();
               form.handleSubmit(onSubmit)();
             }}
-            disabled={isSubmitting || (isSubmitted && !isValid)}>
+            disabled={isSubmitting || !isValid}>
             {i18n.t(submitTitle)}
           </Button>
         )}

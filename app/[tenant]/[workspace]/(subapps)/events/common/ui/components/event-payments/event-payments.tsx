@@ -39,7 +39,8 @@ export function EventPayments({
   const paymentOptionSet = config?.paymentOptionSet;
   const workspaceURL = workspace?.url;
 
-  const isValid = form.formState.isValid;
+  const isValid =
+    form.formState.isValid && !Object.keys(form.formState.errors || {}).length;
   const total = form.watch('totalPrice');
 
   const {toast} = useToast();
