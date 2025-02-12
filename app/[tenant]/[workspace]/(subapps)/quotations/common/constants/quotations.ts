@@ -1,5 +1,3 @@
-import {i18n} from '@/locale';
-
 export const HEADING = 'You have quotations awaiting for reponse.';
 
 export const QUOTATION_STATUS = {
