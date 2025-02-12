@@ -28,6 +28,8 @@ export async function registerParticipants({
     tenantId,
   });
 
+  const timeStamp = new Date();
+
   const participantList = participants.reduce(
     (acc: any, value) => {
       const {subscriptionSet, ...rest} = value;
@@ -39,8 +41,15 @@ export async function registerParticipants({
         ...rest,
         ...(contact && {contact: {select: {id: contact.id}}}),
         subscriptionSet: {
-          create: subscriptionSet || [],
+          create:
+            subscriptionSet?.map(s => ({
+              ...s,
+              createdOn: timeStamp,
+              updatedOn: timeStamp,
+            })) || [],
         },
+        createdOn: timeStamp,
+        updatedOn: timeStamp,
       });
 
       return acc;
@@ -58,6 +67,8 @@ export async function registerParticipants({
         },
       },
       participantList: participantList,
+      createdOn: timeStamp,
+      updatedOn: timeStamp,
     },
   });
 
