@@ -11,13 +11,14 @@ import {
   Label,
   Button,
   Breadcrumbs,
+  CategoriesPanel,
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
-import type {ComputedProduct, PortalWorkspace} from '@/types';
+import type {Category, ComputedProduct, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {Categories} from '..';
@@ -76,7 +77,13 @@ export function ProductView({
     setNote(value);
     await setProductNote(product.id, value);
   };
-  const handleCategoryClick = (category: any) => {
+  const handleCategoryClick = ({category}: {category: Category}) => {
+    router.push(
+      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
+    );
+  };
+
+  const handleBreadCrumbClick = (category: any) => {
     router.push(
       `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
@@ -96,13 +103,16 @@ export function ProductView({
   return (
     <div>
       <div className="relative">
-        <Categories items={categories} onClick={handleCategoryClick} />
+        <CategoriesPanel
+          categories={categories}
+          onClick={handleCategoryClick}
+        />
       </div>
       <div className="container py-2">
         <div className="my-10">
           <Breadcrumbs
             breadcrumbs={breadcrumbs}
-            onClick={handleCategoryClick}
+            onClick={handleBreadCrumbClick}
           />
         </div>
         <div className="grid md:grid-cols-[36%_1fr] grid-cols-1 gap-5">

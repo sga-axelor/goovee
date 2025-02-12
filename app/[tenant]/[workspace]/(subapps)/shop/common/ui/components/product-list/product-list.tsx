@@ -9,12 +9,22 @@ import {MdGridView} from 'react-icons/md';
 import {MdOutlineList} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Breadcrumbs, Pagination, TextField} from '@/ui/components';
+import {
+  Breadcrumbs,
+  CategoriesPanel,
+  Pagination,
+  TextField,
+} from '@/ui/components';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
-import type {ComputedProduct, Product, PortalWorkspace} from '@/types';
+import type {
+  ComputedProduct,
+  Product,
+  PortalWorkspace,
+  Category,
+} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -133,7 +143,7 @@ export function ProductList({
   const handlePage = (page: string | number) => {
     updateSearchParams([{key: 'page', value: page}]);
   };
-  const handleCategoryClick = (category: any) => {
+  const handleCategoryClick = ({category}: {category: Category}) => {
     router.push(
       `${workspaceURI}/shop/category/${category.name}-${category.id}`,
     );
@@ -143,6 +153,12 @@ export function ProductList({
       `${productPath}/${encodeURIComponent(product.name)}-${product.id}`,
     );
   };
+
+  const handleBreadCrumbClick = (category: any) => {
+    router.push(
+      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
+    );
+  };
   const isGridView = view === VIEW.GRID;
   const isListView = view === VIEW.LIST;
 
@@ -150,7 +166,10 @@ export function ProductList({
     <div>
       <div className="flex items-center bg-white relative">
         <div className="grow w-100 max-w-full">
-          <Categories items={categories} onClick={handleCategoryClick} />
+          <CategoriesPanel
+            categories={categories}
+            onClick={handleCategoryClick}
+          />
         </div>
         <div className="basis-full md:basis-[20%] px-4 py-2">
           <form
@@ -173,7 +192,7 @@ export function ProductList({
         <div className="my-10 text-foreground">
           <Breadcrumbs
             breadcrumbs={breadcrumbs}
-            onClick={handleCategoryClick}
+            onClick={handleBreadCrumbClick}
           />
         </div>
         <div className="flex items-center gap-4 mb-2">

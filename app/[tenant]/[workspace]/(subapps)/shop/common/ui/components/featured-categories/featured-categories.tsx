@@ -6,11 +6,10 @@ import {useRouter} from 'next/navigation';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 
-import {Button} from '@/ui/components';
+import {Button, CategoriesPanel} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
-import {Categories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components/categories';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 import type {
@@ -59,7 +58,7 @@ export function FeaturedCategories({
     );
   };
 
-  const handleCategoryClick = (category: any) => {
+  const handleCategoryClick = ({category}: {category: Category}) => {
     router.push(
       `${workspaceURI}/shop/category/${encodeURIComponent(category.name)}-${category.id}`,
     );
@@ -70,7 +69,10 @@ export function FeaturedCategories({
   return (
     <div>
       <div className="relative">
-        <Categories items={categories} onClick={handleCategoryClick} />
+        <CategoriesPanel
+          categories={categories}
+          onClick={handleCategoryClick}
+        />
       </div>
       {carouselList?.length ? (
         <Swiper
@@ -123,7 +125,7 @@ export function FeaturedCategories({
                 </h3>
                 <div
                   className="flex gap-2 px-3 py-4 cursor-pointer"
-                  onClick={() => handleCategoryClick(category)}>
+                  onClick={() => handleCategoryClick({category})}>
                   <span className="leading-6 text-sm">See All</span>
                   <MdEast className="w-6 h-6" />
                 </div>

@@ -216,3 +216,4 @@ export {DropdownSelector} from './dropdown-selector';
 export {DocViewer} from './doc-viewer';
 export {AutosizeTextarea} from './textarea-auto-size';
 export {MobileMenu} from './mobile-menu';
+export {CategoriesPanel} from './categories-panel';
