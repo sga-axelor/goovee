@@ -172,7 +172,8 @@ export async function validateRegistration({
     }
 
     const otherPeople: Participant[] = _otherPeople;
-    otherPeople.push(rest);
+    otherPeople.unshift(rest);
+    otherPeople.sort((a, b) => a.sequence - b.sequence);
 
     const totalRegisteredParticipants = getTotalRegisteredParticipants(event);
     const maxParticipantPerEvent = event.maxParticipantPerEvent || 0;

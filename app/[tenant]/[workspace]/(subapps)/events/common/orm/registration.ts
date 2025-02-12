@@ -77,40 +77,48 @@ export async function getEventContacts({
   tenantId: Tenant['id'];
 }): Promise<EventContact[]> {
   const partners = await Promise.all(
-    participants.map(async participant => {
-      const {emailAddress, name, surname, companyName, phone} = participant;
-      if (!emailAddress) return;
-      const c = await manager.getClient(tenantId);
-      const partner = await c.aOSPartner.findOne({
-        where: {emailAddress: {address: emailAddress}},
-        select: {emailAddress: {address: true}},
-      });
+    participants
+      .toSorted((a, b) => a.sequence - b.sequence)
+      .filter(
+        (p, i, self) =>
+          p.emailAddress &&
+          self.findIndex(s => s.emailAddress === p.emailAddress) === i,
+      ) // Filter out duplicate emails
+      .map(async participant => {
+        const {emailAddress, name, surname, companyName, phone} = participant;
+        const c = await manager.getClient(tenantId);
+        const partner = await c.aOSPartner.findOne({
+          where: {emailAddress: {address: emailAddress}},
+          select: {emailAddress: {address: true}},
+        });
+        if (partner) return partner;
 
-      if (partner) return partner;
-      const eventContact = await c.aOSPartner.create({
-        data: {
-          partnerTypeSelect: PartnerTypeMap[UserType.individual],
-          emailAddress: {create: {address: emailAddress, name: emailAddress}},
-          name: surname,
-          firstName: name,
-          fullName: `${surname} ${name || ''}`.trim(),
-          simpleFullName: `${surname} ${name || ''}`.trim(),
-          isContact: false,
-          isCustomer: false,
-          isProspect: false,
-          createdFromSelect: USER_CREATED_FROM,
-          isRegisteredOnPortal: false,
-          isActivatedOnPortal: false,
-          isPublicPartner: true,
-          portalCompanyName: companyName,
-          mobilePhone: phone,
-        },
-        select: {emailAddress: {address: true}},
-      });
-      return eventContact;
-    }),
+        const eventContact = await c.aOSPartner.create({
+          data: {
+            partnerTypeSelect: PartnerTypeMap[UserType.individual],
+            emailAddress: {create: {address: emailAddress, name: emailAddress}},
+            name: surname,
+            firstName: name,
+            fullName: `${surname} ${name || ''}`.trim(),
+            simpleFullName: `${surname} ${name || ''}`.trim(),
+            isContact: false,
+            isCustomer: false,
+            isProspect: false,
+            createdFromSelect: USER_CREATED_FROM,
+            isRegisteredOnPortal: false,
+            isActivatedOnPortal: false,
+            isPublicPartner: true,
+            portalCompanyName: companyName,
+            mobilePhone: phone,
+            createdOn: new Date(),
+            updatedOn: new Date(),
+          },
+          select: {emailAddress: {address: true}},
+        });
+        return eventContact;
+      }),
   );
-  return partners.filter(Boolean) as EventContact[];
+  return partners;
 }
 
 export async function findEventRegistration({
