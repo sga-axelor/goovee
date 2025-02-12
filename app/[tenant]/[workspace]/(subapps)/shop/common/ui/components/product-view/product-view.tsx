@@ -11,7 +11,7 @@ import {
   Label,
   Button,
   Breadcrumbs,
-  CategoriesPanel,
+  NavbarCategoryMenu,
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
@@ -103,7 +103,7 @@ export function ProductView({
   return (
     <div>
       <div className="relative">
-        <CategoriesPanel
+        <NavbarCategoryMenu
           categories={categories}
           onClick={handleCategoryClick}
         />

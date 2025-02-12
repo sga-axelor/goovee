@@ -6,7 +6,7 @@ import {useRouter} from 'next/navigation';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 
-import {Button, CategoriesPanel} from '@/ui/components';
+import {Button, NavbarCategoryMenu} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
@@ -69,7 +69,7 @@ export function FeaturedCategories({
   return (
     <div>
       <div className="relative">
-        <CategoriesPanel
+        <NavbarCategoryMenu
           categories={categories}
           onClick={handleCategoryClick}
         />

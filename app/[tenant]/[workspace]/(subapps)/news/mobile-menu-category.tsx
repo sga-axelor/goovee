@@ -5,7 +5,7 @@ import {MdOutlineNewspaper} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {Sheet, SheetContent, Portal, MobileMenu} from '@/ui/components';
+import {Sheet, SheetContent, Portal, MobileCategoryMenu} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {Category} from '@/types';
 
@@ -43,7 +43,7 @@ export function MobileCategories({
       />
       <Sheet open={open} onOpenChange={closeSidebar}>
         <SheetContent side="left" className="bg-white divide-y divide-grey-1">
-          <MobileMenu
+          <MobileCategoryMenu
             category={categories}
             parent={null}
             onItemClick={handleItemClick}

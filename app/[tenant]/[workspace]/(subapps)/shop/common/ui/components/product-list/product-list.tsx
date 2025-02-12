@@ -11,7 +11,7 @@ import {MdOutlineList} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {
   Breadcrumbs,
-  CategoriesPanel,
+  NavbarCategoryMenu,
   Pagination,
   TextField,
 } from '@/ui/components';
@@ -166,7 +166,7 @@ export function ProductList({
     <div>
       <div className="flex items-center bg-white relative">
         <div className="grow w-100 max-w-full">
-          <CategoriesPanel
+          <NavbarCategoryMenu
             categories={categories}
             onClick={handleCategoryClick}
           />

@@ -9,7 +9,7 @@ import {Separator} from '@/ui/components';
 import {cn} from '@/utils/css';
 import type {Category} from '@/types';
 
-export const CategoriesPanel = ({
+export const NavbarCategoryMenu = ({
   categories = [],
   onClick,
   slugKey,

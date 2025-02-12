@@ -2,12 +2,14 @@
 
 import React from 'react';
 import {useRouter} from 'next/navigation';
+// ---- LOCAL IMPORTS ---- //
+
+import {NavbarCategoryMenu} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
-import {Category} from '@/subapps/news/common/types';
+import type {Category} from '@/subapps/news/common/types';
 import {transformCategories} from '@/subapps/news/common/utils';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {CategoriesPanel} from '@/ui/components';
 
 export const Categories = ({categories}: {categories: any[]}) => {
   const $categories = transformCategories(categories);
@@ -24,7 +26,7 @@ export const Categories = ({categories}: {categories: any[]}) => {
     router.push(`${workspaceURI}/news/${url}`);
   };
   return (
-    <CategoriesPanel
+    <NavbarCategoryMenu
       categories={$categories}
       onClick={handleCategoriesClick}
       slugKey={'slug'}
