@@ -39,10 +39,6 @@
       "target": "AOSRegistration"
     },
     {
-      "name": "companyName",
-      "type": "String"
-    },
-    {
       "name": "subscriptionSet",
       "type": "ManyToMany",
       "target": "AOSPortalEventFacility"

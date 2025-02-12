@@ -275,9 +275,9 @@ export type Participant = {
   surname: string;
   emailAddress: string;
   phone: string;
-  contact?: any;
+  contactAttrs?: string;
   subscriptionSet?: any[];
-  companyName?: string;
+  company?: string;
   sequence: number;
 };
 

@@ -98,7 +98,7 @@ export const RegistrationForm = ({
         defaultValue: user?.name || '',
       },
       {
-        name: 'companyName',
+        name: 'company',
         title: i18n.t('Company'),
         type: 'string',
         widget: null,

@@ -8,6 +8,8 @@ import {error} from '@/subapps/events/common/utils';
 import {PartnerTypeMap} from '@/orm/partner';
 import {UserType} from '@/lib/core/auth/types';
 import {USER_CREATED_FROM} from '@/constants';
+import {CreateArgs} from '@goovee/orm';
+import {AOSPortalParticipant} from '@/goovee/.generated/models';
 
 export async function registerParticipants({
   eventId,
@@ -30,43 +32,46 @@ export async function registerParticipants({
 
   const timeStamp = new Date();
 
-  const participantList = participants.reduce(
-    (acc: any, value) => {
-      const {subscriptionSet, ...rest} = value;
+  const participantList = participants.map(
+    (participant): CreateArgs<AOSPortalParticipant> => {
+      const {
+        phone,
+        sequence,
+        surname,
+        name,
+        emailAddress,
+        subscriptionSet,
+        company,
+        contactAttrs,
+      } = participant;
+
       const contact = contacts.find(
-        c => c.emailAddress?.address === rest.emailAddress,
+        c => c.emailAddress?.address === emailAddress,
       );
 
-      acc.create.push({
-        ...rest,
-        ...(contact && {contact: {select: {id: contact.id}}}),
-        subscriptionSet: {
-          create:
-            subscriptionSet?.map(s => ({
-              ...s,
-              createdOn: timeStamp,
-              updatedOn: timeStamp,
-            })) || [],
-        },
+      return {
+        company,
+        name,
+        surname,
+        emailAddress,
+        phone,
+        //@ts-expect-error contact attrs is a json string
+        contactAttrs,
+        sequence,
         createdOn: timeStamp,
         updatedOn: timeStamp,
-      });
-
-      return acc;
-    },
-    {
-      create: [],
+        ...(contact && {contact: {select: {id: contact.id}}}),
+        ...(!!subscriptionSet?.length && {
+          subscriptionSet: {select: subscriptionSet.map(s => ({id: s.id}))},
+        }),
+      };
     },
   );
 
   const registration = await c.aOSRegistration.create({
     data: {
-      event: {
-        select: {
-          id: eventId,
-        },
-      },
-      participantList: participantList,
+      event: {select: {id: eventId}},
+      participantList: {create: participantList},
       createdOn: timeStamp,
       updatedOn: timeStamp,
     },
@@ -96,7 +101,7 @@ export async function getEventContacts({
           self.findIndex(s => s.emailAddress === p.emailAddress) === i,
       ) // Filter out duplicate emails
       .map(async participant => {
-        const {emailAddress, name, surname, companyName, phone} = participant;
+        const {emailAddress, name, surname, company, phone} = participant;
         const c = await manager.getClient(tenantId);
         const partner = await c.aOSPartner.findOne({
           where: {emailAddress: {address: emailAddress}},
@@ -119,7 +124,7 @@ export async function getEventContacts({
             isRegisteredOnPortal: false,
             isActivatedOnPortal: false,
             isPublicPartner: true,
-            portalCompanyName: companyName,
+            portalCompanyName: company,
             mobilePhone: phone,
             createdOn: new Date(),
             updatedOn: new Date(),
