@@ -41,44 +41,66 @@ export const ProductsList = ({saleOrderLineList, tenant}: Props) => {
           <StyledTable
             headStyle="bg-foreground !text-background !rounded-none !px-4"
             columns={PRODUCT_COLUMNS}>
-            {saleOrderLineList?.map((saleOrder: any) => {
-              return (
-                <TableRow key={saleOrder.id} className="text-base">
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Avatar className="rounded-sm h-6 w-6">
-                        <AvatarImage src={getProductImage(saleOrder.product)} />
-                      </Avatar>
-                      <p className="font-semibold mb-0">
-                        {saleOrder.productName}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{saleOrder.qty}</TableCell>
-                  <TableCell>{saleOrder?.unit?.name}</TableCell>
-                  <TableCell>{saleOrder.price}</TableCell>
-                  <TableCell>{saleOrder.exTaxTotal}</TableCell>
-                  <TableCell>{saleOrder?.taxLineSet[0]?.value}%</TableCell>
-                  <TableCell>{saleOrder.discountAmount}%</TableCell>
-                  <TableCell className="font-semibold">
-                    {saleOrder.inTaxTotal}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {!saleOrderLineList?.length ? (
+              <TableRow>
+                <TableCell
+                  colSpan={PRODUCT_COLUMNS.length}
+                  className="text-center">
+                  {i18n.t('No records available')}
+                </TableCell>
+              </TableRow>
+            ) : (
+              saleOrderLineList?.map((saleOrder: any) => {
+                return (
+                  <TableRow key={saleOrder.id} className="text-base">
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Avatar className="rounded-sm h-6 w-6">
+                          <AvatarImage
+                            src={getProductImage(saleOrder.product)}
+                          />
+                        </Avatar>
+                        <p className="font-semibold mb-0">
+                          {saleOrder.productName}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{saleOrder.qty}</TableCell>
+                    <TableCell>{saleOrder?.unit?.name}</TableCell>
+                    <TableCell>{saleOrder.price}</TableCell>
+                    <TableCell>{saleOrder.exTaxTotal}</TableCell>
+                    <TableCell>{saleOrder?.taxLineSet[0]?.value}%</TableCell>
+                    <TableCell>{saleOrder.discountAmount}%</TableCell>
+                    <TableCell className="font-semibold">
+                      {saleOrder.inTaxTotal}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </StyledTable>
         </div>
         <div className="block lg:hidden">
           <StyledTable
             headStyle="bg-foreground !text-background !rounded-none !px-4"
             columns={PRODUCT_CARD_COLUMNS}>
-            {saleOrderLineList?.map((saleOrder: any) => (
-              <ProductCard
-                key={saleOrder.id}
-                saleOrder={saleOrder}
-                tenant={tenant}
-              />
-            ))}
+            {!saleOrderLineList?.length ? (
+              <TableRow>
+                <TableCell
+                  colSpan={PRODUCT_CARD_COLUMNS.length}
+                  className="text-center">
+                  {i18n.t('No records available')}
+                </TableCell>
+              </TableRow>
+            ) : (
+              saleOrderLineList?.map((saleOrder: any) => (
+                <ProductCard
+                  key={saleOrder.id}
+                  saleOrder={saleOrder}
+                  tenant={tenant}
+                />
+              ))
+            )}
           </StyledTable>
         </div>
       </div>
