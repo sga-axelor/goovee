@@ -18,9 +18,10 @@ import {
   isCommentEnabled,
 } from '@/comments';
 import {zodParseFormData} from '@/utils/formdata';
+import {getWhereClauseForEntity} from '@/utils/filters';
+import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {getWhereClause} from '../utils/quotations';
 import {findQuotation} from '../orm/quotations';
 
 export const createComment: CreateComment = async formData => {
@@ -70,10 +71,11 @@ export const createComment: CreateComment = async formData => {
   }
   const {role, isContactAdmin} = app;
 
-  const quotationWhereClause = getWhereClause({
+  const quotationWhereClause = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
   const quotation = await findQuotation({
@@ -154,10 +156,11 @@ export const fetchComments: FetchComments = async props => {
 
   const {role, isContactAdmin} = app;
 
-  const quotationWhereClause = getWhereClause({
+  const quotationWhereClause = getWhereClauseForEntity({
     user,
     role,
     isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
   const quotation = await findQuotation({
