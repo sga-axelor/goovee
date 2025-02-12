@@ -1,6 +1,6 @@
 'use client';
 
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {MdAdd} from 'react-icons/md';
 
@@ -60,6 +60,8 @@ export const RegistrationForm = ({
     isPrivate = false,
     maxParticipantPerRegistration,
   } = eventDetails || {};
+
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
@@ -308,6 +310,10 @@ export const RegistrationForm = ({
     ],
   );
 
+  const handleTotalPriceChange = (value: number) => {
+    setTotalPrice(value);
+  };
+
   const onSubmit = async (values: any) => {
     try {
       const result = mapParticipants(values, metaFields);
@@ -384,6 +390,7 @@ export const RegistrationForm = ({
                   list={facilityList}
                   eventPrice={Number(displayAti) ?? 0}
                   currency={eventProduct?.saleCurrency}
+                  onTotalPriceChange={handleTotalPriceChange}
                 />
               ),
             },
@@ -392,7 +399,7 @@ export const RegistrationForm = ({
           mode={'onChange'}
           onSubmit={onSubmit}
           submitButton={
-            canPay
+            canPay && totalPrice > 0
               ? ({form}: any) => (
                   <EventPayments
                     workspace={workspace}

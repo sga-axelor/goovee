@@ -17,6 +17,7 @@ export function SubscriptionsPriceView({
   list,
   currency,
   eventPrice,
+  onTotalPriceChange,
 }: {
   form: any;
   list: any[];
@@ -25,6 +26,7 @@ export function SubscriptionsPriceView({
     numberOfDecimals: number;
   };
   eventPrice: number;
+  onTotalPriceChange: (value: number) => void;
 }) {
   const currencySymbol = currency?.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = currency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
@@ -80,7 +82,8 @@ export function SubscriptionsPriceView({
 
   useEffect(() => {
     form.setValue('totalPrice', totalPrice);
-  }, [totalPrice, form]);
+    onTotalPriceChange(totalPrice);
+  }, [totalPrice, form, onTotalPriceChange]);
 
   return (
     <div className="flex flex-col gap-6">
