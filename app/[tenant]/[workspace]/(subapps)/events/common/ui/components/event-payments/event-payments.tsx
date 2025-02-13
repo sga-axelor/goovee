@@ -216,6 +216,7 @@ export function EventPayments({
               record: {
                 id: eventId,
               },
+              amount: total,
             });
           }}
           onPaymentSuccess={async () => await setitem(eventFormKey, null)}

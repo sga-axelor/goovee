@@ -13,8 +13,9 @@ import {TENANT_HEADER} from '@/middleware';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {findPartnerByEmail} from '@/orm/partner';
-import {createStripeOrder} from '@/lib/core/payment/stripe/actions';
+import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
+import {formatAmountForStripe} from '@/utils/stripe';
 
 // ---- LOCAL IMPORTS ---- //
 import {findEvent} from '@/subapps/events/common/orm/event';
@@ -227,6 +228,7 @@ export async function validateStripePayment({
   values,
   workspaceURL,
   record,
+  amount,
 }: {
   stripeSessionId: string;
   values: any;
@@ -234,8 +236,9 @@ export async function validateStripePayment({
   record: {
     id: string | number;
   };
+  amount: number;
 }) {
-  if (!record?.id || !values) {
+  if (!record?.id || Object.keys(values)?.length === 0 || !amount) {
     return error(await t('Missing required values!'));
   }
 
@@ -300,6 +303,23 @@ export async function validateStripePayment({
   if (!stripeSessionId) {
     return error(await t('Bad Request'));
   }
+
+  let stripeSession;
+  try {
+    stripeSession = await findStripeOrder({id: stripeSessionId});
+  } catch (err) {
+    return error(await t((err as any)?.message));
+  }
+
+  const currencyCode = event.currency?.code || DEFAULT_CURRENCY_CODE;
+
+  const paymentTotal = stripeSession?.lines?.data?.[0]?.amount_total;
+  const eventTotal = formatAmountForStripe(Number(amount || 0), currencyCode);
+
+  if (paymentTotal && eventTotal && paymentTotal !== eventTotal) {
+    return error(await t('Payment amount mistmatch'));
+  }
+
   const resgistration: any = await register({
     eventId: record.id,
     values,
@@ -350,8 +370,8 @@ export async function paypalCaptureOrder({
     id: string | number;
   };
 }) {
-  if (!orderID) {
-    return error(await t('Bad request'));
+  if (!orderID || !amount || Object.keys(values)?.length === 0 || !record.id) {
+    return error(await t('Missing required values'));
   }
 
   if (!workspaceURL) {
@@ -475,7 +495,7 @@ export async function paypalCreateOrder({
   amount: string | number;
   email: string;
 }) {
-  if (!record?.id || !values || !amount || !email) {
+  if (Object.keys(values)?.length === 0 || !record.id || !amount || !email) {
     return error(await t('Missing required values!'));
   }
 
