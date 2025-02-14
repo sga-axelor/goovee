@@ -32,7 +32,6 @@ import {
   SortBy,
   ProductCard,
   ProductListItem,
-  Categories,
   ProductListBrandFilter,
   ProductListColorFilter,
 } from '..';
@@ -164,14 +163,14 @@ export function ProductList({
 
   return (
     <div>
-      <div className="flex items-center bg-white relative">
-        <div className="grow w-100 max-w-full">
+      <div className="flex items-center justify-between bg-white relative">
+        <div className="w-0 md:w-[80%] overflow-hidden">
           <NavbarCategoryMenu
             categories={categories}
             onClick={handleCategoryClick}
           />
         </div>
-        <div className="basis-full md:basis-[20%] px-4 py-2">
+        <div className="w-full sm:!w-[18.75rem] px-4 py-2">
           <form
             onSubmit={handleChangeSearch}
             className={`${styles.wrapper} w-full`}>
