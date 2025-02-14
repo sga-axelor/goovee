@@ -36,6 +36,7 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
     gray: '160 3% 82',
     'gray-light': '180 2% 90%',
     'gray-dark': '170 3% 36%',
+    'gray-fog': '180, 11%, 98%',
 
     border: '214.3 31.8% 91.4%',
     input: '214.3 31.8% 91.4%',

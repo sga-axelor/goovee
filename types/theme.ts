@@ -34,6 +34,7 @@ export type Theme = {
     gray?: string;
     'gray-light'?: string;
     'gray-dark'?: string;
+    'gray-fog'?: string;
 
     border?: string;
     input?: string;

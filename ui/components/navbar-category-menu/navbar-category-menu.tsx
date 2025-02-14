@@ -169,7 +169,7 @@ const Menu = ({
       <div
         className={cn(
           'flex flex-col gap-6 px-4 py-6 pl-10 ',
-          level === 0 && 'w-full bg-gray-50',
+          level === 0 && 'w-full bg-gray-fog',
           !subMenu ? 'w-full' : 'w-fit',
         )}>
         {parentTitle && category && (
