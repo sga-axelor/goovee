@@ -217,11 +217,13 @@ export async function findEvent({
   const formattedDefaultPrice = await formatNumber(displayWt, {
     currency: currencySymbol,
     scale,
+    type: 'DECIMAL',
   });
 
   const formattedDefaultPriceAti = await formatNumber(displayAti, {
     currency: currencySymbol,
     scale,
+    type: 'DECIMAL',
   });
 
   const updatedFacilityList = event?.facilityList?.map(async facility => {
@@ -240,12 +242,15 @@ export async function findEvent({
     const formattedPriceWt = await formatNumber(facilityWt, {
       currency: currencySymbol,
       scale,
+      type: 'DECIMAL',
     });
 
     const formattedPriceAti = await formatNumber(facilityAti, {
       currency: currencySymbol,
       scale,
+      type: 'DECIMAL',
     });
+
     return {
       ...facility,
       displayWt: facilityWt,
