@@ -259,7 +259,7 @@ export const RegistrationForm = ({
                       toast({
                         variant: 'destructive',
                         title: i18n.t(
-                          'Registrations are limited to {0} participants only.',
+                          'Registration is limited to {0} participants only.',
                           String(max),
                         ),
                       });
