@@ -56,7 +56,6 @@ export const RegistrationForm = ({
     eventAllowMultipleRegistrations = false,
     id: eventId,
     eventProduct = null,
-    slug,
     isPrivate = false,
     maxParticipantPerRegistration,
   } = eventDetails || {};
@@ -70,6 +69,7 @@ export const RegistrationForm = ({
   const isLoggedIn = !!user?.emailAddress;
   const showContactsList = isLoggedIn && !user.isContact;
   const canPay = defaultPrice || facilityList?.length;
+  const eventPrice = defaultPrice ? (displayAti ?? 0) : 0;
 
   const basicPerson = useMemo(
     () => [
@@ -145,7 +145,10 @@ export const RegistrationForm = ({
           <SubscriptionsView
             {...props}
             list={facilityList}
-            eventPrice={defaultPrice ? formattedDefaultPriceAti : 0}
+            event={{
+              price: eventPrice,
+              formattedDefaultPriceAti: formattedDefaultPriceAti,
+            }}
           />
         ),
       },
@@ -155,12 +158,12 @@ export const RegistrationForm = ({
       user?.name,
       user?.emailAddress?.address,
       user?.fixedPhone,
-      facilityList,
       isLoggedIn,
       eventId,
       workspace.url,
+      facilityList,
+      eventPrice,
       formattedDefaultPriceAti,
-      defaultPrice,
     ],
   );
 
@@ -287,7 +290,10 @@ export const RegistrationForm = ({
                       {...props}
                       list={facilityList}
                       isSecondary
-                      eventPrice={defaultPrice ? formattedDefaultPriceAti : 0}
+                      event={{
+                        price: eventPrice,
+                        formattedDefaultPriceAti: formattedDefaultPriceAti,
+                      }}
                     />
                   ),
                 }
@@ -302,10 +308,10 @@ export const RegistrationForm = ({
       eventId,
       workspace.url,
       facilityList,
-      defaultPrice,
-      formattedDefaultPriceAti,
       isPrivate,
       maxParticipantPerRegistration,
+      eventPrice,
+      formattedDefaultPriceAti,
       toast,
     ],
   );
@@ -388,7 +394,7 @@ export const RegistrationForm = ({
                 <SubscriptionsPriceView
                   {...props}
                   list={facilityList}
-                  eventPrice={Number(displayAti) ?? 0}
+                  eventPrice={eventPrice}
                   currency={eventProduct?.saleCurrency}
                   onTotalPriceChange={handleTotalPriceChange}
                 />

@@ -1,13 +1,15 @@
 'use client';
 
 import {useEffect, useMemo} from 'react';
-import {useWatch} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {formatNumber} from '@/locale/formatters';
 import {Separator} from '@/ui/components';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+
+// ---- LOCAL IMPORTS ---- //
+import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 
 const getParticipantsNames = (participants: any[]): string =>
   participants.map((_p: any) => `${_p.name} ${_p.surname}`).join(', ');
@@ -61,16 +63,21 @@ export function SubscriptionsPriceView({
   }, [selectedMainSubscriptions, rootName, rootSurname, secondaryParticipants]);
 
   const totalPrice = useMemo(() => {
-    return participants?.reduce((total, participant) => {
-      const participantSubscriptionsTotal = participant.subscriptionSet.reduce(
-        (sum: number, subscription: any) =>
-          sum + Number(subscription.displayAti),
-        0,
-      );
+    const formValues = {
+      name: rootName || '',
+      surname: rootSurname || '',
+      subscriptionSet: selectedMainSubscriptions,
+      otherPeople: secondaryParticipants,
+    };
 
-      return total + participantSubscriptionsTotal + eventPrice;
-    }, 0);
-  }, [participants, eventPrice]);
+    return getCalculatedTotalPrice(formValues, eventPrice);
+  }, [
+    selectedMainSubscriptions,
+    rootName,
+    rootSurname,
+    secondaryParticipants,
+    eventPrice,
+  ]);
 
   const validParticipants = useMemo(() => {
     return participants.filter(
@@ -81,9 +88,8 @@ export function SubscriptionsPriceView({
   const hasParticipants = validParticipants?.length > 0;
 
   useEffect(() => {
-    form.setValue('totalPrice', totalPrice);
     onTotalPriceChange(totalPrice);
-  }, [totalPrice, form, onTotalPriceChange]);
+  }, [onTotalPriceChange, totalPrice]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -98,6 +104,7 @@ export function SubscriptionsPriceView({
                 {formatNumber(totalPrice, {
                   scale,
                   currency: currencySymbol,
+                  type: 'DECIMAL',
                 })}
               </span>
             </div>

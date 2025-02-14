@@ -18,13 +18,16 @@ export function SubscriptionsView({
   form,
   list,
   isSecondary = false,
-  eventPrice,
+  event: {price: eventPrice, formattedDefaultPriceAti},
 }: {
   formKey: string;
   form: any;
   list: any[];
   isSecondary?: boolean;
-  eventPrice?: number;
+  event: {
+    price: number;
+    formattedDefaultPriceAti: string;
+  };
 }) {
   useEffect(() => {
     const currentValues = form.getValues(formKey);
@@ -67,7 +70,7 @@ export function SubscriptionsView({
               </FormControl>
               <FormLabel className="text-sm font-normal !mt-0">
                 {i18n.t('Event')} ({isSecondary ? '+' : ''}
-                {eventPrice})
+                {formattedDefaultPriceAti})
               </FormLabel>
             </FormItem>
           )}
