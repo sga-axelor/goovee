@@ -67,7 +67,8 @@ export const RegistrationForm = ({
   const {toast} = useToast();
 
   const isLoggedIn = !!user?.emailAddress;
-  const showContactsList = isLoggedIn && !user.isContact;
+  //NOTE: temprorary disable contacts list
+  const showContactsList = false && isLoggedIn && !user.isContact;
   const canPay = defaultPrice || facilityList?.length;
   const eventPrice = defaultPrice ? (displayAti ?? 0) : 0;
 
@@ -200,10 +201,11 @@ export const RegistrationForm = ({
         type: 'boolean',
         widget: null,
         helper: null,
-        hidden: false,
+        hidden: true,
         required: false,
-        readonly: false,
+        readonly: true,
         order: 100,
+        defaultValue: true,
       },
       ...(showContactsList
         ? [
@@ -267,7 +269,7 @@ export const RegistrationForm = ({
                   }}>
                   <MdAdd className="w-6 h-6 text-success group-hover:text-white" />
                   <p className="text-sm font-normal text-center text-black">
-                    {i18n.t('Add a new person that does not have an account')}
+                    {i18n.t('Add new participant')}
                   </p>
                 </Button>
               );
@@ -377,8 +379,11 @@ export const RegistrationForm = ({
             </div>
           </CardDescription>
         ) : null}
+        <h3 className="text-lg font-semibold leading-6 tracking-tight">
+          {i18n.t('Participant')} #1
+        </h3>
       </CardHeader>
-      <CardContent className="px-4 pb-4 pt-2 space-y-6">
+      <CardContent className="px-4 pb-4 space-y-6">
         <FormView
           fields={[
             ...(eventAllowMultipleRegistrations
