@@ -14,9 +14,13 @@ export const getTax = ({
   productcompany: any;
 }): ComputedProduct['tax'] => {
   if (ws) {
-    const wt = Number(wsProduct?.prices.find(p => p.type === 'WT')?.price || 0);
+    const wt = Number(
+      wsProduct?.prices.find((p: {type: string}) => p.type === 'WT')?.price ||
+        0,
+    );
     const ati = Number(
-      wsProduct?.prices.find(p => p.type === 'ATI')?.price || 0,
+      wsProduct?.prices.find((p: {type: string}) => p.type === 'ATI')?.price ||
+        0,
     );
 
     return {
