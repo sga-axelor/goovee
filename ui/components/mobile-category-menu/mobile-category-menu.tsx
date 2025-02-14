@@ -35,12 +35,12 @@ export const MobileCategoryMenu = ({
 
   return (
     <>
-      <div className="w-full h-full absolute left-0 top-0 my-10  z-10 bg-background border-none">
-        <div className="flex flex-col">
+      <div className="w-full h-screen overflow-y-auto absolute left-0 top-0  bg-background border-none">
+        <div className="flex flex-col mt-10">
           {parent && (
             <div
               onClick={handleBack}
-              className="flex flex-row cursor-pointer border-b px-4 md:px-6 py-6">
+              className="flex flex-row cursor-pointer border-b px-6 py-6">
               <div>
                 <MdChevronLeft width={32} height={32} />
               </div>
