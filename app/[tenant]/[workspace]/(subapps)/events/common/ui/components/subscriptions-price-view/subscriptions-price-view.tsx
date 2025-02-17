@@ -10,6 +10,7 @@ import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
+import type {EventPayments} from '@/subapps/events/common/types';
 
 const getParticipantsNames = (participants: any[]): string =>
   participants.map((_p: any) => `${_p.name} ${_p.surname}`).join(', ');
@@ -18,7 +19,7 @@ export function SubscriptionsPriceView({
   form,
   list,
   currency,
-  eventPrice,
+  event,
   onTotalPriceChange,
 }: {
   form: any;
@@ -27,7 +28,7 @@ export function SubscriptionsPriceView({
     symbol: string;
     numberOfDecimals: number;
   };
-  eventPrice: number;
+  event: EventPayments;
   onTotalPriceChange: (value: number) => void;
 }) {
   const currencySymbol = currency?.symbol || DEFAULT_CURRENCY_SYMBOL;
@@ -62,7 +63,7 @@ export function SubscriptionsPriceView({
     return [mainParticipant, ...secondaryParticipants];
   }, [selectedMainSubscriptions, rootName, rootSurname, secondaryParticipants]);
 
-  const totalPrice = useMemo(() => {
+  const {total, subscriptionPrices} = useMemo(() => {
     const formValues = {
       name: rootName || '',
       surname: rootSurname || '',
@@ -70,13 +71,13 @@ export function SubscriptionsPriceView({
       otherPeople: secondaryParticipants,
     };
 
-    return getCalculatedTotalPrice(formValues, eventPrice);
+    return getCalculatedTotalPrice(formValues, event);
   }, [
     selectedMainSubscriptions,
     rootName,
     rootSurname,
     secondaryParticipants,
-    eventPrice,
+    event,
   ]);
 
   const validParticipants = useMemo(() => {
@@ -88,8 +89,8 @@ export function SubscriptionsPriceView({
   const hasParticipants = validParticipants?.length > 0;
 
   useEffect(() => {
-    onTotalPriceChange(totalPrice);
-  }, [onTotalPriceChange, totalPrice]);
+    onTotalPriceChange(total);
+  }, [onTotalPriceChange, total]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -101,7 +102,7 @@ export function SubscriptionsPriceView({
             <div className="font-semibold text-xl">
               {i18n.t('Total Price')}:{' '}
               <span className="text-success">
-                {formatNumber(totalPrice, {
+                {formatNumber(total, {
                   scale,
                   currency: currencySymbol,
                   type: 'DECIMAL',
@@ -118,23 +119,28 @@ export function SubscriptionsPriceView({
           </div>
 
           <div className="flex flex-col pl-4 border-success border-l">
-            {list?.map((subscription: any) => {
+            {subscriptionPrices?.map(({facility, price}) => {
               const subscriptionUsers = participants?.filter((p: any) =>
-                p.subscriptionSet.some((f: any) => f.id === subscription.id),
+                p.subscriptionSet.some((f: any) => f.facility === facility),
               );
 
               return (
-                <div key={subscription.id}>
+                <div key={facility}>
                   <div className="font-semibold text-normal">
-                    {subscription.facility}:{' '}
-                    <span className="font-normal">
-                      {formatNumber(subscriptionUsers?.length)}{' '}
-                      {subscriptionUsers?.length > 0 && (
-                        <span className="text-slate-500">
-                          ({getParticipantsNames(subscriptionUsers)})
-                        </span>
-                      )}
+                    {facility}:{' '}
+                    <span className="text-success">
+                      {formatNumber(price, {
+                        scale,
+                        currency: currencySymbol,
+                        type: 'DECIMAL',
+                      })}
                     </span>
+                    {subscriptionUsers?.length > 0 && (
+                      <div className="text-slate-500">
+                        {subscriptionUsers?.length} (
+                        {getParticipantsNames(subscriptionUsers)})
+                      </div>
+                    )}
                   </div>
                 </div>
               );

@@ -399,7 +399,11 @@ export const RegistrationForm = ({
                 <SubscriptionsPriceView
                   {...props}
                   list={facilityList}
-                  eventPrice={eventPrice}
+                  event={{
+                    id: eventId,
+                    displayAti: eventPrice,
+                    facilityList,
+                  }}
                   currency={eventProduct?.saleCurrency}
                   onTotalPriceChange={handleTotalPriceChange}
                 />
