@@ -104,7 +104,7 @@ export function mapParticipants(formValues: any, metaFields: any) {
   if (!data.addOtherPeople) {
     data.otherPeople = [];
   } else {
-    data.otherPeople = data.otherPeople.map((person: any, index: number) => ({
+    data.otherPeople = data.otherPeople?.map((person: any, index: number) => ({
       ...extractCustomData(person, 'contactAttrs', metaFields),
       sequence: index + 1,
     }));

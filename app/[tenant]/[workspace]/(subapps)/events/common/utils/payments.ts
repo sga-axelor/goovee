@@ -34,10 +34,10 @@ export const getCalculatedTotalPrice = (
       return sum + price;
     }, 0);
   };
-
   let total =
-    calculateSubscriptionsTotal(data.subscriptionSet) +
-    Number(event.displayAti);
+    (data.subscriptionSet
+      ? calculateSubscriptionsTotal(data.subscriptionSet)
+      : 0) + Number(event.displayAti);
 
   if (Array.isArray(data.otherPeople) && data.otherPeople.length) {
     data.otherPeople.forEach(person => {
@@ -48,4 +48,11 @@ export const getCalculatedTotalPrice = (
   }
 
   return {total: total || 0, subscriptionPrices};
+};
+
+export const isChargeableEvent = (event: any): boolean => {
+  return (
+    event?.defaultPrice > 0 ||
+    (event?.facilityList?.some((f: any) => f.price > 0) ?? false)
+  );
 };

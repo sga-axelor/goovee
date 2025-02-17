@@ -16,11 +16,14 @@ import {ModelMap, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import type {ID, Participant, PortalWorkspace, User} from '@/types';
+import {ID, Participant, PaymentOption, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
 import NotificationManager, {NotificationType} from '@/notification';
+import {findStripeOrder} from '@/payment/stripe/actions';
+import {findPaypalOrder} from '@/payment/paypal/actions';
+import {formatAmountForStripe} from '@/utils/stripe';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -43,6 +46,10 @@ import {
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
 import {mailTemplate} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/mail';
+import {
+  getCalculatedTotalPrice,
+  isChargeableEvent,
+} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/payments';
 
 export async function getAllEvents({
   limit,
@@ -121,6 +128,7 @@ export async function validateRegistration({
 
   if (!eventId) return error(await t('Event ID is missing!'));
   if (!values) return error(await t('Values are missing!'));
+  // TODO: Handle the form validation here
   if (!tenantId) return error(await t('Tenant ID is missing!'));
   if (!workspaceURL) return error(await t('Workspace is missing!'));
 
@@ -295,16 +303,21 @@ export async function registerParticipantsAction({
     return error(await t('Something went wrong during registration!'));
   }
 }
-
+// TODO: How to know if the amount paid is for the appropriate event only ****export async function register({
 export async function register({
   eventId,
   values,
   workspace: {url: workspaceURL},
+  payment,
 }: {
   eventId: any;
   values: any;
   workspace: {
     url: PortalWorkspace['url'];
+  };
+  payment?: {
+    id: string;
+    mode: PaymentOption;
   };
 }) {
   const validationResult = await validateRegistration({
@@ -317,8 +330,68 @@ export async function register({
     return validationResult;
   }
 
+  const $event: any = await findEvent({
+    id: validationResult.event.id,
+    workspace: {
+      url: workspaceURL,
+    },
+    tenantId: validationResult.tenantId,
+  });
+  const chargeable = validationResult.event && isChargeableEvent($event);
+
+  if (chargeable) {
+    if (!payment) {
+      return error(await t('Payment is required for this event.'));
+    }
+    // TODO: Remove this check once the paypal error gets resolved
+    if (payment.mode !== PaymentOption.paypal) {
+      let isValid = false;
+      let paidAmount = 0;
+
+      try {
+        ({isValid, paidAmount} = await validatePaymentMode(
+          payment.id,
+          payment.mode,
+        ));
+      } catch (err) {
+        console.error('Payment validation error:', err);
+        return error(await t('Payment validation failed.'));
+      }
+
+      let {total: expectedAmount} = getCalculatedTotalPrice(values, $event) || {
+        total: 0,
+      };
+
+      if (!isValid) {
+        return error(
+          await t(
+            `Payment validation failed for {0}.`,
+            payment.mode.toUpperCase(),
+          ),
+        );
+      }
+
+      if (payment.mode === PaymentOption.stripe) {
+        expectedAmount = formatAmountForStripe(
+          Number(expectedAmount || 0),
+          $event.currency.code,
+        );
+      }
+
+      if (paidAmount < expectedAmount) {
+        return error(
+          await t(
+            `Paid amount ({0}) is less than expected ({1}).`,
+            String(paidAmount),
+            String(expectedAmount),
+          ),
+        );
+      }
+    }
+  }
+
   const registrationResult = await registerParticipantsAction({
-    eventId,
+    eventId: validationResult.event.id,
     validatedParticipants: validationResult.validatedParticipants,
     workspaceURL: validationResult.workspaceURL,
     tenantId: validationResult.tenantId,
@@ -645,4 +718,37 @@ export const generateRegistrationMailAction = async ({
   } catch (error) {
     console.error('Error sending registration emails:', error);
   }
+};
+
+export const validatePaymentMode = async (
+  id: string,
+  mode: PaymentOption,
+): Promise<{isValid: boolean; paidAmount: number}> => {
+  let paidAmount = 0;
+
+  try {
+    if (mode === PaymentOption.stripe) {
+      const stripeSession = await findStripeOrder({id});
+
+      if (!stripeSession || !stripeSession?.lines?.data?.length) {
+        return {isValid: false, paidAmount};
+      }
+
+      paidAmount = stripeSession.lines.data[0].amount_total;
+    } else if (mode === PaymentOption.paypal) {
+      const response = await findPaypalOrder({id});
+
+      if (!response?.result?.purchase_units?.length) {
+        return {isValid: false, paidAmount};
+      }
+
+      const purchase = response.result.purchase_units[0];
+      paidAmount = Number(purchase?.payments?.captures?.[0]?.amount?.value);
+    }
+  } catch (error) {
+    console.error('Error validating payment:', error);
+    return {isValid: false, paidAmount};
+  }
+
+  return {isValid: true, paidAmount};
 };
