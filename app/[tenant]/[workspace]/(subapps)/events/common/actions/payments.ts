@@ -22,6 +22,9 @@ import {findEvent} from '@/subapps/events/common/orm/event';
 import {findEventRegistration} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {register} from '@/subapps/events/common/actions/actions';
+import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
+import {validateRequiredFormFields} from '@/subapps/events/common/utils/registration';
+import {REQUIRED_FIELDS} from '@/subapps/events/common/constants';
 
 export async function createInvoice({
   workspaceURL,
@@ -111,18 +114,30 @@ export async function createInvoice({
 }
 
 export async function createStripeCheckoutSession({
-  record,
-  amount,
+  event,
   workspaceURL,
-  email,
+  values,
 }: {
-  record: any;
-  amount: number;
+  event: {
+    id: string | number;
+  };
   workspaceURL: string;
-  email: string;
+  values: any;
 }) {
-  if (!record?.id || !amount) {
-    return error(await t('Missing required fields.'));
+  if (!event?.id) {
+    return error(await t('Event ID is missing'));
+  }
+
+  if (!Object.keys(values)?.length) {
+    return error(await t('Form values are missing'));
+  }
+  const validationResult = await validateRequiredFormFields(
+    values,
+    REQUIRED_FIELDS,
+    t,
+  );
+  if (validationResult) {
+    return error(validationResult.error);
   }
 
   if (!workspaceURL) {
@@ -161,28 +176,35 @@ export async function createStripeCheckoutSession({
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return error(await t('Online payment is not available.'));
   }
+
   const paymentOptionSet = workspace?.config?.paymentOptionSet;
+  if (!paymentOptionSet?.length) {
+    return error(await t('Payment options are not configured.'));
+  }
 
   const allowStripe = isPaymentOptionAvailable(
     paymentOptionSet,
     PaymentOption.stripe,
   );
-
   if (!allowStripe) {
     return error(await t('Stripe is not available.'));
   }
 
-  const event = await findEvent({
-    id: record.id,
+  const $event = await findEvent({
+    id: event.id,
     tenantId,
     workspace,
   });
 
-  if (!event) {
+  if (!$event) {
     return error(await t('Invalid event'));
   }
+  const currency = $event.currency;
 
-  const currency = event.currency;
+  const {total: amount} = getCalculatedTotalPrice(values, $event);
+  if (!amount || amount <= 0) {
+    return error(await t('Total price must be greater than 0.'));
+  }
 
   let emailAddress;
   let payerId;
@@ -191,8 +213,8 @@ export async function createStripeCheckoutSession({
     emailAddress = payer?.emailAddress?.address!;
     payerId = payer?.id!;
   } else {
-    emailAddress = email;
-    payerId = email;
+    emailAddress = values.emailAddress;
+    payerId = values.emailAddress;
   }
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
 
@@ -206,16 +228,17 @@ export async function createStripeCheckoutSession({
       amount: String(amount) as string,
       currency: currencyCode,
       url: {
-        success: `${workspaceURL}/${SUBAPP_CODES.events}/${event.slug}/register?stripe_session_id={CHECKOUT_SESSION_ID}`,
-        error: `${workspaceURL}/${SUBAPP_CODES.events}/${event.slug}/register?stripe_error=true`,
+        success: `${workspaceURL}/${SUBAPP_CODES.events}/${$event.slug}/register?stripe_session_id={CHECKOUT_SESSION_ID}`,
+        error: `${workspaceURL}/${SUBAPP_CODES.events}/${$event.slug}/register?stripe_error=true`,
       },
     });
+
     return {
       client_secret: session.client_secret,
       url: session.url,
     };
   } catch (err) {
-    console.log('Stripe checkout session error:', err);
+    console.error('Stripe checkout session error:', err);
     return {
       error: true,
       message: await t((err as any)?.message),
@@ -227,19 +250,34 @@ export async function validateStripePayment({
   stripeSessionId,
   values,
   workspaceURL,
-  record,
-  amount,
+  event,
 }: {
   stripeSessionId: string;
   values: any;
   workspaceURL: string;
-  record: {
+  event: {
     id: string | number;
   };
-  amount: number;
 }) {
-  if (!record?.id || Object.keys(values)?.length === 0 || !amount) {
-    return error(await t('Missing required values!'));
+  if (!stripeSessionId) {
+    return error(await t('Missing Stripe session ID!'));
+  }
+
+  if (!event?.id) {
+    return error(await t('Event ID is missing'));
+  }
+
+  if (Object.keys(values)?.length === 0) {
+    return error(await t('Form values are missing'));
+  }
+
+  const validationResult = await validateRequiredFormFields(
+    values,
+    REQUIRED_FIELDS,
+    t,
+  );
+  if (validationResult) {
+    return error(validationResult.error);
   }
 
   if (!workspaceURL) {
@@ -276,20 +314,10 @@ export async function validateStripePayment({
     return error(await t('Unauthorized App access!'));
   }
 
-  const event = await findEvent({
-    id: record.id,
-    tenantId,
-    workspace,
-  });
-  if (!event) {
-    return error(await t('Invalid event!'));
-  }
-
-  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
-    return error(await t('Online payment is not available'));
-  }
-
   const paymentOptionSet = workspace?.config?.paymentOptionSet;
+  if (!paymentOptionSet?.length) {
+    return error(await t('Payment options are not configured.'));
+  }
 
   const allowStripe = isPaymentOptionAvailable(
     paymentOptionSet,
@@ -300,8 +328,22 @@ export async function validateStripePayment({
     return error(await t('Stripe is not available.'));
   }
 
-  if (!stripeSessionId) {
-    return error(await t('Bad Request'));
+  const $event = await findEvent({
+    id: event.id,
+    tenantId,
+    workspace,
+  });
+  if (!$event) {
+    return error(await t('Invalid event!'));
+  }
+
+  const {total: amount} = getCalculatedTotalPrice(values, $event);
+  if (!amount || amount <= 0) {
+    return error(await t('Total price must be greater than 0.'));
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return error(await t('Online payment is not available'));
   }
 
   let stripeSession;
@@ -311,7 +353,7 @@ export async function validateStripePayment({
     return error(await t((err as any)?.message));
   }
 
-  const currencyCode = event.currency?.code || DEFAULT_CURRENCY_CODE;
+  const currencyCode = $event.currency?.code || DEFAULT_CURRENCY_CODE;
 
   const paymentTotal = stripeSession?.lines?.data?.[0]?.amount_total;
   const eventTotal = formatAmountForStripe(Number(amount || 0), currencyCode);
@@ -321,10 +363,14 @@ export async function validateStripePayment({
   }
 
   const resgistration: any = await register({
-    eventId: record.id,
+    eventId: event.id,
     values,
     workspace: {
       url: workspaceURL,
+    },
+    payment: {
+      id: stripeSessionId,
+      mode: PaymentOption.stripe,
     },
   });
 
@@ -342,7 +388,7 @@ export async function validateStripePayment({
     workspaceURL,
     tenantId,
     registrationId: data.id,
-    eventId: event.id,
+    eventId: $event.id,
   });
 
   if (invoiceResult?.error) {
@@ -358,20 +404,35 @@ export async function validateStripePayment({
 export async function paypalCaptureOrder({
   orderID,
   workspaceURL,
-  amount,
   values,
-  record,
+  event,
 }: {
   orderID: string;
   workspaceURL: string;
-  amount: any;
   values: any;
-  record: {
+  event: {
     id: string | number;
   };
 }) {
-  if (!orderID || !amount || Object.keys(values)?.length === 0 || !record.id) {
-    return error(await t('Missing required values'));
+  if (!orderID) {
+    return error(await t('Order ID is missing'));
+  }
+
+  if (Object.keys(values)?.length === 0) {
+    return error(await t('Form values are missing'));
+  }
+
+  const validationResult = await validateRequiredFormFields(
+    values,
+    REQUIRED_FIELDS,
+    t,
+  );
+  if (validationResult) {
+    return error(validationResult.error);
+  }
+
+  if (!event.id) {
+    return error(await t('Event ID is missing'));
   }
 
   if (!workspaceURL) {
@@ -408,20 +469,14 @@ export async function paypalCaptureOrder({
     return error(await t('Unauthorized App access!'));
   }
 
-  const event = await findEvent({
-    id: record.id,
-    tenantId,
-    workspace,
-  });
-  if (!event) {
-    return error(await t('Invalid event!'));
-  }
-
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return error(await t('Online payment is not available'));
   }
 
   const paymentOptionSet = workspace?.config?.paymentOptionSet;
+  if (!paymentOptionSet?.length) {
+    return error(await t('Payment options are not configured.'));
+  }
 
   const allowPaypal = isPaymentOptionAvailable(
     paymentOptionSet,
@@ -430,6 +485,20 @@ export async function paypalCaptureOrder({
 
   if (!allowPaypal) {
     return error(await t('Paypal is not available'));
+  }
+
+  const $event = await findEvent({
+    id: event.id,
+    tenantId,
+    workspace,
+  });
+  if (!$event) {
+    return error(await t('Invalid event!'));
+  }
+
+  const {total: amount} = getCalculatedTotalPrice(values, $event);
+  if (!amount || amount <= 0) {
+    return error(await t('Total price must be greater than 0.'));
   }
 
   try {
@@ -445,10 +514,14 @@ export async function paypalCaptureOrder({
     }
 
     const resgistration = await register({
-      eventId: event.id,
+      eventId: $event.id,
       values,
       workspace: {
         url: workspaceURL,
+      },
+      payment: {
+        id: orderID,
+        mode: PaymentOption.paypal,
       },
     });
 
@@ -467,7 +540,7 @@ export async function paypalCaptureOrder({
       workspaceURL,
       tenantId,
       registrationId: data.id,
-      eventId: event.id,
+      eventId: $event.id,
     });
 
     if (invoiceResult?.error) {
@@ -483,24 +556,34 @@ export async function paypalCaptureOrder({
 export async function paypalCreateOrder({
   values,
   workspaceURL,
-  record,
-  amount,
-  email,
+  event,
 }: {
   values: any;
   workspaceURL: string;
-  record: {
+  event: {
     id: string | number;
   };
-  amount: string | number;
   email: string;
 }) {
-  if (Object.keys(values)?.length === 0 || !record.id || !amount || !email) {
-    return error(await t('Missing required values!'));
+  if (!event.id) {
+    return error(await t('Event ID is missing'));
   }
 
   if (!workspaceURL) {
     return error(await t('Workspace not provided!'));
+  }
+
+  if (Object.keys(values)?.length === 0) {
+    return error(await t('Form values are missing'));
+  }
+
+  const validationResult = await validateRequiredFormFields(
+    values,
+    REQUIRED_FIELDS,
+    t,
+  );
+  if (validationResult) {
+    return error(validationResult.error);
   }
 
   const tenantId = headers().get(TENANT_HEADER);
@@ -538,6 +621,9 @@ export async function paypalCreateOrder({
   }
 
   const paymentOptionSet = workspace?.config?.paymentOptionSet;
+  if (!paymentOptionSet?.length) {
+    return error(await t('Payment options are not configured.'));
+  }
 
   const allowPaypal = isPaymentOptionAvailable(
     paymentOptionSet,
@@ -548,24 +634,29 @@ export async function paypalCreateOrder({
     return error(await t('Paypal is not available'));
   }
 
-  const event = await findEvent({
-    id: record.id,
+  const $event = await findEvent({
+    id: event.id,
     tenantId,
     workspace,
   });
 
-  if (!event) {
+  if (!$event) {
     return error(await t('Invalid event'));
   }
 
-  const currency = event.currency;
+  const {total: amount} = getCalculatedTotalPrice(values, $event);
+  if (!amount || amount <= 0) {
+    return error(await t('Total price must be greater than 0.'));
+  }
+
+  const currency = $event.currency;
 
   let emailAddress;
   if (user) {
     const payer = await findPartnerByEmail(user.email, tenantId);
     emailAddress = payer?.emailAddress?.address!;
   } else {
-    emailAddress = email;
+    emailAddress = values.emailAddress;
   }
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
   try {

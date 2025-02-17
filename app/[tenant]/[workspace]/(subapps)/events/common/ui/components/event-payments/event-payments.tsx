@@ -22,15 +22,17 @@ import {
   validateStripePayment,
 } from '@/app/[tenant]/[workspace]/(subapps)/events/common/actions/payments';
 import {mapParticipants} from '@/subapps/events/common/utils';
+import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
+import type {EventPayments} from '@/subapps/events/common/types';
 
 export function EventPayments({
   workspace,
-  eventId,
+  event,
   form,
   metaFields,
 }: {
   workspace: PortalWorkspace;
-  eventId: ID;
+  event: EventPayments;
   form: any;
   metaFields: any;
 }) {
@@ -41,7 +43,6 @@ export function EventPayments({
 
   const isValid =
     form.formState.isValid && !Object.keys(form.formState.errors || {}).length;
-  const total = form.watch('totalPrice');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -99,6 +100,14 @@ export function EventPayments({
       }
 
       const result = getMappedParticipants(form, metaFields);
+      const {total} = getCalculatedTotalPrice(result, event);
+      if (!total || total <= 0) {
+        toast({
+          variant: 'destructive',
+          title: i18n.t('Total price must be greater than zero.'),
+        });
+        return false;
+      }
 
       const validationResult = await validateRegistration({
         eventId,
@@ -135,7 +144,7 @@ export function EventPayments({
           onValidate={async () => {
             const isValid = await handleFormValidation({
               form,
-              eventId,
+              eventId: event.id,
               metaFields,
             });
             return !!isValid;
@@ -146,10 +155,9 @@ export function EventPayments({
             return await paypalCreateOrder({
               workspaceURL,
               values: formValues,
-              record: {
-                id: eventId,
+              event: {
+                id: event.id,
               },
-              amount: formValues.totalPrice,
               email: formValues.emailAddress,
             });
           }}
@@ -160,10 +168,9 @@ export function EventPayments({
               orderID,
               workspaceURL,
               values: formValues,
-              record: {
-                id: eventId,
+              event: {
+                id: event.id,
               },
-              amount: formValues.totalPrice,
             });
           }}
           onApprove={redirectToEvents}
@@ -177,7 +184,7 @@ export function EventPayments({
           onValidate={async () => {
             const isValid = await handleFormValidation({
               form,
-              eventId,
+              eventId: event.id,
               metaFields,
               paymentOption: PaymentOption.stripe,
             });
@@ -188,12 +195,11 @@ export function EventPayments({
             const formValues: any = await getitem(eventFormKey).catch(() => {});
 
             return await createStripeCheckoutSession({
-              record: {
-                id: eventId,
+              event: {
+                id: event.id,
               },
-              amount: total,
               workspaceURL,
-              email: formValues.emailAddress,
+              values: formValues,
             });
           }}
           shouldValidateData={async () => {
@@ -213,10 +219,9 @@ export function EventPayments({
               stripeSessionId,
               workspaceURL,
               values: formValues,
-              record: {
-                id: eventId,
+              event: {
+                id: event.id,
               },
-              amount: total,
             });
           }}
           onPaymentSuccess={async () => await setitem(eventFormKey, null)}

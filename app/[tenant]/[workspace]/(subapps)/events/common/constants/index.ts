@@ -59,3 +59,10 @@ export const EVENT_TAB_ITEMS = [
     label: EVENT_TYPE.PAST,
   },
 ];
+
+export const REQUIRED_FIELDS = [
+  {field: 'name', message: 'Name is required'},
+  {field: 'surname', message: 'Surname is required'},
+  {field: 'emailAddress', message: 'Email address is required'},
+  {field: 'phone', message: 'Phone number is required'},
+];

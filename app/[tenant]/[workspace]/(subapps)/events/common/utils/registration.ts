@@ -119,3 +119,30 @@ export function hasEventEnded(event: {
   if (event.eventAllDay) return now > endOfDay(startDate).getTime();
   return now > endDate.getTime();
 }
+
+export const validateRequiredFormFields = async (
+  values: Record<string, any>,
+  requiredFields: {field: string; message: string}[],
+  t: (key: string, ...args: any[]) => Promise<string>,
+) => {
+  const errors: string[] = [];
+
+  for (const {field, message} of requiredFields) {
+    const value = values[field];
+    if (!value || (typeof value === 'string' && !value.trim())) {
+      errors.push(await t('Participant 1: ${0}', message));
+    }
+  }
+
+  const otherPeople = values.otherPeople || [];
+  for (const [index, person] of otherPeople.entries()) {
+    for (const {field, message} of requiredFields) {
+      const value = person[field];
+      if (!value || (typeof value === 'string' && !value.trim())) {
+        errors.push(await t('Person ${0}: ${1}', `${index + 2}`, message));
+      }
+    }
+  }
+
+  return errors.length ? {error: errors.join(', ')} : null;
+};

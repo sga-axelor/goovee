@@ -1,26 +1,51 @@
 // ---- LOCAL IMPORTS ---- //
-import {FormData, Subscription} from '@/subapps/events/common/types';
+import {EventPayments} from '@/subapps/events/common/types';
 
 export const getCalculatedTotalPrice = (
-  data: FormData,
-  eventPrice = 0,
-): number => {
-  if (!data) return 0;
+  data: Record<string, any>,
+  event: EventPayments = {id: '', displayAti: '0', facilityList: []},
+): {
+  total: number;
+  subscriptionPrices: {facility: string; price: number}[];
+} => {
+  if (!data || !event) return {total: 0, subscriptionPrices: []};
 
-  const getSubscriptionTotal = (subscriptions: Subscription[] = []) =>
-    subscriptions.reduce((sum, subscription) => {
-      const displayAti = parseFloat(subscription.displayAti) || 0;
-      return sum + displayAti;
+  const facilities = event.facilityList || [];
+  const subscriptionPrices: {facility: string; price: number}[] = [];
+
+  const getFacilityPrice = (facilityName: string) => {
+    const facility = facilities.find(f => f.facility === facilityName);
+    return facility ? parseFloat(facility.displayAti) || 0 : 0;
+  };
+
+  const addToSubscriptionPrices = (facility: string, price: number) => {
+    const existing = subscriptionPrices.find(s => s.facility === facility);
+    if (existing) {
+      existing.price += price;
+    } else {
+      subscriptionPrices.push({facility, price});
+    }
+  };
+
+  const calculateSubscriptionsTotal = (subscriptions: any[]) => {
+    return subscriptions?.reduce((sum, subscription) => {
+      const price = getFacilityPrice(subscription.facility);
+      addToSubscriptionPrices(subscription.facility, price);
+      return sum + price;
     }, 0);
+  };
 
-  let total = getSubscriptionTotal(data.subscriptionSet) + Number(eventPrice);
+  let total =
+    calculateSubscriptionsTotal(data.subscriptionSet) +
+    Number(event.displayAti);
 
   if (Array.isArray(data.otherPeople) && data.otherPeople.length) {
-    data.otherPeople.forEach(participant => {
+    data.otherPeople.forEach(person => {
       total +=
-        getSubscriptionTotal(participant.subscriptionSet) + Number(eventPrice);
+        calculateSubscriptionsTotal(person.subscriptionSet) +
+        Number(event.displayAti);
     });
   }
 
-  return total || 0;
+  return {total: total || 0, subscriptionPrices};
 };

@@ -414,7 +414,11 @@ export const RegistrationForm = ({
               ? ({form}: any) => (
                   <EventPayments
                     workspace={workspace}
-                    eventId={eventId}
+                    event={{
+                      id: eventId,
+                      displayAti: eventPrice,
+                      facilityList,
+                    }}
                     form={form}
                     metaFields={metaFields}
                   />
