@@ -44,3 +44,4 @@ export {SubscriptionsView} from './subscriptions-view';
 export {SubscriptionsPriceView} from './subscriptions-price-view';
 export {EmailFormField} from './email-form-field';
 export {EventPayments} from './event-payments';
+export {CompanyAddressField} from './company-address-field';

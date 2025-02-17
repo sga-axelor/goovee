@@ -59,6 +59,13 @@ const partnerFields = {
   isActivatedOnPortal: true,
   createdFromSelect: true,
   canSubscribeNoPublicEvent: true,
+  mainAddress: true,
+  partnerAddressList: {
+    select: {
+      isInvoicingAddr: true,
+      address: true,
+    },
+  },
 };
 
 export async function findPartnerById(id: ID, tenantId: Tenant['id']) {

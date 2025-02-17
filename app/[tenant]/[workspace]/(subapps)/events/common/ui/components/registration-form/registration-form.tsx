@@ -27,6 +27,7 @@ import {
   SubscriptionsView,
   EmailFormField,
   EventPayments,
+  CompanyAddressField,
 } from '@/subapps/events/common/ui/components';
 import type {EventPageCardProps} from '@/subapps/events/common/ui/components';
 import {
@@ -34,7 +35,10 @@ import {
   register,
 } from '@/subapps/events/common/actions/actions';
 import {SUCCESS_REGISTER_MESSAGE} from '@/subapps/events/common/constants';
-import {mapParticipants} from '@/subapps/events/common/utils';
+import {
+  getPartnerAddress,
+  mapParticipants,
+} from '@/subapps/events/common/utils';
 
 export const RegistrationForm = ({
   eventDetails,
@@ -102,13 +106,17 @@ export const RegistrationForm = ({
         name: 'company',
         title: i18n.t('Company'),
         type: 'string',
-        widget: null,
-        helper: i18n.t('Enter company name'),
-        hidden: false,
-        required: false,
-        readonly: false,
+        widget: 'custom',
         order: 3,
-        defaultValue: '',
+        defaultValue: getPartnerAddress(user) || '',
+        required: false,
+        customComponent: (props: any) => (
+          <CompanyAddressField
+            {...props}
+            title={i18n.t('Company/Address')}
+            placeholder={i18n.t('Enter company/address')}
+          />
+        ),
       },
       {
         name: 'emailAddress',
@@ -155,16 +163,13 @@ export const RegistrationForm = ({
       },
     ],
     [
-      user.firstName,
-      user?.name,
-      user?.emailAddress?.address,
-      user?.fixedPhone,
       isLoggedIn,
       eventId,
       workspace.url,
       facilityList,
       eventPrice,
       formattedDefaultPriceAti,
+      user,
     ],
   );
 
@@ -299,7 +304,19 @@ export const RegistrationForm = ({
                     />
                   ),
                 }
-              : field,
+              : field.name === 'company'
+                ? {
+                    ...field,
+                    customComponent: (props: any) => (
+                      <CompanyAddressField
+                        {...props}
+                        title={i18n.t('Company')}
+                        placeholder={i18n.t('Enter company')}
+                        isSecondary
+                      />
+                    ),
+                  }
+                : field,
         ),
       },
     ],
