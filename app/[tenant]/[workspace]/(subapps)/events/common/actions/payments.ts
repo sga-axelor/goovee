@@ -4,27 +4,27 @@ import axios from 'axios';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
+import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
+import {TENANT_HEADER} from '@/middleware';
+import {findPartnerByEmail} from '@/orm/partner';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {createPaypalOrder} from '@/payment/paypal/actions';
+import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
 import {manager, type Tenant} from '@/tenant';
 import {ID, PaymentOption} from '@/types';
-import {TENANT_HEADER} from '@/middleware';
-import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {isPaymentOptionAvailable} from '@/utils/payment';
-import {findPartnerByEmail} from '@/orm/partner';
-import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
-import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {formatAmountForStripe} from '@/utils/stripe';
 
 // ---- LOCAL IMPORTS ---- //
+import {register} from '@/subapps/events/common/actions/actions';
+import {REQUIRED_FIELDS} from '@/subapps/events/common/constants';
 import {findEvent} from '@/subapps/events/common/orm/event';
 import {findEventRegistration} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
-import {register} from '@/subapps/events/common/actions/actions';
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 import {validateRequiredFormFields} from '@/subapps/events/common/utils/registration';
-import {REQUIRED_FIELDS} from '@/subapps/events/common/constants';
 
 export async function createInvoice({
   workspaceURL,
@@ -362,7 +362,7 @@ export async function validateStripePayment({
     return error(await t('Payment amount mistmatch'));
   }
 
-  const resgistration: any = await register({
+  const resgistration = await register({
     eventId: event.id,
     values,
     workspace: {
@@ -374,7 +374,7 @@ export async function validateStripePayment({
     },
   });
 
-  if (!resgistration || resgistration?.error) {
+  if (resgistration.error) {
     return error(
       await t(
         resgistration.message ||

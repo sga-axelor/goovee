@@ -503,9 +503,11 @@ export type EventConfigPartner = {
 export async function findEventConfig({
   id,
   tenantId,
+  workspaceURL,
 }: {
   id: ID;
   tenantId: Tenant['id'];
+  workspaceURL: PortalWorkspace['url'];
 }): Promise<EventConfig | null> {
   if (!(id && tenantId)) return null;
 
@@ -531,7 +533,11 @@ export async function findEventConfig({
   };
 
   const eventConfig = await client.aOSPortalEvent.findOne({
-    where: {id, slug: {ne: null}},
+    where: {
+      id,
+      slug: {ne: null},
+      eventCategorySet: {workspace: {url: workspaceURL}},
+    },
     select: {
       isPrivate: true,
       isHidden: true,

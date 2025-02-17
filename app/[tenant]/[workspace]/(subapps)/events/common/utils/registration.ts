@@ -5,6 +5,7 @@ import {
   findPartnerByEmailForEvent,
 } from '../orm/event';
 import {endOfDay} from 'date-fns';
+import {Participant} from '@/types';
 
 export function isAlreadyRegistered({
   event,
@@ -15,7 +16,8 @@ export function isAlreadyRegistered({
 }) {
   return event.registrationList?.some(registration => {
     return registration?.participantList?.some(
-      participant => participant?.emailAddress === email,
+      participant =>
+        participant?.emailAddress?.toLowerCase() === email.toLowerCase(),
     );
   });
 }
@@ -146,3 +148,17 @@ export const validateRequiredFormFields = async (
 
   return errors.length ? {error: errors.join(', ')} : null;
 };
+
+export function getParticipantsFromValues(values: any): Participant[] {
+  const {otherPeople = [], ...rest} = values;
+
+  const participants: Participant[] = otherPeople.map(
+    (participant: Participant) => ({
+      ...participant,
+      emailAddress: participant.emailAddress?.toLowerCase(),
+    }),
+  );
+  participants.unshift(rest);
+  participants.sort((a, b) => a.sequence - b.sequence);
+  return participants;
+}

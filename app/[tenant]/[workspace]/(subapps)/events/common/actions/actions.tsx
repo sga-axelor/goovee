@@ -15,17 +15,22 @@ import {addComment, findComments} from '@/comments/orm';
 import {ModelMap, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
+import NotificationManager, {NotificationType} from '@/notification';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {findPaypalOrder} from '@/payment/paypal/actions';
+import {findStripeOrder} from '@/payment/stripe/actions';
 import {ID, Participant, PaymentOption, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
-import NotificationManager, {NotificationType} from '@/notification';
-import {findStripeOrder} from '@/payment/stripe/actions';
-import {findPaypalOrder} from '@/payment/paypal/actions';
 import {formatAmountForStripe} from '@/utils/stripe';
 
 // ---- LOCAL IMPORTS ---- //
+import {mailTemplate} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/mail';
+import {
+  getCalculatedTotalPrice,
+  isChargeableEvent,
+} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/payments';
 import {
   validate,
   withSubapp,
@@ -41,15 +46,11 @@ import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error, generateIcs} from '@/subapps/events/common/utils';
 import {
   canEmailBeRegistered,
+  getParticipantsFromValues,
   getTotalRegisteredParticipants,
   hasEventEnded,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
-import {mailTemplate} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/mail';
-import {
-  getCalculatedTotalPrice,
-  isChargeableEvent,
-} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/payments';
 
 export async function getAllEvents({
   limit,
@@ -123,7 +124,7 @@ export async function validateRegistration({
   eventId: any;
   values: any;
   workspaceURL: string;
-}) {
+}): ActionResponse<true> {
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!eventId) return error(await t('Event ID is missing!'));
@@ -151,7 +152,7 @@ export async function validateRegistration({
     );
   }
 
-  const event = await findEventConfig({id: eventId, tenantId});
+  const event = await findEventConfig({id: eventId, tenantId, workspaceURL});
   if (!event) return error(await t('Event not found'));
 
   if (!event.eventAllowRegistration) {
@@ -173,15 +174,13 @@ export async function validateRegistration({
   }
 
   try {
-    const {otherPeople: _otherPeople = [], ...rest} = values;
+    const {otherPeople = []} = values;
 
-    if (!event.eventAllowMultipleRegistrations && _otherPeople?.length) {
+    if (!event.eventAllowMultipleRegistrations && otherPeople?.length) {
       return error(await t('Multiple registrations not allowed'));
     }
 
-    const otherPeople: Participant[] = _otherPeople;
-    otherPeople.unshift(rest);
-    otherPeople.sort((a, b) => a.sequence - b.sequence);
+    const participants = getParticipantsFromValues(values);
 
     const totalRegisteredParticipants = getTotalRegisteredParticipants(event);
     const maxParticipantPerEvent = event.maxParticipantPerEvent || 0;
@@ -191,7 +190,7 @@ export async function validateRegistration({
       );
     }
     if (
-      totalRegisteredParticipants + otherPeople.length >
+      totalRegisteredParticipants + participants.length >
       maxParticipantPerEvent
     ) {
       const slotsLeft = maxParticipantPerEvent - totalRegisteredParticipants;
@@ -205,7 +204,7 @@ export async function validateRegistration({
 
     const maxParticipantPerRegistration =
       event.maxParticipantPerRegistration || 1;
-    if (otherPeople.length > maxParticipantPerRegistration) {
+    if (participants.length > maxParticipantPerRegistration) {
       return error(
         await t(
           'You can only register up to ${0} people',
@@ -214,25 +213,20 @@ export async function validateRegistration({
       );
     }
 
-    otherPeople.forEach(participant => {
-      if (participant.emailAddress) {
-        participant.emailAddress = participant.emailAddress.toLowerCase();
-      }
-    });
-
-    if (!otherPeople.every(participant => participant.emailAddress)) {
+    if (!participants.every(participant => participant.emailAddress)) {
       return error(await t('Email is required'));
     }
 
     if (
       !event.isPublic &&
-      new Set(otherPeople.map(p => p.emailAddress)).size !== otherPeople.length
+      new Set(participants.map(p => p.emailAddress)).size !==
+        participants.length
     ) {
       return error(await t('Individual email address must be unique'));
     }
 
     const canRegisterList = await Promise.all(
-      otherPeople.map(participant =>
+      participants.map(participant =>
         canEmailBeRegistered({
           event,
           email: participant.emailAddress,
@@ -255,7 +249,7 @@ export async function validateRegistration({
       );
     }
 
-    const isAnyEmailAlreadyRegistered = otherPeople.some(participant =>
+    const isAnyEmailAlreadyRegistered = participants.some(participant =>
       isAlreadyRegistered({event, email: participant.emailAddress}),
     );
     if (isAnyEmailAlreadyRegistered) {
@@ -264,10 +258,7 @@ export async function validateRegistration({
 
     return {
       success: true,
-      validatedParticipants: clone(otherPeople),
-      event: clone(event),
-      workspaceURL,
-      tenantId,
+      data: true,
     };
   } catch (err) {
     console.error(err);
@@ -275,35 +266,7 @@ export async function validateRegistration({
   }
 }
 
-export async function registerParticipantsAction({
-  eventId,
-  validatedParticipants,
-  workspaceURL,
-  tenantId,
-}: {
-  validatedParticipants: Participant[];
-  eventId: any;
-  workspaceURL: string;
-  tenantId: string;
-}) {
-  try {
-    const registration: any = await registerParticipants({
-      eventId,
-      workspaceURL,
-      participants: validatedParticipants,
-      tenantId,
-    });
-
-    return {
-      success: true,
-      data: clone(registration),
-    };
-  } catch (err) {
-    console.error(err);
-    return error(await t('Something went wrong during registration!'));
-  }
-}
-// TODO: How to know if the amount paid is for the appropriate event only ****export async function register({
+// TODO: How to know if the amount paid is for the appropriate event only
 export async function register({
   eventId,
   values,
@@ -312,14 +275,11 @@ export async function register({
 }: {
   eventId: any;
   values: any;
-  workspace: {
-    url: PortalWorkspace['url'];
-  };
-  payment?: {
-    id: string;
-    mode: PaymentOption;
-  };
-}) {
+  workspace: {url: PortalWorkspace['url']};
+  payment?: {id: string; mode: PaymentOption};
+}): ActionResponse<{id: ID; version: number}> {
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) return error(await t('Tenant ID is missing!'));
   const validationResult = await validateRegistration({
     eventId,
     values,
@@ -330,14 +290,15 @@ export async function register({
     return validationResult;
   }
 
-  const $event: any = await findEvent({
-    id: validationResult.event.id,
+  const $event = await findEvent({
+    id: eventId,
     workspace: {
       url: workspaceURL,
     },
-    tenantId: validationResult.tenantId,
+    tenantId: tenantId,
   });
-  const chargeable = validationResult.event && isChargeableEvent($event);
+  if (!$event) return error(await t('Event not found!'));
+  const chargeable = isChargeableEvent($event);
 
   if (chargeable) {
     if (!payment) {
@@ -387,23 +348,22 @@ export async function register({
     }
   }
 
-  const registrationResult = await registerParticipantsAction({
-    eventId: validationResult.event.id,
-    validatedParticipants: validationResult.validatedParticipants,
-    workspaceURL: validationResult.workspaceURL,
-    tenantId: validationResult.tenantId,
+  const participants = getParticipantsFromValues(values);
+  const registration = await registerParticipants({
+    eventId,
+    participants,
+    workspaceURL,
+    tenantId,
   });
 
-  if (registrationResult) {
-    await generateRegistrationMailAction({
-      eventId,
-      participants: validationResult.validatedParticipants,
-      workspaceURL: validationResult.workspaceURL,
-      tenantId: validationResult.tenantId,
-    });
-  }
+  await generateRegistrationMailAction({
+    eventId,
+    participants,
+    workspaceURL,
+    tenantId,
+  });
 
-  return registrationResult;
+  return {success: true, data: clone(registration)};
 }
 
 export async function fetchContacts({
@@ -471,6 +431,7 @@ export async function isValidParticipant(props: {
   const event = await findEventConfig({
     id: eventId,
     tenantId,
+    workspaceURL,
   });
 
   if (!event) {

@@ -1,15 +1,13 @@
 // ---- CORE IMPORTS ---- //
-import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
 import type {ID, Participant} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {error} from '@/subapps/events/common/utils';
-import {PartnerTypeMap} from '@/orm/partner';
-import {UserType} from '@/lib/core/auth/types';
 import {USER_CREATED_FROM} from '@/constants';
-import {CreateArgs} from '@goovee/orm';
 import {AOSPortalParticipant} from '@/goovee/.generated/models';
+import {UserType} from '@/lib/core/auth/types';
+import {PartnerTypeMap} from '@/orm/partner';
+import {CreateArgs} from '@goovee/orm';
 
 export async function registerParticipants({
   eventId,
@@ -20,9 +18,7 @@ export async function registerParticipants({
   workspaceURL: string;
   participants: Participant[];
   tenantId: Tenant['id'];
-}) {
-  if (!tenantId) return error(await t('Tenant ID is missing!'));
-
+}): Promise<{id: ID; version: number}> {
   const c = await manager.getClient(tenantId);
 
   const contacts = await getEventContacts({
@@ -46,7 +42,7 @@ export async function registerParticipants({
       } = participant;
 
       const contact = contacts.find(
-        c => c.emailAddress?.address === emailAddress,
+        c => emailAddress && c.emailAddress?.address === emailAddress,
       );
 
       return {
