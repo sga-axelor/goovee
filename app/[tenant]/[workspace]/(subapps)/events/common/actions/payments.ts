@@ -502,17 +502,6 @@ export async function paypalCaptureOrder({
   }
 
   try {
-    const response = await findPaypalOrder({id: orderID});
-
-    const {result} = response;
-    const purchase = result?.purchase_units?.[0];
-    if (
-      Number(purchase?.payments?.captures?.[0]?.amount?.value) !==
-      Number(amount)
-    ) {
-      return error(await t('Amount mismatched'));
-    }
-
     const resgistration = await register({
       eventId: $event.id,
       values,

@@ -343,50 +343,47 @@ export async function register({
     if (!payment) {
       return error(await t('Payment is required for this event.'));
     }
-    // TODO: Remove this check once the paypal error gets resolved
-    if (payment.mode !== PaymentOption.paypal) {
-      let isValid = false;
-      let paidAmount = 0;
+    let isValid = false;
+    let paidAmount = 0;
 
-      try {
-        ({isValid, paidAmount} = await validatePaymentMode(
-          payment.id,
-          payment.mode,
-        ));
-      } catch (err) {
-        console.error('Payment validation error:', err);
-        return error(await t('Payment validation failed.'));
-      }
+    try {
+      ({isValid, paidAmount} = await validatePaymentMode(
+        payment.id,
+        payment.mode,
+      ));
+    } catch (err) {
+      console.error('Payment validation error:', err);
+      return error(await t('Payment validation failed.'));
+    }
 
-      let {total: expectedAmount} = getCalculatedTotalPrice(values, $event) || {
-        total: 0,
-      };
+    let {total: expectedAmount} = getCalculatedTotalPrice(values, $event) || {
+      total: 0,
+    };
 
-      if (!isValid) {
-        return error(
-          await t(
-            `Payment validation failed for {0}.`,
-            payment.mode.toUpperCase(),
-          ),
-        );
-      }
+    if (!isValid) {
+      return error(
+        await t(
+          `Payment validation failed for {0}.`,
+          payment.mode.toUpperCase(),
+        ),
+      );
+    }
 
-      if (payment.mode === PaymentOption.stripe) {
-        expectedAmount = formatAmountForStripe(
-          Number(expectedAmount || 0),
-          $event.currency.code,
-        );
-      }
+    if (payment.mode === PaymentOption.stripe) {
+      expectedAmount = formatAmountForStripe(
+        Number(expectedAmount || 0),
+        $event.currency.code,
+      );
+    }
 
-      if (paidAmount < expectedAmount) {
-        return error(
-          await t(
-            `Paid amount ({0}) is less than expected ({1}).`,
-            String(paidAmount),
-            String(expectedAmount),
-          ),
-        );
-      }
+    if (paidAmount < expectedAmount) {
+      return error(
+        await t(
+          `Paid amount ({0}) is less than expected ({1}).`,
+          String(paidAmount),
+          String(expectedAmount),
+        ),
+      );
     }
   }
 
@@ -720,7 +717,7 @@ export const generateRegistrationMailAction = async ({
   }
 };
 
-export const validatePaymentMode = async (
+const validatePaymentMode = async (
   id: string,
   mode: PaymentOption,
 ): Promise<{isValid: boolean; paidAmount: number}> => {
