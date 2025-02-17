@@ -93,11 +93,11 @@ export function SubscriptionsPriceView({
   }, [onTotalPriceChange, total]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <Separator className="bg-zinc-300" />
+    <div className="flex flex-col gap-6 ">
+      <Separator className="bg-zinc-200" />
 
       {hasParticipants ? (
-        <>
+        <div className="border p-4 rounded-lg flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <div className="font-semibold text-xl">
               {i18n.t('Total Price')}:{' '}
@@ -118,7 +118,7 @@ export function SubscriptionsPriceView({
             </div>
           </div>
 
-          <div className="flex flex-col pl-4 border-success border-l">
+          <div className="flex flex-col gap-4 pl-4 border-success border-l">
             {subscriptionPrices?.map(({facility, price}) => {
               const subscriptionUsers = participants?.filter((p: any) =>
                 p.subscriptionSet.some((f: any) => f.facility === facility),
@@ -146,7 +146,7 @@ export function SubscriptionsPriceView({
               );
             })}
           </div>
-        </>
+        </div>
       ) : (
         <div className="text-gray-500 text-sm">
           {i18n.t(
