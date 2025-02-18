@@ -12,6 +12,7 @@ import {extractCustomData} from '@/ui/form';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event} from '@/subapps/events/common/ui/components';
+import {endOfDay} from 'date-fns';
 
 export const datesBetweenTwoDates = (data: Event[]): Date[] => {
   const Dates: Date[] = [];
@@ -89,7 +90,7 @@ export const generateIcs = (event: any, participants: Participant[]) => {
 
   return ical({
     start: event.eventStartDateTime,
-    end: event.eventEndDateTime,
+    end: getEventEndDate(event),
     summary: event.eventTitle,
     location: event.eventPlace,
     description: event.eventDescription,
@@ -128,4 +129,18 @@ export function getPartnerAddress(user: any): string {
     partnerAddresses[0]?.address;
 
   return address?.formattedFullName || '';
+}
+
+export function getEventEndDate(event: {
+  eventStartDateTime?: Date | string;
+  eventEndDateTime?: Date | string;
+  eventAllDay?: boolean;
+}): string | Date | undefined {
+  const {eventStartDateTime, eventEndDateTime, eventAllDay} = event;
+
+  if (eventAllDay) {
+    if (!eventStartDateTime) return;
+    return endOfDay(eventStartDateTime);
+  }
+  return eventEndDateTime;
 }
