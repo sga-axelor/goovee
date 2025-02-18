@@ -18,6 +18,7 @@ import {FormView, ArrayComponent, formatStudioFields} from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
 import {SUBAPP_CODES} from '@/constants';
 import {BadgeList, Button} from '@/ui/components';
+import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -65,10 +66,12 @@ export const RegistrationForm = ({
   } = eventDetails || {};
 
   const [totalPrice, setTotalPrice] = useState<number>(0);
-
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
+
+  const {searchParams} = useSearchParams();
+  const stripeSessionId = searchParams.get('stripe_session_id');
 
   const isLoggedIn = !!user?.emailAddress;
   //NOTE: temprorary disable contacts list
@@ -431,7 +434,7 @@ export const RegistrationForm = ({
           mode={'onChange'}
           onSubmit={onSubmit}
           submitButton={
-            canPay && totalPrice > 0
+            (canPay && totalPrice > 0) || stripeSessionId
               ? ({form}: any) => (
                   <EventPayments
                     workspace={workspace}
