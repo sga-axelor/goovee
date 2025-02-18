@@ -147,6 +147,7 @@ export async function findEvent({
         ...(slug ? {slug} : {slug: {ne: null}}),
         ...(await filterPrivate({user, tenantId})),
         eventCategorySet: {
+          workspace: {url: workspace.url},
           ...(await filterPrivate({user, tenantId})),
         },
       },
