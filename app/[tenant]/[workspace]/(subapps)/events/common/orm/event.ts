@@ -184,6 +184,9 @@ export async function findEvent({
         isLoginNotNeeded: true,
         isPrivate: true,
         maxParticipantPerRegistration: true,
+        workspace: {
+          url: true,
+        },
       },
     })
     .then(event => {

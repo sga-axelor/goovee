@@ -1,4 +1,5 @@
 // ---- CORE IMPORTS ---- //
+import {SUBAPP_CODES} from '@/constants';
 import {Participant} from '@/types';
 import {html} from '@/utils/template-string';
 
@@ -16,6 +17,8 @@ export function mailTemplate({
     formattedEventStartDateTime,
     formattedEventEndDateTime,
     eventDescription,
+    slug,
+    workspace,
   } = event;
 
   const {name, surname, subscriptionSet = []} = participant;
@@ -31,6 +34,8 @@ export function mailTemplate({
         .map((subscription: any) => html`<li>${subscription.facility}</li>`)
         .join('')
     : null;
+
+  const eventLink = `${workspace.url}/${SUBAPP_CODES.events}/${slug}`;
 
   return html`
     <!doctype html>
@@ -68,6 +73,22 @@ export function mailTemplate({
             margin: 0;
             padding-left: 20px;
           }
+          .btn-container {
+            text-align: center;
+            margin-top: 20px;
+          }
+          .event-btn {
+            background-color: #5603ad;
+            color: #fff;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+          }
+          .event-btn:hover {
+            background-color: #4a0293;
+          }
         </style>
       </head>
       <body>
@@ -91,6 +112,15 @@ export function mailTemplate({
                   <ul class="facility-list">${subscriptionDetails}</ul>`
               : ''}
             ${eventDescription ? `<p>${eventDescription}</p>` : ''}
+            <div class="btn-container">
+              <a
+                href="${eventLink}"
+                class="event-btn"
+                target="_blank"
+                rel="noopener noreferrer">
+                Go to Event
+              </a>
+            </div>
             <p>We look forward to seeing you there!</p>
           </div>
         </div>
