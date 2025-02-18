@@ -15,19 +15,16 @@ import {addComment, findComments} from '@/comments/orm';
 import {ModelMap, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
-import NotificationManager, {NotificationType} from '@/notification';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {findPaypalOrder} from '@/payment/paypal/actions';
 import {findStripeOrder} from '@/payment/stripe/actions';
-import {ID, Participant, PaymentOption, PortalWorkspace, User} from '@/types';
+import {ID, PaymentOption, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
 import {formatAmountForStripe} from '@/utils/stripe';
 
 // ---- LOCAL IMPORTS ---- //
-import {mailTemplate} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/mail';
-import {getCalculatedTotalPrice} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/payments';
 import {
   validate,
   withSubapp,
@@ -40,7 +37,9 @@ import {
 } from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
-import {error, generateIcs} from '@/subapps/events/common/utils';
+import {error} from '@/subapps/events/common/utils';
+import {generateRegistrationMailAction} from '@/subapps/events/common/utils/mail';
+import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 import {
   canEmailBeRegistered,
   getParticipantsFromValues,
@@ -601,75 +600,6 @@ export const fetchComments: FetchComments = async props => {
           ? e.message
           : await t('An unexpected error occurred while fetching comments.'),
     };
-  }
-};
-
-export const generateRegistrationMailAction = async ({
-  eventId,
-  participants,
-  workspaceURL,
-  tenantId,
-}: {
-  participants: Participant[];
-  eventId: any;
-  workspaceURL: string;
-  tenantId: string;
-}) => {
-  if (![eventId, participants?.length, workspaceURL, tenantId].every(Boolean)) {
-    console.error(
-      'Missing required parameters: eventId, participants, workspaceURL, or tenantId.',
-    );
-    return;
-  }
-
-  const session = await getSession();
-  const user = session?.user;
-
-  const event = await findEvent({
-    id: eventId,
-    workspace: {url: workspaceURL},
-    tenantId,
-    user,
-  });
-
-  if (!event) {
-    console.error(`Event with ID ${eventId} not found.`);
-    return;
-  }
-
-  const mailService = NotificationManager.getService(NotificationType.mail);
-  if (!mailService) {
-    console.error('Mail service is not available.');
-    return;
-  }
-
-  const subject = `🎉 You're Registered for "${event.eventTitle}"!`;
-  const ics = generateIcs(event, participants);
-
-  const mailPromises = participants.map(participant => {
-    const emailContent = mailTemplate({event, participant});
-    return mailService.notify({
-      to: participant.emailAddress,
-      subject,
-      html: emailContent,
-      icalEvent: {
-        method: 'REQUEST',
-        content: ics,
-      },
-      attachments: [
-        {
-          filename: 'invite.ics',
-          content: ics,
-          contentType: 'text/calendar; method=REQUEST',
-        },
-      ],
-    });
-  });
-
-  try {
-    await Promise.all(mailPromises);
-  } catch (error) {
-    console.error('Error sending registration emails:', error);
   }
 };
 

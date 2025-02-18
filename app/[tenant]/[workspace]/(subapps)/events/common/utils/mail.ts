@@ -1,7 +1,11 @@
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
+import {getSession} from '@/lib/core/auth';
+import NotificationManager, {NotificationType} from '@/lib/core/notification';
 import {Participant} from '@/types';
 import {html} from '@/utils/template-string';
+import {findEvent} from '../orm/event';
+import {generateIcs} from './index';
 
 export function mailTemplate({
   event,
@@ -128,3 +132,72 @@ export function mailTemplate({
     </html>
   `;
 }
+
+export const generateRegistrationMailAction = async ({
+  eventId,
+  participants,
+  workspaceURL,
+  tenantId,
+}: {
+  participants: Participant[];
+  eventId: any;
+  workspaceURL: string;
+  tenantId: string;
+}) => {
+  if (![eventId, participants?.length, workspaceURL, tenantId].every(Boolean)) {
+    console.error(
+      'Missing required parameters: eventId, participants, workspaceURL, or tenantId.',
+    );
+    return;
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const event = await findEvent({
+    id: eventId,
+    workspace: {url: workspaceURL},
+    tenantId,
+    user,
+  });
+
+  if (!event) {
+    console.error(`Event with ID ${eventId} not found.`);
+    return;
+  }
+
+  const mailService = NotificationManager.getService(NotificationType.mail);
+  if (!mailService) {
+    console.error('Mail service is not available.');
+    return;
+  }
+
+  const subject = `🎉 You're Registered for "${event.eventTitle}"!`;
+  const ics = generateIcs(event, participants);
+
+  const mailPromises = participants.map(participant => {
+    const emailContent = mailTemplate({event, participant});
+    return mailService.notify({
+      to: participant.emailAddress,
+      subject,
+      html: emailContent,
+      icalEvent: {
+        method: 'REQUEST',
+        content: ics,
+      },
+      attachments: [
+        {
+          filename: 'invite.ics',
+          content: ics,
+          contentType: 'text/calendar; method=REQUEST',
+        },
+      ],
+    });
+  });
+
+  try {
+    await Promise.all(mailPromises);
+  } catch (error) {
+    console.error('Error sending registration emails:', error);
+  }
+};
