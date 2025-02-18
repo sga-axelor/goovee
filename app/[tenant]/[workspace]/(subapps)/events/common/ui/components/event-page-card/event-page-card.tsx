@@ -1,32 +1,32 @@
 'use client';
+import {useSession} from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {useSession} from 'next-auth/react';
-import {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {SUBAPP_CODES} from '@/constants';
+import {i18n} from '@/locale';
 import {
+  Badge,
+  BadgeList,
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  Button,
-  Badge,
-  BadgeList,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {i18n} from '@/locale';
-import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {EventDateCard} from '@/subapps/events/common/ui/components';
 import {
   REGISTER_TAG,
   REGISTER_TO_EVENT,
 } from '@/subapps/events/common/constants';
+import {EventDateCard} from '@/subapps/events/common/ui/components';
+import {isLoginNeededForRegistration} from '@/subapps/events/common/utils';
 
 export const EventPageCard = ({eventDetails, workspace}: any) => {
   const {formattedDefaultPriceAti, formattedDefaultPrice, defaultPrice} =
@@ -39,8 +39,10 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
     workspace.config?.allowGuestEventRegistration;
   const eventAllowRegistration = eventDetails?.eventAllowRegistration;
 
-  const isRegistrationAllow =
-    eventAllowRegistration && (user || allowGuestEventRegistration);
+  const allowGuests =
+    allowGuestEventRegistration && !isLoginNeededForRegistration(eventDetails);
+
+  const isRegistrationAllow = eventAllowRegistration && (user || allowGuests);
 
   return (
     <Card className="w-full rounded-2xl border-none shadow-none">

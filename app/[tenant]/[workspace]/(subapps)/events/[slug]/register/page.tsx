@@ -1,20 +1,21 @@
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
 import {getSession} from '@/auth';
-import {workspacePathname} from '@/utils/workspace';
-import {findWorkspace} from '@/orm/workspace';
 import {findPartnerByEmail} from '@/orm/partner';
+import {findWorkspace} from '@/orm/workspace';
+import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/app/[tenant]/[workspace]/(subapps)/events/[slug]/register/content';
-import {findEvent} from '@/subapps/events/common/orm/event';
 import {findModelFields} from '@/orm/model-fields';
 import {
-  PORTAL_PARTICIPANT_MODEL,
   CONTACT_ATTRS,
+  PORTAL_PARTICIPANT_MODEL,
 } from '@/subapps/events/common/constants';
+import {findEvent} from '@/subapps/events/common/orm/event';
+import {isLoginNeededForRegistration} from '@/subapps/events/common/utils';
 
 export default async function Page({
   params,
@@ -53,8 +54,10 @@ export default async function Page({
     workspace.config?.allowGuestEventRegistration;
   const eventAllowRegistration = eventDetails?.eventAllowRegistration;
 
-  const isRegistrationAllow =
-    eventAllowRegistration && (user || allowGuestEventRegistration);
+  const allowGuests =
+    allowGuestEventRegistration && !isLoginNeededForRegistration(eventDetails);
+
+  const isRegistrationAllow = eventAllowRegistration && (user || allowGuests);
   if (!isRegistrationAllow) notFound();
 
   const metaFields = await findModelFields({

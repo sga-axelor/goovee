@@ -5,7 +5,7 @@ import {
   findPartnerByEmailForEvent,
 } from '../orm/event';
 import {endOfDay} from 'date-fns';
-import {Participant} from '@/types';
+import type {Participant} from '@/types';
 
 export function isAlreadyRegistered({
   event,

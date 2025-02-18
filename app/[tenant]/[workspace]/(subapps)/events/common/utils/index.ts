@@ -144,3 +144,10 @@ export function getEventEndDate(event: {
   }
   return eventEndDateTime;
 }
+
+export function isLoginNeededForRegistration(event: {
+  isPrivate?: boolean;
+  isLoginNotNeeded?: boolean;
+}): boolean {
+  return event.isPrivate || !event.isLoginNotNeeded;
+}

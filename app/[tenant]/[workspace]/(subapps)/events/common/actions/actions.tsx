@@ -35,10 +35,12 @@ import {
 } from '@/subapps/events/common/orm/event';
 import {findContacts} from '@/subapps/events/common/orm/partner';
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
-import {error} from '@/subapps/events/common/utils';
+import {
+  error,
+  isLoginNeededForRegistration,
+} from '@/subapps/events/common/utils';
 import {generateRegistrationMailAction} from '@/subapps/events/common/utils/mail';
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
-import {validatePaymentMode} from '@/subapps/events/common/utils/validate';
 import {
   canEmailBeRegistered,
   getParticipantsFromValues,
@@ -46,6 +48,7 @@ import {
   hasEventEnded,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
+import {validatePaymentMode} from '@/subapps/events/common/utils/validate';
 
 export async function getAllEvents({
   limit,
@@ -158,14 +161,10 @@ export async function validateRegistration({
     return error(await t('Event has already ended'));
   }
 
-  if (event.isPrivate || (!event.isPublic && !event.isLoginNotNeeded)) {
-    if (!user) {
-      return error(
-        await t(
-          'Guest registration is not allowed for this event, Please login',
-        ),
-      );
-    }
+  if (isLoginNeededForRegistration(event) && !user) {
+    return error(
+      await t('Guest registration is not allowed for this event, Please login'),
+    );
   }
 
   try {
