@@ -16,8 +16,6 @@ import {ModelMap, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import {findPaypalOrder} from '@/payment/paypal/actions';
-import {findStripeOrder} from '@/payment/stripe/actions';
 import {ID, PaymentOption, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
@@ -39,7 +37,10 @@ import {findContacts} from '@/subapps/events/common/orm/partner';
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {generateRegistrationMailAction} from '@/subapps/events/common/utils/mail';
-import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
+import {
+  getCalculatedTotalPrice,
+  validatePaymentMode,
+} from '@/subapps/events/common/utils/payments';
 import {
   canEmailBeRegistered,
   getParticipantsFromValues,
@@ -601,37 +602,4 @@ export const fetchComments: FetchComments = async props => {
           : await t('An unexpected error occurred while fetching comments.'),
     };
   }
-};
-
-const validatePaymentMode = async (
-  id: string,
-  mode: PaymentOption,
-): Promise<{isValid: boolean; paidAmount: number}> => {
-  let paidAmount = 0;
-
-  try {
-    if (mode === PaymentOption.stripe) {
-      const stripeSession = await findStripeOrder({id});
-
-      if (!stripeSession || !stripeSession?.lines?.data?.length) {
-        return {isValid: false, paidAmount};
-      }
-
-      paidAmount = stripeSession.lines.data[0].amount_total;
-    } else if (mode === PaymentOption.paypal) {
-      const response = await findPaypalOrder({id});
-
-      if (!response?.result?.purchase_units?.length) {
-        return {isValid: false, paidAmount};
-      }
-
-      const purchase = response.result.purchase_units[0];
-      paidAmount = Number(purchase?.payments?.captures?.[0]?.amount?.value);
-    }
-  } catch (error) {
-    console.error('Error validating payment:', error);
-    return {isValid: false, paidAmount};
-  }
-
-  return {isValid: true, paidAmount};
 };
