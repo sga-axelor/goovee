@@ -37,10 +37,8 @@ import {findContacts} from '@/subapps/events/common/orm/partner';
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 import {generateRegistrationMailAction} from '@/subapps/events/common/utils/mail';
-import {
-  getCalculatedTotalPrice,
-  validatePaymentMode,
-} from '@/subapps/events/common/utils/payments';
+import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
+import {validatePaymentMode} from '@/subapps/events/common/utils/validate';
 import {
   canEmailBeRegistered,
   getParticipantsFromValues,
