@@ -66,3 +66,8 @@ export const REQUIRED_FIELDS = [
   {field: 'emailAddress', message: 'Email address is required'},
   {field: 'phone', message: 'Phone number is required'},
 ];
+
+export enum EVENT_STATUS {
+  DRAFT = 0,
+  PUBLISHED = 1,
+}

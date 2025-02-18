@@ -120,6 +120,10 @@
       "type": "Int"
     },
     {
+      "name": "statusSelect",
+      "type": "Int"
+    },
+    {
       "name": "workspace",
       "type": "ManyToOne",
       "target": "AOSPortalWorkspace"

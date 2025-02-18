@@ -24,7 +24,7 @@ import {
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
-import {EVENT_TYPE} from '@/subapps/events/common/constants';
+import {EVENT_STATUS, EVENT_TYPE} from '@/subapps/events/common/constants';
 import {findProductsFromWS} from '@/subapps/events/common/orm/product';
 import {
   AOSPortalEvent,
@@ -142,6 +142,7 @@ export async function findEvent({
   const event = await c.aOSPortalEvent
     .findOne({
       where: {
+        statusSelect: EVENT_STATUS.PUBLISHED,
         ...(id ? {id} : {}),
         ...(slug ? {slug} : {slug: {ne: null}}),
         ...(await filterPrivate({user, tenantId})),
@@ -371,6 +372,7 @@ export async function findEvents({
   const currentDateTime = dayjs().toISOString();
   const todayStartTime = dayjs().startOf(DAY).toISOString();
   const whereClause = {
+    statusSelect: EVENT_STATUS.PUBLISHED,
     slug: {ne: null},
     eventCategorySet: {
       workspace: {
@@ -537,6 +539,7 @@ export async function findEventConfig({
 
   const eventConfig = await client.aOSPortalEvent.findOne({
     where: {
+      statusSelect: EVENT_STATUS.PUBLISHED,
       id,
       slug: {ne: null},
       eventCategorySet: {workspace: {url: workspaceURL}},
