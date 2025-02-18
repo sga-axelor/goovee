@@ -27,10 +27,7 @@ import {formatAmountForStripe} from '@/utils/stripe';
 
 // ---- LOCAL IMPORTS ---- //
 import {mailTemplate} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/mail';
-import {
-  getCalculatedTotalPrice,
-  isChargeableEvent,
-} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/payments';
+import {getCalculatedTotalPrice} from '@/app/[tenant]/[workspace]/(subapps)/events/common/utils/payments';
 import {
   validate,
   withSubapp,
@@ -298,9 +295,11 @@ export async function register({
     tenantId: tenantId,
   });
   if (!$event) return error(await t('Event not found!'));
-  const chargeable = isChargeableEvent($event);
+  let {total: expectedAmount} = getCalculatedTotalPrice(values, $event) || {
+    total: 0,
+  };
 
-  if (chargeable) {
+  if (expectedAmount > 0) {
     if (!payment) {
       return error(await t('Payment is required for this event.'));
     }
@@ -316,10 +315,6 @@ export async function register({
       console.error('Payment validation error:', err);
       return error(await t('Payment validation failed.'));
     }
-
-    let {total: expectedAmount} = getCalculatedTotalPrice(values, $event) || {
-      total: 0,
-    };
 
     if (!isValid) {
       return error(
