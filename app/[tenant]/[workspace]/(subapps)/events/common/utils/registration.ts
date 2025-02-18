@@ -122,6 +122,8 @@ export function hasEventEnded(event: {
   return now > endDate.getTime();
 }
 
+//TODO: create a zod schema instead of manual validation
+//This requires refctoring the registration form entirely
 export const validateRequiredFormFields = async (
   values: Record<string, any>,
   requiredFields: {field: string; message: string}[],
