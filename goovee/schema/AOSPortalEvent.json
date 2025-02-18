@@ -118,6 +118,11 @@
     {
       "name": "maxParticipantPerRegistration",
       "type": "Int"
+    },
+    {
+      "name": "workspace",
+      "type": "ManyToOne",
+      "target": "AOSPortalWorkspace"
     }
   ]
 }
