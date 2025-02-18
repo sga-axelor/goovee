@@ -1,13 +1,15 @@
 'use client';
 import React, {useState} from 'react';
 import {MdOutlineChevronRight} from 'react-icons/md';
-import {MetaFieldPicture} from '../meta-field-picture';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   JSON_MANY_TO_ONE,
   JSON_MANY_TO_MANY,
   MANY_TO_ONE,
   MANY_T0_MANY,
 } from '@/subapps/shop/common/constants';
+import {MetaFieldPicture} from '@/subapps/shop/common/ui/components/meta-field-picture';
 
 export function ProductMetaFieldView({fields}: {fields: any[]}) {
   const [expandedFields, setExpandedFields] = useState<{
@@ -50,7 +52,7 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
           </div>
           {expandedFields[field.title] && (
             <div className="ml-7 mt-2 space-y-4">
-              {field.value.map((image, index) => (
+              {field.value.map((image: any, index: number) => (
                 <MetaFieldPicture image={image.value ?? image} key={index} />
               ))}
             </div>

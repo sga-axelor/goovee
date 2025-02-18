@@ -52,7 +52,7 @@ export function SortBy({
           onChange({value: e});
         }}>
         <SelectTrigger className="w-[11.25rem]">
-          <SelectValue placeholder="Select" />
+          <SelectValue placeholder={i18n.t('Select')} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

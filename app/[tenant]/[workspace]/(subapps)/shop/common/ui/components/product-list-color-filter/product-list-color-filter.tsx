@@ -1,7 +1,10 @@
 'use client';
 
-import {cn} from '@/utils/css';
 import React, {useState} from 'react';
+
+// ---- CORE IMPORTS ---- //
+import {cn} from '@/utils/css';
+import {i18n} from '@/locale';
 
 const filters = [
   {code: 'black', label: 'Black', bg: 'bg-black'},
@@ -24,7 +27,7 @@ export function ProductListColorFilter() {
 
   return (
     <div className="flex flex-col gap-2">
-      <h6 className="font-semibold">Color</h6>
+      <h6 className="font-semibold">{i18n.t('Color')}</h6>
       <div className="flex flex-wrap gap-2">
         {filters.map(filter => (
           <div
@@ -34,7 +37,7 @@ export function ProductListColorFilter() {
             <span
               className={cn('rounded-full w-4 h-4 min-w-4', filter.bg)}></span>
             <span className="text-xs font-medium text-primary">
-              {filter.label}
+              {i18n.t(filter.label)}
             </span>
           </div>
         ))}

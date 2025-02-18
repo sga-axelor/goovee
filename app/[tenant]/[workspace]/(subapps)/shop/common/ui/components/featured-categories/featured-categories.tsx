@@ -6,11 +6,11 @@ import {useRouter} from 'next/navigation';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 
+// ---- CORE IMPORTS ---- //
 import {Button, NavbarCategoryMenu} from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 import type {
   Category,
@@ -20,7 +20,9 @@ import type {
   Product,
 } from '@/types';
 
-import {ProductCard} from '../product-card';
+// ---- LOCAL IMPORTS ---- //
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {ProductCard} from '@/subapps/shop/common/ui/components/product-card';
 
 export function FeaturedCategories({
   categories,

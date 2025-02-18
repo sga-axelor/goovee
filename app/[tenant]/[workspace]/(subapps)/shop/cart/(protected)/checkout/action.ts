@@ -34,7 +34,7 @@ async function createOrder({
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: 'Bad request',
+      message: await t('Bad request'),
     };
   }
 
@@ -43,7 +43,7 @@ async function createOrder({
   if (!tenant?.config?.aos?.url) {
     return {
       error: true,
-      message: 'Order creation failed. Webservice not available',
+      message: await t('Order creation failed. Webservice not available'),
     };
   }
 
@@ -57,7 +57,7 @@ async function createOrder({
   if (!user) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: await t('Unauthorized'),
     };
   }
 
@@ -70,7 +70,7 @@ async function createOrder({
   if (!workspace) {
     return {
       error: true,
-      message: 'Invalid workspace',
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -137,7 +137,7 @@ async function createOrder({
     if (res?.data?.status === -1) {
       return {
         error: true,
-        message: 'Error creating order. Try again.',
+        message: await t('Error creating order. Try again.'),
       };
     }
 
@@ -145,7 +145,7 @@ async function createOrder({
   } catch (err) {
     return {
       error: true,
-      message: 'Error creating order. Try again.',
+      message: await t('Error creating order. Try again.'),
     };
   }
 }
@@ -164,21 +164,21 @@ export async function paypalCaptureOrder({
   if (!session) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: await t('Unauthorized'),
     };
   }
 
   if (!orderId) {
     return {
       error: true,
-      message: 'Bad request',
+      message: await t('Bad request'),
     };
   }
 
   if (!workspaceURL) {
     return {
       error: true,
-      message: 'Bad request',
+      message: await t('Bad request'),
     };
   }
 
@@ -202,14 +202,14 @@ export async function paypalCaptureOrder({
   if (!cart?.items?.length) {
     return {
       error: true,
-      message: 'Bad request',
+      message: await t('Bad request'),
     };
   }
 
   if (!workspace) {
     return {
       error: true,
-      message: 'Invalid workspace',
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -223,7 +223,7 @@ export async function paypalCaptureOrder({
   if (!hasShopAccess) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: await t('Unauthorized'),
     };
   }
 
@@ -266,7 +266,7 @@ export async function paypalCaptureOrder({
     ) {
       return {
         error: true,
-        message: 'Amount mismatched',
+        message: await t('Amount mismatched'),
       };
     }
 

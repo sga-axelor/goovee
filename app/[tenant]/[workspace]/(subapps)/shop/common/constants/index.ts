@@ -25,6 +25,11 @@ export const SORT_BY_OPTIONS = [
   },
 ];
 
+export const SHIPPING_TYPE = {
+  REGULAR: 'regular',
+  FAST: 'fast',
+};
+
 export const BASE_PRODUCT_MODEL = 'com.axelor.apps.base.db.Product';
 export const PRODUCT_ATTRS = 'productAttrs';
 export const MANY_TO_ONE = 'many-to-one';

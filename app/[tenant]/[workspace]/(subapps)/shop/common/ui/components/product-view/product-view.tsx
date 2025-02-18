@@ -22,7 +22,7 @@ import type {Category, ComputedProduct, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {Categories} from '..';
-import {ProductMetaFieldView} from '../product-meta-field-view';
+import {ProductMetaFieldView} from '@/subapps/shop/common/ui/components/product-meta-field-view';
 
 export function ProductView({
   product: computedProduct,

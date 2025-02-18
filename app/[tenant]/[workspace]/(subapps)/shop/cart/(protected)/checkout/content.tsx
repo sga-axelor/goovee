@@ -13,7 +13,6 @@ import {
   RadioGroupItem,
   Button,
   BackgroundImage,
-  Loader,
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
@@ -43,12 +42,8 @@ import {
   validateStripePayment,
   payboxCreateOrder,
   validatePayboxPayment,
-} from './action';
-
-const SHIPPING_TYPE = {
-  REGULAR: 'regular',
-  FAST: 'fast',
-};
+} from '@/subapps/shop/cart/(protected)/checkout/action';
+import {SHIPPING_TYPE} from '@/subapps/shop/common/constants/index';
 
 const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.REGULAR]: 2,
@@ -82,7 +77,7 @@ function Stripe({onApprove}: {onApprove: any}) {
       if (result.error) {
         toast({
           variant: 'destructive',
-          title: result.message,
+          title: i18n.t(result.message ?? 'something went wrong'),
         });
       }
 
@@ -112,7 +107,7 @@ function Stripe({onApprove}: {onApprove: any}) {
         if (result.error) {
           toast({
             variant: 'destructive',
-            title: result.message,
+            title: i18n.t(result.message ?? 'Something went wrong!'),
           });
         } else {
           toast({
@@ -156,7 +151,7 @@ function Stripe({onApprove}: {onApprove: any}) {
     <Button
       className="h-[50px] bg-[#635bff] text-lg font-medium"
       onClick={handleCreateCheckoutSession}>
-      Pay with Stripe
+      {i18n.t('Pay with Stripe')}
     </Button>
   );
 }
@@ -181,7 +176,7 @@ function Paypal({onApprove}: {onApprove: any}) {
     if (result.error) {
       toast({
         variant: 'destructive',
-        title: result.message,
+        title: i18n.t(result.message ?? 'Something went wrong!'),
       });
     } else {
       return result?.order?.id;
@@ -198,7 +193,7 @@ function Paypal({onApprove}: {onApprove: any}) {
     if (result?.error) {
       toast({
         variant: 'destructive',
-        title: result.message,
+        title: i18n.t(result.message ?? 'Something went wrong!'),
       });
     } else {
       toast({
@@ -400,7 +395,7 @@ function Total({cart, shippingType, workspace}: any) {
 
   return (
     <div className="rounded-lg p-4 bg-card text-card-foreground">
-      <Title className="text-xl font-semibold mb-6" text="Total" />
+      <Title className="text-xl font-semibold mb-6" text={i18n.t('Total')} />
       <Separator className="my-4" />
       <div className="flex justify-between">
         <p>{i18n.t('Products')}:</p>
