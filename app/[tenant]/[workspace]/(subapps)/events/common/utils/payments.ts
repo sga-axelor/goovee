@@ -49,10 +49,3 @@ export const getCalculatedTotalPrice = (
 
   return {total: total || 0, subscriptionPrices};
 };
-
-export const isChargeableEvent = (event: any): boolean => {
-  return (
-    event?.defaultPrice > 0 ||
-    (event?.facilityList?.some((f: any) => f.price > 0) ?? false)
-  );
-};
