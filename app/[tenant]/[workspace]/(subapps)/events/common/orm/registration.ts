@@ -8,6 +8,7 @@ import {AOSPortalParticipant} from '@/goovee/.generated/models';
 import {UserType} from '@/lib/core/auth/types';
 import {PartnerTypeMap} from '@/orm/partner';
 import {CreateArgs} from '@goovee/orm';
+import {Maybe} from '@/types/util';
 
 export async function registerParticipants({
   eventId,
@@ -45,14 +46,23 @@ export async function registerParticipants({
         c => emailAddress && c.emailAddress?.address === emailAddress,
       );
 
+      function parse(value: Maybe<string>) {
+        if (value) {
+          try {
+            return JSON.parse(value);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+
       return {
         company,
         name,
         surname,
         emailAddress,
         phone,
-        //@ts-expect-error contact attrs is a json string
-        contactAttrs,
+        contactAttrs: parse(contactAttrs),
         sequence,
         createdOn: timeStamp,
         updatedOn: timeStamp,
