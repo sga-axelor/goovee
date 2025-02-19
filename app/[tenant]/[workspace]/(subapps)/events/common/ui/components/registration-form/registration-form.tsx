@@ -399,9 +399,11 @@ export const RegistrationForm = ({
             </div>
           </CardDescription>
         ) : null}
-        <h3 className="text-lg font-semibold leading-6 tracking-tight">
-          {i18n.t('Participant')} #1
-        </h3>
+        {eventAllowMultipleRegistrations && (
+          <h3 className="text-lg font-semibold leading-6 tracking-tight">
+            {i18n.t('Participant')} #1
+          </h3>
+        )}
       </CardHeader>
       <CardContent className="px-4 pb-4 space-y-6">
         <FormView
