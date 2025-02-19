@@ -130,7 +130,7 @@ export async function validateRegistration({
   if (!eventId) return error(await t('Event ID is missing!'));
   if (!values) return error(await t('Values are missing!'));
   // TODO: Handle the form validation here
-  if (!tenantId) return error(await t('Tenant ID is missing!'));
+  if (!tenantId) return error(await t('TenantId is required'));
   if (!workspaceURL) return error(await t('Workspace is missing!'));
 
   const session = await getSession();
@@ -370,7 +370,7 @@ export async function fetchContacts({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const result = await validate([
@@ -389,7 +389,7 @@ export async function fetchContacts({
     return result;
   } catch (err) {
     console.log(err);
-    return error(await t('Something went wrong!'));
+    return error(await t('Something went wrong'));
   }
 }
 
@@ -402,7 +402,7 @@ export async function isValidParticipant(props: {
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
   if (!email) {
     return error(await t('Email is required'));
@@ -429,7 +429,7 @@ export async function isValidParticipant(props: {
   });
 
   if (!event) {
-    return error(await t('Event not found!'));
+    return error(await t('Event not found'));
   }
 
   if (!(await canEmailBeRegistered({event, email, tenantId}))) {
@@ -462,7 +462,7 @@ export const createComment: CreateComment = async formData => {
 
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) {
-    return {error: true, message: await t('TenantId is required.')};
+    return {error: true, message: await t('TenantId is required')};
   }
 
   const {workspaceURL, ...rest} = zodParseFormData(
@@ -544,7 +544,7 @@ export const fetchComments: FetchComments = async props => {
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 

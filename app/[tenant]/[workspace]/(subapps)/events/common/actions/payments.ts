@@ -52,13 +52,13 @@ export async function createStripeCheckoutSession({
   }
 
   if (!workspaceURL) {
-    return error(await t('Bad request.'));
+    return error(await t('Bad request'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Invalid tenant.'));
+    return error(await t('Invalid tenant'));
   }
 
   const session = await getSession();
@@ -71,7 +71,7 @@ export async function createStripeCheckoutSession({
   });
 
   if (!workspace) {
-    return error(await t('Invalid workspace.'));
+    return error(await t('Invalid workspace'));
   }
 
   const hasEventAccess = await findSubappAccess({
@@ -85,12 +85,12 @@ export async function createStripeCheckoutSession({
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
-    return error(await t('Online payment is not available.'));
+    return error(await t('Online payment is not available'));
   }
 
   const paymentOptionSet = workspace?.config?.paymentOptionSet;
   if (!paymentOptionSet?.length) {
-    return error(await t('Payment options are not configured.'));
+    return error(await t('Payment options are not configured'));
   }
 
   const allowStripe = isPaymentOptionAvailable(
@@ -98,7 +98,7 @@ export async function createStripeCheckoutSession({
     PaymentOption.stripe,
   );
   if (!allowStripe) {
-    return error(await t('Stripe is not available.'));
+    return error(await t('Stripe is not available'));
   }
 
   const $event = await findEvent({
@@ -114,7 +114,7 @@ export async function createStripeCheckoutSession({
 
   const {total: amount} = getCalculatedTotalPrice(values, $event);
   if (!amount || amount <= 0) {
-    return error(await t('Total price must be greater than 0.'));
+    return error(await t('Total price must be greater than 0'));
   }
 
   let emailAddress;
@@ -236,7 +236,7 @@ export async function validateStripePayment({
   );
 
   if (!allowStripe) {
-    return error(await t('Stripe is not available.'));
+    return error(await t('Stripe is not available'));
   }
 
   const $event = await findEvent({
@@ -250,7 +250,7 @@ export async function validateStripePayment({
 
   const {total: amount} = getCalculatedTotalPrice(values, $event);
   if (!amount || amount <= 0) {
-    return error(await t('Total price must be greater than 0.'));
+    return error(await t('Total price must be greater than 0'));
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
@@ -289,7 +289,7 @@ export async function validateStripePayment({
     return error(
       await t(
         resgistration.message ||
-          'Something went wrong while event registration.',
+          'Something went wrong while event registration',
       ),
     );
   }
