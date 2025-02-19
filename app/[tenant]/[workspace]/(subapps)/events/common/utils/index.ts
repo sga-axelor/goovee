@@ -151,3 +151,19 @@ export function isLoginNeededForRegistration(event: {
 }): boolean {
   return event.isPrivate || !event.isLoginNotNeeded;
 }
+
+export function isEventPublic(event: {
+  isPrivate?: boolean;
+  isPublic?: boolean;
+  isLoginNotNeeded?: boolean;
+}): boolean {
+  return !!(!event.isPrivate && event.isLoginNotNeeded && event.isPublic);
+}
+
+export function isEventPrivate(event: {
+  isPrivate?: boolean;
+  isPublic?: boolean;
+  isLoginNotNeeded?: boolean;
+}): boolean {
+  return !!event.isPrivate;
+}

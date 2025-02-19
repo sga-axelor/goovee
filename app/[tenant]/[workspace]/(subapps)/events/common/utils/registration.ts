@@ -1,11 +1,12 @@
 import type {Tenant} from '@/lib/core/tenant';
+import type {Participant} from '@/types';
+import {endOfDay} from 'date-fns';
 import {
   type EventConfig,
   type EventConfigPartner,
   findPartnerByEmailForEvent,
 } from '../orm/event';
-import {endOfDay} from 'date-fns';
-import type {Participant} from '@/types';
+import {isEventPrivate, isEventPublic} from './index';
 
 export function isAlreadyRegistered({
   event,
@@ -31,13 +32,13 @@ export async function canEmailBeRegistered({
   event: EventConfig;
   email: string;
 }): Promise<boolean> {
-  if (event.isPrivate) {
+  if (isEventPrivate(event)) {
     return canRegisterToPrivateEvent({privateEvent: event, email});
   }
-  if (!event.isPublic) {
-    return await canRegisterToNonPublicEvent({email, tenantId});
+  if (isEventPublic(event)) {
+    return true;
   }
-  return true;
+  return await canRegisterToNonPublicEvent({email, tenantId});
 }
 
 export async function canRegisterToNonPublicEvent({

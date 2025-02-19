@@ -37,6 +37,8 @@ import {findContacts} from '@/subapps/events/common/orm/partner';
 import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {
   error,
+  isEventPrivate,
+  isEventPublic,
   isLoginNeededForRegistration,
 } from '@/subapps/events/common/utils';
 import {generateRegistrationMailAction} from '@/subapps/events/common/utils/mail';
@@ -212,7 +214,7 @@ export async function validateRegistration({
     }
 
     if (
-      !event.isPublic &&
+      !isEventPublic(event) &&
       new Set(participants.map(p => p.emailAddress)).size !==
         participants.length
     ) {
@@ -232,8 +234,8 @@ export async function validateRegistration({
     const canAllEmailBeRegistered = canRegisterList.every(Boolean);
     if (!canAllEmailBeRegistered) {
       if (
-        !event.isPublic &&
-        !event.isPrivate &&
+        !isEventPrivate(event) &&
+        !isEventPublic(event) &&
         workspace.config?.nonPublicEmailNotFoundMessage?.trim()
       ) {
         return error(await t(workspace.config.nonPublicEmailNotFoundMessage));
@@ -432,8 +434,8 @@ export async function isValidParticipant(props: {
 
   if (!(await canEmailBeRegistered({event, email, tenantId}))) {
     if (
-      !event.isPublic &&
-      !event.isPrivate &&
+      !isEventPrivate(event) &&
+      !isEventPublic(event) &&
       workspace.config?.nonPublicEmailNotFoundMessage?.trim()
     ) {
       return error(await t(workspace.config.nonPublicEmailNotFoundMessage));
