@@ -56,7 +56,7 @@ export async function GET(
   const tenant = tenants[params.tenant];
 
   if (!tenant) {
-    return new NextResponse('Bad Request', {status: 400});
+    return new NextResponse('Bad request', {status: 400});
   }
 
   return NextResponse.json(tenant);

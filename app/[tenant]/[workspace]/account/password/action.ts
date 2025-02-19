@@ -48,7 +48,7 @@ export async function changePassword({
   if (!partner?.password) {
     return {
       error: true,
-      message: await t('Bad request.'),
+      message: await t('Bad request'),
     };
   }
 

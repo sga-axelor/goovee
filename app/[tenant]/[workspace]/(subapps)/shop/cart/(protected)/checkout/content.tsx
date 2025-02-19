@@ -318,7 +318,7 @@ function Total({cart, shippingType, workspace}: any) {
 function Shipping({value, onChange}: {value: string; onChange: any}) {
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
-      <Title className="text-xl font-medium" text={i18n.t('Shipping Method')} />
+      <Title className="text-xl font-medium" text={i18n.t('Shipping method')} />
       <Separator className="my-4" />
       <RadioGroup defaultValue={value}>
         <div className="border rounded-lg flex p-4 gap-4 items-center">

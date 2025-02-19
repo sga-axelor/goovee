@@ -133,7 +133,7 @@ export async function confirmAddresses({
   if (!tenantId) {
     return {
       error: true,
-      message: await t('Bad request.'),
+      message: await t('Bad request'),
     };
   }
 

@@ -31,7 +31,7 @@ export async function generateOTP({
   });
 
   if (!(invite?.workspace && invite?.partner)) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const workspace = await findWorkspace({
@@ -43,7 +43,7 @@ export async function generateOTP({
   });
 
   if (!workspace?.config) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const email = invite?.emailAddress?.address;

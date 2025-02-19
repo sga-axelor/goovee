@@ -48,7 +48,7 @@ export async function findTicketAccess({
   select?: SelectOptions<AOSProjectTask>;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -87,7 +87,7 @@ export async function createTicket({
   } = data;
 
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -481,7 +481,7 @@ export async function getAllTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -501,7 +501,7 @@ export async function getMyTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -524,7 +524,7 @@ export async function getManagedTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -545,7 +545,7 @@ export async function getCreatedTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -565,7 +565,7 @@ export async function getResolvedTicketCount(props: {
 }): Promise<number> {
   const {projectId, auth} = props;
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
   const client = await manager.getClient(auth.tenantId);
 
@@ -585,7 +585,7 @@ export async function findTickets(
   const {projectId, take, skip, where, orderBy, auth} = props;
 
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -624,7 +624,7 @@ export async function findRelatedTicketLinks(
   tenantId: Tenant['id'],
 ): Promise<TicketLink[] | undefined> {
   if (!tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -664,7 +664,7 @@ export async function findChildTickets(
   tenantId: Tenant['id'],
 ): Promise<ChildTicket[]> {
   if (!tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -701,7 +701,7 @@ export async function findParentTicket(
   tenantId: Tenant['id'],
 ): Promise<ParentTicket | undefined> {
   if (!tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -743,7 +743,7 @@ export async function findTicket({
   auth: AuthProps;
 }): Promise<Ticket | null> {
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -788,7 +788,7 @@ export async function findTicketVersion(
   tenantId: Tenant['id'],
 ): Promise<number> {
   if (!tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -813,7 +813,7 @@ export async function findTicketsBySearch(props: {
   const {search, projectId, excludeList, auth} = props;
 
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -960,7 +960,7 @@ export async function createChildTicketLink({
   const {currentTicketId, linkTicketId} = data;
 
   if (!auth.tenantId) {
-    throw new Error('TenantId is required.');
+    throw new Error('TenantId is required');
   }
 
   const client = await manager.getClient(auth.tenantId);
@@ -1004,7 +1004,7 @@ export async function deleteChildTicketLink({
   auth: AuthProps;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const {currentTicketId, linkTicketId} = data;
@@ -1041,7 +1041,7 @@ export async function createParentTicketLink({
   auth: AuthProps;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const {currentTicketId, linkTicketId} = data;
@@ -1083,7 +1083,7 @@ export async function deleteParentTicketLink({
   auth: AuthProps;
 }) {
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const {currentTicketId, linkTicketId} = data;
@@ -1116,7 +1116,7 @@ export async function findTicketLinkTypes(
   tenantId: Tenant['id'],
 ): Promise<LinkType[]> {
   if (!tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const client = await manager.getClient(tenantId);
@@ -1145,7 +1145,7 @@ export async function createRelatedTicketLink({
   auth: AuthProps;
 }): Promise<[string, string]> {
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const {currentTicketId, linkTicketId, linkType} = data;
@@ -1264,7 +1264,7 @@ export async function deleteRelatedTicketLink({
   auth: AuthProps;
 }): Promise<ID> {
   if (!auth.tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   const {currentTicketId, linkTicketId, linkId} = data;

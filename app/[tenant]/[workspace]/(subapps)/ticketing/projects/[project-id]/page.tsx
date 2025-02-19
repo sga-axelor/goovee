@@ -86,7 +86,7 @@ export default async function Page({
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;
   const items = [
     {
-      label: await t('All Tickets'),
+      label: await t('All tickets'),
       count: getAllTicketCount({projectId, auth}),
       icon: MdAllInbox,
       href: allTicketsURL,

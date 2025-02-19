@@ -201,7 +201,7 @@ export async function update({
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -328,7 +328,7 @@ export async function generateOTPForUpdate({
   const $user = await findPartnerById(user.id!, tenantId);
 
   if (!$user) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const partnerId = user.isContact ? user.mainPartnerId : user.id;
@@ -336,7 +336,7 @@ export async function generateOTPForUpdate({
   const partner = await findPartnerById(partnerId!, tenantId);
 
   if (!partner) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const workspace =
@@ -348,7 +348,7 @@ export async function generateOTPForUpdate({
     }));
 
   if (!workspace) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   if (!workspace?.config?.otpTemplateList?.length) {

@@ -15,7 +15,7 @@ export async function POST(
   if (
     !(tenant?.config && tenant?.config?.aos?.url && tenant?.config?.aos?.auth)
   ) {
-    return new NextResponse('Bad Request', {status: 400});
+    return new NextResponse('Bad request', {status: 400});
   }
 
   const {model = 'com.axelor.dms.db.DMSFile', record} = await request.json();

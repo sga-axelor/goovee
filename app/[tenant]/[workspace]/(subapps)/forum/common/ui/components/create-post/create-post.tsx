@@ -162,7 +162,7 @@ export const CreatePost = ({
       } else {
         toast({
           variant: 'destructive',
-          title: i18n.t(result.message ?? 'Something went wrong!'),
+          title: i18n.t(result.message ?? 'Something went wrong'),
         });
       }
     } catch (error) {

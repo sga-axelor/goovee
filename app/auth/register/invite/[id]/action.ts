@@ -175,7 +175,7 @@ export async function subscribe({
   inviteId: string;
 }) {
   if (!(workspaceURL && inviteId && tenantId)) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -197,13 +197,13 @@ export async function subscribe({
       invite.workspace.url === workspaceURL
     )
   ) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const contactConfig = invite?.contactAppPermissionList?.[0];
 
   if (!contactConfig) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const $user = await findPartnerByEmail(user.email, tenantId);
@@ -226,7 +226,7 @@ export async function subscribe({
 
     revalidatePath('/', 'layout');
   } catch (err) {
-    return error(await t('Error subscribing, try again.'));
+    return error(await t('Error subscribing, try again'));
   }
 
   deleteInviteById({

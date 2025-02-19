@@ -287,7 +287,7 @@ async function upload({
   tenantId: Tenant['id'];
 }): Promise<Attachment[]> {
   if (!tenantId) {
-    throw new Error(await t('TenantId is required.'));
+    throw new Error(await t('TenantId is required'));
   }
 
   if (!attachments.length) return [];

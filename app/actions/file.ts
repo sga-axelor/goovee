@@ -59,7 +59,7 @@ export async function getFile({
     const session = await getSession();
     const user = session?.user;
     if (!user) {
-      return {error: true, message: await t('Unauthorized user.')};
+      return {error: true, message: await t('Unauthorized User.')};
     }
 
     const workspace = await findWorkspace({user, url: workspaceURL, tenantId});

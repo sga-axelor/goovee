@@ -80,19 +80,19 @@ export async function updateInviteApplication({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const $invite = await findInviteById({id: invite.id, tenantId});
 
   if (!$invite) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -112,7 +112,7 @@ export async function updateInviteApplication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const contactConfig: any = $invite?.contactAppPermissionList?.[0];
@@ -186,19 +186,19 @@ export async function updateInviteAuthentication({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const $invite = await findInviteById({id: invite.id, tenantId});
 
   if (!$invite) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -218,7 +218,7 @@ export async function updateInviteAuthentication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const contactConfig: any = $invite?.contactAppPermissionList?.[0];
@@ -278,13 +278,13 @@ export async function deleteMember({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const adminContact = await isAdminContact({workspaceURL, tenantId});
@@ -309,7 +309,7 @@ export async function deleteMember({
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member?.contactWorkspaceConfig?.id) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   try {
@@ -353,13 +353,13 @@ export async function updateMemberApplication({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -384,7 +384,7 @@ export async function updateMemberApplication({
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const availableApps = await findAvailableSubapps({
@@ -395,7 +395,7 @@ export async function updateMemberApplication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const contactConfig: any = $member?.contactWorkspaceConfig;
@@ -479,13 +479,13 @@ export async function updateMemberAuthentication({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const client = await manager.getClient(tenantId);
 
   if (!client) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -510,7 +510,7 @@ export async function updateMemberAuthentication({
   let $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const availableApps = await findAvailableSubapps({
@@ -521,7 +521,7 @@ export async function updateMemberAuthentication({
   const $app = availableApps.find((a: any) => a.code === app.code);
 
   if (!$app) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const contactConfig: any = $member?.contactWorkspaceConfig;

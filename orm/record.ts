@@ -53,7 +53,7 @@ export async function findByID({
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 

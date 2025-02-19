@@ -33,7 +33,7 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   if (!tenantId) {
     return {
       error: true,
-      message: await t('Bad Request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -88,7 +88,7 @@ export async function findRecommendedNews({
   if (!tenantId) {
     return {
       error: true,
-      message: await t('Bad Request'),
+      message: await t('Bad request'),
     };
   }
 
@@ -144,7 +144,7 @@ export const createComment: CreateComment = async formData => {
 
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) {
-    return {error: true, message: await t('TenantId is required.')};
+    return {error: true, message: await t('TenantId is required')};
   }
 
   const {workspaceURL, ...rest} = zodParseFormData(
@@ -226,7 +226,7 @@ export const fetchComments: FetchComments = async props => {
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 

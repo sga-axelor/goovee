@@ -62,7 +62,7 @@ export async function createInvoice({
 
     const event = await findEvent({id: eventId, workspace, tenantId, user});
     if (!event) {
-      return error(await t('Event not found.'));
+      return error(await t('Event not found'));
     }
 
     const eventRegistration = await findEventRegistration({
@@ -125,13 +125,13 @@ export async function createStripeCheckoutSession({
   }
 
   if (!workspaceURL) {
-    return error(await t('Bad request.'));
+    return error(await t('Bad request'));
   }
 
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Invalid tenant.'));
+    return error(await t('Invalid tenant'));
   }
 
   const session = await getSession();
@@ -158,7 +158,7 @@ export async function createStripeCheckoutSession({
   }
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
-    return error(await t('Online payment is not available.'));
+    return error(await t('Online payment is not available'));
   }
   const paymentOptionSet = workspace?.config?.paymentOptionSet;
 
@@ -168,7 +168,7 @@ export async function createStripeCheckoutSession({
   );
 
   if (!allowStripe) {
-    return error(await t('Stripe is not available.'));
+    return error(await t('Stripe is not available'));
   }
 
   const event = await findEvent({
@@ -294,11 +294,11 @@ export async function validateStripePayment({
   );
 
   if (!allowStripe) {
-    return error(await t('Stripe is not available.'));
+    return error(await t('Stripe is not available'));
   }
 
   if (!stripeSessionId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
   const resgistration: any = await register({
     eventId: record.id,

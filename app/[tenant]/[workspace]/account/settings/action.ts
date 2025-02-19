@@ -82,7 +82,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
         .then(contact => contact?.contactWorkspaceConfigSet?.[0]);
 
       if (!contactConfig) {
-        return {error: true, message: await t('Bad Request')};
+        return {error: true, message: await t('Bad request')};
       }
 
       result = await updatePartner({
@@ -114,7 +114,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
         .then(partner => partner?.partnerWorkspaceSet?.[0]);
 
       if (!partnerWorkspace) {
-        return {error: true, message: await t('Bad Request')};
+        return {error: true, message: await t('Bad request')};
       }
 
       result = await client.aOSPartner

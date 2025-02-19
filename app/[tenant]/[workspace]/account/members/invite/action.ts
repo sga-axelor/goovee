@@ -46,7 +46,7 @@ export async function deleteInvite({
   workspaceURL: string;
 }) {
   if (!(id && workspaceURL)) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -59,13 +59,13 @@ export async function deleteInvite({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const workspace = await findWorkspace({url: workspaceURL, user, tenantId});
 
   if (!workspace) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const isPartnerUser = await isPartner();
@@ -96,7 +96,7 @@ export async function deleteInvite({
       };
     }
   } catch (err) {
-    return error(await t('Error deleting invite.'));
+    return error(await t('Error deleting invite'));
   }
 }
 
@@ -112,7 +112,7 @@ export async function sendInvites({
   apps: InviteAppsConfig;
 }) {
   if (!(emails && workspaceURL && apps)) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   let emailAddresses = emails
@@ -121,7 +121,7 @@ export async function sendInvites({
     .filter(Boolean);
 
   if (!emailAddresses) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const session = await getSession();
@@ -134,13 +134,13 @@ export async function sendInvites({
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   const workspace = await findWorkspace({url: workspaceURL, user, tenantId});
 
   if (!workspace) {
-    return error(await t('Bad Request'));
+    return error(await t('Bad request'));
   }
 
   if (!workspace.config?.canInviteMembers) {

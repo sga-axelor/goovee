@@ -73,7 +73,7 @@ export default function SignUp({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!tenantId) {
       toast({
-        title: i18n.t('TenantId is required.'),
+        title: i18n.t('TenantId is required'),
         variant: 'destructive',
       });
       return;

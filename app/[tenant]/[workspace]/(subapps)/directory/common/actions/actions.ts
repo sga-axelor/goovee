@@ -30,7 +30,7 @@ export async function searchEntries({
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
   const session = await getSession();
@@ -52,7 +52,7 @@ export async function searchEntries({
   if (!workspace) {
     return {
       error: true,
-      message: await t('Workspace not found.'),
+      message: await t('Workspace not found'),
     };
   }
 

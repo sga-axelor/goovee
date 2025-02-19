@@ -40,7 +40,7 @@ export async function subscribe({
   const user = session?.user;
 
   if (!(workspace && tenantId)) {
-    return error(await getTranslation({}, 'Bad Request'));
+    return error(await getTranslation({}, 'Bad request'));
   }
 
   if (!user) {
@@ -172,7 +172,7 @@ export async function subscribe({
     }
   }
 
-  return error(await getTranslation({}, 'Error subscribing, try again.'));
+  return error(await getTranslation({}, 'Error subscribing, try again'));
 }
 
 type RegisterDTO = {
@@ -208,7 +208,7 @@ export async function register({
 
   if (type === UserType.company && !companyName) {
     return error(
-      await getTranslation({tenant: tenantId}, 'Company name is required.'),
+      await getTranslation({tenant: tenantId}, 'Company name is required'),
     );
   }
 
@@ -288,7 +288,7 @@ export async function registerByEmail(data: RegisterDTO) {
   const {email, password, confirmPassword, otp, tenantId} = data;
 
   if (!tenantId) {
-    return error(await getTranslation({}, 'Bad Request'));
+    return error(await getTranslation({}, 'Bad request'));
   }
 
   if (!(email && password && confirmPassword)) {
@@ -336,7 +336,7 @@ export async function registerByGoogle(
   const {tenantId} = data;
 
   if (!tenantId) {
-    return error(await getTranslation({}, 'Bad Request'));
+    return error(await getTranslation({}, 'Bad request'));
   }
 
   const session = await getSession();

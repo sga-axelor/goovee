@@ -201,7 +201,7 @@ export async function resetPassword({
     });
 
     if (!result) {
-      return error(await getTranslation({tenant: tenantId}, 'Bad Request'));
+      return error(await getTranslation({tenant: tenantId}, 'Bad request'));
     }
 
     const isValidOTP = await isValid({id: result.id, value: otp, tenantId});

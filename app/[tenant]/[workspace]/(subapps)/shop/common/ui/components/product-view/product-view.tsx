@@ -186,7 +186,7 @@ export function ProductView({
                 <div className="flex items-center justify-center gap-2">
                   <MdOutlineShoppingBasket className="text-2xl" />
                   <span className="text-sm font-medium mb-0">
-                    {i18n.t('Add to Cart')}
+                    {i18n.t('Add to cart')}
                   </span>
                 </div>
               </Button>

@@ -55,7 +55,7 @@ export async function mutate(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -123,7 +123,7 @@ export async function updateAssignment(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -173,7 +173,7 @@ export async function closeTicket(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -226,7 +226,7 @@ export async function cancelTicket(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -281,7 +281,7 @@ export async function createRelatedLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -314,7 +314,7 @@ export async function createChildLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -343,7 +343,7 @@ export async function createParentLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -376,7 +376,7 @@ export async function deleteChildLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -409,7 +409,7 @@ export async function deleteParentLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -441,7 +441,7 @@ export async function deleteRelatedLink(
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -476,7 +476,7 @@ export async function searchTickets({
   if (!tenantId) {
     return {
       error: true,
-      message: await t('TenantId is required.'),
+      message: await t('TenantId is required'),
     };
   }
 
@@ -500,7 +500,7 @@ export async function searchTickets({
 export const createComment: CreateComment = async formData => {
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) {
-    return {error: true, message: await t('TenantId is required.')};
+    return {error: true, message: await t('TenantId is required')};
   }
 
   const {workspaceURL, ...rest} = zodParseFormData(
@@ -568,7 +568,7 @@ export const fetchComments: FetchComments = async props => {
 
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) {
-    return {error: true, message: await t('TenantId is required.')};
+    return {error: true, message: await t('TenantId is required')};
   }
 
   const {error, message, info} = await ensureAuth(workspaceURL, tenantId);

@@ -330,7 +330,7 @@ export async function findMemberGroupById({
   user?: User;
 }) {
   if (!(workspaceID && tenantId)) {
-    return {error: true, message: await t('Bad Request')};
+    return {error: true, message: await t('Bad request')};
   }
 
   if (!(id || groupID)) {

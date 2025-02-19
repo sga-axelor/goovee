@@ -620,7 +620,7 @@ export async function validateStripePayment({
   if (!stripeSessionId) {
     return {
       error: true,
-      message: await t('Bad Request'),
+      message: await t('Bad request'),
     };
   }
 
