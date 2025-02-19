@@ -28,6 +28,7 @@ export interface Field extends BasicItem {
   readonly?: boolean;
   widget?: Widget;
   customComponent?: (options: customComponentOptions) => React.JSX.Element;
+  options?: {[key: string]: any};
   validationOptions?: {
     [key: string]: {
       value?: any;

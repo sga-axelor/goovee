@@ -1,19 +1,43 @@
-import type {Field, Panel} from '@/ui/form';
+import type {Field, InputType, Panel, Widget} from '@/ui/form';
 import type {Column} from '@/ui/grid';
 
 import {SchemaItem} from './types';
 import {findView} from './orm';
 
-const getFieldType = (field: any) => {
+const isArrayField = (relationship: string) => {
+  return relationship === 'OneToMany' || relationship === 'ManyToMany';
+};
+
+async function getFieldType(
+  field: any,
+  item: SchemaItem,
+): Promise<{[key: string]: any; type: InputType}> {
   if (field?.relationship != null) {
+    const modelName = `${field.package}.${field.typeName}`;
+
+    let config: any = {model: modelName};
+
+    if (item.formView != null) {
+      const {fields, panels} = await getGenericFormContent(item.formView);
+      config = {...config, fields, panels};
+    }
+
+    if (item.gridView != null) {
+      const {columns} = await getGenericGridContent(item.gridView);
+      config = {...config, columns};
+    }
+
     return {
-      type: field.relationship,
-      targetModel: `${field.package}.${field.typeName}`,
+      type: isArrayField(field.relationship) ? 'array' : 'object',
+      targetModel: modelName,
+      options: {
+        config: isArrayField(field.relationship) ? config : undefined,
+      },
     };
   }
 
   return {type: field?.typeName?.toLowerCase() ?? 'string'};
-};
+}
 
 export async function getGenericFormContent(viewName: string) {
   const {schema, metaFields} = await findView({
@@ -22,20 +46,22 @@ export async function getGenericFormContent(viewName: string) {
   });
 
   return {
-    ...formatSchema(schema?.items ?? [], metaFields ?? []),
+    ...(await formatSchema(schema?.items ?? [], metaFields ?? [])),
     model: schema?.model,
   };
 }
 
-export const formatSchema = (
+export async function formatSchema(
   schema: SchemaItem[],
   metaFields: any[],
   parent?: string,
-): {fields: Field[]; panels: Panel[]} => {
+): Promise<{fields: Field[]; panels: Panel[]}> {
   let fields: Field[] = [];
   let panels: Panel[] = [];
 
-  schema.forEach((_item: any, idx: number) => {
+  for (let idx = 0; idx < schema.length; idx++) {
+    const _item = schema[idx];
+
     if (_item.type === 'panel') {
       const _name = _item.name ?? `${parent ?? 'panel'}-${idx}`;
       panels.push({
@@ -46,7 +72,7 @@ export const formatSchema = (
           _item.colSpan != null ? parseInt(_item.colSpan, 10) : undefined,
       });
 
-      const {fields: panelsFields, panels: subPanels} = formatSchema(
+      const {fields: panelsFields, panels: subPanels} = await formatSchema(
         _item.items,
         metaFields,
         _name,
@@ -56,33 +82,40 @@ export const formatSchema = (
       panels.push(...(subPanels ?? []));
     } else if (_item.type === 'field') {
       const _field = metaFields.find(_f => _f.name === _item.name);
-      const {type} = getFieldType(_field);
+      const typeConfig = await getFieldType(_field, _item);
       fields.push({
         parent,
         name: _item.name,
-        type,
         title: !!_item.showTitle ? undefined : _item.autoTitle,
-        widget: _item.widget,
+        widget: _item.widget as Widget,
         hidden: _item.hidden ?? false,
         required: _item.required ?? false,
         readonly: _item.readonly ?? false,
         colSpan:
           _item.colSpan != null ? parseInt(_item.colSpan, 10) : undefined,
+        ...typeConfig,
       });
     }
-  });
+  }
 
   return {fields, panels};
-};
+}
 
-export async function getGenericGridContent(
-  viewName: string,
-): Promise<{columns: Partial<Column>[]; model?: string}> {
-  const {schema} = await findView({name: viewName, schemaType: 'grid'});
+export async function getGenericGridContent(viewName: string) {
+  const {schema} = await findView({
+    name: viewName,
+    schemaType: 'grid',
+  });
 
+  return {...formatGridSchema(schema?.items ?? []), model: schema?.model};
+}
+
+export function formatGridSchema(schema: SchemaItem[]): {
+  columns: Partial<Column>[];
+} {
   let columns: Partial<Column>[] = [];
 
-  schema?.items.forEach((_item: any) => {
+  schema.forEach((_item: any) => {
     if (_item.type === 'field') {
       const name = _item.name;
 
@@ -95,5 +128,5 @@ export async function getGenericGridContent(
     }
   });
 
-  return {columns, model: schema?.model};
+  return {columns};
 }

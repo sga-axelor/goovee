@@ -3,7 +3,8 @@
 import React, {useMemo, useState} from 'react';
 import {MdAdd} from 'react-icons/md';
 
-import {Button, TableList} from '@/ui/components';
+import {i18n} from '@/locale';
+import {Button, Label, TableList} from '@/ui/components';
 import {Field, Panel} from '@/ui/form';
 import {useSortBy} from '@/ui/hooks';
 import {getPageInfo} from '@/utils';
@@ -16,6 +17,7 @@ const DEFAULT_PAGE_LIMIT = 5;
 
 export const GridView = ({
   style,
+  title,
   columns,
   data,
   handleRowClick,
@@ -26,6 +28,7 @@ export const GridView = ({
   canCreate = false,
 }: {
   style?: React.CSSProperties;
+  title?: string;
   columns: Partial<Column>[];
   data: any[];
   handleRowClick?: (record: any) => void;
@@ -58,24 +61,28 @@ export const GridView = ({
   const [sortedData, sort, toggleSort] = useSortBy(pageData);
 
   return (
-    <div className="container mt-5 mb-20">
+    <div className="container mt-5 mb-20" style={style}>
       <div className="relative p-2 bg-card rounded-md border">
-        {canCreate && creationContent && (
-          <div className="flex justify-end absolute top-2 right-2 z-50">
-            <AdditionPopup
-              visible={formVisible}
-              onClose={() => setFormVisible(false)}
-              creationContent={creationContent}
-            />
-            <Button
-              onClick={() => setFormVisible(true)}
-              className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
-              <MdAdd className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
+        <div className="flex justify-between items-center">
+          <Label className="text-base font-medium leading-6">
+            {i18n.t(title ?? '')}
+          </Label>
+          {canCreate && creationContent && (
+            <div>
+              <AdditionPopup
+                visible={formVisible}
+                onClose={() => setFormVisible(false)}
+                creationContent={creationContent}
+              />
+              <Button
+                onClick={() => setFormVisible(true)}
+                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+                <MdAdd className="h-6 w-6" />
+              </Button>
+            </div>
+          )}
+        </div>
         <TableList
-          style={style}
           columns={visibleColumns}
           rows={sortedData}
           sort={sort}

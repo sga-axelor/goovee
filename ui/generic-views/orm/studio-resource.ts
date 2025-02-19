@@ -7,7 +7,7 @@ import {clone} from '@/utils';
 
 import type {SchemaType, ViewSchema} from '../types';
 import {findFieldsOfModel} from './meta-field';
-import {FORM_VIEW, GRID_VIEW} from '../fake-data';
+import {FORM_VIEW, FORM_VIEW_2, GRID_VIEW, GRID_VIEW_2} from '../fake-data';
 
 export async function findView({
   name,
@@ -38,11 +38,20 @@ export async function findView({
   //   })
   //   .then(clone);
 
-  const schema = {
-    name,
-    schemaModel: 'com.axelor.apps.base.db.Product',
-    content: schemaType === 'form' ? FORM_VIEW : GRID_VIEW,
-  };
+  let schema = null;
+  if (name.includes('product')) {
+    schema = {
+      name,
+      schemaModel: 'com.axelor.apps.base.db.Product',
+      content: schemaType === 'form' ? FORM_VIEW : GRID_VIEW,
+    };
+  } else {
+    schema = {
+      name,
+      schemaModel: 'com.axelor.apps.purchase.db.SupplierCatalog',
+      content: schemaType === 'form' ? FORM_VIEW_2 : GRID_VIEW_2,
+    };
+  }
 
   if (schema == null) return {};
 

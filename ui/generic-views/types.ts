@@ -6,6 +6,9 @@ export interface SchemaItem {
   showTitle?: boolean;
   colSpan?: string;
   widget?: string;
+  hidden?: boolean;
+  readonly?: boolean;
+  required?: boolean;
   target?: string;
   targetName?: string;
   formView?: string;

@@ -15,6 +15,7 @@ import {
 
 import type {Field as FieldType} from '../types';
 import {getColspan, mapFieldType} from '../display.helpers';
+import FormGridComponent from './grid';
 
 export const FieldComponent = ({
   item,
@@ -72,6 +73,19 @@ export const FieldComponent = ({
           readonly: isReadonly,
           renderItem,
         });
+      }
+
+      if (item.type === 'array') {
+        return (
+          <Wrapper>
+            <FormGridComponent
+              form={form}
+              item={item}
+              readonly={isReadonly}
+              {...item.options}
+            />
+          </Wrapper>
+        );
       }
 
       if (item.type === 'boolean') {

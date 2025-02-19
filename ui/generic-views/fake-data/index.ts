@@ -40,6 +40,20 @@ export const FORM_VIEW = {
                 colSpan: '9',
                 autoTitle: 'Code',
               },
+              {
+                type: 'field',
+                name: 'productCategory',
+                colSpan: '3',
+                autoTitle: 'Product category',
+              },
+              {
+                type: 'field',
+                name: 'supplierCatalogList',
+                colSpan: '9',
+                autoTitle: 'Supplier Catalog Lines',
+                formView: 'supplier-catalog-form',
+                gridView: 'supplier-catalog-grid',
+              },
             ],
           },
         ],
@@ -117,6 +131,81 @@ export const GRID_VIEW = {
         width: '400',
         widget: 'html',
         autoTitle: 'Notes',
+      },
+    ],
+  },
+};
+
+export const FORM_VIEW_2 = {
+  type: 'VIEW',
+  schema: {
+    name: 'supplier-catalog-form',
+    title: 'Supplier catalog',
+    model: 'com.axelor.apps.purchase.db.SupplierCatalog',
+    type: 'form',
+    items: [
+      {
+        type: 'panel',
+        name: 'container',
+        items: [
+          {
+            type: 'panel',
+            items: [
+              {
+                type: 'field',
+                name: 'productSupplierName',
+                autoTitle: 'Product name on catalog',
+              },
+              {
+                type: 'field',
+                name: 'description',
+                autoTitle: 'Description',
+              },
+              {
+                type: 'field',
+                name: 'productSupplierCode',
+                autoTitle: 'Product code on catalog',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const GRID_VIEW_2 = {
+  type: 'VIEW',
+  schema: {
+    name: 'supplier-catalog-grid',
+    title: 'Supplier catalogs',
+    model: 'com.axelor.apps.purchase.db.SupplierCatalog',
+    orderBy: 'productSupplierName',
+    type: 'grid',
+    editIcon: true,
+    rowHeight: 80,
+    items: [
+      {
+        type: 'field',
+        name: 'productSupplierName',
+        autoTitle: 'Product name on catalog',
+      },
+      {
+        type: 'field',
+        name: 'productSupplierCode',
+        autoTitle: 'Product code on catalog',
+      },
+      {
+        type: 'field',
+        name: 'description',
+        autoTitle: 'Description',
+      },
+      {
+        type: 'field',
+        name: 'supplierPartner',
+        target: 'com.axelor.apps.base.db.Partner',
+        targetName: 'fullName',
+        autoTitle: 'Partner',
       },
     ],
   },
