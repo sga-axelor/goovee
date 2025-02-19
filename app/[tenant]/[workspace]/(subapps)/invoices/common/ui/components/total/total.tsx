@@ -18,7 +18,6 @@ import {
   Input,
   Separator,
 } from '@/ui/components';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatNumber} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
@@ -54,41 +53,40 @@ export function Total({
 
   const formSchema = z.object({
     amount: z
-      .number()
-      .min(1, i18n.t('Amount must be at least 1'))
-      .max(
-        remainingAmountValue,
-        i18n.t(`Amount cannot exceed ${amountRemaining?.formattedValue}`),
-      ),
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, i18n.t('Invalid amount format')) // Allow decimals up to 2 places
+      .refine(val => parseFloat(val) >= 1, {
+        message: i18n.t('Amount must be at least 1'),
+      })
+      .refine(val => parseFloat(val) <= remainingAmountValue, {
+        message: i18n.t(
+          `Amount cannot exceed ${amountRemaining?.formattedValue}`,
+        ),
+      }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount: 0,
+      amount: '0',
     },
+    mode: 'onChange',
   });
+  const currentAmount = form.watch('amount');
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: {onChange: (value: string) => void},
+    setValue: any,
+    fieldName: string,
   ) => {
-    const value = e.target.value;
+    let value = e.target.value;
 
-    if (value === '') {
-      field.onChange('');
-      return;
-    }
-
-    if (
-      /^\d*\.?\d*$/.test(value) &&
-      parseFloat(value) <= remainingAmountValue
-    ) {
-      field.onChange(value);
+    if (/^\d*\.?\d{0,2}$/.test(value) || value === '') {
+      setValue(fieldName, value);
     }
   };
 
-  const onSubmit = async () => {
+  const onSubmit = (values: {amount: string}) => {
     setShow(true);
   };
 
@@ -97,8 +95,6 @@ export function Total({
       setShow(false);
     }
   }, [canPayPartialInvoice]);
-
-  const currentAmount = form.watch('amount');
 
   return (
     <div
@@ -143,7 +139,7 @@ export function Total({
               variant={'success'}
               className="text-white font-medium"
               onClick={() => {
-                form.setValue('amount', remainingAmountValue);
+                form.setValue('amount', String(remainingAmountValue));
                 form.handleSubmit(onSubmit)();
               }}>
               {i18n.t('Pay all')}
@@ -167,7 +163,9 @@ export function Total({
                         {...field}
                         placeholder={i18n.t('Enter the amount to pay')}
                         value={field.value}
-                        onChange={e => handleChange(e, field)}
+                        onChange={e => handleChange(e, form.setValue, 'amount')}
+                        inputMode="decimal"
+                        type="number"
                       />
                     </FormControl>
                     <FormMessage />
@@ -190,7 +188,7 @@ export function Total({
                 <span className="text-xl font-medium">
                   {`${i18n.t('Pay partially')}: ${formatNumber(
                     currentAmount || 0,
-                    {currency: currency.symbol},
+                    {currency: currency.symbol, type: 'DECIMAL'},
                   )}`}
                 </span>
               </div>
