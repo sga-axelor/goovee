@@ -11,7 +11,7 @@ type StripeProps = {
   disabled?: boolean;
   successMessage?: string;
   errorMessage?: string;
-  onValidate: () => Promise<boolean>;
+  onValidate?: () => Promise<boolean>;
   onCreateCheckOutSession: () => Promise<{
     url?: string | null;
     error?: boolean;
