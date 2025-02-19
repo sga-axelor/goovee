@@ -102,10 +102,12 @@ const fetchInvoices = async ({
       exTaxTotal: await formatNumber(exTaxTotal, {
         scale,
         currency: currencySymbol,
+        type: 'DECIMAL',
       }),
       inTaxTotal: await formatNumber(inTaxTotal, {
         scale,
         currency: currencySymbol,
+        type: 'DECIMAL',
       }),
     };
 
@@ -255,7 +257,6 @@ export const findInvoice = async ({
             amount: true,
           },
         },
-        invoiceTermList: true,
       },
     })
     .then(clone);
@@ -285,8 +286,13 @@ export const findInvoice = async ({
       exTaxTotal: await formatNumber(list?.exTaxTotal, {
         scale,
         currency: currencySymbol,
+        type: 'DECIMAL',
       }),
-      price: await formatNumber(list?.price, {scale, currency: currencySymbol}),
+      price: await formatNumber(list?.price, {
+        scale,
+        currency: currencySymbol,
+        type: 'DECIMAL',
+      }),
       qty: await formatNumber(list.qty, {scale}),
     };
     $invoiceLineList.push(line);
@@ -299,6 +305,7 @@ export const findInvoice = async ({
       amount: await formatNumber(list.amount, {
         scale,
         currency: currencySymbol,
+        type: 'DECIMAL',
       }),
     };
     $invoicePaymentList.push(line);
@@ -311,20 +318,27 @@ export const findInvoice = async ({
     exTaxTotal: await formatNumber(exTaxTotal, {
       scale,
       currency: currencySymbol,
+      type: 'DECIMAL',
     }),
     inTaxTotal: await formatNumber(inTaxTotal, {
       scale,
       currency: currencySymbol,
+      type: 'DECIMAL',
     }),
     amountRemaining: {
-      value: await formatNumber(amountRemaining, {scale}),
+      value: await formatNumber(amountRemaining, {scale, type: 'DECIMAL'}),
       symbol: currencySymbol,
       formattedValue: await formatNumber(amountRemaining, {
         scale,
         currency: currencySymbol,
+        type: 'DECIMAL',
       }),
     },
-    taxTotal: await formatNumber(taxTotal, {scale, currency: currencySymbol}),
+    taxTotal: await formatNumber(taxTotal, {
+      scale,
+      currency: currencySymbol,
+      type: 'DECIMAL',
+    }),
     invoiceLineList: $invoiceLineList,
     invoicePaymentList: $invoicePaymentList,
   };
