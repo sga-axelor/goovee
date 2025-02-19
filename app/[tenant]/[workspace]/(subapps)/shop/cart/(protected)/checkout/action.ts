@@ -20,7 +20,7 @@ import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findPartnerByEmail} from '@/orm/partner';
 
-export async function createOrder({
+async function createOrder({
   cart,
   workspaceURL,
   tenantId,
