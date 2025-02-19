@@ -86,12 +86,6 @@
       "type": "Decimal"
     },
     {
-      "name": "invoiceTermList",
-      "type": "OneToMany",
-      "target": "AOSInvoiceTerm",
-      "mappedBy": "invoice"
-    },
-    {
       "name": "statusSelect",
       "type": "Int"
     }

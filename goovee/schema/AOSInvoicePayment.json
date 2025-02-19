@@ -16,6 +16,11 @@
     {
       "name": "paymentDate",
       "type": "Date"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "currency",
+      "target": "AOSCurrency"
     }
   ]
 }
