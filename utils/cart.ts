@@ -1,3 +1,5 @@
+// ---- CORE IMPORTS ---- //
+
 import {scale} from '@/utils';
 import {
   DEFAULT_CURRENCY_CODE,
@@ -10,6 +12,7 @@ import type {
   PortalAppConfig,
   PortalWorkspace,
 } from '@/types';
+import {formatNumber} from '@/locale/formatters';
 
 export function computeTotal({
   cart,
@@ -75,7 +78,7 @@ export function computeTotal({
 
   return {
     total,
-    displayTotal: `${total} ${symbol} ${mainPrice.toUpperCase()}`,
+    displayTotal: `${formatNumber(total, {scale: currencyScale, currency: symbol, type: 'DECIMAL'})} ${mainPrice.toUpperCase()}`,
     scale: {
       currency: currencyScale,
     },

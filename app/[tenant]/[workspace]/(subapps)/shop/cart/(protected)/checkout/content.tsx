@@ -30,6 +30,7 @@ import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {PaymentOption, type PortalWorkspace} from '@/types';
+import {formatNumber} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/actions/cart';
@@ -391,7 +392,11 @@ function Total({cart, shippingType, workspace}: any) {
   const shipping = Number(
     scale(SHIPPING_TYPE_COST[shippingType], currencyScale),
   ) as number;
-  const totalWithShipping = Number(total) + Number(shipping);
+  const totalWithShipping = formatNumber(Number(total) + Number(shipping), {
+    currency: currencySymbol,
+    scale: currencyScale,
+    type: 'DECIMAL',
+  });
 
   return (
     <div className="rounded-lg p-4 bg-card text-card-foreground">
@@ -406,16 +411,20 @@ function Total({cart, shippingType, workspace}: any) {
       <div className="flex items-center justify-between mt-4">
         <p>{i18n.t('Shipping')}:</p>
         <div>
-          <p className="text-xs">{`${shipping} ${currencySymbol}`}</p>
+          <p className="text-xs">
+            {formatNumber(shipping, {
+              scale: currencyScale,
+              currency: currencySymbol,
+              type: 'DECIMAL',
+            })}
+          </p>
         </div>
       </div>
       <Separator className="my-4" />
       <div className="flex items-center justify-between">
         <p className="font-medium font-m">{i18n.t('Total price')}:</p>
         <div>
-          <p className="text-xl font-semibold">
-            {`${totalWithShipping} ${currencySymbol}`}
-          </p>
+          <p className="text-xl font-semibold">{`${totalWithShipping} `}</p>
         </div>
       </div>
     </div>

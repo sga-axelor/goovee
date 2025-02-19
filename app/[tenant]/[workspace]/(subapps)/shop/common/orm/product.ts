@@ -19,6 +19,7 @@ import type {
 } from '@/types';
 import {manager, type Tenant} from '@/tenant';
 import {filterPrivate} from '@/orm/filter';
+import {formatNumber} from '@/locale/server/formatters';
 
 function getPageInfo({
   count = 0,
@@ -343,7 +344,7 @@ export async function findProducts({
     })
     .then(clone);
 
-  const compute = ({
+  const compute = async ({
     product,
     ws,
     wsProduct,
@@ -424,7 +425,7 @@ export async function findProducts({
       );
     };
 
-    const getPrice = (): ComputedProduct['price'] => {
+    const getPrice = async (): Promise<ComputedProduct['price']> => {
       const value = productcompany?.salePrice || product.salePrice || 0;
 
       const taxrate = getTax()?.value || 0;
@@ -455,22 +456,38 @@ export async function findProducts({
         wt = scale(wt, unitScale);
       }
 
-      displayAti = `${ati} ${currencySymbol}`;
-      displayWt = `${wt} ${currencySymbol}`;
+      displayAti = (await formatNumber(ati, {
+        scale: unitScale,
+        currency: currencySymbol,
+        type: 'DECIMAL',
+      })) as string;
+      displayWt = (await formatNumber(wt, {
+        scale: unitScale,
+        currency: currencySymbol,
+        type: 'DECIMAL',
+      })) as string;
 
-      let primary, secondary, displayPrimary, displaySecondary;
+      let primary = mainPrice === 'at' ? ati : wt;
+      let secondary = mainPrice === 'at' ? wt : ati;
 
-      if (mainPrice === 'at') {
-        primary = ati;
-        secondary = wt;
-        displayPrimary = `${ati} ${getCurrency().symbol} ATI`;
-        displaySecondary = `${wt} ${getCurrency().symbol} WT`;
-      } else {
-        primary = wt;
-        secondary = ati;
-        displayPrimary = `${wt} ${getCurrency().symbol} WT`;
-        displaySecondary = `${ati} ${getCurrency().symbol} ATI`;
-      }
+      const [formattedPrimary, formattedSecondary] = await Promise.all([
+        formatNumber(primary, {
+          scale: unitScale,
+          currency: currencySymbol,
+          type: 'DECIMAL',
+        }),
+        formatNumber(secondary, {
+          scale: unitScale,
+          currency: currencySymbol,
+          type: 'DECIMAL',
+        }),
+      ]);
+
+      const unitPrimary = mainPrice === 'at' ? 'ATI' : 'WT';
+      const unitSecondary = mainPrice === 'at' ? 'WT' : 'ATI';
+
+      const displayPrimary = `${formattedPrimary} ${unitPrimary}`;
+      const displaySecondary = `${formattedSecondary} ${unitSecondary}`;
 
       return {
         ati,
@@ -488,7 +505,7 @@ export async function findProducts({
 
     return {
       product,
-      price: getPrice(),
+      price: await getPrice(),
       tax: getTax(),
       scale: getScale(),
       currency: getCurrency(),
@@ -522,21 +539,26 @@ export async function findProducts({
       $products.find((p: any) => Number(p.id) === Number(id));
 
     return {
-      products: productsFromWS
-        .map(wsProduct => {
+      products: Promise.all(
+        productsFromWS.map(wsProduct => {
           const product = originalProduct(wsProduct.productId);
           if (!product) return null;
           if (isProductError(wsProduct)) {
-            return compute({product, errorMessage: wsProduct.errorMessage});
+            return compute({
+              product,
+              errorMessage: wsProduct.errorMessage,
+            });
           }
           return compute({product, ws: true, wsProduct});
-        })
-        .filter(Boolean),
+        }),
+      ).then(products => products.filter(Boolean)),
       pageInfo,
     };
   } else {
     return {
-      products: $products.map((product: any) => compute({product})),
+      products: await Promise.all(
+        $products.map((product: any) => compute({product})),
+      ),
       pageInfo,
     };
   }
