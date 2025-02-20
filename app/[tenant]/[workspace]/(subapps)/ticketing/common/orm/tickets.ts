@@ -303,7 +303,7 @@ export async function updateTicketByWS({
           ...(priority && {priority: {id: priority}}),
           ...(status && {status: {id: status}}),
           ...(assignment && {assignment: assignment}),
-          ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
+          ...(managedBy && {managedByContact: {id: managedBy}}),
         },
         fields: ['project'],
       },
