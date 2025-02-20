@@ -284,11 +284,15 @@ export async function updateTicketByWS({
     throw new Error(await t('Ticket not found'));
   }
 
-  const aos = process.env.NEXT_PUBLIC_AOS_URL;
+  const tenant = await manager.getTenant(auth.tenantId);
 
-  if (!aos) throw new Error(await t('Rest API URL not set'));
+  if (!tenant?.config?.aos?.url) {
+    throw new Error(await t('Rest API URL not set'));
+  }
 
-  const ws = `${aos}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
+  const {aos} = tenant.config;
+
+  const ws = `${aos.url}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
 
   const res = await axios
     .post(
@@ -307,12 +311,7 @@ export async function updateTicketByWS({
         },
         fields: ['project'],
       },
-      {
-        auth: {
-          username: process.env.BASIC_AUTH_USERNAME as string,
-          password: process.env.BASIC_AUTH_PASSWORD as string,
-        },
-      },
+      {auth: {username: aos.auth.username, password: aos.auth.password}},
     )
     .then(({data}) => data);
 
