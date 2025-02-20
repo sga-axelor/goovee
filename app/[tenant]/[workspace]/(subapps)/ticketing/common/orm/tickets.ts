@@ -454,6 +454,13 @@ export async function updateTicket({
         });
       }
 
+      if (description) {
+        tracks.push({
+          name: 'description',
+          title: 'Description',
+          value: 'updated',
+        });
+      }
       addComment({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
         userId: auth.userId,
