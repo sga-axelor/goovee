@@ -2,17 +2,6 @@ import {Maybe} from '@/types/util';
 
 import {ASSIGNMENT} from '../constants';
 
-export function getProfilePic(
-  id: Maybe<string>,
-  tenantId: Tenant['id'],
-): string {
-  if (!id) {
-    return '/images/user.png';
-  }
-
-  return getImageURL(id, tenantId!);
-}
-
 export const getPages = (
   records: {_count?: string}[],
   limit: string | number,

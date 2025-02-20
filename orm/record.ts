@@ -122,6 +122,7 @@ export async function findByID({
         response = await findTicketAccess({
           recordId: id,
           auth: {
+            email: user.email,
             userId: user.id,
             simpleFullName: user.simpleFullName,
             workspaceId: workspace.id.toString(),

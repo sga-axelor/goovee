@@ -1,7 +1,7 @@
+import {ROLE} from '@/constants';
 import type {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
 import type {Entity, WhereOptions} from '@goovee/orm';
 import {TYPE_SELECT} from '../constants';
-import {ROLE} from '@/constants';
 import {AuthProps} from '../utils/auth-helper';
 
 export type QueryProps<T extends Entity> = {

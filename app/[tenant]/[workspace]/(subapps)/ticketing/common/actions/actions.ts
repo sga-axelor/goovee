@@ -37,7 +37,6 @@ import {
   findTicketsBySearch,
   findTicketVersion,
   updateTicket,
-  updateTicketByWS,
 } from '../orm/tickets';
 import {ensureAuth} from '../utils/auth-helper';
 import {CreateTicketSchema, UpdateTicketSchema} from '../utils/validators';
@@ -144,12 +143,15 @@ export async function updateAssignment(
       updateData.version = version;
     }
 
-    const update =
-      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
-        ? updateTicketByWS
-        : updateTicket;
+    const fromWS =
+      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS;
 
-    await update({data: updateData, workspaceUserId: workspaceUser?.id, auth});
+    await updateTicket({
+      data: updateData,
+      workspaceUserId: workspaceUser?.id,
+      auth,
+      fromWS,
+    });
     return {success: true, data: true};
   } catch (e) {
     return handleError(e);
@@ -201,12 +203,15 @@ export async function closeTicket(
       updateData.version = version;
     }
 
-    const update =
-      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
-        ? updateTicketByWS
-        : updateTicket;
+    const fromWS =
+      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS;
 
-    await update({data: updateData, workspaceUserId: workspaceUser?.id, auth});
+    await updateTicket({
+      data: updateData,
+      workspaceUserId: workspaceUser?.id,
+      auth,
+      fromWS,
+    });
 
     return {success: true, data: true};
   } catch (e) {
@@ -253,12 +258,15 @@ export async function cancelTicket(
       updateData.version = version;
     }
 
-    const update =
-      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS
-        ? updateTicketByWS
-        : updateTicket;
+    const fromWS =
+      workspace.config.ticketStatusChangeMethod === STATUS_CHANGE_METHOD.WS;
 
-    await update({data: updateData, workspaceUserId: workspaceUser?.id, auth});
+    await updateTicket({
+      data: updateData,
+      workspaceUserId: workspaceUser?.id,
+      auth,
+      fromWS,
+    });
 
     return {success: true, data: true};
   } catch (e) {

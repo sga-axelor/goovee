@@ -1,3 +1,4 @@
+import type {Entity, ID, Payload, SelectOptions} from '@goovee/orm';
 import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
@@ -8,7 +9,6 @@ import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
 import {sql} from '@/utils/template-string';
-import type {Entity, ID, SelectOptions} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -18,7 +18,7 @@ import {
   VERSION_MISMATCH_CAUSE_CLASS,
   VERSION_MISMATCH_ERROR,
 } from '../constants';
-import {
+import type {
   ChildTicket,
   LinkType,
   ParentTicket,
@@ -28,6 +28,7 @@ import {
   TicketSearch,
 } from '../types';
 import type {AuthProps} from '../utils/auth-helper';
+import {getMailRecipients, sendTrackMail} from '../utils/mail';
 import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 import type {QueryProps} from './helpers';
 import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
@@ -36,7 +37,9 @@ export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
 };
 
-export async function findTicketAccess({
+export async function findTicketAccess<
+  T extends SelectOptions<AOSProjectTask>,
+>({
   recordId: ticketId,
   auth,
   select,
@@ -45,8 +48,8 @@ export async function findTicketAccess({
   recordId: ID;
   auth: AuthProps;
   projectId?: ID;
-  select?: SelectOptions<AOSProjectTask>;
-}) {
+  select?: T;
+}): Promise<Payload<AOSProjectTask, {select: T}> | null> {
   if (!auth.tenantId) {
     throw new Error(await t('TenantId is required'));
   }
@@ -61,7 +64,7 @@ export async function findTicketAccess({
         ...getProjectAccessFilter(auth),
       },
     }),
-    select: {id: true, ...select},
+    select: select as T,
   });
 
   return ticket;
@@ -154,7 +157,7 @@ export async function createTicket({
     select: {name: true},
   });
 
-  const ticket = await client.aOSProjectTask.update({
+  const newTicket = await client.aOSProjectTask.update({
     data: {
       id: ticketWithoutFullName.id,
       version: ticketWithoutFullName.version,
@@ -171,7 +174,9 @@ export async function createTicket({
       progress: true,
       createdByContact: {name: true},
       project: {name: true},
-      ...(managedBy && {managedByContact: {name: true}}),
+      ...(managedBy && {
+        managedByContact: {name: true, emailAddress: {address: true}},
+      }),
       ...(category && {projectTaskCategory: {name: true}}),
       ...(priority && {priority: {name: true}}),
       ...(defaultStatus && {status: {name: true}}),
@@ -179,72 +184,72 @@ export async function createTicket({
     },
   });
 
+  const tracks: Track[] = [
+    {name: 'name', title: 'Subject', value: newTicket.name},
+    {
+      name: 'assignment',
+      title: 'Assignment',
+      value: newTicket.assignment?.toString() ?? '',
+    },
+    {name: 'typeSelect', title: 'Type', value: newTicket.typeSelect ?? ''},
+    {name: 'isPrivate', title: 'Private', value: String(newTicket.isPrivate)},
+    {name: 'progress', title: 'Progress', value: newTicket.progress ?? ''},
+    {name: 'project', title: 'Project', value: newTicket.project?.name ?? ''},
+    {
+      name: 'taskDate',
+      title: 'Task Date',
+      value: String(newTicket.taskDate) ?? '', //NOTE: ORM type is Date , but it is sending string,
+    },
+    {
+      name: 'invoicingType',
+      title: 'Invoicing Type',
+      value: String(newTicket.invoicingType),
+    },
+    {
+      name: 'createdByContact',
+      title: 'Created by',
+      value: newTicket.createdByContact?.name ?? '',
+    },
+  ];
+
+  if (category) {
+    tracks.push({
+      name: 'projectTaskCategory',
+      title: 'Category',
+      value: newTicket.projectTaskCategory?.name ?? '',
+    });
+  }
+
+  if (priority) {
+    tracks.push({
+      name: 'priority',
+      title: 'Priority',
+      value: newTicket.priority?.name ?? '',
+    });
+  }
+
+  if (defaultStatus) {
+    tracks.push({
+      name: 'status',
+      title: 'Status',
+      value: newTicket.status?.name ?? '',
+    });
+  }
+
+  if (managedBy) {
+    tracks.push({
+      name: 'managedByContact',
+      title: 'Managed by',
+      value: newTicket.managedByContact?.name ?? '',
+    });
+  }
   try {
     if (workspaceUserId) {
-      const tracks: Track[] = [
-        {name: 'name', title: 'Subject', value: ticket.name},
-        {
-          name: 'assignment',
-          title: 'Assignment',
-          value: ticket.assignment?.toString() ?? '',
-        },
-        {name: 'typeSelect', title: 'Type', value: ticket.typeSelect ?? ''},
-        {name: 'isPrivate', title: 'Private', value: String(ticket.isPrivate)},
-        {name: 'progress', title: 'Progress', value: ticket.progress ?? ''},
-        {name: 'project', title: 'Project', value: ticket.project?.name ?? ''},
-        {
-          name: 'taskDate',
-          title: 'Task Date',
-          value: String(ticket.taskDate) ?? '', //NOTE: ORM type is Date , but it is sending string,
-        },
-        {
-          name: 'invoicingType',
-          title: 'Invoicing Type',
-          value: String(ticket.invoicingType),
-        },
-        {
-          name: 'createdByContact',
-          title: 'Created by',
-          value: ticket.createdByContact?.name ?? '',
-        },
-      ];
-
-      if (category) {
-        tracks.push({
-          name: 'projectTaskCategory',
-          title: 'Category',
-          value: ticket.projectTaskCategory?.name ?? '',
-        });
-      }
-
-      if (priority) {
-        tracks.push({
-          name: 'priority',
-          title: 'Priority',
-          value: ticket.priority?.name ?? '',
-        });
-      }
-
-      if (defaultStatus) {
-        tracks.push({
-          name: 'status',
-          title: 'Status',
-          value: ticket.status?.name ?? '',
-        });
-      }
-
-      if (managedBy) {
-        tracks.push({
-          name: 'managedByContact',
-          title: 'Managed by',
-          value: ticket.managedByContact?.name ?? '',
-        });
-      }
       addComment({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
         userId: auth.userId,
         workspaceUserId: workspaceUserId,
-        recordId: ticket.id,
+        recordId: newTicket.id,
         subject: `Record Created by ${auth.simpleFullName}`,
         messageBody: {title: 'Record Created', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
@@ -257,85 +262,50 @@ export async function createTicket({
     console.error('Error adding comment');
     console.error(e);
   }
-  return ticket;
-}
 
-export async function updateTicketByWS({
-  data,
-  auth,
-}: {
-  data: UpdateTicketInfo;
-  auth: AuthProps;
-}) {
-  const {
-    priority,
-    subject,
-    description,
-    category,
-    status,
-    assignment,
-    managedBy,
-    id,
-    version,
-  } = data;
+  try {
+    const reciepients = getMailRecipients({exclude: [auth.email], newTicket});
 
-  if (!(await findTicketAccess({recordId: id, auth}))) {
-    // To make sure the user has access to the ticket.
-    throw new Error(await t('Ticket not found'));
-  }
-
-  const tenant = await manager.getTenant(auth.tenantId);
-
-  if (!tenant?.config?.aos?.url) {
-    throw new Error(await t('Rest API URL not set'));
-  }
-
-  const {aos} = tenant.config;
-
-  const ws = `${aos.url}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
-
-  const res = await axios
-    .post(
-      ws,
-      {
-        data: {
-          id,
-          version,
-          name: subject,
-          description: description,
-          ...(category && {projectTaskCategory: {id: category}}),
-          ...(priority && {priority: {id: priority}}),
-          ...(status && {status: {id: status}}),
-          ...(assignment && {assignment: assignment}),
-          ...(managedBy && {managedByContact: {id: managedBy}}),
-        },
-        fields: ['project'],
-      },
-      {auth: {username: aos.auth.username, password: aos.auth.password}},
-    )
-    .then(({data}) => data);
-
-  if (!res.data || res?.status === -1) {
-    if (res.data?.causeClass === VERSION_MISMATCH_CAUSE_CLASS) {
-      const e = new Error(res.data.message);
-      e.name = VERSION_MISMATCH_ERROR;
-      throw e;
+    if (reciepients.length) {
+      sendTrackMail({
+        subject: `Ticket Created by ${auth.simpleFullName}`,
+        body: {title: `Ticket Created by ${auth.simpleFullName}`, tracks},
+        reciepients,
+      });
     }
-    throw new Error(await t('Failed to update ticket'));
+  } catch (e) {
+    console.error('Error sending email');
+    console.error(e);
   }
 
-  return res.data;
+  return newTicket;
 }
+
+const updateSelect = {
+  id: true,
+  project: {id: true},
+  name: true,
+  projectTaskCategory: {name: true},
+  priority: {name: true},
+  status: {name: true},
+  assignment: true,
+  managedByContact: {name: true, emailAddress: {address: true}},
+  createdByContact: {name: true, emailAddress: {address: true}},
+} satisfies SelectOptions<AOSProjectTask>;
+
+export type UTicket = Payload<AOSProjectTask, {select: typeof updateSelect}>;
 
 export async function updateTicket({
   data,
   auth,
+  fromWS,
   workspaceUserId,
 }: {
   data: UpdateTicketInfo;
   workspaceUserId?: ID;
+  fromWS?: boolean;
   auth: AuthProps;
-}) {
+}): Promise<UTicket> {
   const {
     priority,
     subject,
@@ -350,121 +320,166 @@ export async function updateTicket({
 
   const client = await manager.getClient(auth.tenantId);
 
-  const select: SelectOptions<AOSProjectTask> = {
-    ...(subject != null && {name: true}),
-    ...(category && {projectTaskCategory: {name: true}}),
-    ...(priority && {priority: {name: true}}),
-    ...(status && {status: {name: true}}),
-    ...(assignment && {assignment: true}),
-    ...(managedBy && {managedByContact: {name: true}}),
-  };
+  const oldTicket = await findTicketAccess({
+    recordId: id,
+    select: updateSelect,
+    auth,
+  });
 
-  const oldTicket = await findTicketAccess({recordId: id, select, auth});
   if (!oldTicket) {
     // To make sure the user has access to the ticket.
     throw new Error(await t('Ticket not found'));
   }
 
-  const ticket = await client.aOSProjectTask.update({
-    data: {
-      id,
-      version,
-      updatedOn: new Date(),
-      description: description,
-      ...(subject != null && {name: subject, fullName: `#${id} ${subject}`}),
-      ...(category && {projectTaskCategory: {select: {id: category}}}),
-      ...(priority && {priority: {select: {id: priority}}}),
-      ...(status && {status: {select: {id: status}}}),
-      ...(assignment && {assignment: assignment}),
-      ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
-    },
-    select: {
-      id: true,
-      project: {id: true},
-      ...select,
-    },
-  });
+  let newTicket: UTicket | null;
+  if (fromWS) {
+    const tenant = await manager.getTenant(auth.tenantId);
+
+    if (!tenant?.config?.aos?.url) {
+      throw new Error(await t('Rest API URL not set'));
+    }
+
+    const {aos} = tenant.config;
+
+    const ws = `${aos.url}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
+
+    const res = await axios
+      .post(
+        ws,
+        {
+          data: {
+            id,
+            version,
+            ...(subject != null && {name: subject}),
+            ...(description != null && {description}),
+            ...(category && {projectTaskCategory: {id: category}}),
+            ...(priority && {priority: {id: priority}}),
+            ...(status && {status: {id: status}}),
+            ...(assignment && {assignment: assignment}),
+            ...(managedBy && {managedByContact: {id: managedBy}}),
+          },
+          fields: ['project'],
+        },
+        {auth: {username: aos.auth.username, password: aos.auth.password}},
+      )
+      .then(({data}) => data);
+
+    if (!res.data || res?.status === -1) {
+      if (res.data?.causeClass === VERSION_MISMATCH_CAUSE_CLASS) {
+        const e = new Error(res.data.message);
+        e.name = VERSION_MISMATCH_ERROR;
+        throw e;
+      }
+      throw new Error(await t('Failed to update ticket'));
+    }
+
+    newTicket = await client.aOSProjectTask.findOne({
+      where: {id},
+      select: updateSelect,
+    });
+
+    if (!newTicket) {
+      throw new Error(await t('Ticket not found'));
+    }
+  } else {
+    newTicket = await client.aOSProjectTask.update({
+      data: {
+        id,
+        version,
+        updatedOn: new Date(),
+        ...(description != null && {description}),
+        ...(subject != null && {name: subject, fullName: `#${id} ${subject}`}),
+        ...(category && {projectTaskCategory: {select: {id: category}}}),
+        ...(priority && {priority: {select: {id: priority}}}),
+        ...(status && {status: {select: {id: status}}}),
+        ...(assignment && {assignment}),
+        ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
+      },
+      select: updateSelect,
+    });
+  }
+
+  const tracks: Track[] = [];
+
+  if (subject != null && oldTicket.name !== newTicket.name) {
+    tracks.push({
+      name: 'name',
+      title: 'Subject',
+      value: newTicket.name,
+      ...(oldTicket.name && {oldValue: oldTicket.name}),
+    });
+  }
+  if (
+    category &&
+    oldTicket.projectTaskCategory?.name !== newTicket.projectTaskCategory?.name
+  ) {
+    tracks.push({
+      name: 'projectTaskCategory',
+      title: 'Category',
+      value: newTicket.projectTaskCategory?.name ?? '',
+      ...(oldTicket.projectTaskCategory?.name && {
+        oldValue: oldTicket.projectTaskCategory.name,
+      }),
+    });
+  }
+  if (priority && oldTicket.priority?.name !== newTicket.priority?.name) {
+    tracks.push({
+      name: 'priority',
+      title: 'Priority',
+      value: newTicket.priority?.name ?? '',
+      ...(oldTicket.priority?.name && {oldValue: oldTicket.priority.name}),
+    });
+  }
+
+  if (status && oldTicket.status?.name !== newTicket.status?.name) {
+    tracks.push({
+      name: 'status',
+      title: 'Status',
+      value: newTicket.status?.name ?? '',
+      ...(oldTicket.status?.name && {oldValue: oldTicket.status.name}),
+    });
+  }
+
+  if (assignment && oldTicket.assignment !== newTicket.assignment) {
+    tracks.push({
+      name: 'assignment',
+      title: 'Assignment',
+      value: newTicket.assignment?.toString() ?? '',
+      ...(oldTicket.assignment && {
+        oldValue: oldTicket.assignment.toString(),
+      }),
+    });
+  }
+
+  if (
+    managedBy &&
+    oldTicket.managedByContact?.name !== newTicket.managedByContact?.name
+  ) {
+    tracks.push({
+      name: 'managedByContact',
+      title: 'Managed by',
+      value: newTicket.managedByContact?.name ?? '',
+      ...(oldTicket.managedByContact?.name && {
+        oldValue: oldTicket.managedByContact.name,
+      }),
+    });
+  }
+
+  if (description) {
+    tracks.push({
+      name: 'description',
+      title: 'Description',
+      value: 'updated',
+    });
+  }
 
   try {
-    if (workspaceUserId) {
-      const tracks: Track[] = [];
-
-      if (subject != null && oldTicket.name !== ticket.name) {
-        tracks.push({
-          name: 'name',
-          title: 'Subject',
-          value: ticket.name,
-          ...(oldTicket.name && {oldValue: oldTicket.name}),
-        });
-      }
-      if (
-        category &&
-        oldTicket.projectTaskCategory?.name !== ticket.projectTaskCategory?.name
-      ) {
-        tracks.push({
-          name: 'projectTaskCategory',
-          title: 'Category',
-          value: ticket.projectTaskCategory?.name ?? '',
-          ...(oldTicket.projectTaskCategory?.name && {
-            oldValue: oldTicket.projectTaskCategory.name,
-          }),
-        });
-      }
-      if (priority && oldTicket.priority?.name !== ticket.priority?.name) {
-        tracks.push({
-          name: 'priority',
-          title: 'Priority',
-          value: ticket.priority?.name ?? '',
-          ...(oldTicket.priority?.name && {oldValue: oldTicket.priority.name}),
-        });
-      }
-
-      if (status && oldTicket.status?.name !== ticket.status?.name) {
-        tracks.push({
-          name: 'status',
-          title: 'Status',
-          value: ticket.status?.name ?? '',
-          ...(oldTicket.status?.name && {oldValue: oldTicket.status.name}),
-        });
-      }
-
-      if (assignment && oldTicket.assignment !== ticket.assignment) {
-        tracks.push({
-          name: 'assignment',
-          title: 'Assignment',
-          value: ticket.assignment?.toString() ?? '',
-          ...(oldTicket.assignment && {
-            oldValue: oldTicket.assignment.toString(),
-          }),
-        });
-      }
-
-      if (
-        managedBy &&
-        oldTicket.managedByContact?.name !== ticket.managedByContact?.name
-      ) {
-        tracks.push({
-          name: 'managedByContact',
-          title: 'Managed by',
-          value: ticket.managedByContact?.name ?? '',
-          ...(oldTicket.managedByContact?.name && {
-            oldValue: oldTicket.managedByContact.name,
-          }),
-        });
-      }
-
-      if (description) {
-        tracks.push({
-          name: 'description',
-          title: 'Description',
-          value: 'updated',
-        });
-      }
+    if (workspaceUserId && !fromWS) {
       addComment({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
         userId: auth.userId,
         workspaceUserId: workspaceUserId,
-        recordId: ticket.id,
+        recordId: newTicket.id,
         subject: `Record Updated by ${auth.simpleFullName}`,
         messageBody: {title: 'Record Updated', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
@@ -477,8 +492,24 @@ export async function updateTicket({
     console.log('Error adding comment');
     console.error(e);
   }
-
-  return ticket;
+  try {
+    const reciepients = getMailRecipients({
+      exclude: [auth.email],
+      newTicket,
+      oldTicket,
+    });
+    if (reciepients.length) {
+      sendTrackMail({
+        subject: `Ticket Updated by ${auth.simpleFullName}`,
+        body: {title: `Ticket Updated by ${auth.simpleFullName}`, tracks},
+        reciepients,
+      });
+    }
+  } catch (e) {
+    console.error('Error sending email');
+    console.error(e);
+  }
+  return newTicket;
 }
 
 export async function getAllTicketCount(props: {

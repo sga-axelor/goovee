@@ -11,6 +11,7 @@ import {cache} from 'react';
 export type UserAuthProps = {
   userId: ID;
   simpleFullName: string;
+  email: string;
   isContact: boolean;
   isContactAdmin: boolean;
   role?: 'total' | 'restricted';
@@ -90,6 +91,7 @@ export const ensureAuth = cache(async function ensureAuth(
       subapp,
       workspace: workspace as PortalWorkspaceWithConfig,
       auth: {
+        email: user.email,
         userId: user.id,
         simpleFullName: user.simpleFullName,
         workspaceId: workspace.id,
