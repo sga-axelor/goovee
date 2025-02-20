@@ -394,7 +394,11 @@ async function findTickets(params: Params) {
   const tickets = await client.aOSProjectTask
     .find({
       where: {
-        project: {portalWorkspace: {url}},
+        project: {
+          portalWorkspace: {url},
+          isBusinessProject: true,
+          projectStatus: {isCompleted: false},
+        },
         typeSelect: 'ticket',
         isPrivate: false,
         OR: [
