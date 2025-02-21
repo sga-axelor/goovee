@@ -8,7 +8,7 @@ import {Button, Chip} from '@/ui/components';
 import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
-import {getStatus} from '@/subapps/invoices/common/utils/invoices';
+import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
 
 export const Columns = [
   {
@@ -24,7 +24,8 @@ export const Columns = [
     label: i18n.t('Status'),
     getter: (row: any) => row.amountRemaining,
     content: (row: any) => {
-      const {status, variant} = getStatus(row.amountRemaining);
+      const status = row.isUpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
+      const variant = row.isUnpaid ? 'destructive' : 'success';
       return (
         <Chip
           value={i18n.t(status)}

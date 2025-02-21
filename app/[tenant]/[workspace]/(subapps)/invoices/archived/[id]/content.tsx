@@ -8,7 +8,6 @@ import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
-import {getStatus} from '@/subapps/invoices/common/utils/invoices';
 import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
 
 export default function Content({invoice, workspace}: any) {
@@ -17,11 +16,10 @@ export default function Content({invoice, workspace}: any) {
     dueDate,
     invoiceDate,
 
-    amountRemaining,
+    isUnpaid,
   } = invoice;
-  const {status, variant} = getStatus(amountRemaining.value);
-  const isUnpaid = status === INVOICE_TYPE.UNPAID;
 
+  const status = isUnpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
   return (
     <>
       <div className="px-4 md:px-12 py-2 md:py-4">
@@ -35,7 +33,9 @@ export default function Content({invoice, workspace}: any) {
             <div className="flex items-center gap-4">
               <h5 className="text-lg font-semibold">{i18n.t('Status')}:</h5>
               <div>
-                <Tag variant={variant}>{i18n.t(status)}</Tag>
+                <Tag variant={isUnpaid ? 'destructive' : 'success'}>
+                  {i18n.t(status)}
+                </Tag>
               </div>
             </div>
             <div className="flex items-center gap-[0.1rem] mt-1">

@@ -14,7 +14,7 @@ import {
 } from '@/subapps/invoices/common/constants/invoices';
 
 export default function Content({invoice, workspace}: any) {
-  const {invoiceId, dueDate, invoiceDate, amountRemaining} = invoice;
+  const {invoiceId, dueDate, invoiceDate, amountRemaining, isUnpaid} = invoice;
 
   const status =
     Number(amountRemaining.value) !== INVOICE_STATUS.UNPAID

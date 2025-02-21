@@ -92,11 +92,20 @@ const fetchInvoices = async ({
   const invoices: any = [];
 
   for (const invoice of $invoices) {
-    const {currency, exTaxTotal, inTaxTotal, dueDate, invoiceDate} = invoice;
+    const {
+      currency,
+      exTaxTotal,
+      inTaxTotal,
+      dueDate,
+      invoiceDate,
+      amountRemaining,
+    } = invoice;
     const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
     const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+    const isUnpaid = Number(amountRemaining) !== 0;
     const $invoice = {
       ...invoice,
+      isUnpaid,
       dueDate: await formatDate(dueDate!),
       invoiceDate: await formatDate(invoiceDate!),
       exTaxTotal: await formatNumber(exTaxTotal, {
@@ -341,5 +350,6 @@ export const findInvoice = async ({
     }),
     invoiceLineList: $invoiceLineList,
     invoicePaymentList: $invoicePaymentList,
+    isUnpaid: Number(invoice.amountRemaining) !== 0,
   };
 };
