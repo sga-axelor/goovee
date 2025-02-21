@@ -13,7 +13,7 @@ export const FORM_VIEW = {
         items: [
           {
             type: 'panel',
-            colSpan: '3',
+            colSpan: '2',
             items: [
               {
                 type: 'field',
@@ -26,7 +26,7 @@ export const FORM_VIEW = {
           },
           {
             type: 'panel',
-            colSpan: '9',
+            colSpan: '10',
             items: [
               {
                 type: 'field',
@@ -37,7 +37,7 @@ export const FORM_VIEW = {
               {
                 type: 'field',
                 name: 'code',
-                colSpan: '9',
+                colSpan: '3',
                 autoTitle: 'Code',
               },
               {
@@ -49,7 +49,7 @@ export const FORM_VIEW = {
               {
                 type: 'field',
                 name: 'supplierCatalogList',
-                colSpan: '9',
+                colSpan: '12',
                 autoTitle: 'Supplier Catalog Lines',
                 formView: 'supplier-catalog-form',
                 gridView: 'supplier-catalog-grid',

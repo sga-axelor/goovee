@@ -62,26 +62,29 @@ export const GridView = ({
 
   return (
     <div className="container mt-5 mb-20" style={style}>
+      <div className="flex justify-between items-center mb-1">
+        <Label className="text-base font-medium leading-6">
+          {i18n.t(title ?? '')}
+        </Label>
+        {canCreate && creationContent && (
+          <div>
+            <AdditionPopup
+              visible={formVisible}
+              onClose={() => setFormVisible(false)}
+              creationContent={creationContent}
+            />
+            <Button
+              onClick={e => {
+                e.preventDefault();
+                setFormVisible(true);
+              }}
+              className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+              <MdAdd className="h-6 w-6" />
+            </Button>
+          </div>
+        )}
+      </div>
       <div className="relative p-2 bg-card rounded-md border">
-        <div className="flex justify-between items-center">
-          <Label className="text-base font-medium leading-6">
-            {i18n.t(title ?? '')}
-          </Label>
-          {canCreate && creationContent && (
-            <div>
-              <AdditionPopup
-                visible={formVisible}
-                onClose={() => setFormVisible(false)}
-                creationContent={creationContent}
-              />
-              <Button
-                onClick={() => setFormVisible(true)}
-                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
-                <MdAdd className="h-6 w-6" />
-              </Button>
-            </div>
-          )}
-        </div>
         <TableList
           columns={visibleColumns}
           rows={sortedData}

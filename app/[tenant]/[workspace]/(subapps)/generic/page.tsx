@@ -3,7 +3,7 @@ import React from 'react';
 // ---- LOCAL IMPORTS ---- //
 import {getGenericFormContent, getGenericGridContent} from '@/ui/generic-views';
 import {GenericForm, GenericGrid} from './common/components';
-import {GRID_DATA} from './fake-data';
+import {FORM_DATA, GRID_DATA} from './fake-data';
 
 export default async function Page({}) {
   const formContent = await getGenericFormContent('product-form');
@@ -11,7 +11,7 @@ export default async function Page({}) {
 
   return (
     <div>
-      <GenericForm {...formContent} />
+      <GenericForm {...formContent} data={FORM_DATA} />
       <GenericGrid
         {...gridContent}
         data={GRID_DATA}

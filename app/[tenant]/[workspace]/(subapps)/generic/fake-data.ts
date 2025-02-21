@@ -276,3 +276,72 @@ export const GRID_DATA = [
     },
   },
 ];
+
+export const FORM_DATA = {
+  id: 11,
+  version: 19,
+  picture: {fileName: 'COMP-0001.png', id: 175, $version: 0},
+  internalDescription:
+    "Internal HDD 3,5'' - Capacity : 1 To / Memory : 64 Mo / Speed : 7200 trs/min",
+  name: 'Hard Disk SATA 1To',
+  code: 'COMP-0001',
+  description:
+    "Internal HDD 3,5'' - Capacity : 1 To / Memory : 64 Mo / Speed : 7200 trs/min",
+  productCategory: {code: 'HDD', name: 'Hard Disk', id: 5, $version: 0},
+  supplierCatalogList: [
+    {
+      productSupplierCode: 'HD-HSHARK1T',
+      description: null,
+      supplierPartner: {
+        fullName: 'P0026 - TOP Components',
+        id: 26,
+        $version: 6,
+      },
+      id: 7,
+      product: {
+        code: 'COMP-0001',
+        fullName: '[COMP-0001] Hard Disk SATA 1To',
+        id: 11,
+        $version: 19,
+      },
+      version: 0,
+      productSupplierName: 'HDD HARDSHARK 1 To ',
+    },
+    {
+      productSupplierCode: '7458764',
+      description: null,
+      supplierPartner: {
+        fullName: 'P0030 - SASAKI Components',
+        id: 30,
+        $version: 5,
+      },
+      id: 8,
+      product: {
+        code: 'COMP-0001',
+        fullName: '[COMP-0001] Hard Disk SATA 1To',
+        id: 11,
+        $version: 19,
+      },
+      version: 0,
+      productSupplierName: 'HARDSHARK SATA 1 To ',
+    },
+    {
+      productSupplierCode: null,
+      description: null,
+      supplierPartner: {
+        fullName: 'P0030 - SASAKI Components',
+        id: 30,
+        $version: 5,
+      },
+      id: 27,
+      product: {
+        code: 'COMP-0001',
+        fullName: '[COMP-0001] Hard Disk SATA 1To',
+        id: 11,
+        $version: 19,
+      },
+      version: 0,
+      productSupplierName: null,
+    },
+  ],
+};
