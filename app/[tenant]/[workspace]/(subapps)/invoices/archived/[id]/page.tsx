@@ -2,11 +2,12 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {findSubappAccess} from '@/orm/workspace';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {workspacePathname} from '@/utils/workspace';
 import {PartnerKey} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
@@ -18,7 +19,6 @@ export default async function Page({
   params: {id: string; tenant: string; workspace: string};
 }) {
   const {id, tenant} = params;
-  const {workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
 
@@ -27,6 +27,16 @@ export default async function Page({
   if (!user) {
     return notFound();
   }
+
+  const {workspaceURL} = workspacePathname(params);
+
+  const workspace = await findWorkspace({
+    url: workspaceURL,
+    user,
+    tenantId: tenant,
+  }).then(clone);
+
+  if (!workspace) return notFound();
 
   const app = await findSubappAccess({
     code: SUBAPP_CODES.invoices,
@@ -61,5 +71,5 @@ export default async function Page({
     return notFound();
   }
 
-  return <Content invoice={invoice} />;
+  return <Content invoice={invoice} workspace={workspace} />;
 }
