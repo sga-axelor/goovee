@@ -93,6 +93,7 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   directoryHeroOverlayColorSelect: true,
   nonPublicEmailNotFoundMessage: true,
   canPayInvoice: true,
+  allowOnlinePaymentForInvoices: true,
 };
 
 export async function findWorkspaceMembers({
