@@ -11,16 +11,13 @@ import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
 import {getStatus} from '@/subapps/invoices/common/utils/invoices';
 import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
 
-export default function Content({invoice}: any) {
+export default function Content({invoice, workspace}: any) {
   const {
     invoiceId,
     dueDate,
     invoiceDate,
-    inTaxTotal,
-    exTaxTotal,
+
     amountRemaining,
-    invoiceLineList,
-    currency: {numberOfDecimals},
   } = invoice;
   const {status, variant} = getStatus(amountRemaining.value);
   const isUnpaid = status === INVOICE_TYPE.UNPAID;
@@ -53,10 +50,9 @@ export default function Content({invoice}: any) {
           <Invoice invoice={invoice} isUnpaid={isUnpaid} />
           {isUnpaid && (
             <Total
-              exTaxTotal={exTaxTotal}
-              inTaxTotal={inTaxTotal}
-              invoiceLineList={invoiceLineList}
-              numberOfDecimals={numberOfDecimals}
+              invoice={invoice}
+              workspace={workspace}
+              isUnpaid={isUnpaid}
             />
           )}
         </div>

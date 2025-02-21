@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -16,6 +16,7 @@ import {
   ITEMS,
   HEADING,
   INVOICE,
+  INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
 import {
   AlertToast,
@@ -61,7 +62,7 @@ export default function Content({
 
   const allowInvoicePayment =
     allowOnlinePayment &&
-    canPayInvoice !== 'no' &&
+    canPayInvoice !== INVOICE_PAYMENT_OPTIONS.NO &&
     Boolean(paymentOptionSet?.length);
 
   const unpaidColumns = useMemo(

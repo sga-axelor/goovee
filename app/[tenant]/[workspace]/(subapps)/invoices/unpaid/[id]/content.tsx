@@ -14,16 +14,7 @@ import {
 } from '@/subapps/invoices/common/constants/invoices';
 
 export default function Content({invoice, workspace}: any) {
-  const {
-    invoiceId,
-    dueDate,
-    invoiceDate,
-    inTaxTotal,
-    exTaxTotal,
-    amountRemaining,
-    invoiceLineList,
-    currency: {numberOfDecimals},
-  } = invoice;
+  const {invoiceId, dueDate, invoiceDate, amountRemaining} = invoice;
 
   const status =
     Number(amountRemaining.value) !== INVOICE_STATUS.UNPAID
@@ -31,18 +22,6 @@ export default function Content({invoice, workspace}: any) {
       : INVOICE_TYPE.PAID;
 
   const isUnpaid = status === INVOICE_TYPE.UNPAID;
-
-  const config = workspace?.config;
-
-  const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
-  const canPayInvoice = config?.canPayInvoice;
-  const paymentOptionSet = config?.paymentOptionSet;
-
-  const allowInvoicePayment =
-    isUnpaid &&
-    allowOnlinePayment &&
-    canPayInvoice !== 'no' &&
-    Boolean(paymentOptionSet?.length);
 
   return (
     <>
@@ -74,11 +53,9 @@ export default function Content({invoice, workspace}: any) {
           <Invoice invoice={invoice} isUnpaid={isUnpaid} />
           {isUnpaid && (
             <Total
-              exTaxTotal={exTaxTotal}
-              inTaxTotal={inTaxTotal}
-              invoiceLineList={invoiceLineList}
-              numberOfDecimals={numberOfDecimals}
-              allowInvoicePayment={allowInvoicePayment}
+              invoice={invoice}
+              isUnpaid={isUnpaid}
+              workspace={workspace}
             />
           )}
         </div>

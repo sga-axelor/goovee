@@ -326,7 +326,7 @@ export const findInvoice = async ({
       type: 'DECIMAL',
     }),
     amountRemaining: {
-      value: await formatNumber(amountRemaining, {scale, type: 'DECIMAL'}),
+      value: amountRemaining,
       symbol: currencySymbol,
       formattedValue: await formatNumber(amountRemaining, {
         scale,

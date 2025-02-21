@@ -19,22 +19,30 @@ import {
   Separator,
 } from '@/ui/components';
 import {formatNumber} from '@/locale/formatters';
+import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
-import {TotalProps} from '@/subapps/invoices/common/types/invoices';
+import {
+  PaymentType,
+  TotalProps,
+} from '@/subapps/invoices/common/types/invoices';
 import {INVOICE_PAYMENT_OPTIONS} from '@/subapps/invoices/common/constants/invoices';
+import {InvoicePayments} from '@/subapps/invoices/common/ui/components';
 
-export function Total({
-  exTaxTotal,
-  inTaxTotal,
-  isUnpaid,
-  workspace,
-  invoicePaymentList,
-  taxTotal,
-  amountRemaining,
-  currency,
-}: TotalProps) {
-  const [show, setShow] = useState(true);
+export function Total({isUnpaid, workspace, invoice}: TotalProps) {
+  const {
+    inTaxTotal,
+    exTaxTotal,
+    amountRemaining,
+    taxTotal,
+    invoicePaymentList,
+    currency,
+  } = invoice;
+
+  const [paymentType, setPaymentType] = useState<PaymentType>(
+    PaymentType.IsPartial,
+  );
+  const [show, setShow] = useState<boolean>();
 
   const config = workspace?.config;
   const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
@@ -51,16 +59,20 @@ export function Total({
 
   const remainingAmountValue = parseFloat(amountRemaining?.value || '0');
 
+  const {searchParams} = useSearchParams();
+  const stripeSessionId = searchParams.get('stripe_session_id');
+
   const formSchema = z.object({
     amount: z
       .string()
-      .regex(/^\d+(\.\d{1,2})?$/, i18n.t('Invalid amount format')) // Allow decimals up to 2 places
+      .regex(/^\d+(\.\d{1,2})?$/, i18n.t('Invalid amount format'))
       .refine(val => parseFloat(val) >= 1, {
         message: i18n.t('Amount must be at least 1'),
       })
       .refine(val => parseFloat(val) <= remainingAmountValue, {
         message: i18n.t(
-          `Amount cannot exceed ${amountRemaining?.formattedValue}`,
+          `Amount cannot exceed {0}`,
+          amountRemaining?.formattedValue,
         ),
       }),
   });
@@ -87,6 +99,10 @@ export function Total({
   };
 
   const onSubmit = (values: {amount: string}) => {
+    const isTotalPayment = parseFloat(values.amount) === remainingAmountValue;
+    setPaymentType(
+      isTotalPayment ? PaymentType.IsTotal : PaymentType.IsPartial,
+    );
     setShow(true);
   };
 
@@ -95,6 +111,12 @@ export function Total({
       setShow(false);
     }
   }, [canPayPartialInvoice]);
+
+  useEffect(() => {
+    if (stripeSessionId) {
+      setShow(true);
+    }
+  }, [stripeSessionId]);
 
   return (
     <div
@@ -176,6 +198,7 @@ export function Total({
           </Form>
         </div>
       )}
+
       {allowInvoicePayment && show && (
         <div className="flex flex-col gap-2.5">
           {canPayPartialInvoice && (
@@ -186,15 +209,26 @@ export function Total({
                   onClick={() => setShow(false)}
                 />
                 <span className="text-xl font-medium">
-                  {`${i18n.t('Pay partially')}: ${formatNumber(
-                    currentAmount || 0,
-                    {currency: currency.symbol, type: 'DECIMAL'},
-                  )}`}
+                  {paymentType === PaymentType.IsTotal
+                    ? i18n.t('Pay all')
+                    : `${i18n.t('Pay partially')}: ${formatNumber(
+                        currentAmount || 0,
+                        {
+                          currency: currency.symbol,
+                          type: 'DECIMAL',
+                        },
+                      )}`}
                 </span>
               </div>
               <Separator />
             </>
           )}
+          <InvoicePayments
+            workspace={workspace}
+            invoice={invoice}
+            amount={currentAmount}
+            paymentType={paymentType}
+          />
         </div>
       )}
     </div>

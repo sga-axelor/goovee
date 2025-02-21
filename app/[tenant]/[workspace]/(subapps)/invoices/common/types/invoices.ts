@@ -1,10 +1,19 @@
 // ---- CORE IMPORTS ---- //
-import {ID} from '@/types';
+import {ID, PortalWorkspace} from '@/types';
 
 export type Invoice = {
   id: ID;
   invoiceId: string;
   invoiceDate: string;
+  inTaxTotal: string;
+  exTaxTotal: number | string;
+  taxTotal: string;
+  invoicePaymentList?: any[];
+  amountRemaining: {value: string; symbol: string; formattedValue: string};
+  currency: {
+    id: string | number;
+    symbol: string;
+  };
 };
 
 export type InvoiceProps = {
@@ -13,11 +22,9 @@ export type InvoiceProps = {
 };
 
 export type TotalProps = {
-  inTaxTotal: string;
-  exTaxTotal: number | string;
-  invoiceLineList: [];
-  numberOfDecimals: number;
-  allowInvoicePayment?: boolean;
+  invoice: Invoice;
+  isUnpaid?: boolean;
+  workspace?: PortalWorkspace;
 };
 
 export type InvoiceTable = {
@@ -43,3 +50,8 @@ export type TableFooterProps = {
   taxTotal: string;
   sumOfDiscounts: number;
 };
+
+export enum PaymentType {
+  IsPartial = 'ispartial',
+  IsTotal = 'istotal',
+}

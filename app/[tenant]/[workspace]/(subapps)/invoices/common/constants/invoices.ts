@@ -38,6 +38,12 @@ const INVOICE_STATUS = {
 };
 const UNABLE_TO_FIND_INVOICE = 'Unable to load file';
 
+const INVOICE_PAYMENT_OPTIONS = {
+  NO: 'no',
+  TOTAL: 'total',
+  PARTIAL: 'partial',
+};
+
 export {
   HEADING,
   ITEMS,
@@ -47,4 +53,5 @@ export {
   INVOICE_CATEGORY,
   INVOICE,
   UNABLE_TO_FIND_INVOICE,
+  INVOICE_PAYMENT_OPTIONS,
 };
