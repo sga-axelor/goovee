@@ -34,7 +34,6 @@ import {
 
 const Content = ({order}: {order: any}) => {
   const [loading, setLoading] = useState<{[key: string]: boolean}>({});
-
   const {
     saleOrderSeq,
     exTaxTotal,

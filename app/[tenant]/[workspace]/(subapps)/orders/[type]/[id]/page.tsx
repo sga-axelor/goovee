@@ -16,9 +16,9 @@ import {findOrder} from '@/subapps/orders/common/orm/orders';
 export default async function Page({
   params,
 }: {
-  params: {tenant: string; workspace: string; id: string};
+  params: {tenant: string; workspace: string; type: string; id: string};
 }) {
-  const {id, tenant} = params;
+  const {type, id, tenant} = params;
 
   const session = await getSession();
   const user = session?.user as User;
@@ -63,6 +63,7 @@ export default async function Page({
     isContactAdmin,
     partnerKey: PartnerKey.PARTNER,
   });
+  const isArchived = type === 'archived' ? true : false;
 
   const order = await findOrder({
     id,
@@ -71,7 +72,7 @@ export default async function Page({
       where,
     },
     workspaceURL,
-    archived: true,
+    archived: isArchived,
     invoicesParams: {where: invoicesWhereClasuse},
   });
 

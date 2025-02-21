@@ -10,17 +10,17 @@ import {PartnerKey, User} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from './content';
-import {findArchivedOrders} from '@/subapps/orders/common/orm/orders';
+import Content from '@/subapps/orders/[type]/content';
+import {fetchOrders} from '@/subapps/orders/common/orm/orders';
 
 export default async function Page({
   params,
   searchParams,
 }: {
-  params: {tenant: string; workspace: string};
+  params: {type: string; tenant: string; workspace: string};
   searchParams: {[key: string]: string | undefined};
 }) {
-  const {tenant} = params;
+  const {type, tenant} = params;
 
   const {limit, page} = searchParams;
 
@@ -61,7 +61,10 @@ export default async function Page({
     partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
-  const result = await findArchivedOrders({
+  const isArchived = type === 'archived' ? true : false;
+
+  const result = await fetchOrders({
+    archived: isArchived,
     params: {
       where,
       page,
@@ -77,5 +80,7 @@ export default async function Page({
 
   const {orders, pageInfo} = result;
 
-  return <Content orders={clone(orders)} pageInfo={pageInfo} />;
+  return (
+    <Content orders={clone(orders)} pageInfo={pageInfo} orderType={type} />
+  );
 }

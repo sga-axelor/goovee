@@ -1,4 +1,4 @@
-export const ITEMS = [
+export const ORDER_TAB_ITEMS = [
   {
     id: '1',
     title: 'Ongoing orders',

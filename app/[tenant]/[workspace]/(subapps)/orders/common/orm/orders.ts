@@ -19,7 +19,7 @@ import {
 } from '@/subapps/orders/common/constants/orders';
 import type {Invoice, Order} from '@/subapps/orders/common/types/orders';
 
-const fetchOrders = async ({
+export const fetchOrders = async ({
   archived = false,
   params = {},
   tenantId,
@@ -124,47 +124,6 @@ const fetchOrders = async ({
     pageInfo,
   };
 };
-
-export async function findOngoingOrders({
-  params,
-  tenantId,
-  workspaceURL,
-}: {
-  params?: any;
-  tenantId: Tenant['id'];
-  workspaceURL: PortalWorkspace['url'];
-}): Promise<any> {
-  return await fetchOrders({
-    params,
-    tenantId,
-    workspaceURL,
-  });
-}
-
-export async function findArchivedOrders({
-  params,
-  tenantId,
-  workspaceURL,
-}: {
-  params?: {
-    where?: object & {
-      partner?: {
-        id: Partner['id'];
-      };
-    };
-    limit?: string | number;
-    page?: string | number;
-  };
-  tenantId: Tenant['id'];
-  workspaceURL: PortalWorkspace['url'];
-}): Promise<any> {
-  return await fetchOrders({
-    archived: true,
-    params,
-    tenantId,
-    workspaceURL,
-  });
-}
 
 export async function findOrder({
   id,
