@@ -120,7 +120,7 @@ const Content = ({order}: {order: any}) => {
       {
         id: record.id,
         workspaceURL,
-        modelName: RELATED_MODELS.INVOICE,
+        modelName: RELATED_MODELS.STOCK_MOVE,
         subapp: SUBAPP_CODES.orders,
         type: INVOICE_ENTITY_TYPE.CUSTOMER_DELIVERY,
       },
