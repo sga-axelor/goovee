@@ -21,7 +21,7 @@ import {
   PaymentMethod,
   ProductsList,
   ExpandableCard,
-  DownlaodButton,
+  DownloadButton,
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {
@@ -183,7 +183,7 @@ const Content = ({order}: {order: any}) => {
                         </div>
                       </div>
 
-                      <DownlaodButton
+                      <DownloadButton
                         disabled={isDisabled}
                         record={record}
                         title={i18n.t(DOWNLOAD_PDF)}
@@ -215,7 +215,7 @@ const Content = ({order}: {order: any}) => {
                           <div>{record.createdOn}</div>
                         </div>
                       </div>
-                      <DownlaodButton
+                      <DownloadButton
                         disabled={isDisabled}
                         record={record}
                         title={i18n.t(DOWNLOAD_PDF)}

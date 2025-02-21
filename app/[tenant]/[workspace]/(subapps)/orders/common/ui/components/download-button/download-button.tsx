@@ -5,7 +5,7 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components';
 
-export function DownlaodButton({
+export function DownloadButton({
   record,
   disabled,
   title,
@@ -28,4 +28,4 @@ export function DownlaodButton({
   );
 }
 
-export default DownlaodButton;
+export default DownloadButton;
