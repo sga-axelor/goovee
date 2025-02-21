@@ -17,7 +17,7 @@ import {
   INVOICE_STATUS,
 } from '@/subapps/invoices/common/constants/invoices';
 
-const fetchInvoices = async ({
+export const fetchInvoices = async ({
   params = {},
   type,
   tenantId,
@@ -129,51 +129,6 @@ const fetchInvoices = async ({
     limit,
   });
   return {invoices, pageInfo};
-};
-
-export const findUnpaidInvoices = async ({
-  params,
-  tenantId,
-  workspaceURL,
-}: {
-  params?: {
-    where?: object & {
-      partner?: {
-        id: Partner['id'];
-      };
-    };
-    limit?: string | number;
-    page?: string | number;
-  };
-  tenantId: Tenant['id'];
-  workspaceURL: PortalWorkspace['url'];
-}) => {
-  return await fetchInvoices({params, tenantId, workspaceURL});
-};
-
-export const findArchivedInvoices = async ({
-  params,
-  tenantId,
-  workspaceURL,
-}: {
-  params?: {
-    where?: object & {
-      partner?: {
-        id: Partner['id'];
-      };
-    };
-    limit?: string | number;
-    page?: string | number;
-  };
-  tenantId: Tenant['id'];
-  workspaceURL: PortalWorkspace['url'];
-}) => {
-  return await fetchInvoices({
-    params,
-    type: INVOICE.ARCHIVED,
-    tenantId,
-    workspaceURL,
-  });
 };
 
 export const findInvoice = async ({

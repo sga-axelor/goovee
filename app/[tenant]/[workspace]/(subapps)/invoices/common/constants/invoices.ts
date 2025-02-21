@@ -3,16 +3,20 @@
 const HEADING =
   'You have unpaid invoices that will soon reach their limit date.';
 
-const ITEMS = [
+const INVOICE = {
+  ARCHIVED: 'archived',
+  UNPAID: 'unpaid',
+};
+const INVOICE_TAB_ITEMS = [
   {
     id: '1',
     title: 'Unpaid invoices',
-    href: 'unpaid',
+    href: INVOICE.UNPAID,
   },
   {
     id: '2',
     title: 'Archived invoices',
-    href: 'archived',
+    href: INVOICE.ARCHIVED,
   },
 ];
 
@@ -21,11 +25,6 @@ const INVOICE_COLUMNS = ['Description', 'Rate', 'Qty', 'Amount'];
 const INVOICE_TYPE = {
   UNPAID: 'Unpaid',
   PAID: 'Paid',
-};
-
-const INVOICE = {
-  ARCHIVED: 'archived',
-  UNPAID: 'unpaid',
 };
 
 const INVOICE_CATEGORY = {
@@ -46,7 +45,7 @@ const INVOICE_PAYMENT_OPTIONS = {
 
 export {
   HEADING,
-  ITEMS,
+  INVOICE_TAB_ITEMS,
   INVOICE_COLUMNS,
   INVOICE_TYPE,
   INVOICE_STATUS,

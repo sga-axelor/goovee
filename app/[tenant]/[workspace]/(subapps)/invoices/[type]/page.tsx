@@ -1,29 +1,31 @@
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {findWorkspace, findSubapp} from '@/orm/workspace';
+import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES, DEFAULT_LIMIT} from '@/constants';
 import {getWhereClauseForEntity} from '@/utils/filters';
 import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from './content';
-import {findArchivedInvoices} from '@/subapps/invoices/common/orm/invoices';
+import Content from '@/app/[tenant]/[workspace]/(subapps)/invoices/[type]/content';
+import {fetchInvoices} from '@/subapps/invoices/common/orm/invoices';
 
 export default async function Invoices({
   params,
   searchParams,
 }: {
   params: {
+    type: string;
     tenant: string;
     workspace: string;
   };
   searchParams: {[key: string]: string | undefined};
 }) {
-  const {tenant} = params;
+  const {type, tenant} = params;
+
   const {limit, page} = searchParams;
 
   const session = await getSession();
@@ -39,8 +41,8 @@ export default async function Invoices({
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
-    user: session?.user,
     url: workspaceURL,
+    user,
     tenantId: tenant,
   }).then(clone);
 
@@ -49,7 +51,7 @@ export default async function Invoices({
   const app = await findSubapp({
     code: SUBAPP_CODES.invoices,
     url: workspace.url,
-    user,
+    user: user,
     tenantId: tenant,
   });
 
@@ -58,6 +60,7 @@ export default async function Invoices({
   }
 
   const {role, isContactAdmin} = app;
+
   const invoicesWhereClause = getWhereClauseForEntity({
     user,
     role,
@@ -65,12 +68,13 @@ export default async function Invoices({
     partnerKey: PartnerKey.PARTNER,
   });
 
-  const result: any = await findArchivedInvoices({
+  const result: any = await fetchInvoices({
     params: {
       where: invoicesWhereClause,
       page,
       limit: limit ? Number(limit) : DEFAULT_LIMIT,
     },
+    type,
     tenantId: tenant,
     workspaceURL,
   });
@@ -81,5 +85,12 @@ export default async function Invoices({
 
   const {invoices, pageInfo} = result;
 
-  return <Content invoices={invoices} pageInfo={pageInfo} />;
+  return (
+    <Content
+      invoiceType={type}
+      invoices={invoices}
+      workspace={workspace}
+      pageInfo={pageInfo}
+    />
+  );
 }

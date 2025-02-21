@@ -8,30 +8,31 @@ import {type PortalWorkspace} from '@/types';
 import {Container, NavView, TableList, AlertToast} from '@/ui/components';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {useSortBy, useToast} from '@/ui/hooks';
+import {useSortBy} from '@/ui/hooks';
 import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  ITEMS,
+  INVOICE_TAB_ITEMS,
   HEADING,
   INVOICE,
   INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
-import {UnpaidColumns} from '@/subapps/invoices/common/ui/components';
+import {Columns, UnpaidColumns} from '@/subapps/invoices/common/ui/components';
 
 export default function Content({
   invoices = [],
   pageInfo,
   workspace,
+  invoiceType,
 }: {
   invoices: [];
   pageInfo?: any;
   workspace: PortalWorkspace;
+  invoiceType: String;
 }) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
-  const {toast} = useToast();
 
   const [sortedInvoices, sortOrder, toggleSortOrder] = useSortBy(invoices);
 
@@ -41,7 +42,7 @@ export default function Content({
 
   const handleClick = (invoice: any) =>
     router.push(
-      `${workspaceURI}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${invoice.id}`,
+      `${workspaceURI}/${SUBAPP_CODES.invoices}/${invoiceType}/${invoice.id}`,
     );
 
   const hasUpcomingInvoices = useMemo(() => {
@@ -67,14 +68,33 @@ export default function Content({
     [allowInvoicePayment],
   );
 
+  const invoiceColumns = useMemo(
+    () =>
+      new Map<String, any>([
+        [INVOICE.UNPAID, unpaidColumns],
+        [INVOICE.ARCHIVED, Columns],
+      ]),
+    [unpaidColumns],
+  );
   return (
     <>
       <Container title={i18n.t('Invoices')}>
-        <AlertToast show={hasUpcomingInvoices} title={HEADING} variant="info" />
-        <NavView items={ITEMS} activeTab="1" onTabChange={handleTabChange}>
+        {invoiceType === INVOICE.UNPAID && (
+          <AlertToast
+            show={hasUpcomingInvoices}
+            title={HEADING}
+            variant="info"
+          />
+        )}
+        <NavView
+          items={INVOICE_TAB_ITEMS}
+          activeTab={
+            INVOICE_TAB_ITEMS.find(item => item.href === invoiceType)!.id
+          }
+          onTabChange={handleTabChange}>
           <div className="flex flex-col gap-4">
             <TableList
-              columns={unpaidColumns}
+              columns={invoiceColumns.get(invoiceType)}
               rows={sortedInvoices}
               sort={sortOrder}
               onSort={toggleSortOrder}
