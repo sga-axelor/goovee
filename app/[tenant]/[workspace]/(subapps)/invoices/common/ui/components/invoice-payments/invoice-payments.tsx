@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {PaymentOption} from '@/types';
-import {Stripe} from '@/ui/components/payment';
+import {Paypal, Stripe} from '@/ui/components/payment';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {PREFIX_INVOICE_KEY, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {getitem, setitem} from '@/storage/local';
@@ -16,6 +16,8 @@ import {i18n} from '@/locale';
 // ---- LOCAL IMPORTS ---- //
 import {
   createStripeCheckoutSession,
+  paypalCaptureOrder,
+  paypalCreateOrder,
   validateStripePayment,
 } from '@/subapps/invoices/common/actions';
 import {Invoice, PaymentType} from '@/subapps/invoices/common/types/invoices';
@@ -65,7 +67,7 @@ export function InvoicePayments({
     paymentOption,
   }: {
     paymentOption?: PaymentOption;
-  }) => {
+  } = {}) => {
     if (!amount) {
       return false;
     }
@@ -92,12 +94,47 @@ export function InvoicePayments({
     PaymentOption.stripe,
   );
 
+  const allowPaypal = isPaymentOptionAvailable(
+    paymentOptionSet,
+    PaymentOption.paypal,
+  );
+
   if (!allowOnlinePayment) {
     return null;
   }
 
   return (
     <div className="flex flex-col">
+      {allowPaypal && (
+        <Paypal
+          onValidate={async () => {
+            const isValid = await handleInvoiceValidation();
+
+            return !!isValid;
+          }}
+          createOrder={async () => {
+            return await paypalCreateOrder({
+              invoice: {
+                id: invoice.id,
+              },
+              amount,
+              workspaceURL,
+            });
+          }}
+          captureOrder={async orderID => {
+            return await paypalCaptureOrder({
+              orderID,
+              invoice: {
+                id: invoice.id,
+              },
+              workspaceURL,
+            });
+          }}
+          onApprove={redirectToInvoice}
+          successMessage="Invoice Amount paid successfully!"
+          errorMessage="Failed to process payment. Please try again."
+        />
+      )}
       {allowStripe && (
         <Stripe
           onValidate={async () => {

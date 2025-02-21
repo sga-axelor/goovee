@@ -17,6 +17,7 @@ import {isPaymentOptionAvailable} from '@/utils/payment';
 import {manager, Tenant} from '@/tenant';
 import {ID} from '@goovee/orm';
 import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
+import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 
 // ---- LOCAL IMPORTS ---- //
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
@@ -25,6 +26,360 @@ import {
   INVOICE,
   INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
+
+export async function paypalCreateOrder({
+  invoice,
+  amount,
+  workspaceURL,
+}: {
+  invoice: {
+    id: string | number;
+  };
+  amount: string;
+  workspaceURL: string;
+}) {
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: await t('Workspace not provided'),
+    };
+  }
+
+  if (!invoice?.id) {
+    return {
+      error: true,
+      message: await t('Invoice is missing'),
+    };
+  }
+
+  if (!amount) {
+    return {
+      error: true,
+      message: await t('Amount is missing'),
+    };
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+  if (!user) {
+    return {
+      error: true,
+      message: await t('Unauthorized'),
+    };
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await t('Tenant is missing'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+  if (!workspace) {
+    return {
+      error: true,
+      message: await t('Invalid workspace'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.invoices,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+  if (!subapp) {
+    return {
+      error: true,
+      message: await t('Unauthorized app access'),
+    };
+  }
+
+  const {role, isContactAdmin} = subapp;
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
+
+  const $invoice = await findInvoice({
+    id: invoice.id,
+    params: {
+      where: invoicesWhereClause,
+    },
+    workspaceURL,
+    tenantId,
+  });
+  if (!$invoice) {
+    return {
+      error: true,
+      message: await t('Invalid invoice'),
+    };
+  }
+
+  if (workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.NO) {
+    return {
+      error: true,
+      message: await t('Payment not allowed'),
+    };
+  }
+
+  const $amount = extractAmount(amount);
+  const remainingAmount = extractAmount($invoice?.amountRemaining?.value);
+
+  const isPartialPayment =
+    workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
+  const isTotalPayment =
+    workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.TOTAL;
+
+  if (isTotalPayment && $amount !== remainingAmount) {
+    return {
+      error: true,
+      message: await t('Payment must match the total amount'),
+    };
+  } else if (isPartialPayment && $amount > remainingAmount) {
+    return {
+      error: true,
+      message: await t('Payment exceeds the remaining amount.'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForInvoices) {
+    return {
+      error: true,
+      message: await t('Online payment is not available'),
+    };
+  }
+
+  const paymentOptions = workspace?.config?.paymentOptionSet;
+  if (!paymentOptions?.length) {
+    return {
+      error: true,
+      message: await t('Payment options are not configured'),
+    };
+  }
+
+  const allowPaypal = isPaymentOptionAvailable(
+    paymentOptions,
+    PaymentOption.paypal,
+  );
+  if (!allowPaypal) {
+    return {
+      error: true,
+      message: await t('Paypal is not available'),
+    };
+  }
+
+  const payer = await findPartnerByEmail(user?.email, tenantId);
+  const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+
+  try {
+    const response = await createPaypalOrder({
+      amount: $amount,
+      currency: currencyCode,
+      email: payer?.emailAddress?.address,
+    });
+    return {success: true, order: response?.result};
+  } catch (err) {
+    console.error('err >>>', err);
+    return {
+      error: true,
+      message: await t((err as any)?.message),
+    };
+  }
+}
+
+export async function paypalCaptureOrder({
+  orderID,
+  invoice,
+  workspaceURL,
+}: {
+  orderID: string;
+  invoice: {
+    id: string | number;
+  };
+  workspaceURL: string;
+}) {
+  if (!orderID) {
+    return {error: true, message: await t('Order ID is missing')};
+  }
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: await t('Workspace not provided'),
+    };
+  }
+
+  if (!invoice?.id) {
+    return {
+      error: true,
+      message: await t('Invoice is missing'),
+    };
+  }
+
+  const session = await getSession();
+  const user = session?.user;
+  if (!user) {
+    return {
+      error: true,
+      message: await t('Unauthorized'),
+    };
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await t('Tenant is missing'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+  if (!workspace) {
+    return {
+      error: true,
+      message: await t('Invalid workspace'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.invoices,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+  if (!subapp) {
+    return {
+      error: true,
+      message: await t('Unauthorized app access'),
+    };
+  }
+
+  const {role, isContactAdmin} = subapp;
+  const invoicesWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.PARTNER,
+  });
+  const $invoice = await findInvoice({
+    id: invoice.id,
+    params: {
+      where: invoicesWhereClause,
+    },
+    workspaceURL,
+    tenantId,
+  });
+  if (!$invoice) {
+    return {
+      error: true,
+      message: await t('Invalid invoice'),
+    };
+  }
+
+  if (workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.NO) {
+    return {
+      error: true,
+      message: await t('Payment not allowed'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForInvoices) {
+    return {
+      error: true,
+      message: await t('Online payment is not available'),
+    };
+  }
+
+  const paymentOptions = workspace?.config?.paymentOptionSet;
+  if (!paymentOptions?.length) {
+    return {
+      error: true,
+      message: await t('Payment options are not configured'),
+    };
+  }
+
+  const allowPaypal = isPaymentOptionAvailable(
+    paymentOptions,
+    PaymentOption.paypal,
+  );
+  if (!allowPaypal) {
+    return {
+      error: true,
+      message: await t('Paypal is not available'),
+    };
+  }
+
+  try {
+    const response = await findPaypalOrder({id: orderID});
+    const {result} = response;
+
+    const purchase = result?.purchase_units?.[0];
+    const purchaseAmount = Number(
+      purchase?.payments?.captures?.[0]?.amount?.value,
+    );
+
+    if (purchaseAmount <= 0) {
+      return {
+        error: true,
+        message: await t('Payment amount must be greater than zero.'),
+      };
+    }
+
+    const remainingAmount = extractAmount($invoice?.amountRemaining?.value);
+
+    const isPartialPayment =
+      workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
+    const isTotalPayment =
+      workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.TOTAL;
+
+    if (isTotalPayment && purchaseAmount !== remainingAmount) {
+      return {
+        error: true,
+        message: await t('Payment must match the total amount'),
+      };
+    } else if (isPartialPayment && purchaseAmount > remainingAmount) {
+      return {
+        error: true,
+        message: await t('Payment exceeds the remaining amount.'),
+      };
+    }
+
+    const updatedInvoice = await updateInvoice({
+      workspaceURL,
+      tenantId,
+      amount: purchaseAmount,
+      invoiceId: $invoice.id,
+    });
+    if (updatedInvoice.error) {
+      return {
+        error: true,
+        message:
+          updatedInvoice.message ||
+          (await t('Something went wrong while updating invoice!')),
+      };
+    }
+    return {success: true, data: $invoice};
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    return {
+      error: true,
+      message: await t('An error occurred while processing the payment.'),
+    };
+  }
+}
 
 export async function createStripeCheckoutSession({
   invoice,
@@ -127,19 +482,19 @@ export async function createStripeCheckoutSession({
   if (workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.NO) {
     return {
       error: true,
-      message: await t('Not allowed'),
+      message: await t('Payment not allowed'),
     };
   }
 
   const $amount = extractAmount(amount);
+  const remainingAmount = extractAmount($invoice?.amountRemaining?.value);
+
   const isPartialPayment =
     workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
+  const isTotalPayment =
+    workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.TOTAL;
 
-  const remainingAmount = extractAmount($invoice?.amountRemaining?.value);
-  if (
-    workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.TOTAL &&
-    $amount !== remainingAmount
-  ) {
+  if (isTotalPayment && $amount !== remainingAmount) {
     return {
       error: true,
       message: await t('Payment must match the total amount'),
