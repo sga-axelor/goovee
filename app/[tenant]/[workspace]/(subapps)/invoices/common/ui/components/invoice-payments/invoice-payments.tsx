@@ -68,17 +68,14 @@ export function InvoicePayments({
   }: {
     paymentOption?: PaymentOption;
   } = {}) => {
-    if (!amount) {
+    if (!Number(amount)) {
+      toast({
+        variant: 'destructive',
+        title: i18n.t('Amount must be greater than 0'),
+      });
       return false;
     }
     try {
-      if (!Number(amount)) {
-        toast({
-          variant: 'destructive',
-          title: i18n.t('Amount must be greater than 0'),
-        });
-        return false;
-      }
       if (paymentOption === PaymentOption.stripe) {
         await setitem(invoiceKey, amount).catch(() => {});
       }

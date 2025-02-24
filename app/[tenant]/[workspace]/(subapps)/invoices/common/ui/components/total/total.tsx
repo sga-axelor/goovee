@@ -54,8 +54,6 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
     allowOnlinePayment &&
     canPayInvoice !== INVOICE_PAYMENT_OPTIONS.NO &&
     Boolean(paymentOptionSet?.length);
-  const canPayPartialInvoice =
-    canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
 
   const remainingAmountValue = parseFloat(amountRemaining?.value || '0');
 
@@ -65,9 +63,14 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
   const formSchema = z.object({
     amount: z
       .string()
-      .regex(/^\d+(\.\d{1,2})?$/, i18n.t('Invalid amount format'))
-      .refine(val => parseFloat(val) >= 1, {
-        message: i18n.t('Amount must be at least 1'),
+      .refine(val => val.trim() !== '', {
+        message: i18n.t('Amount is required'),
+      })
+      .refine(val => /^\d+(\.\d{1,2})?$/.test(val), {
+        message: i18n.t('Invalid amount format'),
+      })
+      .refine(val => parseFloat(val) > 0, {
+        message: i18n.t('Amount must be greater than 0'),
       })
       .refine(val => parseFloat(val) <= remainingAmountValue, {
         message: i18n.t(
@@ -84,17 +87,15 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
     },
     mode: 'onChange',
   });
-  const currentAmount = form.watch('amount');
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setValue: any,
-    fieldName: string,
-  ) => {
+  const currentAmount = form.watch('amount') || '0';
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
 
     if (/^\d*\.?\d{0,2}$/.test(value) || value === '') {
-      setValue(fieldName, value);
+      form.setValue('amount', value);
+      form.trigger('amount');
     }
   };
 
@@ -107,12 +108,6 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
   };
 
   useEffect(() => {
-    if (canPayPartialInvoice) {
-      setShow(false);
-    }
-  }, [canPayPartialInvoice]);
-
-  useEffect(() => {
     if (stripeSessionId) {
       setShow(true);
     }
@@ -120,7 +115,7 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
 
   return (
     <div
-      className="flex basis-full md:basis-1/4 flex-col bg-card text-card-foreground p-4 md:p-6 border rounded-lg border-card-foreground mt-6 md:mt-0"
+      className="flex basis-full md:basis-1/3 flex-col bg-card text-card-foreground p-4 md:p-6 border rounded-lg border-card-foreground mt-6 md:mt-0"
       style={{height: 'fit-content'}}>
       <h4 className="text-xl font-medium mb-0">{i18n.t('Total')}</h4>
       <Separator className="my-3" />
@@ -154,22 +149,33 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
           <div className="ml-auto">{amountRemaining?.formattedValue}</div>
         </div>
       </div>
-      {allowInvoicePayment && canPayPartialInvoice && !show && (
+
+      {allowInvoicePayment && !show && (
         <div className="flex flex-col gap-2.5">
           <div className="flex flex-col gap-4">
             <Button
               variant={'success'}
               className="text-white font-medium"
-              onClick={() => {
-                form.setValue('amount', String(remainingAmountValue));
-                form.handleSubmit(onSubmit)();
+              disabled={!form.formState.isValid}
+              onClick={async () => {
+                const isValid = await form.trigger('amount');
+                if (isValid) {
+                  form.setValue('amount', String(remainingAmountValue));
+                  form.handleSubmit(onSubmit)();
+                }
               }}>
               {i18n.t('Pay all')}
             </Button>
             <Button
               variant={'success'}
               className="text-white font-medium"
-              onClick={form.handleSubmit(onSubmit)}>
+              disabled={!form.formState.isValid}
+              onClick={async () => {
+                const isValid = await form.trigger('amount');
+                if (isValid) {
+                  form.handleSubmit(onSubmit)();
+                }
+              }}>
               {i18n.t('Partially pay')}
             </Button>
           </div>
@@ -185,9 +191,10 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
                         {...field}
                         placeholder={i18n.t('Enter the amount to pay')}
                         value={field.value}
-                        onChange={e => handleChange(e, form.setValue, 'amount')}
+                        onChange={handleChange}
                         inputMode="decimal"
                         type="number"
+                        step="0.1"
                       />
                     </FormControl>
                     <FormMessage />
@@ -201,7 +208,7 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
 
       {allowInvoicePayment && show && (
         <div className="flex flex-col gap-2.5">
-          {canPayPartialInvoice && (
+          {PaymentType.IsPartial && (
             <>
               <div className="flex items-center gap-2.5">
                 <MdArrowBack
