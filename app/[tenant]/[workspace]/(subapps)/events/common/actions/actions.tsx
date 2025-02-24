@@ -344,6 +344,10 @@ export async function register({
       tenantId,
       registrationId: registration.id,
       currencyCode: $event.currency?.code,
+    }).then(res => {
+      if (res.error) {
+        console.error('Invoice creation failed:', res.message);
+      }
     });
   }
   generateRegistrationMailAction({

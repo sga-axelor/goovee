@@ -9,6 +9,7 @@ import {ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
+import {ActionResponse} from '@/types/action';
 
 export async function createInvoice({
   workspaceURL,
@@ -20,7 +21,7 @@ export async function createInvoice({
   tenantId: Tenant['id'];
   registrationId: ID;
   currencyCode: string;
-}) {
+}): ActionResponse<any> {
   const tenant = await manager.getTenant(tenantId);
   const aos = tenant?.config?.aos;
 
@@ -66,7 +67,7 @@ export async function createInvoice({
       );
     }
 
-    return data;
+    return {success: true, data};
   } catch (err) {
     console.error('Invoice creation failed:', err);
     return error(

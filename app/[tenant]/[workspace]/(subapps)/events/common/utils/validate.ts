@@ -7,8 +7,9 @@ import {PaymentOption} from '@/types';
 import type {ActionResponse} from '@/types/action';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {formatAmountForStripe} from '@/utils/stripe';
-import {error} from './index';
 import {DEFAULT_CURRENCY_CODE} from '@/constants';
+
+import {error} from './index';
 
 export async function validatePayment({
   payment,
