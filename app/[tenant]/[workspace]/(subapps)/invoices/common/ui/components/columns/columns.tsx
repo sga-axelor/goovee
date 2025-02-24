@@ -24,7 +24,7 @@ export const Columns = [
     label: i18n.t('Status'),
     getter: (row: any) => row.amountRemaining,
     content: (row: any) => {
-      const status = row.isUpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
+      const status = row.isUnpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
       const variant = row.isUnpaid ? 'destructive' : 'success';
       return (
         <Chip

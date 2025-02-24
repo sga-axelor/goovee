@@ -13,11 +13,11 @@ import type {Partner, PortalWorkspace} from '@/types';
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
 import {
   INVOICE,
-  INVOICE_CATEGORY,
   INVOICE_STATUS,
 } from '@/subapps/invoices/common/constants/invoices';
+import {buildWhereClause} from '@/subapps/invoices/common/utils/invoices';
 
-export const fetchInvoices = async ({
+export const findInvoices = async ({
   params = {},
   type,
   tenantId,
@@ -43,28 +43,7 @@ export const fetchInvoices = async ({
 
   const client = await manager.getClient(tenantId);
 
-  const whereClause: any = {
-    ...params?.where,
-    OR: [
-      {
-        portalWorkspace: {
-          url: workspaceURL,
-        },
-      },
-      {saleOrder: {portalWorkspace: {url: workspaceURL}}},
-      ...(type === INVOICE.ARCHIVED
-        ? [{archived: true}, {amountRemaining: {eq: 0}}]
-        : []),
-    ],
-    ...(type === INVOICE.ARCHIVED
-      ? {
-          operationTypeSelect: INVOICE_CATEGORY.SALE_INVOICE,
-        }
-      : {
-          amountRemaining: {ne: 0},
-        }),
-    statusSelect: {eq: INVOICE_STATUS.VENTILATED},
-  };
+  const whereClause = buildWhereClause({params, workspaceURL, type});
 
   const skip = getSkipInfo(limit, page);
 
@@ -130,14 +109,17 @@ export const fetchInvoices = async ({
   });
   return {invoices, pageInfo};
 };
+type InvoiceType = (typeof INVOICE)[keyof typeof INVOICE];
 
 export const findInvoice = async ({
   id,
+  type = INVOICE.UNPAID,
   params,
   tenantId,
   workspaceURL,
 }: {
   id: Invoice['id'];
+  type?: InvoiceType;
   params?: {
     where?: object & {
       partner?: {
@@ -152,14 +134,13 @@ export const findInvoice = async ({
 
   const client = await manager.getClient(tenantId);
 
+  const whereClause = buildWhereClause({params, workspaceURL, type});
   const invoice: any = await client.aOSInvoice
     .findOne({
       where: {
         id,
         ...params?.where,
-        portalWorkspace: {
-          url: workspaceURL,
-        },
+        ...whereClause,
       },
       select: {
         invoiceId: true,

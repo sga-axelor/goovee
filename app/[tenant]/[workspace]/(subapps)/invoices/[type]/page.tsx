@@ -11,7 +11,7 @@ import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/app/[tenant]/[workspace]/(subapps)/invoices/[type]/content';
-import {fetchInvoices} from '@/subapps/invoices/common/orm/invoices';
+import {findInvoices} from '@/subapps/invoices/common/orm/invoices';
 
 export default async function Invoices({
   params,
@@ -68,7 +68,7 @@ export default async function Invoices({
     partnerKey: PartnerKey.PARTNER,
   });
 
-  const result: any = await fetchInvoices({
+  const result: any = await findInvoices({
     params: {
       where: invoicesWhereClause,
       page,

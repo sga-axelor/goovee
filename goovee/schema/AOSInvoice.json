@@ -88,6 +88,10 @@
     {
       "name": "statusSelect",
       "type": "Int"
+    },
+    {
+      "name": "archived",
+      "type": "Boolean"
     }
   ]
 }

@@ -61,6 +61,7 @@ export default async function Page({
 
   const invoice = await findInvoice({
     id,
+    type,
     params: {
       where: invoicesWhereClause,
     },
