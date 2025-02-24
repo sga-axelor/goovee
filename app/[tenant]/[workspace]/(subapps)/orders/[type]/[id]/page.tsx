@@ -12,6 +12,7 @@ import {getWhereClauseForEntity} from '@/utils/filters';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
+import {ORDER} from '@/subapps/orders/common/constants/orders';
 
 export default async function Page({
   params,
@@ -63,7 +64,7 @@ export default async function Page({
     isContactAdmin,
     partnerKey: PartnerKey.PARTNER,
   });
-  const isArchived = type === 'archived' ? true : false;
+  const isArchived = type === ORDER.ARCHIVED ? true : false;
 
   const order = await findOrder({
     id,

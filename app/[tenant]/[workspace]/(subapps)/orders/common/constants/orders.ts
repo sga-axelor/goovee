@@ -61,3 +61,8 @@ export const INVOICE = 'Invoice';
 export const ORDER_NUMBER = 'Order number';
 export const CUSTOMER_DELIVERY = 'Customer delivery';
 export const DOWNLOAD_PDF = 'Download pdf';
+
+export const ORDER = {
+  ONGOING: 'ongoing',
+  ARCHIVED: 'archived',
+};
