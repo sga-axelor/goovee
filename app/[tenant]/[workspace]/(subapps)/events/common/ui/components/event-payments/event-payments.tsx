@@ -14,12 +14,13 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Paypal, Stripe} from '@/ui/components/payment';
 
 // ---- LOCAL IMPORTS ---- //
-import {validateRegistration} from '@/subapps/events/common/actions/actions';
+import {
+  register,
+  validateRegistration,
+} from '@/subapps/events/common/actions/actions';
 import {
   createStripeCheckoutSession,
-  paypalCaptureOrder,
   paypalCreateOrder,
-  validateStripePayment,
 } from '@/app/[tenant]/[workspace]/(subapps)/events/common/actions/payments';
 import {mapParticipants} from '@/subapps/events/common/utils';
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
@@ -168,13 +169,11 @@ export function EventPayments({
           captureOrder={async orderID => {
             const formValues = getMappedParticipants(form, metaFields);
 
-            return await paypalCaptureOrder({
-              orderID,
-              workspaceURL,
+            return await register({
+              payment: {id: orderID, mode: PaymentOption.paypal},
+              workspace: {url: workspaceURL},
               values: formValues,
-              event: {
-                id: event.id,
-              },
+              eventId: event.id,
             });
           }}
           onApprove={redirectToEvents}
@@ -219,13 +218,11 @@ export function EventPayments({
           onValidateSession={async ({stripeSessionId}) => {
             const formValues: any = await getitem(eventFormKey).catch(() => {});
 
-            return await validateStripePayment({
-              stripeSessionId,
-              workspaceURL,
+            return await register({
+              payment: {id: stripeSessionId, mode: PaymentOption.stripe},
+              workspace: {url: workspaceURL},
               values: formValues,
-              event: {
-                id: event.id,
-              },
+              eventId: event.id,
             });
           }}
           onPaymentSuccess={async () => await setitem(eventFormKey, null)}

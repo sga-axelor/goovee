@@ -280,8 +280,6 @@ export async function findEvent({
       id: productsFromWS?.currencyId,
       code: productsFromWS?.currencyCode,
     },
-    formattedEventStartDateTime: await formatDate(event.eventStartDateTime!),
-    formattedEventEndDateTime: await formatDate(event.eventEndDateTime!),
   };
 }
 

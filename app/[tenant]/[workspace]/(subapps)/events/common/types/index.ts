@@ -72,8 +72,6 @@ export type Event = {
     id: string;
     code: string;
   };
-  formattedEventStartDateTime: string;
-  formattedEventEndDateTime: string;
 };
 
 export type EventPayments = {

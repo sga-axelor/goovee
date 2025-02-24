@@ -8,25 +8,19 @@ import {manager, type Tenant} from '@/tenant';
 import {ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {findEvent} from '@/subapps/events/common/orm/event';
-import {findEventRegistration} from '@/subapps/events/common/orm/registration';
 import {error} from '@/subapps/events/common/utils';
 
 export async function createInvoice({
   workspaceURL,
   tenantId,
   registrationId,
-  eventId,
+  currencyCode,
 }: {
   workspaceURL: string;
   tenantId: Tenant['id'];
   registrationId: ID;
-  eventId: ID;
+  currencyCode: string;
 }) {
-  if (!registrationId) {
-    return error(await t('Event registration ID is required.'));
-  }
-
   const tenant = await manager.getTenant(tenantId);
   const aos = tenant?.config?.aos;
 
@@ -50,26 +44,10 @@ export async function createInvoice({
       return error(await t('Partner workspace id is missing.'));
     }
 
-    const event = await findEvent({id: eventId, workspace, tenantId, user});
-    if (!event) {
-      return error(await t('Event not found.'));
-    }
-
-    const eventRegistration = await findEventRegistration({
-      workspaceURL,
-      tenantId,
-      id: registrationId,
-      eventId: event.id,
-    });
-
-    if (!eventRegistration) {
-      return error(await t('Event registration not found.'));
-    }
-
     const payload = {
-      currencyCode: event.currency.code,
+      currencyCode,
       partnerWorkspaceId,
-      registrationId: eventRegistration.id,
+      registrationId,
     };
 
     const {data} = await axios.post(ws, payload, {

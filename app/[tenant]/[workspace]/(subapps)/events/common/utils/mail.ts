@@ -6,8 +6,9 @@ import {Participant} from '@/types';
 import {html} from '@/utils/template-string';
 import {findEvent} from '../orm/event';
 import {generateIcs} from './index';
+import {formatDate} from '@/lib/core/locale/server/formatters';
 
-export function mailTemplate({
+export async function mailTemplate({
   event,
   participant,
 }: {
@@ -18,8 +19,8 @@ export function mailTemplate({
     eventTitle,
     eventPlace,
     eventAllDay,
-    formattedEventStartDateTime,
-    formattedEventEndDateTime,
+    eventStartDateTime,
+    eventEndDateTime,
     eventDescription,
     slug,
     workspace,
@@ -28,6 +29,8 @@ export function mailTemplate({
   const {name, surname, subscriptionSet = []} = participant;
   const fullName = `${name} ${surname}`.trim();
 
+  const formattedEventStartDateTime = await formatDate(eventStartDateTime);
+  const formattedEventEndDateTime = await formatDate(eventEndDateTime);
   const dateDetails = eventAllDay
     ? html`<strong>Date:</strong> ${formattedEventStartDateTime}`
     : html`<strong>Date:</strong> ${formattedEventStartDateTime} -
@@ -175,8 +178,8 @@ export const generateRegistrationMailAction = async ({
   const subject = `🎉 You're Registered for "${event.eventTitle}"!`;
   const ics = generateIcs(event, participants);
 
-  const mailPromises = participants.map(participant => {
-    const emailContent = mailTemplate({event, participant});
+  const mailPromises = participants.map(async participant => {
+    const emailContent = await mailTemplate({event, participant});
     return mailService.notify({
       to: participant.emailAddress,
       subject,

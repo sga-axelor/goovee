@@ -20,7 +20,6 @@ import {ID, PaymentOption, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
-import {formatAmountForStripe} from '@/utils/stripe';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -28,6 +27,7 @@ import {
   withSubapp,
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
+import {REQUIRED_FIELDS} from '@/subapps/events/common/constants';
 import {
   findEvent,
   findEventConfig,
@@ -49,8 +49,10 @@ import {
   getTotalRegisteredParticipants,
   hasEventEnded,
   isAlreadyRegistered,
+  validateRequiredFormFields,
 } from '@/subapps/events/common/utils/registration';
-import {validatePaymentMode} from '@/subapps/events/common/utils/validate';
+import {validatePayment} from '@/subapps/events/common/utils/validate';
+import {createInvoice} from '@/subapps/events/common/utils/invoice';
 
 export async function getAllEvents({
   limit,
@@ -130,6 +132,18 @@ export async function validateRegistration({
   if (!eventId) return error(await t('Event ID is missing!'));
   if (!values) return error(await t('Values are missing!'));
   // TODO: Handle the form validation here
+
+  if (!Object.keys(values)?.length) {
+    return error(await t('Form values are missing'));
+  }
+  const validationResult = await validateRequiredFormFields(
+    values,
+    REQUIRED_FIELDS,
+    t,
+  );
+  if (validationResult) {
+    return error(validationResult.error);
+  }
   if (!tenantId) return error(await t('TenantId is required'));
   if (!workspaceURL) return error(await t('Workspace is missing!'));
 
@@ -276,6 +290,7 @@ export async function register({
 }): ActionResponse<{id: ID; version: number}> {
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) return error(await t('Tenant ID is missing!'));
+
   const validationResult = await validateRegistration({
     eventId,
     values,
@@ -299,47 +314,20 @@ export async function register({
   };
 
   if (expectedAmount > 0) {
-    if (!payment) {
+    if (!payment?.id || !payment?.mode) {
       return error(await t('Payment is required for this event.'));
     }
-    let isValid = false;
-    let paidAmount = 0;
-
-    try {
-      ({isValid, paidAmount} = await validatePaymentMode(
-        payment.id,
-        payment.mode,
-      ));
-    } catch (err) {
-      console.error('Payment validation error:', err);
-      return error(await t('Payment validation failed.'));
-    }
-
-    if (!isValid) {
-      return error(
-        await t(
-          `Payment validation failed for {0}.`,
-          payment.mode.toUpperCase(),
-        ),
-      );
-    }
-
-    if (payment.mode === PaymentOption.stripe) {
-      expectedAmount = formatAmountForStripe(
-        Number(expectedAmount || 0),
-        $event.currency.code,
-      );
-    }
-
-    if (paidAmount < expectedAmount) {
-      return error(
-        await t(
-          `Paid amount ({0}) is less than expected ({1}).`,
-          String(paidAmount),
-          String(expectedAmount),
-        ),
-      );
-    }
+    const paymentValidationResult = await validatePayment({
+      payment: {
+        id: payment?.id,
+        mode: payment?.mode,
+        amount: expectedAmount,
+        currencyCode: $event.currency?.code,
+      },
+      workspaceURL,
+      tenantId,
+    });
+    if (paymentValidationResult.error) return paymentValidationResult;
   }
 
   const participants = getParticipantsFromValues(values);
@@ -350,7 +338,15 @@ export async function register({
     tenantId,
   });
 
-  await generateRegistrationMailAction({
+  if (expectedAmount > 0) {
+    createInvoice({
+      workspaceURL,
+      tenantId,
+      registrationId: registration.id,
+      currencyCode: $event.currency?.code,
+    });
+  }
+  generateRegistrationMailAction({
     eventId,
     participants,
     workspaceURL,
