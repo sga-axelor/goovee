@@ -19,7 +19,7 @@ import {
 } from '@/subapps/orders/common/constants/orders';
 import type {Invoice, Order} from '@/subapps/orders/common/types/orders';
 
-export const fetchOrders = async ({
+export const findOrders = async ({
   archived = false,
   params = {},
   tenantId,

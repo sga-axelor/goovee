@@ -11,7 +11,7 @@ import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/orders/[type]/content';
-import {fetchOrders} from '@/subapps/orders/common/orm/orders';
+import {findOrders} from '@/subapps/orders/common/orm/orders';
 import {ORDER} from '@/subapps/orders/common/constants/orders';
 
 export default async function Page({
@@ -64,7 +64,7 @@ export default async function Page({
 
   const isArchived = type === ORDER.ARCHIVED ? true : false;
 
-  const result = await fetchOrders({
+  const result = await findOrders({
     archived: isArchived,
     params: {
       where,
