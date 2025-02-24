@@ -11,8 +11,6 @@ import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {ComputedProduct, ID, Product} from '@/types';
 
-// ---- LOCAL IMPORTS ---- //
-
 export type ProductListItemProps = {
   product: ComputedProduct;
   quantity?: string | number;
