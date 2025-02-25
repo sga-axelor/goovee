@@ -71,3 +71,7 @@ export enum EVENT_STATUS {
   DRAFT = 0,
   PUBLISHED = 1,
 }
+
+export const URL_PARAMS = {
+  isPaid: 'isPaid',
+};

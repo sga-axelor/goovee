@@ -43,7 +43,7 @@ function Content({event}: ContentProps) {
           <AlertToast
             show={true}
             title={i18n.t(
-              `${isPaid ? 'Thank you very much for your payment, ' : ''}You are now registered for this event`,
+              `${isPaid ? 'Thank you very much for your payment, you' : 'You'} are now registered for this event`,
             )}
             variant="success"
           />
@@ -52,8 +52,8 @@ function Content({event}: ContentProps) {
           <Link
             href={`${workspaceURI}/${SUBAPP_CODES.events}`}
             className="flex gap-2">
+            <MdKeyboardBackspace size={24} />
             {i18n.t('Go back to the homepage')}{' '}
-            <MdKeyboardBackspace className="rotate-180" size={24} />
           </Link>
         </Button>
       </div>

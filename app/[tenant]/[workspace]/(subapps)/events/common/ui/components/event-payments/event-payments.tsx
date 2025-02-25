@@ -8,12 +8,7 @@ import {ID, PaymentOption, PortalWorkspace} from '@/types';
 import {useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {getitem, setitem} from '@/storage/local';
-import {
-  PREFIX_EVENT_FORM_KEY,
-  SUBAPP_CODES,
-  SUBAPP_PAGE,
-  URL_PARAMS,
-} from '@/constants';
+import {PREFIX_EVENT_FORM_KEY, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Paypal, Stripe} from '@/ui/components/payment';
@@ -29,6 +24,7 @@ import {
 import {mapParticipants} from '@/subapps/events/common/utils';
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 import type {EventPayments} from '@/subapps/events/common/types';
+import {URL_PARAMS} from '@/subapps/events/common/constants';
 
 export function EventPayments({
   workspace,

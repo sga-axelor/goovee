@@ -150,7 +150,6 @@ export const URL_PARAMS = {
   category: 'category',
   date: 'date',
   query: 'query',
-  isPaid: 'isPaid',
 };
 
 /**
