@@ -1,6 +1,8 @@
+'use client';
+
 import React, {useState} from 'react';
 import {cva, VariantProps} from 'class-variance-authority';
-import {MdInfoOutline, MdClose} from 'react-icons/md';
+import {MdInfoOutline, MdClose, MdCheckCircleOutline} from 'react-icons/md';
 
 import {cn} from '@/utils/css';
 
@@ -11,6 +13,7 @@ const alertToastVariants = cva(
       variant: {
         default: 'bg-gray-100 text-gray-800 border-gray-300',
         info: 'bg-palette-purple text-palette-purple-dark border-palette-purple-dark',
+        success: 'bg-palette-green-light text-success-dark border-success-dark',
       },
     },
     defaultVariants: {
@@ -19,9 +22,10 @@ const alertToastVariants = cva(
   },
 );
 
-const variantIcons: Record<'default' | 'info', JSX.Element> = {
+const variantIcons: Record<'default' | 'info' | 'success', JSX.Element> = {
   default: <MdInfoOutline size={24} />,
   info: <MdInfoOutline size={24} />,
+  success: <MdCheckCircleOutline size={24} />,
 };
 
 export interface AlertToastProps

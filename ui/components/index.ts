@@ -217,3 +217,4 @@ export {DocViewer} from './doc-viewer';
 export {AutosizeTextarea} from './textarea-auto-size';
 export {MobileCategoryMenu} from './mobile-category-menu';
 export {NavbarCategoryMenu} from './navbar-category-menu';
+export {AlertToast} from './alert-toast';

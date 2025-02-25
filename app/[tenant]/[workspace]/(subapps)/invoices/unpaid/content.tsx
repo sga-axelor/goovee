@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {type PortalWorkspace} from '@/types';
-import {Container, NavView, TableList} from '@/ui/components';
+import {Container, NavView, TableList, AlertToast} from '@/ui/components';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSortBy, useToast} from '@/ui/hooks';
@@ -18,10 +18,7 @@ import {
   INVOICE,
   INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
-import {
-  AlertToast,
-  UnpaidColumns,
-} from '@/subapps/invoices/common/ui/components';
+import {UnpaidColumns} from '@/subapps/invoices/common/ui/components';
 
 export default function Content({
   invoices = [],

@@ -95,7 +95,7 @@ export const DEFAULT_THEME_OPTIONS: Theme = {
       },
       green: {
         default: '122 39% 49%',
-        light: '122 37% 84%',
+        light: '136 47% 87%',
         dark: '123 43% 39%',
       },
       lightgreen: {
