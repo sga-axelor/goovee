@@ -48,7 +48,7 @@ export const NavbarCategoryMenu = ({
 
   useEffect(() => {
     handleIndicator();
-  }, []);
+  }, [large]);
 
   const handleIndicator = () => {
     setIsBeginning(swiperRef.current?.isBeginning || false);
