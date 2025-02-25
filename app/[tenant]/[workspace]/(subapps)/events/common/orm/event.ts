@@ -158,7 +158,6 @@ export async function findEvent({
         eventImage: {id: true},
         eventDescription: true,
         eventPlace: true,
-        eventLink: true,
         eventStartDateTime: true,
         eventEndDateTime: true,
         eventAllDay: true,
@@ -269,6 +268,8 @@ export async function findEvent({
     };
   });
 
+  const eventLink = `${workspace.url}/${SUBAPP_CODES.events}/${slug}`;
+
   return {
     ...event,
     displayWt,
@@ -280,6 +281,7 @@ export async function findEvent({
       id: productsFromWS?.currencyId,
       code: productsFromWS?.currencyCode,
     },
+    eventLink,
   };
 }
 

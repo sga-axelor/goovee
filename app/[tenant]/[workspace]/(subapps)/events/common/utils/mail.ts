@@ -22,8 +22,7 @@ export async function mailTemplate({
     eventStartDateTime,
     eventEndDateTime,
     eventDescription,
-    slug,
-    workspace,
+    eventLink,
   } = event;
 
   const {name, surname, subscriptionSet = []} = participant;
@@ -41,8 +40,6 @@ export async function mailTemplate({
         .map((subscription: any) => html`<li>${subscription.facility}</li>`)
         .join('')
     : null;
-
-  const eventLink = `${workspace.url}/${SUBAPP_CODES.events}/${slug}`;
 
   return html`
     <!doctype html>

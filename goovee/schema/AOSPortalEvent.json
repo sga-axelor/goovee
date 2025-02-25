@@ -35,10 +35,6 @@
       "type": "String"
     },
     {
-      "name": "eventLink",
-      "type": "String"
-    },
-    {
       "name": "eventAllowRegistration",
       "type": "Boolean"
     },
