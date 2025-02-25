@@ -17,7 +17,7 @@ const Content = ({
 }) => {
   return (
     <>
-      <main className="flex-1 py-6 px-4 lg:px-[100px] flex flex-col lg:flex-row gap-6 pb-20">
+      <main className="container mx-auto  flex-1 py-6 flex flex-col lg:flex-row gap-6 pb-20">
         <div className="order-2 lg:order-1 space-y-6 w-full">
           <RegistrationForm
             eventDetails={eventDetails}
