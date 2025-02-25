@@ -11,10 +11,7 @@ import type {Partner, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
-import {
-  INVOICE,
-  INVOICE_STATUS,
-} from '@/subapps/invoices/common/constants/invoices';
+import {INVOICE} from '@/subapps/invoices/common/constants/invoices';
 import {buildWhereClause} from '@/subapps/invoices/common/utils/invoices';
 
 export const findInvoices = async ({

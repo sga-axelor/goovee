@@ -5,16 +5,25 @@ import React from 'react';
 // ---- CORE IMPORTS ---- //
 import {Tag, Separator} from '@/ui/components';
 import {i18n} from '@/locale';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
-import {
-  INVOICE,
-  INVOICE_TYPE,
-} from '@/subapps/invoices/common/constants/invoices';
+import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
+import type {Invoice as InvoiceType} from '@/subapps/invoices/common/types/invoices';
 
-export default function Content({invoice, workspace}: any) {
-  const {invoiceId, dueDate, invoiceDate, amountRemaining, isUnpaid} = invoice;
+interface ContentProps {
+  invoice: InvoiceType;
+  workspace: PortalWorkspace;
+  invoiceType: string;
+}
+
+export default function Content({
+  invoice,
+  workspace,
+  invoiceType,
+}: ContentProps) {
+  const {invoiceId, dueDate, invoiceDate, isUnpaid} = invoice;
 
   const status = isUnpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
 
@@ -49,6 +58,7 @@ export default function Content({invoice, workspace}: any) {
           {isUnpaid && (
             <Total
               invoice={invoice}
+              invoiceType={invoiceType}
               isUnpaid={isUnpaid}
               workspace={workspace}
             />

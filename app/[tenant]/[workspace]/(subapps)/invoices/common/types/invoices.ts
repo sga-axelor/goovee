@@ -14,6 +14,8 @@ export type Invoice = {
     id: string | number;
     symbol: string;
   };
+  isUnpaid: boolean;
+  dueDate: string;
 };
 
 export type InvoiceProps = {
@@ -25,6 +27,7 @@ export type TotalProps = {
   invoice: Invoice;
   isUnpaid?: boolean;
   workspace?: PortalWorkspace;
+  invoiceType: string;
 };
 
 export type InvoiceTable = {

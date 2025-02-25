@@ -26,10 +26,13 @@ import {
   PaymentType,
   TotalProps,
 } from '@/subapps/invoices/common/types/invoices';
-import {INVOICE_PAYMENT_OPTIONS} from '@/subapps/invoices/common/constants/invoices';
+import {
+  INVOICE,
+  INVOICE_PAYMENT_OPTIONS,
+} from '@/subapps/invoices/common/constants/invoices';
 import {InvoicePayments} from '@/subapps/invoices/common/ui/components';
 
-export function Total({isUnpaid, workspace, invoice}: TotalProps) {
+export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
   const {
     inTaxTotal,
     exTaxTotal,
@@ -149,94 +152,97 @@ export function Total({isUnpaid, workspace, invoice}: TotalProps) {
           <div className="ml-auto">{amountRemaining?.formattedValue}</div>
         </div>
       </div>
-
-      {allowInvoicePayment && !show && (
-        <div className="flex flex-col gap-2.5">
-          <div className="flex flex-col gap-4">
-            <Button
-              variant={'success'}
-              className="text-white font-medium"
-              disabled={!form.formState.isValid}
-              onClick={async () => {
-                const isValid = await form.trigger('amount');
-                if (isValid) {
-                  form.setValue('amount', String(remainingAmountValue));
-                  form.handleSubmit(onSubmit)();
-                }
-              }}>
-              {i18n.t('Pay all')}
-            </Button>
-            <Button
-              variant={'success'}
-              className="text-white font-medium"
-              disabled={!form.formState.isValid}
-              onClick={async () => {
-                const isValid = await form.trigger('amount');
-                if (isValid) {
-                  form.handleSubmit(onSubmit)();
-                }
-              }}>
-              {i18n.t('Partially pay')}
-            </Button>
-          </div>
-          <Form {...form}>
-            <form className="space-y-4">
-              <FormField
-                control={form.control}
-                name="amount"
-                render={({field}) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder={i18n.t('Enter the amount to pay')}
-                        value={field.value}
-                        onChange={handleChange}
-                        inputMode="decimal"
-                        type="number"
-                        step="0.1"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </div>
-      )}
-
-      {allowInvoicePayment && show && (
-        <div className="flex flex-col gap-2.5">
-          {PaymentType.IsPartial && (
-            <>
-              <div className="flex items-center gap-2.5">
-                <MdArrowBack
-                  className="w-6 h-6 cursor-pointer"
-                  onClick={() => setShow(false)}
-                />
-                <span className="text-xl font-medium">
-                  {paymentType === PaymentType.IsTotal
-                    ? i18n.t('Pay all')
-                    : `${i18n.t('Pay partially')}: ${formatNumber(
-                        currentAmount || 0,
-                        {
-                          currency: currency.symbol,
-                          type: 'DECIMAL',
-                        },
-                      )}`}
-                </span>
+      {invoiceType !== INVOICE.ARCHIVED && (
+        <>
+          {allowInvoicePayment && !show && (
+            <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-4">
+                <Button
+                  variant={'success'}
+                  className="text-white font-medium"
+                  disabled={!form.formState.isValid}
+                  onClick={async () => {
+                    const isValid = await form.trigger('amount');
+                    if (isValid) {
+                      form.setValue('amount', String(remainingAmountValue));
+                      form.handleSubmit(onSubmit)();
+                    }
+                  }}>
+                  {i18n.t('Pay all')}
+                </Button>
+                <Button
+                  variant={'success'}
+                  className="text-white font-medium"
+                  disabled={!form.formState.isValid}
+                  onClick={async () => {
+                    const isValid = await form.trigger('amount');
+                    if (isValid) {
+                      form.handleSubmit(onSubmit)();
+                    }
+                  }}>
+                  {i18n.t('Partially pay')}
+                </Button>
               </div>
-              <Separator />
-            </>
+              <Form {...form}>
+                <form className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="amount"
+                    render={({field}) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder={i18n.t('Enter the amount to pay')}
+                            value={field.value}
+                            onChange={handleChange}
+                            inputMode="decimal"
+                            type="number"
+                            step="0.1"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </div>
           )}
-          <InvoicePayments
-            workspace={workspace}
-            invoice={invoice}
-            amount={currentAmount}
-            paymentType={paymentType}
-          />
-        </div>
+
+          {allowInvoicePayment && show && (
+            <div className="flex flex-col gap-2.5">
+              {PaymentType.IsPartial && (
+                <>
+                  <div className="flex items-center gap-2.5">
+                    <MdArrowBack
+                      className="w-6 h-6 cursor-pointer"
+                      onClick={() => setShow(false)}
+                    />
+                    <span className="text-xl font-medium">
+                      {paymentType === PaymentType.IsTotal
+                        ? i18n.t('Pay all')
+                        : `${i18n.t('Pay partially')}: ${formatNumber(
+                            currentAmount || 0,
+                            {
+                              currency: currency.symbol,
+                              type: 'DECIMAL',
+                            },
+                          )}`}
+                    </span>
+                  </div>
+                  <Separator />
+                </>
+              )}
+              <InvoicePayments
+                workspace={workspace}
+                invoice={invoice}
+                amount={currentAmount}
+                paymentType={paymentType}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
