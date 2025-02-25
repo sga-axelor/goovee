@@ -16,7 +16,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {FormView, ArrayComponent, formatStudioFields} from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
-import {SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {BadgeList, Button} from '@/ui/components';
 import {useSearchParams} from '@/ui/hooks';
 
@@ -63,6 +63,7 @@ export const RegistrationForm = ({
     eventProduct = null,
     isPrivate = false,
     maxParticipantPerRegistration,
+    slug,
   } = eventDetails || {};
 
   const [totalPrice, setTotalPrice] = useState<number>(0);
@@ -356,7 +357,9 @@ export const RegistrationForm = ({
           variant: 'success',
           title: i18n.t(SUCCESS_REGISTER_MESSAGE),
         });
-        router.push(`${workspaceURI}/${SUBAPP_CODES.events}`);
+        router.push(
+          `${workspaceURI}/${SUBAPP_CODES.events}/${slug}/${SUBAPP_PAGE.register}/${SUBAPP_PAGE.confirmation}`,
+        );
       } else {
         toast({
           variant: 'destructive',

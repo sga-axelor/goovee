@@ -8,7 +8,12 @@ import {ID, PaymentOption, PortalWorkspace} from '@/types';
 import {useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {getitem, setitem} from '@/storage/local';
-import {PREFIX_EVENT_FORM_KEY, SUBAPP_CODES} from '@/constants';
+import {
+  PREFIX_EVENT_FORM_KEY,
+  SUBAPP_CODES,
+  SUBAPP_PAGE,
+  URL_PARAMS,
+} from '@/constants';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Paypal, Stripe} from '@/ui/components/payment';
@@ -56,7 +61,10 @@ export function EventPayments({
   const redirectToEvents = useCallback(
     async (result: any) => {
       if (result) {
-        router.replace(`${workspaceURI}/${SUBAPP_CODES.events}`);
+        const {data} = result;
+        router.replace(
+          `${workspaceURI}/${SUBAPP_CODES.events}/${data.event.slug}/${SUBAPP_PAGE.register}/${SUBAPP_PAGE.confirmation}?${URL_PARAMS.isPaid}=true`,
+        );
       }
     },
     [workspaceURI, router],

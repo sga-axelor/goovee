@@ -81,6 +81,11 @@ export async function registerParticipants({
       createdOn: timeStamp,
       updatedOn: timeStamp,
     },
+    select: {
+      event: {
+        slug: true,
+      },
+    },
   });
 
   return registration;

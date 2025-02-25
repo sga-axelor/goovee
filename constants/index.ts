@@ -95,6 +95,8 @@ export const SUBAPP_PAGE = {
   account: 'account',
   openSurvey: 'open',
   responseSurvey: 'response',
+  register: 'register',
+  confirmation: 'confirmation',
 };
 
 /**
@@ -148,6 +150,7 @@ export const URL_PARAMS = {
   category: 'category',
   date: 'date',
   query: 'query',
+  isPaid: 'isPaid',
 };
 
 /**
