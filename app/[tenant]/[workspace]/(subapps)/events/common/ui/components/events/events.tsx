@@ -169,7 +169,7 @@ export const Events = ({
                 href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`}
                 key={event.slug}
                 passHref>
-                <EventCard event={event} key={event.id} workspace={workspace} />
+                <EventCard event={event} key={event.id} />
               </Link>
             ))
           ) : (

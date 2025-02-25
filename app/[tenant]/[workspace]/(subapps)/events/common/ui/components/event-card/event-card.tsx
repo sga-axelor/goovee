@@ -23,7 +23,7 @@ import {formatDate} from '@/locale/formatters';
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
 import styles from './event-card.module.scss';
 
-export const EventCard = ({event, workspace}: EventCardProps) => {
+export const EventCard = ({event}: EventCardProps) => {
   const {tenant} = useWorkspace();
 
   const stripImages = (htmlContent: any = '') =>

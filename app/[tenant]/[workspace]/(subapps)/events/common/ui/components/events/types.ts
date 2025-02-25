@@ -62,5 +62,4 @@ export interface CategoriesProps {
 }
 export interface EventCardProps {
   event: Event;
-  workspace: PortalWorkspace;
 }
