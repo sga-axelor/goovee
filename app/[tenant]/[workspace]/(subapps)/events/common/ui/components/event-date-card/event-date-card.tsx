@@ -63,16 +63,16 @@ export const EventDateCard = ({
       <div className="flex items-center gap-x-2">
         <MdOutlineCalendarMonth className="w-6 h-6 text-success" />
         <div className="flex">
-          <p className=" flex text-base gap-2">
+          <p className=" flex text-base gap-2 flex-row flex-wrap">
             <span className="font-semibold">{startDateTime.startDay}</span>{' '}
-            {i18n.t(startDateTime.startTime)}
+            <span> {i18n.t(startDateTime.startTime)}</span>
             {eventAllDay || !endDateTime.endDay ? (
               ' '
             ) : (
               <span className="mx-2">{i18n.t('to')}</span>
             )}
             <span className="font-semibold">{endDateTime.endDay}</span>{' '}
-            {i18n.t(endDateTime.endTime)}
+            <span>{i18n.t(endDateTime.endTime)}</span>
           </p>
         </div>
       </div>
