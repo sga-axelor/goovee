@@ -118,10 +118,19 @@ export function ProductView({
         <div className="grid md:grid-cols-[36%_1fr] grid-cols-1 gap-5">
           <div className="overflow-hidden rounded-lg">
             <ThumbsCarousel
-              images={product.images?.map(i => ({
-                id: i as string,
-                url: getImageURL(i, tenant) as string,
-              }))}
+              images={
+                product.images?.length
+                  ? product.images.map(i => ({
+                      id: i as string,
+                      url: getImageURL(i, tenant) as string,
+                    }))
+                  : [
+                      {
+                        id: 1,
+                        url: getImageURL('', tenant, {noimage: true}),
+                      },
+                    ]
+              }
             />
           </div>
           <div className="rounded-lg border bg-card text-card-foreground p-4">
