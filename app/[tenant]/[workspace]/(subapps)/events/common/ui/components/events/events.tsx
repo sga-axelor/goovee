@@ -108,9 +108,13 @@ export const Events = ({
   };
   const renderSearch = () => (
     <Search
-      findQuery={async () => {
+      findQuery={async ({query}: any) => {
         try {
-          const response: any = await getAllEvents({workspace, user});
+          const response: any = await getAllEvents({
+            workspace,
+            user,
+            search: query,
+          });
           if (response?.error) {
             toast({
               variant: 'destructive',

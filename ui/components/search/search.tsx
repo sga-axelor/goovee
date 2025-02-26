@@ -55,9 +55,7 @@ export const Search = ({
       } catch (error) {
         console.error('Error fetching search results:', error);
       } finally {
-        if (searchRef.current === search) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     }, 500),
     [findQuery],
