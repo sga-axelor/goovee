@@ -43,7 +43,9 @@ export async function registerParticipants({
       } = participant;
 
       const contact = contacts.find(
-        c => emailAddress && c.emailAddress?.address === emailAddress,
+        c =>
+          emailAddress &&
+          c.emailAddress?.address?.toLowerCase() === emailAddress.toLowerCase(),
       );
 
       function parse(value: Maybe<string>) {
@@ -60,7 +62,7 @@ export async function registerParticipants({
         company,
         name,
         surname,
-        emailAddress,
+        emailAddress: emailAddress.toLowerCase(),
         phone,
         contactAttrs: parse(contactAttrs),
         sequence,
@@ -109,13 +111,22 @@ export async function getEventContacts({
       .filter(
         (p, i, self) =>
           p.emailAddress &&
-          self.findIndex(s => s.emailAddress === p.emailAddress) === i,
+          self.findIndex(
+            s => s.emailAddress.toLowerCase() === p.emailAddress.toLowerCase(),
+          ) === i,
       ) // Filter out duplicate emails
       .map(async participant => {
         const {emailAddress, name, surname, company, phone} = participant;
         const c = await manager.getClient(tenantId);
         const partner = await c.aOSPartner.findOne({
-          where: {emailAddress: {address: emailAddress}},
+          where: {
+            emailAddress: {
+              OR: [
+                {address: emailAddress},
+                {address: emailAddress.toLowerCase()},
+              ],
+            },
+          },
           select: {emailAddress: {address: true}},
         });
         if (partner) return partner;
@@ -123,7 +134,12 @@ export async function getEventContacts({
         const eventContact = await c.aOSPartner.create({
           data: {
             partnerTypeSelect: PartnerTypeMap[UserType.individual],
-            emailAddress: {create: {address: emailAddress, name: emailAddress}},
+            emailAddress: {
+              create: {
+                address: emailAddress.toLowerCase(),
+                name: emailAddress.toLowerCase(),
+              },
+            },
             name: surname,
             firstName: name,
             fullName: `${surname} ${name || ''}`.trim(),

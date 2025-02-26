@@ -62,7 +62,10 @@ export function canRegisterToPrivateEvent({
   privateEvent: EventConfig;
   email: string;
 }): boolean {
-  return !!(email && getAllowedEmailsForPrivateEvent(privateEvent).has(email));
+  return !!(
+    email &&
+    getAllowedEmailsForPrivateEvent(privateEvent).has(email.toLowerCase())
+  );
 }
 
 export function getAllowedEmailsForPrivateEvent(
@@ -83,7 +86,9 @@ export function getAllowedEmailsForPrivateEvent(
 }
 
 export function getPortalUserEmails(partner: EventConfigPartner): string[] {
-  const emails = isPortalUser(partner) ? [partner.emailAddress?.address] : []; // add the partner email
+  const emails = isPortalUser(partner)
+    ? [partner.emailAddress?.address?.toLowerCase()]
+    : []; // add the partner email
   const isCustomer =
     !partner.isContact && (partner.isProspect || partner.isCustomer);
   if (isCustomer) {
