@@ -539,7 +539,7 @@ export async function findProducts({
       $products.find((p: any) => Number(p.id) === Number(id));
 
     return {
-      products: Promise.all(
+      products: await Promise.all(
         productsFromWS.map(wsProduct => {
           const product = originalProduct(wsProduct.productId);
           if (!product) return null;
