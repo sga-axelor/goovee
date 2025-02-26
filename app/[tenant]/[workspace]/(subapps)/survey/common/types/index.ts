@@ -33,3 +33,16 @@ export type Response = {
   updatedOn?: string;
   createdOn: string;
 };
+
+export interface AuthSuccessResponse {
+  url: string;
+  username: string;
+  password: string;
+}
+
+export interface AuthErrorResponse {
+  error: boolean;
+  message: string;
+}
+
+export type AuthResponse = AuthSuccessResponse | AuthErrorResponse;

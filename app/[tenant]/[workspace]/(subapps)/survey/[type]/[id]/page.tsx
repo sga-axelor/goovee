@@ -48,6 +48,7 @@ export default async function Page({
         survey={response.attrs?.surveyConfig}
         response={response}
         partnerId={partnerId}
+        workspace={workspace}
       />
     );
   } else if (type === 'open') {
@@ -57,7 +58,13 @@ export default async function Page({
       tenantId: tenant,
     });
 
-    return <Content survey={clone(survey)} partnerId={partnerId} />;
+    return (
+      <Content
+        survey={clone(survey)}
+        partnerId={partnerId}
+        workspace={workspace}
+      />
+    );
   }
 
   return notFound();
