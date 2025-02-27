@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import {NextResponse} from 'next/server';
 import {readPEMFile, verifySignature} from '@/payment/paybox/crypto';
 import {getParamsWithoutSign} from '@/payment/paybox/utils';
-import { PAYBOX_ERRORS } from '@/payment/paybox/constant';
+import {PAYBOX_ERRORS} from '@/payment/paybox/constant';
 
 export async function GET(request: Request) {
   const parsed = new URL(request.url);
