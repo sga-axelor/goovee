@@ -218,3 +218,4 @@ export {AutosizeTextarea} from './textarea-auto-size';
 export {MobileCategoryMenu} from './mobile-category-menu';
 export {NavbarCategoryMenu} from './navbar-category-menu';
 export {AlertToast} from './alert-toast';
+export {AccordionMenu} from './accordion-menu';

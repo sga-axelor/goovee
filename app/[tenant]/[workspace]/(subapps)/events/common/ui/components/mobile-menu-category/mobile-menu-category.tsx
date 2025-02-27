@@ -1,72 +1,83 @@
 'use client';
 
 import {useCallback, useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {MdOutlineCalendarMonth} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Sheet,
-  SheetContent,
-  Portal,
-} from '@/ui/components';
-import {cn} from '@/utils/css';
+import {Sheet, SheetContent, Portal} from '@/ui/components';
+import {AccordionMenu} from '@/ui/components/accordion-menu/accordion-menu';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {useSearchParams} from '@/ui/hooks';
+import {i18n} from '@/lib/core/locale';
 import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from '@/subapps/events/common/ui/components/mobile-menu-category/index.module.scss';
+import {EVENT_TAB_ITEMS, EVENTS} from '@/subapps/events/common/constants/index';
+import {DEFAULT_PAGE, SUBAPP_CODES, URL_PARAMS} from '@/constants';
 
-export function MobileCategories({
-  categories = [],
-  onClick,
-}: {
-  categories?: Category[];
-  onClick?: any;
-}) {
+interface MyRegistrationItem extends AccordionMenu {
+  url: string;
+}
+
+export function MobileCategories({categories = []}: {categories?: Category[]}) {
   const [open, setOpen] = useState(false);
-
   const openSidebar = useCallback(() => setOpen(true), []);
   const closeSidebar = useCallback(() => setOpen(false), []);
+  const router = useRouter();
+  const {workspaceURI, tenant} = useWorkspace();
+  const {update} = useSearchParams();
 
-  const renderCategory = (category: any) => {
-    const {items, id, name} = category;
+  const EventItems: AccordionMenu[] = [
+    {
+      id: '1',
+      name: i18n.t('Events'),
+      items: categories as AccordionMenu[],
+    },
+  ];
 
-    const leaf = !items?.length;
-    const active = false;
+  const MyRegistrationItem: MyRegistrationItem[] = [
+    {
+      id: '2',
+      name: i18n.t('My registrations'),
+      url: '',
+      items: EVENT_TAB_ITEMS.map((item: any) => ({
+        id: item.id,
+        name: i18n.t(item.title),
+        url: item.label,
+      })),
+    },
+  ];
 
-    const handleClick = () => {
-      onClick(category);
-      if (!category?.items?.length) {
-        closeSidebar();
-      }
-    };
-
-    return (
-      <AccordionItem
-        value={String(id)}
-        className={cn('border-b-0 space-y-2 m-0', styles['accordion-item'])}
-        key={id}>
-        <AccordionTrigger
-          className={cn('hover:no-underline py-2 px-2 rounded-lg', {
-            'bg-muted': active,
-            'text-muted-foreground': active,
-          })}
-          icon={!leaf}
-          onClick={handleClick}>
-          <div className="flex grow gap-2 items-center cursor-pointer">
-            <p className="leading-4 line-clamp-1 text-start">{name}</p>
-          </div>
-        </AccordionTrigger>
-        {!leaf && (
-          <AccordionContent className="py-2 pt-4">
-            <div className="ps-6 space-y-4">{items.map(renderCategory)}</div>
-          </AccordionContent>
-        )}
-      </AccordionItem>
-    );
+  const handleItemClick = ({
+    item,
+    level,
+  }: {
+    item: AccordionMenu;
+    level: number;
+  }) => {
+    if (level !== 0) {
+      update([
+        {key: URL_PARAMS.category, value: item.id},
+        {key: URL_PARAMS.page, value: DEFAULT_PAGE},
+      ]);
+      setOpen(false);
+    }
+  };
+  const handleRegistrationItemClick = ({
+    item,
+    level,
+  }: {
+    item: MyRegistrationItem;
+    level: number;
+  }) => {
+    if (level !== 0) {
+      router.push(
+        `${workspaceURI}/${SUBAPP_CODES.events}/${EVENTS.MY_REGISTRATIONS}/${item.url}`,
+      );
+      setOpen(false);
+    }
   };
 
   return (
@@ -76,10 +87,14 @@ export function MobileCategories({
         onClick={openSidebar}
       />
       <Sheet open={open} onOpenChange={closeSidebar}>
-        <SheetContent side="left" className="bg-white divide-y divide-grey-1">
-          <Accordion type="multiple" className="w-full space-y-4 mt-4">
-            {categories.map(renderCategory)}
-          </Accordion>
+        <SheetContent
+          side="left"
+          className="bg-white divide-y divide-grey-1 w-full sm:w-3/4 px-0">
+          <AccordionMenu items={EventItems} onItemClick={handleItemClick} />
+          <AccordionMenu<MyRegistrationItem>
+            items={MyRegistrationItem}
+            onItemClick={handleRegistrationItemClick}
+          />
         </SheetContent>
       </Sheet>
     </>
@@ -88,10 +103,6 @@ export function MobileCategories({
 
 export function MobileMenuCategory({categories}: any) {
   const [container, setContainer] = useState<any>(null);
-
-  const handleCategoryClick = (category: any) => {
-    // router.push(`${workspaceURI}/events`);
-  };
 
   useEffect(() => {
     let container = document.getElementById('subapp-menu');
@@ -109,10 +120,7 @@ export function MobileMenuCategory({categories}: any) {
   return (
     container && (
       <Portal container={container}>
-        <MobileCategories
-          categories={categories}
-          onClick={handleCategoryClick}
-        />
+        <MobileCategories categories={categories} />
       </Portal>
     )
   );
