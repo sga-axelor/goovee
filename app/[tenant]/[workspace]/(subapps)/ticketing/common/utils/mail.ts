@@ -34,48 +34,39 @@ function generateTrackHTML(body: MailProps['body']) {
         <title>${title || ''}</title>
         <style>
           .mx-2 {
-            margin-left: 0.5rem;
-            margin-right: 0.5rem;
+            margin-left: 8px;
+            margin-right: 8px;
           }
-
-          .-ml-9 {
-            margin-left: -2.25rem;
+          .mx-1 {
+            margin-left: 4px;
+            margin-right: 4px;
           }
-
           .mb-1 {
-            margin-bottom: 0.25rem;
+            margin-bottom: 4px;
           }
-
           .ml-2 {
-            margin-left: 0.5rem;
+            margin-left: 8px;
           }
-
+          .px-4 {
+            padding-left: 16px;
+            padding-right: 16px;
+          }
           .flex {
             display: flex;
           }
-
           .flex-shrink-0 {
             flex-shrink: 0;
           }
-
           .list-disc {
             list-style-type: disc;
           }
-
           .items-center {
             align-items: center;
           }
-
-          .px-4 {
-            padding-left: 1rem;
-            padding-right: 1rem;
-          }
-
           .text-xs {
-            font-size: 0.75rem;
-            line-height: 1rem;
+            font-size: 12px;
+            line-height: 16px;
           }
-
           .font-semibold {
             font-weight: 600;
           }
@@ -83,9 +74,7 @@ function generateTrackHTML(body: MailProps['body']) {
       </head>
       <body>
         <div class="px-4 text-xs mb-1">
-          ${title
-            ? html`<div class="font-semibold mb-1 -ml-9">${title}</div>`
-            : ''}
+          ${title ? html`<div class="font-semibold mb-1">${title}</div>` : ''}
           <ul class="list-disc">
             ${tracks
               .map(({title, oldValue, value}) => {
@@ -96,21 +85,9 @@ function generateTrackHTML(body: MailProps['body']) {
                       <span class="font-semibold flex-shrink-0">${title}:</span>
                       <span class="flex items-center ml-2">
                         ${oldValue
-                          ? html`${oldValue}
-                              <svg
-                                class="mx-2"
-                                stroke="currentColor"
-                                fill="currentColor"
-                                stroke-width="0"
-                                viewBox="0 0 24 24"
-                                height="1em"
-                                width="1em"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill="none" d="M0 0h24v24H0z"></path>
-                                <path
-                                  d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z"></path>
-                              </svg>
-                              ${value}`
+                          ? html`<span>${oldValue}</span>
+                              <span class="mx-1">&rArr;</span>
+                              <span>${value}</span>`
                           : value}
                       </span>
                     </div>
