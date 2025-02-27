@@ -10,7 +10,7 @@ import {AccordionMenu} from '@/ui/components/accordion-menu/accordion-menu';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/lib/core/locale';
-import type {Category} from '@/types';
+import type {Category, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from '@/subapps/events/common/ui/components/mobile-menu-category/index.module.scss';
@@ -21,12 +21,18 @@ interface MyRegistrationItem extends AccordionMenu {
   url: string;
 }
 
-export function MobileCategories({categories = []}: {categories?: Category[]}) {
+export function MobileCategories({
+  categories = [],
+  user,
+}: {
+  categories?: Category[];
+  user?: User;
+}) {
   const [open, setOpen] = useState(false);
   const openSidebar = useCallback(() => setOpen(true), []);
   const closeSidebar = useCallback(() => setOpen(false), []);
   const router = useRouter();
-  const {workspaceURI, tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   const {update} = useSearchParams();
 
   const EventItems: AccordionMenu[] = [
@@ -79,6 +85,7 @@ export function MobileCategories({categories = []}: {categories?: Category[]}) {
       setOpen(false);
     }
   };
+  const isLoggedIn = user?.email;
 
   return (
     <>
@@ -90,18 +97,24 @@ export function MobileCategories({categories = []}: {categories?: Category[]}) {
         <SheetContent
           side="left"
           className="bg-white divide-y divide-grey-1 w-full sm:w-3/4 px-0">
-          <AccordionMenu items={EventItems} onItemClick={handleItemClick} />
-          <AccordionMenu<MyRegistrationItem>
-            items={MyRegistrationItem}
-            onItemClick={handleRegistrationItemClick}
+          <AccordionMenu
+            items={EventItems}
+            defaultOpenIds={!isLoggedIn ? EventItems.map(item => item.id) : []}
+            onItemClick={handleItemClick}
           />
+          {isLoggedIn && (
+            <AccordionMenu<MyRegistrationItem>
+              items={MyRegistrationItem}
+              onItemClick={handleRegistrationItemClick}
+            />
+          )}
         </SheetContent>
       </Sheet>
     </>
   );
 }
 
-export function MobileMenuCategory({categories}: any) {
+export function MobileMenuCategory({categories, user}: any) {
   const [container, setContainer] = useState<any>(null);
 
   useEffect(() => {
@@ -120,7 +133,7 @@ export function MobileMenuCategory({categories}: any) {
   return (
     container && (
       <Portal container={container}>
-        <MobileCategories categories={categories} />
+        <MobileCategories categories={categories} user={user} />
       </Portal>
     )
   );

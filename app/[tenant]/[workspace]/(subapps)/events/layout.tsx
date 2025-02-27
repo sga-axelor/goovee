@@ -59,7 +59,7 @@ export default async function Layout({
     <>
       {user && <EventNavbar user={user} />}
       {children}
-      <MobileMenuCategory categories={categories} />
+      <MobileMenuCategory categories={categories} user={user} />
     </>
   );
 }

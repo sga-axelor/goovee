@@ -21,6 +21,7 @@ interface AccordionMenuProps<T extends BaseAccordionMenu> {
   items: T[];
   onItemClick: (params: {item: T; level: number}) => void;
   level?: number;
+  defaultOpenIds?: string[];
 }
 
 export type AccordionMenu = BaseAccordionMenu & {
@@ -31,9 +32,10 @@ export const AccordionMenu = <T extends BaseAccordionMenu>({
   items,
   onItemClick,
   level = 0,
+  defaultOpenIds,
 }: AccordionMenuProps<T>) => {
   return (
-    <Accordion type="multiple" className="w-full">
+    <Accordion type="multiple" defaultValue={defaultOpenIds} className="w-full">
       {items.map((item: T) => (
         <AccordionItem
           value={item.id}
