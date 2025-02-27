@@ -290,6 +290,7 @@ export type Comment = {
 export enum PaymentOption {
   paypal = 'paypal',
   stripe = 'stripe',
+  paybox = 'paybox',
 }
 
 export interface CommentResponse {

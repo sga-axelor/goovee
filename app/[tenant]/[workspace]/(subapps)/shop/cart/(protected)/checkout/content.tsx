@@ -2,8 +2,7 @@
 
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useSession} from 'next-auth/react';
-import Link from 'next/link';
-import {useRouter} from 'next/navigation';
+import {useRouter, usePathname} from 'next/navigation';
 import {PayPalScriptProvider, PayPalButtons} from '@paypal/react-paypal-js';
 
 // ---- CORE IMPORTS ---- //
@@ -42,6 +41,8 @@ import {
   paypalCaptureOrder,
   paypalCreateOrder,
   validateStripePayment,
+  payboxCreateOrder,
+  validatePayboxPayment,
 } from './action';
 
 const SHIPPING_TYPE = {
@@ -225,10 +226,121 @@ function Paypal({onApprove}: {onApprove: any}) {
           shape: 'rect',
           height: 50,
         }}
+        className="mb-[-7px]"
         createOrder={handleCreatePaypalOrder}
         onApprove={handleApprovePaypalOrder}
       />
     </PayPalScriptProvider>
+  );
+}
+
+function Paybox({onApprove}: {onApprove: any}) {
+  const {cart, clearCart} = useCart();
+  const {toast} = useToast();
+
+  const {workspaceURL} = useWorkspace();
+  const {searchParams} = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const validateRef = useRef(false);
+
+  const noAddress = !(cart?.invoicingAddress && cart?.deliveryAddress);
+
+  const handleCreatePayboxOrder = async () => {
+    if (noAddress) {
+      toast({
+        variant: 'destructive',
+        title: i18n.t('Select address to continue'),
+      });
+      return;
+    }
+
+    const result: any = await payboxCreateOrder({
+      cart,
+      workspaceURL,
+      uri: pathname,
+    });
+
+    if (result.error) {
+      toast({
+        variant: 'destructive',
+        title: result.message,
+      });
+    } else {
+      if (result?.order?.url) {
+        router.push(result?.order?.url);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: i18n.t('Error processing payment. Try again.'),
+        });
+      }
+    }
+  };
+
+  const handleValidatePayboxPayment = useCallback(async () => {
+    try {
+      if (!cart?.items?.length) {
+        return;
+      }
+
+      const result = await validatePayboxPayment({
+        params: Object.fromEntries(searchParams.entries()),
+        cart,
+        workspaceURL,
+      });
+
+      if (result.error) {
+        toast({
+          variant: 'destructive',
+          title: result.message,
+        });
+      } else {
+        toast({
+          variant: 'success',
+          title: i18n.t('Order requested successfully'),
+        });
+
+        clearCart();
+        onApprove?.(result);
+      }
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: i18n.t('Error processing paybox payment, try again.'),
+      });
+    }
+  }, [toast, clearCart, onApprove, cart, workspaceURL, searchParams]);
+
+  useEffect(() => {
+    if (validateRef.current) {
+      return;
+    }
+
+    if (!cart?.items?.length) {
+      return;
+    }
+
+    const payboxResponse = searchParams.get('paybox_response');
+    const payboxError = searchParams.get('paybox_error');
+
+    if (payboxError) {
+      toast({
+        variant: 'destructive',
+        title: i18n.t('Error processing paybox payment, try again.'),
+      });
+    } else if (payboxResponse) {
+      handleValidatePayboxPayment();
+    }
+    validateRef.current = true;
+  }, [cart, searchParams, toast, handleValidatePayboxPayment]);
+
+  return (
+    <Button
+      className="h-[50px] text-lg font-medium"
+      onClick={handleCreatePayboxOrder}>
+      {i18n.t('Pay using Paybox')}
+    </Button>
   );
 }
 
@@ -478,6 +590,7 @@ export default function Content({
 
   const allowPaypal = allowPayment(PaymentOption.paypal);
   const allowStripe = allowPayment(PaymentOption.stripe);
+  const allowPaybox = allowPayment(PaymentOption.paybox);
 
   return (
     <>
@@ -505,6 +618,7 @@ export default function Content({
                 <>
                   {allowPaypal && <Paypal onApprove={redirectOrder} />}
                   {allowStripe && <Stripe onApprove={redirectOrder} />}
+                  {allowPaybox && <Paybox onApprove={redirectOrder} />}
                 </>
               ) : null}
             </div>

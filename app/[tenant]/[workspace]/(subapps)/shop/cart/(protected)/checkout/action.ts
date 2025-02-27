@@ -15,10 +15,12 @@ import {manager, type Tenant} from '@/tenant';
 import {PaymentOption} from '@/types';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
+import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findPartnerByEmail} from '@/orm/partner';
+import {formatAmountForPaybox} from '@/lib/core/payment/paybox/utils';
 
 async function createOrder({
   cart,
@@ -643,6 +645,266 @@ export async function validateStripePayment({
 
   const paymentTotal = stripeSession?.lines?.data?.[0]?.amount_total;
   const cartTotal = formatAmountForStripe(Number(total || 0), currencyCode);
+
+  if (paymentTotal && cartTotal && paymentTotal !== cartTotal) {
+    return {
+      error: true,
+      message: await t('Payment amount mistmatch'),
+    };
+  }
+
+  return createOrder({cart, workspaceURL, tenantId});
+}
+
+export async function payboxCreateOrder({
+  cart,
+  workspaceURL,
+  uri,
+}: {
+  cart: any;
+  workspaceURL: string;
+  uri: string;
+}) {
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      error: true,
+      message: await t('Unauthorized'),
+    };
+  }
+
+  if (!cart?.items?.length) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await t('Invalid tenant'),
+    };
+  }
+
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: await t('Invalid workspace'),
+    };
+  }
+
+  const hasShopAccess = await findSubappAccess({
+    code: SUBAPP_CODES.shop,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+
+  if (!hasShopAccess) {
+    return {
+      error: true,
+      message: await t('Unauthorized'),
+    };
+  }
+
+  if (!workspace?.config?.confirmOrder) {
+    return {
+      error: true,
+      message: await t('Not allowed'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return {
+      error: true,
+      message: await t('Online payment is not available'),
+    };
+  }
+
+  const allowPaybox = workspace?.config?.paymentOptionSet?.find(
+    (o: any) => o?.typeSelect === PaymentOption.paybox,
+  );
+
+  if (!allowPaybox) {
+    return {
+      error: true,
+      message: await t('Paybox is not available'),
+    };
+  }
+
+  const {total, currency} = computeTotal({
+    cart,
+    workspace,
+  });
+
+  const payer = await findPartnerByEmail(user?.email, tenantId);
+
+  try {
+    const response = await createPayboxOrder({
+      amount: total,
+      currency: currency?.code,
+      email: payer?.emailAddress?.address,
+      context: {
+        ...cart,
+        items: cart?.items?.map(({product, quantity}: any) => ({
+          product,
+          quantity,
+        })),
+        amount: total,
+      },
+      url: {
+        success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true`,
+        failure: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_error=true`,
+      },
+    });
+
+    return {success: true, order: response};
+  } catch (err) {
+    return {
+      error: true,
+      message: await t((err as any)?.message),
+    };
+  }
+}
+
+export async function validatePayboxPayment({
+  params,
+  cart,
+  workspaceURL,
+}: {
+  params: any;
+  cart: any;
+  workspaceURL: string;
+}) {
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      error: true,
+      message: await t('Unauthorized'),
+    };
+  }
+
+  if (!cart?.items?.length) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  if (!workspaceURL) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  const user = session?.user;
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await t('Invalid tenant'),
+    };
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return {
+      error: true,
+      message: await t('Invalid workspace'),
+    };
+  }
+
+  const hasShopAccess = await findSubappAccess({
+    code: SUBAPP_CODES.shop,
+    user,
+    url: workspace.url,
+    tenantId,
+  });
+
+  if (!hasShopAccess) {
+    return {
+      error: true,
+      message: await t('Unauthorized'),
+    };
+  }
+
+  if (!workspace?.config?.confirmOrder) {
+    return {
+      error: true,
+      message: await t('Not allowed'),
+    };
+  }
+
+  if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
+    return {
+      error: true,
+      message: await t('Online payment is not available'),
+    };
+  }
+
+  const allowPaybox = workspace?.config?.paymentOptionSet?.find(
+    (o: any) => o?.typeSelect === PaymentOption.paybox,
+  );
+
+  if (!allowPaybox) {
+    return {
+      error: true,
+      message: await t('Paybox is not available'),
+    };
+  }
+
+  if (!params) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  let payboxOrder: any;
+  try {
+    payboxOrder = await findPayboxOrder(params);
+  } catch (err) {
+    return {
+      error: true,
+      message: await t((err as any)?.message),
+    };
+  }
+
+  const {total} = computeTotal({
+    cart,
+    workspace,
+  });
+
+  const paymentTotal = formatAmountForPaybox(payboxOrder?.amount);
+  const cartTotal = formatAmountForPaybox(Number(total || 0));
 
   if (paymentTotal && cartTotal && paymentTotal !== cartTotal) {
     return {
