@@ -4,7 +4,6 @@ import {manager} from '@/tenant';
 import {findPreferences} from '@/orm/notification';
 import NotificationManager, {NotificationType} from '@/notification';
 import {getTranslation} from '@/locale/server';
-import {transformLocale} from '@/locale/utils';
 import type {PortalApp} from '@/types';
 
 async function findAppByCode({
@@ -185,7 +184,7 @@ async function sendNotifications(data: {
         users.map(u => ({
           id: u.id,
           email: u.emailAddress?.address,
-          locale: transformLocale(u.localization?.code),
+          locale: u.localization?.code,
         })),
       );
 

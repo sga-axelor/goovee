@@ -1,6 +1,6 @@
 import {DEFAULT_DATE_FORMAT, DEFAULT_LOCALE} from '@/locale/contants';
 import {dayjs, findDateFormat, findDayjsLocale} from '@/locale/dayjs';
-import {limitScale} from '@/locale/utils';
+import {limitScale, transformLocale} from '@/locale/utils';
 
 async function initDayjs(locale: string) {
   const data = await findDayjsLocale(locale);
@@ -30,7 +30,7 @@ export const l10n = (() => {
     let {minimumFractionDigits, maximumFractionDigits} = options ?? {};
     minimumFractionDigits = limitScale(minimumFractionDigits);
     maximumFractionDigits = limitScale(maximumFractionDigits);
-    return new Intl.NumberFormat(locale, {
+    return new Intl.NumberFormat(transformLocale(locale), {
       ...options,
       minimumFractionDigits,
       maximumFractionDigits,

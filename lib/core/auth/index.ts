@@ -3,7 +3,6 @@ import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
 import {findPartnerByEmail} from '@/orm/partner';
-import {transformLocale} from '@/locale/utils';
 import {type Tenant} from '@/tenant';
 
 import google from './google';
@@ -39,7 +38,7 @@ export const authOptions: NextAuthOptions = {
           simpleFullName,
           mainPartnerId: isContact ? mainPartner?.id : undefined,
           tenantId: token?.tenantId as Tenant['id'],
-          locale: transformLocale(localization?.code),
+          locale: localization?.code,
         };
       }
 
@@ -78,7 +77,7 @@ export const authOptions: NextAuthOptions = {
           token.isContact = isContact;
           token.tenantId = session.tenantId;
           token.mainPartnerId = isContact ? mainPartner?.id : undefined;
-          token.locale = transformLocale(localization?.code);
+          token.locale = localization?.code;
         }
       }
 

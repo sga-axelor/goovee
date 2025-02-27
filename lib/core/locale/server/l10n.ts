@@ -1,7 +1,7 @@
 import {headers} from 'next/headers';
 import {getSession} from '@/auth';
 import {DEFAULT_DATE_FORMAT, DEFAULT_LOCALE} from '@/locale';
-import {limitScale} from '@/locale/utils';
+import {limitScale, transformLocale} from '@/locale/utils';
 
 import {
   dayjs,
@@ -51,7 +51,7 @@ export async function l10n(l?: string) {
     minimumFractionDigits = limitScale(minimumFractionDigits);
     maximumFractionDigits = limitScale(maximumFractionDigits);
 
-    return new Intl.NumberFormat(locale, {
+    return new Intl.NumberFormat(transformLocale(locale), {
       ...options,
       minimumFractionDigits,
       maximumFractionDigits,

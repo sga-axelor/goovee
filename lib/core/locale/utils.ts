@@ -47,7 +47,7 @@ export function transformLocale(locale: string) {
 }
 
 export function findLocaleLanguage(locale: string) {
-  return locale?.split('-')?.[0];
+  return locale?.split('_')?.[0];
 }
 
 export function limitScale(value?: number) {
