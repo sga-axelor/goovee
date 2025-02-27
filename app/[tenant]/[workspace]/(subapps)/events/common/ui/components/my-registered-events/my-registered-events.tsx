@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 
@@ -12,6 +12,7 @@ import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
 import {Pagination} from '@/ui/components';
 import {URL_PARAMS, DEFAULT_PAGE, KEY, SUBAPP_CODES} from '@/constants';
+import {useResponsive} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Category, Event} from '@/subapps/events/common/ui/components';
@@ -27,6 +28,7 @@ import {
   EVENT_TAB_ITEMS,
   EVENTS,
 } from '@/subapps/events/common/constants';
+import {getMyRegistrationTabItems} from '@/subapps/events/common/utils';
 
 type TabItem = (typeof EVENT_TAB_ITEMS)[number];
 export const MyRegisteredEvents = ({
@@ -58,7 +60,10 @@ export const MyRegisteredEvents = ({
   const {update} = useSearchParams();
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
+  const res: any = useResponsive();
+  const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
 
+  const TAB_ITEMS = useMemo(() => getMyRegistrationTabItems(large), [large]);
   const handleCategory = (category: Category) => {
     const updatedCategories = selectedCategory.some(
       (c: string) => c === category.id,
@@ -174,10 +179,8 @@ export const MyRegisteredEvents = ({
             />
           </div>
           <TabsList
-            activeTab={
-              EVENT_TAB_ITEMS.find(item => item.label === eventType)!.id
-            }
-            items={EVENT_TAB_ITEMS}
+            activeTab={TAB_ITEMS.find(item => item.label === eventType)!.id}
+            items={TAB_ITEMS}
             onTabChange={handleTabChange}>
             <>
               <div className="flex flex-col space-y-4 w-full">

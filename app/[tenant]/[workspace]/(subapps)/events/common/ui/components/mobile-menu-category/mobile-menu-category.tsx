@@ -101,6 +101,7 @@ export function MobileCategories({
             items={EventItems}
             defaultOpenIds={!isLoggedIn ? EventItems.map(item => item.id) : []}
             onItemClick={handleItemClick}
+            className="mt-4"
           />
           {isLoggedIn && (
             <AccordionMenu<MyRegistrationItem>

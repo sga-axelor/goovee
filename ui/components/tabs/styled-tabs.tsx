@@ -26,11 +26,11 @@ export const StyledTabs = ({
   return (
     <>
       <Tabs defaultValue={activeTab} className="w-full">
-        <TabsList className="w-full flex bg-transparent items-center justify-start border-black">
+        <TabsList className="w-full flex bg-transparent items-center justify-between md:justify-start border-black">
           {Array.isArray(items) &&
             items.map(t => (
               <TabsTrigger
-                className="!rounded-t-[0.313rem] text-base font-semibold data-[state=active]:text-primary-foreground data-[state=active]:bg-success data-[state=inactive]:font-medium"
+                className="!rounded-t-[0.313rem] text-base font-semibold data-[state=active]:text-primary-foreground data-[state=active]:bg-success data-[state=inactive]:font-medium w-full md:w-fit"
                 key={t?.id}
                 value={t?.id}
                 onClick={() => onTabChange?.(t)}>
