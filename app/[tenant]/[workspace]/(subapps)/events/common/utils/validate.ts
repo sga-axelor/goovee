@@ -1,20 +1,17 @@
-import {getSession} from '@/auth';
+import {DEFAULT_CURRENCY_CODE} from '@/constants';
 import {t} from '@/locale/server';
-import {findWorkspace} from '@/orm/workspace';
 import {findPaypalOrder} from '@/payment/paypal/actions';
 import {findStripeOrder} from '@/payment/stripe/actions';
-import {PaymentOption} from '@/types';
+import {PaymentOption, PortalWorkspace} from '@/types';
 import type {ActionResponse} from '@/types/action';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {formatAmountForStripe} from '@/utils/stripe';
-import {DEFAULT_CURRENCY_CODE} from '@/constants';
 
 import {error} from './index';
 
 export async function validatePayment({
   payment,
-  workspaceURL,
-  tenantId,
+  workspace,
 }: {
   payment: {
     id: string;
@@ -22,14 +19,8 @@ export async function validatePayment({
     amount: number;
     currencyCode?: string;
   };
-  workspaceURL: string;
-  tenantId: string;
+  workspace: PortalWorkspace;
 }): ActionResponse<true> {
-  const session = await getSession();
-  const user = session?.user;
-
-  const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
-  if (!workspace) return error(await t('Invalid workspace'));
   const {id, mode, amount: expectedAmount, currencyCode} = payment;
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return error(await t('Online payment is not available'));

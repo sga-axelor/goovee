@@ -1,25 +1,21 @@
 'use server';
-
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/auth';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
-import {TENANT_HEADER} from '@/middleware';
 import {findPartnerByEmail} from '@/orm/partner';
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPaypalOrder} from '@/payment/paypal/actions';
 import {createStripeOrder} from '@/payment/stripe/actions';
 import {PaymentOption} from '@/types';
 import {isPaymentOptionAvailable} from '@/utils/payment';
+import {TENANT_HEADER} from '@/middleware';
 
 // ---- LOCAL IMPORTS ---- //
-import {REQUIRED_FIELDS} from '@/subapps/events/common/constants';
 import {findEvent} from '@/subapps/events/common/orm/event';
 import {error} from '@/subapps/events/common/utils';
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
-import {validateRequiredFormFields} from '@/subapps/events/common/utils/registration';
+import {validateRegistration} from './validation';
 
 export async function createStripeCheckoutSession({
   event,
@@ -32,54 +28,19 @@ export async function createStripeCheckoutSession({
   workspaceURL: string;
   values: any;
 }) {
-  if (!event?.id) {
-    return error(await t('Event ID is missing'));
-  }
-
-  if (!Object.keys(values)?.length) {
-    return error(await t('Form values are missing'));
-  }
-  const validationResult = await validateRequiredFormFields(
-    values,
-    REQUIRED_FIELDS,
-    t,
-  );
-  if (validationResult) {
-    return error(validationResult.error);
-  }
-
-  if (!workspaceURL) {
-    return error(await t('Bad request'));
-  }
-
   const tenantId = headers().get(TENANT_HEADER);
-
-  if (!tenantId) {
-    return error(await t('Invalid tenant'));
-  }
-
-  const session = await getSession();
-  const user = session?.user;
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
+  if (!tenantId) return error(await t('TenantId is required'));
+  const validationRes = await validateRegistration({
+    eventId: event?.id?.toString(),
+    values,
+    workspaceURL,
     tenantId,
   });
 
-  if (!workspace) {
-    return error(await t('Invalid workspace'));
+  if (validationRes.error) {
+    return validationRes;
   }
-
-  const hasEventAccess = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user,
-    url: workspace.url,
-    tenantId,
-  });
-  if (!hasEventAccess) {
-    return error(await t('Unauthorized app access!'));
-  }
+  const {workspace, user} = validationRes.data;
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return error(await t('Online payment is not available'));
@@ -166,56 +127,20 @@ export async function paypalCreateOrder({
   };
   email: string;
 }) {
-  if (!event.id) {
-    return error(await t('Event ID is missing'));
-  }
-
-  if (!workspaceURL) {
-    return error(await t('Workspace not provided!'));
-  }
-
-  if (Object.keys(values)?.length === 0) {
-    return error(await t('Form values are missing'));
-  }
-
-  const validationResult = await validateRequiredFormFields(
-    values,
-    REQUIRED_FIELDS,
-    t,
-  );
-  if (validationResult) {
-    return error(validationResult.error);
-  }
-
   const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) return error(await t('TenantId is required'));
 
-  if (!tenantId) {
-    return error(await t('Invalid tenant'));
-  }
-
-  const session = await getSession();
-  const user = session?.user;
-
-  const workspace = await findWorkspace({
-    user,
-    url: workspaceURL,
+  const validationRes = await validateRegistration({
+    eventId: event?.id?.toString(),
+    values,
+    workspaceURL,
     tenantId,
   });
 
-  if (!workspace) {
-    return error(await t('Invalid workspace'));
+  if (validationRes.error) {
+    return validationRes;
   }
-
-  const hasEventsAccess = await findSubappAccess({
-    code: SUBAPP_CODES.events,
-    user,
-    url: workspace.url,
-    tenantId,
-  });
-
-  if (!hasEventsAccess) {
-    return error(await t('Unauthorized App access!'));
-  }
+  const {workspace, user} = validationRes.data;
 
   if (!workspace?.config?.allowOnlinePaymentForEcommerce) {
     return error(await t('Online payment is not available'));

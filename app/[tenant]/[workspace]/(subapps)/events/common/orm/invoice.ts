@@ -1,23 +1,21 @@
 import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
-import {getSession} from '@/auth';
 import {t} from '@/locale/server';
-import {findWorkspace} from '@/orm/workspace';
 import {manager, type Tenant} from '@/tenant';
-import {ID} from '@/types';
+import {ID, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from '@/subapps/events/common/utils';
 import {ActionResponse} from '@/types/action';
 
 export async function createInvoice({
-  workspaceURL,
+  workspace,
   tenantId,
   registrationId,
   currencyCode,
 }: {
-  workspaceURL: string;
+  workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   registrationId: ID;
   currencyCode: string;
@@ -32,14 +30,6 @@ export async function createInvoice({
   const ws = `${aos.url}/ws/portal/invoice/eventInvoice`;
 
   try {
-    const session = await getSession();
-    const user = session?.user;
-
-    const workspace = await findWorkspace({url: workspaceURL, user, tenantId});
-    if (!workspace) {
-      return error(await t('Invalid workspace.'));
-    }
-
     const partnerWorkspaceId = workspace?.workspacePermissionConfig?.id;
     if (!partnerWorkspaceId) {
       return error(await t('Partner workspace id is missing.'));

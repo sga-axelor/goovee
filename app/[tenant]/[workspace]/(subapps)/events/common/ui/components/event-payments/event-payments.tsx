@@ -14,10 +14,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Paypal, Stripe} from '@/ui/components/payment';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  register,
-  validateRegistration,
-} from '@/subapps/events/common/actions/actions';
+import {register} from '@/subapps/events/common/actions/actions';
 import {
   createStripeCheckoutSession,
   paypalCreateOrder,
@@ -84,12 +81,10 @@ export function EventPayments({
 
   async function handleFormValidation({
     form,
-    eventId,
     metaFields,
     paymentOption,
   }: {
     form: any;
-    eventId: ID;
     metaFields: any;
     paymentOption?: PaymentOption;
   }): Promise<boolean> {
@@ -114,19 +109,6 @@ export function EventPayments({
         return false;
       }
 
-      const validationResult = await validateRegistration({
-        eventId,
-        values: result,
-        workspaceURL,
-      });
-
-      if (validationResult.error) {
-        toast({
-          variant: 'destructive',
-          title: i18n.t(validationResult.message),
-        });
-        return false;
-      }
       if (paymentOption === PaymentOption.stripe) {
         await setitem(eventFormKey, result).catch(() => {});
       }
@@ -149,7 +131,6 @@ export function EventPayments({
           onValidate={async () => {
             const isValid = await handleFormValidation({
               form,
-              eventId: event.id,
               metaFields,
             });
             return !!isValid;
@@ -187,7 +168,6 @@ export function EventPayments({
           onValidate={async () => {
             const isValid = await handleFormValidation({
               form,
-              eventId: event.id,
               metaFields,
               paymentOption: PaymentOption.stripe,
             });
