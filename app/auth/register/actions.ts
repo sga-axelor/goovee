@@ -21,6 +21,7 @@ import type {PortalWorkspace} from '@/types';
 import {ALLOW_AOS_ONLY_REGISTRATION, ALLOW_NO_REGISTRATION} from '@/constants';
 import {findOne, isValid} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
+import {findRegistrationLocalization} from '@/orm/localizations';
 
 function error(message: string) {
   return {
@@ -188,6 +189,7 @@ type RegisterDTO = {
   confirmPassword?: string;
   workspaceURL?: string;
   tenantId: Tenant['id'];
+  locale?: string;
 };
 
 export async function register({
@@ -201,6 +203,7 @@ export async function register({
   password,
   workspaceURL,
   tenantId,
+  locale,
 }: RegisterDTO) {
   if (type === UserType.individual && !name) {
     return error(await getTranslation({tenant: tenantId}, 'Name is required.'));
@@ -254,6 +257,8 @@ export async function register({
     };
   }
 
+  const localization = await findRegistrationLocalization({locale, tenantId});
+
   try {
     const partner = await registerPartner({
       type,
@@ -266,6 +271,7 @@ export async function register({
       password,
       workspaceURL,
       tenantId,
+      localizationId: localization?.id,
     });
 
     const $partner =

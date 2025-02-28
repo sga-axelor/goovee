@@ -8,7 +8,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/locale';
+import {i18n, l10n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import {
   Form,
@@ -84,6 +84,7 @@ export default function SignUp({
         ...values,
         tenantId,
         inviteId,
+        locale: l10n.getLocale(),
       });
 
       await handleUpdateSession();

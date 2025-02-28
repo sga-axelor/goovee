@@ -222,6 +222,12 @@ export interface Company extends Model {
   name: string;
 }
 
+export interface Localization extends Model {
+  name: string;
+  code: string;
+  isAvailableOnPortal?: boolean;
+}
+
 export type ComputedProduct = {
   product: Product;
   scale: {

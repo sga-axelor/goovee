@@ -4,7 +4,7 @@ import {hash} from '@/auth/utils';
 import {manager, type Tenant} from '@/tenant';
 import {USER_CREATED_FROM} from '@/constants';
 import {clone} from '@/utils';
-import {ID, Partner, PortalWorkspace} from '@/types';
+import {ID, Localization, Partner, PortalWorkspace} from '@/types';
 import {
   findContactWorkspaceConfig,
   findDefaultPartnerWorkspaceConfig,
@@ -215,6 +215,7 @@ export async function registerContact({
   tenantId,
   contactConfig,
   partnerId,
+  localizationId,
 }: {
   name: string;
   firstName?: string;
@@ -223,6 +224,7 @@ export async function registerContact({
   tenantId: Tenant['id'];
   contactConfig?: any;
   partnerId: string;
+  localizationId?: Localization['id'];
 }) {
   if (!(name && email && tenantId && partnerId)) {
     return null;
@@ -257,6 +259,7 @@ export async function registerContact({
         name: email,
       },
     },
+    localization: localizationId ? {select: {id: localizationId}} : null,
   };
 
   if (contactConfig?.id) {
@@ -285,6 +288,7 @@ export async function registerPartner({
   workspaceURL,
   tenantId,
   isContact,
+  localizationId,
 }: {
   type: UserType;
   companyName?: string;
@@ -297,6 +301,7 @@ export async function registerPartner({
   workspaceURL?: string;
   tenantId: Tenant['id'];
   isContact?: boolean;
+  localizationId?: Localization['id'];
 }) {
   const client = await manager.getClient(tenantId);
 
@@ -326,6 +331,7 @@ export async function registerPartner({
         name: email,
       },
     },
+    localization: localizationId ? {select: {id: localizationId}} : null,
   };
 
   if (workspaceURL) {

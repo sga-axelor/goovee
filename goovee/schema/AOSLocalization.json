@@ -11,6 +11,10 @@
     {
       "type": "String",
       "name": "name"
+    },
+    {
+      "type": "Boolean",
+      "name": "isAvailableOnPortal"
     }
   ]
 }

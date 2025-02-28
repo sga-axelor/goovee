@@ -3,12 +3,13 @@
 import {revalidatePath} from 'next/cache';
 
 import {Tenant} from '@/tenant';
-import {t} from '@/locale/server';
+import {getTranslation, t} from '@/locale/server';
 import {
   findPartnerByEmail,
   registerContact,
   updatePartner,
 } from '@/orm/partner';
+import {findRegistrationLocalization} from '@/orm/localizations';
 import {deleteInviteById} from '@/app/[tenant]/[workspace]/account/common/orm/invites';
 import {getSession} from '@/auth';
 import {PortalWorkspace} from '@/types';
@@ -32,6 +33,7 @@ type RegisterDTO = {
   password?: string;
   tenantId: string;
   inviteId: string;
+  locale?: string;
 };
 
 export async function register({
@@ -41,6 +43,7 @@ export async function register({
   password,
   tenantId,
   inviteId,
+  locale,
 }: RegisterDTO) {
   if (!(name && tenantId && inviteId)) {
     return error(await t('Bad request'));
@@ -74,6 +77,12 @@ export async function register({
 
   const contactConfig = invite?.contactAppPermissionList?.[0];
 
+  let localization = invite.partner?.localization;
+
+  if (!localization) {
+    localization = await findRegistrationLocalization({locale, tenantId});
+  }
+
   try {
     const contact = await registerContact({
       email,
@@ -83,6 +92,7 @@ export async function register({
       tenantId,
       contactConfig,
       partnerId: invite.partner.id,
+      localizationId: localization?.id,
     });
 
     const uri = `${workspace.url.replace(process.env.NEXT_PUBLIC_HOST, '')}`;
@@ -116,15 +126,11 @@ export async function registerByEmail(data: RegisterDTO) {
   }
 
   if (!(email && password)) {
-    return error(await t('Bad request', {tenantId}));
+    return error(await getTranslation({tenant: tenantId}, 'Bad request'));
   }
 
   if (!otp) {
-    return error(
-      await t('OTP is required.', {
-        tenantId,
-      }),
-    );
+    return error(await getTranslation({tenant: tenantId}, 'OTP is required.'));
   }
 
   const otpResult = await findOne({
@@ -134,19 +140,11 @@ export async function registerByEmail(data: RegisterDTO) {
   });
 
   if (!otpResult) {
-    return error(
-      await t('Invalid OTP', {
-        tenantId,
-      }),
-    );
+    return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
   }
 
   if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
-    return error(
-      await t('Invalid OTP', {
-        tenantId,
-      }),
-    );
+    return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
   }
 
   return register(data);

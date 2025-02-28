@@ -10,7 +10,7 @@ import Image from 'next/image';
 import {signIn} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
-import {i18n} from '@/locale';
+import {i18n, l10n} from '@/locale';
 import {useCountDown, useToast} from '@/ui/hooks';
 import {
   Form,
@@ -98,6 +98,7 @@ export default function SignUp({
         ...values,
         tenantId,
         inviteId,
+        locale: l10n.getLocale(),
       });
 
       if (res.success) {

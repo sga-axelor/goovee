@@ -11,7 +11,7 @@ import {MdOutlineVisibility, MdOutlineVisibilityOff} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {UserType} from '@/auth/types';
-import {i18n} from '@/locale';
+import {i18n, l10n} from '@/locale';
 import {useCountDown, useToast} from '@/ui/hooks';
 import {
   Form,
@@ -155,6 +155,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
         ...values,
         workspaceURL: workspace?.url,
         tenantId,
+        locale: l10n.getLocale(),
       });
 
       if (res.success) {

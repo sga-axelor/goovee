@@ -9,7 +9,7 @@ import {TENANT_HEADER} from '@/middleware';
 import {findContactWorkspaces, findPartnerWorkspaces} from '@/orm/workspace';
 
 // ---- CORE IMPORTS ---- //
-import {findLocalizations} from '../common/orm/languages';
+import {findLocalizations} from '@/orm/localizations';
 import {findPartnerByEmail, updatePartner} from '@/orm/partner';
 
 function error(message: string) {
