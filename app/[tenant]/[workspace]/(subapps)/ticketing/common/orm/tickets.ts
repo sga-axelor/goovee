@@ -269,7 +269,12 @@ export async function createTicket({
     if (reciepients.length) {
       sendTrackMail({
         subject: `Ticket Created by ${auth.simpleFullName}`,
-        body: {title: `Ticket Created by ${auth.simpleFullName}`, tracks},
+        body: {
+          title: `Ticket Created by ${auth.simpleFullName}`,
+          tracks,
+          projectName: newTicket.project?.name!,
+          ticketName: newTicket.name,
+        },
         reciepients,
       });
     }
@@ -283,7 +288,7 @@ export async function createTicket({
 
 const updateSelect = {
   id: true,
-  project: {id: true},
+  project: {id: true, name: true},
   name: true,
   projectTaskCategory: {name: true},
   priority: {name: true},
@@ -501,7 +506,12 @@ export async function updateTicket({
     if (reciepients.length) {
       sendTrackMail({
         subject: `Ticket Updated by ${auth.simpleFullName}`,
-        body: {title: `Ticket Updated by ${auth.simpleFullName}`, tracks},
+        body: {
+          title: `Ticket Updated by ${auth.simpleFullName}`,
+          tracks,
+          projectName: newTicket.project?.name!,
+          ticketName: newTicket.name,
+        },
         reciepients,
       });
     }
