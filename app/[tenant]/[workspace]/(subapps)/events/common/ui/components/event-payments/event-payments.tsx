@@ -114,10 +114,11 @@ export function EventPayments({
       <Payments
         workspace={workspace}
         disabled={!isValid}
-        onValidate={async () => {
+        onValidate={async paymentOption => {
           return await handleFormValidation({
             form,
             metaFields,
+            paymentOption,
           });
         }}
         onPaypalCreatedOrder={async () => {
