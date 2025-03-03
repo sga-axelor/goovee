@@ -118,34 +118,38 @@ export function SubscriptionsPriceView({
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 pl-4 border-success border-l">
-            {subscriptionPrices?.map(({facility, price}) => {
-              const subscriptionUsers = participants?.filter((p: any) =>
-                p.subscriptionSet.some((f: any) => f.facility === facility),
-              );
+          {subscriptionPrices?.length ? (
+            <div className="flex flex-col gap-4 pl-4 border-success border-l">
+              {subscriptionPrices?.map(({facility, price}) => {
+                const subscriptionUsers = participants?.filter((p: any) =>
+                  p.subscriptionSet.some((f: any) => f.facility === facility),
+                );
 
-              return (
-                <div key={facility}>
-                  <div className="font-semibold text-normal">
-                    {facility}:{' '}
-                    <span className="text-success">
-                      {formatNumber(price, {
-                        scale,
-                        currency: currencySymbol,
-                        type: 'DECIMAL',
-                      })}
-                    </span>
-                    {subscriptionUsers?.length > 0 && (
-                      <div className="text-slate-500">
-                        {subscriptionUsers?.length} (
-                        {getParticipantsNames(subscriptionUsers)})
-                      </div>
-                    )}
+                return (
+                  <div key={facility}>
+                    <div className="font-semibold text-normal">
+                      {facility}:{' '}
+                      <span className="text-success">
+                        {formatNumber(price, {
+                          scale,
+                          currency: currencySymbol,
+                          type: 'DECIMAL',
+                        })}
+                      </span>
+                      {subscriptionUsers?.length > 0 && (
+                        <div className="text-slate-500">
+                          {subscriptionUsers?.length} (
+                          {getParticipantsNames(subscriptionUsers)})
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       ) : (
         <div className="text-gray-500 text-sm">
