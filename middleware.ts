@@ -1,6 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {getToken} from 'next-auth/jwt';
-import {t} from '@/locale/server';
 
 export const TENANT_HEADER = 'x-tenant-id';
 export const WORKSPACE_HEADER = 'x-workspace-id';
@@ -19,7 +18,15 @@ export const config = {
   ],
 };
 
-export function extractTenant(url: string) {
+export function extractTenant(url: string, basePath: string = '') {
+  const normalizedBasePath = basePath.replace(/\/$/, '');
+
+  if (normalizedBasePath && url.startsWith(normalizedBasePath)) {
+    url = url.slice(normalizedBasePath.length);
+  }
+
+  url = url.startsWith('/') ? url : '/' + url;
+
   const pattern = /^\/([a-zA-Z]+)(?:\/.*)?$/;
   const matches = url.match(pattern);
 
@@ -48,7 +55,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const tenant = extractTenant(pathname);
+  const tenant = extractTenant(pathname, process.env.NEXT_PUBLIC_BASE_PATH);
 
   if (!tenant) return notFound(req);
 
