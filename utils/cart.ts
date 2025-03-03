@@ -17,9 +17,11 @@ import {formatNumber} from '@/locale/formatters';
 export function computeTotal({
   cart,
   workspace,
+  formatNumber: formatNumberProp = formatNumber,
 }: {
   cart: Cart;
   workspace?: PortalWorkspace;
+  formatNumber?: any;
 }) {
   let mainPrice: PortalAppConfig['mainPrice'] = 'at';
 
@@ -78,7 +80,7 @@ export function computeTotal({
 
   return {
     total,
-    displayTotal: `${formatNumber(total, {scale: currencyScale, currency: symbol, type: 'DECIMAL'})} ${mainPrice.toUpperCase()}`,
+    displayTotal: `${formatNumberProp(total, {scale: currencyScale, currency: symbol, type: 'DECIMAL'})} ${mainPrice.toUpperCase()}`,
     scale: {
       currency: currencyScale,
     },
