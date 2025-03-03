@@ -754,7 +754,7 @@ export async function payboxCreateOrder({
   const {total, currency} = computeTotal({
     cart,
     workspace,
-    formatNumber: (n:any) => n,
+    formatNumber: (n: any) => n,
   });
 
   const payer = await findPartnerByEmail(user?.email, tenantId);
