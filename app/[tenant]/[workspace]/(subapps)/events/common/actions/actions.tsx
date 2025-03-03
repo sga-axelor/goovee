@@ -123,7 +123,13 @@ export async function register({
   eventId: any;
   values: any;
   workspace: {url: PortalWorkspace['url']};
-  payment?: {id: string; mode: PaymentOption};
+  payment?: {
+    data: {
+      id?: string;
+      params?: any;
+    };
+    mode: PaymentOption;
+  };
 }): ActionResponse<{id: ID; version: number}> {
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) return error(await t('Tenant ID is missing!'));
@@ -154,12 +160,12 @@ export async function register({
   };
 
   if (expectedAmount > 0) {
-    if (!payment?.id || !payment?.mode) {
+    if (!(payment?.data?.id || payment?.data?.params) || !payment?.mode) {
       return error(await t('Payment is required for this event.'));
     }
     const paymentValidationResult = await validatePayment({
       payment: {
-        id: payment?.id,
+        data: payment.data,
         mode: payment?.mode,
         amount: expectedAmount,
         currencyCode: $event.currency?.code,
