@@ -6,23 +6,8 @@ import {useCallback, useEffect, useRef} from 'react';
 import {Button} from '@/ui/components';
 import {i18n} from '@/locale';
 import {useSearchParams, useToast} from '@/ui/hooks';
-
-type StripeProps = {
-  disabled?: boolean;
-  successMessage?: string;
-  errorMessage?: string;
-  onValidate?: () => Promise<boolean>;
-  onCreateCheckOutSession: () => Promise<{
-    url?: string | null;
-    error?: boolean;
-    message?: string;
-    client_secret?: string | null;
-  }>;
-  shouldValidateData: () => Promise<boolean>;
-  onValidateSession: (params: {stripeSessionId: string}) => Promise<any>;
-  onApprove?: (result: any) => void;
-  onPaymentSuccess?: () => any;
-};
+import {StripeProps} from '@/ui/components/payment/types';
+import {PaymentOption} from '@/types';
 
 export function Stripe({
   disabled,
@@ -43,7 +28,7 @@ export function Stripe({
     event.preventDefault();
 
     if (onValidate) {
-      const isValid = await onValidate();
+      const isValid = await onValidate(PaymentOption.stripe);
       if (!isValid) {
         return;
       }

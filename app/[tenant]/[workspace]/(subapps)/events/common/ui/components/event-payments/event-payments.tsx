@@ -4,14 +4,13 @@ import React, {useCallback, useMemo} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {ID, PaymentOption, PortalWorkspace} from '@/types';
+import {PaymentOption, PortalWorkspace} from '@/types';
 import {useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {getitem, setitem} from '@/storage/local';
 import {PREFIX_EVENT_FORM_KEY, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import {isPaymentOptionAvailable} from '@/utils/payment';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {Paybox, Paypal, Stripe} from '@/ui/components/payment';
+import {Payments} from '@/ui/components/payment';
 
 // ---- LOCAL IMPORTS ---- //
 import {register} from '@/subapps/events/common/actions/actions';
@@ -36,9 +35,6 @@ export function EventPayments({
   form: any;
   metaFields: any;
 }) {
-  const config = workspace?.config;
-  const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
-  const paymentOptionSet = config?.paymentOptionSet;
   const workspaceURL = workspace?.url;
 
   const isValid =
@@ -64,21 +60,6 @@ export function EventPayments({
       }
     },
     [workspaceURI, router],
-  );
-
-  const allowStripe = isPaymentOptionAvailable(
-    paymentOptionSet,
-    PaymentOption.stripe,
-  );
-
-  const allowPaypal = isPaymentOptionAvailable(
-    paymentOptionSet,
-    PaymentOption.paypal,
-  );
-
-  const allowPaybox = isPaymentOptionAvailable(
-    paymentOptionSet,
-    PaymentOption.paybox,
   );
 
   function getMappedParticipants(form: any, metaFields: any) {
@@ -128,153 +109,99 @@ export function EventPayments({
     }
   }
 
-  if (!allowOnlinePayment) {
-    return null;
-  }
-
   return (
-    <div className="flex flex-col gap-2.5">
-      {allowPaypal && (
-        <Paypal
-          disabled={!isValid}
-          onValidate={async () => {
-            const isValid = await handleFormValidation({
-              form,
-              metaFields,
-            });
-            return !!isValid;
-          }}
-          createOrder={async () => {
-            const formValues = getMappedParticipants(form, metaFields);
-
-            return await paypalCreateOrder({
-              workspaceURL,
-              values: formValues,
-              event: {
-                id: event.id,
-              },
-            });
-          }}
-          captureOrder={async orderID => {
-            const formValues = getMappedParticipants(form, metaFields);
-
-            return await register({
-              payment: {data: {id: orderID}, mode: PaymentOption.paypal},
-              workspace: {url: workspaceURL},
-              values: formValues,
-              eventId: event.id,
-            });
-          }}
-          onApprove={redirectToEvents}
-          successMessage="Event registration completed successfully."
-          errorMessage="Failed to process event registration."
-        />
-      )}
-      {allowStripe && (
-        <Stripe
-          disabled={!isValid}
-          onValidate={async () => {
-            const isValid = await handleFormValidation({
-              form,
-              metaFields,
-              paymentOption: PaymentOption.stripe,
-            });
-
-            return !!isValid;
-          }}
-          onCreateCheckOutSession={async () => {
+    <>
+      <Payments
+        workspace={workspace}
+        disabled={!isValid}
+        onValidate={async () => {
+          return await handleFormValidation({
+            form,
+            metaFields,
+          });
+        }}
+        onPaypalCreatedOrder={async () => {
+          const formValues = getMappedParticipants(form, metaFields);
+          return await paypalCreateOrder({
+            workspaceURL,
+            values: formValues,
+            event: {
+              id: event.id,
+            },
+          });
+        }}
+        onPaypalCaptureOrder={async (orderID: string) => {
+          const formValues = getMappedParticipants(form, metaFields);
+          return await register({
+            payment: {data: {id: orderID}, mode: PaymentOption.paypal},
+            workspace: {url: workspaceURL},
+            values: formValues,
+            eventId: event.id,
+          });
+        }}
+        onApprove={redirectToEvents}
+        onStripeCreateCheckOutSession={async () => {
+          const formValues: any = await getitem(eventFormKey).catch(() => {});
+          return await createStripeCheckoutSession({
+            event: {
+              id: event.id,
+            },
+            workspaceURL,
+            values: formValues,
+          });
+        }}
+        shouldValidateData={async () => {
+          try {
             const formValues: any = await getitem(eventFormKey).catch(() => {});
-
-            return await createStripeCheckoutSession({
-              event: {
-                id: event.id,
-              },
-              workspaceURL,
-              values: formValues,
-            });
-          }}
-          shouldValidateData={async () => {
-            try {
-              const formValues: any = await getitem(eventFormKey).catch(
-                () => {},
-              );
-              return formValues && Object.keys(formValues).length > 0;
-            } catch {
-              return false;
-            }
-          }}
-          onValidateSession={async ({stripeSessionId}) => {
-            const formValues: any = await getitem(eventFormKey).catch(() => {});
-
-            return await register({
-              payment: {
-                data: {id: stripeSessionId},
-                mode: PaymentOption.stripe,
-              },
-              workspace: {url: workspaceURL},
-              values: formValues,
-              eventId: event.id,
-            });
-          }}
-          onPaymentSuccess={async () => await setitem(eventFormKey, null)}
-          onApprove={redirectToEvents}
-          successMessage="Event registration successful!"
-          errorMessage="Failed to process payment. Please try again."
-        />
-      )}
-
-      {allowPaybox && (
-        <Paybox
-          disabled={!isValid}
-          onValidate={async () => {
-            const isValid = await handleFormValidation({
-              form,
-              metaFields,
-              paymentOption: PaymentOption.paybox,
-            });
-            return !!isValid;
-          }}
-          onCreateOrder={async () => {
-            const formValues: any = await getitem(eventFormKey).catch(() => {});
-            return await payboxCreateOrder({
-              event: {
-                id: event.id,
-              },
-              workspaceURL,
-              values: formValues,
-              uri: pathname,
-            });
-          }}
-          shouldValidateData={async () => {
-            try {
-              const formValues: any = await getitem(eventFormKey).catch(
-                () => {},
-              );
-              return formValues && Object.keys(formValues).length > 0;
-            } catch {
-              return false;
-            }
-          }}
-          onValidatePayment={async ({params}: {params: any}) => {
-            const formValues: any = await getitem(eventFormKey).catch(() => {});
-
-            return await register({
-              payment: {
-                mode: PaymentOption.paybox,
-                data: {
-                  params,
-                },
-              },
-              workspace: {url: workspaceURL},
-              values: formValues,
-              eventId: event.id,
-            });
-          }}
-          onPaymentSuccess={async () => await setitem(eventFormKey, null)}
-          onApprove={redirectToEvents}
-        />
-      )}
-    </div>
+            return formValues && Object.keys(formValues).length > 0;
+          } catch {
+            return false;
+          }
+        }}
+        onStripeValidateSession={async ({
+          stripeSessionId,
+        }: {
+          stripeSessionId: string;
+        }) => {
+          const formValues: any = await getitem(eventFormKey).catch(() => {});
+          return await register({
+            payment: {
+              data: {id: stripeSessionId},
+              mode: PaymentOption.stripe,
+            },
+            workspace: {url: workspaceURL},
+            values: formValues,
+            eventId: event.id,
+          });
+        }}
+        onPaymentSuccess={async () => await setitem(eventFormKey, null)}
+        onPayboxCreateOrder={async () => {
+          const formValues: any = await getitem(eventFormKey).catch(() => {});
+          return await payboxCreateOrder({
+            event: {
+              id: event.id,
+            },
+            workspaceURL,
+            values: formValues,
+            uri: pathname,
+          });
+        }}
+        onPayboxValidatePayment={async ({params}) => {
+          const formValues: any = await getitem(eventFormKey).catch(() => {});
+          return await register({
+            payment: {
+              mode: PaymentOption.paybox,
+              data: {params},
+            },
+            workspace: {url: workspaceURL},
+            values: formValues,
+            eventId: event.id,
+          });
+        }}
+        successMessage="Event registration completed successfully."
+        errorMessage="Failed to process event registration."
+      />
+    </>
   );
 }
 

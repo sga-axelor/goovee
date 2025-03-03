@@ -6,23 +6,8 @@ import {PayPalScriptProvider, PayPalButtons} from '@paypal/react-paypal-js';
 import {DEFAULT_CURRENCY_CODE} from '@/constants';
 import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
-
-type PaypalProps = {
-  disabled?: boolean;
-
-  onApprove: (result: any) => any;
-  onValidate?: () => Promise<boolean>;
-  createOrder: () => Promise<{
-    order?: {
-      id: string;
-    };
-    error?: any;
-    message?: string;
-  }>;
-  captureOrder: (orderID: string) => Promise<any>;
-  successMessage?: string;
-  errorMessage?: string;
-};
+import {PaypalProps} from '@/ui/components/payment/types';
+import {PaymentOption} from '@/types';
 
 export function Paypal({
   disabled,
@@ -40,7 +25,7 @@ export function Paypal({
     actions: any,
   ): Promise<any> => {
     if (onValidate) {
-      const isValid = await onValidate();
+      const isValid = await onValidate(PaymentOption.paypal);
       if (!isValid) {
         return '';
       }

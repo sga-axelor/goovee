@@ -1,12 +1,14 @@
 'use client';
 
 import {useCallback, useEffect, useRef} from 'react';
-import {useRouter} from 'next/navigation';
+import {useRouter, usePathname} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components';
 import {useSearchParams, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
+import {PayboxProps} from '@/ui/components/payment/types';
+import {PaymentOption} from '@/types';
 
 export function Paybox({
   disabled,
@@ -16,31 +18,24 @@ export function Paybox({
   onValidate,
   onCreateOrder,
   onValidatePayment,
-}: {
-  disabled?: boolean;
-  onPaymentSuccess: any;
-  onApprove: any;
-  shouldValidateData?: any;
-  onValidate?: any;
-  onCreateOrder: any;
-  onValidatePayment: any;
-}) {
+}: PayboxProps) {
   const {toast} = useToast();
 
   const {searchParams} = useSearchParams();
   const router = useRouter();
   const validateRef = useRef(false);
+  const pathname = usePathname();
 
   const handleCreatePayboxOrder = async (event: any) => {
     event.preventDefault();
     if (onValidate) {
-      const isValid = await onValidate();
+      const isValid = await onValidate(PaymentOption.paybox);
       if (!isValid) {
         return;
       }
     }
 
-    const result: any = await onCreateOrder();
+    const result: any = await onCreateOrder({uri: pathname});
 
     if (result.error) {
       toast({
