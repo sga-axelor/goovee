@@ -22,6 +22,8 @@ import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findPartnerByEmail} from '@/orm/partner';
 import {formatAmountForPaybox} from '@/lib/core/payment/paybox/utils';
 
+const formatNumber = (n: any) => n;
+
 async function createOrder({
   cart,
   workspaceURL,
@@ -93,7 +95,11 @@ async function createOrder({
       ],
     };
 
-    const {total} = computeTotal({cart: $cart, workspace});
+    const {total} = computeTotal({
+      cart: $cart,
+      workspace,
+      formatNumber,
+    });
 
     let partnerId, contactId;
 
@@ -259,7 +265,11 @@ export async function paypalCaptureOrder({
 
     const purchase = result?.purchase_units?.[0];
 
-    const {total} = computeTotal({cart, workspace});
+    const {total} = computeTotal({
+      cart,
+      workspace,
+      formatNumber,
+    });
 
     if (
       Number(purchase?.payments?.captures?.[0]?.amount?.value) !== Number(total)
@@ -375,6 +385,7 @@ export async function paypalCreateOrder({
   const {total, currency} = computeTotal({
     cart,
     workspace,
+    formatNumber,
   });
 
   const payer = await findPartnerByEmail(user?.email, tenantId);
@@ -491,6 +502,7 @@ export async function createStripeCheckoutSession({
   const {total, currency} = computeTotal({
     cart,
     workspace,
+    formatNumber,
   });
 
   const payer = await findPartnerByEmail(user.email, tenantId);
@@ -639,6 +651,7 @@ export async function validateStripePayment({
   const {total, currency} = computeTotal({
     cart,
     workspace,
+    formatNumber,
   });
 
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
@@ -754,7 +767,7 @@ export async function payboxCreateOrder({
   const {total, currency} = computeTotal({
     cart,
     workspace,
-    formatNumber: (n: any) => n,
+    formatNumber,
   });
 
   const payer = await findPartnerByEmail(user?.email, tenantId);
@@ -902,6 +915,7 @@ export async function validatePayboxPayment({
   const {total} = computeTotal({
     cart,
     workspace,
+    formatNumber,
   });
 
   const paymentTotal = formatAmountForPaybox(payboxOrder?.amount);
