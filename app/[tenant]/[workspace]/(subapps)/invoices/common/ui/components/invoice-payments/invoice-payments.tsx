@@ -4,20 +4,22 @@ import {useCallback, useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {PaymentOption} from '@/types';
-import {Paypal, Stripe} from '@/ui/components/payment';
-import {isPaymentOptionAvailable} from '@/utils/payment';
+import {ID, PaymentOption} from '@/types';
+import {Payments} from '@/ui/components/payment';
 import {PREFIX_INVOICE_KEY, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {getitem, setitem} from '@/storage/local';
 import {useToast} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
+import {ErrorResponse, SuccessResponse} from '@/types/action';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   createStripeCheckoutSession,
+  payboxCreateOrder,
   paypalCaptureOrder,
   paypalCreateOrder,
+  validatePayboxPayment,
   validateStripePayment,
 } from '@/subapps/invoices/common/actions';
 import {Invoice, PaymentType} from '@/subapps/invoices/common/types/invoices';
@@ -33,9 +35,6 @@ export function InvoicePayments({
   amount: string;
   paymentType: PaymentType;
 }) {
-  const config = workspace?.config;
-  const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
-  const paymentOptionSet = config?.paymentOptionSet;
   const workspaceURL = workspace?.url;
 
   const invoiceKey = useMemo(
@@ -76,7 +75,10 @@ export function InvoicePayments({
       return false;
     }
     try {
-      if (paymentOption === PaymentOption.stripe) {
+      if (
+        paymentOption &&
+        [PaymentOption.stripe, PaymentOption.paybox].includes(paymentOption)
+      ) {
         await setitem(invoiceKey, amount).catch(() => {});
       }
       return true;
@@ -86,99 +88,120 @@ export function InvoicePayments({
     }
   };
 
-  const allowStripe = isPaymentOptionAvailable(
-    paymentOptionSet,
-    PaymentOption.stripe,
-  );
+  const handleStripeValidations = async ({
+    stripeSessionId,
+  }: {
+    stripeSessionId: string;
+  }): Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>> => {
+    try {
+      const $amount: any = await getitem(invoiceKey).catch(() => {});
 
-  const allowPaypal = isPaymentOptionAvailable(
-    paymentOptionSet,
-    PaymentOption.paypal,
-  );
+      const response: any = await validateStripePayment({
+        stripeSessionId,
+        workspaceURL,
+        invoice: {id: invoice.id},
+        amount: $amount,
+      });
 
-  if (!allowOnlinePayment) {
-    return null;
-  }
+      return response;
+    } catch (error) {
+      return {
+        error: true,
+        message: i18n.t('Unexpected error occurred'),
+      };
+    }
+  };
+
+  const handlePayboxValidations = async ({
+    params,
+  }: {
+    params: any;
+  }): Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>> => {
+    try {
+      const $amount: any = await getitem(invoiceKey).catch(() => {});
+
+      const response: any = await validatePayboxPayment({
+        params,
+        invoice: {
+          id: invoice.id,
+        },
+        amount: $amount,
+        workspaceURL,
+      });
+      return response;
+    } catch (error) {
+      return {
+        error: true,
+        message: i18n.t(
+          'Unexpected error occurred while validating paybox payment',
+        ),
+      };
+    }
+  };
 
   return (
-    <div className="flex flex-col">
-      {allowPaypal && (
-        <Paypal
-          onValidate={async () => {
-            const isValid = await handleInvoiceValidation();
+    <Payments
+      disabled={!Number(amount)}
+      workspace={workspace}
+      onValidate={async paymentOption => {
+        const isValid = await handleInvoiceValidation({paymentOption});
 
-            return !!isValid;
-          }}
-          createOrder={async () => {
-            return await paypalCreateOrder({
-              invoice: {
-                id: invoice.id,
-              },
-              amount,
-              workspaceURL,
-            });
-          }}
-          captureOrder={async orderID => {
-            return await paypalCaptureOrder({
-              orderID,
-              invoice: {
-                id: invoice.id,
-              },
-              workspaceURL,
-            });
-          }}
-          onApprove={redirectToInvoice}
-          successMessage="Invoice Amount paid successfully!"
-          errorMessage="Failed to process payment. Please try again."
-        />
-      )}
-      {allowStripe && (
-        <Stripe
-          onValidate={async () => {
-            const isValid = await handleInvoiceValidation({
-              paymentOption: PaymentOption.stripe,
-            });
-
-            return !!isValid;
-          }}
-          onCreateCheckOutSession={async () => {
-            const $amount: any = await getitem(invoiceKey).catch(() => {});
-
-            return await createStripeCheckoutSession({
-              invoice: {
-                id: invoice.id,
-              },
-              amount: $amount,
-              workspaceURL,
-            });
-          }}
-          shouldValidateData={async () => {
-            try {
-              const $amount: any = await getitem(invoiceKey).catch(() => {});
-              return $amount;
-            } catch {
-              return false;
-            }
-          }}
-          onValidateSession={async ({stripeSessionId}) => {
-            const $amount: any = await getitem(invoiceKey).catch(() => {});
-
-            return await validateStripePayment({
-              stripeSessionId,
-              workspaceURL,
-              invoice: {
-                id: invoice.id,
-              },
-              amount: $amount,
-            });
-          }}
-          onPaymentSuccess={async () => await setitem(invoiceKey, null)}
-          onApprove={redirectToInvoice}
-          successMessage="Invoice Amount paid successfully!"
-          errorMessage="Failed to process payment. Please try again."
-        />
-      )}
-    </div>
+        return !!isValid;
+      }}
+      onPaypalCreatedOrder={async () => {
+        return await paypalCreateOrder({
+          invoice: {
+            id: invoice.id,
+          },
+          amount,
+          workspaceURL,
+        });
+      }}
+      onPaypalCaptureOrder={async orderID => {
+        return await paypalCaptureOrder({
+          orderID,
+          invoice: {
+            id: invoice.id,
+          },
+          workspaceURL,
+        });
+      }}
+      onApprove={redirectToInvoice}
+      shouldValidateData={async () => {
+        try {
+          const $amount: any = await getitem(invoiceKey).catch(() => {});
+          return $amount;
+        } catch {
+          return false;
+        }
+      }}
+      onStripeCreateCheckOutSession={async () => {
+        const $amount: any = await getitem(invoiceKey).catch(() => {});
+        return await createStripeCheckoutSession({
+          invoice: {
+            id: invoice.id,
+          },
+          amount: $amount,
+          workspaceURL,
+        });
+      }}
+      onStripeValidateSession={handleStripeValidations}
+      onPaymentSuccess={async () => await setitem(invoiceKey, null)}
+      onPayboxCreateOrder={async ({uri}) => {
+        const $amount: any = await getitem(invoiceKey).catch(() => {});
+        return await payboxCreateOrder({
+          invoice: {
+            id: invoice.id,
+          },
+          amount: $amount,
+          workspaceURL,
+          uri,
+        });
+      }}
+      onPayboxValidatePayment={handlePayboxValidations}
+      successMessage="Invoice payment completed successfully."
+      errorMessage="Failed to process invoice payment."
+    />
   );
 }
 

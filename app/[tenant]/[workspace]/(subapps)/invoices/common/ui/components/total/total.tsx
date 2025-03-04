@@ -62,6 +62,7 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
 
   const {searchParams} = useSearchParams();
   const stripeSessionId = searchParams.get('stripe_session_id');
+  const payboxResponse = searchParams.get('paybox_response');
 
   const formSchema = z.object({
     amount: z
@@ -111,10 +112,10 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
   };
 
   useEffect(() => {
-    if (stripeSessionId) {
+    if (stripeSessionId || payboxResponse) {
       setShow(true);
     }
-  }, [stripeSessionId]);
+  }, [stripeSessionId, payboxResponse]);
 
   return (
     <div
