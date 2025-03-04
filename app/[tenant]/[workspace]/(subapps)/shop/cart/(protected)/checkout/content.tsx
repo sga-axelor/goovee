@@ -1,9 +1,8 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useSession} from 'next-auth/react';
-import {useRouter, usePathname} from 'next/navigation';
-import {PayPalScriptProvider, PayPalButtons} from '@paypal/react-paypal-js';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -11,7 +10,6 @@ import {
   Label,
   RadioGroup,
   RadioGroupItem,
-  Button,
   BackgroundImage,
   AlertDialog,
   AlertDialogContent,
@@ -24,321 +22,23 @@ import {
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
-import {useSearchParams, useToast} from '@/ui/hooks';
 import {getImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import {PaymentOption, type PortalWorkspace} from '@/types';
+import {type PortalWorkspace} from '@/types';
 import {formatNumber} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/actions/cart';
 import {AddressSelection} from '@/subapps/shop/common/ui/components/address-selection';
-import styles from './content.module.scss';
-import {
-  createStripeCheckoutSession,
-  paypalCaptureOrder,
-  paypalCreateOrder,
-  validateStripePayment,
-  payboxCreateOrder,
-  validatePayboxPayment,
-} from '@/subapps/shop/cart/(protected)/checkout/action';
 import {SHIPPING_TYPE} from '@/subapps/shop/common/constants/index';
+import {ShopPayments} from '@/subapps/shop/common/ui/components';
+import styles from './content.module.scss';
 
 const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.REGULAR]: 2,
   [SHIPPING_TYPE.FAST]: 5,
 };
-
-function Stripe({onApprove}: {onApprove: any}) {
-  const {cart, clearCart} = useCart();
-  const {toast} = useToast();
-  const {workspaceURL} = useWorkspace();
-  const {searchParams} = useSearchParams();
-  const validateRef = useRef(false);
-
-  const noAddress = !(cart?.invoicingAddress && cart?.deliveryAddress);
-
-  const handleCreateCheckoutSession = async () => {
-    try {
-      if (noAddress) {
-        toast({
-          variant: 'destructive',
-          title: i18n.t('Select address to continue'),
-        });
-        return;
-      }
-
-      const result = await createStripeCheckoutSession({
-        cart,
-        workspaceURL,
-      });
-
-      if (result.error) {
-        toast({
-          variant: 'destructive',
-          title: i18n.t(result.message ?? 'something went wrong'),
-        });
-      }
-
-      const {url} = result;
-      window.location.assign(url as string);
-    } catch (err) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t('Error processing stripe payment, try again.'),
-      });
-    }
-  };
-
-  const handleValidateStripePayment = useCallback(
-    async ({stripeSessionId}: {stripeSessionId: string}) => {
-      try {
-        if (!(stripeSessionId && cart?.items?.length)) {
-          return;
-        }
-
-        const result = await validateStripePayment({
-          stripeSessionId,
-          cart,
-          workspaceURL,
-        });
-
-        if (result.error) {
-          toast({
-            variant: 'destructive',
-            title: i18n.t(result.message ?? 'Something went wrong!'),
-          });
-        } else {
-          toast({
-            variant: 'success',
-            title: i18n.t('Order requested successfully'),
-          });
-
-          clearCart();
-          onApprove?.(result);
-        }
-      } catch (err) {
-        toast({
-          variant: 'destructive',
-          title: i18n.t('Error processing stripe payment, try again.'),
-        });
-      }
-    },
-    [toast, clearCart, onApprove, cart, workspaceURL],
-  );
-
-  useEffect(() => {
-    if (validateRef.current) {
-      return;
-    }
-
-    const stripeSessionId = searchParams.get('stripe_session_id');
-    const stripeError = searchParams.get('stripe_error');
-
-    if (stripeError) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t('Error processing stripe payment, try again.'),
-      });
-    } else if (stripeSessionId) {
-      handleValidateStripePayment({stripeSessionId});
-    }
-    validateRef.current = true;
-  }, [searchParams, toast, handleValidateStripePayment]);
-
-  return (
-    <Button
-      className="h-[50px] bg-[#635bff] text-lg font-medium"
-      onClick={handleCreateCheckoutSession}>
-      {i18n.t('Pay with Stripe')}
-    </Button>
-  );
-}
-
-function Paypal({onApprove}: {onApprove: any}) {
-  const {cart, clearCart} = useCart();
-  const {toast} = useToast();
-  const {workspaceURL} = useWorkspace();
-  const noAddress = !(cart?.invoicingAddress && cart?.deliveryAddress);
-
-  const handleCreatePaypalOrder = async (data: any, actions: any) => {
-    if (noAddress) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t('Select address to continue'),
-      });
-      return;
-    }
-
-    const result: any = await paypalCreateOrder({cart, workspaceURL});
-
-    if (result.error) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t(result.message ?? 'Something went wrong!'),
-      });
-    } else {
-      return result?.order?.id;
-    }
-  };
-
-  const handleApprovePaypalOrder = async (data: any, actions: any) => {
-    const result = await paypalCaptureOrder({
-      orderId: data.orderID,
-      workspaceURL,
-      cart,
-    });
-
-    if (result?.error) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t(result.message ?? 'Something went wrong!'),
-      });
-    } else {
-      toast({
-        variant: 'success',
-        title: i18n.t('Order requested successfully'),
-      });
-
-      clearCart();
-
-      onApprove?.(result);
-    }
-  };
-
-  return (
-    <PayPalScriptProvider
-      options={{
-        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
-        currency: DEFAULT_CURRENCY_CODE,
-        intent: 'capture',
-        disableFunding: 'card',
-      }}>
-      <PayPalButtons
-        style={{
-          color: 'blue',
-          shape: 'rect',
-          height: 50,
-        }}
-        className="mb-[-7px]"
-        createOrder={handleCreatePaypalOrder}
-        onApprove={handleApprovePaypalOrder}
-      />
-    </PayPalScriptProvider>
-  );
-}
-
-function Paybox({onApprove}: {onApprove: any}) {
-  const {cart, clearCart} = useCart();
-  const {toast} = useToast();
-
-  const {workspaceURL} = useWorkspace();
-  const {searchParams} = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-  const validateRef = useRef(false);
-
-  const noAddress = !(cart?.invoicingAddress && cart?.deliveryAddress);
-
-  const handleCreatePayboxOrder = async () => {
-    if (noAddress) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t('Select address to continue'),
-      });
-      return;
-    }
-
-    const result: any = await payboxCreateOrder({
-      cart,
-      workspaceURL,
-      uri: pathname,
-    });
-
-    if (result.error) {
-      toast({
-        variant: 'destructive',
-        title: result.message,
-      });
-    } else {
-      if (result?.order?.url) {
-        router.push(result?.order?.url);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: i18n.t('Error processing payment. Try again.'),
-        });
-      }
-    }
-  };
-
-  const handleValidatePayboxPayment = useCallback(async () => {
-    try {
-      if (!cart?.items?.length) {
-        return;
-      }
-
-      const result = await validatePayboxPayment({
-        params: Object.fromEntries(searchParams.entries()),
-        cart,
-        workspaceURL,
-      });
-
-      if (result.error) {
-        toast({
-          variant: 'destructive',
-          title: result.message,
-        });
-      } else {
-        toast({
-          variant: 'success',
-          title: i18n.t('Order requested successfully'),
-        });
-
-        clearCart();
-        onApprove?.(result);
-      }
-    } catch (err) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t('Error processing paybox payment, try again.'),
-      });
-    }
-  }, [toast, clearCart, onApprove, cart, workspaceURL, searchParams]);
-
-  useEffect(() => {
-    if (validateRef.current) {
-      return;
-    }
-
-    if (!cart?.items?.length) {
-      return;
-    }
-
-    const payboxResponse = searchParams.get('paybox_response');
-    const payboxError = searchParams.get('paybox_error');
-
-    if (payboxError) {
-      toast({
-        variant: 'destructive',
-        title: i18n.t('Error processing paybox payment, try again.'),
-      });
-    } else if (payboxResponse) {
-      handleValidatePayboxPayment();
-    }
-    validateRef.current = true;
-  }, [cart, searchParams, toast, handleValidatePayboxPayment]);
-
-  return (
-    <Button
-      className="h-[50px] text-lg font-medium"
-      onClick={handleCreatePayboxOrder}>
-      {i18n.t('Pay using Paybox')}
-    </Button>
-  );
-}
 
 function Summary({cart}: any) {
   const {tenant} = useWorkspace();
@@ -512,6 +212,8 @@ export default function Content({
   const [loading, setLoading] = useState(true);
   const [confirmationDialog, setConfirmationDialog] = useState(false);
 
+  const confirmOrder = workspace?.config?.confirmOrder;
+
   const openConfirmation = () => {
     setConfirmationDialog(true);
   };
@@ -530,19 +232,6 @@ export default function Content({
   ) => {
     setShippingType(event.target.value);
   };
-
-  const redirectOrder = useCallback(
-    (order: any) => {
-      if (orderSubapp) {
-        router.replace(
-          `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders}/${order.data}`,
-        );
-      } else {
-        router.replace(`${workspaceURI}/shop`);
-      }
-    },
-    [workspaceURI, router, orderSubapp],
-  );
 
   useEffect(() => {
     const init = async () => {
@@ -585,17 +274,6 @@ export default function Content({
     return <p>{i18n.t('Loading')}...</p>;
   }
 
-  const confirmOrder = workspace?.config?.confirmOrder;
-  const allowOnlinePayment = workspace?.config?.allowOnlinePaymentForEcommerce;
-  const paymentOptionSet = workspace?.config?.paymentOptionSet;
-
-  const allowPayment = (type: PaymentOption) =>
-    paymentOptionSet?.find((o: any) => o?.typeSelect === type);
-
-  const allowPaypal = allowPayment(PaymentOption.paypal);
-  const allowStripe = allowPayment(PaymentOption.stripe);
-  const allowPaybox = allowPayment(PaymentOption.paybox);
-
   return (
     <>
       <h4 className="mb-6 text-xl font-medium">{i18n.t('Confirm Cart')}</h4>
@@ -618,11 +296,12 @@ export default function Content({
               workspace={workspace}
             />
             <div className="flex flex-col gap-2">
-              {confirmOrder && allowOnlinePayment ? (
+              {confirmOrder ? (
                 <>
-                  {allowPaypal && <Paypal onApprove={redirectOrder} />}
-                  {allowStripe && <Stripe onApprove={redirectOrder} />}
-                  {allowPaybox && <Paybox onApprove={redirectOrder} />}
+                  <ShopPayments
+                    workspace={workspace}
+                    orderSubapp={orderSubapp}
+                  />
                 </>
               ) : null}
             </div>

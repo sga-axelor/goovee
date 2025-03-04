@@ -25,7 +25,7 @@ export function Payments({
   workspace: PortalWorkspace;
   disabled?: boolean;
   onValidate: (paymentOption?: PaymentOption) => Promise<boolean>;
-  onPaypalCreatedOrder: () => Promise<any>;
+  onPaypalCreatedOrder: (data: any, actions: any) => Promise<any>;
   onPaypalCaptureOrder: (orderID: string) => Promise<any>;
   onApprove: (result: any) => Promise<void>;
   onStripeCreateCheckOutSession: () => Promise<any>;

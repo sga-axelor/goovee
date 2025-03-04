@@ -8,3 +8,4 @@ export {ProductListItem} from './product-list-item';
 export {ProductListColorFilter} from './product-list-color-filter';
 export {ProductListBrandFilter} from './product-list-brand-filter';
 export {FeaturedCategories} from './featured-categories';
+export {ShopPayments} from './shop-payments';

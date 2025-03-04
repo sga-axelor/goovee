@@ -17,6 +17,7 @@ export function Paypal({
   onValidate,
   createOrder,
   captureOrder,
+  onPaymentSuccess,
 }: PaypalProps) {
   const {toast} = useToast();
 
@@ -32,7 +33,7 @@ export function Paypal({
     }
 
     try {
-      const result = await createOrder();
+      const result = await createOrder(data, actions);
       if (result.error || !result.order?.id) {
         toast({
           variant: 'destructive',
@@ -63,7 +64,9 @@ export function Paypal({
           variant: 'success',
           title: i18n.t(successMessage),
         });
-
+        if (onPaymentSuccess) {
+          onPaymentSuccess();
+        }
         onApprove?.(result);
       }
     } catch (error) {
@@ -90,6 +93,7 @@ export function Paypal({
           height: 50,
           disableMaxWidth: true,
         }}
+        className="mb-[-7px]"
         disabled={disabled}
         createOrder={handleCreatePaypalOrder}
         onApprove={handleApprovePaypalOrder}
