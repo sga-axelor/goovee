@@ -277,9 +277,8 @@ export async function payboxCreateOrder({
       amount,
       currency: currencyCode,
       email: emailAddress,
-
       context: {
-        amount: amount,
+        amount,
       },
       url: {
         success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true`,
