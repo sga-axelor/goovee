@@ -11,10 +11,8 @@ import {
   isLoginNeededForRegistration,
 } from '@/subapps/events/common/utils';
 import {SUBAPP_CODES} from '@/constants';
-import {TENANT_HEADER} from '@/middleware';
 import {PortalWorkspace, Participant, User} from '@/types';
 import {ActionResponse} from '@/types/action';
-import {headers} from 'next/headers';
 import {REQUIRED_FIELDS} from '../constants';
 import {EventConfig, findEventConfig} from '../orm/event';
 import {
