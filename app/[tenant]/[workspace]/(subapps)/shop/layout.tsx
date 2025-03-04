@@ -63,9 +63,9 @@ export default async function Layout({
   const parentcategories = categories?.filter((c: any) => !c.parent);
 
   return (
-    <>
+    <div className="mb-20 lg:mb-4">
       {children}
       <MobileMenuCategory categories={parentcategories} />
-    </>
+    </div>
   );
 }
