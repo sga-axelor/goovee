@@ -73,6 +73,7 @@ export const RegistrationForm = ({
 
   const {searchParams} = useSearchParams();
   const stripeSessionId = searchParams.get('stripe_session_id');
+  const payboxResponse = searchParams.get('paybox_response');
 
   const isLoggedIn = !!user?.emailAddress;
   //NOTE: temprorary disable contacts list
@@ -439,7 +440,7 @@ export const RegistrationForm = ({
           mode={'onChange'}
           onSubmit={onSubmit}
           submitButton={
-            (canPay && totalPrice > 0) || stripeSessionId
+            (canPay && totalPrice > 0) || stripeSessionId || payboxResponse
               ? ({form}: any) => (
                   <EventPayments
                     workspace={workspace}
