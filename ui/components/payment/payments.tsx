@@ -34,7 +34,7 @@ export function Payments({
     stripeSessionId: string;
   }) => Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>>;
   onPaymentSuccess?: () => Promise<void> | void;
-  onPayboxCreateOrder: () => Promise<any>;
+  onPayboxCreateOrder: ({uri}: {uri: string}) => Promise<any>;
   onPayboxValidatePayment: (params: {
     params: any;
   }) => Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>>;

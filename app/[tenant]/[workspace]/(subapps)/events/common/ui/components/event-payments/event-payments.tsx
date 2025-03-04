@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useCallback, useMemo} from 'react';
-import {usePathname, useRouter} from 'next/navigation';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {PaymentOption, PortalWorkspace} from '@/types';
@@ -43,7 +43,6 @@ export function EventPayments({
   const {toast} = useToast();
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
-  const pathname = usePathname();
 
   const eventFormKey = useMemo(
     () => PREFIX_EVENT_FORM_KEY + '-' + workspaceURL,
@@ -176,7 +175,7 @@ export function EventPayments({
           });
         }}
         onPaymentSuccess={async () => await setitem(eventFormKey, null)}
-        onPayboxCreateOrder={async () => {
+        onPayboxCreateOrder={async ({uri}) => {
           const formValues: any = await getitem(eventFormKey).catch(() => {});
           return await payboxCreateOrder({
             event: {
@@ -184,7 +183,7 @@ export function EventPayments({
             },
             workspaceURL,
             values: formValues,
-            uri: pathname,
+            uri,
           });
         }}
         onPayboxValidatePayment={async ({params}) => {

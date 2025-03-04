@@ -18,6 +18,8 @@ export function Paybox({
   onValidate,
   onCreateOrder,
   onValidatePayment,
+  successMessage,
+  errorMessage,
 }: PayboxProps) {
   const {toast} = useToast();
 
@@ -73,7 +75,7 @@ export function Paybox({
       } else {
         toast({
           variant: 'success',
-          title: i18n.t('Order requested successfully'),
+          title: i18n.t(successMessage || 'Payment completed successfully'),
         });
 
         if (onPaymentSuccess) {
@@ -84,7 +86,9 @@ export function Paybox({
     } catch (err) {
       toast({
         variant: 'destructive',
-        title: i18n.t('Error processing paybox payment, try again.'),
+        title: i18n.t(
+          errorMessage || 'Error processing paybox payment, try again.',
+        ),
       });
     }
   }, [
@@ -94,6 +98,8 @@ export function Paybox({
     toast,
     onPaymentSuccess,
     onApprove,
+    successMessage,
+    errorMessage,
   ]);
 
   useEffect(() => {

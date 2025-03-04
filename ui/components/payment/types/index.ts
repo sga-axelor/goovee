@@ -31,6 +31,8 @@ export type StripeProps = {
 
 export type PayboxProps = {
   disabled?: boolean;
+  successMessage?: string;
+  errorMessage?: string;
   onValidate?: (paymentOption: string) => Promise<boolean>;
   onCreateOrder: ({uri}: {uri: string}) => Promise<any>;
   shouldValidateData: () => Promise<boolean>;
