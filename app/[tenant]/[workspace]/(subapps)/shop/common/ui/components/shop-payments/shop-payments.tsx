@@ -65,7 +65,7 @@ export function ShopPayments({workspace, orderSubapp}: ShopPaymentsProps) {
           return await paypalCreateOrder({cart, workspaceURL});
         }}
         onPaypalCaptureOrder={async orderID => {
-          await paypalCaptureOrder({
+          return await paypalCaptureOrder({
             orderId: orderID,
             workspaceURL,
             cart,
