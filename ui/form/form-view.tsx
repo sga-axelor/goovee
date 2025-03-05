@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useMemo} from 'react';
+import React, {type ReactNode, useCallback, useMemo} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
@@ -30,7 +30,7 @@ export const FormView = ({
   onSubmit: (values: any) => Promise<void>;
   submitTitle: string;
   mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
-  submitButton?: any;
+  submitButton?: (form: any) => ReactNode;
 }) => {
   const fields = useMemo(() => sortFields(_fields), [_fields]);
 
@@ -136,7 +136,7 @@ export const FormView = ({
     <Form {...form}>
       <form className="space-y-6 w-full">
         {visibleFields.map(_i => renderItem(_i, _i.name))}
-        {(submitButton && React.createElement(submitButton, {form})) || (
+        {(submitButton && submitButton({form})) || (
           <Button
             className="text-base font-medium leading-6 p-3 w-full bg-success hover:bg-success-dark"
             type="submit"

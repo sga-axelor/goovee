@@ -440,7 +440,7 @@ export const RegistrationForm = ({
                     metaFields={metaFields}
                   />
                 )
-              : null
+              : undefined
           }
         />
       </CardContent>
