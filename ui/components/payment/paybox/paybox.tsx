@@ -1,10 +1,10 @@
 'use client';
 
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useRouter, usePathname} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {Button} from '@/ui/components';
+import {Button, Portal, Spinner} from '@/ui/components';
 import {useSearchParams, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {PayboxProps} from '@/ui/components/payment/types';
@@ -22,7 +22,7 @@ export function Paybox({
   errorMessage,
 }: PayboxProps) {
   const {toast} = useToast();
-
+  const [verifying, setVerifying] = useState(false);
   const {searchParams} = useSearchParams();
   const router = useRouter();
   const validateRef = useRef(false);
@@ -58,6 +58,7 @@ export function Paybox({
 
   const handleValidatePayboxPayment = useCallback(async () => {
     try {
+      setVerifying(true);
       const isValid = shouldValidateData ? await shouldValidateData() : true;
       if (!isValid) {
         return;
@@ -90,6 +91,8 @@ export function Paybox({
           errorMessage || 'Error processing paybox payment, try again.',
         ),
       });
+    } finally {
+      setVerifying(false);
     }
   }, [
     shouldValidateData,
@@ -102,43 +105,47 @@ export function Paybox({
     errorMessage,
   ]);
 
+  const payboxResponse = searchParams.get('paybox_response');
+  const payboxError = searchParams.get('paybox_error');
+
   useEffect(() => {
     if (validateRef.current) {
       return;
     }
 
-    const validate = async () => {
-      const isValid = shouldValidateData ? await shouldValidateData() : true;
+    if (!(payboxResponse || payboxError)) {
+      return;
+    }
 
-      if (!isValid) {
-        return;
-      }
-
-      const payboxResponse = searchParams.get('paybox_response');
-      const payboxError = searchParams.get('paybox_error');
-
-      if (payboxError) {
-        toast({
-          variant: 'destructive',
-          title: i18n.t('Error processing paybox payment, try again.'),
-        });
-      } else if (payboxResponse) {
-        handleValidatePayboxPayment();
-      }
-
-      validateRef.current = true;
-    };
-
-    validate();
-  }, [shouldValidateData, searchParams, toast, handleValidatePayboxPayment]);
+    validateRef.current = true;
+    if (payboxError) {
+      toast({
+        variant: 'destructive',
+        title: i18n.t('Error processing paybox payment, try again.'),
+      });
+    } else if (payboxResponse) {
+      handleValidatePayboxPayment();
+    }
+  }, [
+    shouldValidateData,
+    payboxResponse,
+    payboxError,
+    toast,
+    handleValidatePayboxPayment,
+  ]);
 
   return (
-    <Button
-      className="h-[50px] text-lg font-medium w-full"
-      disabled={disabled}
-      onClick={handleCreatePayboxOrder}>
-      {i18n.t('Pay using Paybox')}
-    </Button>
+    <>
+      <Button
+        className="h-[50px] text-lg font-medium w-full"
+        disabled={disabled}
+        onClick={handleCreatePayboxOrder}>
+        {i18n.t('Pay using Paybox')}
+      </Button>
+      <Portal>
+        <Spinner show={verifying} fullscreen />
+      </Portal>
+    </>
   );
 }
 

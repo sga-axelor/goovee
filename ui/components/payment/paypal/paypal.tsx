@@ -1,13 +1,15 @@
 'use client';
 
-import {PayPalScriptProvider, PayPalButtons} from '@paypal/react-paypal-js';
+import {useState} from 'react';
+import {PayPalButtons, PayPalScriptProvider} from '@paypal/react-paypal-js';
 
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_CURRENCY_CODE} from '@/constants';
 import {i18n} from '@/locale';
-import {useToast} from '@/ui/hooks';
-import {PaypalProps} from '@/ui/components/payment/types';
 import {PaymentOption} from '@/types';
+import {Portal, Spinner} from '@/ui/components';
+import {PaypalProps} from '@/ui/components/payment/types';
+import {useToast} from '@/ui/hooks';
 
 export function Paypal({
   disabled,
@@ -20,6 +22,7 @@ export function Paypal({
   onPaymentSuccess,
 }: PaypalProps) {
   const {toast} = useToast();
+  const [verifying, setVerifying] = useState(false);
 
   const handleCreatePaypalOrder = async (
     data: any,
@@ -53,6 +56,7 @@ export function Paypal({
 
   const handleApprovePaypalOrder = async (data: any, actions: any) => {
     try {
+      setVerifying(true);
       const result = await captureOrder(data.orderID);
       if (result?.error) {
         toast({
@@ -75,6 +79,8 @@ export function Paypal({
         variant: 'destructive',
         title: i18n.t(errorMessage),
       });
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -98,6 +104,9 @@ export function Paypal({
         createOrder={handleCreatePaypalOrder}
         onApprove={handleApprovePaypalOrder}
       />
+      <Portal>
+        <Spinner show={verifying} fullscreen />
+      </Portal>
     </PayPalScriptProvider>
   );
 }

@@ -1,9 +1,9 @@
 'use client';
 
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {Button} from '@/ui/components';
+import {Button, Portal, Spinner} from '@/ui/components';
 import {i18n} from '@/locale';
 import {useSearchParams, useToast} from '@/ui/hooks';
 import {StripeProps} from '@/ui/components/payment/types';
@@ -21,6 +21,7 @@ export function Stripe({
   onApprove,
 }: StripeProps) {
   const {toast} = useToast();
+  const [verifying, setVerifying] = useState(false);
   const {searchParams} = useSearchParams();
   const validateRef = useRef(false);
 
@@ -57,13 +58,14 @@ export function Stripe({
 
   const handleValidateStripePayment = useCallback(
     async ({stripeSessionId}: {stripeSessionId: string}) => {
-      const isValid = shouldValidateData ? await shouldValidateData() : true;
-
-      if (!(stripeSessionId && isValid)) {
-        return;
-      }
-
       try {
+        setVerifying(true);
+        const isValid = shouldValidateData ? await shouldValidateData() : true;
+
+        if (!(stripeSessionId && isValid)) {
+          return;
+        }
+
         const result: any = await onValidateSession({
           stripeSessionId,
         });
@@ -88,6 +90,8 @@ export function Stripe({
           variant: 'destructive',
           title: i18n.t('Error processing Stripe payment, try again.'),
         });
+      } finally {
+        setVerifying(false);
       }
     },
     [
@@ -101,15 +105,18 @@ export function Stripe({
     ],
   );
 
+  const stripeSessionId = searchParams.get('stripe_session_id');
+  const stripeError = searchParams.get('stripe_error');
+
   useEffect(() => {
     if (validateRef.current) {
       return;
     }
+    if (!(stripeSessionId || stripeError)) {
+      return;
+    }
 
     validateRef.current = true;
-
-    const stripeSessionId = searchParams.get('stripe_session_id');
-    const stripeError = searchParams.get('stripe_error');
 
     if (stripeError) {
       toast({
@@ -119,15 +126,20 @@ export function Stripe({
     } else if (stripeSessionId) {
       handleValidateStripePayment({stripeSessionId});
     }
-  }, [searchParams, toast, handleValidateStripePayment]);
+  }, [stripeSessionId, stripeError, toast, handleValidateStripePayment]);
 
   return (
-    <Button
-      className="h-[50px] w-full bg-[#635bff] text-lg font-medium"
-      disabled={disabled}
-      onClick={handleCreateCheckoutSession}>
-      {i18n.t('Pay with Stripe')}
-    </Button>
+    <>
+      <Button
+        className="h-[50px] w-full bg-[#635bff] text-lg font-medium"
+        disabled={disabled}
+        onClick={handleCreateCheckoutSession}>
+        {i18n.t('Pay with Stripe')}
+      </Button>
+      <Portal>
+        <Spinner show={verifying} fullscreen />
+      </Portal>
+    </>
   );
 }
 
