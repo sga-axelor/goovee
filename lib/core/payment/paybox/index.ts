@@ -1,6 +1,6 @@
 import {DEFAULT_CURRENCY_CODE} from '@/constants';
-import {encodeFilter as encode, decodeFilter as decode} from '@/utils/url';
-import {formatAmountForPaybox, hasKeys, join, makeContextUnique} from './utils';
+import {encodeFilter as encode} from '@/utils/url';
+import {formatAmountForPaybox, hasKeys, join} from './utils';
 import {createHMAC} from './crypto';
 
 const CurrencyCode: Record<string, number> = {
@@ -12,13 +12,13 @@ const DefaultCurrencyCode = CurrencyCode[DEFAULT_CURRENCY_CODE];
 export function getPaymentURL({
   amount,
   email,
-  context,
+  contextId,
   currency,
   url,
 }: {
   amount: string | number;
   email: string;
-  context: any;
+  contextId: string;
   currency: string;
   url: {
     success: string;
@@ -35,7 +35,7 @@ export function getPaymentURL({
     PBX_DEVISE: CurrencyCode[currency] || DefaultCurrencyCode,
     PBX_TOTAL: formatAmountForPaybox(amount),
     PBX_PORTEUR: email,
-    PBX_CMD: encode(makeContextUnique(context, amount)),
+    PBX_CMD: encode({context_id: contextId, amount}),
     PBX_HASH: 'Sha512',
     PBX_EFFECTUE: url?.success,
     PBX_ATTENTE: url?.success,

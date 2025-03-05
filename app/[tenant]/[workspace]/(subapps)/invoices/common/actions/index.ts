@@ -1,33 +1,30 @@
 'use server';
 
-import {headers} from 'next/headers';
 import axios from 'axios';
+import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {t} from '@/locale/server';
 import {getSession} from '@/auth';
-import {findSubapp, findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
-import {PartnerKey, PaymentOption} from '@/types';
-import {findPartnerByEmail} from '@/orm/partner';
-import {formatAmountForStripe} from '@/utils/stripe';
+import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
+import {findPartnerByEmail} from '@/orm/partner';
+import {findSubapp, findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
+import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
+import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
+import {manager, Tenant} from '@/tenant';
+import {PartnerKey, PaymentOption} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
 import {isPaymentOptionAvailable} from '@/utils/payment';
-import {manager, Tenant} from '@/tenant';
 import {ID} from '@goovee/orm';
-import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
-import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
-import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
-import {formatAmountForPaybox} from '@/payment/paybox/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
-import {extractAmount} from '@/subapps/invoices/common/utils/invoices';
 import {
   INVOICE,
   INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
+import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {validatePaymentData} from '@/subapps/invoices/common/utils/validations';
 
 export async function paypalCreateOrder({
@@ -74,9 +71,11 @@ export async function paypalCreateOrder({
 
   try {
     const response = await createPaypalOrder({
+      tenantId,
       amount: $amount,
       currency: currencyCode,
-      email: payer?.emailAddress?.address,
+      context: invoice,
+      email: payer?.emailAddress?.address!,
     });
     return {success: true, order: response?.result};
   } catch (err) {
@@ -90,13 +89,9 @@ export async function paypalCreateOrder({
 
 export async function paypalCaptureOrder({
   orderID,
-  invoice,
   workspaceURL,
 }: {
   orderID: string;
-  invoice: {
-    id: string | number;
-  };
   workspaceURL: string;
 }) {
   if (!orderID) {
@@ -107,13 +102,6 @@ export async function paypalCaptureOrder({
     return {
       error: true,
       message: await t('Workspace not provided'),
-    };
-  }
-
-  if (!invoice?.id) {
-    return {
-      error: true,
-      message: await t('Invoice is missing'),
     };
   }
 
@@ -166,20 +154,6 @@ export async function paypalCaptureOrder({
     isContactAdmin,
     partnerKey: PartnerKey.PARTNER,
   });
-  const $invoice = await findInvoice({
-    id: invoice.id,
-    params: {
-      where: invoicesWhereClause,
-    },
-    workspaceURL,
-    tenantId,
-  });
-  if (!$invoice) {
-    return {
-      error: true,
-      message: await t('Invalid invoice'),
-    };
-  }
 
   if (workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.NO) {
     return {
@@ -215,13 +189,12 @@ export async function paypalCaptureOrder({
   }
 
   try {
-    const response = await findPaypalOrder({id: orderID});
-    const {result} = response;
+    const {amount, context: invoice} = await findPaypalOrder({
+      id: orderID,
+      tenantId,
+    });
 
-    const purchase = result?.purchase_units?.[0];
-    const purchaseAmount = Number(
-      purchase?.payments?.captures?.[0]?.amount?.value,
-    );
+    const purchaseAmount = Number(amount);
 
     if (purchaseAmount <= 0) {
       return {
@@ -230,7 +203,23 @@ export async function paypalCaptureOrder({
       };
     }
 
-    const remainingAmount = extractAmount($invoice?.amountRemaining?.value);
+    const $invoice = await findInvoice({
+      id: invoice.id,
+      params: {
+        where: invoicesWhereClause,
+      },
+      workspaceURL,
+      tenantId,
+    });
+
+    if (!$invoice) {
+      return {
+        error: true,
+        message: await t('Invalid invoice'),
+      };
+    }
+
+    const remainingAmount = Number($invoice.amountRemaining?.value || 0);
 
     const isPartialPayment =
       workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
@@ -322,12 +311,14 @@ export async function createStripeCheckoutSession({
 
   try {
     const session = await createStripeOrder({
+      tenantId,
       customer: {
         id: payer?.id!,
         email: payer?.emailAddress?.address!,
       },
+      context: invoice,
       name: await t('Invoice Checkout'),
-      amount: String($amount) as string,
+      amount: Number($amount),
       currency: currencyCode,
       url: {
         success: `${workspaceURL}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${$invoice.id}?stripe_session_id={CHECKOUT_SESSION_ID}`,
@@ -349,16 +340,10 @@ export async function createStripeCheckoutSession({
 
 export async function validateStripePayment({
   stripeSessionId,
-  invoice,
   workspaceURL,
-  amount,
 }: {
   stripeSessionId: string;
-  invoice: {
-    id: string | number;
-  };
   workspaceURL: string;
-  amount: string;
 }) {
   if (!stripeSessionId) {
     return {error: true, message: await t('Missing stripe session id!')};
@@ -366,17 +351,6 @@ export async function validateStripePayment({
 
   if (!workspaceURL) {
     return {error: true, message: await t('Workspace not provided!')};
-  }
-
-  if (!invoice?.id) {
-    return {error: true, message: await t('Invoice is missing')};
-  }
-
-  if (!amount) {
-    return {
-      error: true,
-      message: await t('Amount is missing'),
-    };
   }
 
   const tenantId = headers().get(TENANT_HEADER);
@@ -406,24 +380,6 @@ export async function validateStripePayment({
 
     if (!subapp) {
       return {error: true, message: await t('Unauthorized app access')};
-    }
-
-    const invoicesWhereClause = getWhereClauseForEntity({
-      user,
-      role: subapp.role,
-      isContactAdmin: subapp.isContactAdmin,
-      partnerKey: PartnerKey.PARTNER,
-    });
-
-    const $invoice = await findInvoice({
-      id: invoice.id,
-      params: {where: invoicesWhereClause},
-      workspaceURL,
-      tenantId,
-    });
-
-    if (!$invoice) {
-      return {error: true, message: await t('Invalid invoice!')};
     }
 
     if (!workspace?.config?.allowOnlinePaymentForInvoices) {
@@ -459,9 +415,14 @@ export async function validateStripePayment({
       };
     }
 
-    let stripeSession;
+    let invoice, purchaseAmount;
     try {
-      stripeSession = await findStripeOrder({id: stripeSessionId});
+      const {amount, context} = await findStripeOrder({
+        id: stripeSessionId,
+        tenantId,
+      });
+      invoice = context;
+      purchaseAmount = amount;
     } catch (err) {
       return {
         error: true,
@@ -469,29 +430,37 @@ export async function validateStripePayment({
       };
     }
 
-    const currencyCode = $invoice.currency?.code || DEFAULT_CURRENCY_CODE;
+    const invoicesWhereClause = getWhereClauseForEntity({
+      user,
+      role: subapp.role,
+      isContactAdmin: subapp.isContactAdmin,
+      partnerKey: PartnerKey.PARTNER,
+    });
 
-    const stripeTotal = stripeSession?.lines?.data?.[0]?.amount_total;
+    const $invoice = await findInvoice({
+      id: invoice.id,
+      params: {where: invoicesWhereClause},
+      workspaceURL,
+      tenantId,
+    });
 
-    const remainingAmount = formatAmountForStripe(
-      Number($invoice.amountRemaining?.value || 0),
-      currencyCode,
-    );
-
-    if (
-      workspace.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.TOTAL &&
-      stripeTotal !== remainingAmount
-    ) {
-      return {
-        error: true,
-        message: await t('Payment must match the remaining amount'),
-      };
+    if (!$invoice) {
+      return {error: true, message: await t('Invalid invoice!')};
     }
 
-    if (
-      workspace.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL &&
-      Number(stripeTotal) > Number(remainingAmount)
-    ) {
+    const remainingAmount = Number($invoice.amountRemaining?.value || 0);
+
+    const isPartialPayment =
+      workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
+    const isTotalPayment =
+      workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.TOTAL;
+
+    if (isTotalPayment && purchaseAmount !== remainingAmount) {
+      return {
+        error: true,
+        message: await t('Payment must match the total amount'),
+      };
+    } else if (isPartialPayment && purchaseAmount > remainingAmount) {
       return {
         error: true,
         message: await t('Payment exceeds the remaining amount.'),
@@ -501,7 +470,7 @@ export async function validateStripePayment({
     const result = await updateInvoice({
       workspaceURL,
       tenantId,
-      amount,
+      amount: purchaseAmount,
       invoiceId: $invoice.id,
     });
 
@@ -580,12 +549,11 @@ export async function payboxCreateOrder({
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
   try {
     const response = await createPayboxOrder({
+      tenantId,
       amount: $amount,
       currency: currencyCode,
       email: payer?.emailAddress?.address!,
-      context: {
-        amount: $amount,
-      },
+      context: invoice,
       url: {
         success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true`,
         failure: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_error=true`,
@@ -604,15 +572,9 @@ export async function payboxCreateOrder({
 export async function validatePayboxPayment({
   params,
   workspaceURL,
-  amount,
-  invoice,
 }: {
   params: any;
   workspaceURL: string;
-  amount: string;
-  invoice: {
-    id: string | number;
-  };
 }) {
   if (!params) {
     return {error: true, message: await t('Bad request')};
@@ -620,14 +582,6 @@ export async function validatePayboxPayment({
 
   if (!workspaceURL) {
     return {error: true, message: await t('Workspace not provided!')};
-  }
-
-  if (!invoice?.id) {
-    return {error: true, message: await t('Invoice is missing')};
-  }
-
-  if (!amount) {
-    return {error: true, message: await t('Amount is missing')};
   }
 
   const tenantId = headers().get(TENANT_HEADER);
@@ -657,24 +611,6 @@ export async function validatePayboxPayment({
 
     if (!subapp) {
       return {error: true, message: await t('Unauthorized app access')};
-    }
-
-    const invoicesWhereClause = getWhereClauseForEntity({
-      user,
-      role: subapp.role,
-      isContactAdmin: subapp.isContactAdmin,
-      partnerKey: PartnerKey.PARTNER,
-    });
-
-    const $invoice = await findInvoice({
-      id: invoice.id,
-      params: {where: invoicesWhereClause},
-      workspaceURL,
-      tenantId,
-    });
-
-    if (!$invoice) {
-      return {error: true, message: await t('Invalid invoice!')};
     }
 
     if (!workspace?.config?.allowOnlinePaymentForInvoices) {
@@ -710,9 +646,11 @@ export async function validatePayboxPayment({
       };
     }
 
-    let payboxOrder: any;
+    let invoice, purchaseAmount;
     try {
-      payboxOrder = await findPayboxOrder(params);
+      const {amount, context} = await findPayboxOrder({params, tenantId});
+      invoice = context;
+      purchaseAmount = amount;
     } catch (err) {
       console.error('Error:', err);
       return {
@@ -721,20 +659,47 @@ export async function validatePayboxPayment({
       };
     }
 
-    const paymentTotal = formatAmountForPaybox(payboxOrder?.amount);
-    const invoiceAmount = formatAmountForPaybox(Number(amount || 0));
+    const invoicesWhereClause = getWhereClauseForEntity({
+      user,
+      role: subapp.role,
+      isContactAdmin: subapp.isContactAdmin,
+      partnerKey: PartnerKey.PARTNER,
+    });
 
-    if (paymentTotal && invoiceAmount && paymentTotal !== invoiceAmount) {
+    const $invoice = await findInvoice({
+      id: invoice.id,
+      params: {where: invoicesWhereClause},
+      workspaceURL,
+      tenantId,
+    });
+
+    if (!$invoice) {
+      return {error: true, message: await t('Invalid invoice!')};
+    }
+
+    const remainingAmount = Number($invoice.amountRemaining?.value || 0);
+
+    const isPartialPayment =
+      workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
+    const isTotalPayment =
+      workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.TOTAL;
+
+    if (isTotalPayment && purchaseAmount !== remainingAmount) {
       return {
         error: true,
-        message: await t('Payment amount mistmatch'),
+        message: await t('Payment must match the total amount'),
+      };
+    } else if (isPartialPayment && purchaseAmount > remainingAmount) {
+      return {
+        error: true,
+        message: await t('Payment exceeds the remaining amount.'),
       };
     }
 
     const result = await updateInvoice({
       workspaceURL,
       tenantId,
-      amount,
+      amount: purchaseAmount,
       invoiceId: $invoice.id,
     });
 

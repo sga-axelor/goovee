@@ -68,7 +68,6 @@ export function ShopPayments({workspace, orderSubapp}: ShopPaymentsProps) {
           return await paypalCaptureOrder({
             orderId: orderID,
             workspaceURL,
-            cart,
           });
         }}
         onStripeCreateCheckOutSession={async () => {
@@ -80,7 +79,6 @@ export function ShopPayments({workspace, orderSubapp}: ShopPaymentsProps) {
         onStripeValidateSession={async ({stripeSessionId}) => {
           return validateStripePayment({
             stripeSessionId,
-            cart,
             workspaceURL,
           });
         }}
@@ -93,7 +91,7 @@ export function ShopPayments({workspace, orderSubapp}: ShopPaymentsProps) {
           });
         }}
         onPayboxValidatePayment={async ({params}) => {
-          return validatePayboxPayment({params, cart, workspaceURL});
+          return validatePayboxPayment({params, workspaceURL});
         }}
         onApprove={redirectOrder}
         successMessage="Order completed successfully."

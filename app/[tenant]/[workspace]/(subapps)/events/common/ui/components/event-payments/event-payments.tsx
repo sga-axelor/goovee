@@ -163,14 +163,12 @@ export function EventPayments({
         }: {
           stripeSessionId: string;
         }) => {
-          const formValues: any = await getitem(eventFormKey).catch(() => {});
           return await register({
             payment: {
               data: {id: stripeSessionId},
               mode: PaymentOption.stripe,
             },
             workspace: {url: workspaceURL},
-            values: formValues,
             eventId: event.id,
           });
         }}

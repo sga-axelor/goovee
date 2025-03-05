@@ -47,7 +47,7 @@ import {
   canEmailBeRegistered,
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
-import {validatePayment} from '@/subapps/events/common/utils/validate';
+import {getPaymentInfo} from '@/subapps/events/common/utils/validate';
 
 export async function getAllEvents({
   limit,
@@ -116,23 +116,42 @@ export async function getAllEvents({
 // TODO: How to know if the amount paid is for the appropriate event only
 export async function register({
   eventId,
-  values,
+  values: _values,
   workspace: {url: workspaceURL},
   payment,
 }: {
   eventId: any;
-  values: any;
   workspace: {url: PortalWorkspace['url']};
-  payment?: {
-    data: {
-      id?: string;
-      params?: any;
-    };
-    mode: PaymentOption;
-  };
+  values?: any;
+  payment?: {data: {id?: string; params?: any}; mode: PaymentOption};
 }): ActionResponse<{id: ID; version: number}> {
   const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) return error(await t('Tenant ID is missing!'));
+
+  const $event = await findEvent({
+    id: eventId,
+    workspace: {url: workspaceURL},
+    tenantId: tenantId,
+  });
+  if (!$event) return error(await t('Event not found!'));
+
+  let paidAmount;
+  let values;
+  if (payment) {
+    const paymentInfo = await getPaymentInfo({
+      mode: payment.mode,
+      data: payment.data,
+      tenantId,
+    });
+
+    if (paymentInfo.error) return paymentInfo;
+
+    values = paymentInfo.data.context;
+    paidAmount = paymentInfo.data.paidAmount;
+  } else {
+    values = _values;
+    paidAmount = 0;
+  }
 
   const validationResult = await validateRegistration({
     tenantId,
@@ -147,32 +166,16 @@ export async function register({
 
   const {workspace, participants} = validationResult.data;
 
-  const $event = await findEvent({
-    id: eventId,
-    workspace: {
-      url: workspaceURL,
-    },
-    tenantId: tenantId,
-  });
-  if (!$event) return error(await t('Event not found!'));
-  let {total: expectedAmount} = getCalculatedTotalPrice(values, $event) || {
-    total: 0,
-  };
+  const {total: expectedAmount} = getCalculatedTotalPrice(values, $event);
 
-  if (expectedAmount > 0) {
-    if (!(payment?.data?.id || payment?.data?.params) || !payment?.mode) {
-      return error(await t('Payment is required for this event.'));
-    }
-    const paymentValidationResult = await validatePayment({
-      payment: {
-        data: payment.data,
-        mode: payment?.mode,
-        amount: expectedAmount,
-        currencyCode: $event.currency?.code,
-      },
-      workspace,
-    });
-    if (paymentValidationResult.error) return paymentValidationResult;
+  if (paidAmount !== expectedAmount) {
+    return error(
+      await t(
+        'Paid amount {0} is not equal to expected amount {1}',
+        String(paidAmount),
+        String(expectedAmount),
+      ),
+    );
   }
 
   const registration = await registerParticipants({
@@ -182,7 +185,7 @@ export async function register({
     tenantId,
   });
 
-  if (expectedAmount > 0) {
+  if (paidAmount > 0) {
     createInvoice({
       workspace,
       tenantId,

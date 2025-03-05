@@ -4,23 +4,21 @@ import axios from 'axios';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
-import {computeTotal} from '@/utils/cart';
 import {t} from '@/locale/server';
-import {formatAmountForStripe} from '@/utils/stripe';
 import {TENANT_HEADER} from '@/middleware';
-import {manager, type Tenant} from '@/tenant';
-import {PaymentOption} from '@/types';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
-import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
+import {manager, type Tenant} from '@/tenant';
+import {PaymentOption} from '@/types';
+import {computeTotal} from '@/utils/cart';
 
 // ---- LOCAL IMPORTS ---- //
-import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findPartnerByEmail} from '@/orm/partner';
-import {formatAmountForPaybox} from '@/lib/core/payment/paybox/utils';
+import {findProduct} from '@/subapps/shop/common/orm/product';
 
 const formatNumber = (n: any) => n;
 
@@ -158,11 +156,9 @@ async function createOrder({
 
 export async function paypalCaptureOrder({
   orderId,
-  cart,
   workspaceURL,
 }: {
   orderId: string;
-  cart: any;
   workspaceURL: string;
 }) {
   const session = await getSession();
@@ -204,13 +200,6 @@ export async function paypalCaptureOrder({
     url: workspaceURL,
     tenantId,
   });
-
-  if (!cart?.items?.length) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
 
   if (!workspace) {
     return {
@@ -259,11 +248,10 @@ export async function paypalCaptureOrder({
   }
 
   try {
-    const response = await findPaypalOrder({id: orderId});
-
-    const {result} = response;
-
-    const purchase = result?.purchase_units?.[0];
+    const {amount, context: cart} = await findPaypalOrder({
+      id: orderId,
+      tenantId,
+    });
 
     const {total} = computeTotal({
       cart,
@@ -271,9 +259,7 @@ export async function paypalCaptureOrder({
       formatNumber,
     });
 
-    if (
-      Number(purchase?.payments?.captures?.[0]?.amount?.value) !== Number(total)
-    ) {
+    if (Number(amount) !== Number(total)) {
       return {
         error: true,
         message: await t('Amount mismatched'),
@@ -392,9 +378,11 @@ export async function paypalCreateOrder({
 
   try {
     const response = await createPaypalOrder({
+      tenantId,
+      context: cart,
       amount: total,
       currency: currency?.code,
-      email: payer?.emailAddress?.address,
+      email: payer?.emailAddress?.address!,
     });
 
     return {success: true, order: response?.result};
@@ -511,13 +499,15 @@ export async function createStripeCheckoutSession({
 
   try {
     const session = await createStripeOrder({
+      tenantId,
       customer: {
         id: payer?.id!,
         email: payer?.emailAddress?.address!,
       },
       name: 'Cart Checkout',
-      amount: total as string,
+      amount: Number(total),
       currency: currencyCode,
+      context: cart,
       url: {
         success: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_session_id={CHECKOUT_SESSION_ID}`,
         error: `${workspaceURL}/${SUBAPP_CODES.shop}/cart/checkout?stripe_error=true`,
@@ -538,11 +528,9 @@ export async function createStripeCheckoutSession({
 
 export async function validateStripePayment({
   stripeSessionId,
-  cart,
   workspaceURL,
 }: {
   stripeSessionId: string;
-  cart: any;
   workspaceURL: string;
 }) {
   const session = await getSession();
@@ -551,13 +539,6 @@ export async function validateStripePayment({
     return {
       error: true,
       message: await t('Unauthorized'),
-    };
-  }
-
-  if (!cart?.items?.length) {
-    return {
-      error: true,
-      message: await t('Bad request'),
     };
   }
 
@@ -638,9 +619,14 @@ export async function validateStripePayment({
     };
   }
 
-  let stripeSession;
+  let paidAmount, cart;
   try {
-    stripeSession = await findStripeOrder({id: stripeSessionId});
+    const {amount, context} = await findStripeOrder({
+      id: stripeSessionId,
+      tenantId,
+    });
+    cart = context;
+    paidAmount = amount;
   } catch (err) {
     return {
       error: true,
@@ -648,18 +634,13 @@ export async function validateStripePayment({
     };
   }
 
-  const {total, currency} = computeTotal({
+  const {total} = computeTotal({
     cart,
     workspace,
     formatNumber,
   });
 
-  const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
-
-  const paymentTotal = stripeSession?.lines?.data?.[0]?.amount_total;
-  const cartTotal = formatAmountForStripe(Number(total || 0), currencyCode);
-
-  if (paymentTotal && cartTotal && paymentTotal !== cartTotal) {
+  if (Number(paidAmount) !== Number(total)) {
     return {
       error: true,
       message: await t('Payment amount mistmatch'),
@@ -774,17 +755,11 @@ export async function payboxCreateOrder({
 
   try {
     const response = await createPayboxOrder({
+      tenantId,
       amount: total,
       currency: currency?.code,
-      email: payer?.emailAddress?.address,
-      context: {
-        ...cart,
-        items: cart?.items?.map(({product, quantity}: any) => ({
-          product,
-          quantity,
-        })),
-        amount: total,
-      },
+      email: payer?.emailAddress?.address!,
+      context: cart,
       url: {
         success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true`,
         failure: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_error=true`,
@@ -802,11 +777,9 @@ export async function payboxCreateOrder({
 
 export async function validatePayboxPayment({
   params,
-  cart,
   workspaceURL,
 }: {
   params: any;
-  cart: any;
   workspaceURL: string;
 }) {
   const session = await getSession();
@@ -815,13 +788,6 @@ export async function validatePayboxPayment({
     return {
       error: true,
       message: await t('Unauthorized'),
-    };
-  }
-
-  if (!cart?.items?.length) {
-    return {
-      error: true,
-      message: await t('Bad request'),
     };
   }
 
@@ -902,9 +868,11 @@ export async function validatePayboxPayment({
     };
   }
 
-  let payboxOrder: any;
+  let paidAmount, cart;
   try {
-    payboxOrder = await findPayboxOrder(params);
+    const {amount, context} = await findPayboxOrder({params, tenantId});
+    cart = context;
+    paidAmount = amount;
   } catch (err) {
     return {
       error: true,
@@ -918,10 +886,7 @@ export async function validatePayboxPayment({
     formatNumber,
   });
 
-  const paymentTotal = formatAmountForPaybox(payboxOrder?.amount);
-  const cartTotal = formatAmountForPaybox(Number(total || 0));
-
-  if (paymentTotal && cartTotal && paymentTotal !== cartTotal) {
+  if (Number(total) !== Number(paidAmount)) {
     return {
       error: true,
       message: await t('Payment amount mistmatch'),

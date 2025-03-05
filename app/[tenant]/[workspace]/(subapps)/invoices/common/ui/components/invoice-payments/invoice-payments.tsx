@@ -94,13 +94,9 @@ export function InvoicePayments({
     stripeSessionId: string;
   }): Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>> => {
     try {
-      const $amount: any = await getitem(invoiceKey).catch(() => {});
-
       const response: any = await validateStripePayment({
         stripeSessionId,
         workspaceURL,
-        invoice: {id: invoice.id},
-        amount: $amount,
       });
 
       return response;
@@ -118,14 +114,8 @@ export function InvoicePayments({
     params: any;
   }): Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>> => {
     try {
-      const $amount: any = await getitem(invoiceKey).catch(() => {});
-
       const response: any = await validatePayboxPayment({
         params,
-        invoice: {
-          id: invoice.id,
-        },
-        amount: $amount,
         workspaceURL,
       });
       return response;
@@ -160,9 +150,6 @@ export function InvoicePayments({
       onPaypalCaptureOrder={async orderID => {
         return await paypalCaptureOrder({
           orderID,
-          invoice: {
-            id: invoice.id,
-          },
           workspaceURL,
         });
       }}

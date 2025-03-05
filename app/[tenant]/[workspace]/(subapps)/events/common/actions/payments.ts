@@ -96,8 +96,10 @@ export async function createStripeCheckoutSession({
         email: emailAddress,
       },
       name: await t('Event Registration'),
-      amount: String(amount) as string,
+      amount: amount,
       currency: currencyCode,
+      context: values,
+      tenantId,
       url: {
         success: `${workspaceURL}/${SUBAPP_CODES.events}/${$event.slug}/register?stripe_session_id={CHECKOUT_SESSION_ID}`,
         error: `${workspaceURL}/${SUBAPP_CODES.events}/${$event.slug}/register?stripe_error=true`,
@@ -191,6 +193,8 @@ export async function paypalCreateOrder({
       amount,
       currency: currencyCode,
       email: emailAddress,
+      tenantId,
+      context: values,
     });
     return {success: true, order: response?.result};
   } catch (err) {
@@ -277,9 +281,8 @@ export async function payboxCreateOrder({
       amount,
       currency: currencyCode,
       email: emailAddress,
-      context: {
-        amount,
-      },
+      context: values,
+      tenantId,
       url: {
         success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true`,
         failure: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_error=true`,

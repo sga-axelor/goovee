@@ -2,18 +2,6 @@ export function formatAmountForPaybox(amount: string | number): string {
   return Math.round(Number(amount) * 100).toString();
 }
 
-export function getRandomNumber() {
-  return Math.floor(Math.random() * 10000) + 1 + Date.now();
-}
-
-export function makeContextUnique(context: any, amount: any) {
-  return {
-    ...context,
-    amount,
-    random: getRandomNumber(),
-  };
-}
-
 export function join(params: object, encode: boolean = true) {
   return Object.entries(params)
     .map(([key, value]) => {

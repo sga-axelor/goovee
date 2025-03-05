@@ -2,6 +2,19 @@ export const formatAmountForStripe = (
   amount: number,
   currency: string,
 ): number => {
+  return isZeroDecimalCurrency(amount, currency)
+    ? amount
+    : Math.round(amount * 100);
+};
+
+export const getAmountFromStripe = (
+  amount: number,
+  currency: string,
+): number => {
+  return isZeroDecimalCurrency(amount, currency) ? amount : amount / 100;
+};
+
+function isZeroDecimalCurrency(amount: number, currency: string): boolean {
   let numberFormat = new Intl.NumberFormat(['en-US'], {
     style: 'currency',
     currency: currency,
@@ -14,5 +27,5 @@ export const formatAmountForStripe = (
       zeroDecimalCurrency = false;
     }
   }
-  return zeroDecimalCurrency ? amount : Math.round(amount * 100);
-};
+  return zeroDecimalCurrency;
+}

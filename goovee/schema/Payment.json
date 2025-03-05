@@ -1,0 +1,24 @@
+{
+  "name": "Payment",
+  "table": "portal_payment",
+  "extends": "Model",
+  "synchronize": true,
+  "fields": [
+    {
+      "type": "String",
+      "name": "payer"
+    },
+    {
+      "type": "JSON",
+      "name": "context"
+    },
+    {
+      "type": "String",
+      "name": "mode"
+    },
+    {
+      "type": "String",
+      "name": "status"
+    }
+  ]
+}

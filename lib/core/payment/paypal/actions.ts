@@ -1,15 +1,23 @@
 import PayPalHttpClient from '.';
 import paypal from '@paypal/checkout-server-sdk';
 import {DEFAULT_CURRENCY_CODE} from '@/constants';
+import type {Tenant} from '@/tenant';
+import {PaymentOption} from '@/types';
+import {createPaymentContext, findPaymentContext} from '../common/orm';
+import type {PaymentInfo} from '../common/type';
 
 export async function createPaypalOrder({
   amount,
   email,
   currency = DEFAULT_CURRENCY_CODE,
+  context,
+  tenantId,
 }: {
   amount: string | number;
   email: string;
   currency: string;
+  context: any;
+  tenantId: Tenant['id'];
 }) {
   if (!(amount && currency && email)) {
     throw new Error('Amount, currency and email is required');
@@ -21,6 +29,13 @@ export async function createPaypalOrder({
 
   request.headers['Prefer'] = 'return=representation';
 
+  const {id: contextId} = await createPaymentContext({
+    context,
+    mode: PaymentOption.paypal,
+    payer: email,
+    tenantId,
+  });
+
   request.requestBody({
     intent: 'CAPTURE',
     payer: {
@@ -28,6 +43,7 @@ export async function createPaypalOrder({
     } as any,
     purchase_units: [
       {
+        custom_id: contextId,
         amount: {
           currency_code: currency,
           value: amount + '',
@@ -50,7 +66,13 @@ export async function createPaypalOrder({
   return response;
 }
 
-export async function findPaypalOrder({id}: {id: string}) {
+export async function findPaypalOrder({
+  id,
+  tenantId,
+}: {
+  id: string;
+  tenantId: Tenant['id'];
+}): Promise<PaymentInfo> {
   if (!id) {
     throw new Error('Order id is required');
   }
@@ -70,5 +92,28 @@ export async function findPaypalOrder({id}: {id: string}) {
     throw new Error('Cannot capture payment');
   }
 
-  return response;
+  const customId =
+    response.result?.purchase_units?.[0]?.payments?.captures?.[0]?.custom_id;
+
+  if (!customId) {
+    throw new Error('Custom id not found');
+  }
+
+  const context = await findPaymentContext({
+    id: customId,
+    tenantId,
+    mode: PaymentOption.paypal,
+  });
+
+  if (!context) {
+    throw new Error('Context not found');
+  }
+
+  return {
+    context,
+    amount: Number(
+      response.result.purchase_units?.[0]?.payments?.captures?.[0]?.amount
+        ?.value || 0,
+    ),
+  };
 }
