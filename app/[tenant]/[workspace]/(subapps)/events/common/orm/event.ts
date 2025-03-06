@@ -268,7 +268,7 @@ export async function findEvent({
     };
   });
 
-  const eventLink = `${workspace.url}/${SUBAPP_CODES.events}/${slug}`;
+  const eventLink = `${workspace.url}/${SUBAPP_CODES.events}/${event.slug}`;
 
   return {
     ...event,

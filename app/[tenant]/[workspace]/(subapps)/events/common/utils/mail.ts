@@ -82,7 +82,7 @@ export async function mailTemplate({
           }
           .event-btn {
             background-color: #5603ad;
-            color: #fff;
+            color: #fff !important;
             padding: 12px 20px;
             text-decoration: none;
             border-radius: 5px;
