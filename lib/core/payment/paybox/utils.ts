@@ -28,12 +28,6 @@ export function hasKeys(obj: Record<string, any>, keys: string[]): boolean {
 
 export function getParamsWithoutSign(searchParams: any) {
   const withoutsignparams = new URLSearchParams(searchParams);
-
   withoutsignparams.delete('sign');
-
-  const message = Array.from(withoutsignparams.entries())
-    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-    .join('&');
-
-  return message;
+  return withoutsignparams.toString();
 }
