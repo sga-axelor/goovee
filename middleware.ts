@@ -67,7 +67,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   const headers = new Headers(req.headers);
-  
+
   if (tenant) {
     headers.set(TENANT_HEADER, tenant);
   }
