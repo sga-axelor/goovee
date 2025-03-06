@@ -44,10 +44,6 @@ function notFound(req: NextRequest, {message = ''}: {message?: string} = {}) {
 const isMultiTenancy = process.env.MULTI_TENANCY === 'true';
 
 export default async function middleware(req: NextRequest) {
-  if (!isMultiTenancy) {
-    return NextResponse.next();
-  }
-
   const url = req.nextUrl;
   const pathname = url.pathname;
 
@@ -57,19 +53,24 @@ export default async function middleware(req: NextRequest) {
 
   const tenant = extractTenant(pathname, process.env.NEXT_PUBLIC_BASE_PATH);
 
-  if (!tenant) return notFound(req);
+  if (isMultiTenancy) {
+    if (!tenant) return notFound(req);
 
-  const token = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
-  const tenantMismatch = token && token.tenantId && token.tenantId !== tenant;
+    const token = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
+    const tenantMismatch = token && token.tenantId && token.tenantId !== tenant;
 
-  if (tenantMismatch)
-    return notFound(req, {
-      message:
-        'You are already loggedin to a tenant. For accessing different tenant, you need to logout first.',
-    });
+    if (tenantMismatch)
+      return notFound(req, {
+        message:
+          'You are already loggedin to a tenant. For accessing different tenant, you need to logout first.',
+      });
+  }
 
   const headers = new Headers(req.headers);
-  headers.set(TENANT_HEADER, tenant);
+  
+  if (tenant) {
+    headers.set(TENANT_HEADER, tenant);
+  }
 
   return NextResponse.next({
     request: {
