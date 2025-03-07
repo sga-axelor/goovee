@@ -24,8 +24,6 @@ export default async function Page({
   const session = await getSession();
   const user = session?.user;
 
-  if (!user) return notFound();
-
   const {workspaceURL, tenant} = workspacePathname(params);
   const {page, responsePage, search} = searchParams;
 
@@ -59,6 +57,7 @@ export default async function Page({
       responses={clone(responses)}
       responsesPageInfo={responsesPageInfo}
       workspace={workspace}
+      isConnected={user != null}
     />
   );
 }

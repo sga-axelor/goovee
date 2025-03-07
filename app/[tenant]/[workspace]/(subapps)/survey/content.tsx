@@ -33,6 +33,7 @@ type ContentProps = {
   workspace: PortalWorkspace;
   responsesPageInfo: any;
   surveysPageInfo: any;
+  isConnected?: boolean;
 };
 
 export default function Content({
@@ -41,6 +42,7 @@ export default function Content({
   surveysPageInfo = {},
   responsesPageInfo = {},
   workspace,
+  isConnected = false,
 }: ContentProps) {
   const [sortedSurveys, surveySortOrder, toggleSurveySortOrder] =
     useSortBy(surveys);
@@ -124,10 +126,10 @@ export default function Content({
     <div className="mb-16 lg:mb-0">
       <div className="container my-6 space-y-6 mx-auto">
         {renderSearch()}
-
         <div className="flex flex-col gap-4">
-          <h2 className="font-semibold text-xl">{i18n.t('Open Surveys')}</h2>
-
+          <h2 className="font-semibold text-xl">
+            {i18n.t('Available surveys')}
+          </h2>
           <TableList
             columns={surveyColumns}
             rows={sortedSurveys}
@@ -138,21 +140,22 @@ export default function Content({
             pageParamKey={SURVEY_URL_PARAMS.page}
           />
         </div>
-
-        <div className="flex flex-col gap-4">
-          <h2 className="font-semibold text-xl">
-            {i18n.t('Partner Responses')}
-          </h2>
-          <TableList
-            columns={partnerResponseColumns}
-            rows={sortedResponses}
-            sort={responseSortOrder}
-            onSort={toggleResponseSortOrder}
-            onRowClick={handleRowResponseClick}
-            pageInfo={responsesPageInfo}
-            pageParamKey={SURVEY_URL_PARAMS.responsePage}
-          />
-        </div>
+        {isConnected && (
+          <div className="flex flex-col gap-4">
+            <h2 className="font-semibold text-xl">
+              {i18n.t('Partner responses')}
+            </h2>
+            <TableList
+              columns={partnerResponseColumns}
+              rows={sortedResponses}
+              sort={responseSortOrder}
+              onSort={toggleResponseSortOrder}
+              onRowClick={handleRowResponseClick}
+              pageInfo={responsesPageInfo}
+              pageParamKey={SURVEY_URL_PARAMS.responsePage}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

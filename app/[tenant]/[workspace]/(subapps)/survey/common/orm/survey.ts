@@ -6,8 +6,9 @@ import {getSession} from '@/auth';
 import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {SURVEY_STATUS, SURVEY_TYPE} from '@/subapps/survey/common/constants';
+import {SURVEY_STATUS} from '@/subapps/survey/common/constants';
 import {Response, Survey} from '@/subapps/survey/common/types';
+import {filterPrivate} from '@/orm/filter';
 
 export async function findSurveys({
   workspace,
@@ -24,39 +25,37 @@ export async function findSurveys({
 }) {
   if (!(workspace && tenantId)) return [];
   const client = await manager.getClient(tenantId);
+  const session = await getSession();
+  const user = session?.user;
 
   const skip = getSkipInfo(limit, page);
 
   let surveys = await client.aOSSurveyConfig
     .find({
       where: {
-        typeSelect: SURVEY_TYPE.PUBLIC,
         statusSelect: SURVEY_STATUS.PUBLISHED,
-        ...(search
-          ? {
-              name: {
-                like: `%${search}%`,
-              },
-            }
-          : {}),
+        slug: {ne: null},
+        ...(search ? {name: {like: `%${search}%`}} : {}),
+        isHidden: false,
+        ...(user
+          ? await filterPrivate({user, tenantId})
+          : {isPrivate: false, isLoginNotNeeded: true}),
       },
       take: limit,
       ...(skip ? {skip} : {}),
       select: {
         name: true,
+        slug: true,
         statusSelect: true,
-        typeSelect: true,
-        category: {
-          name: true,
-        },
+        category: {name: true},
         publicationDatetime: true,
+        isPublic: true,
+        isHidden: true,
+        isLoginNotNeeded: true,
       },
     })
     .then(clone)
     .catch((error: any) => console.log('error >>>', error));
-
-  const session = await getSession();
-  const user = session?.user;
 
   if (Array.isArray(surveys) && user) {
     let result = [];
@@ -187,7 +186,6 @@ export async function findSurveyById({
       select: {
         name: true,
         statusSelect: true,
-        typeSelect: true,
         category: {
           name: true,
         },

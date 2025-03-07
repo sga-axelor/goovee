@@ -4,20 +4,25 @@
   "extends": "Model",
   "synchronize": false,
   "fields": [
-    {
-      "name": "name",
-      "type": "String"
-    },
+    {"name": "name", "type": "String"},
+    {"name": "slug", "type": "String"},
     {"name": "statusSelect", "type": "Int"},
-    {
-      "name": "typeSelect",
-      "type": "Int"
-    },
+    {"name": "typeSelect", "type": "Int"},
     {"name": "category", "type": "ManyToOne", "target": "AOSSurveyCategory"},
     {"name": "publicationDatetime", "type": "Date"},
     {"name": "canAnswerBeModified", "type": "Boolean"},
     {"name": "config", "type": "JSON"},
     {"name": "themeConfig", "type": "JSON"},
-    {"name": "customModel", "type": "OneToOne", "target": "AOSMetaJsonModel"}
+    {"name": "customModel", "type": "OneToOne", "target": "AOSMetaJsonModel"},
+    {"name": "isPrivate", "type": "Boolean"},
+    {"name": "isPublic", "type": "Boolean"},
+    {"name": "isLoginNotNeeded", "type": "Boolean"},
+    {"name": "isHidden", "type": "Boolean"},
+    {"name": "partnerSet", "type": "ManyToMany", "target": "AOSPartner"},
+    {
+      "name": "partnerCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPartnerCategory"
+    }
   ]
 }

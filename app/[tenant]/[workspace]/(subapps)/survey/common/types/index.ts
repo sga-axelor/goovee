@@ -2,7 +2,6 @@ export type Survey = {
   id: number;
   name: string;
   statusSelect: number;
-  typeSelect: number;
   category: {
     name: string;
   };
