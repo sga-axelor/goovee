@@ -131,7 +131,6 @@ export const RegistrationForm = ({
         defaultValue: user?.emailAddress?.address || '',
         required: true,
         customComponent: getEmailFieldComponent({
-          isDisabled: isLoggedIn,
           eventId,
           workspaceURL: workspace.url,
         }),
@@ -168,7 +167,6 @@ export const RegistrationForm = ({
       },
     ],
     [
-      isLoggedIn,
       eventId,
       workspace.url,
       facilityList,
@@ -286,42 +284,34 @@ export const RegistrationForm = ({
             },
           }),
         subSchema: externalParticipantForm.map(field =>
-          field.name === 'emailAddress'
+          field.name === 'subscriptionSet'
             ? {
                 ...field,
-                customComponent: getEmailFieldComponent({
-                  eventId,
-                  workspaceURL: workspace.url,
-                }),
+                customComponent: (props: any) => (
+                  <SubscriptionsView
+                    {...props}
+                    list={facilityList}
+                    isSecondary
+                    event={{
+                      price: eventPrice,
+                      formattedDefaultPriceAti: formattedDefaultPriceAti,
+                    }}
+                  />
+                ),
               }
-            : field.name === 'subscriptionSet'
+            : field.name === 'company'
               ? {
                   ...field,
                   customComponent: (props: any) => (
-                    <SubscriptionsView
+                    <CompanyAddressField
                       {...props}
-                      list={facilityList}
+                      title={i18n.t('Company')}
+                      placeholder={i18n.t('Enter company')}
                       isSecondary
-                      event={{
-                        price: eventPrice,
-                        formattedDefaultPriceAti: formattedDefaultPriceAti,
-                      }}
                     />
                   ),
                 }
-              : field.name === 'company'
-                ? {
-                    ...field,
-                    customComponent: (props: any) => (
-                      <CompanyAddressField
-                        {...props}
-                        title={i18n.t('Company')}
-                        placeholder={i18n.t('Enter company')}
-                        isSecondary
-                      />
-                    ),
-                  }
-                : field,
+              : field,
         ),
       },
     ],
@@ -330,7 +320,6 @@ export const RegistrationForm = ({
       showContactsList,
       externalParticipantForm,
       eventId,
-      workspace.url,
       facilityList,
       isPrivate,
       maxParticipantPerRegistration,

@@ -87,6 +87,7 @@ export function EmailFormField({
               disabled={disabled}
               onBlur={e => {
                 field.onBlur(e);
+                clearErrors(formKey);
                 handleValidation(e.target.value);
               }}
             />
