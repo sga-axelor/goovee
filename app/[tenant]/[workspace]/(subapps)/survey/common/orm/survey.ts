@@ -49,9 +49,6 @@ export async function findSurveys({
         statusSelect: true,
         category: {name: true},
         publicationDatetime: true,
-        isPublic: true,
-        isHidden: true,
-        isLoginNotNeeded: true,
       },
     })
     .then(clone)

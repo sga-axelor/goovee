@@ -15,7 +15,6 @@
     {"name": "themeConfig", "type": "JSON"},
     {"name": "customModel", "type": "OneToOne", "target": "AOSMetaJsonModel"},
     {"name": "isPrivate", "type": "Boolean"},
-    {"name": "isPublic", "type": "Boolean"},
     {"name": "isLoginNotNeeded", "type": "Boolean"},
     {"name": "isHidden", "type": "Boolean"},
     {"name": "partnerSet", "type": "ManyToMany", "target": "AOSPartner"},
