@@ -91,10 +91,13 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
           )}
           {eventDetails?.eventLink && (
             <p>
-              {i18n.t('Link')}:
-              <span className="font-normal break-words">
-                {eventDetails?.eventLink}
-              </span>
+              {i18n.t('Link')}:{' '}
+              <Link
+                href={eventDetails.eventLink}
+                className="font-normal break-words !text-blue-600"
+                target="_blank">
+                {eventDetails.eventLink}
+              </Link>
             </p>
           )}
           {defaultPrice ? (
