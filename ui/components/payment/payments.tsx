@@ -75,6 +75,7 @@ export function Payments({
           onApprove={onApprove}
           successMessage={successMessage}
           errorMessage={errorMessage}
+          onPaymentSuccess={onPaymentSuccess}
         />
       )}
       {allowStripe && (
