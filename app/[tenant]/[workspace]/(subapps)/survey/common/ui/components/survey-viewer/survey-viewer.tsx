@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect} from 'react';
-import {SurveyViewer} from '@axelor-ent/survey-react-components';
+import {SurveyViewer as Viewer} from '@axelor-ent/survey-react-components';
 
 // ---- CORE IMPORTS ---- //
 import {PortalWorkspace} from '@/types';
@@ -12,7 +12,7 @@ import {i18n} from '@/locale';
 import {authenticateUser} from '@/subapps/survey/common/action/action';
 import {ensureAuth} from '@/subapps/survey/common/utils/auth-helper';
 
-const Content = ({
+export const SurveyViewer = ({
   survey,
   response,
   partnerId,
@@ -55,7 +55,7 @@ const Content = ({
   }, [toast, workspace]);
 
   return (
-    <SurveyViewer
+    <Viewer
       config={config}
       theme={themeConfig}
       response={JSON.stringify(response?.attrs)}
@@ -70,4 +70,5 @@ const Content = ({
     />
   );
 };
-export default Content;
+
+export default SurveyViewer;

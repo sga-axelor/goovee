@@ -164,31 +164,33 @@ export async function findSurveyById({
   workspace,
   tenantId,
   id,
+  slug,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
-  id: Survey['id'];
+  id?: Survey['id'];
+  slug?: Survey['slug'];
 }) {
-  if (!(workspace && tenantId)) return [];
-
+  if (!id && !slug) return undefined;
+  if (!(workspace && tenantId)) return undefined;
   const session = await getSession();
   const user = session?.user;
 
-  if (!user) {
-    return [];
-  }
   const client = await manager.getClient(tenantId);
   const survey = await client.aOSSurveyConfig
     .findOne({
       where: {
-        id,
+        ...(id ? {id} : {}),
+        ...(slug ? {slug} : {}),
+        ...(user
+          ? await filterPrivate({user, tenantId})
+          : {isPrivate: false, isLoginNotNeeded: true}),
       },
       select: {
         name: true,
+        slug: true,
         statusSelect: true,
-        category: {
-          name: true,
-        },
+        category: {name: true},
         canAnswerBeModified: true,
         publicationDatetime: true,
         config: true,
@@ -196,11 +198,15 @@ export async function findSurveyById({
         customModel: {name: true},
       },
     })
-    .then(async res => ({
-      ...res,
-      config: await res?.config,
-      themeConfig: await res?.themeConfig,
-    }))
+    .then(async res =>
+      !res
+        ? undefined
+        : {
+            ...res,
+            config: await res?.config,
+            themeConfig: await res?.themeConfig,
+          },
+    )
     .then(clone)
     .catch((error: any) => console.log('error >>>', error));
 
@@ -211,40 +217,35 @@ export async function findMetaModelRecordById({
   workspace,
   tenantId,
   id,
+  surveyId,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   id: Response['id'];
+  surveyId?: Survey['id'];
 }) {
-  if (!(workspace && tenantId)) return [];
+  if (!(workspace && tenantId)) return undefined;
 
   const session = await getSession();
   const user = session?.user;
 
-  if (!user) {
-    return [];
-  }
   const client = await manager.getClient(tenantId);
   const response = await client.aOSMetaJsonRecord.findOne({
-    where: {id},
-    select: {
-      attrs: true,
+    where: {
+      id,
+      AND: [
+        user
+          ? {attrs: {path: 'partner.id', eq: user?.id}}
+          : {attrs: {path: 'partner', eq: null}},
+        {attrs: {path: 'surveyConfig.id', eq: surveyId}},
+      ],
     },
+    select: {attrs: true},
   });
 
-  const enrichedResponse = {...response, attrs: await response?.attrs};
+  const enrichedResponse = response
+    ? {...response, attrs: await response.attrs}
+    : undefined;
 
-  const finalResponse = {
-    ...response,
-    attrs: {
-      ...enrichedResponse.attrs,
-      surveyConfig: await findSurveyById({
-        workspace,
-        tenantId,
-        id: (enrichedResponse.attrs?.surveyConfig as any)?.id,
-      }),
-    },
-  };
-
-  return finalResponse as any;
+  return enrichedResponse as any;
 }

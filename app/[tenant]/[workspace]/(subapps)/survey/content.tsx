@@ -18,7 +18,7 @@ import {useToast, useSearchParams} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {Survey} from '@/subapps/survey/common/types';
+import {Response, Survey} from '@/subapps/survey/common/types';
 import {
   surveyColumns,
   partnerResponseColumns,
@@ -57,13 +57,13 @@ export default function Content({
 
   const handleRowOpenClick = (survey: Survey) => {
     router.push(
-      `${workspaceURI}/${SUBAPP_CODES.survey}/${SUBAPP_PAGE.openSurvey}/${survey.id}`,
+      `${workspaceURI}/${SUBAPP_CODES.survey}/${survey.slug}/${SUBAPP_PAGE.answerSurvey}`,
     );
   };
 
-  const handleRowResponseClick = (response: Survey) => {
+  const handleRowResponseClick = (response: Response) => {
     router.push(
-      `${workspaceURI}/${SUBAPP_CODES.survey}/${SUBAPP_PAGE.responseSurvey}/${response.id}`,
+      `${workspaceURI}/${SUBAPP_CODES.survey}/${response.attrs.surveyConfig.slug}/${SUBAPP_PAGE.answerSurvey}/${response.id}`,
     );
   };
 

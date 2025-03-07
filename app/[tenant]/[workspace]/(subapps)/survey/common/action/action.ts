@@ -90,17 +90,6 @@ export const authenticateUser = async ({
     };
   }
 
-  const workspaceURL = workspace?.url;
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: await t('User not found'),
-    };
-  }
-
   const tenantId = headers().get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -109,6 +98,10 @@ export const authenticateUser = async ({
       message: await t('Missing tenant ID'),
     };
   }
+
+  const workspaceURL = workspace?.url;
+  const session = await getSession();
+  const user = session?.user;
 
   const subapp = await findSubappAccess({
     code: SUBAPP_CODES.survey,

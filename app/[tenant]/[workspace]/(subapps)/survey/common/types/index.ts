@@ -1,5 +1,8 @@
+import {ID} from '@/types';
+
 export type Survey = {
-  id: number;
+  id: ID;
+  slug: string;
   name: string;
   statusSelect: number;
   category: {
@@ -12,18 +15,10 @@ export type Survey = {
 };
 
 export type Response = {
-  id: number;
+  id: ID;
   attrs: {
-    title: string;
     statusSelect: number;
-    surveyConfig: {
-      name: string;
-      statusSelect: number;
-      category: {
-        name: string;
-      };
-      publicationDatetime: string;
-    };
+    surveyConfig: Survey;
     partner: {
       name: string;
       fullName: string;
