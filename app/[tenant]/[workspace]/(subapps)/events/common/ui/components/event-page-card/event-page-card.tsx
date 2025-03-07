@@ -101,14 +101,12 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
             </p>
           )}
           {defaultPrice ? (
-            <div>
-              <p className="text-xl font-medium text-black">
-                {i18n.t('Price (incl. tax)')}:{' '}
-                <span className="text-success font-medium">
-                  {formattedDefaultPriceAti}
-                </span>
+            <div className="flex flex-col gap-2 font-semibold">
+              <p className="text-xl text-black">
+                {i18n.t('Price (incl. tax)')}:
+                <span className="text-success">{formattedDefaultPriceAti}</span>
               </p>
-              <p className="text-sm font-semibold text-black">
+              <p className="text-sm text-black">
                 {i18n.t('Price (excl. tax)')}:{' '}
                 <span className="text-success">{formattedDefaultPrice}</span>
               </p>

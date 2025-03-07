@@ -388,15 +388,13 @@ export const RegistrationForm = ({
         />
         <BadgeList items={eventCategorySet} />
         {defaultPrice ? (
-          <CardDescription className="my-6 text-xl font-semibold text-black border p-4 rounded-lg">
-            <div>
-              <p className="text-xl font-medium text-black">
+          <CardDescription className="my-6 border p-4 rounded-lg">
+            <div className="flex flex-col gap-2 font-semibold">
+              <p className="text-xl text-black">
                 {i18n.t('Price (incl. tax)')}:{' '}
-                <span className="text-success font-medium">
-                  {formattedDefaultPriceAti}
-                </span>
+                <span className="text-success">{formattedDefaultPriceAti}</span>
               </p>
-              <p className="text-sm font-semibold text-black">
+              <p className="text-sm text-black">
                 {i18n.t('Price (excl. tax)')}:{' '}
                 <span className="text-success">{formattedDefaultPrice}</span>
               </p>
