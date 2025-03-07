@@ -38,15 +38,16 @@ export const surveyColumns = [
         dateFormat: DATE_FORMATS.DD_MM_YYYY,
       }),
   },
-  {
-    key: 'nbResponses',
-    label: i18n.t('Number of responses'),
-    getter: (row: Survey) => row.nbResponses,
-    content: (row: any) => (
-      <Chip value={row.nbResponses} variant="success" className="rounded" />
-    ),
-  },
 ];
+
+export const numberResponsesColumn = {
+  key: 'nbResponses',
+  label: i18n.t('Number of responses'),
+  getter: (row: Survey) => row.nbResponses,
+  content: (row: any) => (
+    <Chip value={row.nbResponses} variant="success" className="rounded" />
+  ),
+};
 
 export const partnerResponseColumns = [
   {

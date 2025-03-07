@@ -20,9 +20,10 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 // ---- LOCAL IMPORTS ---- //
 import {Response, Survey} from '@/subapps/survey/common/types';
 import {
-  surveyColumns,
+  numberResponsesColumn,
   partnerResponseColumns,
   SearchItem,
+  surveyColumns,
 } from '@/subapps/survey/common/ui/components';
 import {getAllSurveys} from '@/subapps/survey/common/action/action';
 import {SURVEY_URL_PARAMS} from '@/subapps/survey/common/constants';
@@ -131,7 +132,11 @@ export default function Content({
             {i18n.t('Available surveys')}
           </h2>
           <TableList
-            columns={surveyColumns}
+            columns={
+              isConnected
+                ? [...surveyColumns, numberResponsesColumn]
+                : surveyColumns
+            }
             rows={sortedSurveys}
             sort={surveySortOrder}
             onSort={toggleSurveySortOrder}
