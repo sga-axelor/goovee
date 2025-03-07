@@ -45,7 +45,9 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
   const [paymentType, setPaymentType] = useState<PaymentType>(
     PaymentType.IsPartial,
   );
-  const [show, setShow] = useState<boolean>();
+  const [show, setShow] = useState<boolean>(false);
+  const [isPartialPayClicked, setIsPartialPayClicked] =
+    useState<boolean>(false);
 
   const config = workspace?.config;
   const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
@@ -163,21 +165,19 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
                 <Button
                   variant={'success'}
                   className="text-white font-medium"
-                  disabled={!form.formState.isValid}
                   onClick={async () => {
-                    const isValid = await form.trigger('amount');
-                    if (isValid) {
-                      form.setValue('amount', String(remainingAmountValue));
-                      form.handleSubmit(onSubmit)();
-                    }
+                    form.setValue('amount', String(remainingAmountValue));
+                    form.handleSubmit(onSubmit)();
+                    setIsPartialPayClicked(false);
                   }}>
                   {i18n.t('Pay all')}
                 </Button>
                 <Button
                   variant={'success'}
                   className="text-white font-medium"
-                  disabled={!form.formState.isValid}
+                  disabled={isPartialPayClicked && !form.formState.isValid}
                   onClick={async () => {
+                    setIsPartialPayClicked(true);
                     const isValid = await form.trigger('amount');
                     if (isValid) {
                       form.handleSubmit(onSubmit)();
