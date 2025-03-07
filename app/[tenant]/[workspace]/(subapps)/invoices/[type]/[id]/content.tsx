@@ -55,14 +55,12 @@ export default function Content({
         </div>
         <div className="block md:flex flex-col lg:flex-row gap-4 mb-6 rounded-lg">
           <Invoice invoice={invoice} isUnpaid={isUnpaid} />
-          {isUnpaid && (
-            <Total
-              invoice={invoice}
-              invoiceType={invoiceType}
-              isUnpaid={isUnpaid}
-              workspace={workspace}
-            />
-          )}
+          <Total
+            invoice={invoice}
+            invoiceType={invoiceType}
+            isUnpaid={isUnpaid}
+            workspace={workspace}
+          />
         </div>
       </div>
     </>

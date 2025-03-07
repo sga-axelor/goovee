@@ -148,10 +148,12 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-4 font-medium text-xl">
-          <div>{i18n.t('Remaining to pay')}:</div>
-          <div className="ml-auto">{amountRemaining?.formattedValue}</div>
-        </div>
+        {isUnpaid && (
+          <div className="flex flex-col gap-4 font-medium text-xl">
+            <div>{i18n.t('Remaining to pay')}:</div>
+            <div className="ml-auto">{amountRemaining?.formattedValue}</div>
+          </div>
+        )}
       </div>
       {invoiceType !== INVOICE.ARCHIVED && (
         <>
