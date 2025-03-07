@@ -12,12 +12,33 @@ export function mapStudioTypes(field: any): any {
   }
 }
 
-export function formatStudioFields(items: any[]): Field[] {
+export const removeContextedFields = (fields: any[], object: any): any[] => {
+  if (!Array.isArray(fields) || fields.length === 0) {
+    return [];
+  }
+
+  if (object == null) {
+    return fields;
+  }
+
+  return fields?.filter((_field: any) => {
+    if (_field.contextField == null) {
+      return true;
+    }
+
+    const objectValue = object?.[_field.contextField]?.id;
+    const parsedValue = objectValue ? parseInt(objectValue, 10) : undefined;
+
+    return parsedValue === parseInt(_field.contextFieldValue, 10);
+  });
+};
+
+export function formatStudioFields(items: any[], context?: any): Field[] {
   if (!Array.isArray(items)) {
     return [];
   }
 
-  return items.map(_i => {
+  return removeContextedFields(items, context).map(_i => {
     let field: Field = {
       name: _i.name,
       title: _i.title,

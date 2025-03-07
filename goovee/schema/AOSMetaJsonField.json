@@ -99,6 +99,8 @@
     {
       "type": "String",
       "name": "regex"
-    }
+    },
+    {"type": "String", "name": "contextField"},
+    {"type": "String", "name": "contextFieldValue"}
   ]
 }
