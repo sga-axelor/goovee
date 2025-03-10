@@ -14,10 +14,9 @@ import {
   BadgeList,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
-import {DATE_FORMATS} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
-import {formatDate} from '@/locale/formatters';
+import {formatDateTime} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
@@ -54,14 +53,16 @@ export const EventCard = ({event}: EventCardProps) => {
               </p>
             </CardTitle>
             <CardDescription className="text-sm font-medium text-secondary">
-              {`${formatDate(event.eventStartDateTime, {
-                dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
+              {`${formatDateTime(event.eventStartDateTime, {
+                dateFormat: 'MMMM D YYYY - ',
+                timeFormat: 'h:mmA',
               })}
             ${event.eventEndDateTime && !event.eventAllDay ? i18n.t('to') : ''} 
              ${
                event.eventEndDateTime && !event.eventAllDay
-                 ? formatDate(event.eventEndDateTime, {
-                     dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
+                 ? formatDateTime(event.eventEndDateTime, {
+                     dateFormat: 'MMMM D YYYY - ',
+                     timeFormat: 'h:mmA',
                    })
                  : ''
              }

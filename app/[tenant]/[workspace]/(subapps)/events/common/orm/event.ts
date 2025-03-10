@@ -15,7 +15,7 @@ import type {
   AOSPortalEventCategory,
 } from '@/goovee/.generated/models';
 import {dayjs} from '@/locale';
-import {formatDate, formatNumber} from '@/locale/server/formatters';
+import {formatNumber} from '@/locale/server/formatters';
 import {filterPrivate} from '@/orm/filter';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';

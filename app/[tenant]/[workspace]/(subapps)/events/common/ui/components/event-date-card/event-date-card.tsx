@@ -5,9 +5,8 @@ import {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Card} from '@/ui/components';
-import {DATE_FORMATS} from '@/constants';
 import {i18n} from '@/locale';
-import {formatDate, formatTime} from '@/locale/formatters';
+import {formatDateTime} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCardProps} from '@/subapps/events/common/ui/components';
@@ -17,44 +16,24 @@ export const EventDateCard = ({
   endDate,
   eventAllDay = false,
 }: EventDateCardProps) => {
-  const [startDateTime, setStartDateTime] = useState({
-    startDay: '',
-    startTime: '',
-  });
-  const [endDateTime, setEndDateTime] = useState({
-    endDay: '',
-    endTime: '',
-  });
+  const [startDateTime, setStartDateTime] = useState<string>('');
+  const [endDateTime, setEndDateTime] = useState<string>('');
 
   useEffect(() => {
     if (startDate) {
-      const formattedStartDate = formatDate(startDate, {
-        dateFormat: DATE_FORMATS.full_date,
+      const startDateTime = formatDateTime(startDate, {
+        dateFormat: 'MMMM D YYYY -',
+        timeFormat: 'h:mmA',
       });
-      const formattedStartTime = formatTime(startDate, {
-        timeFormat: DATE_FORMATS.hours_12_hour,
-        seconds: false,
-      });
-
-      setStartDateTime({
-        startDay: formattedStartDate,
-        startTime: formattedStartTime,
-      });
+      setStartDateTime(startDateTime);
     }
 
     if (endDate && !eventAllDay) {
-      const formattedEndDate = formatDate(endDate, {
-        dateFormat: DATE_FORMATS.full_date,
+      const endDateTime = formatDateTime(endDate!, {
+        dateFormat: 'MMMM D YYYY -',
+        timeFormat: 'h:mmA',
       });
-      const formattedEndTime = formatTime(endDate, {
-        timeFormat: DATE_FORMATS.hours_12_hour,
-        seconds: false,
-      });
-
-      setEndDateTime({
-        endDay: formattedEndDate,
-        endTime: formattedEndTime,
-      });
+      setEndDateTime(endDateTime);
     }
   }, [startDate, endDate, eventAllDay]);
 
@@ -64,15 +43,9 @@ export const EventDateCard = ({
         <MdOutlineCalendarMonth className="w-6 h-6 text-success" />
         <div className="flex">
           <p className=" flex text-base gap-2 flex-row flex-wrap">
-            <span className="font-semibold">{startDateTime.startDay}</span>{' '}
-            <span> {i18n.t(startDateTime.startTime)}</span>
-            {eventAllDay || !endDateTime.endDay ? (
-              ' '
-            ) : (
-              <span className="mx-2">{i18n.t('to')}</span>
-            )}
-            <span className="font-semibold">{endDateTime.endDay}</span>{' '}
-            <span>{i18n.t(endDateTime.endTime)}</span>
+            <span className="font-semibold">{startDateTime}</span>
+            {eventAllDay || !endDateTime ? ' ' : <span>{i18n.t('to')}</span>}
+            <span className="font-semibold">{endDateTime}</span>
           </p>
         </div>
       </div>
