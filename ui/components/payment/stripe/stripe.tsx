@@ -15,7 +15,6 @@ export function Stripe({
   errorMessage = 'Error processing payment, try again.',
   onValidate,
   onCreateCheckOutSession,
-  shouldValidateData,
   onValidateSession,
   onPaymentSuccess,
   onApprove,
@@ -60,9 +59,8 @@ export function Stripe({
     async ({stripeSessionId}: {stripeSessionId: string}) => {
       try {
         setVerifying(true);
-        const isValid = shouldValidateData ? await shouldValidateData() : true;
 
-        if (!(stripeSessionId && isValid)) {
+        if (!stripeSessionId) {
           return;
         }
 
@@ -97,7 +95,6 @@ export function Stripe({
     [
       errorMessage,
       successMessage,
-      shouldValidateData,
       onValidateSession,
       toast,
       onPaymentSuccess,

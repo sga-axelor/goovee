@@ -14,7 +14,6 @@ export function Paybox({
   disabled,
   onPaymentSuccess,
   onApprove,
-  shouldValidateData,
   onValidate,
   onCreateOrder,
   onValidatePayment,
@@ -59,10 +58,6 @@ export function Paybox({
   const handleValidatePayboxPayment = useCallback(async () => {
     try {
       setVerifying(true);
-      const isValid = shouldValidateData ? await shouldValidateData() : true;
-      if (!isValid) {
-        return;
-      }
 
       const result = await onValidatePayment({
         params: Object.fromEntries(searchParams.entries()),
@@ -95,7 +90,6 @@ export function Paybox({
       setVerifying(false);
     }
   }, [
-    shouldValidateData,
     onValidatePayment,
     searchParams,
     toast,
@@ -126,13 +120,7 @@ export function Paybox({
     } else if (payboxResponse) {
       handleValidatePayboxPayment();
     }
-  }, [
-    shouldValidateData,
-    payboxResponse,
-    payboxError,
-    toast,
-    handleValidatePayboxPayment,
-  ]);
+  }, [payboxResponse, payboxError, toast, handleValidatePayboxPayment]);
 
   return (
     <>

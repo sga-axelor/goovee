@@ -27,7 +27,6 @@ export type StripeProps = {
     message?: string;
     client_secret?: string | null;
   }>;
-  shouldValidateData: () => Promise<boolean>;
   onValidateSession: (params: {stripeSessionId: string}) => Promise<any>;
   onApprove?: (result: any) => void;
   onPaymentSuccess?: () => any;
@@ -39,7 +38,6 @@ export type PayboxProps = {
   errorMessage?: string;
   onValidate?: (paymentOption: string) => Promise<boolean>;
   onCreateOrder: ({uri}: {uri: string}) => Promise<any>;
-  shouldValidateData: () => Promise<boolean>;
   onValidatePayment: ({
     params,
   }: {

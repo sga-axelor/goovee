@@ -14,7 +14,6 @@ export function Payments({
   onPaypalCaptureOrder,
   onApprove,
   onStripeCreateCheckOutSession,
-  shouldValidateData,
   onStripeValidateSession,
   onPaymentSuccess,
   onPayboxCreateOrder,
@@ -29,7 +28,6 @@ export function Payments({
   onPaypalCaptureOrder: (orderID: string) => Promise<any>;
   onApprove: (result: any) => Promise<void>;
   onStripeCreateCheckOutSession: () => Promise<any>;
-  shouldValidateData: () => Promise<boolean>;
   onStripeValidateSession: (params: {
     stripeSessionId: string;
   }) => Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>>;
@@ -83,7 +81,6 @@ export function Payments({
           disabled={disabled}
           onValidate={() => onValidate(PaymentOption.stripe)}
           onCreateCheckOutSession={onStripeCreateCheckOutSession}
-          shouldValidateData={shouldValidateData}
           onValidateSession={stripeSessionId =>
             onStripeValidateSession(stripeSessionId)
           }
@@ -98,7 +95,6 @@ export function Payments({
           disabled={disabled}
           onValidate={() => onValidate(PaymentOption.paybox)}
           onCreateOrder={onPayboxCreateOrder}
-          shouldValidateData={shouldValidateData}
           onValidatePayment={onPayboxValidatePayment}
           onPaymentSuccess={onPaymentSuccess}
           onApprove={onApprove}

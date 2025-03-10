@@ -60,7 +60,6 @@ export function ShopPayments({workspace, orderSubapp}: ShopPaymentsProps) {
           }
           return true;
         }}
-        shouldValidateData={async () => Boolean(cart?.items?.length)}
         onPaypalCreatedOrder={async () => {
           return await paypalCreateOrder({cart, workspaceURL});
         }}

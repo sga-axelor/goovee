@@ -20,8 +20,6 @@ export const DEFAULT_TAX_VALUE = 0;
  * LOCAL STORAGE
  */
 export const PREFIX_CART_KEY = 'ct';
-export const PREFIX_EVENT_FORM_KEY = 'ef';
-export const PREFIX_INVOICE_KEY = 'in';
 
 /**
  * QUERY

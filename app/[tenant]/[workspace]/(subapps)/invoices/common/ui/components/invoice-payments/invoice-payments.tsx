@@ -1,13 +1,12 @@
 'use client';
 
-import {useCallback, useMemo} from 'react';
+import {useCallback} from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {ID, PaymentOption} from '@/types';
+import {ID} from '@/types';
 import {Payments} from '@/ui/components/payment';
-import {PREFIX_INVOICE_KEY, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import {getitem, setitem} from '@/storage/local';
+import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useToast} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
@@ -37,10 +36,6 @@ export function InvoicePayments({
 }) {
   const workspaceURL = workspace?.url;
 
-  const invoiceKey = useMemo(
-    () => PREFIX_INVOICE_KEY + '-' + workspaceURL,
-    [workspaceURL],
-  );
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
@@ -62,11 +57,7 @@ export function InvoicePayments({
     },
     [paymentType, router, workspaceURI],
   );
-  const handleInvoiceValidation = async ({
-    paymentOption,
-  }: {
-    paymentOption?: PaymentOption;
-  } = {}) => {
+  const handleInvoiceValidation = async () => {
     if (!Number(amount)) {
       toast({
         variant: 'destructive',
@@ -74,18 +65,7 @@ export function InvoicePayments({
       });
       return false;
     }
-    try {
-      if (
-        paymentOption &&
-        [PaymentOption.stripe, PaymentOption.paybox].includes(paymentOption)
-      ) {
-        await setitem(invoiceKey, amount).catch(() => {});
-      }
-      return true;
-    } catch (error) {
-      console.error('validation error:', error);
-      return false;
-    }
+    return true;
   };
 
   const handleStripeValidations = async ({
@@ -133,16 +113,14 @@ export function InvoicePayments({
     <Payments
       disabled={!Number(amount)}
       workspace={workspace}
-      onValidate={async paymentOption => {
-        const isValid = await handleInvoiceValidation({paymentOption});
+      onValidate={async () => {
+        const isValid = await handleInvoiceValidation();
 
         return !!isValid;
       }}
       onPaypalCreatedOrder={async () => {
         return await paypalCreateOrder({
-          invoice: {
-            id: invoice.id,
-          },
+          invoice: {id: invoice.id},
           amount,
           workspaceURL,
         });
@@ -154,33 +132,18 @@ export function InvoicePayments({
         });
       }}
       onApprove={redirectToInvoice}
-      shouldValidateData={async () => {
-        try {
-          const $amount: any = await getitem(invoiceKey).catch(() => {});
-          return $amount;
-        } catch {
-          return false;
-        }
-      }}
       onStripeCreateCheckOutSession={async () => {
-        const $amount: any = await getitem(invoiceKey).catch(() => {});
         return await createStripeCheckoutSession({
-          invoice: {
-            id: invoice.id,
-          },
-          amount: $amount,
+          invoice: {id: invoice.id},
+          amount,
           workspaceURL,
         });
       }}
       onStripeValidateSession={handleStripeValidations}
-      onPaymentSuccess={async () => await setitem(invoiceKey, null)}
       onPayboxCreateOrder={async ({uri}) => {
-        const $amount: any = await getitem(invoiceKey).catch(() => {});
         return await payboxCreateOrder({
-          invoice: {
-            id: invoice.id,
-          },
-          amount: $amount,
+          invoice: {id: invoice.id},
+          amount,
           workspaceURL,
           uri,
         });
