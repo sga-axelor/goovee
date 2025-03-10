@@ -15,6 +15,7 @@ type StyledTabsProps = {
   onTabChange?: (e: any) => void;
   component?: React.ReactNode;
   children: any;
+  controlled?: boolean;
 };
 
 export const StyledTabs = ({
@@ -22,10 +23,13 @@ export const StyledTabs = ({
   activeTab,
   onTabChange,
   children,
+  controlled,
 }: StyledTabsProps) => {
   return (
     <>
-      <Tabs defaultValue={activeTab} className="w-full">
+      <Tabs
+        {...(controlled ? {value: activeTab} : {defaultValue: activeTab})}
+        className="w-full">
         <TabsList className="w-full flex bg-transparent items-center justify-between md:justify-start border-black">
           {Array.isArray(items) &&
             items.map(t => (

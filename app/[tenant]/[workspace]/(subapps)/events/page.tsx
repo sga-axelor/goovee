@@ -9,13 +9,21 @@ import {workspacePathname} from '@/utils/workspace';
 // ---- LOCAL IMPORTS ---- //
 import {findEvents} from '@/subapps/events/common/orm/event';
 import Content from '@/subapps/events/content';
-import {EVENT_TYPE, LIMIT} from '@/subapps/events/common/constants';
+import {
+  EVENT_TAB_ITEMS,
+  EVENT_TYPE,
+  LIMIT,
+} from '@/subapps/events/common/constants';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 
 export default async function Page(context: any) {
   const params = context?.params;
   const page = context?.searchParams?.page || 1;
+  const type = context?.searchParams?.type || EVENT_TYPE.ACTIVE;
 
+  if (!EVENT_TAB_ITEMS.some(item => item.label === type)) {
+    return notFound();
+  }
   const {tenant} = params;
 
   const session = await getSession();
@@ -51,7 +59,7 @@ export default async function Page(context: any) {
           month: new Date(date).getMonth() + 1 || undefined,
           year: new Date(date).getFullYear() || undefined,
         }
-      : {eventType: EVENT_TYPE.ACTIVE}),
+      : {eventType: type}),
     workspace,
     tenantId: tenant,
     user,
@@ -70,6 +78,7 @@ export default async function Page(context: any) {
       pageInfo={pageInfo}
       date={date}
       workspace={workspace}
+      eventType={type}
     />
   );
 }

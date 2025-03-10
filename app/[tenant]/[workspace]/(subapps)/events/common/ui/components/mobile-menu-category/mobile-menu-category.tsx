@@ -14,7 +14,10 @@ import type {Category, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from '@/subapps/events/common/ui/components/mobile-menu-category/index.module.scss';
-import {EVENT_TAB_ITEMS, EVENTS} from '@/subapps/events/common/constants/index';
+import {
+  MY_REGISTRATION_TAB_ITEMS,
+  EVENTS,
+} from '@/subapps/events/common/constants/index';
 import {DEFAULT_PAGE, SUBAPP_CODES, URL_PARAMS} from '@/constants';
 
 interface MyRegistrationItem extends AccordionMenu {
@@ -48,7 +51,7 @@ export function MobileCategories({
       id: '2',
       name: i18n.t('My registrations'),
       url: '',
-      items: EVENT_TAB_ITEMS.map((item: any) => ({
+      items: MY_REGISTRATION_TAB_ITEMS.map((item: any) => ({
         id: item.id,
         name: i18n.t(item.title),
         url: item.label,

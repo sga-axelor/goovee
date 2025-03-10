@@ -13,7 +13,10 @@ import {extractCustomData} from '@/ui/form';
 // ---- LOCAL IMPORTS ---- //
 import type {Event} from '@/subapps/events/common/ui/components';
 import {endOfDay} from 'date-fns';
-import {EVENT_TAB_ITEMS} from '@/subapps/events/common/constants';
+import {
+  EVENT_TAB_ITEMS,
+  MY_REGISTRATION_TAB_ITEMS,
+} from '@/subapps/events/common/constants';
 
 export const datesBetweenTwoDates = (data: Event[]): Date[] => {
   const Dates: Date[] = [];
@@ -169,6 +172,15 @@ export function isEventPrivate(event: {
   return !!event.isPrivate;
 }
 export const getMyRegistrationTabItems = (isLarge: boolean) => {
+  return isLarge
+    ? MY_REGISTRATION_TAB_ITEMS
+    : MY_REGISTRATION_TAB_ITEMS.map(item => ({
+        ...item,
+        title: item.title.split(' ')[0],
+      }));
+};
+
+export const getEventsTabItems = (isLarge: boolean) => {
   return isLarge
     ? EVENT_TAB_ITEMS
     : EVENT_TAB_ITEMS.map(item => ({

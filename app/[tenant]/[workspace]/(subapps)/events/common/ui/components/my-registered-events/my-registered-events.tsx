@@ -25,12 +25,12 @@ import {
 import {
   MY_REGISTRATIONS,
   NO_RESULT_FOUND,
-  EVENT_TAB_ITEMS,
+  MY_REGISTRATION_TAB_ITEMS,
   EVENTS,
 } from '@/subapps/events/common/constants';
 import {getMyRegistrationTabItems} from '@/subapps/events/common/utils';
 
-type TabItem = (typeof EVENT_TAB_ITEMS)[number];
+type TabItem = (typeof MY_REGISTRATION_TAB_ITEMS)[number];
 export const MyRegisteredEvents = ({
   categories,
   category,

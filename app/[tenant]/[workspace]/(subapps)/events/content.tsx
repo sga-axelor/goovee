@@ -10,6 +10,7 @@ type ContentProps = {
   category: any;
   date: any;
   workspace: any;
+  eventType: string;
 };
 
 const Content = ({
@@ -19,6 +20,7 @@ const Content = ({
   category,
   date,
   workspace,
+  eventType,
 }: ContentProps) => {
   return (
     <main className="h-full w-full">
@@ -29,6 +31,7 @@ const Content = ({
         category={category}
         dateOfEvent={date}
         workspace={workspace}
+        eventType={eventType}
       />
     </main>
   );

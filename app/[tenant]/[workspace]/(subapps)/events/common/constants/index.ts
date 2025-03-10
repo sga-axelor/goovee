@@ -41,7 +41,7 @@ export const EVENT_TYPE = {
   ACTIVE: 'active', // either ongoing or upcoming
 };
 
-export const EVENT_TAB_ITEMS = [
+export const MY_REGISTRATION_TAB_ITEMS = [
   {
     id: '0',
     title: 'Upcoming events',
@@ -52,6 +52,19 @@ export const EVENT_TAB_ITEMS = [
     id: '1',
     title: 'Ongoing events',
     label: EVENT_TYPE.ONGOING,
+  },
+  {
+    id: '2',
+    title: 'Past events',
+    label: EVENT_TYPE.PAST,
+  },
+];
+
+export const EVENT_TAB_ITEMS = [
+  {
+    id: '1',
+    title: 'Active events',
+    label: EVENT_TYPE.ACTIVE,
   },
   {
     id: '2',

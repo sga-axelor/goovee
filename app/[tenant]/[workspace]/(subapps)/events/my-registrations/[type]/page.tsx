@@ -8,7 +8,10 @@ import {workspacePathname} from '@/utils/workspace';
 import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {EVENT_TAB_ITEMS, LIMIT} from '@/subapps/events/common/constants';
+import {
+  MY_REGISTRATION_TAB_ITEMS,
+  LIMIT,
+} from '@/subapps/events/common/constants';
 import Content from '@/app/[tenant]/[workspace]/(subapps)/events/my-registrations/[type]/content';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {findEvents} from '@/subapps/events/common/orm/event';
@@ -19,7 +22,7 @@ export default async function Page(context: any) {
 
   const {tenant, type} = params;
 
-  if (!EVENT_TAB_ITEMS.some(item => item.label === type)) {
+  if (!MY_REGISTRATION_TAB_ITEMS.some(item => item.label === type)) {
     return notFound();
   }
 

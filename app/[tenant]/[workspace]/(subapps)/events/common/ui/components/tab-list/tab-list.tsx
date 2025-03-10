@@ -15,6 +15,7 @@ type TabsListProps = {
   activeTab: string;
   onTabChange: (e: any) => void;
   children: React.ReactNode;
+  controlled?: boolean;
 };
 
 export const TabsList = ({
@@ -22,10 +23,15 @@ export const TabsList = ({
   activeTab,
   onTabChange,
   children,
+  controlled,
 }: TabsListProps) => {
   return (
     <div>
-      <StyledTabs items={items} activeTab={activeTab} onTabChange={onTabChange}>
+      <StyledTabs
+        controlled={controlled}
+        items={items}
+        activeTab={activeTab}
+        onTabChange={onTabChange}>
         <TabsContent className="mt-6" value={activeTab}>
           {children}
         </TabsContent>
