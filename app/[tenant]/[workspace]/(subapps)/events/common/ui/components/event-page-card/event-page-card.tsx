@@ -89,17 +89,6 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
               </span>
             </p>
           )}
-          {eventDetails?.eventLink && (
-            <p>
-              {i18n.t('Link')}:{' '}
-              <Link
-                href={eventDetails.eventLink}
-                className="font-normal break-words !text-blue-600"
-                target="_blank">
-                {eventDetails.eventLink}
-              </Link>
-            </p>
-          )}
           {defaultPrice ? (
             <div className="flex flex-col gap-2 font-semibold">
               <p className="text-xl text-black">
