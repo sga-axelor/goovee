@@ -26,7 +26,10 @@ import {
   REGISTER_TO_EVENT,
 } from '@/subapps/events/common/constants';
 import {EventDateCard} from '@/subapps/events/common/ui/components';
-import {isLoginNeededForRegistration} from '@/subapps/events/common/utils';
+import {
+  hasRegistrationEnded,
+  isLoginNeededForRegistration,
+} from '@/subapps/events/common/utils';
 
 export const EventPageCard = ({eventDetails, workspace}: any) => {
   const {formattedDefaultPriceAti, formattedDefaultPrice, defaultPrice} =
@@ -42,7 +45,10 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
   const allowGuests =
     allowGuestEventRegistration && !isLoginNeededForRegistration(eventDetails);
 
-  const isRegistrationAllow = eventAllowRegistration && (user || allowGuests);
+  const isRegistrationAllow =
+    eventAllowRegistration &&
+    (user || allowGuests) &&
+    !hasRegistrationEnded(eventDetails);
 
   return (
     <Card className="w-full rounded-2xl border-none shadow-none">

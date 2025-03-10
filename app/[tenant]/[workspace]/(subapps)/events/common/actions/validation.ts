@@ -17,12 +17,12 @@ import {REQUIRED_FIELDS} from '../constants';
 import {EventConfig, findEventConfig} from '../orm/event';
 import {
   validateRequiredFormFields,
-  hasEventEnded,
   getParticipantsFromValues,
   getTotalRegisteredParticipants,
   canEmailBeRegistered,
   isAlreadyRegistered,
 } from '../utils/registration';
+import {hasRegistrationEnded} from '../utils';
 
 type ValidationResult = {
   error: null | boolean;
@@ -161,8 +161,8 @@ export async function validateRegistration({
     return error(await t('Registration not started for this event'));
   }
 
-  if (hasEventEnded(event)) {
-    return error(await t('Event has already ended'));
+  if (hasRegistrationEnded(event)) {
+    return error(await t('Registration has already ended'));
   }
 
   if (isLoginNeededForRegistration(event) && !user) {

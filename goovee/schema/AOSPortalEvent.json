@@ -26,6 +26,10 @@
       "type": "DateTime"
     },
     {
+      "name": "registrationDeadlineDateTime",
+      "type": "DateTime"
+    },
+    {
       "name": "eventImage",
       "type": "ManyToOne",
       "target": "AOSMetaFile"

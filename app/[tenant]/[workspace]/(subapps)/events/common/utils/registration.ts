@@ -116,18 +116,6 @@ export function getTotalRegisteredParticipants(event: EventConfig): number {
   }, 0);
 }
 
-export function hasEventEnded(event: {
-  eventStartDateTime?: Date | string | null;
-  eventEndDateTime?: Date | string | null;
-  eventAllDay?: boolean;
-}): boolean {
-  const startDate = new Date(event.eventStartDateTime ?? '');
-  const endDate = new Date(event.eventEndDateTime ?? '');
-  const now = Date.now();
-  if (event.eventAllDay) return now > endOfDay(startDate).getTime();
-  return now > endDate.getTime();
-}
-
 //TODO: create a zod schema instead of manual validation
 //This requires refctoring the registration form entirely
 export const validateRequiredFormFields = async (

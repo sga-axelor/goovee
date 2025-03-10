@@ -15,7 +15,10 @@ import {
   PORTAL_PARTICIPANT_MODEL,
 } from '@/subapps/events/common/constants';
 import {findEvent} from '@/subapps/events/common/orm/event';
-import {isLoginNeededForRegistration} from '@/subapps/events/common/utils';
+import {
+  hasRegistrationEnded,
+  isLoginNeededForRegistration,
+} from '@/subapps/events/common/utils';
 
 export default async function Page({
   params,
@@ -57,7 +60,11 @@ export default async function Page({
   const allowGuests =
     allowGuestEventRegistration && !isLoginNeededForRegistration(eventDetails);
 
-  const isRegistrationAllow = eventAllowRegistration && (user || allowGuests);
+  const isRegistrationAllow =
+    eventAllowRegistration &&
+    (user || allowGuests) &&
+    !hasRegistrationEnded(eventDetails);
+
   if (!isRegistrationAllow) notFound();
 
   const metaFields = await findModelFields({

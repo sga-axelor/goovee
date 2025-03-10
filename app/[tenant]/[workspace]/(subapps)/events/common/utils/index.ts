@@ -188,3 +188,14 @@ export const getEventsTabItems = (isLarge: boolean) => {
         title: item.title.split(' ')[0],
       }));
 };
+
+export function hasRegistrationEnded(event: {
+  registrationDeadlineDateTime?: Date | string | null;
+}): boolean {
+  if (event.registrationDeadlineDateTime) {
+    const endDate = new Date(event.registrationDeadlineDateTime);
+    const now = Date.now();
+    return now > endDate.getTime();
+  }
+  return false;
+}

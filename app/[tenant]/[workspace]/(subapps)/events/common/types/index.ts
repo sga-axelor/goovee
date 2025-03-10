@@ -68,6 +68,7 @@ export type Event = {
   displayAti: string;
   formattedDefaultPrice: string;
   formattedDefaultPriceAti: string;
+  registrationDeadlineDateTime?: string | Date;
   currency: {
     id: string;
     code: string;
