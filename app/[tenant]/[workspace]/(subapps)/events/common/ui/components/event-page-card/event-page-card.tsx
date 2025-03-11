@@ -17,6 +17,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  InnerHTML,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 
@@ -81,11 +82,12 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
             className="rounded-lg mx-auto object-cover"
           />
         </div>
-        <CardDescription
-          className="text-sm font-normal tracking-wide leading-6"
-          dangerouslySetInnerHTML={{
-            __html: eventDetails?.eventDescription,
-          }}></CardDescription>
+        <CardDescription className="herllo">
+          <InnerHTML
+            className={`text-sm font-normal tracking-wide leading-6 w-full overflow-x-auto`}
+            content={eventDetails?.eventDescription}
+          />
+        </CardDescription>
         <div className="border-l border-success space-y-4 text-base font-semibold px-4">
           {eventDetails?.eventPlace && (
             <p>

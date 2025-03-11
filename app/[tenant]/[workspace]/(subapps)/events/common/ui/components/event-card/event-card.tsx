@@ -12,6 +12,7 @@ import {
   Button,
   Badge,
   BadgeList,
+  InnerHTML,
 } from '@/ui/components';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -21,6 +22,7 @@ import {formatDateTime} from '@/locale/formatters';
 // ---- LOCAL IMPORTS ---- //
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
 import styles from './event-card.module.scss';
+import mainStyles from '@/subapps/events/styles.module.scss';
 
 export const EventCard = ({event}: EventCardProps) => {
   const {tenant} = useWorkspace();
@@ -71,13 +73,13 @@ export const EventCard = ({event}: EventCardProps) => {
             <BadgeList items={event.eventCategorySet} />
           </CardHeader>
           <CardContent className="p-0 mt-1">
-            <div
-              className="text-sm w-full font-normal line-clamp-2 text-gray-dark overflow-hidden"
-              dangerouslySetInnerHTML={{
-                __html: event?.eventDescription
+            <InnerHTML
+              className={`text-sm max-h-[6.375rem] w-full font-normal line-clamp-2 text-gray-dark overflow-hidden ${mainStyles['constrained-content']} prose`}
+              content={
+                event?.eventDescription
                   ? stripImages(event.eventDescription)
-                  : '',
-              }}
+                  : ''
+              }
             />
           </CardContent>
         </div>
