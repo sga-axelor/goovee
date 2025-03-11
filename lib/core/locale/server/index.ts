@@ -54,3 +54,11 @@ export async function getTranslation(
 }
 
 export const t = getTranslation.bind(null, {});
+
+export async function tattr(text: string, ...interpolations: string[]) {
+  const key = `value:${text}`;
+  const value = await t(key, ...interpolations);
+  const translated = key !== value;
+
+  return translated ? value : t(text);
+}
