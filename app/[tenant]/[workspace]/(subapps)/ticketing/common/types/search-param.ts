@@ -11,6 +11,7 @@ export type PageParams = {
 
 export type FilterParams = {
   filter?: string | undefined;
+  title?: string | undefined;
 };
 
 export type SearchParams = Expand<SortParams & PageParams & FilterParams>;

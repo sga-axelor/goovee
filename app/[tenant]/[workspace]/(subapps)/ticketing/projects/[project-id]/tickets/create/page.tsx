@@ -17,6 +17,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/ui/components';
+import {ALL_TICKETS_TITLE} from '../../../../common/constants';
 import {
   findContactPartners,
   findProject,
@@ -28,6 +29,7 @@ import {findTicketAccess} from '../../../../common/orm/tickets';
 import {ensureAuth} from '../../../../common/utils/auth-helper';
 import {EncodedFilter} from '../../../../common/utils/validators';
 import {Form} from './client-form';
+
 export default async function Page({
   params,
   searchParams,
@@ -70,7 +72,7 @@ export default async function Page({
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
-  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}&title=${encodeURIComponent(ALL_TICKETS_TITLE)}`;
 
   return (
     <div className="container mt-5 mb-20">
@@ -102,7 +104,7 @@ export default async function Page({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild className="cursor-pointer text-md">
-              <Link href={allTicketsURL}>{await t('All tickets')}</Link>
+              <Link href={allTicketsURL}>{await t(ALL_TICKETS_TITLE)}</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator>

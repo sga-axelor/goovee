@@ -44,3 +44,9 @@ export const MUTATE_TYPE = {
   CREATE: 'create',
   UPDATE: 'update',
 } as const;
+
+export const ALL_TICKETS_TITLE = 'All tickets';
+export const MY_TICKETS_TITLE = 'My tickets';
+export const MANAGED_TICKETS_TITLE = 'Managed tickets';
+export const CREATED_TICKETS_TITLE = 'Created tickets';
+export const RESOLVED_TICKETS_TITLE = 'Resolved tickets';

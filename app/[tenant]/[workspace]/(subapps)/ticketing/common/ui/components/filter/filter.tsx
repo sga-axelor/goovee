@@ -124,6 +124,7 @@ export function Filter(props: FilterProps) {
     } else {
       params.delete('filter');
     }
+    params.delete('title');
 
     const route = `${url}?${params.toString()}`;
     router.replace(route);

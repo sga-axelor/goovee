@@ -71,6 +71,7 @@ export default async function Page({
     page = 1,
     sort = DEFAULT_SORT,
     filter,
+    title,
   } = searchParams;
 
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
@@ -126,7 +127,7 @@ export default async function Page({
             <BreadcrumbItem>
               <BreadcrumbPage className="truncate text-lg font-semibold">
                 <h2 className="font-semibold text-xl">
-                  {await t('All tickets')}
+                  {await t(title || 'Tickets')}
                 </h2>
               </BreadcrumbPage>
             </BreadcrumbItem>
