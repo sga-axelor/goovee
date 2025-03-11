@@ -159,7 +159,13 @@ export default async function Page({
       </div>
       <div>
         <TicketList tickets={tickets} />
-        <TablePagination url={url} pages={pages} searchParams={searchParams} />
+        {pages > 1 && (
+          <TablePagination
+            url={url}
+            pages={pages}
+            searchParams={searchParams}
+          />
+        )}
       </div>
     </div>
   );
