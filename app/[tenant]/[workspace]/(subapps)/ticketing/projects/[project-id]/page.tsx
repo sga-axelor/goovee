@@ -63,7 +63,7 @@ export default async function Page({
 
   const {error, info} = await ensureAuth(workspaceURL, tenant);
   if (error) notFound();
-  const {auth} = info;
+  const {auth, workspace} = info;
 
   const [project, tickets, statuses] = await Promise.all([
     findProject(projectId, auth),
@@ -85,46 +85,51 @@ export default async function Page({
   const statusCompleted = statuses.filter(s => s.isCompleted).map(s => s.id);
   const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}`;
   const items = [
-    {
+    workspace.config.isShowAllTickets && {
       label: await t('All tickets'),
       count: getAllTicketCount({projectId, auth}),
       icon: MdAllInbox,
       href: allTicketsURL,
       iconClassName: 'bg-palette-pink text-palette-pink-dark',
     },
-    {
+    workspace.config.isShowMyTickets && {
       label: await t('My tickets'),
       count: getMyTicketCount({projectId, auth}),
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, myTickets: true})}`,
       icon: MdAllInbox,
       iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
-    {
+    workspace.config.isShowManagedTicket && {
       label: await t('Managed tickets'),
       count: getManagedTicketCount({projectId, auth}),
       icon: MdListAlt,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, managedBy: [auth.userId.toString()]})}`,
       iconClassName: 'bg-palette-purple text-palette-purple-dark',
     },
-    {
+    workspace.config.isShowCreatedTicket && {
       label: await t('Created tickets'),
       count: getCreatedTicketCount({projectId, auth}),
       icon: MdPending,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, createdBy: [auth.userId.toString()]})}`,
       iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
-    {
+    workspace.config.isShowResolvedTicket && {
       label: await t('Resolved tickets'),
       count: getResolvedTicketCount({projectId, auth}),
       icon: MdCheckCircleOutline,
       href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status: statusCompleted})}`,
       iconClassName: 'text-success bg-success-light',
     },
-  ].map(props => (
-    <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
-      <TicketCard {...props} />
-    </Suspense>
-  ));
+  ]
+    .filter(Boolean)
+    .map(
+      props =>
+        props && (
+          <Suspense key={props.label} fallback={<TicketCardSkeleton />}>
+            <TicketCard {...props} />
+          </Suspense>
+        ),
+    );
 
   return (
     <div className="container my-6 space-y-6 mx-auto">
@@ -186,7 +191,7 @@ type TicketCardProps = {
   iconClassName: string;
 };
 
-const wrapperClassName = 'flex items-center gap-6 px-4 h-full';
+const wrapperClassName = 'flex items-center gap-5 px-4 h-full';
 const iconWrapperClassName =
   'flex items-center justify-center h-10 w-10 rounded-full';
 

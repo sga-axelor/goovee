@@ -135,6 +135,11 @@ export interface PortalAppConfig extends Model {
   defaultStockLocation?: any;
   nonPublicEmailNotFoundMessage?: string;
   enableRecommendedNews?: boolean;
+  isShowAllTickets: boolean;
+  isShowMyTickets: boolean;
+  isShowManagedTicket: boolean;
+  isShowCreatedTicket: boolean;
+  isShowResolvedTicket: boolean;
 }
 
 export interface PortalApp extends Model {

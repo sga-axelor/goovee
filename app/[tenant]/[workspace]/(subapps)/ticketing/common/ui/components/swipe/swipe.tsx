@@ -11,10 +11,9 @@ export function Swipe({items, className}: SwipeProps) {
   return (
     <Swiper
       slidesPerView="auto"
-      spaceBetween={24}
+      spaceBetween={20}
       modules={[FreeMode, Pagination]}
-      className="space-y-6"
-      wrapperClass="flex items-center"
+      wrapperClass="flex items-center mb-6"
       pagination={{
         el: '.swiper-pagination',
         type: 'bullets',
@@ -24,7 +23,7 @@ export function Swipe({items, className}: SwipeProps) {
         <SwiperSlide
           key={i}
           className={cn(
-            'bg-card rounded-lg shrink-0 !w-[218px] !h-[120px] cursor-pointer',
+            'bg-card rounded-lg shrink-0 !w-[220px] !h-[120px] cursor-pointer',
             className,
           )}>
           {item}

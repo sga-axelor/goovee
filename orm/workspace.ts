@@ -94,6 +94,11 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   nonPublicEmailNotFoundMessage: true,
   canPayInvoice: true,
   allowOnlinePaymentForInvoices: true,
+  isShowAllTickets: true,
+  isShowMyTickets: true,
+  isShowManagedTicket: true,
+  isShowCreatedTicket: true,
+  isShowResolvedTicket: true,
 };
 
 export async function findWorkspaceMembers({

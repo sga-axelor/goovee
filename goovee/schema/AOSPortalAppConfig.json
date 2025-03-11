@@ -260,6 +260,26 @@
       "type": "String",
       "name": "nonPublicEmailNotFoundMessage"
     },
-    {"name": "canPayInvoice", "type": "String"}
+    {"name": "canPayInvoice", "type": "String"},
+    {
+      "name": "isShowAllTickets",
+      "type": "Boolean"
+    },
+    {
+      "name": "isShowMyTickets",
+      "type": "Boolean"
+    },
+    {
+      "name": "isShowManagedTicket",
+      "type": "Boolean"
+    },
+    {
+      "name": "isShowCreatedTicket",
+      "type": "Boolean"
+    },
+    {
+      "name": "isShowResolvedTicket",
+      "type": "Boolean"
+    }
   ]
 }
