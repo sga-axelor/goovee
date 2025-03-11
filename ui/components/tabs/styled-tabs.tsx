@@ -34,7 +34,7 @@ export const StyledTabs = ({
           {Array.isArray(items) &&
             items.map(t => (
               <TabsTrigger
-                className="!rounded-t-[0.313rem] text-base font-semibold data-[state=active]:text-primary-foreground data-[state=active]:bg-success data-[state=inactive]:font-medium w-full md:w-fit"
+                className="!rounded-t-[0.313rem] text-base font-semibold data-[state=active]:text-primary-foreground data-[state=active]:bg-success data-[state=inactive]:font-medium w-full md:w-fit box-border transition-none border border-transparent"
                 key={t?.id}
                 value={t?.id}
                 onClick={() => onTabChange?.(t)}>
