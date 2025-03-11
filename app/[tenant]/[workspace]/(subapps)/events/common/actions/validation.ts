@@ -1,4 +1,4 @@
-import {getTranslation, t} from '@/locale/server';
+import {getTranslation, t, tattr} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import type {Tenant} from '@/tenant';
@@ -240,7 +240,9 @@ export async function validateRegistration({
         !isEventPublic(event) &&
         workspace.config?.nonPublicEmailNotFoundMessage?.trim()
       ) {
-        return error(await t(workspace.config.nonPublicEmailNotFoundMessage));
+        return error(
+          await tattr(workspace.config.nonPublicEmailNotFoundMessage),
+        );
       }
       return error(
         await t('one or more email can not be registered to this event'),

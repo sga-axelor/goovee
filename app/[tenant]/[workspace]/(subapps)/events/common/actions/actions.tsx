@@ -13,7 +13,7 @@ import {
 } from '@/comments';
 import {addComment, findComments} from '@/comments/orm';
 import {ModelMap, SUBAPP_CODES} from '@/constants';
-import {t} from '@/locale/server';
+import {t, tattr} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PaymentOption, PortalWorkspace, User} from '@/types';
@@ -282,7 +282,7 @@ export async function isValidParticipant(props: {
       !isEventPublic(event) &&
       workspace.config?.nonPublicEmailNotFoundMessage?.trim()
     ) {
-      return error(await t(workspace.config.nonPublicEmailNotFoundMessage));
+      return error(await tattr(workspace.config.nonPublicEmailNotFoundMessage));
     }
     return error(await t('This email can not be registered to this event'));
   }
