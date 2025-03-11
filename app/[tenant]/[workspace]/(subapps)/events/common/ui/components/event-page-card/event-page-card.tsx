@@ -100,10 +100,10 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
           {defaultPrice ? (
             <div className="flex flex-col gap-2 font-semibold">
               <p className="text-xl text-black">
-                {i18n.t('Price (incl. tax)')}:
+                {i18n.t('Price (incl. tax)')}:{' '}
                 <span className="text-success">{formattedDefaultPriceAti}</span>
               </p>
-              <p className="text-sm text-black">
+              <p className="text-sm text-black flex gap-2">
                 {i18n.t('Price (excl. tax)')}:{' '}
                 <span className="text-success">{formattedDefaultPrice}</span>
               </p>
