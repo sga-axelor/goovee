@@ -19,6 +19,7 @@ import {computeTotal} from '@/utils/cart';
 // ---- LOCAL IMPORTS ---- //
 import {findPartnerByEmail} from '@/orm/partner';
 import {findProduct} from '@/subapps/shop/common/orm/product';
+import {markContextAsUsed} from '@/lib/core/payment/common/orm';
 
 const formatNumber = (n: any) => n;
 
@@ -248,10 +249,12 @@ export async function paypalCaptureOrder({
   }
 
   try {
-    const {amount, context: cart} = await findPaypalOrder({
+    const {amount, context} = await findPaypalOrder({
       id: orderId,
       tenantId,
     });
+
+    const cart = context.data;
 
     const {total} = computeTotal({
       cart,
@@ -266,7 +269,13 @@ export async function paypalCaptureOrder({
       };
     }
 
-    return createOrder({cart, workspaceURL, tenantId});
+    const res = await createOrder({cart, workspaceURL, tenantId});
+    await markContextAsUsed({
+      contextId: context.id,
+      version: context.version,
+      tenantId,
+    });
+    return res;
   } catch (err) {
     return {
       error: true,
@@ -619,14 +628,15 @@ export async function validateStripePayment({
     };
   }
 
-  let paidAmount, cart;
+  let paidAmount, cart, context;
   try {
-    const {amount, context} = await findStripeOrder({
+    const order = await findStripeOrder({
       id: stripeSessionId,
       tenantId,
     });
-    cart = context;
-    paidAmount = amount;
+    cart = order.context.data;
+    paidAmount = order.amount;
+    context = order.context;
   } catch (err) {
     return {
       error: true,
@@ -647,7 +657,13 @@ export async function validateStripePayment({
     };
   }
 
-  return createOrder({cart, workspaceURL, tenantId});
+  const res = await createOrder({cart, workspaceURL, tenantId});
+  await markContextAsUsed({
+    contextId: context.id,
+    version: context.version,
+    tenantId,
+  });
+  return res;
 }
 
 export async function payboxCreateOrder({
@@ -868,11 +884,12 @@ export async function validatePayboxPayment({
     };
   }
 
-  let paidAmount, cart;
+  let paidAmount, cart, context;
   try {
-    const {amount, context} = await findPayboxOrder({params, tenantId});
-    cart = context;
-    paidAmount = amount;
+    const order = await findPayboxOrder({params, tenantId});
+    cart = order.context.data;
+    paidAmount = order.amount;
+    context = order.context;
   } catch (err) {
     return {
       error: true,
@@ -893,5 +910,11 @@ export async function validatePayboxPayment({
     };
   }
 
-  return createOrder({cart, workspaceURL, tenantId});
+  const res = await createOrder({cart, workspaceURL, tenantId});
+  await markContextAsUsed({
+    contextId: context.id,
+    version: context.version,
+    tenantId,
+  });
+  return res;
 }

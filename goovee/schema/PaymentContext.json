@@ -1,6 +1,6 @@
 {
-  "name": "Payment",
-  "table": "portal_payment",
+  "name": "PaymentContext",
+  "table": "portal_payment_context",
   "extends": "Model",
   "synchronize": true,
   "fields": [
@@ -10,7 +10,7 @@
     },
     {
       "type": "JSON",
-      "name": "context"
+      "name": "data"
     },
     {
       "type": "String",

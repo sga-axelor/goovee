@@ -6,6 +6,7 @@ import {findPaypalOrder} from '@/payment/paypal/actions';
 import {findStripeOrder} from '@/payment/stripe/actions';
 import {PaymentOption} from '@/types';
 import type {ActionResponse} from '@/types/action';
+import type {PaymentOrder} from '@/lib/core/payment/common/type';
 
 // ---- LOCAL IMPORTS ---- //
 import {error} from './index';
@@ -18,37 +19,32 @@ export const getPaymentInfo = async ({
   mode: PaymentOption;
   data: {id?: string; params?: any};
   tenantId: Tenant['id'];
-}): Promise<
-  ActionResponse<{
-    paidAmount: number;
-    context: any;
-  }>
-> => {
+}): Promise<ActionResponse<PaymentOrder>> => {
   try {
     switch (mode) {
       case PaymentOption.stripe: {
         const {id} = data;
         if (!id) return error(await t('Stripe payment requires an ID'));
-        const {amount, context} = await findStripeOrder({
+        const order = await findStripeOrder({
           id,
           tenantId,
         });
-        return {success: true, data: {context, paidAmount: amount}};
+        return {success: true, data: order};
       }
       case PaymentOption.paypal: {
         const {id} = data;
         if (!id) return error(await t('PayPal payment requires an ID'));
-        const {amount, context} = await findPaypalOrder({id, tenantId});
+        const order = await findPaypalOrder({id, tenantId});
 
-        return {success: true, data: {context: context, paidAmount: amount}};
+        return {success: true, data: order};
       }
       case PaymentOption.paybox: {
         const {params} = data;
         if (!params) {
           return error(await t('Paybox payment requires parameters'));
         }
-        const {context, amount} = await findPayboxOrder({params, tenantId});
-        return {success: true, data: {context, paidAmount: amount}};
+        const order = await findPayboxOrder({params, tenantId});
+        return {success: true, data: order};
       }
       default:
         return error(await t('Invalid payment mode'));

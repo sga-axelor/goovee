@@ -7,7 +7,7 @@ import {createPaymentContext, findPaymentContext} from '../common/orm';
 import {PAYBOX_ERRORS} from './constant';
 import {readPEMFile, verifySignature} from './crypto';
 import {getParamsWithoutSign} from './utils';
-import type {PaymentInfo} from '../common/type';
+import type {PaymentOrder} from '../common/type';
 
 export async function createPayboxOrder({
   amount,
@@ -48,13 +48,14 @@ export async function createPayboxOrder({
     }),
   };
 }
+
 export async function findPayboxOrder({
   params,
   tenantId,
 }: {
   params: any;
   tenantId: Tenant['id'];
-}): Promise<PaymentInfo> {
+}): Promise<PaymentOrder> {
   if (!params) {
     throw new Error('Cannot find paybox order');
   }
@@ -91,5 +92,12 @@ export async function findPayboxOrder({
     mode: PaymentOption.paybox,
   });
 
-  return {amount: reference.amount, context};
+  if (!context) {
+    throw new Error('Context not found');
+  }
+
+  return {
+    context,
+    amount: reference.amount,
+  };
 }

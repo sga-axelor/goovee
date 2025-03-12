@@ -4,7 +4,7 @@ import {DEFAULT_CURRENCY_CODE} from '@/constants';
 import type {Tenant} from '@/tenant';
 import {PaymentOption} from '@/types';
 import {createPaymentContext, findPaymentContext} from '../common/orm';
-import type {PaymentInfo} from '../common/type';
+import type {PaymentOrder} from '../common/type';
 
 export async function createPaypalOrder({
   amount,
@@ -72,7 +72,7 @@ export async function findPaypalOrder({
 }: {
   id: string;
   tenantId: Tenant['id'];
-}): Promise<PaymentInfo> {
+}): Promise<PaymentOrder> {
   if (!id) {
     throw new Error('Order id is required');
   }

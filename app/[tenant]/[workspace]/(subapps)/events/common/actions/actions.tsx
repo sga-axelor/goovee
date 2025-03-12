@@ -20,6 +20,7 @@ import {ID, PaymentOption, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
+import {markContextAsUsed} from '@/payment/common/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -135,8 +136,7 @@ export async function register({
   });
   if (!$event) return error(await t('Event not found!'));
 
-  let paidAmount;
-  let values;
+  let paidAmount, values, context;
   if (payment) {
     const paymentInfo = await getPaymentInfo({
       mode: payment.mode,
@@ -146,8 +146,9 @@ export async function register({
 
     if (paymentInfo.error) return paymentInfo;
 
-    values = paymentInfo.data.context;
-    paidAmount = paymentInfo.data.paidAmount;
+    values = paymentInfo.data.context.data;
+    paidAmount = paymentInfo.data.amount;
+    context = paymentInfo.data.context;
   } else {
     values = _values;
     paidAmount = 0;
@@ -185,6 +186,13 @@ export async function register({
     tenantId,
   });
 
+  if (context) {
+    await markContextAsUsed({
+      contextId: context.id,
+      version: context.version,
+      tenantId,
+    });
+  }
   if (paidAmount > 0) {
     createInvoice({
       workspace,

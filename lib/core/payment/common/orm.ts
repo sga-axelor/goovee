@@ -1,9 +1,10 @@
 import {PaymentOption} from '@/types';
 import {manager, type Tenant} from '@/tenant';
+import type {PaymentContext} from './type';
 
-const PAYMET_STATUS = {
+const CONTEXT_STATUS = {
   pending: 'pending',
-  completed: 'completed',
+  used: 'used',
 };
 
 export async function createPaymentContext({
@@ -25,14 +26,14 @@ export async function createPaymentContext({
   if (!client) throw new Error('Client not found');
   const timeStamp = new Date();
 
-  const payment = await client.payment.create({
+  const payment = await client.paymentContext.create({
     data: {
       mode,
       payer,
-      context,
+      data: context,
       createdOn: timeStamp,
       updatedOn: timeStamp,
-      status: PAYMET_STATUS.pending,
+      status: CONTEXT_STATUS.pending,
     },
     select: {id: true},
   });
@@ -48,53 +49,52 @@ export async function findPaymentContext({
   id: string;
   tenantId: Tenant['id'];
   mode: PaymentOption;
-}) {
+}): Promise<PaymentContext | null> {
   const client = await manager.getClient(tenantId);
 
   if (!client) throw new Error('Client not found');
 
-  const payment = await client.payment.findOne({
+  const context = await client.paymentContext.findOne({
     where: {
       id,
       mode,
-      status: PAYMET_STATUS.pending,
+      status: CONTEXT_STATUS.pending,
     },
-    select: {context: true, createdOn: true},
+    select: {data: true, createdOn: true},
   });
 
-  if (!payment) return null;
+  if (!context) return null;
 
-  if (payment.createdOn!.getTime() + CONTEXT_VALIDITY_DURATION < Date.now()) {
+  if (context.createdOn!.getTime() + CONTEXT_VALIDITY_DURATION < Date.now()) {
     return null;
   }
 
-  return (await payment.context) as any;
+  return {
+    id: context.id,
+    version: context.version,
+    data: await context.data,
+  };
 }
 
-export async function markPaymentAsCompleted({
-  paymentId,
+export async function markContextAsUsed({
+  contextId,
+  version,
   tenantId,
 }: {
-  paymentId: string;
+  contextId: string;
+  version: number;
   tenantId: Tenant['id'];
-}) {
+}): Promise<void> {
   const client = await manager.getClient(tenantId);
 
   if (!client) throw new Error('Client not found');
 
-  const payment = await client.payment.findOne({
-    where: {id: paymentId},
-    select: {version: true},
-  });
-
-  if (!payment) throw new Error('Payment not found');
-
   const timeStamp = new Date();
-  await client.payment.update({
+  await client.paymentContext.update({
     data: {
-      id: paymentId,
-      version: payment.version,
-      status: PAYMET_STATUS.completed,
+      id: contextId,
+      version: version,
+      status: CONTEXT_STATUS.used,
       updatedOn: timeStamp,
     },
   });

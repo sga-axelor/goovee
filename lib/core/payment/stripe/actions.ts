@@ -5,7 +5,7 @@ import {formatAmountForStripe, getAmountFromStripe} from '@/utils/stripe';
 import {findPaymentContext, createPaymentContext} from '../common/orm';
 import {PaymentOption} from '@/types';
 import type {Tenant} from '@/tenant';
-import type {PaymentInfo} from '../common/type';
+import type {PaymentOrder} from '../common/type';
 
 export async function createStripeOrder({
   customer,
@@ -84,7 +84,7 @@ export async function findStripeOrder({
 }: {
   id: string;
   tenantId: Tenant['id'];
-}): Promise<PaymentInfo> {
+}): Promise<PaymentOrder> {
   if (!id) {
     throw new Error('Session id is required');
   }
@@ -138,7 +138,7 @@ export async function findStripeOrder({
 
   const currency = lineItems.data?.[0]?.currency || DEFAULT_CURRENCY_CODE;
   return {
-    amount: getAmountFromStripe(lineItems.data?.[0]?.amount_total, currency),
     context,
+    amount: getAmountFromStripe(lineItems.data?.[0]?.amount_total, currency),
   };
 }

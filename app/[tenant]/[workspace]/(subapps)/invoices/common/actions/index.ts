@@ -13,6 +13,7 @@ import {findSubapp, findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
+import {markContextAsUsed} from '@/payment/common/orm';
 import {manager, Tenant} from '@/tenant';
 import {PartnerKey, PaymentOption} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
@@ -189,10 +190,12 @@ export async function paypalCaptureOrder({
   }
 
   try {
-    const {amount, context: invoice} = await findPaypalOrder({
+    const {amount, context} = await findPaypalOrder({
       id: orderID,
       tenantId,
     });
+
+    const invoice = context.data;
 
     const purchaseAmount = Number(amount);
 
@@ -252,6 +255,11 @@ export async function paypalCaptureOrder({
           (await t('Something went wrong while updating invoice!')),
       };
     }
+    await markContextAsUsed({
+      contextId: context.id,
+      version: context.version,
+      tenantId,
+    });
     return {success: true, data: $invoice};
   } catch (error) {
     console.error('Error processing payment:', error);
@@ -415,14 +423,15 @@ export async function validateStripePayment({
       };
     }
 
-    let invoice, purchaseAmount;
+    let invoice, purchaseAmount, context;
     try {
-      const {amount, context} = await findStripeOrder({
+      const order = await findStripeOrder({
         id: stripeSessionId,
         tenantId,
       });
-      invoice = context;
-      purchaseAmount = amount;
+      invoice = order.context.data;
+      purchaseAmount = order.amount;
+      context = order.context;
     } catch (err) {
       return {
         error: true,
@@ -482,6 +491,11 @@ export async function validateStripePayment({
           (await t('Something went wrong while updating invoice!')),
       };
     }
+    await markContextAsUsed({
+      contextId: context.id,
+      version: context.version,
+      tenantId,
+    });
     return {success: true, data: $invoice};
   } catch (error) {
     console.error('Error validating Stripe payment:', error);
@@ -646,11 +660,13 @@ export async function validatePayboxPayment({
       };
     }
 
-    let invoice, purchaseAmount;
+    let invoice, purchaseAmount, context;
     try {
-      const {amount, context} = await findPayboxOrder({params, tenantId});
-      invoice = context;
-      purchaseAmount = amount;
+      const order = await findPayboxOrder({params, tenantId});
+
+      invoice = order.context.data;
+      purchaseAmount = order.amount;
+      context = order.context;
     } catch (err) {
       console.error('Error:', err);
       return {
@@ -711,6 +727,11 @@ export async function validatePayboxPayment({
           (await t('Something went wrong while updating invoice!')),
       };
     }
+    await markContextAsUsed({
+      contextId: context.id,
+      version: context.version,
+      tenantId,
+    });
     return {success: true, data: $invoice};
   } catch (error) {
     console.error('Error validating Paybox payment:', error);
