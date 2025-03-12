@@ -111,7 +111,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
           ) : null}
         </div>
       </CardContent>
-      {isRegistrationAllow && !eventDetails.isRegistered && (
+      {isRegistrationAllow && (
         <CardFooter className="px-4 pb-4">
           {
             <Link
