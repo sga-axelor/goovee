@@ -22,10 +22,12 @@ import {
 import {useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
+import {ZodIssueCode} from 'zod';
 
 // ---- LOCAL IMPORT ---- //
+import type {PortalAppConfig} from '@/types';
 import type {MutateProps, MutateResponse} from '../../../actions';
 import {mutate} from '../../../actions';
 import type {Category, ContactPartner, Priority} from '../../../types';
@@ -44,8 +46,8 @@ type TicketFormProps = {
   submitFormWithAction?: (
     action: (data?: MutateResponse) => Promise<void>,
   ) => Promise<void>;
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 };
-
 export function TicketForm(props: TicketFormProps) {
   const {
     categories,
@@ -57,14 +59,50 @@ export function TicketForm(props: TicketFormProps) {
     className,
     onSuccess,
     submitFormWithAction,
+    ticketingFieldSet,
   } = props;
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
   const [success, setSuccess] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const allowedFields = useMemo(
+    () => new Set(ticketingFieldSet?.map(f => f.name)),
+    [ticketingFieldSet],
+  );
+
+  const refinedSchema = useMemo(
+    () =>
+      TicketFormSchema.superRefine((data, ctx) => {
+        if (allowedFields.has('projectTaskCategory') && !data.category) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: ['category'],
+            message: 'Category is required',
+          });
+        }
+
+        if (allowedFields.has('priority') && !data.priority) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: ['priority'],
+            message: 'Priority is required',
+          });
+        }
+
+        if (allowedFields.has('managedByContact') && !data.managedBy) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: ['managedBy'],
+            message: 'Managed by is required',
+          });
+        }
+      }),
+    [allowedFields],
+  );
+
   const form = useForm<TicketInfo>({
-    resolver: zodResolver(TicketFormSchema),
+    resolver: zodResolver(refinedSchema),
     defaultValues: {
       managedBy: userId.toString(),
       parentId: parentId,
@@ -150,95 +188,100 @@ export function TicketForm(props: TicketFormProps) {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="category"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.t('Category')}*</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={i18n.t('Select your category')}
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem
-                          value={category.id.toString()}
-                          key={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.t('Priority')}*</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={i18n.t('Select your priority')}
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {priorities.map(priority => (
-                        <SelectItem
-                          value={priority.id.toString()}
-                          key={priority.id}>
-                          {priority.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="managedBy"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.t('Managed by')}*</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {contacts.map(contact => (
-                        <SelectItem
-                          value={contact.id.toString()}
-                          key={contact.id}>
-                          {contact.simpleFullName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {allowedFields.has('projectTaskCategory') && (
+              <FormField
+                control={form.control}
+                name="category"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.t('Category')}*</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={i18n.t('Select your category')}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem
+                            value={category.id.toString()}
+                            key={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            {allowedFields.has('priority') && (
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.t('Priority')}*</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={i18n.t('Select your priority')}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {priorities.map(priority => (
+                          <SelectItem
+                            value={priority.id.toString()}
+                            key={priority.id}>
+                            {priority.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            {allowedFields.has('managedByContact') && (
+              <FormField
+                control={form.control}
+                name="managedBy"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.t('Managed by')}*</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {contacts.map(contact => (
+                          <SelectItem
+                            value={contact.id.toString()}
+                            key={contact.id}>
+                            {contact.simpleFullName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="description"

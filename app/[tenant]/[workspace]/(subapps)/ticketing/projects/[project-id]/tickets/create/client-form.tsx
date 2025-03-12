@@ -1,5 +1,6 @@
 'use client';
 
+import type {PortalAppConfig} from '@/types';
 import type {ID} from '@goovee/orm';
 import {useRouter} from 'next/navigation';
 import {useCallback} from 'react';
@@ -18,6 +19,7 @@ export function Form(props: {
   contacts: ContactPartner[];
   workspaceURI: string;
   parentId?: string;
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
   const {
     categories,
@@ -27,6 +29,7 @@ export function Form(props: {
     userId,
     parentId,
     workspaceURI,
+    ticketingFieldSet,
   } = props;
 
   const router = useRouter();
@@ -41,6 +44,7 @@ export function Form(props: {
 
   return (
     <TicketForm
+      ticketingFieldSet={ticketingFieldSet}
       projectId={projectId}
       categories={categories}
       priorities={priorities}

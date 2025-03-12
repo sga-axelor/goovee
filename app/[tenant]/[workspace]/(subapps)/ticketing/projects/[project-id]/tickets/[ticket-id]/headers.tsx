@@ -1,5 +1,6 @@
 'use client';
 import {i18n} from '@/locale';
+import type {PortalAppConfig} from '@/types';
 import type {Cloned} from '@/types/util';
 import {useToast} from '@/ui/hooks';
 import type {ID} from '@goovee/orm';
@@ -9,6 +10,7 @@ import type {
   Priority,
   TicketLink,
 } from '../../../../common/types';
+import {useTicketDetails} from '../../../../common/ui/components/ticket-details/ticket-details-provider';
 import {TicketForm} from '../../../../common/ui/components/ticket-form';
 import {
   TicketChildLinkForm,
@@ -16,7 +18,6 @@ import {
   TicketRelatedLinkForm,
 } from '../../../../common/ui/components/ticket-link-form';
 import {TicketLinkHeader} from '../../../../common/ui/components/ticket-link-header';
-import {useTicketDetails} from '../../../../common/ui/components/ticket-details/ticket-details-provider';
 
 export function RelatedTicketsHeader(props: {
   linkTypes: {
@@ -64,6 +65,7 @@ export function ChildTicketsHeader(props: {
   contacts: ContactPartner[];
   userId: ID;
   childrenIds: ID[];
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
   const {
     ticketId,
@@ -74,6 +76,7 @@ export function ChildTicketsHeader(props: {
     userId,
     parentIds,
     childrenIds,
+    ticketingFieldSet,
   } = props;
 
   const {toast} = useToast();
@@ -91,6 +94,7 @@ export function ChildTicketsHeader(props: {
           contacts={contacts}
           userId={userId}
           parentId={ticketId.toString()}
+          ticketingFieldSet={ticketingFieldSet}
           className="mt-10 text-left"
           submitFormWithAction={submitFormWithAction}
           onSuccess={() => {

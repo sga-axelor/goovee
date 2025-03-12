@@ -145,6 +145,7 @@ export default async function Page({
             categories={categories}
             priorities={priorities}
             contacts={contacts}
+            ticketingFieldSet={clone(workspace.config.ticketingFieldSet)}
           />
           <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
             <Suspense fallback={<Skeleton className="h-[160px]" />}>
@@ -234,6 +235,7 @@ async function ChildTickets({
   return (
     <div>
       <ChildTicketsHeader
+        ticketingFieldSet={clone(ticketingFieldSet)}
         ticketId={ticketId}
         parentIds={parentIds}
         childrenIds={tickets?.map(t => t.id) ?? []}

@@ -2,6 +2,7 @@
 
 import {revalidatePath} from 'next/cache';
 import {headers} from 'next/headers';
+import {ZodIssueCode} from 'zod';
 
 // ---- CORE IMPORTS ---- //
 import {TENANT_HEADER} from '@/middleware';
@@ -68,14 +69,44 @@ export async function mutate(
 
   const {auth, workspace} = info;
 
+  const allowedFields = new Set(
+    workspace.config.ticketingFieldSet?.map(f => f.name),
+  );
+
   try {
     let ticket;
     if (action.type === MUTATE_TYPE.CREATE) {
-      const createData = CreateTicketSchema.parse(action.data);
+      const refinedSchema = CreateTicketSchema.superRefine((data, ctx) => {
+        if (allowedFields.has('projectTaskCategory') && !data.category) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: ['category'],
+            message: 'Category is required',
+          });
+        }
+
+        if (allowedFields.has('priority') && !data.priority) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: ['priority'],
+            message: 'Priority is required',
+          });
+        }
+
+        if (allowedFields.has('managedByContact') && !data.managedBy) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: ['managedBy'],
+            message: 'Managed by is required',
+          });
+        }
+      });
+      const createData = refinedSchema.parse(action.data);
       ticket = await createTicket({
         data: createData,
         workspaceUserId: workspace.workspaceUser?.id,
         auth,
+        allowedFields,
       });
     } else {
       const updateData = UpdateTicketSchema.parse(action.data);
@@ -87,6 +118,7 @@ export async function mutate(
         data: updateData,
         workspaceUserId: workspace.workspaceUser?.id,
         auth,
+        allowedFields,
       });
     }
 
@@ -133,9 +165,22 @@ export async function updateAssignment(
   const {workspace, auth} = info;
   const {workspaceUser} = workspace;
 
+  const allowedFields = new Set(
+    workspace.config.ticketingFieldSet?.map(f => f.name),
+  );
+
+  if (!allowedFields.has('assignment')) {
+    return {
+      error: true,
+      message: await t('Updating AssignedTo is not allowed'),
+    };
+  }
+
   try {
     const updateData = UpdateTicketSchema.parse({
-      ...data,
+      id: data.id,
+      version: data.version,
+      assignment: data.assignment,
     });
 
     if (force) {
@@ -151,6 +196,7 @@ export async function updateAssignment(
       workspaceUserId: workspaceUser?.id,
       auth,
       fromWS,
+      allowedFields,
     });
     return {success: true, data: true};
   } catch (e) {
@@ -185,6 +231,16 @@ export async function closeTicket(
 
   const {workspace, auth} = info;
   const {workspaceUser} = workspace;
+  const allowedFields = new Set(
+    workspace.config.ticketingFieldSet?.map(f => f.name),
+  );
+
+  if (!allowedFields.has('status')) {
+    return {
+      error: true,
+      message: await t('Updating Status is not allowed'),
+    };
+  }
 
   try {
     const status = await findTicketDoneStatus(tenantId);
@@ -196,7 +252,11 @@ export async function closeTicket(
       };
     }
 
-    const updateData = UpdateTicketSchema.parse({...data, status});
+    const updateData = UpdateTicketSchema.parse({
+      id: data.id,
+      version: data.version,
+      status,
+    });
 
     if (force) {
       const version = await findTicketVersion(updateData.id, tenantId);
@@ -211,6 +271,7 @@ export async function closeTicket(
       workspaceUserId: workspaceUser?.id,
       auth,
       fromWS,
+      allowedFields,
     });
 
     return {success: true, data: true};
@@ -242,6 +303,16 @@ export async function cancelTicket(
   const {workspace, auth} = info;
   const {workspaceUser} = workspace;
 
+  const allowedFields = new Set(
+    workspace.config.ticketingFieldSet?.map(f => f.name),
+  );
+  if (!allowedFields.has('status')) {
+    return {
+      error: true,
+      message: await t('Updating Status is not allowed'),
+    };
+  }
+
   try {
     const status = await findTicketCancelledStatus(tenantId);
     if (!status) {
@@ -251,7 +322,11 @@ export async function cancelTicket(
       };
     }
 
-    const updateData = UpdateTicketSchema.parse({...data, status});
+    const updateData = UpdateTicketSchema.parse({
+      id: data.id,
+      version: data.version,
+      status,
+    });
 
     if (force) {
       const version = await findTicketVersion(updateData.id, tenantId);
@@ -266,6 +341,7 @@ export async function cancelTicket(
       workspaceUserId: workspaceUser?.id,
       auth,
       fromWS,
+      allowedFields,
     });
 
     return {success: true, data: true};

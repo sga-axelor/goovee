@@ -48,7 +48,7 @@ export default async function Page({
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
   const {error, info} = await ensureAuth(workspaceURL, tenant);
   if (error) notFound();
-  const {auth} = info;
+  const {auth, workspace} = info;
 
   if (parentId) {
     const parentTicket = await findTicketAccess({
@@ -127,6 +127,7 @@ export default async function Page({
         userId={auth.userId}
         parentId={parentId}
         workspaceURI={workspaceURI}
+        ticketingFieldSet={clone(workspace.config.ticketingFieldSet)}
       />
     </div>
   );

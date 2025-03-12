@@ -1,8 +1,8 @@
 'use client';
 
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {formatDate} from '@/locale/formatters';
 import {i18n} from '@/locale';
+import {formatDate} from '@/locale/formatters';
+import type {PortalAppConfig} from '@/types';
 import type {Maybe} from '@/types/util';
 import {
   Button,
@@ -31,6 +31,8 @@ import {
   FormMessage,
 } from '@/ui/components/form';
 import {Progress} from '@/ui/components/progress';
+import {cn} from '@/utils/css';
+import {useMemo} from 'react';
 import {INVOICING_TYPE} from '../../../constants';
 import type {
   ContactPartner,
@@ -45,6 +47,7 @@ type Props = {
   categories: TCategory[];
   priorities: TPriority[];
   contacts: ContactPartner[];
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 };
 
 export function TicketDetails(props: Props) {
@@ -54,16 +57,22 @@ export function TicketDetails(props: Props) {
     handleTicketFormSubmit: handleSubmit,
     loading,
   } = useTicketDetails();
-  const {categories, priorities, contacts} = props;
+  const {categories, priorities, contacts, ticketingFieldSet} = props;
 
-  const closeAndCancel = !ticket.status?.isCompleted && (
-    <>
-      <CloseTicket />
-      <CancelTicket />
-    </>
+  const allowedFields = useMemo(
+    () => new Set(ticketingFieldSet?.map(f => f.name)),
+    [ticketingFieldSet],
   );
 
-  const assignToButton = <AssignToButton />;
+  const closeAndCancel = !ticket.status?.isCompleted &&
+    allowedFields.has('status') && (
+      <>
+        <CloseTicket />
+        <CancelTicket />
+      </>
+    );
+
+  const assignToButton = allowedFields.has('assignment') && <AssignToButton />;
 
   return (
     <Form {...form}>
@@ -83,9 +92,11 @@ export function TicketDetails(props: Props) {
             </div>
           </div>
           <div className="space-y-3">
-            <div className="flex justify-between">
-              <p className="text-base font-medium">#{ticket?.id}</p>
-            </div>
+            {allowedFields.has('id') && (
+              <div className="flex justify-between">
+                <p className="text-base font-medium">#{ticket?.id}</p>
+              </div>
+            )}
             <FormField
               control={form.control}
               name="subject"
@@ -104,134 +115,30 @@ export function TicketDetails(props: Props) {
               )}
             />
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <span>
-                  <span className="font-medium pe-2">{i18n.t('Status')}:</span>
-                  <Status name={ticket.status?.name} />
-                </span>
-                <span className="hidden lg:inline-flex gap-4 ml-auto">
-                  {closeAndCancel}
-                </span>
-              </div>
-              <hr className="hidden lg:block" />
-              <FormField
-                control={form.control}
-                name="category"
-                render={({field}) => (
-                  <FormItem className="flex items-center gap-2 space-y-0">
-                    <FormLabel className="font-medium text-md">
-                      {i18n.t('Category')}:
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value?.toString()}>
-                      <FormControl>
-                        <SelectTrigger className="w-fit">
-                          <SelectValue
-                            asChild
-                            placeholder={i18n.t('Select your category')}>
-                            <Category
-                              name={
-                                categories.find(c => c.id == field.value)?.name
-                              }
-                            />
-                          </SelectValue>
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map(category => (
-                          <SelectItem
-                            value={category.id.toString()}
-                            key={category.id}>
-                            <Category name={category.name} />
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="priority"
-                render={({field}) => (
-                  <FormItem className="flex items-center gap-2 space-y-0">
-                    <FormLabel className="font-medium text-md">
-                      {i18n.t('Priority')}:
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value?.toString()}>
-                      <FormControl>
-                        <SelectTrigger className="w-fit">
-                          <SelectValue
-                            asChild
-                            placeholder={i18n.t('Select your priority')}>
-                            <Priority
-                              name={
-                                priorities.find(c => c.id == field.value)?.name
-                              }
-                            />
-                          </SelectValue>
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {priorities.map(priority => (
-                          <SelectItem
-                            value={priority.id.toString()}
-                            key={priority.id}>
-                            <Priority name={priority.name} />
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <hr />
-            <p className="!mt-3.5">
-              <span className="font-medium pe-2">{i18n.t('Created by')}:</span>
-
-              <span className="ms-2">
-                {ticket.createdByContact?.simpleFullName
-                  ? ticket.createdByContact?.simpleFullName
-                  : ticket.project?.company?.name}
-              </span>
-            </p>
-            <p>
-              <span className="font-medium pe-2">{i18n.t('Created on')}:</span>
-              {formatDate(ticket?.createdOn!)}
-            </p>
-            <hr />
-
-            <div>
-              <div className="lg:flex space-y-2 mb-3">
-                <div>
-                  <div className="flex items-center gap-2 space-y-0">
-                    <span className="font-medium pe-2">
-                      {i18n.t('Assigned to')}:
+              {allowedFields.has('status') && (
+                <>
+                  <div className="flex items-center gap-4">
+                    <span>
+                      <span className="font-medium pe-2">
+                        {i18n.t('Status')}:
+                      </span>
+                      <Status name={ticket.status?.name} />
                     </span>
-                    <div className="h-10 flex items-center">
-                      {isWithProvider(ticket.assignment)
-                        ? ticket.project?.company?.name
-                        : ticket.project?.clientPartner?.simpleFullName}
-                    </div>
+                    <span className="hidden lg:inline-flex gap-4 ml-auto">
+                      {closeAndCancel}
+                    </span>
                   </div>
-                </div>
-                <div className="hidden lg:block ml-auto">{assignToButton}</div>
-              </div>
-
-              <div className="lg:flex space-y-2 mb-3">
+                  <hr className="hidden lg:block" />
+                </>
+              )}
+              {allowedFields.has('projectTaskCategory') && (
                 <FormField
                   control={form.control}
-                  name="managedBy"
+                  name="category"
                   render={({field}) => (
                     <FormItem className="flex items-center gap-2 space-y-0">
                       <FormLabel className="font-medium text-md">
-                        {i18n.t('Managed by')}:
+                        {i18n.t('Category')}:
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -239,16 +146,23 @@ export function TicketDetails(props: Props) {
                         <FormControl>
                           <SelectTrigger className="w-fit">
                             <SelectValue
-                              placeholder={i18n.t('Select Assignee')}
-                            />
+                              asChild
+                              placeholder={i18n.t('Select your category')}>
+                              <Category
+                                name={
+                                  categories.find(c => c.id == field.value)
+                                    ?.name
+                                }
+                              />
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {contacts.map(contact => (
+                          {categories.map(category => (
                             <SelectItem
-                              value={contact.id.toString()}
-                              key={contact.id}>
-                              {contact.simpleFullName}
+                              value={category.id.toString()}
+                              key={category.id}>
+                              <Category name={category.name} />
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -257,7 +171,131 @@ export function TicketDetails(props: Props) {
                     </FormItem>
                   )}
                 />
-              </div>
+              )}
+              {allowedFields.has('priority') && (
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({field}) => (
+                    <FormItem className="flex items-center gap-2 space-y-0">
+                      <FormLabel className="font-medium text-md">
+                        {i18n.t('Priority')}:
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value?.toString()}>
+                        <FormControl>
+                          <SelectTrigger className="w-fit">
+                            <SelectValue
+                              asChild
+                              placeholder={i18n.t('Select your priority')}>
+                              <Priority
+                                name={
+                                  priorities.find(c => c.id == field.value)
+                                    ?.name
+                                }
+                              />
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {priorities.map(priority => (
+                            <SelectItem
+                              value={priority.id.toString()}
+                              key={priority.id}>
+                              <Priority name={priority.name} />
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+            <hr
+              className={cn({
+                ['hidden']:
+                  !allowedFields.has('priority') &&
+                  !allowedFields.has('projectTaskCategory'),
+              })}
+            />
+            {allowedFields.has('createdByContact') && (
+              <p className="!mt-3.5">
+                <span className="font-medium pe-2">
+                  {i18n.t('Created by')}:
+                </span>
+
+                <span className="ms-2">
+                  {ticket.createdByContact?.simpleFullName
+                    ? ticket.createdByContact?.simpleFullName
+                    : ticket.project?.company?.name}
+                </span>
+              </p>
+            )}
+            <p>
+              <span className="font-medium pe-2">{i18n.t('Created on')}:</span>
+              {formatDate(ticket?.createdOn!)}
+            </p>
+            <hr />
+
+            <div>
+              {allowedFields.has('assignment') && (
+                <div className="lg:flex space-y-2 mb-3">
+                  <div>
+                    <div className="flex items-center gap-2 space-y-0">
+                      <span className="font-medium pe-2">
+                        {i18n.t('Assigned to')}:
+                      </span>
+                      <div className="h-10 flex items-center">
+                        {isWithProvider(ticket.assignment)
+                          ? ticket.project?.company?.name
+                          : ticket.project?.clientPartner?.simpleFullName}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="hidden lg:block ml-auto">
+                    {assignToButton}
+                  </div>
+                </div>
+              )}
+              {allowedFields.has('managedByContact') && (
+                <div className="lg:flex space-y-2 mb-3">
+                  <FormField
+                    control={form.control}
+                    name="managedBy"
+                    render={({field}) => (
+                      <FormItem className="flex items-center gap-2 space-y-0">
+                        <FormLabel className="font-medium text-md">
+                          {i18n.t('Managed by')}:
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value?.toString()}>
+                          <FormControl>
+                            <SelectTrigger className="w-fit">
+                              <SelectValue
+                                placeholder={i18n.t('Select Assignee')}
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {contacts.map(contact => (
+                              <SelectItem
+                                value={contact.id.toString()}
+                                key={contact.id}>
+                                {contact.simpleFullName}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
               <p>
                 <span className="font-medium pe-2">Expected on:</span>
                 {formatDate(ticket?.taskEndDate!)}

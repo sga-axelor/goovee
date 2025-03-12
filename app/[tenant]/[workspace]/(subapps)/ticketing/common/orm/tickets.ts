@@ -74,20 +74,30 @@ export async function createTicket({
   data,
   workspaceUserId,
   auth,
+  allowedFields,
 }: {
   data: CreateTicketInfo;
   workspaceUserId?: ID;
   auth: AuthProps;
+  allowedFields: Set<string>;
 }) {
   const {
-    priority,
+    priority: _priority,
     subject,
     description,
-    category,
+    category: _category,
     project: projectId,
-    managedBy,
+    managedBy: _managedBy,
     parentId,
   } = data;
+
+  const priority = allowedFields.has('priority') ? _priority : undefined;
+  const category = allowedFields.has('projectTaskCategory')
+    ? _category
+    : undefined;
+  const managedBy = allowedFields.has('managedByContact')
+    ? _managedBy
+    : auth.userId;
 
   if (!auth.tenantId) {
     throw new Error(await t('TenantId is required'));
@@ -305,23 +315,35 @@ export async function updateTicket({
   auth,
   fromWS,
   workspaceUserId,
+  allowedFields,
 }: {
   data: UpdateTicketInfo;
   workspaceUserId?: ID;
   fromWS?: boolean;
   auth: AuthProps;
+  allowedFields: Set<string>;
 }): Promise<UTicket> {
   const {
-    priority,
+    priority: _priority,
     subject,
     description,
-    category,
-    status,
-    assignment,
-    managedBy,
+    category: _category,
+    status: _status,
+    assignment: _assignment,
+    managedBy: _managedBy,
     id,
     version,
   } = data;
+
+  const priority = allowedFields.has('priority') ? _priority : undefined;
+  const category = allowedFields.has('projectTaskCategory')
+    ? _category
+    : undefined;
+  const status = allowedFields.has('status') ? _status : undefined;
+  const assignment = allowedFields.has('assignment') ? _assignment : undefined;
+  const managedBy = allowedFields.has('managedByContact')
+    ? _managedBy
+    : undefined;
 
   const client = await manager.getClient(auth.tenantId);
 
