@@ -4,14 +4,14 @@ import type {Cloned} from '@/types/util';
 import {Table, TableBody, TableHeader, TableRow} from '@/ui/components';
 import {useSortBy} from '@/ui/hooks';
 import {useRouter} from 'next/navigation';
-import {useCallback} from 'react';
+import {useCallback, useMemo} from 'react';
 import type {
   ChildTicket,
   ParentTicket,
   TicketLink,
   TicketListTicket,
 } from '../../../types';
-import {TableHeads, TableRows} from '../table-elements';
+import {type Column, TableHeads, TableRows} from '../table-elements';
 import {
   childColumns,
   parentColumns,
@@ -23,17 +23,34 @@ import {
   RemoveLinkButton,
   RemoveParentButton,
 } from './ticket-row-buttons';
+import type {PortalAppConfig} from '@/types';
 
 type TicketListProps = {
   tickets: Cloned<TicketListTicket>[];
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 };
 
+function filterColumns<T extends Record<string, any>>(
+  columns: Column<T>[],
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'],
+) {
+  if (!ticketingFieldSet) return columns;
+  const fields = ticketingFieldSet.map(field => field.name);
+  return columns.filter(
+    column => column.required || fields.includes(column.key),
+  );
+}
+
 export function TicketList(props: TicketListProps) {
-  const {tickets} = props;
+  const {tickets, ticketingFieldSet} = props;
   const [sortedTickets, sort, toggleSort] = useSortBy(tickets);
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
+
+  const columns = useMemo(() => {
+    return filterColumns(ticketColumns, ticketingFieldSet);
+  }, [ticketingFieldSet]);
 
   const handleRowClick = useCallback(
     (record: Cloned<TicketListTicket>) => {
@@ -50,7 +67,7 @@ export function TicketList(props: TicketListProps) {
       <TableHeader>
         <TableRow>
           <TableHeads
-            columns={ticketColumns}
+            columns={columns}
             sort={{
               key: sort.key,
               direction: sort.direction,
@@ -67,7 +84,7 @@ export function TicketList(props: TicketListProps) {
       <TableBody>
         <TableRows
           records={sortedTickets}
-          columns={ticketColumns}
+          columns={columns}
           onRowClick={handleRowClick}
         />
       </TableBody>
@@ -78,11 +95,16 @@ export function TicketList(props: TicketListProps) {
 export function ParentTicketList(props: {
   ticketId: string;
   tickets: Cloned<ParentTicket>[];
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
-  const {tickets, ticketId} = props;
+  const {tickets, ticketId, ticketingFieldSet} = props;
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
+
+  const columns = useMemo(() => {
+    return filterColumns(parentColumns, ticketingFieldSet);
+  }, [ticketingFieldSet]);
 
   const handleRowClick = useCallback(
     (record: Cloned<TicketListTicket>) => {
@@ -99,14 +121,14 @@ export function ParentTicketList(props: {
       {hasTickets && (
         <TableHeader>
           <TableRow>
-            <TableHeads columns={parentColumns} />
+            <TableHeads columns={columns} />
           </TableRow>
         </TableHeader>
       )}
       <TableBody>
         <TableRows
           records={tickets}
-          columns={parentColumns}
+          columns={columns}
           onRowClick={handleRowClick}
           deleteCellRenderer={ticket => (
             <RemoveParentButton
@@ -123,12 +145,17 @@ export function ParentTicketList(props: {
 export function ChildTicketList(props: {
   ticketId: string;
   tickets?: Cloned<ChildTicket[]>;
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
-  const {tickets, ticketId} = props;
+  const {tickets, ticketId, ticketingFieldSet} = props;
   const hasTickets = Boolean(tickets?.length);
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
+
+  const columns = useMemo(() => {
+    return filterColumns(childColumns, ticketingFieldSet);
+  }, [ticketingFieldSet]);
 
   const handleRowClick = useCallback(
     (record: Cloned<ChildTicket>) => {
@@ -145,14 +172,14 @@ export function ChildTicketList(props: {
       {hasTickets && (
         <TableHeader>
           <TableRow>
-            <TableHeads columns={childColumns} />
+            <TableHeads columns={columns} />
           </TableRow>
         </TableHeader>
       )}
       <TableBody>
         <TableRows
           records={tickets ?? []}
-          columns={childColumns}
+          columns={columns}
           onRowClick={handleRowClick}
           deleteCellRenderer={ticket => (
             <RemoveChildButton
@@ -169,9 +196,14 @@ export function ChildTicketList(props: {
 export function RelatedTicketList(props: {
   ticketId: string;
   links: Cloned<TicketLink[]>;
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
-  const {links, ticketId} = props;
+  const {links, ticketId, ticketingFieldSet} = props;
   const hasLinks = Boolean(links?.length);
+
+  const columns = useMemo(() => {
+    return filterColumns(relatedColumns, ticketingFieldSet);
+  }, [ticketingFieldSet]);
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
@@ -191,14 +223,14 @@ export function RelatedTicketList(props: {
       {hasLinks && (
         <TableHeader>
           <TableRow>
-            <TableHeads columns={relatedColumns} />
+            <TableHeads columns={columns} />
           </TableRow>
         </TableHeader>
       )}
       <TableBody>
         <TableRows
           records={links ?? []}
-          columns={relatedColumns}
+          columns={columns}
           onRowClick={handleRowClick}
           deleteCellRenderer={link =>
             link.relatedTask && (

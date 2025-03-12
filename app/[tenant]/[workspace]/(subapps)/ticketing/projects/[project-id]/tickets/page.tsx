@@ -78,7 +78,7 @@ export default async function Page({
 
   const {error, info} = await ensureAuth(workspaceURL, tenant);
   if (error) notFound();
-  const {auth} = info;
+  const {auth, workspace} = info;
 
   const project = await findProject(projectId, auth);
 
@@ -159,7 +159,10 @@ export default async function Page({
         </Suspense>
       </div>
       <div>
-        <TicketList tickets={tickets} />
+        <TicketList
+          tickets={tickets}
+          ticketingFieldSet={clone(workspace.config.ticketingFieldSet)}
+        />
         {pages > 1 && (
           <TablePagination
             url={url}

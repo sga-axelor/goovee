@@ -12,14 +12,14 @@ import type {Column} from '../table-elements';
 
 export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   {
-    key: 'ticketId',
+    key: 'id',
     label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
     mobile: true,
   },
   {
-    key: 'createdBy',
+    key: 'createdByContact',
     label: 'Created by',
     content: t =>
       t.createdByContact?.id
@@ -28,11 +28,13 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
     getter: t => t.createdByContact?.simpleFullName ?? t.project?.company?.name,
   },
   {
-    key: 'subject',
+    key: 'name',
     label: 'Subject',
-    content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
+    // content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
+    content: t => <div className="line-clamp-2">{t.name}</div>,
     getter: 'name',
     mobile: true,
+    required: true,
   },
   {
     key: 'priority',
@@ -47,19 +49,19 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
     getter: 'status.name',
   },
   {
-    key: 'category',
+    key: 'projectTaskCategory',
     label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
-    key: 'managedBy',
+    key: 'managedByContact',
     label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: 'assignedTo',
+    key: 'assignment',
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -80,18 +82,19 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
 
 export const parentColumns: Column<Cloned<ParentTicket>>[] = [
   {
-    key: 'ticketId',
+    key: 'id',
     label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
     mobile: true,
   },
   {
-    key: 'subject',
+    key: 'name',
     label: 'Subject',
     content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
     getter: 'name',
     mobile: true,
+    required: true,
   },
   {
     key: 'priority',
@@ -106,19 +109,19 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
     getter: 'status.name',
   },
   {
-    key: 'category',
+    key: 'projectTaskCategory',
     label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
-    key: 'managedBy',
+    key: 'managedByContact',
     label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: 'assignedTo',
+    key: 'assignment',
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -139,18 +142,19 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
 
 export const childColumns: Column<Cloned<ChildTicket>>[] = [
   {
-    key: 'ticketId',
+    key: 'id',
     label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
     mobile: true,
   },
   {
-    key: 'subject',
+    key: 'name',
     label: 'Subject',
     content: t => <div className="max-w-40 line-clamp-2">{t.name}</div>,
     getter: 'name',
     mobile: true,
+    required: true,
   },
   {
     key: 'priority',
@@ -165,19 +169,19 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
     getter: 'status.name',
   },
   {
-    key: 'category',
+    key: 'projectTaskCategory',
     label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
-    key: 'managedBy',
+    key: 'managedByContact',
     label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: 'assignedTo',
+    key: 'assignment',
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -198,26 +202,28 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
 
 export const relatedColumns: Column<Cloned<TicketLink>>[] = [
   {
-    key: 'linkType',
+    key: 'projectTaskLinkType',
     label: 'Link type',
     content: l => <p className="font-medium">{l.projectTaskLinkType?.name}</p>,
     getter: 'projectTaskLinkType.name',
     mobile: true,
+    required: true,
   },
   {
-    key: 'ticketId',
+    key: 'id',
     label: 'Ticket ID',
     content: ({relatedTask: t}) => <p className="font-medium">#{t?.id}</p>,
     getter: 'relatedTask.id',
   },
   {
-    key: 'subject',
+    key: 'name',
     label: 'Subject',
     content: ({relatedTask: t}) => (
       <div className="max-w-40 line-clamp-2">{t?.name}</div>
     ),
     getter: 'relatedTask.name',
     mobile: true,
+    required: true,
   },
   {
     key: 'priority',
@@ -232,13 +238,13 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
     getter: 'relatedTask.status.name',
   },
   {
-    key: 'managedBy',
+    key: 'managedByContact',
     label: 'Managed by',
     content: ({relatedTask: t}) => t?.managedByContact?.simpleFullName,
     getter: 'relatedTask.managedByContact.simpleFullName',
   },
   {
-    key: 'assignedTo',
+    key: 'assignment',
     label: 'Assigned to',
     content: ({relatedTask: t}) =>
       isWithProvider(t?.assignment)

@@ -178,7 +178,10 @@ export default async function Page({
         </Button>
       </div>
       <div>
-        <TicketList tickets={tickets} />
+        <TicketList
+          tickets={tickets}
+          ticketingFieldSet={clone(workspace.config.ticketingFieldSet)}
+        />
         <div className="flex justify-end p-4">
           <Link
             href={allTicketsURL}

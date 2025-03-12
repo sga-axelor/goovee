@@ -53,7 +53,7 @@ export function TableHeads<T extends Record<string, any>>(
           {['cursor-pointer']: Boolean(sort)},
         )}>
         <div className="flex gap-1 items-center">
-          <div className="line-clamp-1">{i18n.t(column.label)}</div>
+          <div className="line-clamp-1 min-w-fit">{i18n.t(column.label)}</div>
           {icon}
         </div>
       </TableHead>

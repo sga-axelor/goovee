@@ -10,4 +10,5 @@ export type Column<T extends Record<string, any>> = {
   mobile?: boolean;
   getter?: string | Getter<T>;
   type?: SortType;
+  required?: boolean;
 };

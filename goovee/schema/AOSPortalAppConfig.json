@@ -280,6 +280,11 @@
     {
       "name": "isShowResolvedTicket",
       "type": "Boolean"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "ticketingFieldSet",
+      "target": "AOSMetaField"
     }
   ]
 }

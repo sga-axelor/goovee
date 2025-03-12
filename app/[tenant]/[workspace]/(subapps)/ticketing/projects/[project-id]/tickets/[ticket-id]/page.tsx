@@ -23,7 +23,9 @@ import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
+import type {PortalAppConfig} from '@/types';
 import {createComment, fetchComments} from '../../../../common/actions';
+import {ALL_TICKETS_TITLE} from '../../../../common/constants';
 import {
   findContactPartners,
   findTicketCategories,
@@ -42,7 +44,6 @@ import {
 import type {
   Category,
   ContactPartner,
-  ParentTicket,
   Priority,
 } from '../../../../common/types';
 import {TicketDetails} from '../../../../common/ui/components/ticket-details';
@@ -59,7 +60,6 @@ import {
   ParentTicketsHeader,
   RelatedTicketsHeader,
 } from './headers';
-import {ALL_TICKETS_TITLE} from '../../../../common/constants';
 
 export default async function Page({
   params,
@@ -152,6 +152,7 @@ export default async function Page({
                 ticketId={ticket.id}
                 projectId={ticket.project?.id}
                 tenantId={tenant}
+                ticketingFieldSet={workspace.config.ticketingFieldSet}
               />
             </Suspense>
             <Suspense fallback={<Skeleton className="h-[160px]" />}>
@@ -163,6 +164,7 @@ export default async function Page({
                 contacts={contacts}
                 userId={auth.userId}
                 tenantId={tenant}
+                ticketingFieldSet={workspace.config.ticketingFieldSet}
               />
             </Suspense>
             <Suspense fallback={<Skeleton className="h-[160px]" />}>
@@ -170,6 +172,7 @@ export default async function Page({
                 ticketId={ticket.id}
                 projectId={ticket.project?.id}
                 tenantId={tenant}
+                ticketingFieldSet={workspace.config.ticketingFieldSet}
               />
             </Suspense>
           </div>
@@ -211,6 +214,7 @@ async function ChildTickets({
   contacts,
   userId,
   tenantId,
+  ticketingFieldSet,
 }: {
   ticketId: ID;
   projectId?: ID;
@@ -219,6 +223,7 @@ async function ChildTickets({
   contacts: ContactPartner[];
   userId: ID;
   tenantId: Tenant['id'];
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
   if (!projectId) return;
 
@@ -239,7 +244,11 @@ async function ChildTickets({
         userId={userId}
       />
       <hr className="mt-5" />
-      <ChildTicketList ticketId={ticketId.toString()} tickets={tickets} />
+      <ChildTicketList
+        ticketId={ticketId.toString()}
+        tickets={tickets}
+        ticketingFieldSet={clone(ticketingFieldSet)}
+      />
     </div>
   );
 }
@@ -248,10 +257,12 @@ async function ParentTicket({
   projectId,
   ticketId,
   tenantId,
+  ticketingFieldSet,
 }: {
   projectId?: ID;
   ticketId: ID;
   tenantId: Tenant['id'];
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
   if (!projectId) return;
   const [childIds, ticket] = await Promise.all([
@@ -268,6 +279,7 @@ async function ParentTicket({
       />
       <hr className="mt-5" />
       <ParentTicketList
+        ticketingFieldSet={clone(ticketingFieldSet)}
         tickets={ticket ? [ticket] : []}
         ticketId={ticketId.toString()}
       />
@@ -279,10 +291,12 @@ async function RelatedTickets({
   ticketId,
   projectId,
   tenantId,
+  ticketingFieldSet,
 }: {
   ticketId: ID;
   projectId?: ID;
   tenantId: Tenant['id'];
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 }) {
   if (!projectId) return;
   const [linkTypes, links] = await Promise.all([
@@ -299,7 +313,11 @@ async function RelatedTickets({
         projectId={projectId}
       />
       <hr className="mt-5" />
-      <RelatedTicketList links={links ?? []} ticketId={ticketId.toString()} />
+      <RelatedTicketList
+        links={links ?? []}
+        ticketId={ticketId.toString()}
+        ticketingFieldSet={clone(ticketingFieldSet)}
+      />
     </div>
   );
 }

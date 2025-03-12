@@ -69,20 +69,20 @@ export function TableRows<T extends Record<string, any>>(
               {column.content(record)}
             </TableCell>
           ))}
-          {small && (
+          {small && !!subColumns.length && (
             <TableCell
-              className="p-3 action text-center"
+              className="p-3 action text-center w-16"
               onClick={handleToggle}>
               <Arrow className="cursor-pointer inline" />
             </TableCell>
           )}
           {deleteCellRenderer && (
-            <TableCell className="text-center action pointer-events-none p-3">
+            <TableCell className="text-center action pointer-events-none p-3 w-16">
               {deleteCellRenderer(record)}
             </TableCell>
           )}
         </TableRow>
-        {small && (
+        {small && !!subColumns.length && (
           <Collapsible open={open} asChild>
             <TableRow className="text-xs">
               <CollapsibleContent asChild>

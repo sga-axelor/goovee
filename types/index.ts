@@ -140,6 +140,7 @@ export interface PortalAppConfig extends Model {
   isShowManagedTicket: boolean;
   isShowCreatedTicket: boolean;
   isShowResolvedTicket: boolean;
+  ticketingFieldSet: {id: string; name: string}[];
 }
 
 export interface PortalApp extends Model {

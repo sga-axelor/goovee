@@ -1,0 +1,16 @@
+{
+  "name": "AOSMetaField",
+  "table": "meta_field",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "String",
+      "name": "label"
+    }
+  ]
+}
