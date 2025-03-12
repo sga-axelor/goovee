@@ -127,6 +127,11 @@
       "name": "workspace",
       "type": "ManyToOne",
       "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "additionalFieldSet",
+      "target": "AOSMetaJsonField"
     }
   ]
 }

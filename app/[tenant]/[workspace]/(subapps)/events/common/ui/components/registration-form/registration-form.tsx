@@ -40,6 +40,10 @@ import {
   getPartnerAddress,
   mapParticipants,
 } from '@/subapps/events/common/utils';
+import {
+  getEventCustomFields,
+  getFacilitiesCustomFields,
+} from './custom-fields-helper';
 
 export const RegistrationForm = ({
   eventDetails,
@@ -64,6 +68,7 @@ export const RegistrationForm = ({
     isPrivate = false,
     maxParticipantPerRegistration,
     slug,
+    additionalFieldSet,
   } = eventDetails || {};
 
   const [totalPrice, setTotalPrice] = useState<number>(0);
@@ -153,7 +158,7 @@ export const RegistrationForm = ({
         type: 'array',
         widget: 'custom',
         hidden: !facilityList.length,
-        order: 6,
+        order: 7,
         customComponent: (props: any) => (
           <SubscriptionsView
             {...props}
@@ -176,9 +181,18 @@ export const RegistrationForm = ({
     ],
   );
 
+  const metaFieldsFacilities = facilityList.flatMap(
+    facility => facility.additionalFieldSet,
+  );
+
   const participantForm = useMemo(
-    () => [...basicPerson, ...formatStudioFields(metaFields)],
-    [basicPerson, metaFields],
+    () => [
+      ...basicPerson,
+      ...formatStudioFields(metaFields),
+      ...getEventCustomFields(additionalFieldSet),
+      ...getFacilitiesCustomFields(facilityList),
+    ],
+    [basicPerson, facilityList, metaFields, additionalFieldSet],
   );
 
   const externalParticipantForm = useMemo(
@@ -335,7 +349,12 @@ export const RegistrationForm = ({
 
   const onSubmit = async (values: any) => {
     try {
-      const result = mapParticipants(values, metaFields);
+      const result = mapParticipants(
+        values,
+        metaFields,
+        metaFieldsFacilities,
+        additionalFieldSet,
+      );
       const response = await register({
         eventId,
         values: result,

@@ -102,8 +102,17 @@ export const generateIcs = (event: any, participants: Participant[]) => {
   });
 };
 
-export function mapParticipants(formValues: any, metaFields: any) {
-  const data = extractCustomData(formValues, 'contactAttrs', metaFields);
+export function mapParticipants(
+  formValues: any,
+  metaFields: any,
+  metaFieldsFacilities: any,
+  additionalFieldSet: any,
+) {
+  const data = extractCustomData(formValues, 'contactAttrs', [
+    ...metaFields,
+    ...metaFieldsFacilities,
+    ...additionalFieldSet,
+  ]);
   data.sequence = 0;
 
   data.otherPeople =

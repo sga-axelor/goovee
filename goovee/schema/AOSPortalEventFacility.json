@@ -16,6 +16,11 @@
     {
       "name": "price",
       "type": "Int"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "additionalFieldSet",
+      "target": "AOSMetaJsonField"
     }
   ]
 }

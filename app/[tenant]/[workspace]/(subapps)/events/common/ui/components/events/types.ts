@@ -35,6 +35,7 @@ export interface Event {
       price: number;
       formattedPrice: string;
       facility: string;
+      additionalFieldSet: any[];
     },
   ];
   slug: string;
@@ -44,6 +45,7 @@ export interface Event {
   isLoginNotNeeded: boolean;
   maxParticipantPerEvent: number;
   maxParticipantPerRegistration: number;
+  additionalFieldSet: any[];
 }
 export interface EventsProps {
   events: Event[];

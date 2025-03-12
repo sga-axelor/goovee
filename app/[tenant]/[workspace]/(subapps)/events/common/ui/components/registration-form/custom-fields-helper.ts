@@ -1,0 +1,30 @@
+import {formatStudioFields} from '@/ui/form';
+
+export const getFacilitiesCustomFields = (facilityList: any[]): any[] => {
+  let result: any[] = [];
+
+  facilityList.forEach((facility: any) => {
+    const fields = formatStudioFields(facility.additionalFieldSet).map(_f => ({
+      ..._f,
+      order: 8,
+      hideIf: (formState: any) => {
+        return !formState?.subscriptionSet?.find(
+          (_s: any) => _s.id === facility.id,
+        );
+      },
+    }));
+
+    result.push(...fields);
+  });
+
+  return result;
+};
+
+export const getEventCustomFields = (customFields: any[]): any[] => {
+  const fields = formatStudioFields(customFields).map(_f => ({
+    ..._f,
+    order: 6,
+  }));
+
+  return fields;
+};

@@ -180,7 +180,15 @@ export async function findEvent({
         },
         slug: true,
         defaultPrice: true,
-        facilityList: true,
+        facilityList: {
+          select: {
+            id: true,
+            facility: true,
+            price: true,
+            additionalFieldSet: true,
+          },
+        },
+        additionalFieldSet: true,
         isPublic: true,
         isHidden: true,
         isLoginNotNeeded: true,

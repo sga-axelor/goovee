@@ -62,6 +62,7 @@ export type Event = {
     formattedPrice: string;
     formattedPriceWt: string;
     formattedPriceAti: string;
+    additionalFieldSet: any[];
   }>;
   isRegistered: boolean;
   displayWt: string;
@@ -73,6 +74,7 @@ export type Event = {
     id: string;
     code: string;
   };
+  additionalFieldSet: any[];
 };
 
 export type EventPayments = {
