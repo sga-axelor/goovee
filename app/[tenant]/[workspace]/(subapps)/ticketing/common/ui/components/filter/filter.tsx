@@ -1,6 +1,7 @@
 'use client';
 
 import {i18n} from '@/locale';
+import type {PortalAppConfig} from '@/types';
 import type {Cloned} from '@/types/util';
 import {
   Badge,
@@ -29,6 +30,7 @@ import {useResponsive} from '@/ui/hooks';
 import {cn} from '@/utils/css';
 import {decodeFilter, encodeFilter} from '@/utils/url';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {X as RemoveIcon} from 'lucide-react';
 import {useRouter} from 'next/navigation';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
@@ -57,7 +59,6 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '../multi-select';
-import {X as RemoveIcon} from 'lucide-react';
 
 type FilterProps = {
   url: string;
@@ -67,6 +68,7 @@ type FilterProps = {
   statuses: Cloned<Status>[];
   company?: Cloned<Company>;
   clientPartner?: Cloned<ClientPartner>;
+  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
 };
 
 const defaultValues = {
@@ -94,6 +96,7 @@ export function Filter(props: FilterProps) {
     searchParams,
     company,
     clientPartner,
+    ticketingFieldSet,
   } = props;
   const [open, setOpen] = useState(false);
   const filter = useMemo(
@@ -103,6 +106,11 @@ export function Filter(props: FilterProps) {
   const filterCount = useMemo(
     () => (filter ? Object.keys(filter).length : 0),
     [filter],
+  );
+
+  const allowedFields = useMemo(
+    () => new Set(ticketingFieldSet?.map(f => f.name)),
+    [ticketingFieldSet],
   );
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -186,25 +194,38 @@ export function Filter(props: FilterProps) {
               onSubmit={form.handleSubmit(onSubmit)}
               className="relative overflow-x-hidden lg:h-fit lg:max-h-[--radix-popper-available-height] lg:overflow-y-auto p-4">
               <div className="space-y-4">
-                <MyTicketsField form={form} />
+                {(allowedFields.has('createdByContact') ||
+                  allowedFields.has('managedByContact')) && (
+                  <MyTicketsField form={form} />
+                )}
                 {!form.watch('myTickets') && (
                   <>
-                    <CreatedByField
-                      form={form}
-                      contacts={contacts}
-                      company={company}
-                    />
-                    <ManagedByField form={form} contacts={contacts} />
+                    {allowedFields.has('createdByContact') && (
+                      <CreatedByField
+                        form={form}
+                        contacts={contacts}
+                        company={company}
+                      />
+                    )}
+                    {allowedFields.has('managedByContact') && (
+                      <ManagedByField form={form} contacts={contacts} />
+                    )}
                   </>
                 )}
-                <AssignedToField
-                  form={form}
-                  company={company}
-                  clientPartner={clientPartner}
-                />
-                <DatesField form={form} />
-                <PriorityField form={form} priorities={priorities} />
-                <StatusField form={form} statuses={statuses} />
+                {allowedFields.has('assignment') && (
+                  <AssignedToField
+                    form={form}
+                    company={company}
+                    clientPartner={clientPartner}
+                  />
+                )}
+                {allowedFields.has('updatedOn') && <DatesField form={form} />}
+                {allowedFields.has('priority') && (
+                  <PriorityField form={form} priorities={priorities} />
+                )}
+                {allowedFields.has('status') && (
+                  <StatusField form={form} statuses={statuses} />
+                )}
                 <Button
                   variant="success"
                   type="submit"
