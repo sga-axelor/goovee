@@ -33,7 +33,7 @@ import {
 import {Progress} from '@/ui/components/progress';
 import {cn} from '@/utils/css';
 import {useMemo} from 'react';
-import {INVOICING_TYPE} from '../../../constants';
+import {FIELDS, INVOICING_TYPE} from '../../../constants';
 import type {
   ContactPartner,
   Category as TCategory,
@@ -47,7 +47,7 @@ type Props = {
   categories: TCategory[];
   priorities: TPriority[];
   contacts: ContactPartner[];
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 };
 
 export function TicketDetails(props: Props) {
@@ -57,22 +57,24 @@ export function TicketDetails(props: Props) {
     handleTicketFormSubmit: handleSubmit,
     loading,
   } = useTicketDetails();
-  const {categories, priorities, contacts, ticketingFieldSet} = props;
+  const {categories, priorities, contacts, fields} = props;
 
   const allowedFields = useMemo(
-    () => new Set(ticketingFieldSet?.map(f => f.name)),
-    [ticketingFieldSet],
+    () => new Set(fields?.map(f => f.name)),
+    [fields],
   );
 
   const closeAndCancel = !ticket.status?.isCompleted &&
-    allowedFields.has('status') && (
+    allowedFields.has(FIELDS.STATUS) && (
       <>
         <CloseTicket />
         <CancelTicket />
       </>
     );
 
-  const assignToButton = allowedFields.has('assignment') && <AssignToButton />;
+  const assignToButton = allowedFields.has(FIELDS.ASSIGNED_TO) && (
+    <AssignToButton />
+  );
 
   return (
     <Form {...form}>
@@ -92,7 +94,7 @@ export function TicketDetails(props: Props) {
             </div>
           </div>
           <div className="space-y-3">
-            {allowedFields.has('id') && (
+            {allowedFields.has(FIELDS.ID) && (
               <div className="flex justify-between">
                 <p className="text-base font-medium">#{ticket?.id}</p>
               </div>
@@ -115,7 +117,7 @@ export function TicketDetails(props: Props) {
               )}
             />
             <div className="flex flex-col gap-4">
-              {allowedFields.has('status') && (
+              {allowedFields.has(FIELDS.STATUS) && (
                 <>
                   <div className="flex items-center gap-4">
                     <span>
@@ -131,7 +133,7 @@ export function TicketDetails(props: Props) {
                   <hr className="hidden lg:block" />
                 </>
               )}
-              {allowedFields.has('projectTaskCategory') && (
+              {allowedFields.has(FIELDS.CATEGORY) && (
                 <FormField
                   control={form.control}
                   name="category"
@@ -172,7 +174,7 @@ export function TicketDetails(props: Props) {
                   )}
                 />
               )}
-              {allowedFields.has('priority') && (
+              {allowedFields.has(FIELDS.PRIORITY) && (
                 <FormField
                   control={form.control}
                   name="priority"
@@ -217,11 +219,11 @@ export function TicketDetails(props: Props) {
             <hr
               className={cn({
                 ['hidden']:
-                  !allowedFields.has('priority') &&
-                  !allowedFields.has('projectTaskCategory'),
+                  !allowedFields.has(FIELDS.PRIORITY) &&
+                  !allowedFields.has(FIELDS.CATEGORY),
               })}
             />
-            {allowedFields.has('createdByContact') && (
+            {allowedFields.has(FIELDS.CREATED_BY) && (
               <p className="!mt-3.5">
                 <span className="font-medium pe-2">
                   {i18n.t('Created by')}:
@@ -241,7 +243,7 @@ export function TicketDetails(props: Props) {
             <hr />
 
             <div>
-              {allowedFields.has('assignment') && (
+              {allowedFields.has(FIELDS.ASSIGNED_TO) && (
                 <div className="lg:flex space-y-2 mb-3">
                   <div>
                     <div className="flex items-center gap-2 space-y-0">
@@ -260,7 +262,7 @@ export function TicketDetails(props: Props) {
                   </div>
                 </div>
               )}
-              {allowedFields.has('managedByContact') && (
+              {allowedFields.has(FIELDS.MANAGED_BY) && (
                 <div className="lg:flex space-y-2 mb-3">
                   <FormField
                     control={form.control}

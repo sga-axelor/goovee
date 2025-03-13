@@ -19,7 +19,7 @@ export function Form(props: {
   contacts: ContactPartner[];
   workspaceURI: string;
   parentId?: string;
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 }) {
   const {
     categories,
@@ -29,7 +29,7 @@ export function Form(props: {
     userId,
     parentId,
     workspaceURI,
-    ticketingFieldSet,
+    fields,
   } = props;
 
   const router = useRouter();
@@ -44,7 +44,7 @@ export function Form(props: {
 
   return (
     <TicketForm
-      ticketingFieldSet={ticketingFieldSet}
+      fields={fields}
       projectId={projectId}
       categories={categories}
       priorities={priorities}

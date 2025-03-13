@@ -30,6 +30,7 @@ import {ZodIssueCode} from 'zod';
 import type {PortalAppConfig} from '@/types';
 import type {MutateProps, MutateResponse} from '../../../actions';
 import {mutate} from '../../../actions';
+import {FIELDS} from '../../../constants';
 import type {Category, ContactPartner, Priority} from '../../../types';
 import type {TicketInfo} from '../../../utils/validators';
 import {TicketFormSchema} from '../../../utils/validators';
@@ -46,7 +47,7 @@ type TicketFormProps = {
   submitFormWithAction?: (
     action: (data?: MutateResponse) => Promise<void>,
   ) => Promise<void>;
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 };
 export function TicketForm(props: TicketFormProps) {
   const {
@@ -59,7 +60,7 @@ export function TicketForm(props: TicketFormProps) {
     className,
     onSuccess,
     submitFormWithAction,
-    ticketingFieldSet,
+    fields,
   } = props;
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
@@ -67,14 +68,14 @@ export function TicketForm(props: TicketFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const allowedFields = useMemo(
-    () => new Set(ticketingFieldSet?.map(f => f.name)),
-    [ticketingFieldSet],
+    () => new Set(fields?.map(f => f.name)),
+    [fields],
   );
 
   const refinedSchema = useMemo(
     () =>
       TicketFormSchema.superRefine((data, ctx) => {
-        if (allowedFields.has('projectTaskCategory') && !data.category) {
+        if (allowedFields.has(FIELDS.CATEGORY) && !data.category) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
             path: ['category'],
@@ -82,7 +83,7 @@ export function TicketForm(props: TicketFormProps) {
           });
         }
 
-        if (allowedFields.has('priority') && !data.priority) {
+        if (allowedFields.has(FIELDS.PRIORITY) && !data.priority) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
             path: ['priority'],
@@ -90,7 +91,7 @@ export function TicketForm(props: TicketFormProps) {
           });
         }
 
-        if (allowedFields.has('managedByContact') && !data.managedBy) {
+        if (allowedFields.has(FIELDS.MANAGED_BY) && !data.managedBy) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
             path: ['managedBy'],
@@ -188,7 +189,7 @@ export function TicketForm(props: TicketFormProps) {
                 </FormItem>
               )}
             />
-            {allowedFields.has('projectTaskCategory') && (
+            {allowedFields.has(FIELDS.CATEGORY) && (
               <FormField
                 control={form.control}
                 name="category"
@@ -220,7 +221,7 @@ export function TicketForm(props: TicketFormProps) {
                 )}
               />
             )}
-            {allowedFields.has('priority') && (
+            {allowedFields.has(FIELDS.PRIORITY) && (
               <FormField
                 control={form.control}
                 name="priority"
@@ -252,7 +253,7 @@ export function TicketForm(props: TicketFormProps) {
                 )}
               />
             )}
-            {allowedFields.has('managedByContact') && (
+            {allowedFields.has(FIELDS.MANAGED_BY) && (
               <FormField
                 control={form.control}
                 name="managedBy"

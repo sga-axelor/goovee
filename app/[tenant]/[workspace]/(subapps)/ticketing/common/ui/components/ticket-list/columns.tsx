@@ -1,5 +1,6 @@
 import {formatDate} from '@/locale/formatters';
 import type {Cloned} from '@/types/util';
+import {FIELDS} from '../../../constants';
 import type {
   ChildTicket,
   ParentTicket,
@@ -12,14 +13,14 @@ import type {Column} from '../table-elements';
 
 export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
   {
-    key: 'id',
+    key: FIELDS.ID,
     label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
     mobile: true,
   },
   {
-    key: 'createdByContact',
+    key: FIELDS.CREATED_BY,
     label: 'Created by',
     content: t =>
       t.createdByContact?.id
@@ -37,31 +38,31 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
     required: true,
   },
   {
-    key: 'priority',
+    key: FIELDS.PRIORITY,
     label: 'Priority',
     content: t => <Priority name={t.priority?.name} />,
     getter: 'priority.name',
   },
   {
-    key: 'status',
+    key: FIELDS.STATUS,
     label: 'Status',
     content: t => <Status name={t.status?.name} />,
     getter: 'status.name',
   },
   {
-    key: 'projectTaskCategory',
+    key: FIELDS.CATEGORY,
     label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
-    key: 'managedByContact',
+    key: FIELDS.MANAGED_BY,
     label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: 'assignment',
+    key: FIELDS.ASSIGNED_TO,
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -73,7 +74,7 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
         : t.project?.clientPartner?.simpleFullName,
   },
   {
-    key: 'updatedOn',
+    key: FIELDS.UPDATED_ON,
     label: 'Updated',
     content: t => formatDate(t?.updatedOn!),
     getter: 'updatedOn',
@@ -82,7 +83,7 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
 
 export const parentColumns: Column<Cloned<ParentTicket>>[] = [
   {
-    key: 'id',
+    key: FIELDS.ID,
     label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
@@ -97,31 +98,31 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
     required: true,
   },
   {
-    key: 'priority',
+    key: FIELDS.PRIORITY,
     label: 'Priority',
     content: t => <Priority name={t.priority?.name} />,
     getter: 'priority.name',
   },
   {
-    key: 'status',
+    key: FIELDS.STATUS,
     label: 'Status',
     content: t => <Status name={t.status?.name} />,
     getter: 'status.name',
   },
   {
-    key: 'projectTaskCategory',
+    key: FIELDS.CATEGORY,
     label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
-    key: 'managedByContact',
+    key: FIELDS.MANAGED_BY,
     label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: 'assignment',
+    key: FIELDS.ASSIGNED_TO,
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -133,7 +134,7 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
         : t.project?.clientPartner?.simpleFullName,
   },
   {
-    key: 'updatedOn',
+    key: FIELDS.UPDATED_ON,
     label: 'Updated',
     content: t => formatDate(t?.updatedOn!),
     getter: 'updatedOn',
@@ -142,7 +143,7 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
 
 export const childColumns: Column<Cloned<ChildTicket>>[] = [
   {
-    key: 'id',
+    key: FIELDS.ID,
     label: 'Ticket ID',
     content: t => <p className="font-medium">#{t.id}</p>,
     getter: 'id',
@@ -157,31 +158,31 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
     required: true,
   },
   {
-    key: 'priority',
+    key: FIELDS.PRIORITY,
     label: 'Priority',
     content: t => <Priority name={t.priority?.name} />,
     getter: 'priority.name',
   },
   {
-    key: 'status',
+    key: FIELDS.STATUS,
     label: 'Status',
     content: t => <Status name={t.status?.name} />,
     getter: 'status.name',
   },
   {
-    key: 'projectTaskCategory',
+    key: FIELDS.CATEGORY,
     label: 'Category',
     content: t => <Category name={t.projectTaskCategory?.name} />,
     getter: 'projectTaskCategory.name',
   },
   {
-    key: 'managedByContact',
+    key: FIELDS.MANAGED_BY,
     label: 'Managed by',
     content: t => t.managedByContact?.simpleFullName,
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: 'assignment',
+    key: FIELDS.ASSIGNED_TO,
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -193,7 +194,7 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
         : t.project?.clientPartner?.simpleFullName,
   },
   {
-    key: 'updatedOn',
+    key: FIELDS.UPDATED_ON,
     label: 'Updated',
     content: t => formatDate(t?.updatedOn!),
     getter: 'updatedOn',
@@ -210,7 +211,7 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
     required: true,
   },
   {
-    key: 'id',
+    key: FIELDS.ID,
     label: 'Ticket ID',
     content: ({relatedTask: t}) => <p className="font-medium">#{t?.id}</p>,
     getter: 'relatedTask.id',
@@ -226,25 +227,25 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
     required: true,
   },
   {
-    key: 'priority',
+    key: FIELDS.PRIORITY,
     label: 'Priority',
     content: ({relatedTask: t}) => <Priority name={t?.priority?.name} />,
     getter: 'relatedTask.priority.name',
   },
   {
-    key: 'status',
+    key: FIELDS.STATUS,
     label: 'Status',
     content: ({relatedTask: t}) => <Status name={t?.status?.name} />,
     getter: 'relatedTask.status.name',
   },
   {
-    key: 'managedByContact',
+    key: FIELDS.MANAGED_BY,
     label: 'Managed by',
     content: ({relatedTask: t}) => t?.managedByContact?.simpleFullName,
     getter: 'relatedTask.managedByContact.simpleFullName',
   },
   {
-    key: 'assignment',
+    key: FIELDS.ASSIGNED_TO,
     label: 'Assigned to',
     content: ({relatedTask: t}) =>
       isWithProvider(t?.assignment)
@@ -256,7 +257,7 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
         : t?.project?.clientPartner?.simpleFullName,
   },
   {
-    key: 'updatedOn',
+    key: FIELDS.UPDATED_ON,
     label: 'Updated',
     content: ({relatedTask: t}) => formatDate(t?.updatedOn!),
     getter: 'relatedTask.updatedOn',

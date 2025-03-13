@@ -180,7 +180,7 @@ export default async function Page({
       <div>
         <TicketList
           tickets={tickets}
-          ticketingFieldSet={clone(workspace.config.ticketingFieldSet)}
+          fields={clone(workspace.config.ticketingFieldSet)}
         />
         <div className="flex justify-end p-4">
           <Link

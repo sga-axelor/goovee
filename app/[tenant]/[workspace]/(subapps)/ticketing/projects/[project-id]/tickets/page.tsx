@@ -1,6 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
 import {Tenant} from '@/tenant';
+import type {PortalAppConfig} from '@/types';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,10 +33,9 @@ import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
-import type {PortalAppConfig} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {DEFAULT_SORT, sortKeyPathMap} from '../../../common/constants';
+import {DEFAULT_SORT, FIELDS, sortKeyPathMap} from '../../../common/constants';
 import {
   findClientPartner,
   findCompany,
@@ -99,12 +99,12 @@ export default async function Page({
   );
 
   const hasFilter = [
-    'priority',
-    'status',
-    'updatedOn',
-    'createdByContact',
-    'managedByContact',
-    'assignment',
+    FIELDS.PRIORITY,
+    FIELDS.STATUS,
+    FIELDS.UPDATED_ON,
+    FIELDS.CREATED_BY,
+    FIELDS.MANAGED_BY,
+    FIELDS.ASSIGNED_TO,
   ].some(field => allowedFields.has(field));
 
   const url = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
@@ -170,7 +170,7 @@ export default async function Page({
               searchParams={searchParams}
               projectId={projectId}
               tenantId={tenant}
-              ticketingFieldSet={workspace.config.ticketingFieldSet}
+              fields={workspace.config.ticketingFieldSet}
             />
           </Suspense>
         )}
@@ -178,7 +178,7 @@ export default async function Page({
       <div>
         <TicketList
           tickets={tickets}
-          ticketingFieldSet={clone(workspace.config.ticketingFieldSet)}
+          fields={clone(workspace.config.ticketingFieldSet)}
         />
         {pages > 1 && (
           <TablePagination
@@ -264,13 +264,13 @@ async function AsyncFilter({
   searchParams,
   projectId,
   tenantId,
-  ticketingFieldSet,
+  fields,
 }: {
   url: string;
   searchParams: SearchParams;
   projectId: ID;
   tenantId: Tenant['id'];
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 }) {
   const [contacts, statuses, priorities, company, clientPartner] =
     await Promise.all([
@@ -290,7 +290,7 @@ async function AsyncFilter({
       url={url}
       searchParams={searchParams}
       clientPartner={clientPartner}
-      ticketingFieldSet={clone(ticketingFieldSet)}
+      fields={clone(fields)}
     />
   );
 }

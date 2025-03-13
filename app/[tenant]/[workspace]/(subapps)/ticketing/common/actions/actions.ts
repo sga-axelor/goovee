@@ -23,7 +23,7 @@ import {zodParseFormData} from '@/utils/formdata';
 import {ModelMap, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
+import {FIELDS, MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
 import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
 import type {TicketSearch} from '../types';
 import {
@@ -76,32 +76,34 @@ export async function mutate(
   try {
     let ticket;
     if (action.type === MUTATE_TYPE.CREATE) {
-      const refinedSchema = CreateTicketSchema.superRefine((data, ctx) => {
-        if (allowedFields.has('projectTaskCategory') && !data.category) {
-          ctx.addIssue({
-            code: ZodIssueCode.custom,
-            path: ['category'],
-            message: 'Category is required',
-          });
-        }
+      const refinedSchema = CreateTicketSchema.superRefine(
+        async (data, ctx) => {
+          if (allowedFields.has(FIELDS.CATEGORY) && !data.category) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['category'],
+              message: await t('Category is required'),
+            });
+          }
 
-        if (allowedFields.has('priority') && !data.priority) {
-          ctx.addIssue({
-            code: ZodIssueCode.custom,
-            path: ['priority'],
-            message: 'Priority is required',
-          });
-        }
+          if (allowedFields.has(FIELDS.PRIORITY) && !data.priority) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['priority'],
+              message: await t('Priority is required'),
+            });
+          }
 
-        if (allowedFields.has('managedByContact') && !data.managedBy) {
-          ctx.addIssue({
-            code: ZodIssueCode.custom,
-            path: ['managedBy'],
-            message: 'Managed by is required',
-          });
-        }
-      });
-      const createData = refinedSchema.parse(action.data);
+          if (allowedFields.has(FIELDS.MANAGED_BY) && !data.managedBy) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['managedBy'],
+              message: await t('Managed by is required'),
+            });
+          }
+        },
+      );
+      const createData = await refinedSchema.parseAsync(action.data);
       ticket = await createTicket({
         data: createData,
         workspaceUserId: workspace.workspaceUser?.id,
@@ -169,7 +171,7 @@ export async function updateAssignment(
     workspace.config.ticketingFieldSet?.map(f => f.name),
   );
 
-  if (!allowedFields.has('assignment')) {
+  if (!allowedFields.has(FIELDS.ASSIGNED_TO)) {
     return {
       error: true,
       message: await t('Updating AssignedTo is not allowed'),
@@ -235,7 +237,7 @@ export async function closeTicket(
     workspace.config.ticketingFieldSet?.map(f => f.name),
   );
 
-  if (!allowedFields.has('status')) {
+  if (!allowedFields.has(FIELDS.STATUS)) {
     return {
       error: true,
       message: await t('Updating Status is not allowed'),
@@ -306,7 +308,7 @@ export async function cancelTicket(
   const allowedFields = new Set(
     workspace.config.ticketingFieldSet?.map(f => f.name),
   );
-  if (!allowedFields.has('status')) {
+  if (!allowedFields.has(FIELDS.STATUS)) {
     return {
       error: true,
       message: await t('Updating Status is not allowed'),

@@ -13,6 +13,7 @@ import {sql} from '@/utils/template-string';
 // ---- LOCAL IMPORTS ---- //
 import {
   ASSIGNMENT,
+  FIELDS,
   INVOICING_TYPE,
   TYPE_SELECT,
   VERSION_MISMATCH_CAUSE_CLASS,
@@ -91,11 +92,9 @@ export async function createTicket({
     parentId,
   } = data;
 
-  const priority = allowedFields.has('priority') ? _priority : undefined;
-  const category = allowedFields.has('projectTaskCategory')
-    ? _category
-    : undefined;
-  const managedBy = allowedFields.has('managedByContact')
+  const priority = allowedFields.has(FIELDS.PRIORITY) ? _priority : undefined;
+  const category = allowedFields.has(FIELDS.CATEGORY) ? _category : undefined;
+  const managedBy = allowedFields.has(FIELDS.MANAGED_BY)
     ? _managedBy
     : auth.userId;
 
@@ -335,13 +334,13 @@ export async function updateTicket({
     version,
   } = data;
 
-  const priority = allowedFields.has('priority') ? _priority : undefined;
-  const category = allowedFields.has('projectTaskCategory')
-    ? _category
+  const priority = allowedFields.has(FIELDS.PRIORITY) ? _priority : undefined;
+  const category = allowedFields.has(FIELDS.CATEGORY) ? _category : undefined;
+  const status = allowedFields.has(FIELDS.STATUS) ? _status : undefined;
+  const assignment = allowedFields.has(FIELDS.ASSIGNED_TO)
+    ? _assignment
     : undefined;
-  const status = allowedFields.has('status') ? _status : undefined;
-  const assignment = allowedFields.has('assignment') ? _assignment : undefined;
-  const managedBy = allowedFields.has('managedByContact')
+  const managedBy = allowedFields.has(FIELDS.MANAGED_BY)
     ? _managedBy
     : undefined;
 

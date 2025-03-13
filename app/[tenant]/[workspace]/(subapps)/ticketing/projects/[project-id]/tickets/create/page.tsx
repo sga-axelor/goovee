@@ -127,7 +127,7 @@ export default async function Page({
         userId={auth.userId}
         parentId={parentId}
         workspaceURI={workspaceURI}
-        ticketingFieldSet={clone(workspace.config.ticketingFieldSet)}
+        fields={clone(workspace.config.ticketingFieldSet)}
       />
     </div>
   );

@@ -65,7 +65,7 @@ export function ChildTicketsHeader(props: {
   contacts: ContactPartner[];
   userId: ID;
   childrenIds: ID[];
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 }) {
   const {
     ticketId,
@@ -76,7 +76,7 @@ export function ChildTicketsHeader(props: {
     userId,
     parentIds,
     childrenIds,
-    ticketingFieldSet,
+    fields,
   } = props;
 
   const {toast} = useToast();
@@ -94,7 +94,7 @@ export function ChildTicketsHeader(props: {
           contacts={contacts}
           userId={userId}
           parentId={ticketId.toString()}
-          ticketingFieldSet={ticketingFieldSet}
+          fields={fields}
           className="mt-10 text-left"
           submitFormWithAction={submitFormWithAction}
           onSuccess={() => {

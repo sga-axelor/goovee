@@ -27,30 +27,30 @@ import type {PortalAppConfig} from '@/types';
 
 type TicketListProps = {
   tickets: Cloned<TicketListTicket>[];
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 };
 
 function filterColumns<T extends Record<string, any>>(
   columns: Column<T>[],
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'],
+  fields: PortalAppConfig['ticketingFieldSet'],
 ) {
-  if (!ticketingFieldSet) return columns;
-  const fields = ticketingFieldSet.map(field => field.name);
+  if (!fields) return columns;
+  const fieldnames = fields.map(field => field.name);
   return columns.filter(
-    column => column.required || fields.includes(column.key),
+    column => column.required || fieldnames.includes(column.key),
   );
 }
 
 export function TicketList(props: TicketListProps) {
-  const {tickets, ticketingFieldSet} = props;
+  const {tickets, fields} = props;
   const [sortedTickets, sort, toggleSort] = useSortBy(tickets);
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
 
   const columns = useMemo(() => {
-    return filterColumns(ticketColumns, ticketingFieldSet);
-  }, [ticketingFieldSet]);
+    return filterColumns(ticketColumns, fields);
+  }, [fields]);
 
   const handleRowClick = useCallback(
     (record: Cloned<TicketListTicket>) => {
@@ -95,16 +95,16 @@ export function TicketList(props: TicketListProps) {
 export function ParentTicketList(props: {
   ticketId: string;
   tickets: Cloned<ParentTicket>[];
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 }) {
-  const {tickets, ticketId, ticketingFieldSet} = props;
+  const {tickets, ticketId, fields} = props;
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
 
   const columns = useMemo(() => {
-    return filterColumns(parentColumns, ticketingFieldSet);
-  }, [ticketingFieldSet]);
+    return filterColumns(parentColumns, fields);
+  }, [fields]);
 
   const handleRowClick = useCallback(
     (record: Cloned<TicketListTicket>) => {
@@ -145,17 +145,17 @@ export function ParentTicketList(props: {
 export function ChildTicketList(props: {
   ticketId: string;
   tickets?: Cloned<ChildTicket[]>;
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 }) {
-  const {tickets, ticketId, ticketingFieldSet} = props;
+  const {tickets, ticketId, fields} = props;
   const hasTickets = Boolean(tickets?.length);
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
 
   const columns = useMemo(() => {
-    return filterColumns(childColumns, ticketingFieldSet);
-  }, [ticketingFieldSet]);
+    return filterColumns(childColumns, fields);
+  }, [fields]);
 
   const handleRowClick = useCallback(
     (record: Cloned<ChildTicket>) => {
@@ -196,14 +196,14 @@ export function ChildTicketList(props: {
 export function RelatedTicketList(props: {
   ticketId: string;
   links: Cloned<TicketLink[]>;
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 }) {
-  const {links, ticketId, ticketingFieldSet} = props;
+  const {links, ticketId, fields} = props;
   const hasLinks = Boolean(links?.length);
 
   const columns = useMemo(() => {
-    return filterColumns(relatedColumns, ticketingFieldSet);
-  }, [ticketingFieldSet]);
+    return filterColumns(relatedColumns, fields);
+  }, [fields]);
 
   const {workspaceURI} = useWorkspace();
   const router = useRouter();

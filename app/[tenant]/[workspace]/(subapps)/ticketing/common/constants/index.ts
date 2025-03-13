@@ -50,3 +50,14 @@ export const MY_TICKETS_TITLE = 'My tickets';
 export const MANAGED_TICKETS_TITLE = 'Managed tickets';
 export const CREATED_TICKETS_TITLE = 'Created tickets';
 export const RESOLVED_TICKETS_TITLE = 'Resolved tickets';
+
+export const FIELDS = {
+  ID: 'id',
+  PRIORITY: 'priority',
+  STATUS: 'status',
+  CATEGORY: 'projectTaskCategory',
+  ASSIGNED_TO: 'assignment',
+  MANAGED_BY: 'managedByContact',
+  CREATED_BY: 'createdByContact',
+  UPDATED_ON: 'updatedOn',
+};

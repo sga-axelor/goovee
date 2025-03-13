@@ -37,7 +37,7 @@ import {useForm, UseFormReturn} from 'react-hook-form';
 import {FaFilter} from 'react-icons/fa';
 import {z} from 'zod';
 
-import {ASSIGNMENT, COMPANY} from '../../../constants';
+import {ASSIGNMENT, COMPANY, FIELDS} from '../../../constants';
 import type {
   ClientPartner,
   Company,
@@ -68,7 +68,7 @@ type FilterProps = {
   statuses: Cloned<Status>[];
   company?: Cloned<Company>;
   clientPartner?: Cloned<ClientPartner>;
-  ticketingFieldSet: PortalAppConfig['ticketingFieldSet'];
+  fields: PortalAppConfig['ticketingFieldSet'];
 };
 
 const defaultValues = {
@@ -96,7 +96,7 @@ export function Filter(props: FilterProps) {
     searchParams,
     company,
     clientPartner,
-    ticketingFieldSet,
+    fields,
   } = props;
   const [open, setOpen] = useState(false);
   const filter = useMemo(
@@ -109,8 +109,8 @@ export function Filter(props: FilterProps) {
   );
 
   const allowedFields = useMemo(
-    () => new Set(ticketingFieldSet?.map(f => f.name)),
-    [ticketingFieldSet],
+    () => new Set(fields?.map(f => f.name)),
+    [fields],
   );
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -194,36 +194,38 @@ export function Filter(props: FilterProps) {
               onSubmit={form.handleSubmit(onSubmit)}
               className="relative overflow-x-hidden lg:h-fit lg:max-h-[--radix-popper-available-height] lg:overflow-y-auto p-4">
               <div className="space-y-4">
-                {(allowedFields.has('createdByContact') ||
-                  allowedFields.has('managedByContact')) && (
+                {(allowedFields.has(FIELDS.CREATED_BY) ||
+                  allowedFields.has(FIELDS.MANAGED_BY)) && (
                   <MyTicketsField form={form} />
                 )}
                 {!form.watch('myTickets') && (
                   <>
-                    {allowedFields.has('createdByContact') && (
+                    {allowedFields.has(FIELDS.CREATED_BY) && (
                       <CreatedByField
                         form={form}
                         contacts={contacts}
                         company={company}
                       />
                     )}
-                    {allowedFields.has('managedByContact') && (
+                    {allowedFields.has(FIELDS.MANAGED_BY) && (
                       <ManagedByField form={form} contacts={contacts} />
                     )}
                   </>
                 )}
-                {allowedFields.has('assignment') && (
+                {allowedFields.has(FIELDS.ASSIGNED_TO) && (
                   <AssignedToField
                     form={form}
                     company={company}
                     clientPartner={clientPartner}
                   />
                 )}
-                {allowedFields.has('updatedOn') && <DatesField form={form} />}
-                {allowedFields.has('priority') && (
+                {allowedFields.has(FIELDS.UPDATED_ON) && (
+                  <DatesField form={form} />
+                )}
+                {allowedFields.has(FIELDS.PRIORITY) && (
                   <PriorityField form={form} priorities={priorities} />
                 )}
-                {allowedFields.has('status') && (
+                {allowedFields.has(FIELDS.STATUS) && (
                   <StatusField form={form} statuses={statuses} />
                 )}
                 <Button
