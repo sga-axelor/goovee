@@ -1,5 +1,5 @@
 'use client';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {MdChevronLeft, MdChevronRight} from 'react-icons/md';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {FreeMode} from 'swiper/modules';
@@ -9,7 +9,7 @@ import 'swiper/css';
 // ---- CORE IMPORTS ---- //
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/locale';
-import {Separator} from '@/ui/components';
+import {Button, Separator} from '@/ui/components';
 import {cn} from '@/utils/css';
 import type {Category} from '@/types';
 
@@ -19,40 +19,37 @@ export const NavbarCategoryMenu = ({
   slugKey,
 }: {
   categories?: Category[];
-  onClick?: any;
+  onClick?: (data: {category: Category; url: any}) => void;
   slugKey?: string | null;
 }) => {
   const res: any = useResponsive();
-  const large = ['lg', 'xl', 'xxl'].some(x => res[x]);
+  const isLargeScreen = ['lg', 'xl', 'xxl'].some(x => res[x]);
+
   const [activeCategory, setActiveCategory] = useState<any>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
-  const [isBeginning, setIsBeginning] = useState<boolean>(false);
-  const [isEnd, setIsEnd] = useState<boolean>(false);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
 
-  const handleClickOutside = (event: MouseEvent) => {
+  const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       categoriesRef.current &&
       !categoriesRef.current.contains(event.target as Node)
     ) {
       setActiveCategory(null);
     }
-  };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
   }, []);
 
   useEffect(() => {
-    handleIndicator();
-  }, [large]);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [handleClickOutside]);
 
   const handleIndicator = () => {
-    setIsBeginning(swiperRef.current?.isBeginning || false);
-    setIsEnd(swiperRef.current?.isEnd || false);
+    if (swiperRef.current) {
+      setIsBeginning(swiperRef.current.isBeginning);
+      setIsEnd(swiperRef.current.isEnd);
+    }
   };
 
   const handleNext = () => {
@@ -65,19 +62,21 @@ export const NavbarCategoryMenu = ({
     handleIndicator();
   };
 
-  return large ? (
+  if (!isLargeScreen) return null;
+
+  return (
     <div
       ref={categoriesRef}
-      className="px-6 flex items-center gap-5 mb-0  bg-background text-foreground"
-      onMouseLeave={() => setActiveCategory(null)}>
+      className="px-6 flex items-center gap-5 mb-0 bg-background text-foreground">
       {!isBeginning && (
-        <button onClick={handlePrev}>
-          <MdChevronLeft />
-        </button>
+        <Button variant="ghost" onClick={handlePrev}>
+          <MdChevronLeft size={24} />
+        </Button>
       )}
       <Swiper
         onSwiper={swiper => {
           swiperRef.current = swiper;
+          handleIndicator();
         }}
         slidesPerView="auto"
         modules={[FreeMode]}
@@ -85,29 +84,28 @@ export const NavbarCategoryMenu = ({
         allowTouchMove={false}
         wrapperClass="flex items-center">
         {categories.map((category, index) => {
+          const isActive = activeCategory?.id === category.id;
+          const url = slugKey
+            ? category[slugKey as keyof typeof category]
+            : null;
+
           return (
-            <SwiperSlide key={index} className="!w-fit">
-              <div key={index} className="flex items-center">
+            <SwiperSlide key={category.id} className="!w-fit">
+              <div className="flex items-center">
                 {index !== 0 && (
                   <Separator
                     className="bg-black w-[2px] !h-8"
                     orientation="vertical"
                   />
                 )}
-                <div>
-                  <div
-                    className="px-6 py-4 cursor-pointer whitespace-nowrap"
-                    onClick={() =>
-                      onClick({
-                        category,
-                        url: slugKey
-                          ? category[slugKey as keyof typeof category]
-                          : null,
-                      })
-                    }
-                    onMouseEnter={() => setActiveCategory(category)}>
-                    {category.name}
-                  </div>
+                <div
+                  className={cn(
+                    'px-6 py-4 cursor-pointer whitespace-nowrap',
+                    isActive && 'text-success',
+                  )}
+                  onClick={() => onClick?.({category, url})}
+                  onMouseEnter={() => setActiveCategory(category)}>
+                  {category.name}
                 </div>
               </div>
             </SwiperSlide>
@@ -116,12 +114,13 @@ export const NavbarCategoryMenu = ({
       </Swiper>
 
       {!isEnd && (
-        <button onClick={handleNext}>
-          <MdChevronRight />
-        </button>
+        <Button variant="ghost" onClick={handleNext}>
+          <MdChevronRight size={24} />
+        </Button>
       )}
-      {activeCategory && activeCategory.items.length > 0 && (
-        <div className="w-full overflow-hidden absolute left-0 top-14 bg-background flex flex-row  gap-12 z-50 border-t">
+
+      {activeCategory && activeCategory?.items?.length > 0 && (
+        <div className="w-full overflow-hidden absolute left-0 top-14 bg-background flex flex-row gap-12 z-50 border-t">
           <Menu
             category={activeCategory}
             onClick={onClick}
@@ -136,7 +135,7 @@ export const NavbarCategoryMenu = ({
         </div>
       )}
     </div>
-  ) : null;
+  );
 };
 
 const Menu = ({
@@ -148,7 +147,7 @@ const Menu = ({
   url,
 }: {
   category: Category | null;
-  onClick?: any;
+  onClick?: (data: {category: Category; url: any}) => void;
   parentTitle?: boolean;
   level: number;
   slugKey?: string | null;
@@ -156,53 +155,73 @@ const Menu = ({
 }) => {
   const [subMenu, setSubMenu] = useState<Category | null>(null);
 
-  const handleClick = (item: any) => {
-    setSubMenu(prev => (prev?.id === item.id ? null : item));
-  };
-
   useEffect(() => {
     setSubMenu(null);
   }, [category]);
 
+  const renderMenuItem = (
+    item: Category,
+    level: number,
+    parentTitle: boolean,
+  ) => {
+    const isActive = item.id === subMenu?.id;
+    const categoryLength = item?.items?.length || 0;
+    const urlPath = slugKey
+      ? url
+        ? `${url}/${item[slugKey as keyof typeof item]}`
+        : item[slugKey as keyof typeof item]
+      : null;
+
+    const handleMouseEnter = () => setSubMenu(item);
+    const handleClickItem = () => onClick?.({category: item, url: urlPath});
+
+    const containerClasses = cn(
+      'w-[25rem] flex items-center justify-between pl-10 py-3 pr-2',
+      {
+        'text-success': isActive,
+        'bg-success-light': isActive && level === 0,
+        'pl-0': level === 1,
+      },
+    );
+
+    const textClasses = cn('w-full py-2 font-normal cursor-pointer', {
+      'text-sm': parentTitle,
+      'text-base': !parentTitle,
+    });
+
+    return (
+      <div
+        key={item.id}
+        className={containerClasses}
+        onMouseEnter={handleMouseEnter}>
+        <div className={textClasses} onClick={handleClickItem}>
+          {i18n.t(item.name)}
+        </div>
+        {categoryLength > 0 && level < 1 && (
+          <MdChevronRight className="text-2xl" />
+        )}
+      </div>
+    );
+  };
+
+  if (level > 1) {
+    return null;
+  }
+
   return (
-    <React.Fragment>
+    <>
       <div
         className={cn(
-          'flex flex-col gap-6 px-4 py-6 pl-10 ',
+          'flex-col z-20 flex',
           level === 0 && 'w-full bg-gray-fog',
           !subMenu ? 'w-full' : 'w-fit',
         )}>
         {parentTitle && category && (
-          <div className="font-medium text-base">{i18n.t(category.name)}</div>
+          <div className="font-semibold text-base">{i18n.t(category.name)}</div>
         )}
-        {category?.items?.map((item: any) => {
-          const categoryLength = item.items.length;
-          const urlPath = slugKey
-            ? url
-              ? `${url}/${item[slugKey as keyof typeof item]}`
-              : item[slugKey as keyof typeof item]
-            : null;
-          return (
-            <React.Fragment key={item.id}>
-              <li className="z-20 flex ">
-                <div className="w-[25rem] flex gap-12 items-center justify-between ">
-                  <div
-                    className="font-normal text-base cursor-pointer"
-                    onClick={() => onClick({category: item, url: urlPath})}>
-                    {i18n.t(item.name)}
-                  </div>
-                  {categoryLength > 0 && (
-                    <MdChevronRight
-                      className="text-2xl cursor-pointer"
-                      onClick={() => handleClick(item)}
-                    />
-                  )}
-                </div>
-              </li>
-            </React.Fragment>
-          );
-        })}
+        {category?.items?.map(item => renderMenuItem(item, level, parentTitle))}
       </div>
+
       {subMenu?.items && subMenu.items.length > 0 && (
         <Menu
           category={subMenu}
@@ -219,6 +238,6 @@ const Menu = ({
           }
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
