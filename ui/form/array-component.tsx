@@ -30,6 +30,7 @@ export const ArrayComponent = ({
     [childrenForm],
   );
 
+  const childrenState = form.watch(field.name);
   const visibleChildrenFields = useMemo(
     () => childrenForm.filter(_f => !_f.hidden),
     [childrenForm],
@@ -42,7 +43,7 @@ export const ArrayComponent = ({
       ..._current,
       {
         ...childrenDefaultValue,
-        valueId: -_current.length,
+        valueId: _current.length,
         fromParticipant: false,
       },
     ]);
@@ -76,15 +77,15 @@ export const ArrayComponent = ({
               <MdOutlineDelete className="w-6 h-6 text-destructive-dark" />
             </Button>
             <div className="space-y-6 w-full">
-              {visibleChildrenFields.map(_i =>
-                renderItem(_i, `${field.name}.${idx}.${_i.name}`),
-              )}
+              {visibleChildrenFields
+                .filter(_f => !_f.hideIf?.(childrenState?.[subField.valueId]))
+                .map(_i => renderItem(_i, `${field.name}.${idx}.${_i.name}`))}
             </div>
           </div>
         </div>
       );
     },
-    [visibleChildrenFields, field.name, removeItem, renderItem],
+    [visibleChildrenFields, field.name, removeItem, renderItem, childrenState],
   );
 
   return (
