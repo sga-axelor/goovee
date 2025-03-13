@@ -13,7 +13,7 @@ import {findSubapp, findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
-import {markContextAsUsed} from '@/payment/common/orm';
+import {markPaymentAsProcessed} from '@/payment/common/orm';
 import {manager, Tenant} from '@/tenant';
 import {PartnerKey, PaymentOption} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
@@ -255,7 +255,7 @@ export async function paypalCaptureOrder({
           (await t('Something went wrong while updating invoice!')),
       };
     }
-    await markContextAsUsed({
+    await markPaymentAsProcessed({
       contextId: context.id,
       version: context.version,
       tenantId,
@@ -491,7 +491,7 @@ export async function validateStripePayment({
           (await t('Something went wrong while updating invoice!')),
       };
     }
-    await markContextAsUsed({
+    await markPaymentAsProcessed({
       contextId: context.id,
       version: context.version,
       tenantId,
@@ -727,7 +727,7 @@ export async function validatePayboxPayment({
           (await t('Something went wrong while updating invoice!')),
       };
     }
-    await markContextAsUsed({
+    await markPaymentAsProcessed({
       contextId: context.id,
       version: context.version,
       tenantId,

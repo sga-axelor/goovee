@@ -4,7 +4,8 @@ import type {PaymentContext} from './type';
 
 const CONTEXT_STATUS = {
   pending: 'pending',
-  used: 'used',
+  processed: 'processed',
+  cancelled: 'cancelled',
 };
 
 export async function createPaymentContext({
@@ -76,7 +77,7 @@ export async function findPaymentContext({
   };
 }
 
-export async function markContextAsUsed({
+export async function markPaymentAsProcessed({
   contextId,
   version,
   tenantId,
@@ -94,7 +95,7 @@ export async function markContextAsUsed({
     data: {
       id: contextId,
       version: version,
-      status: CONTEXT_STATUS.used,
+      status: CONTEXT_STATUS.processed,
       updatedOn: timeStamp,
     },
   });

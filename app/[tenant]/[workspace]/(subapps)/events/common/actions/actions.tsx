@@ -20,7 +20,7 @@ import {ID, PaymentOption, PortalWorkspace, User} from '@/types';
 import {ActionResponse} from '@/types/action';
 import {clone} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
-import {markContextAsUsed} from '@/payment/common/orm';
+import {markPaymentAsProcessed} from '@/payment/common/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -187,7 +187,7 @@ export async function register({
   });
 
   if (context) {
-    await markContextAsUsed({
+    await markPaymentAsProcessed({
       contextId: context.id,
       version: context.version,
       tenantId,

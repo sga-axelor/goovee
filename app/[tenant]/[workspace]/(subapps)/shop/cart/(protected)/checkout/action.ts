@@ -19,7 +19,7 @@ import {computeTotal} from '@/utils/cart';
 // ---- LOCAL IMPORTS ---- //
 import {findPartnerByEmail} from '@/orm/partner';
 import {findProduct} from '@/subapps/shop/common/orm/product';
-import {markContextAsUsed} from '@/lib/core/payment/common/orm';
+import {markPaymentAsProcessed} from '@/lib/core/payment/common/orm';
 
 const formatNumber = (n: any) => n;
 
@@ -270,7 +270,7 @@ export async function paypalCaptureOrder({
     }
 
     const res = await createOrder({cart, workspaceURL, tenantId});
-    await markContextAsUsed({
+    await markPaymentAsProcessed({
       contextId: context.id,
       version: context.version,
       tenantId,
@@ -658,7 +658,7 @@ export async function validateStripePayment({
   }
 
   const res = await createOrder({cart, workspaceURL, tenantId});
-  await markContextAsUsed({
+  await markPaymentAsProcessed({
     contextId: context.id,
     version: context.version,
     tenantId,
@@ -911,7 +911,7 @@ export async function validatePayboxPayment({
   }
 
   const res = await createOrder({cart, workspaceURL, tenantId});
-  await markContextAsUsed({
+  await markPaymentAsProcessed({
     contextId: context.id,
     version: context.version,
     tenantId,
