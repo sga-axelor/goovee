@@ -28,11 +28,15 @@ export function EventPayments({
   event,
   form,
   metaFields,
+  metaFieldsFacilities,
+  additionalFieldSet,
 }: {
   workspace: PortalWorkspace;
   event: EventPayments;
   form: any;
   metaFields: any;
+  metaFieldsFacilities: any;
+  additionalFieldSet: any;
 }) {
   const workspaceURL = workspace?.url;
 
@@ -57,7 +61,12 @@ export function EventPayments({
 
   function getMappedParticipants(form: any, metaFields: any) {
     const values = form.getValues();
-    return mapParticipants(values, metaFields);
+    return mapParticipants(
+      values,
+      metaFields,
+      metaFieldsFacilities,
+      additionalFieldSet,
+    );
   }
 
   async function handleFormValidation({

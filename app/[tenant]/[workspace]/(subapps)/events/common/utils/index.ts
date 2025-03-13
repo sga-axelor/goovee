@@ -117,7 +117,11 @@ export function mapParticipants(
 
   data.otherPeople =
     data.otherPeople?.map((person: any, index: number) => ({
-      ...extractCustomData(person, 'contactAttrs', metaFields),
+      ...extractCustomData(person, 'contactAttrs', [
+        ...metaFields,
+        ...metaFieldsFacilities,
+        ...additionalFieldSet,
+      ]),
       sequence: index + 1,
     })) ?? [];
 

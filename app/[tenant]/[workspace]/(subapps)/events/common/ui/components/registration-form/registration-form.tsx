@@ -457,6 +457,8 @@ export const RegistrationForm = ({
                     }}
                     form={form}
                     metaFields={metaFields}
+                    metaFieldsFacilities={metaFieldsFacilities}
+                    additionalFieldSet={additionalFieldSet}
                   />
                 )
               : undefined
