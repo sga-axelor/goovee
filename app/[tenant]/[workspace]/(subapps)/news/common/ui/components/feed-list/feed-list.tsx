@@ -42,7 +42,7 @@ export const FeedList = ({
                   onClick={() => onClick(slug)}>
                   <div className="flex w-full gap-4 [overflow-wrap:anywhere]">
                     <div
-                      className="w-[97px] h-[97px] rounded-lg bg-center bg-cover flex-shrink-0"
+                      className="w-20 h-20 rounded-lg bg-center bg-cover flex-shrink-0"
                       style={{
                         backgroundImage: `url(${imageUrl})`,
                       }}></div>
@@ -53,7 +53,7 @@ export const FeedList = ({
                           labelClassName="rounded font-normal text-[0.5rem]"
                           rootClassName="gap-2"
                         />
-                        <div className="font-semibold text-base mb-2 line-clamp-2">
+                        <div className="font-semibold text-base mb-2 line-clamp-1">
                           {title}
                         </div>
                       </div>

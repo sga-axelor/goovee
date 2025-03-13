@@ -238,6 +238,7 @@ async function CategoryPage({
     workspace,
     tenantId,
     user,
+    limit: DEFAULT_NEWS_ASIDE_LIMIT,
   }).then(clone);
 
   const subCategories = await findCategories({
