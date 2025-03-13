@@ -56,12 +56,3 @@ export const COMMENTS = 'Comments';
 export const POSTED_ON = 'Posted on';
 export const PUBLISHED_ON = 'Published on';
 export const WRITE_YOUR_COMMENT = 'Write your comment';
-
-export const PAGE_1_START_INDEX = 0;
-export const OTHER_PAGES_START_INDEX = 3;
-export const PAGE_1_MIDDLE_INDEX = 3;
-export const OTHER_PAGES_MIDDLE_INDEX = 4;
-export const PAGE_1_END_INDEX = 7;
-export const OTHER_PAGES_END_INDEX = 9;
-export const FINAL_BATCH_START_INDEX = 12;
-export const MAX_ITEMS_INDEX = 16;
