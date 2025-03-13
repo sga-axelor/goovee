@@ -29,6 +29,8 @@ export async function sendTrackMail(props: MailProps): Promise<void> {
 function generateTrackHTML(body: MailProps['body']) {
   const {title, tracks, projectName, ticketName} = body;
 
+  // NOTE: yahoo mail on android removes the first <head> tag, so add the style in second <head> tag
+  // gmail doesn't support <style> tag in body
   return html`
 <!doctype html>
     <html lang="en">
@@ -37,8 +39,7 @@ function generateTrackHTML(body: MailProps['body']) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>${title}</title>
       </head>
-      <body>
-        <!--NOTE: yahoo mail doesn't support <style> tag in head  -->
+      <head>
         <style>
           body {
             font-family: 'Arial', sans-serif;
@@ -126,19 +127,16 @@ function generateTrackHTML(body: MailProps['body']) {
             border-top: 1px solid #e2e8f0;
           }
         </style>
+      </head>
+      <body>
         <div class="container">
-          <!-- Header Section -->
           <div class="header">
             <h1>${title}</h1>
           </div>
-
-          <!-- Project & Ticket Section -->
           <div class="project-ticket">
             <span class="project">${projectName}</span> •
             <span class="ticket">${ticketName}</span>
           </div>
-
-          <!-- Content Section -->
           <div class="content">
             <ul class="track-list">
               ${tracks
@@ -157,8 +155,6 @@ function generateTrackHTML(body: MailProps['body']) {
                 .join('')}
             </ul>
           </div>
-
-          <!-- Footer Section -->
           <div class="footer">
             This is an automated message. Please do not reply directly to this
             email.
