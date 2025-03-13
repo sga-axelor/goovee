@@ -106,14 +106,11 @@ export function mapParticipants(formValues: any, metaFields: any) {
   const data = extractCustomData(formValues, 'contactAttrs', metaFields);
   data.sequence = 0;
 
-  if (!data.addOtherPeople) {
-    data.otherPeople = [];
-  } else {
-    data.otherPeople = data.otherPeople?.map((person: any, index: number) => ({
+  data.otherPeople =
+    data.otherPeople?.map((person: any, index: number) => ({
       ...extractCustomData(person, 'contactAttrs', metaFields),
       sequence: index + 1,
-    }));
-  }
+    })) ?? [];
 
   return data;
 }
