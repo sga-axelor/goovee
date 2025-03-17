@@ -17,7 +17,7 @@ export type UserAuthProps = {
   role?: 'total' | 'restricted';
 };
 
-export type WorkspaceAuthProps = {workspaceId: ID};
+export type WorkspaceAuthProps = {workspaceId: ID; workspaceURL: string};
 export type TenantAuthProps = {tenantId: Tenant['id']};
 export type AuthProps = UserAuthProps & WorkspaceAuthProps & TenantAuthProps;
 export type PortalWorkspaceWithConfig = Omit<PortalWorkspace, 'config'> &
@@ -95,6 +95,7 @@ export const ensureAuth = cache(async function ensureAuth(
         userId: user.id,
         simpleFullName: user.simpleFullName,
         workspaceId: workspace.id,
+        workspaceURL: workspaceURL,
         isContact: user.isContact!,
         tenantId,
         role: subapp.role,

@@ -126,6 +126,7 @@ export async function findByID({
             userId: user.id,
             simpleFullName: user.simpleFullName,
             workspaceId: workspace.id.toString(),
+            workspaceURL: workspaceURL,
             tenantId,
             isContact: user.isContact!,
             isContactAdmin: app.isContactAdmin,

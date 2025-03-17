@@ -29,7 +29,8 @@ import type {
   TicketSearch,
 } from '../types';
 import type {AuthProps} from '../utils/auth-helper';
-import {getMailRecipients, sendTrackMail} from '../utils/mail';
+import {sendTrackMail} from '../utils/mail';
+import {getMailRecipients} from './mail';
 import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 import type {QueryProps} from './helpers';
 import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
@@ -273,7 +274,12 @@ export async function createTicket({
   }
 
   try {
-    const reciepients = getMailRecipients({exclude: [auth.email], newTicket});
+    const reciepients = await getMailRecipients({
+      exclude: [auth.email],
+      newTicket,
+      tenantId: auth.tenantId,
+      workspaceURL: auth.workspaceURL,
+    });
 
     if (reciepients.length) {
       sendTrackMail({
@@ -519,10 +525,12 @@ export async function updateTicket({
     console.error(e);
   }
   try {
-    const reciepients = getMailRecipients({
+    const reciepients = await getMailRecipients({
       exclude: [auth.email],
       newTicket,
       oldTicket,
+      tenantId: auth.tenantId,
+      workspaceURL: auth.workspaceURL,
     });
     if (reciepients.length) {
       sendTrackMail({

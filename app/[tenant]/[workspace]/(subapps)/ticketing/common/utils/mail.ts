@@ -2,8 +2,6 @@ import type {Track} from '@/lib/core/comments';
 import NotificationManager, {NotificationType} from '@/notification';
 import {html} from '@/utils/template-string';
 
-import type {UTicket} from '../orm/tickets';
-
 type MailProps = {
   subject: string;
   body: {
@@ -163,23 +161,4 @@ function generateTrackHTML(body: MailProps['body']) {
       </body>
     </html>
   `.trim();
-}
-
-export function getMailRecipients({
-  newTicket,
-  oldTicket,
-  exclude = [],
-}: {
-  newTicket: UTicket;
-  oldTicket?: UTicket;
-  exclude?: string[];
-}): string[] {
-  const reciepients = new Set(
-    [
-      newTicket.createdByContact?.emailAddress?.address,
-      newTicket.managedByContact?.emailAddress?.address,
-      oldTicket?.managedByContact?.emailAddress?.address, // send email to old managedByContact
-    ].filter(email => email && !exclude.includes(email)),
-  ) as Set<string>;
-  return Array.from(reciepients);
 }
