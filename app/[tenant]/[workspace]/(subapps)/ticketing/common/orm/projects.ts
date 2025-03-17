@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {ORDER_BY} from '@/constants';
+import {ORDER_BY, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
 import type {AOSProject} from '@/goovee/.generated/models';
@@ -238,7 +238,19 @@ export async function findContactPartners(
         simpleFullName: true,
         isRegisteredOnPortal: true,
         contactPartnerSet: {
-          where: {isRegisteredOnPortal: true},
+          where: {
+            isRegisteredOnPortal: true,
+            contactWorkspaceConfigSet: {
+              OR: [
+                {isAdmin: true},
+                {
+                  contactAppPermissionList: {
+                    app: {code: SUBAPP_CODES.ticketing},
+                  },
+                },
+              ],
+            },
+          },
           select: {simpleFullName: true},
         } as {select: {simpleFullName: true}}, // as typecast is to prevent orm by giving wrong type
       },
