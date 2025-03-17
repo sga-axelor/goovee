@@ -1,3 +1,4 @@
+import type {CreateArgs} from '@goovee/orm';
 import {getSession} from '@/auth';
 import {UserType} from '@/auth/types';
 import {hash} from '@/auth/utils';
@@ -236,6 +237,17 @@ export async function registerContact({
 
   const hashedPassword = password && (await hash(password));
 
+  const mainPartner = await client.aOSPartner.findOne({
+    where: {id: partnerId},
+    select: {id: true, version: true, companySet: {select: {id: true}}},
+  });
+
+  if (!mainPartner) {
+    return null;
+  }
+
+  const companySet = mainPartner.companySet?.map(c => ({id: c.id}));
+
   const data: any = {
     partnerTypeSelect: PartnerTypeMap[UserType.individual],
     firstName,
@@ -245,6 +257,9 @@ export async function registerContact({
         id: partnerId,
       },
     },
+    ...(!!companySet?.length && {
+      companySet: {select: companySet},
+    }),
     password: hashedPassword,
     isContact: true,
     isCustomer: true,
@@ -259,8 +274,8 @@ export async function registerContact({
         name: email,
       },
     },
-    localization: localizationId ? {select: {id: localizationId}} : null,
-  };
+    localization: localizationId ? {select: {id: localizationId}} : undefined,
+  } satisfies CreateArgs<AOSPartner>;
 
   if (contactConfig?.id) {
     data.contactWorkspaceConfigSet = {select: [{id: contactConfig.id}]};
@@ -268,6 +283,13 @@ export async function registerContact({
   }
 
   const contact = await client.aOSPartner.create({data}).then(clone);
+  await client.aOSPartner.update({
+    data: {
+      id: mainPartner.id,
+      version: mainPartner.version,
+      contactPartnerSet: {select: {id: contact.id}},
+    },
+  });
   return contact;
 }
 

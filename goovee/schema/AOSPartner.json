@@ -67,6 +67,11 @@
     },
     {
       "type": "ManyToMany",
+      "name": "companySet",
+      "target": "AOSCompany"
+    },
+    {
+      "type": "ManyToMany",
       "name": "partnerWorkspaceSet",
       "target": "AOSPartnerPortalWorkspace"
     },
