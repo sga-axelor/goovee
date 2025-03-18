@@ -12,7 +12,7 @@ import {manager} from '@/lib/core/tenant';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
 import {getFileSizeText} from '@/utils/files';
-import {t} from '@/locale/server';
+import {getTranslation, t} from '@/locale/server';
 import {clone} from '@/utils';
 import {
   PartnerTypeMap,
@@ -223,19 +223,11 @@ export async function update({
     });
 
     if (!otpResult) {
-      return error(
-        await t('Invalid OTP', {
-          tenantId,
-        }),
-      );
+      return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
     }
 
     if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
-      return error(
-        await t('Invalid OTP', {
-          tenantId,
-        }),
-      );
+      return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
     }
   }
 
