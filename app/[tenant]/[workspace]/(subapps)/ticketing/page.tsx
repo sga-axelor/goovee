@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import {IMAGE_URL} from '@/constants';
+import {IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {HeroSearch} from '@/ui/components';
 import {
@@ -55,7 +55,7 @@ export default async function Page({
   }
 
   const imageURL = workspace.config.ticketHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.ticketHeroBgImage.id, tenant)})`
+    ? `url(${`${workspaceURL}/${SUBAPP_CODES.ticketing}/api/hero/background`})`
     : IMAGE_URL;
 
   return (
