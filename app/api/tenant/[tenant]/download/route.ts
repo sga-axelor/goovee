@@ -8,6 +8,7 @@ export async function POST(
 ) {
   let tenant;
 
+  return new NextResponse('Forbidden', {status: 403});
   try {
     tenant = await manager.getTenant(params.tenant);
   } catch (err) {}

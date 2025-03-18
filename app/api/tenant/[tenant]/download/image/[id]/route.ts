@@ -5,6 +5,7 @@ export async function GET(
   request: NextRequest,
   {params}: {params: {tenant: string; id: string}},
 ) {
+  return new NextResponse('Forbidden', {status: 403});
   const {id, tenant} = params;
 
   const file = await findFile({
