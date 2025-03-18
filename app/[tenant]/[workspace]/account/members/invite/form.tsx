@@ -194,9 +194,9 @@ export default function InviteForm({
         {form.getValues('role') === 'user' && (
           <div className="flex flex-col p-2 rounded-lg gap-2 bg-white lg:bg-inherit">
             <div className="grid grid-cols-[20%_20%_20%] items-center p-4 gap-6 border-b">
-              <p className="text-xs font-bold">App</p>
-              <p className="text-xs font-bold">Access</p>
-              <p className="text-xs font-bold">Authorization</p>
+              <p className="text-xs font-bold">{i18n.t('App')}</p>
+              <p className="text-xs font-bold">{i18n.t('Access')}</p>
+              <p className="text-xs font-bold">{i18n.t('Authorization')}</p>
             </div>
             {(availableApps || []).map(({name, code, authorization}) => (
               <div
@@ -223,8 +223,8 @@ export default function InviteForm({
                           </FormControl>
                           <SelectContent>
                             {[
-                              {label: 'Yes', value: 'yes'},
-                              {label: 'No', value: 'no'},
+                              {label: i18n.t('Yes'), value: 'yes'},
+                              {label: i18n.t('No'), value: 'no'},
                             ].map((option: any) => (
                               <SelectItem
                                 className="text-xs"
@@ -261,11 +261,11 @@ export default function InviteForm({
                           <SelectContent>
                             {[
                               {
-                                label: 'Restricted',
+                                label: i18n.t('Restricted'),
                                 value: Authorization.restricted,
                               },
                               {
-                                label: 'Total',
+                                label: i18n.t('Total'),
                                 value: Authorization.total,
                               },
                             ].map((option: any) => (

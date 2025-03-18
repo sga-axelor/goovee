@@ -244,8 +244,8 @@ function Members({members, availableApps}: any) {
                                 </SelectTrigger>
                                 <SelectContent>
                                   {[
-                                    {label: 'Yes', value: 'yes'},
-                                    {label: 'No', value: 'no'},
+                                    {label: i18n.t('Yes'), value: 'yes'},
+                                    {label: i18n.t('No'), value: 'no'},
                                   ].map((option: any) => (
                                     <SelectItem
                                       className="text-xs"
@@ -277,11 +277,11 @@ function Members({members, availableApps}: any) {
                                   <SelectContent>
                                     {[
                                       {
-                                        label: 'Restricted',
+                                        label: i18n.t('Restricted'),
                                         value: Authorization.restricted,
                                       },
                                       {
-                                        label: 'Total',
+                                        label: i18n.t('Total'),
                                         value: Authorization.total,
                                       },
                                     ].map((option: any) => (
@@ -480,8 +480,8 @@ function Invited({invites, availableApps}: any) {
                                 </SelectTrigger>
                                 <SelectContent>
                                   {[
-                                    {label: 'Yes', value: 'yes'},
-                                    {label: 'No', value: 'no'},
+                                    {label: i18n.t('Yes'), value: 'yes'},
+                                    {label: i18n.t('No'), value: 'no'},
                                   ].map((option: any) => (
                                     <SelectItem
                                       className="text-xs"
@@ -513,11 +513,11 @@ function Invited({invites, availableApps}: any) {
                                   <SelectContent>
                                     {[
                                       {
-                                        label: 'Restricted',
+                                        label: i18n.t('Restricted'),
                                         value: Authorization.restricted,
                                       },
                                       {
-                                        label: 'Total',
+                                        label: i18n.t('Total'),
                                         value: Authorization.total,
                                       },
                                     ].map((option: any) => (

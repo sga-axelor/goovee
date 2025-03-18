@@ -162,7 +162,7 @@ function Content({
   }, [router]);
 
   if (initiating) {
-    return <p>Loading...</p>;
+    return <p>{i18n.t('Loading')}...</p>;
   }
 
   return (
