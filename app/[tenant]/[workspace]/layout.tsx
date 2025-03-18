@@ -17,6 +17,7 @@ import Header from './header';
 import Sidebar from './sidebar';
 import MobileMenu from './mobile-menu';
 import AnonymousSignOut from './anonymous-signout';
+import Footer from './footer';
 
 const defaultTheme = {
   id: -1,
@@ -103,7 +104,10 @@ export default async function Layout({
               hideTopNavigation={!isTopNavigation}
               workspaces={workspaces}
             />
-            {children}
+            <div className="flex flex-col flex-grow min-h-0">
+              <div className="flex-grow">{children}</div>
+              <Footer />
+            </div>
           </div>
           <MobileMenu subapps={subapps} workspaces={workspaces} />
         </div>
