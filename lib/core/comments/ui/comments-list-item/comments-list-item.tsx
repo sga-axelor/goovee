@@ -69,6 +69,7 @@ interface CommentListItemProps {
   commentField: CommentField;
   trackingField: TrackingField;
   disableReply?: boolean;
+  attachmentDownloadUrl: string;
 }
 
 export const CommentListItem = ({
@@ -85,6 +86,7 @@ export const CommentListItem = ({
   commentField,
   trackingField,
   disableReply,
+  attachmentDownloadUrl,
 }: CommentListItemProps) => {
   const [showSubComments, setShowSubComments] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -180,6 +182,7 @@ export const CommentListItem = ({
         commentField={commentField}
         trackingField={trackingField}
         disableReply={disableReply}
+        attachmentDownloadUrl={attachmentDownloadUrl}
       />
     ));
   };
@@ -311,7 +314,10 @@ export const CommentListItem = ({
           <CommentTracks data={trackingToDisplay} />
         )}
         {!!mailMessageFileList?.length && (
-          <CommentAttachments attachments={mailMessageFileList} />
+          <CommentAttachments
+            attachments={mailMessageFileList}
+            attachmentDownloadUrl={attachmentDownloadUrl}
+          />
         )}
 
         <div className="flex flex-col">

@@ -59,6 +59,7 @@ export type CommentsProps = {
   commentField: CommentField;
   disableReply?: boolean;
   placeholder?: string;
+  attachmentDownloadUrl: string;
 };
 
 export function Comments(props: CommentsProps) {
@@ -85,6 +86,7 @@ export function Comments(props: CommentsProps) {
     commentField,
     disableReply,
     placeholder,
+    attachmentDownloadUrl,
   } = props;
   const inputOnTop = inputPosition === 'top';
   const [showComments, setShowComments] = useState(showCommentsByDefault);
@@ -216,6 +218,7 @@ export function Comments(props: CommentsProps) {
               commentField={commentField}
               trackingField={trackingField}
               disableReply={disableReply}
+              attachmentDownloadUrl={attachmentDownloadUrl}
             />
 
             {!hideCommentsFooter && (

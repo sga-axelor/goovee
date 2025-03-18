@@ -508,3 +508,27 @@ export async function findComments(
     totalCommentThreadCount: Number(totalCommentThreadCount),
   };
 }
+
+export async function isFileOfRecord({
+  fileId,
+  recordId,
+  tenantId,
+}: {
+  tenantId: Tenant['id'];
+  recordId: ID;
+  fileId: ID;
+}): Promise<boolean> {
+  if (!tenantId || !recordId) {
+    throw new Error(await t('TenantId  and RecordId are required.'));
+  }
+
+  const client = await manager.getClient(tenantId);
+  let comment = await client.aOSMailMessage.findOne({
+    where: {
+      relatedId: Number(recordId),
+      mailMessageFileList: {attachmentFile: {id: fileId}},
+    },
+    select: {id: true},
+  });
+  return Boolean(comment);
+}

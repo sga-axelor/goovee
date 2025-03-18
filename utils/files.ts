@@ -39,11 +39,7 @@ type DownloadOptions = {
   isMeta?: boolean;
 };
 
-export function download(
-  record: any,
-  tenantId: string,
-  options: DownloadOptions = {},
-) {
+export function download(record: any, tenantId: string, href?: string) {
   if (!(record && tenantId)) return null;
 
   const html =
@@ -54,9 +50,7 @@ export function download(
 
   link.innerHTML = name || 'File';
   link.download = name || 'download';
-  link.href = html
-    ? getHTMLURL(record)
-    : getDownloadURL(record?.id, tenantId, options);
+  link.href = html ? getHTMLURL(record) : (href ?? '');
 
   Object.assign(link.style, {
     position: 'absolute',

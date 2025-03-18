@@ -218,6 +218,7 @@ export default async function Page({
             commentField="note"
             createComment={createComment}
             fetchComments={fetchComments}
+            attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.ticketing}/api/comments/attachments/${ticket.id}`}
           />
         </div>
       )}

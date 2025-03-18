@@ -6,6 +6,7 @@ import {useSession} from 'next-auth/react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {COMMENTS, Comments, isCommentEnabled, SORT_TYPE} from '@/comments';
 import {SUBAPP_CODES} from '@/constants';
 import {PortalWorkspace} from '@/types';
@@ -49,6 +50,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
   } = news || {};
   const router = useRouter();
   const pathname = usePathname();
+  const {workspaceURL} = useWorkspace();
 
   const {data: session} = useSession();
   const isDisabled = !session ? true : false;
@@ -142,6 +144,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
               commentField="note"
               createComment={createComment}
               fetchComments={fetchComments}
+              attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.news}/api/comments/attachments/${news.id}`}
             />
           </div>
         </div>

@@ -25,6 +25,7 @@ type CommentsListProps = {
   commentField: CommentField;
   trackingField: TrackingField;
   disableReply?: boolean;
+  attachmentDownloadUrl: string;
 };
 
 export const CommentsList = ({
@@ -40,6 +41,7 @@ export const CommentsList = ({
   commentField,
   trackingField,
   disableReply,
+  attachmentDownloadUrl,
 }: CommentsListProps) => {
   return (
     <div
@@ -59,6 +61,7 @@ export const CommentsList = ({
           commentField={commentField}
           trackingField={trackingField}
           disableReply={disableReply}
+          attachmentDownloadUrl={attachmentDownloadUrl}
         />
       ))}
     </div>

@@ -7,14 +7,23 @@ import type {MailMessageFile} from '../../types';
 
 type CommentAttachmentsProps = {
   attachments: MailMessageFile[];
+  attachmentDownloadUrl: string;
 };
 
-export function CommentAttachments({attachments}: CommentAttachmentsProps) {
+export function CommentAttachments({
+  attachments,
+  attachmentDownloadUrl,
+}: CommentAttachmentsProps) {
   const {tenant} = useWorkspace();
 
   const handleDownload = async (attachment: MailMessageFile) => {
     const {attachmentFile} = attachment;
-    download(attachmentFile, tenant, {isMeta: true});
+    if (!attachmentFile?.id) return;
+    download(
+      attachmentFile,
+      tenant,
+      `${attachmentDownloadUrl}/${attachmentFile.id}`,
+    );
   };
 
   return (

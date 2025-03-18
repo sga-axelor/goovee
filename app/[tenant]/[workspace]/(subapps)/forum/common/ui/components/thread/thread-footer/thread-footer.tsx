@@ -4,6 +4,7 @@ import {useMemo} from 'react';
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
 import {isCommentEnabled, Comments} from '@/comments';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {useForum} from '@/subapps/forum/common/ui/context';
@@ -30,6 +31,7 @@ export const ThreadFooter = ({
   const {workspace} = useForum();
 
   const isAllowToComment = useMemo(() => post.isMember, [post]);
+  const {workspaceURL} = useWorkspace();
 
   const enableComment = isCommentEnabled({
     subapp: SUBAPP_CODES.forum,
@@ -53,6 +55,7 @@ export const ThreadFooter = ({
       {...(!isAllowToComment && {
         placeholder: JOIN_GROUP_TO_COMMENT,
       })}
+      attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.forum}/api/comments/attachments/${post.id}`}
     />
   ) : (
     <div />
