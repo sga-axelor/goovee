@@ -1,6 +1,5 @@
-// ---- CORE IMPORTS ---- //
-import {SelectionPicker} from '@/ui/form';
-import type {Field, Widget} from '@/ui/form';
+import {SelectionPicker} from '../components';
+import type {Field, Panel, Widget} from '../types';
 
 export function mapStudioTypes(field: any): any {
   switch (field.type) {
@@ -33,68 +32,102 @@ export const removeContextedFields = (fields: any[], object: any): any[] => {
   });
 };
 
-export function formatStudioFields(items: any[], context?: any): Field[] {
-  if (!Array.isArray(items)) {
-    return [];
+function formatField(_i: any): Field {
+  let field: Field = {
+    name: _i.name,
+    title: _i.title,
+    type: mapStudioTypes(_i),
+    widget: _i.widget?.toLowerCase() as Widget,
+    helper: _i.help,
+    readonly: _i.readonly,
+    required: _i.required,
+    order: _i.sequence,
+    colSpan: _i?.widgetAttrs?.colSpan,
+  };
+
+  if (_i.selection != null) {
+    const isMultiSelect = _i.widget === 'MultiSelect';
+    field = {
+      ...field,
+      type: isMultiSelect ? 'array' : field.type,
+      widget: 'custom',
+      customComponent: props =>
+        SelectionPicker({
+          ...props,
+          options: _i.selectionOptions,
+          isMulti: isMultiSelect,
+        }),
+      subSchema: (isMultiSelect ? field.type : undefined) as any,
+    };
   }
 
-  return removeContextedFields(items, context).map(_i => {
-    let field: Field = {
-      name: _i.name,
-      title: _i.title,
-      type: mapStudioTypes(_i),
-      widget: _i.widget?.toLowerCase() as Widget,
-      helper: _i.help,
-      readonly: _i.readonly,
-      required: _i.required,
-      order: _i.sequence,
+  if (_i.maxSize > 0 || _i.minSize > 0) {
+    let validationOptions = {};
+
+    if (_i.maxSize > 0) {
+      validationOptions = {
+        ...validationOptions,
+        max: {value: _i.maxSize},
+      };
+    }
+
+    if (_i.minSize > 0) {
+      validationOptions = {
+        ...validationOptions,
+        min: {value: _i.minSize},
+      };
+    }
+
+    field = {
+      ...field,
+      validationOptions,
     };
+  }
 
-    if (_i.selection != null) {
-      const isMultiSelect = _i.widget === 'MultiSelect';
-      field = {
-        ...field,
-        type: isMultiSelect ? 'array' : field.type,
-        widget: 'custom',
-        customComponent: props =>
-          SelectionPicker({
-            ...props,
-            options: _i.selectionOptions,
-            isMulti: isMultiSelect,
-          }),
-        subSchema: isMultiSelect ? field.type : undefined,
-      };
+  return field;
+}
+
+export function formatStudioContent(
+  metaFields: any[],
+  context?: any,
+): {fields: Field[]; panels: Panel[]} {
+  const fields: Field[] = [];
+  const panels: Panel[] = [];
+  let lastPanel: string = '';
+
+  removeContextedFields(metaFields, context).forEach(_item => {
+    switch (_item.type) {
+      case 'panel':
+        lastPanel = _item.name;
+
+        panels.push({
+          name: _item.name,
+          order: _item.sequence,
+          title: _item.title,
+        });
+
+        break;
+      case 'spacer':
+      case 'label':
+      case 'separator':
+      case 'button':
+        break;
+      default:
+        fields.push({...formatField(_item), parent: lastPanel});
+        break;
     }
-
-    if (_i.maxSize > 0 || _i.minSize > 0) {
-      let validationOptions = {};
-
-      if (_i.maxSize > 0) {
-        validationOptions = {
-          ...validationOptions,
-          max: {
-            value: _i.maxSize,
-          },
-        };
-      }
-
-      if (_i.minSize > 0) {
-        validationOptions = {
-          ...validationOptions,
-          min: {
-            value: _i.minSize,
-          },
-        };
-      }
-
-      field = {
-        ...field,
-        validationOptions,
-      };
-    }
-
-    return field;
   });
+
+  return {fields, panels};
+}
+
+export function formatStudioFields(items: any[], context?: any): Field[] {
+  return removeContextedFields(items, context)
+    .filter(
+      _i =>
+        !['panel', 'spacer', 'label', 'separator', 'button'].includes(_i.type),
+    )
+    .map(formatField);
 }
 
 export function extractCustomData(
