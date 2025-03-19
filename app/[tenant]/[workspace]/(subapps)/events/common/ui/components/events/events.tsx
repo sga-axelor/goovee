@@ -59,14 +59,14 @@ export const Events = ({
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
   const {update} = useSearchParams();
-  const {workspaceURI, tenant} = useWorkspace();
+  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
   const router = useRouter();
 
   const {data: session} = useSession();
   const {user} = session || {};
 
   const imageURL = workspace?.config?.eventHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.eventHeroBgImage.id, tenant, {noimage: true})})`
+    ? `url(${`${workspaceURL}/${SUBAPP_CODES.events}/api/hero/background`})`
     : IMAGE_URL;
   const {toast} = useToast();
 
