@@ -28,9 +28,6 @@ export async function GET(
 
   const session = await getSession();
   const user = session?.user;
-  if (!user) {
-    return new NextResponse('Unauthorized', {status: 401});
-  }
 
   const workspace = await findWorkspace({
     user,
