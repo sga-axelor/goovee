@@ -1,5 +1,5 @@
 import {getTranslation} from '@/locale/server';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {manager, type Tenant} from '@/tenant';
 import {PortalWorkspace, User} from '@/types';
 import {getPageInfo, getSkipInfo} from '@/utils';
@@ -14,7 +14,8 @@ export const filterPrivateQuery = async (user: any, tenantId: any) => {
     return `OR ${OPEN_RECORD_FILTERS}`;
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const partner = await findGooveeUserByEmail(user.email, tenantId);
+  
   if (!partner) {
     throw new Error('Unauthorized');
   }

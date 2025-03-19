@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
@@ -74,7 +74,7 @@ export default async function Page({
   }).then(clone);
 
   const partner = user
-    ? await findPartnerByEmail(user.email, tenant).then(clone)
+    ? await findGooveeUserByEmail(user.email, tenant).then(clone)
     : {};
 
   return (

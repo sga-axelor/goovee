@@ -16,7 +16,7 @@ import {
 import paypalhttpclient from '@/payment/paypal';
 import {stripe} from '@/payment/stripe';
 import {PartnerKey, PaymentOption} from '@/types';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {formatAmountForStripe} from '@/utils/stripe';
 import {scale} from '@/utils';
 import {TENANT_HEADER} from '@/middleware';
@@ -325,7 +325,7 @@ export async function paypalCreateOrder({
     };
   }
 
-  const payer = await findPartnerByEmail(user?.email, tenantId);
+  const payer = await findGooveeUserByEmail(user?.email, tenantId);
 
   const PaypalClient = paypalhttpclient();
 
@@ -449,7 +449,7 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  const payer = await findPartnerByEmail(user.email, tenantId);
+  const payer = await findGooveeUserByEmail(user.email, tenantId);
 
   const currencyCode = quotation?.currency?.code || DEFAULT_CURRENCY_CODE;
 

@@ -239,22 +239,41 @@ export async function register({
     );
   }
 
-  const $partner = await findPartnerByEmail(email, tenantId);
+  const partner = await findPartnerByEmail(email, tenantId, {
+    where: {
+      isContact: {
+        eq: false,
+      },
+    },
+  });
 
-  if (
-    workspace.allowRegistrationSelect === ALLOW_AOS_ONLY_REGISTRATION &&
-    !$partner
-  ) {
-    return error(
-      await getTranslation({tenant: tenantId}, 'Registration not allowed'),
-    );
-  }
-
-  if ($partner && $partner.isRegisteredOnPortal) {
+  if (partner?.isActivatedOnPortal) {
     return {
       error: true,
-      message: await getTranslation({tenant: tenantId}, 'Email already exists'),
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Account already exists',
+      ),
     };
+  }
+
+  if (workspace.allowRegistrationSelect === ALLOW_AOS_ONLY_REGISTRATION) {
+    if (partner) {
+      if (!partner?.isRegisteredOnPortal) {
+        return {
+          error: true,
+          message: await getTranslation(
+            {tenant: tenantId},
+            'Registration not allowed',
+          ),
+        };
+      }
+    } else {
+      const result = await updatePartnerEmailByContact(email, tenantId);
+      if (result?.error) {
+        return result;
+      }
+    }
   }
 
   const localization = await findRegistrationLocalization({locale, tenantId});
@@ -358,4 +377,101 @@ export async function registerByGoogle(
   }
 
   return register({...data, email: user.email});
+}
+
+async function updatePartnerEmailByContact(
+  email: string,
+  tenantId: Tenant['id'],
+) {
+  if (!(email && tenantId)) {
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Email & TenantId is required',
+      ),
+    };
+  }
+
+  const contact = await findPartnerByEmail(email, tenantId);
+
+  if (!contact?.isContact) {
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Registration not allowed',
+      ),
+    };
+  }
+
+  if (contact.isActivatedOnPortal) {
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Registration not allowed',
+      ),
+    };
+  }
+
+  if (!contact?.isRegisteredOnPortal) {
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Registration not allowed',
+      ),
+    };
+  }
+
+  const contactPartner =
+    contact?.mainPartner &&
+    (await findPartnerById(contact.mainPartner?.id, tenantId));
+
+  if (!contactPartner) {
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Registration not allowed',
+      ),
+    };
+  }
+
+  if(contactPartner?.isActivatedOnPortal){
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Registration not allowed',
+      ),
+    };
+  }
+
+  try {
+    const {id, version} = contactPartner?.emailAddress;
+    const client = await manager.getClient(tenantId);
+
+    /**
+     * Update partner email by contact email when a valid contact
+     * is trying to register on behalf of partner
+     */
+    await client.aOSEmailAddress.update({
+      data: {
+        id,
+        version,
+        name: email,
+        address: email,
+      },
+    });
+  } catch (err) {
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Registration not allowed',
+      ),
+    };
+  }
 }

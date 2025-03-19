@@ -5,6 +5,8 @@ import {revalidatePath} from 'next/cache';
 import {Tenant} from '@/tenant';
 import {getTranslation, t} from '@/locale/server';
 import {
+  findContactByEmail,
+  findGooveeUserByEmail,
   findPartnerByEmail,
   registerContact,
   updatePartner,
@@ -69,9 +71,9 @@ export async function register({
     return error(await 'Invalid workspace');
   }
 
-  const $partner = await findPartnerByEmail(email, tenantId);
+  const contact = await findContactByEmail(email, tenantId);
 
-  if ($partner) {
+  if (contact) {
     return error(await 'Already registered, try login and subscribing invite');
   }
 
@@ -204,7 +206,13 @@ export async function subscribe({
     return error(await t('Bad request'));
   }
 
-  const $user = await findPartnerByEmail(user.email, tenantId);
+  const $user = await findPartnerByEmail(user.email, tenantId, {
+    where: {
+      isContact: {
+        eq: true,
+      },
+    },
+  });
 
   if (!$user) {
     return error(await t('User not found'));
@@ -252,7 +260,7 @@ export async function fetchUpdatedSession({tenantId}: {tenantId: string}) {
     return null;
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const partner = await findGooveeUserByEmail(user.email, tenantId);
 
   if (!partner) {
     return null;

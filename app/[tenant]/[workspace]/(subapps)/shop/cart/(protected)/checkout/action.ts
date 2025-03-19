@@ -17,7 +17,7 @@ import {PaymentOption} from '@/types';
 import {computeTotal} from '@/utils/cart';
 
 // ---- LOCAL IMPORTS ---- //
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {markPaymentAsProcessed} from '@/lib/core/payment/common/orm';
 
@@ -383,7 +383,7 @@ export async function paypalCreateOrder({
     formatNumber,
   });
 
-  const payer = await findPartnerByEmail(user?.email, tenantId);
+  const payer = await findGooveeUserByEmail(user?.email, tenantId);
 
   try {
     const response = await createPaypalOrder({
@@ -502,7 +502,7 @@ export async function createStripeCheckoutSession({
     formatNumber,
   });
 
-  const payer = await findPartnerByEmail(user.email, tenantId);
+  const payer = await findGooveeUserByEmail(user.email, tenantId);
 
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
 
@@ -767,7 +767,7 @@ export async function payboxCreateOrder({
     formatNumber,
   });
 
-  const payer = await findPartnerByEmail(user?.email, tenantId);
+  const payer = await findGooveeUserByEmail(user?.email, tenantId);
 
   try {
     const response = await createPayboxOrder({

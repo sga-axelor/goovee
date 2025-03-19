@@ -1,5 +1,5 @@
 import Credentials from 'next-auth/providers/credentials';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {compare} from './utils';
 
 export const credentials = Credentials({
@@ -11,7 +11,7 @@ export const credentials = Credentials({
   async authorize({email, password, tenantId}: any, req) {
     if (!email) return null;
 
-    const user = await findPartnerByEmail(email, tenantId);
+    const user = await findGooveeUserByEmail(email, tenantId);
 
     if (!user) {
       return null;

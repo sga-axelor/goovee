@@ -9,7 +9,7 @@ import {getSession} from '@/auth';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {
-  findPartnerByEmail,
+  findGooveeUserByEmail,
   findPartnerById,
   isAdminContact,
   isPartner,
@@ -156,7 +156,7 @@ export async function sendInvites({
     return error(await t('Unauthorized'));
   }
 
-  const isValidUser = await findPartnerByEmail(user.email, tenantId);
+  const isValidUser = await findGooveeUserByEmail(user.email, tenantId);
 
   if (!isValidUser) {
     return error(await t('Unauthorized'));
@@ -256,7 +256,7 @@ export async function sendInvites({
     try {
       z.string().email({message: 'Invalid email address'}).parse(email);
 
-      const existingContact = await findPartnerByEmail(email, tenantId);
+      const existingContact = await findGooveeUserByEmail(email, tenantId);
 
       if (
         !existingContact?.isContact &&

@@ -8,7 +8,7 @@ import {getSession} from '@/auth';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {findSubapp, findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
@@ -67,7 +67,7 @@ export async function paypalCreateOrder({
     };
   }
 
-  const payer = await findPartnerByEmail(user?.email, tenantId);
+  const payer = await findGooveeUserByEmail(user?.email, tenantId);
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
 
   try {
@@ -307,7 +307,7 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  const payer = await findPartnerByEmail(user.email, tenantId);
+  const payer = await findGooveeUserByEmail(user.email, tenantId);
   if (!payer) {
     return {
       error: true,
@@ -553,7 +553,7 @@ export async function payboxCreateOrder({
     };
   }
 
-  const payer = await findPartnerByEmail(user.email, tenantId);
+  const payer = await findGooveeUserByEmail(user.email, tenantId);
   if (!payer) {
     return {
       error: true,

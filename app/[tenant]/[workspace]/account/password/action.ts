@@ -6,7 +6,7 @@ import {headers} from 'next/headers';
 import {getSession} from '@/auth';
 import {compare, hash} from '@/auth/utils';
 import {t} from '@/locale/server';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {TENANT_HEADER} from '@/middleware';
 import {manager} from '@/tenant';
 
@@ -43,7 +43,7 @@ export async function changePassword({
     };
   }
 
-  const partner = await findPartnerByEmail(user?.email, tenantId);
+  const partner = await findGooveeUserByEmail(user?.email, tenantId);
 
   if (!partner?.password) {
     return {

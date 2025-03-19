@@ -4,7 +4,7 @@ import {hash} from '@/auth/utils';
 import {getTranslation} from '@/locale/server';
 import {create as createOTP, findOne, isValid, markUsed} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
-import {findPartnerByEmail, updatePartner} from '@/orm/partner';
+import {findGooveeUserByEmail, updatePartner} from '@/orm/partner';
 import NotificationManager, {NotificationType} from '@/notification';
 import {type Tenant} from '@/tenant';
 
@@ -115,11 +115,11 @@ export async function requestResetPassword({
     return error(await getTranslation({tenant: tenantId}, 'Email is required'));
   }
 
-  const partner = await findPartnerByEmail(email, tenantId);
+  const user = await findGooveeUserByEmail(email, tenantId);
 
   const link = `${process.env.NEXT_PUBLIC_HOST}/auth/reset-password/${email}?${searchQuery}`;
 
-  if (!partner?.isRegisteredOnPortal) {
+  if (!user) {
     return {
       success: true,
       data: {url: link},
@@ -185,9 +185,9 @@ export async function resetPassword({
     );
   }
 
-  const partner = await findPartnerByEmail(email, tenantId);
+  const user = await findGooveeUserByEmail(email, tenantId);
 
-  if (!partner?.isRegisteredOnPortal) {
+  if (!user) {
     return error(
       await getTranslation({tenant: tenantId}, 'You are not registered'),
     );
@@ -214,8 +214,8 @@ export async function resetPassword({
 
     const updatedPartner = await updatePartner({
       data: {
-        id: partner.id,
-        version: partner.version,
+        id: user.id,
+        version: user.version,
         password: hashedPassword,
       },
       tenantId,

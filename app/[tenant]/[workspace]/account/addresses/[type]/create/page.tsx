@@ -7,7 +7,7 @@ import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findCountries} from '@/orm/address';
-import {findPartnerByEmail, PartnerTypeMap} from '@/orm/partner';
+import {findGooveeUserByEmail, PartnerTypeMap} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
@@ -27,7 +27,7 @@ export default async function Page({params}: {params: any}) {
     return notFound();
   }
 
-  const partner = await findPartnerByEmail(user.email, tenant);
+  const partner = await findGooveeUserByEmail(user.email, tenant);
 
   if (!partner) {
     return notFound();

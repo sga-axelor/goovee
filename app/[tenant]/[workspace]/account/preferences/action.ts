@@ -10,7 +10,7 @@ import {findContactWorkspaces, findPartnerWorkspaces} from '@/orm/workspace';
 
 // ---- CORE IMPORTS ---- //
 import {findLocalizations} from '@/orm/localizations';
-import {findPartnerByEmail, updatePartner} from '@/orm/partner';
+import {findGooveeUserByEmail, updatePartner} from '@/orm/partner';
 
 function error(message: string) {
   return {
@@ -40,7 +40,7 @@ export async function updatePreference({
   }
 
   try {
-    const partner = await findPartnerByEmail(user.email, tenantId);
+    const partner = await findGooveeUserByEmail(user.email, tenantId);
 
     if (!partner) {
       return error(await t('Invalid partner'));
@@ -114,7 +114,7 @@ export async function fetchPreference() {
   }
 
   try {
-    const partner = await findPartnerByEmail(user.email, tenantId);
+    const partner = await findGooveeUserByEmail(user.email, tenantId);
 
     return {
       success: true,

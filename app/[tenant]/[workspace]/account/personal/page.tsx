@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORT ---- //
 import {getSession} from '@/auth';
-import {PartnerTypeMap, findPartnerByEmail} from '@/orm/partner';
+import {PartnerTypeMap, findGooveeUserByEmail} from '@/orm/partner';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORT ---- //
@@ -23,7 +23,7 @@ export default async function Page({
     return notFound();
   }
 
-  const partner = await findPartnerByEmail(user.email, tenant);
+  const partner = await findGooveeUserByEmail(user.email, tenant);
 
   if (!partner) {
     return notFound();

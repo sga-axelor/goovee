@@ -16,7 +16,7 @@ import {getTranslation, t} from '@/locale/server';
 import {clone} from '@/utils';
 import {
   PartnerTypeMap,
-  findPartnerByEmail,
+  findGooveeUserByEmail,
   findPartnerById,
   updatePartner,
 } from '@/orm/partner';
@@ -58,7 +58,7 @@ export async function updateProfileImage(formData: FormData) {
     return error(await t('Unauthorized'));
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const partner = await findGooveeUserByEmail(user.email, tenantId);
 
   if (!partner) {
     return error(await t('Invalid partner'));
@@ -141,7 +141,7 @@ export async function fetchPersonalSettings() {
     return error(await t('Unauthorized'));
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const partner = await findGooveeUserByEmail(user.email, tenantId);
 
   if (!partner) {
     return error(await t('Invalid partner'));
@@ -231,7 +231,7 @@ export async function update({
     }
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const partner = await findGooveeUserByEmail(user.email, tenantId);
 
   if (!partner) {
     return error(await t('Invalid partner'));
@@ -251,7 +251,7 @@ export async function update({
     return error(await t('Last Name is required'));
   }
 
-  const existingPartner = await findPartnerByEmail(email, tenantId);
+  const existingPartner = await findGooveeUserByEmail(email, tenantId);
 
   if (existingPartner) {
     if (existingPartner.id !== partner.id)

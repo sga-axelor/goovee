@@ -2,7 +2,7 @@ import {getServerSession} from 'next-auth';
 import type {NextAuthOptions} from 'next-auth';
 
 // ---- CORE IMPORTS ---- //
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 import {type Tenant} from '@/tenant';
 
 import google from './google';
@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
     async session({session, token}) {
       const user =
         session?.user?.email &&
-        (await findPartnerByEmail(
+        (await findGooveeUserByEmail(
           session.user.email,
           token?.tenantId as Tenant['id'],
         ));
@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
          * Updating session after registering with Google Oauth
          */
 
-        const partner = await findPartnerByEmail(
+        const partner = await findGooveeUserByEmail(
           session.email,
           session.tenantId,
         );

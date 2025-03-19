@@ -152,9 +152,36 @@ export async function findEmailAddress(email: string, tenantId: Tenant['id']) {
   });
 }
 
+export async function findGooveeUserByEmail(
+  email: string,
+  tenantId: Tenant['id'],
+) {
+  return findPartnerByEmail(email, tenantId, {
+    where: {
+      isActivatedOnPortal: {
+        eq: true,
+      },
+    },
+  });
+}
+
+export async function findContactByEmail(
+  email: string,
+  tenantId: Tenant['id'],
+) {
+  return findPartnerByEmail(email, tenantId, {
+    where: {
+      isContact: {
+        eq: true,
+      },
+    },
+  });
+}
+
 export async function findPartnerByEmail(
   email: string,
   tenantId: Tenant['id'],
+  params?: any,
 ) {
   if (!(email && tenantId)) return null;
 
@@ -170,6 +197,7 @@ export async function findPartnerByEmail(
             eq: email,
           },
         },
+        ...params?.where,
       },
       select: partnerFields,
     })

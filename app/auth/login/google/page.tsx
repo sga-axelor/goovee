@@ -5,7 +5,7 @@ import {notFound} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {getTranslation} from '@/locale/server';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import {extractSearchParams, isExistingUser} from '../../register/common/utils';
@@ -60,11 +60,9 @@ export default async function Page({
     );
   }
 
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const partner = await findGooveeUserByEmail(user.email, tenantId);
 
-  if (
-    !(partner && partner.isActivatedOnPortal && partner.isRegisteredOnPortal)
-  ) {
+  if (!partner) {
     return (
       <Description
         title={await getTranslation({tenant: tenantId}, 'Log In')}

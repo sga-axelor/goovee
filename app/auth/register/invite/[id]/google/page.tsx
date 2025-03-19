@@ -4,7 +4,7 @@ import {notFound} from 'next/navigation';
 import {getSession} from '@/auth';
 import {SEARCH_PARAMS} from '@/constants';
 import {t} from '@/locale/server';
-import {findPartnerByEmail} from '@/orm/partner';
+import {findContactByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import Form from './form';
@@ -43,7 +43,7 @@ export default async function Page({
   /**
    * Google Oauth Uses doesn't contain id or other information
    */
-  const partner = await findPartnerByEmail(user.email, tenantId);
+  const contact = await findContactByEmail(user.email, tenantId);
 
   if (user) {
     if (user.email !== invite.emailAddress.address) {
@@ -61,16 +61,16 @@ export default async function Page({
       );
     } else if (
       user.email === invite.emailAddress.address &&
-      partner?.isActivatedOnPortal &&
-      partner?.isRegisteredOnPortal &&
-      partner?.isContact &&
-      partner?.mainPartner?.id === invite.partner?.id
+      contact?.isActivatedOnPortal &&
+      contact?.isRegisteredOnPortal &&
+      contact?.isContact &&
+      contact?.mainPartner?.id === invite.partner?.id
     ) {
       return (
         <Subscribe
           workspaceURL={invite.workspace.url}
           inviteId={invite.id}
-          updateSession={!!partner}
+          updateSession={!!contact}
         />
       );
     }
@@ -80,7 +80,7 @@ export default async function Page({
     <Form
       email={invite?.emailAddress?.address}
       inviteId={invite.id}
-      updateSession={!!partner}
+      updateSession={!!contact}
     />
   );
 }

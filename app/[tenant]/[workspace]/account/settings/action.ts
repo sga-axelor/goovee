@@ -7,8 +7,8 @@ import {revalidatePath} from 'next/cache';
 import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
-import {findPartnerWorkspaceConfig, findWorkspace} from '@/orm/workspace';
-import {findPartnerByEmail, updatePartner} from '@/orm/partner';
+import {findWorkspace} from '@/orm/workspace';
+import {findGooveeUserByEmail, updatePartner} from '@/orm/partner';
 import {clone} from '@/utils';
 import {SUBAPP_PAGE} from '@/constants';
 import {manager, type Tenant} from '@/tenant';
@@ -44,7 +44,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
     return {error: true, message: await t('Invalid workspace')};
   }
 
-  const $user: any = await findPartnerByEmail(user.email, tenantId);
+  const $user: any = await findGooveeUserByEmail(user.email, tenantId);
 
   if (!$user) {
     return {
