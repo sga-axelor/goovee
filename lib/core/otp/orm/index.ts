@@ -40,6 +40,7 @@ export async function create({
           entity,
           value: hashedOtp,
           expiresAt,
+          used: false,
         },
       })
       .then(clone)
