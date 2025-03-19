@@ -118,7 +118,7 @@ export async function getEventContacts({
       .map(async participant => {
         const {emailAddress, name, surname, company, phone} = participant;
         const c = await manager.getClient(tenantId);
-        const partner = await c.aOSPartner.findOne({
+        const partners = await c.aOSPartner.find({
           where: {
             emailAddress: {
               OR: [
@@ -127,9 +127,12 @@ export async function getEventContacts({
               ],
             },
           },
-          select: {emailAddress: {address: true}},
+          select: {emailAddress: {address: true}, isActivatedOnPortal: true},
         });
-        if (partner) return partner;
+        if (partners.length) {
+          if (partners.length === 1) return partners[0];
+          return partners.find(p => p.isActivatedOnPortal) ?? partners[0];
+        }
 
         const eventContact = await c.aOSPartner.create({
           data: {

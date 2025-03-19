@@ -587,7 +587,7 @@ export async function findPartnerByEmailForEvent(
 
   if (!client) return null;
 
-  const partner = await client.aOSPartner.findOne({
+  const partners = await client.aOSPartner.find({
     where: {
       emailAddress: {
         address: {
@@ -602,5 +602,10 @@ export async function findPartnerByEmailForEvent(
       emailAddress: {address: true},
     },
   });
-  return partner;
+
+  if (partners.length) {
+    if (partners.length === 1) return partners[0];
+    return partners.find(p => p.isActivatedOnPortal) ?? partners[0];
+  }
+  return null;
 }
