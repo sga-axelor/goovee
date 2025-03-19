@@ -348,10 +348,10 @@ export async function sendInvites({
         errors.push(await t('Invites already exists'));
 
       emailsWithDifferentPartner &&
-        errors.push(await t('Registered under different partner already'));
+        errors.push(await t('Registered under different owner already'));
 
       emailsRegisteredAsPartner &&
-        errors.push(await t('Registered as partner already'));
+        errors.push(await t('An account with this email exists already'));
 
       message += errors.join(', ');
     }
