@@ -82,7 +82,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   );
 
   const imageURL = workspace?.config?.forumHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config?.forumHeroBgImage?.id, tenant)})`
+    ? `url(${`${workspaceURL}/${SUBAPP_CODES.forum}/api/hero/background`})`
     : IMAGE_URL;
 
   const handleGroupSearch = (value: string) => {
@@ -215,13 +215,15 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
             i18n.t(BANNER_DESCRIPTION))
         }
         image={imageURL}
-        groupImg={selectedGroup?.image?.id}
+        groupImg={
+          selectedGroup?.image?.id &&
+          `${workspaceURL}/${SUBAPP_CODES.forum}/api/group/${selectedGroup?.id}/image`
+        }
         background={workspace?.config?.forumHeroOverlayColorSelect || 'default'}
         blendMode={
           workspace?.config?.forumHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         renderSearch={!selectedGroup && renderSearch}
-        tenantId={tenant}
       />
       <div className="container py-6 mx-auto grid grid-cols-1 md:grid-cols-[17.563rem_1fr] gap-5">
         <div className="h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">

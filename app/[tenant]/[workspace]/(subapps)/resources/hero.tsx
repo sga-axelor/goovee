@@ -45,7 +45,6 @@ export const Hero = ({
             : 'normal'
         }
         renderSearch={renderSearch}
-        tenantId={tenantId}
       />
     </>
   );

@@ -5,8 +5,6 @@ import {cva, type VariantProps} from 'class-variance-authority';
 import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
-import {type Tenant} from '@/tenant';
-import {getImageURL} from '@/utils/files';
 import {cn} from '@/utils/css';
 
 const bannerVariants = cva(
@@ -74,7 +72,6 @@ export const Banner = ({
   className,
   blendMode,
   background,
-  tenantId,
 }: {
   groupImg?: string;
   title: string;
@@ -82,7 +79,6 @@ export const Banner = ({
   image?: any;
   renderSearch?: any;
   className?: string;
-  tenantId: Tenant['id'];
 } & VariantProps<BannerVariants>) => {
   return (
     <div
@@ -93,7 +89,7 @@ export const Banner = ({
           <div className="w-20 h-20 overflow-hidden rounded-lg relative mb-4">
             <Image
               fill
-              src={getImageURL(groupImg, tenantId)}
+              src={groupImg}
               alt={'Group Image'}
               className="rounded-lg"
               objectFit="cover"

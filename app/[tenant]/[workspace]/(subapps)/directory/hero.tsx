@@ -12,14 +12,12 @@ import {BannerVariants} from '@/ui/components/banner';
 import Search from './search';
 
 export const Hero = ({
-  tenantId,
   title,
   description,
   image,
   background,
 }: {
   projectId?: ID;
-  tenantId: string;
   title?: string;
   description?: string;
   image?: string;
@@ -39,7 +37,6 @@ export const Hero = ({
       background={background || 'default'}
       blendMode={background ? 'overlay' : 'normal'}
       image={image ?? IMAGE_URL}
-      tenantId={tenantId}
       renderSearch={renderSearch}
     />
   );

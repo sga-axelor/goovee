@@ -81,7 +81,6 @@ export default async function Page({
         description={workspace.config?.directoryHeroDescription}
         background={workspace.config?.directoryHeroOverlayColorSelect}
         image={imageURL}
-        tenantId={tenant}
       />
       <div className="container mb-5">
         {cards.length > 0 && (

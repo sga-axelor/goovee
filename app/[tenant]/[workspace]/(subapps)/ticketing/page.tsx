@@ -73,7 +73,6 @@ export default async function Page({
           workspace.config.ticketHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         image={imageURL}
-        tenantId={tenant}
       />
       <div className="container py-6 space-y-6">
         {projects.length === 0 ? (

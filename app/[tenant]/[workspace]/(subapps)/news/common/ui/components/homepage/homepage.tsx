@@ -72,7 +72,6 @@ export const Homepage = ({
           workspace?.config?.newsHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         renderSearch={renderSearch}
-        tenantId={tenant}
       />
       <div className={`container mx-auto grid grid-cols-1 gap-6 mb-20 lg:mb-0`}>
         {latestNews?.length ? (

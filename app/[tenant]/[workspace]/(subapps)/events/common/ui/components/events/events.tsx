@@ -178,7 +178,6 @@ export const Events = ({
           workspace?.config?.eventHeroOverlayColorSelect ? 'overlay' : 'normal'
         }
         renderSearch={renderSearch}
-        tenantId={tenant}
       />
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
         <EventSelector
