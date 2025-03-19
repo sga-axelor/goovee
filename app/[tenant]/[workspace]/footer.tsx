@@ -13,7 +13,7 @@ export default function Footer({}: {}) {
           className="flex items-center">
           <div className="text-xs">Powered by</div>
           <Image
-            src="/images/logo.png"
+            src="/images/axelor.png"
             alt="Axelor Logo"
             width={50}
             height={25}
