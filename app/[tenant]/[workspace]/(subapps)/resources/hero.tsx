@@ -3,25 +3,28 @@
 // ---- CORE IMPORTS ---- //
 import {HeroSearch} from '@/ui/components';
 import {i18n} from '@/locale';
-import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
-import {type Tenant} from '@/tenant';
+import {
+  BANNER_DESCRIPTION,
+  BANNER_TITLES,
+  IMAGE_URL,
+  SUBAPP_CODES,
+} from '@/constants';
 import type {PortalWorkspace} from '@/types';
-import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import Search from './search';
 
 export const Hero = ({
   workspace,
-  tenantId,
+  workspaceURL,
 }: {
   workspace: PortalWorkspace;
-  tenantId: Tenant['id'];
+  workspaceURL: string;
 }) => {
   const renderSearch = () => <Search workspace={workspace} />;
 
   const imageURL = workspace?.config?.resourcesHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.resourcesHeroBgImage.id, tenantId)})`
+    ? `url(${`${workspaceURL}/${SUBAPP_CODES.resources}/api/hero/background`})`
     : IMAGE_URL;
 
   return (

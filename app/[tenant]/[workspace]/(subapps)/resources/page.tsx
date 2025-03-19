@@ -51,7 +51,7 @@ export default async function Page({
 
   return (
     <>
-      <Hero workspace={workspace} tenantId={tenant} />
+      <Hero workspace={workspace} workspaceURL={workspaceURL} />
       <main className="container p-4 mx-auto space-y-6">
         <Categories items={folders} />
         <h2 className="font-semibold text-xl">{i18n.t('New Resources')}</h2>

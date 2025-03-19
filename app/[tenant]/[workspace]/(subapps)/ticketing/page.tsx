@@ -19,7 +19,6 @@ import {notFound, redirect} from 'next/navigation';
 
 // ---- LOCAL IMPORTS ---- //
 import {formatNumber} from '@/locale/server/formatters';
-import {getImageURL} from '@/utils/files';
 import {findProjectsWithTaskCount} from './common/orm/projects';
 import {getPages} from './common/utils';
 import {getPaginationButtons} from '@/utils/pagination';
