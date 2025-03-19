@@ -94,7 +94,7 @@ export default async function Layout({
       tenant={tenant}
       theme={theme}>
       <CartContext>
-        <div className="h-full w-full flex">
+        <div className="h-full w-full flex min-h-screen">
           {isLeftNavigation && (
             <Sidebar subapps={subapps} workspaces={workspaces} />
           )}
