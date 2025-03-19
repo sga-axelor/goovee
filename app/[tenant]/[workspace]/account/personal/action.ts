@@ -366,7 +366,7 @@ export async function generateOTPForUpdate({
 
     return generateOTP({
       email,
-      scope: Scope.Registration,
+      scope: Scope.EmailUpdate,
       tenantId,
       mailConfig: {
         template: template?.template,
