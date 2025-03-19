@@ -89,7 +89,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
         </div>
 
         <div className="w-full flex flex-col gap-6">
-          {enableSocialMediaSharing && (
+          {enableSocialMediaSharing && false && (
             <SocialMedia availableSocials={availableSocials} />
           )}
           {attachmentList?.length > 0 && (
