@@ -1,7 +1,7 @@
-import {z} from 'zod';
+import {z, ZodSchema} from 'zod';
 
 // ---- CORE IMPORTS ---- //
-import type {Field} from '@/ui/form';
+import {isField, type Field} from '@/ui/form';
 
 const getRequiredCondition = (schema: any, _field: Field): any => {
   if (!_field.required) {
@@ -16,9 +16,6 @@ const getFieldSchema = (field: Field) => {
 
   switch (field.type) {
     case 'string':
-    case 'email':
-    case 'url':
-    case 'phone':
       schema = z.string();
 
       if (field.required) {
@@ -34,7 +31,7 @@ const getFieldSchema = (field: Field) => {
     case 'array':
       if (field.subSchema != null) {
         if (typeof field.subSchema === 'string') {
-          schema = z[field.subSchema]();
+          schema = (z[field.subSchema] as any)();
         } else {
           schema = createFormSchema(field.subSchema);
         }
@@ -44,11 +41,14 @@ const getFieldSchema = (field: Field) => {
 
       schema = schema.array();
       break;
+    case 'object':
+      schema = z.object({}).passthrough();
+      break;
     default:
       throw new Error(`Type ${field.type} is not managed for schema creation`);
   }
 
-  switch (field.type) {
+  switch (field.widget) {
     case 'email':
       schema = schema.email();
       break;
@@ -57,12 +57,6 @@ const getFieldSchema = (field: Field) => {
       break;
     case 'phone':
       schema = schema.regex(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/g);
-      break;
-    case 'date':
-      schema = schema.date();
-      break;
-    case 'datetime':
-      schema = schema.datetime();
       break;
     default:
       break;
@@ -89,11 +83,14 @@ const getFieldSchema = (field: Field) => {
   return getRequiredCondition(schema, field);
 };
 
-export function createFormSchema(fields: Field[]): any {
+export function createFormSchema(fields: Field[]): ZodSchema {
   let schemaConfig: any = {};
 
   fields
-    .filter(_field => !_field.readonly)
+    .filter(
+      _field =>
+        isField(_field) && !_field.readonly && _field.type !== 'ornament',
+    )
     .forEach(_field => {
       schemaConfig[_field.name] = getFieldSchema(_field);
     });

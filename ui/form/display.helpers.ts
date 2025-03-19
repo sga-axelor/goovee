@@ -1,5 +1,6 @@
 // ---- LOCAL IMPORTS ---- //
 import type {Field} from '@/ui/form';
+import {DEFAULT_COLSPAN} from '@/ui/form';
 
 export function mapFieldType(field: Field): string {
   if (field.widget != null) {
@@ -23,12 +24,12 @@ export function mapFieldType(field: Field): string {
   }
 }
 
-export function sortFields(items: any): Field[] {
-  if (!Array.isArray(items)) {
-    return [];
-  }
+export function getColspan(value: number | undefined) {
+  return (Math.min(value ?? 0, DEFAULT_COLSPAN) / DEFAULT_COLSPAN) * 100;
+}
 
-  return items.sort((a, b) => a?.order - b?.order);
+export function isField(item: any): boolean {
+  return item?.type != null;
 }
 
 function getItemDefaultValue(item: Field): any {

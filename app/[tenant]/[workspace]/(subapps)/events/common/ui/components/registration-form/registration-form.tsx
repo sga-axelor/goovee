@@ -267,6 +267,7 @@ export const RegistrationForm = ({
         customComponent: (props: any) =>
           ArrayComponent({
             ...props,
+            subItemTitle: i18n.t('Participant'),
             renderAddMore: ({addItem}) => {
               if (isPrivate) return null;
               return (

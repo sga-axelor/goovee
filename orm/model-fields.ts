@@ -19,13 +19,8 @@ export async function findModelFields({
 
   const fields = await c.aOSMetaJsonField
     .find({
-      where: {
-        model: modelName,
-        modelField,
-        type: {ne: 'panel'},
-        hidden: false,
-        showIf: null,
-      },
+      where: {model: modelName, modelField, hidden: false, showIf: null},
+      orderBy: {sequence: 'ASC'},
     })
     .then(clone);
 

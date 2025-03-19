@@ -1,7 +1,8 @@
 'use client';
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import Select, {SingleValue, MultiValue} from 'react-select';
+import {UseFormReturn} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import type {Field} from '@/ui/form';
@@ -17,20 +18,20 @@ function formatValues(formValue: any) {
 }
 
 export const SelectionPicker = ({
+  style,
   form,
   field,
   formKey,
   options,
   isMulti = false,
 }: {
-  form: any;
+  style?: any;
+  form: UseFormReturn<Record<string, any>, any, undefined>;
   field: Field;
   formKey: string;
   options: any[];
   isMulti?: boolean;
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
-
   const selectOptions = useMemo(
     () => options?.map(_o => ({..._o, label: _o.title})) ?? [],
     [options],
@@ -49,15 +50,9 @@ export const SelectionPicker = ({
     }
   };
 
-  useEffect(() => {
-    setIsMounted(true);
-
-    return () => setIsMounted(false);
-  }, []);
-
   const formValue = formatValues(form.watch(formKey));
 
-  return isMounted ? (
+  return (
     <Select
       isMulti={isMulti}
       options={selectOptions}
@@ -65,6 +60,7 @@ export const SelectionPicker = ({
       value={selectOptions.filter(({value}) => formValue.includes(value))}
       onChange={handleChange}
       styles={{
+        container: provided => ({...provided, ...style}),
         multiValue: provided => ({
           ...provided,
           backgroundColor: '#CDCFEF',
@@ -81,5 +77,7 @@ export const SelectionPicker = ({
         }),
       }}
     />
-  ) : null;
+  );
 };
+
+export default SelectionPicker;
