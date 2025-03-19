@@ -53,7 +53,7 @@ export function AddressSelection({
     if (deliveryAddress) {
       setDeliveryAddress(deliveryAddress);
       if (!cartDeliveryAddress) {
-        updateAddress({type: 'delivery', address: deliveryAddress.id});
+        updateAddress({addressType: 'delivery', address: deliveryAddress.id});
       }
     }
   }, [cartInvoicingAddress, cartDeliveryAddress, updateAddress]);
