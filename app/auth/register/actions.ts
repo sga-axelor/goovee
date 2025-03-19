@@ -449,6 +449,16 @@ async function updatePartnerEmailByContact(
     };
   }
 
+  if (!contactPartner?.isAllowedToRegister) {
+    return {
+      error: true,
+      message: await getTranslation(
+        {tenant: tenantId},
+        'Registration not allowed',
+      ),
+    };
+  }
+
   try {
     const {id, version} = contactPartner?.emailAddress;
     const client = await manager.getClient(tenantId);
