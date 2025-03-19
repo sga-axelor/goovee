@@ -259,7 +259,7 @@ export async function register({
 
   if (workspace.allowRegistrationSelect === ALLOW_AOS_ONLY_REGISTRATION) {
     if (partner) {
-      if (!partner?.isRegisteredOnPortal) {
+      if (!partner?.isAllowedToRegister) {
         return {
           error: true,
           message: await getTranslation(
@@ -415,7 +415,7 @@ async function updatePartnerEmailByContact(
     };
   }
 
-  if (!contact?.isRegisteredOnPortal) {
+  if (!contact?.isAllowedToRegister) {
     return {
       error: true,
       message: await getTranslation(

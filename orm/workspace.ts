@@ -131,7 +131,7 @@ export async function findWorkspaceMembers({
     where: {
       isContact: false,
       id: partnerId,
-      isRegisteredOnPortal: true,
+      isActivatedOnPortal: true,
       partnerWorkspaceSet: {
         workspace: {
           url,
@@ -155,7 +155,7 @@ export async function findWorkspaceMembers({
     .find({
       where: {
         isContact: true,
-        isRegisteredOnPortal: true,
+        isActivatedOnPortal: true,
         mainPartner: {
           id: partnerId,
         },

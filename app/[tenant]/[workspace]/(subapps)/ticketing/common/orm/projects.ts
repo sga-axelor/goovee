@@ -236,10 +236,10 @@ export async function findContactPartners(
       clientPartner: {
         id: true,
         simpleFullName: true,
-        isRegisteredOnPortal: true,
+        isActivatedOnPortal: true,
         contactPartnerSet: {
           where: {
-            isRegisteredOnPortal: true,
+            isActivatedOnPortal: true,
             contactWorkspaceConfigSet: {
               OR: [
                 {isAdmin: true},
@@ -266,7 +266,7 @@ export async function findContactPartners(
       simpleFullName: p.simpleFullName,
     })) ?? [];
 
-  if (project.clientPartner.isRegisteredOnPortal) {
+  if (project.clientPartner.isActivatedOnPortal) {
     partners.push({
       id: project.clientPartner.id,
       version: project.clientPartner.version,

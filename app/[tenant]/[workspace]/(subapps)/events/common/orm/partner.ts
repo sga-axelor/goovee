@@ -49,7 +49,6 @@ export async function findContacts({
         ]
       : []),
     isContact: true,
-    isRegisteredOnPortal: true,
     isActivatedOnPortal: true,
     mainPartner: {
       id: partnerId,

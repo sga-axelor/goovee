@@ -148,7 +148,6 @@ export async function getEventContacts({
             isCustomer: false,
             isProspect: false,
             createdFromSelect: USER_CREATED_FROM,
-            isRegisteredOnPortal: false,
             isActivatedOnPortal: false,
             isPublicPartner: true,
             portalCompanyName: company,

@@ -56,7 +56,7 @@ const partnerFields = {
   },
   partnerTypeSelect: true,
   registrationCode: true,
-  isRegisteredOnPortal: true,
+  isAllowedToRegister: true,
   isActivatedOnPortal: true,
   createdFromSelect: true,
   canSubscribeNoPublicEvent: true,
@@ -294,7 +294,6 @@ export async function registerContact({
     fullName: `${name} ${firstName || ''}`,
     simpleFullName: `${name} ${firstName || ''}`,
     createdFromSelect: USER_CREATED_FROM,
-    isRegisteredOnPortal: true,
     isActivatedOnPortal: true,
     emailAddress: {
       create: {
@@ -373,7 +372,6 @@ export async function registerPartner({
     fullName: `${name} ${firstName || ''}`,
     simpleFullName: `${name} ${firstName || ''}`,
     createdFromSelect: USER_CREATED_FROM,
-    isRegisteredOnPortal: true,
     isActivatedOnPortal: true,
     emailAddress: {
       create: {
@@ -398,7 +396,7 @@ export async function registerPartner({
 
   const existingPartner = await findPartnerByEmail(email, tenantId);
 
-  if (existingPartner && !existingPartner.isRegisteredOnPortal) {
+  if (existingPartner && !existingPartner.isActivatedOnPortal) {
     const {id, version} = existingPartner;
     const udpatedPartner = await client.aOSPartner.update({
       data: {

@@ -26,10 +26,6 @@
     },
     {
       "type": "Boolean",
-      "name": "isRegisteredOnPortal"
-    },
-    {
-      "type": "Boolean",
       "name": "isCustomer"
     },
     {
@@ -116,7 +112,8 @@
     },
     {
       "type": "Boolean",
-      "name": "isRegisteredOnPortal"
+      "name": "isAllowedToRegister",
+      "column": "is_registered_on_portal"
     },
     {
       "type": "Boolean",

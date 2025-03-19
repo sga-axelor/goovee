@@ -260,7 +260,7 @@ export async function sendInvites({
 
       if (
         !existingContact?.isContact &&
-        existingContact?.isRegisteredOnPortal
+        existingContact?.isActivatedOnPortal
       ) {
         emailsRegisteredAsPartner = true;
         continue; // don't send invite to email already registered as partner

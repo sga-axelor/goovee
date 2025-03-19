@@ -500,13 +500,12 @@ export type EventConfigPartner = {
   isCustomer?: boolean;
   contactPartnerSet?: {
     emailAddress?: {address?: string};
-    isRegisteredOnPortal?: boolean;
+
     isActivatedOnPortal?: boolean;
   }[];
   emailAddress?: {id: string; version: number; address?: string};
   isActivatedOnPortal?: boolean;
   canSubscribeNoPublicEvent?: boolean;
-  isRegisteredOnPortal?: boolean;
 };
 
 export async function findEventConfig({
@@ -529,13 +528,11 @@ export async function findEventConfig({
     isProspect: true,
     isContact: true,
     isCustomer: true,
-    isRegisteredOnPortal: true,
     isActivatedOnPortal: true,
     canSubscribeNoPublicEvent: true,
     contactPartnerSet: {
       select: {
         emailAddress: {address: true},
-        isRegisteredOnPortal: true,
         isActivatedOnPortal: true,
       },
     },
@@ -575,7 +572,6 @@ export async function findEventConfig({
 export type PartnerForEvent = {
   id: string;
   version: number;
-  isRegisteredOnPortal?: boolean;
   emailAddress?: {id: string; version: number; address?: string};
   isActivatedOnPortal?: boolean;
   canSubscribeNoPublicEvent?: boolean;
@@ -601,7 +597,6 @@ export async function findPartnerByEmailForEvent(
     },
     select: {
       id: true,
-      isRegisteredOnPortal: true,
       isActivatedOnPortal: true,
       canSubscribeNoPublicEvent: true,
       emailAddress: {address: true},

@@ -103,10 +103,9 @@ export function getPortalUserEmails(partner: EventConfigPartner): string[] {
 }
 
 export function isPortalUser(partner: {
-  isRegisteredOnPortal?: boolean;
   isActivatedOnPortal?: boolean;
 }): boolean {
-  return !!(partner.isRegisteredOnPortal && partner.isActivatedOnPortal);
+  return !!partner.isActivatedOnPortal;
 }
 
 export function getTotalRegisteredParticipants(event: EventConfig): number {
