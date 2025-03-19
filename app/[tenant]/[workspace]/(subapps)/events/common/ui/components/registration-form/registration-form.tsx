@@ -14,7 +14,12 @@ import {
 } from '@/ui/components/card';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
-import {FormView, ArrayComponent, formatStudioFields} from '@/ui/form';
+import {
+  FormView,
+  ArrayComponent,
+  formatStudioFields,
+  type Field,
+} from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {BadgeList, Button} from '@/ui/components';
@@ -418,31 +423,33 @@ export const RegistrationForm = ({
       </CardHeader>
       <CardContent className="px-4 pb-4 space-y-6">
         <FormView
-          fields={[
-            ...(eventAllowMultipleRegistrations
-              ? multipleRegistrationForm
-              : participantForm),
-            {
-              name: 'facilitiesPrice',
-              title: null,
-              type: 'array',
-              widget: 'custom',
-              hidden: !canPay,
-              customComponent: (props: any) => (
-                <SubscriptionsPriceView
-                  {...props}
-                  list={facilityList}
-                  event={{
-                    id: eventId,
-                    displayAti: eventPrice,
-                    facilityList,
-                  }}
-                  currency={eventProduct?.saleCurrency}
-                  onTotalPriceChange={handleTotalPriceChange}
-                />
-              ),
-            },
-          ]}
+          fields={
+            [
+              ...(eventAllowMultipleRegistrations
+                ? multipleRegistrationForm
+                : participantForm),
+              {
+                name: 'facilitiesPrice',
+                title: null,
+                type: 'array',
+                widget: 'custom',
+                hidden: !canPay,
+                customComponent: (props: any) => (
+                  <SubscriptionsPriceView
+                    {...props}
+                    list={facilityList}
+                    event={{
+                      id: eventId,
+                      displayAti: eventPrice,
+                      facilityList,
+                    }}
+                    currency={eventProduct?.saleCurrency}
+                    onTotalPriceChange={handleTotalPriceChange}
+                  />
+                ),
+              },
+            ] as Field[]
+          }
           submitTitle={i18n.t('Register')}
           mode={'onChange'}
           onSubmit={onSubmit}
