@@ -15,7 +15,7 @@ function error(message: string) {
   };
 }
 
-const forgotPasswordTemplate = ({
+const resetPasswordTemplate = ({
   email,
   otp,
   link,
@@ -98,7 +98,7 @@ const otpTemplateHTML = ({
       </html>
       `;
 
-export async function forgotPassword({
+export async function requestResetPassword({
   email,
   tenantId,
   searchQuery,
@@ -117,18 +117,19 @@ export async function forgotPassword({
 
   const partner = await findPartnerByEmail(email, tenantId);
 
+  const link = `${process.env.NEXT_PUBLIC_HOST}/auth/reset-password/${email}?${searchQuery}`;
+
   if (!partner?.isRegisteredOnPortal) {
-    return error(
-      await getTranslation({tenant: tenantId}, 'You are not registered'),
-    );
+    return {
+      success: true,
+      data: {url: link},
+    };
   }
 
   try {
-    const link = `${process.env.NEXT_PUBLIC_HOST}/auth/forgot-password/${email}?${searchQuery}`;
-
     const result: any = await createOTP({
       entity: email,
-      scope: Scope.ForgotPassword,
+      scope: Scope.ResetPassword,
       tenantId,
       force: true,
     });
@@ -137,7 +138,7 @@ export async function forgotPassword({
 
     result?.otp &&
       mailService?.notify(
-        forgotPasswordTemplate({
+        resetPasswordTemplate({
           email,
           otp: result.otp,
           link,
@@ -146,16 +147,15 @@ export async function forgotPassword({
 
     return {
       success: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Reset link sent to your email',
-      ),
+      data: {
+        url: link,
+      },
     };
   } catch (err) {
     return error(
       await getTranslation(
         {tenant: tenantId},
-        'Error sending reset link. Try again.',
+        'Error resetting password. Try again.',
       ),
     );
   }
@@ -195,7 +195,7 @@ export async function resetPassword({
 
   try {
     const result: any = await findOne({
-      scope: Scope.ForgotPassword,
+      scope: Scope.ResetPassword,
       entity: email,
       tenantId,
     });

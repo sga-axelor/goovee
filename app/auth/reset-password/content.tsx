@@ -22,7 +22,7 @@ import {Label} from '@/ui/components/label';
 import {Button} from '@/ui/components/button';
 import {SEARCH_PARAMS} from '@/constants';
 import {useToast} from '@/ui/hooks';
-import {forgotPassword} from './action';
+import {requestResetPassword} from './action';
 
 const formSchema = z.object({
   email: z.string().email().min(1, 'Email is required'),
@@ -44,28 +44,24 @@ export default function Content() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const res: any = await forgotPassword({
+    const res: any = await requestResetPassword({
       email: values.email,
       tenantId: tenantId!,
       searchQuery,
     });
-    if (res.success) {
-      toast({
-        variant: 'success',
-        title: res.message,
-      });
-      router.push(`/auth/login?${searchQuery}`);
-    } else if (res.error) {
+    if (res.success && res.data?.url) {
+      router.push(res.data.url);
+    } else {
       toast({
         variant: 'destructive',
-        title: res.message,
+        title: res.message || i18n.t('Error resetting password. Try again.'),
       });
     }
   };
 
   return (
     <div className="container space-y-6 mt-8">
-      <h1 className="text-[2rem] font-bold">{i18n.t('Forgot Password')}</h1>
+      <h1 className="text-[2rem] font-bold">{i18n.t('Reset Password')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

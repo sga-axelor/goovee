@@ -111,10 +111,10 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
               </Label>
             </div>
             <Link
-              href={`/auth/forgot-password?${searchQuery}`}
+              href={`/auth/reset-password?${searchQuery}`}
               aria-disabled={submitting}
               className="flex underline text-success">
-              {i18n.t('Forgot Password ?')}
+              {i18n.t('Reset Password')} ?
             </Link>
           </div>
           <Button

@@ -90,7 +90,7 @@ export default function Page({params}: {params: {email: string}}) {
 
   return (
     <div className="container space-y-6 mt-8">
-      <h1 className="text-[2rem] font-bold">{i18n.t('Forgot Password')}</h1>
+      <h1 className="text-[2rem] font-bold">{i18n.t('Reset Password')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -121,7 +121,6 @@ export default function Page({params}: {params: {email: string}}) {
                   <FormControl>
                     <Input
                       {...field}
-                      type="password"
                       value={field.value}
                       placeholder={i18n.t('Enter OTP')}
                     />
