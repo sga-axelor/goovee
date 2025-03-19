@@ -260,16 +260,50 @@ export async function update({
 
   try {
     if (email !== partner?.emailAddress.address) {
-      const {id, version} = partner?.emailAddress;
+      const updateEmail = async (emailAddress: any, newEmail: string) => {
+        if (!emailAddress) return;
 
-      await client.aOSEmailAddress.update({
-        data: {
-          id,
-          version,
-          name: email,
-          address: email,
-        },
-      });
+        const {id, version} = emailAddress;
+
+        await client.aOSEmailAddress.update({
+          data: {
+            id,
+            version,
+            name: newEmail,
+            address: newEmail,
+          },
+        });
+      };
+
+      await updateEmail(partner?.emailAddress, email);
+
+      /**
+       * Check if the email belongs to contact, if so then update
+       * contact email along with this update. This is in respect to
+       * registration flow where a contact can register partner (#92494)
+       */
+
+      if (!partner.isContact) {
+        const contact = await client.aOSPartner.findOne({
+          where: {
+            mainPartner: {id: partner.id},
+            isContact: {eq: true},
+            emailAddress: {
+              address: partner.emailAddress.address,
+            },
+            isActivatedOnPortal: {
+              ne: true,
+            },
+          },
+          select: {
+            emailAddress: true,
+          },
+        });
+
+        if (contact?.emailAddress) {
+          await updateEmail(contact?.emailAddress, email);
+        }
+      }
     }
 
     const updatedPartner = await updatePartner({
