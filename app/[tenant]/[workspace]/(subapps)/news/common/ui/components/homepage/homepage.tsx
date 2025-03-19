@@ -5,10 +5,14 @@ import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
-import {BANNER_DESCRIPTION, BANNER_TITLES, IMAGE_URL} from '@/constants';
+import {
+  BANNER_DESCRIPTION,
+  BANNER_TITLES,
+  IMAGE_URL,
+  SUBAPP_CODES,
+} from '@/constants';
 import {HeroSearch, Search} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
-import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -40,10 +44,10 @@ export const Homepage = ({
   workspace: PortalWorkspace;
 }) => {
   const router = useRouter();
-  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   const imageURL = workspace?.config?.newsHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.newsHeroBgImage.id, tenant)})`
+    ? `url(${`${workspaceURL}/${SUBAPP_CODES.news}/api/hero/background`})`
     : IMAGE_URL;
 
   const handleClick = (slug: string) => {
