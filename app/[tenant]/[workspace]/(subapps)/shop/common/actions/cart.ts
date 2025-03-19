@@ -16,6 +16,8 @@ import {findProduct as $findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 
+const formatNumber = (n: any) => n;
+
 export async function findProduct({
   id,
   workspace,
@@ -123,7 +125,7 @@ export async function requestOrder({
       ],
     };
 
-    const {total} = computeTotal({cart: $cart, workspace});
+    const {total} = computeTotal({cart: $cart, workspace, formatNumber});
 
     let partnerId, contactId;
 
