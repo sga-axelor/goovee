@@ -15,9 +15,10 @@ import {clone} from '@/utils';
 import {getPaginationButtons} from '@/utils/pagination';
 
 // ---- LOCAL IMPORTS ---- //
+import type {ID} from '@/types';
 import {Suspense} from 'react';
 import {findMapConfig} from './common/orm';
-import type {ListEntry, MapConfig, SearchParams} from './common/types';
+import type {ListEntry, SearchParams} from './common/types';
 import {Card} from './common/ui/components/card';
 import {Map} from './common/ui/components/map';
 import {MapSkeleton} from './common/ui/components/map/map-skeleton';
@@ -30,7 +31,7 @@ type ContentProps = {
   tenant: string;
   pages: number;
   searchParams: SearchParams;
-  workspaceId: string;
+  workspaceId: ID;
 };
 
 export async function Content({
@@ -84,7 +85,7 @@ export async function Content({
 
 async function ServerMap(props: {
   entries: ContentProps['entries'];
-  workspaceId: string;
+  workspaceId: ID;
   tenant: string;
 }) {
   const {entries, workspaceId, tenant} = props;

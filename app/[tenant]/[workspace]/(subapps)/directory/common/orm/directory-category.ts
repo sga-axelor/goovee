@@ -11,7 +11,7 @@ export async function findCategories({
   workspaceId,
   tenantId,
 }: {
-  workspaceId?: string;
+  workspaceId?: ID;
   tenantId: Tenant['id'];
 }): Promise<ListCategory[]> {
   if (!(workspaceId && tenantId)) {
@@ -34,7 +34,7 @@ export async function findCategory({
   tenantId,
 }: {
   id: ID;
-  workspaceId?: string;
+  workspaceId?: ID;
   tenantId: Tenant['id'];
 }): Promise<Category | null> {
   if (!(workspaceId && tenantId)) {

@@ -13,7 +13,7 @@ export async function findEntry({
   tenantId,
 }: {
   id: ID;
-  workspaceId?: string;
+  workspaceId?: ID;
   tenantId: Tenant['id'];
 }): Promise<Entry | null> {
   if (!(id && workspaceId && tenantId)) {
@@ -61,7 +61,7 @@ export async function findEntries({
 }: {
   take?: number;
   skip?: number;
-  workspaceId?: string;
+  workspaceId?: ID;
   categoryId?: ID;
   tenantId: Tenant['id'];
   orderBy?: OrderByOptions<AOSPortalDirectoryEntry>;

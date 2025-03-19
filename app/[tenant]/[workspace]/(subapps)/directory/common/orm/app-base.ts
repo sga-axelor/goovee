@@ -1,14 +1,15 @@
 import {t} from '@/lib/core/locale/server';
-import {manager, Tenant} from '@/lib/core/tenant';
+import {manager, type Tenant} from '@/lib/core/tenant';
+import type {ID} from '@/types';
 
 import {MAP_SELECT} from '../constants';
-import {MapConfig} from '../types';
+import type {MapConfig} from '../types';
 
 export async function findMapConfig({
   workspaceId,
   tenantId,
 }: {
-  workspaceId?: string;
+  workspaceId?: ID;
   tenantId: Tenant['id'];
 }): Promise<MapConfig> {
   if (!(workspaceId && tenantId)) {

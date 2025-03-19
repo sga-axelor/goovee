@@ -9,16 +9,16 @@ export async function GET(
 ) {
   const {workspaceURL, tenant} = workspacePathname(params);
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenant);
+  const {error, info} = await ensureAuth(workspaceURL, tenant);
   if (error) {
-    return NextResponse.json({message}, {status: 401});
+    return new NextResponse('Unauthorized', {status: 401});
   }
 
   const {workspace} = info;
   const bgImageId = workspace.config.ticketHeroBgImage?.id;
 
   if (!bgImageId) {
-    return new NextResponse('No ticket hero image found', {status: 404});
+    return new NextResponse('Image not found', {status: 404});
   }
 
   const file = await findFile({

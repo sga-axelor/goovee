@@ -2,10 +2,9 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {IMAGE_URL} from '@/constants';
+import {IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {getImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -60,8 +59,8 @@ export default async function Page({
   ]);
 
   const pages = getPages(entries, limit);
-  const imageURL = workspace.config.directoryHeroBgImage?.id
-    ? `url(${getImageURL(workspace.config.directoryHeroBgImage.id, tenant)})`
+  const imageURL = workspace.config?.directoryHeroBgImage?.id
+    ? `url(${`${workspaceURL}/${SUBAPP_CODES.directory}/api/hero/background`})`
     : IMAGE_URL;
 
   const cards = categories.map(category => (
@@ -78,9 +77,9 @@ export default async function Page({
   return (
     <>
       <Hero
-        title={workspace.config.directoryHeroTitle}
-        description={workspace.config.directoryHeroDescription}
-        background={workspace.config.directoryHeroOverlayColorSelect}
+        title={workspace.config?.directoryHeroTitle}
+        description={workspace.config?.directoryHeroDescription}
+        background={workspace.config?.directoryHeroOverlayColorSelect}
         image={imageURL}
         tenantId={tenant}
       />
