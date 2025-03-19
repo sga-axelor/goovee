@@ -126,7 +126,7 @@ export default function Header({
                 </Link>
               );
             })}
-          <Notification />
+          {false && <Notification />}
           <Cart />
           <Account baseURL={workspaceURI} tenant={tenant} />
         </div>
