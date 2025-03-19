@@ -106,10 +106,12 @@ export function MobileMenu({subapps, workspaces}: any) {
         <MobileSidebar subapps={subapps} workspaces={workspaces} />
         {/** Render Subapp Menu using Portal */}
         <div id="subapp-menu" className="hidden" />
-        <MdNotificationsNone
-          className="cursor-pointer h-6 w-6"
-          onClick={redirect}
-        />
+        {false && (
+          <MdNotificationsNone
+            className="cursor-pointer h-6 w-6"
+            onClick={redirect}
+          />
+        )}
         <Account />
       </div>
     </nav>
