@@ -7,6 +7,28 @@ import type {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
 
 import type {Entry, SearchEntry} from '../types';
 
+export async function findEntryImage({
+  id,
+  workspaceId,
+  tenantId,
+}: {
+  id: ID;
+  workspaceId?: ID;
+  tenantId: Tenant['id'];
+}): Promise<string | undefined> {
+  if (!(id && workspaceId && tenantId)) {
+    throw new Error(await t('Missing required parameters'));
+  }
+
+  const c = await manager.getClient(tenantId);
+
+  const entry = await c.aOSPortalDirectoryEntry.findOne({
+    where: {id, workspace: {id: workspaceId}},
+    select: {image: {id: true}},
+  });
+  return entry?.image?.id;
+}
+
 export async function findEntry({
   id,
   workspaceId,

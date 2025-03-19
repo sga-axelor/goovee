@@ -21,7 +21,7 @@ export const Map = memo((props: MapContentProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [popup, setPopup] = useState<Popup | null>(null);
   const {className, center, zoom, items, small} = props;
-  const {workspaceURI, tenant} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   useLayoutEffect(() => {
     if (!mapRef.current) return;
@@ -62,7 +62,7 @@ export const Map = memo((props: MapContentProps) => {
             item={popup.item}
             url={`${workspaceURI}/directory/entry/${popup.item.id}`}
             small={small}
-            tenant={tenant}
+            workspaceURL={workspaceURL}
           />,
           popup.el,
         )}

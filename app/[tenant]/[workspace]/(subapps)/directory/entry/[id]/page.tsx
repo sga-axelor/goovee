@@ -21,6 +21,7 @@ import {findEntry, findMapConfig} from '../../common/orm';
 import type {Entry} from '../../common/types';
 import {Map} from '../../common/ui/components/map';
 import {Category} from '../../common/ui/components/pills';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 export default async function Page({
   params,
@@ -53,7 +54,11 @@ export default async function Page({
   return (
     <div className="container flex flex-col gap-4 mt-4 mb-5">
       <div className="flex flex-col gap-4 bg-card p-4 rounded-lg">
-        <Details entryDetail={entry} tenant={tenant} />
+        <Details
+          entryDetail={entry}
+          tenant={tenant}
+          workspaceURL={workspaceURL}
+        />
         <Map className="h-80 w-full" entries={[clone(entry)]} config={config} />
       </div>
       {entry.directoryContactSet && entry.directoryContactSet?.length > 0 && (
@@ -76,9 +81,11 @@ export default async function Page({
 async function Details({
   entryDetail,
   tenant,
+  workspaceURL,
 }: {
   entryDetail: Entry;
   tenant: string;
+  workspaceURL: string;
 }) {
   const {
     title,
@@ -91,6 +98,7 @@ async function Details({
     instagram,
     directoryEntryCategorySet,
     attrs,
+    id,
   } = entryDetail;
 
   const customFields = (
@@ -132,8 +140,12 @@ async function Details({
         <img
           width={156}
           height={138}
-          className="rounded-r-lg h-[138px]"
-          src={getImageURL(image?.id, tenant, {noimage: true})}
+          className="rounded-r-lg h-[138px] object-cover"
+          src={
+            image?.id
+              ? `${workspaceURL}/${SUBAPP_CODES.directory}/api/entry/${id}/image`
+              : NO_IMAGE_URL
+          }
           alt="image"
         />
       </div>

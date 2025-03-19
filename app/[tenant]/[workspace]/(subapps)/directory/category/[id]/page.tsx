@@ -90,6 +90,7 @@ export default async function Page({
           url={`${workspaceURI}/directory/category/${id}`}
           workspaceURI={workspaceURI}
           workspaceId={workspace.id}
+          workspaceURL={workspaceURL}
           entries={entries}
           tenant={tenant}
           pages={pages}

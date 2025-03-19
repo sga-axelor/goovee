@@ -49,7 +49,7 @@ type MarkerProps = {
 
 export function Marker(props: MarkerProps) {
   const {small, item} = props;
-  const {workspaceURI, tenant} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
 
   const url = `${workspaceURI}/directory/entry/${item.id}`;
   const [markerRef, marker] = useMarkerRef();
@@ -70,7 +70,12 @@ export function Marker(props: MarkerProps) {
       />
       {show && (
         <InfoWindow anchor={marker} onClose={handleClose} headerDisabled>
-          <Card item={item} url={url} small={small} tenant={tenant} />
+          <Card
+            item={item}
+            url={url}
+            small={small}
+            workspaceURL={workspaceURL}
+          />
         </InfoWindow>
       )}
     </>

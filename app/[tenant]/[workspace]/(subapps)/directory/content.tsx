@@ -32,10 +32,12 @@ type ContentProps = {
   pages: number;
   searchParams: SearchParams;
   workspaceId: ID;
+  workspaceURL: string;
 };
 
 export async function Content({
   workspaceURI,
+  workspaceURL,
   tenant,
   pages,
   searchParams,
@@ -71,7 +73,7 @@ export async function Content({
               item={item}
               url={`${workspaceURI}/directory/entry/${item.id}`}
               key={item.id}
-              tenant={tenant}
+              workspaceURL={workspaceURL}
             />
           ))}
         </main>

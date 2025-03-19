@@ -231,3 +231,5 @@ export const INVOICE_ENTITY_TYPE = {
   INVOICE: 'invoice',
   CUSTOMER_DELIVERY: 'customer_delivery',
 };
+
+export const NO_IMAGE_URL = '/images/no-image.png';

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import {cn} from '@/utils/css';
-import {getImageURL} from '@/utils/files';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {InnerHTML} from '@/ui/components';
 
 import {colors} from '../../../constants';
@@ -12,11 +12,11 @@ export type CardProps = {
   item: ListEntry | Entry;
   url: string;
   small?: boolean;
-  tenant: string;
+  workspaceURL: string;
 };
 
 export function Card(props: CardProps) {
-  const {item, url, small, tenant} = props;
+  const {item, url, small, workspaceURL} = props;
 
   return (
     <Link
@@ -49,8 +49,12 @@ export function Card(props: CardProps) {
         <img
           width={150}
           height={138}
-          className="rounded-r-lg h-[138px]"
-          src={getImageURL(item?.image?.id, tenant, {noimage: true})}
+          className="rounded-r-lg h-[138px] object-cover"
+          src={
+            item.image?.id
+              ? `${workspaceURL}/${SUBAPP_CODES.directory}/api/entry/${item.id}/image`
+              : NO_IMAGE_URL
+          }
           alt="image"
         />
       )}
