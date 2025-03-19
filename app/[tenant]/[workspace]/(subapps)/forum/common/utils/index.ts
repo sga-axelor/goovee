@@ -15,7 +15,7 @@ export const filterPrivateQuery = async (user: any, tenantId: any) => {
   }
 
   const partner = await findGooveeUserByEmail(user.email, tenantId);
-  
+
   if (!partner) {
     throw new Error('Unauthorized');
   }

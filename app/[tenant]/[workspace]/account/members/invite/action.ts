@@ -258,10 +258,7 @@ export async function sendInvites({
 
       const existingContact = await findGooveeUserByEmail(email, tenantId);
 
-      if (
-        !existingContact?.isContact &&
-        existingContact?.isActivatedOnPortal
-      ) {
+      if (!existingContact?.isContact && existingContact?.isActivatedOnPortal) {
         emailsRegisteredAsPartner = true;
         continue; // don't send invite to email already registered as partner
       }

@@ -439,7 +439,7 @@ async function updatePartnerEmailByContact(
     };
   }
 
-  if(contactPartner?.isActivatedOnPortal){
+  if (contactPartner?.isActivatedOnPortal) {
     return {
       error: true,
       message: await getTranslation(
