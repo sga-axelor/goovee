@@ -147,6 +147,9 @@ export default async function Page({
             priorities={priorities}
             contacts={contacts}
             formFields={clone(workspace.config.ticketingFormFieldSet)}
+            showCancel={workspace.config.isDisplayCancelBtn}
+            showClose={workspace.config.isDisplayCloseBtn}
+            showAssignment={workspace.config.isDisplayAssignmentBtn}
           />
 
           <div

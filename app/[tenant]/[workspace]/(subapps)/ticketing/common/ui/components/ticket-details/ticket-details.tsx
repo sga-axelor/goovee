@@ -48,6 +48,9 @@ type Props = {
   priorities: TPriority[];
   contacts: ContactPartner[];
   formFields: PortalAppConfig['ticketingFormFieldSet'];
+  showCancel?: boolean;
+  showClose?: boolean;
+  showAssignment?: boolean;
 };
 
 export function TicketDetails(props: Props) {
@@ -57,24 +60,25 @@ export function TicketDetails(props: Props) {
     handleTicketFormSubmit: handleSubmit,
     loading,
   } = useTicketDetails();
-  const {categories, priorities, contacts, formFields} = props;
+  const {
+    categories,
+    priorities,
+    contacts,
+    formFields,
+    showCancel,
+    showClose,
+    showAssignment,
+  } = props;
 
   const allowedFields = useMemo(
     () => new Set(formFields?.map(f => f.name)),
     [formFields],
   );
 
-  const closeAndCancel = !ticket.status?.isCompleted &&
-    allowedFields.has(FIELDS.STATUS) && (
-      <>
-        <CloseTicket />
-        <CancelTicket />
-      </>
-    );
+  const close = !ticket.status?.isCompleted && showClose && <CloseTicket />;
+  const cancel = !ticket.status?.isCompleted && showCancel && <CancelTicket />;
 
-  const assignToButton = allowedFields.has(FIELDS.ASSIGNMENT) && (
-    <AssignToButton />
-  );
+  const assignToButton = showAssignment && <AssignToButton />;
 
   return (
     <Form {...form}>
@@ -90,7 +94,8 @@ export function TicketDetails(props: Props) {
             </Button>
             <div className="contents lg:hidden">
               {assignToButton}
-              {closeAndCancel}
+              {close}
+              {cancel}
             </div>
           </div>
           <div className="space-y-3">
@@ -117,22 +122,25 @@ export function TicketDetails(props: Props) {
               )}
             />
             <div className="flex flex-col gap-4">
-              {allowedFields.has(FIELDS.STATUS) && (
-                <>
-                  <div className="flex items-center gap-4">
+              <>
+                <div className="flex items-center gap-4">
+                  {allowedFields.has(FIELDS.STATUS) && (
                     <span>
                       <span className="font-medium pe-2">
                         {i18n.t('Status')}:
                       </span>
                       <Status name={ticket.status?.name} />
                     </span>
-                    <span className="hidden lg:inline-flex gap-4 ml-auto">
-                      {closeAndCancel}
-                    </span>
-                  </div>
+                  )}
+                  <span className="hidden lg:inline-flex gap-4 ml-auto">
+                    {close}
+                    {cancel}
+                  </span>
+                </div>
+                {(allowedFields.has(FIELDS.STATUS) || close || cancel) && (
                   <hr className="hidden lg:block" />
-                </>
-              )}
+                )}
+              </>
               {allowedFields.has(FIELDS.CATEGORY) && (
                 <FormField
                   control={form.control}
@@ -253,8 +261,12 @@ export function TicketDetails(props: Props) {
             />
 
             <div>
-              {allowedFields.has(FIELDS.ASSIGNMENT) && (
-                <div className="lg:flex space-y-2 mb-3">
+              <div
+                className={cn('lg:flex space-y-2', {
+                  ['mb-3']:
+                    allowedFields.has(FIELDS.ASSIGNMENT) || showAssignment,
+                })}>
+                {allowedFields.has(FIELDS.ASSIGNMENT) && (
                   <div>
                     <div className="flex items-center gap-2 space-y-0">
                       <span className="font-medium pe-2">
@@ -267,11 +279,13 @@ export function TicketDetails(props: Props) {
                       </div>
                     </div>
                   </div>
+                )}
+                {showAssignment && (
                   <div className="hidden lg:block ml-auto">
                     {assignToButton}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               {allowedFields.has(FIELDS.MANAGED_BY) && (
                 <div className="lg:flex space-y-2 mb-3">
                   <FormField

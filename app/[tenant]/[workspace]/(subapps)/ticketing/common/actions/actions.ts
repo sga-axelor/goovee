@@ -23,7 +23,12 @@ import {zodParseFormData} from '@/utils/formdata';
 import {ModelMap, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {FIELDS, MUTATE_TYPE, STATUS_CHANGE_METHOD} from '../constants';
+import {
+  FIELDS,
+  MUTATE_TYPE,
+  STATUS_CHANGE_METHOD,
+  UPDATABLE_FIELDS,
+} from '../constants';
 import {findTicketCancelledStatus, findTicketDoneStatus} from '../orm/projects';
 import type {TicketSearch} from '../types';
 import {
@@ -70,7 +75,9 @@ export async function mutate(
   const {auth, workspace} = info;
 
   const allowedFields = new Set(
-    workspace.config.ticketingFormFieldSet?.map(f => f.name),
+    workspace.config.ticketingFormFieldSet
+      ?.map(f => f.name)
+      .filter(name => UPDATABLE_FIELDS.includes(name)),
   );
 
   try {
@@ -85,12 +92,27 @@ export async function mutate(
               message: await t('Category is required'),
             });
           }
+          if (data.category && !allowedFields.has(FIELDS.CATEGORY)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['category'],
+              message: await t('Updating Category is not allowed'),
+            });
+          }
 
           if (allowedFields.has(FIELDS.PRIORITY) && !data.priority) {
             ctx.addIssue({
               code: ZodIssueCode.custom,
               path: ['priority'],
               message: await t('Priority is required'),
+            });
+          }
+
+          if (data.priority && !allowedFields.has(FIELDS.PRIORITY)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['priority'],
+              message: await t('Updating Priority is not allowed'),
             });
           }
 
@@ -101,6 +123,15 @@ export async function mutate(
               message: await t('Managed by is required'),
             });
           }
+
+          if (data.managedBy && !allowedFields.has(FIELDS.MANAGED_BY)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['managedBy'],
+              message: await t('Updating Managed by is not allowed'),
+            });
+          }
+
           if (
             !workspace.config.isDisplayChildTicket &&
             !workspace.config.isDisplayTicketParent &&
@@ -119,10 +150,37 @@ export async function mutate(
         data: createData,
         workspaceUserId: workspace.workspaceUser?.id,
         auth,
-        allowedFields,
       });
     } else {
-      const updateData = UpdateTicketSchema.parse(action.data);
+      const refinedSchema = UpdateTicketSchema.superRefine(
+        async (data, ctx) => {
+          if (data.category && !allowedFields.has(FIELDS.CATEGORY)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['category'],
+              message: await t('Updating Category is not allowed'),
+            });
+          }
+
+          if (data.priority && !allowedFields.has(FIELDS.PRIORITY)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['priority'],
+              message: await t('Updating Priority is not allowed'),
+            });
+          }
+
+          if (data.managedBy && !allowedFields.has(FIELDS.MANAGED_BY)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['managedBy'],
+              message: await t('Updating Managed by is not allowed'),
+            });
+          }
+        },
+      );
+
+      const updateData = await refinedSchema.parseAsync(action.data);
       if (force) {
         const version = await findTicketVersion(updateData.id, tenantId);
         updateData.version = version;
@@ -131,7 +189,6 @@ export async function mutate(
         data: updateData,
         workspaceUserId: workspace.workspaceUser?.id,
         auth,
-        allowedFields,
       });
     }
 
@@ -178,11 +235,7 @@ export async function updateAssignment(
   const {workspace, auth} = info;
   const {workspaceUser} = workspace;
 
-  const allowedFields = new Set(
-    workspace.config.ticketingFormFieldSet?.map(f => f.name),
-  );
-
-  if (!allowedFields.has(FIELDS.ASSIGNMENT)) {
+  if (!workspace.config.isDisplayAssignmentBtn) {
     return {
       error: true,
       message: await t('Updating AssignedTo is not allowed'),
@@ -209,7 +262,6 @@ export async function updateAssignment(
       workspaceUserId: workspaceUser?.id,
       auth,
       fromWS,
-      allowedFields,
     });
     return {success: true, data: true};
   } catch (e) {
@@ -244,14 +296,11 @@ export async function closeTicket(
 
   const {workspace, auth} = info;
   const {workspaceUser} = workspace;
-  const allowedFields = new Set(
-    workspace.config.ticketingFormFieldSet?.map(f => f.name),
-  );
 
-  if (!allowedFields.has(FIELDS.STATUS)) {
+  if (!workspace.config.isDisplayCloseBtn) {
     return {
       error: true,
-      message: await t('Updating Status is not allowed'),
+      message: await t('Closing ticket not allowed'),
     };
   }
 
@@ -284,7 +333,6 @@ export async function closeTicket(
       workspaceUserId: workspaceUser?.id,
       auth,
       fromWS,
-      allowedFields,
     });
 
     return {success: true, data: true};
@@ -316,13 +364,10 @@ export async function cancelTicket(
   const {workspace, auth} = info;
   const {workspaceUser} = workspace;
 
-  const allowedFields = new Set(
-    workspace.config.ticketingFormFieldSet?.map(f => f.name),
-  );
-  if (!allowedFields.has(FIELDS.STATUS)) {
+  if (!workspace.config.isDisplayCancelBtn) {
     return {
       error: true,
-      message: await t('Updating Status is not allowed'),
+      message: await t('Cancelling ticket not allowed'),
     };
   }
 
@@ -354,7 +399,6 @@ export async function cancelTicket(
       workspaceUserId: workspaceUser?.id,
       auth,
       fromWS,
-      allowedFields,
     });
 
     return {success: true, data: true};

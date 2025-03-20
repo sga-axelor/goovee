@@ -1,4 +1,4 @@
-import type {Entity, ID, Payload, SelectOptions} from '@goovee/orm';
+import type {Entity, ID, Payload, SelectOptions, UpdateArgs} from '@goovee/orm';
 import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
@@ -13,7 +13,6 @@ import {sql} from '@/utils/template-string';
 // ---- LOCAL IMPORTS ---- //
 import {
   ASSIGNMENT,
-  FIELDS,
   INVOICING_TYPE,
   TYPE_SELECT,
   VERSION_MISMATCH_CAUSE_CLASS,
@@ -30,10 +29,10 @@ import type {
 } from '../types';
 import type {AuthProps} from '../utils/auth-helper';
 import {sendTrackMail} from '../utils/mail';
-import {getMailRecipients} from './mail';
 import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 import type {QueryProps} from './helpers';
 import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
+import {getMailRecipients} from './mail';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
@@ -76,28 +75,21 @@ export async function createTicket({
   data,
   workspaceUserId,
   auth,
-  allowedFields,
 }: {
   data: CreateTicketInfo;
   workspaceUserId?: ID;
   auth: AuthProps;
-  allowedFields: Set<string>;
 }) {
   const {
-    priority: _priority,
+    priority,
     subject,
     description,
-    category: _category,
+    category,
     project: projectId,
-    managedBy: _managedBy,
     parentId,
   } = data;
-
-  const priority = allowedFields.has(FIELDS.PRIORITY) ? _priority : undefined;
-  const category = allowedFields.has(FIELDS.CATEGORY) ? _category : undefined;
-  const managedBy = allowedFields.has(FIELDS.MANAGED_BY)
-    ? _managedBy
-    : auth.userId;
+  let {managedBy} = data;
+  managedBy = managedBy || String(auth.userId);
 
   if (!auth.tenantId) {
     throw new Error(await t('TenantId is required'));
@@ -320,35 +312,23 @@ export async function updateTicket({
   auth,
   fromWS,
   workspaceUserId,
-  allowedFields,
 }: {
   data: UpdateTicketInfo;
   workspaceUserId?: ID;
   fromWS?: boolean;
   auth: AuthProps;
-  allowedFields: Set<string>;
 }): Promise<UTicket> {
   const {
-    priority: _priority,
+    priority,
     subject,
     description,
-    category: _category,
-    status: _status,
-    assignment: _assignment,
-    managedBy: _managedBy,
+    category,
+    status,
+    assignment,
+    managedBy,
     id,
     version,
   } = data;
-
-  const priority = allowedFields.has(FIELDS.PRIORITY) ? _priority : undefined;
-  const category = allowedFields.has(FIELDS.CATEGORY) ? _category : undefined;
-  const status = allowedFields.has(FIELDS.STATUS) ? _status : undefined;
-  const assignment = allowedFields.has(FIELDS.ASSIGNMENT)
-    ? _assignment
-    : undefined;
-  const managedBy = allowedFields.has(FIELDS.MANAGED_BY)
-    ? _managedBy
-    : undefined;
 
   const client = await manager.getClient(auth.tenantId);
 
@@ -375,6 +355,20 @@ export async function updateTicket({
 
     const ws = `${aos.url}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
 
+    const toUpdate = {
+      ...(subject != null && {name: subject}),
+      ...(description != null && {description}),
+      ...(category && {projectTaskCategory: {id: category}}),
+      ...(priority && {priority: {id: priority}}),
+      ...(status && {status: {id: status}}),
+      ...(assignment && {assignment: assignment}),
+      ...(managedBy && {managedByContact: {id: managedBy}}),
+    };
+
+    if (!Object.keys(toUpdate).length) {
+      throw new Error(await t('Nothing to update'));
+    }
+
     const res = await axios
       .post(
         ws,
@@ -382,13 +376,7 @@ export async function updateTicket({
           data: {
             id,
             version,
-            ...(subject != null && {name: subject}),
-            ...(description != null && {description}),
-            ...(category && {projectTaskCategory: {id: category}}),
-            ...(priority && {priority: {id: priority}}),
-            ...(status && {status: {id: status}}),
-            ...(assignment && {assignment: assignment}),
-            ...(managedBy && {managedByContact: {id: managedBy}}),
+            ...toUpdate,
           },
           fields: ['project'],
         },
@@ -414,18 +402,26 @@ export async function updateTicket({
       throw new Error(await t('Ticket not found'));
     }
   } else {
+    const toUpdate = {
+      ...(description != null && {description}),
+      ...(subject != null && {name: subject, fullName: `#${id} ${subject}`}),
+      ...(category && {projectTaskCategory: {select: {id: category}}}),
+      ...(priority && {priority: {select: {id: priority}}}),
+      ...(status && {status: {select: {id: status}}}),
+      ...(assignment && {assignment}),
+      ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
+    } satisfies Omit<UpdateArgs<AOSProjectTask>, 'id' | 'version'>;
+
+    if (!Object.keys(toUpdate).length) {
+      throw new Error(await t('Nothing to update'));
+    }
+
     newTicket = await client.aOSProjectTask.update({
       data: {
         id,
         version,
         updatedOn: new Date(),
-        ...(description != null && {description}),
-        ...(subject != null && {name: subject, fullName: `#${id} ${subject}`}),
-        ...(category && {projectTaskCategory: {select: {id: category}}}),
-        ...(priority && {priority: {select: {id: priority}}}),
-        ...(status && {status: {select: {id: status}}}),
-        ...(assignment && {assignment}),
-        ...(managedBy && {managedByContact: {select: {id: managedBy}}}),
+        ...toUpdate,
       },
       select: updateSelect,
     });

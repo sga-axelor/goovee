@@ -104,6 +104,9 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   isDisplayChildTicket: true,
   isDisplayRelatedTicket: true,
   isDisplayTicketParent: true,
+  isDisplayAssignmentBtn: true,
+  isDisplayCancelBtn: true,
+  isDisplayCloseBtn: true,
 };
 
 export async function findWorkspaceMembers({

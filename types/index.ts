@@ -145,6 +145,9 @@ export interface PortalAppConfig extends Model {
   isDisplayChildTicket: boolean;
   isDisplayRelatedTicket: boolean;
   isDisplayTicketParent: boolean;
+  isDisplayAssignmentBtn: boolean;
+  isDisplayCancelBtn: boolean;
+  isDisplayCloseBtn: boolean;
   otpTemplateList: any[];
   invitationTemplateList: any[];
 }

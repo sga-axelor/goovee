@@ -105,7 +105,9 @@ export function TicketForm(props: TicketFormProps) {
   const form = useForm<TicketInfo>({
     resolver: zodResolver(refinedSchema),
     defaultValues: {
-      managedBy: userId.toString(),
+      managedBy: allowedFields.has(FIELDS.MANAGED_BY)
+        ? userId.toString()
+        : undefined,
       parentId: parentId,
     },
   });

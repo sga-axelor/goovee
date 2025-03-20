@@ -1,3 +1,5 @@
+import {pick} from 'lodash';
+
 // NOTE: This is used for serverside sorting
 export const sortKeyPathMap: Record<string, string> = {
   ticketId: 'id',
@@ -65,3 +67,9 @@ export const FIELDS = {
   TARGET_VERSION: 'targetVersion',
   TASK_END_DATE: 'taskEndDate',
 };
+
+export const UPDATABLE_FIELDS = [
+  FIELDS.PRIORITY,
+  FIELDS.CATEGORY,
+  FIELDS.MANAGED_BY,
+];

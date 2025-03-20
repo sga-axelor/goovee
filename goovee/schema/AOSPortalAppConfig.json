@@ -302,6 +302,18 @@
     {
       "name": "isDisplayRelatedTicket",
       "type": "Boolean"
+    },
+    {
+      "name": "isDisplayCancelBtn",
+      "type": "Boolean"
+    },
+    {
+      "name": "isDisplayCloseBtn",
+      "type": "Boolean"
+    },
+    {
+      "name": "isDisplayAssignmentBtn",
+      "type": "Boolean"
     }
   ]
 }
