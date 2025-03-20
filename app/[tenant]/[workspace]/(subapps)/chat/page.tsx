@@ -14,13 +14,13 @@ export default async function Chat({params}: {params: {tenant: string}}) {
   const {data: mmuser, token} = await getAuthToken(user?.email, user?.email);
 
   if (!token) {
-    return <div>{await t('Aucune discussion disponible')}</div>;
+    return <div>{await t('No discussions available')}</div>;
   }
 
   const team = await getTeam({tenant: params.tenant}).then(clone);
 
   if (!team || team?.teamId === '') {
-    return <div>{await t('Erreur de configuration du chat.')}</div>;
+    return <div>{await t('Chat configuration error.')}</div>;
   }
 
   const userStatus = await getUserStatus(mmuser.id, token);
