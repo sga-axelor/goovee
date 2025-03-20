@@ -192,7 +192,7 @@ export const GroupActionList = ({
                         <div className="flex items-center gap-[0.625rem] px-2">
                           <MdOutlineMarkChatRead className="w-4 h-4" />
                           <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
-                            {MARK_AS_READ}
+                            {i18n.t(MARK_AS_READ)}
                           </span>
                         </div>
                       )}
@@ -201,7 +201,7 @@ export const GroupActionList = ({
                         onClick={() => handlePinGroup(group?.isPin, group)}>
                         <MdOutlinePushPin className="w-4 h-4" />
                         <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
-                          {!group?.isPin ? PIN : REMOVE_PIN}
+                          {!group?.isPin ? i18n.t(PIN) : i18n.t(REMOVE_PIN)}
                         </span>
                       </div>
                     </>
@@ -213,7 +213,7 @@ export const GroupActionList = ({
                         <div className="flex items-center gap-[0.625rem] px-2">
                           <MdNotificationsNone className="w-4 h-4" />
                           <span className="w-full text-left text-xs leading-[1.125rem] font-normal cursor-pointer">
-                            {NOTIFICATIONS}
+                            {i18n.t(NOTIFICATIONS)}
                           </span>
                         </div>
                       </PopoverTrigger>
@@ -239,7 +239,7 @@ export const GroupActionList = ({
                       onClick={() => handleExit(group)}>
                       <MdExitToApp className="w-4 h-4" />
                       <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
-                        {LEAVE_THIS_GROUP}
+                        {i18n.t(LEAVE_THIS_GROUP)}
                       </span>
                     </div>
                   ) : (
@@ -248,7 +248,7 @@ export const GroupActionList = ({
                       onClick={() => handleJoinGroup(group, userId)}>
                       <MdOutlineGroupAdd className="w-4 h-4" />
                       <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
-                        {ASK_TO_JOIN}
+                        {i18n.t(ASK_TO_JOIN)}
                       </span>
                     </div>
                   )}

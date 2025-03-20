@@ -7,6 +7,7 @@ import debounce from 'lodash/debounce';
 // ---- CORE IMPORTS ---- //
 import {Button, Input} from '@/ui/components';
 import {SEARCH_HERE} from '@/subapps/forum/common/constants';
+import {i18n} from '@/locale';
 
 export const Search = ({
   onChange = () => {},
@@ -34,7 +35,7 @@ export const Search = ({
       <Input
         value={searchValue}
         className="border-none placeholder:text-sm"
-        placeholder={SEARCH_HERE}
+        placeholder={i18n.t(SEARCH_HERE)}
         onChange={e => {
           const value = e.target.value;
           setSearchValue(value);

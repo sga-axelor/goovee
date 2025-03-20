@@ -255,7 +255,7 @@ export const RegistrationForm = ({
         : []),
       {
         name: 'otherPeople',
-        title: 'Other people',
+        title: i18n.t('Other people'),
         type: 'array',
         widget: 'custom',
         helper: null,

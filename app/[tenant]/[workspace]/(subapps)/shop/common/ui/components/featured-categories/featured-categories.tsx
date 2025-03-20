@@ -128,7 +128,7 @@ export function FeaturedCategories({
                 <div
                   className="flex gap-2 px-3 py-4 cursor-pointer"
                   onClick={() => handleCategoryClick({category})}>
-                  <span className="leading-6 text-sm">See All</span>
+                  <span className="leading-6 text-sm">{i18n.t('See All')}</span>
                   <MdEast className="w-6 h-6" />
                 </div>
               </div>

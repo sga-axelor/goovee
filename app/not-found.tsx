@@ -22,7 +22,7 @@ export default function NotFound() {
         </div>
         <div>
           <Link href="/">
-            <Button>Return Home</Button>
+            <Button>{i18n.t('Return Home')}</Button>
           </Link>
         </div>
       </div>

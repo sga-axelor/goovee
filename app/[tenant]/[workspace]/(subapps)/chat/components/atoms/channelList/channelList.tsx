@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import {i18n} from '@/locale';
 import {ChannelType} from '../../../types/types';
 
 export const ChannelList = ({
@@ -65,7 +66,11 @@ export const ChannelList = ({
   }, [channels, searchTerm]);
 
   if (!channels) {
-    return <div className="text-gray-400 p-4">Chargement des canaux...</div>;
+    return (
+      <div className="text-gray-400 p-4">
+        {i18n.t('Chargement des canaux...')}
+      </div>
+    );
   }
 
   const toggleCollapse = () => {
@@ -91,7 +96,7 @@ export const ChannelList = ({
         </button>
         {!isCollapsed && (
           <div className="ml-2 flex-grow">
-            <h2 className="font-semibold text-lg">Canaux</h2>
+            <h2 className="font-semibold text-lg">{i18n.t('Canaux')}</h2>
             {channels.length > 10 && (
               <div className="flex items-center bg-gray-900 rounded p-1 mt-2">
                 <Search size={16} className="text-gray-400 mr-2" />

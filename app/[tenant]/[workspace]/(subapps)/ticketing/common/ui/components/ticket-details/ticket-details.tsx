@@ -324,7 +324,9 @@ export function TicketDetails(props: Props) {
               )}
               {allowedFields.has(FIELDS.TASK_END_DATE) && (
                 <p>
-                  <span className="font-medium pe-2">Expected on:</span>
+                  <span className="font-medium pe-2">
+                    {i18n.t('Expected on')}:
+                  </span>
                   {formatDate(ticket?.taskEndDate!)}
                 </p>
               )}

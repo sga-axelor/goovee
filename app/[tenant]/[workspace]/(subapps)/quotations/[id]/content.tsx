@@ -132,7 +132,7 @@ function Stripe({onApprove, quotation}: any) {
     <Button
       className="h-[50px] bg-[#635bff] text-lg font-medium"
       onClick={handleCreateCheckoutSession}>
-      Pay with Stripe
+      {i18n.t('Pay with Stripe')}{' '}
     </Button>
   );
 }

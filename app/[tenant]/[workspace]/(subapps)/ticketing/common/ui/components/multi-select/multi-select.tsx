@@ -8,6 +8,7 @@ import {
   CommandItem,
 } from '@/ui/components';
 import {cn} from '@/utils/css';
+import {i18n} from '@/locale';
 import {Command as CommandPrimitive} from 'cmdk';
 import {X as RemoveIcon, Check} from 'lucide-react';
 import React, {
@@ -250,7 +251,9 @@ const MultiSelectorList = forwardRef<
       )}>
       {children}
       <CommandEmpty>
-        <span className="text-muted-foreground">No results found</span>
+        <span className="text-muted-foreground">
+          {i18n.t('No results found')}
+        </span>
       </CommandEmpty>
     </CommandList>
   );
