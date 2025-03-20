@@ -3,7 +3,7 @@ import {useCallback, useMemo} from 'react';
 import {i18n} from '@/locale';
 import {Label, Separator} from '@/ui/components';
 
-import {type DisplayPanel} from '../types';
+import type {DisplayPanel} from '../types';
 import {getColspan} from '../display.helpers';
 
 export const PanelComponent = ({
@@ -65,5 +65,3 @@ export const PanelComponent = ({
 
   return renderContent();
 };
-
-export default PanelComponent;

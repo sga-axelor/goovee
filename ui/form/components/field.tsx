@@ -13,7 +13,7 @@ import {
   RichTextEditor,
 } from '@/ui/components';
 
-import {type Field as FieldType} from '../types';
+import type {Field as FieldType} from '../types';
 import {getColspan, mapFieldType} from '../display.helpers';
 
 export const FieldComponent = ({
@@ -166,5 +166,3 @@ export const FieldComponent = ({
     />
   );
 };
-
-export default FieldComponent;

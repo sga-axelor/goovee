@@ -5,12 +5,14 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 
 // ---- CORE IMPORTS ---- //
-import {Button, Form} from '@/ui/components';
-import type {Panel, Field, DisplayPanel} from '@/ui/form';
-import {createFormSchema, isField} from '@/ui/form';
-import {FieldComponent, PanelComponent} from './components';
-import {getFormContent} from './content.helpers';
 import {i18n} from '@/locale';
+import {Button, Form} from '@/ui/components';
+
+import type {Panel, Field, DisplayPanel} from './types';
+import {createFormSchema} from './validation.helpers';
+import {getFormContent} from './content.helpers';
+import {isField} from './display.helpers';
+import {FieldComponent, PanelComponent} from './components';
 
 export const FormView = ({
   style,
@@ -69,12 +71,12 @@ export const FormView = ({
     form.formState.isValid && !Object.keys(form.formState.errors || {}).length;
 
   const renderItem = useCallback(
-    (item: any, name: any) => {
+    (item: DisplayPanel | Field, name: string) => {
       if (isField(item)) {
         return (
           <FieldComponent
             key={name}
-            item={item}
+            item={item as Field}
             identifier={name}
             form={form}
             globalReadonly={isReadonly}
@@ -116,5 +118,3 @@ export const FormView = ({
     </div>
   );
 };
-
-export default FormView;

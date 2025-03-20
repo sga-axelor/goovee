@@ -1,6 +1,4 @@
-// ---- LOCAL IMPORTS ---- //
-import type {Field} from '@/ui/form';
-import {DEFAULT_COLSPAN} from '@/ui/form';
+import {type Field, DEFAULT_COLSPAN} from './types';
 
 export function mapFieldType(field: Field): string {
   if (field.widget != null) {

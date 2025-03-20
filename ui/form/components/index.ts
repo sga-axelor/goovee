@@ -1,4 +1,4 @@
-export {default as ArrayComponent} from './array';
-export {default as FieldComponent} from './field';
-export {default as PanelComponent} from './panel';
-export {default as SelectionPicker} from './selection-picker';
+export {ArrayComponent} from './array';
+export {FieldComponent} from './field';
+export {PanelComponent} from './panel';
+export {SelectionPicker} from './selection-picker';

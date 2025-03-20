@@ -71,5 +71,3 @@ export const CustomFieldsViewer = ({
 
   return formContent.map(_i => renderItem(_i, _i.name));
 };
-
-export default CustomFieldsViewer;

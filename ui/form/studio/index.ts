@@ -1,2 +1,6 @@
-export {default as CustomFieldsViewer} from './custom-fields-viewer';
-export * from './display.helpers';
+export {CustomFieldsViewer} from './custom-fields-viewer';
+export {
+  extractCustomData,
+  formatStudioContent,
+  formatStudioFields,
+} from './display.helpers';

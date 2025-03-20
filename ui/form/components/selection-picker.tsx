@@ -4,8 +4,7 @@ import React, {useMemo} from 'react';
 import Select, {SingleValue, MultiValue} from 'react-select';
 import {UseFormReturn} from 'react-hook-form';
 
-// ---- CORE IMPORTS ---- //
-import type {Field} from '@/ui/form';
+import type {Field} from '../types';
 
 function formatValues(formValue: any) {
   if (Array.isArray(formValue)) {
@@ -79,5 +78,3 @@ export const SelectionPicker = ({
     />
   );
 };
-
-export default SelectionPicker;

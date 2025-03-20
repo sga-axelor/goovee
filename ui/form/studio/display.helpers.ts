@@ -1,7 +1,7 @@
 import {SelectionPicker} from '../components';
 import type {Field, Panel, Widget} from '../types';
 
-export function mapStudioTypes(field: any): any {
+function mapStudioTypes(field: any): any {
   switch (field.type) {
     case 'decimal':
     case 'integer':
@@ -11,7 +11,7 @@ export function mapStudioTypes(field: any): any {
   }
 }
 
-export const removeContextedFields = (fields: any[], object: any): any[] => {
+const removeContextedFields = (fields: any[], object: any): any[] => {
   if (!Array.isArray(fields) || fields.length === 0) {
     return [];
   }

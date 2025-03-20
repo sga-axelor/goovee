@@ -1,7 +1,8 @@
 import {z, ZodSchema} from 'zod';
 
 // ---- CORE IMPORTS ---- //
-import {isField, type Field} from '@/ui/form';
+import type {Field} from './types';
+import {isField} from './display.helpers';
 
 const getRequiredCondition = (schema: any, _field: Field): any => {
   if (!_field.required) {
