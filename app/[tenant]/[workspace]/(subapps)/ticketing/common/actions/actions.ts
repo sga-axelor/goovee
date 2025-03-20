@@ -101,6 +101,17 @@ export async function mutate(
               message: await t('Managed by is required'),
             });
           }
+          if (
+            !workspace.config.isDisplayChildTicket &&
+            !workspace.config.isDisplayTicketParent &&
+            data.parentId
+          ) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: ['parentId'],
+              message: await t('Parent child relation not enabled'),
+            });
+          }
         },
       );
       const createData = await refinedSchema.parseAsync(action.data);
@@ -375,7 +386,10 @@ export async function createRelatedLink(
 
   if (error) return {error: true, message};
 
-  const {auth} = info;
+  const {auth, workspace} = info;
+  if (!workspace.config.isDisplayRelatedTicket) {
+    return {error: true, message: await t('Related tickets are not enabled')};
+  }
 
   try {
     await createRelatedTicketLink({data, auth});
@@ -408,8 +422,13 @@ export async function createChildLink(
 
   if (error) return {error: true, message};
 
-  const {auth} = info;
-
+  const {auth, workspace} = info;
+  if (
+    !workspace.config.isDisplayChildTicket &&
+    !workspace.config.isDisplayTicketParent
+  ) {
+    return {error: true, message: await t('Parent child relation not enabled')};
+  }
   try {
     await createChildTicketLink({data, auth});
 
@@ -437,7 +456,13 @@ export async function createParentLink(
 
   if (error) return {error: true, message};
 
-  const {auth} = info;
+  const {auth, workspace} = info;
+  if (
+    !workspace.config.isDisplayChildTicket &&
+    !workspace.config.isDisplayTicketParent
+  ) {
+    return {error: true, message: await t('Parent child relation not enabled')};
+  }
 
   try {
     await createParentTicketLink({data, auth});
@@ -470,7 +495,13 @@ export async function deleteChildLink(
 
   if (error) return {error: true, message};
 
-  const {auth} = info;
+  const {auth, workspace} = info;
+  if (
+    !workspace.config.isDisplayChildTicket &&
+    !workspace.config.isDisplayTicketParent
+  ) {
+    return {error: true, message: await t('Parent child relation not enabled')};
+  }
 
   try {
     await deleteChildTicketLink({data, auth});
@@ -503,7 +534,13 @@ export async function deleteParentLink(
 
   if (error) return {error: true, message};
 
-  const {auth} = info;
+  const {auth, workspace} = info;
+  if (
+    !workspace.config.isDisplayChildTicket &&
+    !workspace.config.isDisplayTicketParent
+  ) {
+    return {error: true, message: await t('Parent child relation not enabled')};
+  }
 
   try {
     await deleteParentTicketLink({data, auth});
@@ -535,7 +572,10 @@ export async function deleteRelatedLink(
 
   if (error) return {error: true, message};
 
-  const {auth} = info;
+  const {auth, workspace} = info;
+  if (!workspace.config.isDisplayRelatedTicket) {
+    return {error: true, message: await t('Related tickets are not enabled')};
+  }
 
   try {
     const count = await deleteRelatedTicketLink({data, auth});

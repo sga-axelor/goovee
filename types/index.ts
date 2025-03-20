@@ -142,6 +142,9 @@ export interface PortalAppConfig extends Model {
   isShowResolvedTicket: boolean;
   ticketingFieldSet: {id: string; name: string}[];
   ticketingFormFieldSet: {id: string; name: string}[];
+  isDisplayChildTicket: boolean;
+  isDisplayRelatedTicket: boolean;
+  isDisplayTicketParent: boolean;
   otpTemplateList: any[];
   invitationTemplateList: any[];
 }

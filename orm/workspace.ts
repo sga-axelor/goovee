@@ -101,6 +101,9 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   isShowResolvedTicket: true,
   ticketingFieldSet: {select: {name: true}},
   ticketingFormFieldSet: {select: {name: true}},
+  isDisplayChildTicket: true,
+  isDisplayRelatedTicket: true,
+  isDisplayTicketParent: true,
 };
 
 export async function findWorkspaceMembers({

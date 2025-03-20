@@ -19,6 +19,7 @@ import {
 } from '@/ui/components';
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
+import {cn} from '@/utils/css';
 import {encodeFilter} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 
@@ -147,36 +148,49 @@ export default async function Page({
             contacts={contacts}
             formFields={clone(workspace.config.ticketingFormFieldSet)}
           />
-          <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
-            <Suspense fallback={<Skeleton className="h-[160px]" />}>
-              <ParentTicket
-                ticketId={ticket.id}
-                projectId={ticket.project?.id}
-                tenantId={tenant}
-                fields={workspace.config.ticketingFieldSet}
-              />
-            </Suspense>
-            <Suspense fallback={<Skeleton className="h-[160px]" />}>
-              <ChildTickets
-                projectId={ticket.project?.id}
-                ticketId={ticket.id}
-                categories={categories}
-                priorities={priorities}
-                contacts={contacts}
-                userId={auth.userId}
-                tenantId={tenant}
-                fields={workspace.config.ticketingFieldSet}
-                formFields={workspace.config.ticketingFormFieldSet}
-              />
-            </Suspense>
-            <Suspense fallback={<Skeleton className="h-[160px]" />}>
-              <RelatedTickets
-                ticketId={ticket.id}
-                projectId={ticket.project?.id}
-                tenantId={tenant}
-                fields={workspace.config.ticketingFieldSet}
-              />
-            </Suspense>
+
+          <div
+            className={cn('space-y-4 rounded-md border bg-card p-4 mt-5', {
+              ['hidden']:
+                !workspace.config.isDisplayTicketParent &&
+                !workspace.config.isDisplayChildTicket &&
+                !workspace.config.isDisplayRelatedTicket,
+            })}>
+            {workspace.config.isDisplayTicketParent && (
+              <Suspense fallback={<Skeleton className="h-[160px]" />}>
+                <ParentTicket
+                  ticketId={ticket.id}
+                  projectId={ticket.project?.id}
+                  tenantId={tenant}
+                  fields={workspace.config.ticketingFieldSet}
+                />
+              </Suspense>
+            )}
+            {workspace.config.isDisplayChildTicket && (
+              <Suspense fallback={<Skeleton className="h-[160px]" />}>
+                <ChildTickets
+                  projectId={ticket.project?.id}
+                  ticketId={ticket.id}
+                  categories={categories}
+                  priorities={priorities}
+                  contacts={contacts}
+                  userId={auth.userId}
+                  tenantId={tenant}
+                  fields={workspace.config.ticketingFieldSet}
+                  formFields={workspace.config.ticketingFormFieldSet}
+                />
+              </Suspense>
+            )}
+            {workspace.config.isDisplayRelatedTicket && (
+              <Suspense fallback={<Skeleton className="h-[160px]" />}>
+                <RelatedTickets
+                  ticketId={ticket.id}
+                  projectId={ticket.project?.id}
+                  tenantId={tenant}
+                  fields={workspace.config.ticketingFieldSet}
+                />
+              </Suspense>
+            )}
           </div>
         </>
       </TicketDetailsProvider>

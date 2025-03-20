@@ -290,6 +290,18 @@
       "type": "ManyToMany",
       "name": "ticketingFormFieldSet",
       "target": "AOSMetaField"
+    },
+    {
+      "name": "isDisplayTicketParent",
+      "type": "Boolean"
+    },
+    {
+      "name": "isDisplayChildTicket",
+      "type": "Boolean"
+    },
+    {
+      "name": "isDisplayRelatedTicket",
+      "type": "Boolean"
     }
   ]
 }
