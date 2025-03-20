@@ -145,7 +145,7 @@ export default async function Page({
             categories={categories}
             priorities={priorities}
             contacts={contacts}
-            fields={clone(workspace.config.ticketingFieldSet)}
+            formFields={clone(workspace.config.ticketingFormFieldSet)}
           />
           <div className="space-y-4 rounded-md border bg-card p-4 mt-5">
             <Suspense fallback={<Skeleton className="h-[160px]" />}>
@@ -166,6 +166,7 @@ export default async function Page({
                 userId={auth.userId}
                 tenantId={tenant}
                 fields={workspace.config.ticketingFieldSet}
+                formFields={workspace.config.ticketingFormFieldSet}
               />
             </Suspense>
             <Suspense fallback={<Skeleton className="h-[160px]" />}>
@@ -216,6 +217,7 @@ async function ChildTickets({
   userId,
   tenantId,
   fields,
+  formFields,
 }: {
   ticketId: ID;
   projectId?: ID;
@@ -225,6 +227,7 @@ async function ChildTickets({
   userId: ID;
   tenantId: Tenant['id'];
   fields: PortalAppConfig['ticketingFieldSet'];
+  formFields: PortalAppConfig['ticketingFormFieldSet'];
 }) {
   if (!projectId) return;
 
@@ -235,7 +238,7 @@ async function ChildTickets({
   return (
     <div>
       <ChildTicketsHeader
-        fields={clone(fields)}
+        formFields={clone(formFields)}
         ticketId={ticketId}
         parentIds={parentIds}
         childrenIds={tickets?.map(t => t.id) ?? []}

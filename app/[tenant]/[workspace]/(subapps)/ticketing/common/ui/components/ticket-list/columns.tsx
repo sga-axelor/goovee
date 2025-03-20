@@ -62,7 +62,7 @@ export const ticketColumns: Column<Cloned<TicketListTicket>>[] = [
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: FIELDS.ASSIGNED_TO,
+    key: FIELDS.ASSIGNMENT,
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -122,7 +122,7 @@ export const parentColumns: Column<Cloned<ParentTicket>>[] = [
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: FIELDS.ASSIGNED_TO,
+    key: FIELDS.ASSIGNMENT,
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -182,7 +182,7 @@ export const childColumns: Column<Cloned<ChildTicket>>[] = [
     getter: 'managedByContact.simpleFullName',
   },
   {
-    key: FIELDS.ASSIGNED_TO,
+    key: FIELDS.ASSIGNMENT,
     label: 'Assigned to',
     content: t =>
       isWithProvider(t.assignment)
@@ -245,7 +245,7 @@ export const relatedColumns: Column<Cloned<TicketLink>>[] = [
     getter: 'relatedTask.managedByContact.simpleFullName',
   },
   {
-    key: FIELDS.ASSIGNED_TO,
+    key: FIELDS.ASSIGNMENT,
     label: 'Assigned to',
     content: ({relatedTask: t}) =>
       isWithProvider(t?.assignment)

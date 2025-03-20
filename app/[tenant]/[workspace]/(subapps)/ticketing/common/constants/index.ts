@@ -56,8 +56,12 @@ export const FIELDS = {
   PRIORITY: 'priority',
   STATUS: 'status',
   CATEGORY: 'projectTaskCategory',
-  ASSIGNED_TO: 'assignment',
+  ASSIGNMENT: 'assignment',
   MANAGED_BY: 'managedByContact',
   CREATED_BY: 'createdByContact',
   UPDATED_ON: 'updatedOn',
+  CREATED_ON: 'createdOn',
+  PROGRESS: 'progress',
+  TARGET_VERSION: 'targetVersion',
+  TASK_END_DATE: 'taskEndDate',
 };

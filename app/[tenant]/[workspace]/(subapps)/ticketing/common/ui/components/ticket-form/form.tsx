@@ -47,7 +47,7 @@ type TicketFormProps = {
   submitFormWithAction?: (
     action: (data?: MutateResponse) => Promise<void>,
   ) => Promise<void>;
-  fields: PortalAppConfig['ticketingFieldSet'];
+  formFields: PortalAppConfig['ticketingFormFieldSet'];
 };
 export function TicketForm(props: TicketFormProps) {
   const {
@@ -60,7 +60,7 @@ export function TicketForm(props: TicketFormProps) {
     className,
     onSuccess,
     submitFormWithAction,
-    fields,
+    formFields,
   } = props;
   const {toast} = useToast();
   const {workspaceURL, workspaceURI} = useWorkspace();
@@ -68,8 +68,8 @@ export function TicketForm(props: TicketFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const allowedFields = useMemo(
-    () => new Set(fields?.map(f => f.name)),
-    [fields],
+    () => new Set(formFields?.map(f => f.name)),
+    [formFields],
   );
 
   const refinedSchema = useMemo(

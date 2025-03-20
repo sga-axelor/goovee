@@ -343,7 +343,7 @@ export async function updateTicket({
   const priority = allowedFields.has(FIELDS.PRIORITY) ? _priority : undefined;
   const category = allowedFields.has(FIELDS.CATEGORY) ? _category : undefined;
   const status = allowedFields.has(FIELDS.STATUS) ? _status : undefined;
-  const assignment = allowedFields.has(FIELDS.ASSIGNED_TO)
+  const assignment = allowedFields.has(FIELDS.ASSIGNMENT)
     ? _assignment
     : undefined;
   const managedBy = allowedFields.has(FIELDS.MANAGED_BY)

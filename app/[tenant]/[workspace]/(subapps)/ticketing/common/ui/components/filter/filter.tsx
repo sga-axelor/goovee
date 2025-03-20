@@ -212,7 +212,7 @@ export function Filter(props: FilterProps) {
                     )}
                   </>
                 )}
-                {allowedFields.has(FIELDS.ASSIGNED_TO) && (
+                {allowedFields.has(FIELDS.ASSIGNMENT) && (
                   <AssignedToField
                     form={form}
                     company={company}

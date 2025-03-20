@@ -100,6 +100,7 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   isShowCreatedTicket: true,
   isShowResolvedTicket: true,
   ticketingFieldSet: {select: {name: true}},
+  ticketingFormFieldSet: {select: {name: true}},
 };
 
 export async function findWorkspaceMembers({

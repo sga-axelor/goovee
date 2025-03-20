@@ -70,7 +70,7 @@ export async function mutate(
   const {auth, workspace} = info;
 
   const allowedFields = new Set(
-    workspace.config.ticketingFieldSet?.map(f => f.name),
+    workspace.config.ticketingFormFieldSet?.map(f => f.name),
   );
 
   try {
@@ -168,10 +168,10 @@ export async function updateAssignment(
   const {workspaceUser} = workspace;
 
   const allowedFields = new Set(
-    workspace.config.ticketingFieldSet?.map(f => f.name),
+    workspace.config.ticketingFormFieldSet?.map(f => f.name),
   );
 
-  if (!allowedFields.has(FIELDS.ASSIGNED_TO)) {
+  if (!allowedFields.has(FIELDS.ASSIGNMENT)) {
     return {
       error: true,
       message: await t('Updating AssignedTo is not allowed'),
@@ -234,7 +234,7 @@ export async function closeTicket(
   const {workspace, auth} = info;
   const {workspaceUser} = workspace;
   const allowedFields = new Set(
-    workspace.config.ticketingFieldSet?.map(f => f.name),
+    workspace.config.ticketingFormFieldSet?.map(f => f.name),
   );
 
   if (!allowedFields.has(FIELDS.STATUS)) {
@@ -306,7 +306,7 @@ export async function cancelTicket(
   const {workspaceUser} = workspace;
 
   const allowedFields = new Set(
-    workspace.config.ticketingFieldSet?.map(f => f.name),
+    workspace.config.ticketingFormFieldSet?.map(f => f.name),
   );
   if (!allowedFields.has(FIELDS.STATUS)) {
     return {

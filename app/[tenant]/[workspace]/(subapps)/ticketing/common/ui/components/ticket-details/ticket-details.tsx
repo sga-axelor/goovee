@@ -47,7 +47,7 @@ type Props = {
   categories: TCategory[];
   priorities: TPriority[];
   contacts: ContactPartner[];
-  fields: PortalAppConfig['ticketingFieldSet'];
+  formFields: PortalAppConfig['ticketingFormFieldSet'];
 };
 
 export function TicketDetails(props: Props) {
@@ -57,11 +57,11 @@ export function TicketDetails(props: Props) {
     handleTicketFormSubmit: handleSubmit,
     loading,
   } = useTicketDetails();
-  const {categories, priorities, contacts, fields} = props;
+  const {categories, priorities, contacts, formFields} = props;
 
   const allowedFields = useMemo(
-    () => new Set(fields?.map(f => f.name)),
-    [fields],
+    () => new Set(formFields?.map(f => f.name)),
+    [formFields],
   );
 
   const closeAndCancel = !ticket.status?.isCompleted &&
@@ -72,7 +72,7 @@ export function TicketDetails(props: Props) {
       </>
     );
 
-  const assignToButton = allowedFields.has(FIELDS.ASSIGNED_TO) && (
+  const assignToButton = allowedFields.has(FIELDS.ASSIGNMENT) && (
     <AssignToButton />
   );
 
@@ -236,14 +236,24 @@ export function TicketDetails(props: Props) {
                 </span>
               </p>
             )}
-            <p>
-              <span className="font-medium pe-2">{i18n.t('Created on')}:</span>
-              {formatDate(ticket?.createdOn!)}
-            </p>
-            <hr />
+            {allowedFields.has(FIELDS.CREATED_ON) && (
+              <p>
+                <span className="font-medium pe-2">
+                  {i18n.t('Created on')}:
+                </span>
+                {formatDate(ticket?.createdOn!)}
+              </p>
+            )}
+            <hr
+              className={cn({
+                ['hidden']:
+                  !allowedFields.has(FIELDS.CREATED_BY) &&
+                  !allowedFields.has(FIELDS.CREATED_ON),
+              })}
+            />
 
             <div>
-              {allowedFields.has(FIELDS.ASSIGNED_TO) && (
+              {allowedFields.has(FIELDS.ASSIGNMENT) && (
                 <div className="lg:flex space-y-2 mb-3">
                   <div>
                     <div className="flex items-center gap-2 space-y-0">
@@ -298,26 +308,45 @@ export function TicketDetails(props: Props) {
                   />
                 </div>
               )}
+              {allowedFields.has(FIELDS.TASK_END_DATE) && (
+                <p>
+                  <span className="font-medium pe-2">Expected on:</span>
+                  {formatDate(ticket?.taskEndDate!)}
+                </p>
+              )}
+            </div>
+            <hr
+              className={cn({
+                ['hidden']:
+                  !allowedFields.has(FIELDS.TASK_END_DATE) &&
+                  !allowedFields.has(FIELDS.MANAGED_BY) &&
+                  !allowedFields.has(FIELDS.ASSIGNMENT),
+              })}
+            />
+            {allowedFields.has(FIELDS.PROGRESS) && (
+              <div className="sm:flex items-center !mt-3.5">
+                <p className="font-medium pe-2 mb-3 sm:mb-0">
+                  {i18n.t('Progress')}: {getProgress(ticket.progress)}%
+                </p>
+                <Progress
+                  value={getProgress(ticket.progress)}
+                  className="h-3 basis-3/4 sm:ms-5 rounded-none"
+                />
+              </div>
+            )}
+            {allowedFields.has(FIELDS.TARGET_VERSION) && (
               <p>
-                <span className="font-medium pe-2">Expected on:</span>
-                {formatDate(ticket?.taskEndDate!)}
+                <span className="font-medium pe-2"> {i18n.t('Version')}:</span>
+                {ticket.targetVersion?.title}
               </p>
-            </div>
-            <hr />
-            <div className="sm:flex items-center !mt-3.5">
-              <p className="font-medium pe-2 mb-3 sm:mb-0">
-                {i18n.t('Progress')}: {getProgress(ticket.progress)}%
-              </p>
-              <Progress
-                value={getProgress(ticket.progress)}
-                className="h-3 basis-3/4 sm:ms-5 rounded-none"
-              />
-            </div>
-            <p>
-              <span className="font-medium pe-2"> {i18n.t('Version')}:</span>
-              {ticket.targetVersion?.title}
-            </p>
-            <hr />
+            )}
+            <hr
+              className={cn({
+                ['hidden']:
+                  !allowedFields.has(FIELDS.PROGRESS) &&
+                  !allowedFields.has(FIELDS.TARGET_VERSION),
+              })}
+            />
             {ticket.displayFinancialData &&
               ticket.invoicingType === INVOICING_TYPE.PACKAGE && (
                 <div className="flex gap-4">

@@ -104,7 +104,7 @@ export default async function Page({
     FIELDS.UPDATED_ON,
     FIELDS.CREATED_BY,
     FIELDS.MANAGED_BY,
-    FIELDS.ASSIGNED_TO,
+    FIELDS.ASSIGNMENT,
   ].some(field => allowedFields.has(field));
 
   const url = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
