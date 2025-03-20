@@ -19,6 +19,7 @@ import {Icon} from '@/ui/components';
 import {SUBAPP_PAGE} from '@/constants';
 import {Account} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/locale';
 
 function MobileSidebar({subapps, workspaces}: any) {
   const pathname = usePathname();
@@ -62,7 +63,7 @@ function MobileSidebar({subapps, workspaces}: any) {
           )}
 
           {subapps
-            ?.filter((app: any) => app.installed && app.showInMySpace)
+            ?.filter((app: any) => app.installed)
             .sort(
               (app1: any, app2: any) =>
                 app1.orderForMySpaceMenu - app2.orderForMySpaceMenu,
@@ -90,6 +91,16 @@ function MobileSidebar({subapps, workspaces}: any) {
                 </Link>
               );
             })}
+          {Boolean(user) && (
+            <Link href={`${workspaceURI}/account`} className="no-underline">
+              <div className="flex items-center pt-8 px-6 py-2 font-normal gap-x-4">
+                <Icon name="account" className="h-6 w-6" />
+                <p className="max-w-full whitespace-nowrap text-main-black">
+                  {i18n.t('My Account')}
+                </p>
+              </div>
+            </Link>
+          )}
         </SheetContent>
       </Sheet>
     </>

@@ -22,6 +22,7 @@ import {
   TooltipArrow,
 } from '@/ui/components/tooltip';
 import {SUBAPP_PAGE} from '@/constants';
+import {i18n} from '@/locale';
 import {useWorkspace} from './workspace-context';
 
 export function Sidebar({
@@ -123,6 +124,32 @@ export function Sidebar({
                 </Link>
               );
             })}
+          <Link href={`${workspaceURI}/account`} className="no-underline">
+            <div className="flex gap-4 items-center">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <span>
+                    <Icon name="account" className="h-6 w-6" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  align="center"
+                  className="bg-success-light"
+                  hidden={!collapsed}>
+                  <p>{i18n.t('My Account')}</p>
+                  <TooltipArrow className="fill-success-light" />
+                </TooltipContent>
+              </Tooltip>
+
+              <p
+                className={`${
+                  collapsed ? 'hidden' : 'block'
+                } whitespace-nowrap overflow-hidden duration-500`}>
+                {i18n.t('My Account')}
+              </p>
+            </div>
+          </Link>
         </TooltipProvider>
       </div>
     </div>

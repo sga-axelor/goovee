@@ -18,6 +18,7 @@ import {
   MdListAlt,
   MdFolder,
   MdOutlinePoll,
+  MdAccountCircle,
 } from 'react-icons/md';
 
 interface IconMapping {
@@ -38,6 +39,7 @@ interface IconMapping {
   ticketing: IconType;
   directory: IconType;
   survey: IconType;
+  account: IconType;
 }
 
 function getIcon(type: keyof IconMapping): IconType | undefined {
@@ -59,6 +61,7 @@ function getIcon(type: keyof IconMapping): IconType | undefined {
     ticketing: MdListAlt,
     directory: MdFolder,
     survey: MdOutlinePoll,
+    account: MdAccountCircle,
   };
 
   const icon = iconMapping[type];
