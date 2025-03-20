@@ -224,7 +224,7 @@ function Members({members, availableApps}: any) {
 
                         const permission =
                           contactWorkspaceConfig?.contactAppPermissionList.find(
-                            (a: any) => a.app.code === code,
+                            (a: any) => a?.app?.code === code,
                           );
 
                         return (
