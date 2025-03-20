@@ -6,6 +6,7 @@ import {revalidatePath} from 'next/cache';
 import {getSession} from '@/auth';
 import {UserType} from '@/auth/types';
 import {
+  findContactByEmail,
   findPartnerByEmail,
   findPartnerById,
   registerPartner,
@@ -393,9 +394,9 @@ async function updatePartnerEmailByContact(
     };
   }
 
-  const contact = await findPartnerByEmail(email, tenantId);
+  const contact = await findContactByEmail(email, tenantId);
 
-  if (!contact?.isContact) {
+  if (!contact) {
     return {
       error: true,
       message: await getTranslation(
