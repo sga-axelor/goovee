@@ -445,7 +445,7 @@ async function updatePartnerEmailByContact(
       error: true,
       message: await getTranslation(
         {tenant: tenantId},
-        'Registration not allowed',
+        'An account for the same company exists already, please contact your admin',
       ),
     };
   }

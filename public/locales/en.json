@@ -22,6 +22,7 @@
   "Already subscribed": "Already subscribed",
   "Amount mismatched": "Amount mismatched",
   "An account with this email exists already": "An account with this email exists already",
+  "An account for the same company exists already, please contact your admin": "An account for the same company exists already, please contact your admin",
   "An error occurred": "An error occurred",
   "An error occurred!": "An error occurred!",
   "An unexpected error occurred": "An unexpected error occurred",

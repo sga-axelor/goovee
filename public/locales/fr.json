@@ -22,6 +22,7 @@
   "Already subscribed": "Déjà abonné",
   "Amount mismatched": "Montant non correspondant",
   "An account with this email exists already": "Un compte avec cet email existe déjà",
+  "An account for the same company exists already, please contact your admin": "Un compte pour la même entreprise existe déjà, veuillez contacter votre admin",
   "An error occurred": "Une erreur s’est produite",
   "An error occurred!": "Une erreur s’est produite !",
   "An unexpected error occurred": "Une erreur inattendue s’est produite",
