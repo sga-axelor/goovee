@@ -23,6 +23,7 @@ import {
 } from '@/ui/components';
 import type {ID} from '@/types';
 import {SEARCH_PARAMS} from '@/constants';
+import {getLoginURL} from '@/utils/url';
 
 export function Account({
   baseURL = '',
@@ -32,7 +33,7 @@ export function Account({
   tenant?: ID | null;
 }) {
   const pathname = usePathname();
-  const encodedPathname = encodeURIComponent(pathname);
+
   const {data: session} = useSession();
   const [confirmationDialog, setConfirmationDialog] = useState(false);
 
@@ -46,11 +47,15 @@ export function Account({
 
   const loggedin = !!session;
 
+  const loginURL = getLoginURL({
+    callbackurl: pathname,
+    workspaceURI: baseURL,
+    tenant,
+  });
+
   const handleLogout = () => {
     signOut({
-      callbackUrl: `/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
-        baseURL,
-      )}${tenant ? `&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`,
+      callbackUrl: loginURL,
     });
   };
 
@@ -78,10 +83,7 @@ export function Account({
             </>
           ) : (
             <>
-              <Link
-                href={`/auth/login?callbackurl=${encodedPathname}&workspaceURI=${encodeURIComponent(
-                  baseURL,
-                )}${tenant ? `&${SEARCH_PARAMS.TENANT_ID}=${encodeURIComponent(tenant)}` : ''}`}>
+              <Link href={loginURL}>
                 <DropdownMenuItem className="cursor-pointer">
                   Log In
                 </DropdownMenuItem>

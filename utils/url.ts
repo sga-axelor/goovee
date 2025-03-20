@@ -1,3 +1,4 @@
+import {type Tenant} from '@/tenant';
 import {Maybe} from '@/types/util';
 import {
   compressToEncodedURIComponent,
@@ -40,4 +41,17 @@ export function decodeFilter(base64: Maybe<string>): unknown {
     console.error(e);
     return;
   }
+}
+
+export function getLoginURL(params: {
+  callbackurl?: string;
+  workspaceURI?: string;
+  tenant?: Tenant['id'] | number | null;
+}) {
+  const sp = new URLSearchParams();
+  Object.entries(params).forEach(
+    ([key, value]) => key && value && sp.append(key, String(value)),
+  );
+
+  return `/auth/login?${sp.toString()}`;
 }

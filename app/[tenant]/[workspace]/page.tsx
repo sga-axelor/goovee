@@ -4,6 +4,8 @@ import {notFound, redirect} from 'next/navigation';
 import {getSession} from '@/auth';
 import {findSubapps} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
+import {SEARCH_PARAMS} from '@/constants';
+import {getLoginURL} from '@/utils/url';
 
 export default async function Page({
   params,
@@ -13,10 +15,17 @@ export default async function Page({
   const {tenant} = params;
   const session = await getSession();
 
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
+  const user = session?.user;
+
+  const loginURL = getLoginURL({
+    callbackurl: workspaceURI,
+    workspaceURI,
+    [SEARCH_PARAMS.TENANT_ID]: tenant,
+  });
 
   if (!workspaceURL) {
-    return notFound();
+    return user ? notFound() : redirect(loginURL);
   }
 
   const apps = await findSubapps({
@@ -26,7 +35,7 @@ export default async function Page({
   });
 
   if (!apps?.length) {
-    return notFound();
+    return user ? notFound() : redirect(loginURL);
   }
 
   redirect(`${workspaceURL}/${apps[0].code}`);

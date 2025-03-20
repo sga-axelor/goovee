@@ -1,5 +1,5 @@
 import React from 'react';
-import {notFound} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
@@ -7,7 +7,8 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace, findWorkspaces, findSubapps} from '@/orm/workspace';
 import {DEFAULT_THEME_OPTIONS} from '@/constants/theme';
-import {NAVIGATION} from '@/constants';
+import {NAVIGATION, SEARCH_PARAMS} from '@/constants';
+import {getLoginURL} from '@/utils/url';
 
 // ---- LOCAL IMPORTS ---- //
 import Workspace from './workspace-context';
@@ -34,31 +35,13 @@ export default async function Layout({
   const session = await getSession();
   const user = session?.user;
 
-  const {workspaceURL, workspace} = workspacePathname(params);
+  const {workspaceURL, workspaceURI, workspace} = workspacePathname(params);
 
   if (user && !user?.id) {
     /**
      * Remove tenative login using oauth for registration
      */
     return <AnonymousSignOut callbackurl={workspaceURL} />;
-  }
-
-  const workspaces = await findWorkspaces({
-    url: process.env.NEXT_PUBLIC_HOST,
-    user,
-    tenantId: tenant,
-  }).then(clone);
-
-  if (!workspaces?.length) {
-    return notFound();
-  }
-
-  const hasWorkspaceAccess = workspaces.some(
-    (workspace: any) => workspace.url === workspaceURL,
-  );
-
-  if (!hasWorkspaceAccess) {
-    return notFound();
   }
 
   const $workspace = await findWorkspace({
@@ -68,16 +51,29 @@ export default async function Layout({
   }).then(clone);
 
   if (!$workspace) {
-    return notFound();
+    return user
+      ? notFound()
+      : redirect(
+          getLoginURL({
+            callbackurl: workspaceURI,
+            workspaceURI,
+            [SEARCH_PARAMS.TENANT_ID]: tenant,
+          }),
+        );
   }
 
-  let theme;
+  const workspaces = await findWorkspaces({
+    url: process.env.NEXT_PUBLIC_HOST,
+    user,
+    tenantId: tenant,
+  }).then(clone);
 
+  let theme: any;
   try {
     theme = $workspace?.theme || defaultTheme;
     theme.options = JSON.parse(theme?.css);
-  } catch (err) {
-    console.error(err.message);
+  } catch (err: any) {
+    console.error(err?.message);
   }
 
   const subapps = await findSubapps({

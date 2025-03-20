@@ -11,13 +11,14 @@ import {
 // ---- CORE IMPORTS ---- //
 import {useTheme} from '@/app/theme';
 import {Theme} from '@/types/theme';
+import {type PortalWorkspace} from '@/types';
 
 export const WorkspaceContext = React.createContext<{
   tenant: string;
   workspace: string;
   workspaceURI: string;
   workspaceURL: string;
-  workspaceID: string;
+  workspaceID: PortalWorkspace['id'];
 }>({
   tenant: DEFAULT_TENANT,
   workspace: DEFAULT_WORKSPACE,
@@ -33,7 +34,7 @@ export function Workspace({
   theme,
   children,
 }: {
-  id: string;
+  id: PortalWorkspace['id'];
   tenant: string;
   workspace: string;
   theme?: {id: string; name: string; options: Theme};
