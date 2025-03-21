@@ -42,8 +42,7 @@ import {fetchPosts} from '@/subapps/forum/common/action/action';
 import {useForum} from '@/subapps/forum/common/ui/context';
 
 export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
-  const {memberGroups, nonMemberGroups, user, selectedGroup, isMember} =
-    useForum();
+  const {memberGroups, nonMemberGroups, user, selectedGroup} = useForum();
 
   const [open, setOpen] = useState(false);
   const [memberGroupList, setMemberGroupList] = useState<Group[]>(
@@ -67,9 +66,15 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
 
   const isLoggedIn = !!id;
 
+  const isAllowedToPost = selectedGroup
+    ? memberGroups
+        .map((group: any) => group.forumGroup.id)
+        .includes(selectedGroup.id)
+    : true;
+
   const isDisabled = useMemo(() => {
-    return isLoggedIn ? !isMember || memberGroups?.length === 0 : true;
-  }, [isLoggedIn, isMember, memberGroups?.length]);
+    return isLoggedIn ? !isAllowedToPost : true;
+  }, [isLoggedIn, isAllowedToPost]);
 
   const groups = useMemo(
     () => memberGroups?.map((group: any) => group.forumGroup),
@@ -85,7 +90,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   };
 
   const handleDialogOpen = () => {
-    if (!isLoggedIn || !isMember) return;
+    if (!isLoggedIn || !isAllowedToPost) return;
     setOpen(true);
   };
 
@@ -258,7 +263,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
                   : 'bg-white text-gray border-gray hover:bg-white hover:text-gray'
               }`}>
               {isLoggedIn
-                ? isMember
+                ? isAllowedToPost
                   ? i18n.t(START_A_POST)
                   : i18n.t(JOIN_GROUP_TO_POST)
                 : i18n.t(DISABLED_SEARCH_PLACEHOLDER)}

@@ -24,8 +24,7 @@ export const ThreadFooter = ({
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
 }) => {
-  const {isMember, workspace} = useForum();
-  const disabled = useMemo(() => !isMember, [isMember]);
+  const {workspace} = useForum();
 
   const enableComment = isCommentEnabled({
     subapp: SUBAPP_CODES.forum,
@@ -39,7 +38,7 @@ export const ThreadFooter = ({
       showCommentsByDefault={showCommentsByDefault}
       hideCloseComments={hideCloseComments}
       usePopUpStyles={usePopUpStyles}
-      disabled={disabled}
+      disabled={!post.isMember}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
       limit={COMMENTS_PER_LOAD}
       trackingField="publicBody"

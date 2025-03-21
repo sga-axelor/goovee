@@ -35,8 +35,6 @@ const Content = ({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const isMember = useMemo(() => memberGroups.length !== 0, [memberGroups]);
-
   const value = useMemo(
     () => ({
       memberGroups,
@@ -44,10 +42,9 @@ const Content = ({
       user,
       posts,
       pageInfo,
-      isMember,
       workspace,
     }),
-    [memberGroups, nonMemberGroups, user, posts, pageInfo, isMember, workspace],
+    [memberGroups, nonMemberGroups, user, posts, pageInfo, workspace],
   );
 
   const handleMenuClick = (link: string) => {

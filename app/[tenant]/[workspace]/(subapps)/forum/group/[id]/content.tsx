@@ -45,7 +45,6 @@ const Content = ({
       posts,
       pageInfo,
       selectedGroup,
-      isMember,
       workspace,
     }),
     [
@@ -55,7 +54,6 @@ const Content = ({
       posts,
       pageInfo,
       selectedGroup,
-      isMember,
       workspace,
     ],
   );

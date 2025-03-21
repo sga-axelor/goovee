@@ -79,6 +79,13 @@ export default async function Page({
     user,
   }).then(clone);
 
+  const $posts = posts?.map((post: any) => {
+    return {
+      ...post,
+      isMember: memberGroupIDs.includes(post.forumGroup?.id),
+    };
+  });
+
   const $user = await findUser({
     userId,
     tenantId: tenant,
@@ -89,7 +96,7 @@ export default async function Page({
       memberGroups={memberGroups}
       nonMemberGroups={nonMemberGroups}
       user={$user}
-      posts={posts}
+      posts={$posts}
       pageInfo={pageInfo}
       workspace={workspace}
     />
