@@ -34,7 +34,6 @@ import {
 import {useToast} from '@/ui/hooks/use-toast';
 import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -127,8 +126,9 @@ export const CreatePost = ({
 
   const handlePost = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
+
     const formData = new FormData();
-    if (attachments.images.length) {
+    if (attachments.images?.length) {
       attachments.images.forEach((element: any, index) => {
         formData.append(
           `attachmentList[${index}][title]`,
@@ -143,14 +143,17 @@ export const CreatePost = ({
       );
       formData.append(`attachmentList[0][file]`, attachments.file?.file);
     }
+
+    const groupID = selectedGroup?.id || values.groupId;
+
     try {
       const result: any = await addPost({
-        group: {id: selectedGroup ? selectedGroup.id : values.groupId},
+        group: {id: groupID},
         title: values.title,
         content: editorContent,
         workspaceURL,
         formData,
-      }).then(clone);
+      });
 
       if (result.success) {
         toast({
@@ -166,6 +169,7 @@ export const CreatePost = ({
         });
       }
     } catch (error) {
+      console.error('Post creation error:', error);
       toast({
         variant: 'destructive',
         title: i18n.t('An error occurred!'),

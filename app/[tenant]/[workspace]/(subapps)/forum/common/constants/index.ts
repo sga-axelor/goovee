@@ -128,6 +128,13 @@ export const TEXT_ALIGNMENT = [
   {name: 'justify', icon: CiTextAlignJustify},
 ];
 
+export const NOTIFICATION_VALUES = {
+  ALL: 'all',
+  ALL_ON_MY_POST: 'allOnMyPost',
+  NEW_COMMENTS_ON_MY_POST: 'newCommentsOnMyPost',
+  NONE: 'none',
+};
+
 export const NOTIFICATIONS_OPTIONS = [
   {
     id: 1,

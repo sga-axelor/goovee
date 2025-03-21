@@ -94,6 +94,7 @@ export const SUBAPP_PAGE = {
   answerSurvey: 'answer',
   register: 'register',
   confirmation: 'confirmation',
+  group: 'group',
 };
 
 /**

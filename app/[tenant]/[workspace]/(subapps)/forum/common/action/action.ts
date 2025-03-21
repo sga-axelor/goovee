@@ -10,7 +10,7 @@ import {revalidatePath} from 'next/cache';
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
 import {clone} from '@/utils';
-import {ModelMap, SUBAPP_CODES} from '@/constants';
+import {ModelMap, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/auth';
@@ -37,6 +37,8 @@ import {
   findPosts,
 } from '@/subapps/forum/common/orm/forum';
 import {NOTIFICATION_VALUES} from '@/subapps/forum/common/constants';
+import {sendEmailNotifications} from '@/subapps/forum/common/utils/mail';
+import {ContentType} from '@/subapps/forum/common/types/forum';
 
 interface FileMeta {
   fileName: string;
@@ -504,6 +506,17 @@ export async function addPost({
     const post = await client.aOSPortalForumPost.create({
       select: {
         attachmentList: {select: {metaFile: true}},
+        title: true,
+        forumGroup: {
+          name: true,
+        },
+        postDateT: true,
+        content: true,
+        author: {
+          simpleFullName: true,
+          fullName: true,
+        },
+        createdOn: true,
       },
       data: {
         postDateT: publicationDateTime,
@@ -529,6 +542,24 @@ export async function addPost({
       },
     });
 
+    const subscribers: any = await getSubscribersByGroup({
+      groupID: post.forumGroup.id,
+      workspaceURL,
+    });
+
+    if (!subscribers.error) {
+      const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}#post-${post.id}`;
+
+      sendEmailNotifications({
+        type: ContentType.POST,
+        title: post?.title ?? '',
+        content: post?.content ?? '',
+        author: post.author,
+        group: post.forumGroup,
+        subscribers,
+        link: postLink,
+      });
+    }
     revalidatePath(`${workspaceURL}/${SUBAPP_CODES.forum}`);
     return {success: true, data: clone(post)};
   } catch (error) {
@@ -804,7 +835,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const {posts = []}: any = await findPosts({
+  const {posts = []} = await findPosts({
     whereClause: {id: rest.recordId},
     workspaceID: workspace.id,
     tenantId,
@@ -840,6 +871,33 @@ export const createComment: CreateComment = async formData => {
       subject: `${user.simpleFullName || user.name} added a comment`,
       ...rest,
     });
+
+    if (res) {
+      const post = posts[0];
+      const subscribers: any = await getSubscribersByGroup({
+        groupID: post.forumGroup.id,
+        workspaceURL,
+      });
+
+      if (!subscribers?.error) {
+        const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}#post-${post.id}`;
+        sendEmailNotifications({
+          type: ContentType.COMMENT,
+          title: post.title,
+          content: res[0].note ?? '',
+          author: {
+            id: res[0]?.partner?.id ?? '',
+            simpleFullName: res[0]?.partner?.simpleFullName ?? 'Unknown User',
+          },
+          postAuthor: {
+            id: post?.author?.id ?? '',
+          },
+          group: post.forumGroup,
+          subscribers,
+          link: postLink,
+        });
+      }
+    }
 
     return {success: true, data: clone(res)};
   } catch (e) {
@@ -914,6 +972,88 @@ export const fetchComments: FetchComments = async props => {
         e instanceof Error
           ? e.message
           : await t('An unexpected error occurred while fetching comments.'),
+    };
+  }
+};
+
+export const getSubscribersByGroup = async ({
+  groupID,
+  workspaceURL,
+}: {
+  groupID: string | number;
+  workspaceURL: string;
+}) => {
+  if (!groupID) {
+    return {error: true, message: await t('Group id is missing')};
+  }
+
+  if (!workspaceURL) {
+    return {error: true, message: await t('Workspace not provided!')};
+  }
+
+  const tenantId = headers().get(TENANT_HEADER);
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await t('TenantId is required'),
+    };
+  }
+
+  const session = await getSession();
+
+  const user = session?.user;
+
+  if (!user) {
+    return {error: true, message: await t('Unauthorized')};
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.forum,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!subapp) {
+    return {error: true, message: await t('Unauthorized')};
+  }
+
+  const workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!workspace) {
+    return {error: true, message: await t('Invalid workspace')};
+  }
+
+  const client = await manager.getClient(tenantId);
+  try {
+    const result = await client.aOSPortalForumGroupMember.find({
+      where: {
+        forumGroup: {
+          id: groupID,
+          ...(await filterPrivate({user, tenantId})),
+          workspace: {id: workspace.id},
+        },
+      },
+      select: {
+        notificationSelect: true,
+        member: {
+          emailAddress: {
+            address: true,
+          },
+          simpleFullName: true,
+        },
+      },
+    });
+    return clone(result);
+  } catch (error) {
+    console.error('Error while fetching group subscribers:', error);
+    return {
+      error: true,
+      message: await t('Failed to fetch group subscribers'),
     };
   }
 };

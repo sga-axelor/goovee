@@ -73,3 +73,40 @@ export interface Post extends Model {
   author: Author;
   createdOn: string;
 }
+
+export enum ContentType {
+  POST = 'post',
+  COMMENT = 'comment',
+}
+
+export interface Subscriber {
+  notificationSelect: string;
+  member: {
+    id: string | number;
+    emailAddress: {
+      address: string;
+    };
+    simpleFullName: string;
+  };
+}
+
+export interface NotificationParams {
+  type: ContentType;
+  title: string;
+  content: string;
+  author: {id: string | number; simpleFullName: string};
+  group: {name: string};
+  subscribers: Subscriber[];
+  link: string;
+  postAuthor?: {id: string | number};
+}
+
+export interface MailTemplateParams {
+  type: ContentType;
+  title: string;
+  author: {simpleFullName: string};
+  group: {name: string};
+  contentSnippet: string;
+  link: string;
+  user: string;
+}

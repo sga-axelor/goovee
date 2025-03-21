@@ -287,7 +287,7 @@ export async function findPostsByGroupId({
 
 export async function findGroupById(
   id: ID,
-  workspaceID: string,
+  workspaceID: ID,
   tenantId: Tenant['id'],
   user?: User,
 ) {
@@ -325,7 +325,7 @@ export async function findMemberGroupById({
 }: {
   id: ID;
   groupID: ID;
-  workspaceID: string;
+  workspaceID: ID;
   tenantId: Tenant['id'];
   user?: User;
 }) {
