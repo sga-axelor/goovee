@@ -815,6 +815,20 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Record not found')};
   }
 
+  const memberGroups: any = await findGroupsByMembers({
+    id: user.id,
+    workspaceID: workspace.id!,
+    tenantId,
+    user,
+  });
+  const memberGroupIDs = memberGroups?.map(
+    (group: any) => group?.forumGroup?.id,
+  );
+
+  const isAllowedToComment = memberGroupIDs.includes(posts[0].forumGroup?.id);
+  if (!isAllowedToComment)
+    return {error: true, message: await t('You are not permitted to comment')};
+
   try {
     const res = await addComment({
       modelName,
