@@ -36,6 +36,7 @@ import {
   findMemberGroupById,
   findPosts,
 } from '@/subapps/forum/common/orm/forum';
+import {NOTIFICATION_VALUES} from '@/subapps/forum/common/constants';
 
 interface FileMeta {
   fileName: string;
@@ -320,6 +321,7 @@ export async function joinGroup({
           member: {
             select: {id: userId},
           },
+          notificationSelect: NOTIFICATION_VALUES.ALL_ON_MY_POST,
           isPin: false,
         },
       })
