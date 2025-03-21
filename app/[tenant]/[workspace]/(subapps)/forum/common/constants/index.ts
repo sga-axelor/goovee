@@ -58,6 +58,7 @@ export const MANAGE_NOTIFICATIONS = 'Manage notifications';
 export const SORT_BY = 'Sort By';
 export const SEE_MORE = 'See more';
 export const SEE_LESS = 'See less';
+export const JOIN_GROUP_TO_COMMENT = 'Join the group to comment';
 
 export const GROUP_SORT_BY = [
   {

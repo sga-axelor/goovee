@@ -79,7 +79,7 @@ export const GroupActionList = ({
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.t(response.message || 'An error occurred'),
+        title: i18n.t(response?.message || 'An error occurred'),
       });
     }
   };
@@ -97,7 +97,7 @@ export const GroupActionList = ({
     } else {
       toast({
         variant: 'destructive',
-        title: i18n.t(response.message || 'An error occurred'),
+        title: i18n.t(response?.message || 'An error occurred'),
       });
     }
   };

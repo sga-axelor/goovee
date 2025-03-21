@@ -7,7 +7,10 @@ import {isCommentEnabled, Comments} from '@/comments';
 
 // ---- LOCAL IMPORTS ---- //
 import {useForum} from '@/subapps/forum/common/ui/context';
-import {COMMENTS_PER_LOAD} from '@/subapps/forum/common/constants';
+import {
+  COMMENTS_PER_LOAD,
+  JOIN_GROUP_TO_COMMENT,
+} from '@/subapps/forum/common/constants';
 import {
   fetchComments,
   createComment,
@@ -26,6 +29,8 @@ export const ThreadFooter = ({
 }) => {
   const {workspace} = useForum();
 
+  const isAllowToComment = useMemo(() => post.isMember, [post]);
+
   const enableComment = isCommentEnabled({
     subapp: SUBAPP_CODES.forum,
     workspace,
@@ -38,13 +43,16 @@ export const ThreadFooter = ({
       showCommentsByDefault={showCommentsByDefault}
       hideCloseComments={hideCloseComments}
       usePopUpStyles={usePopUpStyles}
-      disabled={!post.isMember}
+      disabled={!isAllowToComment}
       inputContainerClassName={!usePopUpStyles ? 'px-4' : ''}
       limit={COMMENTS_PER_LOAD}
       trackingField="publicBody"
       commentField="note"
       fetchComments={fetchComments}
       createComment={createComment}
+      {...(!isAllowToComment && {
+        placeholder: JOIN_GROUP_TO_COMMENT,
+      })}
     />
   ) : (
     <div />

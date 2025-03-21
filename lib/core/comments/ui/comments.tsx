@@ -58,6 +58,7 @@ export type CommentsProps = {
   trackingField: TrackingField;
   commentField: CommentField;
   disableReply?: boolean;
+  placeholder?: string;
 };
 
 export function Comments(props: CommentsProps) {
@@ -83,6 +84,7 @@ export function Comments(props: CommentsProps) {
     trackingField,
     commentField,
     disableReply,
+    placeholder,
   } = props;
   const inputOnTop = inputPosition === 'top';
   const [showComments, setShowComments] = useState(showCommentsByDefault);
@@ -130,7 +132,9 @@ export function Comments(props: CommentsProps) {
         disabled && 'bg-gray-light placeholder:text-gray-dark',
       )}
       placeholderText={
-        isLoggedIn ? i18n.t(COMMENT) : i18n.t(DISABLED_COMMENT_PLACEHOLDER)
+        isLoggedIn
+          ? i18n.t(placeholder || COMMENT)
+          : i18n.t(DISABLED_COMMENT_PLACEHOLDER)
       }
       onSubmit={handleCreate}
     />
