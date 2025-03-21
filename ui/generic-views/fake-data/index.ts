@@ -154,17 +154,20 @@ export const FORM_VIEW_2 = {
               {
                 type: 'field',
                 name: 'productSupplierName',
+                colSpan: '6',
                 autoTitle: 'Product name on catalog',
+              },
+              {
+                type: 'field',
+                name: 'productSupplierCode',
+                colSpan: '6',
+                autoTitle: 'Product code on catalog',
               },
               {
                 type: 'field',
                 name: 'description',
                 autoTitle: 'Description',
-              },
-              {
-                type: 'field',
-                name: 'productSupplierCode',
-                autoTitle: 'Product code on catalog',
+                widget: 'html',
               },
             ],
           },

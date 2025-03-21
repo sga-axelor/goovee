@@ -1,0 +1,25 @@
+'use server';
+
+import axios from 'axios';
+import {headers} from 'next/headers';
+
+import {manager} from '@/lib/core/tenant';
+import {TENANT_HEADER} from '@/middleware';
+
+export async function getModelData(model: string) {
+  const tenantId = headers().get(TENANT_HEADER);
+
+  const tenant = await manager.getTenant(tenantId as string);
+  const aos = tenant?.config?.aos;
+
+  if (!aos?.url) return [];
+
+  const res = await axios
+    .get(`${aos.url}/ws/rest/${model}`, {
+      auth: aos.auth,
+    })
+    .then(res => res?.data)
+    .catch(() => console.log('Error with trying to fetch model data'));
+
+  return res?.data ?? [];
+}

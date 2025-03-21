@@ -3,6 +3,7 @@ import type {Column} from '@/ui/grid';
 
 import {SchemaItem} from './types';
 import {findView} from './orm';
+import {getModelData} from './actions';
 
 const isArrayField = (relationship: string) => {
   return relationship === 'OneToMany' || relationship === 'ManyToMany';
@@ -13,25 +14,35 @@ async function getFieldType(
   item: SchemaItem,
 ): Promise<{[key: string]: any; type: InputType}> {
   if (field?.relationship != null) {
-    const modelName = `${field.package}.${field.typeName}`;
+    const modelName = `${field.packageName}.${field.typeName}`;
 
-    let config: any = {model: modelName};
+    if (isArrayField(field.relationship)) {
+      let config: any = {model: modelName};
 
-    if (item.formView != null) {
-      const {fields, panels} = await getGenericFormContent(item.formView);
-      config = {...config, fields, panels};
+      if (item.formView != null) {
+        const {fields, panels} = await getGenericFormContent(item.formView);
+        config = {...config, fields, panels};
+      }
+
+      if (item.gridView != null) {
+        const {columns} = await getGenericGridContent(item.gridView);
+        config = {...config, columns};
+      }
+
+      return {
+        type: 'array',
+        options: {config},
+      };
     }
 
-    if (item.gridView != null) {
-      const {columns} = await getGenericGridContent(item.gridView);
-      config = {...config, columns};
-    }
+    const data = await getModelData(modelName);
 
     return {
-      type: isArrayField(field.relationship) ? 'array' : 'object',
-      targetModel: modelName,
+      type: 'object',
       options: {
-        config: isArrayField(field.relationship) ? config : undefined,
+        data,
+        targetModel: modelName,
+        targetName: 'name',
       },
     };
   }

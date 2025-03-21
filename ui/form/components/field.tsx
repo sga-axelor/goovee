@@ -11,6 +11,11 @@ import {
   FormMessage,
   Input,
   RichTextEditor,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/ui/components';
 
 import type {Field as FieldType} from '../types';
@@ -84,6 +89,44 @@ export const FieldComponent = ({
               readonly={isReadonly}
               {...item.options}
             />
+          </Wrapper>
+        );
+      }
+
+      if (item.type === 'object') {
+        const optionList: any[] = item.options?.data ?? [];
+
+        return (
+          <Wrapper>
+            <FormLabel className="text-base font-medium leading-6">
+              {i18n.t(item.title ?? '')}
+            </FormLabel>
+            <Select
+              onValueChange={value => {
+                form.setValue(
+                  identifier,
+                  optionList.find(({id}: any) => id === parseInt(value, 10)),
+                );
+              }}
+              value={form.watch(identifier)?.id?.toString()}>
+              <FormControl>
+                <SelectTrigger className="w-full rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal h-[2.875rem] border text-sm font-normal">
+                  <SelectValue placeholder={i18n.t('Select')} />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {optionList?.length === 0 ? (
+                  <p className="text-center">No result</p>
+                ) : (
+                  optionList.map((_i: any) => (
+                    <SelectItem value={_i.id?.toString()} key={_i.id}>
+                      {_i[item.options?.targetName ?? 'name']}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+            <FormMessage />
           </Wrapper>
         );
       }
