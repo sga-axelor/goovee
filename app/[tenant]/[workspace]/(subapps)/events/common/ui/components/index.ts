@@ -24,8 +24,6 @@ export {CommentsSection} from './comments-section';
 export type {Comment} from './comments-section';
 export type {CommentSectionProps} from './comments-section';
 
-export {CommentCard} from './comment-card';
-
 export {RegistrationForm} from './registration-form';
 
 export {CustomSelect} from './custom-select';

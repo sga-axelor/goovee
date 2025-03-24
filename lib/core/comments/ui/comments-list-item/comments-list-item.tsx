@@ -36,7 +36,7 @@ import {
   TooltipTrigger,
 } from '@/ui/components';
 import {cn} from '@/utils/css';
-import {getImageURL} from '@/utils/files';
+import {getPartnerImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -187,9 +187,9 @@ export const CommentListItem = ({
     ));
   };
 
-  const renderAvatar = (pictureId: ID | undefined) => (
+  const renderAvatar = (pictureId: ID) => (
     <Avatar className="rounded-full h-6 w-6">
-      <AvatarImage src={getImageURL(pictureId, tenantId, {noimage: true})} />
+      <AvatarImage src={getPartnerImageURL(pictureId, tenantId)} />
     </Avatar>
   );
 

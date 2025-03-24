@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/files';
+import {getImageURL, getPartnerImageURL} from '@/utils/files';
 import {formatDate} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
@@ -72,7 +72,9 @@ export const ThreadBody = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Avatar className="rounded-full h-10 w-10">
-              <AvatarImage src={getImageURL(author?.picture?.id, tenant)} />
+              <AvatarImage
+                src={getPartnerImageURL(author?.picture?.id, tenant)}
+              />
             </Avatar>
             <div className="flex flex-col gap-2">
               <div className="text-base font-semibold">

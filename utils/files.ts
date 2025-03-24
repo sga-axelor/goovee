@@ -108,6 +108,20 @@ export function getImageURL(
   return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/download/image/${id}`;
 }
 
+export function getPartnerImageURL(
+  id: ID | undefined,
+  tenant: string,
+  options: {noimage?: boolean; noimageSrc?: string} = {},
+) {
+  const {noimage, noimageSrc} = options;
+
+  if (!(id && tenant)) {
+    return noimage ? noimageSrc || '/images/user.png' : '';
+  }
+
+  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/partner/image/${id}`;
+}
+
 export function getDownloadURL(
   id?: ID,
   tenantId?: string,

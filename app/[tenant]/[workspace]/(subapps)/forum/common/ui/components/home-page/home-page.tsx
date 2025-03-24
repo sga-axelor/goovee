@@ -16,7 +16,7 @@ import {
 } from '@/constants';
 import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
-import {getImageURL} from '@/utils/files';
+import {getImageURL, getPartnerImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {PortalWorkspace} from '@/types';
 
@@ -254,7 +254,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
           <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[0.625rem]">
             <Avatar
               className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
-              {<AvatarImage src={getImageURL(picture?.id, tenant)} />}
+              {<AvatarImage src={getPartnerImageURL(picture?.id, tenant)} />}
             </Avatar>
             <Button
               onClick={handleDialogOpen}

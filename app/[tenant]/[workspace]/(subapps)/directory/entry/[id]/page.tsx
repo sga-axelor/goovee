@@ -12,7 +12,7 @@ import {findWorkspace} from '@/orm/workspace';
 import {Avatar, AvatarImage, InnerHTML} from '@/ui/components';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
-import {getImageURL} from '@/utils/files';
+import {getPartnerImageURL} from '@/utils/files';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -209,10 +209,7 @@ async function Contact({
         <Avatar className="h-10 w-10">
           <AvatarImage
             className="object-cover"
-            src={getImageURL(picture?.id, tenant, {
-              noimage: true,
-              noimageSrc: '/images/user.png',
-            })}
+            src={getPartnerImageURL(picture?.id, tenant, {noimage: true})}
           />
         </Avatar>
         <span className="font-semibold">{simpleFullName}</span>

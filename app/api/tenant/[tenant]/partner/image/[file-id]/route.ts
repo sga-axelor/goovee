@@ -4,18 +4,18 @@ import {manager} from '@/tenant';
 
 export async function GET(
   request: NextRequest,
-  {params}: {params: {tenant: string; id: string}},
+  {params}: {params: {tenant: string; 'file-id': string}},
 ) {
-  const {id, tenant} = params;
+  const {'file-id': fileId, tenant} = params;
 
   const client = await manager.getClient(tenant);
 
-  if (!client || !id) {
-    return NextResponse.json({message: 'Bad request'}, {status: 400});
+  if (!client) {
+    return new NextResponse('Bad request', {status: 400});
   }
 
   const partner = await client.aOSPartner.findOne({
-    where: {id},
+    where: {picture: {id: fileId}},
     select: {picture: {id: true}},
   });
 

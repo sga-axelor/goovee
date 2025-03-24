@@ -34,7 +34,7 @@ import {
 import {UserType} from '@/auth/types';
 import {useCountDown, useToast} from '@/ui/hooks';
 import {getInitials} from '@/utils/names';
-import {getDownloadURL} from '@/utils/files';
+import {getPartnerImageURL} from '@/utils/files';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '../../workspace-context';
 
@@ -305,8 +305,7 @@ export default function Personal({
                   <div>
                     <Avatar className="size-20">
                       <AvatarImage
-                        src={getDownloadURL(picture, tenant, {
-                          isMeta: true,
+                        src={getPartnerImageURL(picture, tenant, {
                           noimage: true,
                           noimageSrc: '/images/profile.png',
                         })}
@@ -318,6 +317,7 @@ export default function Personal({
                     <Button
                       variant="outline-success"
                       onClick={openFileUpload}
+                      type="button"
                       disabled={updatingPicture}>
                       <MdFileUpload className="size-6" />
                       {i18n.t('Upload a picture')}
@@ -332,6 +332,7 @@ export default function Personal({
                     <Button
                       variant="outline-destructive"
                       onClick={openConfirmation}
+                      type="button"
                       disabled={updatingPicture}>
                       <MdDeleteOutline className="size-6" />
                       {i18n.t('Delete')}

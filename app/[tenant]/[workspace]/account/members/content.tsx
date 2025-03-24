@@ -34,7 +34,7 @@ import {Button} from '@/ui/components/button';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '../../workspace-context';
 import {getInitials} from '@/utils/names';
-import {getDownloadURL} from '@/utils/files';
+import {getPartnerImageURL} from '@/utils/files';
 import {SUBAPP_WITH_ROLES} from '@/constants';
 import {useToast} from '@/ui/hooks';
 import {useSession} from 'next-auth/react';
@@ -165,8 +165,7 @@ function Members({members, availableApps}: any) {
                       <div className="flex items-center gap-2">
                         <Avatar className="size-8">
                           <AvatarImage
-                            src={getDownloadURL(picture?.id, tenant, {
-                              isMeta: true,
+                            src={getPartnerImageURL(picture?.id, tenant, {
                               noimage: true,
                               noimageSrc: '/images/profile.png',
                             })}

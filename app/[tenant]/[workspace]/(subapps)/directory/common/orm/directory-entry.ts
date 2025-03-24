@@ -5,7 +5,7 @@ import type {ID} from '@/types';
 import type {OrderByOptions} from '@goovee/orm';
 import type {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
 
-import type {Entry, SearchEntry} from '../types';
+import type {Entry, ListEntry, SearchEntry} from '../types';
 
 export async function findEntryImage({
   id,
@@ -87,7 +87,7 @@ export async function findEntries({
   categoryId?: ID;
   tenantId: Tenant['id'];
   orderBy?: OrderByOptions<AOSPortalDirectoryEntry>;
-}): Promise<Entry[]> {
+}): Promise<ListEntry[]> {
   if (!(workspaceId && tenantId)) {
     throw new Error(await t('Missing required parameters'));
   }

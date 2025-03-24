@@ -6,7 +6,7 @@ import React from 'react';
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
 import {i18n} from '@/locale';
-import {getImageURL} from '@/utils/files';
+import {getImageURL, getPartnerImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatDate} from '@/locale/formatters';
 
@@ -31,6 +31,7 @@ export const NewsInfo = ({
   publicationDateTime: string;
   content: string;
   author: {
+    id: string | number;
     simpleFullName: string;
     picture: {
       id: string;
@@ -59,7 +60,9 @@ export const NewsInfo = ({
           <div className="flex items-center gap-4 pb-4">
             <Avatar className="rounded-full h-8 w-8">
               <AvatarImage
-                src={getImageURL(author?.picture?.id, tenant, {noimage: true})}
+                src={getPartnerImageURL(author?.picture?.id, tenant, {
+                  noimage: true,
+                })}
               />
             </Avatar>
             <div className="flex flex-col gap-2 w-full ">
