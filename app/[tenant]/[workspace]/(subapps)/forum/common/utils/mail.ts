@@ -21,8 +21,16 @@ export const sendEmailNotifications = async ({
   postAuthor,
 }: NotificationParams) => {
   try {
+    if (!subscribers?.length) {
+      return;
+    }
+
     const filteredSubscribers = subscribers.filter(
       ({notificationSelect, member}) => {
+        if (!member?.id) {
+          return false;
+        }
+
         switch (notificationSelect) {
           case NOTIFICATION_VALUES.ALL:
             return true;
@@ -41,6 +49,10 @@ export const sendEmailNotifications = async ({
       },
     );
 
+    if (!filteredSubscribers?.length) {
+      return;
+    }
+
     const mailService = NotificationManager.getService(NotificationType.mail);
     if (!mailService) {
       console.error('Mail service is not available.');
@@ -49,14 +61,18 @@ export const sendEmailNotifications = async ({
 
     for (const subscriber of filteredSubscribers) {
       try {
+        if (!subscriber.member?.emailAddress?.address) {
+          continue;
+        }
+
         const emailContent = mailTemplate({
           type,
           title,
           author,
           group,
-          contentSnippet: content.slice(0, 100) + '...',
+          contentSnippet: content?.slice(0, 100) + '...' || '',
           link,
-          user: subscriber.member.simpleFullName,
+          user: subscriber.member?.simpleFullName,
         });
 
         mailService.notify({
@@ -66,7 +82,7 @@ export const sendEmailNotifications = async ({
         });
       } catch (error) {
         console.error(
-          `Failed to send email to ${subscriber.member.emailAddress.address}:`,
+          `Failed to send email to ${subscriber.member?.emailAddress?.address || 'Unknown Email'}:`,
           error,
         );
       }

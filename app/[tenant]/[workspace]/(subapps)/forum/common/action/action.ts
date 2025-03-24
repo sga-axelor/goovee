@@ -842,7 +842,7 @@ export const createComment: CreateComment = async formData => {
     user,
   });
 
-  if (!posts.length) {
+  if (!posts?.length) {
     return {error: true, message: await t('Record not found')};
   }
 
@@ -852,13 +852,17 @@ export const createComment: CreateComment = async formData => {
     tenantId,
     user,
   });
-  const memberGroupIDs = memberGroups?.map(
-    (group: any) => group?.forumGroup?.id,
-  );
 
-  const isAllowedToComment = memberGroupIDs.includes(posts[0].forumGroup?.id);
-  if (!isAllowedToComment)
-    return {error: true, message: await t('You are not permitted to comment')};
+  const memberGroupIDs =
+    memberGroups?.map((group: any) => group?.forumGroup?.id) || [];
+
+  const isAllowedToComment = memberGroupIDs?.includes(posts[0].forumGroup?.id);
+  if (!isAllowedToComment) {
+    return {
+      error: true,
+      message: await t('You do not have permission to comment'),
+    };
+  }
 
   try {
     const res = await addComment({
@@ -874,6 +878,12 @@ export const createComment: CreateComment = async formData => {
 
     if (res) {
       const post = posts[0];
+
+      if (!post?.id) {
+        console.warn('Post not found. Skipping notification.');
+        return;
+      }
+
       const subscribers: any = await getSubscribersByGroup({
         groupID: post.forumGroup.id,
         workspaceURL,
@@ -881,6 +891,7 @@ export const createComment: CreateComment = async formData => {
 
       if (!subscribers?.error) {
         const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}#post-${post.id}`;
+
         sendEmailNotifications({
           type: ContentType.COMMENT,
           title: post.title,
