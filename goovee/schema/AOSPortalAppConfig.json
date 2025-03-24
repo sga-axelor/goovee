@@ -215,6 +215,10 @@
       "name": "canInviteMembers"
     },
     {
+      "type": "Boolean",
+      "name": "isExistingContactsOnly"
+    },
+    {
       "type": "OneToMany",
       "name": "otpTemplateList",
       "target": "AOSPortalEmailTemplate",

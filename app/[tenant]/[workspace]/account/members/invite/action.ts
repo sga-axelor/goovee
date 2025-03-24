@@ -9,6 +9,7 @@ import {getSession} from '@/auth';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {
+  findContactByEmail,
   findGooveeUserByEmail,
   findPartnerById,
   isAdminContact,
@@ -195,10 +196,11 @@ export async function sendInvites({
     return error(await t('Invalid partner'));
   }
 
-  let emailsWithMemberAlready,
-    emailsWithDifferentPartner,
-    emailsWithExistingInvite,
-    emailsRegisteredAsPartner;
+  let emailsWithMemberAlready = [],
+    emailsWithOutSamePartner = [],
+    emailsWithDifferentPartner = [],
+    emailsWithExistingInvite = [],
+    emailsAlreadyRegistered = [];
   let invitesCount = 0;
 
   let mailConfig: any;
@@ -256,16 +258,23 @@ export async function sendInvites({
     try {
       z.string().email({message: 'Invalid email address'}).parse(email);
 
-      const existingContact = await findGooveeUserByEmail(email, tenantId);
+      const existingContact = await findContactByEmail(email, tenantId);
 
-      if (!existingContact?.isContact && existingContact?.isActivatedOnPortal) {
-        emailsRegisteredAsPartner = true;
-        continue; // don't send invite to email already registered as partner
+      if (!existingContact?.isContact) {
+        emailsAlreadyRegistered.push(email);
+        continue; // don't send invite to email already registered
+      }
+
+      if (workspace.config?.isExistingContactsOnly) {
+        if (existingContact?.mainPartner?.id !== partnerId) {
+          emailsWithOutSamePartner.push(email);
+          continue; // don't send invite to email who don't have current partner as main partner
+        }
       }
 
       if (existingContact?.mainPartner) {
         if (existingContact.mainPartner.id !== partnerId) {
-          emailsWithDifferentPartner = true;
+          emailsWithDifferentPartner.push(email);
           continue; // don't send invite to contact with different partner
         }
       }
@@ -275,7 +284,7 @@ export async function sendInvites({
       );
 
       if (memberAlready) {
-        emailsWithMemberAlready = true;
+        emailsWithMemberAlready.push(email);
         continue; // don't send invite to contact if already a member
       }
 
@@ -286,7 +295,7 @@ export async function sendInvites({
       });
 
       if (existingInvite) {
-        emailsWithExistingInvite = true;
+        emailsWithExistingInvite.push(email);
         continue;
       }
 
@@ -329,28 +338,51 @@ export async function sendInvites({
       message = await t('Invites send successfully.');
     }
 
+    const isEmailsWithMemberAlready = emailsWithMemberAlready.length;
+    const isEmailsWithoutSamePartner = emailsWithOutSamePartner.length;
+    const isEmailsWithDifferentPartner = emailsWithDifferentPartner.length;
+    const isEmailsWithExistingInvite = emailsWithExistingInvite.length;
+    const isEmailsAlreadyRegistered = emailsAlreadyRegistered.length;
+
     if (
-      emailsWithMemberAlready ||
-      emailsWithDifferentPartner ||
-      emailsWithExistingInvite ||
-      emailsRegisteredAsPartner
+      isEmailsWithMemberAlready ||
+      isEmailsWithoutSamePartner ||
+      isEmailsWithDifferentPartner ||
+      isEmailsWithExistingInvite ||
+      isEmailsAlreadyRegistered
     ) {
       message += `\n ${await t('Some invites are not send for the following ')} ${await t('reason')} : `;
 
       let errors = [];
 
-      emailsWithMemberAlready && errors.push(await t('Members already exists'));
+      const getEmails = (emails: string[]) => emails.join(', ');
 
-      emailsWithExistingInvite &&
-        errors.push(await t('Invites already exists'));
+      isEmailsWithMemberAlready &&
+        errors.push(
+          `${await t('Members already exists')} - ${getEmails(emailsWithMemberAlready)}`,
+        );
 
-      emailsWithDifferentPartner &&
-        errors.push(await t('Registered under different owner already'));
+      isEmailsWithExistingInvite &&
+        errors.push(
+          `${await t('Invites already exists')} - ${getEmails(emailsWithExistingInvite)}`,
+        );
 
-      emailsRegisteredAsPartner &&
-        errors.push(await t('An account with this email exists already'));
+      isEmailsWithoutSamePartner &&
+        errors.push(
+          `${await t(`Registered under different owner already`)} - ${getEmails(emailsWithOutSamePartner)}`,
+        );
 
-      message += errors.join(', ');
+      isEmailsWithDifferentPartner &&
+        errors.push(
+          `${await t('Registered under different owner already')} - ${getEmails(emailsWithDifferentPartner)}`,
+        );
+
+      isEmailsAlreadyRegistered &&
+        errors.push(
+          `${await t('An account with this email exists already')} - ${getEmails(emailsAlreadyRegistered)}`,
+        );
+
+      message += errors.join('; ');
     }
     return {
       ...(isSuccess ? {success: true} : {error: true}),

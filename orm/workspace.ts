@@ -69,6 +69,7 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   enableEventComment: true,
   socialMediaSelect: true,
   canInviteMembers: true,
+  isExistingContactsOnly: true,
   invitationTemplateList: {
     select: {
       localization: true,

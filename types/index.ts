@@ -150,6 +150,8 @@ export interface PortalAppConfig extends Model {
   isDisplayCloseBtn: boolean;
   otpTemplateList: any[];
   invitationTemplateList: any[];
+  canInviteMembers?: boolean;
+  isExistingContactsOnly?: boolean;
 }
 
 export interface PortalApp extends Model {
