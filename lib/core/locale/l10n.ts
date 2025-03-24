@@ -1,6 +1,10 @@
 import {DEFAULT_DATE_FORMAT, DEFAULT_LOCALE} from '@/locale/contants';
 import {dayjs, findDateFormat, findDayjsLocale} from '@/locale/dayjs';
-import {limitScale, transformLocale} from '@/locale/utils';
+import {
+  inverseTransformLocale,
+  limitScale,
+  transformLocale,
+} from '@/locale/utils';
 
 async function initDayjs(locale: string) {
   const data = await findDayjsLocale(locale);
@@ -13,7 +17,7 @@ export const l10n = (() => {
   let dateFormat = DEFAULT_DATE_FORMAT;
 
   async function init(l?: string) {
-    locale = l || navigator.language || DEFAULT_LOCALE;
+    locale = l || inverseTransformLocale(navigator.language) || DEFAULT_LOCALE;
     const dayjsLocale = await initDayjs(locale);
     dateFormat = findDateFormat(locale, dateFormat, dayjsLocale);
   }
