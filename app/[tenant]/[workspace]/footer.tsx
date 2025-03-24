@@ -1,6 +1,6 @@
-'use client';
 import Link from 'next/link';
 import Image from 'next/image';
+import {i18n} from '@/locale';
 
 export default function Footer({}: {}) {
   return (
@@ -11,7 +11,7 @@ export default function Footer({}: {}) {
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center">
-          <div className="text-xs">Powered by</div>
+          <div className="text-xs">{i18n.t('Powered by')}</div>
           <Image
             src="/images/axelor.png"
             alt="Axelor Logo"
