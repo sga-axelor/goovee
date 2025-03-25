@@ -4,7 +4,7 @@ import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {DATE_FORMATS, NOT_INTERESTED, REPORT} from '@/constants';
+import {DATE_FORMATS, NOT_INTERESTED, REPORT, SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
 import {
   Avatar,
@@ -38,7 +38,7 @@ export const ThreadBody = ({
 }) => {
   const {title, content, attachmentList, author, postDateT}: any = post || {};
 
-  const {tenant} = useWorkspace();
+  const {tenant, workspaceURL} = useWorkspace();
 
   const ref = React.useRef(null);
 
@@ -57,6 +57,7 @@ export const ThreadBody = ({
               id: attachment?.metaFile?.id,
               type: attachment?.metaFile?.fileType,
               name: attachment?.metaFile?.fileName,
+              url: `${workspaceURL}/${SUBAPP_CODES.forum}/api/post/${post?.id}/attachment/${attachment?.metaFile?.id}`,
             });
           }
           return acc;
@@ -64,7 +65,7 @@ export const ThreadBody = ({
         {images: [], files: []},
       ) || {images: [], files: []}
     );
-  }, [attachmentList]);
+  }, [attachmentList, post?.id, workspaceURL]);
 
   return (
     <>

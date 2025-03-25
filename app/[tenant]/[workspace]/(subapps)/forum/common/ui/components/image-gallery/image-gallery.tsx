@@ -4,20 +4,20 @@ import {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {getImageURL} from '@/utils/files';
 import {formatNumber} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
 import type {Post} from '@/subapps/forum/common/types/forum';
 import {ThreadPopup} from '@/subapps/forum/common/ui/components';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
   const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
 
   const [openPopUp, setOpenPopUp] = useState(false);
 
-  const {tenant} = useWorkspace();
+  const {workspaceURL} = useWorkspace();
 
   const openThreadPopup = () => {
     post && setOpenPopUp(true);
@@ -37,7 +37,7 @@ export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
             <div
               className="w-full h-[12.813rem] bg-no-repeat bg-center bg-cover cursor-pointer"
               style={{
-                backgroundImage: `url(${getImageURL(image?.metaFile?.id, tenant)})`,
+                backgroundImage: `url(${image?.metaFile?.id ? `${workspaceURL}/${SUBAPP_CODES.forum}/api/post/${post?.id}/attachment/${image.metaFile.id}` : NO_IMAGE_URL})`,
               }}></div>
             {index === 2 && showOverlay && (
               <div className="absolute inset-0 flex items-center cursor-pointer justify-center bg-black bg-opacity-50 text-white text-5xl font-semibold">
