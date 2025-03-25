@@ -38,7 +38,13 @@ export const FilePreviewer = React.memo(({file}: {file: any}) => {
                 : {})}
             />
           </div>
-          {file?.name}
+
+          <a
+            href={file.url}
+            download
+            className="text-blue-600 underline cursor-pointer marker:text-black">
+            {file?.name}
+          </a>
         </div>
       )}
     </div>
