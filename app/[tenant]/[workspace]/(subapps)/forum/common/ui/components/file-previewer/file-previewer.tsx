@@ -16,9 +16,6 @@ export const FilePreviewer = React.memo(({file}: {file: any}) => {
     [file],
   );
 
-  if (!file.id) {
-    return;
-  }
   return (
     <div className="w-full">
       {file?.type === 'application/pdf' ? (
