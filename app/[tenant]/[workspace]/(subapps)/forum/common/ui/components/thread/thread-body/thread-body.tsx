@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/ui/components';
-import {getImageURL, getPartnerImageURL} from '@/utils/files';
+import {getPartnerImageURL} from '@/utils/files';
 import {formatDate} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //

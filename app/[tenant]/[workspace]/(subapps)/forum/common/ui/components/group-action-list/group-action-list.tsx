@@ -26,7 +26,7 @@ import {
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
-import {SUBAPP_CODES} from '@/constants';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -44,7 +44,6 @@ import {
   joinGroup,
   pinGroup,
 } from '@/subapps/forum/common/action/action';
-import {getImageURL} from '@/utils/files';
 import {Group} from '@/subapps/forum/common/types/forum';
 
 export const GroupActionList = ({
@@ -151,8 +150,11 @@ export const GroupActionList = ({
       </h1>
       <div className="flex flex-col gap-4">
         {groups?.map((group: any) => {
-          const groupImageID = group?.forumGroup?.image?.id || group?.image?.id;
-          const groupImage = getImageURL(groupImageID, tenant, {noimage: true});
+          const id = group?.forumGroup?.id || group?.id;
+          const imageId = group?.forumGroup?.image?.id || group?.image?.id;
+          const groupImage = imageId
+            ? `${workspaceURI}/${SUBAPP_CODES.forum}/api/group/${id}/image`
+            : NO_IMAGE_URL;
 
           return (
             <Collapsible key={group?.id}>

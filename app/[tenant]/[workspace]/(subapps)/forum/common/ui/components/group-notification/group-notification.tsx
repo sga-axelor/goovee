@@ -10,7 +10,6 @@ import {
   RadioGroupItem,
   Separator,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 
@@ -18,6 +17,7 @@ import {useToast} from '@/ui/hooks';
 import {NOTIFICATIONS_OPTIONS} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {Group} from '@/subapps/forum/common/types/forum';
 import {addGroupNotification} from '@/subapps/forum/common/action/action';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 interface groupNotificationPros {
   group: Group;
@@ -59,9 +59,11 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
         <div className="flex items-center gap-3">
           <Avatar className="rounded-full h-6 w-6">
             <AvatarImage
-              src={getImageURL(group.forumGroup?.image?.id, tenant, {
-                noimage: true,
-              })}
+              src={
+                group.forumGroup?.image?.id
+                  ? `${workspaceURL}/${SUBAPP_CODES.forum}/api/group/${group.forumGroup?.id}/image`
+                  : NO_IMAGE_URL
+              }
             />
           </Avatar>
           <span className="text-sm">{i18n.t(forumGroup.name)}</span>

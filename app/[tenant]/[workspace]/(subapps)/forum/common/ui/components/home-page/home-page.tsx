@@ -16,7 +16,7 @@ import {
 } from '@/constants';
 import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
-import {getImageURL, getPartnerImageURL} from '@/utils/files';
+import {getPartnerImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {PortalWorkspace} from '@/types';
 

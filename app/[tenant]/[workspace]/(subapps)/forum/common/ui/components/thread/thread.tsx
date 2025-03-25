@@ -56,9 +56,7 @@ export const Thread = ({
     <div
       id={`post-${post?.id}`}
       className="bg-white rounded-lg flex flex-col gap-4 pt-4 pb-0 rounded-t-lg">
-      {showHeader && (
-        <ThreadHeader title={forumGroup?.name} image={forumGroup?.image} />
-      )}
+      {showHeader && <ThreadHeader group={forumGroup} />}
       <ThreadBody post={post} usePopUpStyles={usePopUpStyles} />
       <ThreadFooter
         post={post}

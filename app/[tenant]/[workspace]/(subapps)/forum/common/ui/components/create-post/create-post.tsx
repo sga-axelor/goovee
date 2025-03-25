@@ -32,7 +32,6 @@ import {
   SelectValue,
 } from '@/ui/components';
 import {useToast} from '@/ui/hooks/use-toast';
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
@@ -53,6 +52,7 @@ import {
   FileUploader,
   ImageUploader,
 } from '@/subapps/forum/common/ui/components';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 interface ImageItem {
   file: File;
@@ -85,7 +85,7 @@ export const CreatePost = ({
   const [loading, setLoading] = useState(false);
 
   const {toast} = useToast();
-  const {workspaceURL, tenant} = useWorkspace();
+  const {workspaceURL} = useWorkspace();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -233,7 +233,11 @@ export const CreatePost = ({
                                 <div className="w-6 h-6 rounded-lg overflow-hidden relative">
                                   <Image
                                     fill
-                                    src={getImageURL(group?.image?.id, tenant)}
+                                    src={
+                                      group?.image?.id
+                                        ? `${workspaceURL}/${SUBAPP_CODES.forum}/api/group/${group.id}/image`
+                                        : NO_IMAGE_URL
+                                    }
                                     alt={group.name}
                                     objectFit="cover"
                                   />
