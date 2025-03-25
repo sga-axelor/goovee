@@ -47,20 +47,28 @@ function MobileSidebar({subapps, workspaces}: any) {
       <MdApps onClick={openSidebar} className="cursor-pointer h-6 w-6" />
       <Sheet open={open} onOpenChange={closeSidebar}>
         <SheetContent side="left" className="bg-white divide-y divide-grey-1">
-          {user && Boolean(workspaces?.length) && (
-            <Select defaultValue={workspaceURL} onValueChange={redirect}>
-              <SelectTrigger className="grow max-w-100 overflow-hidden px-6 py-2 mt-4 bg-none! h-[auto]">
-                <SelectValue placeholder="" />
-              </SelectTrigger>
-              <SelectContent>
-                {workspaces.map((workspace: any) => (
-                  <SelectItem key={workspace.url} value={workspace.url}>
-                    {workspace.name || workspace.url}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          {user && Boolean(workspaces?.length) ? (
+            workspaces.length === 1 ? (
+              <Link href={workspaceURL}>
+                <p className="px-6 py-2">
+                  {workspaces[0]?.name || workspaces[0]?.url}
+                </p>
+              </Link>
+            ) : (
+              <Select defaultValue={workspaceURL} onValueChange={redirect}>
+                <SelectTrigger className="grow max-w-100 overflow-hidden px-6 py-2 mt-4 bg-none! h-[auto]">
+                  <SelectValue placeholder="" />
+                </SelectTrigger>
+                <SelectContent>
+                  {workspaces.map((workspace: any) => (
+                    <SelectItem key={workspace.url} value={workspace.url}>
+                      {workspace.name || workspace.url}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )
+          ) : null}
 
           {subapps
             ?.filter((app: any) => app.installed)
