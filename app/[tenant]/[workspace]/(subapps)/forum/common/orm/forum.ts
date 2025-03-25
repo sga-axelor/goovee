@@ -63,23 +63,13 @@ export async function findGroupsByMembers({
 
   const whereClause = {
     member: {
-      AND: [{id: id}, {id: {ne: null}}],
+      AND: [{id}, {id: {ne: null}}],
     },
     forumGroup: {
-      workspace: {
-        id: workspaceID,
-      },
+      workspace: {id: workspaceID},
       ...(await filterPrivate({user, tenantId})),
+      ...(searchKey ? {name: {like: `%${searchKey}%`}} : {}),
     },
-    ...(searchKey
-      ? {
-          forumGroup: {
-            name: {
-              like: `%${searchKey}%`,
-            },
-          },
-        }
-      : {}),
   };
 
   return await client.aOSPortalForumGroupMember
