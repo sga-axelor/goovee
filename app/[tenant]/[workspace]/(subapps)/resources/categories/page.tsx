@@ -114,13 +114,7 @@ export default async function Page({
         )}
       </div>
       <p className="leading-5 text-sm">
-        {await t(`This is the folder description : Office ipsum you must be muted. Ground
-        items back-end beforehand lets previous low-hanging eye create. On
-        player-coach give six say. Synchronise note just one ask guys cost. Work
-        after search production pulling involved paradigm chime. Would existing
-        jumping meaningful pivot. Exploratory mint so hits boy site. Keywords
-        key welcome panel downloaded we lean next group points. Before
-        incentivization hits ui launch.`)}
+        {file?.description ? file.description : ''}
       </p>
       <div className="grid sm:grid-cols-4 gap-5">
         <div className="bg-white rounded-lg py-6 px-2">

@@ -186,6 +186,7 @@ export async function fetchFile({
       partnerSet: true,
       partnerCategorySet: true,
       isDirectory: true,
+      description: true,
     },
   });
 
