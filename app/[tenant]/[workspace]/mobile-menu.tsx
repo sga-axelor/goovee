@@ -20,6 +20,7 @@ import {SUBAPP_PAGE} from '@/constants';
 import {Account} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
+import {useNavigationVisibility} from '@/ui/hooks';
 
 function MobileSidebar({subapps, workspaces}: any) {
   const pathname = usePathname();
@@ -118,6 +119,17 @@ function MobileSidebar({subapps, workspaces}: any) {
 export function MobileMenu({subapps, workspaces}: any) {
   const router = useRouter();
   const redirect = () => router.push('/notifications');
+
+  const {data: session} = useSession();
+  const user = session?.user;
+
+  const {loading, visible} = useNavigationVisibility();
+
+  const canDisplayContent = !loading && visible;
+
+  if (!canDisplayContent && !user) {
+    return;
+  }
 
   return (
     <nav className="flex items-center w-screen fixed left-0 bottom-0 h-[72px] bg-white z-50 lg:hidden dark:bg-secondary px-8 pt-4 pb-6">

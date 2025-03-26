@@ -9,6 +9,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
+import {useSession} from 'next-auth/react';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCard} from '@/subapps/events/common/ui/components';
@@ -22,6 +23,10 @@ function Content({event}: ContentProps) {
   const isPaid = searchParams.get('isPaid')?.toLowerCase() === 'true';
 
   const {workspaceURI} = useWorkspace();
+  const {data: session} = useSession();
+  const user = session?.user;
+
+  const hideEventHomeNavigationButton = event.isHidden && !user;
 
   return (
     <div className="py-6 container mx-auto flex flex-col gap-6 mb-16">
@@ -48,14 +53,16 @@ function Content({event}: ContentProps) {
             variant="success"
           />
         </div>
-        <Button variant="outline-success">
-          <Link
-            href={`${workspaceURI}/${SUBAPP_CODES.events}`}
-            className="flex gap-2">
-            <MdKeyboardBackspace size={24} />
-            {i18n.t('Go back to the homepage')}{' '}
-          </Link>
-        </Button>
+        {!hideEventHomeNavigationButton && (
+          <Button variant="outline-success">
+            <Link
+              href={`${workspaceURI}/${SUBAPP_CODES.events}`}
+              className="flex gap-2">
+              <MdKeyboardBackspace size={24} />
+              {i18n.t('Go back to the homepage')}
+            </Link>
+          </Button>
+        )}
       </div>
     </div>
   );

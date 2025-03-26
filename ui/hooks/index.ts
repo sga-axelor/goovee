@@ -5,3 +5,4 @@ export {useToast} from './use-toast';
 export {useSearchParams} from './use-search-params';
 export {useSortBy} from './use-sort-by';
 export {useCountDown} from './use-count-down';
+export {useNavigationVisibility} from './use-navigation-visibility';

@@ -1,6 +1,6 @@
 'use client';
 
-import {Fragment} from 'react';
+import {Fragment, useMemo} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
@@ -22,6 +22,8 @@ import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Icon} from '@/ui/components';
+import {PortalWorkspace} from '@/types';
+import {useNavigationVisibility} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
@@ -43,6 +45,7 @@ function Logo() {
     </Link>
   );
 }
+
 function Notification() {
   const {workspaceURI} = useWorkspace();
 
@@ -78,7 +81,7 @@ export default function Header({
 }: {
   subapps: any;
   hideTopNavigation?: boolean;
-  workspaces?: any;
+  workspaces?: PortalWorkspace[];
 }) {
   const router = useRouter();
   const {data: session} = useSession();
@@ -86,19 +89,19 @@ export default function Header({
 
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
 
+  const {visible, loading} = useNavigationVisibility();
+
   const redirect = (value: any) => {
     router.push(value);
   };
 
-  let showTopNavigation = false;
+  const showTopNavigation = useMemo(() => {
+    if (!subapps?.length) return false;
 
-  if (subapps?.length) {
-    if (user) {
-      showTopNavigation = !hideTopNavigation;
-    } else {
-      showTopNavigation = true;
-    }
-  }
+    if (user) return !hideTopNavigation;
+
+    return visible ?? true;
+  }, [subapps, user, hideTopNavigation, visible]);
 
   const shopSubapp = subapps?.find(
     (app: any) => app.code === SUBAPP_CODES.shop,
@@ -112,31 +115,35 @@ export default function Header({
 
         <div className="grow" />
         <div className="flex items-center gap-8">
-          {subapps
-            .filter((app: any) => app.installed && app.showInTopMenu)
-            .sort(
-              (app1: any, app2: any) =>
-                app1.orderForTopMenu - app2.orderForTopMenu,
-            )
-            .reverse()
-            .map(({name, icon, code, color}: any) => {
-              const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
-              return (
-                <Link key={code} href={`${workspaceURI}/${code}${page}`}>
-                  {icon ? (
-                    <Icon name={icon} className="h-6 w-6" style={{color}} />
-                  ) : (
-                    <p className="font-medium">{name}</p>
-                  )}
-                </Link>
-              );
-            })}
+          {visible &&
+            !loading &&
+            subapps
+              .filter((app: any) => app.installed && app.showInTopMenu)
+              .sort(
+                (app1: any, app2: any) =>
+                  app1.orderForTopMenu - app2.orderForTopMenu,
+              )
+              .reverse()
+              .map(({name, icon, code, color}: any) => {
+                const page =
+                  SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
+                return (
+                  <Link key={code} href={`${workspaceURI}/${code}${page}`}>
+                    {icon ? (
+                      <Icon name={icon} className="h-6 w-6" style={{color}} />
+                    ) : (
+                      <p className="font-medium">{name}</p>
+                    )}
+                  </Link>
+                );
+              })}
           {false && <Notification />}
-          {showCart && <Cart />}
+          {showCart && visible && !loading && <Cart />}
           <Account baseURL={workspaceURI} tenant={tenant} />
         </div>
       </div>
-      {showTopNavigation ? (
+
+      {showTopNavigation && !loading ? (
         <div className="bg-background text-foreground px-6 py-4 hidden lg:flex items-center justify-between border-b border-border border-solid max-w-full gap-10">
           <div>
             {Boolean(workspaces?.length) && user && (
@@ -145,7 +152,7 @@ export default function Header({
                   <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
-                  {workspaces.map((workspace: any) => (
+                  {workspaces?.map(workspace => (
                     <SelectItem key={workspace.url} value={workspace.url}>
                       {workspace.name || workspace.url}
                     </SelectItem>
@@ -162,7 +169,7 @@ export default function Header({
                   app1.orderForTopMenu - app2.orderForTopMenu,
               )
               .reverse()
-              .map(({code, name, icon, color, background}: any, i: any) => {
+              .map(({code, name}: any, i: any) => {
                 const page =
                   SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
                 return (
