@@ -18,7 +18,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/ui/components';
-import {SUBAPP_PAGE} from '@/constants';
+import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Icon} from '@/ui/components';
@@ -100,6 +100,11 @@ export default function Header({
     }
   }
 
+  const shopSubapp = subapps?.find(
+    (app: any) => app.code === SUBAPP_CODES.shop,
+  );
+  const showCart = shopSubapp?.installed;
+
   return (
     <>
       <div className="bg-background text-foreground px-6 py-2 flex items-center border-b border-border border-solid">
@@ -127,7 +132,7 @@ export default function Header({
               );
             })}
           {false && <Notification />}
-          <Cart />
+          {showCart && <Cart />}
           <Account baseURL={workspaceURI} tenant={tenant} />
         </div>
       </div>
