@@ -2,6 +2,8 @@ import fs, {Stats} from 'fs';
 import {manager} from '@/tenant';
 import {NextResponse} from 'next/server';
 import type {ReadableOptions} from 'stream';
+import {filterPrivate} from '@/orm/filter';
+import {User} from '@/types';
 
 export async function findFile({
   id,
@@ -68,6 +70,64 @@ export async function findFile({
     filePath,
     fileType,
   };
+}
+
+export async function findLatestDMSFileByName({
+  tenant: tenantId,
+  user,
+  relatedId,
+  relatedModel,
+  name,
+}: {
+  tenant: string;
+  relatedId: any;
+  relatedModel: string;
+  user: User;
+  name: string;
+}) {
+  if (!tenantId || !user) {
+    return null;
+  }
+
+  try {
+    const tenant = await manager.getTenant(tenantId);
+    if (!(tenant?.client && tenant?.config && tenant?.config?.aos?.storage)) {
+      return null;
+    }
+
+    const storage = tenant?.config?.aos?.storage;
+    const {client} = tenant;
+
+    const record = await client.aOSDMSFile.findOne({
+      where: {
+        isDirectory: false,
+        relatedId,
+        relatedModel,
+        parent: {relatedModel},
+        fileName: {like: `%${name}%`},
+        ...(await filterPrivate({tenantId, user})),
+      },
+      select: {metaFile: true},
+      orderBy: {
+        updatedOn: 'DESC',
+      } as any,
+    });
+
+    if (!record?.metaFile) return null;
+    const filePath = `${storage}/${record.metaFile.filePath}`;
+    const fileName = record.metaFile.fileName!;
+    const fileType = record.metaFile.fileType!;
+
+    return {
+      record,
+      filePath,
+      fileName,
+      fileType,
+    };
+  } catch (error) {
+    console.error('Error while getting DMS file:', error);
+    return null;
+  }
 }
 
 export function createStream(
