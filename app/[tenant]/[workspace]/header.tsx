@@ -76,11 +76,11 @@ function Cart() {
 
 export default function Header({
   subapps,
-  hideTopNavigation,
+  isTopNavigation = false,
   workspaces,
 }: {
   subapps: any;
-  hideTopNavigation?: boolean;
+  isTopNavigation?: boolean;
   workspaces?: PortalWorkspace[];
 }) {
   const router = useRouter();
@@ -88,25 +88,22 @@ export default function Header({
   const user = session?.user;
 
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
-
   const {visible, loading} = useNavigationVisibility();
 
-  const redirect = (value: any) => {
-    router.push(value);
-  };
+  const redirect = (value: any) => router.push(value);
 
-  const showTopNavigation = useMemo(() => {
-    if (!subapps?.length) return false;
-
-    if (user) return !hideTopNavigation;
-
-    return visible ?? true;
-  }, [subapps, user, hideTopNavigation, visible]);
+  const showTopNavigation = subapps?.length
+    ? user
+      ? isTopNavigation
+      : (visible ?? true)
+    : false;
 
   const shopSubapp = subapps?.find(
     (app: any) => app.code === SUBAPP_CODES.shop,
   );
-  const showCart = shopSubapp?.installed;
+
+  const shouldDisplayIcons = visible && !loading;
+  const showCart = shopSubapp?.installed && shouldDisplayIcons;
 
   return (
     <>
@@ -115,8 +112,7 @@ export default function Header({
 
         <div className="grow" />
         <div className="flex items-center gap-8">
-          {visible &&
-            !loading &&
+          {shouldDisplayIcons &&
             subapps
               .filter((app: any) => app.installed && app.showInTopMenu)
               .sort(
@@ -138,7 +134,7 @@ export default function Header({
                 );
               })}
           {false && <Notification />}
-          {showCart && visible && !loading && <Cart />}
+          {showCart && <Cart />}
           <Account baseURL={workspaceURI} tenant={tenant} />
         </div>
       </div>

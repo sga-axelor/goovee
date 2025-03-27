@@ -101,7 +101,7 @@ export default async function Layout({
           <div className="flex flex-col flex-1 max-h-full max-w-full min-w-0">
             <Header
               subapps={subapps}
-              hideTopNavigation={!isTopNavigation}
+              isTopNavigation={isTopNavigation}
               workspaces={workspaces}
             />
             <div className="flex flex-col flex-grow min-h-0">
