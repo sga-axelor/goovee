@@ -13,6 +13,7 @@ export interface SchemaItem {
   targetName?: string;
   formView?: string;
   gridView?: string;
+  canSelect?: string;
   items: SchemaItem[];
 }
 

@@ -53,6 +53,7 @@ export const FORM_VIEW = {
                 autoTitle: 'Supplier Catalog Lines',
                 formView: 'supplier-catalog-form',
                 gridView: 'supplier-catalog-grid',
+                canSelect: 'true',
               },
             ],
           },

@@ -27,6 +27,11 @@ async function getFieldType(
       if (item.gridView != null) {
         const {columns} = await getGenericGridContent(item.gridView);
         config = {...config, columns};
+
+        if (item.canSelect === 'true') {
+          const data = await getModelData(modelName);
+          config = {...config, data};
+        }
       }
 
       return {

@@ -24,6 +24,7 @@ import {RESPONSIVE_SIZES} from '@/constants';
 type TableRowsProps<T extends Record<string, any>> = {
   rows: T[];
   columns: any[];
+  selectedRows?: any[];
   onRowClick?: (record: T, e: MouseEvent<HTMLTableRowElement>) => void;
   deleteCellRenderer?: (record: T) => ReactNode;
 };
@@ -31,6 +32,7 @@ type TableRowsProps<T extends Record<string, any>> = {
 export function ExpandableTableRows<T extends Record<string, any>>({
   rows,
   columns,
+  selectedRows,
   deleteCellRenderer,
   onRowClick,
 }: TableRowsProps<T>) {
@@ -84,6 +86,16 @@ export function ExpandableTableRows<T extends Record<string, any>>({
           <TableRow
             onClick={e => handleClick(row, e)}
             className="cursor-pointer [&:not(:has(.action:hover)):hover]:bg-slate-100 text-sm">
+            {selectedRows && (
+              <TableCell className="p-3">
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(row.id)}
+                  onChange={e => handleClick(row, e as any)}
+                />
+              </TableCell>
+            )}
+
             {mainColumns.map((column: any) => (
               <TableCell key={column.key} className="p-3">
                 {column.content(row)}
@@ -129,6 +141,7 @@ export function ExpandableTableRows<T extends Record<string, any>>({
     rows,
     columns.length,
     openId,
+    selectedRows,
     mainColumns,
     isSmallScreen,
     handleToggle,

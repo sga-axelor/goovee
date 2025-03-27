@@ -12,6 +12,7 @@ type TableListProps = {
   style?: React.CSSProperties;
   columns: Column[];
   rows: any[];
+  selectedRows?: any[];
   sort: SortState;
   pageInfo?: any;
   pageParamKey?: string;
@@ -24,6 +25,7 @@ export function TableList({
   style,
   columns,
   rows,
+  selectedRows,
   sort,
   pageInfo,
   pageParamKey,
@@ -74,6 +76,7 @@ export function TableList({
       <Table className="rounded-lg bg-card text-card-foreground" style={style}>
         <SortableHeader
           columns={memoizedColumns}
+          showEmptyCell={selectedRows != null}
           sort={{
             key: sort?.key,
             direction: sort?.direction,
@@ -84,6 +87,7 @@ export function TableList({
           <ExpandableTableRows
             rows={rows}
             columns={memoizedColumns}
+            selectedRows={selectedRows}
             onRowClick={onRowClick}
           />
         </TableBody>

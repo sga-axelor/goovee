@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo} from 'react';
 
 import {i18n} from '@/locale';
 import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
@@ -18,15 +18,29 @@ export const AdditionPopup = ({
   style?: React.CSSProperties;
   visible?: boolean;
   onClose: () => void;
-  creationContent: {fields: Field[]; panels?: Panel[]; model?: string};
+  creationContent: {
+    fields: Field[];
+    panels?: Panel[];
+    model?: string;
+    handleCreate?: (data: any) => Promise<void>;
+  };
 }) => {
+  const {fields, panels, model, handleCreate} = useMemo(
+    () => creationContent,
+    [creationContent],
+  );
+
   const handleRowCreation = useCallback(
     async (values: any) => {
-      await createRow(creationContent?.model, values);
+      if (handleCreate) {
+        await handleCreate(values);
+      } else {
+        await createRow(model, values);
+      }
 
       onClose();
     },
-    [creationContent?.model, onClose],
+    [handleCreate, model, onClose],
   );
 
   return (
@@ -38,8 +52,8 @@ export const AdditionPopup = ({
         <div className="overflow-y-auto">
           <FormView
             className="!my-0"
-            fields={creationContent.fields}
-            panels={creationContent.panels}
+            fields={fields}
+            panels={panels}
             submitTitle={i18n.t('Create')}
             onSubmit={handleRowCreation}
           />

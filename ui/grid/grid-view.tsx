@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useMemo, useState} from 'react';
-import {MdAdd} from 'react-icons/md';
+import {MdAdd, MdSearch} from 'react-icons/md';
 
 import {i18n} from '@/locale';
 import {Button, Label, TableList} from '@/ui/components';
@@ -12,6 +12,7 @@ import {getPageInfo} from '@/utils';
 import type {Column} from './types';
 import {sortColumns} from './content.helpers';
 import AdditionPopup from './addition-popup';
+import SelectionPopup from './selection-popup';
 
 const DEFAULT_PAGE_LIMIT = 5;
 
@@ -24,8 +25,11 @@ export const GridView = ({
   pageInfo,
   handlePage,
   localPageLimit = DEFAULT_PAGE_LIMIT,
-  creationContent,
   canCreate = false,
+  creationContent,
+  canSelect = false,
+  selectionContent,
+  selectedRows,
 }: {
   style?: React.CSSProperties;
   title?: string;
@@ -42,11 +46,23 @@ export const GridView = ({
   };
   handlePage?: (page: number) => void;
   localPageLimit?: number;
-  creationContent?: {fields: Field[]; panels?: Panel[]; model?: string};
   canCreate?: boolean;
+  creationContent?: {
+    fields: Field[];
+    panels?: Panel[];
+    model?: string;
+    handleCreate?: (data: any) => Promise<void>;
+  };
+  canSelect?: boolean;
+  selectionContent?: {
+    data: any[];
+    handleSelect: (record: any) => void;
+  };
+  selectedRows?: any[];
 }) => {
   const [page, setPage] = useState(1);
   const [formVisible, setFormVisible] = useState<boolean>(false);
+  const [gridVisible, setGridVisible] = useState<boolean>(false);
 
   const visibleColumns = useMemo(() => sortColumns(columns), [columns]);
   const isLocalPage = useMemo(() => pageInfo == null, [pageInfo]);
@@ -66,28 +82,48 @@ export const GridView = ({
         <Label className="text-base font-medium leading-6">
           {i18n.t(title ?? '')}
         </Label>
-        {canCreate && creationContent && (
-          <div>
-            <AdditionPopup
-              visible={formVisible}
-              onClose={() => setFormVisible(false)}
-              creationContent={creationContent}
-            />
-            <Button
-              onClick={e => {
-                e.preventDefault();
-                setFormVisible(true);
-              }}
-              className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
-              <MdAdd className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
+        <div className="flex flex-row gap-2 items-center">
+          {canSelect && selectionContent && (
+            <div>
+              <SelectionPopup
+                visible={gridVisible}
+                onClose={() => setGridVisible(false)}
+                selectionContent={{columns, ...selectionContent}}
+              />
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  setGridVisible(true);
+                }}
+                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+                <MdSearch className="h-6 w-6" />
+              </Button>
+            </div>
+          )}
+          {canCreate && creationContent && (
+            <div>
+              <AdditionPopup
+                visible={formVisible}
+                onClose={() => setFormVisible(false)}
+                creationContent={creationContent}
+              />
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  setFormVisible(true);
+                }}
+                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+                <MdAdd className="h-6 w-6" />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="relative p-2 bg-card rounded-md border">
         <TableList
           columns={visibleColumns}
           rows={sortedData}
+          selectedRows={selectedRows}
           sort={sort}
           onSort={toggleSort}
           onRowClick={handleRowClick}

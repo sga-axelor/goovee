@@ -13,6 +13,7 @@ import {i18n} from '@/locale';
 
 type SortableHeaderProps = {
   columns: Column[];
+  showEmptyCell?: boolean;
   sort?: {
     key: string | null;
     direction: 'ASC' | 'DESC';
@@ -20,7 +21,11 @@ type SortableHeaderProps = {
   };
 };
 
-export function SortableHeader({columns, sort}: SortableHeaderProps) {
+export function SortableHeader({
+  columns,
+  showEmptyCell = false,
+  sort,
+}: SortableHeaderProps) {
   const res = useResponsive();
 
   const isSmallScreen = useMemo(
@@ -41,6 +46,8 @@ export function SortableHeader({columns, sort}: SortableHeaderProps) {
   return (
     <TableHeader>
       <TableRow>
+        {showEmptyCell && <TableHead className="border-none p-3" />}
+
         {filteredColumns.map(column => {
           const isActive = sort?.key === column.key;
           const isAscending = isActive && sort?.direction === ORDER_BY.ASC;

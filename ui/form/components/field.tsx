@@ -58,7 +58,7 @@ export const FieldComponent = ({
     ({children, className = ''}: {children: any; className?: string}) => {
       return (
         <FormItem
-          className={`min-w-[70px] flex-grow ${className}`}
+          className={`min-w-[70px] flex-grow p-1 ${className}`}
           style={widthStyle}>
           {children}
         </FormItem>
@@ -86,6 +86,7 @@ export const FieldComponent = ({
             <FormGridComponent
               form={form}
               item={item}
+              identifier={identifier}
               readonly={isReadonly}
               {...item.options}
             />
