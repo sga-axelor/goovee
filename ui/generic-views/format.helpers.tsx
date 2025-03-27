@@ -123,10 +123,16 @@ export async function getGenericGridContent(viewName: string) {
     schemaType: 'grid',
   });
 
-  return {...formatGridSchema(schema?.items ?? []), model: schema?.model};
+  return {
+    ...formatGridSchema(schema?.items ?? [], schema?.sortable),
+    model: schema?.model,
+  };
 }
 
-export function formatGridSchema(schema: SchemaItem[]): {
+export function formatGridSchema(
+  schema: SchemaItem[],
+  sortable = false,
+): {
   columns: Partial<Column>[];
 } {
   let columns: Partial<Column>[] = [];
@@ -140,6 +146,7 @@ export function formatGridSchema(schema: SchemaItem[]): {
         label: !!_item.showTitle ? undefined : _item.autoTitle,
         hidden: _item.hidden ?? false,
         targetName: _item.targetName,
+        sortable,
       });
     }
   });

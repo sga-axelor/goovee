@@ -24,6 +24,7 @@ export const sortColumns = (items: Partial<Column>[]): Column[] => {
   return items
     .map((_c: any, idx: number) => ({
       ..._c,
+      getter: (record: any) => getContent(record, _c.key, _c.targetName),
       content: (record: any) => (
         <p className="font-light">
           {getContent(record, _c.key, _c.targetName)}

@@ -70,15 +70,16 @@ export const GridView = ({
 
   const visibleColumns = useMemo(() => sortColumns(columns), [columns]);
   const isLocalPage = useMemo(() => pageInfo == null, [pageInfo]);
+
+  const [sortedData, sort, toggleSort] = useSortBy(data);
+
   const pageData = useMemo(
     () =>
       isLocalPage
-        ? data?.slice((page - 1) * localPageLimit, page * localPageLimit)
-        : data,
-    [data, isLocalPage, localPageLimit, page],
+        ? sortedData?.slice((page - 1) * localPageLimit, page * localPageLimit)
+        : sortedData,
+    [sortedData, isLocalPage, localPageLimit, page],
   );
-
-  const [sortedData, sort, toggleSort] = useSortBy(pageData);
 
   return (
     <div className="container mt-5 mb-20" style={style}>
@@ -136,7 +137,7 @@ export const GridView = ({
       <div className="relative p-2 bg-card rounded-md border">
         <TableList
           columns={visibleColumns}
-          rows={sortedData}
+          rows={pageData}
           selectedRows={selectedRows}
           sort={sort}
           onSort={toggleSort}

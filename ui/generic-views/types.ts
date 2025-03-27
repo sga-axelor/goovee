@@ -25,5 +25,6 @@ export interface ViewSchema {
   model: string;
   type: SchemaType;
   orderBy?: string;
+  sortable?: boolean;
   items: SchemaItem[];
 }
