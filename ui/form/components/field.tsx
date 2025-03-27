@@ -20,7 +20,7 @@ import {
 
 import type {Field as FieldType} from '../types';
 import {getColspan, mapFieldType} from '../display.helpers';
-import FormGridComponent from './grid';
+import {FormGridComponent} from './grid';
 
 export const FieldComponent = ({
   item,

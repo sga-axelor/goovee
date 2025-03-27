@@ -7,6 +7,7 @@ import {Button, Dialog, DialogContent, DialogTitle} from '@/ui/components';
 
 import GridView from './grid-view';
 import {Column} from './types';
+import {selectRecord} from './content.helpers';
 
 export const SelectionPopup = ({
   style,
@@ -42,7 +43,7 @@ export const SelectionPopup = ({
   }, [handleClose, handleSelect, selectedRows]);
 
   const handleRowSelection = useCallback((record: any) => {
-    setSelectedRows(_current => [..._current, record]);
+    setSelectedRows(_current => selectRecord(_current, record));
   }, []);
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useMemo, useState} from 'react';
-import {MdAdd, MdSearch} from 'react-icons/md';
+import {MdAdd, MdDelete, MdSearch} from 'react-icons/md';
 
 import {i18n} from '@/locale';
 import {Button, Label, TableList} from '@/ui/components';
@@ -30,6 +30,8 @@ export const GridView = ({
   canSelect = false,
   selectionContent,
   selectedRows,
+  canRemove = false,
+  handleRemove,
 }: {
   style?: React.CSSProperties;
   title?: string;
@@ -59,6 +61,8 @@ export const GridView = ({
     handleSelect: (record: any) => void;
   };
   selectedRows?: any[];
+  canRemove?: boolean;
+  handleRemove?: () => void;
 }) => {
   const [page, setPage] = useState(1);
   const [formVisible, setFormVisible] = useState<boolean>(false);
@@ -83,6 +87,23 @@ export const GridView = ({
           {i18n.t(title ?? '')}
         </Label>
         <div className="flex flex-row gap-2 items-center">
+          {canCreate && creationContent && (
+            <div>
+              <AdditionPopup
+                visible={formVisible}
+                onClose={() => setFormVisible(false)}
+                creationContent={creationContent}
+              />
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  setFormVisible(true);
+                }}
+                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+                <MdAdd className="h-6 w-6" />
+              </Button>
+            </div>
+          )}
           {canSelect && selectionContent && (
             <div>
               <SelectionPopup
@@ -100,22 +121,15 @@ export const GridView = ({
               </Button>
             </div>
           )}
-          {canCreate && creationContent && (
-            <div>
-              <AdditionPopup
-                visible={formVisible}
-                onClose={() => setFormVisible(false)}
-                creationContent={creationContent}
-              />
-              <Button
-                onClick={e => {
-                  e.preventDefault();
-                  setFormVisible(true);
-                }}
-                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
-                <MdAdd className="h-6 w-6" />
-              </Button>
-            </div>
+          {canRemove && handleRemove && (
+            <Button
+              onClick={e => {
+                e.preventDefault();
+                handleRemove();
+              }}
+              className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+              <MdDelete className="h-6 w-6" />
+            </Button>
           )}
         </div>
       </div>

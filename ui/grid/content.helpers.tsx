@@ -35,3 +35,11 @@ export const sortColumns = (items: Partial<Column>[]): Column[] => {
     .filter(_c => !_c.hidden)
     .sort((a, b) => a.order - b.order);
 };
+
+export const selectRecord = (currentSet: any[], record: any): any[] => {
+  if (currentSet.find(({id}: any) => id === record.id)) {
+    return currentSet.filter(({id}: any) => id !== record.id);
+  }
+
+  return [...currentSet, record];
+};
