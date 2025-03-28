@@ -3,10 +3,10 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatRelativeTime} from '@/locale/formatters';
 import {BadgeList} from '@/ui/components';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 export const LeadStories = ({
   title,
@@ -17,7 +17,7 @@ export const LeadStories = ({
   news?: any[];
   onClick: (slug: string) => void;
 }) => {
-  const {tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   return (
     <div className="flex flex-col gap-6">
       {title && <div className="font-semibold text-xl">{title}</div>}
@@ -39,7 +39,9 @@ export const LeadStories = ({
                   key={id}
                   className={`relative lg:h-full p-4 bg-no-repeat bg-center bg-cover flex flex-col rounded-lg cursor-pointer`}
                   style={{
-                    backgroundImage: `url(${getImageURL(image?.id, tenant, {noimage: true})})`,
+                    backgroundImage: image?.id
+                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+                      : `url(${NO_IMAGE_URL})`,
                     height: '100%',
                   }}
                   onClick={() => onClick(slug)}>
@@ -92,7 +94,9 @@ export const LeadStories = ({
                 <div
                   className="w-full h-[150px] bg-no-repeat bg-center bg-cover rounded-t-lg"
                   style={{
-                    backgroundImage: `url('${getImageURL(image?.id, tenant, {noimage: true})}')`,
+                    backgroundImage: image?.id
+                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+                      : `url(${NO_IMAGE_URL})`,
                   }}
                 />
                 <div className="bg-white px-4 py-2 rounded-b-lg flex flex-col flex-1">

@@ -124,6 +124,60 @@ export async function findNews({
   return {news, pageInfo};
 }
 
+export async function findNewsImageBySlug({
+  slug,
+  workspace,
+  tenantId,
+  user,
+}: {
+  slug: string;
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  user?: User;
+}): Promise<string | undefined> {
+  if (!tenantId || !workspace) return;
+
+  const client = await manager.getClient(tenantId);
+
+  const news = await client.aOSPortalNews.findOne({
+    where: {
+      slug,
+      categorySet: {workspace: {id: workspace.id}},
+      ...(await filterPrivate({user, tenantId})),
+    },
+    select: {image: {id: true}},
+  });
+
+  return news?.image?.id;
+}
+
+export async function findCategoryImageBySlug({
+  slug,
+  workspace,
+  tenantId,
+  user,
+}: {
+  slug: string;
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  user?: User;
+}): Promise<string | undefined> {
+  if (!tenantId || !workspace) return;
+
+  const c = await manager.getClient(tenantId);
+
+  const news = await c.aOSPortalNewsCategory.findOne({
+    where: {
+      slug,
+      workspace: {id: workspace.id},
+      ...(await filterPrivate({user, tenantId})),
+    },
+    select: {image: {id: true}},
+  });
+
+  return news?.image?.id;
+}
+
 export async function findCategories({
   category = null,
   showAllCategories = false,

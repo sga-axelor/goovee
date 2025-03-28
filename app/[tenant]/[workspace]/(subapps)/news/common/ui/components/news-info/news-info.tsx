@@ -6,9 +6,10 @@ import React from 'react';
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {Separator} from '@/ui/components/separator';
 import {i18n} from '@/locale';
-import {getImageURL, getPartnerImageURL} from '@/utils/files';
+import {getPartnerImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatDate} from '@/locale/formatters';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFormatString} from '@/subapps/news/common/utils';
@@ -23,8 +24,10 @@ export const NewsInfo = ({
   publicationDateTime,
   content,
   author,
+  slug,
 }: {
   title: string;
+  slug: string;
   categorySet: any[];
   image: {id: string};
   description: string;
@@ -38,7 +41,7 @@ export const NewsInfo = ({
     };
   };
 }) => {
-  const {tenant} = useWorkspace();
+  const {tenant, workspaceURI} = useWorkspace();
   return (
     <div className="bg-white rounded-lg p-4 font-normal text-sm text-zinc-500 flex flex-col gap-4">
       <div className="flex flex-col gap-4">
@@ -51,7 +54,9 @@ export const NewsInfo = ({
         <div
           className="h-[300px] w-full bg-no-repeat bg-center bg-cover"
           style={{
-            backgroundImage: `url(${getImageURL(image?.id, tenant, {noimage: true})})`,
+            backgroundImage: image?.id
+              ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+              : `url(${NO_IMAGE_URL})`,
           }}></div>
         <p>{description}</p>
       </div>

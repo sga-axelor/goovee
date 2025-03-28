@@ -1,13 +1,12 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatRelativeTime} from '@/locale/formatters';
 import {BadgeList} from '@/ui/components';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 export const NewsCard = ({
   news,
@@ -19,7 +18,7 @@ export const NewsCard = ({
   onClick: (slug: string) => void;
 }) => {
   const {publicationDateTime, title, image, categorySet, slug} = news;
-  const {tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   return (
     <div
@@ -29,7 +28,9 @@ export const NewsCard = ({
       <div
         className="w-full h-[150px] bg-no-repeat bg-center bg-cover rounded-t-lg"
         style={{
-          backgroundImage: `url(${getImageURL(image?.id, tenant, {noimage: true})})`,
+          backgroundImage: image?.id
+            ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+            : `url(${NO_IMAGE_URL})`,
         }}></div>
       <div className="py-2 px-4 flex flex-col justify-between flex-grow">
         <div className="flex flex-col gap-1">

@@ -47,6 +47,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
     relatedNewsSet,
     recommendedNews,
     attachmentList,
+    slug,
   } = news || {};
   const router = useRouter();
   const pathname = usePathname();
@@ -87,6 +88,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
             publicationDateTime={publicationDateTime}
             content={content}
             author={author}
+            slug={slug}
           />
         </div>
 

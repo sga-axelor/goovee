@@ -5,9 +5,9 @@ import {MdChevronRight} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {BadgeList, Separator} from '@/ui/components';
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatRelativeTime} from '@/locale/formatters';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 export const FeedList = ({
   title,
@@ -20,7 +20,7 @@ export const FeedList = ({
   width?: string;
   onClick: (slug: string) => void;
 }) => {
-  const {tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   return (
     <div
       className={`bg-white h-max p-4 rounded-lg ${
@@ -33,7 +33,9 @@ export const FeedList = ({
             {id, title, publicationDateTime, categorySet, image, slug},
             index,
           ) => {
-            const imageUrl = getImageURL(image?.id, tenant, {noimage: true});
+            const imageUrl = image?.id
+              ? `${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image`
+              : NO_IMAGE_URL;
 
             return (
               <React.Fragment key={id}>

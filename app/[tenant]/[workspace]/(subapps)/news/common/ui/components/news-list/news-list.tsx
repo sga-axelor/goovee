@@ -3,10 +3,10 @@
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatRelativeTime} from '@/locale/formatters';
 import {BadgeList} from '@/ui/components';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 export const NewsList = ({
   news,
@@ -18,7 +18,7 @@ export const NewsList = ({
   onClick: (slug: string) => void;
 }) => {
   const {publicationDateTime, title, image, categorySet, slug} = news;
-  const {tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   return (
     <div
       key={id}
@@ -27,7 +27,9 @@ export const NewsList = ({
       <div
         className="flex-shrink-0 w-[150px] h-[93px] bg-no-repeat bg-center bg-cover rounded-lg"
         style={{
-          backgroundImage: `url(${getImageURL(image?.id, tenant, {noimage: true})})`,
+          backgroundImage: image?.id
+            ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+            : `url(${NO_IMAGE_URL})`,
         }}></div>
       <div className="w-full flex flex-col gap-1 justify-between">
         <div>
