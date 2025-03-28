@@ -9,8 +9,10 @@ import {SUBAPP_CODES} from '@/constants';
 import {fetchEvent} from '@/app/[tenant]/[workspace]/(subapps)/events/common/actions/actions';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
-const DEFAULT_REGEX =
-  /^\/(?<tenant>[^\/]+)\/(?<workspace>[^\/]+)\/(?<code>[^\/]+)\/(?<slug>[^\/]+)(?:\/.*)?$/;
+const CODE_REGEX = (code: string) =>
+  new RegExp(
+    `^\/(?<tenant>[^\\/]+)\/(?<workspace>[^\\/]+)\/${code}\/(?<slug>[^\\/]+)(?:\/.*)?$`,
+  );
 
 type VisibilityHandler = (
   pathname: string,
@@ -26,6 +28,7 @@ type Handler = {
 
 const HANDLERS: Array<Handler> = [
   {
+    regex: CODE_REGEX(SUBAPP_CODES.events),
     code: SUBAPP_CODES.events,
     visibility: navigationVisibilityForEvents,
   },
@@ -37,9 +40,9 @@ async function navigationVisibilityForEvents(
   user: any,
 ): Promise<boolean> {
   const handler = HANDLERS.find(h => h.code === SUBAPP_CODES.events)!;
-  const {regex = DEFAULT_REGEX} = handler;
+  const {regex} = handler;
 
-  const match = pathname.match(regex);
+  const match = pathname.match(regex!);
 
   if (match?.groups) {
     const {slug} = match.groups;
@@ -77,8 +80,8 @@ export function useNavigationVisibility() {
         let matchedHandler: Handler | undefined;
 
         for (const handler of HANDLERS) {
-          const {regex = DEFAULT_REGEX} = handler;
-          const match = pathname.match(regex);
+          const {regex} = handler;
+          const match = pathname.match(regex!);
 
           if (match) {
             matchedHandler = handler;
