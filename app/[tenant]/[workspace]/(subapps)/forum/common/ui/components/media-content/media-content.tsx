@@ -5,7 +5,6 @@ import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {MetaFile} from '@/types';
-import {getImageURL} from '@/utils/files';
 import {DynamicIcon} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {getFileTypeIcon, getIconColor} from '@/utils/files';
@@ -47,7 +46,7 @@ export const MediaContent = ({groupId = ''}: {groupId: string}) => {
             {item.metaFile.fileType?.startsWith('image') ? (
               <Image
                 fill
-                src={getImageURL(item.metaFile.id, tenant)}
+                //src={/* add it later */}
                 alt={item.metaFile.fileName}
               />
             ) : (
