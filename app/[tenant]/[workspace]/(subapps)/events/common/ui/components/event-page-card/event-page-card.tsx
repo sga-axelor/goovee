@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {SUBAPP_CODES} from '@/constants';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
 import {
   Badge,
@@ -19,7 +19,6 @@ import {
   CardTitle,
   InnerHTML,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -35,7 +34,7 @@ import {
 export const EventPageCard = ({eventDetails, workspace}: any) => {
   const {formattedDefaultPriceAti, formattedDefaultPrice, defaultPrice} =
     eventDetails || {};
-  const {workspaceURI, tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   const {data: session} = useSession();
   const user = session?.user;
 
@@ -74,9 +73,11 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
       <CardContent className="px-4 pb-4 space-y-4">
         <div className="relative h-[15.625rem]">
           <Image
-            src={getImageURL(eventDetails?.eventImage?.id, tenant, {
-              noimage: true,
-            })}
+            src={
+              eventDetails.eventImage?.id
+                ? `${workspaceURI}/${SUBAPP_CODES.events}/api/event/${eventDetails.slug}/image`
+                : NO_IMAGE_URL
+            }
             alt={`${eventDetails.eventTitle} image`}
             fill
             className="rounded-lg mx-auto object-cover"

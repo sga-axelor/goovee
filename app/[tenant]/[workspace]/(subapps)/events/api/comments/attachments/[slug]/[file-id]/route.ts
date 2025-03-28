@@ -18,13 +18,13 @@ export async function GET(
     params: {
       tenant: string;
       workspace: string;
-      'event-id': string;
+      slug: string;
       'file-id': string;
     };
   },
 ) {
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
-  const {'event-id': eventId, 'file-id': fileId} = params;
+  const {slug, 'file-id': fileId} = params;
 
   const session = await getSession();
   const user = session?.user;
@@ -54,7 +54,7 @@ export async function GET(
   }
 
   const event = await findEvent({
-    id: eventId,
+    slug,
     workspace,
     tenantId,
     user,
@@ -63,7 +63,7 @@ export async function GET(
     return new NextResponse('Forbidden', {status: 403});
   }
 
-  if (!(await isFileOfRecord({recordId: eventId, fileId, tenantId}))) {
+  if (!(await isFileOfRecord({recordId: event.id, fileId, tenantId}))) {
     return new NextResponse('Forbidden', {status: 403});
   }
 

@@ -14,10 +14,10 @@ import {
   BadgeList,
   InnerHTML,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {formatDateTime} from '@/locale/formatters';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
@@ -25,7 +25,7 @@ import styles from './event-card.module.scss';
 import mainStyles from '@/subapps/events/styles.module.scss';
 
 export const EventCard = ({event}: EventCardProps) => {
-  const {tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   const stripImages = (htmlContent: any = '') =>
     htmlContent?.replace(/<img[^>]*>/g, '');
@@ -35,7 +35,9 @@ export const EventCard = ({event}: EventCardProps) => {
       <div
         className="w-[150px] h-[150px] rounded-lg bg-center bg-cover flex-shrink-0"
         style={{
-          backgroundImage: `url(${getImageURL(event?.eventImage?.id, tenant, {noimage: true})})`,
+          backgroundImage: event.eventImage?.id
+            ? `url(${workspaceURI}/${SUBAPP_CODES.events}/api/event/${event.slug}/image)`
+            : `url(${NO_IMAGE_URL})`,
         }}></div>
 
       <div className="flex w-full gap-10 py-2">

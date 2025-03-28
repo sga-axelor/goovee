@@ -14,7 +14,7 @@ import {
   createComment,
 } from '@/subapps/events/common/actions/actions';
 
-export const CommentsSection = ({eventId}: CommentSectionProps) => {
+export const CommentsSection = ({eventId, slug}: CommentSectionProps) => {
   const {workspaceURL} = useWorkspace();
   return (
     <Card className="rounded-2xl border-none shadow-none p-4 w-full space-y-4 ">
@@ -35,7 +35,7 @@ export const CommentsSection = ({eventId}: CommentSectionProps) => {
         fetchComments={fetchComments}
         trackingField="publicBody"
         commentField="note"
-        attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.events}/api/comments/attachments/${eventId}`}
+        attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.events}/api/comments/attachments/${slug}`}
       />
     </Card>
   );

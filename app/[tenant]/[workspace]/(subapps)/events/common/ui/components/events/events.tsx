@@ -20,7 +20,6 @@ import {
 import {useResponsive, useSearchParams, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
-import {getImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Event, Category} from '@/subapps/events/common/ui/components';

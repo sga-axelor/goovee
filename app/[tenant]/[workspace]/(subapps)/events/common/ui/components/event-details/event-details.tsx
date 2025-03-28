@@ -28,7 +28,9 @@ export function EventDetails({
   return (
     <div className="container mx-auto flex flex-col gap-6 pt-6 pb-24 lg:pb-6">
       <EventPageCard eventDetails={eventDetails} workspace={workspace} />
-      {enableComment && <CommentsSection eventId={eventId} />}
+      {enableComment && (
+        <CommentsSection eventId={eventId} slug={eventDetails.slug} />
+      )}
     </div>
   );
 }
