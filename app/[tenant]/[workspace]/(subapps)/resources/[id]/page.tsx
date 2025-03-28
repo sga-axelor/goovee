@@ -6,7 +6,6 @@ import {MdHistory, MdWeb} from 'react-icons/md';
 import {getSession} from '@/auth';
 import {t} from '@/locale/server';
 import {fetchFile} from '@/subapps/resources/common/orm/dms';
-import {DocViewer} from '@/ui/components';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {formatDate} from '@/locale/server/formatters';
@@ -16,9 +15,10 @@ import {findWorkspace} from '@/orm/workspace';
 import DownloadIcon from './download-icon';
 import HTMLViewer from './html-viewer';
 import ImageViewer from './image-viewer';
+import PDFViewer from './pdf-viewer';
 
 const viewer: Record<string, React.JSXElementConstructor<any>> = {
-  'application/pdf': DocViewer,
+  'application/pdf': PDFViewer,
   'image/jpeg': ImageViewer,
   'image/jpg': ImageViewer,
   'image/png': ImageViewer,

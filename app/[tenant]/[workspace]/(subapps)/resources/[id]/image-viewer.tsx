@@ -3,16 +3,16 @@
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {getDownloadURL} from '@/utils/files';
+import {SUBAPP_CODES} from '@/constants';
 
 export default function ImageViewer({record}: any) {
-  const {tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   return (
     <div className="container">
       <img
         className="object-cover max-w-100"
-        src={getDownloadURL(record?.id, tenant)}
+        src={`${workspaceURI}/${SUBAPP_CODES.resources}/api/file/${record?.id}`}
         alt="Viewer"></img>
     </div>
   );
