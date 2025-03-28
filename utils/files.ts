@@ -13,28 +13,6 @@ export function getFileSizeText(fileSize: number) {
   return fileSize + ' B';
 }
 
-export function parseFormData(formData: FormData) {
-  const values: any = [];
-
-  for (const [key, value] of formData.entries()) {
-    const index = Number(key.match(/\[(\d+)\]/)?.[1]);
-
-    if (Number.isNaN(index)) {
-      continue;
-    }
-
-    if (!values[index]) {
-      values[index] = {};
-    }
-
-    const field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
-
-    values[index][field] = value instanceof File ? value : value.toString();
-  }
-
-  return values;
-}
-
 export function download(record: any, tenantId: string, href?: string) {
   if (!(record && tenantId)) return null;
 
