@@ -78,6 +78,7 @@ export interface PortalAppConfig extends Model {
   requestQuotation: boolean;
   paymentOptionSet?: Array<{}>;
   carouselList?: Array<{
+    id: ID;
     title?: string;
     subTitle?: string;
     href?: string;
