@@ -3,11 +3,11 @@
 import {headers} from 'next/headers';
 
 import {TENANT_HEADER} from '@/middleware';
-import {clone} from '@/utils';
+// import {clone} from '@/utils';
 
 import type {SchemaType, ViewSchema} from '../types';
-import {findFieldsOfModel} from './meta-field';
 import {FORM_VIEW, FORM_VIEW_2, GRID_VIEW, GRID_VIEW_2} from '../fake-data';
+import {getModelFields} from '../actions';
 
 export async function findView({
   name,
@@ -53,13 +53,13 @@ export async function findView({
     };
   }
 
-  if (schema == null) return {};
+  const schemaContent: any = schema?.content?.schema;
 
-  const metaFields: any[] =
-    (await findFieldsOfModel({
-      tenantId,
-      name: schema.schemaModel,
-    }).then(clone)) ?? [];
+  if (schemaType === 'form') {
+    const metaFields: any[] = await getModelFields(schema.schemaModel);
 
-  return {schema: schema.content.schema as any, metaFields};
+    return {schema: schemaContent, metaFields};
+  }
+
+  return {schema: schemaContent};
 }

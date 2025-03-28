@@ -11,23 +11,6 @@
     {
       "type": "String",
       "name": "label"
-    },
-    {
-      "type": "String",
-      "name": "typeName"
-    },
-    {
-      "type": "String",
-      "name": "relationship"
-    },
-    {
-      "type": "String",
-      "name": "packageName"
-    },
-    {
-      "type": "ManyToOne",
-      "name": "metaModel",
-      "target": "AOSMetaModel"
     }
   ]
 }

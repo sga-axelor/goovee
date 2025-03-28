@@ -5,18 +5,39 @@ import {SchemaItem} from './types';
 import {findView} from './orm';
 import {getModelData} from './actions';
 
-const isArrayField = (relationship: string) => {
-  return relationship === 'OneToMany' || relationship === 'ManyToMany';
-};
+function mapStudioType(field: any): InputType {
+  const _type = field?.type?.toLowerCase();
+  switch (_type) {
+    case 'boolean':
+      return 'boolean';
+    case 'integer':
+    case 'decimal':
+    case 'long':
+      return 'number';
+    case 'many_to_one':
+    case 'one_to_one':
+      return 'object';
+    case 'one_to_many':
+    case 'manay_to_many':
+      return 'array';
+    case 'date':
+    case 'datetime':
+    case 'string':
+    case 'text':
+    default:
+      return 'string';
+  }
+}
 
 async function getFieldType(
   field: any,
   item: SchemaItem,
 ): Promise<{[key: string]: any; type: InputType}> {
-  if (field?.relationship != null) {
-    const modelName = `${field.packageName}.${field.typeName}`;
+  const type = mapStudioType(field);
+  const modelName = field?.target;
 
-    if (isArrayField(field.relationship)) {
+  if (modelName != null) {
+    if (type === 'array') {
       let config: any = {model: modelName};
 
       if (item.formView != null) {
@@ -34,25 +55,22 @@ async function getFieldType(
         }
       }
 
-      return {
-        type: 'array',
-        options: {config},
-      };
+      return {type, options: {config}};
     }
 
     const data = await getModelData(modelName);
 
     return {
-      type: 'object',
+      type,
       options: {
         data,
         targetModel: modelName,
-        targetName: 'name',
+        targetName: field?.targetName ?? 'name',
       },
     };
   }
 
-  return {type: field?.typeName?.toLowerCase() ?? 'string'};
+  return {type};
 }
 
 export async function getGenericFormContent(viewName: string) {
