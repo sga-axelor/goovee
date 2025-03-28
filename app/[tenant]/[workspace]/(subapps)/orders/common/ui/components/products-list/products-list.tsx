@@ -12,7 +12,7 @@ import {
   AvatarImage,
 } from '@/ui/components';
 import {i18n} from '@/locale';
-import {getImageURL} from '@/utils/files';
+import {getProductImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {ProductCard} from '@/subapps/orders/common/ui/components';
@@ -23,7 +23,7 @@ import {
 
 export const ProductsList = ({saleOrderLineList, tenant}: any) => {
   const getProductImage = (product: any) => {
-    return getImageURL(product?.picture?.id, tenant, {noimage: true});
+    return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
   return (
     <>

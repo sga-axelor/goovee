@@ -5,7 +5,7 @@ import {MdAddShoppingCart} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {Button, BackgroundImage} from '@/ui/components';
 import {cn} from '@/utils/css';
-import {getImageURL} from '@/utils/files';
+import {getProductImageURL} from '@/utils/files';
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -50,7 +50,7 @@ export function ProductListItem({
     <div className="cursor-pointer rounded-2xl grid grid-cols-1 md:grid-cols-[14.875rem_1fr] gap-6 w-full bg-card text-card-foreground">
       <BackgroundImage
         className="rounded-l-lg relative bg-cover md:w-[14.875rem] w-[5rem] md:h-[14.6875rem] h-[5rem]"
-        src={getImageURL(product.images?.[0] as ID, tenant)}>
+        src={getProductImageURL(product.images?.[0] as ID, tenant)}>
         {Boolean(quantity) && (
           <div className="border shadow-lg absolute bottom-4 right-4 bg-card p-1 md:p-4 rounded-full flex items-center justify-center w-[1.875rem] md:w-[3.75rem] h-[1.875rem] md:h-[3.75rem]">
             <p className="mb-0 text-sm md:text-xl">{quantity}</p>

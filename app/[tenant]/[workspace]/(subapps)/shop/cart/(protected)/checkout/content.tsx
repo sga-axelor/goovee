@@ -22,7 +22,7 @@ import {
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {scale} from '@/utils';
 import {computeTotal} from '@/utils/cart';
-import {getImageURL} from '@/utils/files';
+import {getProductImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {type PortalWorkspace} from '@/types';
@@ -55,7 +55,10 @@ function Summary({cart}: any) {
           }: any = {}) => (
             <div key={product?.id} className="flex gap-4">
               <BackgroundImage
-                src={getImageURL(images?.[0] ? images?.[0] : null, tenant)}
+                src={getProductImageURL(
+                  images?.[0] ? images?.[0] : null,
+                  tenant,
+                )}
                 className="rounded-lg w-[5rem] h-[5rem]"
               />
               <div>

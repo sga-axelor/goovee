@@ -5,7 +5,7 @@ import {MdAddShoppingCart} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {BackgroundImage, Button} from '@/ui/components';
-import {getImageURL} from '@/utils/files';
+import {getProductImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {useToast} from '@/ui/hooks';
@@ -58,7 +58,7 @@ export function ProductCard({
       <div onClick={handleClick}>
         <BackgroundImage
           className="rounded-t-lg bg-cover relative h-[14.5rem]"
-          src={getImageURL(product.images?.[0] as ID, tenant)}>
+          src={getProductImageURL(product.images?.[0] as ID, tenant)}>
           {Boolean(quantity) ? (
             <div className="border shadow-lg absolute bg-card p-4 rounded-full flex items-center justify-center w-[3.75rem] h-[3.75rem] bottom-4 right-4">
               <p className="mb-0 text-xl font-bold">{quantity}</p>

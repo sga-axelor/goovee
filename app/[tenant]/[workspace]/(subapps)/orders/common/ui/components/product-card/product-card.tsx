@@ -11,7 +11,7 @@ import {
   AvatarImage,
   ArrowSwitch,
 } from '@/ui/components';
-import {getImageURL} from '@/utils/files';
+import {getProductImageURL} from '@/utils/files';
 
 export const ProductCard = ({
   saleOrder,
@@ -23,7 +23,7 @@ export const ProductCard = ({
   const [show, setShow] = React.useState(false);
 
   const getProductImage = (product: any) => {
-    return getImageURL(product?.picture?.id, tenant, {noimage: true});
+    return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
 
   return (

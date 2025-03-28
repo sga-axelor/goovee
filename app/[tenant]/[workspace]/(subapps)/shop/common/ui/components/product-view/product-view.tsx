@@ -15,13 +15,12 @@ import {
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
-import {getImageURL} from '@/utils/files';
+import {getProductImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import type {Category, ComputedProduct, PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {Categories} from '..';
 import {ProductMetaFieldView} from '@/subapps/shop/common/ui/components/product-meta-field-view';
 
 export function ProductView({
@@ -122,12 +121,12 @@ export function ProductView({
                 product.images?.length
                   ? product.images.map(i => ({
                       id: i as string,
-                      url: getImageURL(i, tenant) as string,
+                      url: getProductImageURL(i, tenant) as string,
                     }))
                   : [
                       {
                         id: 1,
-                        url: getImageURL('', tenant, {noimage: true}),
+                        url: getProductImageURL('', tenant, {noimage: true}),
                       },
                     ]
               }

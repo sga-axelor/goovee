@@ -25,7 +25,7 @@ import {
 import {useQuantity, useToast} from '@/ui/hooks';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {computeTotal} from '@/utils/cart';
-import {getImageURL} from '@/utils/files';
+import {getProductImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {SEARCH_PARAMS} from '@/constants';
@@ -108,7 +108,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
       <BackgroundImage
         className="rounded-lg h-[12.5rem] md:w-[12.5rem] w-full min-w-[12.5rem]"
         style={{backgroundSize: 'cover'}}
-        src={getImageURL(product?.images?.[0], tenant)}
+        src={getProductImageURL(product?.images?.[0], tenant)}
       />
       <div className="flex-col md:flex-row flex items-start justify-between w-full h-full">
         <div className="flex flex-col items-start justify-between py-2 h-full">
