@@ -1,39 +1,33 @@
 'use client';
 
-import React, {useState} from 'react';
-
 // ---- CORE IMPORTS ---- //
-import {Container} from '@/ui/components';
-import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {download} from '@/utils/files';
-import {useToast} from '@/ui/hooks';
-import {SUBAPP_CODES, RELATED_MODELS, INVOICE_ENTITY_TYPE} from '@/constants';
-import {getFile} from '@/app/actions/file';
+import {SUBAPP_CODES} from '@/constants';
+import {i18n} from '@/locale';
+import {Container} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  Contact,
-  ContactUs,
-  History,
-  Informations,
-  Total,
-  PaymentMethod,
-  ProductsList,
-  ExpandableCard,
-  DownloadButton,
-} from '@/subapps/orders/common/ui/components';
-import {getStatus} from '@/subapps/orders/common/utils/orders';
-import {
-  ORDER_TYPE,
-  ORDER_NUMBER,
-  INVOICE,
   CUSTOMER_DELIVERY,
   DOWNLOAD_PDF,
+  INVOICE,
+  ORDER_NUMBER,
+  ORDER_TYPE,
 } from '@/subapps/orders/common/constants/orders';
+import {
+  Contact,
+  ContactUs,
+  DownloadButton,
+  ExpandableCard,
+  History,
+  Informations,
+  PaymentMethod,
+  ProductsList,
+  Total,
+} from '@/subapps/orders/common/ui/components';
+import {getStatus} from '@/subapps/orders/common/utils/orders';
 
 const Content = ({order}: {order: any}) => {
-  const [loading, setLoading] = useState<{[key: string]: boolean}>({});
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -56,76 +50,6 @@ const Content = ({order}: {order: any}) => {
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
 
   const {workspaceURL, tenant} = useWorkspace();
-  const {toast} = useToast();
-
-  const handleDownload = async (
-    params: any,
-    uniqueKey: string,
-    errorMessage: string,
-  ) => {
-    setLoading(prev => ({...prev, [uniqueKey]: true}));
-    try {
-      const result: any = await getFile(params);
-
-      if (result?.error) {
-        toast({
-          variant: 'destructive',
-          description: i18n.t(result.message),
-        });
-        return;
-      }
-
-      download(result.data, tenant);
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        description: i18n.t(
-          'An unexpected error occurred. Please try again later.',
-        ),
-      });
-    } finally {
-      setLoading(prev => ({...prev, [uniqueKey]: false}));
-    }
-  };
-
-  const handleOrderInvoiceDownload = async () =>
-    await handleDownload(
-      {
-        id: id,
-        workspaceURL,
-        modelName: RELATED_MODELS.SALE_ORDER,
-        subapp: SUBAPP_CODES.orders,
-        type: INVOICE_ENTITY_TYPE.ORDER,
-      },
-      `orderInvoice-${id}`,
-      'Unexpected error during order invoice download:',
-    );
-
-  const handleInvoiceDownload = async (record: any) =>
-    await handleDownload(
-      {
-        id: record.id,
-        workspaceURL,
-        modelName: RELATED_MODELS.INVOICE,
-        subapp: SUBAPP_CODES.orders,
-        type: INVOICE_ENTITY_TYPE.INVOICE,
-      },
-      `invoice-${record.id}`,
-      'Unexpected error during invoice download:',
-    );
-
-  const handleCustomerDeliveryPDFDownload = async (record: any) =>
-    await handleDownload(
-      {
-        id: record.id,
-        workspaceURL,
-        modelName: RELATED_MODELS.STOCK_MOVE,
-        subapp: SUBAPP_CODES.orders,
-        type: INVOICE_ENTITY_TYPE.CUSTOMER_DELIVERY,
-      },
-      `customerDelivery-${record.id}`,
-      'Unexpected error during customer delivery download:',
-    );
 
   return (
     <>
@@ -135,8 +59,7 @@ const Content = ({order}: {order: any}) => {
           shipmentMode={shipmentMode}
           status={status}
           variant={variant}
-          onDownload={handleOrderInvoiceDownload}
-          isDisabled={loading[`orderInvoice-${id}`] || false}
+          orderId={id}
         />
         <div className="flex flex-col-reverse xl:flex-row gap-6 xl:gap-4">
           <div className="flex flex-col gap-6 basis-full md:basis-3/4">
@@ -166,8 +89,6 @@ const Content = ({order}: {order: any}) => {
             {invoices?.length ? (
               <ExpandableCard title={i18n.t(INVOICE)}>
                 {invoices.map((record: any) => {
-                  const isDisabled = loading[`invoice-${record.id}`] || false;
-
                   return (
                     <div key={record.id} className="flex flex-col gap-4 mb-4">
                       <div className="flex flex-col gap-2 text-sm">
@@ -184,10 +105,8 @@ const Content = ({order}: {order: any}) => {
                       </div>
 
                       <DownloadButton
-                        disabled={isDisabled}
-                        record={record}
+                        downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/invoice/${record.id}`}
                         title={i18n.t(DOWNLOAD_PDF)}
-                        onDownload={handleInvoiceDownload}
                       />
                     </div>
                   );
@@ -198,9 +117,6 @@ const Content = ({order}: {order: any}) => {
             {customerDeliveries.length ? (
               <ExpandableCard title={i18n.t(CUSTOMER_DELIVERY)}>
                 {customerDeliveries.map((record: any) => {
-                  const isDisabled =
-                    loading[`customerDelivery-${record.id}`] || false;
-
                   return (
                     <div key={record.id} className="flex flex-col gap-4 mb-4">
                       <div className="flex flex-col gap-2 text-sm">
@@ -216,10 +132,8 @@ const Content = ({order}: {order: any}) => {
                         </div>
                       </div>
                       <DownloadButton
-                        disabled={isDisabled}
-                        record={record}
                         title={i18n.t(DOWNLOAD_PDF)}
-                        onDownload={handleCustomerDeliveryPDFDownload}
+                        downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/customer-delivery/${record.id}`}
                       />
                     </div>
                   );

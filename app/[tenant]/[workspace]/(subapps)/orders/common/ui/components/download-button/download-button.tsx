@@ -6,24 +6,21 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 import {Button} from '@/ui/components';
 
 export function DownloadButton({
-  record,
-  disabled,
+  downloadURL,
   title,
-  onDownload,
 }: {
-  record: any;
-  disabled: boolean;
   title: string;
-  onDownload: (record: any) => void;
+  downloadURL: string;
 }) {
   return (
     <Button
+      asChild
       variant="outline"
-      className="w-full flex items-center gap-2 bg-white hover:bg-white text-success hover:text-success border-success font-medium text-base"
-      disabled={disabled}
-      onClick={() => onDownload(record)}>
-      <MdOutlineFileDownload className="h-6 w-6" />
-      {title}
+      className="w-full flex items-center gap-2 bg-white hover:bg-white text-success hover:text-success border-success font-medium text-base">
+      <a href={downloadURL}>
+        <MdOutlineFileDownload className="h-6 w-6" />
+        {title}
+      </a>
     </Button>
   );
 }

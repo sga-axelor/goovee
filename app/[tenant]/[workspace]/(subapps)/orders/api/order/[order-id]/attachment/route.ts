@@ -10,7 +10,7 @@ import {getWhereClauseForEntity} from '@/utils/filters';
 import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
+import {findOrder} from '@/subapps/orders/common/orm/orders';
 
 export async function GET(
   request: NextRequest,
@@ -20,12 +20,12 @@ export async function GET(
     params: {
       tenant: string;
       workspace: string;
-      'invoice-id': string;
+      'order-id': string;
     };
   },
 ) {
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
-  const {'invoice-id': invoiceId} = params;
+  const {'order-id': orderId} = params;
 
   const session = await getSession();
 
@@ -56,30 +56,30 @@ export async function GET(
     return new NextResponse('Unauthorized', {status: 401});
   }
 
-  const invoicesWhereClause = getWhereClauseForEntity({
+  const orderWhereClause = getWhereClauseForEntity({
     user,
     role: subapp.role,
     isContactAdmin: subapp.isContactAdmin,
-    partnerKey: PartnerKey.PARTNER,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
-  const invoice = await findInvoice({
-    id: invoiceId,
-    params: {where: invoicesWhereClause},
-    workspaceURL,
+  const order = await findOrder({
+    id: orderId,
     tenantId,
+    workspaceURL,
+    params: {where: orderWhereClause},
   });
 
-  if (!invoice) {
-    return new NextResponse('Invoice not found', {status: 404});
+  if (!order) {
+    return new NextResponse('Order not found', {status: 404});
   }
 
   const file = await findLatestDMSFileByName({
     tenant: tenantId,
     user,
-    relatedId: invoiceId,
-    relatedModel: RELATED_MODELS.INVOICE,
-    name: invoice.invoiceId || '',
+    relatedId: orderId,
+    relatedModel: RELATED_MODELS.SALE_ORDER,
+    name: order.saleOrderSeq || '',
   });
 
   if (!file) {

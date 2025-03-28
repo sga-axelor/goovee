@@ -6,18 +6,20 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {Separator, Button, Tag} from '@/ui/components';
 import {i18n} from '@/locale';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
+import {SUBAPP_CODES} from '@/constants';
 
 export const Informations = ({
   createdOn,
   shipmentMode,
   status,
   variant,
-  onDownload,
-  isDisabled,
+  orderId,
 }: any) => {
+  const {workspaceURL} = useWorkspace();
   const showShippingLink = [ORDER_TYPE.SHIPPED, ORDER_TYPE.DELIVERED].includes(
     status,
   );
@@ -53,12 +55,14 @@ export const Informations = ({
           )}
           <div className="flex">
             <Button
+              asChild
               variant="outline"
-              className="flex items-center gap-2 bg-white hover:bg-white text-success hover:text-success border-success !font-medium basis-full md:basis-0"
-              disabled={isDisabled}
-              onClick={onDownload}>
-              <MdOutlineFileDownload className="text-2xl" />{' '}
-              {i18n.t('Download invoice')}
+              className="flex items-center gap-2 bg-white hover:bg-white text-success hover:text-success border-success !font-medium basis-full md:basis-0">
+              <a
+                href={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${orderId}/attachment`}>
+                <MdOutlineFileDownload className="text-2xl" />{' '}
+                {i18n.t('Download invoice')}
+              </a>
             </Button>
           </div>
         </div>
