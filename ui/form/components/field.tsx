@@ -11,16 +11,13 @@ import {
   FormMessage,
   Input,
   RichTextEditor,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
 } from '@/ui/components';
 
 import type {Field as FieldType} from '../types';
 import {getColspan, mapFieldType} from '../display.helpers';
 import {FormGridComponent} from './grid';
+import {SelectionPicker} from './selection-picker';
+import {ObjectPicker} from './object-picker';
 
 export const FieldComponent = ({
   item,
@@ -80,6 +77,24 @@ export const FieldComponent = ({
         });
       }
 
+      if (item.widget === 'select') {
+        return (
+          <Wrapper>
+            <FormLabel className="text-base font-medium leading-6">
+              {i18n.t(item.title ?? '')}
+            </FormLabel>
+            <SelectionPicker
+              form={form}
+              field={item}
+              formKey={identifier}
+              readonly={isReadonly}
+              {...item.options}
+            />
+            <FormMessage />
+          </Wrapper>
+        );
+      }
+
       if (item.type === 'array') {
         return (
           <Wrapper>
@@ -95,38 +110,18 @@ export const FieldComponent = ({
       }
 
       if (item.type === 'object') {
-        const optionList: any[] = item.options?.data ?? [];
-
         return (
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
               {i18n.t(item.title ?? '')}
             </FormLabel>
-            <Select
-              onValueChange={value => {
-                form.setValue(
-                  identifier,
-                  optionList.find(({id}: any) => id === parseInt(value, 10)),
-                );
-              }}
-              value={form.watch(identifier)?.id?.toString()}>
-              <FormControl>
-                <SelectTrigger className="w-full rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal h-[2.875rem] border text-sm font-normal">
-                  <SelectValue placeholder={i18n.t('Select')} />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {optionList?.length === 0 ? (
-                  <p className="text-center">No result</p>
-                ) : (
-                  optionList.map((_i: any) => (
-                    <SelectItem value={_i.id?.toString()} key={_i.id}>
-                      {_i[item.options?.targetName ?? 'name']}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+            <ObjectPicker
+              form={form}
+              field={item}
+              formKey={identifier}
+              readonly={isReadonly}
+              {...item.options}
+            />
             <FormMessage />
           </Wrapper>
         );
@@ -164,6 +159,7 @@ export const FieldComponent = ({
               <RichTextEditor
                 onChange={field.onChange}
                 content={form.watch(identifier)}
+                disabled={isReadonly}
                 classNames={{
                   wrapperClassName: 'overflow-visible bg-card',
                   toolbarClassName: 'mt-0',

@@ -1,80 +1,97 @@
 'use client';
 
-import React, {useMemo} from 'react';
-import Select, {SingleValue, MultiValue} from 'react-select';
-import {UseFormReturn} from 'react-hook-form';
+import React, {useCallback, useMemo} from 'react';
+import type {UseFormReturn} from 'react-hook-form';
+import {Check} from 'lucide-react';
+
+import {i18n} from '@/locale';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@/ui/components';
 
 import type {Field} from '../types';
 
-function formatValues(formValue: any) {
-  if (Array.isArray(formValue)) {
-    return formValue;
-  } else if (formValue != null) {
-    return [formValue];
-  } else {
-    return [];
-  }
-}
-
 export const SelectionPicker = ({
-  style,
   form,
   field,
   formKey,
-  options,
+  readonly = false,
+  itemSet,
   isMulti = false,
 }: {
-  style?: any;
   form: UseFormReturn<Record<string, any>, any, undefined>;
   field: Field;
   formKey: string;
-  options: any[];
+  readonly?: boolean;
+  itemSet?: any[];
   isMulti?: boolean;
 }) => {
-  const selectOptions = useMemo(
-    () => options?.map(_o => ({..._o, label: _o.title})) ?? [],
-    [options],
+  const options = useMemo(
+    () => itemSet?.map(_o => ({..._o, label: _o.title})) ?? [],
+    [itemSet],
   );
 
-  const handleChange = (
-    selected: MultiValue<any> | SingleValue<any> | null,
-  ) => {
-    if (Array.isArray(selected)) {
-      form.setValue(
-        formKey,
-        selected.map(({value}) => value),
-      );
-    } else {
-      form.setValue(formKey, selected?.value);
-    }
-  };
+  const isSelected = useCallback(
+    (value: string, _current: string[]) => _current.includes(value),
+    [],
+  );
 
-  const formValue = formatValues(form.watch(formKey));
+  const handleSelect = useCallback(
+    (value: string, _current: string[]) => {
+      if (value?.length > 0) {
+        const _value = value.replace('-', '');
+
+        const _next = _current.includes(_value)
+          ? _current.filter((_v: string) => _v !== _value)
+          : [...(isMulti ? _current : []), _value];
+
+        form.setValue(formKey, _next.length > 0 ? _next.join(',') : undefined);
+      }
+    },
+    [form, formKey, isMulti],
+  );
+
+  const formValue = form.watch(formKey);
+  const selectedItems = formValue?.split(',') ?? [];
 
   return (
     <Select
-      isMulti={isMulti}
-      options={selectOptions}
-      placeholder={field.title}
-      value={selectOptions.filter(({value}) => formValue.includes(value))}
-      onChange={handleChange}
-      styles={{
-        container: provided => ({...provided, ...style}),
-        multiValue: provided => ({
-          ...provided,
-          backgroundColor: '#CDCFEF',
-          borderRadius: '4px',
-          padding: '4px 8px',
-        }),
-        multiValueRemove: provided => ({
-          ...provided,
-          color: 'black', // Default color
-          ':hover': {
-            backgroundColor: 'transparent',
-            color: 'black', // Hover color for the delete icon
-          },
-        }),
-      }}
-    />
+      value={formValue}
+      onValueChange={_v => handleSelect(_v, selectedItems)}
+      disabled={readonly}
+      required={field.required}>
+      <SelectTrigger className="w-full rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal h-[2.875rem] border text-sm font-normal">
+        <div className="truncate">
+          {selectedItems?.length > 0
+            ? selectedItems
+                .map((v: string) => options.find(_i => _i.value === v)?.label)
+                .join(', ')
+            : i18n.t('Select an option...')}
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        {options.map(item => {
+          const _value = item.value;
+          const isItemSelected = isSelected(_value, selectedItems);
+
+          return (
+            <SelectItem
+              key={_value}
+              value={`-${_value}`}
+              displaySelected={false}>
+              {isItemSelected && (
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <Check className="h-4 w-4" />
+                </span>
+              )}
+              {item.label}
+            </SelectItem>
+          );
+        })}
+      </SelectContent>
+    </Select>
   );
 };

@@ -31,21 +31,41 @@ export const FORM_VIEW = {
               {
                 type: 'field',
                 name: 'name',
-                colSpan: '3',
+                colSpan: '4',
                 autoTitle: 'Name',
               },
               {
                 type: 'field',
                 name: 'code',
-                colSpan: '3',
+                colSpan: '4',
                 autoTitle: 'Code',
               },
               {
                 type: 'field',
                 name: 'productCategory',
-                colSpan: '3',
+                colSpan: '4',
                 autoTitle: 'Product category',
               },
+              {
+                type: 'field',
+                name: 'productTypeSelect',
+                widget: 'SingleSelect',
+                colSpan: '6',
+                autoTitle: 'Type',
+              },
+              {
+                type: 'field',
+                name: 'productSubTypeSelect',
+                widget: 'MultiSelect',
+                colSpan: '6',
+                autoTitle: 'Sub-type',
+              },
+            ],
+          },
+          {
+            type: 'panel',
+            colSpan: '12',
+            items: [
               {
                 type: 'field',
                 name: 'supplierCatalogList',

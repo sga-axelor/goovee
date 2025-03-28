@@ -1,4 +1,3 @@
-import {SelectionPicker} from '../components';
 import type {Field, Panel, Widget} from '../types';
 
 function mapStudioTypes(field: any): any {
@@ -46,18 +45,17 @@ function formatField(_i: any): Field {
   };
 
   if (_i.selection != null) {
-    const isMultiSelect = _i.widget === 'MultiSelect';
+    const isMulti = _i.widget?.toLowerCase()?.includes('multi');
+
     field = {
       ...field,
-      type: isMultiSelect ? 'array' : field.type,
-      widget: 'custom',
-      customComponent: props =>
-        SelectionPicker({
-          ...props,
-          options: _i.selectionOptions,
-          isMulti: isMultiSelect,
-        }),
-      subSchema: (isMultiSelect ? field.type : undefined) as any,
+      type: isMulti ? 'array' : field.type,
+      widget: 'select',
+      options: {
+        itemSet: _i.selectionOptions,
+        isMulti,
+      },
+      subSchema: (isMulti ? field.type : undefined) as any,
     };
   }
 

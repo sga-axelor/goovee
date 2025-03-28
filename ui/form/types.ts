@@ -59,4 +59,5 @@ export type Widget =
   | 'phone'
   | 'html'
   | 'checkbox'
+  | 'select'
   | 'custom';

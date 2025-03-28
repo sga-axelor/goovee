@@ -70,6 +70,20 @@ async function getFieldType(
     };
   }
 
+  if (field?.selection != null) {
+    const isMulti = item.widget?.toLowerCase()?.includes('multi');
+
+    return {
+      type: isMulti ? 'array' : type,
+      widget: 'select',
+      options: {
+        itemSet: field.selectionList,
+        isMulti,
+      },
+      subSchema: isMulti ? type : undefined,
+    };
+  }
+
   return {type};
 }
 
