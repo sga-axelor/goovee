@@ -725,5 +725,6 @@
   "Preferences": "Préférences",
   "Registration and payment success": "Succès de l’inscription et du paiement",
   "Thank you very much for your payment, you are now registered for this event": "Merci pour votre paiement, vous êtes maintenant inscrit à cet événement",
-  "Go to the homepage": "Retourner à la page d'accueil"
+  "Go to the homepage": "Retourner à la page d'accueil",
+  "You are trying to create an account for an existing company, please contact admin to invite you as a user": "Vous essayez de créer un compte pour une société déjà existante, veuillez contacter votre admin"
 }

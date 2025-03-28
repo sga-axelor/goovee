@@ -69,7 +69,11 @@ const partnerFields = {
   },
 };
 
-export async function findPartnerById(id: ID, tenantId: Tenant['id']) {
+export async function findPartnerById(
+  id: ID,
+  tenantId: Tenant['id'],
+  params?: any,
+) {
   if (!(id && tenantId)) return null;
 
   const client = await manager.getClient(tenantId);
@@ -80,6 +84,7 @@ export async function findPartnerById(id: ID, tenantId: Tenant['id']) {
     .findOne({
       where: {
         id,
+        ...params?.where,
       },
       select: partnerFields,
     })
@@ -170,6 +175,19 @@ export async function findContactByEmail(
   tenantId: Tenant['id'],
 ) {
   return findPartnerByEmail(email, tenantId, {
+    where: {
+      isContact: {
+        eq: true,
+      },
+    },
+  });
+}
+
+export async function findContactById(
+  id: Partner['id'],
+  tenantId: Tenant['id'],
+) {
+  return findPartnerById(id, tenantId, {
     where: {
       isContact: {
         eq: true,
@@ -360,17 +378,19 @@ export async function registerPartner({
   const partnerTypeSelect =
     PartnerTypeMap[type] || PartnerTypeMap[UserType.individual];
 
+  const $name = isCompany ? companyName : name;
+
   const data: any = {
     partnerTypeSelect,
     registrationCode: identificationNumber,
     fixedPhone: companyNumber,
     firstName,
-    name: isCompany ? companyName : name,
+    name: $name,
     password: hashedPassword,
     isContact: isContact || false,
     isCustomer: true,
-    fullName: `${name} ${firstName || ''}`,
-    simpleFullName: `${name} ${firstName || ''}`,
+    fullName: `${$name} ${firstName || ''}`,
+    simpleFullName: `${$name} ${firstName || ''}`,
     createdFromSelect: USER_CREATED_FROM,
     isActivatedOnPortal: true,
     emailAddress: {

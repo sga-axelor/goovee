@@ -7,9 +7,13 @@ import {getSession} from '@/auth';
 import {UserType} from '@/auth/types';
 import {
   findContactByEmail,
+  findContactById,
+  findGooveeUserByEmail,
   findPartnerByEmail,
   findPartnerById,
+  registerContact,
   registerPartner,
+  updatePartner,
 } from '@/orm/partner';
 import {
   findDefaultPartnerWorkspaceConfig,
@@ -18,11 +22,16 @@ import {
 } from '@/orm/workspace';
 import {getTranslation} from '@/locale/server';
 import {manager, type Tenant} from '@/tenant';
-import type {PortalWorkspace} from '@/types';
-import {ALLOW_AOS_ONLY_REGISTRATION, ALLOW_NO_REGISTRATION} from '@/constants';
+import type {Partner, PortalWorkspace} from '@/types';
+import {
+  ALLOW_ALL_REGISTRATION,
+  ALLOW_AOS_ONLY_REGISTRATION,
+  ALLOW_NO_REGISTRATION,
+} from '@/constants';
 import {findOne, isValid} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
 import {findRegistrationLocalization} from '@/orm/localizations';
+import {hash} from '@/auth/utils';
 
 function error(message: string) {
   return {
@@ -206,11 +215,15 @@ export async function register({
   tenantId,
   locale,
 }: RegisterDTO) {
-  if (type === UserType.individual && !name) {
+  const isIndividual = type === UserType.individual;
+
+  if (isIndividual && !name) {
     return error(await getTranslation({tenant: tenantId}, 'Name is required.'));
   }
 
-  if (type === UserType.company && !companyName) {
+  const isCompany = type === UserType.company;
+
+  if (isCompany && !companyName) {
     return error(
       await getTranslation({tenant: tenantId}, 'Company name is required'),
     );
@@ -234,46 +247,126 @@ export async function register({
     return error(await getTranslation({tenant: tenantId}, 'Invalid workspace'));
   }
 
-  if (workspace.allowRegistrationSelect === ALLOW_NO_REGISTRATION) {
+  const registrationScope = workspace.allowRegistrationSelect;
+
+  if (!registrationScope || registrationScope === ALLOW_NO_REGISTRATION) {
     return error(
       await getTranslation({tenant: tenantId}, 'Registration not allowed'),
     );
   }
 
-  const partner = await findPartnerByEmail(email, tenantId, {
-    where: {
-      isContact: {
-        eq: false,
-      },
-    },
-  });
+  const existingUser = await findGooveeUserByEmail(email, tenantId);
 
-  if (partner?.isActivatedOnPortal) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Account already exists',
-      ),
-    };
+  if (existingUser) {
+    return error(
+      await getTranslation({tenant: tenantId}, 'Account already exists'),
+    );
   }
 
-  if (workspace.allowRegistrationSelect === ALLOW_AOS_ONLY_REGISTRATION) {
-    if (partner) {
-      if (!partner?.isAllowedToRegister) {
-        return {
-          error: true,
-          message: await getTranslation(
-            {tenant: tenantId},
-            'Registration not allowed',
-          ),
-        };
+  const aosPartner = await findPartnerByEmail(email, tenantId);
+  const isNewEmail = !aosPartner;
+
+  const isAosContact = aosPartner?.isContact;
+  const isAosPartner = !isAosContact;
+
+  const isAllowedToRegister = aosPartner?.isAllowedToRegister;
+
+  const registrationError = error(
+    await getTranslation({tenant: tenantId}, 'Registration not allowed'),
+  );
+
+  const companyRegistrationError = error(
+    await getTranslation(
+      {
+        locale,
+        tenant: tenantId,
+      },
+      'You are trying to create an account for an existing company, please contact admin to invite you as a user',
+    ),
+  );
+
+  if (registrationScope === ALLOW_AOS_ONLY_REGISTRATION) {
+    if (isNewEmail) {
+      return registrationError;
+    } else if (isAosPartner) {
+      if (!isAllowedToRegister) return registrationError;
+      const existingAdminContact: any =
+        await findActiveAdminContactForWorkspace({
+          url: workspaceURL,
+          tenantId,
+          partnerId: aosPartner.id,
+        });
+
+      if (existingAdminContact?.id || existingAdminContact?.error) {
+        return companyRegistrationError;
+      }
+      /** Register */
+    } else if (isAosContact) {
+      if (!isAllowedToRegister) return registrationError;
+      if (!aosPartner?.mainPartner) {
+        const result: any = await transformAosContactAsPartner(
+          aosPartner.id,
+          tenantId,
+        );
+        if (!('success' in result)) return registrationError;
+        /** Register */
+      } else {
+        return registerAosContactAsAdmin({
+          type,
+          companyName,
+          identificationNumber,
+          companyNumber,
+          firstName,
+          name,
+          email,
+          password,
+          workspaceURL,
+          tenantId,
+          locale,
+        });
       }
     } else {
-      const result = await updatePartnerEmailByContact(email, tenantId);
-      if (result?.error) {
-        return result;
+    }
+  } else if (registrationScope === ALLOW_ALL_REGISTRATION) {
+    if (isNewEmail) {
+      /** Register */
+    } else if (isAosPartner) {
+      const existingAdminContact: any =
+        await findActiveAdminContactForWorkspace({
+          url: workspaceURL,
+          tenantId,
+        });
+
+      if (existingAdminContact?.id || existingAdminContact?.error) {
+        return companyRegistrationError;
       }
+
+      /** Register */
+    } else if (isAosContact) {
+      if (!aosPartner?.mainPartner) {
+        const result = await transformAosContactAsPartner(
+          aosPartner.id,
+          tenantId,
+          locale,
+        );
+        if (!('success' in result)) return registrationError;
+        /** Register */
+      } else {
+        return registerAosContactAsAdmin({
+          type,
+          companyName,
+          identificationNumber,
+          companyNumber,
+          firstName,
+          name,
+          email,
+          password,
+          workspaceURL,
+          tenantId,
+          locale,
+        });
+      }
+    } else {
     }
   }
 
@@ -297,17 +390,23 @@ export async function register({
     const $partner =
       partner?.id && (await findPartnerById(partner.id, tenantId));
 
-    return {
-      success: true,
-      message: await getTranslation({}, 'Registered successfully'),
-      data: $partner,
-    };
+    if ($partner) {
+      return {
+        success: true,
+        message: await getTranslation(
+          {locale, tenant: tenantId},
+          'Registered successfully',
+        ),
+      };
+    }
   } catch (err) {}
 
-  return {
-    error: true,
-    message: await getTranslation({}, 'Error registering, try again'),
-  };
+  return error(
+    await getTranslation(
+      {locale, tenant: tenantId},
+      'Error registering, try again',
+    ),
+  );
 }
 
 export async function registerByEmail(data: RegisterDTO) {
@@ -380,109 +479,252 @@ export async function registerByGoogle(
   return register({...data, email: user.email});
 }
 
-async function updatePartnerEmailByContact(
-  email: string,
+async function transformAosContactAsPartner(
+  id: Partner['id'],
   tenantId: Tenant['id'],
+  locale?: string,
 ) {
-  if (!(email && tenantId)) {
+  if (!tenantId)
+    return error(await getTranslation({locale}, 'TenantId is required'));
+
+  if (!id)
+    return error(
+      await getTranslation({tenant: tenantId, locale}, 'Bad Request'),
+    );
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client)
+    return error(
+      await getTranslation({tenant: tenantId, locale}, 'Bad Request'),
+    );
+
+  const contact = await findContactById(id, tenantId);
+
+  if (!contact)
+    return error(
+      await getTranslation({tenant: tenantId, locale}, 'Bad Request'),
+    );
+
+  try {
+    await updatePartner({
+      data: {
+        id: contact.id,
+        version: contact.version,
+        isContact: false,
+      },
+      tenantId,
+    });
     return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Email & TenantId is required',
-      ),
+      success: true,
     };
+  } catch (err) {
+    return error(
+      await getTranslation(
+        {tenant: tenantId, locale},
+        'Error updating resource',
+      ),
+    );
+  }
+}
+
+async function registerAosContactAsAdmin({
+  type,
+  companyName,
+  identificationNumber,
+  companyNumber,
+  firstName,
+  name,
+  email,
+  password,
+  workspaceURL,
+  tenantId,
+  locale,
+}: RegisterDTO) {
+  if (!tenantId)
+    return error(await getTranslation({locale}, 'TenantId is required'));
+
+  if (!email)
+    return error(
+      await getTranslation({tenant: tenantId, locale}, 'Email is required'),
+    );
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client)
+    return error(
+      await getTranslation({tenant: tenantId, locale}, 'Invalid tenant'),
+    );
+
+  if (!workspaceURL)
+    return error(
+      await getTranslation({tenant: tenantId}, 'Workspace is required'),
+    );
+
+  const workspace = await findWorkspaceByURL({url: workspaceURL, tenantId});
+
+  if (!workspace) {
+    return error(await getTranslation({tenant: tenantId}, 'Invalid workspace'));
   }
 
   const contact = await findContactByEmail(email, tenantId);
 
-  if (!contact) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Registration not allowed',
-      ),
-    };
-  }
+  const registrationError = error(
+    await getTranslation(
+      {tenant: tenantId, locale},
+      'Registration not allowed',
+    ),
+  );
 
-  if (contact.isActivatedOnPortal) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Registration not allowed',
-      ),
-    };
-  }
+  if (!contact) return registrationError;
 
-  if (!contact?.isAllowedToRegister) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Registration not allowed',
-      ),
-    };
-  }
+  if (contact.isActivatedOnPortal) return registrationError;
+
+  if (!contact?.isAllowedToRegister) return registrationError;
 
   const contactPartner =
     contact?.mainPartner &&
     (await findPartnerById(contact.mainPartner?.id, tenantId));
 
-  if (!contactPartner) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Registration not allowed',
-      ),
-    };
+  if (!contactPartner) return registrationError;
+
+  const isContactPartnerAlreadyRegistered = contactPartner?.password;
+
+  const companyRegistrationError = error(
+    await getTranslation(
+      {
+        locale,
+        tenant: tenantId,
+      },
+      'You are trying to create an account for an existing company, please contact admin to invite you as a user',
+    ),
+  );
+
+  if (isContactPartnerAlreadyRegistered) return companyRegistrationError;
+
+  const existingAdminContact: any = await findActiveAdminContactForWorkspace({
+    url: workspaceURL,
+    tenantId,
+    partnerId: contactPartner.id,
+  });
+
+  if (existingAdminContact?.id || existingAdminContact?.error) {
+    return companyRegistrationError;
   }
 
-  if (contactPartner?.isActivatedOnPortal) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'An account for the same company exists already, please contact your admin',
-      ),
-    };
-  }
-
-  if (!contactPartner?.isAllowedToRegister) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Registration not allowed',
-      ),
-    };
-  }
+  const localization = await findRegistrationLocalization({locale, tenantId});
 
   try {
-    const {id, version} = contactPartner?.emailAddress;
-    const client = await manager.getClient(tenantId);
-
-    /**
-     * Update partner email by contact email when a valid contact
-     * is trying to register on behalf of partner
-     */
-    await client.aOSEmailAddress.update({
+    const contactConfig = await client.aOSPortalContactWorkspaceConfig.create({
       data: {
-        id,
-        version,
-        name: email,
-        address: email,
+        name: `${email}-contact-config`,
+        portalWorkspace: {
+          select: {
+            id: workspace.id,
+          },
+        },
+        isAdmin: true,
       },
     });
-  } catch (err) {
-    return {
-      error: true,
-      message: await getTranslation(
-        {tenant: tenantId},
-        'Registration not allowed',
-      ),
-    };
-  }
+
+    if (!contactConfig?.id) return registrationError;
+
+    let result;
+
+    try {
+      const isCompany = type === UserType.company;
+      const $name = isCompany ? companyName : name;
+
+      result = await client.aOSPartner.update({
+        data: {
+          id: contact.id,
+          version: contact.version,
+          registrationCode: identificationNumber,
+          fixedPhone: companyNumber,
+          name: $name,
+          firstName,
+          password: password && (await hash(password)),
+          fullName: `${$name} ${firstName || ''}`,
+          simpleFullName: `${$name} ${firstName || ''}`,
+          isActivatedOnPortal: true,
+          localization: localization?.id
+            ? {select: {id: localization.id}}
+            : undefined,
+          contactWorkspaceConfigSet: {select: [{id: contactConfig.id}]},
+          defaultWorkspace: {select: [{id: contactConfig.id}]},
+        },
+      });
+    } catch (err) {
+      return registrationError;
+    }
+
+    const $contact = result?.id && (await findContactById(result.id, tenantId));
+
+    if ($contact) {
+      return {
+        success: true,
+        message: await getTranslation(
+          {locale, tenant: tenantId},
+          'Registered successfully',
+        ),
+      };
+    } else {
+      await client.aOSPortalContactWorkspaceConfig.delete({
+        id: contactConfig.id,
+        version: contactConfig.version,
+      });
+    }
+  } catch (err) {}
+
+  return error(
+    await getTranslation(
+      {locale, tenant: tenantId},
+      'Error registering, try again',
+    ),
+  );
+}
+
+async function findActiveAdminContactForWorkspace({
+  url,
+  partnerId,
+  tenantId,
+}: {
+  url: PortalWorkspace['url'];
+  partnerId?: Partner['id'];
+  tenantId: Tenant['id'];
+}) {
+  if (!tenantId) return error(await getTranslation({}, 'TenantId is required'));
+
+  if (!url)
+    return error(
+      await getTranslation({tenant: tenantId}, 'Workspace is required'),
+    );
+
+  const workspace = await findWorkspaceByURL({url, tenantId});
+
+  if (!workspace)
+    return error(await getTranslation({tenant: tenantId}, 'Invalid workspace'));
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client)
+    return error(await getTranslation({tenant: tenantId}, 'Invalid tenant'));
+
+  return client.aOSPartner.findOne({
+    where: {
+      isActivatedOnPortal: true,
+      isContact: true,
+      contactWorkspaceConfigSet: {
+        isAdmin: true,
+        portalWorkspace: {
+          url,
+        },
+      },
+      ...(partnerId ? {mainPartner: {id: partnerId}} : {}),
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
 }
