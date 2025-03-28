@@ -68,20 +68,6 @@ export function getHTMLURL(record: any) {
   return url;
 }
 
-export function getImageURL(
-  id: ID | undefined,
-  tenant: string,
-  options: {noimage?: boolean; noimageSrc?: string} = {},
-) {
-  const {noimage, noimageSrc} = options;
-
-  if (!(id && tenant)) {
-    return noimage ? noimageSrc || '/images/no-image.png' : '';
-  }
-
-  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/download/image/${id}`;
-}
-
 export function getPartnerImageURL(
   id: ID | undefined,
   tenant: string,
