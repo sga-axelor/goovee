@@ -19,8 +19,7 @@ export async function GET(
     select: {picture: {id: true}},
   });
 
-  if (!partner) return new NextResponse('Partner not found', {status: 404});
-  if (!partner.picture?.id) {
+  if (!partner?.picture?.id) {
     return new NextResponse('Picture not found', {status: 404});
   }
 

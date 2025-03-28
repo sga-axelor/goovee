@@ -1,16 +1,19 @@
-import fs, {Stats} from 'fs';
-import {manager} from '@/tenant';
+import type {Stats} from 'fs';
+import fs from 'fs';
 import {NextResponse} from 'next/server';
 import type {ReadableOptions} from 'stream';
+
+// ---- CORE IMPORTS ---- //
 import {filterPrivate} from '@/orm/filter';
-import {User} from '@/types';
+import {manager} from '@/tenant';
+import type {ID, User} from '@/types';
 
 export async function findFile({
   id,
   meta,
   tenant: tenantId,
 }: {
-  id: string;
+  id: ID;
   meta?: boolean;
   tenant: string;
 }) {
