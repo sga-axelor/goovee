@@ -2,16 +2,19 @@
 import React, {useState} from 'react';
 import {MdOutlineChevronRight} from 'react-icons/md';
 
+// ---- CORE IMPORTS ---- //
+import type {ID} from '@/types';
 // ---- LOCAL IMPORTS ---- //
-import {
-  JSON_MANY_TO_ONE,
-  JSON_MANY_TO_MANY,
-  MANY_TO_ONE,
-  MANY_T0_MANY,
-} from '@/subapps/shop/common/constants';
 import {MetaFieldPicture} from '@/subapps/shop/common/ui/components/meta-field-picture';
+import {isRelationalType} from '@/subapps/shop/common/utils';
 
-export function ProductMetaFieldView({fields}: {fields: any[]}) {
+export function ProductMetaFieldView({
+  fields,
+  productId,
+}: {
+  fields: any[];
+  productId: ID;
+}) {
   const [expandedFields, setExpandedFields] = useState<{
     [key: string]: boolean;
   }>({});
@@ -53,7 +56,11 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
           {expandedFields[field.title] && (
             <div className="ml-7 mt-2 space-y-4">
               {field.value.map((image: any, index: number) => (
-                <MetaFieldPicture image={image.value ?? image} key={index} />
+                <MetaFieldPicture
+                  image={image.value ?? image}
+                  key={index}
+                  productId={productId}
+                />
               ))}
             </div>
           )}
@@ -73,18 +80,9 @@ export function ProductMetaFieldView({fields}: {fields: any[]}) {
     }
   };
 
-  const isManyTo = (type: string) => {
-    return (
-      type === JSON_MANY_TO_MANY ||
-      type === JSON_MANY_TO_ONE ||
-      type === MANY_T0_MANY ||
-      type === MANY_TO_ONE
-    );
-  };
-
   const renderFieldValue = (field: any) => {
     const transFormedField = transformValueToArray(field);
-    if (isManyTo(field.type) && field.value) {
+    if (isRelationalType(field.type) && field.value) {
       return renderFieldMTM(transFormedField);
     }
     return (

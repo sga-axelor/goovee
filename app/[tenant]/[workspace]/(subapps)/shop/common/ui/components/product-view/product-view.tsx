@@ -158,10 +158,7 @@ export function ProductView({
                 <p className="text-sm">{price.displayPrimary}</p>
               </>
             )}
-            <ProductMetaFieldView
-              productAttrs={product.productAttrs}
-              fields={metaFields}
-            />
+            <ProductMetaFieldView productId={product.id} fields={metaFields} />
             <span className="font-medium">{i18n.t('Product description')}</span>
             <p
               className="text-sm mb-0"

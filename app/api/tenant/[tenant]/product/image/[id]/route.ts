@@ -39,7 +39,7 @@ export async function GET(
     },
   });
 
-  if (!product?.picture?.id || !product.portalImageList?.length) {
+  if (!product?.picture?.id && !product?.portalImageList?.length) {
     return new NextResponse('Picture not found', {status: 404});
   }
 
