@@ -72,20 +72,20 @@ export function Account({
                 href={`${baseURL || ''}/account`}
                 className="cursor-pointer">
                 <DropdownMenuItem className="cursor-pointer">
-                  My Account
+                  {i18n.t('My Account')}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={openConfirmation}>
-                logout
+                {i18n.t('logout')}
               </DropdownMenuItem>
             </>
           ) : (
             <>
               <Link href={loginURL}>
                 <DropdownMenuItem className="cursor-pointer">
-                  Log In
+                  {i18n.t('login')}
                 </DropdownMenuItem>
               </Link>
             </>
