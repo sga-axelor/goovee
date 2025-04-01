@@ -87,14 +87,9 @@ export default async function Page({
     search,
     tenantId: tenant,
     user,
+    memberGroupIDs,
   }).then(clone);
 
-  const $posts = posts?.map((post: any) => {
-    return {
-      ...post,
-      isMember: memberGroupIDs.includes(post.forumGroup.id),
-    };
-  });
   const $user = await findUser({userId, tenantId: tenant}).then(clone);
 
   if (!selectedGroup) {
@@ -106,10 +101,9 @@ export default async function Page({
       memberGroups={memberGroups}
       nonMemberGroups={nonMemberGroups}
       user={$user}
-      posts={$posts}
+      posts={posts}
       selectedGroup={selectedGroup}
       pageInfo={pageInfo}
-      isMember={isMember}
       workspace={workspace}
     />
   );

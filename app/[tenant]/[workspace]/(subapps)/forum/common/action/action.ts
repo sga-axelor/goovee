@@ -645,15 +645,18 @@ export async function fetchPosts({
   page,
   search = '',
   workspaceURL,
+  memberGroupIDs = [],
+  groupIDs = [],
 }: {
   sort?: any;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
   workspaceURL: string;
+  memberGroupIDs?: Array<String>;
+  groupIDs?: ID[];
 }) {
   const tenantId = headers().get(TENANT_HEADER);
-
   if (!tenantId) {
     return {
       error: true,
@@ -683,6 +686,8 @@ export async function fetchPosts({
     workspaceID: workspace.id,
     tenantId,
     user,
+    groupIDs,
+    memberGroupIDs,
   }).then(clone);
 }
 

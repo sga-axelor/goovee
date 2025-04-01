@@ -20,7 +20,6 @@ interface groupContentProps {
   posts: Post[];
   selectedGroup: ForumGroup;
   pageInfo: any;
-  isMember: boolean;
   workspace: PortalWorkspace;
 }
 
@@ -31,7 +30,6 @@ const Content = ({
   posts,
   selectedGroup,
   pageInfo,
-  isMember,
   workspace,
 }: groupContentProps) => {
   const router = useRouter();

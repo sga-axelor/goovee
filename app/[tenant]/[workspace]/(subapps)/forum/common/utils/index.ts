@@ -54,6 +54,7 @@ export async function getPopularQuery({
   search,
   tenantId,
   user,
+  memberGroupIDs = [],
 }: {
   page?: string | number;
   limit?: number;
@@ -63,6 +64,7 @@ export async function getPopularQuery({
   search?: string | undefined;
   tenantId: Tenant['id'];
   user?: User;
+  memberGroupIDs?: Array<String>;
 }) {
   if (!workspaceID) {
     return {
@@ -73,7 +75,6 @@ export async function getPopularQuery({
   const client = await manager.getClient(tenantId);
 
   const skip = getSkipInfo(limit, page);
-
   const whereClause = `WHERE forumGroup.workspace = ${workspaceID}
           ${groupIDs?.length ? `AND post.forum_group IN (${groupIDs.join(', ')})` : ''}
           ${ids?.length ? `AND post.id IN (${ids.join(', ')})` : ''}
@@ -81,8 +82,9 @@ export async function getPopularQuery({
           ${await filterPrivateQuery(user, tenantId)}
           `;
 
-  const posts: any = await client.$raw(
-    `WITH 
+  const posts: any = await client
+    .$raw(
+      `WITH 
     postData AS (
         SELECT 
             post.id AS postId, 
@@ -191,9 +193,17 @@ export async function getPopularQuery({
     LIMIT $1
     OFFSET $2
         `,
-    limit,
-    skip,
-  );
+      limit,
+      skip,
+    )
+    .then((posts: any) => {
+      return posts.map((post: any) => {
+        return {
+          ...post,
+          isMember: memberGroupIDs.includes(String(post.forumGroup?.id)),
+        };
+      });
+    });
 
   const pageInfo = getPageInfo({
     count: posts?.[0]?._count,

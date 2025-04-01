@@ -15,6 +15,7 @@ import {useToast} from '@/ui/hooks';
 import {Thread} from '@/subapps/forum/common/ui/components';
 import {fetchPosts} from '@/subapps/forum/common/action/action';
 import {Post} from '@/subapps/forum/common/types/forum';
+import {useForum} from '@/subapps/forum/common/ui/context';
 
 interface PageInfo {
   count: number;
@@ -38,6 +39,11 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   const {workspaceURL} = useWorkspace();
   const params = useParams();
   const {toast} = useToast();
+  const {memberGroups, selectedGroup} = useForum();
+
+  const memberGroupIDs = useMemo(() => {
+    return memberGroups.map((group: any) => group.forumGroup?.id);
+  }, [memberGroups]);
 
   const {searchParams} = useSearchParams();
   const sort = useMemo(() => searchParams.get('sort') || '', [searchParams]);
@@ -58,6 +64,10 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
         limit: Number(limit),
         page: nextPage,
         workspaceURL,
+        memberGroupIDs,
+        ...(selectedGroup && {
+          groupIDs: [selectedGroup.id],
+        }),
       });
 
       if (response.error) {

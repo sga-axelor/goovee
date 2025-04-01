@@ -125,6 +125,7 @@ export async function findPosts({
   tenantId,
   ids,
   user,
+  memberGroupIDs = [],
 }: {
   sort?: any;
   limit?: number;
@@ -136,6 +137,7 @@ export async function findPosts({
   groupIDs?: any[];
   tenantId: Tenant['id'];
   user?: User;
+  memberGroupIDs?: Array<String>;
 }) {
   if (!(workspaceID && tenantId)) {
     return {
@@ -162,6 +164,7 @@ export async function findPosts({
         tenantId,
         ids,
         user,
+        memberGroupIDs,
       });
       const {posts = [], pageInfo = {}, error, message} = query;
 
@@ -229,8 +232,17 @@ export async function findPosts({
         createdOn: true,
       },
     })
-    .then(clone)
+    .then((posts: any) => {
+      const $posts = posts?.map((post: any) => {
+        return {
+          ...post,
+          isMember: memberGroupIDs.includes(post.forumGroup?.id),
+        };
+      });
+      return clone($posts);
+    })
     .catch(error => console.log('error >>>', error));
+
   const pageInfo = getPageInfo({
     count: posts?.[0]?._count,
     page,
@@ -248,6 +260,7 @@ export async function findPostsByGroupId({
   search = '',
   tenantId,
   user,
+  memberGroupIDs = [],
 }: {
   id: ID;
   workspaceID: string;
@@ -256,6 +269,7 @@ export async function findPostsByGroupId({
   search?: string | undefined;
   tenantId: Tenant['id'];
   user?: User;
+  memberGroupIDs?: Array<String>;
 }) {
   const whereClause = {
     forumGroup: {
@@ -272,6 +286,7 @@ export async function findPostsByGroupId({
     groupIDs: [id],
     tenantId,
     user,
+    memberGroupIDs,
   });
 }
 
