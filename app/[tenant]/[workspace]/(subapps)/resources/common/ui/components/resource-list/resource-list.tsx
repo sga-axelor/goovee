@@ -11,6 +11,7 @@ import {cn} from '@/utils/css';
 import {download, getFileTypeIcon, getIconColor} from '@/utils/files';
 import {formatDate} from '@/locale/formatters';
 
+import {SUBAPP_CODES} from '@/constants';
 // ---- LOCAL IMPORTS ---- //
 import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon';
 
@@ -24,7 +25,8 @@ export function ResourceList({resources}: any) {
 
   const handleDownload = (record: any) => (event: React.MouseEvent) => {
     event.stopPropagation();
-    download(record, tenant);
+    const href = `${workspaceURI}/${SUBAPP_CODES.resources}/api/file/${record?.id}`;
+    download(record, tenant, href);
   };
 
   return (
