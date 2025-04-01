@@ -98,6 +98,7 @@ export const Article = ({news, breadcrumbs = [], workspace}: ArticleProps) => {
           )}
           {attachmentList?.length > 0 && (
             <AttachmentList
+              slug={slug}
               title={i18n.t(RELATED_FILES)}
               items={attachmentList}
               width="w-full"

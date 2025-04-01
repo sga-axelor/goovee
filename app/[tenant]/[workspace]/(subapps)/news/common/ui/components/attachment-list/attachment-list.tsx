@@ -7,6 +7,7 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 import {Separator} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {download} from '@/utils/files';
+import {SUBAPP_CODES} from '@/constants';
 
 interface Attachment {
   id: string;
@@ -17,19 +18,23 @@ interface Attachment {
   };
 }
 export const AttachmentList = ({
+  slug,
   title,
   items,
   width,
 }: {
+  slug: string;
   title: string;
   items: any[];
   width?: string;
 }) => {
-  const {tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   const handleDownload = async (attachment: Attachment) => {
     const {metaFile} = attachment;
-    download(metaFile, tenant, {isMeta: true});
+    if (!metaFile?.id) return;
+    const href = `${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/attachment/${metaFile.id}`;
+    download(metaFile, href);
   };
 
   return (

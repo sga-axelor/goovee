@@ -178,6 +178,36 @@ export async function findCategoryImageBySlug({
   return news?.image?.id;
 }
 
+export async function isAttachmentOfNews({
+  slug,
+  fileId,
+  workspace,
+  tenantId,
+  user,
+}: {
+  slug: string;
+  fileId: string;
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  user?: User;
+}): Promise<boolean> {
+  if (!tenantId || !workspace) return false;
+
+  const client = await manager.getClient(tenantId);
+
+  const news = await client.aOSPortalNews.findOne({
+    where: {
+      slug,
+      attachmentList: {metaFile: {id: fileId}},
+      categorySet: {workspace: {id: workspace.id}},
+      ...(await filterPrivate({user, tenantId})),
+    },
+    select: {id: true},
+  });
+
+  return Boolean(news);
+}
+
 export async function findCategories({
   category = null,
   showAllCategories = false,
