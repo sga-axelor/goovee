@@ -884,34 +884,31 @@ export const createComment: CreateComment = async formData => {
     if (res) {
       const post = posts[0];
 
-      if (!post?.id) {
-        console.warn('Post not found. Skipping notification.');
-        return;
-      }
-
-      const subscribers: any = await getSubscribersByGroup({
-        groupID: post.forumGroup.id,
-        workspaceURL,
-      });
-
-      if (!subscribers?.error) {
-        const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}#post-${post.id}`;
-
-        sendEmailNotifications({
-          type: ContentType.COMMENT,
-          title: post.title,
-          content: res[0].note ?? '',
-          author: {
-            id: res[0]?.partner?.id ?? '',
-            simpleFullName: res[0]?.partner?.simpleFullName ?? 'Unknown User',
-          },
-          postAuthor: {
-            id: post?.author?.id ?? '',
-          },
-          group: post.forumGroup,
-          subscribers,
-          link: postLink,
+      if (post?.id) {
+        const subscribers: any = await getSubscribersByGroup({
+          groupID: post.forumGroup.id,
+          workspaceURL,
         });
+
+        if (!subscribers?.error) {
+          const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}#post-${post.id}`;
+
+          sendEmailNotifications({
+            type: ContentType.COMMENT,
+            title: post.title,
+            content: res[0].note ?? '',
+            author: {
+              id: res[0]?.partner?.id ?? '',
+              simpleFullName: res[0]?.partner?.simpleFullName ?? 'Unknown User',
+            },
+            postAuthor: {
+              id: post?.author?.id ?? '',
+            },
+            group: post.forumGroup,
+            subscribers,
+            link: postLink,
+          });
+        }
       }
     }
 
