@@ -23,8 +23,8 @@ export async function updatePreference({
   defaultWorkspace,
   localization,
 }: {
-  defaultWorkspace: string;
-  localization: string;
+  defaultWorkspace?: string;
+  localization?: string;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
@@ -46,12 +46,13 @@ export async function updatePreference({
       return error(await t('Invalid partner'));
     }
 
-    if (localization) {
-      const availableLocalization = await findLocalizations({
-        tenantId,
-      });
+    const availableLocalizations = await findLocalizations({
+      tenantId,
+    });
 
-      const isValidLocalization = availableLocalization.find(
+    if (localization && availableLocalizations?.length) {
+      
+      const isValidLocalization = availableLocalizations.find(
         l => Number(l.id) === Number(localization),
       );
 

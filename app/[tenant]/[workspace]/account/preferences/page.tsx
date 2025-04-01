@@ -38,7 +38,7 @@ import {
 
 const formSchema = z.object({
   defaultWorkspace: z.string().optional(),
-  localization: z.string(),
+  localization: z.string().optional(),
 });
 
 export default function Page() {
@@ -187,36 +187,38 @@ export default function Page() {
                 )}
               />
             )}
-            <FormField
-              control={form.control}
-              name="localization"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>{i18n.t('Language')}</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={i18n.t('Select your language')}
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {localizations.map((localization: any) => (
-                        <SelectItem
-                          value={localization.id}
-                          key={localization.id}>
-                          {localization.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {Boolean(localizations?.length) && (
+              <FormField
+                control={form.control}
+                name="localization"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>{i18n.t('Language')}</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={i18n.t('Select your language')}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {localizations.map((localization: any) => (
+                          <SelectItem
+                            value={localization.id}
+                            key={localization.id}>
+                            {localization.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className="space-y-4 text-end">
               <Button variant="success">{i18n.t('Save Preference')}</Button>
