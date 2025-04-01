@@ -33,17 +33,16 @@ export const NavbarCategoryMenu = ({
   const [isEnd, setIsEnd] = useState(false);
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (
-      categoriesRef.current &&
-      !categoriesRef.current.contains(event.target as Node)
-    ) {
+    if (categoriesRef?.current) {
       setActiveCategory(null);
     }
   }, []);
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    const element = categoriesRef?.current;
+    if (!element) return;
+    element.addEventListener('mouseleave', handleClickOutside);
+    return () => element.removeEventListener('mouseleave', handleClickOutside);
   }, [handleClickOutside]);
 
   const handleIndicator = () => {
@@ -157,10 +156,23 @@ const Menu = ({
   url?: string | null;
 }) => {
   const [subMenu, setSubMenu] = useState<Category | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSubMenu(null);
   }, [category]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current) {
+        setSubMenu(null);
+      }
+    };
+    const element = menuRef.current;
+    if (!element || level !== 1) return;
+    element.addEventListener('mouseleave', handleClickOutside);
+    return () => element.removeEventListener('mouseleave', handleClickOutside);
+  }, [menuRef, level]);
 
   const renderMenuItem = (
     item: Category,
@@ -222,7 +234,11 @@ const Menu = ({
         {parentTitle && category && (
           <div className="font-semibold text-base">{i18n.t(category.name)}</div>
         )}
-        {category?.items?.map(item => renderMenuItem(item, level, parentTitle))}
+        <div ref={menuRef}>
+          {category?.items?.map(item =>
+            renderMenuItem(item, level, parentTitle),
+          )}
+        </div>
       </div>
 
       {subMenu?.items && subMenu.items.length > 0 && (
