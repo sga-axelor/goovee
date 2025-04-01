@@ -62,7 +62,7 @@ export default function Page() {
   return (
     <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="px-2">
           <div className="space-y-20">
             <div className="space-y-4">
               <Title text={i18n.t('Personal Settings')} />

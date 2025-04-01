@@ -295,7 +295,7 @@ export default function Personal({
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="px-2">
           <div className="space-y-10">
             <div className="space-y-4">
               <Title text={i18n.t('Profile Settings')} />
