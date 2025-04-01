@@ -73,14 +73,11 @@ export function computeTotal({
     },
   };
 
-  let total = scale(
-    mainPrice === 'wt' ? subtotal : subtotal + tax,
-    currencyScale,
-  );
+  let total = scale(subtotal + tax, currencyScale);
 
   return {
     total,
-    displayTotal: `${formatNumberProp(total, {scale: currencyScale, currency: symbol, type: 'DECIMAL'})} ${mainPrice.toUpperCase()}`,
+    displayTotal: `${formatNumberProp(total, {scale: currencyScale, currency: symbol, type: 'DECIMAL'})} ATI`,
     scale: {
       currency: currencyScale,
     },
