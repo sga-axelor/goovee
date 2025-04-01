@@ -371,7 +371,7 @@ export const CommentListItem = ({
                 disabled={isDisabled}
                 className={cn(
                   'placeholder:text-sm placeholder:text-gray border bg-white',
-                  disabled && 'bg-gray-light placeholder:text-gray-dark',
+                  isDisabled && 'bg-gray-light placeholder:text-gray-dark',
                 )}
                 placeholderText={
                   isLoggedIn
