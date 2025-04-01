@@ -6,11 +6,11 @@ import {download} from '@/utils/files';
 import {SUBAPP_CODES} from '@/constants';
 
 export default function DownloadIcon({record}: any) {
-  const {tenant, workspaceURI} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   const href = `${workspaceURI}/${SUBAPP_CODES.resources}/api/file/${record?.id}`;
 
   const handleDownload = () => {
-    download(record, tenant, href);
+    download(record, href);
   };
 
   return (

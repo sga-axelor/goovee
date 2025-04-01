@@ -13,8 +13,8 @@ export function getFileSizeText(fileSize: number) {
   return fileSize + ' B';
 }
 
-export function download(record: any, tenantId: string, href?: string) {
-  if (!(record && tenantId)) return null;
+export function download(record: any, href?: string) {
+  if (!record) return null;
 
   const html =
     record.contentType === 'html' || record?.metaFile?.fileType === 'text/html';

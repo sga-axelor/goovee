@@ -17,7 +17,7 @@ import {DynamicIcon} from '@/subapps/resources/common/ui/components/dynamic-icon
 
 export function ResourceList({resources}: any) {
   const router = useRouter();
-  const {workspaceURI, tenant} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   const handleRedirection = (resource: any) => () => {
     router.push(`${workspaceURI}/resources/${resource.id}`);
@@ -26,7 +26,7 @@ export function ResourceList({resources}: any) {
   const handleDownload = (record: any) => (event: React.MouseEvent) => {
     event.stopPropagation();
     const href = `${workspaceURI}/${SUBAPP_CODES.resources}/api/file/${record?.id}`;
-    download(record, tenant, href);
+    download(record, href);
   };
 
   return (

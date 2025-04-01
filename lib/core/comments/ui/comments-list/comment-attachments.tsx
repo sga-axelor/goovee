@@ -14,16 +14,11 @@ export function CommentAttachments({
   attachments,
   attachmentDownloadUrl,
 }: CommentAttachmentsProps) {
-  const {tenant} = useWorkspace();
-
   const handleDownload = async (attachment: MailMessageFile) => {
     const {attachmentFile} = attachment;
     if (!attachmentFile?.id) return;
-    download(
-      attachmentFile,
-      tenant,
-      `${attachmentDownloadUrl}/${attachmentFile.id}`,
-    );
+
+    download(attachmentFile, `${attachmentDownloadUrl}/${attachmentFile.id}`);
   };
 
   return (
