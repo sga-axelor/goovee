@@ -4,7 +4,10 @@ import {getPageInfo, getSkipInfo} from '@/utils';
 import type {PortalWorkspace, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {DEFAULT_PAGE} from '@/subapps/news/common/constants';
+import {
+  DEFAULT_NEWS_ASIDE_LIMIT,
+  DEFAULT_PAGE,
+} from '@/subapps/news/common/constants';
 import {filterPrivate} from '@/orm/filter';
 
 export async function findNews({
@@ -90,6 +93,7 @@ export async function findNews({
           picture: true,
         },
         relatedNewsSet: {
+          take: DEFAULT_NEWS_ASIDE_LIMIT,
           select: {
             title: true,
             id: true,

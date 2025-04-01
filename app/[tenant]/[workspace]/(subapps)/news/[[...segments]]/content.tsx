@@ -82,7 +82,7 @@ const Content = ({
             <CategorySlider
               title={category}
               categories={categories}
-              showButton={true}
+              showButton={false}
               buttonText={i18n.t(SUBSCRIBE)}
               buttonIcon={MdOutlineNotificationAdd}
             />
