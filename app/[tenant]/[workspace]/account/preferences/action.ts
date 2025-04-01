@@ -51,7 +51,6 @@ export async function updatePreference({
     });
 
     if (localization && availableLocalizations?.length) {
-      
       const isValidLocalization = availableLocalizations.find(
         l => Number(l.id) === Number(localization),
       );
