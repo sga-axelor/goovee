@@ -35,10 +35,6 @@ export function parseFormData(formData: FormData) {
   return values;
 }
 
-type DownloadOptions = {
-  isMeta?: boolean;
-};
-
 export function download(record: any, tenantId: string, href?: string) {
   if (!(record && tenantId)) return null;
 
@@ -134,28 +130,6 @@ export function getProductImageURL(
   }
 
   return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/product/image/${id}`;
-}
-
-export function getDownloadURL(
-  id?: ID,
-  tenantId?: string,
-  options: DownloadOptions & {noimage?: boolean; noimageSrc?: string} = {},
-) {
-  const {noimage, noimageSrc} = options;
-
-  if (!(id && tenantId)) {
-    return noimage ? noimageSrc || '/images/no-image.png' : '';
-  }
-
-  let query = '';
-
-  const {isMeta} = options;
-
-  if (isMeta) {
-    query += 'meta=true';
-  }
-
-  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenantId}/download/${id}${query ? `?${query}` : ''}`;
 }
 
 export function getFileTypeIcon(fileType: string) {
