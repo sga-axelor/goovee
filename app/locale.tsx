@@ -13,7 +13,7 @@ export default function Locale({children}: {children: React.ReactNode}) {
   const params = useParams();
   const tenant = params?.tenant;
 
-  const {data: session} = useSession();
+  const {data: session, status} = useSession();
   const user = session?.user;
   const locale = user?.locale;
 
@@ -35,7 +35,7 @@ export default function Locale({children}: {children: React.ReactNode}) {
     document.documentElement.dir = dir;
   }, [dir, lang]);
 
-  if (loading > 0) return null;
+  if (loading > 0 || status === 'loading') return null;
 
   return <>{children}</>;
 }
