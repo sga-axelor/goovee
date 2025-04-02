@@ -8,7 +8,7 @@ import {usePathname, useRouter} from 'next/navigation';
 import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
 import {Pagination} from '@/ui/components';
-import {URL_PARAMS} from '@/constants';
+import {DEFAULT_PAGE, URL_PARAMS} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -131,17 +131,19 @@ const Content = ({
               className="flex flex-wrap gap-6">
               {renderNewsItems(Number(page) !== 1 ? 9 : 12, 16, NewsList)}
             </ConditionalRender>
-            <div className="mb-12 md:mb-0">
-              <Pagination
-                page={page}
-                pages={pages}
-                disablePrev={!hasPrev}
-                disableNext={!hasNext}
-                onPrev={handlePreviousPage}
-                onNext={handleNextPage}
-                onPage={handlePage}
-              />
-            </div>
+            {pages > DEFAULT_PAGE && (
+              <div className="mb-12 md:mb-0">
+                <Pagination
+                  page={page}
+                  pages={pages}
+                  disablePrev={!hasPrev}
+                  disableNext={!hasNext}
+                  onPrev={handlePreviousPage}
+                  onNext={handleNextPage}
+                  onPage={handlePage}
+                />
+              </div>
+            )}
           </>
         ) : (
           <>
