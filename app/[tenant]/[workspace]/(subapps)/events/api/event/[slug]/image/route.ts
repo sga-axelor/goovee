@@ -37,7 +37,7 @@ export async function GET(
   }
 
   const app = await findSubappAccess({
-    code: SUBAPP_CODES.forum,
+    code: SUBAPP_CODES.events,
     user,
     url: workspaceURL,
     tenantId,

@@ -39,12 +39,12 @@ export async function GET(
     return new NextResponse('Invalid workspace', {status: 401});
   }
 
-  if (!isCommentEnabled({subapp: SUBAPP_CODES.forum, workspace})) {
+  if (!isCommentEnabled({subapp: SUBAPP_CODES.events, workspace})) {
     return new NextResponse('Forbidden', {status: 403});
   }
 
   const app = await findSubappAccess({
-    code: SUBAPP_CODES.forum,
+    code: SUBAPP_CODES.events,
     user,
     url: workspaceURL,
     tenantId,
