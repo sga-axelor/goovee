@@ -128,7 +128,7 @@ export async function paypalCaptureOrder({
   if (!session) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: await t('Unauthorized'),
     };
   }
 
@@ -137,7 +137,7 @@ export async function paypalCaptureOrder({
   if (!(orderId && workspaceURL && quotation && tenantId)) {
     return {
       error: true,
-      message: 'Bad request',
+      message: await t('Bad request'),
     };
   }
 
@@ -152,7 +152,7 @@ export async function paypalCaptureOrder({
   if (!workspace) {
     return {
       error: true,
-      message: 'Invalid workspace',
+      message: await t('Invalid workspace'),
     };
   }
 
@@ -166,7 +166,7 @@ export async function paypalCaptureOrder({
   if (!hasQuotationAccess) {
     return {
       error: true,
-      message: 'Unauthorized',
+      message: await t('Unauthorized'),
     };
   }
 
@@ -204,7 +204,7 @@ export async function paypalCaptureOrder({
   if (!response) {
     return {
       error: true,
-      message: 'Error processing payment. Try again.',
+      message: await t('Error processing payment. Try again.'),
     };
   }
 
@@ -223,7 +223,7 @@ export async function paypalCaptureOrder({
   ) {
     return {
       error: true,
-      message: 'Amount mismatched',
+      message: await t('Amount mismatched'),
     };
   }
 
