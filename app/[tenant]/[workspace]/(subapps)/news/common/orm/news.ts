@@ -94,6 +94,15 @@ export async function findNews({
         },
         relatedNewsSet: {
           take: DEFAULT_NEWS_ASIDE_LIMIT,
+          where: {
+            categorySet: {
+              workspace: {
+                id: workspace.id,
+              },
+            },
+            ...(await filterPrivate({user, tenantId})),
+          },
+
           select: {
             title: true,
             id: true,
