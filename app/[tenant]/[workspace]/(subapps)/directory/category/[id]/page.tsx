@@ -75,10 +75,12 @@ export default async function Page({
       <div className="container mb-5">
         <div className="flex items-center justify-between mt-5">
           <p className="text-xl font-semibold">{category.title}</p>
-          <Button variant="success" className="flex items-center">
-            <MdOutlineNotificationAdd className="size-6 me-2" />
-            <span>{await t('Subscribe')}</span>
-          </Button>
+          {false && (
+            <Button variant="success" className="flex items-center">
+              <MdOutlineNotificationAdd className="size-6 me-2" />
+              <span>{await t('Subscribe')}</span>
+            </Button>
+          )}
         </div>
         {cards && cards?.length > 0 && (
           <Swipe
