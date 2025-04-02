@@ -2,11 +2,11 @@
 
 import {headers} from 'next/headers';
 
+import {manager} from '@/lib/core/tenant';
 import {TENANT_HEADER} from '@/middleware';
-// import {clone} from '@/utils';
+import {clone} from '@/utils';
 
 import type {SchemaType, ViewSchema} from '../types';
-import {FORM_VIEW, FORM_VIEW_2, GRID_VIEW, GRID_VIEW_2} from '../fake-data';
 import {getModelFields} from '../actions';
 
 export async function findView({
@@ -20,38 +20,22 @@ export async function findView({
 
   if (!tenantId) return {};
 
-  // TODO: restore when studio available
-  // const c = await manager.getClient(tenantId);
+  const c = await manager.getClient(tenantId);
 
-  // const schema: any = await c.aOSStudioResource
-  //   .findOne({
-  //     where: {
-  //       name,
-  //       type: 'VIEW',
-  //       schemaType,
-  //     },
-  //     select: {
-  //       name: true,
-  //       content: true,
-  //       schemaModel: true,
-  //     },
-  //   })
-  //   .then(clone);
-
-  let schema = null;
-  if (name.includes('product')) {
-    schema = {
-      name,
-      schemaModel: 'com.axelor.apps.base.db.Product',
-      content: schemaType === 'form' ? FORM_VIEW : GRID_VIEW,
-    };
-  } else {
-    schema = {
-      name,
-      schemaModel: 'com.axelor.apps.purchase.db.SupplierCatalog',
-      content: schemaType === 'form' ? FORM_VIEW_2 : GRID_VIEW_2,
-    };
-  }
+  const schema: any = await c.aOSStudioResource
+    .findOne({
+      where: {
+        name,
+        type: 'VIEW',
+        schemaType,
+      },
+      select: {
+        name: true,
+        content: true,
+        schemaModel: true,
+      },
+    })
+    .then(clone);
 
   const schemaContent: any = schema?.content?.schema;
 
