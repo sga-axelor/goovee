@@ -1,5 +1,3 @@
-import {pick} from 'lodash';
-
 // NOTE: This is used for serverside sorting
 export const sortKeyPathMap: Record<string, string> = {
   ticketId: 'id',

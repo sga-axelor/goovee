@@ -176,7 +176,7 @@ export function ProductList({
             className={`${styles.wrapper} w-full`}>
             <TextField
               name="search"
-              placeholder="Search"
+              placeholder={i18n.t('Search here')}
               value={searching}
               onChange={e => setSearching(e.target.value)}
               className="pl-12 rounded-full mb-0"

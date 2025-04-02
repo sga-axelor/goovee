@@ -94,7 +94,7 @@ export function Search({
     <div className={cn('w-full relative', className)}>
       <Command className="p-0 bg-card" shouldFilter={false}>
         <CommandInput
-          placeholder="Search here"
+          placeholder={i18n.t('Search here')}
           className={cn(
             'lg:placeholder:text-base placeholder:text-sm placeholder:font-normal lg:placeholder:font-medium pl-[10px] pr-[132px] h-12 lg:pl-4 border-none text-base font-medium rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black',
             inputClassName,

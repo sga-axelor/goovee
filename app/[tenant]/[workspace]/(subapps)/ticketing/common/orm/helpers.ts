@@ -1,14 +1,13 @@
 import {ROLE} from '@/constants';
 import type {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
-import type {Entity, WhereOptions} from '@goovee/orm';
+import type {Entity, OrderByArg, WhereOptions} from '@goovee/orm';
 import {TYPE_SELECT} from '../constants';
 import {AuthProps} from '../utils/auth-helper';
 
 export type QueryProps<T extends Entity> = {
   where?: WhereOptions<T> | null;
   take?: number;
-  // orderBy?: OrderByArg<T>;
-  orderBy?: any;
+  orderBy?: OrderByArg<T> | null;
   skip?: number;
 };
 

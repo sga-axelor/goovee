@@ -27,7 +27,7 @@ export default function Content() {
           <TextField
             label={i18n.t('New Password')}
             name="password"
-            placeholder="Password"
+            placeholder={i18n.t('Password')}
             type={showPassword ? 'text' : 'password'}
             icons={[
               {
@@ -41,7 +41,7 @@ export default function Content() {
           <TextField
             label={i18n.t('Confirm Password')}
             name="confirmPassword"
-            placeholder="Password"
+            placeholder={i18n.t('Password')}
             type={showConfirmPassword ? 'text' : 'password'}
             icons={[
               {

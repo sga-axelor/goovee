@@ -170,7 +170,7 @@ export const ImageUploader = ({
                           name="altText"
                           value={images[selectedIndex]?.altText || ''}
                           onChange={handleChange}
-                          placeholder="Alternate Text"
+                          placeholder={i18n.t('Alternate Text')}
                           className="shadow-none mt-2 h-10 lg:h-12"
                         />
                       </div>
