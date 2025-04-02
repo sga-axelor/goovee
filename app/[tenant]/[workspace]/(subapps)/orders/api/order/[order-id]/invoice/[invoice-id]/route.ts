@@ -47,13 +47,13 @@ export async function GET(
   }
 
   const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.invoices,
+    code: SUBAPP_CODES.orders,
     user: session?.user,
     url: workspaceURL,
     tenantId,
   });
 
-  if (!subapp) {
+  if (!subapp?.installed) {
     return new NextResponse('Unauthorized', {status: 401});
   }
 
