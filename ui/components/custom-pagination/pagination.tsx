@@ -12,6 +12,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from '@/ui/components/pagination';
+import {cn} from '@/utils/css';
 
 type PaginationProps = {
   page?: string | number;
@@ -84,12 +85,12 @@ export const Pagination = ({
     <PaginationItem key={pageNumber}>
       <PaginationLink
         isActive={pageNumber === currentPage}
-        href="#"
-        className={
+        className={cn(
+          'cursor-pointer',
           pageNumber === currentPage
             ? 'bg-success hover:bg-success-dark text-white hover:text-white rounded-full border-none'
-            : 'hover:rounded-full font-normal text-sm'
-        }
+            : 'hover:rounded-full font-normal text-sm',
+        )}
         onClick={() => onPage?.(pageNumber)}>
         {pageNumber}
       </PaginationLink>
