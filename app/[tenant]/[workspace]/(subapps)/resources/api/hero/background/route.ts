@@ -31,7 +31,7 @@ export async function GET(
     url: workspaceURL,
     tenantId,
   });
-  if (!subapp) {
+  if (!subapp?.installed) {
     return new NextResponse('Unauthorized', {status: 401});
   }
 
