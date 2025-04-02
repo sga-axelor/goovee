@@ -39,6 +39,7 @@ import {z} from 'zod';
 
 import {ASSIGNMENT, COMPANY, FIELDS} from '../../../constants';
 import type {
+  Category,
   ClientPartner,
   Company,
   ContactPartner,
@@ -66,6 +67,7 @@ type FilterProps = {
   contacts: Cloned<ContactPartner>[];
   priorities: Cloned<Priority>[];
   statuses: Cloned<Status>[];
+  categories: Cloned<Category>[];
   company?: Cloned<Company>;
   clientPartner?: Cloned<ClientPartner>;
   fields: PortalAppConfig['ticketingFieldSet'];
@@ -74,6 +76,7 @@ type FilterProps = {
 const defaultValues = {
   createdBy: [] as string[],
   managedBy: [] as string[],
+  category: [] as string[],
   updatedOn: ['', ''] as [string, string],
   priority: [] as string[],
   status: [] as string[],
@@ -97,6 +100,7 @@ export function Filter(props: FilterProps) {
     company,
     clientPartner,
     fields,
+    categories,
   } = props;
   const [open, setOpen] = useState(false);
   const filter = useMemo(
@@ -228,6 +232,9 @@ export function Filter(props: FilterProps) {
                 {allowedFields.has(FIELDS.STATUS) && (
                   <StatusField form={form} statuses={statuses} />
                 )}
+                {allowedFields.has(FIELDS.CATEGORY) && (
+                  <CategoryField form={form} categories={categories} />
+                )}
                 <Button
                   variant="success"
                   type="submit"
@@ -261,7 +268,7 @@ function ManagedByField(props: FieldProps & Pick<FilterProps, 'contacts'>) {
                 contacts.find(contact => contact.id === value)?.simpleFullName
               }>
               <MultiSelectorInput
-                placeholder="Select users"
+                placeholder={i18n.t('Select users')}
                 className="text-xs"
               />
             </MultiSelectorTrigger>
@@ -306,7 +313,7 @@ function CreatedByField(
                       ?.simpleFullName
               }>
               <MultiSelectorInput
-                placeholder="Select users"
+                placeholder={i18n.t('Select users')}
                 className="text-xs"
               />
             </MultiSelectorTrigger>
@@ -544,7 +551,7 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
                 statuses.find(status => status.id === value)?.name
               }>
               <MultiSelectorInput
-                placeholder="Select statuses"
+                placeholder={i18n.t('Select statuses')}
                 className="text-xs"
               />
             </MultiSelectorTrigger>
@@ -554,6 +561,47 @@ function StatusField(props: FieldProps & Pick<FilterProps, 'statuses'>) {
                   <MultiSelectorItem key={status.id} value={status.id}>
                     <div className="flex items-center space-x-2">
                       <span>{status.name}</span>
+                    </div>
+                  </MultiSelectorItem>
+                ))}
+              </MultiSelectorList>
+            </MultiSelectorContent>
+          </MultiSelector>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function CategoryField(props: FieldProps & Pick<FilterProps, 'categories'>) {
+  const {form, categories} = props;
+  return (
+    <FormField
+      control={form.control}
+      name="category"
+      render={({field}) => (
+        <FormItem>
+          <FormLabel className="text-xs">{i18n.t('Category')} :</FormLabel>
+          <MultiSelector
+            onValuesChange={field.onChange}
+            className="space-y-0"
+            values={field.value ?? []}>
+            <MultiSelectorTrigger
+              renderLabel={value =>
+                categories.find(category => category.id === value)?.name
+              }>
+              <MultiSelectorInput
+                placeholder={i18n.t('Select categories')}
+                className="text-xs"
+              />
+            </MultiSelectorTrigger>
+            <MultiSelectorContent>
+              <MultiSelectorList>
+                {categories.map(category => (
+                  <MultiSelectorItem key={category.id} value={category.id}>
+                    <div className="flex items-center space-x-2">
+                      <span>{category.name}</span>
                     </div>
                   </MultiSelectorItem>
                 ))}

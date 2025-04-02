@@ -42,11 +42,13 @@ export function getWhere(
     updatedOn,
     myTickets,
     assignment,
+    category,
   } = data;
 
   const where: Where<AOSProjectTask> = {
     ...(status && {status: {id: {in: status}}}),
     ...(priority && {priority: {id: {in: priority}}}),
+    ...(category && {projectTaskCategory: {id: {in: category}}}),
     ...(updatedOn && {updatedOn: {between: updatedOn}}),
     ...(assignment && {assignment}),
   };

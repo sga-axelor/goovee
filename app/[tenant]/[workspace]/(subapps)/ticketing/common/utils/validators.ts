@@ -52,6 +52,7 @@ export const FilterSchema = z.object({
   createdBy: z.array(z.string()).optional(),
   priority: z.array(z.string()).optional(),
   status: z.array(z.string()).optional(),
+  category: z.array(z.string()).optional(),
   updatedOn: z
     .tuple([z.string().optional(), z.string().optional()])
     .superRefine((data, ctx) => {

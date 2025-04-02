@@ -41,6 +41,7 @@ import {
   findCompany,
   findContactPartners,
   findProject,
+  findTicketCategories,
   findTicketPriorities,
   findTicketStatuses,
 } from '../../../common/orm/projects';
@@ -272,13 +273,14 @@ async function AsyncFilter({
   tenantId: Tenant['id'];
   fields: PortalAppConfig['ticketingFieldSet'];
 }) {
-  const [contacts, statuses, priorities, company, clientPartner] =
+  const [contacts, statuses, priorities, company, clientPartner, categories] =
     await Promise.all([
       findContactPartners(projectId, tenantId),
       findTicketStatuses(projectId, tenantId),
       findTicketPriorities(projectId, tenantId),
       findCompany(projectId, tenantId),
       findClientPartner(projectId, tenantId),
+      findTicketCategories(projectId, tenantId),
     ]).then(clone);
 
   return (
@@ -287,6 +289,7 @@ async function AsyncFilter({
       priorities={priorities}
       statuses={statuses}
       company={company}
+      categories={categories}
       url={url}
       searchParams={searchParams}
       clientPartner={clientPartner}
