@@ -265,30 +265,30 @@ export async function createTicket({
     console.error(e);
   }
 
-  try {
-    const reciepients = await getMailRecipients({
-      exclude: [auth.email],
-      newTicket,
-      tenantId: auth.tenantId,
-      workspaceURL: auth.workspaceURL,
+  getMailRecipients({
+    exclude: [auth.email],
+    newTicket,
+    tenantId: auth.tenantId,
+    workspaceURL: auth.workspaceURL,
+  })
+    .then(reciepients => {
+      if (reciepients.length) {
+        sendTrackMail({
+          subject: `Ticket Created by ${auth.simpleFullName}`,
+          body: {
+            title: `Ticket Created by ${auth.simpleFullName}`,
+            tracks,
+            projectName: newTicket.project?.name!,
+            ticketName: newTicket.name,
+          },
+          reciepients,
+        });
+      }
+    })
+    .catch(e => {
+      console.error('Error sending email');
+      console.error(e);
     });
-
-    if (reciepients.length) {
-      sendTrackMail({
-        subject: `Ticket Created by ${auth.simpleFullName}`,
-        body: {
-          title: `Ticket Created by ${auth.simpleFullName}`,
-          tracks,
-          projectName: newTicket.project?.name!,
-          ticketName: newTicket.name,
-        },
-        reciepients,
-      });
-    }
-  } catch (e) {
-    console.error('Error sending email');
-    console.error(e);
-  }
 
   return newTicket;
 }
@@ -520,30 +520,32 @@ export async function updateTicket({
     console.log('Error adding comment');
     console.error(e);
   }
-  try {
-    const reciepients = await getMailRecipients({
-      exclude: [auth.email],
-      newTicket,
-      oldTicket,
-      tenantId: auth.tenantId,
-      workspaceURL: auth.workspaceURL,
+
+  getMailRecipients({
+    exclude: [auth.email],
+    newTicket,
+    oldTicket,
+    tenantId: auth.tenantId,
+    workspaceURL: auth.workspaceURL,
+  })
+    .then(reciepients => {
+      if (reciepients.length) {
+        sendTrackMail({
+          subject: `Ticket Updated by ${auth.simpleFullName}`,
+          body: {
+            title: `Ticket Updated by ${auth.simpleFullName}`,
+            tracks,
+            projectName: newTicket.project?.name!,
+            ticketName: newTicket.name,
+          },
+          reciepients,
+        });
+      }
+    })
+    .catch(e => {
+      console.error('Error sending email');
+      console.error(e);
     });
-    if (reciepients.length) {
-      sendTrackMail({
-        subject: `Ticket Updated by ${auth.simpleFullName}`,
-        body: {
-          title: `Ticket Updated by ${auth.simpleFullName}`,
-          tracks,
-          projectName: newTicket.project?.name!,
-          ticketName: newTicket.name,
-        },
-        reciepients,
-      });
-    }
-  } catch (e) {
-    console.error('Error sending email');
-    console.error(e);
-  }
   return newTicket;
 }
 
