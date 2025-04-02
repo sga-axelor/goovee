@@ -62,7 +62,7 @@ export const NavbarCategoryMenu = ({
     handleIndicator();
   };
 
-  if (!isLargeScreen) return null;
+  if (!isLargeScreen || !categories.length) return null;
 
   if (!categories?.length) return null;
 
