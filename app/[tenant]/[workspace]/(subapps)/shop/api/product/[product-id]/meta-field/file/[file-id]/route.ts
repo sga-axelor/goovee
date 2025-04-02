@@ -1,4 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
+
+// ---- CORE IMPORTS ---- //
 import {findFile, streamFile} from '@/utils/download';
 import {manager} from '@/tenant';
 import {filterPrivate} from '@/orm/filter';
@@ -6,7 +8,11 @@ import {getSession} from '@/lib/core/auth';
 import {and} from '@/utils/orm';
 import type {AOSProduct} from '@/goovee/.generated/models';
 import {findModelFields} from '@/orm/model-fields';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
+import {workspacePathname} from '@/utils/workspace';
+import {SUBAPP_CODES} from '@/constants';
 
+// ---- LOCAL IMPORTS ---- //
 import {
   BASE_PRODUCT_MODEL,
   PRODUCT_ATTRS,
@@ -15,15 +21,45 @@ import {isRelationalType} from '@/subapps/shop/common/utils';
 
 export async function GET(
   request: NextRequest,
-  {params}: {params: {tenant: string; 'product-id': string; 'file-id': string}},
+  {
+    params,
+  }: {
+    params: {
+      tenant: string;
+      'product-id': string;
+      'file-id': string;
+      workspace: string;
+    };
+  },
 ) {
   const {'product-id': productId, 'file-id': fileId, tenant} = params;
-
-  const client = await manager.getClient(tenant);
+  const {workspaceURL} = workspacePathname(params);
 
   const session = await getSession();
   const user = session?.user;
 
+  const workspace = await findWorkspace({
+    user: session?.user,
+    url: workspaceURL,
+    tenantId: tenant,
+  });
+
+  if (!workspace) {
+    return new NextResponse('Invalid workspace', {status: 401});
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.shop,
+    user: session?.user,
+    url: workspaceURL,
+    tenantId: tenant,
+  });
+
+  if (!subapp?.installed) {
+    return new NextResponse('Unauthorized', {status: 401});
+  }
+
+  const client = await manager.getClient(tenant);
   if (!client) {
     return new NextResponse('Bad request', {status: 400});
   }
