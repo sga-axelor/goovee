@@ -153,7 +153,7 @@ export function TicketSelect({
               key={option.id}
               value={option.id.toString()}
               onSelect={() => handleSelect(option)}>
-              {option.fullName}
+              {option.fullName ?? option.name}
             </CommandItem>
           ))}
         </CommandGroup>
@@ -166,7 +166,7 @@ export function TicketSelect({
     <Controller open={open} onOpenChange={handleOpenChange}>
       <Trigger asChild>
         <Button variant="outline" className={className} ref={buttonRef}>
-          {value ? value.fullName : i18n.t('Select ticket')}
+          {value ? (value.fullName ?? value.name) : i18n.t('Select ticket')}
         </Button>
       </Trigger>
       <Content

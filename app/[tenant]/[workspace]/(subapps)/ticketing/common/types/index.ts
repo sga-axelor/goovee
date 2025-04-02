@@ -4,7 +4,12 @@ export type Company = {id: string; version: number; name?: string};
 export type Category = {id: string; version: number; name?: string};
 export type Priority = {id: string; version: number; name?: string};
 export type LinkType = {id: string; version: number; name: string};
-export type TicketSearch = {id: string; version: number; fullName?: string};
+export type TicketSearch = {
+  id: string;
+  version: number;
+  fullName?: string;
+  name?: string;
+};
 
 export type Status = {
   id: string;

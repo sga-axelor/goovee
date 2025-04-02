@@ -909,7 +909,7 @@ export async function findTicketsBySearch(props: {
       }),
     }),
     take: 10,
-    select: {fullName: true},
+    select: {fullName: true, name: true},
   });
 
   return tickets;
