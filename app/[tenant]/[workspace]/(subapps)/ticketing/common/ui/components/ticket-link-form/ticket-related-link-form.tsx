@@ -102,7 +102,7 @@ export function TicketRelatedLinkForm({
             control={form.control}
             name="linkType"
             render={({field}) => (
-              <FormItem className="lg:grow-[1] text-primary">
+              <FormItem className="lg:basis-1/3 text-primary">
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
@@ -127,7 +127,7 @@ export function TicketRelatedLinkForm({
             control={form.control}
             name="ticket"
             render={({field}) => (
-              <FormItem className="lg:grow-[2]">
+              <FormItem className="lg:basis-2/3">
                 <FormControl>
                   <TicketSelect
                     className="w-full border-input"
