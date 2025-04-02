@@ -34,7 +34,7 @@ export async function GET(
     tenantId,
   });
 
-  if (!subapp) {
+  if (!subapp?.installed) {
     return new NextResponse('Unauthorized', {status: 401});
   }
 
