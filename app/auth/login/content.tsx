@@ -39,9 +39,16 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setSubmitting(true);
-
     const {email, password} = values;
+
+    if (!(email && password)) {
+      return toast({
+        title: i18n.t('Email & password is required'),
+        variant: 'destructive',
+      });
+    }
+
+    setSubmitting(true);
 
     const login = await signIn('credentials', {
       email,

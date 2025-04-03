@@ -726,5 +726,6 @@
   "Registration and payment success": "Registration and payment success",
   "Thank you very much for your payment, you are now registered for this event": "Thank you very much for your payment, you are now registered for this event",
   "Go to the homepage": "Go to the homepage",
-  "You are trying to create an account for an existing company, please contact admin to invite you as a user": "You are trying to create an account for an existing company, please contact admin to invite you as a user"
+  "You are trying to create an account for an existing company, please contact admin to invite you as a user": "You are trying to create an account for an existing company, please contact admin to invite you as a user",
+  "Email & password is required": "Email & password is required"
 }

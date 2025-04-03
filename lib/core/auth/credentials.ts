@@ -19,10 +19,13 @@ export const credentials = Credentials({
 
     const {id, fullName: name, password: hashedpassword} = user;
 
-    if (password && hashedpassword) {
-      const isvalid = await compare(password, hashedpassword);
-      if (!isvalid) return null;
+    if (!(password && hashedpassword)) {
+      return null;
     }
+
+    const isvalid = await compare(password, hashedpassword);
+    
+    if (!isvalid) return null;
 
     return {
       id,
