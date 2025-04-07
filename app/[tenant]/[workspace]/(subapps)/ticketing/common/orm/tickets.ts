@@ -1172,13 +1172,19 @@ export async function findTicketLinkTypes(
   if (projectId) {
     const project = await client.aOSProject.findOne({
       where: {id: projectId},
-      select: {projectTaskLinkTypeSet: {select: {name: true}}},
+      select: {
+        projectTaskLinkTypeSet: {
+          where: {OR: [{archived: false}, {archived: null}]},
+          select: {name: true},
+        } as {select: {name: true}},
+      },
     });
     if (project?.projectTaskLinkTypeSet?.length) {
       return project?.projectTaskLinkTypeSet;
     }
   }
   const links = await client.aOSProjectTaskLinkType.find({
+    where: {OR: [{archived: false}, {archived: null}]},
     select: {name: true},
   });
 

@@ -147,6 +147,10 @@
     {
       "type": "String",
       "name": "portalCompanyName"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
     }
   ]
 }

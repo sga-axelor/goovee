@@ -14,6 +14,7 @@ export type QueryProps<T extends Entity> = {
 export function getProjectAccessFilter(props: AuthProps) {
   const {userId, isContact, workspaceId} = props;
   const where: WhereOptions<AOSProject> = {
+    OR: [{archived: false}, {archived: null}],
     isBusinessProject: true,
     projectStatus: {isCompleted: false},
     portalWorkspace: {id: workspaceId},
@@ -26,6 +27,7 @@ export function getProjectAccessFilter(props: AuthProps) {
 
 export function getTicketAccessFilter() {
   const where: WhereOptions<AOSProjectTask> = {
+    OR: [{archived: false}, {archived: null}],
     typeSelect: TYPE_SELECT.TICKET,
     isPrivate: false,
   };

@@ -23,6 +23,10 @@
       "type": "ManyToOne",
       "name": "relatedTask",
       "target": "AOSProjectTask"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
     }
   ]
 }

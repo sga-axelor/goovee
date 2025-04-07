@@ -7,6 +7,10 @@
     {
       "type": "String",
       "name": "title"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
     }
   ]
 }

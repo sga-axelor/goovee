@@ -12,6 +12,7 @@
       "type": "String",
       "name": "code"
     },
+
     {
       "type": "Boolean",
       "name": "isBusinessProject"
@@ -90,6 +91,10 @@
       "type": "ManyToOne",
       "name": "company",
       "target": "AOSCompany"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
     }
   ]
 }

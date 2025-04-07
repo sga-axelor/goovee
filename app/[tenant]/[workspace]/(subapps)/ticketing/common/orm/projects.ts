@@ -17,6 +17,7 @@ import {
   Priority,
   Status,
 } from '../types';
+import {and} from '@/utils/orm';
 
 export async function findProjects(
   props: QueryProps<AOSProject> & {auth: AuthProps},
@@ -33,10 +34,7 @@ export async function findProjects(
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
-    where: {
-      ...getProjectAccessFilter(auth),
-      ...where,
-    },
+    where: and<AOSProject>([getProjectAccessFilter(auth), where]),
     select: {name: true},
   });
 
@@ -88,7 +86,10 @@ export async function findTicketCategories(
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {
-      projectTaskCategorySet: {select: {id: true, name: true}},
+      projectTaskCategorySet: {
+        where: {OR: [{archived: false}, {archived: null}]},
+        select: {id: true, name: true},
+      },
     },
   });
 
@@ -108,7 +109,10 @@ export async function findTicketPriorities(
   const project = await client.aOSProject.findOne({
     where: {id: projectId},
     select: {
-      projectTaskPrioritySet: {select: {id: true, name: true}},
+      projectTaskPrioritySet: {
+        where: {OR: [{archived: false}, {archived: null}]},
+        select: {id: true, name: true},
+      },
     },
   });
 
@@ -129,21 +133,10 @@ export async function findTicketStatuses(
     where: {id: projectId},
     select: {
       projectTaskStatusSet: {
+        where: {OR: [{archived: false}, {archived: null}]},
         orderBy: {sequence: ORDER_BY.ASC},
-        select: {
-          id: true,
-          name: true,
-          sequence: true,
-          isCompleted: true,
-        },
-      } as unknown as {
-        select: {
-          id: true;
-          name: true;
-          sequence: true;
-          isCompleted: true;
-        };
-      },
+        select: {id: true, name: true, sequence: true, isCompleted: true},
+      } as {select: {id: true; name: true; sequence: true; isCompleted: true}},
     },
   });
 
@@ -239,6 +232,7 @@ export async function findContactPartners(
         isActivatedOnPortal: true,
         contactPartnerSet: {
           where: {
+            OR: [{archived: false}, {archived: null}],
             isActivatedOnPortal: true,
             contactWorkspaceConfigSet: {
               OR: [
