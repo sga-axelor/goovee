@@ -25,6 +25,7 @@ import type {
   TrackingField,
 } from '../types';
 import {CommentSchema, CommentsSchema} from '../utils';
+import {and} from '@/utils/orm';
 
 const pump = promisify(pipeline);
 
@@ -164,6 +165,7 @@ async function getPopularCommentsBySorting({
               OR mail_message.is_public_note = TRUE
             )
             AND mail_message.related_model = $4
+            AND mail_message.archived IS NOT TRUE
             AND mail_message.related_id = $1 ${showRepliesInMainThread
         ? ''
         : 'AND mail_message.parent_mail_message IS NULL'} ${exclude &&
@@ -223,6 +225,7 @@ async function getPopularCommentsBySorting({
             LEFT JOIN mailMessageFileListData AS mf ON childComment.id = mf.id
           WHERE
             childComment.is_public_note = TRUE
+            AND childComment.archived IS NOT TRUE
             AND childComment.related_model = $4
             AND childComment.related_id = $1
           GROUP BY
@@ -358,7 +361,11 @@ export async function addComment(
   let parent;
   if (parentId) {
     parent = await client.aOSMailMessage.findOne({
-      where: {id: {eq: parentId}, relatedId: Number(recordId)},
+      where: {
+        id: {eq: parentId},
+        relatedId: Number(recordId),
+        OR: [{archived: false}, {archived: null}],
+      },
       select: {id: true},
     });
     if (!parent) {
@@ -462,15 +469,16 @@ export async function findComments(
   }
 
   let comments = await client.aOSMailMessage.find({
-    where: {
-      relatedId: Number(recordId),
-      relatedModel: modelName,
-      OR: [{[trackingField]: {ne: null}}, {isPublicNote: true}],
-      ...(exclude && exclude.length && {id: {notIn: exclude}}),
-      ...(!showRepliesInMainThread && {
-        parentMailMessage: {id: {eq: null}},
-      }),
-    },
+    where: and<AOSMailMessage>([
+      {
+        relatedId: Number(recordId),
+        relatedModel: modelName,
+        OR: [{[trackingField]: {ne: null}}, {isPublicNote: true}],
+      },
+      {OR: [{archived: false}, {archived: null}]},
+      exclude && exclude.length && {id: {notIn: exclude}},
+      !showRepliesInMainThread && {parentMailMessage: {id: {eq: null}}},
+    ]),
     orderBy,
     take: limit,
     ...(skip ? {skip} : {}),
@@ -481,6 +489,7 @@ export async function findComments(
       childConditions: {
         orderBy,
         where: {
+          OR: [{archived: false}, {archived: null}],
           relatedId: Number(recordId),
           relatedModel: modelName,
           isPublicNote: true,
@@ -496,9 +505,14 @@ export async function findComments(
 
   const totalCommentThreadCount = await client.aOSMailMessage.count({
     where: {
-      relatedId: Number(recordId),
-      relatedModel: modelName,
-      OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+      AND: [
+        {
+          relatedId: Number(recordId),
+          relatedModel: modelName,
+          OR: [{publicBody: {ne: null}}, {isPublicNote: true}],
+        },
+        {OR: [{archived: false}, {archived: null}]},
+      ],
     },
   });
 
@@ -527,6 +541,7 @@ export async function isFileOfRecord({
     where: {
       relatedId: Number(recordId),
       mailMessageFileList: {attachmentFile: {id: fileId}},
+      OR: [{archived: false}, {archived: null}],
     },
     select: {id: true},
   });

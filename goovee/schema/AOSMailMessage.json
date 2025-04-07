@@ -84,6 +84,10 @@
       "name": "childMailMessages",
       "mappedBy": "parentMailMessage",
       "target": "AOSMailMessage"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
     }
   ]
 }
