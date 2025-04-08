@@ -10,6 +10,7 @@ import {getPageInfo, getSkipInfo} from '@/utils';
 import type {ID, PortalWorkspace} from '@/types';
 import {manager} from '@/tenant';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
+import {and} from '@/utils/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
@@ -41,25 +42,22 @@ export const fetchQuotations = async ({
   const client = await manager.getClient(tenantId);
   const skip = getSkipInfo(limit, page);
 
-  const whereClause: any = {
-    template: false,
-    ...where,
-    OR: [
-      {
-        statusSelect: {
-          lt: QUOTATION_STATUS.CONFIRMED,
-        },
+  const whereClause: any = and<any>([
+    where,
+    {
+      template: false,
+      portalWorkspace: {
+        url: workspaceURL,
       },
-      {
-        statusSelect: {
-          eq: QUOTATION_STATUS.CANCELED_QUOTATION,
-        },
-      },
-    ],
-    portalWorkspace: {
-      url: workspaceURL,
     },
-  };
+    {OR: [{archived: false}, {archived: null}]},
+    {
+      OR: [
+        {statusSelect: {lt: QUOTATION_STATUS.CONFIRMED}},
+        {statusSelect: {eq: QUOTATION_STATUS.CANCELED_QUOTATION}},
+      ],
+    },
+  ]);
 
   const quotations = await client.aOSOrder
     .find({
@@ -116,14 +114,26 @@ export async function findQuotation({
 
   const client = await manager.getClient(tenantId);
 
-  const quotation: any = await client.aOSOrder.findOne({
-    where: {
+  const whereClause: any = and<any>([
+    params?.where,
+    {
       id,
-      ...params?.where,
+      template: false,
       portalWorkspace: {
         url: workspaceURL,
       },
     },
+    {OR: [{archived: false}, {archived: null}]},
+    {
+      OR: [
+        {statusSelect: {lt: QUOTATION_STATUS.CONFIRMED}},
+        {statusSelect: {eq: QUOTATION_STATUS.CANCELED_QUOTATION}},
+      ],
+    },
+  ]);
+
+  const quotation: any = await client.aOSOrder.findOne({
+    where: whereClause,
     select: {
       saleOrderSeq: true,
       endOfValidityDate: true,
