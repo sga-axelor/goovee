@@ -318,17 +318,7 @@ export async function updateTicket({
   fromWS?: boolean;
   auth: AuthProps;
 }): Promise<UTicket> {
-  const {
-    priority,
-    subject,
-    description,
-    category,
-    status,
-    assignment,
-    managedBy,
-    id,
-    version,
-  } = data;
+  const {priority, category, status, assignment, managedBy, id, version} = data;
 
   const client = await manager.getClient(auth.tenantId);
 
@@ -356,8 +346,6 @@ export async function updateTicket({
     const ws = `${aos.url}/ws/rest/com.axelor.apps.project.db.ProjectTask`;
 
     const toUpdate = {
-      ...(subject != null && {name: subject}),
-      ...(description != null && {description}),
       ...(category && {projectTaskCategory: {id: category}}),
       ...(priority && {priority: {id: priority}}),
       ...(status && {status: {id: status}}),
@@ -403,8 +391,6 @@ export async function updateTicket({
     }
   } else {
     const toUpdate = {
-      ...(description != null && {description}),
-      ...(subject != null && {name: subject, fullName: `#${id} ${subject}`}),
       ...(category && {projectTaskCategory: {select: {id: category}}}),
       ...(priority && {priority: {select: {id: priority}}}),
       ...(status && {status: {select: {id: status}}}),
@@ -429,14 +415,6 @@ export async function updateTicket({
 
   const tracks: Track[] = [];
 
-  if (subject != null && oldTicket.name !== newTicket.name) {
-    tracks.push({
-      name: 'name',
-      title: 'Subject',
-      value: newTicket.name,
-      ...(oldTicket.name && {oldValue: oldTicket.name}),
-    });
-  }
   if (
     category &&
     oldTicket.projectTaskCategory?.name !== newTicket.projectTaskCategory?.name
@@ -490,14 +468,6 @@ export async function updateTicket({
       ...(oldTicket.managedByContact?.name && {
         oldValue: oldTicket.managedByContact.name,
       }),
-    });
-  }
-
-  if (description) {
-    tracks.push({
-      name: 'description',
-      title: 'Description',
-      value: 'updated',
     });
   }
 

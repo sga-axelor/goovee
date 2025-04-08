@@ -25,18 +25,15 @@ import {ASSIGNMENT} from '../../../constants';
 import {useRetryAction} from '../../../hooks';
 import type {Ticket} from '../../../types';
 import {isWithProvider} from '../../../utils';
-import {TicketFormSchema, type TicketInfo} from '../../../utils/validators';
+import {UpdateFormSchema, type UpdateFormData} from '../../../utils/validators';
 
 export const TicketDetailsContext =
   createContext<null | TicketDetailsContextValue>(null);
 
-const getDefaultValues = (ticket: Cloned<Ticket>) => {
+const getDefaultValues = (ticket: Cloned<Ticket>): UpdateFormData => {
   return {
-    subject: ticket?.name ?? '',
     category: ticket?.projectTaskCategory?.id,
     priority: ticket?.priority?.id,
-    description: ticket?.description ?? '',
-    assignment: ticket?.assignment,
     managedBy: ticket?.managedByContact?.id,
   };
 };
@@ -47,11 +44,11 @@ type Props = {
 };
 
 type TicketDetailsContextValue = {
-  ticketForm: UseFormReturn<TicketInfo>;
+  ticketForm: UseFormReturn<UpdateFormData>;
   ticket: Cloned<Ticket>;
   loading: boolean;
   handleTicketFormSubmit: (
-    value: TicketInfo,
+    value: UpdateFormData,
     onSuccess?: (res: MutateResponse) => Promise<void>,
   ) => Promise<void>;
   handleCancelTicket: () => Promise<void>;
@@ -67,8 +64,8 @@ export function TicketDetailsProvider(props: Props) {
 
   const {toast} = useToast();
 
-  const ticketForm = useForm<TicketInfo>({
-    resolver: zodResolver(TicketFormSchema),
+  const ticketForm = useForm<UpdateFormData>({
+    resolver: zodResolver(UpdateFormSchema),
     defaultValues: getDefaultValues(ticket),
   });
 
@@ -102,11 +99,11 @@ export function TicketDetailsProvider(props: Props) {
     ticketForm.formState.isSubmitting;
 
   const getDirtyValues = useCallback(
-    (value: TicketInfo): TicketInfo | undefined => {
+    (value: UpdateFormData): UpdateFormData | undefined => {
       const dirtyFieldKeys = Object.keys(ticketForm.formState.dirtyFields);
       if (!dirtyFieldKeys.length) return;
 
-      const dirtyValues = pick(value, dirtyFieldKeys) as TicketInfo;
+      const dirtyValues = pick(value, dirtyFieldKeys) as UpdateFormData;
       return dirtyValues;
     },
     [ticketForm.formState.dirtyFields],
@@ -114,7 +111,7 @@ export function TicketDetailsProvider(props: Props) {
 
   const handleTicketFormSubmit = useCallback(
     async (
-      value: TicketInfo,
+      value: UpdateFormData,
       onSuccess?: (res: MutateResponse) => Promise<void>,
     ) => {
       const dirtyValues = getDirtyValues(value);

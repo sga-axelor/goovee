@@ -32,8 +32,8 @@ import type {MutateProps, MutateResponse} from '../../../actions';
 import {mutate} from '../../../actions';
 import {FIELDS} from '../../../constants';
 import type {Category, ContactPartner, Priority} from '../../../types';
-import type {TicketInfo} from '../../../utils/validators';
-import {TicketFormSchema} from '../../../utils/validators';
+import type {CreateFormData} from '../../../utils/validators';
+import {CreateFormSchema} from '../../../utils/validators';
 
 type TicketFormProps = {
   projectId: string;
@@ -74,7 +74,7 @@ export function TicketForm(props: TicketFormProps) {
 
   const refinedSchema = useMemo(
     () =>
-      TicketFormSchema.superRefine((data, ctx) => {
+      CreateFormSchema.superRefine((data, ctx) => {
         if (allowedFields.has(FIELDS.CATEGORY) && !data.category) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
@@ -102,7 +102,7 @@ export function TicketForm(props: TicketFormProps) {
     [allowedFields],
   );
 
-  const form = useForm<TicketInfo>({
+  const form = useForm<CreateFormData>({
     resolver: zodResolver(refinedSchema),
     defaultValues: {
       managedBy: allowedFields.has(FIELDS.MANAGED_BY)
@@ -132,7 +132,7 @@ export function TicketForm(props: TicketFormProps) {
   );
 
   const handleSubmit = useCallback(
-    async (value: TicketInfo): Promise<void> => {
+    async (value: CreateFormData): Promise<void> => {
       const mutateProps: MutateProps = {
         action: {
           type: 'create',
@@ -158,7 +158,7 @@ export function TicketForm(props: TicketFormProps) {
   );
 
   const handleSubmitWithAction = useCallback(
-    (value: TicketInfo): Promise<void> => {
+    (value: CreateFormData): Promise<void> => {
       if (submitFormWithAction) {
         return submitFormWithAction(() => handleSubmit(value));
       }

@@ -14,8 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  RichTextEditor,
+  InnerHTML,
   Select,
   SelectContent,
   SelectItem,
@@ -33,7 +32,7 @@ import {
 import {Progress} from '@/ui/components/progress';
 import {cn} from '@/utils/css';
 import {useMemo} from 'react';
-import {FIELDS, INVOICING_TYPE} from '../../../constants';
+import {FIELDS, INVOICING_TYPE, UPDATABLE_FIELDS} from '../../../constants';
 import type {
   ContactPartner,
   Category as TCategory,
@@ -75,6 +74,11 @@ export function TicketDetails(props: Props) {
     [formFields],
   );
 
+  const hasEditableFields = useMemo(
+    () => UPDATABLE_FIELDS.some(f => allowedFields.has(f)),
+    [allowedFields],
+  );
+
   const close = !ticket.status?.isCompleted && showClose && <CloseTicket />;
   const cancel = !ticket.status?.isCompleted && showCancel && <CancelTicket />;
 
@@ -85,13 +89,15 @@ export function TicketDetails(props: Props) {
       <form onSubmit={form.handleSubmit(value => handleSubmit(value))}>
         <div className="flex flex-col-reverse lg:flex-col gap-4 rounded-md border bg-card p-4 mt-5">
           <div className="grid grid-cols-1 gap-4 lg:flex lg:flex-row-reverse lg:justify-start lg:grow">
-            <Button
-              size="sm"
-              type="submit"
-              variant="success"
-              disabled={!form.formState.isDirty || loading}>
-              {i18n.t('Save Changes')}
-            </Button>
+            {hasEditableFields && (
+              <Button
+                size="sm"
+                type="submit"
+                variant="success"
+                disabled={!form.formState.isDirty || loading}>
+                {i18n.t('Save Changes')}
+              </Button>
+            )}
             <div className="contents lg:hidden">
               {assignToButton}
               {close}
@@ -104,23 +110,8 @@ export function TicketDetails(props: Props) {
                 <p className="text-base font-medium">#{ticket?.id}</p>
               </div>
             )}
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({field}) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className="text-xl font-semibold h-11"
-                      placeholder={i18n.t('Enter your subject')}
-                      value={field.value ?? ''}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <h1 className="text-xl font-semibold">{ticket.name}</h1>
+            <hr />
             <div className="flex flex-col gap-4">
               <>
                 <div className="flex items-center gap-4">
@@ -385,29 +376,8 @@ export function TicketDetails(props: Props) {
                   <hr />
                 </>
               )}
-            <div className="!mt-10">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({field}) => {
-                  return (
-                    <FormItem>
-                      <FormControl>
-                        <RichTextEditor
-                          onChange={field.onChange}
-                          content={ticket.description}
-                          classNames={{
-                            wrapperClassName: 'overflow-visible bg-card',
-                            toolbarClassName: 'mt-0',
-                            editorClassName: 'px-4',
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
+            <div>
+              <InnerHTML content={ticket.description} />
             </div>
           </div>
         </div>

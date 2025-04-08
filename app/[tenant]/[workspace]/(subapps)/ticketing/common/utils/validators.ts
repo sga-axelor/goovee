@@ -1,7 +1,7 @@
 import type {Expand} from '@/types/util';
 import {z} from 'zod';
 
-export const TicketFormSchema = z.object({
+export const CreateFormSchema = z.object({
   subject: z
     .string({required_error: 'Subject is required'})
     .trim()
@@ -13,23 +13,25 @@ export const TicketFormSchema = z.object({
   parentId: z.string().optional(),
 });
 
-export const UpdateTicketSchema = z.object({
-  id: z.string(),
-  version: z.number(),
+export const UpdateFormSchema = z.object({
   category: z.string().optional(),
   priority: z.string().optional(),
-  subject: z.string().optional(),
-  status: z.string().optional(),
-  assignment: z.number().optional(),
-  description: z.string().optional(),
   managedBy: z.string().optional(),
 });
 
-export const CreateTicketSchema = TicketFormSchema.extend({
+export const UpdateTicketSchema = UpdateFormSchema.extend({
+  id: z.string(),
+  version: z.number(),
+  status: z.string().optional(),
+  assignment: z.number().optional(),
+});
+
+export const CreateTicketSchema = CreateFormSchema.extend({
   project: z.string(),
 });
 
-export type TicketInfo = z.infer<typeof TicketFormSchema>;
+export type CreateFormData = z.infer<typeof CreateFormSchema>;
+export type UpdateFormData = z.infer<typeof UpdateFormSchema>;
 export type CreateTicketInfo = z.infer<typeof CreateTicketSchema>;
 export type UpdateTicketInfo = z.infer<typeof UpdateTicketSchema>;
 
