@@ -54,6 +54,7 @@ export async function getPopularQuery({
   search,
   tenantId,
   user,
+  archived = false,
   memberGroupIDs = [],
 }: {
   page?: string | number;
@@ -64,6 +65,7 @@ export async function getPopularQuery({
   search?: string | undefined;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
   memberGroupIDs?: Array<String>;
 }) {
   if (!workspaceID) {
@@ -80,7 +82,12 @@ export async function getPopularQuery({
           ${ids?.length ? `AND post.id IN (${ids.join(', ')})` : ''}
           ${search ? `AND post.title LIKE '%${search}%'` : ''}
           ${await filterPrivateQuery(user, tenantId)}
-          `;
+          ${
+            archived
+              ? 'AND post.archived = true AND forumGroup.archived = true'
+              : 'AND COALESCE(post.archived, false) IS FALSE AND COALESCE(forumGroup.archived, false ) IS FALSE'
+          }
+         `;
 
   const posts: any = await client
     .$raw(
@@ -213,3 +220,30 @@ export async function getPopularQuery({
 
   return {posts, pageInfo};
 }
+
+interface Element {
+  [key: string]: any;
+}
+
+export const addProperties = ({
+  element = {},
+  key,
+  value,
+}: {
+  element: Element;
+  key: string;
+  value: any;
+}) => {
+  if (!key) return element;
+
+  const properties = element[key] || [];
+  properties.push(value);
+  element[key] = properties;
+  return element;
+};
+
+export const getArchivedFilter = ({archived}: {archived: boolean}) => {
+  return archived
+    ? {archived: true}
+    : {OR: [{archived: false}, {archived: null}]};
+};

@@ -50,7 +50,7 @@ export const ThreadBody = ({
     return (
       attachmentList?.reduce(
         (acc: any, attachment: any) => {
-          if (attachment?.metaFile?.fileType.startsWith('image')) {
+          if (attachment?.metaFile?.fileType?.startsWith('image')) {
             acc.images.push(attachment);
           } else {
             acc.files.push({

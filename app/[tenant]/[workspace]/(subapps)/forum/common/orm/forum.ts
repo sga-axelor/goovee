@@ -9,29 +9,37 @@ import {filterPrivate} from '@/orm/filter';
 import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
-import {getPopularQuery} from '@/subapps/forum/common/utils';
+import {
+  addProperties,
+  getArchivedFilter,
+  getPopularQuery,
+} from '@/subapps/forum/common/utils';
 import {Post} from '@/subapps/forum/common/types/forum';
 
 export async function findGroups({
   workspace,
   tenantId,
   user,
+  archived = false,
 }: {
   workspace: PortalWorkspace;
   memberGroupIDs?: any;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) return [];
 
   const client = await manager.getClient(tenantId);
-
   const groups = await client.aOSPortalForumGroup.find({
     where: {
       workspace: {
         id: workspace.id,
       },
-      ...(await filterPrivate({user, tenantId})),
+      AND: [
+        await filterPrivate({user, tenantId}),
+        getArchivedFilter({archived}),
+      ],
     },
     select: {
       name: true,
@@ -49,6 +57,7 @@ export async function findGroupsByMembers({
   workspaceID,
   tenantId,
   user,
+  archived = false,
 }: {
   id: any;
   searchKey?: string;
@@ -56,6 +65,7 @@ export async function findGroupsByMembers({
   workspaceID: PortalWorkspace['id'];
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspaceID && tenantId)) return [];
 
@@ -67,7 +77,10 @@ export async function findGroupsByMembers({
     },
     forumGroup: {
       workspace: {id: workspaceID},
-      ...(await filterPrivate({user, tenantId})),
+      AND: [
+        await filterPrivate({user, tenantId}),
+        getArchivedFilter({archived}),
+      ],
       ...(searchKey ? {name: {like: `%${searchKey}%`}} : {}),
     },
   };
@@ -93,19 +106,23 @@ export async function findGroupsByMembers({
 export async function findUser({
   userId,
   tenantId,
+  archived = false,
 }: {
   userId: any;
   tenantId: Tenant['id'];
+  archived?: boolean;
 }) {
   if (!(userId && tenantId)) {
     return {};
   }
 
   const client = await manager.getClient(tenantId);
+  const archivedFilter = getArchivedFilter({archived});
 
   const user = await client.aOSPartner.findOne({
     where: {
       id: userId,
+      ...archivedFilter,
     },
     select: {
       picture: true,
@@ -125,6 +142,7 @@ export async function findPosts({
   tenantId,
   ids,
   user,
+  archived = false,
   memberGroupIDs = [],
 }: {
   sort?: any;
@@ -137,6 +155,7 @@ export async function findPosts({
   groupIDs?: any[];
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
   memberGroupIDs?: Array<String>;
 }) {
   if (!(workspaceID && tenantId)) {
@@ -164,6 +183,7 @@ export async function findPosts({
         tenantId,
         ids,
         user,
+        archived,
         memberGroupIDs,
       });
       const {posts = [], pageInfo = {}, error, message} = query;
@@ -181,15 +201,22 @@ export async function findPosts({
 
   const skip = getSkipInfo(limit, page);
 
+  const archivedFilter = getArchivedFilter({archived});
+  const whereClauseWithArchivedFilter = addProperties({
+    element: whereClause,
+    key: 'AND',
+    value: archivedFilter,
+  });
+
   const combinedWhereClause = {
-    ...whereClause,
+    ...whereClauseWithArchivedFilter,
     forumGroup: {
       workspace: {
         id: workspaceID,
       },
       ...(groupIDs.length ? {id: {in: groupIDs}} : {}),
       ...whereClause.forumGroup,
-      ...(await filterPrivate({user, tenantId})),
+      AND: [await filterPrivate({tenantId, user}), archivedFilter],
     },
     ...(search
       ? {
@@ -295,12 +322,14 @@ export async function findGroupById(
   workspaceID: ID,
   tenantId: Tenant['id'],
   user?: User,
+  archived = false,
 ) {
   if (!(workspaceID && tenantId)) {
     return null;
   }
 
   const client = await manager.getClient(tenantId);
+  const archivedFilter = getArchivedFilter({archived});
 
   const group = await client.aOSPortalForumGroup.findOne({
     where: {
@@ -308,7 +337,7 @@ export async function findGroupById(
       workspace: {
         id: workspaceID,
       },
-      ...(await filterPrivate({user, tenantId})),
+      AND: [await filterPrivate({user, tenantId}), archivedFilter],
     },
     select: {
       name: true,
@@ -327,12 +356,14 @@ export async function findMemberGroupById({
   workspaceID,
   tenantId,
   user,
+  archived = false,
 }: {
   id: ID;
   groupID: ID;
   workspaceID: ID;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspaceID && tenantId)) {
     return {error: true, message: await t('Bad request')};
@@ -350,7 +381,10 @@ export async function findMemberGroupById({
           id: workspaceID,
         },
         id: groupID,
-        ...(await filterPrivate({user, tenantId})),
+        AND: [
+          await filterPrivate({user, tenantId}),
+          getArchivedFilter({archived}),
+        ],
       },
     },
     select: {

@@ -39,6 +39,7 @@ import {
 import {NOTIFICATION_VALUES} from '@/subapps/forum/common/constants';
 import {sendEmailNotifications} from '@/subapps/forum/common/utils/mail';
 import {ContentType} from '@/subapps/forum/common/types/forum';
+import {getArchivedFilter} from '@/subapps/forum/common/utils';
 
 interface FileMeta {
   fileName: string;
@@ -573,9 +574,11 @@ export async function addPost({
 export async function findMedia({
   id,
   workspaceURL,
+  archived = false,
 }: {
   id: ID;
   workspaceURL: string;
+  archived?: boolean;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
@@ -619,7 +622,10 @@ export async function findMedia({
           ? {
               forumGroup: {
                 id,
-                ...(await filterPrivate({user, tenantId})),
+                AND: [
+                  await filterPrivate({user, tenantId}),
+                  getArchivedFilter({archived}),
+                ],
               },
             }
           : {}),

@@ -21,6 +21,10 @@
     {
       "name": "notificationSelect",
       "type": "String"
+    },
+    {
+      "name": "archived",
+      "type": "Boolean"
     }
   ]
 }
