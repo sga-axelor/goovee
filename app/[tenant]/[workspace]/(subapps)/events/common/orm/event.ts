@@ -15,7 +15,7 @@ import type {
   AOSPortalEventCategory,
 } from '@/goovee/.generated/models';
 import {dayjs} from '@/locale';
-import {formatNumber} from '@/locale/server/formatters';
+import {formatDate, formatNumber} from '@/locale/server/formatters';
 import {filterPrivate} from '@/orm/filter';
 import {type Tenant, manager} from '@/tenant';
 import type {ID, PortalWorkspace, User} from '@/types';
@@ -291,6 +291,12 @@ export async function findEvent({
       code: productsFromWS?.currencyCode,
     },
     eventLink,
+    registrationDeadlineDateTime: await formatDate(
+      event?.registrationDeadlineDateTime as any,
+      {
+        dateFormat: 'MMMM DD YYYY, h:mm a',
+      },
+    ),
   };
 }
 

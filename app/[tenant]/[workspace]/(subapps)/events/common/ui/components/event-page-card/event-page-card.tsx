@@ -32,15 +32,19 @@ import {
 } from '@/subapps/events/common/utils';
 
 export const EventPageCard = ({eventDetails, workspace}: any) => {
-  const {formattedDefaultPriceAti, formattedDefaultPrice, defaultPrice} =
-    eventDetails || {};
+  const {
+    formattedDefaultPriceAti,
+    formattedDefaultPrice,
+    defaultPrice,
+    eventAllowRegistration,
+    registrationDeadlineDateTime,
+  } = eventDetails || {};
   const {workspaceURI} = useWorkspace();
   const {data: session} = useSession();
   const user = session?.user;
 
   const allowGuestEventRegistration =
     workspace.config?.allowGuestEventRegistration;
-  const eventAllowRegistration = eventDetails?.eventAllowRegistration;
 
   const allowGuests =
     allowGuestEventRegistration && !isLoginNeededForRegistration(eventDetails);
@@ -110,6 +114,14 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
               </p>
             </div>
           ) : null}
+          {eventAllowRegistration && registrationDeadlineDateTime && (
+            <p>
+              {i18n.t('Registration deadline')}:{' '}
+              <span className="font-normal text-destructive">
+                {registrationDeadlineDateTime}
+              </span>
+            </p>
+          )}
         </div>
       </CardContent>
       {isRegistrationAllow && (
