@@ -18,11 +18,13 @@ import {
 export function ExpandableCard({
   title,
   children,
+  open,
 }: {
   title: string;
   children: any;
+  open?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false || open);
 
   return (
     <div>

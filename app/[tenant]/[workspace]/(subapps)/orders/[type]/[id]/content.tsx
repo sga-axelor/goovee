@@ -4,7 +4,7 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
-import {Container} from '@/ui/components';
+import {Container, Separator} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -87,27 +87,28 @@ const Content = ({order}: {order: any}) => {
             />
 
             {invoices?.length ? (
-              <ExpandableCard title={i18n.t(INVOICE)}>
-                {invoices.map((record: any) => {
+              <ExpandableCard title={i18n.t(INVOICE)} open={true}>
+                {invoices.map((record: any, index: number) => {
+                  const isLast = index === invoices.length - 1;
                   return (
-                    <div key={record.id} className="flex flex-col gap-4 mb-4">
-                      <div className="flex flex-col gap-2 text-sm">
-                        <div className="flex gap-4 justify-between">
-                          <div className="font-medium">{i18n.t('Number')}:</div>
-                          <div>{record.invoiceId}</div>
-                        </div>
-                        <div className="flex gap-4 justify-between">
-                          <div className="font-medium">
-                            {i18n.t('Created on')}:
+                    <div key={record.id} className="flex flex-col gap-2">
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-1 items-center gap-4">
+                          <div className="flex-1 truncate">
+                            {record.invoiceId}
                           </div>
-                          <div>{record.createdOn}</div>
+                          <div className="flex-1">{record.createdOn}</div>
+                        </div>
+                        <div className="flex justify-end">
+                          <DownloadButton
+                            downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/invoice/${record.id}`}
+                            title={i18n.t(DOWNLOAD_PDF)}
+                            className="border-none"
+                          />
                         </div>
                       </div>
 
-                      <DownloadButton
-                        downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/invoice/${record.id}`}
-                        title={i18n.t(DOWNLOAD_PDF)}
-                      />
+                      {!isLast && <Separator />}
                     </div>
                   );
                 })}
@@ -115,26 +116,30 @@ const Content = ({order}: {order: any}) => {
             ) : null}
 
             {customerDeliveries.length ? (
-              <ExpandableCard title={i18n.t(CUSTOMER_DELIVERY)}>
-                {customerDeliveries.map((record: any) => {
+              <ExpandableCard title={i18n.t(CUSTOMER_DELIVERY)} open={true}>
+                {customerDeliveries.map((record: any, index: number) => {
+                  const isLast = index === customerDeliveries.length - 1;
+
                   return (
-                    <div key={record.id} className="flex flex-col gap-4 mb-4">
-                      <div className="flex flex-col gap-2 text-sm">
-                        <div className="flex gap-4 justify-between">
-                          <div className="font-medium">{i18n.t('Number')}:</div>
-                          <div>{record.stockMoveSeq}</div>
-                        </div>
-                        <div className="flex gap-4 justify-between">
-                          <div className="font-medium">
-                            {i18n.t('Created on')}:
+                    <div key={record.id} className="flex flex-col gap-2">
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-1 items-center gap-4">
+                          <div className="flex-1 truncate">
+                            {record.stockMoveSeq}
                           </div>
-                          <div>{record.createdOn}</div>
+
+                          <div className="flex-1">{record.createdOn}</div>
+                        </div>
+
+                        <div className="flex justify-end">
+                          <DownloadButton
+                            title={i18n.t(DOWNLOAD_PDF)}
+                            downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/customer-delivery/${record.id}`}
+                            className="border-none"
+                          />
                         </div>
                       </div>
-                      <DownloadButton
-                        title={i18n.t(DOWNLOAD_PDF)}
-                        downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/customer-delivery/${record.id}`}
-                      />
+                      {!isLast && <Separator />}
                     </div>
                   );
                 })}
