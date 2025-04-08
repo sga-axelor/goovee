@@ -66,7 +66,6 @@ export default async function Page({
   const memberGroupIDs = memberGroups.map(
     (group: any) => group?.forumGroup?.id,
   );
-  const isMember = memberGroupIDs.includes(groupId);
 
   const nonMemberGroups: any = groups.filter((group: any) => {
     return !memberGroupIDs.includes(group.id);
