@@ -4,12 +4,14 @@ import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
+  ORDER_BY,
 } from '@/constants';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
 import type {Partner, PortalWorkspace} from '@/types';
 import {ID} from '@goovee/orm';
 import {t} from '@/locale/server';
+import {and} from '@/utils/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -45,30 +47,35 @@ export const findOrders = async ({
 
   const client = await manager.getClient(tenantId);
 
-  const whereClause: any = {
-    ...where,
-    portalWorkspace: {
-      url: workspaceURL,
+  const whereClause = and<any>([
+    where,
+    {
+      portalWorkspace: {
+        url: workspaceURL,
+      },
+      template: false,
     },
-  };
+    archived
+      ? {
+          OR: [
+            {
+              archived: {
+                eq: true,
+              },
+            },
+            {
+              statusSelect: {
+                eq: ORDER_STATUS.CLOSED,
+              },
+            },
+          ],
+        }
+      : {
+          statusSelect: ORDER_STATUS.CONFIRMED,
+          OR: [{archived: false}, {archived: null}],
+        },
+  ]);
 
-  if (archived) {
-    whereClause.OR = [
-      {
-        archived: {
-          eq: true,
-        },
-      },
-      {
-        statusSelect: {
-          eq: ORDER_STATUS.CLOSED,
-        },
-      },
-    ];
-  } else {
-    whereClause.template = false;
-    whereClause.statusSelect = ORDER_STATUS.CONFIRMED;
-  }
   const skip = getSkipInfo(limit, page);
 
   const $orders = await client.aOSOrder
@@ -146,21 +153,22 @@ export async function findOrder({
   if (!client) {
     return null;
   }
-  const baseWhereClause: any = {
-    id,
-    ...params.where,
-    portalWorkspace: {url: workspaceURL},
-  };
 
-  if (archived) {
-    baseWhereClause.OR = [
-      {archived: {eq: true}},
-      {statusSelect: {eq: ORDER_STATUS.CLOSED}},
-    ];
-  } else {
-    baseWhereClause.template = false;
-    baseWhereClause.statusSelect = ORDER_STATUS.CONFIRMED;
-  }
+  const baseWhereClause = and([
+    params.where,
+    {id, portalWorkspace: {url: workspaceURL}, template: false},
+    archived
+      ? {
+          OR: [
+            {archived: {eq: true}},
+            {statusSelect: {eq: ORDER_STATUS.CLOSED}},
+          ],
+        }
+      : {
+          statusSelect: ORDER_STATUS.CONFIRMED,
+          OR: [{archived: false}, {archived: null}],
+        },
+  ]);
 
   const order = await client.aOSOrder.findOne({
     where: baseWhereClause,
