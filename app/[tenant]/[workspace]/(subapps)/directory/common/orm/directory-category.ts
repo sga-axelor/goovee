@@ -21,6 +21,7 @@ export async function findCategories({
   const c = await manager.getClient(tenantId);
 
   const directoryCategories = await c.aOSPortalDirectoryCategory.find({
+    where: {OR: [{archived: false}, {archived: null}]},
     orderBy: {title: 'ASC'},
     select: {title: true, color: true, icon: true},
   });
@@ -44,7 +45,7 @@ export async function findCategory({
   const c = await manager.getClient(tenantId);
 
   const directoryCategory = await c.aOSPortalDirectoryCategory.findOne({
-    where: {id},
+    where: {id, OR: [{archived: false}, {archived: null}]},
     select: {
       title: true,
       directoryCategorySet: {

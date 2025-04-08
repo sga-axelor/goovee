@@ -15,6 +15,10 @@
     {
       "type": "String",
       "name": "googleMapsApiKey"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
     }
   ]
 }

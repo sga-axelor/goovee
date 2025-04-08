@@ -18,6 +18,7 @@ export async function findMapConfig({
   const c = await manager.getClient(tenantId);
 
   const mapConfig = await c.aOSAppBase.findOne({
+    where: {OR: [{archived: false}, {archived: null}]},
     select: {
       mapApiSelect: true,
       googleMapsApiKey: true,

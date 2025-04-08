@@ -23,6 +23,10 @@
       "name": "directoryCategorySet",
       "type": "ManyToMany",
       "target": "AOSPortalDirectoryCategory"
+    },
+    {
+      "name": "archived",
+      "type": "Boolean"
     }
   ]
 }

@@ -6,6 +6,7 @@ import type {OrderByOptions} from '@goovee/orm';
 import type {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
 
 import type {Entry, ListEntry, SearchEntry} from '../types';
+import {and} from '@/utils/orm';
 
 export async function findEntryImage({
   id,
@@ -23,7 +24,11 @@ export async function findEntryImage({
   const c = await manager.getClient(tenantId);
 
   const entry = await c.aOSPortalDirectoryEntry.findOne({
-    where: {id, workspace: {id: workspaceId}},
+    where: {
+      id,
+      workspace: {id: workspaceId},
+      OR: [{archived: false}, {archived: null}],
+    },
     select: {image: {id: true}},
   });
   return entry?.image?.id;
@@ -45,7 +50,11 @@ export async function findEntry({
   const c = await manager.getClient(tenantId);
 
   const entry = await c.aOSPortalDirectoryEntry.findOne({
-    where: {id: id, workspace: {id: workspaceId}},
+    where: {
+      id: id,
+      workspace: {id: workspaceId},
+      OR: [{archived: false}, {archived: null}],
+    },
     select: {
       title: true,
       address: {latit: true, longit: true, formattedFullName: true},
@@ -96,6 +105,7 @@ export async function findEntries({
     where: {
       workspace: {id: workspaceId},
       ...(categoryId && {directoryEntryCategorySet: {id: categoryId}}),
+      OR: [{archived: false}, {archived: null}],
     },
     orderBy,
     ...(take ? {take} : {}),
@@ -130,18 +140,21 @@ export async function findEntriesBySearch({
   const c = await manager.getClient(tenantId);
   const entries = await c.aOSPortalDirectoryEntry.find({
     take: 10,
-    where: {
-      workspace: {id: workspaceId},
-      ...(categoryId && {directoryEntryCategorySet: {id: categoryId}}),
-      ...(search && {
+    where: and<AOSPortalDirectoryEntry>([
+      {
+        workspace: {id: workspaceId},
+        OR: [{archived: false}, {archived: null}],
+      },
+      categoryId && {directoryEntryCategorySet: {id: categoryId}},
+      search && {
         OR: [
           {title: {like: `%${search}%`}},
           {description: {like: `%${search}%`}},
           {address: {formattedFullName: {like: `%${search}%`}}},
           {directoryEntryCategorySet: {title: {like: `%${search}%`}}},
         ],
-      }),
-    },
+      },
+    ]),
     select: {title: true},
   });
   return entries;
