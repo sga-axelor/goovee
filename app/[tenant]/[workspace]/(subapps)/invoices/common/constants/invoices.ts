@@ -37,11 +37,11 @@ const INVOICE_STATUS = {
 };
 const UNABLE_TO_FIND_INVOICE = 'Unable to load file';
 
-enum INVOICE_PAYMENT_OPTIONS {
-  NO = 'no',
-  TOTAL = 'total',
-  PARTIAL = 'partial',
-}
+const INVOICE_PAYMENT_OPTIONS = {
+  NO: 'no',
+  TOTAL: 'total',
+  PARTIAL: 'partial',
+};
 
 export {
   HEADING,

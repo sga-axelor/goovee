@@ -1,3 +1,5 @@
+'use client';
+
 import {useCallback} from 'react';
 import {useRouter} from 'next/navigation';
 
@@ -19,21 +21,18 @@ import {
   validatePayboxPayment,
   validateStripePayment,
 } from '@/subapps/invoices/common/actions';
-import {Invoice} from '@/subapps/invoices/common/types/invoices';
-import {INVOICE_PAYMENT_OPTIONS} from '@/subapps/invoices/common/constants/invoices';
+import {Invoice, PaymentType} from '@/subapps/invoices/common/types/invoices';
 
 export function InvoicePayments({
   workspace,
   invoice,
   amount,
   paymentType,
-  resetPaymentType,
 }: {
   workspace: any;
   invoice: Invoice;
   amount: string;
-  paymentType: INVOICE_PAYMENT_OPTIONS | null;
-  resetPaymentType: () => void;
+  paymentType: PaymentType;
 }) {
   const workspaceURL = workspace?.url;
 
@@ -45,8 +44,7 @@ export function InvoicePayments({
     async (result: any) => {
       if (result) {
         const {data} = result;
-        if (paymentType === INVOICE_PAYMENT_OPTIONS.PARTIAL) {
-          resetPaymentType();
+        if (paymentType === PaymentType.IsPartial) {
           router.replace(
             `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.invoices}/${data.id}`,
           );
@@ -57,7 +55,7 @@ export function InvoicePayments({
         }
       }
     },
-    [paymentType, router, workspaceURI, resetPaymentType],
+    [paymentType, router, workspaceURI],
   );
   const handleInvoiceValidation = async () => {
     if (!Number(amount)) {

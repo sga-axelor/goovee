@@ -292,8 +292,7 @@ export async function createStripeCheckoutSession({
   if (validationResult.error) {
     return validationResult;
   }
-  const {workspace, user, $amount, $invoice, isPartialPayment} =
-    validationResult.data;
+  const {workspace, user, $amount, $invoice} = validationResult.data;
 
   const paymentOptions = workspace?.config?.paymentOptionSet;
 
@@ -330,7 +329,7 @@ export async function createStripeCheckoutSession({
       amount: Number($amount),
       currency: currencyCode,
       url: {
-        success: `${workspaceURL}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${$invoice.id}?stripe_session_id={CHECKOUT_SESSION_ID}&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}`,
+        success: `${workspaceURL}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${$invoice.id}?stripe_session_id={CHECKOUT_SESSION_ID}`,
         error: `${workspaceURL}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${$invoice.id}?stripe_error=true`,
       },
     });
@@ -539,8 +538,7 @@ export async function payboxCreateOrder({
   if (validationResult.error) {
     return validationResult;
   }
-  const {workspace, user, $amount, $invoice, isPartialPayment} =
-    validationResult.data;
+  const {workspace, user, $amount, $invoice} = validationResult.data;
 
   const paymentOptions = workspace?.config?.paymentOptionSet;
 
@@ -571,7 +569,7 @@ export async function payboxCreateOrder({
       email: payer?.emailAddress?.address!,
       context: invoice,
       url: {
-        success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}`,
+        success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true`,
         failure: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_error=true`,
       },
     });

@@ -1,7 +1,7 @@
 'use client';
 
 import {MdArrowBack} from 'react-icons/md';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -22,13 +22,15 @@ import {formatNumber} from '@/locale/formatters';
 import {useSearchParams} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
-import {TotalProps} from '@/subapps/invoices/common/types/invoices';
+import {
+  PaymentType,
+  TotalProps,
+} from '@/subapps/invoices/common/types/invoices';
 import {
   INVOICE,
   INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
 import {InvoicePayments} from '@/subapps/invoices/common/ui/components';
-import {cn} from '@/utils/css';
 
 export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
   const {
@@ -40,15 +42,12 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
     currency,
   } = invoice;
 
-  const {searchParams} = useSearchParams();
-  const type = searchParams.get('type') as INVOICE_PAYMENT_OPTIONS;
-
-  const [paymentType, setPaymentType] =
-    useState<INVOICE_PAYMENT_OPTIONS | null>(type ?? null);
-
-  const resetPaymentType = useCallback(() => {
-    setPaymentType(null);
-  }, []);
+  const [paymentType, setPaymentType] = useState<PaymentType>(
+    PaymentType.IsPartial,
+  );
+  const [show, setShow] = useState<boolean>(false);
+  const [isPartialPayClicked, setIsPartialPayClicked] =
+    useState<boolean>(false);
 
   const config = workspace?.config;
   const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
@@ -62,6 +61,10 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
     Boolean(paymentOptionSet?.length);
 
   const remainingAmountValue = parseFloat(amountRemaining?.value || '0');
+
+  const {searchParams} = useSearchParams();
+  const stripeSessionId = searchParams.get('stripe_session_id');
+  const payboxResponse = searchParams.get('paybox_response');
 
   const formSchema = z.object({
     amount: z
@@ -105,11 +108,16 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
   const onSubmit = (values: {amount: string}) => {
     const isTotalPayment = parseFloat(values.amount) === remainingAmountValue;
     setPaymentType(
-      isTotalPayment
-        ? INVOICE_PAYMENT_OPTIONS.TOTAL
-        : INVOICE_PAYMENT_OPTIONS.PARTIAL,
+      isTotalPayment ? PaymentType.IsTotal : PaymentType.IsPartial,
     );
+    setShow(true);
   };
+
+  useEffect(() => {
+    if (stripeSessionId || payboxResponse) {
+      setShow(true);
+    }
+  }, [stripeSessionId, payboxResponse]);
 
   return (
     <div
@@ -151,7 +159,7 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
       </div>
       {invoiceType !== INVOICE.ARCHIVED && (
         <>
-          {allowInvoicePayment && !paymentType && (
+          {allowInvoicePayment && !show && (
             <div className="flex flex-col gap-2.5">
               <div className="flex flex-col gap-4">
                 <Button
@@ -160,14 +168,16 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
                   onClick={async () => {
                     form.setValue('amount', String(remainingAmountValue));
                     form.handleSubmit(onSubmit)();
+                    setIsPartialPayClicked(false);
                   }}>
                   {i18n.t('Pay all')}
                 </Button>
                 <Button
                   variant={'success'}
                   className="text-white font-medium"
-                  disabled={!form.formState.isValid}
+                  disabled={isPartialPayClicked && !form.formState.isValid}
                   onClick={async () => {
+                    setIsPartialPayClicked(true);
                     const isValid = await form.trigger('amount');
                     if (isValid) {
                       form.handleSubmit(onSubmit)();
@@ -203,36 +213,38 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
             </div>
           )}
 
-          <div
-            className={cn('hidden flex-col gap-2.5', {
-              ['flex']: allowInvoicePayment && paymentType,
-            })}>
-            <div className="flex items-center gap-2.5">
-              <MdArrowBack
-                className="w-6 h-6 cursor-pointer"
-                onClick={resetPaymentType}
+          {allowInvoicePayment && show && (
+            <div className="flex flex-col gap-2.5">
+              {PaymentType.IsPartial && (
+                <>
+                  <div className="flex items-center gap-2.5">
+                    <MdArrowBack
+                      className="w-6 h-6 cursor-pointer"
+                      onClick={() => setShow(false)}
+                    />
+                    <span className="text-xl font-medium">
+                      {paymentType === PaymentType.IsTotal
+                        ? i18n.t('Pay all')
+                        : `${i18n.t('Pay partially')}: ${formatNumber(
+                            currentAmount || 0,
+                            {
+                              currency: currency.symbol,
+                              type: 'DECIMAL',
+                            },
+                          )}`}
+                    </span>
+                  </div>
+                  <Separator />
+                </>
+              )}
+              <InvoicePayments
+                workspace={workspace}
+                invoice={invoice}
+                amount={currentAmount}
+                paymentType={paymentType}
               />
-              <span className="text-xl font-medium">
-                {paymentType === INVOICE_PAYMENT_OPTIONS.TOTAL
-                  ? i18n.t('Pay all')
-                  : `${i18n.t('Pay partially')}: ${formatNumber(
-                      currentAmount || 0,
-                      {
-                        currency: currency.symbol,
-                        type: 'DECIMAL',
-                      },
-                    )}`}
-              </span>
             </div>
-            <Separator />
-            <InvoicePayments
-              workspace={workspace}
-              invoice={invoice}
-              amount={currentAmount}
-              paymentType={paymentType}
-              resetPaymentType={resetPaymentType}
-            />
-          </div>
+          )}
         </>
       )}
     </div>
