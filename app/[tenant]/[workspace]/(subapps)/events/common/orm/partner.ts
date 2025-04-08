@@ -2,6 +2,8 @@
 import {SUBAPP_CODES} from '@/constants';
 import {manager, type Tenant} from '@/tenant';
 import {getSession} from '@/lib/core/auth';
+import {and} from '@/utils/orm';
+import type {AOSPartner} from '@/goovee/.generated/models';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -38,27 +40,16 @@ export async function findContacts({
 
   const c = await manager.getClient(tenantId);
 
-  const whereClause = {
-    ...(search
-      ? [
-          {
-            simpleFullName: {
-              like: `%${search.toLowerCase()}%`,
-            },
-          },
-        ]
-      : []),
-    isContact: true,
-    isActivatedOnPortal: true,
-    mainPartner: {
-      id: partnerId,
+  const whereClause = and<AOSPartner>([
+    {
+      isContact: true,
+      isActivatedOnPortal: true,
+      mainPartner: {id: partnerId},
+      contactWorkspaceConfigSet: {portalWorkspace: {url: workspaceURL}},
     },
-    contactWorkspaceConfigSet: {
-      portalWorkspace: {
-        url: workspaceURL,
-      },
-    },
-  };
+    search && {simpleFullName: {like: `%${search.toLowerCase()}%`}},
+    {OR: [{archived: false}, {archived: null}]},
+  ]);
 
   const result = await c.aOSPartner.find({
     where: whereClause,

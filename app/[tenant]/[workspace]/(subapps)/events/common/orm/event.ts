@@ -141,16 +141,19 @@ export async function findEvent({
 
   const event = await c.aOSPortalEvent
     .findOne({
-      where: {
-        statusSelect: EVENT_STATUS.PUBLISHED,
-        ...(id ? {id} : {}),
-        ...(slug ? {slug} : {slug: {ne: null}}),
-        ...(await filterPrivate({user, tenantId})),
-        eventCategorySet: {
-          workspace: {url: workspace.url},
-          ...(await filterPrivate({user, tenantId})),
+      where: and<AOSPortalEvent>([
+        id && {id},
+        slug ? {slug} : {slug: {ne: null}},
+        await filterPrivate({user, tenantId}),
+        {OR: [{archived: false}, {archived: null}]},
+        {
+          statusSelect: EVENT_STATUS.PUBLISHED,
+          eventCategorySet: and<AOSPortalEventCategory>([
+            {workspace: {url: workspace.url}},
+            await filterPrivate({user, tenantId}),
+          ]),
         },
-      },
+      ]),
       select: {
         id: true,
         eventTitle: true,
@@ -387,40 +390,37 @@ export async function findEvents({
   }));
   const currentDateTime = dayjs().toISOString();
   const todayStartTime = dayjs().startOf(DAY).toISOString();
-  const whereClause = {
-    statusSelect: EVENT_STATUS.PUBLISHED,
-    slug: {ne: null},
-    eventCategorySet: {
-      workspace: {
-        id: workspace?.id,
-      },
-      ...and<AOSPortalEventCategory>([
+  const whereClause = and<AOSPortalEvent>([
+    {
+      statusSelect: EVENT_STATUS.PUBLISHED,
+      slug: {ne: null},
+      eventCategorySet: and<AOSPortalEventCategory>([
+        {workspace: {id: workspace?.id}},
         categoryids?.length && {id: {in: categoryids}},
         await filterPrivate({user, tenantId}),
       ]),
     },
-    ...and<AOSPortalEvent>([
-      await filterPrivate({user, tenantId}),
-      ids?.length && {id: {in: ids}},
-      search && {eventTitle: {like: `%${search}%`}},
-      buildDateFilters({eventStartDateTimeCriteria, year, startDate, endDate}),
-      eventType &&
-        buildEventTypeFilters({eventType, todayStartTime, currentDateTime}),
-      onlyRegisteredEvent
-        ? {registrationList: {participantList: {emailAddress: user?.email}}}
-        : {
-            OR: [{isHidden: false}, {isHidden: null}].concat(
-              user?.email
-                ? ({
-                    registrationList: {
-                      participantList: {emailAddress: user?.email},
-                    },
-                  } as any)
-                : [],
-            ),
-          },
-    ]),
-  };
+    await filterPrivate({user, tenantId}),
+    ids?.length && {id: {in: ids}},
+    search && {eventTitle: {like: `%${search}%`}},
+    {OR: [{archived: false}, {archived: null}]},
+    buildDateFilters({eventStartDateTimeCriteria, year, startDate, endDate}),
+    eventType &&
+      buildEventTypeFilters({eventType, todayStartTime, currentDateTime}),
+    onlyRegisteredEvent
+      ? {registrationList: {participantList: {emailAddress: user?.email}}}
+      : {
+          OR: [{isHidden: false}, {isHidden: null}].concat(
+            user?.email
+              ? ({
+                  registrationList: {
+                    participantList: {emailAddress: user?.email},
+                  },
+                } as any)
+              : [],
+          ),
+        },
+  ]);
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
 
@@ -558,6 +558,7 @@ export async function findEventConfig({
       id,
       slug: {ne: null},
       eventCategorySet: {workspace: {url: workspaceURL}},
+      OR: [{archived: false}, {archived: null}],
     },
     select: {
       isPrivate: true,
@@ -603,11 +604,8 @@ export async function findPartnerByEmailForEvent(
 
   const partners = await client.aOSPartner.find({
     where: {
-      emailAddress: {
-        address: {
-          eq: email,
-        },
-      },
+      emailAddress: {address: {eq: email}},
+      OR: [{archived: false}, {archived: null}],
     },
     select: {
       id: true,

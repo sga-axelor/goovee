@@ -46,6 +46,10 @@
     {
       "name": "sequence",
       "type": "Int"
+    },
+    {
+      "name": "archived",
+      "type": "Boolean"
     }
   ]
 }

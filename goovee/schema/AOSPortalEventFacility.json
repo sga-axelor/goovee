@@ -21,6 +21,10 @@
       "type": "ManyToMany",
       "name": "additionalFieldSet",
       "target": "AOSMetaJsonField"
+    },
+    {
+      "name": "archived",
+      "type": "Boolean"
     }
   ]
 }

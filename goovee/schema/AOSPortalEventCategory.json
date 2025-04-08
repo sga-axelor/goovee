@@ -34,6 +34,10 @@
       "name": "partnerCategorySet",
       "type": "ManyToMany",
       "target": "AOSPartnerCategory"
+    },
+    {
+      "name": "archived",
+      "type": "Boolean"
     }
   ]
 }

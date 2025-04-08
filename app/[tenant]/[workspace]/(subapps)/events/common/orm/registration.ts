@@ -126,6 +126,7 @@ export async function getEventContacts({
                 {address: emailAddress.toLowerCase()},
               ],
             },
+            OR: [{archived: false}, {archived: null}],
           },
           select: {emailAddress: {address: true}, isActivatedOnPortal: true},
         });

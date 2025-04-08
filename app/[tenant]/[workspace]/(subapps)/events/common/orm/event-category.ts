@@ -4,6 +4,8 @@ import {ORDER_BY} from '@/constants';
 import type {PortalWorkspace, User} from '@/types';
 import type {Tenant} from '@/tenant';
 import {filterPrivate} from '@/orm/filter';
+import {and} from '@/utils/orm';
+import type {AOSPortalEventCategory} from '@/goovee/.generated/models';
 
 export async function findEventCategories({
   workspace,
@@ -19,12 +21,13 @@ export async function findEventCategories({
   const c = await manager.getClient(tenantId);
 
   const eventCategories = await c.aOSPortalEventCategory.find({
-    where: {
-      workspace: {
-        id: workspace.id,
+    where: and<AOSPortalEventCategory>([
+      {
+        workspace: {id: workspace.id},
+        OR: [{archived: false}, {archived: null}],
       },
-      ...(await filterPrivate({user, tenantId})),
-    },
+      await filterPrivate({user, tenantId}),
+    ]),
     orderBy: {name: ORDER_BY.ASC} as any,
     select: {
       id: true,
