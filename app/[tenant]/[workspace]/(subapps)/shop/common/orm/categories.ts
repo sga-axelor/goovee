@@ -28,10 +28,12 @@ export async function findCategories({
   workspace,
   tenantId,
   user,
+  archived,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -42,7 +44,12 @@ export async function findCategories({
       portalWorkspace: {
         id: workspace.id,
       },
-      ...(await filterPrivate({user, tenantId})),
+      AND: [
+        await await filterPrivate({tenantId, user}),
+        archived
+          ? {archived: true}
+          : {OR: [{archived: false}, {archived: null}]},
+      ],
     },
     select: {
       name: true,
@@ -57,10 +64,12 @@ export async function findFeaturedCategories({
   workspace,
   tenantId,
   user,
+  archived,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -72,7 +81,12 @@ export async function findFeaturedCategories({
         id: workspace.id,
       },
       isFeatured: true,
-      ...(await filterPrivate({tenantId, user})),
+      AND: [
+        await await filterPrivate({tenantId, user}),
+        archived
+          ? {archived: true}
+          : {OR: [{archived: false}, {archived: null}]},
+      ],
     },
     select: {
       name: true,

@@ -112,6 +112,7 @@ const getWhereClause = async ({
   workspace,
   tenantId,
   user,
+  archived,
 }: {
   ids?: Product['id'][];
   search?: string;
@@ -120,6 +121,7 @@ const getWhereClause = async ({
   tenantId: Tenant['id'];
   workspace: PortalWorkspace;
   user?: User;
+  archived?: boolean;
 }) => {
   const whereClause = {
     ...(ids?.length
@@ -152,7 +154,10 @@ const getWhereClause = async ({
           },
         }
       : {}),
-    ...(await filterPrivate({tenantId, user})),
+    AND: [
+      await await filterPrivate({tenantId, user}),
+      archived ? {archived: true} : {OR: [{archived: false}, {archived: null}]},
+    ],
   };
 
   return whereClause;

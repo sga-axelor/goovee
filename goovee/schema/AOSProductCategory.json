@@ -13,6 +13,10 @@
       "name": "isFeatured"
     },
     {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
       "type": "ManyToOne",
       "name": "parentProductCategory",
       "target": "AOSProductCategory"

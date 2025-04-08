@@ -17,6 +17,10 @@
       "name": "code"
     },
     {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
       "type": "Decimal",
       "name": "salePrice"
     },

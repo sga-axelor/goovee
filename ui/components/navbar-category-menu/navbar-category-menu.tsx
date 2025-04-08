@@ -1,4 +1,5 @@
 'use client';
+
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {MdChevronLeft, MdChevronRight} from 'react-icons/md';
 import {Swiper, SwiperSlide} from 'swiper/react';
@@ -63,6 +64,8 @@ export const NavbarCategoryMenu = ({
   };
 
   if (!isLargeScreen) return null;
+
+  if (!categories?.length) return null;
 
   return (
     <div
