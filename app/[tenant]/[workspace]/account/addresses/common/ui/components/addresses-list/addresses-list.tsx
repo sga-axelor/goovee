@@ -20,6 +20,7 @@ export const AddressesList = ({
   onEdit,
   onCreate,
   onSelect,
+  onDelete,
 }: {
   isFromQuotation?: boolean;
   currentAddress?: {id: string | number} | null;
@@ -28,6 +29,7 @@ export const AddressesList = ({
   onCreate: (type: ADDRESS_TYPE) => void;
   onEdit: (type: ADDRESS_TYPE, id: string | number) => void;
   onSelect?: (type: ADDRESS_TYPE, address: any) => void;
+  onDelete: (id: string | number) => void;
 }) => {
   return (
     <div className="flex flex-col gap-4">
@@ -54,6 +56,7 @@ export const AddressesList = ({
                   type={type}
                   isSelected={isSelected}
                   onEdit={onEdit}
+                  onDelete={onDelete}
                   onSelect={() => onSelect?.(type, {id, address})}
                 />
               </SwiperSlide>

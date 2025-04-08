@@ -13,7 +13,10 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {AddressesList} from '@/app/[tenant]/[workspace]/account/addresses/common/ui/components';
-import {confirmAddresses} from '@/app/[tenant]/[workspace]/account/addresses/common/actions/action';
+import {
+  confirmAddresses,
+  deleteAddress,
+} from '@/app/[tenant]/[workspace]/account/addresses/common/actions/action';
 
 interface ContentProps {
   quotation: {
@@ -79,6 +82,23 @@ function Content({
     router.push(
       `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}/${type}/${SUBAPP_PAGE.edit}/${id}${queryString ? `?${queryString}` : ''}`,
     );
+  };
+
+  const handleDelete = async (id: string | number) => {
+    const result = await deleteAddress(id);
+
+    if (result) {
+      toast({
+        title: i18n.t('Address deleted successfully'),
+        variant: 'success',
+      });
+      router.refresh();
+    } else {
+      toast({
+        title: i18n.t('Error deleting address'),
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleAddressSelection = (type: ADDRESS_TYPE, partnerAddress: any) => {
@@ -190,6 +210,7 @@ function Content({
               onCreate={handleCreate}
               onEdit={handleEdit}
               onSelect={isSubAppActive ? handleAddressSelection : undefined}
+              onDelete={handleDelete}
             />
           </div>
 
@@ -207,6 +228,7 @@ function Content({
               onCreate={handleCreate}
               onEdit={handleEdit}
               onSelect={isSubAppActive ? handleAddressSelection : undefined}
+              onDelete={handleDelete}
             />
           </div>
         </div>

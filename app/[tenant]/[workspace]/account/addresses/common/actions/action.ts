@@ -10,7 +10,11 @@ import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {findCities, findCountry} from '@/orm/address';
-import {createPartnerAddress, updatePartnerAddress} from '@/orm/address';
+import {
+  createPartnerAddress,
+  updatePartnerAddress,
+  deletePartnerAddress,
+} from '@/orm/address';
 import {PartnerAddress} from '@/types';
 import {manager} from '@/tenant';
 import {findByID} from '@/orm/record';
@@ -106,6 +110,20 @@ export async function updateAddress(values: Partial<PartnerAddress>) {
   const address = await updatePartnerAddress(
     session.user?.id,
     values,
+    tenantId,
+  ).then(clone);
+
+  return address;
+}
+export async function deleteAddress(id: PartnerAddress['id']) {
+  const session = await getSession();
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(session?.user && tenantId && id)) return null;
+
+  const address = await deletePartnerAddress(
+    session.user?.id,
+    id,
     tenantId,
   ).then(clone);
 

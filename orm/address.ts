@@ -121,6 +121,36 @@ export async function updatePartnerAddress(
   return address;
 }
 
+export async function deletePartnerAddress(
+  partnerId: Partner['id'],
+  addressId: PartnerAddress['id'],
+  tenantId: Tenant['id'],
+) {
+  if (!(partnerId && addressId && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  const address = await client.aOSPartnerAddress.findOne({
+    where: {
+      partner: {
+        id: partnerId,
+      },
+      id: addressId,
+    },
+  });
+
+  if (!address) return null;
+
+  try {
+    return client.aOSPartnerAddress.delete({
+      id: address.id as any,
+      version: address.version as any,
+    });
+  } catch (err) {
+    return null;
+  }
+}
+
 export async function findAddresses(
   partnerId: Partner['id'],
   tenantId: Tenant['id'],

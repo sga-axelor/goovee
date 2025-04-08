@@ -727,5 +727,8 @@
   "Thank you very much for your payment, you are now registered for this event": "Merci pour votre paiement, vous êtes maintenant inscrit à cet événement",
   "Go to the homepage": "Retourner à la page d'accueil",
   "You are trying to create an account for an existing company, please contact admin to invite you as a user": "Vous essayez de créer un compte pour une société déjà existante, veuillez contacter votre admin",
-  "Email & password is required": "L'email et le mot de passe sont requis"
+  "Email & password is required": "L'email et le mot de passe sont requis",
+  "Do you want to delete address?": "Voulez-vous supprimer l'adresse ?",
+  "Error deleting address": "Erreur lors de la suppression de l'adresse",
+  "Address deleted successfully": "Adresse supprimée avec succès"
 }
