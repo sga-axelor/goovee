@@ -89,24 +89,24 @@ export const AddressForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       personalInformation: {
-        addressName: address?.addressl2 ?? '',
-        firstName: address?.firstName ?? '',
-        lastName: address?.lastName ?? '',
-        companyName: address?.companyName ?? '',
+        addressName: address?.address?.addressl2 ?? '',
+        firstName: address?.address?.firstName ?? '',
+        lastName: address?.address?.lastName ?? '',
+        companyName: address?.address?.companyName ?? '',
       },
       addressInformation: {
         country: {
-          id: address?.country?.id ?? '',
-          name: address?.country?.name ?? '',
+          id: address?.address?.country?.id ?? '',
+          name: address?.address?.country?.name ?? '',
         },
-        streetName: address?.streetName ?? '',
-        addressAddition: address?.countrySubDivision ?? '',
-        zip: address?.zip ?? '',
+        streetName: address?.address?.streetName ?? '',
+        addressAddition: address?.address?.countrySubDivision ?? '',
+        zip: address?.address?.zip ?? '',
         city: {
-          id: address?.city?.id ?? '',
-          name: address?.city?.id ?? '',
+          id: address?.address?.city?.id ?? '',
+          name: address?.address?.city?.id ?? '',
         },
-        multipletype: false,
+        multipletype: address?.isInvoicingAddr && address?.isDeliveryAddr,
       },
     },
   });
@@ -137,7 +137,6 @@ export const AddressForm = ({
     };
 
     const addressBody = {
-      ...(address ? {id: address.id} : {}),
       country: country.id,
       addressl2: addressName,
       addressl4: streetName,
@@ -159,6 +158,7 @@ export const AddressForm = ({
       const action = address ? updateAddress : createAddress;
       const result = await action({
         address: addressBody as any,
+        id: address?.id,
         isInvoicingAddr,
         isDeliveryAddr,
       });

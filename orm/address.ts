@@ -89,14 +89,20 @@ export async function updatePartnerAddress(
   values: Partial<PartnerAddress>,
   tenantId: Tenant['id'],
 ) {
-  if (!(partnerId && tenantId)) return null;
+  const partnerAddressId = values?.id;
+
+  if (!(partnerId && tenantId && partnerAddressId)) return null;
+
+  const partnerAddress = await findPartnerAddress(partnerAddressId, tenantId);
+
+  if (!partnerAddress) return null;
 
   const client = await manager.getClient(tenantId);
 
   const address = await client.aOSPartnerAddress.update({
     data: {
       id: values.id as any,
-      version: values.version as any,
+      version: partnerAddress.version as any,
       address: {
         update: {
           ...values.address,

@@ -63,7 +63,7 @@ export default async function Page({
   return (
     <Content
       type={type}
-      address={partnerAddress.address}
+      address={partnerAddress}
       countries={countries}
       userType={userType}
     />
