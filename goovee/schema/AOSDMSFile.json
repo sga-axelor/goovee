@@ -21,6 +21,10 @@
       "name": "contentType"
     },
     {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
       "type": "ManyToOne",
       "name": "parent",
       "target": "AOSDMSFile"

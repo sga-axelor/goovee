@@ -12,11 +12,13 @@ export async function fetchFolders({
   tenantId,
   params,
   user,
+  archived,
 }: {
   params?: any;
   tenantId: Tenant['id'];
   workspace: PortalWorkspace;
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -29,10 +31,12 @@ export async function fetchFolders({
         id: workspace?.id,
       },
       ...params?.where,
-      ...(await filterPrivate({
-        tenantId,
-        user,
-      })),
+      AND: [
+        await await filterPrivate({tenantId, user}),
+        archived
+          ? {archived: true}
+          : {OR: [{archived: false}, {archived: null}]},
+      ],
     },
     select: {
       fileName: true,
@@ -73,11 +77,13 @@ export async function fetchFiles({
   workspace,
   user,
   tenantId,
+  archived,
 }: {
   id: string;
   workspace: PortalWorkspace;
   user?: User;
   tenantId: Tenant['id'];
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) {
     return [];
@@ -93,10 +99,12 @@ export async function fetchFiles({
       parent: {
         id,
       },
-      ...(await filterPrivate({
-        tenantId,
-        user,
-      })),
+      AND: [
+        await await filterPrivate({tenantId, user}),
+        archived
+          ? {archived: true}
+          : {OR: [{archived: false}, {archived: null}]},
+      ],
     },
     select: {
       fileName: true,
@@ -113,10 +121,12 @@ export async function fetchLatestFiles({
   workspace,
   tenantId,
   user,
+  archived,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -130,10 +140,12 @@ export async function fetchLatestFiles({
       workspaceSet: {
         id: workspace?.id,
       },
-      ...(await filterPrivate({
-        tenantId,
-        user,
-      })),
+      AND: [
+        await await filterPrivate({tenantId, user}),
+        archived
+          ? {archived: true}
+          : {OR: [{archived: false}, {archived: null}]},
+      ],
     },
     select: {
       fileName: true,
@@ -155,11 +167,13 @@ export async function fetchFile({
   workspace,
   user,
   tenantId,
+  archived,
 }: {
   id: string;
   workspace: PortalWorkspace;
   user?: User;
   tenantId: Tenant['id'];
+  archived?: boolean;
 }) {
   const client = await manager.getClient(tenantId);
 
@@ -169,10 +183,12 @@ export async function fetchFile({
       workspaceSet: {
         id: workspace?.id,
       },
-      ...(await filterPrivate({
-        tenantId,
-        user,
-      })),
+      AND: [
+        await await filterPrivate({tenantId, user}),
+        archived
+          ? {archived: true}
+          : {OR: [{archived: false}, {archived: null}]},
+      ],
     },
     select: {
       fileName: true,
@@ -205,10 +221,12 @@ export async function fetchExplorerCategories({
   workspace,
   user,
   tenantId,
+  archived,
 }: {
   workspace: PortalWorkspace;
   user?: User;
   tenantId: Tenant['id'];
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) return [];
 
@@ -221,10 +239,12 @@ export async function fetchExplorerCategories({
         workspaceSet: {
           id: workspace.id,
         },
-        ...(await filterPrivate({
-          tenantId,
-          user,
-        })),
+        AND: [
+          await await filterPrivate({tenantId, user}),
+          archived
+            ? {archived: true}
+            : {OR: [{archived: false}, {archived: null}]},
+        ],
       },
       select: {
         parent: {
