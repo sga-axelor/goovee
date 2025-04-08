@@ -54,8 +54,3 @@ export type TableFooterProps = {
   taxTotal: string;
   sumOfDiscounts: number;
 };
-
-export enum PaymentType {
-  IsPartial = 'ispartial',
-  IsTotal = 'istotal',
-}

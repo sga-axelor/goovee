@@ -31,6 +31,7 @@ export async function validatePaymentData({
     user: User;
     $amount: string | number;
     $invoice?: any;
+    isPartialPayment: boolean;
   }>
 > {
   if (!workspaceURL) {
@@ -127,6 +128,7 @@ export async function validatePaymentData({
       user,
       $amount,
       $invoice,
+      isPartialPayment: $amount < remainingAmount,
     },
   };
 }
