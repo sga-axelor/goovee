@@ -1,7 +1,7 @@
 import {z, ZodSchema} from 'zod';
 
 // ---- CORE IMPORTS ---- //
-import type {Field} from './types';
+import {InputType, WidgetType, type Field} from './types';
 import {isField} from './display.helpers';
 
 const getRequiredCondition = (schema: any, _field: Field): any => {
@@ -16,20 +16,20 @@ const getFieldSchema = (field: Field) => {
   let schema = null;
 
   switch (field.type) {
-    case 'string':
+    case InputType.string:
       schema = z.string();
 
       if (field.required) {
         schema = schema.min(1, 'Required');
       }
       break;
-    case 'number':
+    case InputType.number:
       schema = z.coerce.number();
       break;
-    case 'boolean':
+    case InputType.boolean:
       schema = z.boolean();
       break;
-    case 'array':
+    case InputType.array:
       if (field.subSchema != null) {
         if (typeof field.subSchema === 'string') {
           schema = (z[field.subSchema] as any)();
@@ -42,7 +42,7 @@ const getFieldSchema = (field: Field) => {
 
       schema = schema.array();
       break;
-    case 'object':
+    case InputType.object:
       schema = z.object({}).passthrough();
       break;
     default:
@@ -50,13 +50,13 @@ const getFieldSchema = (field: Field) => {
   }
 
   switch (field.widget) {
-    case 'email':
+    case WidgetType.email:
       schema = schema.email();
       break;
-    case 'url':
+    case WidgetType.url:
       schema = schema.url();
       break;
-    case 'phone':
+    case WidgetType.phone:
       schema = schema.regex(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/g);
       break;
     default:
@@ -90,7 +90,9 @@ export function createFormSchema(fields: Field[]): ZodSchema {
   fields
     .filter(
       _field =>
-        isField(_field) && !_field.readonly && _field.type !== 'ornament',
+        isField(_field) &&
+        !_field.readonly &&
+        _field.type !== InputType.ornament,
     )
     .forEach(_field => {
       schemaConfig[_field.name] = getFieldSchema(_field);

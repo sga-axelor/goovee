@@ -13,7 +13,7 @@ import {
   RichTextEditor,
 } from '@/ui/components';
 
-import type {Field as FieldType} from '../types';
+import {InputType, WidgetType, type Field as FieldType} from '../types';
 import {getColspan, mapFieldType} from '../display.helpers';
 import {FormGridComponent} from './grid';
 import {SelectionPicker} from './selection-picker';
@@ -66,7 +66,7 @@ export const FieldComponent = ({
 
   const renderComponent = useCallback(
     ({field}: {field: ControllerRenderProps<any, any>}): React.ReactElement => {
-      if (item.widget === 'custom') {
+      if (item.widget === WidgetType.custom) {
         return React.createElement(item.customComponent as any, {
           style: widthStyle,
           form,
@@ -77,7 +77,7 @@ export const FieldComponent = ({
         });
       }
 
-      if (item.widget === 'select') {
+      if (item.widget === WidgetType.select) {
         return (
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
@@ -95,7 +95,7 @@ export const FieldComponent = ({
         );
       }
 
-      if (item.type === 'array') {
+      if (item.type === InputType.array) {
         return (
           <Wrapper>
             <FormGridComponent
@@ -109,7 +109,7 @@ export const FieldComponent = ({
         );
       }
 
-      if (item.type === 'object') {
+      if (item.type === InputType.object) {
         return (
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
@@ -127,7 +127,7 @@ export const FieldComponent = ({
         );
       }
 
-      if (item.type === 'boolean') {
+      if (item.type === InputType.boolean) {
         return (
           <Wrapper className="my-2 flex items-center gap-3">
             <FormControl>
@@ -149,7 +149,7 @@ export const FieldComponent = ({
         );
       }
 
-      if (item.type === 'string' && item.widget === 'html') {
+      if (item.type === InputType.string && item.widget === WidgetType.html) {
         return (
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
@@ -172,7 +172,7 @@ export const FieldComponent = ({
         );
       }
 
-      if (item.type === 'string' || item.type === 'number') {
+      if (item.type === InputType.string || item.type === InputType.number) {
         return (
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">

@@ -7,11 +7,11 @@ export {
 } from './studio';
 export {createDefaultValues} from './display.helpers';
 export {FormView} from './form-view';
-export type {
-  Field,
-  Panel,
-  customComponentOptions,
+export {
+  type Field,
+  type Panel,
+  type customComponentOptions,
   InputType,
-  Widget,
+  WidgetType,
 } from './types';
 export {createFormSchema} from './validation.helpers';

@@ -1,5 +1,10 @@
+export enum SchemaItemType {
+  panel = 'panel',
+  field = 'field',
+}
+
 export interface SchemaItem {
-  type: 'panel' | 'field';
+  type: SchemaItemType;
   name: string;
   title?: string;
   autoTitle?: string;
@@ -17,8 +22,10 @@ export interface SchemaItem {
   items: SchemaItem[];
 }
 
-export type SchemaType = 'form' | 'grid';
-
+export enum SchemaType {
+  form = 'form',
+  grid = 'grid',
+}
 export interface ViewSchema {
   name: string;
   title: string;
@@ -27,4 +34,19 @@ export interface ViewSchema {
   orderBy?: string;
   sortable?: boolean;
   items: SchemaItem[];
+}
+
+export enum MetaFieldType {
+  boolean = 'boolean',
+  integer = 'integer',
+  decimal = 'decimal',
+  long = 'long',
+  m2o = 'many_to_one',
+  o2o = 'one_to_one',
+  o2m = 'one_to_many',
+  m2m = 'many_to_many',
+  date = 'date',
+  datetime = 'datetime',
+  string = 'string',
+  text = 'text',
 }

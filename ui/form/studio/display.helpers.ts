@@ -1,10 +1,20 @@
-import type {Field, Panel, Widget} from '../types';
+import {type Field, InputType, type Panel, WidgetType} from '../types';
 
-function mapStudioTypes(field: any): any {
+enum StudioType {
+  decimal = 'decimal',
+  integer = 'integer',
+  panel = 'panel',
+  spacer = 'spacer',
+  label = 'label',
+  separator = 'separator',
+  button = 'button',
+}
+
+function mapStudioTypes(field: any): InputType {
   switch (field.type) {
-    case 'decimal':
-    case 'integer':
-      return 'number';
+    case StudioType.decimal:
+    case StudioType.integer:
+      return InputType.number;
     default:
       return field.type;
   }
@@ -36,7 +46,7 @@ function formatField(_i: any): Field {
     name: _i.name,
     title: _i.title,
     type: mapStudioTypes(_i),
-    widget: _i.widget?.toLowerCase() as Widget,
+    widget: _i.widget?.toLowerCase() as WidgetType,
     helper: _i.help,
     readonly: _i.readonly,
     required: _i.required,
@@ -49,8 +59,8 @@ function formatField(_i: any): Field {
 
     field = {
       ...field,
-      type: isMulti ? 'array' : field.type,
-      widget: 'select',
+      type: isMulti ? InputType.array : field.type,
+      widget: WidgetType.select,
       options: {
         itemSet: _i.selectionOptions,
         isMulti,
@@ -95,7 +105,7 @@ export function formatStudioContent(
 
   removeContextedFields(metaFields, context).forEach(_item => {
     switch (_item.type) {
-      case 'panel':
+      case StudioType.panel:
         lastPanel = _item.name;
 
         panels.push({
@@ -105,10 +115,10 @@ export function formatStudioContent(
         });
 
         break;
-      case 'spacer':
-      case 'label':
-      case 'separator':
-      case 'button':
+      case StudioType.spacer:
+      case StudioType.label:
+      case StudioType.separator:
+      case StudioType.button:
         break;
       default:
         fields.push({...formatField(_item), parent: lastPanel});
@@ -123,7 +133,13 @@ export function formatStudioFields(items: any[], context?: any): Field[] {
   return removeContextedFields(items, context)
     .filter(
       _i =>
-        !['panel', 'spacer', 'label', 'separator', 'button'].includes(_i.type),
+        ![
+          StudioType.panel,
+          StudioType.spacer,
+          StudioType.label,
+          StudioType.separator,
+          StudioType.button,
+        ].includes(_i.type),
     )
     .map(formatField);
 }

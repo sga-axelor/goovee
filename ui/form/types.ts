@@ -26,7 +26,7 @@ export interface Field extends BasicItem {
   hideIf?: (formState: any) => boolean;
   required?: boolean;
   readonly?: boolean;
-  widget?: Widget;
+  widget?: WidgetType;
   customComponent?: (options: customComponentOptions) => React.JSX.Element;
   options?: {[key: string]: any};
   validationOptions?: {
@@ -44,20 +44,22 @@ export interface DisplayPanel extends Panel {
   content: (DisplayPanel | Field)[];
 }
 
-export type InputType =
-  | 'ornament'
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'array'
-  | 'object';
+export enum InputType {
+  ornament = 'ornament',
+  string = 'string',
+  number = 'number',
+  boolean = 'boolean',
+  array = 'array',
+  object = 'object',
+}
 
-export type Widget =
-  | 'default'
-  | 'email'
-  | 'url'
-  | 'phone'
-  | 'html'
-  | 'checkbox'
-  | 'select'
-  | 'custom';
+export enum WidgetType {
+  default = 'default',
+  email = 'email',
+  url = 'url',
+  phone = 'phone',
+  html = 'html',
+  checkbox = 'checkbox',
+  select = 'select',
+  custom = 'custom',
+}

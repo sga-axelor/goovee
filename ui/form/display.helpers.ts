@@ -1,13 +1,14 @@
-import {type Field, DEFAULT_COLSPAN} from './types';
+import React from 'react';
+import {type Field, DEFAULT_COLSPAN, InputType, WidgetType} from './types';
 
-export function mapFieldType(field: Field): string {
+export function mapFieldType(field: Field): React.HTMLInputTypeAttribute {
   if (field.widget != null) {
     switch (field.widget.toLowerCase()) {
-      case 'email':
+      case WidgetType.email:
         return 'email';
-      case 'phone':
+      case WidgetType.phone:
         return 'tel';
-      case 'url':
+      case WidgetType.url:
         return 'url';
       default:
         break;
@@ -15,7 +16,7 @@ export function mapFieldType(field: Field): string {
   }
 
   switch (field.type) {
-    case 'string':
+    case InputType.string:
       return 'text';
     default:
       return field.type;
@@ -32,13 +33,13 @@ export function isField(item: any): boolean {
 
 function getItemDefaultValue(item: Field): any {
   switch (item.type) {
-    case 'string':
+    case InputType.string:
       return '';
-    case 'number':
+    case InputType.number:
       return 0;
-    case 'boolean':
+    case InputType.boolean:
       return false;
-    case 'array':
+    case InputType.array:
       return [];
     default:
       return undefined;

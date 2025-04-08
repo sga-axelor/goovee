@@ -1,31 +1,31 @@
-import type {Field, InputType, Panel, Widget} from '@/ui/form';
+import {Field, InputType, Panel, WidgetType} from '@/ui/form';
 import type {Column} from '@/ui/grid';
 
-import {SchemaItem} from './types';
+import {MetaFieldType, SchemaItem, SchemaItemType, SchemaType} from './types';
 import {findView} from './orm';
 import {getModelData} from './actions';
 
 function mapStudioType(field: any): InputType {
   const _type = field?.type?.toLowerCase();
   switch (_type) {
-    case 'boolean':
-      return 'boolean';
-    case 'integer':
-    case 'decimal':
-    case 'long':
-      return 'number';
-    case 'many_to_one':
-    case 'one_to_one':
-      return 'object';
-    case 'one_to_many':
-    case 'manay_to_many':
-      return 'array';
-    case 'date':
-    case 'datetime':
-    case 'string':
-    case 'text':
+    case MetaFieldType.boolean:
+      return InputType.boolean;
+    case MetaFieldType.integer:
+    case MetaFieldType.decimal:
+    case MetaFieldType.long:
+      return InputType.number;
+    case MetaFieldType.m2o:
+    case MetaFieldType.o2o:
+      return InputType.object;
+    case MetaFieldType.o2m:
+    case MetaFieldType.m2m:
+      return InputType.array;
+    case MetaFieldType.date:
+    case MetaFieldType.datetime:
+    case MetaFieldType.string:
+    case MetaFieldType.text:
     default:
-      return 'string';
+      return InputType.string;
   }
 }
 
@@ -37,7 +37,7 @@ async function getFieldType(
   const modelName = field?.target;
 
   if (modelName != null) {
-    if (type === 'array') {
+    if (type === InputType.array) {
       let config: any = {model: modelName};
 
       if (item.formView != null) {
@@ -74,8 +74,8 @@ async function getFieldType(
     const isMulti = item.widget?.toLowerCase()?.includes('multi');
 
     return {
-      type: isMulti ? 'array' : type,
-      widget: 'select',
+      type: isMulti ? InputType.array : type,
+      widget: WidgetType.select,
       options: {
         itemSet: field.selectionList,
         isMulti,
@@ -90,7 +90,7 @@ async function getFieldType(
 export async function getGenericFormContent(viewName: string) {
   const {schema, metaFields} = await findView({
     name: viewName,
-    schemaType: 'form',
+    schemaType: SchemaType.form,
   });
 
   return {
@@ -110,8 +110,8 @@ export async function formatSchema(
   for (let idx = 0; idx < schema.length; idx++) {
     const _item = schema[idx];
 
-    if (_item.type === 'panel') {
-      const _name = _item.name ?? `${parent ?? 'panel'}-${idx}`;
+    if (_item.type === SchemaItemType.panel) {
+      const _name = _item.name ?? `${parent ?? SchemaItemType.panel}-${idx}`;
       panels.push({
         parent,
         name: _name,
@@ -128,14 +128,14 @@ export async function formatSchema(
 
       fields.push(...(panelsFields ?? []));
       panels.push(...(subPanels ?? []));
-    } else if (_item.type === 'field') {
+    } else if (_item.type === SchemaItemType.field) {
       const _field = metaFields.find(_f => _f.name === _item.name);
       const typeConfig = await getFieldType(_field, _item);
       fields.push({
         parent,
         name: _item.name,
         title: !!_item.showTitle ? undefined : _item.autoTitle,
-        widget: _item.widget as Widget,
+        widget: _item.widget as WidgetType,
         hidden: _item.hidden ?? false,
         required: _item.required ?? false,
         readonly: _item.readonly ?? false,
@@ -152,7 +152,7 @@ export async function formatSchema(
 export async function getGenericGridContent(viewName: string) {
   const {schema} = await findView({
     name: viewName,
-    schemaType: 'grid',
+    schemaType: SchemaType.grid,
   });
 
   return {
@@ -170,7 +170,7 @@ export function formatGridSchema(
   let columns: Partial<Column>[] = [];
 
   schema.forEach((_item: any) => {
-    if (_item.type === 'field') {
+    if (_item.type === SchemaItemType.field) {
       const name = _item.name;
 
       columns.push({

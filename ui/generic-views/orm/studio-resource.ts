@@ -6,7 +6,7 @@ import {manager} from '@/lib/core/tenant';
 import {TENANT_HEADER} from '@/middleware';
 import {clone} from '@/utils';
 
-import type {SchemaType, ViewSchema} from '../types';
+import {SchemaType, ViewSchema} from '../types';
 import {getModelFields} from '../actions';
 
 export async function findView({
@@ -39,7 +39,7 @@ export async function findView({
 
   const schemaContent: any = schema?.content?.schema;
 
-  if (schemaType === 'form') {
+  if (schemaType === SchemaType.form) {
     const metaFields: any[] = await getModelFields(schema.schemaModel);
 
     return {schema: schemaContent, metaFields};
