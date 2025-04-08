@@ -336,7 +336,8 @@ export function TicketDetails(props: Props) {
                 ['hidden']:
                   !allowedFields.has(FIELDS.TASK_END_DATE) &&
                   !allowedFields.has(FIELDS.MANAGED_BY) &&
-                  !allowedFields.has(FIELDS.ASSIGNMENT),
+                  !allowedFields.has(FIELDS.ASSIGNMENT) &&
+                  !showAssignment,
               })}
             />
             {allowedFields.has(FIELDS.PROGRESS) && (
@@ -365,21 +366,24 @@ export function TicketDetails(props: Props) {
             />
             {ticket.displayFinancialData &&
               ticket.invoicingType === INVOICING_TYPE.PACKAGE && (
-                <div className="flex gap-4">
-                  <span className="font-medium">
-                    {i18n.t('Financial data')}:
-                  </span>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{i18n.t('Qty')}</span>
-                    <span>{ticket.quantity}</span>
-                  </div>
-                  <div className="flex flex-col">
+                <>
+                  <div className="flex gap-4">
                     <span className="font-medium">
-                      {i18n.t('Invoicing unit')}
+                      {i18n.t('Financial data')}:
                     </span>
-                    <span>{ticket.invoicingUnit?.name}</span>
+                    <div className="flex flex-col">
+                      <span className="font-medium">{i18n.t('Qty')}</span>
+                      <span>{ticket.quantity}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-medium">
+                        {i18n.t('Invoicing unit')}
+                      </span>
+                      <span>{ticket.invoicingUnit?.name}</span>
+                    </div>
                   </div>
-                </div>
+                  <hr />
+                </>
               )}
             <div className="!mt-10">
               <FormField
