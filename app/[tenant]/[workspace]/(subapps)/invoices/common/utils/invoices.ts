@@ -31,7 +31,6 @@ export function buildWhereClause({
 
   const archivedCondition = {
     OR: [{archived: true}, {amountRemaining: {eq: 0}}],
-    operationTypeSelect: INVOICE_CATEGORY.SALE_INVOICE,
   };
 
   const isArchived = type === INVOICE.ARCHIVED;
@@ -39,6 +38,7 @@ export function buildWhereClause({
   let whereClause: any = {
     ...params?.where,
     statusSelect: {eq: INVOICE_STATUS.VENTILATED},
+    operationTypeSelect: INVOICE_CATEGORY.SALE_INVOICE,
   };
 
   whereClause.AND = [
@@ -48,12 +48,9 @@ export function buildWhereClause({
       ? archivedCondition
       : {
           OR: [{archived: false}, {archived: null}],
+          amountRemaining: {ne: 0},
         },
   ];
-
-  if (!isArchived) {
-    whereClause.amountRemaining = {ne: 0};
-  }
 
   return whereClause;
 }
