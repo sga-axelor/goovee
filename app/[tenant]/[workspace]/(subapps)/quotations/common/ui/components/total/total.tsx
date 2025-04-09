@@ -68,7 +68,7 @@ export const Total = ({
 
   return (
     <>
-      <div className="flex flex-col bg-card text-card-foreground px-6 py-4 rounded-lg border border-card-foreground">
+      <div className="flex flex-col bg-card text-card-foreground px-6 py-4 rounded-lg">
         <h4 className="text-xl font-medium mb-0">{i18n.t('Offered price')}</h4>
         <Separator className="my-3" />
         <div className="flex flex-col gap-4 mb-2">

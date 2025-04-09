@@ -121,7 +121,7 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
 
   return (
     <div
-      className="flex basis-full md:basis-1/3 flex-col bg-card text-card-foreground p-4 md:p-6 border rounded-lg border-card-foreground mt-6 md:mt-0"
+      className="flex basis-full md:basis-1/3 flex-col bg-card text-card-foreground p-4 md:p-6 rounded-lg mt-6 md:mt-0"
       style={{height: 'fit-content'}}>
       <h4 className="text-xl font-medium mb-0">{i18n.t('Total')}</h4>
       <Separator className="my-3" />
