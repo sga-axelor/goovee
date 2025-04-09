@@ -209,19 +209,27 @@ export async function findQuotation({
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
-  const sumOfDiscounts = saleOrderLineList.reduce(
-    (total: number, {discountAmount}: any) => {
-      return total + parseFloat(discountAmount);
+  const totalDiscountAmount = saleOrderLineList.reduce(
+    (total: number, {exTaxTotal, discountAmount}: any) => {
+      const exTax = parseFloat(exTaxTotal);
+      const discountPercent = parseFloat(discountAmount);
+      const discountValue = (exTax * discountPercent) / 100;
+      return total + discountValue;
     },
     0,
   );
-  const totalDiscount =
-    sumOfDiscounts === 0
-      ? 0
-      : ((100 * sumOfDiscounts) / (sumOfDiscounts + +exTaxTotal)).toFixed(
-          currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE,
-        );
 
+  const totalExTax = saleOrderLineList.reduce(
+    (total: number, {exTaxTotal}: any) => {
+      return total + parseFloat(exTaxTotal);
+    },
+    0,
+  );
+
+  const totalDiscountPercent =
+    totalExTax === 0
+      ? 0
+      : ((totalDiscountAmount / totalExTax) * 100).toFixed(scale);
   const $saleOrderLineList: any = [];
 
   for (const list of saleOrderLineList || []) {
@@ -255,6 +263,6 @@ export async function findQuotation({
     }),
     saleOrderLineList: $saleOrderLineList,
 
-    totalDiscount,
+    totalDiscount: totalDiscountPercent,
   };
 }

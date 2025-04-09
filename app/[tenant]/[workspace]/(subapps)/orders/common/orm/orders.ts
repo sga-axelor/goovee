@@ -266,20 +266,27 @@ export async function findOrder({
   const currencySymbol = currency?.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = currency?.numberOfDecimals ?? DEFAULT_CURRENCY_SCALE;
 
-  const sumOfDiscounts = saleOrderLineList.reduce(
-    (total: number, {discountAmount}: any) => {
-      return total + parseFloat(discountAmount);
+  const totalDiscountAmount = saleOrderLineList.reduce(
+    (total: number, {exTaxTotal, discountAmount}: any) => {
+      const exTax = parseFloat(exTaxTotal);
+      const discountPercent = parseFloat(discountAmount);
+      const discountValue = (exTax * discountPercent) / 100;
+      return total + discountValue;
     },
     0,
   );
 
-  const totalDiscount =
-    sumOfDiscounts === 0
+  const totalExTax = saleOrderLineList.reduce(
+    (total: number, {exTaxTotal}: any) => {
+      return total + parseFloat(exTaxTotal);
+    },
+    0,
+  );
+
+  const totalDiscountPercent =
+    totalExTax === 0
       ? 0
-      : (
-          (100 * sumOfDiscounts) /
-          (sumOfDiscounts + parseFloat(exTaxTotal))
-        ).toFixed(scale);
+      : ((totalDiscountAmount / totalExTax) * 100).toFixed(scale);
 
   const [$saleOrderLineList, $invoices, $customerDeliveries] =
     await Promise.all([
@@ -302,7 +309,7 @@ export async function findOrder({
     saleOrderLineList: $saleOrderLineList,
     invoices: $invoices,
     customerDeliveries: $customerDeliveries,
-    totalDiscount,
+    totalDiscount: totalDiscountPercent,
   };
 }
 
