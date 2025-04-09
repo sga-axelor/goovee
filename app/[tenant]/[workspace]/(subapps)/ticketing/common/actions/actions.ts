@@ -700,7 +700,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Invalid model type')};
   }
 
-  const ticket = findTicketAccess({
+  const ticket = await findTicketAccess({
     recordId: rest.recordId,
     auth,
   });
@@ -763,7 +763,7 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Invalid model type')};
   }
 
-  const ticket = findTicketAccess({
+  const ticket = await findTicketAccess({
     recordId: rest.recordId,
     auth,
   });
