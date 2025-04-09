@@ -4,6 +4,7 @@ import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
+  ORDER_BY,
 } from '@/constants';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
@@ -49,6 +50,7 @@ export const findInvoices = async ({
       where: whereClause,
       take: limit as any,
       ...(skip ? {skip: skip as any} : {}),
+      orderBy: {createdOn: ORDER_BY.DESC} as any,
       select: {
         invoiceId: true,
         dueDate: true,
