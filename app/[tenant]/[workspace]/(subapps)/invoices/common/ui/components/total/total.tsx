@@ -93,6 +93,10 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
 
   const currentAmount = form.watch('amount') || '0';
 
+  const resetForm = useCallback(() => {
+    form.reset();
+  }, [form]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
 
@@ -231,6 +235,7 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
               amount={currentAmount}
               paymentType={paymentType}
               resetPaymentType={resetPaymentType}
+              resetForm={resetForm}
             />
           </div>
         </>

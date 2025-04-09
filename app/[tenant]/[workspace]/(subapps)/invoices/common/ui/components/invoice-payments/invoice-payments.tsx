@@ -28,12 +28,14 @@ export function InvoicePayments({
   amount,
   paymentType,
   resetPaymentType,
+  resetForm,
 }: {
   workspace: any;
   invoice: Invoice;
   amount: string;
   paymentType: INVOICE_PAYMENT_OPTIONS | null;
   resetPaymentType: () => void;
+  resetForm: () => void;
 }) {
   const workspaceURL = workspace?.url;
 
@@ -47,6 +49,7 @@ export function InvoicePayments({
         const {data} = result;
         if (paymentType === INVOICE_PAYMENT_OPTIONS.PARTIAL) {
           resetPaymentType();
+          resetForm();
           router.replace(
             `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.invoices}/${data.id}`,
           );
@@ -57,8 +60,9 @@ export function InvoicePayments({
         }
       }
     },
-    [paymentType, router, workspaceURI, resetPaymentType],
+    [paymentType, router, workspaceURI, resetPaymentType, resetForm],
   );
+
   const handleInvoiceValidation = async () => {
     if (!Number(amount)) {
       toast({
