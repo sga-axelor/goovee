@@ -21,79 +21,88 @@ import {
   PRODUCT_CARD_COLUMNS,
 } from '@/subapps/orders/common/constants/orders';
 
-export const ProductsList = ({saleOrderLineList, tenant}: any) => {
+export const ProductsList = ({
+  saleOrderLineList,
+  tenant,
+  hideDiscount: hideDiscountColumn,
+}: any) => {
   const getProductImage = (product: any) => {
     return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
+
+  const visibleColumns = hideDiscountColumn
+    ? PRODUCT_COLUMNS.filter(col => col.key !== 'discountAmount')
+    : PRODUCT_COLUMNS;
+
   return (
-    <>
-      <div className="flex flex-col gap-4">
-        <h4 className="text-xl font-medium mb-0">{i18n.t('Products')}</h4>
-        <Separator />
-        <div className="hidden lg:block">
-          <StyledTable
-            headStyle="bg-foreground !text-background !rounded-none !px-4"
-            columns={PRODUCT_COLUMNS}>
-            {!saleOrderLineList?.length ? (
-              <TableRow>
-                <TableCell
-                  colSpan={PRODUCT_COLUMNS.length}
-                  className="text-center">
-                  {i18n.t('No records available')}
+    <div className="flex flex-col gap-4">
+      <h4 className="text-xl font-medium mb-0">{i18n.t('Products')}</h4>
+      <Separator />
+      <div className="hidden lg:block">
+        <StyledTable
+          headStyle="bg-foreground !text-background !rounded-none !px-4"
+          columns={visibleColumns}>
+          {!saleOrderLineList?.length ? (
+            <TableRow>
+              <TableCell
+                colSpan={visibleColumns.length}
+                className="text-center">
+                {i18n.t('No records available')}
+              </TableCell>
+            </TableRow>
+          ) : (
+            saleOrderLineList.map((saleOrder: any) => (
+              <TableRow key={saleOrder.id} className="text-base">
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="rounded-sm h-6 w-6">
+                      <AvatarImage src={getProductImage(saleOrder.product)} />
+                    </Avatar>
+                    <p className="font-semibold mb-0">
+                      {saleOrder.productName}
+                    </p>
+                  </div>
                 </TableCell>
+                <TableCell>{saleOrder.qty}</TableCell>
+                <TableCell>{saleOrder?.unit?.name}</TableCell>
+                <TableCell>{saleOrder.price}</TableCell>
+                <TableCell>{saleOrder.exTaxTotal}</TableCell>
+                <TableCell>{saleOrder?.taxLineSet?.[0]?.value}%</TableCell>
+                {!hideDiscountColumn && (
+                  <TableCell>{saleOrder.discountAmount}%</TableCell>
+                )}
+                <TableCell>{saleOrder.inTaxTotal}</TableCell>
               </TableRow>
-            ) : (
-              saleOrderLineList.map((saleOrder: any) => {
-                return (
-                  <TableRow key={saleOrder.id} className="text-base">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="rounded-sm h-6 w-6">
-                        <AvatarImage src={getProductImage(saleOrder.product)} />
-                      </Avatar>
-                      <p className="font-semibold mb-0">
-                        {saleOrder.productName}
-                      </p>
-                    </div>
-                    <TableCell>{saleOrder.qty}</TableCell>
-                    <TableCell>{saleOrder?.unit?.name}</TableCell>
-                    <TableCell>{saleOrder.price}</TableCell>
-                    <TableCell>{saleOrder.exTaxTotal}</TableCell>
-                    <TableCell>{saleOrder?.taxLineSet[0]?.value}%</TableCell>
-                    <TableCell>{saleOrder.discountAmount}%</TableCell>
-                    <TableCell>{saleOrder.inTaxTotal}</TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </StyledTable>
-        </div>
-        <div className="block lg:hidden">
-          <StyledTable
-            headStyle="bg-foreground !text-background !rounded-none !text-sm !px-4"
-            columns={PRODUCT_CARD_COLUMNS}>
-            {!saleOrderLineList?.length ? (
-              <TableRow>
-                <TableCell
-                  colSpan={PRODUCT_CARD_COLUMNS.length}
-                  className="text-center">
-                  {i18n.t('No records available')}
-                </TableCell>
-              </TableRow>
-            ) : (
-              saleOrderLineList.map((saleOrder: any) => {
-                return (
-                  <ProductCard
-                    key={saleOrder.id}
-                    saleOrder={saleOrder}
-                    tenant={tenant}
-                  />
-                );
-              })
-            )}
-          </StyledTable>
-        </div>
+            ))
+          )}
+        </StyledTable>
       </div>
-    </>
+
+      <div className="block lg:hidden">
+        <StyledTable
+          headStyle="bg-foreground !text-background !rounded-none !text-sm !px-4"
+          columns={PRODUCT_CARD_COLUMNS}>
+          {!saleOrderLineList?.length ? (
+            <TableRow>
+              <TableCell
+                colSpan={PRODUCT_CARD_COLUMNS.length}
+                className="text-center">
+                {i18n.t('No records available')}
+              </TableCell>
+            </TableRow>
+          ) : (
+            saleOrderLineList.map((saleOrder: any) => (
+              <ProductCard
+                key={saleOrder.id}
+                saleOrder={saleOrder}
+                tenant={tenant}
+              />
+            ))
+          )}
+        </StyledTable>
+      </div>
+    </div>
   );
 };
+
 export default ProductsList;

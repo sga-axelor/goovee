@@ -25,12 +25,21 @@ import type {Product} from '@/subapps/quotations/common/types/quotations';
 type Props = {
   saleOrderLineList: Product[];
   tenant: any;
+  hideDiscount: boolean;
 };
 
-export const ProductsList = ({saleOrderLineList, tenant}: Props) => {
+export const ProductsList = ({
+  saleOrderLineList,
+  tenant,
+  hideDiscount: hideDiscountColumn,
+}: Props) => {
   const getProductImage = (product: any) => {
     return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
+
+  const visibleColumns = hideDiscountColumn
+    ? PRODUCT_COLUMNS.filter(col => col.key !== 'discountAmount')
+    : PRODUCT_COLUMNS;
 
   return (
     <>
@@ -40,11 +49,11 @@ export const ProductsList = ({saleOrderLineList, tenant}: Props) => {
         <div className="hidden lg:block">
           <StyledTable
             headStyle="bg-foreground !text-background !rounded-none !px-4"
-            columns={PRODUCT_COLUMNS}>
+            columns={visibleColumns}>
             {!saleOrderLineList?.length ? (
               <TableRow>
                 <TableCell
-                  colSpan={PRODUCT_COLUMNS.length}
+                  colSpan={visibleColumns.length}
                   className="text-center">
                   {i18n.t('No records available')}
                 </TableCell>
@@ -70,7 +79,9 @@ export const ProductsList = ({saleOrderLineList, tenant}: Props) => {
                     <TableCell>{saleOrder.price}</TableCell>
                     <TableCell>{saleOrder.exTaxTotal}</TableCell>
                     <TableCell>{saleOrder?.taxLineSet[0]?.value}%</TableCell>
-                    <TableCell>{saleOrder.discountAmount}%</TableCell>
+                    {!hideDiscountColumn && (
+                      <TableCell>{saleOrder.discountAmount}%</TableCell>
+                    )}
                     <TableCell className="font-semibold">
                       {saleOrder.inTaxTotal}
                     </TableCell>

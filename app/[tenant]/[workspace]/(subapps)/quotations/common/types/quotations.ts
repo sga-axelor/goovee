@@ -110,6 +110,7 @@ export type TotalProps = {
   totalDiscount: number | string;
   statusSelect: string | number;
   workspace?: PortalWorkspace;
+  hideDiscount: boolean;
   onConfirmQuotation?: () => any;
   renderPaymentOptions?: () => any;
 };

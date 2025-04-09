@@ -28,6 +28,7 @@ export const Total = ({
   totalDiscount,
   statusSelect,
   workspace,
+  hideDiscount,
   onConfirmQuotation,
   renderPaymentOptions,
 }: TotalProps) => {
@@ -80,10 +81,12 @@ export const Total = ({
               <p>{i18n.t('Total ATI')}:</p>
               <p>{inTaxTotal}</p>
             </div>
-            <div className="flex items-center justify-between">
-              <p>{i18n.t('Discount')}:</p>
-              <p>{totalDiscount}%</p>
-            </div>
+            {!hideDiscount && (
+              <div className="flex items-center justify-between">
+                <p>{i18n.t('Discount')}:</p>
+                <p>{totalDiscount}%</p>
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <h6 className="font-medium">{i18n.t('Total price')}:</h6>

@@ -228,6 +228,10 @@ const Content = ({
     workspace,
   });
 
+  const hideDiscount = saleOrderLineList?.every(
+    (item: any) => parseFloat(item.discountAmount) === 0,
+  );
+
   const redirectOrder = (order?: {id: string}) => {
     if (orderSubapp && order) {
       router.replace(`${workspaceURI}/${SUBAPP_CODES.quotations}/${order?.id}`);
@@ -323,6 +327,7 @@ const Content = ({
               <ProductsList
                 saleOrderLineList={saleOrderLineList}
                 tenant={tenant}
+                hideDiscount={hideDiscount}
               />
             </div>
           </div>
@@ -334,6 +339,7 @@ const Content = ({
               statusSelect={statusSelect}
               totalDiscount={totalDiscount}
               workspace={workspace}
+              hideDiscount={hideDiscount}
               onConfirmQuotation={handleConfirmQuotation}
               renderPaymentOptions={renderPaymentOptions}
             />

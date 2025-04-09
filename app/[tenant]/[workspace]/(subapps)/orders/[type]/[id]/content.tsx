@@ -12,7 +12,6 @@ import {
   DOWNLOAD_PDF,
   INVOICE,
   ORDER_NUMBER,
-  ORDER_TYPE,
 } from '@/subapps/orders/common/constants/orders';
 import {
   Contact,
@@ -51,6 +50,10 @@ const Content = ({order}: {order: any}) => {
 
   const {workspaceURL, tenant} = useWorkspace();
 
+  const hideDiscount = saleOrderLineList?.every(
+    (item: any) => parseFloat(item.discountAmount) === 0,
+  );
+
   return (
     <>
       <Container title={`${i18n.t(ORDER_NUMBER)} ${saleOrderSeq}`}>
@@ -74,6 +77,7 @@ const Content = ({order}: {order: any}) => {
               <ProductsList
                 saleOrderLineList={saleOrderLineList}
                 tenant={tenant}
+                hideDiscount={hideDiscount}
               />
               {false && <PaymentMethod />}
             </div>
@@ -84,6 +88,7 @@ const Content = ({order}: {order: any}) => {
               exTaxTotal={exTaxTotal}
               inTaxTotal={inTaxTotal}
               totalDiscount={totalDiscount}
+              hideDiscount={hideDiscount}
             />
 
             {invoices?.length ? (

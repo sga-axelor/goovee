@@ -10,8 +10,14 @@ export type TotalProps = {
   inTaxTotal: string;
   exTaxTotal: number | string;
   totalDiscount: number;
+  hideDiscount: boolean;
 };
-export const Total = ({exTaxTotal, inTaxTotal, totalDiscount}: TotalProps) => {
+export const Total = ({
+  exTaxTotal,
+  inTaxTotal,
+  totalDiscount,
+  hideDiscount,
+}: TotalProps) => {
   return (
     <>
       <div
@@ -29,10 +35,12 @@ export const Total = ({exTaxTotal, inTaxTotal, totalDiscount}: TotalProps) => {
               <p>{i18n.t('Total ATI')}:</p>
               <p>{inTaxTotal}</p>
             </div>
-            <div className="flex items-center justify-between">
-              <p>{i18n.t('Discount')}:</p>
-              <p>{totalDiscount}%</p>
-            </div>
+            {!hideDiscount && (
+              <div className="flex items-center justify-between">
+                <p>{i18n.t('Discount')}:</p>
+                <p>{totalDiscount}%</p>
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <h4 className="text-xl font-medium mb-0">
