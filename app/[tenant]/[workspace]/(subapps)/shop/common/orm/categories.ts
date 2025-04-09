@@ -45,7 +45,7 @@ export async function findCategories({
         id: workspace.id,
       },
       AND: [
-        await await filterPrivate({tenantId, user}),
+        await filterPrivate({tenantId, user}),
         archived
           ? {archived: true}
           : {OR: [{archived: false}, {archived: null}]},
@@ -82,7 +82,7 @@ export async function findFeaturedCategories({
       },
       isFeatured: true,
       AND: [
-        await await filterPrivate({tenantId, user}),
+        await filterPrivate({tenantId, user}),
         archived
           ? {archived: true}
           : {OR: [{archived: false}, {archived: null}]},

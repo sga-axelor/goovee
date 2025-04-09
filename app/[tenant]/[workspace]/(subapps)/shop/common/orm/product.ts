@@ -155,7 +155,7 @@ const getWhereClause = async ({
         }
       : {}),
     AND: [
-      await await filterPrivate({tenantId, user}),
+      await filterPrivate({tenantId, user}),
       archived ? {archived: true} : {OR: [{archived: false}, {archived: null}]},
     ],
   };
