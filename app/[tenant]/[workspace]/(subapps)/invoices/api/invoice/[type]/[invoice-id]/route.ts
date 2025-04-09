@@ -21,11 +21,12 @@ export async function GET(
       tenant: string;
       workspace: string;
       'invoice-id': string;
+      type: string;
     };
   },
 ) {
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
-  const {'invoice-id': invoiceId} = params;
+  const {'invoice-id': invoiceId, type} = params;
 
   const session = await getSession();
 
@@ -66,6 +67,7 @@ export async function GET(
   const invoice = await findInvoice({
     id: invoiceId,
     params: {where: invoicesWhereClause},
+    type,
     workspaceURL,
     tenantId,
   });

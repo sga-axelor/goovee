@@ -9,7 +9,7 @@ import {DocViewer, Separator} from '@/ui/components';
 // ---- LOCAL IMPORTS ---- //
 import {InvoiceProps} from '@/subapps/invoices/common/types/invoices';
 
-export function Invoice({invoice, isUnpaid}: InvoiceProps) {
+export function Invoice({invoice, isUnpaid, invoiceType}: InvoiceProps) {
   const {workspaceURI} = useWorkspace();
 
   return (
@@ -22,7 +22,7 @@ export function Invoice({invoice, isUnpaid}: InvoiceProps) {
       <DocViewer
         documents={[
           {
-            uri: `${workspaceURI}/${SUBAPP_CODES.invoices}/api/invoice/${invoice.id}`,
+            uri: `${workspaceURI}/${SUBAPP_CODES.invoices}/api/invoice/${invoiceType}/${invoice.id}`,
           },
         ]}
       />
