@@ -61,7 +61,7 @@ export const Informations = ({
               <a
                 href={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${orderId}/attachment`}>
                 <MdOutlineFileDownload className="text-2xl" />{' '}
-                {i18n.t('Download invoice')}
+                {i18n.t('Download order')}
               </a>
             </Button>
           </div>
