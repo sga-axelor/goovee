@@ -4,7 +4,7 @@ import {NextRequest, NextResponse} from 'next/server';
 import {RELATED_MODELS, SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/lib/core/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import {findLatestDMSFileByName, streamFile} from '@/utils/download';
+import {findFile, streamFile} from '@/utils/download';
 import {workspacePathname} from '@/utils/workspace';
 import {getWhereClauseForEntity} from '@/utils/filters';
 import {PartnerKey} from '@/types';
@@ -74,12 +74,10 @@ export async function GET(
     return new NextResponse('Order not found', {status: 404});
   }
 
-  const file = await findLatestDMSFileByName({
+  const file = await findFile({
     tenant: tenantId,
-    user,
-    relatedId: orderId,
-    relatedModel: RELATED_MODELS.SALE_ORDER,
-    name: order.saleOrderSeq || '',
+    id: order.orderReport.id,
+    meta: true,
   });
 
   if (!file) {

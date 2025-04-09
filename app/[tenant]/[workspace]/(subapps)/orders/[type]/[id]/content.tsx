@@ -45,6 +45,7 @@ const Content = ({order}: {order: any}) => {
     id,
     invoices = [],
     customerDeliveries = [],
+    orderReport,
   } = order;
   const {status, variant} = getStatus(statusSelect, deliveryState);
 
@@ -59,6 +60,7 @@ const Content = ({order}: {order: any}) => {
           status={status}
           variant={variant}
           orderId={id}
+          orderReport={orderReport}
         />
         <div className="flex flex-col-reverse xl:flex-row gap-6 xl:gap-4">
           <div className="flex flex-col gap-6 basis-full md:basis-3/4">

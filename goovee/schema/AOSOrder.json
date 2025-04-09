@@ -97,6 +97,11 @@
     {
       "name": "deliveryAddressStr",
       "type": "String"
+    },
+    {
+      "name": "orderReport",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
     }
   ]
 }

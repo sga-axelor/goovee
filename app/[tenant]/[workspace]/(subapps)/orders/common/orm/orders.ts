@@ -209,6 +209,9 @@ export async function findOrder({
         },
       },
       currency: {code: true, numberOfDecimals: true, symbol: true},
+      orderReport: {
+        id: true,
+      },
     },
   });
 
