@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 
 // ---- CORE IMPORTS ---- //
-import {RELATED_MODELS, SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/lib/core/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {findFile, streamFile} from '@/utils/download';
