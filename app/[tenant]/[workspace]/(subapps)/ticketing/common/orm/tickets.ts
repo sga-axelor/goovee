@@ -177,7 +177,7 @@ export async function createTicket({
       createdByContact: {name: true},
       project: {name: true},
       ...(managedBy && {
-        managedByContact: {name: true, emailAddress: {address: true}},
+        managedByContact: {name: true},
       }),
       ...(category && {projectTaskCategory: {name: true}}),
       ...(priority && {priority: {name: true}}),
@@ -266,28 +266,29 @@ export async function createTicket({
   }
 
   getMailRecipients({
-    exclude: [auth.email],
-    newTicket,
+    userId: auth.userId,
+    contacts: new Set([
+      newTicket.createdByContact?.id,
+      newTicket.managedByContact?.id,
+    ]),
     tenantId: auth.tenantId,
     workspaceURL: auth.workspaceURL,
   })
-    .then(reciepients => {
+    .then(async reciepients => {
       if (reciepients.length) {
-        sendTrackMail({
+        await sendTrackMail({
           subject: `Ticket Created by ${auth.simpleFullName}`,
-          body: {
-            title: `Ticket Created by ${auth.simpleFullName}`,
-            tracks,
-            projectName: newTicket.project?.name!,
-            ticketName: newTicket.name,
-            ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
-          },
+          title: `Ticket Created by ${auth.simpleFullName}`,
+          tracks,
+          projectName: newTicket.project?.name!,
+          ticketName: newTicket.name,
+          ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           reciepients,
         });
       }
     })
     .catch(e => {
-      console.error('Error sending email');
+      console.error('Error sending tracking email: ');
       console.error(e);
     });
 
@@ -302,8 +303,8 @@ const updateSelect = {
   priority: {name: true},
   status: {name: true},
   assignment: true,
-  managedByContact: {name: true, emailAddress: {address: true}},
-  createdByContact: {name: true, emailAddress: {address: true}},
+  managedByContact: {name: true},
+  createdByContact: {name: true},
 } satisfies SelectOptions<AOSProjectTask>;
 
 export type UTicket = Payload<AOSProjectTask, {select: typeof updateSelect}>;
@@ -493,29 +494,30 @@ export async function updateTicket({
   }
 
   getMailRecipients({
-    exclude: [auth.email],
-    newTicket,
-    oldTicket,
+    userId: auth.userId,
+    contacts: new Set([
+      newTicket.createdByContact?.id,
+      newTicket.managedByContact?.id,
+      oldTicket?.managedByContact?.id,
+    ]),
     tenantId: auth.tenantId,
     workspaceURL: auth.workspaceURL,
   })
-    .then(reciepients => {
+    .then(async reciepients => {
       if (reciepients.length) {
-        sendTrackMail({
+        await sendTrackMail({
           subject: `Ticket Updated by ${auth.simpleFullName}`,
-          body: {
-            title: `Ticket Updated by ${auth.simpleFullName}`,
-            tracks,
-            projectName: newTicket.project?.name!,
-            ticketName: newTicket.name,
-            ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
-          },
+          title: `Ticket Updated by ${auth.simpleFullName}`,
+          tracks,
+          projectName: newTicket.project?.name!,
+          ticketName: newTicket.name,
+          ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           reciepients,
         });
       }
     })
     .catch(e => {
-      console.error('Error sending email');
+      console.error('Error sending tracking email: ');
       console.error(e);
     });
   return newTicket;

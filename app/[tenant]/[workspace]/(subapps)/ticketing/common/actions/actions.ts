@@ -48,6 +48,8 @@ import {ensureAuth} from '../utils/auth-helper';
 import {CreateTicketSchema, UpdateTicketSchema} from '../utils/validators';
 import {handleError} from './helpers';
 import type {ActionConfig, MutateProps} from './types';
+import {getMailRecipients} from '../orm/mail';
+import {sendCommentMail} from '../utils/mail';
 
 export type MutateResponse = {id: string; version: number};
 
@@ -703,6 +705,12 @@ export const createComment: CreateComment = async formData => {
   const ticket = await findTicketAccess({
     recordId: rest.recordId,
     auth,
+    select: {
+      name: true,
+      project: {id: true, name: true},
+      managedByContact: {id: true},
+      createdByContact: {id: true},
+    },
   });
 
   if (!ticket) {
@@ -720,6 +728,37 @@ export const createComment: CreateComment = async formData => {
       subject: `${user.simpleFullName || user.name} added a comment`,
       ...rest,
     });
+
+    const [comment, parentComment] = res;
+
+    getMailRecipients({
+      userId: auth.userId,
+      contacts: new Set([
+        parentComment?.partner?.id,
+        ticket.createdByContact?.id,
+        ticket.managedByContact?.id,
+      ]),
+      tenantId,
+      workspaceURL,
+    })
+      .then(async reciepients => {
+        if (reciepients.length) {
+          await sendCommentMail({
+            comment,
+            parentComment,
+            ticketLink: `${workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${ticket.project?.id}/tickets/${ticket.id}`,
+            projectName: ticket.project?.name || '',
+            ticketName: ticket.name,
+            subject: `New comment by ${user.simpleFullName || user.name}`,
+            title: `New comment by ${user.simpleFullName || user.name}`,
+            reciepients,
+          });
+        }
+      })
+      .catch(e => {
+        console.error('Error sending comment email: ');
+        console.error(e);
+      });
 
     return {success: true, data: clone(res)};
   } catch (e) {

@@ -1,54 +1,53 @@
 import {SUBAPP_CODES} from '@/constants';
-import {findPartnerPreference} from '@/orm/notification';
-import type {Tenant} from '@/tenant';
-import type {UTicket} from './tickets';
+import {manager, type Tenant} from '@/tenant';
+import type {ID} from '@/types';
+import type {Maybe} from '@/types/util';
 
 export async function getMailRecipients({
-  newTicket,
-  oldTicket,
-  exclude = [],
+  userId,
+  contacts,
   workspaceURL,
   tenantId,
 }: {
-  newTicket: UTicket;
-  oldTicket?: UTicket;
-  exclude?: string[];
+  contacts: Set<Maybe<ID>>;
+  userId: ID;
   workspaceURL: string;
   tenantId: Tenant['id'];
 }): Promise<string[]> {
-  const reciepients = Object.values(
-    [
-      newTicket.createdByContact,
-      newTicket.managedByContact,
-      oldTicket?.managedByContact,
-    ].reduce(
-      (acc, contact) => {
-        if (!contact?.emailAddress?.address) return acc;
-        if (exclude.includes(contact.emailAddress.address)) return acc;
-        acc[contact.emailAddress.address] ??= contact as {
-          id: string;
-          emailAddress: {address: string};
-        }; // only keep unique contacts
-        return acc;
-      },
-      {} as Record<string, {id: string; emailAddress: {address: string}}>,
+  const reciepients = await Promise.all(
+    Array.from(contacts).map(
+      contact =>
+        contact &&
+        String(userId) !== String(contact) && // Exclude the logged in user
+        findPartnerNotificationEmail({id: contact, workspaceURL, tenantId}),
     ),
   );
 
-  const preferences = await Promise.all(
-    reciepients.map(async contact => {
-      const preference = await findPartnerPreference({
-        code: SUBAPP_CODES.ticketing,
-        user: {id: contact.id} as any,
-        url: workspaceURL,
-        tenantId,
-      });
-      return {
-        email: contact.emailAddress!.address!,
-        activateNotification: Boolean(preference?.activateNotification),
-      };
-    }),
-  );
+  return reciepients.filter(Boolean) as string[];
+}
 
-  return preferences.filter(p => p.activateNotification).map(p => p.email);
+export async function findPartnerNotificationEmail({
+  id,
+  workspaceURL,
+  tenantId,
+}: {
+  id: ID;
+  workspaceURL: string;
+  tenantId: Tenant['id'];
+}) {
+  const client = await manager.getClient(tenantId);
+
+  const partner = await client.aOSPartner.findOne({
+    where: {
+      id,
+      portalUserPreferenceList: {
+        app: {code: SUBAPP_CODES.ticketing},
+        workspace: {url: workspaceURL},
+        activateNotification: true,
+      },
+    },
+    select: {emailAddress: {address: true}},
+  });
+
+  return partner?.emailAddress?.address;
 }
