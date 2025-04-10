@@ -4,13 +4,11 @@ import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
-  ORDER_BY,
 } from '@/constants';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatDate, formatNumber} from '@/locale/server/formatters';
 import type {Partner, PortalWorkspace} from '@/types';
 import {ID} from '@goovee/orm';
-import {t} from '@/locale/server';
 import {and} from '@/utils/orm';
 
 // ---- LOCAL IMPORTS ---- //
@@ -217,27 +215,32 @@ export async function findOrder({
   const saleOrderLineIds = order?.saleOrderLineList?.map(
     (line: any) => line.id,
   );
+  const invoicesWhere = and([
+    invoicesParams?.where,
+    {
+      OR: [
+        {saleOrder: {id: order.id}},
+        {
+          AND: [
+            {saleOrder: {id: null}},
+            {
+              invoiceLineList: {
+                saleOrderLine: {
+                  id: {in: saleOrderLineIds},
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ]);
 
   const [invoices, customerDeliveries] = await Promise.all([
     findInvoices({
       workspaceURL,
       tenantId,
-      whereClause: {
-        ...invoicesParams?.where,
-        OR: [
-          {saleOrder: {id: order.id}},
-          {
-            AND: [
-              {saleOrder: {id: null}},
-              {
-                invoiceLineList: {
-                  saleOrderLine: {id: {in: saleOrderLineIds}},
-                },
-              },
-            ],
-          },
-        ],
-      },
+      whereClause: invoicesWhere,
     }),
     findCustomerDeliveries({
       workspaceURL,
@@ -299,12 +302,10 @@ export async function findOrder({
 }
 
 export async function findInvoices({
-  ids,
   workspaceURL,
   tenantId,
   whereClause = null,
 }: {
-  ids?: ID[];
   workspaceURL: string;
   tenantId: Tenant['id'];
   whereClause?: any;
@@ -316,20 +317,16 @@ export async function findInvoices({
     return null;
   }
 
+  const finalWhereClause = {
+    ...whereClause,
+    portalWorkspace: {url: workspaceURL},
+    statusSelect: {eq: INVOICE_STATUS.VENTILATED},
+    OR: [{archived: false}, {archived: null}],
+  };
+
   const result: any = await client.aOSInvoice
     .find({
-      where: {
-        ...whereClause,
-        ...(ids
-          ? {
-              id: {
-                in: ids,
-              },
-            }
-          : {}),
-        portalWorkspace: {url: workspaceURL},
-        statusSelect: {eq: INVOICE_STATUS.VENTILATED},
-      },
+      where: finalWhereClause,
       select: {
         invoiceId: true,
         createdOn: true,
@@ -348,58 +345,7 @@ export async function findInvoices({
   return result;
 }
 
-export async function findInvoice({
-  id,
-  tenantId,
-  workspaceURL,
-  params,
-}: {
-  id: Invoice['id'];
-  tenantId: Tenant['id'];
-  workspaceURL: PortalWorkspace['url'];
-  params?: {
-    where?: object & {
-      partner?: {
-        id: Partner['id'];
-      };
-    };
-  };
-}) {
-  if (!id) {
-    return null;
-  }
-
-  if (!(tenantId && workspaceURL))
-    return {
-      error: true,
-      message: await t('Invalid TenantId & workspace'),
-    };
-  const result = await findInvoices({
-    ids: [id],
-    workspaceURL,
-    tenantId,
-    whereClause: {
-      ...params?.where,
-    },
-  })
-    .then((invoices: any) => {
-      return {
-        success: true,
-        data: invoices && invoices[0],
-      };
-    })
-    .catch(error => {
-      console.log('error >>>', error);
-      return {
-        error: true,
-        data: null,
-      };
-    });
-  return result;
-}
-
 export async function findCustomerDeliveries({
-  ids,
   workspaceURL,
   tenantId,
   whereClause = null,
@@ -420,15 +366,9 @@ export async function findCustomerDeliveries({
     .find({
       where: {
         ...whereClause,
-        ...(ids?.length
-          ? {
-              id: {
-                in: ids,
-              },
-            }
-          : {}),
         statusSelect: CUSTOMERS_DELIVERY_STATUS.REALIZED,
         portalWorkspace: {url: workspaceURL},
+        OR: [{archived: false}, {archived: null}],
       },
       select: {
         id: true,
@@ -440,43 +380,6 @@ export async function findCustomerDeliveries({
     .catch(error => {
       console.log('error >>>', error);
       return null;
-    });
-  return result;
-}
-
-export async function findCustomerDelivery({
-  id,
-  tenantId,
-  workspaceURL,
-}: {
-  id: ID;
-  tenantId: Tenant['id'];
-  workspaceURL: PortalWorkspace['url'];
-}) {
-  if (!id) {
-    return null;
-  }
-
-  if (!workspaceURL) {
-    return null;
-  }
-  const result = await findCustomerDeliveries({
-    ids: [id],
-    workspaceURL,
-    tenantId,
-  })
-    .then((deliveries: any) => {
-      return {
-        success: true,
-        data: deliveries && deliveries[0],
-      };
-    })
-    .catch(error => {
-      console.log('error >>>', error);
-      return {
-        error: true,
-        data: null,
-      };
     });
   return result;
 }
