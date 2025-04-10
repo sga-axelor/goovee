@@ -235,16 +235,21 @@ export async function findQuotation({
   for (const list of saleOrderLineList || []) {
     const line = {
       ...list,
-      qty: await formatNumber(list.qty, {scale}),
+      qty: await formatNumber(list.qty, {scale, type: 'DECIMAL'}),
       price: await formatNumber(list.price, {scale, currency: currencySymbol}),
       exTaxTotal: await formatNumber(list.exTaxTotal, {
         scale,
         currency: currencySymbol,
+        type: 'DECIMAL',
       }),
-      discountAmount: await formatNumber(list.discountAmount, {scale}),
+      discountAmount: await formatNumber(list.discountAmount, {
+        scale,
+        type: 'DECIMAL',
+      }),
       inTaxTotal: await formatNumber(list.inTaxTotal, {
         scale,
         currency: currencySymbol,
+        type: 'DECIMAL',
       }),
     };
     $saleOrderLineList.push(line);
@@ -256,13 +261,14 @@ export async function findQuotation({
     displayExTaxTotal: await formatNumber(exTaxTotal, {
       scale,
       currency: currencySymbol,
+      type: 'DECIMAL',
     }),
     displayInTaxTotal: await formatNumber(inTaxTotal, {
       scale,
       currency: currencySymbol,
+      type: 'DECIMAL',
     }),
     saleOrderLineList: $saleOrderLineList,
-
     totalDiscount: totalDiscountPercent,
   };
 }
