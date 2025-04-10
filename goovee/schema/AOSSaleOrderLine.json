@@ -47,6 +47,10 @@
       "type": "ManyToOne",
       "name": "product",
       "target": "AOSProduct"
+    },
+    {
+      "type": "Decimal",
+      "name": "priceDiscounted"
     }
   ]
 }

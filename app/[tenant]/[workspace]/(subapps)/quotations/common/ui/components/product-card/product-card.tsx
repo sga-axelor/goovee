@@ -58,15 +58,15 @@ export const ProductCard = ({
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">
-                    {i18n.t('Unit power WT')}
+                    {i18n.t('Unit price WT')}
                   </p>
-                  <p className="text-base mb-0">{saleOrder?.price}</p>
+                  <p className="text-base mb-0">{saleOrder?.priceDiscounted}</p>
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">
                     {i18n.t('Total WT')}
                   </p>
-                  <p className="text-base mb-0">{saleOrder?.price}</p>
+                  <p className="text-base mb-0">{saleOrder?.exTaxTotal}</p>
                 </div>
                 <div className="flex justify-between px-4">
                   <p className="text-base font-semibold mb-0">

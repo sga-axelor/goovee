@@ -179,7 +179,7 @@ export async function findQuotation({
           unit: {
             name: true,
           },
-          price: true,
+          priceDiscounted: true,
           exTaxTotal: true,
           taxLineSet: {
             select: {name: true, value: true},
@@ -236,7 +236,11 @@ export async function findQuotation({
     const line = {
       ...list,
       qty: await formatNumber(list.qty, {scale, type: 'DECIMAL'}),
-      price: await formatNumber(list.price, {scale, currency: currencySymbol}),
+      priceDiscounted: await formatNumber(list.priceDiscounted, {
+        scale,
+        currency: currencySymbol,
+        type: 'DECIMAL',
+      }),
       exTaxTotal: await formatNumber(list.exTaxTotal, {
         scale,
         currency: currencySymbol,

@@ -30,9 +30,9 @@ export type Product = {
   id: ID;
   productName: string;
   qty: string | number;
-  price: string;
   exTaxTotal: string;
   discountAmount: string | number;
+  priceDiscounted: string;
   inTaxTotal: string;
   unit: {
     id: ID;

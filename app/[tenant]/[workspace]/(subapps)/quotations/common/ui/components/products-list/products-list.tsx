@@ -76,7 +76,7 @@ export const ProductsList = ({
                     </TableCell>
                     <TableCell>{saleOrder.qty}</TableCell>
                     <TableCell>{saleOrder?.unit?.name}</TableCell>
-                    <TableCell>{saleOrder.price}</TableCell>
+                    <TableCell>{saleOrder.priceDiscounted}</TableCell>
                     <TableCell>{saleOrder.exTaxTotal}</TableCell>
                     <TableCell>{saleOrder?.taxLineSet[0]?.value}%</TableCell>
                     {!hideDiscountColumn && (
