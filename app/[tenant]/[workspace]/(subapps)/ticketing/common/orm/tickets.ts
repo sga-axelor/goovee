@@ -280,6 +280,7 @@ export async function createTicket({
             tracks,
             projectName: newTicket.project?.name!,
             ticketName: newTicket.name,
+            ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           },
           reciepients,
         });
@@ -507,6 +508,7 @@ export async function updateTicket({
             tracks,
             projectName: newTicket.project?.name!,
             ticketName: newTicket.name,
+            ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           },
           reciepients,
         });
