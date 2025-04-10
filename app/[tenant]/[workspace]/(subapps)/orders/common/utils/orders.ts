@@ -13,19 +13,20 @@ export function getStatus(
   variant: 'success' | 'purple' | 'yellow' | 'default';
 } {
   if (statusSelect === ORDER_STATUS.CONFIRMED) {
+    if (deliveryState === ORDER_DELIVERY_STATUS.DELIVERED) {
+      return {
+        status: ORDER_TYPE.DELIVERED,
+        variant: 'purple',
+      };
+    }
     return {
       status: ORDER_TYPE.CONFIRMED,
       variant: 'yellow',
     };
-  } else if (statusSelect === ORDER_STATUS.CONFIRMED) {
+  } else if (statusSelect === ORDER_STATUS.CLOSED) {
     return {
       status: ORDER_TYPE.CLOSED,
       variant: 'success',
-    };
-  } else if (deliveryState === ORDER_DELIVERY_STATUS.DELIVERED) {
-    return {
-      status: ORDER_TYPE.DELIVERED,
-      variant: 'purple',
     };
   } else {
     return {
