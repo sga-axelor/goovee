@@ -1,4 +1,5 @@
 // ---- CORE IMPORTS ---- //
+import {SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {Tenant} from '@/tenant';
 import type {PortalAppConfig} from '@/types';
@@ -24,12 +25,12 @@ import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
 import {getPaginationButtons} from '@/utils/pagination';
-import {decodeFilter} from '@/utils/url';
+import {decodeFilter, getLoginURL} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 import type {ID} from '@goovee/orm';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
-import {notFound} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
@@ -78,7 +79,17 @@ export default async function Page({
 
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
-  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  const {error, info, forceLogin} = await ensureAuth(workspaceURL, tenant);
+  if (forceLogin) {
+    redirect(
+      getLoginURL({
+        callbackurl: `${workspaceURI}/${SUBAPP_CODES.ticketing}/projects/${projectId}/tickets?${new URLSearchParams(searchParams).toString()}`,
+        workspaceURI,
+        tenant,
+      }),
+    );
+  }
+
   if (error) notFound();
   const {auth, workspace} = info;
 

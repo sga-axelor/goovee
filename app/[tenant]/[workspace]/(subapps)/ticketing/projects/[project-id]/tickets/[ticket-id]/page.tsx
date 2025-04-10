@@ -1,6 +1,6 @@
 import type {ID} from '@goovee/orm';
 import Link from 'next/link';
-import {notFound} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import {Suspense} from 'react';
 import {FaChevronRight} from 'react-icons/fa';
 
@@ -20,7 +20,7 @@ import {
 import {Skeleton} from '@/ui/components/skeleton';
 import {clone} from '@/utils';
 import {cn} from '@/utils/css';
-import {encodeFilter} from '@/utils/url';
+import {encodeFilter, getLoginURL} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -78,7 +78,17 @@ export default async function Page({
 
   const {tenant} = params;
 
-  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  const {error, info, forceLogin} = await ensureAuth(workspaceURL, tenant);
+  if (forceLogin) {
+    redirect(
+      getLoginURL({
+        callbackurl: `${workspaceURI}/${SUBAPP_CODES.ticketing}/projects/${projectId}/tickets/${ticketId}`,
+        workspaceURI,
+        tenant,
+      }),
+    );
+  }
+
   if (error) notFound();
   const {auth, workspace} = info;
 

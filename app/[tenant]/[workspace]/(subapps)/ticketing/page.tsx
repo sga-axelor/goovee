@@ -16,6 +16,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {notFound, redirect} from 'next/navigation';
+import {getLoginURL} from '@/utils/url';
 
 // ---- LOCAL IMPORTS ---- //
 import {formatNumber} from '@/locale/server/formatters';
@@ -35,8 +36,18 @@ export default async function Page({
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const {limit = 8, page = 1} = searchParams;
-  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  const {error, info, forceLogin} = await ensureAuth(workspaceURL, tenant);
+  if (forceLogin) {
+    redirect(
+      getLoginURL({
+        callbackurl: `${workspaceURI}/${SUBAPP_CODES.ticketing}`,
+        workspaceURI,
+        tenant,
+      }),
+    );
+  }
   if (error) notFound();
+
   const {auth, workspace} = info;
 
   const projects = await findProjectsWithTaskCount({

@@ -27,10 +27,16 @@ export const ensureAuth = cache(async function ensureAuth(
   workspaceURL: Maybe<string>,
   tenantId: Tenant['id'],
 ): Promise<
-  | {error: true; message: string; info?: never}
+  | {
+      error: true;
+      message: string;
+      forceLogin?: boolean;
+      info?: never;
+    }
   | {
       error: false;
       message?: never;
+      forceLogin?: never;
       info: {
         auth: AuthProps;
         user: User;
@@ -53,6 +59,7 @@ export const ensureAuth = cache(async function ensureAuth(
   if (!user) {
     return {
       error: true,
+      forceLogin: true,
       message: await t('Unauthorized'),
     };
   }

@@ -1,11 +1,12 @@
 import Link from 'next/link';
-import {notFound} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import {FaChevronRight} from 'react-icons/fa';
 
 // ---- CORE IMPORTS ---- //
+import {SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {clone} from '@/utils';
-import {encodeFilter} from '@/utils/url';
+import {encodeFilter, getLoginURL} from '@/utils/url';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -46,7 +47,17 @@ export default async function Page({
   const projectId = params['project-id'];
   const {parentId} = searchParams;
   const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
-  const {error, info} = await ensureAuth(workspaceURL, tenant);
+  const {error, info, forceLogin} = await ensureAuth(workspaceURL, tenant);
+  if (forceLogin) {
+    redirect(
+      getLoginURL({
+        callbackurl: `${workspaceURI}/${SUBAPP_CODES.ticketing}/projects/${projectId}/tickets/create?${new URLSearchParams(searchParams).toString()}`,
+        workspaceURI,
+        tenant,
+      }),
+    );
+  }
+
   if (error) notFound();
   const {auth, workspace} = info;
 
