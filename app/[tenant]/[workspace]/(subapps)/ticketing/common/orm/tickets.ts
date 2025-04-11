@@ -274,9 +274,9 @@ export async function createTicket({
     tenantId: auth.tenantId,
     workspaceURL: auth.workspaceURL,
   })
-    .then(async reciepients => {
+    .then(reciepients => {
       if (reciepients.length) {
-        await sendTrackMail({
+        return sendTrackMail({
           subject: `Ticket Created by ${auth.simpleFullName}`,
           title: `Ticket Created by ${auth.simpleFullName}`,
           tracks,
@@ -503,9 +503,9 @@ export async function updateTicket({
     tenantId: auth.tenantId,
     workspaceURL: auth.workspaceURL,
   })
-    .then(async reciepients => {
+    .then(reciepients => {
       if (reciepients.length) {
-        await sendTrackMail({
+        return sendTrackMail({
           subject: `Ticket Updated by ${auth.simpleFullName}`,
           title: `Ticket Updated by ${auth.simpleFullName}`,
           tracks,

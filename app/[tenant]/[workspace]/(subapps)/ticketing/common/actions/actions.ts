@@ -741,9 +741,9 @@ export const createComment: CreateComment = async formData => {
       tenantId,
       workspaceURL,
     })
-      .then(async reciepients => {
+      .then(reciepients => {
         if (reciepients.length) {
-          await sendCommentMail({
+          return sendCommentMail({
             comment,
             parentComment,
             ticketLink: `${workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${ticket.project?.id}/tickets/${ticket.id}`,
