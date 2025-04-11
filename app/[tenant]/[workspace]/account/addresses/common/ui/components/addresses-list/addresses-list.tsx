@@ -21,15 +21,21 @@ export const AddressesList = ({
   onCreate,
   onSelect,
   onDelete,
+  onDefault,
 }: {
   isFromQuotation?: boolean;
   currentAddress?: {id: string | number} | null;
-  addresses: {id: string | number; address: any}[];
+  addresses: {id: string | number; isDefaultAddr?: boolean; address: any}[];
   type: ADDRESS_TYPE;
   onCreate: (type: ADDRESS_TYPE) => void;
   onEdit: (type: ADDRESS_TYPE, id: string | number) => void;
   onSelect?: (type: ADDRESS_TYPE, address: any) => void;
   onDelete: (id: string | number) => void;
+  onDefault?: (
+    type: ADDRESS_TYPE,
+    id: string | number,
+    isDefault?: boolean,
+  ) => void;
 }) => {
   return (
     <div className="flex flex-col gap-4">
@@ -43,7 +49,7 @@ export const AddressesList = ({
             horizontalClass: '!bottom-0',
           }}
           className="min-h-[15.5rem] flex">
-          {addresses.map(({id, address}) => {
+          {addresses.map(({id, address, isDefaultAddr}) => {
             const isSelected = isFromQuotation
               ? currentAddress?.id === address.id
               : currentAddress?.id === id;
@@ -57,7 +63,9 @@ export const AddressesList = ({
                   isSelected={isSelected}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  onDefault={onDefault}
                   onSelect={() => onSelect?.(type, {id, address})}
+                  isDefault={isDefaultAddr}
                 />
               </SwiperSlide>
             );

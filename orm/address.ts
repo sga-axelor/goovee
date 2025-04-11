@@ -193,6 +193,9 @@ export async function findDeliveryAddresses(
       isDeliveryAddr: true,
     },
     select: addressFields,
+    orderBy: {
+      id: 'DESC',
+    },
   });
 
   return addresses;
@@ -214,6 +217,9 @@ export async function findInvoicingAddresses(
       isInvoicingAddr: true,
     },
     select: addressFields,
+    orderBy: {
+      id: 'DESC',
+    },
   });
 
   return addresses;
@@ -262,6 +268,56 @@ export async function findDefaultDeliveryAddress(
   return result;
 }
 
+export async function updateDefaultDeliveryAddress(
+  partnerAddressId: PartnerAddress['id'],
+  partnerId: Partner['id'],
+  tenantId: Tenant['id'],
+  isDefault?: boolean,
+) {
+  if (!(partnerAddressId && partnerId && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  try {
+    const result = await client.aOSPartnerAddress.findOne({
+      where: {
+        partner: {
+          id: partnerId,
+        },
+        id: partnerAddressId,
+      },
+      select: addressFields,
+    });
+
+    if (!result) return null;
+
+    const current = await findDefaultDeliveryAddress(partnerId, tenantId);
+
+    if (current && current.id !== result.id && isDefault) {
+      await client.aOSPartnerAddress.update({
+        data: {
+          id: current.id,
+          version: current.version,
+          isDefaultAddr: false,
+        },
+      });
+    }
+
+    const updatedDefault = await client.aOSPartnerAddress.update({
+      data: {
+        id: result.id,
+        version: result.version,
+        isDefaultAddr: isDefault,
+      },
+    });
+
+    return updatedDefault;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
 export async function findDefaultInvoicingAddress(
   partnerId: Partner['id'],
   tenantId: Tenant['id'],
@@ -282,6 +338,55 @@ export async function findDefaultInvoicingAddress(
   });
 
   return result;
+}
+
+export async function updateDefaultInvoicingAddress(
+  partnerAddressId: PartnerAddress['id'],
+  partnerId: Partner['id'],
+  tenantId: Tenant['id'],
+  isDefault?: boolean,
+) {
+  if (!(partnerAddressId && partnerId && tenantId)) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  try {
+    const result = await client.aOSPartnerAddress.findOne({
+      where: {
+        partner: {
+          id: partnerId,
+        },
+        id: partnerAddressId,
+      },
+      select: addressFields,
+    });
+
+    if (!result) return null;
+
+    const current = await findDefaultInvoicingAddress(partnerId, tenantId);
+
+    if (current && current.id !== result.id && isDefault) {
+      await client.aOSPartnerAddress.update({
+        data: {
+          id: current.id,
+          version: current.version,
+          isDefaultAddr: false,
+        },
+      });
+    }
+
+    const updatedDefault = await client.aOSPartnerAddress.update({
+      data: {
+        id: result.id,
+        version: result.version,
+        isDefaultAddr: isDefault,
+      },
+    });
+
+    return updatedDefault;
+  } catch (err) {
+    return null;
+  }
 }
 
 export async function findCountries(tenantId: Tenant['id']) {

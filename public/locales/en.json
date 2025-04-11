@@ -733,5 +733,7 @@
   "Email & password is required": "Email & password is required",
   "Do you want to delete address?": "Do you want to delete address?",
   "Error deleting address": "Error deleting address",
-  "Address deleted successfully": "Address deleted successfully"
+  "Address deleted successfully": "Address deleted successfully",
+  "Default address updated": "Default address updated",
+  "Error updating default address": "Error updating default address"
 }

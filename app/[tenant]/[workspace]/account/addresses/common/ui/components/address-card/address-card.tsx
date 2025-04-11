@@ -1,6 +1,6 @@
 'use client';
 
-import {MdOutlineEdit, MdOutlineDelete} from 'react-icons/md';
+import {MdOutlineEdit, MdOutlineDelete, MdOutlineStar} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
@@ -13,6 +13,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/ui/components/alert-dialog';
+import {Tag} from '@/ui/components/tag';
 import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {ADDRESS_TYPE} from '@/constants';
@@ -21,15 +22,18 @@ import {useState} from 'react';
 export const AddressCard = ({
   id,
   isSelected,
+  isDefault,
   type,
   address,
   onSelect,
   onEdit,
   onDelete,
+  onDefault,
 }: {
   id: string | number;
   isSelected: boolean;
   type: ADDRESS_TYPE;
+  isDefault?: boolean;
   address: {
     firstName?: string;
     lastName?: string;
@@ -41,6 +45,11 @@ export const AddressCard = ({
   };
   onSelect?: (type: ADDRESS_TYPE, address: any) => void;
   onEdit: (type: ADDRESS_TYPE, id: string | number) => void;
+  onDefault?: (
+    type: ADDRESS_TYPE,
+    id: string | number,
+    isDefault?: boolean,
+  ) => void;
   onDelete: (id: string | number) => void;
 }) => {
   const {
@@ -56,6 +65,11 @@ export const AddressCard = ({
   const [confirmationDialog, setConfirmationDialog] = useState(false);
 
   const handleSelect = () => onSelect && onSelect(type, address);
+
+  const handleDefault = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    onDefault?.(type, id, !isDefault);
+  };
 
   const handleEdit = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -96,8 +110,18 @@ export const AddressCard = ({
           isSelected ? 'bg-success-light border-black' : 'border-gray-300',
         )}>
         <div className="flex flex-col gap-4">
-          <div className="font-semibold text-base line-clamp-2">
-            {formatAddressHeader(firstName, lastName, companyName)}
+          <div className="flex items-center justify-between gap-2">
+            <div className="font-semibold text-base line-clamp-2">
+              {formatAddressHeader(firstName, lastName, companyName)}
+            </div>
+            {isDefault && (
+              <Tag
+                className="font-bold text-[0.5rem] p-1"
+                variant="default"
+                outline>
+                {i18n.t('Default')}
+              </Tag>
+            )}
           </div>
           <div className="text-sm leading-[1.313rem] font-normal">
             {[addressl4, addressl6, zip, country?.name].map(
@@ -117,7 +141,12 @@ export const AddressCard = ({
             className="h-9 flex items-center gap-2 rounded-md font-medium px-3 py-1.5"
             onClick={openConfirmation}>
             <MdOutlineDelete className="w-6 h-6" />
-            {i18n.t('Delete')}
+          </Button>
+          <Button
+            variant={isDefault ? 'default' : 'outline'}
+            className="h-9 flex items-center gap-2 rounded-md font-medium px-3 py-1.5"
+            onClick={handleDefault}>
+            <MdOutlineStar className="w-6 h-6" />
           </Button>
         </div>
       </div>

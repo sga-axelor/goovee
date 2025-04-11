@@ -16,6 +16,7 @@ import {AddressesList} from '@/app/[tenant]/[workspace]/account/addresses/common
 import {
   confirmAddresses,
   deleteAddress,
+  updateDefaultAddress,
 } from '@/app/[tenant]/[workspace]/account/addresses/common/actions/action';
 
 interface ContentProps {
@@ -82,6 +83,27 @@ function Content({
     router.push(
       `${workspaceURI}/${SUBAPP_PAGE.account}/${SUBAPP_PAGE.addresses}/${type}/${SUBAPP_PAGE.edit}/${id}${queryString ? `?${queryString}` : ''}`,
     );
+  };
+
+  const handleDefault = async (
+    type: ADDRESS_TYPE,
+    id: string | number,
+    isDefault?: boolean,
+  ) => {
+    const result = await updateDefaultAddress({type, id, isDefault});
+
+    if (result) {
+      toast({
+        title: i18n.t('Default address updated'),
+        variant: 'success',
+      });
+      router.refresh();
+    } else {
+      toast({
+        title: i18n.t('Error updating default address'),
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleDelete = async (id: string | number) => {
@@ -211,6 +233,7 @@ function Content({
               onEdit={handleEdit}
               onSelect={isSubAppActive ? handleAddressSelection : undefined}
               onDelete={handleDelete}
+              onDefault={handleDefault}
             />
           </div>
 
@@ -229,6 +252,7 @@ function Content({
               onEdit={handleEdit}
               onSelect={isSubAppActive ? handleAddressSelection : undefined}
               onDelete={handleDelete}
+              onDefault={handleDefault}
             />
           </div>
         </div>

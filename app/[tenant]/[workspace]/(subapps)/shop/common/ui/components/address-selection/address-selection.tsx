@@ -7,8 +7,8 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   findAddress,
-  findDeliveryAddress,
-  findInvoicingAddress,
+  findDefaultDelivery,
+  findDefaultInvoicing,
 } from '@/subapps/shop/common/actions/address';
 import Link from 'next/link';
 import {Button, Loader, Separator} from '@/ui/components';
@@ -37,10 +37,10 @@ export function AddressSelection({
     const [deliveryAddress, invoicingAddress] = await Promise.all([
       cartDeliveryAddress
         ? findAddress(cartDeliveryAddress)
-        : findDeliveryAddress(),
+        : findDefaultDelivery(),
       cartInvoicingAddress
         ? findAddress(cartInvoicingAddress)
-        : findInvoicingAddress(),
+        : findDefaultInvoicing(),
     ]);
 
     if (invoicingAddress) {

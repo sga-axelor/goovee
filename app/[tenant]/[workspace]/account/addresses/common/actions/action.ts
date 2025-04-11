@@ -5,11 +5,16 @@ import {headers} from 'next/headers';
 // ---- CORE IMPORTS ---- //
 import {TENANT_HEADER} from '@/middleware';
 import {t} from '@/locale/server';
-import {SUBAPP_CODES} from '@/constants';
+import {ADDRESS_TYPE, SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
-import {findCities, findCountry} from '@/orm/address';
+import {
+  findCities,
+  findCountry,
+  updateDefaultDeliveryAddress,
+  updateDefaultInvoicingAddress,
+} from '@/orm/address';
 import {
   createPartnerAddress,
   updatePartnerAddress,
@@ -115,6 +120,29 @@ export async function updateAddress(values: Partial<PartnerAddress>) {
 
   return address;
 }
+
+export async function updateDefaultAddress({
+  type,
+  id,
+  isDefault,
+}: {
+  type: ADDRESS_TYPE;
+  id: PartnerAddress['id'];
+  isDefault?: boolean;
+}) {
+  const session = await getSession();
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(session && tenantId)) return null;
+
+  const updateHandler =
+    type === ADDRESS_TYPE.delivery
+      ? updateDefaultDeliveryAddress
+      : updateDefaultInvoicingAddress;
+
+  return updateHandler(id, session?.user?.id, tenantId, isDefault).then(clone);
+}
+
 export async function deleteAddress(id: PartnerAddress['id']) {
   const session = await getSession();
   const tenantId = headers().get(TENANT_HEADER);

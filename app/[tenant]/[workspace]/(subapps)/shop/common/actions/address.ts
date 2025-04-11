@@ -12,7 +12,7 @@ import {
 import type {ID} from '@/types';
 import {clone} from '@/utils';
 
-export async function findInvoicingAddress() {
+export async function findDefaultInvoicing() {
   const session = await getSession();
   const user = session?.user;
 
@@ -23,7 +23,7 @@ export async function findInvoicingAddress() {
   return findDefaultInvoicingAddress(user.id, tenantId).then(clone);
 }
 
-export async function findDeliveryAddress() {
+export async function findDefaultDelivery() {
   const session = await getSession();
   const user = session?.user;
 
