@@ -4,7 +4,7 @@
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
-import {Container, Separator} from '@/ui/components';
+import {Container} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -43,8 +43,8 @@ const Content = ({order}: {order: any}) => {
     saleOrderLineList,
     totalDiscount,
     id,
-    invoices,
-    customerDeliveries,
+    invoices = [],
+    customerDeliveries = [],
   } = order;
   const {status, variant} = getStatus(statusSelect, deliveryState);
   const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
@@ -87,62 +87,52 @@ const Content = ({order}: {order: any}) => {
             />
 
             {invoices?.length ? (
-              <ExpandableCard title={i18n.t(INVOICE)} open={true}>
-                {invoices.map((record: any, index: number) => {
-                  const isLast = index === invoices.length - 1;
-                  return (
-                    <div key={record.id} className="flex flex-col gap-2">
-                      <div className="flex items-center gap-4">
-                        <div className="flex flex-1 items-center gap-4">
-                          <div className="flex-1 truncate">
-                            {record.invoiceId}
-                          </div>
-                          <div className="flex-1">{record.createdOn}</div>
+              <ExpandableCard title={i18n.t(INVOICE)} initialState={true}>
+                <div className="flex flex-col divide-y divide-border">
+                  {invoices.map((record: any) => (
+                    <div key={record.id} className="flex flex-col gap-2 py-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 truncate">
+                          {record.invoiceId}
                         </div>
+                        <div className="flex-1">{record.createdOn}</div>
                         <div className="flex justify-end">
                           <DownloadButton
                             downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/invoice/${record.id}`}
                             title={i18n.t(DOWNLOAD_PDF)}
-                            className="border-none"
+                            className="border-none p-0"
                           />
                         </div>
                       </div>
-
-                      {!isLast && <Separator />}
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </ExpandableCard>
             ) : null}
 
-            {customerDeliveries.length ? (
-              <ExpandableCard title={i18n.t(CUSTOMER_DELIVERY)} open={true}>
-                {customerDeliveries.map((record: any, index: number) => {
-                  const isLast = index === customerDeliveries.length - 1;
-
-                  return (
-                    <div key={record.id} className="flex flex-col gap-2">
-                      <div className="flex items-center gap-4">
-                        <div className="flex flex-1 items-center gap-4">
-                          <div className="flex-1 truncate">
-                            {record.stockMoveSeq}
-                          </div>
-
-                          <div className="flex-1">{record.createdOn}</div>
+            {customerDeliveries?.length ? (
+              <ExpandableCard
+                title={i18n.t(CUSTOMER_DELIVERY)}
+                initialState={true}>
+                <div className="flex flex-col divide-y divide-border">
+                  {customerDeliveries.map((record: any) => (
+                    <div key={record.id} className="flex flex-col gap-2 py-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 truncate">
+                          {record.stockMoveSeq}
                         </div>
-
+                        <div className="flex-1">{record.createdOn}</div>
                         <div className="flex justify-end">
                           <DownloadButton
                             title={i18n.t(DOWNLOAD_PDF)}
                             downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/customer-delivery/${record.id}`}
-                            className="border-none"
+                            className="border-none p-0"
                           />
                         </div>
                       </div>
-                      {!isLast && <Separator />}
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </ExpandableCard>
             ) : null}
           </div>
