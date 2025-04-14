@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useState} from 'react';
-import {MdOutlineCalendarMonth} from 'react-icons/md';
+import {MdOutlineShoppingBag} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -37,7 +37,7 @@ export function MobileCategories({
 
   return (
     <>
-      <MdOutlineCalendarMonth
+      <MdOutlineShoppingBag
         className="cursor-pointer h-6 w-6"
         onClick={openSidebar}
       />
