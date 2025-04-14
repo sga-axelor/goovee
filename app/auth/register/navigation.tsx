@@ -22,7 +22,7 @@ export default function Navigation({workspace}: {workspace?: PortalWorkspace}) {
   };
 
   return (
-    <div className="container space-y-6 mt-8">
+    <div className="container space-y-6 mt-8 md:!w-3/4 xl:!w-1/2">
       <h1 className="text-[2rem] font-semibold">{i18n.t('Sign Up')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Link href={`/auth/register/email?${searchQuery}`} className="w-full">

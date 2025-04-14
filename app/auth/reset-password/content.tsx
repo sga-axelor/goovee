@@ -60,7 +60,7 @@ export default function Content() {
   };
 
   return (
-    <div className="container space-y-6 mt-8">
+    <div className="container space-y-6 mt-8 md:!w-3/4 xl:!w-1/2">
       <h1 className="text-[2rem] font-bold">{i18n.t('Reset Password')}</h1>
       <div className="bg-white py-4 px-6 space-y-4">
         <Form {...form}>
