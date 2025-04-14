@@ -58,7 +58,7 @@ export const Columns = [
             <Button
               variant="outline"
               className="h-9 bg-white hover:bg-success-light text-success hover:text-success border-success flex items-center justify-center gap-2 w-fit rounded-[0.375rem] py-1.5 px-3 text-base !font-medium">
-              {i18n.t('Give a reponse')} <MdEast className="text-2xl" />
+              {i18n.t('Give a response')} <MdEast className="text-2xl" />
             </Button>
           ) : (
             false && (
