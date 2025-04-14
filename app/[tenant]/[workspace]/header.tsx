@@ -24,6 +24,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Icon} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
 import {useNavigationVisibility} from '@/ui/hooks';
+import {useResponsive} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
@@ -89,6 +90,8 @@ export default function Header({
 
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
   const {visible, loading} = useNavigationVisibility();
+  const res: any = useResponsive();
+  const isLarge = ['lg', 'xl', 'xxl'].some(x => res[x]);
 
   const redirect = (value: any) => router.push(value);
 
@@ -112,7 +115,8 @@ export default function Header({
 
         <div className="grow" />
         <div className="flex items-center gap-8">
-          {shouldDisplayIcons &&
+          {isLarge &&
+            shouldDisplayIcons &&
             subapps
               .filter((app: any) => app.installed && app.showInTopMenu)
               .sort(
@@ -135,7 +139,7 @@ export default function Header({
               })}
           {false && <Notification />}
           {showCart && <Cart />}
-          <Account baseURL={workspaceURI} tenant={tenant} />
+          {isLarge && <Account baseURL={workspaceURI} tenant={tenant} />}
         </div>
       </div>
 
