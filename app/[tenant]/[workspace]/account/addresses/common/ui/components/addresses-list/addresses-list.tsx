@@ -40,37 +40,45 @@ export const AddressesList = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="">
-        <Swiper
-          slidesPerView="auto"
-          spaceBetween={30}
-          modules={[Pagination]}
-          pagination={{
-            dynamicBullets: true,
-            horizontalClass: '!bottom-0',
-          }}
-          className="min-h-[15.5rem] flex">
-          {addresses.map(({id, address, isDefaultAddr}) => {
-            const isSelected = isFromQuotation
-              ? currentAddress?.id === address.id
-              : currentAddress?.id === id;
+        {addresses.length === 0 ? (
+          <div className="text-muted-foreground text-sm italic px-2">
+            {i18n.t('No addresses available. Please create a new address.')}
+          </div>
+        ) : (
+          <Swiper
+            slidesPerView="auto"
+            spaceBetween={30}
+            modules={[Pagination]}
+            pagination={{
+              dynamicBullets: true,
+              horizontalClass: '!bottom-0',
+            }}
+            className="min-h-[15.5rem] flex">
+            {addresses.map(({id, address, isDefaultAddr}) => {
+              const isSelected = isFromQuotation
+                ? currentAddress?.id === address.id
+                : currentAddress?.id === id;
 
-            return (
-              <SwiperSlide key={address.id} className="!w-[17.563rem] !h-auto">
-                <AddressCard
-                  id={id}
-                  address={address}
-                  type={type}
-                  isSelected={isSelected}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  onDefault={onDefault}
-                  onSelect={() => onSelect?.(type, {id, address})}
-                  isDefault={isDefaultAddr}
-                />
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+              return (
+                <SwiperSlide
+                  key={address.id}
+                  className="!w-[17.563rem] !h-auto">
+                  <AddressCard
+                    id={id}
+                    address={address}
+                    type={type}
+                    isSelected={isSelected}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onDefault={onDefault}
+                    onSelect={() => onSelect?.(type, {id, address})}
+                    isDefault={isDefaultAddr}
+                  />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        )}
       </div>
 
       <Button
