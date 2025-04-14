@@ -139,6 +139,7 @@ export async function requestOrder({
       }
     }
     const {invoicingAddress, deliveryAddress} = cart;
+
     const payload = {
       partnerId,
       contactId,

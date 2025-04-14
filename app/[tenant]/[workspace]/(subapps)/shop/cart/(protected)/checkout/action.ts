@@ -112,6 +112,8 @@ async function createOrder({
       }
     }
 
+    const {invoicingAddress, deliveryAddress} = cart;
+
     const payload = {
       partnerId,
       contactId,
@@ -130,6 +132,8 @@ async function createOrder({
         };
       }),
       workspaceId: workspace.id,
+      invocingPartnerAddressId: invoicingAddress,
+      deliveryPartnerAddressId: deliveryAddress,
     };
 
     const res = await axios.post(ws, payload, {
