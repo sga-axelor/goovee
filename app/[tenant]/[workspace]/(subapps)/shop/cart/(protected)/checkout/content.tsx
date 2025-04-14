@@ -217,10 +217,6 @@ export default function Content({
 
   const confirmOrder = workspace?.config?.confirmOrder;
 
-  const openConfirmation = () => {
-    setConfirmationDialog(true);
-  };
-
   const closeConfirmation = () => {
     setConfirmationDialog(false);
   };
