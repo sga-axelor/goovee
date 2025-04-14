@@ -1,17 +1,16 @@
 'use client';
 
-import {Fragment, useMemo} from 'react';
+import {Fragment} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {useSession} from 'next-auth/react';
-import {MdNotificationsNone, MdOutlineShoppingCart} from 'react-icons/md';
+import {MdNotificationsNone} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {
   Account,
   Separator,
-  Badge,
   Select,
   SelectTrigger,
   SelectValue,
@@ -19,15 +18,12 @@ import {
   SelectItem,
 } from '@/ui/components';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Icon} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
 import {useNavigationVisibility} from '@/ui/hooks';
 import {useResponsive} from '@/ui/hooks';
-
-// ---- LOCAL IMPORTS ---- //
-import styles from './styles.module.scss';
+import Cart from '@/app/[tenant]/[workspace]/cart';
 
 function Logo() {
   const {workspaceURI, tenant} = useWorkspace();
@@ -53,24 +49,6 @@ function Notification() {
   return (
     <Link href={`${workspaceURI}/notifications`} className="inline-flex">
       <MdNotificationsNone className="cursor-pointer text-foreground text-2xl" />
-    </Link>
-  );
-}
-
-function Cart() {
-  const {cart} = useCart();
-  const {workspaceURI} = useWorkspace();
-  const count = cart?.items?.reduce(
-    (count: number, i: any) => count + Number(i.quantity),
-    0,
-  );
-
-  return (
-    <Link href={`${workspaceURI}/shop/cart`} className="flex relative">
-      <MdOutlineShoppingCart className="cursor-pointer text-foreground text-2xl" />
-      {count ? (
-        <Badge className={`${styles.badge} rounded bg-primary`}>{count}</Badge>
-      ) : null}
     </Link>
   );
 }
@@ -110,37 +88,38 @@ export default function Header({
 
   return (
     <>
-      <div className="bg-background text-foreground px-6 py-2 flex items-center border-b border-border border-solid">
+      <div className="min-h-16 bg-background text-foreground px-6 py-2 flex items-center border-b border-border border-solid">
         <Logo />
 
         <div className="grow" />
-        <div className="flex items-center gap-8">
-          {isLarge &&
-            shouldDisplayIcons &&
-            subapps
-              .filter((app: any) => app.installed && app.showInTopMenu)
-              .sort(
-                (app1: any, app2: any) =>
-                  app1.orderForTopMenu - app2.orderForTopMenu,
-              )
-              .reverse()
-              .map(({name, icon, code, color}: any) => {
-                const page =
-                  SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
-                return (
-                  <Link key={code} href={`${workspaceURI}/${code}${page}`}>
-                    {icon ? (
-                      <Icon name={icon} className="h-6 w-6" style={{color}} />
-                    ) : (
-                      <p className="font-medium">{name}</p>
-                    )}
-                  </Link>
-                );
-              })}
-          {false && <Notification />}
-          {showCart && <Cart />}
-          {isLarge && <Account baseURL={workspaceURI} tenant={tenant} />}
-        </div>
+        {isLarge && (
+          <div className="flex items-center gap-8">
+            {shouldDisplayIcons &&
+              subapps
+                .filter((app: any) => app.installed && app.showInTopMenu)
+                .sort(
+                  (app1: any, app2: any) =>
+                    app1.orderForTopMenu - app2.orderForTopMenu,
+                )
+                .reverse()
+                .map(({name, icon, code, color}: any) => {
+                  const page =
+                    SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
+                  return (
+                    <Link key={code} href={`${workspaceURI}/${code}${page}`}>
+                      {icon ? (
+                        <Icon name={icon} className="h-6 w-6" style={{color}} />
+                      ) : (
+                        <p className="font-medium">{name}</p>
+                      )}
+                    </Link>
+                  );
+                })}
+            {false && <Notification />}
+            {showCart && <Cart />}
+            <Account baseURL={workspaceURI} tenant={tenant} />
+          </div>
+        )}
       </div>
 
       {showTopNavigation && !loading ? (

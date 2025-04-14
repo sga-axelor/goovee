@@ -21,6 +21,7 @@ import {Account} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {useNavigationVisibility} from '@/ui/hooks';
+import Cart from '@/app/[tenant]/[workspace]/cart';
 
 function MobileSidebar({subapps, workspaces}: any) {
   const pathname = usePathname();
@@ -100,6 +101,7 @@ function MobileSidebar({subapps, workspaces}: any) {
                 </Link>
               );
             })}
+
           {Boolean(user) && (
             <Link href={`${workspaceURI}/account`} className="no-underline">
               <div className="flex items-center pt-8 px-6 py-2 font-normal gap-x-4">
@@ -143,6 +145,7 @@ export function MobileMenu({subapps, workspaces}: any) {
             onClick={redirect}
           />
         )}
+        <Cart />
         <Account />
       </div>
     </nav>
