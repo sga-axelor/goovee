@@ -7,6 +7,8 @@ import {TENANT_HEADER} from '@/middleware';
 import {
   findDefaultDeliveryAddress,
   findDefaultInvoicingAddress,
+  findDeliveryAddresses,
+  findInvoicingAddresses,
   findPartnerAddress,
 } from '@/orm/address';
 import type {ID} from '@/types';
@@ -43,4 +45,26 @@ export async function findAddress(id: ID) {
   if (!(user && tenantId)) return null;
 
   return findPartnerAddress(id, tenantId).then(clone);
+}
+
+export async function fetchDeliveryAddresses() {
+  const session = await getSession();
+  const user = session?.user;
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(user && tenantId)) return null;
+
+  return findDeliveryAddresses(user.id, tenantId).then(clone);
+}
+
+export async function fetchInvoicingAddresses() {
+  const session = await getSession();
+  const user = session?.user;
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!(user && tenantId)) return null;
+
+  return findInvoicingAddresses(user.id, tenantId).then(clone);
 }

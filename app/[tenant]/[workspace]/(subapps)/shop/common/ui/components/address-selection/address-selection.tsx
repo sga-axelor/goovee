@@ -1,17 +1,21 @@
 'use client';
 
 import {useCallback, useEffect, useState} from 'react';
+import Link from 'next/link';
 
+// ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   findAddress,
+  fetchDeliveryAddresses,
+  fetchInvoicingAddresses,
   findDefaultDelivery,
   findDefaultInvoicing,
 } from '@/subapps/shop/common/actions/address';
-import Link from 'next/link';
 import {Button, Loader, Separator} from '@/ui/components';
+import {ADDRESS_TYPE} from '@/constants';
 
 export function AddressSelection({
   callbackURL,
@@ -25,52 +29,90 @@ export function AddressSelection({
   const [deliveryAddress, setDeliveryAddress] = useState<any>(null);
 
   const {cart, updateAddress} = useCart();
+  const {workspaceURI} = useWorkspace();
 
   const {
     invoicingAddress: cartInvoicingAddress,
     deliveryAddress: cartDeliveryAddress,
   } = cart || {};
 
-  const {workspaceURI} = useWorkspace();
+  const resolveFromCartAddresses = useCallback(async () => {
+    setLoading(true);
 
-  const handleFetchAddresses = useCallback(async () => {
-    const [deliveryAddress, invoicingAddress] = await Promise.all([
-      cartDeliveryAddress
-        ? findAddress(cartDeliveryAddress)
-        : findDefaultDelivery(),
-      cartInvoicingAddress
-        ? findAddress(cartInvoicingAddress)
-        : findDefaultInvoicing(),
+    const [delivery, invoicing] = await Promise.all([
+      cartDeliveryAddress ? findAddress(cartDeliveryAddress) : null,
+      cartInvoicingAddress ? findAddress(cartInvoicingAddress) : null,
+    ]);
+    if (delivery) setDeliveryAddress(delivery);
+    if (invoicing) setInvoicingAddress(invoicing);
+    setLoading(false);
+  }, [cartDeliveryAddress, cartInvoicingAddress]);
+
+  const resolveDefaultAddresses = useCallback(async () => {
+    setLoading(true);
+
+    const getDeliveryAddress = async () => {
+      let address: any = await findDefaultDelivery();
+      if (!address) {
+        const addresses = await fetchDeliveryAddresses();
+        address = addresses?.[0];
+      }
+      return address;
+    };
+
+    const getInvoicingAddress = async () => {
+      let address: any = await findDefaultInvoicing();
+      if (!address) {
+        const addresses = await fetchInvoicingAddresses();
+        address = addresses?.[0];
+      }
+      return address;
+    };
+
+    const [deliveryResult, invoicingResult] = await Promise.allSettled([
+      getDeliveryAddress(),
+      getInvoicingAddress(),
     ]);
 
-    if (invoicingAddress) {
-      setInvoicingAddress(invoicingAddress);
-      if (!cartInvoicingAddress) {
-        updateAddress({addressType: 'invoicing', address: invoicingAddress.id});
-      }
+    const delivery =
+      deliveryResult.status === 'fulfilled' ? deliveryResult.value : null;
+    const invoicing =
+      invoicingResult.status === 'fulfilled' ? invoicingResult.value : null;
+
+    if (delivery) {
+      setDeliveryAddress(delivery);
+      updateAddress({addressType: ADDRESS_TYPE.delivery, address: delivery.id});
     }
 
-    if (deliveryAddress) {
-      setDeliveryAddress(deliveryAddress);
-      if (!cartDeliveryAddress) {
-        updateAddress({addressType: 'delivery', address: deliveryAddress.id});
-      }
+    if (invoicing) {
+      setInvoicingAddress(invoicing);
+      updateAddress({
+        addressType: ADDRESS_TYPE.invoicing,
+        address: invoicing.id,
+      });
     }
-  }, [cartInvoicingAddress, cartDeliveryAddress, updateAddress]);
+
+    setLoading(false);
+  }, [updateAddress]);
 
   useEffect(() => {
-    setLoading(true);
-    handleFetchAddresses().finally(() => {
-      setLoading(false);
-    });
-  }, [handleFetchAddresses]);
+    if (cartDeliveryAddress && cartInvoicingAddress) {
+      resolveFromCartAddresses();
+    } else {
+      resolveDefaultAddresses();
+    }
+  }, [
+    cartDeliveryAddress,
+    cartInvoicingAddress,
+    resolveFromCartAddresses,
+    resolveDefaultAddresses,
+  ]);
 
-  const noaddress = !invoicingAddress && !deliveryAddress;
+  const noAddress = !invoicingAddress && !deliveryAddress;
 
-  const sameDeliveryAndInvoicingAddress =
-    invoicingAddress &&
-    deliveryAddress &&
-    invoicingAddress.id === deliveryAddress.id;
+  const sameDeliveryAndInvoicingAddress = Boolean(
+    invoicingAddress?.id && invoicingAddress.id === deliveryAddress?.id,
+  );
 
   const LinkButton = ({children, ...props}: any) => (
     <Link
@@ -88,7 +130,7 @@ export function AddressSelection({
       <Separator className="my-4" />
       {loading ? (
         <Loader />
-      ) : noaddress ? (
+      ) : noAddress ? (
         <div className="border p-4 rounded-lg space-y-2">
           <h3 className="text-lg font-semibold mb-4">
             {i18n.t('Invoicing and delivery address')}
