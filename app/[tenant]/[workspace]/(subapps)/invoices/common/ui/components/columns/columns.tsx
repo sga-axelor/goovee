@@ -66,8 +66,9 @@ export const UnpaidColumns = (allowInvoicePayment?: boolean) => {
       getter: () => 'action',
       content: () => (
         <Button
+          variant="success"
           className={cn(
-            'h-9 bg-success hover:bg-success-dark flex items-center justify-center gap-2 w-full rounded-[0.375rem] p-1.5 text-base',
+            'h-9 flex items-center justify-center gap-2 w-full rounded-[0.375rem] p-1.5 text-base',
             {
               hidden: !allowInvoicePayment,
             },

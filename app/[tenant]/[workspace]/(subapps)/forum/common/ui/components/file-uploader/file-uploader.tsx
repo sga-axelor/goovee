@@ -84,7 +84,7 @@ export const FileUploader = ({
           <ScrollArea
             className={`relative w-full ${fileDetails?.file?.type === 'application/pdf' ? 'h-[90vh]' : 'h-fit'} pt-8`}>
             <Button
-              className="w-6 h-6 flex items-center justify-center rounded-full p-px absolute top-0 right-0 cursor-pointer bg-white hover:bg-white"
+              className="w-6 h-6 flex items-center justify-center rounded-full p-px absolute top-0 right-0 cursor-pointer bg-white hover:bg-white border-none"
               onClick={() => {
                 onUpload({});
                 handleClose();
@@ -124,7 +124,8 @@ export const FileUploader = ({
                   </div>
                 )}
                 <Button
-                  className="bg-success w-full rounded-md h-10 mt-4"
+                  variant="success"
+                  className="w-full rounded-md h-10 mt-4"
                   onClick={() => {
                     onUpload(fileDetails);
                     handleClose();

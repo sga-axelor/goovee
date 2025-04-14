@@ -132,7 +132,8 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
               className="w-full">
               <Button
                 size="sm"
-                className="w-full text-base font-medium bg-success hover:bg-success-dark">
+                variant="success"
+                className="w-full text-base font-medium">
                 {i18n.t(REGISTER_TO_EVENT)}
               </Button>
             </Link>

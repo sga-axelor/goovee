@@ -41,13 +41,14 @@ export const CategorySlider = ({
   if (!showTitle) {
     return null;
   }
-
   return (
     <div className="flex flex-col gap-6 mt-6">
       <div className="flex justify-between">
         <span className="font-semibold text-xl">{title}</span>
         {showButton && (
-          <Button className="flex gap-2 bg-success text-white px-3 py-[6px] rounded-md hover:bg-success-dark">
+          <Button
+            variant="success"
+            className="flex gap-2 text-white px-3 py-[6px] rounded-md hover:bg-success-dark">
             <Icon className="w-6 h-6" />
             <span className="text-base font-medium"> {buttonText}</span>
           </Button>

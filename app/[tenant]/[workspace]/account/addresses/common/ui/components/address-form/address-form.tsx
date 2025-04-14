@@ -234,7 +234,8 @@ export const AddressForm = ({
         </div>
 
         <Button
-          className="w-full bg-success hover:bg-success-dark py-1.5"
+          variant="success"
+          className="w-full py-1.5"
           disabled={form.formState.isSubmitting}
           onClick={e => {
             e.preventDefault();

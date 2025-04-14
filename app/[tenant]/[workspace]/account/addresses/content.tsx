@@ -259,7 +259,8 @@ function Content({
       </div>
       {isSubAppActive && (
         <Button
-          className="w-full bg-success hover:bg-success-dark py-1.5"
+          variant="success"
+          className="w-full py-1.5"
           onClick={handleConfirm}
           disabled={isPending}>
           {isPending ? i18n.t('Processing...') : i18n.t('Confirm address')}

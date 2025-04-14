@@ -278,7 +278,7 @@ export const RegistrationForm = ({
               return (
                 <Button
                   type="button"
-                  className={`bg-success-light hover:bg-success p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full group`}
+                  className={`bg-success-light hover:bg-success p-2 flex whitespace-normal items-center gap-2 h-fit max-w-full group border-none`}
                   onClick={() => {
                     const current =
                       props.form.getValues(props.field.name)?.length || 0;

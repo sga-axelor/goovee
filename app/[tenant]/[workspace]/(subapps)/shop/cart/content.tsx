@@ -155,7 +155,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
           <Button
             disabled={disabled || updating}
             onClick={handleRemove(product)}
-            className="w-6 bg-transparent hover:bg-transparent text-destructive p-0 ml-auto mt-auto">
+            className="w-6 bg-transparent hover:bg-transparent text-destructive p-0 ml-auto mt-auto border-none">
             <MdDeleteOutline className="text-2xl" />
           </Button>
         </div>

@@ -100,7 +100,7 @@ export const GridView = ({
                   e.preventDefault();
                   setFormVisible(true);
                 }}
-                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark border-none">
                 <MdAdd className="h-6 w-6" />
               </Button>
             </div>
@@ -117,7 +117,7 @@ export const GridView = ({
                   e.preventDefault();
                   setGridVisible(true);
                 }}
-                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+                className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark border-none">
                 <MdSearch className="h-6 w-6" />
               </Button>
             </div>
@@ -128,7 +128,7 @@ export const GridView = ({
                 e.preventDefault();
                 handleRemove();
               }}
-              className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark">
+              className="!px-2 !py-1 text-primary-foreground bg-success hover:bg-success-dark border-none">
               <MdDelete className="h-6 w-6" />
             </Button>
           )}

@@ -104,7 +104,8 @@ export const FormView = ({
           {submitButton && submitButton({form})}
           {onSubmit != null && (
             <Button
-              className="text-base font-medium leading-6 p-3 w-full bg-success hover:bg-success-dark"
+              variant="success"
+              className="text-base font-medium leading-6 p-3 w-full"
               onClick={e => {
                 e.preventDefault();
                 form.handleSubmit(onSubmit)();

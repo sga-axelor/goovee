@@ -128,7 +128,7 @@ export function Stripe({
   return (
     <>
       <Button
-        className="h-[50px] w-full bg-[#635bff] text-lg font-medium"
+        className="h-[50px] w-full bg-[#635bff] text-lg font-medium border-none"
         disabled={disabled}
         onClick={handleCreateCheckoutSession}>
         {i18n.t('Pay with Stripe')}

@@ -301,7 +301,8 @@ export const CreatePost = ({
               </div>
               <Button
                 type="submit"
-                className="bg-success w-full mt-1 lg:mt-4"
+                variant="success"
+                className="w-full mt-1 lg:mt-4"
                 disabled={loading}>
                 {loading ? i18n.t(PUBLISHING) : i18n.t(PUBLISH)}
               </Button>

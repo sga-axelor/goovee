@@ -82,7 +82,8 @@ export const AddressesList = ({
       </div>
 
       <Button
-        className="w-fit h-9 bg-success hover:bg-success-dark flex items-center gap-2 rounded-md font-medium px-3 py-1.5"
+        variant="success"
+        className="w-fit h-9 flex items-center gap-2 rounded-md font-medium px-3 py-1.5"
         onClick={() => onCreate(type)}>
         <MdAdd className="w-6 h-6" />
         {i18n.t('Create address')}
