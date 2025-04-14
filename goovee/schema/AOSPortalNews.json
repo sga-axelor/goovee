@@ -73,6 +73,10 @@
       "type": "OneToMany",
       "target": "AOSPortalAttachment",
       "mappedBy": "portalNews"
+    },
+    {
+      "name": "archived",
+      "type": "Boolean"
     }
   ]
 }

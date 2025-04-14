@@ -45,3 +45,8 @@ export function transformCategories(categories: any[]): any[] {
 
   return groupedCategories;
 }
+export const getArchivedFilter = ({archived}: {archived: boolean}) => {
+  return archived
+    ? {archived: true}
+    : {OR: [{archived: false}, {archived: null}]};
+};

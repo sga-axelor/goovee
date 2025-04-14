@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
-import {getPageInfo, getSkipInfo} from '@/utils';
+import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import type {PortalWorkspace, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -9,6 +9,88 @@ import {
   DEFAULT_PAGE,
 } from '@/subapps/news/common/constants';
 import {filterPrivate} from '@/orm/filter';
+import {getArchivedFilter} from '@/subapps/news/common/utils';
+
+export async function findNonArchivedNewsCategories({
+  workspace,
+  user,
+  tenantId,
+}: {
+  workspace: PortalWorkspace;
+  user?: User;
+  tenantId: Tenant['id'];
+}) {
+  if (!(workspace && tenantId)) return [];
+
+  const client = await manager.getClient(tenantId);
+
+  const categories = await client.aOSPortalNewsCategory
+    .find({
+      where: {
+        workspace: {
+          id: workspace.id,
+        },
+
+        ...(await filterPrivate({tenantId, user})),
+      },
+      select: {
+        parentCategory: {
+          id: true,
+        },
+        name: true,
+        archived: true,
+      },
+    })
+    .then(clone);
+
+  const hiearchy = (categories: any) => {
+    const map: any = {};
+    categories.forEach((category: any) => {
+      category.children = [];
+      map[category.id] = category;
+    });
+
+    categories.forEach((category: any) => {
+      const {parentCategory} = category;
+      if (parentCategory?.id) {
+        map[parentCategory.id]?.children.push(category);
+      }
+    });
+
+    const _parent = (category: any, parents: any[] = []) => {
+      if (!category._parent) {
+        category._parent = [...parents];
+      }
+
+      category.children.forEach((child: any) => {
+        _parent(child, [...parents, category.id]);
+      });
+    };
+
+    Object.values(map).forEach(category => _parent(category));
+
+    Object.values(map).forEach((category: any) => {
+      if (category._parent?.length) {
+        category._parentArchived = category._parent.some(
+          (p: any) => map[p]?.archived,
+        );
+      }
+    });
+
+    return Object.keys(map)
+      .filter(key => {
+        const category = map[key];
+        const archived = category.archived || category._parentArchived;
+
+        return !archived;
+      })
+      .map(id => map[id]);
+  };
+
+  const _categories: any = hiearchy(categories);
+
+  return _categories;
+}
 
 export async function findNews({
   id = '',
@@ -21,6 +103,7 @@ export async function findNews({
   categoryIds = [],
   tenantId,
   user,
+  archived = false,
 }: {
   id?: string | number;
   orderBy?: any;
@@ -32,13 +115,26 @@ export async function findNews({
   categoryIds?: any[];
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
-  if (!(workspace && tenantId)) return [];
-
   const c = await manager.getClient(tenantId);
 
-  const skip = getSkipInfo(limit, page);
+  const nonarchivedcategory = await findNonArchivedNewsCategories({
+    tenantId: tenantId,
+    workspace: workspace,
+    user: user,
+  });
 
+  const nonarchivedcategoryids = nonarchivedcategory?.map((c: any) => c.id);
+  let categoryIdsFilteredByArchive = nonarchivedcategoryids;
+
+  if (categoryIds && categoryIds.length > 0) {
+    categoryIdsFilteredByArchive = nonarchivedcategoryids.filter((id: any) =>
+      categoryIds.includes(Number(id)),
+    );
+  }
+
+  const skip = getSkipInfo(limit, page);
   const whereClause = {
     ...(id
       ? {
@@ -47,18 +143,15 @@ export async function findNews({
       : {}),
     ...(isFeaturedNews ? {isFeaturedNews: true} : {}),
     ...(slug ? {slug} : {}),
-    ...(await filterPrivate({user, tenantId})),
+    AND: [await filterPrivate({user, tenantId}), getArchivedFilter({archived})],
     categorySet: {
       workspace: {
         id: workspace.id,
       },
-      ...(categoryIds.length > 0
-        ? {
-            id: {
-              in: categoryIds,
-            },
-          }
-        : {}),
+
+      id: {
+        in: categoryIdsFilteredByArchive,
+      },
     },
   };
 
@@ -74,6 +167,11 @@ export async function findNews({
         description: true,
         image: {id: true},
         categorySet: {
+          where: {
+            id: {
+              in: nonarchivedcategoryids,
+            },
+          },
           select: {
             name: true,
             color: true,
@@ -99,15 +197,27 @@ export async function findNews({
               workspace: {
                 id: workspace.id,
               },
+              id: {
+                in: nonarchivedcategoryids,
+              },
             },
-            ...(await filterPrivate({user, tenantId})),
+            AND: [
+              await filterPrivate({user, tenantId}),
+              getArchivedFilter({archived}),
+            ],
           },
 
           select: {
             title: true,
             id: true,
             image: {id: true},
-            categorySet: true,
+            categorySet: {
+              where: {
+                id: {
+                  in: nonarchivedcategoryids,
+                },
+              },
+            },
             publicationDateTime: true,
             slug: true,
           },
@@ -142,21 +252,24 @@ export async function findNewsImageBySlug({
   workspace,
   tenantId,
   user,
+  archived = false,
 }: {
   slug: string;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }): Promise<string | undefined> {
   if (!tenantId || !workspace) return;
 
   const client = await manager.getClient(tenantId);
+  const archivedFilter = getArchivedFilter({archived});
 
   const news = await client.aOSPortalNews.findOne({
     where: {
       slug,
       categorySet: {workspace: {id: workspace.id}},
-      ...(await filterPrivate({user, tenantId})),
+      AND: [await filterPrivate({user, tenantId}), archivedFilter],
     },
     select: {image: {id: true}},
   });
@@ -228,6 +341,7 @@ export async function findCategories({
   workspace,
   tenantId,
   user,
+  archived = false,
 }: {
   category?: any;
   showAllCategories?: boolean;
@@ -235,17 +349,19 @@ export async function findCategories({
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
+  archived?: boolean;
 }) {
   if (!(workspace && tenantId)) return [];
 
   const c = await manager.getClient(tenantId);
+  const archivedFilter = getArchivedFilter({archived});
 
   const categories = await c.aOSPortalNewsCategory.find({
     where: {
       workspace: {
         id: workspace.id,
       },
-      ...(await filterPrivate({user, tenantId})),
+      AND: [await filterPrivate({user, tenantId}), archivedFilter],
       ...(category
         ? {
             parentCategory: {
