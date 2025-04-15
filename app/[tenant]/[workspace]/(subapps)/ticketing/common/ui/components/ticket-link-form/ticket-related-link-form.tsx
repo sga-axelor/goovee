@@ -35,6 +35,8 @@ import {
 } from '../../../utils/validators';
 import {useTicketDetails} from '../ticket-details/ticket-details-provider';
 import {TicketSelect} from '../ticket-select';
+import {useRouter} from 'next/navigation';
+import {useToast} from '@/ui/hooks';
 
 export function TicketRelatedLinkForm({
   linkTypes,
@@ -53,6 +55,8 @@ export function TicketRelatedLinkForm({
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const {toast} = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<z.infer<typeof RelatedTicketSchema>>({
     resolver: zodResolver(RelatedTicketSchema),
@@ -63,21 +67,30 @@ export function TicketRelatedLinkForm({
   });
 
   const {loading, submitFormWithAction} = useTicketDetails();
-  const {action, loading: isSubmitting} = useRetryAction(
-    createRelatedLink,
-    i18n.t('Link created'),
-  );
+  const {action, loading: isSubmitting} = useRetryAction(createRelatedLink);
 
   const handleSubmit = async (values: z.infer<typeof RelatedTicketSchema>) => {
     submitFormWithAction(async () => {
-      await action({
-        workspaceURL,
-        data: {
-          linkType: values.linkType,
-          linkTicketId: values.ticket.id,
-          currentTicketId: ticketId,
+      await action(
+        {
+          workspaceURL,
+          data: {
+            linkType: values.linkType,
+            linkTicketId: values.ticket.id,
+            currentTicketId: ticketId,
+          },
         },
-      });
+        {
+          onDiscard: () => router.refresh(),
+          onSuccess: () => {
+            router.refresh();
+            toast({
+              variant: 'success',
+              title: i18n.t('Link created'),
+            });
+          },
+        },
+      );
       onSubmit();
     });
   };
@@ -168,6 +181,8 @@ export function TicketChildLinkForm({
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
+  const router = useRouter();
+  const {toast} = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<z.infer<typeof ChildTicketSchema>>({
@@ -175,20 +190,29 @@ export function TicketChildLinkForm({
   });
 
   const {loading, submitFormWithAction} = useTicketDetails();
-  const {action, loading: isSubmitting} = useRetryAction(
-    createChildLink,
-    i18n.t('Link created'),
-  );
+  const {action, loading: isSubmitting} = useRetryAction(createChildLink);
 
   const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
     submitFormWithAction(async () => {
-      await action({
-        workspaceURL,
-        data: {
-          linkTicketId: values.ticket.id,
-          currentTicketId: ticketId,
+      await action(
+        {
+          workspaceURL,
+          data: {
+            linkTicketId: values.ticket.id,
+            currentTicketId: ticketId,
+          },
         },
-      });
+        {
+          onDiscard: () => router.refresh(),
+          onSuccess: () => {
+            router.refresh();
+            toast({
+              variant: 'success',
+              title: i18n.t('Link created'),
+            });
+          },
+        },
+      );
       onSubmit();
     });
   };
@@ -245,26 +269,37 @@ export function TicketParentLinkForm({
   onSubmit: () => void;
 }) {
   const {workspaceURL} = useWorkspace();
+  const {toast} = useToast();
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<z.infer<typeof ChildTicketSchema>>({
     resolver: zodResolver(ChildTicketSchema),
   });
 
   const {loading, submitFormWithAction} = useTicketDetails();
-  const {action, loading: isSubmitting} = useRetryAction(
-    createParentLink,
-    i18n.t('Link created'),
-  );
+  const {action, loading: isSubmitting} = useRetryAction(createParentLink);
 
   const handleSubmit = async (values: z.infer<typeof ChildTicketSchema>) => {
     submitFormWithAction(async () => {
-      await action({
-        workspaceURL,
-        data: {
-          linkTicketId: values.ticket.id,
-          currentTicketId: ticketId,
+      await action(
+        {
+          workspaceURL,
+          data: {
+            linkTicketId: values.ticket.id,
+            currentTicketId: ticketId,
+          },
         },
-      });
+        {
+          onDiscard: () => router.refresh(),
+          onSuccess: () => {
+            router.refresh();
+            toast({
+              variant: 'success',
+              title: i18n.t('Link created'),
+            });
+          },
+        },
+      );
       onSubmit();
     });
   };

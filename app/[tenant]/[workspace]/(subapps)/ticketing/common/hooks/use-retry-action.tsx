@@ -1,4 +1,3 @@
-import {useRouter} from 'next/navigation';
 import {useCallback, useState} from 'react';
 
 import {i18n} from '@/locale';
@@ -14,45 +13,27 @@ export function useRetryAction<
   R extends ActionResponse,
 >(
   action: (actionProps: T, config?: ActionConfig) => R,
-  successMessage?: string,
 ): {
   action: (
     actionProps: T,
-    onSuccess?: (
-      res: Extract<Awaited<R>, {success: true}>['data'],
-    ) => Promise<void>,
+    config?: {
+      onSuccess?: (res: Extract<Awaited<R>, {success: true}>['data']) => void;
+      onDiscard?: () => void;
+    },
   ) => Promise<void>;
   loading: boolean;
 } {
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
-  const router = useRouter();
-  const handleSuccess = useCallback(
-    async (
-      onSuccess?: (
-        res: Extract<Awaited<R>, {success: true}>['data'],
-      ) => Promise<void>,
-      data?: Extract<Awaited<R>, {success: true}>['data'],
-    ) => {
-      toast({
-        variant: 'success',
-        title: successMessage ?? i18n.t('Saved successfully'),
-      });
-      if (onSuccess && data) {
-        await onSuccess(data);
-      }
-      router.refresh();
-    },
-    [toast, router, successMessage],
-  );
 
   const handleError = useCallback(
     (
       message: string,
       retryProps: T,
-      onSuccess?: (
-        res: Extract<Awaited<R>, {success: true}>['data'],
-      ) => Promise<void>,
+      config?: {
+        onSuccess?: (res: Extract<Awaited<R>, {success: true}>['data']) => void;
+        onDiscard?: () => void;
+      },
     ) => {
       if (message === VERSION_MISMATCH_ERROR) {
         const handleOverwrite = async () => {
@@ -62,10 +43,10 @@ export function useRetryAction<
               force: true,
             });
             if (error) {
-              handleError(message, retryProps, onSuccess);
+              handleError(message, retryProps, config);
               return;
             }
-            await handleSuccess(onSuccess, data);
+            config?.onSuccess?.(data);
           } catch (e) {
             toast({
               variant: 'destructive',
@@ -77,7 +58,7 @@ export function useRetryAction<
           }
         };
         const handleDiscard = () => {
-          router.refresh();
+          config?.onDiscard?.();
         };
         return toast({
           variant: 'destructive',
@@ -101,24 +82,25 @@ export function useRetryAction<
         title: message,
       });
     },
-    [toast, handleSuccess, router, action],
+    [toast, action],
   );
 
   const actionHandler = useCallback(
     async (
       actionProps: T,
-      onSuccess?: (
-        res: Extract<Awaited<R>, {success: true}>['data'],
-      ) => Promise<void>,
+      config?: {
+        onSuccess?: (res: Extract<Awaited<R>, {success: true}>['data']) => void;
+        onDiscard?: () => void;
+      },
     ): Promise<void> => {
       try {
         setLoading(true);
         const {error, message, data} = await action(actionProps);
         if (error) {
-          handleError(message, actionProps, onSuccess);
+          handleError(message, actionProps, config);
           return;
         }
-        await handleSuccess(onSuccess, data);
+        config?.onSuccess?.(data);
       } catch (e) {
         toast({
           variant: 'destructive',
@@ -129,7 +111,7 @@ export function useRetryAction<
         setLoading(false);
       }
     },
-    [action, handleError, handleSuccess, toast],
+    [action, handleError, toast],
   );
 
   return {

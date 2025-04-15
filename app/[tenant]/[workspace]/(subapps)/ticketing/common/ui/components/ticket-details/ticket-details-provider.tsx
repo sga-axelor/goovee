@@ -26,6 +26,7 @@ import {useRetryAction} from '../../../hooks';
 import type {Ticket} from '../../../types';
 import {isWithProvider} from '../../../utils';
 import {UpdateFormSchema, type UpdateFormData} from '../../../utils/validators';
+import {useRouter} from 'next/navigation';
 
 export const TicketDetailsContext =
   createContext<null | TicketDetailsContextValue>(null);
@@ -63,6 +64,7 @@ export function TicketDetailsProvider(props: Props) {
   const {children, ticket} = props;
 
   const {toast} = useToast();
+  const router = useRouter();
 
   const ticketForm = useForm<UpdateFormData>({
     resolver: zodResolver(UpdateFormSchema),
@@ -70,24 +72,17 @@ export function TicketDetailsProvider(props: Props) {
   });
 
   const {action: mutateAction, loading: isSubmitting} = useRetryAction(mutate);
-  const {action: closeTicketAction, loading: isClosingTicket} = useRetryAction(
-    closeTicket,
-    i18n.t('Ticket closed'),
-  );
+  const {action: closeTicketAction, loading: isClosingTicket} =
+    useRetryAction(closeTicket);
 
   const company = ticket.project?.company?.name ?? '';
   const client = ticket.project?.clientPartner?.simpleFullName ?? '';
 
   const {action: cancelTicketAction, loading: isCancellingTicket} =
-    useRetryAction(cancelTicket, i18n.t('Ticket canceled'));
+    useRetryAction(cancelTicket);
 
   const {action: updateAssignmentAction, loading: isUpdatingAssignment} =
-    useRetryAction(
-      updateAssignment,
-      isWithProvider(ticket.assignment)
-        ? i18n.t('Ticket assigned to') + ' ' + client
-        : i18n.t('Ticket assigned to') + ' ' + company,
-    );
+    useRetryAction(updateAssignment);
 
   const {workspaceURL, workspaceURI} = useWorkspace();
 
@@ -112,7 +107,7 @@ export function TicketDetailsProvider(props: Props) {
   const handleTicketFormSubmit = useCallback(
     async (
       value: UpdateFormData,
-      onSuccess?: (res: MutateResponse) => Promise<void>,
+      onSuccess?: (res: MutateResponse) => void,
     ) => {
       const dirtyValues = getDirtyValues(value);
       if (!dirtyValues) return;
@@ -129,7 +124,17 @@ export function TicketDetailsProvider(props: Props) {
         workspaceURI,
       };
 
-      await mutateAction(mutateProps, onSuccess);
+      await mutateAction(mutateProps, {
+        onSuccess: res => {
+          toast({
+            variant: 'success',
+            title: i18n.t('Saved successfully'),
+          });
+          if (onSuccess) onSuccess(res);
+          else router.refresh();
+        },
+        onDiscard: () => router.refresh(),
+      });
     },
     [
       getDirtyValues,
@@ -138,6 +143,8 @@ export function TicketDetailsProvider(props: Props) {
       ticket.version,
       workspaceURI,
       workspaceURL,
+      toast,
+      router,
     ],
   );
 
@@ -168,16 +175,30 @@ export function TicketDetailsProvider(props: Props) {
 
   const handleAssignment = useCallback(async () => {
     submitFormWithAction(data =>
-      updateAssignmentAction({
-        data: {
-          id: ticket.id,
-          version: data?.version ?? ticket.version,
-          assignment: isWithProvider(ticket.assignment)
-            ? ASSIGNMENT.CUSTOMER
-            : ASSIGNMENT.PROVIDER,
+      updateAssignmentAction(
+        {
+          data: {
+            id: ticket.id,
+            version: data?.version ?? ticket.version,
+            assignment: isWithProvider(ticket.assignment)
+              ? ASSIGNMENT.CUSTOMER
+              : ASSIGNMENT.PROVIDER,
+          },
+          workspaceURL,
         },
-        workspaceURL,
-      }),
+        {
+          onSuccess: () => {
+            router.refresh();
+            toast({
+              variant: 'success',
+              title: isWithProvider(ticket.assignment)
+                ? i18n.t('Ticket assigned to') + ' ' + client
+                : i18n.t('Ticket assigned to') + ' ' + company,
+            });
+          },
+          onDiscard: () => router.refresh(),
+        },
+      ),
     );
   }, [
     submitFormWithAction,
@@ -186,14 +207,30 @@ export function TicketDetailsProvider(props: Props) {
     ticket.version,
     ticket.assignment,
     workspaceURL,
+    router,
+    toast,
+    client,
+    company,
   ]);
 
   const handleCancelTicket = useCallback(async () => {
     submitFormWithAction(data =>
-      cancelTicketAction({
-        data: {id: ticket.id, version: data?.version ?? ticket.version},
-        workspaceURL,
-      }),
+      cancelTicketAction(
+        {
+          data: {id: ticket.id, version: data?.version ?? ticket.version},
+          workspaceURL,
+        },
+        {
+          onSuccess: () => {
+            router.refresh();
+            toast({
+              variant: 'success',
+              title: i18n.t('Ticket canceled'),
+            });
+          },
+          onDiscard: () => router.refresh(),
+        },
+      ),
     );
   }, [
     submitFormWithAction,
@@ -201,14 +238,28 @@ export function TicketDetailsProvider(props: Props) {
     ticket.id,
     ticket.version,
     workspaceURL,
+    toast,
+    router,
   ]);
 
   const handleCloseTicket = useCallback(async () => {
     submitFormWithAction(data =>
-      closeTicketAction({
-        data: {id: ticket.id, version: data?.version ?? ticket.version},
-        workspaceURL,
-      }),
+      closeTicketAction(
+        {
+          data: {id: ticket.id, version: data?.version ?? ticket.version},
+          workspaceURL,
+        },
+        {
+          onSuccess: () => {
+            router.refresh();
+            toast({
+              variant: 'success',
+              title: i18n.t('Ticket closed'),
+            });
+          },
+          onDiscard: () => router.refresh(),
+        },
+      ),
     );
   }, [
     submitFormWithAction,
@@ -216,6 +267,8 @@ export function TicketDetailsProvider(props: Props) {
     ticket.id,
     ticket.version,
     workspaceURL,
+    router,
+    toast,
   ]);
 
   useEffect(() => {
