@@ -144,7 +144,12 @@ export const AddressCard = ({
           </Button>
           <Button
             variant={isDefault ? 'default' : 'outline'}
-            className="h-9 flex items-center gap-2 rounded-md font-medium px-3 py-1.5"
+            className={cn(
+              'h-9 flex items-center gap-2 rounded-md font-medium px-3 py-1.5',
+              {
+                'border border-primary': isDefault,
+              },
+            )}
             onClick={handleDefault}>
             <MdOutlineStar className="w-6 h-6" />
           </Button>
