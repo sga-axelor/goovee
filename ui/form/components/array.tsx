@@ -78,7 +78,7 @@ export const ArrayComponent = ({
                 onClick={() => removeItem(subField.valueId)}
                 type="button"
                 size="icon"
-                className={`bg-destructive-dark/20 hover:bg-destructive-dark/40 w-10 h-10 p-2 border-none`}>
+                className='bg-destructive-dark/20 hover:bg-destructive-dark/40 w-10 h-10 p-2'>
                 <MdOutlineDelete className="w-6 h-6 text-destructive-dark" />
               </Button>
             )}

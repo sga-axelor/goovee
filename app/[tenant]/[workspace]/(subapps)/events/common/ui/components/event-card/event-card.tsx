@@ -86,7 +86,7 @@ export const EventCard = ({event}: EventCardProps) => {
           </CardContent>
         </div>
         <div className="flex-col hidden lg:flex items-center justify-center pr-2">
-          <Button className="bg-success-light border-none hover:bg-success-light text-success hover:text-success h-10 w-10 p-0 rounded-lg">
+          <Button className="bg-success-light hover:bg-success-light text-success hover:text-success h-10 w-10 p-0 rounded-lg">
             <MdChevronRight className="h-6 w-6" />
           </Button>
         </div>

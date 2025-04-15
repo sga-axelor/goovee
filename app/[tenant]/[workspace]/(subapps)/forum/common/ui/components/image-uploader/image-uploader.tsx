@@ -122,7 +122,7 @@ export const ImageUploader = ({
         <div className="bg-background w-full h-screen lg:h-full z-[100] overflow-y-auto">
           <div className="relative w-full h-full pt-4 xl:pt-8">
             <Button
-              className="w-6 h-6 flex items-center justify-center rounded-full p-px absolute top-0 right-1 cursor-pointer bg-white hover:bg-white border-none"
+              className="w-6 h-6 flex items-center justify-center rounded-full p-px absolute top-0 right-1 cursor-pointer bg-white hover:bg-white"
               onClick={() => {
                 handleClose();
               }}>

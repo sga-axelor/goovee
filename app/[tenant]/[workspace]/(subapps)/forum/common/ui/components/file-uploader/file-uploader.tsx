@@ -84,7 +84,7 @@ export const FileUploader = ({
           <ScrollArea
             className={`relative w-full ${fileDetails?.file?.type === 'application/pdf' ? 'h-[90vh]' : 'h-fit'} pt-8`}>
             <Button
-              className="w-6 h-6 flex items-center justify-center rounded-full p-px absolute top-0 right-0 cursor-pointer bg-white hover:bg-white border-none"
+              className="w-6 h-6 flex items-center justify-center rounded-full p-px absolute top-0 right-0 cursor-pointer bg-white hover:bg-white"
               onClick={() => {
                 onUpload({});
                 handleClose();
