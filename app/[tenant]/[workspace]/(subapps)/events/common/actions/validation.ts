@@ -193,10 +193,9 @@ export async function validateRegistration({
     ) {
       const slotsLeft = maxParticipantPerEvent - totalRegisteredParticipants;
       return error(
-        await t(
-          slotsLeft === 1 ? 'Only {0} slot left' : 'Only ${0} slots left',
-          String(slotsLeft),
-        ),
+        slotsLeft === 1
+          ? await t('Only one slot left')
+          : await t('Only {0} slots left', String(slotsLeft)),
       );
     }
 
@@ -205,7 +204,7 @@ export async function validateRegistration({
     if (participants.length > maxParticipantPerRegistration) {
       return error(
         await t(
-          'You can only register up to ${0} people',
+          'You can only register up to {0} people',
           String(maxParticipantPerRegistration),
         ),
       );

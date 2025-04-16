@@ -127,7 +127,7 @@ export const validateRequiredFormFields = async (
   for (const {field, message} of requiredFields) {
     const value = values[field];
     if (!value || (typeof value === 'string' && !value.trim())) {
-      errors.push(await t('Participant 1: ${0}', message));
+      errors.push(await t('Participant {0}: {1}', 1, message));
     }
   }
 
@@ -136,7 +136,7 @@ export const validateRequiredFormFields = async (
     for (const {field, message} of requiredFields) {
       const value = person[field];
       if (!value || (typeof value === 'string' && !value.trim())) {
-        errors.push(await t('Person ${0}: ${1}', `${index + 2}`, message));
+        errors.push(await t('Person {0}: {1}', `${index + 2}`, message));
       }
     }
   }
