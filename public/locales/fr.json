@@ -735,5 +735,11 @@
   "Error deleting address": "Erreur lors de la supression de l'adresse",
   "Address deleted successfully": "Adresse supprimée avec succès",
   "Default address updated": "Adresse par défaut mise à jour",
-  "Error updating default address": "Erreur lors de la mise à jour de l'adresse par défaut"
+  "Error updating default address": "Erreur lors de la mise à jour de l'adresse par défaut",
+  "New comment by {0}": "Nouveau commentaire de {0}",
+  "Comment left by": "Commentaire laissé par",
+  "Ticket Created by {0}": "Ticket créé par {0}",
+  "Ticket Updated by {0}": "Ticket mis à jour par {0}",
+  "View ticket": "Voir le ticket",
+  "This is an automated message. Please do not reply directly to this email.": "Ceci est un message automatique. Veuillez ne pas répondre directement à cet e-mail."
 }

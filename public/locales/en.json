@@ -735,5 +735,11 @@
   "Error deleting address": "Error deleting address",
   "Address deleted successfully": "Address deleted successfully",
   "Default address updated": "Default address updated",
-  "Error updating default address": "Error updating default address"
+  "Error updating default address": "Error updating default address",
+  "New comment by {0}": "New comment by {0}",
+  "Comment left by": "Comment left by",
+  "Ticket Created by {0}": "Ticket Created by {0}",
+  "Ticket Updated by {0}": "Ticket Updated by {0}",
+  "View ticket": "View ticket",
+  "This is an automated message. Please do not reply directly to this email.": "This is an automated message. Please do not reply directly to this email."
 }

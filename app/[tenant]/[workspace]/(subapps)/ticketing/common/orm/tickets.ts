@@ -277,8 +277,8 @@ export async function createTicket({
     .then(reciepients => {
       if (reciepients.length) {
         return sendTrackMail({
-          subject: `Ticket Created by ${auth.simpleFullName}`,
-          title: `Ticket Created by ${auth.simpleFullName}`,
+          author: auth.simpleFullName,
+          type: 'create',
           tracks,
           projectName: newTicket.project?.name!,
           ticketName: newTicket.name,
@@ -506,8 +506,8 @@ export async function updateTicket({
     .then(reciepients => {
       if (reciepients.length) {
         return sendTrackMail({
-          subject: `Ticket Updated by ${auth.simpleFullName}`,
-          title: `Ticket Updated by ${auth.simpleFullName}`,
+          author: auth.simpleFullName,
+          type: 'update',
           tracks,
           projectName: newTicket.project?.name!,
           ticketName: newTicket.name,

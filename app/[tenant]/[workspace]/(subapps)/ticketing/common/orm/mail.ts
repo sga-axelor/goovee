@@ -13,7 +13,7 @@ export async function getMailRecipients({
   userId: ID;
   workspaceURL: string;
   tenantId: Tenant['id'];
-}): Promise<string[]> {
+}): Promise<NotificationPartner[]> {
   const reciepients = await Promise.all(
     Array.from(contacts).map(
       contact =>
@@ -23,8 +23,12 @@ export async function getMailRecipients({
     ),
   );
 
-  return reciepients.filter(Boolean) as string[];
+  return reciepients.filter(Boolean) as NotificationPartner[];
 }
+
+export type NotificationPartner = NonNullable<
+  Awaited<ReturnType<typeof findPartnerNotificationEmail>>
+>;
 
 export async function findPartnerNotificationEmail({
   id,
@@ -45,9 +49,10 @@ export async function findPartnerNotificationEmail({
         workspace: {url: workspaceURL},
         activateNotification: true,
       },
+      emailAddress: {address: {ne: null}},
     },
-    select: {emailAddress: {address: true}},
+    select: {emailAddress: {address: true}, localization: {code: true}},
   });
 
-  return partner?.emailAddress?.address;
+  return partner;
 }

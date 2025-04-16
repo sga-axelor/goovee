@@ -749,8 +749,6 @@ export const createComment: CreateComment = async formData => {
             ticketLink: `${workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${ticket.project?.id}/tickets/${ticket.id}`,
             projectName: ticket.project?.name || '',
             ticketName: ticket.name,
-            subject: `New comment by ${user.simpleFullName || user.name}`,
-            title: `New comment by ${user.simpleFullName || user.name}`,
             reciepients,
           });
         }
