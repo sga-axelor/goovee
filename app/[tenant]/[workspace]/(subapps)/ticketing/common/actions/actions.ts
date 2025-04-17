@@ -750,6 +750,7 @@ export const createComment: CreateComment = async formData => {
             projectName: ticket.project?.name || '',
             ticketName: ticket.name,
             reciepients,
+            tenant: tenantId,
           });
         }
       })

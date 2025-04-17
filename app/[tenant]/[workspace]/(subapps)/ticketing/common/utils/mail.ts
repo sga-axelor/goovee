@@ -18,6 +18,7 @@ export async function sendCommentMail(props: {
   projectName: string;
   ticketName: string;
   ticketLink: string;
+  tenant: string;
 }) {
   const {
     comment,
@@ -26,6 +27,7 @@ export async function sendCommentMail(props: {
     projectName,
     ticketName,
     ticketLink,
+    tenant,
   } = props;
   const mailService = NotificationManager.getService(NotificationType.mail);
   if (!mailService) {
@@ -40,6 +42,7 @@ export async function sendCommentMail(props: {
     const t = getTranslation.bind(null, {
       locale: partner.localization?.code || DEFAULT_LOCALE,
       user: partner,
+      tenant,
     });
 
     const subject = await t(
@@ -106,6 +109,7 @@ export async function sendTrackMail(props: {
   projectName: string;
   ticketLink: string;
   reciepients: NotificationPartner[];
+  tenant: string;
 }): Promise<void> {
   const {
     author,
@@ -115,6 +119,7 @@ export async function sendTrackMail(props: {
     ticketLink,
     tracks,
     reciepients,
+    tenant,
   } = props;
   const mailService = NotificationManager.getService(NotificationType.mail);
   if (!mailService) {
@@ -126,6 +131,7 @@ export async function sendTrackMail(props: {
     const t = getTranslation.bind(null, {
       locale: partner.localization?.code || DEFAULT_LOCALE,
       user: partner,
+      tenant,
     });
 
     const subject = await t(
