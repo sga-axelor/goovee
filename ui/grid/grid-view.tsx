@@ -52,8 +52,7 @@ export const GridView = ({
   creationContent?: {
     fields: Field[];
     panels?: Panel[];
-    model?: string;
-    handleCreate?: (data: any) => Promise<void>;
+    handleCreate: (data: any) => void;
   };
   canSelect?: boolean;
   selectionContent?: {

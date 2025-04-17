@@ -1,5 +1,3 @@
-'use server';
-
 import {headers} from 'next/headers';
 
 import {manager} from '@/lib/core/tenant';

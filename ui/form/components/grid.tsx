@@ -23,10 +23,9 @@ export const FormGridComponent = ({
     fields: FieldType[];
     panels?: Panel[];
     data?: any[];
-    model: string;
   };
 }) => {
-  const {columns, fields, panels, data, model} = config ?? {};
+  const {columns, fields, panels, data} = config ?? {};
 
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
 
@@ -60,6 +59,18 @@ export const FormGridComponent = ({
     setSelectedRows([]);
   }, [form, identifier, selectedRows]);
 
+  const handleAddition = useCallback(
+    (data: any) => {
+      const _current = form.getValues(identifier) ?? [];
+
+      form.setValue(identifier, [
+        ..._current,
+        {id: `id-${Date.now()}`, ...data},
+      ]);
+    },
+    [form, identifier],
+  );
+
   return (
     <GridView
       title={item.title}
@@ -67,7 +78,9 @@ export const FormGridComponent = ({
       columns={columns ?? []}
       data={form.getValues(identifier) ?? []}
       handleRowClick={handleRowSelection}
-      creationContent={fields ? {fields, panels, model} : undefined}
+      creationContent={
+        fields ? {fields, panels, handleCreate: handleAddition} : undefined
+      }
       selectionContent={data ? {data, handleSelect} : undefined}
       canCreate={!readonly}
       canSelect={!readonly}

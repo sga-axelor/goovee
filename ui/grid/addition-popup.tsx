@@ -7,8 +7,6 @@ import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
 import type {Field, Panel} from '@/ui/form';
 import {FormView} from '@/ui/form';
 
-import {createRow} from './actions';
-
 export const AdditionPopup = ({
   style,
   visible = false,
@@ -21,26 +19,21 @@ export const AdditionPopup = ({
   creationContent: {
     fields: Field[];
     panels?: Panel[];
-    model?: string;
-    handleCreate?: (data: any) => Promise<void>;
+    handleCreate: (data: any) => void;
   };
 }) => {
-  const {fields, panels, model, handleCreate} = useMemo(
+  const {fields, panels, handleCreate} = useMemo(
     () => creationContent,
     [creationContent],
   );
 
   const handleRowCreation = useCallback(
     async (values: any) => {
-      if (handleCreate) {
-        await handleCreate(values);
-      } else {
-        await createRow(model, values);
-      }
+      handleCreate(values);
 
       onClose();
     },
-    [handleCreate, model, onClose],
+    [handleCreate, onClose],
   );
 
   return (
