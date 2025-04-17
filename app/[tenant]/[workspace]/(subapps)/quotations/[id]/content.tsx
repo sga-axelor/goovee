@@ -327,19 +327,17 @@ const Content = ({
             </div>
           </div>
 
-          {statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION && (
-            <div className="flex flex-col gap-6 basis-full lg:basis-1/4">
-              <Total
-                exTaxTotal={displayExTaxTotal}
-                inTaxTotal={displayInTaxTotal}
-                statusSelect={statusSelect}
-                totalDiscount={totalDiscount}
-                workspace={workspace}
-                onConfirmQuotation={handleConfirmQuotation}
-                renderPaymentOptions={renderPaymentOptions}
-              />
-            </div>
-          )}
+          <div className="flex flex-col gap-6 basis-full lg:basis-1/4">
+            <Total
+              exTaxTotal={displayExTaxTotal}
+              inTaxTotal={displayInTaxTotal}
+              statusSelect={statusSelect}
+              totalDiscount={totalDiscount}
+              workspace={workspace}
+              onConfirmQuotation={handleConfirmQuotation}
+              renderPaymentOptions={renderPaymentOptions}
+            />
+          </div>
         </div>
         {enableComment && (
           <div className="rounded-md border bg-card p-4 mt-5">
