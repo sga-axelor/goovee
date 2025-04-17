@@ -47,7 +47,6 @@ const Content = ({order}: {order: any}) => {
     customerDeliveries = [],
   } = order;
   const {status, variant} = getStatus(statusSelect, deliveryState);
-  const showContactUs = ![ORDER_TYPE.CLOSED].includes(status);
 
   const {workspaceURL, tenant} = useWorkspace();
 
@@ -77,7 +76,6 @@ const Content = ({order}: {order: any}) => {
               {false && <PaymentMethod />}
             </div>
             {false && <History />}
-            {showContactUs && <ContactUs />}
           </div>
           <div className="flex flex-col gap-6 basis-full md:basis-1/4">
             <Total
