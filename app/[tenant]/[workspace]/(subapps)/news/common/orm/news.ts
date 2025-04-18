@@ -46,12 +46,12 @@ export async function findNonArchivedNewsCategories({
 
   const hiearchy = (categories: any) => {
     const map: any = {};
-    categories.forEach((category: any) => {
+    categories?.forEach((category: any) => {
       category.children = [];
       map[category.id] = category;
     });
 
-    categories.forEach((category: any) => {
+    categories?.forEach((category: any) => {
       const {parentCategory} = category;
       if (parentCategory?.id) {
         map[parentCategory.id]?.children.push(category);
@@ -129,7 +129,7 @@ export async function findNews({
   const nonarchivedcategoryids = nonarchivedcategory?.map((c: any) => c.id);
   let categoryIdsFilteredByArchive = nonarchivedcategoryids;
 
-  if (categoryIds && categoryIds.length > 0) {
+  if (categoryIds?.length) {
     categoryIdsFilteredByArchive = categoryIds
       .map(id => String(id))
       .filter((id: any) => nonarchivedcategoryids.includes(id));
@@ -149,10 +149,13 @@ export async function findNews({
       workspace: {
         id: workspace.id,
       },
-
-      id: {
-        in: categoryIdsFilteredByArchive,
-      },
+      ...(categoryIdsFilteredByArchive?.length
+        ? {
+            id: {
+              in: categoryIdsFilteredByArchive,
+            },
+          }
+        : {}),
     },
   };
 
@@ -169,9 +172,13 @@ export async function findNews({
         image: {id: true},
         categorySet: {
           where: {
-            id: {
-              in: nonarchivedcategoryids,
-            },
+            ...(nonarchivedcategoryids?.length
+              ? {
+                  id: {
+                    in: nonarchivedcategoryids,
+                  },
+                }
+              : {}),
           },
           select: {
             name: true,
@@ -201,9 +208,13 @@ export async function findNews({
               workspace: {
                 id: workspace.id,
               },
-              id: {
-                in: nonarchivedcategoryids,
-              },
+              ...(nonarchivedcategoryids?.length
+                ? {
+                    id: {
+                      in: nonarchivedcategoryids,
+                    },
+                  }
+                : {}),
             },
             AND: [
               await filterPrivate({user, tenantId}),
@@ -217,9 +228,13 @@ export async function findNews({
             image: {id: true},
             categorySet: {
               where: {
-                id: {
-                  in: nonarchivedcategoryids,
-                },
+                ...(nonarchivedcategoryids?.length
+                  ? {
+                      id: {
+                        in: nonarchivedcategoryids,
+                      },
+                    }
+                  : {}),
               },
             },
             publicationDateTime: true,
