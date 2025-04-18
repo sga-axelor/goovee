@@ -129,9 +129,9 @@ export async function findNews({
   let categoryIdsFilteredByArchive = nonarchivedcategoryids;
 
   if (categoryIds && categoryIds.length > 0) {
-    categoryIdsFilteredByArchive = nonarchivedcategoryids.filter((id: any) =>
-      categoryIds.includes(Number(id)),
-    );
+    categoryIdsFilteredByArchive = categoryIds
+      .map(id => String(id))
+      .filter((id: any) => nonarchivedcategoryids.includes(id));
   }
 
   const skip = getSkipInfo(limit, page);
