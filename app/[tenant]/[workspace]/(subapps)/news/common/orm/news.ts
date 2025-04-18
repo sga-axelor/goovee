@@ -2,13 +2,14 @@
 import {manager, type Tenant} from '@/tenant';
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import type {PortalWorkspace, User} from '@/types';
+import {ORDER_BY} from '@/constants';
+import {filterPrivate} from '@/orm/filter';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   DEFAULT_NEWS_ASIDE_LIMIT,
   DEFAULT_PAGE,
 } from '@/subapps/news/common/constants';
-import {filterPrivate} from '@/orm/filter';
 import {getArchivedFilter} from '@/subapps/news/common/utils';
 
 export async function findNonArchivedNewsCategories({
@@ -192,6 +193,9 @@ export async function findNews({
         },
         relatedNewsSet: {
           take: DEFAULT_NEWS_ASIDE_LIMIT,
+          orderBy: {
+            publicationDateTime: ORDER_BY.DESC,
+          },
           where: {
             categorySet: {
               workspace: {

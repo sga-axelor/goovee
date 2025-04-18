@@ -177,6 +177,7 @@ async function CategoryPage({
     if (!newsObject) {
       return notFound();
     }
+
     async function getBreadcrumbs() {
       const slicedArray = segments.slice(0, -2);
 
