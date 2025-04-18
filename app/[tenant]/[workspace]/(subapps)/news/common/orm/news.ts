@@ -402,10 +402,12 @@ export async function findCategoryTitleBySlugName({
   slug,
   workspace,
   tenantId,
+  archived = false,
 }: {
   slug: any;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
+  archived?: boolean;
 }) {
   if (!tenantId) {
     return null;
@@ -419,6 +421,7 @@ export async function findCategoryTitleBySlugName({
       workspace: {
         id: workspace.id,
       },
+      ...getArchivedFilter({archived}),
     },
     select: {
       name: true,
