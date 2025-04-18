@@ -295,19 +295,21 @@ export const CommentListItem = ({
             })}
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger>
-              <MdOutlineMoreHoriz className="w-6 h-6 cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent className="p-0 w-fit">
-              <div className="flex flex-col gap-[10px] p-4 bg-white rounded-lg text-xs leading-[18px]">
-                <div className="cursor-pointer">{i18n.t(REPORT)}</div>
-                <div className="cursor-pointer">{i18n.t(NOT_INTERESTED)}</div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+        {false && (
+          <div className="flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger>
+                <MdOutlineMoreHoriz className="w-6 h-6 cursor-pointer" />
+              </PopoverTrigger>
+              <PopoverContent className="p-0 w-fit">
+                <div className="flex flex-col gap-[10px] p-4 bg-white rounded-lg text-xs leading-[18px]">
+                  <div className="cursor-pointer">{i18n.t(REPORT)}</div>
+                  <div className="cursor-pointer">{i18n.t(NOT_INTERESTED)}</div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        )}
       </div>
       <div className={`${isTopLevel ? 'ml-3 pl-10' : 'pl-8'}`}>
         {trackingToDisplay && isTrackObject(trackingToDisplay) && (

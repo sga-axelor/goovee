@@ -87,17 +87,19 @@ export const ThreadBody = ({
             </div>
           </div>
           <div></div>
-          <Popover>
-            <PopoverTrigger>
-              <MdOutlineMoreHoriz className="w-6 h-6 cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent className="p-0 w-fit">
-              <div className="flex flex-col gap-2.5 p-4 bg-white rounded-lg text-xs leading-[1.125rem]">
-                <div className="cursor-pointer">{i18n.t(REPORT)}</div>
-                <div className="cursor-pointer">{i18n.t(NOT_INTERESTED)}</div>
-              </div>
-            </PopoverContent>
-          </Popover>
+          {false && (
+            <Popover>
+              <PopoverTrigger>
+                <MdOutlineMoreHoriz className="w-6 h-6 cursor-pointer" />
+              </PopoverTrigger>
+              <PopoverContent className="p-0 w-fit">
+                <div className="flex flex-col gap-2.5 p-4 bg-white rounded-lg text-xs leading-[1.125rem]">
+                  <div className="cursor-pointer">{i18n.t(REPORT)}</div>
+                  <div className="cursor-pointer">{i18n.t(NOT_INTERESTED)}</div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <div className="text-lg font-semibold line-clamp-1">{title}</div>
