@@ -25,35 +25,33 @@ export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
   };
 
   return (
-    <>
-      <div className="bg-card text-card-foreground flex md:block flex-col rounded-lg px-6 py-4">
-        <h4 className="text-xl font-medium mb-0">{i18n.t('Informations')}</h4>
-        <Separator className="my-2" />
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <h5 className="text-sm font-medium mb-0">{i18n.t('Status')}:</h5>
-            <Chip
-              value={i18n.t(status)}
-              className="font-normal text-[0.625rem] px-2 py-1"
-              variant={variant}
-            />
-          </div>
-          {renderDateInfo()}
-          {false && (
-            <div className="flex md:flex-row gap-4">
-              <Button className="bg-white border border-success text-success hover:bg-success hover:text-white flex items-center justify-center gap-3 rounded-md font-normal">
-                <MdOutlineFileDownload className="text-2xl" />{' '}
-                {i18n.t('Download invoice')}
-              </Button>
-              <Button className="bg-white border border-success text-success hover:bg-success hover:text-white flex items-center justify-center gap-3 rounded-md font-normal">
-                <MdOutlineFileDownload className="text-2xl" />
-                {i18n.t('Download order signed confirmation')}
-              </Button>
-            </div>
-          )}
+    <div className="bg-card text-card-foreground flex md:block flex-col rounded-lg px-6 py-4">
+      <h4 className="text-xl font-medium mb-0">{i18n.t('Informations')}</h4>
+      <Separator className="my-2" />
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <h5 className="text-sm font-medium mb-0">{i18n.t('Status')}:</h5>
+          <Chip
+            value={i18n.t(status)}
+            className="font-normal text-[0.625rem] px-2 py-1"
+            variant={variant}
+          />
         </div>
+        {renderDateInfo()}
+        {false && (
+          <div className="flex md:flex-row gap-4">
+            <Button className="bg-white border border-success text-success hover:bg-success hover:text-white flex items-center justify-center gap-3 rounded-md font-normal">
+              <MdOutlineFileDownload className="text-2xl" />{' '}
+              {i18n.t('Download invoice')}
+            </Button>
+            <Button className="bg-white border border-success text-success hover:bg-success hover:text-white flex items-center justify-center gap-3 rounded-md font-normal">
+              <MdOutlineFileDownload className="text-2xl" />
+              {i18n.t('Download order signed confirmation')}
+            </Button>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
