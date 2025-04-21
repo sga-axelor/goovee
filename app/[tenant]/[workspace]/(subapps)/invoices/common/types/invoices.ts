@@ -20,7 +20,6 @@ export type Invoice = {
 
 export type InvoiceProps = {
   invoice: any;
-  isUnpaid: boolean;
   invoiceType: string;
 };
 

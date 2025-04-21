@@ -77,34 +77,32 @@ export default function Content({
     [unpaidColumns],
   );
   return (
-    <>
-      <Container title={i18n.t('Invoices')}>
-        {invoiceType === INVOICE.UNPAID && (
-          <AlertToast
-            show={hasUpcomingInvoices}
-            title={HEADING}
-            variant="info"
+    <Container title={i18n.t('Invoices')}>
+      {invoiceType === INVOICE.UNPAID && (
+        <AlertToast
+          show={hasUpcomingInvoices}
+          title={i18n.t(HEADING)}
+          variant="info"
+        />
+      )}
+      <NavView
+        items={INVOICE_TAB_ITEMS}
+        activeTab={
+          INVOICE_TAB_ITEMS.find(item => item.href === invoiceType)!.id
+        }
+        onTabChange={handleTabChange}>
+        <div className="flex flex-col gap-4">
+          <TableList
+            columns={invoiceColumns.get(invoiceType)}
+            rows={sortedInvoices}
+            sort={sortOrder}
+            onSort={toggleSortOrder}
+            onRowClick={handleClick}
+            pageInfo={pageInfo}
+            pageParamKey={URL_PARAMS.page}
           />
-        )}
-        <NavView
-          items={INVOICE_TAB_ITEMS}
-          activeTab={
-            INVOICE_TAB_ITEMS.find(item => item.href === invoiceType)!.id
-          }
-          onTabChange={handleTabChange}>
-          <div className="flex flex-col gap-4">
-            <TableList
-              columns={invoiceColumns.get(invoiceType)}
-              rows={sortedInvoices}
-              sort={sortOrder}
-              onSort={toggleSortOrder}
-              onRowClick={handleClick}
-              pageInfo={pageInfo}
-              pageParamKey={URL_PARAMS.page}
-            />
-          </div>
-        </NavView>
-      </Container>
-    </>
+        </div>
+      </NavView>
+    </Container>
   );
 }

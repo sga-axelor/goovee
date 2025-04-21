@@ -117,23 +117,23 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
 
   return (
     <div
-      className="flex basis-full md:basis-1/3 flex-col bg-card text-card-foreground p-4 md:p-6 rounded-lg mt-6 md:mt-0"
+      className="flex flex-col bg-card text-card-foreground px-6 py-4 rounded-lg"
       style={{height: 'fit-content'}}>
       <h4 className="text-xl font-medium mb-0">{i18n.t('Total')}</h4>
-      <Separator className="my-3" />
-      <div className="flex flex-col gap-4 mb-3">
-        <div className="flex flex-col gap-[0.5rem] text-base">
+      <Separator className="my-2.5" />
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <p>{i18n.t('Total WT')}:</p>
-            <p>{exTaxTotal}</p>
+            <p className="whitespace-nowrap">{exTaxTotal}</p>
           </div>
           <div className="flex items-center justify-between">
             <p>{i18n.t('Taxes')}:</p>
-            <p>{taxTotal}</p>
+            <p className="whitespace-nowrap">{taxTotal}</p>
           </div>
           <div className="flex items-center justify-between">
             <h6 className="font-medium">{i18n.t('Total ATI')}:</h6>
-            <h6 className="font-medium">{inTaxTotal}</h6>
+            <h6 className="font-medium whitespace-nowrap">{inTaxTotal}</h6>
           </div>
         </div>
         <div className="flex flex-col gap-2 text-base">

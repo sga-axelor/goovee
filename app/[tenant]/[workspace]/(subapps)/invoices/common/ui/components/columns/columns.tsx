@@ -17,7 +17,9 @@ export const Columns = [
     sortable: true,
     mobile: true,
     getter: (row: any) => row.invoiceId,
-    content: (row: any) => <span className="font-medium">{row.invoiceId}</span>,
+    content: (row: any) => (
+      <span className="font-medium ">{row.invoiceId}</span>
+    ),
   },
   {
     key: 'amountRemaining',
@@ -29,7 +31,7 @@ export const Columns = [
       return (
         <Chip
           value={i18n.t(status)}
-          className="font-normal text-sm"
+          className="font-normal text-[0.625rem]"
           variant={variant}
         />
       );
@@ -53,7 +55,9 @@ export const Columns = [
     label: i18n.t('Total ATI'),
     getter: (row: any) => row.inTaxTotal,
     mobile: true,
-    content: (row: any) => row.inTaxTotal,
+    content: (row: any) => (
+      <span className="font-medium">{row.inTaxTotal}</span>
+    ),
   },
 ];
 
