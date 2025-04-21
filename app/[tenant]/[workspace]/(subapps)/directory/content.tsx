@@ -57,7 +57,7 @@ export async function Content({
     <>
       {/* NOTE: expand class applied by the map , when it is expanded and when it is in mobile view */}
       <div className="flex has-[.expand]:flex-col gap-4 mt-4">
-        <aside className="space-y-4">
+        <aside className="space-y-4 z-10">
           <Suspense fallback={<MapSkeleton />}>
             <ServerMap
               entries={clone(entries)}
