@@ -48,7 +48,9 @@ function MobileSidebar({subapps, workspaces}: any) {
     <>
       <MdApps onClick={openSidebar} className="cursor-pointer h-6 w-6" />
       <Sheet open={open} onOpenChange={closeSidebar}>
-        <SheetContent side="left" className="bg-white divide-y divide-grey-1">
+        <SheetContent
+          side="left"
+          className="bg-white divide-y divide-grey-1 overflow-auto">
           {user && Boolean(workspaces?.length) ? (
             workspaces.length === 1 ? (
               <Link href={workspaceURL}>
