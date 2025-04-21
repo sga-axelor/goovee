@@ -209,6 +209,7 @@ function CartSummary({
   workspace?: PortalWorkspace;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const noitem = !cart?.items?.length;
   const {displayTotal} = computeTotal({cart, workspace});
   const {workspaceURI, tenant} = useWorkspace();
@@ -239,13 +240,12 @@ function CartSummary({
       {authenticated ? (
         <>
           {!hideCheckout && (
-            <Link
-              href={`${workspaceURI}/shop/cart/checkout`}
-              className="no-underline text-inherit">
-              <Button className="w-full rounded-full mb-4" disabled={noitem}>
-                {i18n.t('Checkout')}
-              </Button>
-            </Link>
+            <Button
+              className="w-full rounded-full mb-4"
+              disabled={noitem}
+              onClick={() => router.push(`${workspaceURI}/shop/cart/checkout`)}>
+              {i18n.t('Checkout')}
+            </Button>
           )}
           {!hideRequestQuotation && (
             <Button
