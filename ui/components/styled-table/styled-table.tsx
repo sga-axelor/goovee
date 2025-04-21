@@ -16,26 +16,33 @@ import {i18n} from '@/locale';
 // ---- LOCAL IMPORTS ---- //
 import type {TableHeadProps, TableProps} from './types';
 
-export const StyledHead = ({columns, className}: TableHeadProps) => {
+export const StyledHead = ({columns, className = ''}: TableHeadProps) => {
+  const getAlignmentClass = (align?: string) => {
+    switch (align) {
+      case 'right':
+        return 'text-right';
+      case 'center':
+        return 'text-center';
+      default:
+        return 'text-left';
+    }
+  };
+
   return (
     <TableRow>
-      {columns?.map((column: any, index: number) => (
-        <TableHead
-          key={column.key}
-          className={`${className} text-card-foreground text-base font-semibold`}
-          style={{
-            paddingInline: '1.5rem',
-            border: 'none',
-            borderRadius:
-              index === 0
-                ? '0.5rem 0rem 0rem 0.5rem'
-                : index === columns.length - 1
-                  ? '0 0.5rem 0.5rem 0'
-                  : '',
-          }}>
-          {i18n.t(column.label)}
-        </TableHead>
-      ))}
+      {columns?.map(({key, label, align}, index) => {
+        const isEdge = index === 0 || index === columns?.length - 1;
+        const paddingInline = isEdge ? '1.5rem' : '1rem';
+
+        return (
+          <TableHead
+            key={key}
+            className={`${className} ${getAlignmentClass(align)} text-card-foreground text-base font-semibold`}
+            style={{paddingInline}}>
+            {i18n.t(label)}
+          </TableHead>
+        );
+      })}
     </TableRow>
   );
 };

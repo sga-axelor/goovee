@@ -312,10 +312,9 @@ const Content = ({
           endOfValidityDate={endOfValidityDate}
           statusSelect={statusSelect}
         />
-        <div className="flex flex-col-reverse xl:flex-row gap-6 xl:gap-4">
-          <div
-            className={`${statusSelect !== QUOTATION_STATUS.DRAFT_QUOTATION ? 'lg:basis-3/4' : 'lg:basis-full'} flex flex-col gap-6 basis-full`}>
-            <div className="flex flex-col gap-4  bg-card text-card-foreground p-6 rounded-lg">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-4">
+          <div className="col-span-12 xl:col-span-9 flex flex-col gap-6 order-2 xl:order-1">
+            <div className="flex flex-col gap-4 bg-card text-card-foreground p-6 rounded-lg">
               <ContactDetails
                 mainInvoicingAddress={mainInvoicingAddress}
                 deliveryAddress={deliveryAddress}
@@ -332,7 +331,7 @@ const Content = ({
             </div>
           </div>
 
-          <div className="flex flex-col gap-6 basis-full lg:basis-1/4">
+          <div className="col-span-12 xl:col-span-3 flex flex-col gap-6 order-1 xl:order-2">
             <Total
               exTaxTotal={displayExTaxTotal}
               inTaxTotal={displayInTaxTotal}

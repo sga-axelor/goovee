@@ -34,7 +34,7 @@ export const Columns = [
       return (
         <Chip
           value={i18n.t(status)}
-          className="font-normal text-sm"
+          className="font-normal text-[0.625rem]"
           variant={variant}
         />
       );
@@ -46,32 +46,5 @@ export const Columns = [
     sortable: true,
     getter: (row: any) => row.createdOn,
     content: (row: any) => row.createdOn,
-  },
-  {
-    key: 'action',
-    label: i18n.t(''),
-    getter: () => 'action',
-    content: (row: any) => {
-      return (
-        <div className="flex justify-center">
-          {row?.statusSelect === QUOTATION_STATUS.FINALISED_QUOTATION ? (
-            <Button
-              variant="outline"
-              className="h-9 bg-white hover:bg-success-light text-success hover:text-success border-success flex items-center justify-center gap-2 w-fit rounded-[0.375rem] py-1.5 px-3 text-base !font-medium">
-              {i18n.t('Give a response')} <MdEast className="text-2xl" />
-            </Button>
-          ) : (
-            false && (
-              <Button
-                className={cn(
-                  'h-9 bg-success hover:bg-success-dark flex items-center justify-center gap-2 min-w-[10.688rem] rounded-[0.375rem] py-1.5 px-3 text-base !font-medium',
-                )}>
-                {i18n.t('Pay')} <MdEast className="text-2xl" />
-              </Button>
-            )
-          )}
-        </div>
-      );
-    },
   },
 ];

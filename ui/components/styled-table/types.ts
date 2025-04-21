@@ -5,10 +5,14 @@ export type TableProps = {
   headStyle?: string;
 };
 
-export type TableHeadProps = {
-  columns: any[];
+export interface TableHeadProps {
+  columns: Array<{
+    key: string;
+    label: string;
+    align?: 'left' | 'center' | 'right';
+  }>;
   className?: string;
-};
+}
 
 export type TableBodyProps = {
   onClick?: () => void;

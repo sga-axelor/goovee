@@ -8,16 +8,14 @@ import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
-import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 import type {InfoProps} from '@/subapps/quotations/common/types/quotations';
-import styles from '@/subapps/quotations/common/ui/components/styles.module.scss';
 
 export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
   const {variant, status} = getStatus(statusSelect);
 
   const DateInfoRow = (label: string, date: any) => (
-    <div className="flex items-center gap-1">
-      <h5 className="text-base font-medium mb-0">{i18n.t(label)}:</h5>
+    <div className="flex items-center gap-2">
+      <h5 className="text-sm font-medium mb-0">{i18n.t(label)}:</h5>
       <p className="text-sm">{date || '--/--/----'}</p>
     </div>
   );
@@ -31,19 +29,17 @@ export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
       <div className="bg-card text-card-foreground flex md:block flex-col rounded-lg px-6 py-4">
         <h4 className="text-xl font-medium mb-0">{i18n.t('Informations')}</h4>
         <Separator className="my-2" />
-        <div className="flex flex-col gap-[0.313rem]">
-          <div className="flex items-center gap-4 py-1.5">
-            <h5 className={`${styles.text} text-sm font-medium mb-0`}>
-              {i18n.t('Status')}:
-            </h5>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <h5 className="text-sm font-medium mb-0">{i18n.t('Status')}:</h5>
             <Chip
               value={status}
-              className="font-normal text-[0.625rem]"
+              className="font-normal text-[0.625rem] px-2 py-1"
               variant={variant}
             />
           </div>
           {renderDateInfo()}
-          {statusSelect === QUOTATION_STATUS.CANCELED_QUOTATION && (
+          {false && (
             <div className="flex md:flex-row gap-4">
               <Button className="bg-white border border-success text-success hover:bg-success hover:text-white flex items-center justify-center gap-3 rounded-md font-normal">
                 <MdOutlineFileDownload className="text-2xl" />{' '}

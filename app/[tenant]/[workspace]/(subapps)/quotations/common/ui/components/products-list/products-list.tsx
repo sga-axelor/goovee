@@ -48,7 +48,7 @@ export const ProductsList = ({
         <Separator />
         <div className="hidden lg:block">
           <StyledTable
-            headStyle="bg-foreground !text-background !rounded-none !px-4"
+            headStyle="bg-foreground !text-background !rounded-none whitespace-nowrap"
             columns={visibleColumns}>
             {!saleOrderLineList?.length ? (
               <TableRow>
@@ -62,27 +62,39 @@ export const ProductsList = ({
               saleOrderLineList?.map((saleOrder: any) => {
                 return (
                   <TableRow key={saleOrder.id} className="text-base">
-                    <TableCell>
+                    <TableCell className="ps-6">
                       <div className="flex gap-2">
                         <Avatar className="rounded-sm h-6 w-6">
                           <AvatarImage
                             src={getProductImage(saleOrder.product)}
                           />
                         </Avatar>
-                        <p className="font-semibold mb-0">
+                        <p className="font-medium mb-0">
                           {saleOrder.productName}
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell>{saleOrder.qty}</TableCell>
+                    <TableCell className="whitespace-nowrap" align="right">
+                      {saleOrder.qty}
+                    </TableCell>
                     <TableCell>{saleOrder?.unit?.name}</TableCell>
-                    <TableCell>{saleOrder.priceDiscounted}</TableCell>
-                    <TableCell>{saleOrder.exTaxTotal}</TableCell>
-                    <TableCell>{saleOrder?.taxLineSet[0]?.value}%</TableCell>
+                    <TableCell className="whitespace-nowrap" align="right">
+                      {saleOrder.priceDiscounted}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap" align="right">
+                      {saleOrder.exTaxTotal}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap" align="right">
+                      {saleOrder?.taxLineSet[0]?.value}%
+                    </TableCell>
                     {!hideDiscountColumn && (
-                      <TableCell>{saleOrder.discountAmount}%</TableCell>
+                      <TableCell className="whitespace-nowrap" align="right">
+                        {saleOrder.discountAmount}%
+                      </TableCell>
                     )}
-                    <TableCell className="font-semibold">
+                    <TableCell
+                      className="font-semibold whitespace-nowrap"
+                      align="right">
                       {saleOrder.inTaxTotal}
                     </TableCell>
                   </TableRow>
@@ -93,7 +105,7 @@ export const ProductsList = ({
         </div>
         <div className="block lg:hidden">
           <StyledTable
-            headStyle="bg-foreground !text-background !rounded-none !px-4"
+            headStyle="bg-foreground !text-background !rounded-none whitespace-nowrap"
             columns={PRODUCT_CARD_COLUMNS}>
             {!saleOrderLineList?.length ? (
               <TableRow>
