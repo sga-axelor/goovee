@@ -272,6 +272,9 @@ export default function Content({
   if (loading) {
     return <p>{i18n.t('Loading')}...</p>;
   }
+  if (!cart?.items?.length) {
+    return <p className="text-xl font-bold">{i18n.t('Your cart is empty.')}</p>;
+  }
 
   return (
     <>
