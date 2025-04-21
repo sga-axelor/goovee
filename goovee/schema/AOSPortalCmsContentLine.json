@@ -1,0 +1,22 @@
+{
+  "name": "AOSPortalCmsContentLine",
+  "table": "portal_portal_cms_content_line",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "Int",
+      "name": "sequence"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "content",
+      "target": "AOSPortalCmsContent"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "page",
+      "target": "AOSPortalCmsSite"
+    }
+  ]
+}

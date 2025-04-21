@@ -1,0 +1,49 @@
+{
+  "name": "AOSPortalCmsPage",
+  "table": "portal_portal_cms_page",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "title"
+    },
+    {
+      "type": "String",
+      "name": "slug"
+    },
+    {
+      "type": "String",
+      "name": "statusSelect"
+    },
+    {
+      "type": "Boolean",
+      "name": "isPrivate"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
+      "name": "partnerSet",
+      "type": "ManyToMany",
+      "target": "AOSPartner"
+    },
+    {
+      "name": "partnerCategorySet",
+      "type": "ManyToMany",
+      "target": "AOSPartnerCategory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "website",
+      "target": "AOSPortalCmsSite"
+    },
+    {
+      "type": "OneToMany",
+      "name": "contentLines",
+      "target": "AOSPortalCmsContentLine",
+      "mappedBy": "page"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "AOSPortalCmsComponent",
+  "table": "portal_portal_cms_component",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "title"
+    },
+    {
+      "type": "String",
+      "name": "code"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
+    }
+  ]
+}

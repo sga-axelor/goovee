@@ -67,6 +67,7 @@ export enum SUBAPP_CODES {
   chat = 'chat',
   directory = 'directory',
   survey = 'survey',
+  website = 'website',
 }
 
 /**
