@@ -33,7 +33,7 @@ export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
           <div className="flex items-center gap-2">
             <h5 className="text-sm font-medium mb-0">{i18n.t('Status')}:</h5>
             <Chip
-              value={status}
+              value={i18n.t(status)}
               className="font-normal text-[0.625rem] px-2 py-1"
               variant={variant}
             />
