@@ -258,7 +258,7 @@ export default function Content({
     () => ({
       ...cart,
       items: [
-        ...cart?.items?.map((i: any) => ({
+        ...(cart?.items ?? []).map((i: any) => ({
           ...i,
           computedProduct: computedProducts.find(
             cp => Number(cp?.product?.id) === Number(i.product),

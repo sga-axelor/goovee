@@ -346,11 +346,11 @@ export default function Content({
 
       const cartItemIDs = cart?.items?.map((i: any) => i.product);
 
-      const diff = cartItemIDs.filter(
+      const diff = cartItemIDs?.filter(
         (id: string) => !computedProductIDs.includes(id),
       );
 
-      if (diff.length) {
+      if (diff?.length) {
         await Promise.all(
           cart.items.map((i: any) =>
             findProduct({
@@ -388,7 +388,7 @@ export default function Content({
     () => ({
       ...cart,
       items: [
-        ...cart?.items?.map((i: any) => ({
+        ...(cart?.items ?? []).map((i: any) => ({
           ...i,
           computedProduct: computedProducts.find(
             cp => Number(cp?.product?.id) === Number(i.product),
