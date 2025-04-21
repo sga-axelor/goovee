@@ -346,10 +346,6 @@ export default function CartContextProvider({
     ],
   );
 
-  if (loading) {
-    return null;
-  }
-
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
