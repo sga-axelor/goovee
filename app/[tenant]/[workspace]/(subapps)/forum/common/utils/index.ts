@@ -11,7 +11,7 @@ export const filterPrivateQuery = async (user: any, tenantId: any) => {
   const OPEN_RECORD_FILTERS = `COALESCE(forumGroup.is_private, false) IS FALSE`;
 
   if (!user) {
-    return `OR ${OPEN_RECORD_FILTERS}`;
+    return `AND ${OPEN_RECORD_FILTERS}`;
   }
 
   const partner = await findGooveeUserByEmail(user.email, tenantId);
