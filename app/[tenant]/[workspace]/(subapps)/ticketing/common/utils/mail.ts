@@ -140,30 +140,32 @@ export async function sendTrackMail(props: {
     );
     const title = subject;
     const content = html`<ul style="list-style: none; padding: 0; margin: 0;">
-        ${tracks
-          .map(({title, oldValue, value}, index) => {
-            if (title === 'comment.note') return '';
-            const isLast = index === tracks.length - 1;
-            return html`<li
-                style=" display: flex; align-items: center; padding: 12px 0; font-size: 14px; color: #4a5568; ${!isLast
-                  ? 'border-bottom: 1px solid #e2e8f0;'
-                  : ''}">
-                <span style=" font-weight: 600; color: #2d3748; "
-                  >${title}</span
-                >
-                <span
-                  style=" color: #38a169; font-weight: 600; margin-left: auto; display: flex; align-items: center; ">
-                  ${oldValue
-                    ? html`<span
-                          style=" color: #e53e3e; text-decoration: line-through; margin-right: 6px; font-weight: 600; "
-                          >${oldValue}</span
-                        >&rArr;`
-                    : ''}
-                  ${value}
-                </span>
-              </li>`;
-          })
-          .join('')}
+        ${(
+          await Promise.all(
+            tracks.map(async ({title, oldValue, value}, index) => {
+              if (title === 'comment.note') return '';
+              const isLast = index === tracks.length - 1;
+              return html`<li
+                  style=" display: flex; align-items: center; padding: 12px 0; font-size: 14px; color: #4a5568; ${!isLast
+                    ? 'border-bottom: 1px solid #e2e8f0;'
+                    : ''}">
+                  <span style=" font-weight: 600; color: #2d3748; "
+                    >${await t(title)}</span
+                  >
+                  <span
+                    style=" color: #38a169; font-weight: 600; margin-left: auto; display: flex; align-items: center; ">
+                    ${oldValue
+                      ? html`<span
+                            style=" color: #e53e3e; text-decoration: line-through; margin-right: 6px; font-weight: 600; "
+                            >${await t(oldValue)}</span
+                          >&rArr;`
+                      : ''}
+                    ${await t(value)}
+                  </span>
+                </li>`;
+            }),
+          )
+        ).join('')}
       </ul>`;
 
     const doc = await generateHTML({
