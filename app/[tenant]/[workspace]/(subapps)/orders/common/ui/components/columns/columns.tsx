@@ -24,7 +24,7 @@ export const OrderColumns = [
       const {status, variant} = getStatus(row.statusSelect, row.deliveryState);
       return (
         <Chip
-          className="font-normal text-sm"
+          className="font-normal text-[0.625rem]"
           value={i18n.t(status)}
           variant={variant}
         />
@@ -49,6 +49,8 @@ export const OrderColumns = [
     label: i18n.t('Total ATI'),
     getter: (row: any) => row.inTaxTotal,
     mobile: true,
-    content: (row: any) => row.inTaxTotal,
+    content: (row: any) => (
+      <span className="font-medium">{row.inTaxTotal}</span>
+    ),
   },
 ];

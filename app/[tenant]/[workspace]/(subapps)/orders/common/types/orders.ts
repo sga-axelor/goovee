@@ -36,6 +36,7 @@ export type SaleOrder = {
   productName: string;
   price: number;
   discountAmount: number;
+  priceDiscounted: number;
   deliveredQty: string;
   product?: Product;
   qty: number;

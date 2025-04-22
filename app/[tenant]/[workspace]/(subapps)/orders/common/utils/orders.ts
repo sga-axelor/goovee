@@ -10,13 +10,13 @@ export function getStatus(
   deliveryState: number,
 ): {
   status: string;
-  variant: 'success' | 'purple' | 'yellow' | 'default';
+  variant: 'success' | 'purple' | 'yellow' | 'primary' | 'default';
 } {
   if (statusSelect === ORDER_STATUS.CONFIRMED) {
     if (deliveryState === ORDER_DELIVERY_STATUS.DELIVERED) {
       return {
         status: ORDER_TYPE.DELIVERED,
-        variant: 'purple',
+        variant: 'primary',
       };
     }
     return {

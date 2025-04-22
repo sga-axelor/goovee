@@ -4,7 +4,7 @@ import React from 'react';
 import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Separator, Button, Tag} from '@/ui/components';
+import {Separator, Button, Chip} from '@/ui/components';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
@@ -26,28 +26,31 @@ export const Informations = ({
   );
   return (
     <>
-      <div className="bg-card text-card-foreground flex md:block flex-col rounded-lg p-4 md:p-6">
+      <div className="bg-card text-card-foreground flex md:block flex-col rounded-lg px-6 py-4">
         <h4 className="text-xl font-medium mb-0">{i18n.t('Informations')}</h4>
-        <Separator className="my-1" />
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-            <h5 className="text-lg font-semibold mb-0">{i18n.t('Status')}:</h5>
-            <Tag variant={variant}>{i18n.t(status)}</Tag>
-            <div></div>
+        <Separator className="my-2" />
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <h5 className="text-sm font-medium mb-0">{i18n.t('Status')}:</h5>
+            <Chip
+              value={i18n.t(status)}
+              className="font-normal text-[0.625rem] px-2 py-1"
+              variant={variant}
+            />
           </div>
           <div className="flex items-center gap-2">
-            <h5 className="text-lg font-semibold mb-0 pr-1">
+            <h5 className="text-sm font-medium mb-0">
               {i18n.t('Created on')}:
             </h5>
-            <p>{createdOn}</p>
+            <p className="text-sm">{createdOn}</p>
           </div>
           <div className="flex items-center gap-2">
-            <h5 className="text-lg font-semibold mb-0 pr-1">
+            <h5 className="text-sm font-medium mb-0">
               {i18n.t('Shipping method')}:
             </h5>
             <p>{shipmentMode?.name}</p>
           </div>
-          {showShippingLink && (
+          {showShippingLink && false && (
             <div className="flex items-center gap-2">
               <p className="underline text-palette-blue-dark">
                 {i18n.t('Shipping link to follow the delivery path')}
@@ -55,7 +58,7 @@ export const Informations = ({
             </div>
           )}
           {orderReport && (
-            <div className="flex">
+            <div className="flex mt-2">
               <Button
                 asChild
                 variant="outline"

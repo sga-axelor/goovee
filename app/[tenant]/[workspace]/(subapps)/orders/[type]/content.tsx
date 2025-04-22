@@ -37,26 +37,24 @@ const Content = ({orders, pageInfo, orderType}: ContentProps) => {
     );
 
   return (
-    <>
-      <Container title={i18n.t('Orders')}>
-        <NavView
-          items={ORDER_TAB_ITEMS}
-          activeTab={ORDER_TAB_ITEMS.find(item => item.href === orderType)!.id}
-          onTabChange={handleTabChange}>
-          <div className="flex flex-col gap-4">
-            <TableList
-              columns={OrderColumns}
-              rows={sortedOrders}
-              sort={ordersSortOrder}
-              onSort={toggleOrdersSortOrder}
-              onRowClick={handleClick}
-              pageInfo={pageInfo}
-              pageParamKey={URL_PARAMS.page}
-            />
-          </div>
-        </NavView>
-      </Container>
-    </>
+    <Container title={i18n.t('Orders')}>
+      <NavView
+        items={ORDER_TAB_ITEMS}
+        activeTab={ORDER_TAB_ITEMS.find(item => item.href === orderType)!.id}
+        onTabChange={handleTabChange}>
+        <div className="flex flex-col gap-4">
+          <TableList
+            columns={OrderColumns}
+            rows={sortedOrders}
+            sort={ordersSortOrder}
+            onSort={toggleOrdersSortOrder}
+            onRowClick={handleClick}
+            pageInfo={pageInfo}
+            pageParamKey={URL_PARAMS.page}
+          />
+        </div>
+      </NavView>
+    </Container>
   );
 };
 export default Content;
