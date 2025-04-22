@@ -36,11 +36,11 @@ const findGeneralTranslations = cache(async function findGeneralTranslations(
   const lang = findLocaleLanguage(locale);
 
   const readwritecache = async (l: string) => {
-    if (tcache[lang]) {
-      return tcache[lang];
+    if (tcache[l]) {
+      return tcache[l];
     } else {
       const result = await readFile(l);
-      tcache[lang] = result;
+      tcache[l] = result;
       return result;
     }
   };
