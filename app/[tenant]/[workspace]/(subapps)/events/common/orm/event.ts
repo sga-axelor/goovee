@@ -24,11 +24,6 @@ import {formatDateToISOString, formatToTwoDigits} from '@/utils/date';
 import {and} from '@/utils/orm';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  validate,
-  withSubapp,
-  withWorkspace,
-} from '@/subapps/events/common/actions/validation';
 import {EVENT_STATUS, EVENT_TYPE} from '@/subapps/events/common/constants';
 import {findProductsFromWS} from '@/subapps/events/common/orm/product';
 
@@ -69,15 +64,12 @@ const buildEventTypeFilters = ({
     case EVENT_TYPE.ACTIVE:
       return {
         OR: [
+          {eventEndDateTime: {ge: currentDateTime}},
+          {eventStartDateTime: {ge: currentDateTime}},
           {
-            eventStartDateTime: {le: currentDateTime},
-            eventEndDateTime: {ge: currentDateTime},
+            eventStartDateTime: {ge: todayStartTime},
+            eventAllDay: true,
           },
-          {
-            eventStartDateTime: {between: [todayStartTime, currentDateTime]},
-            eventAllDay: {eq: true},
-          },
-          {eventStartDateTime: {gt: currentDateTime}},
         ],
       };
     case EVENT_TYPE.UPCOMING:
@@ -139,18 +131,19 @@ export async function findEvent({
 
   const c = await manager.getClient(tenantId);
 
+  const privateFilter = await filterPrivate({user, tenantId});
   const event = await c.aOSPortalEvent
     .findOne({
       where: and<AOSPortalEvent>([
         id && {id},
         slug ? {slug} : {slug: {ne: null}},
-        await filterPrivate({user, tenantId}),
+        privateFilter,
         {OR: [{archived: false}, {archived: null}]},
         {
           statusSelect: EVENT_STATUS.PUBLISHED,
           eventCategorySet: and<AOSPortalEventCategory>([
             {workspace: {url: workspace.url}},
-            await filterPrivate({user, tenantId}),
+            privateFilter,
           ]),
         },
       ]),
@@ -338,17 +331,6 @@ export async function findEvents({
     return {events: [], pageInfo: {}};
   }
 
-  const workspaceURL = workspace.url;
-
-  const result = await validate([
-    withWorkspace(workspaceURL, tenantId, {checkAuth: false}),
-    withSubapp(SUBAPP_CODES.events, workspaceURL, tenantId),
-  ]);
-
-  if (result.error) {
-    return result;
-  }
-
   if (onlyRegisteredEvent && !user) {
     return {events: [], pageInfo: {}};
   }
@@ -390,6 +372,7 @@ export async function findEvents({
   }));
   const currentDateTime = dayjs().toISOString();
   const todayStartTime = dayjs().startOf(DAY).toISOString();
+  const privateFilter = await filterPrivate({user, tenantId});
   const whereClause = and<AOSPortalEvent>([
     {
       statusSelect: EVENT_STATUS.PUBLISHED,
@@ -397,10 +380,10 @@ export async function findEvents({
       eventCategorySet: and<AOSPortalEventCategory>([
         {workspace: {id: workspace?.id}},
         categoryids?.length && {id: {in: categoryids}},
-        await filterPrivate({user, tenantId}),
+        privateFilter,
       ]),
     },
-    await filterPrivate({user, tenantId}),
+    privateFilter,
     ids?.length && {id: {in: ids}},
     search && {eventTitle: {like: `%${search}%`}},
     {OR: [{archived: false}, {archived: null}]},
