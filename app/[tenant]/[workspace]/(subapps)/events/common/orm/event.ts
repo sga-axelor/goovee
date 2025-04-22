@@ -418,45 +418,37 @@ export async function findEvents({
         id: true,
         eventTitle: true,
         eventCategorySet: {select: {id: true, name: true, color: true}},
-        eventImage: {id: true, filePath: true},
+        eventImage: {id: true},
         eventDescription: true,
         eventStartDateTime: true,
         eventEndDateTime: true,
         eventAllDay: true,
-        eventAllowRegistration: true,
-        eventAllowMultipleRegistrations: true,
-        eventProduct: {id: true, name: true, salePrice: true},
         registrationDeadlineDateTime: true,
-        registrationList: {
-          select: {
-            participantList: {
-              where: {...(user?.email ? {emailAddress: user?.email} : {})},
-              select: {emailAddress: true},
+        ...(user?.email && {
+          registrationList: {
+            select: {
+              participantList: {
+                where: {emailAddress: user.email},
+                select: {emailAddress: true},
+              } as {select: {emailAddress: true}},
             },
           },
-        },
+        }),
         slug: true,
-        isPublic: true,
-        isHidden: true,
-        isLoginNotNeeded: true,
       },
-    } as any)
+    })
     .then(events =>
       events.map(event => ({
         ...event,
         isRegistered: user?.email
           ? Boolean(
-              event.registrationList.find(
+              event.registrationList?.find(
                 (r: any) => r.participantList.length > 0,
               ),
             )
           : false,
       })),
-    )
-    .catch((err: any) => {
-      console.log(err);
-      return [];
-    });
+    );
 
   const pageInfo = getPageInfo({
     count: events?.[0]?._count,

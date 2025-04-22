@@ -1,33 +1,32 @@
 'use client';
 
-import {useState, useEffect, useMemo} from 'react';
-import {useRouter} from 'next/navigation';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
+import {useEffect, useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {convertDateToISO8601} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {useSearchParams} from '@/ui/hooks';
+import {DEFAULT_PAGE, KEY, SUBAPP_CODES, URL_PARAMS} from '@/constants';
 import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
 import {Pagination} from '@/ui/components';
-import {URL_PARAMS, DEFAULT_PAGE, KEY, SUBAPP_CODES} from '@/constants';
-import {useResponsive} from '@/ui/hooks';
+import {useResponsive, useSearchParams} from '@/ui/hooks';
+import {convertDateToISO8601} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Category, Event} from '@/subapps/events/common/ui/components';
 import {
-  EventSelector,
-  EventSearch,
-  TabsList,
-  EventCard,
-} from '@/subapps/events/common/ui/components';
-import {
+  EVENTS,
+  MY_REGISTRATION_TAB_ITEMS,
   MY_REGISTRATIONS,
   NO_RESULT_FOUND,
-  MY_REGISTRATION_TAB_ITEMS,
-  EVENTS,
 } from '@/subapps/events/common/constants';
+import type {Category, ListEvent} from '@/subapps/events/common/ui/components';
+import {
+  EventCard,
+  EventSearch,
+  EventSelector,
+  TabsList,
+} from '@/subapps/events/common/ui/components';
 import {getMyRegistrationTabItems} from '@/subapps/events/common/utils';
 
 type TabItem = (typeof MY_REGISTRATION_TAB_ITEMS)[number];
@@ -48,7 +47,7 @@ export const MyRegisteredEvents = ({
   query?: string;
   workspace: PortalWorkspace;
   onlyRegisteredEvent: boolean;
-  events: Event[];
+  events: ListEvent[];
   pageInfo: any;
   eventType: string;
 }) => {

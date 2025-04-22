@@ -15,7 +15,7 @@ import {convertDateToISO8601} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import {EVENT_TAB_ITEMS, EVENT_TYPE} from '@/subapps/events/common/constants';
-import type {Category, Event} from '@/subapps/events/common/ui/components';
+import type {Category, ListEvent} from '@/subapps/events/common/ui/components';
 import {
   EventCard,
   EventSelector,
@@ -95,7 +95,7 @@ export function EventTabs({
   eventType,
 }: {
   pageInfo: any;
-  events: Event[];
+  events: ListEvent[];
   eventType: string;
 }) {
   const res: any = useResponsive();

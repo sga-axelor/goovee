@@ -3,7 +3,7 @@
 // ---- LOCAL IMPORTS ---- //
 import {
   Category,
-  Event,
+  ListEvent,
   MyRegisteredEvents,
 } from '@/subapps/events/common/ui/components';
 
@@ -13,7 +13,7 @@ type ContentProps = {
   date: any;
   query?: string;
   workspace: any;
-  events: Event[];
+  events: ListEvent[];
   pageInfo: any;
   eventType: string;
 };

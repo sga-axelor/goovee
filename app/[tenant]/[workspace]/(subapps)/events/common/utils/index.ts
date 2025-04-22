@@ -5,23 +5,23 @@ import icalgen, {
 } from 'ical-generator';
 
 // ---- CORE IMPORTS ---- //
-import type {ErrorResponse} from '@/types/action';
-import {isSameDay} from '@/utils/date';
 import {Participant} from '@/types';
+import type {ErrorResponse} from '@/types/action';
 import {extractCustomData} from '@/ui/form';
+import {isSameDay} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Event} from '@/subapps/events/common/ui/components';
-import {endOfDay} from 'date-fns';
 import {
   EVENT_TAB_ITEMS,
   MY_REGISTRATION_TAB_ITEMS,
 } from '@/subapps/events/common/constants';
+import type {ListEvent} from '@/subapps/events/common/ui/components';
+import {endOfDay} from 'date-fns';
 
-export const datesBetweenTwoDates = (data: Event[]): Date[] => {
+export const datesBetweenTwoDates = (data: ListEvent[]): Date[] => {
   const Dates: Date[] = [];
 
-  data.forEach((event: Event) => {
+  data.forEach(event => {
     const startDate = new Date(event.eventStartDateTime);
 
     if (event.eventAllDay) {

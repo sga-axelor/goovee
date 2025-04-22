@@ -1,5 +1,3 @@
-import {PortalWorkspace} from '@/types';
-
 export interface Event {
   key: string | undefined;
   id: string;
@@ -63,5 +61,30 @@ export interface CategoriesProps {
   eventsCategories: Category[];
 }
 export interface EventCardProps {
-  event: Event;
+  event: ListEvent;
+}
+
+export interface ListEvent {
+  isRegistered: boolean;
+  id: string;
+  version: number;
+  eventTitle?: string;
+  eventCategorySet?: {
+    id: string;
+    version: number;
+    name?: string;
+    color?: string;
+  }[];
+  eventStartDateTime?: Date;
+  eventAllDay?: boolean;
+  eventEndDateTime?: Date;
+  registrationDeadlineDateTime?: Date;
+  eventImage?: {id: string; version: number};
+  eventDescription?: string;
+  registrationList?: {
+    id: string;
+    version: number;
+    participantList?: {id: string; version: number; emailAddress?: string}[];
+  }[];
+  slug?: string;
 }

@@ -3,7 +3,7 @@ export {Navbar} from './navbar';
 export {ThemeProvider} from './theme-provider';
 
 export {EventCalendar, EventTabs} from './events';
-export type {Event} from './events';
+export type {Event, ListEvent} from './events';
 export type {EventsProps} from './events';
 export type {Category} from './events';
 export type {CategoriesProps} from './events';
