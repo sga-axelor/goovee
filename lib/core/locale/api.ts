@@ -55,7 +55,7 @@ const findGeneralTranslations = cache(async function findGeneralTranslations(
   });
 
   if (keys) {
-    keys.reduce(
+    return keys.reduce(
       (a, k) => {
         a[k] = data[k];
         return a;
