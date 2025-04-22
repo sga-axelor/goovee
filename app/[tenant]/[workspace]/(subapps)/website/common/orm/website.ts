@@ -73,6 +73,7 @@ export async function findWebsiteBySlug({
       ],
     },
     select: {
+      name: true,
       slug: true,
       isGuestUserAllow: true,
       header: {
@@ -175,6 +176,9 @@ export async function findWebsitePageBySlug({
     },
     select: {
       title: true,
+      seoTitle: true,
+      seoDescription: true,
+      seoKeyword: true,
       contentLines: {
         select: {
           sequence: true,

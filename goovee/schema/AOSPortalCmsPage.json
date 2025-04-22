@@ -14,6 +14,18 @@
     },
     {
       "type": "String",
+      "name": "seoTitle"
+    },
+    {
+      "type": "String",
+      "name": "seoKeyword"
+    },
+    {
+      "type": "String",
+      "name": "seoDescription"
+    },
+    {
+      "type": "String",
       "name": "statusSelect"
     },
     {

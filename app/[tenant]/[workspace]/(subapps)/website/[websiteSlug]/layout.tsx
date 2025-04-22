@@ -11,9 +11,37 @@ import {findWebsiteBySlug} from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/ui/components';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
 
-export async function generateMetadata() {
+export async function generateMetadata({
+  params,
+}: {
+  params: {
+    tenant: string;
+    workspace: string;
+    websiteSlug: string;
+  };
+}) {
+  const {workspaceURL} = workspacePathname(params);
+  const {tenant, websiteSlug} = params;
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const website = await findWebsiteBySlug({
+    websiteSlug,
+    workspaceURL,
+    user,
+    tenantId: tenant,
+  });
+
+  if (!website) {
+    return null;
+  }
+
   return {
-    title: await t('Website'),
+    title: {
+      template: `%s | ${website.name}`,
+      default: 'Page  ',
+    },
   };
 }
 
