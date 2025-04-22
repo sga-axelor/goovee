@@ -1,73 +1,45 @@
 'use client';
 
-import {useMemo, useState} from 'react';
-import Link from 'next/link';
-import {useRouter} from 'next/navigation';
-import {useSession} from 'next-auth/react';
 import {endOfDay, isPast} from 'date-fns';
+import Link from 'next/link';
+import {useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {convertDateToISO8601} from '@/utils/date';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {HeroSearch, Search, Pagination} from '@/ui/components';
-import {
-  BANNER_DESCRIPTION,
-  BANNER_TITLES,
-  IMAGE_URL,
-  SUBAPP_CODES,
-  URL_PARAMS,
-} from '@/constants';
-import {useResponsive, useSearchParams, useToast} from '@/ui/hooks';
+import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
 import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
+import {Pagination} from '@/ui/components';
+import {useResponsive, useSearchParams} from '@/ui/hooks';
+import {convertDateToISO8601} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Event, Category} from '@/subapps/events/common/ui/components';
+import {EVENT_TAB_ITEMS, EVENT_TYPE} from '@/subapps/events/common/constants';
+import type {Category, Event} from '@/subapps/events/common/ui/components';
 import {
-  EventSelector,
   EventCard,
+  EventSelector,
   TabsList,
 } from '@/subapps/events/common/ui/components';
-import {SearchItem} from '@/app/[tenant]/[workspace]/(subapps)/events/common/ui/components';
-import {getAllEvents} from '@/subapps/events/common/actions/actions';
 import {getEventsTabItems} from '@/subapps/events/common/utils';
-import {EVENT_TAB_ITEMS, EVENT_TYPE} from '@/subapps/events/common/constants';
 
 type TabItem = (typeof EVENT_TAB_ITEMS)[number];
-export const Events = ({
+export const EventCalendar = ({
   categories,
-  events,
   category,
   dateOfEvent,
   workspace,
-  pageInfo: {page, pages, hasPrev, hasNext} = {},
-  eventType,
 }: {
   categories: Category[];
-  events: Event[];
   category: any[];
   dateOfEvent: string;
   workspace: PortalWorkspace;
-  pageInfo: any;
-  eventType: string;
 }) => {
-  const res: any = useResponsive();
-  const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
   const {update} = useSearchParams();
-  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
-  const router = useRouter();
-
-  const {data: session} = useSession();
-  const {user} = session || {};
-
-  const imageURL = workspace?.config?.eventHeroBgImage?.id
-    ? `url(${`${workspaceURL}/${SUBAPP_CODES.events}/api/hero/background`})`
-    : IMAGE_URL;
-  const {toast} = useToast();
 
   const updateCateg = (category: Category) => {
     const updatedCategories = selectedCategory.some(
@@ -105,6 +77,32 @@ export const Events = ({
     update(toUpdate, {scroll: false});
   };
 
+  return (
+    <EventSelector
+      selectedCategories={selectedCategory}
+      date={date}
+      setDate={updateDate}
+      updateCateg={updateCateg}
+      categories={categories}
+      workspace={workspace}
+    />
+  );
+};
+
+export function EventTabs({
+  pageInfo: {page, pages, hasPrev, hasNext} = {},
+  events,
+  eventType,
+}: {
+  pageInfo: any;
+  events: Event[];
+  eventType: string;
+}) {
+  const res: any = useResponsive();
+  const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
+  const {update} = useSearchParams();
+  const {workspaceURI} = useWorkspace();
+
   const handlePreviousPage = () => {
     if (!hasPrev) return;
     update([{key: URL_PARAMS.page, value: Math.max(Number(page) - 1, 1)}]);
@@ -119,113 +117,49 @@ export const Events = ({
     update([{key: URL_PARAMS.page, value: page}]);
   };
 
-  const handlClick = (slug: string | number) => {
-    router.push(`${workspaceURI}/${SUBAPP_CODES.events}/${slug}`);
-  };
-  const renderSearch = () => (
-    <Search
-      findQuery={async ({query}: any) => {
-        try {
-          const response: any = await getAllEvents({
-            workspace,
-            user,
-            search: query,
-          });
-          if (response?.error) {
-            toast({
-              variant: 'destructive',
-              description: i18n.t(
-                response.error || 'Something went wrong while searching!',
-              ),
-            });
-            return [];
-          }
-
-          return response.events || [];
-        } catch (error) {
-          toast({
-            variant: 'destructive',
-            description: i18n.t('Something went wrong while searching!'),
-          });
-          return [];
-        }
-      }}
-      renderItem={SearchItem}
-      searchKey="eventTitle"
-      onItemClick={handlClick}
-    />
-  );
-
   const TAB_ITEMS = useMemo(() => getEventsTabItems(large), [large]);
 
   const handleTabChange = (t: TabItem) => {
     update([{key: 'type', value: t.label}]);
   };
-
   return (
-    <>
-      <HeroSearch
-        title={
-          workspace?.config?.eventHeroTitle || i18n.t(BANNER_TITLES.events)
-        }
-        description={
-          workspace?.config?.eventHeroDescription || i18n.t(BANNER_DESCRIPTION)
-        }
-        image={imageURL}
-        background={workspace?.config?.eventHeroOverlayColorSelect || 'default'}
-        blendMode={
-          workspace?.config?.eventHeroOverlayColorSelect ? 'overlay' : 'normal'
-        }
-        renderSearch={renderSearch}
-      />
-      <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
-        <EventSelector
-          selectedCategories={selectedCategory}
-          date={date}
-          setDate={updateDate}
-          updateCateg={updateCateg}
-          categories={categories}
-          workspace={workspace}
-        />
-        <TabsList
-          activeTab={TAB_ITEMS.find(item => item.label === eventType)!.id}
-          items={TAB_ITEMS}
-          onTabChange={handleTabChange}
-          controlled>
-          <>
-            <div className="flex flex-col space-y-4 w-full">
-              {events.length ? (
-                events.map((event, i) => (
-                  <Link
-                    href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`}
-                    key={event.slug}
-                    passHref>
-                    <EventCard event={event} key={event.id} />
-                  </Link>
-                ))
-              ) : (
-                <>
-                  <h5 className="text-lg font-bold">{i18n.t('No events')}</h5>
-                  <p>{i18n.t('There are no events')}</p>
-                </>
-              )}
-              <div className="w-full mt-10 flex items-center justify-center ml-auto">
-                {pages > 1 && (
-                  <Pagination
-                    page={page}
-                    pages={pages}
-                    disablePrev={!hasPrev}
-                    disableNext={!hasNext}
-                    onPrev={handlePreviousPage}
-                    onNext={handleNextPage}
-                    onPage={handlePage}
-                  />
-                )}
-              </div>
-            </div>
-          </>
-        </TabsList>
-      </div>
-    </>
+    <TabsList
+      activeTab={TAB_ITEMS.find(item => item.label === eventType)!.id}
+      items={TAB_ITEMS}
+      onTabChange={handleTabChange}
+      controlled>
+      <>
+        <div className="flex flex-col space-y-4 w-full">
+          {events.length ? (
+            events.map((event, i) => (
+              <Link
+                href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`}
+                key={event.slug}
+                passHref>
+                <EventCard event={event} key={event.id} />
+              </Link>
+            ))
+          ) : (
+            <>
+              <h5 className="text-lg font-bold">{i18n.t('No events')}</h5>
+              <p>{i18n.t('There are no events')}</p>
+            </>
+          )}
+          <div className="w-full mt-10 flex items-center justify-center ml-auto">
+            {pages > 1 && (
+              <Pagination
+                page={page}
+                pages={pages}
+                disablePrev={!hasPrev}
+                disableNext={!hasNext}
+                onPrev={handlePreviousPage}
+                onNext={handleNextPage}
+                onPage={handlePage}
+              />
+            )}
+          </div>
+        </div>
+      </>
+    </TabsList>
   );
-};
+}

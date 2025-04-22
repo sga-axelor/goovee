@@ -2,7 +2,7 @@ export {Logo} from './logo';
 export {Navbar} from './navbar';
 export {ThemeProvider} from './theme-provider';
 
-export {Events} from './events';
+export {EventCalendar, EventTabs} from './events';
 export type {Event} from './events';
 export type {EventsProps} from './events';
 export type {Category} from './events';
