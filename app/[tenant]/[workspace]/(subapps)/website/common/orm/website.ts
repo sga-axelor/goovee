@@ -3,6 +3,67 @@ import {filterPrivate} from '@/orm/filter';
 import {manager, type Tenant} from '@/tenant';
 import type {PortalWorkspace, User, Website, WebsitePage} from '@/types';
 
+export async function findAllMainWebsites({
+  workspaceURL,
+  user,
+  tenantId,
+  locale,
+}: {
+  workspaceURL: PortalWorkspace['url'];
+  user?: User;
+  tenantId: Tenant['id'];
+  locale?: string;
+}) {
+  if (!(workspaceURL && tenantId)) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) {
+    return [];
+  }
+
+  const mainWebsites = await client.aOSPortalCmsMainWebSite.find({
+    where: {
+      workspaces: {
+        url: workspaceURL,
+      },
+      AND: [
+        await filterPrivate({tenantId, user}),
+        {OR: [{archived: false}, {archived: null}]},
+      ],
+    },
+    select: {
+      name: true,
+      defaultWebsite: {
+        slug: true,
+      },
+      languages: {
+        where: {
+          ...(locale ? {language: locale} : {}),
+        },
+        select: {
+          language: true,
+          website: {
+            slug: true,
+          },
+        },
+      },
+    },
+  });
+
+  return mainWebsites
+    .map((website: any) => {
+      if (website?.languages?.length) {
+        return website?.languages?.[0]?.website;
+      } else {
+        return website?.defaultWebsite || null;
+      }
+    })
+    .filter(Boolean);
+}
+
 export async function findAllWebsites({
   workspaceURL,
   user,
