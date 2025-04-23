@@ -23,6 +23,7 @@ import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {EventCardProps} from '@/subapps/events/common/ui/components/events/types';
 import styles from './event-card.module.scss';
 import mainStyles from '@/subapps/events/styles.module.scss';
+import {Skeleton} from '@/ui/components/skeleton';
 
 export const EventCard = ({event}: EventCardProps) => {
   const {workspaceURI} = useWorkspace();
@@ -94,3 +95,36 @@ export const EventCard = ({event}: EventCardProps) => {
     </Card>
   );
 };
+
+export function EventCardSkeleton() {
+  return (
+    <Card className="p-2 overflow-hidden cursor-pointer rounded-2xl flex gap-6 h-fit border-none shadow-none ">
+      {/* Image skeleton */}
+      <Skeleton className="w-[150px] h-[150px] rounded-lg flex-shrink-0" />
+
+      <div className="flex w-full gap-10 py-2">
+        <div className="flex flex-col flex-1 space-y-3">
+          {/* Title */}
+          <Skeleton className="h-5 w-1/2" />
+
+          {/* Date & time */}
+          <Skeleton className="h-4 w-3/4" />
+
+          {/* Tag */}
+          <Skeleton className="h-5 w-16 rounded-2xl" />
+
+          {/* Description */}
+          <div className="space-y-2 pt-1">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+          </div>
+        </div>
+
+        {/* Arrow button */}
+        <div className="hidden lg:flex items-center justify-center pr-2">
+          <Skeleton className="h-10 w-10 rounded-lg" />
+        </div>
+      </div>
+    </Card>
+  );
+}

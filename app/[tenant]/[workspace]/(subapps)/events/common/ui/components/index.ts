@@ -2,7 +2,7 @@ export {Logo} from './logo';
 export {Navbar} from './navbar';
 export {ThemeProvider} from './theme-provider';
 
-export {EventCalendar, EventTabs} from './events';
+export {EventCalendar, EventTabs, EventTabsContent} from './events';
 export type {Event, ListEvent} from './events';
 export type {EventsProps} from './events';
 export type {Category} from './events';
@@ -12,7 +12,7 @@ export {EventSelector} from './event-selector';
 export type {EventSelectorProps} from './event-selector';
 export {Calendar} from './calendar';
 
-export {EventCard} from './event-card';
+export {EventCard, EventCardSkeleton} from './event-card';
 
 export {EventDateCard} from './event-date-card';
 export type {EventDateCardProps} from './event-date-card';

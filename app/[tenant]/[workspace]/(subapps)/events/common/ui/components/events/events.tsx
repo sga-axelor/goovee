@@ -2,7 +2,7 @@
 
 import {endOfDay, isPast, isToday} from 'date-fns';
 import Link from 'next/link';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -18,6 +18,7 @@ import {EVENT_TAB_ITEMS, EVENT_TYPE} from '@/subapps/events/common/constants';
 import type {Category, ListEvent} from '@/subapps/events/common/ui/components';
 import {
   EventCard,
+  EventCardSkeleton,
   EventSelector,
   TabsList,
 } from '@/subapps/events/common/ui/components';
@@ -100,21 +101,51 @@ export const EventCalendar = ({
 };
 
 export function EventTabs({
-  pageInfo: {page, pages, hasPrev, hasNext} = {},
-  events,
   eventType,
   tabs,
+  children,
 }: {
-  pageInfo: any;
-  events: ListEvent[];
   eventType: string;
   tabs: {id: string; title: string; label: string}[];
+  children: React.ReactNode;
 }) {
   const res: any = useResponsive();
   const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
   const {update} = useSearchParams();
-  const {workspaceURI} = useWorkspace();
+  const [activeTab, setActiveTab] = useState<TabItem>(
+    () => tabs.find(t => t.label === eventType)!,
+  );
 
+  const TAB_ITEMS = useMemo(() => getTabItems(tabs, large), [tabs, large]);
+
+  const handleTabChange = (t: TabItem) => {
+    setActiveTab(t);
+    update([{key: 'type', value: t.label}]);
+  };
+
+  useEffect(() => {
+    setActiveTab(tabs.find(t => t.label === eventType)!);
+  }, [eventType, tabs]);
+  return (
+    <TabsList
+      activeTab={activeTab.id}
+      items={TAB_ITEMS}
+      onTabChange={handleTabChange}
+      controlled>
+      {activeTab.label === eventType ? children : <EventCardSkeleton />}
+    </TabsList>
+  );
+}
+
+export function EventTabsContent({
+  pageInfo: {page, pages, hasPrev, hasNext} = {},
+  events,
+}: {
+  pageInfo: any;
+  events: ListEvent[];
+}) {
+  const {workspaceURI} = useWorkspace();
+  const {update} = useSearchParams();
   const handlePreviousPage = () => {
     if (!hasPrev) return;
     update([{key: URL_PARAMS.page, value: Math.max(Number(page) - 1, 1)}]);
@@ -128,50 +159,36 @@ export function EventTabs({
   const handlePage = (page: string | number) => {
     update([{key: URL_PARAMS.page, value: page}]);
   };
-
-  const TAB_ITEMS = useMemo(() => getTabItems(tabs, large), [tabs, large]);
-
-  const handleTabChange = (t: TabItem) => {
-    update([{key: 'type', value: t.label}]);
-  };
   return (
-    <TabsList
-      activeTab={TAB_ITEMS.find(item => item.label === eventType)!.id}
-      items={TAB_ITEMS}
-      onTabChange={handleTabChange}
-      controlled>
-      <>
-        <div className="flex flex-col space-y-4 w-full">
-          {events.length ? (
-            events.map((event, i) => (
-              <Link
-                href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`}
-                key={event.slug}
-                passHref>
-                <EventCard event={event} key={event.id} />
-              </Link>
-            ))
-          ) : (
-            <>
-              <h5 className="text-lg font-bold">{i18n.t('No events')}</h5>
-              <p>{i18n.t('There are no events')}</p>
-            </>
-          )}
-          <div className="w-full mt-10 flex items-center justify-center ml-auto">
-            {pages > 1 && (
-              <Pagination
-                page={page}
-                pages={pages}
-                disablePrev={!hasPrev}
-                disableNext={!hasNext}
-                onPrev={handlePreviousPage}
-                onNext={handleNextPage}
-                onPage={handlePage}
-              />
-            )}
-          </div>
-        </div>
-      </>
-    </TabsList>
+    <div className="flex flex-col space-y-4 w-full">
+      {events.length ? (
+        events.map((event, i) => (
+          <Link
+            href={`${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`}
+            key={event.slug}
+            passHref>
+            <EventCard event={event} key={event.id} />
+          </Link>
+        ))
+      ) : (
+        <>
+          <h5 className="text-lg font-bold">{i18n.t('No events')}</h5>
+          <p>{i18n.t('There are no events')}</p>
+        </>
+      )}
+      <div className="w-full mt-10 flex items-center justify-center ml-auto">
+        {pages > 1 && (
+          <Pagination
+            page={page}
+            pages={pages}
+            disablePrev={!hasPrev}
+            disableNext={!hasNext}
+            onPrev={handlePreviousPage}
+            onNext={handleNextPage}
+            onPage={handlePage}
+          />
+        )}
+      </div>
+    </div>
   );
 }

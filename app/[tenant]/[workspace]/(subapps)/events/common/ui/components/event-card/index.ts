@@ -1,1 +1,1 @@
-export {EventCard} from './event-card';
+export {EventCard, EventCardSkeleton} from './event-card';

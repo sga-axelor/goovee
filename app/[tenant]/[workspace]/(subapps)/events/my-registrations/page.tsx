@@ -19,8 +19,10 @@ import {findEvents} from '@/subapps/events/common/orm/event';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {
   EventCalendar,
+  EventCardSkeleton,
   EventSearch,
   EventTabs,
+  EventTabsContent,
 } from '@/subapps/events/common/ui/components';
 import {PortalWorkspace, User} from '@/types';
 import {Skeleton} from '@/ui/components/skeleton';
@@ -77,23 +79,25 @@ export default async function Page(context: any) {
             />
           </Suspense>
         </div>
-        <Suspense fallback={<Skeleton className="h-[437px]" />}>
-          <div>
-            <div className="mb-4 h-[3.4rem]">
-              <EventSearch query={query} />
-            </div>
-            <EventList
-              user={user}
-              workspace={workspace}
-              tenant={tenant}
-              type={type}
-              page={page}
-              date={date}
-              category={category}
-              query={query}
-            />
+        <div>
+          <div className="mb-4 h-[3.4rem]">
+            <EventSearch query={query} />
           </div>
-        </Suspense>
+          <EventTabs eventType={type} tabs={MY_REGISTRATION_TAB_ITEMS}>
+            <Suspense fallback={<EventCardSkeleton />}>
+              <EventList
+                user={user}
+                workspace={workspace}
+                tenant={tenant}
+                type={type}
+                page={page}
+                date={date}
+                category={category}
+                query={query}
+              />
+            </Suspense>
+          </EventTabs>
+        </div>
       </div>
     </main>
   );
@@ -163,12 +167,5 @@ async function EventList({
     onlyRegisteredEvent: true,
   }).then(clone);
 
-  return (
-    <EventTabs
-      pageInfo={pageInfo}
-      events={events}
-      eventType={type}
-      tabs={MY_REGISTRATION_TAB_ITEMS}
-    />
-  );
+  return <EventTabsContent pageInfo={pageInfo} events={events} />;
 }

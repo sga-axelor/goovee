@@ -16,7 +16,12 @@ import {
 } from '@/subapps/events/common/constants';
 import {findEvents} from '@/subapps/events/common/orm/event';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
-import {EventCalendar, EventTabs} from '@/subapps/events/common/ui/components';
+import {
+  EventCalendar,
+  EventCardSkeleton,
+  EventTabs,
+  EventTabsContent,
+} from '@/subapps/events/common/ui/components';
 import Hero from './hero';
 import {Suspense} from 'react';
 import {Skeleton} from '@/ui/components/skeleton';
@@ -66,17 +71,19 @@ export default async function Page(context: any) {
             category={category}
           />
         </Suspense>
-        <Suspense fallback={<Skeleton className="h-[437px]" />}>
-          <EventList
-            user={user}
-            workspace={workspace}
-            tenant={tenant}
-            type={type}
-            page={page}
-            date={date}
-            category={category}
-          />
-        </Suspense>
+        <EventTabs eventType={type} tabs={EVENT_TAB_ITEMS}>
+          <Suspense fallback={<EventCardSkeleton />}>
+            <EventList
+              user={user}
+              workspace={workspace}
+              tenant={tenant}
+              type={type}
+              page={page}
+              date={date}
+              category={category}
+            />
+          </Suspense>
+        </EventTabs>
       </div>
     </main>
   );
@@ -142,12 +149,5 @@ async function EventList({
     user,
   }).then(clone);
 
-  return (
-    <EventTabs
-      pageInfo={pageInfo}
-      events={events}
-      eventType={type}
-      tabs={EVENT_TAB_ITEMS}
-    />
-  );
+  return <EventTabsContent pageInfo={pageInfo} events={events} />;
 }

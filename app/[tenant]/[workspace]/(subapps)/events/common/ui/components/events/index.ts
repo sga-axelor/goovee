@@ -1,4 +1,4 @@
-export {EventCalendar, EventTabs} from './events';
+export {EventCalendar, EventTabs, EventTabsContent} from './events';
 export type {
   Event,
   EventsProps,
