@@ -20,9 +20,12 @@ import {
   updatePartnerAddress,
   deletePartnerAddress,
 } from '@/orm/address';
-import {PartnerAddress} from '@/types';
+import {PartnerAddress, PartnerKey, User} from '@/types';
 import {manager} from '@/tenant';
-import {findByID} from '@/orm/record';
+import {getWhereClauseForEntity} from '@/utils/filters';
+
+// ---- LOCAL IMPORT ---- //
+import {findQuotation} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/orm/quotations';
 
 export const fetchCities = async ({
   countryId,
@@ -228,24 +231,24 @@ export async function confirmAddresses({
     };
   }
 
-  const {
-    error,
-    message,
-    data: modelRecord,
-  }: any = await findByID({
-    subapp: subapp.code,
-    id: record.id,
-    workspaceURL,
-    workspace,
-    tenantId,
-    withAuth: false,
-  });
+  let modelRecord;
 
-  if (error) {
-    return {
-      error: true,
-      message: await t(message || 'Record not found.'),
-    };
+  if (subAppCode === SUBAPP_CODES.quotations) {
+    const response = await getQuotationRecord({
+      id: record.id,
+      user,
+      tenantId,
+      workspaceURL,
+      subapp,
+    });
+
+    if (response.error) {
+      return {
+        error: true,
+        message: await t(response.message || 'Record not found.'),
+      };
+    }
+    modelRecord = response;
   }
 
   try {
@@ -271,13 +274,47 @@ export async function confirmAddresses({
       .update({data: reqBody})
       .then(clone)
       .catch(error => {
-        console.log('Error >>>', error);
+        console.error('Update error >>>', error);
       });
+
     return {success: true, data: result};
   } catch (error) {
+    console.error('Confirm Address error >>>', error);
     return {
       error: true,
       message: await t('Something went wrong while saving address!'),
     };
   }
+}
+
+async function getQuotationRecord({
+  id,
+  user,
+  tenantId,
+  workspaceURL,
+  subapp,
+}: {
+  id: string;
+  user: User;
+  tenantId: string;
+  workspaceURL: string;
+  subapp: {
+    role: string;
+    isContactAdmin: boolean;
+  };
+}) {
+  const {role, isContactAdmin} = subapp;
+  const quotationWhereClause = getWhereClauseForEntity({
+    user,
+    role,
+    isContactAdmin,
+    partnerKey: PartnerKey.CLIENT_PARTNER,
+  });
+
+  return await findQuotation({
+    id,
+    tenantId,
+    params: {where: quotationWhereClause},
+    workspaceURL,
+  });
 }
