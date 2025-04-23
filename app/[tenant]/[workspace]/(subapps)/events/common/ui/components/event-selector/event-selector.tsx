@@ -16,6 +16,8 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
+import {useResponsive} from '@/ui/hooks';
+import {RESPONSIVE_SIZES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import type {
@@ -34,6 +36,9 @@ export const EventSelector = ({
   selectedCategories = [],
   onlyRegisteredEvent = false,
 }: EventSelectorProps) => {
+  const res = useResponsive();
+  const small = RESPONSIVE_SIZES.some(x => res[x]);
+
   const selectCategory = (category: Category) => {
     updateCateg(category);
   };
@@ -45,7 +50,7 @@ export const EventSelector = ({
       setDate(undefined);
     }
   };
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(!small);
 
   return (
     <Card className="p-4 border-none shadow-none flex flex-col gap-2 md:flex-row lg:flex-col h-fit rounded-2xl">
