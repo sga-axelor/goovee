@@ -11,21 +11,6 @@ export const CATEGORIES = 'Categories';
 export const REGISTER_TO_EVENT = 'Register to the event';
 export const REGISTER_TAG = '#Registered';
 
-export const EVENTS_NAVBAR_LINKS = [
-  {
-    id: 1,
-    title: 'Events',
-    redirectTo: '/',
-    validate: false,
-  },
-  {
-    id: 2,
-    title: 'My registrations',
-    redirectTo: '/my-registrations/upcoming',
-    validate: true,
-  },
-];
-
 export const MY_REGISTRATIONS = 'My registrations';
 export const NO_EVENT = 'No event';
 export const NO_RESULT_FOUND = 'No events found';
@@ -40,6 +25,21 @@ export const EVENT_TYPE = {
   PAST: 'past',
   ACTIVE: 'active', // either ongoing or upcoming
 };
+
+export const EVENTS_NAVBAR_LINKS = [
+  {
+    id: 1,
+    title: 'Events',
+    redirectTo: '/',
+    validate: false,
+  },
+  {
+    id: 2,
+    title: 'My registrations',
+    redirectTo: `/my-registrations?type=${EVENT_TYPE.UPCOMING}`,
+    validate: true,
+  },
+];
 
 export const MY_REGISTRATION_TAB_ITEMS = [
   {

@@ -1,18 +1,39 @@
 'use client';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Command, CommandInput} from '@/ui/components/command';
+import {useSearchParams} from '@/ui/hooks';
+import {DEFAULT_PAGE, KEY, URL_PARAMS} from '@/constants';
 
-export const EventSearch = ({
-  search,
-  handleSearch,
-  onKeyDown,
-}: {
-  search: string;
-  onKeyDown: any;
-  handleSearch: (x: string) => void;
-}) => {
+export const EventSearch = ({query = ''}: {query: string}) => {
+  const [search, setSearch] = useState(query);
+  const {update} = useSearchParams();
+  const updateSearchQuery = () => {
+    update(
+      [
+        {key: URL_PARAMS.page, value: DEFAULT_PAGE},
+        {key: URL_PARAMS.query, value: search},
+      ],
+      {scroll: false},
+    );
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === KEY.enter) {
+      updateSearchQuery();
+    }
+  };
+  const handleSearch = (searchKey: string) => {
+    setSearch(searchKey);
+  };
+
+  useEffect(() => {
+    if (search.length === 0) {
+      updateSearchQuery();
+    }
+  }, [search]);
+
   return (
     <>
       <div className="w-full relative">

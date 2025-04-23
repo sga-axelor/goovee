@@ -181,22 +181,17 @@ export function isEventPrivate(event: {
 }): boolean {
   return !!event.isPrivate;
 }
-export const getMyRegistrationTabItems = (isLarge: boolean) => {
+export const getTabItems = (
+  tabs: {
+    id: string;
+    title: string;
+    label: string;
+  }[],
+  isLarge: boolean,
+) => {
   return isLarge
-    ? MY_REGISTRATION_TAB_ITEMS
-    : MY_REGISTRATION_TAB_ITEMS.map(item => ({
-        ...item,
-        title: item.title.split(' ')[0],
-      }));
-};
-
-export const getEventsTabItems = (isLarge: boolean) => {
-  return isLarge
-    ? EVENT_TAB_ITEMS
-    : EVENT_TAB_ITEMS.map(item => ({
-        ...item,
-        title: item.title.split(' ')[0],
-      }));
+    ? tabs
+    : tabs.map(item => ({...item, title: item.title.split(' ')[0]}));
 };
 
 export function hasRegistrationEnded(event: {

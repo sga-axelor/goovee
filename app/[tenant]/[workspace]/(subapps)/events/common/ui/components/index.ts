@@ -35,7 +35,6 @@ export {EventDetails} from './event-details';
 export {MobileMenuCategory} from './mobile-menu-category';
 export {SearchItem} from './search-item';
 export {EventNavbar} from './event-navbar';
-export {MyRegisteredEvents} from './my-registered-events';
 export {EventSearch} from './event-search';
 export {TabsList} from './tab-list';
 export {SubscriptionsView} from './subscriptions-view';

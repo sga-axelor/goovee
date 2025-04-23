@@ -5,25 +5,31 @@ import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import type {PortalWorkspace, User} from '@/types';
-import type {Tenant} from '@/lib/core/tenant';
 
 // ---- LOCAL IMPORTS ---- //
+import {t} from '@/lib/core/locale/server';
+import {Tenant} from '@/lib/core/tenant';
 import {
-  EVENT_TAB_ITEMS,
   EVENT_TYPE,
   LIMIT,
+  MY_REGISTRATION_TAB_ITEMS,
+  MY_REGISTRATIONS,
 } from '@/subapps/events/common/constants';
 import {findEvents} from '@/subapps/events/common/orm/event';
 import {findEventCategories} from '@/subapps/events/common/orm/event-category';
-import {EventCalendar, EventTabs} from '@/subapps/events/common/ui/components';
-import Hero from './hero';
-import {Suspense} from 'react';
+import {
+  EventCalendar,
+  EventSearch,
+  EventTabs,
+} from '@/subapps/events/common/ui/components';
+import {PortalWorkspace, User} from '@/types';
 import {Skeleton} from '@/ui/components/skeleton';
+import {Suspense} from 'react';
 
 export default async function Page(context: any) {
   const params = context?.params;
   const page = context?.searchParams?.page || 1;
+  const query = context?.searchParams?.query || '';
   const category = context?.searchParams?.category
     ? Array.isArray(context?.searchParams?.category)
       ? context?.searchParams?.category
@@ -31,11 +37,12 @@ export default async function Page(context: any) {
     : [];
 
   const date = context?.searchParams?.date || undefined;
-  const type = context?.searchParams?.type || EVENT_TYPE.ACTIVE;
+  const type = context?.searchParams?.type || EVENT_TYPE.UPCOMING;
 
-  if (!EVENT_TAB_ITEMS.some(item => item.label === type)) {
+  if (!MY_REGISTRATION_TAB_ITEMS.some(item => item.label === type)) {
     return notFound();
   }
+
   const {tenant} = params;
 
   const session = await getSession();
@@ -55,27 +62,37 @@ export default async function Page(context: any) {
 
   return (
     <main className="h-full w-full">
-      <Hero workspace={workspace} />
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
+        <div>
+          <h2 className="text-lg font-semibold text-start mb-4 h-[3.4rem]">
+            {await t(MY_REGISTRATIONS)}
+          </h2>
+          <Suspense fallback={<Skeleton className="h-[437px]" />}>
+            <Calendar
+              date={date}
+              user={user}
+              tenant={tenant}
+              workspace={workspace}
+              category={category}
+            />
+          </Suspense>
+        </div>
         <Suspense fallback={<Skeleton className="h-[437px]" />}>
-          <Calendar
-            date={date}
-            user={user}
-            tenant={tenant}
-            workspace={workspace}
-            category={category}
-          />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-[437px]" />}>
-          <EventList
-            user={user}
-            workspace={workspace}
-            tenant={tenant}
-            type={type}
-            page={page}
-            date={date}
-            category={category}
-          />
+          <div>
+            <div className="mb-4 h-[3.4rem]">
+              <EventSearch query={query} />
+            </div>
+            <EventList
+              user={user}
+              workspace={workspace}
+              tenant={tenant}
+              type={type}
+              page={page}
+              date={date}
+              category={category}
+              query={query}
+            />
+          </div>
         </Suspense>
       </div>
     </main>
@@ -107,7 +124,7 @@ async function Calendar({
       category={category}
       dateOfEvent={date}
       workspace={workspace}
-      tabs={EVENT_TAB_ITEMS}
+      tabs={MY_REGISTRATION_TAB_ITEMS}
     />
   );
 }
@@ -120,6 +137,7 @@ async function EventList({
   page,
   date,
   category,
+  query,
 }: {
   date: string;
   category: any[];
@@ -128,10 +146,12 @@ async function EventList({
   workspace: PortalWorkspace;
   tenant: Tenant['id'];
   type: string;
+  query: string;
 }) {
   const {events, pageInfo}: any = await findEvents({
     limit: LIMIT,
     page: page,
+    search: query,
     categoryids: category,
     day: new Date(date).getDate() || undefined,
     month: new Date(date).getMonth() + 1 || undefined,
@@ -140,6 +160,7 @@ async function EventList({
     workspace,
     tenantId: tenant,
     user,
+    onlyRegisteredEvent: true,
   }).then(clone);
 
   return (
@@ -147,7 +168,7 @@ async function EventList({
       pageInfo={pageInfo}
       events={events}
       eventType={type}
-      tabs={EVENT_TAB_ITEMS}
+      tabs={MY_REGISTRATION_TAB_ITEMS}
     />
   );
 }

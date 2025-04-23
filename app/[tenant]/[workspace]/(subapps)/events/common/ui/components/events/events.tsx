@@ -1,6 +1,6 @@
 'use client';
 
-import {endOfDay, isPast} from 'date-fns';
+import {endOfDay, isPast, isToday} from 'date-fns';
 import Link from 'next/link';
 import {useMemo, useState} from 'react';
 
@@ -21,7 +21,7 @@ import {
   EventSelector,
   TabsList,
 } from '@/subapps/events/common/ui/components';
-import {getEventsTabItems} from '@/subapps/events/common/utils';
+import {getTabItems} from '@/subapps/events/common/utils';
 
 type TabItem = (typeof EVENT_TAB_ITEMS)[number];
 export const EventCalendar = ({
@@ -29,11 +29,15 @@ export const EventCalendar = ({
   category,
   dateOfEvent,
   workspace,
+  onlyRegisteredEvent,
+  tabs,
 }: {
   categories: Category[];
   category: any[];
   dateOfEvent: string;
   workspace: PortalWorkspace;
+  onlyRegisteredEvent?: boolean;
+  tabs: {id: string; title: string; label: string}[];
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
@@ -66,12 +70,17 @@ export const EventCalendar = ({
       {key: 'category', value: selectedCategory},
       {key: 'page', value: 1},
       {key: 'date', value: convertDateToISO8601(d) || ''},
-      ,
     ];
     if (newDate) {
       toUpdate.push({
         key: 'type',
-        value: isPast(endOfDay(newDate)) ? EVENT_TYPE.PAST : EVENT_TYPE.ACTIVE,
+        value: isPast(endOfDay(newDate))
+          ? EVENT_TYPE.PAST
+          : tabs.find(t => t.label === EVENT_TYPE.ACTIVE)
+            ? EVENT_TYPE.ACTIVE
+            : isToday(newDate)
+              ? EVENT_TYPE.ONGOING
+              : EVENT_TYPE.UPCOMING,
       });
     }
     update(toUpdate, {scroll: false});
@@ -85,6 +94,7 @@ export const EventCalendar = ({
       updateCateg={updateCateg}
       categories={categories}
       workspace={workspace}
+      onlyRegisteredEvent={onlyRegisteredEvent}
     />
   );
 };
@@ -93,10 +103,12 @@ export function EventTabs({
   pageInfo: {page, pages, hasPrev, hasNext} = {},
   events,
   eventType,
+  tabs,
 }: {
   pageInfo: any;
   events: ListEvent[];
   eventType: string;
+  tabs: {id: string; title: string; label: string}[];
 }) {
   const res: any = useResponsive();
   const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
@@ -117,7 +129,7 @@ export function EventTabs({
     update([{key: URL_PARAMS.page, value: page}]);
   };
 
-  const TAB_ITEMS = useMemo(() => getEventsTabItems(large), [large]);
+  const TAB_ITEMS = useMemo(() => getTabItems(tabs, large), [tabs, large]);
 
   const handleTabChange = (t: TabItem) => {
     update([{key: 'type', value: t.label}]);
