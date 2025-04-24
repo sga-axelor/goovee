@@ -243,8 +243,10 @@ export async function findWebsitePageBySlug({
       statusSelect: '1',
       website: {
         slug: websiteSlug,
-        workspace: {
-          url: workspaceURL,
+        mainWebsite: {
+          workspaceSet: {
+            url: workspaceURL,
+          },
         },
       },
       AND: [
