@@ -53,6 +53,8 @@ export default async function Page(context: any) {
   const session = await getSession();
   const user = session?.user;
 
+  if (!user) return notFound();
+
   const {workspaceURL} = workspacePathname(params);
 
   const workspace = await findWorkspace({
