@@ -17,6 +17,11 @@
       "type": "ManyToOne",
       "name": "page",
       "target": "AOSPortalCmsSite"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "language",
+      "target": "AOSLocalization"
     }
   ]
 }

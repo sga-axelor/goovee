@@ -56,6 +56,16 @@
       "name": "contentLines",
       "target": "AOSPortalCmsContentLine",
       "mappedBy": "page"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "language",
+      "target": "AOSLocalization"
+    },
+    {
+      "name": "pageSet",
+      "type": "ManyToMany",
+      "target": "AOSPortalCmsPage"
     }
   ]
 }

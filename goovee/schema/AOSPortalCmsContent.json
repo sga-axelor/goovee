@@ -16,6 +16,11 @@
       "type": "ManyToOne",
       "name": "component",
       "target": "AOSPortalCmsComponent"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "language",
+      "target": "AOSLocalization"
     }
   ]
 }
