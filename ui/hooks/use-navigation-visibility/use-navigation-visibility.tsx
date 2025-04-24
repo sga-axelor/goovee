@@ -11,7 +11,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 const CODE_REGEX = (code: string) =>
   new RegExp(
-    `^\/(?<tenant>[^\\/]+)\/(?<workspace>[^\\/]+)\/${code}\/(?<slug>[^\\/]+)(?:\/.*)?$`,
+    `^\/(?<tenant>[^\\/]+)\/(?<workspace>[^\\/]+)\/${code}\/(?<slug>[0-9a-fA-F-]{36})(?:\/.*)?$`,
   );
 
 type VisibilityHandler = (
