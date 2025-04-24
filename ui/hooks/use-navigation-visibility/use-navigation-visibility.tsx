@@ -9,6 +9,18 @@ import {SUBAPP_CODES} from '@/constants';
 import {fetchEvent} from '@/app/[tenant]/[workspace]/(subapps)/events/common/actions/actions';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
+/**
+ * Returns a RegExp that matches paths structured like:
+ * /{tenant}/{workspace}/{code}/{slug}
+ *
+ * Dynamic Parts:
+ * - tenant: any string without slashes
+ * - workspace: any string without slashes
+ * - code: dynamic segment passed to the function (e.g., 'events')
+ * - slug: expected to be a UUID (36-character format including hyphens)
+ * - Supports optional sub-paths after the slug
+ *
+ */
 const CODE_REGEX = (code: string) =>
   new RegExp(
     `^\/(?<tenant>[^\\/]+)\/(?<workspace>[^\\/]+)\/${code}\/(?<slug>[0-9a-fA-F-]{36})(?:\/.*)?$`,
