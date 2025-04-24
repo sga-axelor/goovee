@@ -24,9 +24,9 @@ export async function findAllMainWebsites({
     return [];
   }
 
-  const mainWebsites = await client.aOSPortalCmsMainWebSite.find({
+  const mainWebsites = await client.aOSPortalCmsMainWebsite.find({
     where: {
-      workspaces: {
+      workspaceSet: {
         url: workspaceURL,
       },
       AND: [
@@ -39,9 +39,13 @@ export async function findAllMainWebsites({
       defaultWebsite: {
         slug: true,
       },
-      languages: {
+      languageList: {
         where: {
-          ...(locale ? {language: locale} : {}),
+          ...(locale
+            ? {
+                language: {code: locale, isAvailableOnPortal: true},
+              }
+            : {}),
         },
         select: {
           language: true,
@@ -55,8 +59,8 @@ export async function findAllMainWebsites({
 
   return mainWebsites
     .map((website: any) => {
-      if (website?.languages?.length) {
-        return website?.languages?.[0]?.website;
+      if (website?.languageList?.length) {
+        return website?.languageList?.[0]?.website;
       } else {
         return website?.defaultWebsite || null;
       }

@@ -1,0 +1,31 @@
+{
+  "name": "AOSPortalCmsMainWebsite",
+  "table": "portal_portal_cms_main_website",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
+      "name": "workspaceSet",
+      "type": "ManyToMany",
+      "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "defaultWebsite",
+      "target": "AOSPortalCmsSite"
+    },
+    {
+      "type": "OneToMany",
+      "name": "languageList",
+      "target": "AOSPortalCmsSiteLanguage"
+    }
+  ]
+}

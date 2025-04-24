@@ -1,0 +1,28 @@
+{
+  "name": "AOSPortalCmsSiteLanguage",
+  "table": "portal_portal_cms_site_language",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "mainWebsite",
+      "target": "AOSPortalCmsMainWebsite"
+    },
+
+    {
+      "type": "ManyToOne",
+      "name": "website",
+      "target": "AOSPortalCmsSite"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "language",
+      "target": "AOSLocalization"
+    }
+  ]
+}
