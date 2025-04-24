@@ -222,13 +222,12 @@ export function EventCollapsible({children}: {children: React.ReactNode}) {
 export const EventCategoryList = ({
   categories,
   selectedCategories = [],
-  category = [],
 }: {
-  category: string[];
   categories: Category[];
   selectedCategories?: string[];
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
+  const [selectedCategory, setSelectedCategory] =
+    useState<string[]>(selectedCategories);
   const {update} = useSearchParams();
 
   const updateCateg = (category: Category) => {
@@ -247,8 +246,10 @@ export const EventCategoryList = ({
 
     setSelectedCategory(updatedCategories);
   };
+
   return categories.map((category: any) => {
     const isActive = selectedCategories.includes(category.id);
+    const isPending = isActive != selectedCategory.includes(category.id);
 
     return (
       <div className="flex items-center space-x-4" key={category.id}>
@@ -259,6 +260,8 @@ export const EventCategoryList = ({
             isActive
               ? `border-none ${category?.color ? `!bg-palette-${category.color}-dark` : 'bg-black'}`
               : '',
+            isPending && 'ring-2 animate-pulse',
+            !isActive && isPending && 'ring-blue-500',
           )}
           onCheckedChange={() => updateCateg(category)}
         />

@@ -132,11 +132,7 @@ async function Categories({
   }).then(clone);
 
   return (
-    <EventCategoryList
-      categories={categories}
-      category={category}
-      selectedCategories={category}
-    />
+    <EventCategoryList categories={categories} selectedCategories={category} />
   );
 }
 
