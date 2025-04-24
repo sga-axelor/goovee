@@ -19,12 +19,16 @@ import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {
   EventCalendar,
   EventCardSkeleton,
+  EventCategoryList,
+  EventCategorySkeleton,
+  EventCollapsible,
   EventTabs,
   EventTabsContent,
 } from '@/subapps/events/common/ui/components';
 import Hero from './hero';
 import {Suspense} from 'react';
 import {Skeleton} from '@/ui/components/skeleton';
+import {Card} from '@/ui/components';
 
 export default async function Page(context: any) {
   const params = context?.params;
@@ -62,15 +66,23 @@ export default async function Page(context: any) {
     <main className="h-full w-full">
       <Hero workspace={workspace} />
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
-        <Suspense fallback={<Skeleton className="h-[437px]" />}>
-          <Calendar
-            date={date}
-            user={user}
-            tenant={tenant}
+        <Card className="p-4 border-none shadow-none flex flex-col gap-2 md:flex-row lg:flex-col h-fit rounded-2xl">
+          <EventCalendar
+            dateOfEvent={date}
             workspace={workspace}
-            category={category}
+            tabs={EVENT_TAB_ITEMS}
           />
-        </Suspense>
+          <EventCollapsible>
+            <Suspense fallback={<EventCategorySkeleton />}>
+              <Categories
+                user={user}
+                tenant={tenant}
+                workspace={workspace}
+                category={category}
+              />
+            </Suspense>
+          </EventCollapsible>
+        </Card>
         <EventTabs eventType={type} tabs={EVENT_TAB_ITEMS}>
           <Suspense fallback={<EventCardSkeleton />}>
             <EventList
@@ -89,14 +101,12 @@ export default async function Page(context: any) {
   );
 }
 
-async function Calendar({
-  date,
+async function Categories({
   workspace,
   user,
   tenant,
   category,
 }: {
-  date: string;
   user?: User;
   tenant: Tenant['id'];
   workspace: PortalWorkspace;
@@ -109,12 +119,10 @@ async function Calendar({
   }).then(clone);
 
   return (
-    <EventCalendar
+    <EventCategoryList
       categories={categories}
       category={category}
-      dateOfEvent={date}
-      workspace={workspace}
-      tabs={EVENT_TAB_ITEMS}
+      selectedCategories={category}
     />
   );
 }

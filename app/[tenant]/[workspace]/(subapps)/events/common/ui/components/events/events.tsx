@@ -3,72 +3,63 @@
 import {endOfDay, isPast, isToday} from 'date-fns';
 import Link from 'next/link';
 import {useEffect, useMemo, useState} from 'react';
+import {
+  MdOutlineKeyboardArrowUp,
+  MdOutlineKeyboardArrowDown,
+} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
+import {RESPONSIVE_SIZES, SUBAPP_CODES, URL_PARAMS} from '@/constants';
 import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
-import {Pagination} from '@/ui/components';
+import {Checkbox, Pagination} from '@/ui/components';
 import {useResponsive, useSearchParams} from '@/ui/hooks';
 import {convertDateToISO8601} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import {EVENT_TAB_ITEMS, EVENT_TYPE} from '@/subapps/events/common/constants';
+import {
+  CATEGORIES,
+  EVENT_TAB_ITEMS,
+  EVENT_TYPE,
+} from '@/subapps/events/common/constants';
 import type {Category, ListEvent} from '@/subapps/events/common/ui/components';
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from '@/ui/components';
 import {
   EventCard,
   EventCardSkeleton,
-  EventSelector,
+  Calendar,
   TabsList,
 } from '@/subapps/events/common/ui/components';
 import {getTabItems} from '@/subapps/events/common/utils';
+import {cn} from '@/utils/css';
+import {Skeleton} from '@/ui/components/skeleton';
 
 type TabItem = (typeof EVENT_TAB_ITEMS)[number];
 export const EventCalendar = ({
-  categories,
-  category,
   dateOfEvent,
   workspace,
   onlyRegisteredEvent,
   tabs,
 }: {
-  categories: Category[];
-  category: any[];
   dateOfEvent: string;
   workspace: PortalWorkspace;
   onlyRegisteredEvent?: boolean;
   tabs: {id: string; title: string; label: string}[];
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
   const [date, setDate] = useState<Date | undefined>(
     dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
   );
   const {update} = useSearchParams();
 
-  const updateCateg = (category: Category) => {
-    const updatedCategories = selectedCategory.some(
-      (c: string) => c === category.id,
-    )
-      ? selectedCategory.filter((i: string) => i !== category.id)
-      : [...selectedCategory, category.id];
-    update(
-      [
-        {key: 'category', value: updatedCategories},
-        {key: 'page', value: 1},
-        {key: 'date', value: convertDateToISO8601(date) || ''},
-      ],
-      {scroll: false},
-    );
-
-    setSelectedCategory(updatedCategories);
-  };
-
   const updateDate = (d: Date | undefined) => {
     const newDate = d ? new Date(d) : undefined;
     setDate(newDate);
     const toUpdate = [
-      {key: 'category', value: selectedCategory},
       {key: 'page', value: 1},
       {key: 'date', value: convertDateToISO8601(d) || ''},
     ];
@@ -88,14 +79,14 @@ export const EventCalendar = ({
   };
 
   return (
-    <EventSelector
-      selectedCategories={selectedCategory}
-      date={date}
-      setDate={updateDate}
-      updateCateg={updateCateg}
-      categories={categories}
+    <Calendar
       workspace={workspace}
-      onlyRegisteredEvent={onlyRegisteredEvent}
+      date={date}
+      mode="single"
+      selected={date}
+      onSelect={updateDate}
+      className="flex justify-center mx-auto w-full md:flex-1"
+      onlyRegisteredEvent={!!onlyRegisteredEvent}
     />
   );
 };
@@ -189,6 +180,106 @@ export function EventTabsContent({
           />
         )}
       </div>
+    </div>
+  );
+}
+
+export function EventCollapsible({children}: {children: React.ReactNode}) {
+  const res = useResponsive();
+  const small = RESPONSIVE_SIZES.some(x => res[x]);
+
+  const [isOpen, setIsOpen] = useState<boolean>(!small);
+  return (
+    <div className="flex-1 flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 md:flex-1">
+        <Collapsible
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          className="w-full space-y-4">
+          <div className="w-full flex items-center justify-between space-x-4 px-4 cursor-pointer">
+            <CollapsibleTrigger asChild>
+              <div className="w-full flex justify-between items-center">
+                <h2 className="text-[18px] font-semibold">
+                  {i18n.t(CATEGORIES)}
+                </h2>
+                {isOpen ? (
+                  <MdOutlineKeyboardArrowUp className="h-4 w-4" />
+                ) : (
+                  <MdOutlineKeyboardArrowDown className="h-4 w-4" />
+                )}
+              </div>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent className="space-y-4 mx-4">
+            {children}
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    </div>
+  );
+}
+
+export const EventCategoryList = ({
+  categories,
+  selectedCategories = [],
+  category = [],
+}: {
+  category: string[];
+  categories: Category[];
+  selectedCategories?: string[];
+}) => {
+  const [selectedCategory, setSelectedCategory] = useState<string[]>(category);
+  const {update} = useSearchParams();
+
+  const updateCateg = (category: Category) => {
+    const updatedCategories = selectedCategory.some(
+      (c: string) => c === category.id,
+    )
+      ? selectedCategory.filter((i: string) => i !== category.id)
+      : [...selectedCategory, category.id];
+    update(
+      [
+        {key: 'category', value: updatedCategories},
+        {key: 'page', value: 1},
+      ],
+      {scroll: false},
+    );
+
+    setSelectedCategory(updatedCategories);
+  };
+  return categories.map((category: any) => {
+    const isActive = selectedCategories.includes(category.id);
+
+    return (
+      <div className="flex items-center space-x-4" key={category.id}>
+        <Checkbox
+          id={category.id}
+          checked={isActive}
+          className={cn(
+            isActive
+              ? `border-none ${category?.color ? `!bg-palette-${category.color}-dark` : 'bg-black'}`
+              : '',
+          )}
+          onCheckedChange={() => updateCateg(category)}
+        />
+        <label
+          htmlFor={category.id}
+          className="text-md font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          {category.name}
+        </label>
+      </div>
+    );
+  });
+};
+
+export function EventCategorySkeleton() {
+  return (
+    <div className="flex items-center space-x-4">
+      {/* Checkbox placeholder */}
+      <Skeleton className="h-4 w-4 rounded" />
+
+      {/* Label placeholder */}
+      <Skeleton className="h-4 w-24" />
     </div>
   );
 }

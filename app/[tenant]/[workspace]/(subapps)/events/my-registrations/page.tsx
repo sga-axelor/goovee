@@ -20,12 +20,15 @@ import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import {
   EventCalendar,
   EventCardSkeleton,
+  EventCategoryList,
+  EventCategorySkeleton,
+  EventCollapsible,
   EventSearch,
   EventTabs,
   EventTabsContent,
 } from '@/subapps/events/common/ui/components';
 import {PortalWorkspace, User} from '@/types';
-import {Skeleton} from '@/ui/components/skeleton';
+import {Card} from '@/ui/components';
 import {Suspense} from 'react';
 
 export default async function Page(context: any) {
@@ -69,15 +72,23 @@ export default async function Page(context: any) {
           <h2 className="text-lg font-semibold text-start mb-4 h-[3.4rem]">
             {await t(MY_REGISTRATIONS)}
           </h2>
-          <Suspense fallback={<Skeleton className="h-[437px]" />}>
-            <Calendar
-              date={date}
-              user={user}
-              tenant={tenant}
+          <Card className="p-4 border-none shadow-none flex flex-col gap-2 md:flex-row lg:flex-col h-fit rounded-2xl">
+            <EventCalendar
+              dateOfEvent={date}
               workspace={workspace}
-              category={category}
+              tabs={MY_REGISTRATION_TAB_ITEMS}
             />
-          </Suspense>
+            <EventCollapsible>
+              <Suspense fallback={<EventCategorySkeleton />}>
+                <Categories
+                  user={user}
+                  tenant={tenant}
+                  workspace={workspace}
+                  category={category}
+                />
+              </Suspense>
+            </EventCollapsible>
+          </Card>
         </div>
         <div>
           <div className="mb-4 h-[3.4rem]">
@@ -103,14 +114,12 @@ export default async function Page(context: any) {
   );
 }
 
-async function Calendar({
-  date,
+async function Categories({
   workspace,
   user,
   tenant,
   category,
 }: {
-  date: string;
   user?: User;
   tenant: Tenant['id'];
   workspace: PortalWorkspace;
@@ -123,12 +132,10 @@ async function Calendar({
   }).then(clone);
 
   return (
-    <EventCalendar
+    <EventCategoryList
       categories={categories}
       category={category}
-      dateOfEvent={date}
-      workspace={workspace}
-      tabs={MY_REGISTRATION_TAB_ITEMS}
+      selectedCategories={category}
     />
   );
 }
