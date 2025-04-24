@@ -30,6 +30,11 @@
     },
     {
       "type": "ManyToOne",
+      "name": "mainWebsite",
+      "target": "AOSPortalCmsMainWebsite"
+    },
+    {
+      "type": "ManyToOne",
       "name": "header",
       "target": "AOSPortalCmsContent"
     },
@@ -52,11 +57,6 @@
       "name": "partnerCategorySet",
       "type": "ManyToMany",
       "target": "AOSPartnerCategory"
-    },
-    {
-      "type": "ManyToOne",
-      "name": "workspace",
-      "target": "AOSPortalWorkspace"
     }
   ]
 }

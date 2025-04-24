@@ -29,10 +29,10 @@ export async function findAllMainWebsites({
       workspaceSet: {
         url: workspaceURL,
       },
-      AND: [
-        await filterPrivate({tenantId, user}),
-        {OR: [{archived: false}, {archived: null}]},
-      ],
+      defaultWebsite: {
+        ...(await filterPrivate({tenantId, user})),
+      },
+      AND: [{OR: [{archived: false}, {archived: null}]}],
     },
     select: {
       name: true,
@@ -43,9 +43,15 @@ export async function findAllMainWebsites({
         where: {
           ...(locale
             ? {
-                language: {code: locale, isAvailableOnPortal: true},
+                language: {
+                  code: locale,
+                  isAvailableOnPortal: true,
+                },
               }
             : {}),
+          website: {
+            ...(await filterPrivate({tenantId, user})),
+          },
         },
         select: {
           language: true,
@@ -58,12 +64,15 @@ export async function findAllMainWebsites({
   });
 
   return mainWebsites
-    .map((website: any) => {
-      if (website?.languageList?.length) {
-        return website?.languageList?.[0]?.website;
-      } else {
-        return website?.defaultWebsite || null;
+    .map((mainWebsite: any) => {
+      let $website =
+        mainWebsite?.languageList?.[0]?.website || mainWebsite?.defaultWebsite;
+
+      if ($website) {
+        $website.name = mainWebsite.name;
       }
+
+      return $website;
     })
     .filter(Boolean);
 }
@@ -89,8 +98,10 @@ export async function findAllWebsites({
 
   const websites = await client.aOSPortalCmsSite.find({
     where: {
-      workspace: {
-        url: workspaceURL,
+      mainWebsite: {
+        workspaceSet: {
+          url: workspaceURL,
+        },
       },
       AND: [
         await filterPrivate({tenantId, user}),
@@ -129,8 +140,10 @@ export async function findWebsiteBySlug({
   const website = await client.aOSPortalCmsSite.findOne({
     where: {
       slug: websiteSlug,
-      workspace: {
-        url: workspaceURL,
+      mainWebsite: {
+        workspaceSet: {
+          url: workspaceURL,
+        },
       },
       AND: [
         await filterPrivate({tenantId, user}),

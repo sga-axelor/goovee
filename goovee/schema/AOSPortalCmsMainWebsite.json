@@ -25,7 +25,8 @@
     {
       "type": "OneToMany",
       "name": "languageList",
-      "target": "AOSPortalCmsSiteLanguage"
+      "target": "AOSPortalCmsSiteLanguage",
+      "mappedBy": "mainWebsite"
     }
   ]
 }
