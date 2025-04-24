@@ -63,7 +63,7 @@ export default async function Page(context: any) {
   }
 
   return (
-    <main className="h-full w-full">
+    <main className="w-full">
       <Hero workspace={workspace} />
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
         <Card className="p-4 border-none shadow-none flex flex-col gap-2 md:flex-row lg:flex-col h-fit rounded-2xl">

@@ -66,7 +66,7 @@ export default async function Page(context: any) {
   }
 
   return (
-    <main className="h-full w-full">
+    <main className="w-full">
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
         <div>
           <h2 className="text-lg font-semibold text-start mb-4 h-[3.4rem]">
