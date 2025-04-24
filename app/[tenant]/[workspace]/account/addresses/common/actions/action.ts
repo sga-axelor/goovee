@@ -20,12 +20,11 @@ import {
   updatePartnerAddress,
   deletePartnerAddress,
 } from '@/orm/address';
-import {PartnerAddress, PartnerKey, User} from '@/types';
+import {PartnerAddress} from '@/types';
 import {manager} from '@/tenant';
-import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORT ---- //
-import {findQuotation} from '@/app/[tenant]/[workspace]/(subapps)/quotations/common/orm/quotations';
+import {getQuotationRecord} from '@/app/[tenant]/[workspace]/account/addresses/common/utils';
 
 export const fetchCities = async ({
   countryId,
@@ -285,36 +284,4 @@ export async function confirmAddresses({
       message: await t('Something went wrong while saving address!'),
     };
   }
-}
-
-async function getQuotationRecord({
-  id,
-  user,
-  tenantId,
-  workspaceURL,
-  subapp,
-}: {
-  id: string;
-  user: User;
-  tenantId: string;
-  workspaceURL: string;
-  subapp: {
-    role: string;
-    isContactAdmin: boolean;
-  };
-}) {
-  const {role, isContactAdmin} = subapp;
-  const quotationWhereClause = getWhereClauseForEntity({
-    user,
-    role,
-    isContactAdmin,
-    partnerKey: PartnerKey.CLIENT_PARTNER,
-  });
-
-  return await findQuotation({
-    id,
-    tenantId,
-    params: {where: quotationWhereClause},
-    workspaceURL,
-  });
 }
