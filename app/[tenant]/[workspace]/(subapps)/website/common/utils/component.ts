@@ -4,15 +4,16 @@ import dynamic from 'next/dynamic';
 import {WebsiteComponent} from '@/types';
 
 export function getWebsiteComponent(component: WebsiteComponent) {
-  const {code, title} = component;
-  const displayName = title || code;
-
   const Fallback = () => null;
-  Fallback.displayName = displayName;
+  Fallback.displayName = 'ComponentFallback';
 
   if (!component?.code) {
     return Fallback;
   }
+
+  const {code, title} = component;
+  const displayName = title || code;
+  Fallback.displayName = displayName;
 
   return dynamic(
     () =>
