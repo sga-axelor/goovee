@@ -1,0 +1,41 @@
+{
+  "name": "AOSPortalCmsMenuLine",
+  "table": "portal_portal_cms_menu_line",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "title"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
+      "type": "OneToMany",
+      "name": "subMenuList",
+      "target": "AOSPortalCmsMenuLine",
+      "mappedBy": "parentMenu"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "parentMenu",
+      "target": "AOSPortalCmsMenuLine"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "menu",
+      "target": "AOSPortalCmsMenu"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "page",
+      "target": "AOSPortalCmsPage"
+    },
+    {
+      "type": "String",
+      "name": "externalPage"
+    }
+  ]
+}

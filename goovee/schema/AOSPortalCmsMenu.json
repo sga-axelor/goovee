@@ -1,0 +1,32 @@
+{
+  "name": "AOSPortalCmsMenu",
+  "table": "portal_portal_cms_menu",
+  "extends": "Model",
+  "synchronize": false,
+  "fields": [
+    {
+      "type": "String",
+      "name": "title"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
+    },
+    {
+      "type": "OneToMany",
+      "name": "menuList",
+      "target": "AOSPortalCmsMenuLine",
+      "mappedBy": "menu"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "language",
+      "target": "AOSLocalization"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "component",
+      "target": "AOSPortalCmsComponent"
+    }
+  ]
+}

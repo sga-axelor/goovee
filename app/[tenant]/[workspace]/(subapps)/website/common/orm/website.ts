@@ -116,6 +116,25 @@ export async function findAllWebsites({
   return websites;
 }
 
+function buildMenuHierarchy(menulines: any) {
+  const map = new Map();
+
+  menulines.forEach((item: any) => {
+    item.subMenuList = [];
+    map.set(item.id, item);
+  });
+
+  // Link submenus to their parent
+  menulines.forEach((item: any) => {
+    if (item.parentMenu && map.has(item.parentMenu.id)) {
+      map.get(item.parentMenu.id).subMenuList.push(item);
+    }
+  });
+
+  // Filter top-level menu items (no parent)
+  return menulines.filter((item: any) => !item.parentMenu);
+}
+
 export async function findWebsiteBySlug({
   websiteSlug,
   workspaceURL,
@@ -163,6 +182,12 @@ export async function findWebsiteBySlug({
       homepage: {
         slug: true,
       },
+      menu: {
+        title: true,
+        component: true,
+        language: true,
+        menuList: true,
+      },
     },
   });
 
@@ -170,6 +195,26 @@ export async function findWebsiteBySlug({
 
   if (isGuest && !website?.isGuestUserAllow) {
     return null;
+  }
+
+  if (website?.menu) {
+    const menuList = await client.aOSPortalCmsMenuLine.find({
+      where: {
+        menu: {
+          id: website.menu.id,
+        },
+        page: {
+          ...(await filterPrivate({tenantId, user})),
+        },
+      },
+      select: {
+        parentMenu: {
+          id: true,
+        },
+      },
+    });
+
+    website.menu.menuList = buildMenuHierarchy(menuList);
   }
 
   return website;

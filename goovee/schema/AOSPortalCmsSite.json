@@ -57,6 +57,11 @@
       "name": "partnerCategorySet",
       "type": "ManyToMany",
       "target": "AOSPartnerCategory"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "menu",
+      "target": "AOSPortalCmsMenu"
     }
   ]
 }
