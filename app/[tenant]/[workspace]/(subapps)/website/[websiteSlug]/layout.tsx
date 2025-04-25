@@ -7,9 +7,13 @@ import {workspacePathname} from '@/utils/workspace';
 import {Website} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {findWebsiteBySlug} from '@/subapps/website/common/orm/website';
+import {
+  findAllMainWebsiteLanguages,
+  findWebsiteBySlug,
+} from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/ui/components';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
+import {LanguageSelection} from './language-selection';
 
 export async function generateMetadata({
   params,
@@ -73,11 +77,22 @@ export default async function Layout({
     return <NotFound />;
   }
 
+  const mainWebsiteLanguages = await findAllMainWebsiteLanguages({
+    mainWebsiteId: website?.mainWebsite?.id,
+    workspaceURL,
+    user,
+    tenantId: tenant,
+  });
+
   const Header = getWebsiteComponent(website.header?.component);
   const Footer = getWebsiteComponent(website.footer?.component);
 
   return (
     <>
+      <LanguageSelection
+        languageList={mainWebsiteLanguages}
+        active={websiteSlug}
+      />
       <Header />
       {children}
       <Footer />

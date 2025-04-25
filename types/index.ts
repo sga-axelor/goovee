@@ -329,6 +329,8 @@ export enum PartnerKey {
   PARTNER = 'partner',
 }
 
+export interface MainWebsite extends Model {}
+
 export interface Website extends Model {
   slug: string;
 }

@@ -1,7 +1,14 @@
 // ---- CORE IMPORTS ---- //
 import {filterPrivate} from '@/orm/filter';
 import {manager, type Tenant} from '@/tenant';
-import type {PortalWorkspace, User, Website, WebsitePage} from '@/types';
+import type {
+  MainWebsite,
+  PortalWorkspace,
+  User,
+  Website,
+  WebsitePage,
+} from '@/types';
+import {clone} from '@/utils';
 
 export async function findAllMainWebsites({
   workspaceURL,
@@ -188,6 +195,7 @@ export async function findWebsiteBySlug({
         language: true,
         menuList: true,
       },
+      mainWebsite: true,
     },
   });
 
@@ -320,4 +328,55 @@ export async function findWebsitePageBySlug({
   });
 
   return page;
+}
+
+export async function findAllMainWebsiteLanguages({
+  mainWebsiteId,
+  workspaceURL,
+  user,
+  tenantId,
+}: {
+  mainWebsiteId: MainWebsite['id'];
+  workspaceURL: PortalWorkspace['url'];
+  user?: User;
+  tenantId: Tenant['id'];
+}) {
+  if (!(mainWebsiteId && workspaceURL && tenantId)) {
+    return [];
+  }
+
+  const client = await manager.getClient(tenantId);
+
+  if (!client) {
+    return [];
+  }
+
+  const mainWebsiteLanguages = await client.aOSPortalCmsMainWebsite
+    .findOne({
+      where: {
+        id: mainWebsiteId,
+        workspaceSet: {
+          url: workspaceURL,
+        },
+        AND: [{OR: [{archived: false}, {archived: null}]}],
+      },
+      select: {
+        languageList: {
+          where: {
+            website: {
+              ...(await filterPrivate({tenantId, user})),
+            },
+          },
+          select: {
+            language: true,
+            website: {
+              slug: true,
+            },
+          },
+        },
+      },
+    })
+    .then(clone);
+
+  return mainWebsiteLanguages?.languageList;
 }
