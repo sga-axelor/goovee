@@ -1,4 +1,6 @@
+import {headers} from 'next/headers';
 import {redirect} from 'next/navigation';
+import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -8,9 +10,8 @@ import {SUBAPP_CODES} from '@/constants';
 // ---- LOCAL IMPORTS ---- //
 import {findAllMainWebsites} from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/ui/components';
-import {headers} from 'next/headers';
-import Link from 'next/link';
-import {Website} from '@/types';
+import {inverseTransformLocale} from '@/locale/utils';
+import type {Website} from '@/types';
 
 export default async function Page({
   params,
@@ -32,7 +33,7 @@ export default async function Page({
     const acceptLanguageLocale = acceptLanguage?.split(',')?.[0];
 
     if (acceptLanguageLocale) {
-      locale = acceptLanguageLocale;
+      locale = inverseTransformLocale(acceptLanguageLocale);
     }
   }
 
