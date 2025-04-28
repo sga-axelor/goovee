@@ -85,10 +85,12 @@ export default async function Layout({
   });
 
   const Header = getWebsiteComponent(website.header?.component);
+  const Menu = getWebsiteComponent(website?.menu?.component);
   const Footer = getWebsiteComponent(website.footer?.component);
 
   return (
     <>
+      <Menu menu={website?.menu} />
       <LanguageSelection
         languageList={mainWebsiteLanguages}
         active={websiteSlug}

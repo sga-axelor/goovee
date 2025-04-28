@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 // ---- CORE IMPORTS ---- //
 import {WebsiteComponent} from '@/types';
 
-export function getWebsiteComponent(component: WebsiteComponent) {
+export function getWebsiteComponent(component: WebsiteComponent): any {
   const Fallback = () => null;
   Fallback.displayName = 'ComponentFallback';
 
