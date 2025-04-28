@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {useRouter} from 'next/navigation';
+import {useParams, useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -15,16 +15,37 @@ import {
 } from '@/ui/components/select';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Website} from '@/types';
-import {SUBAPP_CODES} from '@/constants';
+import {i18n} from '@/locale';
+
+// ---- LOCAL IMPORTS ---- //
+import {getLocaleRedirectionURL} from '../common/action';
+import {useToast} from '@/ui/hooks';
 
 export function LanguageSelection({languageList, active}: any) {
   const {workspaceURL} = useWorkspace();
   const router = useRouter();
+  const {toast} = useToast();
+  const params = useParams();
+
+  const websitePageSlug = params.websitePageSlug as string;
 
   if (!languageList?.length) return null;
 
-  const handleLanguageChange = (websiteSlug: Website['slug']) => {
-    router.push(`${workspaceURL}/${SUBAPP_CODES.website}/${websiteSlug}`);
+  const handleLanguageChange = async (websiteSlug: Website['slug']) => {
+    const result = await getLocaleRedirectionURL({
+      workspaceURL,
+      websiteSlug,
+      websitePageSlug,
+    });
+
+    if (result?.success && result?.data?.url) {
+      return router.push(result.data.url);
+    }
+
+    toast({
+      variant: 'destructive',
+      title: result.message || i18n.t('Error redirecting'),
+    });
   };
 
   return (
@@ -34,7 +55,7 @@ export function LanguageSelection({languageList, active}: any) {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Locales</SelectLabel>
+          <SelectLabel>{i18n.t('Locales')}</SelectLabel>
           {languageList
             .filter((item: any) => item.language && item.website)
             .map((item: any) => {
