@@ -13,6 +13,10 @@
       "name": "archived"
     },
     {
+      "type": "JSON",
+      "name": "attrs"
+    },
+    {
       "type": "ManyToOne",
       "name": "component",
       "target": "AOSPortalCmsComponent"
