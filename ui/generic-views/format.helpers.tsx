@@ -79,6 +79,7 @@ async function getFieldType(
       options: {
         itemSet: field.selectionList,
         isMulti,
+        isInteger: type === InputType.number,
       },
       subSchema: isMulti ? type : undefined,
     };

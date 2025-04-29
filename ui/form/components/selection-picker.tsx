@@ -21,6 +21,7 @@ export const SelectionPicker = ({
   readonly = false,
   itemSet,
   isMulti = false,
+  isInteger = false,
 }: {
   form: UseFormReturn<Record<string, any>, any, undefined>;
   field: Field;
@@ -28,6 +29,7 @@ export const SelectionPicker = ({
   readonly?: boolean;
   itemSet?: any[];
   isMulti?: boolean;
+  isInteger?: boolean;
 }) => {
   const options = useMemo(
     () => itemSet?.map(_o => ({..._o, label: _o.title})) ?? [],
@@ -44,6 +46,11 @@ export const SelectionPicker = ({
       if (value?.length > 0) {
         const _value = value.replace('-', '');
 
+        if (isInteger) {
+          form.setValue(formKey, parseInt(_value));
+          return;
+        }
+
         const _next = _current.includes(_value)
           ? _current.filter((_v: string) => _v !== _value)
           : [...(isMulti ? _current : []), _value];
@@ -51,10 +58,10 @@ export const SelectionPicker = ({
         form.setValue(formKey, _next.length > 0 ? _next.join(',') : undefined);
       }
     },
-    [form, formKey, isMulti],
+    [form, formKey, isInteger, isMulti],
   );
 
-  const formValue = form.watch(formKey);
+  const formValue = '' + form.watch(formKey);
   const selectedItems = formValue?.split(',') ?? [];
 
   return (

@@ -64,6 +64,7 @@ function formatField(_i: any): Field {
       options: {
         itemSet: _i.selectionOptions,
         isMulti,
+        isInteger: field.type === InputType.number,
       },
       subSchema: (isMulti ? field.type : undefined) as any,
     };
