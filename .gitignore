@@ -39,3 +39,6 @@ next-env.d.ts
 goovee/.generated
 
 portal/
+
+# generated css for templates
+public/css
