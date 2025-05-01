@@ -1,5 +1,5 @@
 import {FC, Fragment, ReactElement, ReactNode} from 'react';
-import {useRouter} from 'next/router';
+import {usePathname} from 'next/navigation';
 import {Navbar} from '@/subapps/templates/common/components/blocks/navbar';
 import PageProgress from '@/subapps/templates/common/components/common/PageProgress';
 import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
@@ -35,7 +35,7 @@ const filters = [
 ];
 
 const BlockLayout: FC<BlockLayoutProps> = ({title, children}) => {
-  const {pathname} = useRouter();
+  const pathname = usePathname();
 
   return (
     <Fragment>

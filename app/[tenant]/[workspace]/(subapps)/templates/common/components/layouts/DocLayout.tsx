@@ -1,6 +1,6 @@
-import {useRouter} from 'next/router';
 import {Link as ScrollLink} from 'react-scroll';
 import {FC, Fragment, ReactElement, ReactNode} from 'react';
+import {usePathname} from 'next/navigation';
 // -------- custom component -------- //
 import {Navbar} from '@/subapps/templates/common/components/blocks/navbar';
 import PageProgress from '@/subapps/templates/common/components/common/PageProgress';
@@ -105,7 +105,7 @@ const DocLayout: FC<DocLayoutProps> = ({
 }) => {
   // used for copy button
   useClipboard();
-  const {pathname} = useRouter();
+  const pathname = usePathname();
 
   // render the links
   const renderLinks = (data: Links) => {

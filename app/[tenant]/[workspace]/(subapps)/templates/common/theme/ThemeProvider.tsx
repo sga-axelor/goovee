@@ -1,9 +1,9 @@
 import {FC, useEffect, ReactNode} from 'react';
-import {useRouter} from 'next/router';
 import changeTheme from './themeOptions';
+import {usePathname} from 'next/navigation';
 
 const ThemeProvider: FC<{children: ReactNode}> = ({children}) => {
-  const {pathname} = useRouter();
+  const pathname = usePathname();
 
   const removePageLoader = () => {
     const pageLoader = document.querySelector('.page-loader');
