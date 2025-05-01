@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 
 const Banner3: FC = () => {
   // used for light box popup

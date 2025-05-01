@@ -1,9 +1,9 @@
 import {FC} from 'react';
-import Team from 'icons/lineal/Team';
-import Carousel from 'components/reuseable/Carousel';
-import {TeamCard1} from 'components/reuseable/team-cards';
+import Team from '@/subapps/templates/common/icons/lineal/Team';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import {TeamCard1} from '@/subapps/templates/common/components/reuseable/team-cards';
 // -------- data -------- //
-import teams from 'data/team-list';
+import teams from '@/subapps/templates/common/data/team-list';
 
 const Team3: FC = () => {
   const carouselBreakpoints = {

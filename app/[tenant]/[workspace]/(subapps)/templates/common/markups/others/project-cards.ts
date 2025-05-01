@@ -1,4 +1,4 @@
-const card1Markup = `import { ProjectCard1 } from 'components/reuseable/project-cards';
+const card1Markup = `import { ProjectCard1 } from '@/subapps/templates/common/components/reuseable/project-cards';
 
 <ProjectCard1   
   link="#"
@@ -9,7 +9,7 @@ const card1Markup = `import { ProjectCard1 } from 'components/reuseable/project-
 />
 `;
 
-const card2Markup = `import { ProjectCard2 } from 'components/reuseable/project-cards';
+const card2Markup = `import { ProjectCard2 } from '@/subapps/templates/common/components/reuseable/project-cards';
 
 <ProjectCard2   
   link='#'
@@ -24,7 +24,7 @@ const card2Markup = `import { ProjectCard2 } from 'components/reuseable/project-
 />
 `;
 
-const card3Markup = `import { ProjectCard3 } from 'components/reuseable/project-cards';
+const card3Markup = `import { ProjectCard3 } from '@/subapps/templates/common/components/reuseable/project-cards';
 
 <ProjectCard3   
   link='/single-project-1'

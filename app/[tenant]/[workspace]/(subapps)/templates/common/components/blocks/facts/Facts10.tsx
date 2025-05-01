@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import {Counter1} from 'components/reuseable/counter';
+import {Counter1} from '@/subapps/templates/common/components/reuseable/counter';
 // -------- data -------- //
-import {factList5} from 'data/facts';
+import {factList5} from '@/subapps/templates/common/data/facts';
 
 const Facts10: FC = () => {
   return (

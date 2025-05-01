@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
-import {ServiceCard3} from 'components/reuseable/service-cards';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {ServiceCard3} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {processList9} from 'data/process';
+import {processList9} from '@/subapps/templates/common/data/process';
 
 const Process12: FC = () => {
   return (

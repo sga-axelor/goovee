@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import GoogleAppBtn from 'components/common/GoogleAppBtn';
+import GoogleAppBtn from '@/subapps/templates/common/components/common/GoogleAppBtn';
 
 const Banner1: FC = () => {
   return (

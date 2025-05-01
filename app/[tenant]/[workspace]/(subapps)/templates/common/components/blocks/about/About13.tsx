@@ -1,10 +1,10 @@
 import {FC} from 'react';
 import {Banner4} from '../banner';
-import ListColumn from 'components/reuseable/ListColumn';
+import ListColumn from '@/subapps/templates/common/components/reuseable/ListColumn';
 // -------- custom hooks -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 // -------- data -------- //
-import {aboutList1} from 'data/about';
+import {aboutList1} from '@/subapps/templates/common/data/about';
 
 const About13: FC = () => {
   // lighbox hook called

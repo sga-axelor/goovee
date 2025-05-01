@@ -1,22 +1,22 @@
-import {LinkType} from 'types/demo-1';
-import color from 'utils/color';
+import {LinkType} from '@/subapps/templates/common/types/demo-1';
+import color from '@/subapps/templates/common/utils/color';
 
-import AI from 'icons/solid/AI';
-import Hand from 'icons/solid/Hand';
-import Code from 'icons/solid/Code';
-import Cart from 'icons/solid/Cart';
-import Rocket from 'icons/solid/Rocket';
-import ShieldTwo from 'icons/solid/Shield';
-import SettingTwo from 'icons/solid/Setting';
-import DevicesTwo from 'icons/solid/DevicesTwo';
-import DevicesThree from 'icons/solid/DevicesThree';
-import HandHoldingMedical from 'icons/solid/HandHoldingMedical';
-import SuitcaseMedical from 'icons/solid/SuitcaseMdical';
-import BrainPlus from 'icons/solid/BrainPlus';
-import ScaleUnbalanced from 'icons/solid/ScaleUnbalanced';
-import Stethoscope from 'icons/solid/Stethoscope';
-import TruckMedical from 'icons/solid/TruckMedical';
-import Headphone from 'icons/solid/Headphone';
+import AI from '@/subapps/templates/common/icons/solid/AI';
+import Hand from '@/subapps/templates/common/icons/solid/Hand';
+import Code from '@/subapps/templates/common/icons/solid/Code';
+import Cart from '@/subapps/templates/common/icons/solid/Cart';
+import Rocket from '@/subapps/templates/common/icons/solid/Rocket';
+import ShieldTwo from '@/subapps/templates/common/icons/solid/Shield';
+import SettingTwo from '@/subapps/templates/common/icons/solid/Setting';
+import DevicesTwo from '@/subapps/templates/common/icons/solid/DevicesTwo';
+import DevicesThree from '@/subapps/templates/common/icons/solid/DevicesThree';
+import HandHoldingMedical from '@/subapps/templates/common/icons/solid/HandHoldingMedical';
+import SuitcaseMedical from '@/subapps/templates/common/icons/solid/SuitcaseMdical';
+import BrainPlus from '@/subapps/templates/common/icons/solid/BrainPlus';
+import ScaleUnbalanced from '@/subapps/templates/common/icons/solid/ScaleUnbalanced';
+import Stethoscope from '@/subapps/templates/common/icons/solid/Stethoscope';
+import TruckMedical from '@/subapps/templates/common/icons/solid/TruckMedical';
+import Headphone from '@/subapps/templates/common/icons/solid/Headphone';
 
 // used in the services-1 block
 export const serviceList1 = [

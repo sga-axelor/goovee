@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import IconBox from 'components/reuseable/IconBox';
-import {Counter3} from 'components/reuseable/counter';
+import IconBox from '@/subapps/templates/common/components/reuseable/IconBox';
+import {Counter3} from '@/subapps/templates/common/components/reuseable/counter';
 // -------- data -------- //
-import {factList8} from 'data/facts';
+import {factList8} from '@/subapps/templates/common/data/facts';
 
 const Facts15: FC = () => {
   return (

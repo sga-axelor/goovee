@@ -1,4 +1,4 @@
-const card1Markup = `import { TeamCard1 } from 'components/reuseable/team-cards';
+const card1Markup = `import { TeamCard1 } from '@/subapps/templates/common/components/reuseable/team-cards';
   
 <TeamCard1 
   name='Coriss Ambady'
@@ -11,7 +11,7 @@ const card1Markup = `import { TeamCard1 } from 'components/reuseable/team-cards'
 />
 `;
 
-const card2Markup = `import { TeamCard2 } from 'components/reuseable/team-cards';
+const card2Markup = `import { TeamCard2 } from '@/subapps/templates/common/components/reuseable/team-cards';
   
 <TeamCard2
   name='Coriss Ambady'
@@ -24,7 +24,7 @@ const card2Markup = `import { TeamCard2 } from 'components/reuseable/team-cards'
 />
 `;
 
-const card3Markup = `import { TeamCard3 } from 'components/reuseable/team-cards';
+const card3Markup = `import { TeamCard3 } from '@/subapps/templates/common/components/reuseable/team-cards';
   
 <TeamCard3
   name='Coriss Ambady'

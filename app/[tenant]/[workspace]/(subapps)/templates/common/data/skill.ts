@@ -1,4 +1,4 @@
-import color from 'utils/color';
+import color from '@/subapps/templates/common/utils/color';
 
 export const skill1 = [
   {id: 1, percent: 100, title: 'JavaScript', color: color.violet},

@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {zoomInAnimate} from 'utils/animation';
+import {zoomInAnimate} from '@/subapps/templates/common/utils/animation';
 
 const Hero22: FC = () => {
   return (

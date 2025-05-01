@@ -1,8 +1,8 @@
 import {FC} from 'react';
 import Plyr from 'plyr-react';
-import Hex from 'icons/Hex';
+import Hex from '@/subapps/templates/common/icons/Hex';
 // -------- data -------- //
-import {processList10} from 'data/process';
+import {processList10} from '@/subapps/templates/common/data/process';
 
 const Process13: FC = () => {
   return (

@@ -1,18 +1,18 @@
 // -------- icons -------- //
-import Bulb from 'icons/solid-mono/Bulb';
-import Design from 'icons/lineal/Design';
-import Compare from 'icons/solid-mono/Compare';
-import LightBulb from 'icons/lineal/LightBulb';
-import DeliveryBox from 'icons/solid-mono/DeliveryBox';
-import PieChartTwo from 'icons/lineal/PieChartTwo';
-import CheckShield from 'icons/solid/CheckShield';
-import Dollar from 'icons/solid/Dollar';
-import Update from 'icons/solid/Update';
-import Download from 'icons/solid/Download';
-import ClipboardList from 'icons/solid/ClipboardList';
-import HourGlassStart from 'icons/solid/HourGlassStart';
-import Rocket from 'icons/solid/Rocket';
-import TruckMedical from 'icons/solid/TruckMedical';
+import Bulb from '@/subapps/templates/common/icons/solid-mono/Bulb';
+import Design from '@/subapps/templates/common/icons/lineal/Design';
+import Compare from '@/subapps/templates/common/icons/solid-mono/Compare';
+import LightBulb from '@/subapps/templates/common/icons/lineal/LightBulb';
+import DeliveryBox from '@/subapps/templates/common/icons/solid-mono/DeliveryBox';
+import PieChartTwo from '@/subapps/templates/common/icons/lineal/PieChartTwo';
+import CheckShield from '@/subapps/templates/common/icons/solid/CheckShield';
+import Dollar from '@/subapps/templates/common/icons/solid/Dollar';
+import Update from '@/subapps/templates/common/icons/solid/Update';
+import Download from '@/subapps/templates/common/icons/solid/Download';
+import ClipboardList from '@/subapps/templates/common/icons/solid/ClipboardList';
+import HourGlassStart from '@/subapps/templates/common/icons/solid/HourGlassStart';
+import Rocket from '@/subapps/templates/common/icons/solid/Rocket';
+import TruckMedical from '@/subapps/templates/common/icons/solid/TruckMedical';
 
 // used in the process-1, process-7, process-14 block
 export const processList1 = [

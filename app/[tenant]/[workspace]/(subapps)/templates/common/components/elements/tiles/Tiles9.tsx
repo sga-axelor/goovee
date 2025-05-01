@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {fadeInAnimate} from 'utils/animation';
+import {fadeInAnimate} from '@/subapps/templates/common/utils/animation';
 
 // ====================================================
 type Tiles9Props = {hiddenShape?: boolean};

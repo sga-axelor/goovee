@@ -1,5 +1,7 @@
 import {FC} from 'react';
-import animation, {fadeInAnimate} from 'utils/animation';
+import animation, {
+  fadeInAnimate,
+} from '@/subapps/templates/common/utils/animation';
 
 const Tiles7: FC = () => {
   return (

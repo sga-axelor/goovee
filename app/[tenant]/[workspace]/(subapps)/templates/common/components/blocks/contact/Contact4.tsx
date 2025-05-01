@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Contact4: FC = () => {
   return (

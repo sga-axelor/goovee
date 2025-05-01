@@ -2,11 +2,11 @@ import dayjs from 'dayjs';
 import {FC} from 'react';
 import Link from 'next/link';
 // -------- custom components -------- //
-import Carousel from 'components/reuseable/Carousel';
-import NextLink from 'components/reuseable/links/NextLink';
-import carouselBreakpoints from 'utils/carouselBreakpoints';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
 // -------- data -------- //
-import {blogList3} from 'data/blog';
+import {blogList3} from '@/subapps/templates/common/data/blog';
 
 const Blog5: FC = () => {
   return (

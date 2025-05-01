@@ -8,8 +8,8 @@ declare global {
 
 const useProgressbar = () => {
   useEffect(() => {
-    require('plugins/waypoints');
-    const ProgressBar = require('plugins/progressbar');
+    require('@/subapps/templates/common/plugins/waypoints');
+    const ProgressBar = require('@/subapps/templates/common/plugins/progressbar');
 
     const pline = document.querySelectorAll('.progressbar.line');
     const pcircle = document.querySelectorAll('.progressbar.semi-circle');

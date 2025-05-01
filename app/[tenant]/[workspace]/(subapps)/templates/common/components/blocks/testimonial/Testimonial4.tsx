@@ -1,10 +1,10 @@
 import {FC} from 'react';
 // -------- custom component -------- //
-import Carousel from 'components/reuseable/Carousel';
-import carouselBreakpoints from 'utils/carouselBreakpoints';
-import {TestimonialCard3} from 'components/reuseable/testimonial-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
+import {TestimonialCard3} from '@/subapps/templates/common/components/reuseable/testimonial-cards';
 // -------- data -------- //
-import {testimonialList2} from 'data/testimonial-list';
+import {testimonialList2} from '@/subapps/templates/common/data/testimonial-list';
 
 const Testimonial4: FC = () => {
   return (

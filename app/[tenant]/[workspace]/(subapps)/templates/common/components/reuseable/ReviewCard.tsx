@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import {FC} from 'react';
 import NextLink from './links/NextLink';
-import ratingGenerate from 'utils/ratings';
-import FigureImage from 'components/reuseable/FigureImage';
+import ratingGenerate from '@/subapps/templates/common/utils/ratings';
+import FigureImage from '@/subapps/templates/common/components/reuseable/FigureImage';
 
 // ===================================================================
 type ReviewCardProps = {

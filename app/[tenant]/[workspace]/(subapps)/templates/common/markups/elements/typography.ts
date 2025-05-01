@@ -83,7 +83,7 @@ const dropcapMarkup = `<span className="dropcap text-dark">A</span>
 <span className="dropcap text-primary">A</span>
 <span className="dropcap rounded-circle text-primary bg-pale-primary">A</span>`;
 
-const linksMarkup = `import NextLink from 'components/reuseable/links/NextLink';
+const linksMarkup = `import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <NextLink title="Link example" href="#" className="hover link-body me-4 ms-1 mb-5" />
 <NextLink title="Link example" href="#" className="hover me-4 mb-5" />

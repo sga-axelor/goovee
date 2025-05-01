@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import Puzzle from 'icons/lineal/Puzzle';
+import Puzzle from '@/subapps/templates/common/icons/lineal/Puzzle';
 
 const CTA5: FC = () => {
   return (

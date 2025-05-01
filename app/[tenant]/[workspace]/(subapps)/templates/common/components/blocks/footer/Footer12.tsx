@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import SocialLinks from 'components/reuseable/SocialLinks';
-import NextLink from 'components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import footerNav from 'data/footer';
+import footerNav from '@/subapps/templates/common/data/footer';
 
 const Footer12: FC = () => {
   return (

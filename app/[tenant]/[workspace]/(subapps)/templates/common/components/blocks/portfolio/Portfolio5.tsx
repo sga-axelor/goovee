@@ -1,6 +1,6 @@
 import {FC} from 'react';
-import useIsotope from 'hooks/useIsotope';
-import {portfolioList4} from 'data/portfolio';
+import useIsotope from '@/subapps/templates/common/hooks/useIsotope';
+import {portfolioList4} from '@/subapps/templates/common/data/portfolio';
 
 const Portfolio5: FC = () => {
   const {filterKey, handleFilterKeyChange} = useIsotope();

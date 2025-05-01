@@ -1,8 +1,11 @@
 import {FC} from 'react';
 import CountUp from 'react-countup';
-import animation, {fadeInAnimate, slideInDownAnimate} from 'utils/animation';
-import IconBox from 'components/reuseable/IconBox';
-import NextLink from 'components/reuseable/links/NextLink';
+import animation, {
+  fadeInAnimate,
+  slideInDownAnimate,
+} from '@/subapps/templates/common/utils/animation';
+import IconBox from '@/subapps/templates/common/components/reuseable/IconBox';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Hero8: FC = () => {
   return (

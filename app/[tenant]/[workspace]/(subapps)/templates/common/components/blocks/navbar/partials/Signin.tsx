@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import LoginForm from 'components/elements/forms/LoginForm';
+import LoginForm from '@/subapps/templates/common/components/elements/forms/LoginForm';
 
 const Signin: FC = () => {
   return (

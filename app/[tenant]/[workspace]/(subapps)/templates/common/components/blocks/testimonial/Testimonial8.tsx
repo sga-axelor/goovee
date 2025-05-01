@@ -1,9 +1,9 @@
 import {FC} from 'react';
-import {TestimonialCard3} from 'components/reuseable/testimonial-cards';
+import {TestimonialCard3} from '@/subapps/templates/common/components/reuseable/testimonial-cards';
 // -------- custom hook -------- //
-import useIsotope from 'hooks/useIsotope';
+import useIsotope from '@/subapps/templates/common/hooks/useIsotope';
 // -------- data -------- //
-import {testimonialList} from 'data/demo-7';
+import {testimonialList} from '@/subapps/templates/common/data/demo-7';
 
 const Testimonial8: FC = () => {
   // used for masonry layout

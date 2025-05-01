@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import Carousel2 from 'components/reuseable/Carousel2';
+import Carousel2 from '@/subapps/templates/common/components/reuseable/Carousel2';
 
 const Hero23: FC = () => {
   return (

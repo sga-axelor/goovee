@@ -1,8 +1,8 @@
 import {FC, Fragment, ReactElement, ReactNode} from 'react';
 import {useRouter} from 'next/router';
-import {Navbar} from 'components/blocks/navbar';
-import PageProgress from 'components/common/PageProgress';
-import NextLink from 'components/reuseable/links/NextLink';
+import {Navbar} from '@/subapps/templates/common/components/blocks/navbar';
+import PageProgress from '@/subapps/templates/common/components/common/PageProgress';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 // ====================================================
 type Links = {title: string; url: string}[];

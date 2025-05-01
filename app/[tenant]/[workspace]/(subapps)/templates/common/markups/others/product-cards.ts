@@ -1,4 +1,4 @@
-const card1Markup = `import { ProductCard } from 'components/reuseable/product-cards';
+const card1Markup = `import { ProductCard } from '@/subapps/templates/common/components/reuseable/product-cards';
 
 <ProductCard 
   image="..."
@@ -13,7 +13,7 @@ const card1Markup = `import { ProductCard } from 'components/reuseable/product-c
 />
 `;
 
-const card2Markup = `import { ProductCard2 } from 'components/reuseable/product-cards';
+const card2Markup = `import { ProductCard2 } from '@/subapps/templates/common/components/reuseable/product-cards';
 
 <ProductCard2 
   size="..."

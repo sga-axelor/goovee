@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
-import {ProjectCard3} from 'components/reuseable/project-cards';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {ProjectCard3} from '@/subapps/templates/common/components/reuseable/project-cards';
 // -------- data -------- //
-import {portfolioList6} from 'data/portfolio';
+import {portfolioList6} from '@/subapps/templates/common/data/portfolio';
 
 const Portfolio11: FC = () => {
   return (

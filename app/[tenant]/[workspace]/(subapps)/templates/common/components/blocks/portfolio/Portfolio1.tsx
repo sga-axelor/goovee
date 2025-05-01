@@ -1,8 +1,8 @@
 import {FC} from 'react';
 import Image from 'next/image';
-import Carousel from 'components/reuseable/Carousel';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
 // -------- data -------- //
-import {portfolioList1} from 'data/portfolio';
+import {portfolioList1} from '@/subapps/templates/common/data/portfolio';
 
 const Portfolio1: FC = () => {
   const carouselBreakpoints = {

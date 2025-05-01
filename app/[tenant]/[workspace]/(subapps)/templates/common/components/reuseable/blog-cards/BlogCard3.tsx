@@ -1,7 +1,7 @@
 import {FC} from 'react';
 import Link from 'next/link';
 import NextLink from '../links/NextLink';
-import FigureImage from 'components/reuseable/FigureImage';
+import FigureImage from '@/subapps/templates/common/components/reuseable/FigureImage';
 
 // ========================================================
 type BlogCard3Props = {

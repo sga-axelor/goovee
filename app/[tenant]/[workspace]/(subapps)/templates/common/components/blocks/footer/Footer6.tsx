@@ -1,9 +1,9 @@
 import {FC} from 'react';
 // -------- custom component -------- //
-import NextLink from 'components/reuseable/links/NextLink';
-import SocialLinks from 'components/reuseable/SocialLinks';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
 // -------- data -------- //
-import footerNav from 'data/footer';
+import footerNav from '@/subapps/templates/common/data/footer';
 
 const Footer6: FC = () => {
   return (

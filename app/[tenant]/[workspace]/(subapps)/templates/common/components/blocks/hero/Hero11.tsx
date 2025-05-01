@@ -1,10 +1,10 @@
 import {FC} from 'react';
-import {slideInDownAnimate} from 'utils/animation';
+import {slideInDownAnimate} from '@/subapps/templates/common/utils/animation';
 // -------- custom component -------- //
-import Carousel from 'components/reuseable/Carousel';
-import NextLink from 'components/reuseable/links/NextLink';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- custom hook -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 
 const Hero11: FC = () => {
   // use video popup

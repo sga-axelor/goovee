@@ -1,14 +1,14 @@
-const defaultMarkup = `import Pagination from 'components/reuseable/Pagination';
+const defaultMarkup = `import Pagination from '@/subapps/templates/common/components/reuseable/Pagination';
 
 <Pagination className="justify-content-start" />
 `;
 
-const alternativeMarkup = `import Pagination from 'components/reuseable/Pagination';
+const alternativeMarkup = `import Pagination from '@/subapps/templates/common/components/reuseable/Pagination';
 
 <Pagination className="justify-content-start" altStyle />
 `;
 
-const breadcrumbMarkup = `import Breadcrumb from 'components/reuseable/Breadcrumb';
+const breadcrumbMarkup = `import Breadcrumb from '@/subapps/templates/common/components/reuseable/Breadcrumb';
 
 <Breadcrumb data={[{ id: 1, title: 'Home', url: '#' }]} />
 

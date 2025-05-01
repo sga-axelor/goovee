@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import SocialLinks from 'components/reuseable/SocialLinks';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
 
 const Contact10: FC = () => {
   return (

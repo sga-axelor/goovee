@@ -1,9 +1,9 @@
 import {FC} from 'react';
 import Image from 'next/image';
-import Carousel from 'components/reuseable/Carousel';
-import NextLink from 'components/reuseable/links/NextLink';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import {carouselImages} from 'data/demo-7';
+import {carouselImages} from '@/subapps/templates/common/data/demo-7';
 
 const Portfolio2: FC = () => {
   return (

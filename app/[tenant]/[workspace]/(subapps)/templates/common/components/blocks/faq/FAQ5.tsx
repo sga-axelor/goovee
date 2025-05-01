@@ -1,6 +1,6 @@
 import {FC} from 'react';
 // -------- data -------- //
-import {faq} from 'data/demo-11';
+import {faq} from '@/subapps/templates/common/data/demo-11';
 
 const FAQ5: FC = () => {
   return (

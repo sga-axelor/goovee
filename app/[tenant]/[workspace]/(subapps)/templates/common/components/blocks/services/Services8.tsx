@@ -1,9 +1,9 @@
 import {FC} from 'react';
-import {Tiles4} from 'components/elements/tiles';
-import IconBox from 'components/reuseable/IconBox';
-import {ServiceCard3} from 'components/reuseable/service-cards';
+import {Tiles4} from '@/subapps/templates/common/components/elements/tiles';
+import IconBox from '@/subapps/templates/common/components/reuseable/IconBox';
+import {ServiceCard3} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {serviceList2} from 'data/service';
+import {serviceList2} from '@/subapps/templates/common/data/service';
 
 const Services8: FC = () => {
   return (

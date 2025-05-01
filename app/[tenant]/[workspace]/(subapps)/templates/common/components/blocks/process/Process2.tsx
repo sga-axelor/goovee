@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import {ProcessList2} from 'components/reuseable/process-list';
+import {ProcessList2} from '@/subapps/templates/common/components/reuseable/process-list';
 // -------- data -------- //
-import {processList3} from 'data/process';
+import {processList3} from '@/subapps/templates/common/data/process';
 
 const Process2: FC = () => {
   return (

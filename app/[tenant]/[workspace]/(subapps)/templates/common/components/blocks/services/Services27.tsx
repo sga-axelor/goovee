@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import Link from 'next/link';
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Services27: FC = () => {
   return (

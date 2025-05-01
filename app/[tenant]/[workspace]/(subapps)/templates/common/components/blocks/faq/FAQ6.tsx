@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import Accordion from 'components/reuseable/accordion';
-import NextLink from 'components/reuseable/links/NextLink';
+import Accordion from '@/subapps/templates/common/components/reuseable/accordion';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import {accordionList3} from 'data/faq';
+import {accordionList3} from '@/subapps/templates/common/data/faq';
 
 const FAQ6: FC = () => {
   return (

@@ -1,11 +1,11 @@
-const markup1 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup1 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar language button={<NextLink title="Contact" href="#" className="btn btn-sm btn-primary rounded" />} />
 `;
 
-const markup2 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup2 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   language
@@ -15,8 +15,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup3 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup3 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   language
@@ -25,8 +25,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup4 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup4 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   language
@@ -36,8 +36,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup5 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup5 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   fancy
@@ -48,8 +48,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup6 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup6 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   info
@@ -63,8 +63,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup7 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup7 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   info
@@ -79,8 +79,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup8 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup8 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   info
@@ -94,8 +94,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup9 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup9 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   info
@@ -110,8 +110,8 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup10 = `import { Navbar } from 'components/blocks/navbar';
-import NextLink from 'components/reuseable/links/NextLink';
+const markup10 = `import { Navbar } from '@/subapps/templates/common/components/blocks/navbar';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <Navbar
   info
@@ -126,32 +126,32 @@ import NextLink from 'components/reuseable/links/NextLink';
 />
 `;
 
-const markup11 = `import { Navbar3 } from 'components/blocks/navbar';
+const markup11 = `import { Navbar3 } from '@/subapps/templates/common/components/blocks/navbar';
 
 <Navbar3 logoAlt="logo-purple" navClassName="navbar navbar-expand-lg center-logo transparent navbar-light" />
 `;
 
-const markup12 = `import { Navbar3 } from 'components/blocks/navbar';
+const markup12 = `import { Navbar3 } from '@/subapps/templates/common/components/blocks/navbar';
 
 <Navbar3 logoAlt="logo-light" navClassName="navbar navbar-expand-lg center-logo transparent navbar-dark" />
 `;
 
-const markup13 = `import { Navbar3 } from 'components/blocks/navbar';
+const markup13 = `import { Navbar3 } from '@/subapps/templates/common/components/blocks/navbar';
 
 <Navbar3 logoAlt="logo-dark" navClassName="navbar navbar-expand-lg center-logo navbar-light navbar-bg-light" />
 `;
 
-const markup14 = `import { Navbar3 } from 'components/blocks/navbar';
+const markup14 = `import { Navbar3 } from '@/subapps/templates/common/components/blocks/navbar';
 
 <Navbar3 logoAlt="logo-light" navClassName="navbar navbar-expand-lg center-logo navbar-dark navbar-bg-dark" />
 `;
 
-const markup15 = `import { Navbar2 } from 'components/blocks/navbar';
+const markup15 = `import { Navbar2 } from '@/subapps/templates/common/components/blocks/navbar';
 
 <Navbar2 />
 `;
 
-const markup16 = `import { Navbar4 } from 'components/blocks/navbar';
+const markup16 = `import { Navbar4 } from '@/subapps/templates/common/components/blocks/navbar';
 
 <Navbar4 />
 `;

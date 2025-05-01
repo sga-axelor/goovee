@@ -1,11 +1,11 @@
 import {FC} from 'react';
 // -------- custom component -------- //
-import Carousel from 'components/reuseable/Carousel';
-import carouselBreakpoints from 'utils/carouselBreakpoints';
-import NextLink from 'components/reuseable/links/NextLink';
-import {TeamCard2} from 'components/reuseable/team-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {TeamCard2} from '@/subapps/templates/common/components/reuseable/team-cards';
 // -------- data -------- //
-import {teams2} from 'data/team-list';
+import {teams2} from '@/subapps/templates/common/data/team-list';
 
 const Team2: FC = () => {
   return (

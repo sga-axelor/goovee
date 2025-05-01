@@ -1,6 +1,9 @@
 import {FC} from 'react';
-import {slideInDownAnimate, zoomInAnimate} from 'utils/animation';
-import NextLink from 'components/reuseable/links/NextLink';
+import {
+  slideInDownAnimate,
+  zoomInAnimate,
+} from '@/subapps/templates/common/utils/animation';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Hero2: FC = () => {
   return (

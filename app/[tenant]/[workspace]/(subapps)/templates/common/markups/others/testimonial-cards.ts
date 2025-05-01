@@ -1,14 +1,14 @@
-const card1Markup = `import { TestimonialCard1 } from 'components/reuseable/testimonial-cards';
+const card1Markup = `import { TestimonialCard1 } from '@/subapps/templates/common/components/reuseable/testimonial-cards';
   
 <TestimonialCard1 name="..." review="..." designation="..." />
 `;
 
-const card2Markup = `import { TestimonialCard2 } from 'components/reuseable/testimonial-cards';
+const card2Markup = `import { TestimonialCard2 } from '@/subapps/templates/common/components/reuseable/testimonial-cards';
   
 <TestimonialCard2 name="..." review="..." designation="..." />
 `;
 
-const card3Markup = `import { TestimonialCard3 } from 'components/reuseable/testimonial-cards';
+const card3Markup = `import { TestimonialCard3 } from '@/subapps/templates/common/components/reuseable/testimonial-cards';
   
 <TestimonialCard3
   name='...'
@@ -18,12 +18,12 @@ const card3Markup = `import { TestimonialCard3 } from 'components/reuseable/test
 />
 `;
 
-const card4Markup = `import { TestimonialCard4 } from 'components/reuseable/testimonial-cards';
+const card4Markup = `import { TestimonialCard4 } from '@/subapps/templates/common/components/reuseable/testimonial-cards';
   
 <TestimonialCard4 />
 `;
 
-const card5Markup = `import { TestimonialCard5 } from 'components/reuseable/testimonial-cards';
+const card5Markup = `import { TestimonialCard5 } from '@/subapps/templates/common/components/reuseable/testimonial-cards';
   
 <TestimonialCard5
   name='...'
@@ -33,7 +33,7 @@ const card5Markup = `import { TestimonialCard5 } from 'components/reuseable/test
 />
 `;
 
-const card6Markup = `import { TestimonialCard6 } from 'components/reuseable/testimonial-cards';
+const card6Markup = `import { TestimonialCard6 } from '@/subapps/templates/common/components/reuseable/testimonial-cards';
   
 <TestimonialCard6
   name='...'

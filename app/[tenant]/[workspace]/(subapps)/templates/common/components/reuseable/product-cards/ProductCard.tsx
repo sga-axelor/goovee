@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import currency from 'utils/currency';
+import currency from '@/subapps/templates/common/utils/currency';
 import NextLink from '../links/NextLink';
-import ratingGenerate from 'utils/ratings';
+import ratingGenerate from '@/subapps/templates/common/utils/ratings';
 
 // =========================================
 type ProductCardProps = {

@@ -11,7 +11,7 @@ const useReplaceMe = () => {
     };
 
     (() => {
-      const ReplaceMe = require('plugins/replaceme');
+      const ReplaceMe = require('@/subapps/templates/common/plugins/replaceme');
 
       if (document.querySelector('.rotator-zoom') !== null) {
         replace = new ReplaceMe(document.querySelector('.rotator-zoom'), {

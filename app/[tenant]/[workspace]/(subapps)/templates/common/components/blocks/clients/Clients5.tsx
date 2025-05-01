@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import FigureImage from 'components/reuseable/FigureImage';
+import FigureImage from '@/subapps/templates/common/components/reuseable/FigureImage';
 // -------- data -------- //
-import {clientList2} from 'data/client';
+import {clientList2} from '@/subapps/templates/common/data/client';
 
 const Clients5: FC = () => {
   return (

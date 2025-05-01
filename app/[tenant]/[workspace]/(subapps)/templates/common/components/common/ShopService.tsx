@@ -1,8 +1,8 @@
 import {FC} from 'react';
 // -------- icons -------- //
-import Verify from 'icons/solid-mono/Verify';
-import PushCart from 'icons/solid-mono/PushCart';
-import Shipment from 'icons/solid-mono/Shipment';
+import Verify from '@/subapps/templates/common/icons/solid-mono/Verify';
+import PushCart from '@/subapps/templates/common/icons/solid-mono/PushCart';
+import Shipment from '@/subapps/templates/common/icons/solid-mono/Shipment';
 // -------- data -------- //
 const services = [
   {

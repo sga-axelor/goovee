@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import Carousel from 'components/reuseable/Carousel';
-import carouselBreakpoints from 'utils/carouselBreakpoints';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
 // -------- data -------- //
-import {testimonialList7} from 'data/testimonial-list';
+import {testimonialList7} from '@/subapps/templates/common/data/testimonial-list';
 
 const Testimonial19: FC = () => {
   return (

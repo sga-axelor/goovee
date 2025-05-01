@@ -3,8 +3,8 @@ import {
   fadeInAnimate,
   slideInDownAnimate,
   zoomInAnimate,
-} from 'utils/animation';
-import NextLink from 'components/reuseable/links/NextLink';
+} from '@/subapps/templates/common/utils/animation';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Hero7: FC = () => {
   return (

@@ -1,8 +1,8 @@
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 import Image from 'next/image';
 import Link from 'next/link';
 import {FC} from 'react';
-import currency from 'utils/currency';
+import currency from '@/subapps/templates/common/utils/currency';
 
 const cartItems = [
   {

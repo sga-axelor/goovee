@@ -1,7 +1,7 @@
 import {FC} from 'react';
 import Link from 'next/link';
 // -------- data -------- //
-import {serviceList14} from 'data/service';
+import {serviceList14} from '@/subapps/templates/common/data/service';
 
 const Services26: FC = () => {
   return (

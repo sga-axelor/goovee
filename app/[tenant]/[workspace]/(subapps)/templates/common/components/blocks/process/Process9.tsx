@@ -1,11 +1,11 @@
 import {FC} from 'react';
 // -------- custom component -------- //
 import {Banner4} from '../banner';
-import {ServiceCard3} from 'components/reuseable/service-cards';
+import {ServiceCard3} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- custom hooks -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 // -------- data -------- //
-import {processList8} from 'data/process';
+import {processList8} from '@/subapps/templates/common/data/process';
 
 const Process9: FC = () => {
   // lighbox hook called

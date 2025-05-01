@@ -1,9 +1,9 @@
 import {FC} from 'react';
 import CountUp from 'react-countup';
-import {slideInDownAnimate} from 'utils/animation';
+import {slideInDownAnimate} from '@/subapps/templates/common/utils/animation';
 // -------- custom component -------- //
-import Check from 'icons/lineal/Check';
-import NextLink from 'components/reuseable/links/NextLink';
+import Check from '@/subapps/templates/common/icons/lineal/Check';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Hero16: FC = () => {
   return (

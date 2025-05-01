@@ -1,6 +1,6 @@
 import {FC} from 'react';
 // -------- data -------- //
-import {clientList} from 'data/client';
+import {clientList} from '@/subapps/templates/common/data/client';
 
 const Clients1: FC = () => {
   return (

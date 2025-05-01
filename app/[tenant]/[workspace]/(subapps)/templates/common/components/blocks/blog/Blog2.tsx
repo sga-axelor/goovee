@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import Carousel from 'components/reuseable/Carousel';
-import {BlogCard4} from 'components/reuseable/blog-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import {BlogCard4} from '@/subapps/templates/common/components/reuseable/blog-cards';
 // -------- data -------- //
-import {blogList} from 'data/demo-11';
+import {blogList} from '@/subapps/templates/common/data/demo-11';
 
 const Blog2: FC = () => {
   const carouselBreakpoints = {

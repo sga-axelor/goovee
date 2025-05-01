@@ -1,5 +1,5 @@
 import {FC, Fragment} from 'react';
-import ProgressList from 'components/common/ProgressList';
+import ProgressList from '@/subapps/templates/common/components/common/ProgressList';
 
 const About5: FC = () => {
   return (

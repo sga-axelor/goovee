@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import {Counter2} from 'components/reuseable/counter';
+import {Counter2} from '@/subapps/templates/common/components/reuseable/counter';
 // -------- data -------- //
-import {facts} from 'data/demo-11';
+import {facts} from '@/subapps/templates/common/data/demo-11';
 
 const FAQ4: FC = () => {
   return (

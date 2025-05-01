@@ -1,5 +1,5 @@
-const card1Markup = `import { ServiceCard1 } from 'components/reuseable/service-cards';
-import Search from 'icons/Search';
+const card1Markup = `import { ServiceCard1 } from '@/subapps/templates/common/components/reuseable/service-cards';
+import Search from '@/subapps/templates/common/icons/Search';
 
 <ServiceCard1
   linkUrl='#'
@@ -11,7 +11,7 @@ import Search from 'icons/Search';
 />
 `;
 
-const card2Markup = `import { ServiceCard2 } from 'components/reuseable/service-cards';
+const card2Markup = `import { ServiceCard2 } from '@/subapps/templates/common/components/reuseable/service-cards';
 
 <ServiceCard2
   linkUrl='#'
@@ -21,8 +21,8 @@ const card2Markup = `import { ServiceCard2 } from 'components/reuseable/service-
 />
 `;
 
-const card3Markup = `import { ServiceCard3 } from 'components/reuseable/service-cards';
-import Target from 'icons/Target';
+const card3Markup = `import { ServiceCard3 } from '@/subapps/templates/common/components/reuseable/service-cards';
+import Target from '@/subapps/templates/common/icons/Target';
 
 <ServiceCard3
   Icon={Target}
@@ -31,8 +31,8 @@ import Target from 'icons/Target';
 />
 `;
 
-const card4Markup = `import { ServiceCard4 } from 'components/reuseable/service-cards';
-import Telephone from 'icons/Telephone';
+const card4Markup = `import { ServiceCard4 } from '@/subapps/templates/common/components/reuseable/service-cards';
+import Telephone from '@/subapps/templates/common/icons/Telephone';
 
 <ServiceCard4
   Icon={Telephone}
@@ -44,7 +44,7 @@ import Telephone from 'icons/Telephone';
 />
 `;
 
-const card5Markup = `import { ServiceCard5 } from 'components/reuseable/service-cards';
+const card5Markup = `import { ServiceCard5 } from '@/subapps/templates/common/components/reuseable/service-cards';
 
 <ServiceCard5
   url="#"
@@ -54,7 +54,7 @@ const card5Markup = `import { ServiceCard5 } from 'components/reuseable/service-
 />
 `;
 
-const card6Markup = `import { ServiceCard6 } from 'components/reuseable/service-cards';
+const card6Markup = `import { ServiceCard6 } from '@/subapps/templates/common/components/reuseable/service-cards';
 
 <ServiceCard6
   linkUrl='#'

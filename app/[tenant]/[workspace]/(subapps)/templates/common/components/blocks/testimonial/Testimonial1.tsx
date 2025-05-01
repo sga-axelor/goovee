@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
-import {TestimonialCard1} from 'components/reuseable/testimonial-cards';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {TestimonialCard1} from '@/subapps/templates/common/components/reuseable/testimonial-cards';
 // -------- data -------- //
-import {testimonialList1} from 'data/testimonial-list';
+import {testimonialList1} from '@/subapps/templates/common/data/testimonial-list';
 
 const Testimonial1: FC = () => {
   return (

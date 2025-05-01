@@ -1,10 +1,10 @@
 import {FC} from 'react';
 import CountUp from 'react-countup';
-import {ProcessList2} from 'components/reuseable/process-list';
+import {ProcessList2} from '@/subapps/templates/common/components/reuseable/process-list';
 // -------- data -------- //
-import {skill2} from 'data/skill';
-import {factList10} from 'data/facts';
-import {processList} from 'data/demo-12';
+import {skill2} from '@/subapps/templates/common/data/skill';
+import {factList10} from '@/subapps/templates/common/data/facts';
+import {processList} from '@/subapps/templates/common/data/demo-12';
 
 const list = [
   'One effective way to detail your skills.',

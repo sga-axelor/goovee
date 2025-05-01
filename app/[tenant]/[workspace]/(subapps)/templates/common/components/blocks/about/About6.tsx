@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import {Tiles5} from 'components/elements/tiles';
-import ListColumn from 'components/reuseable/ListColumn';
+import {Tiles5} from '@/subapps/templates/common/components/elements/tiles';
+import ListColumn from '@/subapps/templates/common/components/reuseable/ListColumn';
 // -------- data -------- //
-import {aboutList2} from 'data/about';
+import {aboutList2} from '@/subapps/templates/common/data/about';
 
 const About6: FC = () => {
   return (

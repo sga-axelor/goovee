@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import {zoomInAnimate} from 'utils/animation';
+import {zoomInAnimate} from '@/subapps/templates/common/utils/animation';
 // -------- custom hook -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 
 const Hero13: FC = () => {
   // use video popup

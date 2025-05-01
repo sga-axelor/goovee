@@ -1,9 +1,9 @@
 import {FC} from 'react';
 import {Banner4} from '../banner';
 // -------- custom hooks -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 // -------- data -------- //
-import {progressList} from 'data/demo-8';
+import {progressList} from '@/subapps/templates/common/data/demo-8';
 
 const About10: FC = () => {
   // lighbox hook called

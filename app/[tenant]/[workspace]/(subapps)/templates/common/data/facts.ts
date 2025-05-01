@@ -1,12 +1,12 @@
 // -------- icons -------- //
-import User from 'icons/lineal/User';
-import AwardTwo from 'icons/lineal/AwardTwo';
-import BriefcaseTwo from 'icons/lineal/BriefcaseTwo';
-import CheckList from 'icons/lineal/Check';
+import User from '@/subapps/templates/common/icons/lineal/User';
+import AwardTwo from '@/subapps/templates/common/icons/lineal/AwardTwo';
+import BriefcaseTwo from '@/subapps/templates/common/icons/lineal/BriefcaseTwo';
+import CheckList from '@/subapps/templates/common/icons/lineal/Check';
 
-import Check from 'icons/solid/Check';
-import UserTwo from 'icons/solid/User';
-import Briefcase from 'icons/solid/Briefcase';
+import Check from '@/subapps/templates/common/icons/solid/Check';
+import UserTwo from '@/subapps/templates/common/icons/solid/User';
+import Briefcase from '@/subapps/templates/common/icons/solid/Briefcase';
 
 // used in the facts-2 block
 export const factList1 = [

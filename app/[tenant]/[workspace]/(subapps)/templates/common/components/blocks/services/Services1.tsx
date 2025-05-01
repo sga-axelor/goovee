@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import {ServiceCard1} from 'components/reuseable/service-cards';
+import {ServiceCard1} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {serviceList1} from 'data/service';
+import {serviceList1} from '@/subapps/templates/common/data/service';
 
 const Services1: FC = () => {
   return (

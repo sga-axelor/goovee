@@ -1,7 +1,7 @@
 import {FC, Fragment} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import {serviceList13} from 'data/service';
+import {serviceList13} from '@/subapps/templates/common/data/service';
 
 const Services25: FC = () => {
   return (

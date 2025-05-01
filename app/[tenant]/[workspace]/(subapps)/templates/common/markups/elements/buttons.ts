@@ -1,5 +1,5 @@
 const colorsMarkup = `// reusable link component
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
   
 <NextLink title="Button" href="#" className="btn btn-yellow rounded-pill" />
 <NextLink title="Button" href="#" className="btn btn-pink rounded-pill" />
@@ -30,7 +30,7 @@ import NextLink from 'components/reuseable/links/NextLink';
 `;
 
 const gradientsMarkup = `// reusable link component
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
   
 <NextLink title="Button" href="#" className="btn btn-gradient gradient-1 rounded-pill" />
 <NextLink title="Button" href="#" className="btn btn-gradient gradient-2 rounded-pill" />
@@ -84,7 +84,7 @@ import NextLink from 'components/reuseable/links/NextLink';
 `;
 
 const sizesMarkup = `// reusable link component
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <NextLink  href="#" title="Large Button" className="btn btn-primary btn-lg rounded-pill" />
 <NextLink href="#" title="Default Button" className="btn btn-primary rounded-pill" />
@@ -92,7 +92,7 @@ import NextLink from 'components/reuseable/links/NextLink';
 `;
 
 const shapesMarkup = `// reusable link component
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <NextLink title="Square" href="#" className="btn btn-primary rounded-0" />
 <NextLink title="Rounded" href="#" className="btn btn-primary" />
@@ -100,7 +100,7 @@ import NextLink from 'components/reuseable/links/NextLink';
 `;
 
 const stylesMarkup = `// reusable link component
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <NextLink href="#" title="Solid" className="btn btn-primary rounded-pill" />
 <NextLink href="#" title="Soft" className="btn btn-soft-primary rounded-pill" />
@@ -114,7 +114,7 @@ import NextLink from 'components/reuseable/links/NextLink';
 `;
 
 const circleMarkup = `// reusable link component
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 <NextLink
   href="#"

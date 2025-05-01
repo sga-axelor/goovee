@@ -112,7 +112,7 @@ const subscriptionMarkup = `<button
 </div>
 `;
 
-const signinMarkup = `import Signin from 'components/blocks/navbar/partials/Signin';
+const signinMarkup = `import Signin from '@/subapps/templates/common/components/blocks/navbar/partials/Signin';
   
 <button
   className="btn btn-primary rounded-pill mx-1 mb-2 mb-md-0"
@@ -125,7 +125,7 @@ const signinMarkup = `import Signin from 'components/blocks/navbar/partials/Sign
 <Signin />
 `;
 
-const signupMarkup = `import Signup from 'components/blocks/navbar/partials/Signup';
+const signupMarkup = `import Signup from '@/subapps/templates/common/components/blocks/navbar/partials/Signup';
   
 <button
   className="btn btn-primary rounded-pill mx-1 mb-2 mb-md-0"

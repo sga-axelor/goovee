@@ -1,6 +1,6 @@
 const simpleMarkup = `// reusable carousel component
-import Carousel from 'components/reuseable/Carousel';
-import carouselBreakpoints from 'utils/carouselBreakpoints';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
 
 <Carousel breakpoints={carouselBreakpoints}>
   <figure className="overlay overlay-1 hover-scale rounded mb-0">
@@ -28,7 +28,7 @@ import carouselBreakpoints from 'utils/carouselBreakpoints';
 `;
 
 const cardMarkup = `// reusable carousel component
-import Carousel from 'components/reuseable/Carousel';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
 
 <Carousel
   grabCursor
@@ -55,7 +55,7 @@ import Carousel from 'components/reuseable/Carousel';
 `;
 
 const textMarkup = `// reusable carousel component
-import Carousel from 'components/reuseable/Carousel';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
 
 <Carousel className="dots-closer text-center" navigation={false} grabCursor slidesPerView={1}>
   {[1, 2, 3].map((item) => (
@@ -67,7 +67,7 @@ import Carousel from 'components/reuseable/Carousel';
 `;
 
 const imageMarkup = `// reusable carousel component
-import Carousel from 'components/reuseable/Carousel';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
 
 <Carousel
   autoHeight
@@ -96,7 +96,7 @@ import Carousel from 'components/reuseable/Carousel';
 </Carousel>
 `;
 
-const thumbnailMarkup = `import ThumbsCarousel from 'components/reuseable/ThumbsCarousel';
+const thumbnailMarkup = `import ThumbsCarousel from '@/subapps/templates/common/components/reuseable/ThumbsCarousel';
   
 // this is static component. This is used for product details page
 <ThumbsCarousel />

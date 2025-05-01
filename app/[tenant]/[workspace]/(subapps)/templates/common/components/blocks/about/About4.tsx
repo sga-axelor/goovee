@@ -1,6 +1,6 @@
 import {FC} from 'react';
-import {Tiles2} from 'components/elements/tiles';
-import AccordionList from 'components/common/AccordionList';
+import {Tiles2} from '@/subapps/templates/common/components/elements/tiles';
+import AccordionList from '@/subapps/templates/common/components/common/AccordionList';
 
 const About4: FC = () => {
   return (

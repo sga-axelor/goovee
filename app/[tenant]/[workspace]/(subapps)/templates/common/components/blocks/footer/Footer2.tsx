@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import {Contact2} from '../contact';
-import SocialLinks from 'components/reuseable/SocialLinks';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
 
 const Footer2: FC = () => {
   return (

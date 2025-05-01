@@ -1,10 +1,10 @@
 import {FC, Fragment, useState} from 'react';
 // -------- custom component -------- //
-import Switch from 'components/reuseable/Switch';
-import {PricingCard1} from 'components/reuseable/pricing-cards';
+import Switch from '@/subapps/templates/common/components/reuseable/Switch';
+import {PricingCard1} from '@/subapps/templates/common/components/reuseable/pricing-cards';
 import {FAQ5} from '../faq';
 // -------- data-------- //
-import {pricingList3} from 'data/pricing';
+import {pricingList3} from '@/subapps/templates/common/data/pricing';
 
 const Pricing8: FC = () => {
   const [activeYearly, setActiveYearly] = useState(false);

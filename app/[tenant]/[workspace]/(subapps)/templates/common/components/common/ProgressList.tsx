@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import useProgressbar from 'hooks/useProgressbar';
+import useProgressbar from '@/subapps/templates/common/hooks/useProgressbar';
 // -------- data -------- //
 const list = [
   {id: 1, percent: 100, title: 'Marketing', color: 'blue'},

@@ -1,9 +1,9 @@
 import {FC} from 'react';
 import Image from 'next/image';
-import NextLink from 'components/reuseable/links/NextLink';
-import {ServiceCard3} from 'components/reuseable/service-cards';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {ServiceCard3} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {processList12} from 'data/process';
+import {processList12} from '@/subapps/templates/common/data/process';
 
 const About25: FC = () => {
   return (

@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import Carousel from 'components/reuseable/Carousel';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
 // -------- custom hook -------- //
-import useLightBox from 'hooks/useLightBox';
-import NextLink from 'components/reuseable/links/NextLink';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Hero15: FC = () => {
   // use video popup

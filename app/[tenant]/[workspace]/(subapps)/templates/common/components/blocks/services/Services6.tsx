@@ -1,7 +1,7 @@
 import {FC, ReactElement} from 'react';
-import ListColumn from 'components/reuseable/ListColumn';
+import ListColumn from '@/subapps/templates/common/components/reuseable/ListColumn';
 // -------- data -------- //
-import {serviceList5} from 'data/service';
+import {serviceList5} from '@/subapps/templates/common/data/service';
 
 // ============================================================
 type Services6Props = {

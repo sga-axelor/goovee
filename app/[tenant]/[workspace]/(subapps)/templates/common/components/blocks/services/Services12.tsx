@@ -1,10 +1,10 @@
 import {FC, Fragment} from 'react';
 // -------- icons -------- //
-import Dollar from 'icons/solid/Dollar';
-import Update from 'icons/solid/Update';
-import CheckShield from 'icons/solid/CheckShield';
+import Dollar from '@/subapps/templates/common/icons/solid/Dollar';
+import Update from '@/subapps/templates/common/icons/solid/Update';
+import CheckShield from '@/subapps/templates/common/icons/solid/CheckShield';
 // -------- custom component -------- //
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Services12: FC = () => {
   return (

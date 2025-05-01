@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import RegisterForm from 'components/elements/forms/RegisterForm';
+import RegisterForm from '@/subapps/templates/common/components/elements/forms/RegisterForm';
 
 const Signup: FC = () => {
   return (

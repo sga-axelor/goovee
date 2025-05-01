@@ -1,4 +1,4 @@
-const simpleMarkup = `import Accordion from 'components/reuseable/accordion';
+const simpleMarkup = `import Accordion from '@/subapps/templates/common/components/reuseable/accordion';
 
 <Accordion 
   no="One"
@@ -9,7 +9,7 @@ const simpleMarkup = `import Accordion from 'components/reuseable/accordion';
 />
 `;
 
-const cardMarkup = `import Accordion from 'components/reuseable/accordion';
+const cardMarkup = `import Accordion from '@/subapps/templates/common/components/reuseable/accordion';
 
 <Accordion 
   no="One" 
@@ -19,7 +19,7 @@ const cardMarkup = `import Accordion from 'components/reuseable/accordion';
 />
 `;
 
-const shadowMarkup = `import Accordion from 'components/reuseable/accordion';
+const shadowMarkup = `import Accordion from '@/subapps/templates/common/components/reuseable/accordion';
 
 <Accordion 
   no="One" 

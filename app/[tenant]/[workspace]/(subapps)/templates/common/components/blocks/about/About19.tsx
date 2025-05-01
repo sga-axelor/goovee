@@ -1,8 +1,8 @@
 import {FC, Fragment} from 'react';
-import {Tiles11} from 'components/elements/tiles';
-import ListColumn from 'components/reuseable/ListColumn';
+import {Tiles11} from '@/subapps/templates/common/components/elements/tiles';
+import ListColumn from '@/subapps/templates/common/components/reuseable/ListColumn';
 // -------- data -------- //
-import {aboutList2, aboutList3} from 'data/about';
+import {aboutList2, aboutList3} from '@/subapps/templates/common/data/about';
 
 const About19: FC = () => {
   return (

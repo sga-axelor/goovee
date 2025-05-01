@@ -1,9 +1,9 @@
 import {FC} from 'react';
-import Link from 'types/link';
-import NextLink from 'components/reuseable/links/NextLink';
-import SocialLinks from 'components/reuseable/SocialLinks';
+import Link from '@/subapps/templates/common/types/link';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
 // -------- data -------- //
-import {helps, learnMore} from 'data/footer';
+import {helps, learnMore} from '@/subapps/templates/common/data/footer';
 
 // common links section
 const widget = (list: Link[], title: string) => {

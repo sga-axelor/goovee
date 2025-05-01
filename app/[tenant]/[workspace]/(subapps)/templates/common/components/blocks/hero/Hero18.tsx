@@ -1,6 +1,9 @@
 import {FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
-import {fadeInAnimate, slideInDownAnimate} from 'utils/animation';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {
+  fadeInAnimate,
+  slideInDownAnimate,
+} from '@/subapps/templates/common/utils/animation';
 
 const Hero18: FC = () => {
   return (

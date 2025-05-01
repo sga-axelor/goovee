@@ -1,9 +1,9 @@
 import {FC} from 'react';
 // -------- hook -------- //
-import useProgressbar from 'hooks/useProgressbar';
+import useProgressbar from '@/subapps/templates/common/hooks/useProgressbar';
 // -------- data -------- //
-import {skill1} from 'data/skill';
-import {serviceList8} from 'data/service';
+import {skill1} from '@/subapps/templates/common/data/skill';
+import {serviceList8} from '@/subapps/templates/common/data/service';
 
 const Services18: FC = () => {
   // used for the animated line

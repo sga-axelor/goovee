@@ -1,6 +1,6 @@
 import {FC} from 'react';
 // -------- data -------- //
-import {processList7} from 'data/process';
+import {processList7} from '@/subapps/templates/common/data/process';
 
 const Process8: FC = () => {
   return (

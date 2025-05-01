@@ -2,9 +2,12 @@ import Plyr from 'plyr-react';
 import Image from 'next/image';
 import {FC, Fragment} from 'react';
 // -------- custom component -------- //
-import Carousel from 'components/reuseable/Carousel';
-import Pagination from 'components/reuseable/Pagination';
-import {BlogCard2, BlogCard3} from 'components/reuseable/blog-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import Pagination from '@/subapps/templates/common/components/reuseable/Pagination';
+import {
+  BlogCard2,
+  BlogCard3,
+} from '@/subapps/templates/common/components/reuseable/blog-cards';
 // -------- data -------- //
 const blogs = [
   {

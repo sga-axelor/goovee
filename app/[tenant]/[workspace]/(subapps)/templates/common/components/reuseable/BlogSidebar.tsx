@@ -3,10 +3,10 @@ import Link from 'next/link';
 import {FC, Fragment} from 'react';
 // -------- custom component -------- //
 import FigureImage from './FigureImage';
-import NextLink from 'components/reuseable/links/NextLink';
-import SocialLinks from 'components/reuseable/SocialLinks';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
 // -------- data -------- //
-import data from 'data/blog-sidebar';
+import data from '@/subapps/templates/common/data/blog-sidebar';
 
 // ========================================================
 type BlogSidebarProps = {thumbnail?: string};

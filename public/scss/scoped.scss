@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import 'src/assets/scss/fonts/custom-fonts.scss';
+@import 'app/[tenant]/[workspace]/(subapps)/templates/common/assets/scss/fonts/custom-fonts.scss';
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700');
 
 .gv {
@@ -186,7 +186,7 @@
   @import '../../node_modules/swiper/modules/navigation/navigation.min';
   @import '../../node_modules/swiper/modules/pagination/pagination.min';
   @import '../../node_modules/swiper/modules/thumbs/thumbs.min';
-  @import 'src/plugins/scrollcue/scrollCue';
+  @import '@/subapps/templates/common/plugins/scrollcue/scrollCue';
   @import '../../node_modules/glightbox/dist/css/glightbox';
 
   @import '../../node_modules/plyr-react/plyr';

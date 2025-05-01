@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {clients} from 'data/demo-8';
+import {clients} from '@/subapps/templates/common/data/demo-8';
 
 const Clients2: FC = () => {
   return (

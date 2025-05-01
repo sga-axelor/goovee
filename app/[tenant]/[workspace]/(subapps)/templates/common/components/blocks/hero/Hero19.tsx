@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {slideInDownAnimate} from 'utils/animation';
+import {slideInDownAnimate} from '@/subapps/templates/common/utils/animation';
 
 const Hero19: FC = () => {
   return (

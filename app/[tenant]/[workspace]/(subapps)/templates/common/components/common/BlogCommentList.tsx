@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {FC} from 'react';
 // -------- custom component -------- //
 import FigureImage from '../reuseable/FigureImage';
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
 const comments = [
   {

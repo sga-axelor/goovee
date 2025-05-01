@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import {slideInDownAnimate} from 'utils/animation';
+import {slideInDownAnimate} from '@/subapps/templates/common/utils/animation';
 import Typewriter from 'typewriter-effect';
 // -------- custom hook -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 
 const Hero3: FC = () => {
   // used for lightbox

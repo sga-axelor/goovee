@@ -1,6 +1,6 @@
 import {FC} from 'react';
 // -------- data -------- //
-import {factList9} from 'data/facts';
+import {factList9} from '@/subapps/templates/common/data/facts';
 
 const Facts16: FC = () => {
   return (

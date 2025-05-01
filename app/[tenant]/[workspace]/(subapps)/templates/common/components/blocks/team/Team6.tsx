@@ -1,7 +1,7 @@
 import {FC, Fragment} from 'react';
-import {TeamCard3} from 'components/reuseable/team-cards';
+import {TeamCard3} from '@/subapps/templates/common/components/reuseable/team-cards';
 // -------- data -------- //
-import {teams} from 'data/demo-11';
+import {teams} from '@/subapps/templates/common/data/demo-11';
 
 const Team6: FC = () => {
   return (

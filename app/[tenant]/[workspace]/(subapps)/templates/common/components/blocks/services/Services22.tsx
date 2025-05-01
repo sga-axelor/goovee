@@ -1,13 +1,13 @@
 import {FC, Fragment} from 'react';
 // -------- icons -------- //
-import Bulb from 'icons/solid-mono/Bulb';
-import Compare from 'icons/solid-mono/Compare';
-import DeliveryBox from 'icons/solid-mono/DeliveryBox';
+import Bulb from '@/subapps/templates/common/icons/solid-mono/Bulb';
+import Compare from '@/subapps/templates/common/icons/solid-mono/Compare';
+import DeliveryBox from '@/subapps/templates/common/icons/solid-mono/DeliveryBox';
 // -------- custom component -------- //
-import NextLink from 'components/reuseable/links/NextLink';
-import CheckShield from 'icons/solid/CheckShield';
-import Dollar from 'icons/solid/Dollar';
-import Update from 'icons/solid/Update';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import CheckShield from '@/subapps/templates/common/icons/solid/CheckShield';
+import Dollar from '@/subapps/templates/common/icons/solid/Dollar';
+import Update from '@/subapps/templates/common/icons/solid/Update';
 
 const Services22: FC = () => {
   return (

@@ -2,7 +2,7 @@ import {FC} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 // -------- data -------- //
-import {portfolioList5} from 'data/portfolio';
+import {portfolioList5} from '@/subapps/templates/common/data/portfolio';
 
 const Portfolio8: FC = () => {
   return (

@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import CountUp from 'react-countup';
-import CloudGroup from 'icons/solid-duo/CloudGroup';
+import CloudGroup from '@/subapps/templates/common/icons/solid-duo/CloudGroup';
 
 const About18: FC = () => {
   return (

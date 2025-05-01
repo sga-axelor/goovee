@@ -1,12 +1,12 @@
 // -------- icons -------- //
-import Lamp from 'icons/solid-mono/Lamp';
-import Bulb from 'icons/solid-mono/Bulb';
-import Puzzle from 'icons/solid-mono/Puzzle';
-import Headphone from 'icons/solid-mono/Headphone';
-import Shield from 'icons/solid/Shield';
-import DevicesTwo from 'icons/solid/DevicesTwo';
-import AI from 'icons/solid/AI';
-import Rocket from 'icons/solid/Rocket';
+import Lamp from '@/subapps/templates/common/icons/solid-mono/Lamp';
+import Bulb from '@/subapps/templates/common/icons/solid-mono/Bulb';
+import Puzzle from '@/subapps/templates/common/icons/solid-mono/Puzzle';
+import Headphone from '@/subapps/templates/common/icons/solid-mono/Headphone';
+import Shield from '@/subapps/templates/common/icons/solid/Shield';
+import DevicesTwo from '@/subapps/templates/common/icons/solid/DevicesTwo';
+import AI from '@/subapps/templates/common/icons/solid/AI';
+import Rocket from '@/subapps/templates/common/icons/solid/Rocket';
 
 // =========================================================================
 

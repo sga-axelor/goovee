@@ -1,9 +1,9 @@
 import {FC, Fragment} from 'react';
-import {Tiles3} from 'components/elements/tiles';
-import Carousel from 'components/reuseable/Carousel';
-import {TestimonialCard2} from 'components/reuseable/testimonial-cards';
+import {Tiles3} from '@/subapps/templates/common/components/elements/tiles';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import {TestimonialCard2} from '@/subapps/templates/common/components/reuseable/testimonial-cards';
 // -------- data -------- //
-import {testimonialList2} from 'data/testimonial-list';
+import {testimonialList2} from '@/subapps/templates/common/data/testimonial-list';
 
 const Testimonial3: FC = () => {
   return (

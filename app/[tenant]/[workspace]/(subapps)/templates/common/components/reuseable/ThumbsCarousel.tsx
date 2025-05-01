@@ -3,7 +3,7 @@ import {FC, useState} from 'react';
 import Swiper, {FreeMode, Navigation, Thumbs} from 'swiper';
 import {Swiper as SwiperCarousel, SwiperSlide} from 'swiper/react';
 // -------- custom hook -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 
 const ThumbsCarousel: FC = () => {
   useLightBox();

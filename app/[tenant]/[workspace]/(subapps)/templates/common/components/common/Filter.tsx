@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import Collapse from 'components/reuseable/Collapse';
+import Collapse from '@/subapps/templates/common/components/reuseable/Collapse';
 // -------- data -------- //
 const collapseList = [
   {

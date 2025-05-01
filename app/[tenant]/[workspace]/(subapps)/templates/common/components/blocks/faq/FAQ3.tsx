@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import Accordion from 'components/reuseable/accordion';
+import Accordion from '@/subapps/templates/common/components/reuseable/accordion';
 // -------- data -------- //
-import {accordions} from 'data/demo-8';
+import {accordions} from '@/subapps/templates/common/data/demo-8';
 
 const FAQ3: FC = () => {
   return (

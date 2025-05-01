@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {TestimonialCard4} from 'components/reuseable/testimonial-cards';
+import {TestimonialCard4} from '@/subapps/templates/common/components/reuseable/testimonial-cards';
 
 const Testimonial2: FC = () => {
   return (

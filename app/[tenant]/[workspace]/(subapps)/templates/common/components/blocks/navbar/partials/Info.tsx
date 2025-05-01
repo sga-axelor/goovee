@@ -1,5 +1,5 @@
-import NextLink from 'components/reuseable/links/NextLink';
-import SocialLinks from 'components/reuseable/SocialLinks';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
 import {FC, Fragment, ReactElement} from 'react';
 
 // ========================================================

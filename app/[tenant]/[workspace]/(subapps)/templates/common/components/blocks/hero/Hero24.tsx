@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import Carousel from 'components/reuseable/Carousel';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
 // -------- data -------- //
 const images = [
   '/img/photos/cf1.jpg',

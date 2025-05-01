@@ -1,16 +1,16 @@
 import {FC} from 'react';
 import Link from 'next/link';
-import LinkType from 'types/link';
+import LinkType from '@/subapps/templates/common/types/link';
 // -------- custom component -------- //
-import ListItemLink from 'components/reuseable/links/ListItemLink';
-import DropdownToggleLink from 'components/reuseable/links/DropdownToggleLink';
+import ListItemLink from '@/subapps/templates/common/components/reuseable/links/ListItemLink';
+import DropdownToggleLink from '@/subapps/templates/common/components/reuseable/links/DropdownToggleLink';
 // -------- data -------- //
 import {
   blogsNavigation,
   demos,
   pages,
   projectsNavigation,
-} from 'data/navigation';
+} from '@/subapps/templates/common/data/navigation';
 
 const Navigations: FC = () => {
   // render inner nav item links

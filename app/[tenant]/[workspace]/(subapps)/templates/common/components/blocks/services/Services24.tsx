@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import {serviceList12} from 'data/service';
+import {serviceList12} from '@/subapps/templates/common/data/service';
 
 const Services24: FC = () => {
   return (

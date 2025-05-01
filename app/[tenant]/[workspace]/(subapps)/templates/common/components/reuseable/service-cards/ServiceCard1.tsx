@@ -1,6 +1,6 @@
 import {FC} from 'react';
-import IconProps from 'types/icon';
-import {LinkType} from 'types/demo-1';
+import IconProps from '@/subapps/templates/common/types/icon';
+import {LinkType} from '@/subapps/templates/common/types/demo-1';
 import NextLink from '../links/NextLink';
 
 // ===============================================================

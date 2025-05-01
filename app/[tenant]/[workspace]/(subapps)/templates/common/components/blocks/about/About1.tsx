@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import AccordionList from 'components/common/AccordionList';
+import AccordionList from '@/subapps/templates/common/components/common/AccordionList';
 
 const About1: FC = () => {
   return (

@@ -1,11 +1,11 @@
-import Box from 'icons/solid/Box';
-import User from 'icons/lineal/User';
-import Check from 'icons/lineal/Check';
-import {LinkType} from 'types/demo-1';
-import IdCard from 'icons/solid/IdCard';
-import ThumbsUp from 'icons/solid/ThumbsUp';
-import Megaphone from 'icons/solid/Megaphone';
-import BriefcaseTwo from 'icons/lineal/BriefcaseTwo';
+import Box from '@/subapps/templates/common/icons/solid/Box';
+import User from '@/subapps/templates/common/icons/lineal/User';
+import Check from '@/subapps/templates/common/icons/lineal/Check';
+import {LinkType} from '@/subapps/templates/common/types/demo-1';
+import IdCard from '@/subapps/templates/common/icons/solid/IdCard';
+import ThumbsUp from '@/subapps/templates/common/icons/solid/ThumbsUp';
+import Megaphone from '@/subapps/templates/common/icons/solid/Megaphone';
+import BriefcaseTwo from '@/subapps/templates/common/icons/lineal/BriefcaseTwo';
 
 const services = [
   {

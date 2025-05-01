@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import animation from 'utils/animation';
+import animation from '@/subapps/templates/common/utils/animation';
 
 const Tiles6: FC = () => {
   return (

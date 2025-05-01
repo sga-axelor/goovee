@@ -1,28 +1,28 @@
-const markup1 = `import { Tiles1 } from 'components/elements/tiles'
+const markup1 = `import { Tiles1 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles1 />`;
-const markup2 = `import { Tiles2 } from 'components/elements/tiles'
+const markup2 = `import { Tiles2 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles2 />`;
-const markup3 = `import { Tiles3 } from 'components/elements/tiles'
+const markup3 = `import { Tiles3 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles3 />`;
-const markup4 = `import { Tiles4 } from 'components/elements/tiles'
+const markup4 = `import { Tiles4 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles4 />`;
-const markup5 = `import { Tiles5 } from 'components/elements/tiles'
+const markup5 = `import { Tiles5 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles5 />`;
-const markup6 = `import { Tiles6 } from 'components/elements/tiles'
+const markup6 = `import { Tiles6 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles6 />`;
-const markup7 = `import { Tiles7 } from 'components/elements/tiles'
+const markup7 = `import { Tiles7 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles7 />`;
-const markup8 = `import { Tiles8 } from 'components/elements/tiles'
+const markup8 = `import { Tiles8 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles8 />`;
-const markup9 = `import { Tiles9 } from 'components/elements/tiles'
+const markup9 = `import { Tiles9 } from '@/subapps/templates/common/components/elements/tiles'
 
 <Tiles9 />`;
 

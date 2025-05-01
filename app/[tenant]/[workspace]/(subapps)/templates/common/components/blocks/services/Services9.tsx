@@ -1,9 +1,9 @@
 import {FC} from 'react';
 // -------- custom component -------- //
-import NextLink from 'components/reuseable/links/NextLink';
-import {ServiceCard4} from 'components/reuseable/service-cards';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {ServiceCard4} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {serviceList7} from 'data/service';
+import {serviceList7} from '@/subapps/templates/common/data/service';
 
 const Services9: FC = () => {
   return (

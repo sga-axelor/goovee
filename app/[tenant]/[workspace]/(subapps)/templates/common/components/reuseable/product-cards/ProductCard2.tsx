@@ -1,7 +1,7 @@
 import {FC} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import currency from 'utils/currency';
+import currency from '@/subapps/templates/common/utils/currency';
 import NextLink from '../links/NextLink';
 
 // ======================================================================

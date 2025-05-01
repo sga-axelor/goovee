@@ -1,8 +1,8 @@
-import Dollar from 'icons/solid/Dollar';
-import Rocket from 'icons/solid/Rocket';
-import Briefcase from 'icons/solid/Briefcase';
-import DisplayChartUp from 'icons/solid/DisplayChartUp';
-import HourGlassStart from 'icons/solid/HourGlassStart';
+import Dollar from '@/subapps/templates/common/icons/solid/Dollar';
+import Rocket from '@/subapps/templates/common/icons/solid/Rocket';
+import Briefcase from '@/subapps/templates/common/icons/solid/Briefcase';
+import DisplayChartUp from '@/subapps/templates/common/icons/solid/DisplayChartUp';
+import HourGlassStart from '@/subapps/templates/common/icons/solid/HourGlassStart';
 
 const facilities = [
   {

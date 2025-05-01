@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import useReplaceMe from 'hooks/useReplaceMe';
+import useReplaceMe from '@/subapps/templates/common/hooks/useReplaceMe';
 // -------- data -------- //
-import {clientList} from 'data/client';
+import {clientList} from '@/subapps/templates/common/data/client';
 
 const Hero21: FC = () => {
   // enable the text rotator animation

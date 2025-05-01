@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import useReplaceMe from 'hooks/useReplaceMe';
+import useReplaceMe from '@/subapps/templates/common/hooks/useReplaceMe';
 
 const Hero20: FC = () => {
   // enable the text rotator animation

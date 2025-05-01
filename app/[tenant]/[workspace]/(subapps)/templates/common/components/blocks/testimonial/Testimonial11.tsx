@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import Carousel from 'components/reuseable/Carousel';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
 // -------- data -------- //
-import {testimonialList} from 'data/demo-11';
+import {testimonialList} from '@/subapps/templates/common/data/demo-11';
 
 const Testimonial11: FC = () => {
   return (

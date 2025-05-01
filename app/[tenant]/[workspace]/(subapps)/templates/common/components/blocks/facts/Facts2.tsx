@@ -1,7 +1,7 @@
 import {FC, ReactElement} from 'react';
-import {Counter3} from 'components/reuseable/counter';
+import {Counter3} from '@/subapps/templates/common/components/reuseable/counter';
 // -------- data -------- //
-import {factList1} from 'data/facts';
+import {factList1} from '@/subapps/templates/common/data/facts';
 
 // ===========================================================================
 type Facts2Props = {

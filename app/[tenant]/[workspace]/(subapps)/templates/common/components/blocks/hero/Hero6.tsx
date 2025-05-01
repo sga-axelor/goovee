@@ -1,6 +1,9 @@
 import {FC} from 'react';
-import {fadeInAnimate, slideInDownAnimate} from 'utils/animation';
-import GoogleAppBtn from 'components/common/GoogleAppBtn';
+import {
+  fadeInAnimate,
+  slideInDownAnimate,
+} from '@/subapps/templates/common/utils/animation';
+import GoogleAppBtn from '@/subapps/templates/common/components/common/GoogleAppBtn';
 
 const Hero6: FC = () => {
   return (

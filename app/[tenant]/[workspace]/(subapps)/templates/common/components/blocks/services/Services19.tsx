@@ -1,8 +1,8 @@
 import {FC, Fragment} from 'react';
-import IconBox from 'components/reuseable/IconBox';
-import NextLink from 'components/reuseable/links/NextLink';
+import IconBox from '@/subapps/templates/common/components/reuseable/IconBox';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import {serviceList9} from 'data/service';
+import {serviceList9} from '@/subapps/templates/common/data/service';
 
 const Services19: FC = () => {
   return (

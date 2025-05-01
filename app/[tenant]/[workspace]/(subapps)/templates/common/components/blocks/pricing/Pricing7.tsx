@@ -1,9 +1,9 @@
 import {FC, useState} from 'react';
-import Switch from 'components/reuseable/Switch';
-import NextLink from 'components/reuseable/links/NextLink';
-import {PricingCard1} from 'components/reuseable/pricing-cards';
+import Switch from '@/subapps/templates/common/components/reuseable/Switch';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {PricingCard1} from '@/subapps/templates/common/components/reuseable/pricing-cards';
 // -------- data -------- //
-import {pricingList1} from 'data/pricing';
+import {pricingList1} from '@/subapps/templates/common/data/pricing';
 
 const Pricing7: FC = () => {
   const [activeYearly, setActiveYearly] = useState(false);

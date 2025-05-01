@@ -1,11 +1,11 @@
 import CountUp from 'react-countup';
 import {FC, Fragment} from 'react';
-import {Tiles1} from 'components/elements/tiles';
-import ListColumn from 'components/reuseable/ListColumn';
-import {ServiceCard3} from 'components/reuseable/service-cards';
+import {Tiles1} from '@/subapps/templates/common/components/elements/tiles';
+import ListColumn from '@/subapps/templates/common/components/reuseable/ListColumn';
+import {ServiceCard3} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {aboutList6} from 'data/about';
-import {serviceList4} from 'data/service';
+import {aboutList6} from '@/subapps/templates/common/data/about';
+import {serviceList4} from '@/subapps/templates/common/data/service';
 
 const Services5: FC = () => {
   return (

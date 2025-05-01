@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import IconBox from 'components/reuseable/IconBox';
+import IconBox from '@/subapps/templates/common/components/reuseable/IconBox';
 
 const Contact7: FC = () => {
   return (

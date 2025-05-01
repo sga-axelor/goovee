@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import Accordion from 'components/reuseable/accordion';
+import Accordion from '@/subapps/templates/common/components/reuseable/accordion';
 // -------- data -------- //
-import {accordionList2} from 'data/faq';
+import {accordionList2} from '@/subapps/templates/common/data/faq';
 
 // ============================================================
 type Faq2Props = {titleColor?: 'primary' | 'muted'};

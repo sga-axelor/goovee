@@ -2,10 +2,10 @@ import {useRouter} from 'next/router';
 import {Link as ScrollLink} from 'react-scroll';
 import {FC, Fragment, ReactElement, ReactNode} from 'react';
 // -------- custom component -------- //
-import {Navbar} from 'components/blocks/navbar';
-import PageProgress from 'components/common/PageProgress';
-import NextLink from 'components/reuseable/links/NextLink';
-import useClipboard from 'hooks/useClipboard';
+import {Navbar} from '@/subapps/templates/common/components/blocks/navbar';
+import PageProgress from '@/subapps/templates/common/components/common/PageProgress';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import useClipboard from '@/subapps/templates/common/hooks/useClipboard';
 // -------- data -------- //
 const navigations = [
   {

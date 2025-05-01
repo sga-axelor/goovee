@@ -1,4 +1,4 @@
-const job1Markup = `import { JobPostCard1 } from 'components/reuseable/job-cards';
+const job1Markup = `import { JobPostCard1 } from '@/subapps/templates/common/components/reuseable/job-cards';
   
 <JobPostCard1  
   time="..."
@@ -10,7 +10,7 @@ const job1Markup = `import { JobPostCard1 } from 'components/reuseable/job-cards
 />
 `;
 
-const job2Markup = `import { JobPostCard2 } from 'components/reuseable/job-cards';
+const job2Markup = `import { JobPostCard2 } from '@/subapps/templates/common/components/reuseable/job-cards';
   
 <JobPostCard2  
   link="..."

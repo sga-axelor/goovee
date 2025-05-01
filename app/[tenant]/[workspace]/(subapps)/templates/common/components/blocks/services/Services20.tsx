@@ -1,6 +1,6 @@
 import {FC, Fragment} from 'react';
 // -------- data -------- //
-import {serviceList10} from 'data/service';
+import {serviceList10} from '@/subapps/templates/common/data/service';
 
 const Services20: FC = () => {
   return (

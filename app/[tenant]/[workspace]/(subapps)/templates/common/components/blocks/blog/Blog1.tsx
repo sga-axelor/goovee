@@ -1,10 +1,10 @@
 import {FC} from 'react';
-import Carousel from 'components/reuseable/Carousel';
-import {BlogCard1} from 'components/reuseable/blog-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import {BlogCard1} from '@/subapps/templates/common/components/reuseable/blog-cards';
 // -------- carousel breakpoint obj -------- //
-import carouselBreakpoints from 'utils/carouselBreakpoints';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
 // -------- data -------- //
-import {blogList1} from 'data/blog';
+import {blogList1} from '@/subapps/templates/common/data/blog';
 
 const Blog1: FC = () => {
   return (

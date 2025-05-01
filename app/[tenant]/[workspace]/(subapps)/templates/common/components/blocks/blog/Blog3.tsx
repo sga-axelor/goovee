@@ -1,9 +1,9 @@
 import {FC, Fragment} from 'react';
-import Carousel from 'components/reuseable/Carousel';
-import carouselBreakpoints from 'utils/carouselBreakpoints';
-import {BlogCard1} from 'components/reuseable/blog-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
+import {BlogCard1} from '@/subapps/templates/common/components/reuseable/blog-cards';
 // -------- data -------- //
-import {blogList2} from 'data/blog';
+import {blogList2} from '@/subapps/templates/common/data/blog';
 
 const Blog3: FC = () => {
   return (

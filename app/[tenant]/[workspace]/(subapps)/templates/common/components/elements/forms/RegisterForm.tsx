@@ -1,5 +1,5 @@
 import {FormEvent, Fragment, useState, FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const RegisterForm: FC = () => {
   const [name, setName] = useState('');

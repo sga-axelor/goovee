@@ -1,6 +1,6 @@
 import {FC} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
-import {ServiceCard5} from 'components/reuseable/service-cards';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import {ServiceCard5} from '@/subapps/templates/common/components/reuseable/service-cards';
 
 const Services10: FC = () => {
   return (

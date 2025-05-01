@@ -1,4 +1,4 @@
-import IconProps from 'types/icon';
+import IconProps from '@/subapps/templates/common/types/icon';
 
 const Calendar = ({className}: IconProps) => {
   return (

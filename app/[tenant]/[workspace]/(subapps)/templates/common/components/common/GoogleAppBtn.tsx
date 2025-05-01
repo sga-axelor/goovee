@@ -1,6 +1,6 @@
 import {FC, Fragment} from 'react';
-import {slideInDownAnimate} from 'utils/animation';
-import NextLink from 'components/reuseable/links/NextLink';
+import {slideInDownAnimate} from '@/subapps/templates/common/utils/animation';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const GoogleAppBtn: FC = () => {
   return (

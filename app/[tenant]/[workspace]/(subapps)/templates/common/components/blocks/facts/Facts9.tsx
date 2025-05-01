@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import animation from 'utils/animation';
-import {Counter2} from 'components/reuseable/counter';
+import animation from '@/subapps/templates/common/utils/animation';
+import {Counter2} from '@/subapps/templates/common/components/reuseable/counter';
 // -------- data -------- //
-import {factList6} from 'data/facts';
+import {factList6} from '@/subapps/templates/common/data/facts';
 
 const Facts9: FC = () => {
   return (

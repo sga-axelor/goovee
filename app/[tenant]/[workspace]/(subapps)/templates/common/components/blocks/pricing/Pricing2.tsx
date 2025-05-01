@@ -1,9 +1,9 @@
 import {FC, useState} from 'react';
 // -------- custom component -------- //
-import Switch from 'components/reuseable/Switch';
-import {PricingCard2} from 'components/reuseable/pricing-cards';
+import Switch from '@/subapps/templates/common/components/reuseable/Switch';
+import {PricingCard2} from '@/subapps/templates/common/components/reuseable/pricing-cards';
 // -------- data-------- //
-import {pricingList2} from 'data/pricing';
+import {pricingList2} from '@/subapps/templates/common/data/pricing';
 
 // =============================================================================
 type Pricing2Props = {className?: string};

@@ -1,8 +1,8 @@
 import {FC} from 'react';
-import {slideInDownAnimate} from 'utils/animation';
-import {ServiceCard2} from 'components/reuseable/service-cards';
+import {slideInDownAnimate} from '@/subapps/templates/common/utils/animation';
+import {ServiceCard2} from '@/subapps/templates/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {serviceList2} from 'data/service';
+import {serviceList2} from '@/subapps/templates/common/data/service';
 
 const Services13: FC = () => {
   return (

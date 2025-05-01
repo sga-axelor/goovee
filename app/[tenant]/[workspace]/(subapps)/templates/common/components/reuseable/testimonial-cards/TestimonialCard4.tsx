@@ -1,7 +1,7 @@
 import {FC} from 'react';
 import Carousel from '../Carousel';
 import TestimonialCard2 from './TestimonialCard2';
-import {testimonialList2} from 'data/testimonial-list';
+import {testimonialList2} from '@/subapps/templates/common/data/testimonial-list';
 
 // ============================================================
 type TestimonialCard4Props = {

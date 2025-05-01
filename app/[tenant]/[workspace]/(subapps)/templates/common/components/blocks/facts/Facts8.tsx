@@ -1,7 +1,7 @@
 import {FC} from 'react';
 import CountUp from 'react-countup';
 // -------- data -------- //
-import {factList} from 'data/demo-12';
+import {factList} from '@/subapps/templates/common/data/demo-12';
 
 const Facts8: FC = () => {
   return (

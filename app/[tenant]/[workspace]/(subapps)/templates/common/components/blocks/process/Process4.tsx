@@ -1,8 +1,8 @@
 import {FC} from 'react';
 import Plyr from 'plyr-react';
-import animation from 'utils/animation';
+import animation from '@/subapps/templates/common/utils/animation';
 // -------- data -------- //
-import {processList5} from 'data/process';
+import {processList5} from '@/subapps/templates/common/data/process';
 
 const Process4: FC = () => {
   return (

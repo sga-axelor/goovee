@@ -2,15 +2,15 @@ import {FC} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 // -------- custom hook -------- //
-import useLightBox from 'hooks/useLightBox';
+import useLightBox from '@/subapps/templates/common/hooks/useLightBox';
 // -------- custom component -------- //
-import Carousel from 'components/reuseable/Carousel';
-import ShareButton from 'components/common/ShareButton';
-import FigureImage from 'components/reuseable/FigureImage';
-import NextLink from 'components/reuseable/links/NextLink';
-import SocialLinks from 'components/reuseable/SocialLinks';
-import BlogCommentList from 'components/common/BlogCommentList';
-import {BlogCard1} from 'components/reuseable/blog-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import ShareButton from '@/subapps/templates/common/components/common/ShareButton';
+import FigureImage from '@/subapps/templates/common/components/reuseable/FigureImage';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
+import BlogCommentList from '@/subapps/templates/common/components/common/BlogCommentList';
+import {BlogCard1} from '@/subapps/templates/common/components/reuseable/blog-cards';
 // -------- data -------- //
 const tags = [
   {id: 1, title: 'Graphic', url: '#'},

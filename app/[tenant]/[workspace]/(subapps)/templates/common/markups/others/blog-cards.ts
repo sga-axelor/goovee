@@ -1,9 +1,9 @@
-const card1Markup = `import { BlogCard1 } from 'components/reuseable/blog-cards';
+const card1Markup = `import { BlogCard1 } from '@/subapps/templates/common/components/reuseable/blog-cards';
 
 <BlogCard1 date="..." category="..." image="..." title="..." />
 `;
 
-const card2Markup = `import { BlogCard2 } from 'components/reuseable/blog-cards';
+const card2Markup = `import { BlogCard2 } from '@/subapps/templates/common/components/reuseable/blog-cards';
 
 <BlogCard2
   link="..."
@@ -14,17 +14,17 @@ const card2Markup = `import { BlogCard2 } from 'components/reuseable/blog-cards'
 />
 `;
 
-const card3Markup = `import { BlogCard3 } from 'components/reuseable/blog-cards';
+const card3Markup = `import { BlogCard3 } from '@/subapps/templates/common/components/reuseable/blog-cards';
 
 <BlogCard3 link="..." title="..." image="..." category="..." description="..." />
 `;
 
-const card4Markup = `import { BlogCard4 } from 'components/reuseable/blog-cards';
+const card4Markup = `import { BlogCard4 } from '@/subapps/templates/common/components/reuseable/blog-cards';
 
 <BlogCard4 date="..." title="..." image="..." category="..." description="..." />
 `;
 
-const card5Markup = `import { BlogCard5 } from 'components/reuseable/blog-cards';
+const card5Markup = `import { BlogCard5 } from '@/subapps/templates/common/components/reuseable/blog-cards';
 
 <BlogCard4
   image="..."

@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import {TeamCard3} from 'components/reuseable/team-cards';
+import {TeamCard3} from '@/subapps/templates/common/components/reuseable/team-cards';
 // -------- data -------- //
-import {teams} from 'data/demo-8';
+import {teams} from '@/subapps/templates/common/data/demo-8';
 
 const Team5: FC = () => {
   return (

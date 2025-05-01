@@ -1,6 +1,6 @@
 import {FC} from 'react';
-import {Tiles3} from 'components/elements/tiles';
-import NextLink from 'components/reuseable/links/NextLink';
+import {Tiles3} from '@/subapps/templates/common/components/elements/tiles';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const Contact3: FC = () => {
   return (

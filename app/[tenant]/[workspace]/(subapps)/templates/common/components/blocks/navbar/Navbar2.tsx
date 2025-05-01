@@ -1,14 +1,14 @@
 import Link from 'next/link';
-import LinkType from 'types/link';
+import LinkType from '@/subapps/templates/common/types/link';
 import {FC, Fragment, useRef} from 'react';
 // -------- custom hook -------- //
-import useSticky from 'hooks/useSticky';
-import useNestedDropdown from 'hooks/useNestedDropdown';
+import useSticky from '@/subapps/templates/common/hooks/useSticky';
+import useNestedDropdown from '@/subapps/templates/common/hooks/useNestedDropdown';
 // -------- custom component -------- //
-import NextLink from 'components/reuseable/links/NextLink';
-import SocialLinks from 'components/reuseable/SocialLinks';
-import ListItemLink from 'components/reuseable/links/ListItemLink';
-import DropdownToggleLink from 'components/reuseable/links/DropdownToggleLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
+import ListItemLink from '@/subapps/templates/common/components/reuseable/links/ListItemLink';
+import DropdownToggleLink from '@/subapps/templates/common/components/reuseable/links/DropdownToggleLink';
 // -------- partial header component -------- //
 import Info from './partials/Info';
 import Language from './partials/Language';
@@ -20,7 +20,7 @@ import {
   blocksNavigation,
   projectsNavigation,
   documentionNavigation,
-} from 'data/navigation';
+} from '@/subapps/templates/common/data/navigation';
 
 // ===================================================================
 type Navbar2Props = {navClassName?: string};

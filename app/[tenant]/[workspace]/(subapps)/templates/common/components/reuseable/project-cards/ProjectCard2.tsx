@@ -1,6 +1,6 @@
 import {CSSProperties, FC} from 'react';
 import NextLink from '../links/NextLink';
-import FigureImage from 'components/reuseable/FigureImage';
+import FigureImage from '@/subapps/templates/common/components/reuseable/FigureImage';
 
 // ==============================================================================
 type ProjectCard2Props = {

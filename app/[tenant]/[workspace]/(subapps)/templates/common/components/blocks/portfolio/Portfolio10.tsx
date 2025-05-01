@@ -1,9 +1,9 @@
 import {FC, Fragment} from 'react';
-import Carousel from 'components/reuseable/Carousel';
-import carouselBreakpoints from 'utils/carouselBreakpoints';
-import {ProjectCard3} from 'components/reuseable/project-cards';
+import Carousel from '@/subapps/templates/common/components/reuseable/Carousel';
+import carouselBreakpoints from '@/subapps/templates/common/utils/carouselBreakpoints';
+import {ProjectCard3} from '@/subapps/templates/common/components/reuseable/project-cards';
 // -------- data -------- //
-import {portfolioList6} from 'data/portfolio';
+import {portfolioList6} from '@/subapps/templates/common/data/portfolio';
 
 const Portfolio10: FC = () => {
   return (

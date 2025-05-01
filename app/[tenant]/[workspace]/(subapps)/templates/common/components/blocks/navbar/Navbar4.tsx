@@ -1,10 +1,10 @@
 import {FC, Fragment, useRef} from 'react';
 // -------- custom hook -------- //
-import useSticky from 'hooks/useSticky';
-import useNestedDropdown from 'hooks/useNestedDropdown';
+import useSticky from '@/subapps/templates/common/hooks/useSticky';
+import useNestedDropdown from '@/subapps/templates/common/hooks/useNestedDropdown';
 // -------- custom component -------- //
-import NextLink from 'components/reuseable/links/NextLink';
-import SocialLinks from 'components/reuseable/SocialLinks';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
+import SocialLinks from '@/subapps/templates/common/components/reuseable/SocialLinks';
 // -------- partial header component -------- //
 import Info from './partials/Info';
 import Search from './partials/Search';

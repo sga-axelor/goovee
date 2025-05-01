@@ -1,5 +1,5 @@
 import {FC, FormEvent, Fragment, useState} from 'react';
-import NextLink from 'components/reuseable/links/NextLink';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 
 const LoginForm: FC = () => {
   const [email, setEmail] = useState('');

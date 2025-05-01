@@ -1,7 +1,7 @@
 import {FC} from 'react';
-import ListColumn from 'components/reuseable/ListColumn';
+import ListColumn from '@/subapps/templates/common/components/reuseable/ListColumn';
 // -------- data -------- //
-import {aboutList1} from 'data/about';
+import {aboutList1} from '@/subapps/templates/common/data/about';
 
 const About17: FC = () => {
   return (

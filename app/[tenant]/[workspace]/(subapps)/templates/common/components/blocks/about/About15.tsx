@@ -1,9 +1,9 @@
 import {FC} from 'react';
-import ListColumn from 'components/reuseable/ListColumn';
-import FigureImage from 'components/reuseable/FigureImage';
-import NextLink from 'components/reuseable/links/NextLink';
+import ListColumn from '@/subapps/templates/common/components/reuseable/ListColumn';
+import FigureImage from '@/subapps/templates/common/components/reuseable/FigureImage';
+import NextLink from '@/subapps/templates/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import {aboutList1} from 'data/about';
+import {aboutList1} from '@/subapps/templates/common/data/about';
 
 const About15: FC = () => {
   return (

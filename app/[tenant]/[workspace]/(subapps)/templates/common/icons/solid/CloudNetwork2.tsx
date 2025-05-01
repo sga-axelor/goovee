@@ -1,4 +1,4 @@
-import IconProps from 'types/icon';
+import IconProps from '@/subapps/templates/common/types/icon';
 
 const CloudNetwork2 = ({className}: IconProps) => {
   return (
