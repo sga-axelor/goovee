@@ -1,4 +1,4 @@
-import IconProps from '@/subapps/templates/common/types/icon';
+import IconProps from '@/subapps/templates/common/types/icons';
 
 const Code = ({className}: IconProps) => {
   return (

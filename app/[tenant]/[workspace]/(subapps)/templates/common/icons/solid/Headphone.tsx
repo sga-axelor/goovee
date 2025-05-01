@@ -1,4 +1,4 @@
-import IconProps from '@/subapps/templates/common/types/icon';
+import IconProps from '@/subapps/templates/common/types/icons';
 
 const Headphone = ({className}: IconProps) => {
   return (

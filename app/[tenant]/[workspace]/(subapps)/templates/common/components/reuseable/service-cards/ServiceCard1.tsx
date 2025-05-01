@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import IconProps from '@/subapps/templates/common/types/icon';
+import IconProps from '@/subapps/templates/common/types/icons';
 import {LinkType} from '@/subapps/templates/common/types/demo-1';
 import NextLink from '../links/NextLink';
 
