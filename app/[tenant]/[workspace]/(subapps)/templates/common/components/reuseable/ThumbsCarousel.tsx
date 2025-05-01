@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import {FC, useState} from 'react';
-import Swiper, {FreeMode, Navigation, Thumbs} from 'swiper';
+import type Swiper from 'swiper';
+import {FreeMode, Navigation, Thumbs} from 'swiper/modules';
 import {Swiper as SwiperCarousel, SwiperSlide} from 'swiper/react';
 // -------- custom hook -------- //
 import useLightBox from '@/subapps/templates/common/hooks/useLightBox';

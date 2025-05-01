@@ -182,10 +182,10 @@
   height: 100%;
   @import '../../node_modules/animate.css/animate';
   @import '../../node_modules/swiper/swiper.min';
-  @import '../../node_modules/swiper/modules/free-mode/free-mode.min';
-  @import '../../node_modules/swiper/modules/navigation/navigation.min';
-  @import '../../node_modules/swiper/modules/pagination/pagination.min';
-  @import '../../node_modules/swiper/modules/thumbs/thumbs.min';
+  @import '../../node_modules/swiper/modules/free-mode.min';
+  @import '../../node_modules/swiper/modules/navigation.min';
+  @import '../../node_modules/swiper/modules/pagination.min';
+  @import '../../node_modules/swiper/modules/thumbs.min';
   @import '@/subapps/templates/common/plugins/scrollcue/scrollCue';
   @import '../../node_modules/glightbox/dist/css/glightbox';
 
