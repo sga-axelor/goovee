@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/templates/common/assets/scss:public/css",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "generate": "goovee generate"
@@ -96,7 +97,23 @@
     "usehooks-ts": "^3.1.0",
     "vaul": "^0.9.9",
     "zod": "^3.23.8",
-    "zustand": "^4.5.5"
+    "zustand": "^4.5.5",
+    "@popperjs/core": "^2.11.8",
+    "animate.css": "^4.1.1",
+    "bootstrap": "^5.3.5",
+    "clipboard": "^2.0.11",
+    "countup.js": "^2.5.0",
+    "glightbox": "^3.2.0",
+    "isotope-layout": "^3.0.6",
+    "itooltip": "^1.1.1",
+    "plyr-react": "^5.1.2",
+    "progressbar.js": "^1.1.0",
+    "react-countup": "^6.4.2",
+    "react-scroll": "^1.8.9",
+    "react-syntax-highlighter": "^15.5.0",
+    "scrollcue": "^2.0.0",
+    "sharp": "^0.31.3",
+    "typewriter-effect": "^2.19.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -118,7 +135,12 @@
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "@types/bootstrap": "^5.2.6",
+    "@types/isotope-layout": "^3.0.9",
+    "@types/progressbar.js": "^1.1.2",
+    "@types/react-scroll": "^1.8.6",
+    "@types/react-syntax-highlighter": "^15.5.6"
   },
   "engines": {
     "node": ">=20"
