@@ -28,17 +28,12 @@ export default function Layout({children}: {children: React.ReactNode}) {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    document.documentElement.classList.add('gv');
-    return () => {
-      document.documentElement.classList.remove('gv');
-    };
-  }, []);
-
   return (
-    <ThemeProvider>
-      {/* <div className="page-loader" /> */}
-      {loading ? <div className="page-loader" /> : children}
-    </ThemeProvider>
+    <div className="gv">
+      <ThemeProvider>
+        {/* <div className="page-loader" /> */}
+        {loading ? <div className="page-loader" /> : children}
+      </ThemeProvider>
+    </div>
   );
 }
