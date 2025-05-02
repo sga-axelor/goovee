@@ -9,6 +9,9 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   company: {
     id: true,
     name: true,
+    logo: {
+      id: true,
+    },
   },
   byNewest: true,
   byFeature: true,
@@ -432,6 +435,9 @@ export async function findWorkspace({
       defaultTheme: true,
       navigationSelect: true,
       user: {id: true},
+      workspaceLogo: {
+        id: true,
+      },
     },
   });
 
@@ -479,6 +485,7 @@ export async function findWorkspace({
     defaultTheme: theme,
     navigationSelect = 'leftSide',
     user: workspaceUser,
+    workspaceLogo: logo,
   } = workspace;
 
   return {
@@ -492,6 +499,7 @@ export async function findWorkspace({
     apps,
     navigationSelect,
     workspacePermissionConfig,
+    logo,
   };
 }
 

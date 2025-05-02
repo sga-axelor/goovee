@@ -26,17 +26,17 @@ import {useResponsive} from '@/ui/hooks';
 import Cart from '@/app/[tenant]/[workspace]/cart';
 
 function Logo() {
-  const {workspaceURI, tenant} = useWorkspace();
+  const {workspaceURI, tenant, workspaceURL} = useWorkspace();
 
   return (
     <Link
       href={`/?workspaceURI=${encodeURIComponent(workspaceURI || '')}&tenant=${encodeURIComponent(tenant || '')}`}>
       <Image
-        src="/images/logo.png"
+        src={`${workspaceURL}/api/workspace/logo/image`}
         alt="Axelor Logo"
         width={100}
         height={50}
-        className="h-8 mr-4"
+        className="mr-4"
         style={{width: 'auto', height: 'auto'}}
       />
     </Link>

@@ -42,6 +42,11 @@
     {
       "type": "String",
       "name": "navigationSelect"
+    },
+    {
+      "name": "workspaceLogo",
+      "type": "ManyToOne",
+      "target": "AOSMetaFile"
     }
   ]
 }

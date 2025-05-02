@@ -55,6 +55,9 @@ export interface PortalWorkspace extends Model {
   workspacePermissionConfig?: {
     id: ID;
   };
+  logo: {
+    id: ID;
+  };
 }
 
 export interface PortalAppConfig extends Model {
@@ -239,6 +242,9 @@ export interface PartnerAddress extends Model {
 
 export interface Company extends Model {
   name: string;
+  logo: {
+    id: ID;
+  };
 }
 
 export interface Localization extends Model {
