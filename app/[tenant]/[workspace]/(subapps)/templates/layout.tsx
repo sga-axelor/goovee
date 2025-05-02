@@ -29,7 +29,7 @@ export default function Layout({children}: {children: React.ReactNode}) {
   }, []);
 
   return (
-    <div className="gv">
+    <div className="gv relative">
       <ThemeProvider>
         {/* <div className="page-loader" /> */}
         {loading ? <div className="page-loader" /> : children}
