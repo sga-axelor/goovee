@@ -742,25 +742,3 @@ async function findModelRecords({
 
   return res.data;
 }
-
-export async function resolvePromisesDeep(obj: any): Promise<any> {
-  if (obj instanceof Promise) {
-    return resolvePromisesDeep(await obj);
-  }
-
-  if (Array.isArray(obj)) {
-    return Promise.all(obj.map(resolvePromisesDeep));
-  }
-
-  if (obj && typeof obj === 'object') {
-    const entries = await Promise.all(
-      Object.entries(obj).map(async ([key, value]) => [
-        key,
-        await resolvePromisesDeep(value),
-      ]),
-    );
-    return Object.fromEntries(entries);
-  }
-
-  return obj;
-}
