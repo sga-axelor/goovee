@@ -541,7 +541,7 @@ async function getCustomRelationalFieldTypeData({
     return value;
   }
 
-  const isManyToOneRelation = value?.id;
+  const isToOneRelation = value?.id;
 
   const isToManyRelation = Array.isArray(value);
 
@@ -564,8 +564,8 @@ async function getCustomRelationalFieldTypeData({
     targetJsonModel = $targetJsonModel;
   }
 
-  if (isToManyRelation || isManyToOneRelation) {
-    const ids = isManyToOneRelation
+  if (isToManyRelation || isToOneRelation) {
+    const ids = isToOneRelation
       ? [value.id]
       : isToManyRelation
         ? value.map(({id}) => id)
@@ -610,7 +610,7 @@ async function getCustomRelationalFieldTypeData({
 
     records = [...cachedRecords, ...records];
 
-    if (isManyToOneRelation) {
+    if (isToOneRelation) {
       return records?.[0];
     }
 
