@@ -584,14 +584,23 @@ async function getCustomRelationalFieldTypeData({
 
     const uncachedIds = difference(ids, cachedIds);
 
-    let records = await client.aOSMetaJsonRecord.find({
-      where: {
-        jsonModel: targetJsonModelName,
-        id: {
-          in: uncachedIds,
+    let records = await client.aOSMetaJsonRecord
+      .find({
+        where: {
+          jsonModel: targetJsonModelName,
+          id: {in: uncachedIds},
         },
-      },
-    });
+        select: {
+          name: true,
+          jsonModel: true,
+          createdOn: true,
+          updatedOn: true,
+          attrs: true,
+        },
+      })
+      .then(records =>
+        Promise.all(records.map(async r => ({...r, attrs: await r.attrs}))),
+      );
 
     if (records?.length) {
       records.forEach((record: any) => {
