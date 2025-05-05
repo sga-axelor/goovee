@@ -54,20 +54,26 @@ export default async function Page({
   }
 
   return (
-    <>
-      {mainWebsites.map((website: any) => (
-        <Link
-          key={website.slug}
-          href={getWebsiteURL(website)}
-          {...(user
-            ? {}
-            : {
-                target: '_blank',
-                rel: 'noopener noreferrer',
-              })}>
-          <p>{website.name}</p>
-        </Link>
-      ))}
-    </>
+    <div className="container py-6 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {mainWebsites.map(async website => (
+          <Link
+            key={website.slug}
+            href={getWebsiteURL(website)}
+            {...(user
+              ? {}
+              : {
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                })}>
+            <div className="bg-card p-6 rounded-lg">
+              <p className="text-[1rem] font-semibold text-ellipsis whitespace-nowrap overflow-hidden">
+                {website.name}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
