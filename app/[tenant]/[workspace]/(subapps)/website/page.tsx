@@ -56,8 +56,16 @@ export default async function Page({
   return (
     <>
       {mainWebsites.map((website: any) => (
-        <Link key={website.slug} href={getWebsiteURL(website)}>
-          <p key={website.slug}>{website.name}</p>
+        <Link
+          key={website.slug}
+          href={getWebsiteURL(website)}
+          {...(user
+            ? {}
+            : {
+                target: '_blank',
+                rel: 'noopener noreferrer',
+              })}>
+          <p>{website.name}</p>
         </Link>
       ))}
     </>
