@@ -3,5 +3,16 @@
   "table": "meta_json_model",
   "extends": "Model",
   "synchronize": false,
-  "fields": [{"type": "String", "name": "name"}]
+  "fields": [
+    {
+      "type": "String",
+      "name": "name"
+    },
+    {
+      "type": "OneToMany",
+      "name": "fields",
+      "target": "AOSMetaJsonField",
+      "mappedBy": "jsonModel"
+    }
+  ]
 }

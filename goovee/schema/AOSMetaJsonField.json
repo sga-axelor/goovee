@@ -104,8 +104,31 @@
       "type": "String",
       "name": "showIf"
     },
-    {"type": "String", "name": "contextField"},
-    {"type": "String", "name": "contextFieldValue"},
-    {"type": "String", "name": "widgetAttrs"}
+    {
+      "type": "String",
+      "name": "contextField"
+    },
+    {
+      "type": "String",
+      "name": "contextFieldValue"
+    },
+    {
+      "type": "String",
+      "name": "widgetAttrs"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "targetJsonModel",
+      "target": "AOSMetaJsonModel"
+    },
+    {
+      "type": "String",
+      "name": "targetModel"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "jsonModel",
+      "target": "AOSMetaJsonModel"
+    }
   ]
 }
