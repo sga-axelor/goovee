@@ -12,6 +12,7 @@ import type {
 } from '@/types';
 import {clone} from '@/utils';
 import {findModelFields} from '@/orm/model-fields';
+import {SUBAPP_CODES} from '@/constants';
 
 type CacheValue = any;
 
@@ -271,21 +272,34 @@ export async function findWebsiteBySlug({
   }
 
   if (website?.menu) {
-    const menuList = await client.aOSPortalCmsMenuLine.find({
-      where: {
-        menu: {
-          id: website.menu.id,
+    const menuList = await client.aOSPortalCmsMenuLine
+      .find({
+        where: {
+          menu: {
+            id: website.menu.id,
+          },
+          page: {
+            ...(await filterPrivate({tenantId, user})),
+          },
         },
-        page: {
-          ...(await filterPrivate({tenantId, user})),
+        select: {
+          parentMenu: {
+            id: true,
+          },
+          page: {
+            slug: true,
+          },
         },
-      },
-      select: {
-        parentMenu: {
-          id: true,
-        },
-      },
-    });
+      })
+      .then(lines =>
+        lines?.map(line => ({
+          ...line,
+          page: line?.page && {
+            ...line?.page,
+            url: `${workspaceURL}/${SUBAPP_CODES.website}/${websiteSlug}/${line?.page?.slug}`,
+          },
+        })),
+      );
 
     website.menu.menuList = buildMenuHierarchy(menuList);
   }
