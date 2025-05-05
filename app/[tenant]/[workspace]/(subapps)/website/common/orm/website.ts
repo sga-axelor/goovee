@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 // ---- CORE IMPORTS ---- //
 import {filterPrivate} from '@/orm/filter';
 import {manager, type Tenant} from '@/tenant';
@@ -9,6 +11,69 @@ import type {
   WebsitePage,
 } from '@/types';
 import {clone} from '@/utils';
+import {findModelFields} from '@/orm/model-fields';
+
+type CacheValue = any;
+
+export class Cache {
+  private store = new Map<string, CacheValue>();
+
+  set(key: string, value: CacheValue): void {
+    this.store.set(key, value);
+  }
+
+  get(key: string): CacheValue | undefined {
+    return this.store.get(key);
+  }
+
+  has(key: string): boolean {
+    return this.store.has(key);
+  }
+
+  delete(key: string): boolean {
+    return this.store.delete(key);
+  }
+
+  clear(): void {
+    this.store.clear();
+  }
+
+  keys(): string[] {
+    return Array.from(this.store.keys());
+  }
+
+  values(): CacheValue[] {
+    return Array.from(this.store.values());
+  }
+
+  entries(): [string, CacheValue][] {
+    return Array.from(this.store.entries());
+  }
+}
+
+const CONTENT_MODEL = 'com.axelor.apps.portal.db.PortalCmsContent';
+const CONTENT_FIELD_NAME = 'attrs';
+
+const FieldType = {
+  OneToMany: 'one-to-many',
+  ManyToMany: 'many-to-many',
+  ManyToOne: 'many-to-one',
+  CustomOneToMany: 'json-one-to-many',
+  CustomManyToMany: 'json-many-to-many',
+  CustomManyToOne: 'json-many-to-one',
+};
+
+const RelationalFieldTypes = [
+  FieldType.OneToMany,
+  FieldType.ManyToMany,
+  FieldType.ManyToOne,
+];
+
+const CustomRelationalFieldTypes = [
+  FieldType.CustomOneToMany,
+  FieldType.CustomManyToMany,
+  FieldType.CustomManyToOne,
+];
 
 export async function findAllMainWebsites({
   workspaceURL,
@@ -318,6 +383,7 @@ export async function findWebsitePageBySlug({
           content: {
             title: true,
             component: true,
+            attrs: true,
           },
         },
         orderBy: {
@@ -327,7 +393,22 @@ export async function findWebsitePageBySlug({
     },
   });
 
-  return page;
+  let contentLines = [];
+
+  if ((page?.contentLines as any)?.length) {
+    const fields = await findModelFields({
+      tenantId,
+      modelName: CONTENT_MODEL,
+      modelField: CONTENT_FIELD_NAME,
+    });
+
+    contentLines = await populateContent(page?.contentLines, fields, tenantId);
+  }
+
+  return {
+    ...page,
+    contentLines,
+  };
 }
 
 export async function findAllMainWebsiteLanguages({
@@ -379,4 +460,298 @@ export async function findAllMainWebsiteLanguages({
     .then(clone);
 
   return mainWebsiteLanguages?.languageList;
+}
+
+async function getRelationalFieldTypeData({
+  field,
+  value,
+  modelRecordCache,
+  tenantId,
+}: any) {
+  const targetModel = field?.targetModel;
+
+  if (!targetModel) {
+    return value;
+  }
+
+  const isManyToOneRelation = value?.id;
+
+  const isToManyRelation = Array.isArray(value);
+
+  if (isToManyRelation || isManyToOneRelation) {
+    const ids = isManyToOneRelation
+      ? [value.id]
+      : isToManyRelation
+        ? value.map(({id}) => id)
+        : [];
+
+    if (!ids.length) return value;
+
+    const cachedRecords = ids
+      .map(id => modelRecordCache.get(`${targetModel}-${id}`))
+      .filter(Boolean);
+
+    const cachedIds = cachedRecords.map(r => r.id);
+
+    const difference = (arr1: any, arr2: any) =>
+      arr1.filter((item: any) => !arr2.includes(item));
+
+    const uncachedIds = difference(ids, cachedIds);
+
+    let records = await findModelRecords({
+      tenantId,
+      modelName: targetModel,
+      ids: uncachedIds,
+    });
+
+    if (records?.length) {
+      records.forEach((record: any) => {
+        modelRecordCache.set(`${targetModel}-${record.id}`, record);
+      });
+    }
+
+    records = [...cachedRecords, ...records];
+
+    if (isManyToOneRelation) {
+      return records?.[0];
+    }
+
+    if (isToManyRelation) {
+      return value.map(
+        item => records.find((r: any) => r.id == item.id) || item,
+      );
+    }
+  } else {
+    return value;
+  }
+}
+
+async function getCustomRelationalFieldTypeData({
+  field,
+  value,
+  fields,
+  modelRecordCache,
+  jsonModelCache,
+  jsonModelRecordCache,
+  tenantId,
+}: any) {
+  const targetJsonModelName = field?.targetJsonModel;
+
+  if (!targetJsonModelName) {
+    return value;
+  }
+
+  const isManyToOneRelation = value?.id;
+
+  const isToManyRelation = Array.isArray(value);
+
+  const client = await manager.getClient(tenantId);
+
+  let targetJsonModel = jsonModelCache.get(targetJsonModelName);
+
+  if (!targetJsonModel) {
+    const $targetJsonModel = await client.aOSMetaJsonModel.findOne({
+      where: {
+        name: targetJsonModelName,
+      },
+    });
+
+    if (!$targetJsonModel) {
+      return value;
+    }
+
+    jsonModelCache.set(targetJsonModelName, $targetJsonModel);
+    targetJsonModel = $targetJsonModel;
+  }
+
+  if (isToManyRelation || isManyToOneRelation) {
+    const ids = isManyToOneRelation
+      ? [value.id]
+      : isToManyRelation
+        ? value.map(({id}) => id)
+        : [];
+
+    if (!ids.length) return value;
+
+    const cachedRecords = ids
+      .map(id => jsonModelRecordCache.get(`${targetJsonModelName}-${id}`))
+      .filter(Boolean);
+
+    const cachedIds = cachedRecords.map(r => r.id);
+
+    const difference = (arr1: any, arr2: any) =>
+      arr1.filter((item: any) => !arr2.includes(item));
+
+    const uncachedIds = difference(ids, cachedIds);
+
+    let records = await client.aOSMetaJsonRecord.find({
+      where: {
+        jsonModel: targetJsonModelName,
+        id: {
+          in: uncachedIds,
+        },
+      },
+    });
+
+    if (records?.length) {
+      records.forEach((record: any) => {
+        modelRecordCache.set(`${targetJsonModelName}-${record.id}`, record);
+      });
+    }
+
+    records = [...cachedRecords, ...records];
+
+    if (isManyToOneRelation) {
+      return records?.[0];
+    }
+
+    if (isToManyRelation) {
+      return value.map(
+        item => records.find((r: any) => r.id == item.id) || item,
+      );
+    }
+  } else {
+    return value;
+  }
+}
+
+async function populateContent(
+  contentLines: any,
+  fields: any,
+  tenantId: Tenant['id'],
+) {
+  const jsonModelCache = new Cache();
+  const jsonModelRecordCache = new Cache();
+  const modelRecordCache = new Cache();
+
+  const getField = (fieldName: string) => {
+    return fields.find((field: any) => field.name === fieldName);
+  };
+
+  const populate = async (line: any) => {
+    const attrs = await line.content.attrs;
+
+    if (!attrs) {
+      return line;
+    }
+
+    const fieldNames = Object.keys(attrs);
+
+    if (!fieldNames?.length) {
+      return line;
+    }
+
+    const data: Record<string, any> = {};
+
+    for (const fieldName of fieldNames) {
+      const value = attrs[fieldName];
+
+      const isPrimitiveType = typeof value !== 'object';
+
+      if (isPrimitiveType) {
+        data[fieldName] = value;
+        continue;
+      }
+
+      const field = getField(fieldName);
+
+      if (!field?.type) {
+        data[fieldName] = value;
+        continue;
+      }
+
+      const type = field.type;
+      const isRelationalField = RelationalFieldTypes.includes(type);
+      const isCustomRelationalField = CustomRelationalFieldTypes.includes(type);
+
+      let handler;
+
+      if (isRelationalField) {
+        handler = getRelationalFieldTypeData;
+      } else if (isCustomRelationalField) {
+        handler = getCustomRelationalFieldTypeData;
+      }
+
+      if (!handler) {
+        data[fieldName] = value;
+        continue;
+      }
+
+      const $value = await handler({
+        field,
+        value,
+        fields,
+        modelRecordCache,
+        jsonModelCache,
+        jsonModelRecordCache,
+        tenantId,
+      });
+
+      data[fieldName] = $value;
+    }
+
+    return data;
+  };
+
+  const populatedContentLines = await Promise.allSettled(
+    contentLines.map(populate),
+  ).then(results => results.map(({value}: any) => value));
+
+  return populatedContentLines;
+}
+
+async function findModelRecords({
+  tenantId,
+  modelName,
+  ids,
+}: {
+  tenantId: Tenant['id'];
+  modelName: string;
+  ids: string[];
+}) {
+  const tenant = await manager.getTenant(tenantId);
+  const aos = tenant?.config?.aos;
+
+  if (!aos?.url) return [];
+  const res = await axios
+    .post(
+      `${aos.url}/ws/rest/${modelName}/search`,
+      {
+        data: {
+          _domain: 'self.id in :ids',
+          _domainContext: {ids},
+        },
+      },
+      {auth: aos.auth},
+    )
+    .then(res => res?.data)
+    .catch(() => console.log('Error with trying to fetch model fields'));
+
+  if (res?.status !== 0 || !res.data) {
+    return [];
+  }
+
+  return res.data;
+}
+
+export async function resolvePromisesDeep(obj: any): Promise<any> {
+  if (obj instanceof Promise) {
+    return resolvePromisesDeep(await obj);
+  }
+
+  if (Array.isArray(obj)) {
+    return Promise.all(obj.map(resolvePromisesDeep));
+  }
+
+  if (obj && typeof obj === 'object') {
+    const entries = await Promise.all(
+      Object.entries(obj).map(async ([key, value]) => [
+        key,
+        await resolvePromisesDeep(value),
+      ]),
+    );
+    return Object.fromEntries(entries);
+  }
+
+  return obj;
 }
