@@ -18,13 +18,13 @@ const Process5: FC = () => {
       <div className="col-lg-6">
         <h2 className="fs-15 text-uppercase text-muted mb-3">How It Works</h2>
         <h3 className="display-4 mb-5">
-          Download the app, create your profile, and you're ready to go!
+          Download the app, create your profile, and you&apos;re ready to go!
         </h3>
         <p className="mb-8">
           Individual health-related objectives may vary depending on factors
           such as age, gender, medical history, and personal preferences.
-          Additionally, it's important to set realistic and achievable goals
-          that are specific, measurable, and time-bound.
+          Additionally, it&apos;s important to set realistic and achievable
+          goals that are specific, measurable, and time-bound.
         </p>
 
         <div className="row gy-6 gx-xxl-8 process-wrapper">

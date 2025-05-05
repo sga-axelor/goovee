@@ -15,9 +15,9 @@ const Hero5: FC = () => {
             <p
               className="lead fs-lg px-xl-12 px-xxl-4 mb-7"
               style={slideInDownAnimate('300ms')}>
-              You'll have no issue achieving your financial targets. Keep care
-              of all of your recurring and one-time spending and earnings in one
-              location.
+              You&apos;ll have no issue achieving your financial targets. Keep
+              care of all of your recurring and one-time spending and earnings
+              in one location.
             </p>
 
             <div

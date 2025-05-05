@@ -19,8 +19,8 @@ const Contact5: FC = () => {
         <p>
           Our portfolio is filled with a diverse range of works that highlight
           our creativity and innovation. We take great pride in our ability to
-          develop custom solutions that exceed our clients' expectations and
-          push the boundaries of design.
+          develop custom solutions that exceed our clients&apos; expectations
+          and push the boundaries of design.
         </p>
 
         <NextLink

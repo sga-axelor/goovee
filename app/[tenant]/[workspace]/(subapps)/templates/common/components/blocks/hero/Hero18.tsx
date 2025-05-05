@@ -27,7 +27,7 @@ const Hero18: FC = () => {
                   <p
                     className="lead fs-23 lh-sm mb-7 pe-xxl-15"
                     style={slideInDownAnimate('1200ms')}>
-                    We're a company that focuses on establishing long-term
+                    We&apos;re a company that focuses on establishing long-term
                     relationships with customers.
                   </p>
 

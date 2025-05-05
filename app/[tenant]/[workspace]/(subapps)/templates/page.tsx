@@ -656,8 +656,8 @@ export default function Page() {
                         <blockquote className="icon mb-0">
                           <p>
                             “This is just next level stuff in terms of quality,
-                            docs and features. I don't think I'm going to need
-                            or tolerate any other template from now on.”
+                            docs and features. I don&apos;t think I&apos;m going
+                            to need or tolerate any other template from now on.”
                           </p>
                           <div className="blockquote-details">
                             <div className="info p-0">
@@ -674,9 +674,10 @@ export default function Page() {
                       <div className="card-body">
                         <blockquote className="icon mb-0">
                           <p>
-                            “I've been a Themeforest user for almost 10 years
-                            and I have purchased well over 100 themes during my
-                            time. This theme is amongst the best here.”
+                            “I&apos;ve been a Themeforest user for almost 10
+                            years and I have purchased well over 100 themes
+                            during my time. This theme is amongst the best
+                            here.”
                           </p>
                           <div className="blockquote-details">
                             <div className="info p-0">
@@ -714,8 +715,9 @@ export default function Page() {
                   Satisfying clients is always our primary goal.
                 </h2>
                 <p className="lead fs-22 mb-6">
-                  Believe whatever we say for that, but don't trust our word for
-                  it. Listen to what clients have to say about Lighthouse.
+                  Believe whatever we say for that, but don&apos;t trust our
+                  word for it. Listen to what clients have to say about
+                  Lighthouse.
                 </p>
                 <a
                   href="https://1.envato.market/Rygn0y"

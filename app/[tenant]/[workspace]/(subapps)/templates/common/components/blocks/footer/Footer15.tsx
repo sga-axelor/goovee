@@ -15,8 +15,8 @@ const Footer15: FC = () => {
                 alt=""
               />
               <p className="lead mb-0">
-                I'm Caitlyn Lighthouse, a photographer specializing in food,
-                drink and product photography.
+                I&apos;m Caitlyn Lighthouse, a photographer specializing in
+                food, drink and product photography.
               </p>
             </div>
           </div>

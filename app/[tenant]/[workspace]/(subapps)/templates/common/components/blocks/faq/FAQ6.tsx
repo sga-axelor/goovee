@@ -12,8 +12,8 @@ const FAQ6: FC = () => {
           <div className="col-lg-6 mb-0">
             <h2 className="fs-16 text-uppercase text-primary mb-4">FAQ</h2>
             <h3 className="display-3 mb-4">
-              You can use our inquiry form to reach us if you don't see a reply
-              to your query there.
+              You can use our inquiry form to reach us if you don&apos;t see a
+              reply to your query there.
             </h3>
             <p className="mb-6">
               Software engineers provide a range of services related to the

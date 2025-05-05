@@ -27,7 +27,7 @@ const Process1: FC = () => {
         </p>
 
         <p className="mb-6">
-          By improving your website's speed, you can provide a better user
+          By improving your website&apos;s speed, you can provide a better user
           experience for your visitors, reduce bounce rates, and ultimately
           increase conversions.
         </p>

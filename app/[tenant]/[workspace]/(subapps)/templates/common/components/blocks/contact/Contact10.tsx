@@ -10,7 +10,7 @@ const Contact10: FC = () => {
             <div className="row align-items-center gx-md-8 gx-xl-12 gy-10">
               <div className="col-lg-6">
                 <h2 className="display-4 mb-3 pe-lg-10">
-                  Let's collaborate in case you love the things you see.
+                  Let&apos;s collaborate in case you love the things you see.
                 </h2>
                 <p className="lead pe-lg-12 mb-0">
                   I bring rapid solutions to make the life of my clients easier.

@@ -12,7 +12,8 @@ const Process11: FC = () => {
             Company Strategy
           </h2>
           <h3 className="display-4">
-            Simply relax and enjoy as we manage your company's requirements.
+            Simply relax and enjoy as we manage your company&apos;s
+            requirements.
           </h3>
         </div>
       </div>

@@ -53,9 +53,9 @@ const Hero16: FC = () => {
             <p
               className="lead fs-23 lh-sm mb-7 px-md-10 px-lg-0"
               style={slideInDownAnimate('900ms')}>
-              Hello! I'm Marry, a New York-based freelance software
-              engineer, and UX designer. I'm highly enthusiastic about the job I
-              do.
+              Hello! I&apos;m Marry, a New York-based freelance software
+              engineer, and UX designer. I&apos;m highly enthusiastic about the
+              job I do.
             </p>
 
             <div className="d-flex justify-content-center justify-content-lg-start">

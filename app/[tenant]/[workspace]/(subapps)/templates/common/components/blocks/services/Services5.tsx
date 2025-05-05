@@ -36,7 +36,8 @@ const Services5: FC = () => {
 
         <div className="col-lg-6">
           <h3 className="display-4 mb-5">
-            Our goal is to develop solutions that make our clients' life easier.
+            Our goal is to develop solutions that make our clients&apos; life
+            easier.
           </h3>
 
           <p className="mb-7">

@@ -24,8 +24,9 @@ const About2: FC = () => {
 
         <p className="mb-6">
           We take great pride in our ability to develop custom solutions that
-          exceed our clients' expectations and push the boundaries of design. If
-          you are looking for inspiration or want to see what is possible
+          exceed our clients&apos; expectations and push the boundaries of
+          design. If you are looking for inspiration or want to see what is
+          possible
         </p>
 
         <ListColumn rowClass="gx-xl-8" list={aboutList5} />

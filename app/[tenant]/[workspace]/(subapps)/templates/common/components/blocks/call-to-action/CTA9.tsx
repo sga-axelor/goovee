@@ -11,7 +11,7 @@ const CTA9: FC = () => {
           <div className="col-xl-10 col-xxl-8 mx-auto text-center">
             <i className="icn-flower text-white fs-30 opacity-50" />
             <h2 className="display-4 text-white mt-2 mb-7">
-              I'm here to document your special moments. Searching for a
+              I&apos;m here to document your special moments. Searching for a
               professional photographer?
             </h2>
             <NextLink

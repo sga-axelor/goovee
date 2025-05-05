@@ -17,7 +17,7 @@ const Team2: FC = () => {
           solutions
         </h3>
         <p className="fs-15">
-          Maximize your resources with our professional team's time and
+          Maximize your resources with our professional team&apos;s time and
           cost-effective solutions. Partner with us to save valuable time and
           money.
         </p>

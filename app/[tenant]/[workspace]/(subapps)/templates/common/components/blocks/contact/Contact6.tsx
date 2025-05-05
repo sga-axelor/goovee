@@ -19,7 +19,7 @@ const Contact6: FC = () => {
 
           <div className="col-lg-5">
             <h3 className="display-4 mb-7">
-              Got any questions? Don't hesitate to get in touch.
+              Got any questions? Don&apos;t hesitate to get in touch.
             </h3>
             <div className="d-flex flex-row">
               <div>

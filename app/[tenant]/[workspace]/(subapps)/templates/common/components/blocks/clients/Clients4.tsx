@@ -13,7 +13,7 @@ const Clients4: FC = () => {
               300+ customers have given faith in us.
             </h3>
             <p className="lead fs-lg mb-0">
-              We create ideas that make our clients' lives better.
+              We create ideas that make our clients&apos; lives better.
             </p>
           </div>
 

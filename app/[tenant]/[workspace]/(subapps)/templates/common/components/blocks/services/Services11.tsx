@@ -26,7 +26,7 @@ const Services11: FC = () => {
         <p className="lead fs-lg mb-8 pe-xxl-2">
           The comprehensive service we provide is{' '}
           <span className="underline">specifically</span> tailored to your
-          company's requirements.
+          company&apos;s requirements.
         </p>
 
         <div className="row gx-xl-10 gy-6">

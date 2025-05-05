@@ -25,9 +25,9 @@ const Testimonial9: FC = () => {
                 “I wanted to share my positive experience working with your
                 team. From start to finish, the process was smooth and
                 efficient, and the end result exceeded my expectations. Your
-                team's attention to detail, creativity, and responsiveness was
-                impressive. I appreciate how you took the time to understand my
-                needs”
+                team&apos;s attention to detail, creativity, and responsiveness
+                was impressive. I appreciate how you took the time to understand
+                my needs”
               </p>
 
               <div className="blockquote-details justify-content-center text-center">

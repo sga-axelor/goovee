@@ -19,7 +19,7 @@ const Contact11: FC = () => {
           Contact Us
         </h2>
         <h3 className="display-4 mb-8">
-          Got any questions? Don't hesitate to get in touch.
+          Got any questions? Don&apos;t hesitate to get in touch.
         </h3>
         <div className="d-flex flex-row">
           <div>

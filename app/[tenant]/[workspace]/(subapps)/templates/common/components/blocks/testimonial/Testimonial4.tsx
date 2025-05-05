@@ -16,7 +16,7 @@ const Testimonial4: FC = () => {
               Happy Customers
             </h2>
             <h3 className="display-4 mb-6 px-xl-6">
-              Don't just take our word for it - take a look at what our
+              Don&apos;t just take our word for it - take a look at what our
               customers have to say about us.
             </h3>
           </div>

@@ -9,7 +9,7 @@ const Banner5: FC = () => {
           <div className="col-xl-9 col-xxl-7 mx-auto text-center">
             <i className="icn-flower text-leaf fs-30 opacity-25"></i>
             <h2 className="display-5 text-center mt-2 mb-10">
-              I'd like to provide you with a one-of-a-kind video and photo
+              I&apos;d like to provide you with a one-of-a-kind video and photo
               package customized to your specific needs.
             </h2>
           </div>

@@ -31,14 +31,14 @@ const About24: FC = () => {
 
           <div className="col-lg-6">
             <h2 className="display-5 mb-5">
-              Hi, I'm Jhon, and I'm a film bridal and individual photography
-              located in United Kingdom.
+              Hi, I&apos;m Jhon, and I&apos;m a film bridal and individual
+              photography located in United Kingdom.
             </h2>
             <p className="mb-6">
               I’m a professional photographer with a passion for capturing
-              life's fleeting moments. With over 4+ years of experience in the
-              field, I developed a keen eye for detail and a unique perspective
-              that shines through in every photograph of my art.
+              life&apos;s fleeting moments. With over 4+ years of experience in
+              the field, I developed a keen eye for detail and a unique
+              perspective that shines through in every photograph of my art.
             </p>
 
             <div className="row counter-wrapper gy-6">
@@ -80,9 +80,9 @@ const About24: FC = () => {
             <h3>Why Choose Me?</h3>
             <p>
               I’m a professional photographer with a passion for capturing
-              life's fleeting moments. With over 4+ years of experience in the
-              field, I developed a keen eye for detail and a unique perspective
-              that shines through in every photograph.
+              life&apos;s fleeting moments. With over 4+ years of experience in
+              the field, I developed a keen eye for detail and a unique
+              perspective that shines through in every photograph.
             </p>
 
             <ul className="icon-list bullet-bg bullet-soft-primary">

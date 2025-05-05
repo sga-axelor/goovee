@@ -61,7 +61,7 @@ const Services10: FC = () => {
 
         <p className="lead fs-lg lh-sm">
           The comprehensive service we provide is specially tailored to your
-          company's requirements.
+          company&apos;s requirements.
         </p>
 
         <p>

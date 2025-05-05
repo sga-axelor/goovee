@@ -10,8 +10,8 @@ const Hero1: FC = () => {
               Expand Your Business with Our Solutions.
             </h1>
             <p className="lead fs-lg mb-7">
-              Boost your website's traffic, rankings, and online visibility with
-              our services.
+              Boost your website&apos;s traffic, rankings, and online visibility
+              with our services.
             </p>
             <a className="btn btn-primary rounded-pill me-2">Try It For Free</a>
           </div>

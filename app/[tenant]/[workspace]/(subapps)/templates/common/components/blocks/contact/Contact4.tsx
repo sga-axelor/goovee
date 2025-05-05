@@ -18,7 +18,7 @@ const Contact4: FC = () => {
       <div className="col-lg-6">
         <h2 className="fs-16 text-uppercase text-muted mb-3 ">Let’s Talk</h2>
         <h3 className="display-4 mb-5 ">
-          Together, let's build something fantastic. We have more than 5000
+          Together, let&apos;s build something fantastic. We have more than 5000
           clients who trust us.
         </h3>
 

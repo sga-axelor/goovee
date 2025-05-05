@@ -17,7 +17,8 @@ const Hero4: FC = () => {
               <h1
                 className="display-2 mb-5"
                 style={slideInDownAnimate('600ms')}>
-                Simple get down & calm down and we're control your requirements.
+                Simple get down & calm down and we&apos;re control your
+                requirements.
               </h1>
               <p
                 className="lead fs-23 lh-sm mb-7 pe-md-10"

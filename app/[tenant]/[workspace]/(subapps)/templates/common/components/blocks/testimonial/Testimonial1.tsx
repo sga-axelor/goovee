@@ -24,7 +24,7 @@ const Testimonial1: FC = () => {
               Our Community
             </h2>
             <h3 className="display-4 mb-5">
-              Don't believe anything we say. Check out what our clients are
+              Don&apos;t believe anything we say. Check out what our clients are
               saying about us.
             </h3>
             <p>
