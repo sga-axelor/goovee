@@ -3,12 +3,14 @@
 import React from 'react';
 import {MdChevronRight} from 'react-icons/md';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {BadgeList, Separator, Skeleton} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatRelativeTime} from '@/locale/formatters';
 import {NO_IMAGE_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
+import {i18n} from '@/lib/core/locale';
 
 export const FeedList = ({
   title,
@@ -44,11 +46,13 @@ export const FeedList = ({
                   href={`${workspaceURL}/${navigatingPathFrom}/${SUBAPP_PAGE.article}/${slug}`}
                   className={`w-full flex gap-4 justify-between items-center flex-auto p-2 cursor-pointer`}>
                   <div className="flex w-full gap-4 [overflow-wrap:anywhere]">
-                    <div
-                      className="w-20 h-20 rounded-lg bg-center bg-cover flex-shrink-0"
-                      style={{
-                        backgroundImage: `url(${imageUrl})`,
-                      }}></div>
+                    <Image
+                      src={imageUrl}
+                      alt={image?.fileName || i18n.t('News image')}
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                    />
                     <div className="w-full flex flex-col justify-between">
                       <div className="flex flex-col gap-1">
                         <BadgeList

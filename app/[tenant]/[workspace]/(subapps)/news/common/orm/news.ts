@@ -169,7 +169,7 @@ export async function findNews({
         title: true,
         publicationDateTime: true,
         description: true,
-        image: {id: true},
+        image: {id: true, fileName: true},
         categorySet: {
           where: {
             ...(nonarchivedcategoryids?.length

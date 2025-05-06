@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -26,13 +27,19 @@ export const NewsCard = ({
       key={id}
       href={`${workspaceURL}/${navigatingPathFrom}/${SUBAPP_PAGE.article}/${slug}`}
       className="bg-white rounded-lg flex flex-col cursor-pointer">
-      <div
-        className="w-full h-[150px] bg-no-repeat bg-center bg-cover rounded-t-lg"
-        style={{
-          backgroundImage: image?.id
-            ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
-            : `url(${NO_IMAGE_URL})`,
-        }}></div>
+      <div className="w-full h-[150px] rounded-t-lg relative">
+        <Image
+          src={
+            image?.id
+              ? `${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image`
+              : NO_IMAGE_URL
+          }
+          alt={image?.fileName || 'News image'}
+          fill
+          className="object-cover rounded-t-lg"
+          sizes="(min-width: 1024px) 212px, (min-width: 768px) 480px, 100vw"
+        />
+      </div>
       <div className="py-2 px-4 flex flex-col justify-between flex-grow">
         <div className="flex flex-col gap-1">
           <BadgeList

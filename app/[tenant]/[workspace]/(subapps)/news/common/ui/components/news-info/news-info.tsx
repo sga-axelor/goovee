@@ -15,6 +15,7 @@ import {BadgeList, Skeleton} from '@/ui/components';
 // ---- LOCAL IMPORTS ---- //
 import {getFormatString} from '@/subapps/news/common/utils';
 import {PUBLISHED_ON} from '@/subapps/news/common/constants';
+import Image from 'next/image';
 
 export const NewsInfo = ({
   title,
@@ -29,7 +30,7 @@ export const NewsInfo = ({
   title: string;
   slug: string;
   categorySet: any[];
-  image: {id: string};
+  image: {id: string; fileName?: string};
   description: string;
   publicationDateTime: string;
   content: string;
@@ -51,13 +52,19 @@ export const NewsInfo = ({
           rootClassName="gap-2"
         />
         <div className="text-2xl font-semibold text-black">{title}</div>
-        <div
-          className="h-[300px] w-full bg-no-repeat bg-center bg-cover"
-          style={{
-            backgroundImage: image?.id
-              ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image?isFullView=true)`
-              : `url(${NO_IMAGE_URL})`,
-          }}></div>
+        <div className="h-[300px] w-full relative rounded-lg">
+          <Image
+            src={
+              image?.id
+                ? `${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image?isFullView=true`
+                : NO_IMAGE_URL
+            }
+            alt={image?.fileName || 'News image'}
+            fill
+            className="object-cover rounded-lg"
+            sizes="(min-width: 1024px) 750px, 100vw"
+          />
+        </div>
         <p>{description}</p>
       </div>
       <div className="flex flex-col gap-5">

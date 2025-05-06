@@ -16,6 +16,7 @@ import {Skeleton} from '@/ui/components';
 
 //---- LOCAL IMPORTS ---- //
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
+import Image from 'next/image';
 
 export const CategorySlider = ({
   title = '',
@@ -100,13 +101,18 @@ export const CategorySlider = ({
                   <Link
                     className="relative flex w-full items-end justify-center cursor-pointer"
                     href={`${pathname}/${slug}`}>
-                    <div
-                      className="h-[120px] w-full bg-no-repeat bg-center bg-cover rounded-md flex items-end justify-center"
-                      style={{
-                        backgroundImage: image?.id
-                          ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/category/${slug}/image)`
-                          : `url(${NO_IMAGE_URL})`,
-                      }}>
+                    <div className="h-[120px] w-full relative rounded-md flex items-end justify-center">
+                      <Image
+                        fill
+                        src={
+                          image?.id
+                            ? `${workspaceURI}/${SUBAPP_CODES.news}/api/category/${slug}/image`
+                            : NO_IMAGE_URL
+                        }
+                        alt={'Category image'}
+                        className="rounded-md object-cover"
+                        sizes="(min-width: 1024px) 130px, (min-width: 768px) 233px, (min-width: 320px) 190px, 100vw"
+                      />
                       <div className="pb-4 text-center text-white font-semibold text-xs z-10">
                         {name}
                       </div>

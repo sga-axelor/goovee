@@ -2,12 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatRelativeTime} from '@/locale/formatters';
 import {BadgeList, Skeleton} from '@/ui/components';
 import {NO_IMAGE_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
+import {i18n} from '@/lib/core/locale';
 
 export const LeadStories = ({
   title,
@@ -40,13 +42,18 @@ export const LeadStories = ({
                 <Link
                   key={id}
                   href={`${workspaceURL}/${navigatingPathFrom}/${SUBAPP_PAGE.article}/${slug}`}
-                  className={`relative lg:h-full p-4 bg-no-repeat bg-center bg-cover flex flex-col rounded-lg cursor-pointer`}
-                  style={{
-                    backgroundImage: image?.id
-                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image/?isFullView=true)`
-                      : `url(${NO_IMAGE_URL})`,
-                    height: '100%',
-                  }}>
+                  className="relative lg:h-full p-4 flex flex-col rounded-lg cursor-pointer">
+                  <Image
+                    src={
+                      image?.id
+                        ? `${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image?isFullView=true`
+                        : NO_IMAGE_URL
+                    }
+                    alt={image?.fileName || 'News image'}
+                    fill
+                    className="object-cover rounded-lg"
+                    sizes="(min-width: 1024px) 576px, (min-width: 768px) 991px, 100vw"
+                  />
                   <div
                     className="absolute inset-0 rounded-md"
                     style={{
@@ -93,14 +100,19 @@ export const LeadStories = ({
                 key={id}
                 href={`${workspaceURL}/${navigatingPathFrom}/${SUBAPP_PAGE.article}/${slug}`}
                 className="flex flex-col col-span-2 md:col-span-1 cursor-pointer">
-                <div
-                  className="w-full h-[150px] bg-no-repeat bg-center bg-cover rounded-t-lg"
-                  style={{
-                    backgroundImage: image?.id
-                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image/?isFullView=true)`
-                      : `url(${NO_IMAGE_URL})`,
-                  }}
-                />
+                <div className="w-full h-[150px]  relative">
+                  <Image
+                    fill
+                    sizes="(min-width: 1024px) 270px, (min-width: 768px) 480px, 100vw"
+                    className="rounded-t-lg object-cover"
+                    src={
+                      image?.id
+                        ? `${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image?isFullView=true`
+                        : NO_IMAGE_URL
+                    }
+                    alt={image?.fileName || i18n.t('News image')}
+                  />
+                </div>
                 <div className="bg-white px-4 py-2 rounded-b-lg flex flex-col flex-1">
                   <BadgeList
                     items={categorySet}

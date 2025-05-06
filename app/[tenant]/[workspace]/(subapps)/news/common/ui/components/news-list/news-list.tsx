@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
@@ -25,14 +26,18 @@ export const NewsList = ({
     <Link
       key={id}
       href={`${workspaceURL}/${navigatingPathFrom}/${SUBAPP_PAGE.article}/${slug}`}
-      className="bg-white rounded-lg flex gap-4 w-full cursor-pointer p-4">
-      <div
-        className="flex-shrink-0 w-[150px] h-[93px] bg-no-repeat bg-center bg-cover rounded-lg"
-        style={{
-          backgroundImage: image?.id
-            ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
-            : `url(${NO_IMAGE_URL})`,
-        }}></div>
+      className="bg-white rounded-lg flex gap-4 w-full cursor-pointer p-4 relative">
+      <Image
+        width={150}
+        height={93}
+        alt={image?.fileName || 'News image'}
+        className="flex-shrink-0 w-[150px] h-[93px] object-cover rounded-lg"
+        src={
+          image?.id
+            ? `${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image`
+            : NO_IMAGE_URL
+        }
+      />
       <div className="w-full flex flex-col gap-1 justify-between">
         <div>
           <BadgeList
