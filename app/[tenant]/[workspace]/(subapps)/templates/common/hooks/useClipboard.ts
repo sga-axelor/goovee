@@ -2,7 +2,7 @@ import ClipboardJS from 'clipboard';
 import {useEffect, useRef} from 'react';
 
 const useClipboard = () => {
-  const clipboard = useRef<ClipboardJS>();
+  const clipboard = useRef<ClipboardJS | undefined>(undefined);
   const copyIconCode = useRef<ClipboardJS | undefined>();
 
   useEffect(() => {

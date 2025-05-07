@@ -2,7 +2,7 @@ import type Isotope from 'isotope-layout';
 import {useEffect, useRef, useState} from 'react';
 
 const useIsotope = () => {
-  const isotope = useRef<Isotope>();
+  const isotope = useRef<Isotope | undefined>(undefined);
   const [filterKey, setFilterKey] = useState('*');
 
   useEffect(() => {
