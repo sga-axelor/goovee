@@ -169,6 +169,7 @@ export interface Product extends Model {
   name: string;
   code: string;
   description?: string;
+  thumbnailImage?: {id: string};
   images?: Array<string | number>;
   salePrice: number;
   costPrice: number;

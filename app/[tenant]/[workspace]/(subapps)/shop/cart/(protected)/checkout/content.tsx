@@ -56,7 +56,7 @@ function Summary({cart}: any) {
             <div key={product?.id} className="flex gap-4">
               <BackgroundImage
                 src={getProductImageURL(
-                  product?.images?.[0] ? product?.images?.[0] : null,
+                  product?.thumbnailImage?.id || product?.images?.[0],
                   tenant,
                 )}
                 className="rounded-lg w-[5rem] h-[5rem] bg-cover"

@@ -54,6 +54,9 @@ const getProductFields = ({workspace}: {workspace: PortalWorkspace}) =>
     salePrice: true,
     featured: true,
     createdOn: true,
+    thumbnailImage: {
+      id: true,
+    },
     picture: {
       id: true,
     },

@@ -26,12 +26,17 @@ export async function GET(
       ...and<AOSProduct>([
         await filterPrivate({tenantId: tenant, user}),
         {
-          OR: [{picture: {id}}, {portalImageList: {picture: {id}}}],
+          OR: [
+            {picture: {id}},
+            {thumbnailImage: {id}},
+            {portalImageList: {picture: {id}}},
+          ],
         },
       ]),
     },
     select: {
       picture: {id: true},
+      thumbnailImage: {id: true},
       portalImageList: {
         where: {picture: {id}},
         select: {picture: {id: true}},
@@ -39,19 +44,23 @@ export async function GET(
     },
   });
 
-  if (!product?.picture?.id && !product?.portalImageList?.length) {
+  if (
+    id === product?.picture?.id ||
+    product?.portalImageList?.some((i: any) => i?.product?.id === id) ||
+    id === product?.thumbnailImage?.id
+  ) {
+    const file = await findFile({
+      id,
+      meta: true,
+      tenant,
+    });
+
+    if (!file) {
+      return new NextResponse('File not found', {status: 404});
+    }
+
+    return streamFile(file);
+  } else {
     return new NextResponse('Picture not found', {status: 404});
   }
-
-  const file = await findFile({
-    id,
-    meta: true,
-    tenant,
-  });
-
-  if (!file) {
-    return new NextResponse('File not found', {status: 404});
-  }
-
-  return streamFile(file);
 }
