@@ -1,4 +1,5 @@
-const htmlMarkup = `import Plyr from 'plyr-react';
+const htmlMarkup = `import dynamic from "next/dynamic";
+const Plyr = dynamic(() => import('plyr-react'), {ssr: false});
 
 <Plyr
   options={{ loadSprite: true, clickToPlay: true }}
@@ -6,7 +7,8 @@ const htmlMarkup = `import Plyr from 'plyr-react';
 />
 `;
 
-const vimeoMarkup = `import Plyr from 'plyr-react';
+const vimeoMarkup = `import dynamic from "next/dynamic";
+const Plyr = dynamic(() => import('plyr-react'), {ssr: false});
 
 <Plyr
   options={{ loadSprite: true, clickToPlay: true }}
@@ -14,7 +16,8 @@ const vimeoMarkup = `import Plyr from 'plyr-react';
 />
 `;
 
-const youtubeMarkup = `import Plyr from 'plyr-react';
+const youtubeMarkup = `import dynamic from "next/dynamic";
+const Plyr = dynamic(() => import('plyr-react'), {ssr: false});
 
 <Plyr
   options={{ loadSprite: true, clickToPlay: true }}

@@ -1,9 +1,10 @@
 import {FC} from 'react';
-import Plyr from 'plyr-react';
+import dynamic from 'next/dynamic';
 import Hex from '@/subapps/templates/common/icons/Hex';
 // -------- data -------- //
 import {processList10} from '@/subapps/templates/common/data/process';
 
+const Plyr = dynamic(() => import('plyr-react'), {ssr: false});
 const Process13: FC = () => {
   return (
     <section className="wrapper bg-light">

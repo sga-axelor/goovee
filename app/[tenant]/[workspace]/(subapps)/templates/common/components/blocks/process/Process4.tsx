@@ -1,8 +1,10 @@
 import {FC} from 'react';
-import Plyr from 'plyr-react';
+import dynamic from 'next/dynamic';
 import animation from '@/subapps/templates/common/utils/animation';
 // -------- data -------- //
 import {processList5} from '@/subapps/templates/common/data/process';
+
+const Plyr = dynamic(() => import('plyr-react'), {ssr: false});
 
 const Process4: FC = () => {
   return (

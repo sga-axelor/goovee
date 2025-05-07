@@ -1,4 +1,4 @@
-import Plyr from 'plyr-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {FC, Fragment} from 'react';
 // -------- custom component -------- //
@@ -8,6 +8,8 @@ import {
   BlogCard2,
   BlogCard3,
 } from '@/subapps/templates/common/components/reuseable/blog-cards';
+
+const Plyr = dynamic(() => import('plyr-react'), {ssr: false});
 // -------- data -------- //
 const blogs = [
   {
