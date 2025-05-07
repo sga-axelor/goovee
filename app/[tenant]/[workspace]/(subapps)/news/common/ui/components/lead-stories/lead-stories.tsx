@@ -43,7 +43,7 @@ export const LeadStories = ({
                   className={`relative lg:h-full p-4 bg-no-repeat bg-center bg-cover flex flex-col rounded-lg cursor-pointer`}
                   style={{
                     backgroundImage: image?.id
-                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image/?isFullView=true)`
                       : `url(${NO_IMAGE_URL})`,
                     height: '100%',
                   }}>
@@ -97,7 +97,7 @@ export const LeadStories = ({
                   className="w-full h-[150px] bg-no-repeat bg-center bg-cover rounded-t-lg"
                   style={{
                     backgroundImage: image?.id
-                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+                      ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image/?isFullView=true)`
                       : `url(${NO_IMAGE_URL})`,
                   }}
                 />

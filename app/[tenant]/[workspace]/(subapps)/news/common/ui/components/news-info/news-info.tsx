@@ -55,7 +55,7 @@ export const NewsInfo = ({
           className="h-[300px] w-full bg-no-repeat bg-center bg-cover"
           style={{
             backgroundImage: image?.id
-              ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image)`
+              ? `url(${workspaceURI}/${SUBAPP_CODES.news}/api/news/${slug}/image?isFullView=true)`
               : `url(${NO_IMAGE_URL})`,
           }}></div>
         <p>{description}</p>

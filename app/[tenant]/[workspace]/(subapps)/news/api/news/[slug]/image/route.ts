@@ -20,6 +20,9 @@ export async function GET(
     };
   },
 ) {
+  const {searchParams} = new URL(request.url);
+  const isFullView = searchParams.get('isFullView') === 'true';
+
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
   const {slug} = params;
 
@@ -51,6 +54,7 @@ export async function GET(
     workspace,
     tenantId,
     user,
+    isFullView,
   });
 
   if (!imageId) {

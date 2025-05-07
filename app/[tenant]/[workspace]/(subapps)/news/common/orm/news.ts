@@ -272,12 +272,14 @@ export async function findNewsImageBySlug({
   tenantId,
   user,
   archived = false,
+  isFullView = false,
 }: {
   slug: string;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
   archived?: boolean;
+  isFullView?: boolean;
 }): Promise<string | undefined> {
   if (!tenantId || !workspace) return;
 
@@ -290,10 +292,13 @@ export async function findNewsImageBySlug({
       categorySet: {workspace: {id: workspace.id}},
       AND: [await filterPrivate({user, tenantId}), archivedFilter],
     },
-    select: {image: {id: true}},
+    select: {image: {id: true}, thumbnailImage: {id: true}},
   });
 
-  return news?.image?.id;
+  if (isFullView) {
+    return news?.image?.id;
+  }
+  return news?.thumbnailImage?.id || news?.image?.id;
 }
 
 export async function findCategoryImageBySlug({
@@ -317,10 +322,13 @@ export async function findCategoryImageBySlug({
       workspace: {id: workspace.id},
       ...(await filterPrivate({user, tenantId})),
     },
-    select: {image: {id: true}},
+    select: {
+      image: {id: true},
+      thumbnailImage: {id: true},
+    },
   });
 
-  return news?.image?.id;
+  return news?.thumbnailImage?.id || news?.image?.id;
 }
 
 export async function isAttachmentOfNews({
