@@ -24,6 +24,7 @@ import {EventCardProps} from '@/subapps/events/common/ui/components/events/types
 import styles from './event-card.module.scss';
 import mainStyles from '@/subapps/events/styles.module.scss';
 import {Skeleton} from '@/ui/components/skeleton';
+import Image from 'next/image';
 
 export const EventCard = ({event}: EventCardProps) => {
   const {workspaceURI} = useWorkspace();
@@ -33,13 +34,19 @@ export const EventCard = ({event}: EventCardProps) => {
 
   return (
     <Card className="p-2 overflow-hidden cursor-pointer rounded-2xl flex gap-6 h-fit border-none shadow-none ">
-      <div
-        className="w-[150px] h-[150px] rounded-lg bg-center bg-cover flex-shrink-0"
-        style={{
-          backgroundImage: event.eventImage?.id
-            ? `url(${workspaceURI}/${SUBAPP_CODES.events}/api/event/${event.slug}/image)`
-            : `url(${NO_IMAGE_URL})`,
-        }}></div>
+      <div className="w-[150px] h-[150px] rounded-lg  flex-shrink-0 relative">
+        <Image
+          height={150}
+          width={150}
+          alt="Event image"
+          className="rounded-lg w-[150px] h-[150px] object-cover"
+          src={
+            event.eventImage?.id
+              ? `${workspaceURI}/${SUBAPP_CODES.events}/api/event/${event.slug}/image`
+              : NO_IMAGE_URL
+          }
+        />
+      </div>
 
       <div className="flex w-full gap-10 py-2">
         <div

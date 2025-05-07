@@ -85,6 +85,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
             alt={`${eventDetails.eventTitle} image`}
             fill
             className="rounded-lg mx-auto object-cover"
+            sizes="(min-width: 1024px) 1152px, 100vw"
           />
         </div>
         <CardDescription className="herllo">
