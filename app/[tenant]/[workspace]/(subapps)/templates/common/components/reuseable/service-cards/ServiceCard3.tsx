@@ -1,9 +1,9 @@
-import {FC} from 'react';
+import {FC, ReactElement} from 'react';
 
 // ================================================
 type ServiceCard3Props = {
   title: string;
-  Icon: JSX.Element;
+  Icon: ReactElement;
   className?: string;
   description: string;
 };

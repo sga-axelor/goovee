@@ -1,6 +1,7 @@
-import {FC} from 'react';
+import {FC, ReactElement} from 'react';
 import Price from './Price';
 import NextLink from '../links/NextLink';
+import IconProps from '../../../types/icons';
 
 // ================================================================
 type PricingCard2Props = {
@@ -10,7 +11,7 @@ type PricingCard2Props = {
   monthlyPrice: number;
   activeYearly: boolean;
   roundedButton?: boolean;
-  Icon: (props: any) => JSX.Element;
+  Icon: (props: IconProps) => ReactElement;
 };
 // ================================================================
 

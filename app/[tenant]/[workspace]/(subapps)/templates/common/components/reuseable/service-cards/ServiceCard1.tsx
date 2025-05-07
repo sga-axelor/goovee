@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, ReactElement} from 'react';
 import IconProps from '@/subapps/templates/common/types/icons';
 import {LinkType} from '@/subapps/templates/common/types/demo-1';
 import NextLink from '../links/NextLink';
@@ -11,7 +11,7 @@ type ServiceCard1Props = {
   description: string;
   cardClassName?: string;
   iconClassName?: string;
-  Icon: (props: IconProps) => JSX.Element;
+  Icon: (props: IconProps) => ReactElement;
 };
 // ===============================================================
 
