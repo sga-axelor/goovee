@@ -6,20 +6,20 @@ img.svg-inject {
 }
 .icon-svg,
 .icon-svg.icon-svg-lg {
-  width: 3rem;
-  height: 3rem;
+  width: 3.75rem;
+  height: 3.75rem;
 }
 .icon-svg.icon-svg-md {
-  width: 2.6rem;
-  height: 2.6rem;
+  width: 3.25rem;
+  height: 3.25rem;
 }
 .icon-svg.icon-svg-sm {
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2.75rem;
+  height: 2.75rem;
 }
 .icon-svg.icon-svg-xs {
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 .svg-bg {
   display: inline-flex;
@@ -27,17 +27,17 @@ img.svg-inject {
   justify-content: center;
   backface-visibility: hidden;
   .icon-svg {
-    width: 1.3rem;
-    height: 1.3rem;
+    width: 1.625rem;
+    height: 1.625rem;
   }
-  width: 3rem;
-  height: 3rem;
+  width: 3.75rem;
+  height: 3.75rem;
   &.svg-bg-lg {
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
+    height: 5rem;
     .icon-svg {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 1.875rem;
+      height: 1.875rem;
     }
   }
 }
@@ -189,9 +189,9 @@ img.svg-inject {
 .ratings {
   display: inline-block;
   position: relative;
-  width: 5rem;
-  height: 0.8rem;
-  @include font-size(0.9rem);
+  width: 6.25rem;
+  height: 1rem;
+  @include font-size(1.125rem);
   line-height: 1;
   &:after,
   &:before {
@@ -225,7 +225,7 @@ img.svg-inject {
   }
 }
 .custom-control .ratings {
-  height: 0.9rem;
+  height: 1.125rem;
 }
 .ratings-wrapper span {
   display: inline-block;

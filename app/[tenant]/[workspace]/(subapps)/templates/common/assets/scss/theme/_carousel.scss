@@ -16,8 +16,8 @@
       color: $main-dark;
       border: 0;
       box-shadow: $box-shadow-sm;
-      width: 2.2rem;
-      height: 2.2rem;
+      width: 2.75rem;
+      height: 2.75rem;
       line-height: inherit;
       border-radius: 100%;
       text-shadow: none;
@@ -30,16 +30,16 @@
       }
       &:after {
         font-family: $font-family-unicons;
-        @include font-size(1.2rem);
+        @include font-size(1.5rem);
       }
       &.swiper-button-prev {
-        left: 1rem;
+        left: 1.25rem;
         &:after {
           content: $icon-prev;
         }
       }
       &.swiper-button-next {
-        right: 1rem;
+        right: 1.25rem;
         &:after {
           content: $icon-next;
         }
@@ -51,7 +51,7 @@
   }
 
   .swiper-pagination {
-    bottom: -2.8rem;
+    bottom: -3.5rem;
     position: absolute !important;
     pointer-events: all;
     .swiper-pagination-bullet {
@@ -59,9 +59,9 @@
       @include transition($link-transition);
       position: relative;
       display: inline-block;
-      width: 0.5rem;
-      height: 0.5rem;
-      margin: 0 0.3rem;
+      width: 0.625rem;
+      height: 0.625rem;
+      margin: 0 0.375rem;
       padding: 0;
       background: $secondary;
       opacity: 0.5;
@@ -126,7 +126,7 @@
       justify-content: center;
       transform: none;
       position: absolute !important;
-      bottom: -3.2rem;
+      bottom: -4rem;
       left: 0;
       width: 100%;
       .swiper-button {
@@ -135,26 +135,26 @@
         right: auto;
         bottom: 0;
         position: relative;
-        margin: 0 0.2rem;
+        margin: 0 0.25rem;
       }
       + .swiper-pagination {
-        bottom: -5.2rem;
+        bottom: -6.5rem;
       }
     }
     &.nav-far .swiper-navigation {
-      bottom: -4.1rem;
+      bottom: -5.125rem;
     }
     &.nav-start .swiper-navigation {
       text-align: left;
       justify-content: flex-start;
       .swiper-button {
-        margin: 0 0.4rem 0 0;
+        margin: 0 0.5rem 0 0;
       }
     }
   }
   &.dots-over {
     .swiper-pagination {
-      bottom: 0.6rem;
+      bottom: 0.75rem;
       .swiper-pagination-bullet {
         background: $white;
         opacity: 1;
@@ -190,7 +190,7 @@
     opacity: 0.75;
   }
   &.dots-closer .swiper-pagination {
-    bottom: -2rem;
+    bottom: -2.5rem;
   }
 }
 //----------------------------------------------------------//
@@ -273,17 +273,17 @@
   }
   .swiper-thumbs {
     position: absolute;
-    bottom: 1rem;
+    bottom: 1.25rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
     .swiper-slide {
       cursor: pointer;
-      width: 2.5rem !important;
-      height: 2.5rem !important;
+      width: 3.125rem !important;
+      height: 3.125rem !important;
       img {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 3.125rem;
+        height: 3.125rem;
         border-radius: 100%;
       }
       &:after {
@@ -382,7 +382,7 @@
 //	INNER
 //----------------------------------------------------------//
 .item-inner {
-  padding: 1rem 0.75rem;
+  padding: 1.25rem 0.9375rem;
 }
 //----------------------------------------------------------//
 //	THUMBNAILS
@@ -392,7 +392,7 @@
     position: relative;
   }
   .swiper:not(.swiper-thumbs) {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.625rem;
   }
   &:not(.swiper-fullscreen) .swiper-thumbs {
     .swiper-slide {

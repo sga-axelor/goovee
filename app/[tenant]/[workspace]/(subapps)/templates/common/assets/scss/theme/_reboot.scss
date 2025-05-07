@@ -8,7 +8,7 @@
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  word-spacing: 0.05rem;
+  word-spacing: 0.0625rem;
   overflow-x: hidden !important;
 }
 //----------------------------------------------------------//
@@ -67,7 +67,7 @@ a.hover {
 a.hover-2 {
   position: relative;
   z-index: 1;
-  padding: 0 0.2rem 0.05rem;
+  padding: 0 0.25rem 0.0625rem;
   &::before {
     position: absolute;
     width: 100%;
@@ -97,7 +97,7 @@ a.hover-2 {
 }
 a.hover-3 {
   position: relative;
-  padding: 0 0.2rem 0.05rem;
+  padding: 0 0.25rem 0.0625rem;
   transition: color ease 0.3s;
   z-index: 1;
   &:before {
@@ -194,17 +194,17 @@ a.text-reset:hover,
 //----------------------------------------------------------//
 .more {
   font-weight: $font-weight-bold;
-  letter-spacing: -0.01rem;
+  letter-spacing: -0.0125rem;
   display: inline-block;
   &:after {
     line-height: 1;
     font-family: $font-family-unicons;
     content: $icon-more;
-    padding-left: 0.05rem;
-    @include font-size(0.9rem);
+    padding-left: 0.0625rem;
+    @include font-size(1.125rem);
     font-weight: normal;
     vertical-align: -3px;
-    margin-right: -0.25rem;
+    margin-right: -0.3125rem;
     display: inline-block;
   }
 }
@@ -231,7 +231,7 @@ hr.double {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  @include font-size(1.2rem);
+  @include font-size(1.5rem);
   color: $hr-color;
 }
 .divider-icon:before,
@@ -240,7 +240,7 @@ hr.double {
   top: 50%;
   content: '';
   border-top: 1px solid $hr-color;
-  width: calc(50% - 1.5rem);
+  width: calc(50% - 1.875rem);
 }
 .divider-icon:before {
   left: 0;
@@ -293,7 +293,7 @@ hr.double {
   font-style: $headings-font-style;
   font-weight: $headings-font-weight;
   color: $headings-color;
-  word-spacing: 0.1rem;
+  word-spacing: 0.125rem;
   letter-spacing: $letter-spacing;
 }
 %heading {
@@ -360,7 +360,7 @@ h6 {
 .lead {
   line-height: 1.65;
   &.fs-lg {
-    @include font-size(1.05rem !important);
+    @include font-size(1.3125rem !important);
     line-height: 1.6;
   }
 }
@@ -370,7 +370,7 @@ h6 {
 .text-line {
   position: relative;
   vertical-align: top;
-  padding-left: 1.4rem;
+  padding-left: 1.75rem;
   &:not(.text-gradient) {
     display: inline-flex;
   }
@@ -381,8 +381,8 @@ h6 {
     top: 50%;
     transform: translateY(-60%);
     left: 0;
-    width: 0.75rem;
-    height: 0.05rem;
+    width: 0.9375rem;
+    height: 0.0625rem;
     background: $main-color;
   }
   @each $color, $value in $colors {
@@ -405,7 +405,7 @@ h6 {
     content: '';
     display: block;
     background: rgba($main-color, 0.12);
-    border-radius: 5rem;
+    border-radius: 6.25rem;
     position: absolute;
     width: calc(100% + 2.5%);
     height: 30%;
@@ -429,7 +429,7 @@ h6 {
     content: '';
     display: block;
     background: $main-color;
-    border-radius: 5rem;
+    border-radius: 6.25rem;
     position: absolute;
     width: calc(100% + 2.5%);
     height: 10%;
@@ -571,39 +571,39 @@ mark {
 .page-frame {
   section,
   footer {
-    margin-top: 1.25rem;
+    margin-top: 1.5625rem;
   }
 }
 @media (min-width: 768px) {
   .page-frame {
-    padding: 1.25rem;
+    padding: 1.5625rem;
     section,
     footer,
     .video-wrapper,
     .video-wrapper:after,
     .video-wrapper video {
-      border-radius: 1rem;
+      border-radius: 1.25rem;
     }
     section,
     footer {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-      border-radius: 1rem;
+      padding-left: 1.875rem;
+      padding-right: 1.875rem;
+      border-radius: 1.25rem;
     }
   }
 }
 @media (min-width: 768px) {
   .section-frame {
-    margin-left: 1.5rem;
-    margin-right: 1.5rem;
-    border-radius: 1rem;
+    margin-left: 1.875rem;
+    margin-right: 1.875rem;
+    border-radius: 1.25rem;
     &.br-fix {
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
     }
   }
   .section-frame-wrapper {
-    border-radius: 1rem;
+    border-radius: 1.25rem;
   }
 }
 //----------------------------------------------------------//
@@ -654,7 +654,7 @@ figure img {
 }
 .map.map-full {
   height: 100%;
-  min-height: 15rem;
+  min-height: 18.75rem;
 }
 //----------------------------------------------------------//
 //	ADDITIONAL MARGINS

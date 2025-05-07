@@ -4,15 +4,15 @@
 // Font Variables
 $font-family-base: 'Space Grotesk', sans-serif;
 $font-family-serif: 'IBM Plex Serif', serif;
-$font-size-base: 0.85rem;
+$font-size-base: 1.0625rem;
 $headings-font-weight: 600;
 $font-weight-base: 400;
-$btn-padding-top: 0.55rem;
-$btn-padding-bottom: 0.45rem;
-$btn-padding-top-sm: 0.45rem;
-$btn-padding-bottom-sm: 0.35rem;
-$btn-padding-top-lg: 0.7rem;
-$btn-padding-bottom-lg: 0.6rem;
+$btn-padding-top: 0.6875rem;
+$btn-padding-bottom: 0.5625rem;
+$btn-padding-top-sm: 0.5625rem;
+$btn-padding-bottom-sm: 0.4375rem;
+$btn-padding-top-lg: 0.875rem;
+$btn-padding-bottom-lg: 0.75rem;
 
 // Font Specific Settings
 * {
@@ -105,21 +105,21 @@ h6,
   padding-bottom: $btn-padding-bottom-lg;
 }
 blockquote.icon:before {
-  top: -0.9rem;
+  top: -1.125rem;
 }
 .counter-wrapper {
   p {
     @include font-size($font-size-base);
   }
   .counter {
-    @include font-size(2.05rem);
+    @include font-size(2.5625rem);
     &.counter-lg {
-      @include font-size(2.25rem);
+      @include font-size(2.8125rem);
     }
   }
 }
 .lead {
-  @include font-size(0.95rem);
+  @include font-size(1.1875rem);
   line-height: 1.6;
 }
 .lead.fs-lg {

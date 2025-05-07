@@ -5,7 +5,7 @@
   outline: 0;
 }
 .popover-header {
-  padding: $popover-header-padding-y $popover-header-padding-x 0.25rem;
+  padding: $popover-header-padding-y $popover-header-padding-x 0.3125rem;
   border: 0;
   @include font-size($font-size-lg);
 }

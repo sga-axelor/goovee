@@ -3,7 +3,7 @@
 
 // Font Variables
 $font-family-base: 'Urbanist', sans-serif;
-$font-size-base: 0.85rem;
+$font-size-base: 1.0625rem;
 $headings-font-weight: 600;
 
 // Font Specific Settings
@@ -109,80 +109,80 @@ blockquote {
     @include font-size($font-size-base);
   }
   .counter {
-    @include font-size(2.05rem);
+    @include font-size(2.5625rem);
     &.counter-lg {
-      @include font-size(2.25rem);
+      @include font-size(2.8125rem);
     }
   }
 }
 .icon-list.bullet-bg i {
-  top: 0.25rem;
+  top: 0.3125rem;
 }
 .accordion-wrapper .card-header button:before {
-  margin-top: -0.2rem;
+  margin-top: -0.25rem;
 }
 .form-floating > label {
-  padding-top: 0.65rem;
+  padding-top: 0.8125rem;
 }
 .h1,
 h1 {
-  @include font-size(1.5rem);
+  @include font-size(1.875rem);
 }
 .h2,
 h2 {
-  @include font-size(1.35rem);
+  @include font-size(1.6875rem);
 }
 .h3,
 h3 {
-  @include font-size(1.15rem);
+  @include font-size(1.4375rem);
 }
 .h4,
 h4 {
-  @include font-size(1rem);
+  @include font-size(1.25rem);
 }
 .h5,
 h5 {
-  @include font-size(0.95rem);
+  @include font-size(1.1875rem);
 }
 .h6,
 h6 {
-  @include font-size(0.9rem);
+  @include font-size(1.125rem);
 }
 .fs-sm {
-  @include font-size(0.75rem !important);
+  @include font-size(0.9375rem !important);
 }
 .fs-lg {
-  @include font-size(1.05rem !important);
+  @include font-size(1.3125rem !important);
 }
 .lead {
-  @include font-size(0.95rem);
+  @include font-size(1.1875rem);
   line-height: 1.6;
 }
 .lead.fs-lg {
-  @include font-size(1.1rem !important);
+  @include font-size(1.375rem !important);
   line-height: 1.55;
 }
 .display-1 {
-  @include font-size(2.5rem);
+  @include font-size(3.125rem);
   line-height: 1.15;
 }
 .display-2 {
-  @include font-size(2.3rem);
+  @include font-size(2.875rem);
   line-height: 1.2;
 }
 .display-3 {
-  @include font-size(2.1rem);
+  @include font-size(2.625rem);
   line-height: 1.2;
 }
 .display-4 {
-  @include font-size(1.9rem);
+  @include font-size(2.375rem);
   line-height: 1.25;
 }
 .display-5 {
-  @include font-size(1.7rem);
+  @include font-size(2.125rem);
   line-height: 1.25;
 }
 .display-6 {
-  @include font-size(1.5rem);
+  @include font-size(1.875rem);
   line-height: 1.3;
 }

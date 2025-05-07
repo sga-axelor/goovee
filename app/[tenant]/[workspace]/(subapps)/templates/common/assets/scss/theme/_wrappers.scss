@@ -100,12 +100,12 @@ footer.bg-dark,
 
 @media (max-width: 991.98px) {
   .image-wrapper.bg-cover {
-    min-height: 25rem;
+    min-height: 31.25rem;
   }
 }
 @media (max-width: 767px) {
   .image-wrapper.bg-cover {
-    min-height: 20rem;
+    min-height: 25rem;
   }
 }
 .bg-lines {
@@ -194,26 +194,26 @@ footer.bg-dark,
   &.lower-end:after {
     border-right-color: transparent;
     border-right-width: 100vw;
-    border-bottom-width: 4rem;
-    bottom: -4rem;
+    border-bottom-width: 5rem;
+    bottom: -5rem;
   }
   &.lower-start:after {
     border-left-color: transparent;
     border-left-width: 100vw;
-    border-bottom-width: 4rem;
-    bottom: -4rem;
+    border-bottom-width: 5rem;
+    bottom: -5rem;
   }
   &.upper-end:before {
     border-right-color: transparent;
     border-right-width: 100vw;
-    border-top-width: 4rem;
-    top: -4rem;
+    border-top-width: 5rem;
+    top: -5rem;
   }
   &.upper-start:before {
     border-left-color: transparent;
     border-left-width: 100vw;
-    border-top-width: 4rem;
-    top: -4rem;
+    border-top-width: 5rem;
+    top: -5rem;
   }
 }
 footer.bg-dark.angled {

@@ -10,9 +10,9 @@
     padding: $alert-padding-y * 1.05 $alert-padding-x;
     &:before {
       background: none;
-      @include font-size(1.2rem);
-      width: 1.2rem;
-      height: 1.2rem;
+      @include font-size(1.5rem);
+      width: 1.5rem;
+      height: 1.5rem;
     }
     &:hover {
       &:before {
@@ -37,8 +37,8 @@
     top: 0;
     left: 0;
     z-index: $stretched-link-z-index + 1;
-    padding: 0.8rem $alert-padding-x;
-    @include font-size(1rem);
+    padding: 1rem $alert-padding-x;
+    @include font-size(1.25rem);
   }
 }
 // scss-docs-start alert-modifiers
@@ -59,9 +59,9 @@
 }
 
 .alert[class*='bg-'] {
-  padding: 0.8rem 0;
+  padding: 1rem 0;
   .alert-inner {
-    padding-right: 3rem;
+    padding-right: 3.75rem;
   }
   &.alert-dismissible {
     .btn-close {
@@ -78,6 +78,6 @@
 }
 @media (max-width: 767px) {
   .alert[class*='bg-'].alert-dismissible .btn-close {
-    padding-right: 0.5rem;
+    padding-right: 0.625rem;
   }
 }

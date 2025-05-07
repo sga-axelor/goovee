@@ -52,9 +52,9 @@
             background: none;
             .dropdown-item {
               color: $navbar-dark-color;
-              padding-left: 1rem;
-              padding-top: 0.3rem;
-              padding-bottom: 0.3rem;
+              padding-left: 1.25rem;
+              padding-top: 0.375rem;
+              padding-bottom: 0.375rem;
             }
           }
           .nav-link,
@@ -65,26 +65,26 @@
             color: $navbar-dark-color !important;
           }
           .nav-link {
-            padding-top: 0.3rem;
-            padding-bottom: 0.3rem;
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
           }
           .dropdown-toggle {
             &:after {
               position: absolute;
               margin-right: 0;
-              right: -0.25rem;
-              top: 0.35rem;
-              @include font-size(0.9rem);
+              right: -0.3125rem;
+              top: 0.4375rem;
+              @include font-size(1.125rem);
             }
           }
           .dropdown-submenu .dropdown-toggle:after {
-            top: 0.3rem;
+            top: 0.375rem;
           }
         }
         .dropdown-header {
-          padding-left: 1rem;
-          padding-right: 1rem;
-          margin-top: 0.5rem;
+          padding-left: 1.25rem;
+          padding-right: 1.25rem;
+          margin-top: 0.625rem;
         }
         .dropstart .dropdown-toggle:after,
         .dropend .dropdown-toggle:after {
@@ -97,7 +97,7 @@
           }
         }
         .dropdown-toggle:after {
-          top: 0.25rem !important;
+          top: 0.3125rem !important;
         }
         .language-select {
           .dropdown-toggle:after {
@@ -105,14 +105,14 @@
           }
         }
         .navbar-other .nav-item.language-select .nav-link {
-          @include font-size(1.05rem);
+          @include font-size(1.3125rem);
         }
         .navbar-other .nav-item .nav-link > i {
-          @include font-size(1.3rem);
+          @include font-size(1.625rem);
         }
         .navbar-brand {
-          padding-top: 1.2rem;
-          padding-bottom: 1.2rem;
+          padding-top: 1.5rem;
+          padding-bottom: 1.5rem;
         }
         &.fancy .navbar-collapse-wrapper {
           background: none !important;
@@ -148,7 +148,7 @@
         .navbar-nav {
           .dropdown-menu {
             &.dropdown-lg {
-              padding: 1.6rem 0.25rem 1.3rem 0.25rem;
+              padding: 2rem 0.3125rem 1.625rem 0.3125rem;
               .dropdown-lg-content {
                 display: flex;
                 flex-direction: row;
@@ -159,8 +159,8 @@
             }
             &:before {
               position: absolute;
-              top: -1rem;
-              left: -1rem;
+              top: -1.25rem;
+              left: -1.25rem;
               width: 100%;
               height: 100%;
               content: '';
@@ -171,14 +171,14 @@
               &:after {
                 position: absolute;
                 margin-right: 0;
-                right: $dropdown-item-padding-x - 0.5rem;
-                top: 0.15rem;
+                right: $dropdown-item-padding-x - 0.625rem;
+                top: 0.1875rem;
                 @include font-size($caret-size);
               }
             }
             &.mega-menu {
-              margin-left: 0.75rem !important;
-              margin-right: 0.75rem !important;
+              margin-left: 0.9375rem !important;
+              margin-right: 0.9375rem !important;
             }
           }
         }
@@ -210,7 +210,7 @@
               }
               &.dropstart:before {
                 position: absolute;
-                left: -1rem;
+                left: -1.25rem;
                 width: 100%;
                 height: 100%;
                 content: '';
@@ -230,10 +230,10 @@
           }
         }
         .dropend > .dropdown-menu {
-          margin-left: 0.5rem;
+          margin-left: 0.625rem;
         }
         .dropstart > .dropdown-menu {
-          margin-right: 0.5rem;
+          margin-right: 0.625rem;
         }
         .offcanvas-nav {
           position: unset;
@@ -248,21 +248,21 @@
           background: none !important;
         }
         &.extended:not(.fixed) .navbar-collapse .nav-link {
-          padding-top: 1.15rem;
-          padding-bottom: 1.15rem;
+          padding-top: 1.4375rem;
+          padding-bottom: 1.4375rem;
         }
         &.fancy:not(.fixed) .navbar-collapse .nav-link {
-          padding-top: 1.25rem;
-          padding-bottom: 1.25rem;
+          padding-top: 1.5625rem;
+          padding-bottom: 1.5625rem;
         }
         &[class*='navbar-bg-']:not(.fancy):not(.extended):not(.fixed)
           .navbar-collapse
           .nav-link {
-          padding-top: 1.7rem;
-          padding-bottom: 1.7rem;
+          padding-top: 2.125rem;
+          padding-bottom: 2.125rem;
         }
         &.transparent:not(.fixed) {
-          padding-top: 0.3rem;
+          padding-top: 0.375rem;
         }
         &.extended .navbar-collapse-wrapper,
         &.fancy .navbar-collapse-wrapper {
@@ -271,22 +271,22 @@
           border-radius: $border-radius;
         }
         &.extended:not(.extended-alt):not(.fixed) .navbar-collapse-wrapper {
-          padding: 0 1.5rem 0 0.5rem;
+          padding: 0 1.875rem 0 0.625rem;
         }
         &.extended.extended-alt:not(.fixed) .navbar-collapse-wrapper {
-          padding: 0 1.5rem;
+          padding: 0 1.875rem;
         }
         &.fancy:not(.fixed) .navbar-collapse-wrapper {
-          padding: 0 1.5rem 0 1.5rem;
-          margin-top: 2.25rem;
+          padding: 0 1.875rem 0 1.875rem;
+          margin-top: 2.8125rem;
         }
         &.extended:not(.extended-alt) .navbar-brand {
-          padding-top: 1.5rem;
-          padding-bottom: 1.5rem;
+          padding-top: 1.875rem;
+          padding-bottom: 1.875rem;
         }
         &.extended.extended-alt .navbar-brand {
-          padding-top: 1.75rem;
-          padding-bottom: 1.75rem;
+          padding-top: 2.1875rem;
+          padding-bottom: 2.1875rem;
         }
         &.fixed .topbar {
           display: none !important;
@@ -303,7 +303,7 @@
           .navbar-nav
           .dropdown:not(.dropdown-submenu):not(.language-select)
           > .dropdown-menu {
-          margin-top: 0.5rem;
+          margin-top: 0.625rem;
         }
         .navbar-collapse {
           .nav-link {
@@ -326,7 +326,7 @@
           border-left: 1px solid $border-light;
         }
         .mega-menu-content {
-          padding: 0.6rem 0.25rem 0.2rem;
+          padding: 0.75rem 0.3125rem 0.25rem;
         }
         .mega-menu-dark {
           background: $dropdown-dark-bg;
@@ -348,8 +348,8 @@
         .mega-menu-img {
           padding: 0 !important;
           .mega-menu-content {
-            padding: 0.2rem 2rem !important;
-            margin: 1.8rem 0 !important;
+            padding: 0.25rem 2.5rem !important;
+            margin: 2.25rem 0 !important;
           }
           .dropdown-item {
             padding-left: 0;
@@ -379,36 +379,36 @@
   .mega-menu-scroll {
     overflow-y: scroll;
     & > span {
-      @include font-size(0.7rem);
+      @include font-size(0.875rem);
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
       height: auto;
       position: absolute;
-      bottom: 0.3rem;
+      bottom: 0.375rem;
       left: 0;
       text-align: center;
       color: $dropdown-dark-link-color;
       i {
-        @include font-size(1rem);
+        @include font-size(1.25rem);
       }
     }
   }
 }
 @media (min-width: 1400px) {
   .mega-menu-scroll {
-    height: 30.6rem;
+    height: 38.25rem;
   }
 }
 @media (min-width: 1200px) and (max-width: 1399.98px) {
   .mega-menu-scroll {
-    height: 26.2rem;
+    height: 32.75rem;
   }
 }
 @media (min-width: 992px) and (max-width: 1199.98px) {
   .mega-menu-scroll {
-    height: 21.8rem;
+    height: 27.25rem;
   }
 }
 //----------------------------------------------------------//
@@ -433,39 +433,39 @@
   .dropdown-toggle:after {
     position: unset !important;
     margin-left: 0 !important;
-    margin-right: -0.25rem !important;
+    margin-right: -0.3125rem !important;
     vertical-align: -1px !important;
   }
   .dropdown-menu {
     left: 50% !important;
     transform: translateX(-50%) !important;
     top: 100% !important;
-    margin-top: 0.5rem !important;
+    margin-top: 0.625rem !important;
     padding: $dropdown-padding-y-sm $dropdown-padding-x;
     position: absolute;
-    min-width: 4rem;
+    min-width: 5rem;
   }
 }
 //----------------------------------------------------------//
 //	SHARE DROPDOWN
 //----------------------------------------------------------//
 .share-dropdown .dropdown-menu {
-  min-width: 6.25rem;
-  margin-top: 1rem !important;
-  padding-top: 0.65rem !important;
-  padding-bottom: 0.65rem !important;
+  min-width: 7.8125rem;
+  margin-top: 1.25rem !important;
+  padding-top: 0.8125rem !important;
+  padding-bottom: 0.8125rem !important;
   &[data-popper-placement^='top'] {
     margin-top: 0 !important;
-    margin-bottom: 1rem !important;
+    margin-bottom: 1.25rem !important;
   }
   .dropdown-item {
-    padding: 0.25rem 1.15rem;
-    @include font-size(0.7rem);
+    padding: 0.3125rem 1.4375rem;
+    @include font-size(0.875rem);
     i {
-      padding-right: 0.4rem;
-      vertical-align: -0.1rem;
-      width: 1rem;
-      @include font-size(0.8rem);
+      padding-right: 0.5rem;
+      vertical-align: -0.125rem;
+      width: 1.25rem;
+      @include font-size(1rem);
     }
   }
 }
@@ -478,7 +478,7 @@
   }
   &:after {
     @include font-size($caret-size);
-    margin-right: -0.25rem;
+    margin-right: -0.3125rem;
   }
 }
 .navbar-light .language-select .dropdown-toggle:after {

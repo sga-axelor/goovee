@@ -142,9 +142,9 @@
     rgba(255, 255, 255, 0.15),
     rgba(255, 255, 255, 0)
   );
-  --bs-root-font-size: 20px;
+  --bs-root-font-size: 16px;
   --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 0.8rem;
+  --bs-body-font-size: 1rem;
   --bs-body-font-weight: 500;
   --bs-body-line-height: 1.7;
   --bs-body-color: #60697b;
@@ -153,23 +153,29 @@
   --bs-border-style: solid;
   --bs-border-color: #cacaca;
   --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
-  --bs-border-radius: 0.4rem;
-  --bs-border-radius-sm: 0.2rem;
-  --bs-border-radius-lg: 0.4rem;
-  --bs-border-radius-xl: 0.8rem;
+  --bs-border-radius: 0.5rem;
+  --bs-border-radius-sm: 0.25rem;
+  --bs-border-radius-lg: 0.5rem;
+  --bs-border-radius-xl: 1rem;
   --bs-border-radius-2xl: 2rem;
   --bs-border-radius-pill: 50rem;
   --bs-heading-color: #343f52;
   --bs-link-color: #3f78e0;
   --bs-link-hover-color: #3f78e0;
   --bs-code-color: #60697b;
-  --bs-highlight-bg: #fef1de;
+  --bs-highlight-bg: rgb(254, 240.6, 221.6);
+
   --bs-breakpoint-xs: 0;
   --bs-breakpoint-sm: 576px;
   --bs-breakpoint-md: 768px;
   --bs-breakpoint-lg: 992px;
   --bs-breakpoint-xl: 1200px;
   --bs-breakpoint-xxl: 1400px;
+
+  --bs-carousel-indicator-active-bg: #fff;
+  --bs-carousel-caption-color: #fff;
+  --bs-carousel-control-icon-filter: ;
+
   --animate-delay: 0.5s;
   --animate-duration: 1s;
   --animate-repeat: 1;
@@ -194,7 +200,7 @@
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  word-spacing: 0.05rem;
+  word-spacing: 0.0625rem;
   overflow-x: hidden !important;
   display: -ms-flexbox;
   display: flex;
