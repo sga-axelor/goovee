@@ -45,16 +45,16 @@ type NavbarProps = {
 
 const Navbar: FC<NavbarProps> = props => {
   const {
-    navClassName,
-    info,
-    search,
-    social,
-    language,
+    navClassName = 'navbar navbar-expand-lg center-nav transparent navbar-light',
+    info = false,
+    search = false,
+    social = false,
+    language = false,
     button,
-    cart,
+    cart = false,
     fancy,
-    navOtherClass,
-    stickyBox,
+    navOtherClass = 'navbar-other w-100 d-flex ms-auto',
+    stickyBox = true,
     logoAlt,
   } = props;
 
@@ -393,18 +393,6 @@ const Navbar: FC<NavbarProps> = props => {
       {cart && <MiniCart />}
     </Fragment>
   );
-};
-
-// set deafult Props
-Navbar.defaultProps = {
-  cart: false,
-  info: false,
-  social: false,
-  search: false,
-  language: false,
-  stickyBox: true,
-  navOtherClass: 'navbar-other w-100 d-flex ms-auto',
-  navClassName: 'navbar navbar-expand-lg center-nav transparent navbar-light',
 };
 
 export default Navbar;

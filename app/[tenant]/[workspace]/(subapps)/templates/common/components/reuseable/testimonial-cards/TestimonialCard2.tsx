@@ -11,8 +11,13 @@ type TestimonialCard2Props = {
 // =================================================
 
 const TestimonialCard2: FC<TestimonialCard2Props> = props => {
-  const {name, review, designation, blockClassName, blockDetailsClassName} =
-    props;
+  const {
+    name,
+    review,
+    designation,
+    blockClassName = 'icon icon-top fs-lg text-center',
+    blockDetailsClassName = 'blockquote-details justify-content-center text-center',
+  } = props;
 
   return (
     <blockquote className={blockClassName}>
@@ -26,13 +31,6 @@ const TestimonialCard2: FC<TestimonialCard2Props> = props => {
       </div>
     </blockquote>
   );
-};
-
-// set default props
-TestimonialCard2.defaultProps = {
-  blockClassName: 'icon icon-top fs-lg text-center',
-  blockDetailsClassName:
-    'blockquote-details justify-content-center text-center',
 };
 
 export default TestimonialCard2;

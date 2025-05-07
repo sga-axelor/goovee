@@ -25,7 +25,11 @@ type Navbar3Props = {
 };
 // ===================================================================
 
-const Navbar3: FC<Navbar3Props> = ({navClassName, logoAlt, stickyBox}) => {
+const Navbar3: FC<Navbar3Props> = ({
+  navClassName = 'navbar navbar-expand-lg center-logo transparent position-absolute navbar-dark',
+  logoAlt,
+  stickyBox = true,
+}) => {
   useNestedDropdown();
   const sticky = useSticky(350);
   const navbarRef = useRef<HTMLElement | null>(null);
@@ -327,13 +331,6 @@ const Navbar3: FC<Navbar3Props> = ({navClassName, logoAlt, stickyBox}) => {
       </nav>
     </Fragment>
   );
-};
-
-// set deafult Props
-Navbar3.defaultProps = {
-  stickyBox: true,
-  navClassName:
-    'navbar navbar-expand-lg center-logo transparent position-absolute navbar-dark',
 };
 
 export default Navbar3;

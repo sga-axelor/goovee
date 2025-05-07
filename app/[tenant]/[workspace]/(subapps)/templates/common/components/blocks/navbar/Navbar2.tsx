@@ -26,7 +26,9 @@ import {
 type Navbar2Props = {navClassName?: string};
 // ===================================================================
 
-const Navbar2: FC<Navbar2Props> = ({navClassName}) => {
+const Navbar2: FC<Navbar2Props> = ({
+  navClassName = 'navbar navbar-expand-lg extended navbar-light navbar-bg-light caret-none',
+}) => {
   useNestedDropdown();
   const sticky = useSticky(350);
   const navbarRef = useRef<HTMLElement | null>(null);
@@ -323,12 +325,6 @@ const Navbar2: FC<Navbar2Props> = ({navClassName}) => {
       <Info />
     </Fragment>
   );
-};
-
-// set deafult Props
-Navbar2.defaultProps = {
-  navClassName:
-    'navbar navbar-expand-lg extended navbar-light navbar-bg-light caret-none',
 };
 
 export default Navbar2;

@@ -12,7 +12,16 @@ type InfoProps = {
 // ========================================================
 
 const Info: FC<InfoProps> = props => {
-  const {title, description, address, phone} = props;
+  const {
+    title = 'Lighthouse',
+    description = `Lighthouse is a multipurpose HTML5 template with various layouts which will be a great solution for your business.`,
+    address = (
+      <Fragment>
+        Moonshine St. 14/05 <br /> Light City, London
+      </Fragment>
+    ),
+    phone = '00 (123) 456 78 90',
+  } = props;
 
   const otherPages = [
     {title: 'Our Story', url: '#'},
@@ -71,18 +80,6 @@ const Info: FC<InfoProps> = props => {
       </div>
     </div>
   );
-};
-
-// set default props
-Info.defaultProps = {
-  title: 'Lighthouse',
-  phone: '00 (123) 456 78 90',
-  description: `Lighthouse is a multipurpose HTML5 template with various layouts which will be a great solution for your business.`,
-  address: (
-    <Fragment>
-      Moonshine St. 14/05 <br /> Light City, London
-    </Fragment>
-  ),
 };
 
 export default Info;

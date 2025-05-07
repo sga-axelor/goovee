@@ -15,7 +15,10 @@ import OnePageDemoLinks from './partials/OnePageDemoLinks';
 type Navbar4Props = {navClassName?: string; onePageDemo?: boolean};
 // ===================================================================
 
-const Navbar4: FC<Navbar4Props> = ({navClassName, onePageDemo}) => {
+const Navbar4: FC<Navbar4Props> = ({
+  navClassName = 'navbar navbar-expand-lg extended extended-alt navbar-light navbar-bg-light',
+  onePageDemo,
+}) => {
   useNestedDropdown();
   const sticky = useSticky(350);
   const navbarRef = useRef<HTMLElement | null>(null);
@@ -130,12 +133,6 @@ const Navbar4: FC<Navbar4Props> = ({navClassName, onePageDemo}) => {
       <Search />
     </Fragment>
   );
-};
-
-// set deafult Props
-Navbar4.defaultProps = {
-  navClassName:
-    'navbar navbar-expand-lg extended extended-alt navbar-light navbar-bg-light',
 };
 
 export default Navbar4;

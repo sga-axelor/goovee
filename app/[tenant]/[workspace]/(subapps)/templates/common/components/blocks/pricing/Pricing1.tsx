@@ -84,13 +84,4 @@ const Pricing1: FC<Pricing1Props> = props => {
   );
 };
 
-// set deafult props
-Pricing1.defaultProps = {
-  roundShape: false,
-  dottedShape: false,
-  roundedButton: false,
-  textLineTitle: false,
-  titleColor: 'text-muted',
-};
-
 export default Pricing1;

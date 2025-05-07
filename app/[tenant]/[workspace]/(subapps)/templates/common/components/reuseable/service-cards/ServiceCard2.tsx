@@ -20,7 +20,7 @@ const ServiceCard2: FC<ServiceCard2Props> = props => {
     linkUrl,
     description,
     icon,
-    iconBoxClassNames,
+    iconBoxClassNames = 'icon btn btn-circle btn-lg btn-primary pe-none mb-5',
     titleColor,
     hiddenBtn,
   } = props;
@@ -35,11 +35,6 @@ const ServiceCard2: FC<ServiceCard2Props> = props => {
       )}
     </div>
   );
-};
-
-// set deafult Props
-ServiceCard2.defaultProps = {
-  iconBoxClassNames: 'icon btn btn-circle btn-lg btn-primary pe-none mb-5',
 };
 
 export default ServiceCard2;

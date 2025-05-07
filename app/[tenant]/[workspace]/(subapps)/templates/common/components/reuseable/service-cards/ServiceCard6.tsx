@@ -13,7 +13,13 @@ type ServiceCard6Props = {
 // ================================================
 
 const ServiceCard6: FC<ServiceCard6Props> = props => {
-  const {title, linkUrl, description, icon, iconBoxClassNames} = props;
+  const {
+    title,
+    linkUrl,
+    description,
+    icon,
+    iconBoxClassNames = 'icon btn btn-circle btn-lg btn-primary pe-none mb-5',
+  } = props;
 
   return (
     <div className="col-md-6 col-lg-3">
@@ -27,11 +33,6 @@ const ServiceCard6: FC<ServiceCard6Props> = props => {
       </div>
     </div>
   );
-};
-
-// set deafult Props
-ServiceCard6.defaultProps = {
-  iconBoxClassNames: 'icon btn btn-circle btn-lg btn-primary pe-none mb-5',
 };
 
 export default ServiceCard6;
