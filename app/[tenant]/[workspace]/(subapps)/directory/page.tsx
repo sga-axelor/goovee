@@ -60,7 +60,7 @@ export default async function Page({
 
   const pages = getPages(entries, limit);
   const imageURL = workspace.config?.directoryHeroBgImage?.id
-    ? `url(${`${workspaceURL}/${SUBAPP_CODES.directory}/api/hero/background`})`
+    ? `${workspaceURL}/${SUBAPP_CODES.directory}/api/hero/background`
     : IMAGE_URL;
 
   const cards = categories.map(category => (
