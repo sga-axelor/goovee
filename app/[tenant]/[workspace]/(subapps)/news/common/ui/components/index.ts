@@ -10,3 +10,10 @@ export {SearchItem} from './search-item';
 export {Breadcrumbs, BreadcrumbsSkeleton} from './breadcrumbs';
 export {AttachmentList, AttachmentListSkeleton} from './attachment-list';
 export {Hero} from './hero';
+export {
+  ArticleSkeleton,
+  CategoryHomeSkeleton,
+  HomeNewsFeedSkeleton,
+  HomepageNewsGridSkeleton,
+  CategoryNewsGridSkeleton,
+} from './skeletons';

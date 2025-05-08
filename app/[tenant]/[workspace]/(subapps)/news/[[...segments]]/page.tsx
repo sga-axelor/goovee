@@ -29,6 +29,11 @@ import {
   SocialMediaSkeleton,
   AttachmentListSkeleton,
   BreadcrumbsSkeleton,
+  HomeNewsFeedSkeleton,
+  CategoryHomeSkeleton,
+  ArticleSkeleton,
+  HomepageNewsGridSkeleton,
+  CategoryNewsGridSkeleton,
 } from '@/subapps/news/common/ui/components';
 import {
   DEFAULT_LIMIT,
@@ -85,6 +90,8 @@ export default async function Page({
   const isRecommendationEnable =
     workspace.config?.enableRecommendedNews || false;
 
+  const articlePage = segments?.includes('article');
+
   if (homepage) {
     return (
       <div
@@ -106,8 +113,9 @@ export default async function Page({
                 tenant={tenant}
               />
             </Suspense>
-
-            <NewsFeed workspace={workspace} user={user} tenant={tenant} />
+            <Suspense fallback={<HomeNewsFeedSkeleton />}>
+              <NewsFeed workspace={workspace} user={user} tenant={tenant} />
+            </Suspense>
           </div>
         </div>
       </div>
@@ -121,15 +129,19 @@ export default async function Page({
           <NavMenuWrapper workspace={workspace} tenant={tenant} user={user} />
         </Suspense>
       </div>
-      <CategoryPage
-        segments={segments}
-        page={page}
-        limit={limit}
-        workspace={workspace}
-        tenantId={tenant}
-        workspaceURL={workspaceURL}
-        isRecommendationEnable={isRecommendationEnable}
-      />
+      <Suspense
+        fallback={articlePage ? <ArticleSkeleton /> : <CategoryHomeSkeleton />}>
+        <CategoryPage
+          segments={segments}
+          page={page}
+          limit={limit}
+          workspace={workspace}
+          tenantId={tenant}
+          workspaceURL={workspaceURL}
+          isRecommendationEnable={isRecommendationEnable}
+          articlePage={articlePage}
+        />
+      </Suspense>
     </div>
   );
 }
@@ -142,6 +154,7 @@ async function CategoryPage({
   tenantId,
   workspaceURL,
   isRecommendationEnable,
+  articlePage = false,
 }: {
   segments: string[];
   page?: string;
@@ -150,6 +163,7 @@ async function CategoryPage({
   tenantId: Tenant['id'];
   workspaceURL: string;
   isRecommendationEnable: boolean;
+  articlePage?: boolean;
 }) {
   if (!tenantId) {
     return null;
@@ -158,9 +172,8 @@ async function CategoryPage({
   const user = session?.user;
 
   const slug = segments?.at(-1) || '';
-  const articlepage = segments.includes('article');
 
-  if (articlepage) {
+  if (articlePage) {
     const {news}: any = await findNews({
       slug,
       workspace,
@@ -209,15 +222,17 @@ async function CategoryPage({
           tenant={tenantId}
         />
       </Suspense>
-      <CategoryPageFeed
-        workspace={workspace}
-        user={user}
-        tenant={tenantId}
-        slug={slug}
-        page={page}
-        limit={limit}
-        segments={segments}
-      />
+      <Suspense fallback={<CategoryHomeSkeleton />}>
+        <CategoryPageFeed
+          workspace={workspace}
+          user={user}
+          tenant={tenantId}
+          slug={slug}
+          page={page}
+          limit={limit}
+          segments={segments}
+        />
+      </Suspense>
     </div>
   );
 }
@@ -256,12 +271,14 @@ async function NewsFeed({
         />
       </Suspense>
 
-      <HomepageNewsGridLayoutWrapper
-        workspace={workspace}
-        user={user}
-        tenant={tenant}
-        news={news}
-      />
+      <Suspense fallback={<HomepageNewsGridSkeleton />}>
+        <HomepageNewsGridLayoutWrapper
+          workspace={workspace}
+          user={user}
+          tenant={tenant}
+          news={news}
+        />
+      </Suspense>
 
       <Suspense fallback={<NewsCardSkeleton count={5} />}>
         <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
@@ -319,15 +336,17 @@ async function CategoryPageFeed({
           />
         </Suspense>
       )}
-      <CategoryNewsGridLayoutWrapper
-        workspace={workspace}
-        user={user}
-        tenant={tenant}
-        slug={slug}
-        navigatingPathFrom={navigatingPathFromURL}
-        news={news}
-        pageInfo={pageInfo}
-      />
+      <Suspense fallback={<CategoryNewsGridSkeleton />}>
+        <CategoryNewsGridLayoutWrapper
+          workspace={workspace}
+          user={user}
+          tenant={tenant}
+          slug={slug}
+          navigatingPathFrom={navigatingPathFromURL}
+          news={news}
+          pageInfo={pageInfo}
+        />
+      </Suspense>
       <PaginationContent pageInfo={pageInfo} />
     </>
   );
