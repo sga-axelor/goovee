@@ -155,6 +155,7 @@ export {
   SheetTrigger,
 } from './sheet';
 export {ScrollArea} from './scroll-area';
+export {Skeleton} from './skeleton';
 export {
   Table,
   TableBody,

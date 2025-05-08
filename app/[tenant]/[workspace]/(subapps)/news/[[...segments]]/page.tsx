@@ -1,37 +1,58 @@
 import {notFound} from 'next/navigation';
+import {Suspense} from 'react';
 
 // ---- CORE IMPORTS ----//
 import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {ORDER_BY} from '@/constants';
+import {ORDER_BY, SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
+import {t} from '@/locale/server';
+import {CommentsSkeleton} from '@/lib/core/comments';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from '@/subapps/news/[[...segments]]/content';
 import {
-  findCategories,
   findCategoryTitleBySlugName,
   findNews,
   findNewsByCategory,
 } from '@/subapps/news/common/orm/news';
 import {
-  Article,
-  Categories,
-  Homepage,
+  CategoriesSkeleton,
+  Hero,
+  NavMenuSkeleton,
+  LeadStoriesSkeleton,
+  FeedListSkeleton,
+  NewsCardSkeleton,
+  NewsInfoSkeleton,
+  SocialMediaSkeleton,
+  AttachmentListSkeleton,
+  BreadcrumbsSkeleton,
 } from '@/subapps/news/common/ui/components';
 import {
   DEFAULT_LIMIT,
-  DEFAULT_NEWS_ASIDE_LIMIT,
+  HOMEPAGE_NEWS_LIMIT,
+  NO_NEWS_AVAILABLE,
 } from '@/subapps/news/common/constants';
-import {findRecommendedNews} from '@/subapps/news/common/actions/action';
+import {
+  AttachmentListWrapper,
+  CategorySliderWrapper,
+  CommentsWrapper,
+  CategoryNewsGridLayoutWrapper,
+  LeadStoriesWrapper,
+  NavMenuWrapper,
+  NewsCardWrapper,
+  NewsInfoWrapper,
+  RecommendedNewsWrapper,
+  RelatedNewsWrapper,
+  SocialMediaWrapper,
+  SubCategorySliderWrapper,
+  HomepageNewsGridLayoutWrapper,
+  BreadcrumbsWrapper,
+} from '@/subapps/news/[[...segments]]/wrappers';
+import PaginationContent from './pagination-content';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
-
-interface CategorySegment {
-  slug: string;
-}
 
 export default async function Page({
   params,
@@ -61,50 +82,34 @@ export default async function Page({
 
   const {limit, page} = searchParams;
 
-  const allCategories = await findCategories({
-    showAllCategories: true,
-    workspace,
-    tenantId: tenant,
-  }).then(clone);
-
   const isRecommendationEnable =
     workspace.config?.enableRecommendedNews || false;
 
   if (homepage) {
-    const {news: latestNews}: any = await findNews({
-      orderBy: {publicationDateTime: ORDER_BY.DESC},
-      workspace,
-      tenantId: tenant,
-      user,
-    }).then(clone);
-
-    const {news: homePageFeaturedNews}: any = await findNews({
-      isFeaturedNews: true,
-      workspace,
-      tenantId: tenant,
-      user,
-      limit: DEFAULT_NEWS_ASIDE_LIMIT,
-    }).then(clone);
-
-    const parentCategories = await findCategories({
-      category: null,
-      workspace,
-      tenantId: tenant,
-      user,
-    }).then(clone);
-
     return (
       <div
         className={`flex flex-col h-full flex-1 ${styles['news-container']}`}>
         <div className="hidden lg:block relative">
-          <Categories categories={allCategories} />
+          <Suspense fallback={<NavMenuSkeleton />}>
+            <NavMenuWrapper workspace={workspace} tenant={tenant} user={user} />
+          </Suspense>
         </div>
-        <Homepage
-          latestNews={latestNews}
-          featuredNews={homePageFeaturedNews}
-          categories={parentCategories}
-          workspace={workspace}
-        />
+
+        <div className="h-full flex flex-col">
+          <Hero workspace={workspace} />
+
+          <div className="container mx-auto grid grid-cols-1 gap-6 mb-20 lg:mb-0">
+            <Suspense fallback={<CategoriesSkeleton />}>
+              <CategorySliderWrapper
+                workspace={workspace}
+                user={user}
+                tenant={tenant}
+              />
+            </Suspense>
+
+            <NewsFeed workspace={workspace} user={user} tenant={tenant} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -112,7 +117,9 @@ export default async function Page({
   return (
     <div className={`flex flex-col h-full flex-1 ${styles['news-container']}`}>
       <div className="hidden lg:block relative">
-        <Categories categories={allCategories} />
+        <Suspense fallback={<NavMenuSkeleton />}>
+          <NavMenuWrapper workspace={workspace} tenant={tenant} user={user} />
+        </Suspense>
       </div>
       <CategoryPage
         segments={segments}
@@ -147,7 +154,6 @@ async function CategoryPage({
   if (!tenantId) {
     return null;
   }
-
   const session = await getSession();
   const user = session?.user;
 
@@ -164,51 +170,19 @@ async function CategoryPage({
 
     const [newsObject] = news;
 
-    const categoryIds = newsObject?.categorySet?.map((item: any) => item.id);
-    let recommendedNews = [];
-    if (isRecommendationEnable) {
-      recommendedNews = await findRecommendedNews({
-        workspaceURL,
-        tenantId,
-        categoryIds,
-      });
-    }
-
     if (!newsObject) {
       return notFound();
     }
 
-    async function getBreadcrumbs() {
-      const slicedArray = segments.slice(0, -2);
-
-      const results = slicedArray?.map(async (segment: string) => {
-        const categorySegment: CategorySegment = {slug: segment};
-
-        try {
-          const categoryTitle = await findCategoryTitleBySlugName({
-            slug: categorySegment,
-            workspace,
-            tenantId,
-          });
-          if (!categoryTitle) {
-            return notFound();
-          }
-          return {title: categoryTitle, slug: segment};
-        } catch (error) {
-          console.error(error);
-          return '';
-        }
-      });
-
-      return await Promise.all(results);
-    }
-    const breadcrumbs = await getBreadcrumbs();
-
     return (
-      <Article
-        news={{...newsObject, recommendedNews}}
-        breadcrumbs={breadcrumbs}
+      <ArticleFeed
         workspace={workspace}
+        segments={segments}
+        tenantId={tenantId}
+        news={newsObject}
+        isRecommendationEnable={isRecommendationEnable}
+        workspaceURL={workspaceURL}
+        user={user}
       />
     );
   }
@@ -217,47 +191,240 @@ async function CategoryPage({
     slug,
     workspace,
     tenantId,
+    user,
   });
 
   if (!categoryTitle) {
     return notFound();
   }
 
-  const {news: categoryNews, pageInfo}: any = await findNewsByCategory({
+  return (
+    <div className="container mx-auto grid grid-cols-1 pb-6 px-4 gap-6 mb-20 lg:mb-0">
+      <Suspense fallback={<CategoriesSkeleton />}>
+        <SubCategorySliderWrapper
+          slug={slug}
+          title={categoryTitle}
+          workspace={workspace}
+          user={user}
+          tenant={tenantId}
+        />
+      </Suspense>
+      <CategoryPageFeed
+        workspace={workspace}
+        user={user}
+        tenant={tenantId}
+        slug={slug}
+        page={page}
+        limit={limit}
+        segments={segments}
+      />
+    </div>
+  );
+}
+
+async function NewsFeed({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  user: any;
+  tenant: Tenant['id'];
+}) {
+  const {news} = await findNews({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: HOMEPAGE_NEWS_LIMIT,
+  }).then(clone);
+
+  if (!news?.length) {
+    return (
+      <div className="font-medium text-center flex items-center justify-center py-4 flex-1">
+        {await t(NO_NEWS_AVAILABLE)}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Suspense fallback={<LeadStoriesSkeleton />}>
+        <LeadStoriesWrapper
+          news={news}
+          navigatingPathFrom={`${SUBAPP_CODES.news}`}
+        />
+      </Suspense>
+
+      <HomepageNewsGridLayoutWrapper
+        workspace={workspace}
+        user={user}
+        tenant={tenant}
+        news={news}
+      />
+
+      <Suspense fallback={<NewsCardSkeleton count={5} />}>
+        <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
+          <NewsCardWrapper news={news} />
+        </div>
+      </Suspense>
+    </>
+  );
+}
+
+async function CategoryPageFeed({
+  workspace,
+  tenant,
+  user,
+  page,
+  limit,
+  slug,
+  segments,
+}: {
+  workspace: PortalWorkspace;
+  user: any;
+  tenant: Tenant['id'];
+  page?: string;
+  limit?: string | number;
+  slug: string;
+  segments?: string[];
+}) {
+  const {news, pageInfo}: any = await findNewsByCategory({
     orderBy: {publicationDateTime: ORDER_BY.DESC},
     page,
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
     slug,
     workspace,
-    tenantId,
+    tenantId: tenant,
     user,
   }).then(clone);
 
-  const {news: categoryFeaturedNews}: any = await findNewsByCategory({
-    isFeaturedNews: true,
-    slug,
-    workspace,
-    tenantId,
-    user,
-    limit: DEFAULT_NEWS_ASIDE_LIMIT,
-  }).then(clone);
+  const navigatingPathFromURL = `${SUBAPP_CODES.news}/${segments?.map((slug: string) => slug).join('/')}`;
 
-  const subCategories = await findCategories({
-    slug,
-    workspace,
-    tenantId,
-    user,
-  }).then(clone);
+  if (!news?.length) {
+    return (
+      <div className="font-medium text-center flex items-center justify-center h-full py-4">
+        {await t(NO_NEWS_AVAILABLE)}
+      </div>
+    );
+  }
 
   return (
     <>
-      <Content
-        category={categoryTitle}
-        categories={subCategories}
-        news={categoryNews}
-        featuredNews={categoryFeaturedNews}
+      {Number(pageInfo.page) === 1 && (
+        <Suspense fallback={<LeadStoriesSkeleton />}>
+          <LeadStoriesWrapper
+            news={news}
+            navigatingPathFrom={navigatingPathFromURL}
+          />
+        </Suspense>
+      )}
+      <CategoryNewsGridLayoutWrapper
+        workspace={workspace}
+        user={user}
+        tenant={tenant}
+        slug={slug}
+        navigatingPathFrom={navigatingPathFromURL}
+        news={news}
         pageInfo={pageInfo}
       />
+      <PaginationContent pageInfo={pageInfo} />
     </>
+  );
+}
+
+async function ArticleFeed({
+  workspace,
+  segments,
+  tenantId,
+  news,
+  isRecommendationEnable,
+  workspaceURL,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  segments: string[];
+  tenantId: Tenant['id'];
+  news: any;
+  isRecommendationEnable: boolean;
+  workspaceURL: string;
+  user: any;
+}) {
+  const slicedSegments = segments.slice(0, -2);
+  const categoryIds = news?.categorySet?.map((item: any) => item.id);
+
+  const segmentPath = slicedSegments?.length
+    ? `/${slicedSegments.join('/')}`
+    : '';
+
+  const navigatingPathFromURL = `${SUBAPP_CODES.news}${segmentPath}`;
+  const directRoute = !slicedSegments?.length;
+
+  return (
+    <div className={`container mx-auto grid grid-cols-1 gap-6 mt-6`}>
+      {!directRoute && (
+        <Suspense fallback={<BreadcrumbsSkeleton />}>
+          <div className="py-4">
+            <BreadcrumbsWrapper
+              workspace={workspace}
+              tenantId={tenantId}
+              segments={slicedSegments}
+              news={news}
+              user={user}
+            />
+          </div>
+        </Suspense>
+      )}
+
+      <div className=" grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main News Info Section */}
+        <div className="lg:col-span-2">
+          <Suspense fallback={<NewsInfoSkeleton />}>
+            <NewsInfoWrapper news={news} />
+          </Suspense>
+        </div>
+
+        <div className="w-full flex flex-col gap-6">
+          {/* SocialMedia Section */}
+          <Suspense fallback={<SocialMediaSkeleton />}>
+            <SocialMediaWrapper workspace={workspace} />
+          </Suspense>
+
+          {/* Attachments Section */}
+          <Suspense fallback={<AttachmentListSkeleton />}>
+            <AttachmentListWrapper news={news} />
+          </Suspense>
+
+          {/* RelatedNews Section */}
+          <Suspense fallback={<FeedListSkeleton width="w-full" />}>
+            <RelatedNewsWrapper
+              news={news}
+              navigatingPathFrom={navigatingPathFromURL}
+            />
+          </Suspense>
+
+          {/* RecommendedNews Section */}
+          <Suspense fallback={<FeedListSkeleton width="w-full" />}>
+            <RecommendedNewsWrapper
+              isRecommendationEnable={isRecommendationEnable}
+              navigatingPathFrom={navigatingPathFromURL}
+              workspaceURL={workspaceURL}
+              tenantId={tenantId}
+              categoryIds={categoryIds}
+            />
+          </Suspense>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <Suspense fallback={<CommentsSkeleton />}>
+        <CommentsWrapper
+          news={news}
+          workspace={workspace}
+          user={user}
+          workspaceURL={workspaceURL}
+        />
+      </Suspense>
+    </div>
   );
 }

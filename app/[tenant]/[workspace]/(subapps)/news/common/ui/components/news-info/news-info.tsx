@@ -10,11 +10,11 @@ import {getPartnerImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatDate} from '@/locale/formatters';
 import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
+import {BadgeList, Skeleton} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFormatString} from '@/subapps/news/common/utils';
 import {PUBLISHED_ON} from '@/subapps/news/common/constants';
-import {BadgeList} from '@/ui/components';
 
 export const NewsInfo = ({
   title,
@@ -90,6 +90,53 @@ export const NewsInfo = ({
           className="relative overflow-auto"
           dangerouslySetInnerHTML={{__html: content}}
         />
+      </div>
+    </div>
+  );
+};
+
+export const NewsInfoSkeleton = () => {
+  return (
+    <div className="bg-white rounded-lg p-4 font-normal text-sm text-zinc-500 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-2">
+          <Skeleton className="h-4 w-12 rounded" />
+          <Skeleton className="h-4 w-10 rounded" />
+          <Skeleton className="h-4 w-14 rounded" />
+        </div>
+
+        <Skeleton className="h-6 w-2/3 rounded" />
+
+        <Skeleton className="h-[300px] w-full rounded" />
+
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-4 w-full rounded" />
+          <Skeleton className="h-4 w-5/6 rounded" />
+          <Skeleton className="h-4 w-4/6 rounded" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-5">
+        <div>
+          <div className="flex items-center gap-4 pb-4">
+            <Skeleton className="rounded-full h-8 w-8" />
+            <div className="flex flex-col gap-2 w-full">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-3 w-1/2" />
+            </div>
+          </div>
+
+          <Skeleton className="h-px w-full bg-zinc-300" />
+        </div>
+
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-4/6" />
+          <Skeleton className="h-4 w-2/3" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
       </div>
     </div>
   );

@@ -422,17 +422,20 @@ export async function findCategoryTitleBySlugName({
   workspace,
   tenantId,
   archived = false,
+  user,
 }: {
   slug: any;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   archived?: boolean;
+  user?: User;
 }) {
   if (!tenantId) {
     return null;
   }
 
   const c = await manager.getClient(tenantId);
+  const archivedFilter = getArchivedFilter({archived});
 
   const title = await c.aOSPortalNewsCategory.findOne({
     where: {
@@ -440,7 +443,7 @@ export async function findCategoryTitleBySlugName({
       workspace: {
         id: workspace.id,
       },
-      ...getArchivedFilter({archived}),
+      AND: [await filterPrivate({user, tenantId}), archivedFilter],
     },
     select: {
       name: true,

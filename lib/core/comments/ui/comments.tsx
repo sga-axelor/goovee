@@ -12,7 +12,7 @@ import {
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {type SUBAPP_CODES} from '@/constants';
-import {DropdownToggle, Separator} from '@/ui/components';
+import {DropdownToggle, Separator, Skeleton} from '@/ui/components';
 import {cn} from '@/utils/css';
 import {i18n} from '@/locale';
 import type {ID} from '@/types';
@@ -258,3 +258,35 @@ export function Comments(props: CommentsProps) {
     </div>
   );
 }
+
+export const CommentsSkeleton = () => {
+  return (
+    <div className="flex flex-col bg-white">
+      {/* Header */}
+      <div className="flex justify-between p-4">
+        <Skeleton className="w-32 h-7" />
+      </div>
+
+      {/* Comments Container */}
+      <div className="border-t p-4 flex flex-col gap-4">
+        {/* Sort Dropdown */}
+        <div className="w-full flex gap-4 items-center">
+          <Skeleton className="h-8 w-24 rounded" />
+          <Skeleton className="h-px w-full" />
+        </div>
+
+        {/* Comment Items */}
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className="flex gap-3 items-start">
+            <Skeleton className="w-10 h-10 rounded-full" />
+            <div className="flex flex-col gap-2 w-full">
+              <Skeleton className="w-1/4 h-4" />
+              <Skeleton className="w-full h-5" />
+              <Skeleton className="w-3/4 h-5" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

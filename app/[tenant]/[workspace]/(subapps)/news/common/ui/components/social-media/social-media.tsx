@@ -6,6 +6,7 @@ import Link from 'next/link';
 // ---- CORE IMPORTS ---- //
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {i18n} from '@/locale';
+import {Skeleton} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -47,6 +48,20 @@ export const SocialMedia = ({
               <AvatarImage src={image} alt={`Visit ${redirectUrl}`} />
             </Avatar>
           </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const SocialMediaSkeleton = () => {
+  return (
+    <div className="bg-white rounded-lg p-4 flex flex-col gap-4">
+      <Skeleton className="h-6 w-2/3 rounded" />
+
+      <div className="flex gap-6">
+        {[...Array(4)].map((_, index) => (
+          <Skeleton key={index} className="w-8 h-8 rounded-full" />
         ))}
       </div>
     </div>

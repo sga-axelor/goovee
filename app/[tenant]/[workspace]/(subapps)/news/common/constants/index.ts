@@ -1,5 +1,6 @@
 export const DEFAULT_LIMIT = 16;
 export const DEFAULT_PAGE = 1;
+export const HOMEPAGE_NEWS_LIMIT = 12;
 export const DEFAULT_NEWS_ASIDE_LIMIT = 5;
 
 // Button Labels

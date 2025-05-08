@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 // ---- CORE IMPORTS ---- //
@@ -11,11 +13,12 @@ import {
 } from '@/ui/components/breadcrumb';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {Skeleton} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {NEWS} from '@/subapps/news/common/constants';
 
-export const Breadcrumb = ({items, title}: {items: any; title: string}) => {
+export const Breadcrumbs = ({items, title}: {items: any; title: string}) => {
   const {workspaceURI} = useWorkspace();
 
   const generateRoute = (index: number) => {
@@ -62,4 +65,21 @@ export const Breadcrumb = ({items, title}: {items: any; title: string}) => {
   );
 };
 
-export default Breadcrumb;
+export const BreadcrumbsSkeleton = ({levels = 3}: {levels?: number}) => {
+  return (
+    <div className="flex items-center gap-2">
+      {[...Array(levels)].map((_, index) => (
+        <React.Fragment key={index}>
+          <Skeleton
+            className={`h-3 ${index === levels - 1 ? 'w-48' : 'w-20'} rounded bg-white`}
+          />
+          {index !== levels - 1 && (
+            <BreadcrumbSeparator className="text-white/40" />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+export default Breadcrumbs;

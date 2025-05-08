@@ -96,6 +96,7 @@ export const SUBAPP_PAGE = {
   register: 'register',
   confirmation: 'confirmation',
   group: 'group',
+  article: 'article',
 };
 
 /**

@@ -5,12 +5,14 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import {usePathname, useRouter} from 'next/navigation';
+import {usePathname} from 'next/navigation';
+import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
+import {Skeleton} from '@/ui/components';
 
 //---- LOCAL IMPORTS ---- //
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
@@ -30,13 +32,8 @@ export const CategorySlider = ({
   buttonIcon?: any;
   showTitle?: boolean;
 }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const {workspaceURI} = useWorkspace();
-
-  const handleClick = (slug: string) => {
-    router.push(`${pathname}/${slug}`);
-  };
 
   if (!showTitle) {
     return null;
@@ -100,9 +97,9 @@ export const CategorySlider = ({
                     width: '154px',
                     marginRight: 20,
                   }}>
-                  <div
+                  <Link
                     className="relative flex w-full items-end justify-center cursor-pointer"
-                    onClick={() => handleClick(slug)}>
+                    href={`${pathname}/${slug}`}>
                     <div
                       className="h-[120px] w-full bg-no-repeat bg-center bg-cover rounded-md flex items-end justify-center"
                       style={{
@@ -120,7 +117,7 @@ export const CategorySlider = ({
                         background:
                           'linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%)',
                       }}></div>
-                  </div>
+                  </Link>
                 </SwiperSlide>
               ),
             )}
@@ -132,5 +129,33 @@ export const CategorySlider = ({
     </div>
   );
 };
+
+export function CategoriesSkeleton() {
+  return (
+    <div className="flex flex-col gap-6 mt-6">
+      <Skeleton className="h-6 w-32" />
+      <div className="flex gap-4">
+        <div className="w-[8.125rem] h-[7.5rem] rounded-md relative overflow-hidden">
+          <Skeleton className="w-full h-full rounded-md" />
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-3">
+            <Skeleton className="h-3 w-full rounded bg-white" />
+          </div>
+        </div>
+        <div className="w-[8.125rem] h-[7.5rem] rounded-md relative overflow-hidden">
+          <Skeleton className="w-full h-full rounded-md" />
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-3">
+            <Skeleton className="h-3 w-full rounded bg-white" />
+          </div>
+        </div>
+        <div className="w-[8.125rem] h-[7.5rem] rounded-md relative overflow-hidden">
+          <Skeleton className="w-full h-full rounded-md" />
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-3">
+            <Skeleton className="h-3 w-full rounded bg-white" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default CategorySlider;

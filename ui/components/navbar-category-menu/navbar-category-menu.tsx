@@ -20,7 +20,7 @@ export const NavbarCategoryMenu = ({
   slugKey,
 }: {
   categories?: Category[];
-  onClick?: (data: {category: Category; url: any}) => void;
+  onClick?: (data: {category: any; url: any}) => void;
   slugKey?: string | null;
 }) => {
   const res: any = useResponsive();
