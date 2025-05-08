@@ -49,8 +49,9 @@ export async function GET(
     return new NextResponse('Image not found', {status: 404});
   }
 
+  const imageId = group.thumbnailImage?.id || group.image?.id;
   const file = await findFile({
-    id: group.image.id,
+    id: imageId,
     meta: true,
     tenant: tenantId,
   });
