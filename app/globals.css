@@ -185,3 +185,12 @@
   margin-right: auto;
   margin-left: auto;
 }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-fast {
+  animation: spin 0.3s linear infinite;
+}
