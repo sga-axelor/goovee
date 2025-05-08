@@ -6,12 +6,14 @@ import {Navigation} from 'swiper/modules';
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
+import {i18n} from '@/locale';
+import Image from 'next/image';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
+import {Image as ImageType, Post} from '@/subapps/forum/common/types/forum';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import styles from './styles.module.scss';
-import {Image, Post} from '@/subapps/forum/common/types/forum';
-import {SUBAPP_CODES} from '@/constants';
 
 export const ThreadPopup = ({
   post,
@@ -45,14 +47,21 @@ export const ThreadPopup = ({
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper h-full">
-                {images.map((image: Image, index: number) => (
+                {images.map((image: ImageType, index: number) => (
                   <SwiperSlide key={index} className="flex items-center">
-                    <div
-                      className="w-full h-full bg-no-repeat bg-center"
-                      style={{
-                        backgroundImage: `url(${workspaceURI}/${SUBAPP_CODES.forum}/api/post/${post?.id}/attachment/${image?.metaFile?.id})`,
-                        backgroundSize: '100%',
-                      }}></div>
+                    <div className="w-full h-full bg-no-repeat bg-center relative">
+                      <Image
+                        fill
+                        className="rounded-t-lg object-contain"
+                        src={
+                          image?.id
+                            ? `${workspaceURI}/${SUBAPP_CODES.forum}/api/post/${post?.id}/attachment/${image?.metaFile?.id}`
+                            : NO_IMAGE_URL
+                        }
+                        alt={image?.metaFile?.fileName || i18n.t('post image')}
+                        sizes="(min-width:768px) 544px, 100vw"
+                      />
+                    </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
