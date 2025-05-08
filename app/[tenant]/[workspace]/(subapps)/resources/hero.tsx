@@ -24,7 +24,7 @@ export const Hero = ({
   const renderSearch = () => <Search workspace={workspace} />;
 
   const imageURL = workspace?.config?.resourcesHeroBgImage?.id
-    ? `url(${`${workspaceURL}/${SUBAPP_CODES.resources}/api/hero/background`})`
+    ? `${workspaceURL}/${SUBAPP_CODES.resources}/api/hero/background`
     : IMAGE_URL;
 
   return (

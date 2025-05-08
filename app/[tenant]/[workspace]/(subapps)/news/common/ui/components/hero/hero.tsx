@@ -25,7 +25,7 @@ export function Hero({workspace}: {workspace: PortalWorkspace}) {
 
   const {workspaceURL} = useWorkspace();
   const imageURL = workspace?.config?.newsHeroBgImage?.id
-    ? `url(${`${workspaceURL}/${SUBAPP_CODES.news}/api/hero/background`})`
+    ? `${workspaceURL}/${SUBAPP_CODES.news}/api/hero/background`
     : IMAGE_URL;
 
   const handleClick = (slug: string) => {

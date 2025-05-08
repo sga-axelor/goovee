@@ -82,9 +82,19 @@ export const Banner = ({
 } & VariantProps<BannerVariants>) => {
   return (
     <div
-      className={cn(className, bannerVariants({blendMode, background}))}
-      style={{backgroundImage: image}}>
-      <div className="px-4 flex text-white items-center flex-col justify-cente py-0.5">
+      className={cn(
+        'relative bg-transparent',
+        className,
+        bannerVariants({blendMode, background}),
+      )}>
+      <Image
+        fill
+        src={image}
+        alt="background image"
+        className={cn('object-cover z-0')}
+        priority
+      />
+      <div className="px-4 flex text-white items-center flex-col justify-cente py-0.5 z-10">
         {groupImg && (
           <div className="w-20 h-20 overflow-hidden rounded-lg relative mb-4">
             <Image

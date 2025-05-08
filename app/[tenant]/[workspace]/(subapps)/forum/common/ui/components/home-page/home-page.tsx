@@ -82,7 +82,7 @@ export const HomePage = ({workspace}: {workspace: PortalWorkspace}) => {
   );
 
   const imageURL = workspace?.config?.forumHeroBgImage?.id
-    ? `url(${`${workspaceURL}/${SUBAPP_CODES.forum}/api/hero/background`})`
+    ? `${workspaceURL}/${SUBAPP_CODES.forum}/api/hero/background`
     : IMAGE_URL;
 
   const handleGroupSearch = (value: string) => {

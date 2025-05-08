@@ -65,7 +65,7 @@ export const Hero = ({workspace}: {workspace: PortalWorkspace}) => {
   );
 
   const imageURL = workspace?.config?.eventHeroBgImage?.id
-    ? `url(${`${workspaceURL}/${SUBAPP_CODES.events}/api/hero/background`})`
+    ? `${workspaceURL}/${SUBAPP_CODES.events}/api/hero/background`
     : IMAGE_URL;
   return (
     <HeroSearch
