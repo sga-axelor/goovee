@@ -11,6 +11,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatDate} from '@/locale/formatters';
 import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {BadgeList, Skeleton} from '@/ui/components';
+import {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFormatString} from '@/subapps/news/common/utils';
@@ -26,6 +27,7 @@ export const NewsInfo = ({
   content,
   author,
   slug,
+  workspace,
 }: {
   title: string;
   slug: string;
@@ -41,8 +43,16 @@ export const NewsInfo = ({
       id: string;
     };
   };
+  workspace: PortalWorkspace;
 }) => {
   const {tenant, workspaceURI} = useWorkspace();
+
+  const {
+    isShowPublicationAuthor,
+    isShowPublicationDate,
+    isShowPublicationTime,
+  } = workspace?.config || {};
+
   return (
     <div className="bg-white rounded-lg p-4 font-normal text-sm text-zinc-500 flex flex-col gap-4">
       <div className="flex flex-col gap-4">
@@ -70,24 +80,34 @@ export const NewsInfo = ({
       <div className="flex flex-col gap-5">
         <div>
           <div className="flex items-center gap-4 pb-4">
-            <Avatar className="rounded-full h-8 w-8">
-              <AvatarImage
-                src={getPartnerImageURL(author?.picture?.id, tenant, {
-                  noimage: true,
-                })}
-              />
-            </Avatar>
+            {isShowPublicationAuthor && (
+              <Avatar className="rounded-full h-8 w-8">
+                <AvatarImage
+                  src={getPartnerImageURL(author?.picture?.id, tenant, {
+                    noimage: true,
+                  })}
+                />
+              </Avatar>
+            )}
+
             <div className="flex flex-col gap-2 w-full ">
               <div className=" w-full">
-                <div className="text-sm font-semibold text-black leading-[21px]">
-                  {author?.simpleFullName}
-                </div>
-                <div className="text-xs font-normal text-palette-mediumGray leading-[18px]">
-                  {i18n.t(PUBLISHED_ON)}{' '}
-                  {formatDate(publicationDateTime, {
-                    dateFormat: getFormatString(publicationDateTime),
-                  })}
-                </div>
+                {isShowPublicationAuthor && (
+                  <div className="text-sm font-semibold text-black leading-[21px]">
+                    {author?.simpleFullName}
+                  </div>
+                )}
+                {isShowPublicationDate && (
+                  <div className="text-xs font-normal text-palette-mediumGray leading-[18px]">
+                    {i18n.t(PUBLISHED_ON)}{' '}
+                    {formatDate(publicationDateTime, {
+                      dateFormat: getFormatString({
+                        dateString: publicationDateTime,
+                        includeTime: isShowPublicationTime,
+                      }),
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           </div>

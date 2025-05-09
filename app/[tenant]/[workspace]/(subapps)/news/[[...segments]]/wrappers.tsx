@@ -440,7 +440,13 @@ export async function BreadcrumbsWrapper({
   return <Breadcrumbs items={breadcrumbs} title={news.title} />;
 }
 
-export async function NewsInfoWrapper({news}: {news: any}) {
+export async function NewsInfoWrapper({
+  news,
+  workspace,
+}: {
+  news: any;
+  workspace: PortalWorkspace;
+}) {
   const {
     title,
     categorySet,
@@ -462,6 +468,7 @@ export async function NewsInfoWrapper({news}: {news: any}) {
       content={content}
       author={author}
       slug={slug}
+      workspace={workspace}
     />
   );
 }

@@ -399,7 +399,7 @@ async function ArticleFeed({
         {/* Main News Info Section */}
         <div className="lg:col-span-2">
           <Suspense fallback={<NewsInfoSkeleton />}>
-            <NewsInfoWrapper news={news} />
+            <NewsInfoWrapper news={news} workspace={workspace} />
           </Suspense>
         </div>
 

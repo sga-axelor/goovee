@@ -111,6 +111,9 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   isDisplayAssignmentBtn: true,
   isDisplayCancelBtn: true,
   isDisplayCloseBtn: true,
+  isShowPublicationAuthor: true,
+  isShowPublicationDate: true,
+  isShowPublicationTime: true,
 };
 
 export async function findWorkspaceMembers({

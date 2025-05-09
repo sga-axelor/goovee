@@ -318,6 +318,18 @@
     {
       "name": "isDisplayAssignmentBtn",
       "type": "Boolean"
+    },
+    {
+      "name": "isShowPublicationAuthor",
+      "type": "Boolean"
+    },
+    {
+      "name": "isShowPublicationDate",
+      "type": "Boolean"
+    },
+    {
+      "name": "isShowPublicationTime",
+      "type": "Boolean"
     }
   ]
 }

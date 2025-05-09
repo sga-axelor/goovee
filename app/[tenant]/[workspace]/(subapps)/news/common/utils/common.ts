@@ -1,6 +1,12 @@
 import {dayjs} from '@/locale';
 
-export function getFormatString(dateString: any) {
+export function getFormatString({
+  dateString,
+  includeTime = true,
+}: {
+  dateString: any;
+  includeTime: Boolean | undefined;
+}) {
   const date = dayjs(dateString);
   const currentYear = dayjs().year();
   const dateYear = date.year();
@@ -10,8 +16,7 @@ export function getFormatString(dateString: any) {
   if (dateYear !== currentYear) {
     formatString += ', YYYY';
   }
-
-  formatString += ', h:mm A';
+  if (includeTime) formatString += ', h:mm A';
 
   return formatString;
 }

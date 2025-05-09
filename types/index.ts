@@ -156,6 +156,9 @@ export interface PortalAppConfig extends Model {
   invitationTemplateList: any[];
   canInviteMembers?: boolean;
   isExistingContactsOnly?: boolean;
+  isShowPublicationAuthor: boolean;
+  isShowPublicationDate: boolean;
+  isShowPublicationTime: boolean;
 }
 
 export interface PortalApp extends Model {
