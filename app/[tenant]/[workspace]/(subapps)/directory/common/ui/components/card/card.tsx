@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import {cn} from '@/utils/css';
@@ -46,7 +47,7 @@ export function Card(props: CardProps) {
         )}
       </div>
       {!small && (
-        <img
+        <Image
           width={150}
           height={138}
           className="rounded-r-lg h-[138px] object-cover"

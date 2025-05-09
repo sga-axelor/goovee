@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import {notFound} from 'next/navigation';
 import {FaInstagram, FaLinkedin} from 'react-icons/fa';
 import {FaXTwitter} from 'react-icons/fa6';
@@ -137,7 +138,7 @@ async function Details({
         </div>
 
         {/* image */}
-        <img
+        <Image
           width={156}
           height={138}
           className="rounded-r-lg h-[138px] object-cover"
