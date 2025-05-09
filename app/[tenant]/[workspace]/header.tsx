@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/ui/components';
-import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
+import {DEFAULT_LOGO_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Icon} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
@@ -25,20 +25,28 @@ import {useNavigationVisibility} from '@/ui/hooks';
 import {useResponsive} from '@/ui/hooks';
 import Cart from '@/app/[tenant]/[workspace]/cart';
 
-function Logo() {
-  const {workspaceURI, tenant, workspaceURL} = useWorkspace();
+function Logo({currentWorkspace}: {currentWorkspace: PortalWorkspace}) {
+  const {workspaceURI, tenant, workspaceURL, workspaceID} = useWorkspace();
+  const logoId =
+    currentWorkspace.logo?.id || currentWorkspace.config?.company?.logo?.id;
+  const logoURL = logoId
+    ? `${workspaceURL}/api/workspace/logo/image`
+    : DEFAULT_LOGO_URL;
 
   return (
     <Link
       href={`/?workspaceURI=${encodeURIComponent(workspaceURI || '')}&tenant=${encodeURIComponent(tenant || '')}`}>
-      <Image
-        src={`${workspaceURL}/api/workspace/logo/image`}
-        alt="Axelor Logo"
-        width={100}
-        height={50}
-        className="mr-4"
-        style={{width: 'auto', height: 'auto'}}
-      />
+      <div className="flex items-center justify-start">
+        <div className="w-24 aspect-[2/1] relative">
+          <Image
+            fill
+            src={logoURL}
+            alt="Logo"
+            className="w-full h-full object-contain"
+            priority
+          />
+        </div>
+      </div>
     </Link>
   );
 }
@@ -57,10 +65,12 @@ export default function Header({
   subapps,
   isTopNavigation = false,
   workspaces,
+  cuurentWorkspace,
 }: {
   subapps: any;
   isTopNavigation?: boolean;
-  workspaces?: PortalWorkspace[];
+  workspaces: PortalWorkspace[];
+  cuurentWorkspace: PortalWorkspace;
 }) {
   const router = useRouter();
   const {data: session} = useSession();
@@ -89,7 +99,7 @@ export default function Header({
   return (
     <>
       <div className="min-h-16 bg-background text-foreground px-6 py-2 flex items-center border-b border-border border-solid">
-        <Logo />
+        <Logo currentWorkspace={cuurentWorkspace} />
 
         <div className="grow" />
         {isLarge && (
