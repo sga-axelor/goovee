@@ -16,15 +16,15 @@ import Search from './search';
 
 export const Hero = ({
   workspace,
-  workspaceURL,
+  workspaceURI,
 }: {
   workspace: PortalWorkspace;
-  workspaceURL: string;
+  workspaceURI: string;
 }) => {
   const renderSearch = () => <Search workspace={workspace} />;
 
   const imageURL = workspace?.config?.resourcesHeroBgImage?.id
-    ? `${workspaceURL}/${SUBAPP_CODES.resources}/api/hero/background`
+    ? `${workspaceURI}/${SUBAPP_CODES.resources}/api/hero/background`
     : IMAGE_URL;
 
   return (

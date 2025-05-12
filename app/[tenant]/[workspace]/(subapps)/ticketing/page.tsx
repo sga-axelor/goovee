@@ -65,7 +65,7 @@ export default async function Page({
   }
 
   const imageURL = workspace.config.ticketHeroBgImage?.id
-    ? `${workspaceURL}/${SUBAPP_CODES.ticketing}/api/hero/background`
+    ? `${workspaceURI}/${SUBAPP_CODES.ticketing}/api/hero/background`
     : IMAGE_URL;
 
   return (

@@ -13,11 +13,11 @@ export type CardProps = {
   item: ListEntry | Entry;
   url: string;
   small?: boolean;
-  workspaceURL: string;
+  workspaceURI: string;
 };
 
 export function Card(props: CardProps) {
-  const {item, url, small, workspaceURL} = props;
+  const {item, url, small, workspaceURI} = props;
 
   return (
     <Link
@@ -53,7 +53,7 @@ export function Card(props: CardProps) {
           className="rounded-r-lg h-[138px] object-cover"
           src={
             item.image?.id
-              ? `${workspaceURL}/${SUBAPP_CODES.directory}/api/entry/${item.id}/image`
+              ? `${workspaceURI}/${SUBAPP_CODES.directory}/api/entry/${item.id}/image`
               : NO_IMAGE_URL
           }
           alt="image"

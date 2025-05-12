@@ -22,7 +22,7 @@ import {SearchItem} from '@/subapps/events/common/ui/components';
 export const Hero = ({workspace}: {workspace: PortalWorkspace}) => {
   const {data: session} = useSession();
   const {user} = session || {};
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   const router = useRouter();
   const {toast} = useToast();
 
@@ -65,7 +65,7 @@ export const Hero = ({workspace}: {workspace: PortalWorkspace}) => {
   );
 
   const imageURL = workspace?.config?.eventHeroBgImage?.id
-    ? `${workspaceURL}/${SUBAPP_CODES.events}/api/hero/background`
+    ? `${workspaceURI}/${SUBAPP_CODES.events}/api/hero/background`
     : IMAGE_URL;
   return (
     <HeroSearch

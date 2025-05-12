@@ -85,7 +85,7 @@ export const CreatePost = ({
   const [loading, setLoading] = useState(false);
 
   const {toast} = useToast();
-  const {workspaceURL} = useWorkspace();
+  const {workspaceURI, workspaceURL} = useWorkspace();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -235,7 +235,7 @@ export const CreatePost = ({
                                     fill
                                     src={
                                       group?.image?.id
-                                        ? `${workspaceURL}/${SUBAPP_CODES.forum}/api/group/${group.id}/image`
+                                        ? `${workspaceURI}/${SUBAPP_CODES.forum}/api/group/${group.id}/image`
                                         : NO_IMAGE_URL
                                     }
                                     alt={group.name}

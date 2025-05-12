@@ -35,7 +35,7 @@ export default async function Page({
   // TODO: check if user auth is required
   // if (!session?.user) notFound();
 
-  const {workspaceURL, tenant} = workspacePathname(params);
+  const {workspaceURL, workspaceURI, tenant} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user: session?.user,
@@ -58,7 +58,7 @@ export default async function Page({
         <Details
           entryDetail={entry}
           tenant={tenant}
-          workspaceURL={workspaceURL}
+          workspaceURI={workspaceURI}
         />
         <Map className="h-80 w-full" entries={[clone(entry)]} config={config} />
       </div>
@@ -82,11 +82,11 @@ export default async function Page({
 async function Details({
   entryDetail,
   tenant,
-  workspaceURL,
+  workspaceURI,
 }: {
   entryDetail: Entry;
   tenant: string;
-  workspaceURL: string;
+  workspaceURI: string;
 }) {
   const {
     title,
@@ -144,7 +144,7 @@ async function Details({
           className="rounded-r-lg h-[138px] object-cover"
           src={
             image?.id
-              ? `${workspaceURL}/${SUBAPP_CODES.directory}/api/entry/${id}/image`
+              ? `${workspaceURI}/${SUBAPP_CODES.directory}/api/entry/${id}/image`
               : NO_IMAGE_URL
           }
           alt="image"

@@ -23,9 +23,9 @@ import {findSearchNews} from '@/subapps/news/common/actions/action';
 export function Hero({workspace}: {workspace: PortalWorkspace}) {
   const router = useRouter();
 
-  const {workspaceURL} = useWorkspace();
+  const {workspaceURL, workspaceURI} = useWorkspace();
   const imageURL = workspace?.config?.newsHeroBgImage?.id
-    ? `${workspaceURL}/${SUBAPP_CODES.news}/api/hero/background`
+    ? `${workspaceURI}/${SUBAPP_CODES.news}/api/hero/background`
     : IMAGE_URL;
 
   const handleClick = (slug: string) => {

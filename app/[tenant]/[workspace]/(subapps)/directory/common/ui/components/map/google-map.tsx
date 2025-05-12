@@ -49,7 +49,7 @@ type MarkerProps = {
 
 export function Marker(props: MarkerProps) {
   const {small, item} = props;
-  const {workspaceURI, workspaceURL} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   const url = `${workspaceURI}/directory/entry/${item.id}`;
   const [markerRef, marker] = useMarkerRef();
@@ -74,7 +74,7 @@ export function Marker(props: MarkerProps) {
             item={item}
             url={url}
             small={small}
-            workspaceURL={workspaceURL}
+            workspaceURI={workspaceURI}
           />
         </InfoWindow>
       )}

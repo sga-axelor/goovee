@@ -19,7 +19,7 @@ export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
 
   const [openPopUp, setOpenPopUp] = useState(false);
 
-  const {workspaceURL} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   const openThreadPopup = () => {
     post && setOpenPopUp(true);
@@ -40,7 +40,7 @@ export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
               fill
               src={
                 image?.metaFile?.id
-                  ? `${workspaceURL}/${SUBAPP_CODES.forum}/api/post/${post?.id}/attachment/${image.metaFile.id}`
+                  ? `${workspaceURI}/${SUBAPP_CODES.forum}/api/post/${post?.id}/attachment/${image.metaFile.id}`
                   : NO_IMAGE_URL
               }
               alt={image?.metaFile?.fileName || i18n.t('post image')}

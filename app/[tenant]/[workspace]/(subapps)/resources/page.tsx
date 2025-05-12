@@ -25,7 +25,7 @@ export default async function Page({
   const session = await getSession();
   const user = session?.user;
 
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user,
@@ -51,7 +51,7 @@ export default async function Page({
 
   return (
     <>
-      <Hero workspace={workspace} workspaceURL={workspaceURL} />
+      <Hero workspace={workspace} workspaceURI={workspaceURI} />
       <main className="container p-4 mx-auto space-y-6">
         <Categories items={folders} />
         <h2 className="font-semibold text-xl">{i18n.t('New Resources')}</h2>
