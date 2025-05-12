@@ -16,5 +16,3 @@ export function HomepageNewsGridSkeleton() {
     </div>
   );
 }
-
-export default HomepageNewsGridSkeleton;

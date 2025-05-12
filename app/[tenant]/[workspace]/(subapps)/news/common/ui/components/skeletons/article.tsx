@@ -32,5 +32,3 @@ export function ArticleSkeleton() {
     </div>
   );
 }
-
-export default ArticleSkeleton;

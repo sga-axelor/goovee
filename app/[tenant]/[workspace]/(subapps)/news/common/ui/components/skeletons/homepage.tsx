@@ -25,5 +25,3 @@ export function HomeNewsFeedSkeleton() {
     </>
   );
 }
-
-export default HomeNewsFeedSkeleton;

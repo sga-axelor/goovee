@@ -19,5 +19,3 @@ export function CategoryNewsGridSkeleton() {
     </>
   );
 }
-
-export default CategoryNewsGridSkeleton;

@@ -23,5 +23,3 @@ export const CategoryHomeSkeleton = () => {
     </div>
   );
 };
-
-export default CategoryHomeSkeleton;
