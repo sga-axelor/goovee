@@ -79,7 +79,7 @@ export function getPartnerImageURL(
     return noimage ? noimageSrc || '/images/user.png' : '';
   }
 
-  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/partner/image/${id}`;
+  return `/api/tenant/${tenant}/partner/image/${id}`;
 }
 
 export function getProductImageURL(
@@ -93,7 +93,7 @@ export function getProductImageURL(
     return noimage ? noimageSrc || '/images/no-image.png' : '';
   }
 
-  return `${process.env.NEXT_PUBLIC_HOST}/api/tenant/${tenant}/product/image/${id}`;
+  return `/api/tenant/${tenant}/product/image/${id}`;
 }
 
 export function getFileTypeIcon(fileType: string) {
