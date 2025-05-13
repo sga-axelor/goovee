@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -12,8 +13,9 @@ import {getWhereClauseForEntity} from '@/utils/filters';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
+import {InvoiceSkeleton} from '@/subapps/invoices/common/ui/components';
 
-export default async function Page({
+async function Invoice({
   params,
 }: {
   params: {id: string; type: string; tenant: string; workspace: string};
@@ -79,5 +81,17 @@ export default async function Page({
       invoice={clone(invoice)}
       workspace={workspace}
     />
+  );
+}
+
+export default async function Page({
+  params,
+}: {
+  params: {id: string; type: string; tenant: string; workspace: string};
+}) {
+  return (
+    <Suspense fallback={<InvoiceSkeleton />}>
+      <Invoice params={params} />
+    </Suspense>
   );
 }
