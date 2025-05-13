@@ -247,17 +247,17 @@ export async function findWebsiteBySlug({
       slug: true,
       isGuestUserAllow: true,
       header: {
-        component: true,
+        component: {title: true, code: true},
       },
       footer: {
-        component: true,
+        component: {title: true, code: true},
       },
       homepage: {
         slug: true,
       },
       menu: {
         title: true,
-        component: true,
+        component: {title: true, code: true},
         language: true,
         menuList: true,
       },
@@ -396,20 +396,27 @@ export async function findWebsitePageBySlug({
           sequence: true,
           content: {
             title: true,
-            component: true,
+            component: {title: true, code: true},
             attrs: true,
           },
         },
-        orderBy: {
-          sequence: 'ASC',
-        },
+        orderBy: {sequence: 'ASC'},
+      } as {
+        select: {
+          sequence: true;
+          content: {
+            title: true;
+            component: {title: true; code: true};
+            attrs: true;
+          };
+        };
       },
     },
   });
 
-  let contentLines = [];
+  let contentLines: (ContentLine | ReplacedContentLine)[] = [];
 
-  if ((page?.contentLines as any)?.length) {
+  if (page?.contentLines?.length) {
     const fields = await findModelFields({
       tenantId,
       modelName: CONTENT_MODEL,
@@ -638,11 +645,47 @@ async function getCustomRelationalFieldTypeData({
   }
 }
 
+type ContentLine = {
+  id: string;
+  version: number;
+  sequence?: number;
+  content?: {
+    id: string;
+    version: number;
+    title?: string;
+    attrs?: Promise<Record<string, any>>;
+    component?: {
+      id: string;
+      version: number;
+      title?: string;
+      code?: string;
+    };
+  };
+};
+
+type ReplacedContentLine = {
+  id: string;
+  version: number;
+  sequence?: number;
+  content: {
+    attrs: Record<string, any>;
+    id: string;
+    version: number;
+    title?: string;
+    component?: {
+      id: string;
+      version: number;
+      title?: string;
+      code?: string;
+    };
+  };
+};
+
 async function populateContent(
-  contentLines: any,
+  contentLines: ContentLine[],
   fields: any,
   tenantId: Tenant['id'],
-) {
+): Promise<(ContentLine | ReplacedContentLine)[]> {
   const jsonModelCache = new Cache();
   const jsonModelRecordCache = new Cache();
   const modelRecordCache = new Cache();
@@ -651,18 +694,16 @@ async function populateContent(
     return fields.find((field: any) => field.name === fieldName);
   };
 
-  const populate = async (line: any) => {
-    const attrs = await line.content.attrs;
-
-    if (!attrs) {
-      return line;
-    }
+  const populate = async (
+    line: ContentLine,
+  ): Promise<ContentLine | ReplacedContentLine> => {
+    if (!line.content) return line;
+    const attrs = await line.content?.attrs;
+    if (!attrs) return line;
 
     const fieldNames = Object.keys(attrs);
 
-    if (!fieldNames?.length) {
-      return line;
-    }
+    if (!fieldNames?.length) return line;
 
     const data: Record<string, any> = {};
 
@@ -721,7 +762,11 @@ async function populateContent(
 
   const populatedContentLines = await Promise.allSettled(
     contentLines.map(populate),
-  ).then(results => results.map(({value}: any) => value));
+  ).then(results =>
+    results.map((result, i) =>
+      result.status === 'fulfilled' ? result.value : contentLines[i],
+    ),
+  );
 
   return populatedContentLines;
 }

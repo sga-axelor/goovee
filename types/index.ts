@@ -356,8 +356,8 @@ export interface WebsitePage extends Model {
 }
 
 export interface WebsiteComponent extends Model {
-  title: string;
-  code: string;
+  title?: string;
+  code?: string;
 }
 
 export type PageInfo = {

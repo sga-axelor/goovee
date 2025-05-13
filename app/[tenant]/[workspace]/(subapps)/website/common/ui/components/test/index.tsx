@@ -1,3 +1,5 @@
-export function Test() {
-  return <div>test</div>;
+import type {TemplateProps} from '../../../types';
+
+export function Test({data}: TemplateProps) {
+  return <div>This is the component</div>;
 }
