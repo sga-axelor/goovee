@@ -7,13 +7,15 @@ import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES, DEFAULT_LIMIT} from '@/constants';
 import {getWhereClauseForEntity} from '@/utils/filters';
+import {TableSkeleton} from '@/ui/components/table';
 import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/app/[tenant]/[workspace]/(subapps)/invoices/[type]/content';
 import {findInvoices} from '@/subapps/invoices/common/orm/invoices';
+import {Suspense} from 'react';
 
-export default async function Invoices({
+async function Invoices({
   params,
   searchParams,
 }: {
@@ -92,5 +94,23 @@ export default async function Invoices({
       workspace={workspace}
       pageInfo={pageInfo}
     />
+  );
+}
+
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: {
+    type: string;
+    tenant: string;
+    workspace: string;
+  };
+  searchParams: {[key: string]: string | undefined};
+}) {
+  return (
+    <Suspense fallback={<TableSkeleton />}>
+      <Invoices params={params} searchParams={searchParams} />
+    </Suspense>
   );
 }
