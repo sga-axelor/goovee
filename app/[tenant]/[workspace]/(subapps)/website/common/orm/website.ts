@@ -713,7 +713,10 @@ async function populateContent(
       data[fieldName] = $value;
     }
 
-    return data;
+    return {
+      ...line,
+      content: {...line.content, attrs: data},
+    };
   };
 
   const populatedContentLines = await Promise.allSettled(
