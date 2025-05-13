@@ -7,14 +7,16 @@ import {getSession} from '@/auth';
 import {DEFAULT_LIMIT, SUBAPP_CODES} from '@/constants';
 import {clone} from '@/utils';
 import {PartnerKey, User} from '@/types';
+import {TableSkeleton} from '@/ui/components/table';
 import {getWhereClauseForEntity} from '@/utils/filters';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/subapps/orders/[type]/content';
 import {findOrders} from '@/subapps/orders/common/orm/orders';
 import {ORDER} from '@/subapps/orders/common/constants/orders';
+import {Suspense} from 'react';
 
-export default async function Page({
+async function Orders({
   params,
   searchParams,
 }: {
@@ -83,5 +85,19 @@ export default async function Page({
 
   return (
     <Content orders={clone(orders)} pageInfo={pageInfo} orderType={type} />
+  );
+}
+
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: {type: string; tenant: string; workspace: string};
+  searchParams: {[key: string]: string | undefined};
+}) {
+  return (
+    <Suspense fallback={<TableSkeleton />}>
+      <Orders params={params} searchParams={searchParams} />
+    </Suspense>
   );
 }
