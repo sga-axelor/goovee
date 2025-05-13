@@ -9,3 +9,4 @@ export {ProductCard} from './product-card';
 export {OrderColumns} from './columns';
 export {ExpandableCard} from './expandable-card';
 export {DownloadButton} from './download-button';
+export {OrderSkeleton} from './order-skeleton';

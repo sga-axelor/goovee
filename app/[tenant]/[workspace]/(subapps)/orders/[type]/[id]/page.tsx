@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -13,8 +14,9 @@ import {getWhereClauseForEntity} from '@/utils/filters';
 import Content from './content';
 import {findOrder} from '@/subapps/orders/common/orm/orders';
 import {ORDER} from '@/subapps/orders/common/constants/orders';
+import {OrderSkeleton} from '@/subapps/orders/common/ui/components';
 
-export default async function Page({
+async function Order({
   params,
 }: {
   params: {tenant: string; workspace: string; type: string; id: string};
@@ -82,4 +84,16 @@ export default async function Page({
   }
 
   return <Content order={clone(order)} />;
+}
+
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string; type: string; id: string};
+}) {
+  return (
+    <Suspense fallback={<OrderSkeleton />}>
+      <Order params={params} />
+    </Suspense>
+  );
 }
