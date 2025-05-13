@@ -8,12 +8,14 @@ import {clone} from '@/utils';
 import {DEFAULT_LIMIT, DEFAULT_PAGE, SUBAPP_CODES} from '@/constants';
 import {PartnerKey, type User} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
+import {TableSkeleton} from '@/ui/components/table';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {fetchQuotations} from '@/subapps/quotations/common/orm/quotations';
+import {Suspense} from 'react';
 
-export default async function Page({
+async function Quotations({
   params,
   searchParams,
 }: {
@@ -61,12 +63,14 @@ export default async function Page({
     partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
+  const queryParams = {
+    where,
+    page: page || DEFAULT_PAGE,
+    limit: limit ? Number(limit) : DEFAULT_LIMIT,
+  };
+
   const result: any = await fetchQuotations({
-    params: {
-      where,
-      page: page || DEFAULT_PAGE,
-      limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    },
+    params: queryParams,
     tenantId: tenant,
     workspaceURL,
   });
@@ -78,4 +82,18 @@ export default async function Page({
   const {quotations, pageInfo} = result;
 
   return <Content quotations={clone(quotations)} pageInfo={pageInfo} />;
+}
+
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: {tenant: string; workspace: string};
+  searchParams: {[key: string]: string | undefined};
+}) {
+  return (
+    <Suspense fallback={<TableSkeleton columnCount={3} rowCount={10} />}>
+      <Quotations params={params} searchParams={searchParams} />
+    </Suspense>
+  );
 }
