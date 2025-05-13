@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {Suspense, useCallback, useEffect, useRef, useState} from 'react';
 import {MdOutlineRefresh} from 'react-icons/md';
 import {useRouter} from 'next/navigation';
 import {PayPalScriptProvider, PayPalButtons} from '@paypal/react-paypal-js';
@@ -17,7 +17,12 @@ import {
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
-import {isCommentEnabled, SORT_TYPE, Comments} from '@/comments';
+import {
+  isCommentEnabled,
+  SORT_TYPE,
+  Comments,
+  CommentsSkeleton,
+} from '@/comments';
 import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -345,28 +350,30 @@ const Content = ({
           </div>
         </div>
         {enableComment && (
-          <div className="rounded-md border bg-card p-4 mt-5">
-            <h4 className="text-xl font-semibold border-b">
-              {i18n.t('Comments')}
-            </h4>
-            <Comments
-              recordId={quotation.id}
-              subapp={SUBAPP_CODES.quotations}
-              sortBy={SORT_TYPE.new}
-              showCommentsByDefault
-              hideTopBorder
-              hideCloseComments
-              hideCommentsHeader
-              hideSortBy
-              showRepliesInMainThread
-              createComment={createComment}
-              fetchComments={fetchComments}
-              attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.quotations}/api/comments/attachments/${quotation.id}`}
-              trackingField="body"
-              commentField="body"
-              disableReply
-            />
-          </div>
+          <Suspense fallback={<CommentsSkeleton />}>
+            <div className="rounded-md border bg-card p-4 mt-5">
+              <h4 className="text-xl font-semibold border-b">
+                {i18n.t('Comments')}
+              </h4>
+              <Comments
+                recordId={quotation.id}
+                subapp={SUBAPP_CODES.quotations}
+                sortBy={SORT_TYPE.new}
+                showCommentsByDefault
+                hideTopBorder
+                hideCloseComments
+                hideCommentsHeader
+                hideSortBy
+                showRepliesInMainThread
+                createComment={createComment}
+                fetchComments={fetchComments}
+                attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.quotations}/api/comments/attachments/${quotation.id}`}
+                trackingField="body"
+                commentField="body"
+                disableReply
+              />
+            </div>
+          </Suspense>
         )}
       </Container>
       <Dialog open={confirmingQuotation}>

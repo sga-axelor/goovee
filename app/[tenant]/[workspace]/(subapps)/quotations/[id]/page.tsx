@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -13,6 +13,7 @@ import {getWhereClauseForEntity} from '@/utils/filters';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
+import {QuotationSkeleton} from '@/subapps/quotations/common/ui/components';
 
 type PageProps = {
   params: {
@@ -21,7 +22,7 @@ type PageProps = {
     workspace: string;
   };
 };
-export default async function Page({params}: PageProps) {
+async function Quotation({params}: PageProps) {
   const {id, tenant} = params;
 
   const session = await getSession();
@@ -83,5 +84,13 @@ export default async function Page({params}: PageProps) {
       workspace={workspace}
       orderSubapp={Boolean(orderSubapp)}
     />
+  );
+}
+
+export default async function Page({params}: PageProps) {
+  return (
+    <Suspense fallback={<QuotationSkeleton />}>
+      <Quotation params={params} />
+    </Suspense>
   );
 }
