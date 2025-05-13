@@ -165,6 +165,7 @@ export {
   TableHead,
   TableHeader,
   TableRow,
+  TableSkeleton
 } from './table';
 export {Textarea} from './textarea';
 export {Toaster} from './toaster';
