@@ -5,8 +5,7 @@ import {MetaFieldType, SchemaItem, SchemaItemType, SchemaType} from './types';
 import {findView} from './orm';
 import {getModelData} from './actions';
 
-function mapStudioType(field: any): InputType {
-  const _type = field?.type?.toLowerCase();
+function mapStudioType(_type: MetaFieldType): InputType {
   switch (_type) {
     case MetaFieldType.boolean:
       return InputType.boolean;
@@ -33,7 +32,8 @@ async function getFieldType(
   field: any,
   item: SchemaItem,
 ): Promise<{[key: string]: any; type: InputType}> {
-  const type = mapStudioType(field);
+  const jsonType = field?.type?.toLowerCase();
+  const type = mapStudioType(jsonType);
   const modelName = field?.target;
 
   if (modelName != null) {
@@ -49,7 +49,7 @@ async function getFieldType(
         const {columns} = await getGenericGridContent(item.gridView);
         config = {...config, columns};
 
-        if (item.canSelect === 'true') {
+        if (item.canSelect === 'true' && jsonType === MetaFieldType.m2m) {
           const data = await getModelData(modelName);
           config = {...config, data};
         }
