@@ -75,5 +75,5 @@ export default async function Page({
     return <Component key={line.id} data={line.content?.attrs} />;
   });
 
-  return <div> {components} </div>;
+  return <div>{components}</div>;
 }

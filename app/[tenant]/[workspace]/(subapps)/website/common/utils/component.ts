@@ -30,7 +30,8 @@ export function getWebsiteComponent(
           return Fallback;
         }
 
-        Component.displayName = displayName;
+        //TODO: figure out how to add this later
+        // Component.displayName = displayName;
         return Component;
       }),
     {

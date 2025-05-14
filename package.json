@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/templates/common/assets/scss:public/css",
+    "sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/website/common/assets/scss:public/css",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "generate": "goovee generate"
