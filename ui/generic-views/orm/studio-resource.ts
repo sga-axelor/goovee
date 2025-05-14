@@ -33,12 +33,15 @@ export async function findView({
         schemaModel: true,
       },
     })
+    .then(async (res: any) =>
+      res ? {...res, content: await res.content} : undefined,
+    )
     .then(clone);
 
   const schemaContent: any = schema?.content?.schema;
 
   if (schemaType === SchemaType.form) {
-    const metaFields: any[] = await getModelFields(schema.schemaModel);
+    const metaFields: any[] = await getModelFields(schema?.schemaModel);
 
     return {schema: schemaContent, metaFields};
   }
