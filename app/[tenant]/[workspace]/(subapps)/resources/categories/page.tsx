@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {MdAdd} from 'react-icons/md';
+import {Suspense} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
@@ -11,11 +12,14 @@ import {clone} from '@/utils';
 import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
+import type {PortalWorkspace, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   CategoryExplorer,
   ResourceList,
+  ExplorerSkeleton,
+  ResourceListSkeleton,
 } from '@/subapps/resources/common/ui/components';
 import {
   fetchExplorerCategories,
@@ -24,6 +28,55 @@ import {
   fetchLatestFiles,
 } from '@/subapps/resources/common/orm/dms';
 import {ACTION} from '../common/constants';
+
+async function Categories({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  tenant: string;
+  user?: User;
+}) {
+  const categories = await fetchExplorerCategories({
+    workspace,
+    user,
+    tenantId: tenant,
+  }).then(clone);
+
+  return <CategoryExplorer categories={categories} />;
+}
+
+async function Resources({
+  workspace,
+  tenant,
+  user,
+  category,
+}: {
+  workspace: PortalWorkspace;
+  tenant: string;
+  user?: User;
+  category?: string;
+}) {
+  let files;
+
+  if (category) {
+    files = await fetchFiles({
+      id: category,
+      workspace,
+      user,
+      tenantId: tenant,
+    }).then(clone);
+  } else {
+    files = await fetchLatestFiles({
+      workspace,
+      user,
+      tenantId: tenant,
+    }).then(clone);
+  }
+
+  return <ResourceList resources={files} />;
+}
 
 export default async function Page({
   searchParams,
@@ -51,36 +104,16 @@ export default async function Page({
     return notFound();
   }
 
-  let files;
   let file;
 
   if (id) {
-    files = await fetchFiles({
-      id,
-      workspace,
-      user,
-      tenantId: tenant,
-    }).then(clone);
-
     file = await fetchFile({
       id,
       workspace,
       user,
       tenantId: tenant,
     });
-  } else {
-    files = await fetchLatestFiles({
-      workspace,
-      user,
-      tenantId: tenant,
-    }).then(clone);
   }
-  const categories = await fetchExplorerCategories({
-    workspace,
-    user,
-    tenantId: tenant,
-  }).then(clone);
-
   const permissionSelect = file?.permissionSelect;
   const canWrite = permissionSelect && permissionSelect === ACTION.WRITE;
   const canUpload = permissionSelect && permissionSelect === ACTION.UPLOAD;
@@ -118,11 +151,20 @@ export default async function Page({
       </p>
       <div className="grid sm:grid-cols-4 gap-5">
         <div className="bg-white rounded-lg py-6 px-2">
-          <CategoryExplorer categories={categories} />
+          <Suspense fallback={<ExplorerSkeleton />}>
+            <Categories workspace={workspace} tenant={tenant} user={user} />
+          </Suspense>
         </div>
         <div className="sm:hidden">{/* <SortBy /> */}</div>
         <div className="sm:col-span-3 overflow-auto">
-          <ResourceList resources={files} />
+          <Suspense fallback={<ResourceListSkeleton />}>
+            <Resources
+              workspace={workspace}
+              tenant={tenant}
+              user={user}
+              category={id}
+            />
+          </Suspense>
         </div>
       </div>
     </main>

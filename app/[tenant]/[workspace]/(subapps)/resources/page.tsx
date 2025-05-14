@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -6,15 +7,56 @@ import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
 import {i18n} from '@/locale';
+import type {PortalWorkspace, User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   fetchLatestFiles,
   fetchLatestFolders,
 } from '@/subapps/resources/common/orm/dms';
-import {ResourceList} from '@/subapps/resources/common/ui/components';
+import {
+  ResourceList,
+  CategoriesSkeleton,
+  ResourceListSkeleton,
+} from '@/subapps/resources/common/ui/components';
 import Categories from './categories';
 import Hero from './hero';
+
+async function LatestCategories({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  tenant: string;
+  user?: User;
+}) {
+  const folders = await fetchLatestFolders({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
+
+  return <Categories items={folders} />;
+}
+
+async function LatestResources({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  tenant: string;
+  user?: User;
+}) {
+  const files = await fetchLatestFiles({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
+
+  return <ResourceList resources={files} />;
+}
 
 export default async function Page({
   params,
@@ -37,25 +79,17 @@ export default async function Page({
     return notFound();
   }
 
-  const files = await fetchLatestFiles({
-    workspace,
-    tenantId: tenant,
-    user,
-  }).then(clone);
-
-  const folders = await fetchLatestFolders({
-    workspace,
-    tenantId: tenant,
-    user,
-  }).then(clone);
-
   return (
     <>
       <Hero workspace={workspace} workspaceURI={workspaceURI} />
       <main className="container p-4 mx-auto space-y-6">
-        <Categories items={folders} />
+        <Suspense fallback={<CategoriesSkeleton />}>
+          <LatestCategories workspace={workspace} tenant={tenant} user={user} />
+        </Suspense>
         <h2 className="font-semibold text-xl">{i18n.t('New Resources')}</h2>
-        <ResourceList resources={files} />
+        <Suspense fallback={<ResourceListSkeleton />}>
+          <LatestResources workspace={workspace} tenant={tenant} user={user} />
+        </Suspense>
       </main>
     </>
   );
