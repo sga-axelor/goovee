@@ -12,7 +12,7 @@ import {Team1} from './team-1';
 import {Services2} from './services-2';
 import {Testimonial1} from './testimonial-1';
 import {Pricing1} from './pricing-1';
-import {Contacts4} from './contacts-4';
+import {Contact4} from './contacts-4';
 import {Clients1} from './clients-1';
 
 export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
@@ -26,7 +26,7 @@ export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   'services-2': Services2,
   'testimonial-1': Testimonial1,
   'pricing-1': Pricing1,
-  'contacts-4': Contacts4,
+  'contacts-4': Contact4,
   'clients-1': Clients1,
 };
 

@@ -1,1 +1,1 @@
-export type TemplateProps = {data?: any; menu?: any};
+export type TemplateProps<T = any, M = any> = {data?: T; menu?: M};

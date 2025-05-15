@@ -1,9 +1,9 @@
 'use client';
 import {ServiceCard1} from '@/subapps/website/common/components/reuseable/service-cards';
 // -------- data -------- //
-import {TemplateProps} from '../../../types';
-import dynamic from 'next/dynamic';
 import Design from '@/subapps/website/common/icons/solid/Design';
+import dynamic from 'next/dynamic';
+import {TemplateProps} from '../../../types';
 
 function getIcon(icon: string) {
   return icon
@@ -15,19 +15,36 @@ function getIcon(icon: string) {
     : Design;
 }
 
-export function Services1(props: TemplateProps) {
+type Services1Data = {
+  services1Title: string;
+  services1Caption: string;
+  services1Services: {
+    id: string;
+    attrs: {
+      title: string;
+      description: string;
+      icon: string;
+      link: string;
+      linkType: string;
+    };
+  }[];
+};
+
+export function Services1(props: TemplateProps<Services1Data>) {
   const {data} = props;
-  const services = data?.services;
-  console.log(data);
+  const {
+    services1Title: title,
+    services1Caption: caption,
+    services1Services: services,
+  } = data || {};
+
   return (
     <section className="wrapper bg-light">
       <div className="container pt-14 pt-md-16">
         <div className="row text-center">
           <div className="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-            <h2 className="fs-16 text-uppercase text-muted mb-3">
-              {data?.caption}
-            </h2>
-            <h3 className="display-4 mb-10 px-xl-12">{data?.title}</h3>
+            <h2 className="fs-16 text-uppercase text-muted mb-3">{caption}</h2>
+            <h3 className="display-4 mb-10 px-xl-12">{title}</h3>
           </div>
         </div>
 

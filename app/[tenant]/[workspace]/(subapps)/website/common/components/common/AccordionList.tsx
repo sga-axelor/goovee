@@ -1,4 +1,3 @@
-import {FC} from 'react';
 import Accordion from '@/subapps/website/common/components/reuseable/accordion';
 // -------- data -------- //
 const accordions = [
@@ -22,14 +21,33 @@ const accordions = [
   },
 ];
 
-const AccordionList: FC = () => {
+type AccordionItem = {
+  id: string;
+  expand: boolean;
+  heading: string;
+  body: string;
+};
+
+type AccordionProps = {
+  accordions: AccordionItem[];
+};
+
+function AccordionList(props: AccordionProps) {
+  const {accordions} = props;
   return (
     <div className="accordion accordion-wrapper" id="accordionExample">
       {accordions.map(item => (
-        <Accordion type="plain" key={item.no} {...item} />
+        <Accordion
+          type="plain"
+          key={item.id}
+          no={item.id}
+          expand={item.expand}
+          heading={item.heading}
+          body={item.body}
+        />
       ))}
     </div>
   );
-};
+}
 
 export default AccordionList;
