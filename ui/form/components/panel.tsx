@@ -31,7 +31,7 @@ export const PanelComponent = ({
     }) => {
       return (
         <div
-          className={`flex ${direction} flex-wrap flex-grow min-w-[150px] ${isRoot && containerStyle ? 'rounded-md border bg-card p-4 mt-5' : ''}`}
+          className={`flex ${direction} flex-wrap flex-grow min-w-[200px] ${isRoot && containerStyle ? 'rounded-md border bg-card p-4 mt-5' : ''}`}
           style={{width: `${width}%`}}>
           {children}
         </div>

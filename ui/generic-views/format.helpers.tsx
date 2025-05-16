@@ -180,6 +180,7 @@ export function formatGridSchema(
         hidden: _item.hidden ?? false,
         targetName: _item.targetName,
         sortable,
+        mobile: columns.length === 0,
       });
     }
   });
