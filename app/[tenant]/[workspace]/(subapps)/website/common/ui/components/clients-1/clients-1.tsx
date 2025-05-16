@@ -15,7 +15,7 @@ export function Clients1(props: TemplateProps<Clients1Data>) {
 
   return (
     <section className="wrapper bg-light angled upper-end lower-end">
-      <div className="container py-14 pt-md-14 pb-md-18">
+      <div className="container pb-14 pb-md-18">
         <div className="px-lg-5">
           <div className="row gx-0 gx-md-8 gx-xl-12 gy-8 align-items-center">
             {clientList?.map(({id, attrs: item}) => (

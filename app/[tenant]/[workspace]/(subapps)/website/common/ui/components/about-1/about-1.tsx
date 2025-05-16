@@ -33,7 +33,7 @@ export function About1(props: TemplateProps<About1Data>) {
 
   return (
     <section className="wrapper bg-light angled upper-start lower-start">
-      <div className="container py-14 pt-md-17 pb-md-15">
+      <div className="container pb-14 pb-md-15">
         <div className="row gx-lg-8 gx-xl-12 gy-10 mb-lg-22 mb-xl-24 align-items-center">
           <div className="col-lg-7">
             <figure>

@@ -23,7 +23,7 @@ export function Contact4(props: TemplateProps<Contact4Props>) {
 
   return (
     <section className="wrapper bg-light angled upper-end lower-end">
-      <div className="container py-14 pt-md-14 pb-md-18">
+      <div className="container">
         <div className="row gx-lg-8 gx-xl-12 gy-10 mb-10 mb-md-14 align-items-center">
           <div className="col-lg-6">
             <figure>

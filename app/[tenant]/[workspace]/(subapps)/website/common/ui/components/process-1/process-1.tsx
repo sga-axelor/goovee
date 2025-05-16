@@ -32,7 +32,7 @@ export function Process1(props: TemplateProps<Process1Data>) {
   } = data || {};
   return (
     <section className="wrapper bg-light angled upper-start lower-start">
-      <div className="container py-14 pt-md-17 pb-md-15">
+      <div className="container pt-14 pt-md-17">
         <div className="row gx-md-8 gx-xl-12 gy-10 mb-14 mb-md-18 align-items-center">
           <div className="col-lg-6 order-lg-2">
             {processList?.map(item => (
