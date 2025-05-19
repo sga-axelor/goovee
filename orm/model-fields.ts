@@ -4,10 +4,12 @@ import {clone} from '@/utils';
 
 export async function findModelFields({
   modelName,
+  jsonModelName,
   modelField,
   tenantId,
 }: {
-  modelName: string;
+  modelName?: string;
+  jsonModelName?: string;
   modelField: string;
   tenantId: Tenant['id'];
 }) {
@@ -19,7 +21,13 @@ export async function findModelFields({
 
   const fields = await c.aOSMetaJsonField
     .find({
-      where: {model: modelName, modelField, hidden: false, showIf: null},
+      where: {
+        modelField,
+        hidden: false,
+        showIf: null,
+        ...(modelName && {model: modelName}),
+        ...(jsonModelName && {jsonModel: {name: jsonModelName}}),
+      },
       orderBy: {sequence: 'ASC'},
       select: {
         columnSequence: true,

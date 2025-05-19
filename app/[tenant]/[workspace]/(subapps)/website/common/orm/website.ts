@@ -53,7 +53,8 @@ export class Cache {
 }
 
 const CONTENT_MODEL = 'com.axelor.apps.portal.db.PortalCmsContent';
-const CONTENT_FIELD_NAME = 'attrs';
+const CONTENT_MODEL_ATTRS = 'attrs';
+const JSON_MODEL_ATTRS = 'attrs';
 
 const FieldType = {
   OneToMany: 'one-to-many',
@@ -262,6 +263,7 @@ export async function findWebsiteBySlug({
         menuList: true,
       },
       mainWebsite: true,
+      isWiki: true,
     },
   });
 
@@ -414,16 +416,10 @@ export async function findWebsitePageBySlug({
     },
   });
 
-  let contentLines: (ContentLine | ReplacedContentLine)[] = [];
+  let contentLines: (ReplacedContentLine | undefined)[] = [];
 
   if (page?.contentLines?.length) {
-    const fields = await findModelFields({
-      tenantId,
-      modelName: CONTENT_MODEL,
-      modelField: CONTENT_FIELD_NAME,
-    });
-
-    contentLines = await populateContent(page?.contentLines, fields, tenantId);
+    contentLines = await populateContent(page?.contentLines, tenantId);
   }
 
   return {
@@ -551,6 +547,7 @@ async function getCustomRelationalFieldTypeData({
   field,
   value,
   fields,
+  modelFieldCache,
   modelRecordCache,
   jsonModelCache,
   jsonModelRecordCache,
@@ -620,7 +617,24 @@ async function getCustomRelationalFieldTypeData({
         },
       })
       .then(records =>
-        Promise.all(records.map(async r => ({...r, attrs: await r.attrs}))),
+        Promise.all(
+          records.map(async r => {
+            const attrs = await r.attrs;
+            return {
+              ...r,
+              attrs: await populate({
+                attrs,
+                modelField: JSON_MODEL_ATTRS,
+                jsonModelName: targetJsonModelName,
+                tenantId,
+                modelFieldCache,
+                modelRecordCache,
+                jsonModelCache,
+                jsonModelRecordCache,
+              }),
+            };
+          }),
+        ),
       );
 
     if (records?.length) {
@@ -667,8 +681,8 @@ type ReplacedContentLine = {
   id: string;
   version: number;
   sequence?: number;
-  content: {
-    attrs: Record<string, any>;
+  content?: {
+    attrs?: Record<string, any>;
     id: string;
     version: number;
     title?: string;
@@ -681,90 +695,153 @@ type ReplacedContentLine = {
   };
 };
 
+const getModelFields = async ({
+  modelName,
+  jsonModelName,
+  modelField,
+  modelFieldCache,
+  tenantId,
+}: {
+  modelName?: string;
+  jsonModelName?: string;
+  modelField: string;
+  modelFieldCache: Cache;
+  tenantId: Tenant['id'];
+}) => {
+  const cacheKey = `${modelName || jsonModelName}-${modelField}`;
+  if (modelFieldCache.has(cacheKey)) {
+    return modelFieldCache.get(cacheKey);
+  }
+
+  const fields = await findModelFields({
+    tenantId,
+    jsonModelName,
+    modelName,
+    modelField,
+  });
+
+  modelFieldCache.set(cacheKey, fields);
+  return fields;
+};
+
+const populate = async ({
+  attrs,
+  modelName,
+  jsonModelName,
+  modelField,
+  tenantId,
+  modelFieldCache,
+  modelRecordCache,
+  jsonModelCache,
+  jsonModelRecordCache,
+}: {
+  attrs?: Record<string, any>;
+  modelName?: string;
+  jsonModelName?: string;
+  modelField: string;
+  tenantId: Tenant['id'];
+  modelFieldCache: Cache;
+  modelRecordCache: Cache;
+  jsonModelCache: Cache;
+  jsonModelRecordCache: Cache;
+}): Promise<Record<string, any>> => {
+  if (!attrs) return {};
+  const fieldNames = Object.keys(attrs);
+
+  const data: Record<string, any> = {};
+
+  for (const fieldName of fieldNames) {
+    const value = attrs[fieldName];
+
+    const isPrimitiveType = typeof value !== 'object';
+
+    if (isPrimitiveType) {
+      data[fieldName] = value;
+      continue;
+    }
+
+    const fields = await getModelFields({
+      modelName,
+      jsonModelName,
+      modelField,
+      modelFieldCache,
+      tenantId,
+    });
+
+    const field = fields.find((field: any) => field.name === fieldName);
+
+    if (!field?.type) {
+      data[fieldName] = value;
+      continue;
+    }
+
+    const type = field.type;
+    const isRelationalField = RelationalFieldTypes.includes(type);
+    const isCustomRelationalField = CustomRelationalFieldTypes.includes(type);
+
+    let handler;
+
+    if (isRelationalField) {
+      handler = getRelationalFieldTypeData;
+    } else if (isCustomRelationalField) {
+      handler = getCustomRelationalFieldTypeData;
+    }
+
+    if (!handler) {
+      data[fieldName] = value;
+      continue;
+    }
+
+    const $value = await handler({
+      field,
+      value,
+      fields,
+      modelFieldCache,
+      modelRecordCache,
+      jsonModelCache,
+      jsonModelRecordCache,
+      tenantId,
+    });
+
+    data[fieldName] = $value;
+  }
+
+  return data;
+};
+
 async function populateContent(
   contentLines: ContentLine[],
-  fields: any,
   tenantId: Tenant['id'],
-): Promise<(ContentLine | ReplacedContentLine)[]> {
+): Promise<(ReplacedContentLine | undefined)[]> {
   const jsonModelCache = new Cache();
   const jsonModelRecordCache = new Cache();
   const modelRecordCache = new Cache();
-
-  const getField = (fieldName: string) => {
-    return fields.find((field: any) => field.name === fieldName);
-  };
-
-  const populate = async (
-    line: ContentLine,
-  ): Promise<ContentLine | ReplacedContentLine> => {
-    if (!line.content) return line;
-    const attrs = await line.content?.attrs;
-    if (!attrs) return line;
-
-    const fieldNames = Object.keys(attrs);
-
-    if (!fieldNames?.length) return line;
-
-    const data: Record<string, any> = {};
-
-    for (const fieldName of fieldNames) {
-      const value = attrs[fieldName];
-
-      const isPrimitiveType = typeof value !== 'object';
-
-      if (isPrimitiveType) {
-        data[fieldName] = value;
-        continue;
-      }
-
-      const field = getField(fieldName);
-
-      if (!field?.type) {
-        data[fieldName] = value;
-        continue;
-      }
-
-      const type = field.type;
-      const isRelationalField = RelationalFieldTypes.includes(type);
-      const isCustomRelationalField = CustomRelationalFieldTypes.includes(type);
-
-      let handler;
-
-      if (isRelationalField) {
-        handler = getRelationalFieldTypeData;
-      } else if (isCustomRelationalField) {
-        handler = getCustomRelationalFieldTypeData;
-      }
-
-      if (!handler) {
-        data[fieldName] = value;
-        continue;
-      }
-
-      const $value = await handler({
-        field,
-        value,
-        fields,
-        modelRecordCache,
-        jsonModelCache,
-        jsonModelRecordCache,
-        tenantId,
-      });
-
-      data[fieldName] = $value;
-    }
-
-    return {
-      ...line,
-      content: {...line.content, attrs: data},
-    };
-  };
+  const modelFieldCache = new Cache();
 
   const populatedContentLines = await Promise.allSettled(
-    contentLines.map(populate),
+    contentLines.map(async line => {
+      if (!line.content) return line;
+      const attrs = await line.content?.attrs;
+      return {
+        ...line,
+        content: {
+          ...line.content,
+          attrs: await populate({
+            attrs,
+            modelName: CONTENT_MODEL,
+            modelField: CONTENT_MODEL_ATTRS,
+            tenantId,
+            modelFieldCache,
+            modelRecordCache,
+            jsonModelCache,
+            jsonModelRecordCache,
+          }),
+        },
+      };
+    }),
   ).then(results =>
     results.map((result, i) =>
-      result.status === 'fulfilled' ? result.value : contentLines[i],
+      result.status === 'fulfilled' ? result.value : undefined,
     ),
   );
 
