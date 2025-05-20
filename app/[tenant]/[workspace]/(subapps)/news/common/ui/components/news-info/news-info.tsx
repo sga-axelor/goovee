@@ -20,13 +20,13 @@ import Image from 'next/image';
 
 export const NewsInfo = ({
   title,
+  slug,
   categorySet,
   image,
   description,
   publicationDateTime,
   content,
   author,
-  slug,
   workspace,
 }: {
   title: string;
@@ -46,12 +46,16 @@ export const NewsInfo = ({
   workspace: PortalWorkspace;
 }) => {
   const {tenant, workspaceURI} = useWorkspace();
-
   const {
     isShowPublicationAuthor,
     isShowPublicationDate,
     isShowPublicationTime,
   } = workspace?.config || {};
+
+  const shouldShowAuthor = isShowPublicationAuthor && !!author;
+  const shouldShowDate = isShowPublicationDate && !!publicationDateTime;
+  const shouldShowMetaSection =
+    (shouldShowAuthor || shouldShowDate) && (author || publicationDateTime);
 
   return (
     <div className="bg-white rounded-lg p-4 font-normal text-sm text-zinc-500 flex flex-col gap-4">
@@ -75,29 +79,29 @@ export const NewsInfo = ({
             sizes="(min-width: 1024px) 750px, 100vw"
           />
         </div>
-        <p>{description}</p>
+        {description && <p>{description}</p>}
       </div>
-      <div className="flex flex-col gap-5">
-        <div>
-          <div className="flex items-center gap-4 pb-4">
-            {isShowPublicationAuthor && (
-              <Avatar className="rounded-full h-8 w-8">
-                <AvatarImage
-                  src={getPartnerImageURL(author?.picture?.id, tenant, {
-                    noimage: true,
-                  })}
-                />
-              </Avatar>
-            )}
 
-            <div className="flex flex-col gap-2 w-full ">
-              <div className=" w-full">
-                {isShowPublicationAuthor && (
+      {(shouldShowMetaSection || content) && (
+        <div className="flex flex-col gap-5">
+          {shouldShowMetaSection && (
+            <div className="flex items-center gap-4">
+              {shouldShowAuthor && (
+                <Avatar className="rounded-full h-8 w-8">
+                  <AvatarImage
+                    src={getPartnerImageURL(author.picture?.id, tenant, {
+                      noimage: true,
+                    })}
+                  />
+                </Avatar>
+              )}
+              <div className="flex flex-col w-full">
+                {shouldShowAuthor && (
                   <div className="text-sm font-semibold text-black leading-[21px]">
-                    {author?.simpleFullName}
+                    {author.simpleFullName}
                   </div>
                 )}
-                {isShowPublicationDate && (
+                {shouldShowDate && (
                   <div className="text-xs font-normal text-palette-mediumGray leading-[18px]">
                     {i18n.t(PUBLISHED_ON)}{' '}
                     {formatDate(publicationDateTime, {
@@ -110,14 +114,18 @@ export const NewsInfo = ({
                 )}
               </div>
             </div>
-          </div>
-          <Separator className="bg-zinc-300" />
+          )}
+          {content && (
+            <>
+              <Separator className="bg-zinc-300" />
+              <div
+                className="relative overflow-auto"
+                dangerouslySetInnerHTML={{__html: content}}
+              />
+            </>
+          )}
         </div>
-        <div
-          className="relative overflow-auto"
-          dangerouslySetInnerHTML={{__html: content}}
-        />
-      </div>
+      )}
     </div>
   );
 };
