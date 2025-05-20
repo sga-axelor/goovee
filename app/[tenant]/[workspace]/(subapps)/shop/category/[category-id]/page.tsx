@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- ///
@@ -9,13 +10,16 @@ import {DEFAULT_LIMIT} from '@/constants';
 import type {Category, PortalAppConfig} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductList} from '@/subapps/shop/common/ui/components';
+import {
+  ProductList,
+  ProductListSkeleton,
+} from '@/subapps/shop/common/ui/components';
 import {findProducts} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {SORT_BY_OPTIONS} from '@/subapps/shop/common/constants';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 
-export default async function Shop({
+async function Category({
   params,
   searchParams,
 }: {
@@ -110,5 +114,19 @@ export default async function Shop({
       productPath={`${workspaceURI}/shop/category/${$category.id}/product/`}
       defaultSort={defaultSort}
     />
+  );
+}
+
+export default function Page({
+  params,
+  searchParams,
+}: {
+  params: {tenant: string; workspace: string; 'category-id': string};
+  searchParams: {[key: string]: string | undefined};
+}) {
+  return (
+    <Suspense fallback={<ProductListSkeleton />}>
+      <Category params={params} searchParams={searchParams} />
+    </Suspense>
   );
 }
