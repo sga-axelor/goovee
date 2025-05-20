@@ -622,8 +622,8 @@ async function getCustomRelationalFieldTypeData({
             const attrs = await r.attrs;
             return {
               ...r,
-              attrs: await populate({
-                attrs,
+              attrs: await populateAttributes({
+                attributes: attrs,
                 modelField: JSON_MODEL_ATTRS,
                 jsonModelName: targetJsonModelName,
                 tenantId,
@@ -724,8 +724,8 @@ const getModelFields = async ({
   return fields;
 };
 
-const populate = async ({
-  attrs,
+const populateAttributes = async ({
+  attributes,
   modelName,
   jsonModelName,
   modelField,
@@ -735,7 +735,7 @@ const populate = async ({
   jsonModelCache,
   jsonModelRecordCache,
 }: {
-  attrs?: Record<string, any>;
+  attributes: Record<string, any> | undefined;
   modelName?: string;
   jsonModelName?: string;
   modelField: string;
@@ -745,13 +745,13 @@ const populate = async ({
   jsonModelCache: Cache;
   jsonModelRecordCache: Cache;
 }): Promise<Record<string, any>> => {
-  if (!attrs) return {};
-  const fieldNames = Object.keys(attrs);
+  if (!attributes) return {};
+  const fieldNames = Object.keys(attributes);
 
   const data: Record<string, any> = {};
 
   for (const fieldName of fieldNames) {
-    const value = attrs[fieldName];
+    const value = attributes[fieldName];
 
     const isPrimitiveType = typeof value !== 'object';
 
@@ -826,8 +826,8 @@ async function populateContent(
         ...line,
         content: {
           ...line.content,
-          attrs: await populate({
-            attrs,
+          attrs: await populateAttributes({
+            attributes: attrs,
             modelName: CONTENT_MODEL,
             modelField: CONTENT_MODEL_ATTRS,
             tenantId,
