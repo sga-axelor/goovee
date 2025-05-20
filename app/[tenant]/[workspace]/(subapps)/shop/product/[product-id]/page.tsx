@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {notFound, redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -7,7 +8,10 @@ import {clone, isNumeric} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {ProductView} from '@/subapps/shop/common/ui/components';
+import {
+  ProductView,
+  ProductViewSkeleton,
+} from '@/subapps/shop/common/ui/components';
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
@@ -18,11 +22,10 @@ import {
   PRODUCT_ATTRS,
 } from '@/subapps/shop/common/constants';
 
-export default async function Page({
+async function Product({
   params,
 }: {
   params: {tenant: string; workspace: string; 'product-id': string};
-  searchParams: {[key: string]: string};
 }) {
   const {tenant} = params;
   const session = await getSession();
@@ -88,5 +91,18 @@ export default async function Page({
       categories={parentcategories}
       metaFields={metaFieldsValues}
     />
+  );
+}
+
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string; 'product-id': string};
+  searchParams: {[key: string]: string};
+}) {
+  return (
+    <Suspense fallback={<ProductViewSkeleton />}>
+      <Product params={params} />
+    </Suspense>
   );
 }
