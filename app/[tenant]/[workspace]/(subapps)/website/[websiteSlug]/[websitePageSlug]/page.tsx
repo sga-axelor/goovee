@@ -6,6 +6,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {findWebsitePageBySlug} from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/ui/components';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
+import {clone} from '@/utils';
 
 export async function generateMetadata({
   params,
@@ -71,8 +72,9 @@ export default async function Page({
   }
 
   const components = websitePage.contentLines.map(line => {
-    const Component = getWebsiteComponent(line.content?.component);
-    return <Component key={line.id} data={line.content?.attrs} />;
+    if (!line?.content?.component) return;
+    const Component = getWebsiteComponent(line.content.component);
+    return <Component key={line.id} data={clone(line.content.attrs)} />;
   });
 
   return <div>{components}</div>;
