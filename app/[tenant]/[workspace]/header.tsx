@@ -25,10 +25,9 @@ import {useNavigationVisibility} from '@/ui/hooks';
 import {useResponsive} from '@/ui/hooks';
 import Cart from '@/app/[tenant]/[workspace]/cart';
 
-function Logo({currentWorkspace}: {currentWorkspace: PortalWorkspace}) {
-  const {workspaceURI, tenant, workspaceURL, workspaceID} = useWorkspace();
-  const logoId =
-    currentWorkspace.logo?.id || currentWorkspace.config?.company?.logo?.id;
+function Logo({workspace}: {workspace: PortalWorkspace}) {
+  const {workspaceURI, tenant, workspaceURL} = useWorkspace();
+  const logoId = workspace.logo?.id || workspace.config?.company?.logo?.id;
   const logoURL = logoId
     ? `${workspaceURL}/api/workspace/logo/image`
     : DEFAULT_LOGO_URL;
@@ -65,12 +64,12 @@ export default function Header({
   subapps,
   isTopNavigation = false,
   workspaces,
-  cuurentWorkspace,
+  workspace,
 }: {
   subapps: any;
   isTopNavigation?: boolean;
   workspaces: PortalWorkspace[];
-  cuurentWorkspace: PortalWorkspace;
+  workspace: PortalWorkspace;
 }) {
   const router = useRouter();
   const {data: session} = useSession();
@@ -99,7 +98,7 @@ export default function Header({
   return (
     <>
       <div className="min-h-16 bg-background text-foreground px-6 py-2 flex items-center border-b border-border border-solid">
-        <Logo currentWorkspace={cuurentWorkspace} />
+        <Logo workspace={workspace} />
 
         <div className="grow" />
         {isLarge && (

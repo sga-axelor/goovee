@@ -103,7 +103,7 @@ export default async function Layout({
               subapps={subapps}
               isTopNavigation={isTopNavigation}
               workspaces={workspaces}
-              cuurentWorkspace={$workspace}
+              workspace={$workspace}
             />
             <div className="flex flex-col flex-grow min-h-0">
               <div className="flex-grow">{children}</div>
