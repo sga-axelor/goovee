@@ -1,6 +1,5 @@
 import ListColumn from '@/subapps/website/common/components/reuseable/ListColumn';
 // -------- data -------- //
-import {aboutList1} from '@/subapps/website/common/data/about';
 import {TemplateProps} from '../../../types';
 
 type Services2Data = {
@@ -8,6 +7,7 @@ type Services2Data = {
   services2Caption: string;
   services2Description: string;
   services2Image: string;
+  services2Services: {id: string; attrs: {title: string}}[];
 };
 
 export function Services2(props: TemplateProps<Services2Data>) {
@@ -17,7 +17,21 @@ export function Services2(props: TemplateProps<Services2Data>) {
     services2Title: title,
     services2Caption: caption,
     services2Description: description,
+    services2Services: services,
   } = data || {};
+
+  const list: string[][] = [];
+
+  if (services?.length) {
+    for (let i = 0; i < services.length; i += 2) {
+      const item = [];
+
+      services[i] && item.push(services[i].attrs.title);
+      services[i + 1] && item.push(services[i + 1].attrs.title);
+
+      list.push(item);
+    }
+  }
 
   return (
     <section className="wrapper bg-light">
@@ -34,8 +48,7 @@ export function Services2(props: TemplateProps<Services2Data>) {
             <h3 className="display-4 mb-5">{caption}</h3>
 
             <p className="mb-6">{description}</p>
-            {/* TODO:  use dynamic list later */}
-            <ListColumn list={aboutList1} />
+            <ListColumn list={list} />
           </div>
         </div>
       </div>
