@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -7,18 +8,66 @@ import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {FeaturedCategories} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
 import {findProducts} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
 import {
   findCategories,
   findFeaturedCategories,
 } from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/categories';
 
-export default async function Shop({
-  params,
-}: {
-  params: {tenant: string; workspace: string};
-}) {
+import {
+  ProductCategories,
+  HomeCarousel,
+  FeaturedCategories,
+  CarouselSkeleton,
+  CategoriesSkeleton,
+  FeaturedCategoriesSkeleton,
+} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
+
+async function Categories({tenant, user, workspace}: any) {
+  const categories = await findCategories({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
+
+  const parentcategories = categories?.filter((c: any) => !c.parent);
+
+  return <ProductCategories categories={parentcategories} />;
+}
+
+async function Carousel({workspace}: any) {
+  const carouselList = workspace?.config?.carouselList;
+
+  return <HomeCarousel images={carouselList} />;
+}
+
+async function Featured({tenant, user, workspace}: any) {
+  const featuredCategories: any = await findFeaturedCategories({
+    workspace: workspace!,
+    tenantId: tenant,
+    user,
+  }).then(clone);
+
+  for (const category of featuredCategories) {
+    if (category?.productList?.length) {
+      const res: any = await findProducts({
+        ids: category.productList.map((p: any) => p.id),
+        workspace: workspace!,
+        user,
+        tenantId: tenant,
+        categoryids: [category.id],
+      }).then(clone);
+
+      category.products = res?.products;
+    }
+  }
+
+  return (
+    <FeaturedCategories categories={featuredCategories} workspace={workspace} />
+  );
+}
+
+async function Shop({params}: {params: {tenant: string; workspace: string}}) {
   const {tenant} = params;
 
   const session = await getSession();
@@ -35,32 +84,6 @@ export default async function Shop({
   if (!workspace) {
     return notFound();
   }
-
-  const categories = await findCategories({
-    workspace,
-    tenantId: tenant,
-    user,
-  }).then(clone);
-
-  const getbreadcrumbs: any = (category: any) => {
-    if (!category) return [];
-
-    let breadcrumbs: any = [];
-
-    if (category?.parent?.id) {
-      breadcrumbs = [
-        ...getbreadcrumbs(
-          categories.find((c: any) => c.id === category?.parent?.id),
-        ),
-      ];
-    }
-
-    breadcrumbs.push({id: category.id, name: category.name});
-
-    return breadcrumbs;
-  };
-
-  const parentcategories = categories?.filter((c: any) => !c.parent);
 
   const featuredCategories: any = await findFeaturedCategories({
     workspace,
@@ -83,10 +106,46 @@ export default async function Shop({
   }
 
   return (
-    <FeaturedCategories
-      categories={parentcategories}
-      featuredCategories={featuredCategories}
-      workspace={workspace}
-    />
+    <div>
+      <div className="relative">
+        <Suspense fallback={<CategoriesSkeleton />}>
+          <Categories workspace={workspace} user={user} tenant={tenant} />
+        </Suspense>
+      </div>
+      <Suspense fallback={<CarouselSkeleton />}>
+        <Carousel workspace={workspace} />
+      </Suspense>
+      <div className="container flex flex-col gap-6 mx-auto px-2 mb-4">
+        <Suspense fallback={<FeaturedCategoriesSkeleton />}>
+          <Featured workspace={workspace} user={user} tenant={tenant} />
+        </Suspense>
+      </div>
+    </div>
+  );
+}
+
+function ShopSkeleton() {
+  return (
+    <div>
+      <div className="relative">
+        <CategoriesSkeleton />
+      </div>
+      <CarouselSkeleton />
+      <div className="container flex flex-col gap-6 mx-auto px-2 mb-4">
+        <FeaturedCategoriesSkeleton />
+      </div>
+    </div>
+  );
+}
+
+export default function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string};
+}) {
+  return (
+    <Suspense fallback={<ShopSkeleton />}>
+      <Shop params={params} />
+    </Suspense>
   );
 }
