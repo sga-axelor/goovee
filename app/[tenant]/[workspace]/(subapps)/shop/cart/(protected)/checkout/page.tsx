@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {redirect} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -9,8 +10,9 @@ import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
+import {CheckoutSkeleton} from '@/subapps/shop/common/ui/components';
 
-export default async function Page({
+async function Checkout({
   params,
 }: {
   params: {tenant: string; workspace: string};
@@ -41,5 +43,17 @@ export default async function Page({
 
   return (
     <Content workspace={workspace} orderSubapp={orderSubapp} tenant={tenant} />
+  );
+}
+
+export default async function Page({
+  params,
+}: {
+  params: {tenant: string; workspace: string};
+}) {
+  return (
+    <Suspense fallback={<CheckoutSkeleton />}>
+      <Checkout params={params} />
+    </Suspense>
   );
 }
