@@ -50,7 +50,6 @@ export function Pricing1(props: TemplateProps<Pricing1Props>) {
     plans,
   } = data || {};
 
-  console.log({data});
   const [activeYearly, setActiveYearly] = useState(false);
 
   return (
