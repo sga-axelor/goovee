@@ -151,13 +151,17 @@ export async function formatSchema(
 }
 
 export async function getGenericGridContent(viewName: string) {
-  const {schema} = await findView({
+  const {schema, metaFields} = await findView({
     name: viewName,
     schemaType: SchemaType.grid,
   });
 
   return {
-    ...formatGridSchema(schema?.items ?? [], schema?.sortable),
+    ...formatGridSchema(
+      schema?.items ?? [],
+      schema?.sortable,
+      metaFields ?? [],
+    ),
     model: schema?.model,
   };
 }
@@ -165,6 +169,7 @@ export async function getGenericGridContent(viewName: string) {
 export function formatGridSchema(
   schema: SchemaItem[],
   sortable = false,
+  metaFields: any[],
 ): {
   columns: Partial<Column>[];
 } {
@@ -173,6 +178,7 @@ export function formatGridSchema(
   schema.forEach((_item: any) => {
     if (_item.type === SchemaItemType.field) {
       const name = _item.name;
+      const _field = metaFields?.find(_f => _f.name === name);
 
       columns.push({
         key: name,
@@ -181,6 +187,7 @@ export function formatGridSchema(
         targetName: _item.targetName,
         sortable,
         mobile: columns.length === 0,
+        selectionList: _field?.selectionList,
       });
     }
   });
