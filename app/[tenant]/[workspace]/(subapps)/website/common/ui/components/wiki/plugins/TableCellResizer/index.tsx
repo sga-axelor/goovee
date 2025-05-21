@@ -77,7 +77,7 @@ function TableCellResizer({editor}: {editor: LexicalEditor}): JSX.Element {
   useEffect(() => {
     const tableKeys = new Set<NodeKey>();
     return mergeRegister(
-      editor.registerMutationListener(TableNode, (nodeMutations) => {
+      editor.registerMutationListener(TableNode, nodeMutations => {
         for (const [nodeKey, mutation] of nodeMutations) {
           if (mutation === 'destroyed') {
             tableKeys.delete(nodeKey);
@@ -87,7 +87,7 @@ function TableCellResizer({editor}: {editor: LexicalEditor}): JSX.Element {
         }
         setHasTable(tableKeys.size > 0);
       }),
-      editor.registerNodeTransform(TableNode, (tableNode) => {
+      editor.registerNodeTransform(TableNode, tableNode => {
         if (tableNode.getColWidths()) {
           return tableNode;
         }
@@ -236,7 +236,7 @@ function TableCellResizer({editor}: {editor: LexicalEditor}): JSX.Element {
             const rowCells = tableRow.getChildren<TableCellNode>();
             height = Math.min(
               ...rowCells.map(
-                (cell) => getCellNodeHeight(cell, editor) ?? Infinity,
+                cell => getCellNodeHeight(cell, editor) ?? Infinity,
               ),
             );
           }
@@ -350,9 +350,9 @@ function TableCellResizer({editor}: {editor: LexicalEditor}): JSX.Element {
 
   const toggleResize = useCallback(
     (
-        direction: PointerDraggingDirection,
-      ): PointerEventHandler<HTMLDivElement> =>
-      (event) => {
+      direction: PointerDraggingDirection,
+    ): PointerEventHandler<HTMLDivElement> =>
+      event => {
         event.preventDefault();
         event.stopPropagation();
 

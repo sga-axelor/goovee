@@ -27,11 +27,11 @@ export default function DragDropPaste(): null {
   useEffect(() => {
     return editor.registerCommand(
       DRAG_DROP_PASTE,
-      (files) => {
+      files => {
         (async () => {
           const filesResult = await mediaFileReader(
             files,
-            [ACCEPTABLE_IMAGE_TYPES].flatMap((x) => x),
+            [ACCEPTABLE_IMAGE_TYPES].flatMap(x => x),
           );
           for (const {file, result} of filesResult) {
             if (isMimeType(file, ACCEPTABLE_IMAGE_TYPES)) {

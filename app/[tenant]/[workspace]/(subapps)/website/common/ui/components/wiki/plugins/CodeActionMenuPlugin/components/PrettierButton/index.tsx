@@ -37,7 +37,7 @@ type LanguagesType = keyof typeof PRETTIER_PARSER_MODULES;
 async function loadPrettierParserByLang(lang: string) {
   const dynamicImports = PRETTIER_PARSER_MODULES[lang as LanguagesType];
   const modules = await Promise.all(
-    dynamicImports.map((dynamicImport) => dynamicImport()),
+    dynamicImports.map(dynamicImport => dynamicImport()),
   );
   return modules;
 }
@@ -97,9 +97,7 @@ export function PrettierButton({lang, editor, getCodeDOMNode}: Props) {
       const format = await loadPrettierFormat();
       const options = getPrettierOptions(lang);
       const prettierParsers = await loadPrettierParserByLang(lang);
-      options.plugins = prettierParsers.map(
-        (parser) => parser.default || parser,
-      );
+      options.plugins = prettierParsers.map(parser => parser.default || parser);
       const formattedCode = await format(content, options);
 
       editor.update(() => {

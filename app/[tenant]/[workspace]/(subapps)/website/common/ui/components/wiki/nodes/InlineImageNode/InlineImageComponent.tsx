@@ -47,7 +47,7 @@ const imageCache = new Set();
 
 function useSuspenseImage(src: string) {
   if (!imageCache.has(src)) {
-    throw new Promise((resolve) => {
+    throw new Promise(resolve => {
       const img = new Image();
       img.src = src;
       img.onload = () => {
@@ -270,7 +270,7 @@ export default function InlineImageComponent({
       ),
       editor.registerCommand<MouseEvent>(
         CLICK_COMMAND,
-        (payload) => {
+        payload => {
           const event = payload;
           if (event.target === imageRef.current) {
             if (event.shiftKey) {
@@ -288,7 +288,7 @@ export default function InlineImageComponent({
       ),
       editor.registerCommand(
         DRAGSTART_COMMAND,
-        (event) => {
+        event => {
           if (event.target === imageRef.current) {
             // TODO This is just a temporary workaround for FF to behave like other browsers.
             // Ideally, this handles drag & drop too (and all browsers).
@@ -331,7 +331,7 @@ export default function InlineImageComponent({
               className="image-edit-button"
               ref={buttonRef}
               onClick={() => {
-                showModal('Update Inline Image', (onClose) => (
+                showModal('Update Inline Image', onClose => (
                   <UpdateInlineImageDialog
                     activeEditor={editor}
                     nodeKey={nodeKey}

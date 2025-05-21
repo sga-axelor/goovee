@@ -171,7 +171,7 @@ export default function InlineImagePlugin(): JSX.Element | null {
     return mergeRegister(
       editor.registerCommand<InsertInlineImagePayload>(
         INSERT_INLINE_IMAGE_COMMAND,
-        (payload) => {
+        payload => {
           const imageNode = $createInlineImageNode(payload);
           $insertNodes([imageNode]);
           if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
@@ -184,21 +184,21 @@ export default function InlineImagePlugin(): JSX.Element | null {
       ),
       editor.registerCommand<DragEvent>(
         DRAGSTART_COMMAND,
-        (event) => {
+        event => {
           return $onDragStart(event);
         },
         COMMAND_PRIORITY_HIGH,
       ),
       editor.registerCommand<DragEvent>(
         DRAGOVER_COMMAND,
-        (event) => {
+        event => {
           return $onDragover(event);
         },
         COMMAND_PRIORITY_LOW,
       ),
       editor.registerCommand<DragEvent>(
         DROP_COMMAND,
-        (event) => {
+        event => {
           return $onDrop(event, editor);
         },
         COMMAND_PRIORITY_HIGH,

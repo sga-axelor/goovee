@@ -29,7 +29,7 @@ export default function TwitterPlugin(): JSX.Element | null {
 
     return editor.registerCommand<string>(
       INSERT_TWEET_COMMAND,
-      (payload) => {
+      payload => {
         const tweetNode = $createTweetNode(payload);
         $insertNodeToNearestRoot(tweetNode);
 

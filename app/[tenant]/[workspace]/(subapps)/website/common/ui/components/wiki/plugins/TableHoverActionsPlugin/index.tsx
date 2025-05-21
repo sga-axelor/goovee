@@ -79,7 +79,7 @@ function TableHoverActionsContainer({
           const maybeTableCell = $getNearestNodeFromDOMNode(tableDOMNode);
 
           if ($isTableCellNode(maybeTableCell)) {
-            const table = $findMatchingParent(maybeTableCell, (node) =>
+            const table = $findMatchingParent(maybeTableCell, node =>
               $isTableNode(node),
             );
             if (!$isTableNode(table)) {
@@ -198,7 +198,7 @@ function TableHoverActionsContainer({
     return mergeRegister(
       editor.registerMutationListener(
         TableNode,
-        (mutations) => {
+        mutations => {
           editor.getEditorState().read(
             () => {
               let resetObserver = false;

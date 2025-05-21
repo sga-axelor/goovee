@@ -147,7 +147,6 @@ const keyPresses = new Set([
 ]);
 
 type Step = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
   count: number;
   name: string;
@@ -220,7 +219,7 @@ ${steps.map(formatStep).join(`\n`)}
   // coalesce some actions like insertText/moveNativeSelection
   const pushStep = useCallback(
     (name: string, value: Step['value']) => {
-      setSteps((currentSteps) => {
+      setSteps(currentSteps => {
         // trying to group steps
         const currentIndex = steps.length - 1;
         const lastStep = steps[currentIndex];
@@ -375,7 +374,7 @@ ${steps.map(formatStep).join(`\n`)}
         });
         setSteps([]);
       }
-      setIsRecording((currentIsRecording) => !currentIsRecording);
+      setIsRecording(currentIsRecording => !currentIsRecording);
     },
     [isRecording],
   );

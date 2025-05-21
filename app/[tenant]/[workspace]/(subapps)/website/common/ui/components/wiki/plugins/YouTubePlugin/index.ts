@@ -29,7 +29,7 @@ export default function YouTubePlugin(): JSX.Element | null {
 
     return editor.registerCommand<string>(
       INSERT_YOUTUBE_COMMAND,
-      (payload) => {
+      payload => {
         const youTubeNode = $createYouTubeNode(payload);
         $insertNodeToNearestRoot(youTubeNode);
 

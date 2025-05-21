@@ -29,7 +29,7 @@ export default function FigmaPlugin(): JSX.Element | null {
 
     return editor.registerCommand<string>(
       INSERT_FIGMA_COMMAND,
-      (payload) => {
+      payload => {
         const figmaNode = $createFigmaNode(payload);
         $insertNodeToNearestRoot(figmaNode);
         return true;

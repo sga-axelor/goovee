@@ -88,7 +88,7 @@ export default function StickyComponent({
 
   useLayoutEffect(() => {
     const position = positioningRef.current;
-    const resizeObserver = new ResizeObserver((entries) => {
+    const resizeObserver = new ResizeObserver(entries => {
       for (let i = 0; i < entries.length; i++) {
         const entry = entries[i];
         const {target} = entry;
@@ -201,7 +201,7 @@ export default function StickyComponent({
     <div ref={stickyContainerRef} className="sticky-note-container">
       <div
         className={`sticky-note ${color}`}
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           const stickyContainer = stickyContainerRef.current;
           if (
             stickyContainer == null ||

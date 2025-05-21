@@ -112,17 +112,17 @@ export default function ContextMenuPlugin(): JSX.Element {
   const defaultOptions = useMemo(() => {
     return [
       new ContextMenuOption(`Copy`, {
-        onSelect: (_node) => {
+        onSelect: _node => {
           editor.dispatchCommand(COPY_COMMAND, null);
         },
       }),
       new ContextMenuOption(`Cut`, {
-        onSelect: (_node) => {
+        onSelect: _node => {
           editor.dispatchCommand(CUT_COMMAND, null);
         },
       }),
       new ContextMenuOption(`Paste`, {
-        onSelect: (_node) => {
+        onSelect: _node => {
           navigator.clipboard.read().then(async function (...args) {
             const data = new DataTransfer();
 
@@ -152,7 +152,7 @@ export default function ContextMenuPlugin(): JSX.Element {
         },
       }),
       new ContextMenuOption(`Paste as Plain Text`, {
-        onSelect: (_node) => {
+        onSelect: _node => {
           navigator.clipboard.read().then(async function (...args) {
             const permission = await navigator.permissions.query({
               // @ts-expect-error These types are incorrect.
@@ -176,7 +176,7 @@ export default function ContextMenuPlugin(): JSX.Element {
         },
       }),
       new ContextMenuOption(`Delete Node`, {
-        onSelect: (_node) => {
+        onSelect: _node => {
           const selection = $getSelection();
           if ($isRangeSelection(selection)) {
             const currentNode = selection.anchor.getNode();
@@ -187,7 +187,7 @@ export default function ContextMenuPlugin(): JSX.Element {
             ancestorNodeWithRootAsParent?.remove();
           } else if ($isNodeSelection(selection)) {
             const selectedNodes = selection.getNodes();
-            selectedNodes.forEach((node) => {
+            selectedNodes.forEach(node => {
               if ($isDecoratorNode(node)) {
                 node.remove();
               }
@@ -223,7 +223,7 @@ export default function ContextMenuPlugin(): JSX.Element {
         if ($isLinkNode(parent)) {
           newOptions = [
             new ContextMenuOption(`Remove Link`, {
-              onSelect: (_node) => {
+              onSelect: _node => {
                 editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
               },
             }),

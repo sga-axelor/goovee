@@ -122,7 +122,7 @@ export default function ColorPicker({
       ref={innerDivRef}>
       <TextInput label="Hex" onChange={onSetHex} value={inputColor} />
       <div className="color-picker-basic-color">
-        {basicColors.map((basicColor) => (
+        {basicColors.map(basicColor => (
           <button
             className={basicColor === selfColor.hex ? ' active' : ''}
             key={basicColor}
@@ -286,7 +286,7 @@ function hex2rgb(hex: string): RGB {
       )
       .substring(1)
       .match(/.{2}/g) || []
-  ).map((x) => parseInt(x, 16));
+  ).map(x => parseInt(x, 16));
 
   return {
     b: rbgArr[2],
@@ -307,8 +307,8 @@ function rgb2hsv({r, g, b}: RGB): HSV {
     ? (max === r
         ? (g - b) / d + (g < b ? 6 : 0)
         : max === g
-        ? 2 + (b - r) / d
-        : 4 + (r - g) / d) * 60
+          ? 2 + (b - r) / d
+          : 4 + (r - g) / d) * 60
     : 0;
   const s = max ? (d / max) * 100 : 0;
   const v = max * 100;
@@ -335,7 +335,7 @@ function hsv2rgb({h, s, v}: HSV): RGB {
 }
 
 function rgb2hex({b, g, r}: RGB): string {
-  return '#' + [r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('');
+  return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
 function transformColor<M extends keyof Color, C extends Color[M]>(

@@ -72,8 +72,8 @@ function PollOptionComponent({
           ref={checkboxRef}
           className="PollNode__optionCheckbox"
           type="checkbox"
-          onChange={(e) => {
-            withPollNode((node) => {
+          onChange={e => {
+            withPollNode(node => {
               node.toggleVote(option, clientID);
             });
           }}
@@ -92,13 +92,13 @@ function PollOptionComponent({
           className="PollNode__optionInput"
           type="text"
           value={text}
-          onChange={(e) => {
+          onChange={e => {
             const target = e.target;
             const value = target.value;
             const selectionStart = target.selectionStart;
             const selectionEnd = target.selectionEnd;
             withPollNode(
-              (node) => {
+              node => {
                 node.setOptionText(option, value);
               },
               () => {
@@ -118,7 +118,7 @@ function PollOptionComponent({
         )}
         aria-label="Remove"
         onClick={() => {
-          withPollNode((node) => {
+          withPollNode(node => {
             node.deleteOption(option);
           });
         }}
@@ -150,7 +150,7 @@ export default function PollComponent({
       }),
       editor.registerCommand<MouseEvent>(
         CLICK_COMMAND,
-        (payload) => {
+        payload => {
           const event = payload;
 
           if (event.target === ref.current) {
@@ -184,7 +184,7 @@ export default function PollComponent({
   };
 
   const addOption = () => {
-    withPollNode((node) => {
+    withPollNode(node => {
       node.addOption(createPollOption());
     });
   };

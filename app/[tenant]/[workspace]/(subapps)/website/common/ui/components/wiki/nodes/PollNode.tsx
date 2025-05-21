@@ -96,7 +96,7 @@ function parseOptions(json: unknown): Options {
 
 const questionState = makeStateWrapper(
   createState('question', {
-    parse: (v) => (typeof v === 'string' ? v : ''),
+    parse: v => (typeof v === 'string' ? v : ''),
   }),
 );
 const optionsState = makeStateWrapper(
@@ -129,11 +129,11 @@ export class PollNode extends DecoratorNode<JSX.Element> {
   setOptions = optionsState.makeSetterMethod<this>();
 
   addOption(option: Option): this {
-    return this.setOptions((options) => [...options, option]);
+    return this.setOptions(options => [...options, option]);
   }
 
   deleteOption(option: Option): this {
-    return this.setOptions((prevOptions) => {
+    return this.setOptions(prevOptions => {
       const index = prevOptions.indexOf(option);
       if (index === -1) {
         return prevOptions;
@@ -145,7 +145,7 @@ export class PollNode extends DecoratorNode<JSX.Element> {
   }
 
   setOptionText(option: Option, text: string): this {
-    return this.setOptions((prevOptions) => {
+    return this.setOptions(prevOptions => {
       const clonedOption = cloneOption(option, text);
       const options = Array.from(prevOptions);
       const index = options.indexOf(option);
@@ -155,7 +155,7 @@ export class PollNode extends DecoratorNode<JSX.Element> {
   }
 
   toggleVote(option: Option, clientID: number): this {
-    return this.setOptions((prevOptions) => {
+    return this.setOptions(prevOptions => {
       const index = prevOptions.indexOf(option);
       if (index === -1) {
         return prevOptions;
