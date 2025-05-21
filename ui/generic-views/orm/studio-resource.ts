@@ -34,9 +34,10 @@ export async function findView({
       },
     })
     .then(async (res: any) =>
-      res ? {...res, content: await res.content} : undefined,
+      res ? {...res, content: JSON.parse(res.content)} : undefined,
     )
-    .then(clone);
+    .then(clone)
+    .catch(() => undefined);
 
   if (!schema) return {};
 

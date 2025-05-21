@@ -14,7 +14,7 @@
     },
     {
       "name": "content",
-      "type": "JSON"
+      "type": "String"
     },
     {
       "name": "schemaModel",
