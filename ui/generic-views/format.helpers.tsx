@@ -135,7 +135,7 @@ export async function formatSchema(
       fields.push({
         parent,
         name: _item.name,
-        title: !!_item.showTitle ? undefined : _item.autoTitle,
+        title: !!_item.showTitle ? undefined : (_item.title ?? _field?.title),
         widget: _item.widget as WidgetType,
         hidden: _item.hidden ?? false,
         required: _item.required ?? false,
@@ -182,7 +182,7 @@ export function formatGridSchema(
 
       columns.push({
         key: name,
-        label: !!_item.showTitle ? undefined : _item.autoTitle,
+        label: !!_item.showTitle ? undefined : (_item.title ?? _field?.title),
         hidden: _item.hidden ?? false,
         targetName: _item.targetName,
         sortable,
