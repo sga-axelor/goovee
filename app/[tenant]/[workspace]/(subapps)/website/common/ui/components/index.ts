@@ -15,6 +15,7 @@ import {Pricing1} from './pricing-1';
 import {Contact4} from './contacts-4';
 import {Clients1} from './clients-1';
 import {Navbar1} from './navbar-1';
+import {Wiki} from './wiki';
 
 export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   'page-progress': PageProgress,
@@ -30,6 +31,7 @@ export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   'contacts-4': Contact4,
   'clients-1': Clients1,
   'navbar-1': Navbar1,
+  wiki: Wiki,
 };
 
 export {NotFound} from './not-found';
