@@ -7,7 +7,9 @@
  *
  */
 
-.StickyEditorTheme__paragraph {
-  margin: 0;
-  position: 'relative';
+.wiki.wiki.wiki.wiki {
+  .StickyEditorTheme__paragraph {
+    margin: 0;
+    position: 'relative';
+  }
 }

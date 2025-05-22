@@ -952,44 +952,52 @@ export default function CommentPlugin({
     <>
       {showCommentInput &&
         createPortal(
-          <CommentInputBox
-            editor={editor}
-            cancelAddComment={cancelAddComment}
-            submitAddComment={submitAddComment}
-          />,
+          <div className="wiki">
+            <CommentInputBox
+              editor={editor}
+              cancelAddComment={cancelAddComment}
+              submitAddComment={submitAddComment}
+            />
+          </div>,
           document.body,
         )}
       {activeAnchorKey !== null &&
         activeAnchorKey !== undefined &&
         !showCommentInput &&
         createPortal(
-          <AddCommentBox
-            anchorKey={activeAnchorKey}
-            editor={editor}
-            onAddComment={onAddComment}
-          />,
+          <div className="wiki">
+            <AddCommentBox
+              anchorKey={activeAnchorKey}
+              editor={editor}
+              onAddComment={onAddComment}
+            />
+          </div>,
           document.body,
         )}
       {createPortal(
-        <Button
-          className={`CommentPlugin_ShowCommentsButton ${
-            showComments ? 'active' : ''
-          }`}
-          onClick={() => setShowComments(!showComments)}
-          title={showComments ? 'Hide Comments' : 'Show Comments'}>
-          <i className="comments" />
-        </Button>,
+        <div className="wiki">
+          <Button
+            className={`CommentPlugin_ShowCommentsButton ${
+              showComments ? 'active' : ''
+            }`}
+            onClick={() => setShowComments(!showComments)}
+            title={showComments ? 'Hide Comments' : 'Show Comments'}>
+            <i className="comments" />
+          </Button>
+        </div>,
         document.body,
       )}
       {showComments &&
         createPortal(
-          <CommentsPanel
-            comments={comments}
-            submitAddComment={submitAddComment}
-            deleteCommentOrThread={deleteCommentOrThread}
-            activeIDs={activeIDs}
-            markNodeMap={markNodeMap}
-          />,
+          <div className="wiki">
+            <CommentsPanel
+              comments={comments}
+              submitAddComment={submitAddComment}
+              deleteCommentOrThread={deleteCommentOrThread}
+              activeIDs={activeIDs}
+              markNodeMap={markNodeMap}
+            />
+          </div>,
           document.body,
         )}
     </>

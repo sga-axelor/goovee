@@ -198,71 +198,73 @@ export default function StickyComponent({
   const {historyState} = useSharedHistoryContext();
 
   return (
-    <div ref={stickyContainerRef} className="sticky-note-container">
-      <div
-        className={`sticky-note ${color}`}
-        onPointerDown={event => {
-          const stickyContainer = stickyContainerRef.current;
-          if (
-            stickyContainer == null ||
-            event.button === 2 ||
-            event.target !== stickyContainer.firstChild
-          ) {
-            // Right click or click on editor should not work
-            return;
-          }
-          const stickContainer = stickyContainer;
-          const positioning = positioningRef.current;
-          if (stickContainer !== null) {
-            const {top, left} = stickContainer.getBoundingClientRect();
-            const zoom = calculateZoomLevel(stickContainer);
-            positioning.offsetX = event.clientX / zoom - left;
-            positioning.offsetY = event.clientY / zoom - top;
-            positioning.isDragging = true;
-            stickContainer.classList.add('dragging');
-            document.addEventListener('pointermove', handlePointerMove);
-            document.addEventListener('pointerup', handlePointerUp);
-            event.preventDefault();
-          }
-        }}>
-        <button
-          onClick={handleDelete}
-          className="delete"
-          aria-label="Delete sticky note"
-          title="Delete">
-          X
-        </button>
-        <button
-          onClick={handleColorChange}
-          className="color"
-          aria-label="Change sticky note color"
-          title="Color">
-          <i className="bucket" />
-        </button>
-        <LexicalNestedComposer
-          initialEditor={caption}
-          initialTheme={StickyEditorTheme}>
-          {isCollabActive ? (
-            <CollaborationPlugin
-              id={caption.getKey()}
-              providerFactory={createWebsocketProvider}
-              shouldBootstrap={true}
-            />
-          ) : (
-            <HistoryPlugin externalHistoryState={historyState} />
-          )}
-          <PlainTextPlugin
-            contentEditable={
-              <ContentEditable
-                placeholder="What's up?"
-                placeholderClassName="StickyNode__placeholder"
-                className="StickyNode__contentEditable"
-              />
+    <div className="wiki">
+      <div ref={stickyContainerRef} className="sticky-note-container">
+        <div
+          className={`sticky-note ${color}`}
+          onPointerDown={event => {
+            const stickyContainer = stickyContainerRef.current;
+            if (
+              stickyContainer == null ||
+              event.button === 2 ||
+              event.target !== stickyContainer.firstChild
+            ) {
+              // Right click or click on editor should not work
+              return;
             }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-        </LexicalNestedComposer>
-      </div>
+            const stickContainer = stickyContainer;
+            const positioning = positioningRef.current;
+            if (stickContainer !== null) {
+              const {top, left} = stickContainer.getBoundingClientRect();
+              const zoom = calculateZoomLevel(stickContainer);
+              positioning.offsetX = event.clientX / zoom - left;
+              positioning.offsetY = event.clientY / zoom - top;
+              positioning.isDragging = true;
+              stickContainer.classList.add('dragging');
+              document.addEventListener('pointermove', handlePointerMove);
+              document.addEventListener('pointerup', handlePointerUp);
+              event.preventDefault();
+            }
+          }}>
+          <button
+            onClick={handleDelete}
+            className="delete"
+            aria-label="Delete sticky note"
+            title="Delete">
+            X
+          </button>
+          <button
+            onClick={handleColorChange}
+            className="color"
+            aria-label="Change sticky note color"
+            title="Color">
+            <i className="bucket" />
+          </button>
+          <LexicalNestedComposer
+            initialEditor={caption}
+            initialTheme={StickyEditorTheme}>
+            {isCollabActive ? (
+              <CollaborationPlugin
+                id={caption.getKey()}
+                providerFactory={createWebsocketProvider}
+                shouldBootstrap={true}
+              />
+            ) : (
+              <HistoryPlugin externalHistoryState={historyState} />
+            )}
+            <PlainTextPlugin
+              contentEditable={
+                <ContentEditable
+                  placeholder="What's up?"
+                  placeholderClassName="StickyNode__placeholder"
+                  className="StickyNode__contentEditable"
+                />
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+          </LexicalNestedComposer>
+        </div>
+      </div>{' '}
     </div>
   );
 }

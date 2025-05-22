@@ -7,14 +7,16 @@
  *
  */
 
-.TableCellResizer__resizer {
-  position: absolute;
-  touch-action: none;
-}
-
-@media (pointer: coarse) {
+.wiki.wiki.wiki.wiki {
   .TableCellResizer__resizer {
-    background-color: #adf;
-    mix-blend-mode: color;
+    position: absolute;
+    touch-action: none;
+  }
+
+  @media (pointer: coarse) {
+    .TableCellResizer__resizer {
+      background-color: #adf;
+      mix-blend-mode: color;
+    }
   }
 }

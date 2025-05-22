@@ -220,29 +220,31 @@ export default function ExcalidrawModal({
   };
 
   return createPortal(
-    <div className="ExcalidrawModal__overlay" role="dialog">
-      <div
-        className="ExcalidrawModal__modal"
-        ref={excaliDrawModelRef}
-        tabIndex={-1}>
-        <div className="ExcalidrawModal__row">
-          {discardModalOpen && <ShowDiscardDialog />}
-          <Excalidraw
-            onChange={onChange}
-            excalidrawAPI={excalidrawAPIRefCallback}
-            initialData={{
-              appState: initialAppState || {isLoading: false},
-              elements: initialElements,
-              files: initialFiles,
-            }}
-          />
-          <div className="ExcalidrawModal__actions">
-            <button className="action-button" onClick={discard}>
-              Discard
-            </button>
-            <button className="action-button" onClick={save}>
-              Save
-            </button>
+    <div className="wiki">
+      <div className="ExcalidrawModal__overlay" role="dialog">
+        <div
+          className="ExcalidrawModal__modal"
+          ref={excaliDrawModelRef}
+          tabIndex={-1}>
+          <div className="ExcalidrawModal__row">
+            {discardModalOpen && <ShowDiscardDialog />}
+            <Excalidraw
+              onChange={onChange}
+              excalidrawAPI={excalidrawAPIRefCallback}
+              initialData={{
+                appState: initialAppState || {isLoading: false},
+                elements: initialElements,
+                files: initialFiles,
+              }}
+            />
+            <div className="ExcalidrawModal__actions">
+              <button className="action-button" onClick={discard}>
+                Discard
+              </button>
+              <button className="action-button" onClick={save}>
+                Save
+              </button>
+            </div>
           </div>
         </div>
       </div>

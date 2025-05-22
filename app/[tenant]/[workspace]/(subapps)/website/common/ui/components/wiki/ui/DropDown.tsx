@@ -137,8 +137,10 @@ function DropDownItems({
 
   return (
     <DropDownContext.Provider value={contextValue}>
-      <div className="dropdown" ref={dropDownRef} onKeyDown={handleKeyDown}>
-        {children}
+      <div className="wiki">
+        <div className="dropdown" ref={dropDownRef} onKeyDown={handleKeyDown}>
+          {children}
+        </div>
       </div>
     </DropDownContext.Provider>
   );

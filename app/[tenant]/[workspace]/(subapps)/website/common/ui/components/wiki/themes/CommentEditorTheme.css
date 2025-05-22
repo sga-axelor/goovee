@@ -7,7 +7,9 @@
  *
  */
 
-.CommentEditorTheme__paragraph {
-  margin: 0;
-  position: 'relative';
+.wiki.wiki.wiki.wiki {
+  .CommentEditorTheme__paragraph {
+    margin: 0;
+    position: 'relative';
+  }
 }

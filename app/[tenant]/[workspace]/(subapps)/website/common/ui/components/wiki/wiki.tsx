@@ -187,21 +187,24 @@ export function Wiki() {
     },
     theme: PlaygroundEditorTheme,
   };
+
   return (
-    <SettingsContext>
-      <FlashMessageContext>
-        <LexicalComposer initialConfig={initialConfig}>
-          <SharedHistoryContext>
-            <TableContext>
-              <ToolbarContext>
-                <div className="editor-shell">
-                  <Editor />
-                </div>
-              </ToolbarContext>
-            </TableContext>
-          </SharedHistoryContext>
-        </LexicalComposer>
-      </FlashMessageContext>
-    </SettingsContext>
+    <div className="wiki">
+      <SettingsContext>
+        <FlashMessageContext>
+          <LexicalComposer initialConfig={initialConfig}>
+            <SharedHistoryContext>
+              <TableContext>
+                <ToolbarContext>
+                  <div className="editor-shell">
+                    <Editor />
+                  </div>
+                </ToolbarContext>
+              </TableContext>
+            </SharedHistoryContext>
+          </LexicalComposer>
+        </FlashMessageContext>
+      </SettingsContext>
+    </div>
   );
 }

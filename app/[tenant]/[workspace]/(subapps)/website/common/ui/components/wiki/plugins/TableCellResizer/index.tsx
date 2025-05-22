@@ -462,7 +462,12 @@ export default function TableCellResizerPlugin(): null | ReactPortal {
   return useMemo(
     () =>
       isEditable
-        ? createPortal(<TableCellResizer editor={editor} />, document.body)
+        ? createPortal(
+            <div className="wiki">
+              <TableCellResizer editor={editor} />
+            </div>,
+            document.body,
+          )
         : null,
     [editor, isEditable],
   );
