@@ -28,6 +28,7 @@
   -moz-osx-font-smoothing: grayscale;
   background: #eee;
   padding: 0 20px;
+  height: 100%;
 
   header {
     max-width: 580px;

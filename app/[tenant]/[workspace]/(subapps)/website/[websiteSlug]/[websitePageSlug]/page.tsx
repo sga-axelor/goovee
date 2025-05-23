@@ -84,5 +84,5 @@ export default async function Page({
     );
   });
 
-  return <div>{components}</div>;
+  return components;
 }
