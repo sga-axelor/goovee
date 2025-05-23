@@ -23,6 +23,9 @@ import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 import {parseAllowedColor} from './ui/ColorPicker';
 
 import './index.css';
+import Settings from './Settings';
+import {TemplateProps} from '../../../types';
+import {useMemo} from 'react';
 
 function $prepopulatedRichText() {
   const root = $getRoot();
@@ -168,17 +171,18 @@ function buildImportMap(): DOMConversionMap {
 
   return importMap;
 }
-export function Wiki() {
+type WikiProps = {
+  content: string;
+};
+
+export function Wiki(props: TemplateProps<WikiProps>) {
+  const {data, contentId, contentVersion} = props;
+  const {content} = data || {};
   const {
     settings: {isCollab, emptyEditor, measureTypingPerf},
   } = useSettings();
 
   const initialConfig = {
-    editorState: isCollab
-      ? null
-      : emptyEditor
-        ? undefined
-        : $prepopulatedRichText,
     html: {import: buildImportMap()},
     namespace: 'Playground',
     nodes: [...PlaygroundNodes],
@@ -189,7 +193,7 @@ export function Wiki() {
   };
 
   return (
-    <div className="wiki">
+    <div className="wiki relative">
       <SettingsContext>
         <FlashMessageContext>
           <LexicalComposer initialConfig={initialConfig}>
@@ -197,8 +201,13 @@ export function Wiki() {
               <TableContext>
                 <ToolbarContext>
                   <div className="editor-shell">
-                    <Editor />
+                    <Editor
+                      content={content}
+                      contentId={String(contentId!)}
+                      contentVersion={contentVersion!}
+                    />
                   </div>
+                  <Settings />
                 </ToolbarContext>
               </TableContext>
             </SharedHistoryContext>

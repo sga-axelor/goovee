@@ -74,7 +74,14 @@ export default async function Page({
   const components = websitePage.contentLines.map(line => {
     if (!line?.content?.component) return;
     const Component = getWebsiteComponent(line.content.component);
-    return <Component key={line.id} data={clone(line.content.attrs)} />;
+    return (
+      <Component
+        key={line.id}
+        data={clone(line.content.attrs)}
+        contentId={line.content.id}
+        contentVersion={line.content.version}
+      />
+    );
   });
 
   return <div>{components}</div>;

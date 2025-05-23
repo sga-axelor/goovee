@@ -47,6 +47,11 @@ import {
   SPEECH_TO_TEXT_COMMAND,
   SUPPORT_SPEECH_RECOGNITION,
 } from '../SpeechToTextPlugin';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {updateWikiContent} from '../../../../../action';
+import {useParams, useRouter} from 'next/navigation';
+import {useToast} from '@/ui/hooks';
+import {i18n} from '@/locale';
 
 async function sendEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());
@@ -95,12 +100,24 @@ async function shareDoc(doc: SerializedDocument): Promise<void> {
 }
 
 export default function ActionsPlugin({
+  contentId,
+  contentVersion,
+  content,
   isRichText,
   shouldPreserveNewLinesInMarkdown,
 }: {
+  content: string | undefined;
+  contentId: string;
+  contentVersion: number;
   isRichText: boolean;
   shouldPreserveNewLinesInMarkdown: boolean;
 }): JSX.Element {
+  const {workspaceURL} = useWorkspace();
+
+  const params = useParams();
+  const {toast} = useToast();
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
   const [editor] = useLexicalComposerContext();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const [isSpeechToText, setIsSpeechToText] = useState(false);
@@ -109,6 +126,52 @@ export default function ActionsPlugin({
   const [modal, showModal] = useModal();
   const showFlashMessage = useFlashMessage();
   const {isCollabActive} = useCollaborationContext();
+
+  useEffect(() => {
+    if (content) {
+      const editorState = editor.parseEditorState(content);
+      editor.update(() => {
+        editor.setEditorState(editorState);
+      });
+    }
+  }, [content, editor]);
+
+  async function save() {
+    if (saving) return;
+    const content = editor.getEditorState().toJSON();
+    setSaving(true);
+    try {
+      const {error, message} = await updateWikiContent({
+        workspaceURL,
+        websiteSlug: params.websiteSlug as string,
+        websitePageSlug: params.websitePageSlug as string,
+        contentId,
+        contentVersion,
+        content: JSON.stringify(content),
+      });
+
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: message || i18n.t('Something went wrong'),
+        });
+        return;
+      }
+      toast({
+        variant: 'success',
+        title: i18n.t('Saved successfully'),
+      });
+      router.refresh();
+    } catch (e) {
+      toast({
+        variant: 'destructive',
+        title: i18n.t('Something went wrong'),
+      });
+    } finally {
+      setSaving(false);
+    }
+  }
+
   useEffect(() => {
     if (INITIAL_SETTINGS.isCollab) {
       return;
@@ -198,6 +261,9 @@ export default function ActionsPlugin({
 
   return (
     <div className="actions">
+      <button className="action-button" onClick={save} disabled={saving}>
+        save
+      </button>
       {SUPPORT_SPEECH_RECOGNITION && (
         <button
           onClick={() => {

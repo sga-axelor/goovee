@@ -1,4 +1,4 @@
-export type TemplateProps<T = any, M = any> = {data?: T; menu?: M};
+import {ID} from '@/types';
 
 export type MenuItem = {
   id: string;
@@ -13,4 +13,11 @@ export type MenuItem = {
 
 export type Menu = {
   menuList: MenuItem[];
+};
+
+export type TemplateProps<T = any, M = any> = {
+  data?: T;
+  menu?: M;
+  contentId?: ID;
+  contentVersion?: number;
 };

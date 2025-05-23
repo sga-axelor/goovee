@@ -6,13 +6,18 @@ import {headers} from 'next/headers';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
 import {t} from '@/locale/server';
-import type {PortalWorkspace, Website, WebsitePage} from '@/types';
+import type {ID, PortalWorkspace, Website, WebsitePage} from '@/types';
 import {findSubappAccess} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {findAllMainWebsiteLanguages, findWebsiteBySlug} from '../orm/website';
+import {
+  findAllMainWebsiteLanguages,
+  findWebsiteBySlug,
+  findWebsitePageBySlug,
+} from '../orm/website';
 import {manager} from '@/tenant';
+import {ActionResponse} from '@/types/action';
 
 export async function getLocaleRedirectionURL({
   workspaceURL,
@@ -136,6 +141,98 @@ export async function getLocaleRedirectionURL({
     success: true,
     data: {
       url: `${workspaceURL}/${SUBAPP_CODES.website}/${websiteSlug}`,
+    },
+  };
+}
+
+export async function updateWikiContent({
+  workspaceURL,
+  websiteSlug,
+  websitePageSlug,
+  contentId,
+  contentVersion,
+  content,
+}: {
+  workspaceURL: PortalWorkspace['url'];
+  websiteSlug: Website['slug'];
+  websitePageSlug: WebsitePage['slug'];
+  contentId: ID;
+  contentVersion: number;
+  content: any;
+}): ActionResponse<{id: string; version: number}> {
+  const session = await getSession();
+  const user = session?.user;
+
+  const tenantId = headers().get(TENANT_HEADER);
+
+  if (!tenantId) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  if (!(workspaceURL && websiteSlug && contentId)) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  const subapp = await findSubappAccess({
+    code: SUBAPP_CODES.website,
+    user,
+    url: workspaceURL,
+    tenantId,
+  });
+
+  if (!subapp)
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+
+  const websitePage = await findWebsitePageBySlug({
+    websiteSlug,
+    websitePageSlug,
+    workspaceURL,
+    user,
+    tenantId,
+  });
+
+  if (!websitePage) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  const contentLine = websitePage.contentLines.find(
+    line => line?.content?.id === contentId,
+  );
+
+  if (!contentLine) {
+    return {
+      error: true,
+      message: await t('Bad request'),
+    };
+  }
+
+  const attributes = contentLine.content?.attrs;
+
+  const client = await manager.getClient(tenantId);
+  const newContent = await client.aOSPortalCmsContent.update({
+    data: {
+      id: String(contentId),
+      version: contentVersion,
+      attrs: {...attributes, content} as any,
+    },
+  });
+  return {
+    success: true,
+    data: {
+      id: newContent.id,
+      version: newContent.version,
     },
   };
 }

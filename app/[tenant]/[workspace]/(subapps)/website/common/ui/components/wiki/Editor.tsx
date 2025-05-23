@@ -80,7 +80,12 @@ const skipCollaborationInit =
   // @ts-expect-error
   window.parent != null && window.parent.frames.right === window;
 
-export default function Editor(): JSX.Element {
+export default function Editor(props: {
+  contentId: string;
+  contentVersion: number;
+  content: string | undefined;
+}): JSX.Element {
+  const {contentId, contentVersion, content} = props;
   const {historyState} = useSharedHistoryContext();
   const {
     settings: {
@@ -271,6 +276,9 @@ export default function Editor(): JSX.Element {
         <ActionsPlugin
           isRichText={isRichText}
           shouldPreserveNewLinesInMarkdown={shouldPreserveNewLinesInMarkdown}
+          content={content}
+          contentId={contentId}
+          contentVersion={contentVersion}
         />
       </div>
       {showTreeView && <TreeViewPlugin />}

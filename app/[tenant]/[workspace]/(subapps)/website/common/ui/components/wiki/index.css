@@ -217,6 +217,7 @@
     position: fixed;
     left: 20px;
     bottom: 20px;
+    z-index: 100;
   }
 
   #test-recorder-button {
@@ -928,7 +929,7 @@
   }
 
   .switches {
-    z-index: 6;
+    z-index: 106;
     position: fixed;
     left: 10px;
     bottom: 70px;
