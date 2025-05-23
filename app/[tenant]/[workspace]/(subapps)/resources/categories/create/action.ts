@@ -21,7 +21,7 @@ export async function create(formData: FormData, workspaceURL: string) {
   const description = formData.get('description') as string;
   const icon = formData.get('icon') as string;
   const parentId = formData.get('parent')!;
-  
+
   const color = formData.get('color') as string;
 
   if (!workspaceURL) {
