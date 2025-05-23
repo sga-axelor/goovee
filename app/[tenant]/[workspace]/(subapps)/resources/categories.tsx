@@ -53,7 +53,9 @@ export default function Categories({items}: any) {
                 <h3 className="font-semibold leading-6 text-center">
                   {fileName}
                 </h3>
-                <p className="leading-4 text-[0.625rem] px-4 text-muted-foreground">
+                <p
+                  className="leading-4 text-[0.625rem] px-4 text-muted-foreground line-clamp-3"
+                  title={description}>
                   {description}
                 </p>
               </div>
