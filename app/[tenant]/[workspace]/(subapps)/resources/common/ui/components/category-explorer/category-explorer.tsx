@@ -15,6 +15,7 @@ import {cn} from '@/utils/css';
 // ---- LOCAL IMPORTS ---- //
 import {useSearchParams} from '@/subapps/resources/common/ui/hooks/use-search-params';
 import styles from './category-explorer.module.scss';
+import {DynamicIcon} from '../dynamic-icon';
 
 interface CategoryExplorerProps extends React.HTMLAttributes<HTMLDivElement> {
   categories?: any[];
@@ -33,7 +34,13 @@ export function CategoryExplorer({categories = []}: CategoryExplorerProps) {
   }, [categories, current]);
 
   const renderCategory = (category: any) => {
-    const {id, fileName: label, children} = category;
+    const {
+      id,
+      fileName: label,
+      children,
+      logoSelect: icon,
+      colorSelect: color,
+    } = category;
 
     const active = id === current;
 
@@ -54,13 +61,24 @@ export function CategoryExplorer({categories = []}: CategoryExplorerProps) {
         className={cn('border-b-0 space-y-2 m-0', styles['accordion-item'])}
         key={id}>
         <AccordionTrigger
-          className={cn('hover:no-underline py-0 px-2 rounded-lg', {
+          className={cn('hover:no-underline py-0.5 px-2 rounded-lg', {
             'bg-success-light text-success': active,
           })}
           icon={!leaf}
           onClick={handleClick}>
           <div className="flex grow gap-2 items-center cursor-pointer">
-            <MdFolderOpen className="h-4 w-4 text-muted-foreground shrink-0" />
+            {icon ? (
+              <DynamicIcon
+                className="h-4 w-4 text-muted-foreground shrink-0"
+                fill={color}
+                icon={icon}
+              />
+            ) : (
+              <MdFolderOpen
+                className="h-4 w-4 text-muted-foreground shrink-0"
+                fill={color}
+              />
+            )}
             <p className="leading-4 text-xs line-clamp-1 text-start">{label}</p>
           </div>
         </AccordionTrigger>

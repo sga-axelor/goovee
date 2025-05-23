@@ -253,6 +253,8 @@ export async function fetchExplorerCategories({
           id: true,
         },
         fileName: true,
+        logoSelect: true,
+        colorSelect: true,
       },
     })
     .then(clone);
