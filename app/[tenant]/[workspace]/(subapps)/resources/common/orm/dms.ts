@@ -44,6 +44,7 @@ export async function fetchFolders({
       contentType: true,
       description: true,
       colorSelect: true,
+      logoSelect: true,
     },
     orderBy: {
       updatedOn: 'DESC',

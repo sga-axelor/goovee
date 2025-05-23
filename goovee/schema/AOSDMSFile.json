@@ -83,6 +83,10 @@
     {
       "type": "String",
       "name": "colorSelect"
+    },
+    {
+      "type": "String",
+      "name": "logoSelect"
     }
   ]
 }

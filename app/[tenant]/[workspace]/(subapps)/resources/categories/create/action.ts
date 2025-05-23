@@ -19,8 +19,9 @@ import {ACTION} from '../../common/constants';
 export async function create(formData: FormData, workspaceURL: string) {
   const title = formData.get('title') as string;
   const description = formData.get('description') as string;
-  const icon = formData.get('icon')!;
+  const icon = formData.get('icon') as string;
   const parentId = formData.get('parent')!;
+  
   const color = formData.get('color') as string;
 
   if (!workspaceURL) {
@@ -138,6 +139,7 @@ export async function create(formData: FormData, workspaceURL: string) {
           permissionSelect,
           description,
           colorSelect: color,
+          logoSelect: icon,
           ...(partnerSet?.length
             ? {
                 partnerSet: {

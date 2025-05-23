@@ -14,6 +14,7 @@ export function DynamicIcon({
   className?: string;
   onClick?: any;
   style?: any;
+  fill?: string;
 }) {
   const [library, name] = icon?.split('-');
 

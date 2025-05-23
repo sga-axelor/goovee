@@ -7,6 +7,7 @@ import {MdOutlineCategory} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {DynamicIcon} from './common/ui/components';
 
 export default function Categories({items}: any) {
   const router = useRouter();
@@ -28,26 +29,38 @@ export default function Categories({items}: any) {
         type: 'bullets',
         clickable: true,
       }}>
-      {items.map(({fileName, description, id, colorSelect: color}: any) => (
-        <SwiperSlide
-          key={id}
-          className="!mr-0 !w-[281px] cursor-pointer"
-          onClick={handleRedirection(id)}>
-          <div className="space-y-2">
-            <div className="!h-[144px] bg-white rounded-lg flex justify-center items-center">
-              <MdOutlineCategory className="h-16 w-16" fill={color} />
-            </div>
+      {items.map(
+        ({
+          fileName,
+          description,
+          id,
+          colorSelect: color,
+          logoSelect: icon,
+        }: any) => (
+          <SwiperSlide
+            key={id}
+            className="!mr-0 !w-[281px] cursor-pointer"
+            onClick={handleRedirection(id)}>
             <div className="space-y-2">
-              <h3 className="font-semibold leading-6 text-center">
-                {fileName}
-              </h3>
-              <p className="leading-4 text-[0.625rem] px-4 text-muted-foreground">
-                {description}
-              </p>
+              <div className="!h-[144px] bg-white rounded-lg flex justify-center items-center">
+                {icon ? (
+                  <DynamicIcon className="h-16 w-16" fill={color} icon={icon} />
+                ) : (
+                  <MdOutlineCategory className="h-16 w-16" fill={color} />
+                )}
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold leading-6 text-center">
+                  {fileName}
+                </h3>
+                <p className="leading-4 text-[0.625rem] px-4 text-muted-foreground">
+                  {description}
+                </p>
+              </div>
             </div>
-          </div>
-        </SwiperSlide>
-      ))}
+          </SwiperSlide>
+        ),
+      )}
       <div className={'swiper-pagination !relative'}></div>
     </Swiper>
   );
