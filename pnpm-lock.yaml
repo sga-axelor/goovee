@@ -41,6 +41,9 @@ dependencies:
   '@lexical/mark':
     specifier: 0.31.2
     version: 0.31.2
+  '@lexical/markdown':
+    specifier: ^0.31.2
+    version: 0.31.2
   '@lexical/overflow':
     specifier: 0.31.2
     version: 0.31.2
