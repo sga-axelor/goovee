@@ -21,7 +21,7 @@ export async function create(formData: FormData, workspaceURL: string) {
   const description = formData.get('description') as string;
   const icon = formData.get('icon')!;
   const parentId = formData.get('parent')!;
-  const color = formData.get('color')!;
+  const color = formData.get('color') as string;
 
   if (!workspaceURL) {
     return {
@@ -137,6 +137,7 @@ export async function create(formData: FormData, workspaceURL: string) {
           isPrivate,
           permissionSelect,
           description,
+          colorSelect: color,
           ...(partnerSet?.length
             ? {
                 partnerSet: {

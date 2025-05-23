@@ -28,14 +28,14 @@ export default function Categories({items}: any) {
         type: 'bullets',
         clickable: true,
       }}>
-      {items.map(({fileName, description, id}: any) => (
+      {items.map(({fileName, description, id, colorSelect: color}: any) => (
         <SwiperSlide
           key={id}
           className="!mr-0 !w-[281px] cursor-pointer"
           onClick={handleRedirection(id)}>
           <div className="space-y-2">
             <div className="!h-[144px] bg-white rounded-lg flex justify-center items-center">
-              <MdOutlineCategory className="h-16 w-16" />
+              <MdOutlineCategory className="h-16 w-16" fill={color} />
             </div>
             <div className="space-y-2">
               <h3 className="font-semibold leading-6 text-center">

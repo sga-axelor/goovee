@@ -5,20 +5,88 @@ export const ACTION = {
 
 export const COLORS = [
   {
+    label: 'Red',
+    value: 'red',
+  },
+  {
+    label: 'Pink',
+    value: 'pink',
+  },
+  {
     label: 'Purple',
     value: 'purple',
   },
   {
-    label: 'Turquoise',
-    value: 'turquoise',
+    label: 'Deeppurple',
+    value: 'deeppurple',
+  },
+  {
+    label: 'Indigo',
+    value: 'indigo',
+  },
+  {
+    label: 'Blue',
+    value: 'blue',
+  },
+  {
+    label: 'Lightblue',
+    value: 'lightblue',
+  },
+  {
+    label: 'Cyan',
+    value: 'cyan',
+  },
+  {
+    label: 'Teal',
+    value: 'teal',
   },
   {
     label: 'Green',
     value: 'green',
   },
   {
-    label: 'Blue',
-    value: 'blue',
+    label: 'Lightgreen',
+    value: 'lightgreen',
+  },
+  {
+    label: 'Lime',
+    value: 'lime',
+  },
+  {
+    label: 'Yellow',
+    value: 'yellow',
+  },
+  {
+    label: 'Amber',
+    value: 'amber',
+  },
+  {
+    label: 'Orange',
+    value: 'orange',
+  },
+  {
+    label: 'Deeporange',
+    value: 'deeporange',
+  },
+  {
+    label: 'Brown',
+    value: 'brown',
+  },
+  {
+    label: 'Grey',
+    value: 'grey',
+  },
+  {
+    label: 'Bluegrey',
+    value: 'bluegrey',
+  },
+  {
+    label: 'Black',
+    value: 'black',
+  },
+  {
+    label: 'White',
+    value: 'white',
   },
 ];
 
