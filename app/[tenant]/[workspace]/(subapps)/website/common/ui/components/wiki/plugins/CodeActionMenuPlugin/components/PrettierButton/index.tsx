@@ -19,15 +19,15 @@ interface Props {
 }
 
 const PRETTIER_PARSER_MODULES = {
-  css: [() => import('prettier/parser-postcss')],
-  html: [() => import('prettier/parser-html')],
+  css: [() => import('prettier/plugins/postcss')],
+  html: [() => import('prettier/plugins/html')],
   js: [
-    () => import('prettier/parser-babel'),
+    () => import('prettier/plugins/babel'),
     () => import('prettier/plugins/estree'),
   ],
-  markdown: [() => import('prettier/parser-markdown')],
+  markdown: [() => import('prettier/plugins/markdown')],
   typescript: [
-    () => import('prettier/parser-typescript'),
+    () => import('prettier/plugins/typescript'),
     () => import('prettier/plugins/estree'),
   ],
 } as const;
