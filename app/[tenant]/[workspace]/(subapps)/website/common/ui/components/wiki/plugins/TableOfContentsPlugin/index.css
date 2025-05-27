@@ -42,16 +42,6 @@
 
   .table-of-contents {
     color: #65676b;
-    position: fixed;
-    top: 200px;
-    right: -35px;
-    padding: 10px;
-    width: 250px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    z-index: 1;
-    height: 300px;
   }
 
   .first-heading {
@@ -64,27 +54,17 @@
     list-style: none;
     margin-top: 0;
     margin-left: 10px;
+    height: fit-content;
+    position: relative;
     padding: 0;
-    overflow: scroll;
-    width: 200px;
-    height: 220px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .headings::-webkit-scrollbar {
-    display: none;
   }
 
   .headings::before {
     content: ' ';
     position: absolute;
-    height: 220px;
+    height: 100%;
     width: 4px;
-    right: 240px;
+    left: 7px;
     margin-top: 5px;
     background-color: #ccd0d5;
     border-radius: 2px;

@@ -27,7 +27,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #eee;
-  padding: 0 20px;
   height: 100%;
 
   header {
@@ -56,22 +55,48 @@
     display: inline-block;
     margin: 20px 0 0 0;
   }
+
+  .wiki-container {
+    display: flex;
+    height: 100%;
+    overflow: auto;
+  }
+
   .editor-shell {
-    margin: 20px auto;
     border-radius: 2px;
-    max-width: 1100px;
     color: #000;
     position: relative;
     line-height: 1.7;
     font-weight: 400;
+    flex: 1 1 1px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .wiki-sidebar {
+    display: none;
+    width: 300px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    top: 0;
+    height: calc(100vh - 98px);
+  }
+
+  @media screen and (min-width: 1024px) {
+    .wiki-sidebar {
+      display: block;
+    }
   }
 
   .editor-shell .editor-container {
     background: #fff;
     position: relative;
     display: block;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    height: calc(100vh - 142px);
+    overflow: auto;
   }
 
   .editor-shell .editor-container.tree-view {
@@ -1511,15 +1536,12 @@
     margin-bottom: 1px;
     background: #fff;
     padding: 4px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
     vertical-align: middle;
     overflow: auto;
     height: 36px;
-    position: sticky;
-    top: 0;
     z-index: 2;
     overflow-y: hidden; /* disable vertical scroll*/
+    flex-shrink: 0;
   }
 
   button.toolbar-item {

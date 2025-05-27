@@ -25,7 +25,7 @@ import {parseAllowedColor} from './ui/ColorPicker';
 import './index.css';
 import Settings from './Settings';
 import {TemplateProps} from '../../../types';
-import {useMemo} from 'react';
+import TableOfContentsPlugin from './plugins/TableOfContentsPlugin';
 
 function $prepopulatedRichText() {
   const root = $getRoot();
@@ -193,19 +193,24 @@ export function Wiki(props: TemplateProps<WikiProps>) {
   };
 
   return (
-    <div className="wiki relative">
+    <div className="wiki relative h-full">
       <SettingsContext>
         <FlashMessageContext>
           <LexicalComposer initialConfig={initialConfig}>
             <SharedHistoryContext>
               <TableContext>
                 <ToolbarContext>
-                  <div className="editor-shell">
-                    <Editor
-                      content={content}
-                      contentId={String(contentId!)}
-                      contentVersion={contentVersion!}
-                    />
+                  <div className="wiki-container">
+                    <aside className="wiki-sidebar">
+                      <TableOfContentsPlugin />
+                    </aside>
+                    <div className="editor-shell">
+                      <Editor
+                        content={content}
+                        contentId={String(contentId!)}
+                        contentVersion={contentVersion!}
+                      />
+                    </div>
                   </div>
                   <Settings />
                 </ToolbarContext>

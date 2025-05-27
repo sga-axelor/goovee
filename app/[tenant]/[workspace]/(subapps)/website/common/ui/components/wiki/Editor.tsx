@@ -270,7 +270,6 @@ export default function Editor(props: {
           />
         )}
         {isAutocomplete && <AutocompletePlugin />}
-        <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
         {shouldUseLexicalContextMenu && <ContextMenuPlugin />}
         {shouldAllowHighlightingWithBrackets && <SpecialTextPlugin />}
         <ActionsPlugin
