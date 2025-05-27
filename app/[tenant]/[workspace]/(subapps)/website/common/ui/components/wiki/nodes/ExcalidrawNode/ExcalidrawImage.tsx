@@ -6,14 +6,17 @@
  *
  */
 
-import type {
-  ExcalidrawElement,
-  NonDeleted,
-} from '@excalidraw/excalidraw/element/types';
-import type {AppState, BinaryFiles} from '@excalidraw/excalidraw/types';
 import type {JSX} from 'react';
 
 import {exportToSvg} from '@excalidraw/excalidraw';
+import type {
+  ExcalidrawElement,
+  NonDeleted,
+} from '@excalidraw/excalidraw/dist/types/excalidraw/element/types';
+import type {
+  AppState,
+  BinaryFiles,
+} from '@excalidraw/excalidraw/dist/types/excalidraw/types';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 

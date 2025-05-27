@@ -5,9 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type {ExcalidrawInitialElements} from '../../ui/ExcalidrawModal';
-import type {AppState, BinaryFiles} from '@excalidraw/excalidraw/types';
+import type {
+  AppState,
+  BinaryFiles,
+} from '@excalidraw/excalidraw/dist/types/excalidraw/types';
 import type {JSX} from 'react';
+import type {ExcalidrawInitialElements} from '../../ui/ExcalidrawModal';
 
 import '@excalidraw/excalidraw/index.css';
 
