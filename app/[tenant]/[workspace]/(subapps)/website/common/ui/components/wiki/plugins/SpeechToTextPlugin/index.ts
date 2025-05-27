@@ -19,8 +19,6 @@ import {
 } from 'lexical';
 import {useEffect, useRef, useState} from 'react';
 
-import useReport from '../../hooks/useReport';
-
 export const SPEECH_TO_TEXT_COMMAND: LexicalCommand<boolean> = createCommand(
   'SPEECH_TO_TEXT_COMMAND',
 );
@@ -52,7 +50,6 @@ function SpeechToTextPlugin(): null {
     // @ts-expect-error missing type
     window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = useRef<typeof SpeechRecognition | null>(null);
-  const report = useReport();
 
   useEffect(() => {
     if (isEnabled && recognition.current === null) {
@@ -64,7 +61,6 @@ function SpeechToTextPlugin(): null {
         (event: typeof SpeechRecognition) => {
           const resultItem = event.results.item(event.resultIndex);
           const {transcript} = resultItem.item(0);
-          report(transcript);
 
           if (!resultItem.isFinal) {
             return;
@@ -105,7 +101,7 @@ function SpeechToTextPlugin(): null {
         recognition.current.stop();
       }
     };
-  }, [SpeechRecognition, editor, isEnabled, report]);
+  }, [SpeechRecognition, editor, isEnabled]);
   useEffect(() => {
     return editor.registerCommand(
       SPEECH_TO_TEXT_COMMAND,
