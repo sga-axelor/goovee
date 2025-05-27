@@ -403,6 +403,9 @@ devDependencies:
   '@types/lodash':
     specifier: ^4.17.13
     version: 4.17.13
+  '@types/lodash-es':
+    specifier: ^4.17.12
+    version: 4.17.12
   '@types/node':
     specifier: ^20.17.6
     version: 20.17.6
@@ -4262,6 +4265,12 @@ packages:
     resolution: {integrity: sha512-wzZoyySUxkgMZ0ihJ7IaUIblG8Rdc8AbbZKLneyn+QjYsj5q1QU7TEKYqwTr10BGSzY5LI7tJk9Ifo+mEjdFRw==}
     dependencies:
       '@types/geojson': 7946.0.15
+    dev: true
+
+  /@types/lodash-es@4.17.12:
+    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
+    dependencies:
+      '@types/lodash': 4.17.13
     dev: true
 
   /@types/lodash@4.17.13:
