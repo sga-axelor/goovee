@@ -93,7 +93,6 @@
 
   .editor-shell .editor-container {
     background: #fff;
-    position: relative;
     display: block;
     height: calc(100vh - 142px);
     overflow: auto;
