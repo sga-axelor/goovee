@@ -96,7 +96,11 @@ export default async function Layout({
       <CartContext>
         <div className="h-full w-full flex min-h-screen">
           {isLeftNavigation && (
-            <Sidebar subapps={subapps} workspaces={workspaces} />
+            <Sidebar
+              subapps={subapps}
+              workspaces={workspaces}
+              workspace={$workspace}
+            />
           )}
           <div className="flex flex-col flex-1 max-h-full max-w-full min-w-0">
             <Header
@@ -110,7 +114,11 @@ export default async function Layout({
               <Footer />
             </div>
           </div>
-          <MobileMenu subapps={subapps} workspaces={workspaces} />
+          <MobileMenu
+            subapps={subapps}
+            workspaces={workspaces}
+            workspace={$workspace}
+          />
         </div>
       </CartContext>
     </Workspace>

@@ -28,9 +28,11 @@ import {useWorkspace} from './workspace-context';
 export function Sidebar({
   subapps,
   workspaces,
+  workspace,
 }: {
   subapps: any;
   workspaces?: any;
+  workspace?: any;
 }) {
   const {data: session} = useSession();
   const [collapsed, setCollapsed] = useState(false);
@@ -50,10 +52,12 @@ export function Sidebar({
     return null;
   }
 
+  const displayContact = workspace?.config?.isDisplayContact;
+
   return (
     <div
       className={cn(
-        'hidden lg:block sticky left-0 top-0 h-full min-h-screen transition-all bg-secondary text-secondary-foreground w-60 py-3 px-6 shrink-0 z-10',
+        'hidden lg:flex lg:flex-col sticky left-0 top-0 h-full min-h-screen transition-all bg-secondary text-secondary-foreground w-60 py-3 px-6 shrink-0 z-10',
         {'w-14 py-3 px-4': collapsed},
       )}>
       <div className="flex items-center gap-4 mb-10">
@@ -83,7 +87,7 @@ export function Sidebar({
           )
         ) : null}
       </div>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col flex-1 gap-6">
         <TooltipProvider>
           {subapps
             ?.filter((app: any) => app.installed)
@@ -156,6 +160,14 @@ export function Sidebar({
               </p>
             </div>
           </Link>
+          <div className="flex-1" />
+          {displayContact && (
+            <div className="flex flex-col gap-1">
+              <p className="font-medium">{workspace?.config?.contactName}</p>
+              <p>{workspace?.config?.contactEmailAddress?.address}</p>
+              <p>{workspace?.config?.contactPhone}</p>
+            </div>
+          )}
         </TooltipProvider>
       </div>
     </div>

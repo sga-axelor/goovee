@@ -114,6 +114,10 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   isShowPublicationAuthor: true,
   isShowPublicationDate: true,
   isShowPublicationTime: true,
+  isDisplayContact: true,
+  contactEmailAddress: true,
+  contactName: true,
+  contactPhone: true,
 };
 
 export async function findWorkspaceMembers({

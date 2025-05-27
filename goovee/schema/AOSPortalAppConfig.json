@@ -330,6 +330,23 @@
     {
       "name": "isShowPublicationTime",
       "type": "Boolean"
+    },
+    {
+      "name": "isDisplayContact",
+      "type": "Boolean"
+    },
+    {
+      "name": "contactName",
+      "type": "String"
+    },
+    {
+      "name": "contactEmailAddress",
+      "type": "OneToOne",
+      "target": "AOSEmailAddress"
+    },
+    {
+      "name": "contactPhone",
+      "type": "String"
     }
   ]
 }

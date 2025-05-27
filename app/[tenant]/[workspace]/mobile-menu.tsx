@@ -23,7 +23,7 @@ import {i18n} from '@/locale';
 import {useNavigationVisibility} from '@/ui/hooks';
 import Cart from '@/app/[tenant]/[workspace]/cart';
 
-function MobileSidebar({subapps, workspaces}: any) {
+function MobileSidebar({subapps, workspaces, workspace}: any) {
   const pathname = usePathname();
   const {data: session} = useSession();
   const [open, setOpen] = useState(false);
@@ -44,13 +44,13 @@ function MobileSidebar({subapps, workspaces}: any) {
     closeSidebar();
   }, [pathname, closeSidebar]);
 
+  const displayContact = workspace?.config?.isDisplayContact;
+
   return (
     <>
       <MdApps onClick={openSidebar} className="cursor-pointer h-6 w-6" />
       <Sheet open={open} onOpenChange={closeSidebar}>
-        <SheetContent
-          side="left"
-          className="bg-white divide-y divide-grey-1 overflow-auto">
+        <SheetContent side="left" className="bg-white overflow-auto">
           {user && Boolean(workspaces?.length) ? (
             workspaces.length === 1 ? (
               <Link href={workspaceURL}>
@@ -114,13 +114,20 @@ function MobileSidebar({subapps, workspaces}: any) {
               </div>
             </Link>
           )}
+          {displayContact && (
+            <div className="flex flex-col gap-1 mt-4 pt-8 px-6 py-2">
+              <p className="font-medium">{workspace?.config?.contactName}</p>
+              <p>{workspace?.config?.contactEmailAddress?.address}</p>
+              <p>{workspace?.config?.contactPhone}</p>
+            </div>
+          )}
         </SheetContent>
       </Sheet>
     </>
   );
 }
 
-export function MobileMenu({subapps, workspaces}: any) {
+export function MobileMenu({subapps, workspaces, workspace}: any) {
   const router = useRouter();
   const redirect = () => router.push('/notifications');
 
@@ -138,7 +145,11 @@ export function MobileMenu({subapps, workspaces}: any) {
   return (
     <nav className="flex items-center w-screen fixed left-0 bottom-0 h-[72px] bg-white z-50 lg:hidden dark:bg-secondary px-8 pt-4 pb-6">
       <div className="flex items-center justify-between w-full">
-        <MobileSidebar subapps={subapps} workspaces={workspaces} />
+        <MobileSidebar
+          subapps={subapps}
+          workspaces={workspaces}
+          workspace={workspace}
+        />
         {/** Render Subapp Menu using Portal */}
         <div id="subapp-menu" className="hidden" />
         {false && (
