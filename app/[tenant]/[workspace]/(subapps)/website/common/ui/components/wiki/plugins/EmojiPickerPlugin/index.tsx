@@ -160,6 +160,7 @@ export default function EmojiPickerPlugin() {
       onQueryChange={setQueryString}
       onSelectOption={onSelectOption}
       triggerFn={checkForTriggerMatch}
+      anchorClassName="wiki"
       options={options}
       menuRenderFn={(
         anchorElementRef,
