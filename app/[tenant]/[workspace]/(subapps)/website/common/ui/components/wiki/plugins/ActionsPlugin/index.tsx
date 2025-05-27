@@ -9,7 +9,6 @@
 import type {LexicalEditor} from 'lexical';
 import type {JSX} from 'react';
 
-import {$createCodeNode, $isCodeNode} from '@lexical/code';
 import {
   editorStateFromSerializedDocument,
   exportFile,
@@ -17,41 +16,31 @@ import {
   SerializedDocument,
   serializedDocumentFromEditorState,
 } from '@lexical/file';
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-} from '@lexical/markdown';
-import {useCollaborationContext} from '@lexical/react/LexicalCollaborationContext';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {mergeRegister} from '@lexical/utils';
-import {CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND} from '@lexical/yjs';
 import {
-  $createTextNode,
   $getRoot,
   $isParagraphNode,
   CLEAR_EDITOR_COMMAND,
   CLEAR_HISTORY_COMMAND,
   COLLABORATION_TAG,
-  COMMAND_PRIORITY_EDITOR,
   HISTORIC_TAG,
 } from 'lexical';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
-import {INITIAL_SETTINGS} from '../../appSettings';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {i18n} from '@/locale';
+import {useToast} from '@/ui/hooks';
+import {useParams, useRouter} from 'next/navigation';
+import {updateWikiContent} from '../../../../../action';
 import useFlashMessage from '../../hooks/useFlashMessage';
 import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';
 import {docFromHash, docToHash} from '../../utils/docSerialization';
-import {PLAYGROUND_TRANSFORMERS} from '../MarkdownTransformers';
 import {
   SPEECH_TO_TEXT_COMMAND,
   SUPPORT_SPEECH_RECOGNITION,
 } from '../SpeechToTextPlugin';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {updateWikiContent} from '../../../../../action';
-import {useParams, useRouter} from 'next/navigation';
-import {useToast} from '@/ui/hooks';
-import {i18n} from '@/locale';
 
 async function sendEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());
@@ -103,14 +92,10 @@ export default function ActionsPlugin({
   contentId,
   contentVersion,
   content,
-  isRichText,
-  shouldPreserveNewLinesInMarkdown,
 }: {
   content: string | undefined;
   contentId: string;
   contentVersion: number;
-  isRichText: boolean;
-  shouldPreserveNewLinesInMarkdown: boolean;
 }): JSX.Element {
   const {workspaceURL} = useWorkspace();
 
@@ -121,11 +106,9 @@ export default function ActionsPlugin({
   const [editor] = useLexicalComposerContext();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const [isSpeechToText, setIsSpeechToText] = useState(false);
-  const [connected, setConnected] = useState(false);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [modal, showModal] = useModal();
   const showFlashMessage = useFlashMessage();
-  const {isCollabActive} = useCollaborationContext();
 
   useEffect(() => {
     if (content) {
@@ -173,9 +156,6 @@ export default function ActionsPlugin({
   }
 
   useEffect(() => {
-    if (INITIAL_SETTINGS.isCollab) {
-      return;
-    }
     docFromHash(window.location.hash).then(doc => {
       if (doc && doc.source === 'Playground') {
         editor.setEditorState(editorStateFromSerializedDocument(editor, doc));
@@ -188,15 +168,6 @@ export default function ActionsPlugin({
       editor.registerEditableListener(editable => {
         setIsEditable(editable);
       }),
-      editor.registerCommand<boolean>(
-        CONNECTED_COMMAND,
-        payload => {
-          const isConnected = payload;
-          setConnected(isConnected);
-          return false;
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
     );
   }, [editor]);
 
@@ -231,33 +202,6 @@ export default function ActionsPlugin({
       },
     );
   }, [editor, isEditable]);
-
-  const handleMarkdownToggle = useCallback(() => {
-    editor.update(() => {
-      const root = $getRoot();
-      const firstChild = root.getFirstChild();
-      if ($isCodeNode(firstChild) && firstChild.getLanguage() === 'markdown') {
-        $convertFromMarkdownString(
-          firstChild.getTextContent(),
-          PLAYGROUND_TRANSFORMERS,
-          undefined, // node
-          shouldPreserveNewLinesInMarkdown,
-        );
-      } else {
-        const markdown = $convertToMarkdownString(
-          PLAYGROUND_TRANSFORMERS,
-          undefined, //node
-          shouldPreserveNewLinesInMarkdown,
-        );
-        const codeNode = $createCodeNode('markdown');
-        codeNode.append($createTextNode(markdown));
-        root.clear().append(codeNode);
-        if (markdown.length === 0) {
-          codeNode.select();
-        }
-      }
-    });
-  }, [editor, shouldPreserveNewLinesInMarkdown]);
 
   return (
     <div className="actions">
@@ -303,7 +247,6 @@ export default function ActionsPlugin({
       </button>
       <button
         className="action-button share"
-        disabled={isCollabActive || INITIAL_SETTINGS.isCollab}
         onClick={() =>
           shareDoc(
             serializedDocumentFromEditorState(editor.getEditorState(), {
@@ -343,28 +286,6 @@ export default function ActionsPlugin({
         aria-label={`${!isEditable ? 'Unlock' : 'Lock'} read-only mode`}>
         <i className={!isEditable ? 'unlock' : 'lock'} />
       </button>
-      <button
-        className="action-button"
-        onClick={handleMarkdownToggle}
-        title="Convert From Markdown"
-        aria-label="Convert from markdown">
-        <i className="markdown" />
-      </button>
-      {isCollabActive && (
-        <button
-          className="action-button connect"
-          onClick={() => {
-            editor.dispatchCommand(TOGGLE_CONNECT_COMMAND, !connected);
-          }}
-          title={`${
-            connected ? 'Disconnect' : 'Connect'
-          } Collaborative Editing`}
-          aria-label={`${
-            connected ? 'Disconnect from' : 'Connect to'
-          } a collaborative editing server`}>
-          <i className={connected ? 'disconnect' : 'connect'} />
-        </button>
-      )}
       {modal}
     </div>
   );

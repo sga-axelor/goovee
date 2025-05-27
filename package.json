@@ -33,7 +33,6 @@
     "@lexical/selection": "0.31.2",
     "@lexical/table": "0.31.2",
     "@lexical/utils": "0.31.2",
-    "@lexical/yjs": "^0.31.2",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@paypal/react-paypal-js": "^8.8.2",
     "@popperjs/core": "^2.11.8",
@@ -134,7 +133,6 @@
     "usehooks-ts": "^3.1.0",
     "vaul": "^0.9.9",
     "y-websocket": "^1.5.4",
-    "yjs": ">=13.5.42",
     "zod": "^3.23.8",
     "zustand": "^4.5.5"
   },
