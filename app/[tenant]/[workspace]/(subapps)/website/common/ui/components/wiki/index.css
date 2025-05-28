@@ -8,6 +8,49 @@
 
 @import 'https://fonts.googleapis.com/css?family=Reenie+Beanie';
 
+@keyframes wiki-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-200px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes wiki-mic-pulsate-color {
+  0% {
+    background-color: #ffdcdc;
+  }
+
+  50% {
+    background-color: #ff8585;
+  }
+
+  100% {
+    background-color: #ffdcdc;
+  }
+}
+
+@keyframes wiki-octocat-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+
+  20%,
+  60% {
+    transform: rotate(-25deg);
+  }
+
+  40%,
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
 .wiki.wiki.wiki {
   *,
   *::before,
@@ -958,19 +1001,7 @@
     position: fixed;
     left: 10px;
     bottom: 70px;
-    animation: slide-in 0.4s ease;
-  }
-
-  @keyframes slide-in {
-    0% {
-      opacity: 0;
-      transform: translateX(-200px);
-    }
-
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    animation: wiki-slide-in 0.4s ease;
   }
 
   .switch {
@@ -1430,27 +1461,13 @@
   }
 
   .action-button-mic.active {
-    animation: mic-pulsate-color 3s infinite;
+    animation: wiki-mic-pulsate-color 3s infinite;
   }
 
   button.action-button:disabled {
     opacity: 0.6;
     background: #eee;
     cursor: not-allowed;
-  }
-
-  @keyframes mic-pulsate-color {
-    0% {
-      background-color: #ffdcdc;
-    }
-
-    50% {
-      background-color: #ff8585;
-    }
-
-    100% {
-      background-color: #ffdcdc;
-    }
   }
 
   .debug-timetravel-panel {
@@ -1765,24 +1782,7 @@
   }
 
   .github-corner:hover .octo-arm {
-    animation: octocat-wave 560ms ease-in-out;
-  }
-
-  @keyframes octocat-wave {
-    0%,
-    100% {
-      transform: rotate(0);
-    }
-
-    20%,
-    60% {
-      transform: rotate(-25deg);
-    }
-
-    40%,
-    80% {
-      transform: rotate(10deg);
-    }
+    animation: wiki-octocat-wave 560ms ease-in-out;
   }
 
   @media (max-width: 500px) {
@@ -1791,7 +1791,7 @@
     }
 
     .github-corner .octo-arm {
-      animation: octocat-wave 560ms ease-in-out;
+      animation: wiki-octocat-wave 560ms ease-in-out;
     }
   }
 

@@ -6,6 +6,22 @@
  *
  *
  */
+
+@keyframes wiki-cursor-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes wiki-table-controls {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .wiki.wiki.wiki.wiki {
   .PlaygroundEditorTheme__ltr {
     text-align: left;
@@ -162,12 +178,7 @@
     top: -2px;
     width: 20px;
     border-top: 1px solid black;
-    animation: CursorBlink 1.1s steps(2, start) infinite;
-  }
-  @keyframes CursorBlink {
-    to {
-      visibility: hidden;
-    }
+    animation: wiki-cursor-blink 1.1s steps(2, start) infinite;
   }
   .PlaygroundEditorTheme__code {
     background-color: rgb(240, 242, 245);
@@ -329,7 +340,7 @@
     position: absolute;
     background-color: #eee;
     height: 100%;
-    animation: table-controls 0.2s ease;
+    animation: wiki-table-controls 0.2s ease;
     border: 0;
     cursor: pointer;
   }
@@ -355,7 +366,7 @@
     position: absolute;
     width: calc(100% - 25px);
     background-color: #eee;
-    animation: table-controls 0.2s ease;
+    animation: wiki-table-controls 0.2s ease;
     border: 0;
     cursor: pointer;
   }
@@ -372,14 +383,6 @@
     width: 100%;
     height: 100%;
     opacity: 0.4;
-  }
-  @keyframes table-controls {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
   }
   .PlaygroundEditorTheme__tableCellResizeRuler {
     display: block;
