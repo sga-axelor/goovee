@@ -3,6 +3,11 @@ export const DEFAULT_PAGE = 1;
 export const HOMEPAGE_NEWS_LIMIT = 12;
 export const DEFAULT_NEWS_ASIDE_LIMIT = 5;
 
+export const HEADER_NEWS_LIMIT = 3;
+export const ASIDE_NEWS_LIMIT = 4;
+export const FOOTER_NEWS_LIMIT = 5;
+export const NEWS_FEED_LIMIT = 4;
+
 // Button Labels
 export const SUBSCRIBE = 'SUBSCRIBE';
 export const SEND = 'SEND';

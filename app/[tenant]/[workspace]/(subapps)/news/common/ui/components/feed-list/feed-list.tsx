@@ -93,7 +93,8 @@ export function FeedListSkeleton({
   count?: number;
 }) {
   return (
-    <div className={`bg-white h-max p-4 rounded-lg ${width ? '' : 'lg:w-2/5'}`}>
+    <div
+      className={`bg-white h-max p-4 rounded-lg ${width ? width : 'basis-[40%]'}`}>
       <Skeleton className="h-7 w-32 mb-1.5" />
       {[...Array(count)].map((_, index) => (
         <div key={index}>

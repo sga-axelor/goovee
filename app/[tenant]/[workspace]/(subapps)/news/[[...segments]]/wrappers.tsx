@@ -6,12 +6,21 @@ import {SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
 import {t} from '@/locale/server';
+import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   findCategories,
+  findCategoryAsideNews,
+  findCategoryBottomFeedNews,
+  findCategoryFooterNews,
+  findCategoryPageFeaturedNews,
+  findCategoryPageHeaderNews,
   findCategoryTitleBySlugName,
-  findNews,
+  findHomePageAsideNews,
+  findHomePageFeaturedNews,
+  findHomePageFooterNews,
+  findHomePageHeaderNews,
   findNewsByCategory,
 } from '@/subapps/news/common/orm/news';
 import {
@@ -31,7 +40,7 @@ import {
 } from '@/subapps/news/common/ui/components';
 import {
   CATEGORIES,
-  DEFAULT_NEWS_ASIDE_LIMIT,
+  DEFAULT_LIMIT,
   FEATURED_NEWS,
   LATEST_NEWS,
   RECOMMENDED_NEWS,
@@ -50,6 +59,7 @@ import {
   fetchComments,
   findRecommendedNews,
 } from '@/subapps/news/common/actions/action';
+import PaginationContent from '@/subapps/news/[[...segments]]/pagination-content';
 
 interface CategorySegment {
   slug: string;
@@ -101,13 +111,26 @@ export async function NavMenuWrapper({
   return <NavMenu categories={allCategories} />;
 }
 
-export async function LeadStoriesWrapper({
-  news,
+export async function HomePageHeaderNewsWrapper({
+  workspace,
+  tenant,
   navigatingPathFrom,
 }: {
-  news: any[];
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
   navigatingPathFrom: string;
 }) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findHomePageHeaderNews({workspace, tenant, user});
+
+  const news = Array.isArray(response) ? [] : response.news || [];
+
+  if (!news?.length) {
+    return null;
+  }
+
   const title = await t(LATEST_NEWS);
   return (
     <div>
@@ -120,78 +143,85 @@ export async function LeadStoriesWrapper({
   );
 }
 
-export async function HomepageNewsGridLayoutWrapper({
+export async function FeaturedHomePageNewsWrapper({
   workspace,
   tenant,
-  user,
-  news,
 }: {
   workspace: PortalWorkspace;
   tenant: Tenant['id'];
-  user: any;
-  news: any[];
 }) {
-  const {news: featuredNews}: any = await findNews({
-    isFeaturedNews: true,
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findHomePageFeaturedNews({
     workspace,
-    tenantId: tenant,
+    tenant,
     user,
-    limit: DEFAULT_NEWS_ASIDE_LIMIT,
   }).then(clone);
 
-  const hasFeaturedNews = featuredNews?.length > 0;
+  const featuredNews = Array.isArray(response) ? [] : response.news || [];
+
+  if (!featuredNews.length) return null;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {hasFeaturedNews && (
-        <Suspense fallback={<FeedListSkeleton count={5} />}>
-          <FeedList
-            title={await t(FEATURED_NEWS)}
-            items={featuredNews}
-            navigatingPathFrom={`${SUBAPP_CODES.news}`}
-          />
-        </Suspense>
-      )}
-      <div
-        className={`${hasFeaturedNews ? 'lg:w-3/5' : 'w-full'} flex flex-col gap-4`}>
-        <Suspense
-          fallback={
-            <NewsListSkeleton
-              width={hasFeaturedNews ? 'lg:w-3/5' : 'w-full'}
-              count={4}
-            />
-          }>
-          <NewsListWrapper news={news} />
-        </Suspense>
-      </div>
-    </div>
+    <FeedList
+      title={await t(FEATURED_NEWS)}
+      items={featuredNews}
+      navigatingPathFrom={`${SUBAPP_CODES.news}`}
+    />
   );
 }
 
-export async function NewsListWrapper({news}: {news: any[]}) {
-  return news
-    .slice(3, 7)
-    ?.map((news: any) => (
-      <NewsList
-        key={news.id}
-        id={news.id}
-        news={news}
-        navigatingPathFrom={`${SUBAPP_CODES.news}`}
-      />
-    ));
+export async function HomePageAsideNewsWrapper({
+  workspace,
+  tenant,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findHomePageAsideNews({workspace, tenant, user});
+
+  const news = Array.isArray(response) ? [] : response.news || [];
+
+  if (!news.length) return null;
+
+  return news.map(item => (
+    <NewsList
+      key={item.id}
+      id={item.id}
+      news={item}
+      navigatingPathFrom={SUBAPP_CODES.news}
+    />
+  ));
 }
 
-export async function NewsCardWrapper({news}: {news: any[]}) {
-  return news
-    .slice(7, 12)
-    ?.map((news: any) => (
-      <NewsCard
-        key={news.id}
-        id={news.id}
-        news={news}
-        navigatingPathFrom={`${SUBAPP_CODES.news}`}
-      />
-    ));
+export async function HomePageFooterNewsWrapper({
+  workspace,
+  tenant,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findHomePageFooterNews({workspace, tenant, user});
+
+  const news = Array.isArray(response) ? [] : response.news || [];
+
+  if (!news.length) return null;
+
+  return news.map((news: any) => (
+    <NewsCard
+      key={news.id}
+      id={news.id}
+      news={news}
+      navigatingPathFrom={`${SUBAPP_CODES.news}`}
+    />
+  ));
 }
 
 export async function SubCategorySliderWrapper({
@@ -230,172 +260,297 @@ export async function SubCategorySliderWrapper({
   );
 }
 
-export async function CategoryNewsGridLayoutWrapper({
+export async function CategoryPageHeaderNewsWrapper({
   workspace,
   tenant,
-  user,
-  slug,
   navigatingPathFrom,
-  news,
-  pageInfo,
+  slug,
+  page,
 }: {
   workspace: PortalWorkspace;
   tenant: Tenant['id'];
-  user: any;
+  navigatingPathFrom: string;
+  slug: string;
+  page: number;
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response: any = await findCategoryPageHeaderNews({
+    workspace,
+    tenant,
+    user,
+    slug,
+  });
+
+  const {news} = response;
+  if (page !== 1 || !news.length) return null;
+
+  const title = await t(LATEST_NEWS);
+
+  return (
+    <div>
+      <LeadStories
+        title={title}
+        news={news}
+        navigatingPathFrom={navigatingPathFrom}
+      />
+    </div>
+  );
+}
+
+export async function CategoryNewsGridLayoutWrapper({
+  workspace,
+  tenant,
+  slug,
+  navigatingPathFrom,
+  page,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
   slug: string;
   navigatingPathFrom: string;
-  news: any;
-  pageInfo: any;
+  page: string | number;
 }) {
-  const {news: featuredNews}: any = await findNewsByCategory({
-    isFeaturedNews: true,
-    slug,
-    workspace,
-    tenantId: tenant,
-    user,
-    limit: DEFAULT_NEWS_ASIDE_LIMIT,
-  }).then(clone);
-
-  const hasFeaturedNews = featuredNews?.length > 0;
-
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-6">
-        {hasFeaturedNews && (
-          <Suspense fallback={<FeedListSkeleton count={5} />}>
-            <FeedList
-              title={await t(FEATURED_NEWS)}
-              items={featuredNews}
-              navigatingPathFrom={navigatingPathFrom}
-            />
-          </Suspense>
-        )}
-        <Suspense
-          fallback={
-            <NewsListSkeleton
-              width={hasFeaturedNews ? 'lg:w-3/5' : 'w-full'}
-              count={4}
-            />
-          }>
-          <CategoryNewsListWrapper
-            news={news}
-            start={Number(pageInfo.page) !== 1 ? 0 : 3}
-            end={Number(pageInfo.page) !== 1 ? 4 : 7}
-            width={hasFeaturedNews ? 'lg:w-3/5' : 'w-full'}
-            navigatingPath={navigatingPathFrom}
+        <Suspense fallback={<FeedListSkeleton count={5} />}>
+          <CategoryFeaturedNewsWrapper
+            workspace={workspace}
+            tenant={tenant}
+            slug={slug}
+            navigatingPathFrom={navigatingPathFrom}
+          />
+        </Suspense>
+        <Suspense fallback={<NewsListSkeleton width={'flex-1'} count={4} />}>
+          <CategoryAsideNewsWrapper
+            workspace={workspace}
+            tenant={tenant}
+            slug={slug}
+            navigatingPathFrom={navigatingPathFrom}
+            page={page}
           />
         </Suspense>
       </div>
       <Suspense fallback={<NewsCardSkeleton count={5} />}>
-        <CategoryNewsCardWrapper
-          news={news}
-          start={Number(pageInfo.page) !== 1 ? 4 : 7}
-          end={Number(pageInfo.page) !== 1 ? 9 : 12}
-          navigatingPath={navigatingPathFrom}
+        <CategoryFooterNewsWrapper
+          workspace={workspace}
+          tenant={tenant}
+          slug={slug}
+          navigatingPathFrom={navigatingPathFrom}
+          page={page}
         />
       </Suspense>
       <Suspense fallback={<NewsListSkeleton width="w-full" count={4} />}>
-        <CategoryNewsListWrapper
-          news={news}
-          start={Number(pageInfo.page) !== 1 ? 9 : 12}
-          end={16}
-          width="w-full"
-          navigatingPath={navigatingPathFrom}
+        <CategoryBottomFeedNewsWrapper
+          workspace={workspace}
+          tenant={tenant}
+          slug={slug}
+          navigatingPathFrom={navigatingPathFrom}
+          page={page}
         />
       </Suspense>
+      <PaginationWrapper
+        workspace={workspace}
+        tenant={tenant}
+        slug={slug}
+        page={page}
+      />
     </>
   );
 }
 
-const renderNewsItems = ({
-  news,
-  start,
-  end,
-  Component,
-  navigatingPath,
+export async function CategoryFeaturedNewsWrapper({
+  workspace,
+  tenant,
+  slug,
+  navigatingPathFrom,
 }: {
-  news: any;
-  start: number;
-  end: number;
-  Component: any;
-  navigatingPath: string;
-}) => {
-  return news
-    .slice(start, end)
-    .map((newsItem: any) => (
-      <Component
-        key={newsItem.id}
-        id={newsItem.id}
-        news={newsItem}
-        navigatingPathFrom={navigatingPath}
-      />
-    ));
-};
-
-export async function CategoryNewsListWrapper({
-  news,
-  navigatingPath,
-  start,
-  end,
-  width,
-}: {
-  news: any;
-  navigatingPath: string;
-  start: number;
-  end: number;
-  width?: string;
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  slug: string;
+  navigatingPathFrom: string;
 }) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findCategoryPageFeaturedNews({
+    workspace,
+    tenant,
+    user,
+    slug,
+  }).then(clone);
+
+  const featuredNews = Array.isArray(response) ? [] : response.news || [];
+
+  if (!featuredNews.length) return null;
+
   return (
-    <ConditionalRender
-      items={renderNewsItems({
-        news,
-        start,
-        end,
-        Component: NewsList,
-        navigatingPath,
-      })}
-      className={`${width ? width : ''} flex flex-col gap-4`}>
-      {renderNewsItems({
-        news,
-        start,
-        end,
-        Component: NewsList,
-        navigatingPath,
-      })}
-    </ConditionalRender>
+    <FeedList
+      title={await t(FEATURED_NEWS)}
+      items={featuredNews}
+      navigatingPathFrom={navigatingPathFrom}
+    />
   );
 }
 
-export async function CategoryNewsCardWrapper({
-  news,
-  navigatingPath,
-  start,
-  end,
+export async function CategoryAsideNewsWrapper({
+  workspace,
+  tenant,
+  slug,
+  navigatingPathFrom,
+  page,
 }: {
-  news: any;
-  navigatingPath: string;
-  start: number;
-  end: number;
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  slug: string;
+  navigatingPathFrom: string;
+  page: any;
 }) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findCategoryAsideNews({
+    workspace,
+    tenant,
+    user,
+    slug,
+    page,
+  }).then(clone);
+
+  const news = Array.isArray(response) ? [] : response.news || [];
+
+  if (!news.length) return null;
+
   return (
-    <ConditionalRender
-      items={renderNewsItems({
-        news,
-        start,
-        end,
-        Component: NewsCard,
-        navigatingPath,
-      })}
-      className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
-      {renderNewsItems({
-        news,
-        start,
-        end,
-        Component: NewsCard,
-        navigatingPath,
-      })}
-    </ConditionalRender>
+    <div className={`flex-1 flex flex-col gap-4`}>
+      {news.map(item => (
+        <NewsList
+          key={item.id}
+          id={item.id}
+          news={item}
+          navigatingPathFrom={navigatingPathFrom}
+        />
+      ))}
+    </div>
   );
+}
+
+export async function CategoryFooterNewsWrapper({
+  workspace,
+  tenant,
+  slug,
+  navigatingPathFrom,
+  page,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  slug: string;
+  navigatingPathFrom: string;
+  page: any;
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findCategoryFooterNews({
+    workspace,
+    tenant,
+    user,
+    slug,
+    page,
+  }).then(clone);
+
+  const news = Array.isArray(response) ? [] : response.news || [];
+
+  if (!news.length) return null;
+
+  return (
+    <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
+      {news.map(item => (
+        <NewsCard
+          key={item.id}
+          id={item.id}
+          news={item}
+          navigatingPathFrom={navigatingPathFrom}
+        />
+      ))}
+    </div>
+  );
+}
+
+export async function CategoryBottomFeedNewsWrapper({
+  workspace,
+  tenant,
+  slug,
+  navigatingPathFrom,
+  page,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  slug: string;
+  navigatingPathFrom: string;
+  page: any;
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findCategoryBottomFeedNews({
+    workspace,
+    tenant,
+    user,
+    slug,
+    page,
+  }).then(clone);
+
+  const news = Array.isArray(response) ? [] : response.news || [];
+
+  if (!news.length) return null;
+
+  return (
+    <div className="w-full flex flex-col gap-4">
+      {news.map(item => (
+        <NewsList
+          key={item.id}
+          id={item.id}
+          news={item}
+          navigatingPathFrom={navigatingPathFrom}
+        />
+      ))}
+    </div>
+  );
+}
+
+export async function PaginationWrapper({
+  workspace,
+  tenant,
+  slug,
+  page,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  slug: string;
+  page: any;
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const response = await findNewsByCategory({
+    workspace,
+    tenantId: tenant,
+    user,
+    slug,
+    page,
+    limit: DEFAULT_LIMIT,
+  }).then(clone);
+
+  const {pageInfo, news = []} = response;
+
+  if (!news?.length) {
+    return null;
+  }
+
+  return <PaginationContent pageInfo={pageInfo} />;
 }
 
 export async function BreadcrumbsWrapper({
@@ -627,17 +782,3 @@ export async function CommentsWrapper({
     </div>
   );
 }
-
-// ---- HELPER COMPONENT ---- //
-const ConditionalRender = ({
-  children,
-  items,
-  className,
-}: {
-  children: React.ReactNode;
-  items: any[];
-  className?: string;
-}) => {
-  if (!items || items.length === 0) return null;
-  return <div className={className}>{children}</div>;
-};

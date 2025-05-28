@@ -6,7 +6,7 @@ import {clone} from '@/utils';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {ORDER_BY, SUBAPP_CODES} from '@/constants';
+import {DEFAULT_PAGE, SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
 import {t} from '@/locale/server';
@@ -16,7 +16,6 @@ import {CommentsSkeleton} from '@/lib/core/comments';
 import {
   findCategoryTitleBySlugName,
   findNews,
-  findNewsByCategory,
 } from '@/subapps/news/common/orm/news';
 import {
   CategoriesSkeleton,
@@ -34,29 +33,26 @@ import {
   ArticleSkeleton,
   HomepageNewsGridSkeleton,
   CategoryNewsGridSkeleton,
+  NewsListSkeleton,
 } from '@/subapps/news/common/ui/components';
-import {
-  DEFAULT_LIMIT,
-  HOMEPAGE_NEWS_LIMIT,
-  NO_NEWS_AVAILABLE,
-} from '@/subapps/news/common/constants';
 import {
   AttachmentListWrapper,
   CategorySliderWrapper,
   CommentsWrapper,
   CategoryNewsGridLayoutWrapper,
-  LeadStoriesWrapper,
   NavMenuWrapper,
-  NewsCardWrapper,
+  HomePageFooterNewsWrapper,
   NewsInfoWrapper,
   RecommendedNewsWrapper,
   RelatedNewsWrapper,
   SocialMediaWrapper,
   SubCategorySliderWrapper,
-  HomepageNewsGridLayoutWrapper,
   BreadcrumbsWrapper,
+  FeaturedHomePageNewsWrapper,
+  HomePageAsideNewsWrapper,
+  HomePageHeaderNewsWrapper,
+  CategoryPageHeaderNewsWrapper,
 } from '@/subapps/news/[[...segments]]/wrappers';
-import PaginationContent from './pagination-content';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 
 export default async function Page({
@@ -85,7 +81,7 @@ export default async function Page({
   const {segments} = params;
   const homepage = !segments;
 
-  const {limit, page} = searchParams;
+  const {page = DEFAULT_PAGE} = searchParams;
 
   const isRecommendationEnable =
     workspace.config?.enableRecommendedNews || false;
@@ -114,7 +110,11 @@ export default async function Page({
               />
             </Suspense>
             <Suspense fallback={<HomeNewsFeedSkeleton />}>
-              <NewsFeed workspace={workspace} user={user} tenant={tenant} />
+              <HomePageNewsFeed
+                workspace={workspace}
+                user={user}
+                tenant={tenant}
+              />
             </Suspense>
           </div>
         </div>
@@ -133,8 +133,7 @@ export default async function Page({
         fallback={articlePage ? <ArticleSkeleton /> : <CategoryHomeSkeleton />}>
         <CategoryPage
           segments={segments}
-          page={page}
-          limit={limit}
+          page={Number(page)}
           workspace={workspace}
           tenantId={tenant}
           workspaceURL={workspaceURL}
@@ -149,7 +148,6 @@ export default async function Page({
 async function CategoryPage({
   segments,
   page,
-  limit,
   workspace,
   tenantId,
   workspaceURL,
@@ -157,8 +155,7 @@ async function CategoryPage({
   articlePage = false,
 }: {
   segments: string[];
-  page?: string;
-  limit?: string | number;
+  page: number;
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   workspaceURL: string;
@@ -225,11 +222,9 @@ async function CategoryPage({
       <Suspense fallback={<CategoryHomeSkeleton />}>
         <CategoryPageFeed
           workspace={workspace}
-          user={user}
           tenant={tenantId}
           slug={slug}
           page={page}
-          limit={limit}
           segments={segments}
         />
       </Suspense>
@@ -237,52 +232,43 @@ async function CategoryPage({
   );
 }
 
-async function NewsFeed({
+async function HomePageNewsFeed({
   workspace,
   tenant,
-  user,
 }: {
   workspace: PortalWorkspace;
   user: any;
   tenant: Tenant['id'];
 }) {
-  const {news} = await findNews({
-    orderBy: {publicationDateTime: ORDER_BY.DESC},
-    workspace,
-    tenantId: tenant,
-    user,
-    limit: HOMEPAGE_NEWS_LIMIT,
-  }).then(clone);
-
-  if (!news?.length) {
-    return (
-      <div className="font-medium text-center flex items-center justify-center py-4 flex-1">
-        {await t(NO_NEWS_AVAILABLE)}
-      </div>
-    );
-  }
-
   return (
     <>
       <Suspense fallback={<LeadStoriesSkeleton />}>
-        <LeadStoriesWrapper
-          news={news}
+        <HomePageHeaderNewsWrapper
+          workspace={workspace}
+          tenant={tenant}
           navigatingPathFrom={`${SUBAPP_CODES.news}`}
         />
       </Suspense>
 
       <Suspense fallback={<HomepageNewsGridSkeleton />}>
-        <HomepageNewsGridLayoutWrapper
-          workspace={workspace}
-          user={user}
-          tenant={tenant}
-          news={news}
-        />
+        <div className="flex flex-col lg:flex-row gap-6">
+          <Suspense fallback={<FeedListSkeleton count={5} />}>
+            <FeaturedHomePageNewsWrapper
+              workspace={workspace}
+              tenant={tenant}
+            />
+          </Suspense>
+          <div className="flex flex-col flex-1 gap-4">
+            <Suspense fallback={<NewsListSkeleton width="flex-1" count={4} />}>
+              <HomePageAsideNewsWrapper workspace={workspace} tenant={tenant} />
+            </Suspense>
+          </div>
+        </div>
       </Suspense>
 
       <Suspense fallback={<NewsCardSkeleton count={5} />}>
         <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
-          <NewsCardWrapper news={news} />
+          <HomePageFooterNewsWrapper workspace={workspace} tenant={tenant} />
         </div>
       </Suspense>
     </>
@@ -292,62 +278,38 @@ async function NewsFeed({
 async function CategoryPageFeed({
   workspace,
   tenant,
-  user,
   page,
-  limit,
   slug,
   segments,
 }: {
   workspace: PortalWorkspace;
-  user: any;
   tenant: Tenant['id'];
-  page?: string;
-  limit?: string | number;
+  page: number;
   slug: string;
   segments?: string[];
 }) {
-  const {news, pageInfo}: any = await findNewsByCategory({
-    orderBy: {publicationDateTime: ORDER_BY.DESC},
-    page,
-    limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    slug,
-    workspace,
-    tenantId: tenant,
-    user,
-  }).then(clone);
-
   const navigatingPathFromURL = `${SUBAPP_CODES.news}/${segments?.map((slug: string) => slug).join('/')}`;
-
-  if (!news?.length) {
-    return (
-      <div className="font-medium text-center flex items-center justify-center h-full py-4">
-        {await t(NO_NEWS_AVAILABLE)}
-      </div>
-    );
-  }
 
   return (
     <>
-      {Number(pageInfo.page) === 1 && (
-        <Suspense fallback={<LeadStoriesSkeleton />}>
-          <LeadStoriesWrapper
-            news={news}
-            navigatingPathFrom={navigatingPathFromURL}
-          />
-        </Suspense>
-      )}
-      <Suspense fallback={<CategoryNewsGridSkeleton />}>
-        <CategoryNewsGridLayoutWrapper
+      <Suspense fallback={<LeadStoriesSkeleton />}>
+        <CategoryPageHeaderNewsWrapper
           workspace={workspace}
-          user={user}
           tenant={tenant}
           slug={slug}
           navigatingPathFrom={navigatingPathFromURL}
-          news={news}
-          pageInfo={pageInfo}
+          page={page}
         />
       </Suspense>
-      <PaginationContent pageInfo={pageInfo} />
+      <Suspense fallback={<CategoryNewsGridSkeleton />}>
+        <CategoryNewsGridLayoutWrapper
+          workspace={workspace}
+          tenant={tenant}
+          slug={slug}
+          navigatingPathFrom={navigatingPathFromURL}
+          page={page}
+        />
+      </Suspense>
     </>
   );
 }

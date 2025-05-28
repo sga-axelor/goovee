@@ -353,3 +353,12 @@ export interface WebsiteComponent extends Model {
   title: string;
   code: string;
 }
+
+export type PageInfo = {
+  count: number | string;
+  limit?: number | string;
+  page?: number | string;
+  pages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+};

@@ -7,10 +7,16 @@ import {filterPrivate} from '@/orm/filter';
 
 // ---- LOCAL IMPORTS ---- //
 import {
+  ASIDE_NEWS_LIMIT,
   DEFAULT_NEWS_ASIDE_LIMIT,
   DEFAULT_PAGE,
+  FOOTER_NEWS_LIMIT,
+  HEADER_NEWS_LIMIT,
+  NEWS_FEED_LIMIT,
 } from '@/subapps/news/common/constants';
 import {getArchivedFilter} from '@/subapps/news/common/utils';
+
+const PAGE_LIMT = ASIDE_NEWS_LIMIT + FOOTER_NEWS_LIMIT + NEWS_FEED_LIMIT;
 
 export async function findNonArchivedNewsCategories({
   workspace,
@@ -105,6 +111,8 @@ export async function findNews({
   tenantId,
   user,
   archived = false,
+  params,
+  skip,
 }: {
   id?: string | number;
   orderBy?: any;
@@ -117,8 +125,23 @@ export async function findNews({
   tenantId: Tenant['id'];
   user?: User;
   archived?: boolean;
+  params?: any;
+  skip?: number;
 }) {
-  const c = await manager.getClient(tenantId);
+  if (!(workspace && tenantId)) {
+    return {
+      news: [],
+      pageInfo: {},
+    };
+  }
+
+  const client = await manager.getClient(tenantId);
+  if (!client) {
+    return {
+      news: [],
+      pageInfo: {},
+    };
+  }
 
   const nonarchivedcategory = await findNonArchivedNewsCategories({
     tenantId: tenantId,
@@ -135,7 +158,8 @@ export async function findNews({
       .filter((id: any) => nonarchivedcategoryids.includes(id));
   }
 
-  const skip = getSkipInfo(limit, page);
+  const $skip = skip ? skip : getSkipInfo(limit, page);
+
   const whereClause = {
     ...(id
       ? {
@@ -144,7 +168,6 @@ export async function findNews({
       : {}),
     ...(isFeaturedNews ? {isFeaturedNews: true} : {}),
     ...(slug ? {slug} : {}),
-    AND: [await filterPrivate({user, tenantId}), getArchivedFilter({archived})],
     categorySet: {
       workspace: {
         id: workspace.id,
@@ -157,14 +180,20 @@ export async function findNews({
           }
         : {}),
     },
+    ...(params?.where || {}),
+    AND: [
+      await filterPrivate({user, tenantId}),
+      getArchivedFilter({archived}),
+      ...(params?.where?.AND || []),
+    ],
   };
 
-  const news = await c.aOSPortalNews
+  const news = await client.aOSPortalNews
     .find({
       where: whereClause,
       ...(orderBy ? {orderBy} : {}),
       take: limit,
-      ...(skip ? {skip} : {}),
+      ...($skip ? {skip: $skip} : {}),
       select: {
         title: true,
         publicationDateTime: true,
@@ -193,6 +222,7 @@ export async function findNews({
             },
           },
         },
+        // TODO: Get these from params
         content: true,
         author: {
           simpleFullName: true,
@@ -254,6 +284,7 @@ export async function findNews({
           },
         },
         slug: true,
+        ...params?.select,
       },
     })
     .catch(() => []);
@@ -470,6 +501,8 @@ export async function findNewsByCategory({
   isFeaturedNews,
   tenantId,
   user,
+  params,
+  skip,
 }: {
   orderBy?: any;
   isFeaturedNews?: boolean;
@@ -479,9 +512,14 @@ export async function findNewsByCategory({
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   user?: User;
+  params?: any;
+  skip?: number;
 }) {
   if (!tenantId) {
-    return [];
+    return {
+      news: [],
+      pageInfo: {},
+    };
   }
 
   const categories = await findCategories({
@@ -515,7 +553,7 @@ export async function findNewsByCategory({
 
   const categoryIds: any = gatherCategoryIds(topCategoryId);
 
-  return findNews({
+  return await findNews({
     orderBy,
     isFeaturedNews,
     page,
@@ -524,5 +562,236 @@ export async function findNewsByCategory({
     categoryIds,
     tenantId,
     user,
+    params,
+    skip,
   });
+}
+
+export async function findHomePageHeaderNews({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+}) {
+  const result = await findNews({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: HEADER_NEWS_LIMIT,
+  }).then(clone);
+  return result;
+}
+
+export async function findHomePageFeaturedNews({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+}) {
+  const result = await findNews({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: DEFAULT_NEWS_ASIDE_LIMIT,
+    params: {
+      where: {
+        isFeaturedNews: true,
+      },
+    },
+  }).then(clone);
+  return result;
+}
+
+export async function findHomePageAsideNews({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+}) {
+  const result = await findNews({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: ASIDE_NEWS_LIMIT,
+    skip: HEADER_NEWS_LIMIT,
+  }).then(clone);
+  return result;
+}
+
+export async function findHomePageFooterNews({
+  workspace,
+  tenant,
+  user,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+}) {
+  const result = await findNews({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: FOOTER_NEWS_LIMIT,
+    skip: HEADER_NEWS_LIMIT + ASIDE_NEWS_LIMIT,
+  }).then(clone);
+  return result;
+}
+
+export async function findCategoryPageHeaderNews({
+  workspace,
+  tenant,
+  user,
+  slug,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+  slug: string;
+}) {
+  const result = await findNewsByCategory({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: HEADER_NEWS_LIMIT,
+    slug,
+  }).then(clone);
+
+  return result;
+}
+
+export async function findCategoryPageFeaturedNews({
+  workspace,
+  tenant,
+  user,
+  slug,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+  slug: string;
+}) {
+  const result = await findNewsByCategory({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: DEFAULT_NEWS_ASIDE_LIMIT,
+    slug,
+    params: {
+      where: {
+        isFeaturedNews: true,
+      },
+    },
+  }).then(clone);
+
+  return result;
+}
+export async function findCategoryAsideNews({
+  workspace,
+  tenant,
+  user,
+  slug,
+  page = DEFAULT_PAGE,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+  slug: string;
+  page?: number;
+}) {
+  const skip =
+    page === DEFAULT_PAGE
+      ? HEADER_NEWS_LIMIT
+      : HEADER_NEWS_LIMIT + PAGE_LIMT * (page - 1);
+
+  const result = await findNewsByCategory({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: ASIDE_NEWS_LIMIT,
+    skip,
+    slug,
+  }).then(clone);
+
+  return result;
+}
+
+export async function findCategoryFooterNews({
+  workspace,
+  tenant,
+  user,
+  slug,
+  page = DEFAULT_PAGE,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+  slug: string;
+  page?: number;
+}) {
+  const skip =
+    page === DEFAULT_PAGE
+      ? HEADER_NEWS_LIMIT + ASIDE_NEWS_LIMIT
+      : HEADER_NEWS_LIMIT + PAGE_LIMT * (page - 1) + ASIDE_NEWS_LIMIT;
+
+  const result = await findNewsByCategory({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: FOOTER_NEWS_LIMIT,
+    skip,
+    slug,
+  }).then(clone);
+
+  return result;
+}
+
+export async function findCategoryBottomFeedNews({
+  workspace,
+  tenant,
+  user,
+  slug,
+  page = DEFAULT_PAGE,
+}: {
+  workspace: PortalWorkspace;
+  tenant: Tenant['id'];
+  user?: User;
+  slug: string;
+  page?: number;
+}) {
+  const skip =
+    page === DEFAULT_PAGE
+      ? HEADER_NEWS_LIMIT + ASIDE_NEWS_LIMIT + FOOTER_NEWS_LIMIT
+      : HEADER_NEWS_LIMIT +
+        ASIDE_NEWS_LIMIT +
+        FOOTER_NEWS_LIMIT +
+        PAGE_LIMT * (page - 1);
+
+  const result = await findNewsByCategory({
+    orderBy: {publicationDateTime: ORDER_BY.DESC},
+    workspace,
+    tenantId: tenant,
+    user,
+    limit: ASIDE_NEWS_LIMIT,
+    skip,
+    slug,
+  }).then(clone);
+
+  return result;
 }
