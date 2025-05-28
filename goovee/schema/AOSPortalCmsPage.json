@@ -37,6 +37,10 @@
       "name": "archived"
     },
     {
+      "type": "Boolean",
+      "name": "isWiki"
+    },
+    {
       "name": "partnerSet",
       "type": "ManyToMany",
       "target": "AOSPartner"

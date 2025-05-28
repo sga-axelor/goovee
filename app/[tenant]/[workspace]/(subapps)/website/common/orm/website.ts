@@ -263,7 +263,6 @@ export async function findWebsiteBySlug({
         menuList: true,
       },
       mainWebsite: true,
-      isWiki: true,
     },
   });
 
@@ -389,6 +388,7 @@ export async function findWebsitePageBySlug({
       ],
     },
     select: {
+      isWiki: true,
       title: true,
       seoTitle: true,
       seoDescription: true,
