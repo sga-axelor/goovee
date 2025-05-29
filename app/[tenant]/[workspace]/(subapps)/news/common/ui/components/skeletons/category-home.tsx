@@ -2,7 +2,6 @@
 
 // ---- LOCAL IMPORTS ---- //
 import {
-  CategoriesSkeleton,
   FeedListSkeleton,
   LeadStoriesSkeleton,
   NewsCardSkeleton,
@@ -11,8 +10,7 @@ import {
 
 export const CategoryHomeSkeleton = () => {
   return (
-    <div className="container mx-auto grid grid-cols-1 pb-6 px-4 gap-6 mb-20 lg:mb-0">
-      <CategoriesSkeleton />
+    <>
       <LeadStoriesSkeleton />
       <div className="flex flex-col lg:flex-row gap-6">
         <FeedListSkeleton count={5} />
@@ -20,6 +18,6 @@ export const CategoryHomeSkeleton = () => {
       </div>
       <NewsCardSkeleton count={5} />
       <NewsListSkeleton width="w-full" count={4} />
-    </div>
+    </>
   );
 };

@@ -735,13 +735,12 @@ export async function CommentsWrapper({
   workspace,
   user,
   news,
-  workspaceURL,
 }: {
   workspace: PortalWorkspace;
   user: any;
   news: any;
-  workspaceURL: string;
 }) {
+  const workspaceURL = workspace.url;
   const title = await t(COMMENTS);
 
   const enableComment = isCommentEnabled({
