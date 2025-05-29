@@ -6,9 +6,13 @@ import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
+import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
-import {findCategoryTitleBySlugName} from '@/subapps/news/common/orm/news';
+import {
+  findCategoryTitleBySlugName,
+  findNewsCount,
+} from '@/subapps/news/common/orm/news';
 import {
   CategoriesSkeleton,
   NavMenuSkeleton,
@@ -23,6 +27,7 @@ import {
   CategoryPageHeaderNewsWrapper,
 } from '@/subapps/news/[[...segments]]/wrappers';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
+import {NO_NEWS_AVAILABLE} from '@/subapps/news/common/constants';
 
 async function CategoryGrid({
   segments,
@@ -51,6 +56,15 @@ async function CategoryGrid({
 
   if (!categoryTitle) {
     return notFound();
+  }
+
+  const newsCount = await findNewsCount({workspace, tenantId, user, slug});
+  if (!newsCount) {
+    return (
+      <div className="font-medium text-center flex items-center justify-center py-4 flex-1">
+        {await t(NO_NEWS_AVAILABLE)}
+      </div>
+    );
   }
 
   return (

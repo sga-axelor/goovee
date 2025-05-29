@@ -796,3 +796,20 @@ export async function findCategoryBottomFeedNews({
 
   return result;
 }
+
+export async function findNewsCount({
+  workspace,
+  tenantId,
+  user,
+  slug,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  user?: User;
+  slug?: string;
+}) {
+  if (!workspace || !tenantId) return null;
+
+  const {news} = (await findNews({workspace, tenantId, user, slug})) ?? {};
+  return news?.length ?? 0;
+}

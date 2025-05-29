@@ -5,6 +5,7 @@ import {type Tenant} from '@/tenant';
 import {getSession} from '@/auth';
 import {PortalWorkspace} from '@/types';
 import {SUBAPP_CODES} from '@/constants';
+import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -27,15 +28,28 @@ import {
   NavMenuWrapper,
 } from '@/subapps/news/[[...segments]]/wrappers';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
+import {findNewsCount} from '@/subapps/news/common/orm/news';
+import {NO_NEWS_AVAILABLE} from '@/subapps/news/common/constants';
 
 async function HomePageNewsFeed({
   workspace,
   tenant,
+  user,
 }: {
   workspace: PortalWorkspace;
   user: any;
   tenant: Tenant['id'];
 }) {
+  const newsCount = await findNewsCount({workspace, tenantId: tenant, user});
+
+  if (!newsCount) {
+    return (
+      <div className="font-medium text-center flex items-center justify-center py-4 flex-1">
+        {await t(NO_NEWS_AVAILABLE)}
+      </div>
+    );
+  }
+
   return (
     <>
       <Suspense fallback={<LeadStoriesSkeleton />}>
