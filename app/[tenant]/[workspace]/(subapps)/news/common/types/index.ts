@@ -11,7 +11,7 @@ export interface Category {
 
 export type NewsItem = {
   id: string;
-  title: string;
+  title?: string;
   description?: string;
   image?: any;
   slug?: string;

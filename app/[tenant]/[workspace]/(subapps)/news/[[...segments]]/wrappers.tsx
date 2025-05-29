@@ -60,6 +60,7 @@ import {
   findRecommendedNews,
 } from '@/subapps/news/common/actions/action';
 import PaginationContent from '@/subapps/news/[[...segments]]/pagination-content';
+import {NewsResponse} from '../common/types';
 
 interface CategorySegment {
   slug: string;
@@ -535,7 +536,7 @@ export async function PaginationWrapper({
   const session = await getSession();
   const user = session?.user;
 
-  const response = await findNewsByCategory({
+  const response: NewsResponse = await findNewsByCategory({
     workspace,
     tenantId: tenant,
     user,

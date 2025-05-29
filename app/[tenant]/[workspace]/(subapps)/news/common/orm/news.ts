@@ -15,8 +15,20 @@ import {
   NEWS_FEED_LIMIT,
 } from '@/subapps/news/common/constants';
 import {getArchivedFilter} from '@/subapps/news/common/utils';
+import {NewsResponse} from '@/subapps/news/common/types';
 
 const PAGE_LIMT = ASIDE_NEWS_LIMIT + FOOTER_NEWS_LIMIT + NEWS_FEED_LIMIT;
+
+const EMPTY_NEWS_RESPONSE: NewsResponse = {
+  news: [],
+  pageInfo: {
+    page: 1,
+    count: 0,
+    pages: 0,
+    hasNext: false,
+    hasPrev: false,
+  },
+};
 
 export async function findNonArchivedNewsCategories({
   workspace,
@@ -129,18 +141,12 @@ export async function findNews({
   skip?: number;
 }) {
   if (!(workspace && tenantId)) {
-    return {
-      news: [],
-      pageInfo: {},
-    };
+    return EMPTY_NEWS_RESPONSE;
   }
 
   const client = await manager.getClient(tenantId);
   if (!client) {
-    return {
-      news: [],
-      pageInfo: {},
-    };
+    return EMPTY_NEWS_RESPONSE;
   }
 
   const nonarchivedcategory = await findNonArchivedNewsCategories({
@@ -515,12 +521,7 @@ export async function findNewsByCategory({
   params?: any;
   skip?: number;
 }) {
-  if (!tenantId) {
-    return {
-      news: [],
-      pageInfo: {},
-    };
-  }
+  if (!tenantId) return EMPTY_NEWS_RESPONSE;
 
   const categories = await findCategories({
     showAllCategories: true,
@@ -535,7 +536,7 @@ export async function findNewsByCategory({
 
   const topCategory = categories.find(category => category.slug === slug);
 
-  if (!topCategory) return {news: []};
+  if (!topCategory) return EMPTY_NEWS_RESPONSE;
 
   const topCategoryId = Number(topCategory.id);
 
