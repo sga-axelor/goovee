@@ -203,7 +203,6 @@ export async function findNews({
       select: {
         title: true,
         publicationDateTime: true,
-        description: true,
         image: {id: true, fileName: true},
         categorySet: {
           where: {
@@ -583,6 +582,11 @@ export async function findHomePageHeaderNews({
     tenantId: tenant,
     user,
     limit: HEADER_NEWS_LIMIT,
+    params: {
+      select: {
+        description: true,
+      },
+    },
   }).then(clone);
   return result;
 }
