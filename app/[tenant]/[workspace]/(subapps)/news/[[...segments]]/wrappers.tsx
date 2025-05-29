@@ -21,7 +21,9 @@ import {
   findHomePageFeaturedNews,
   findHomePageFooterNews,
   findHomePageHeaderNews,
+  findNewsAttachments,
   findNewsByCategory,
+  findNewsRelatedNews,
 } from '@/subapps/news/common/orm/news';
 import {
   NavMenu,
@@ -558,13 +560,13 @@ export async function BreadcrumbsWrapper({
   workspace,
   tenantId,
   segments,
-  news,
+  newsTitle,
   user,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   segments: string[];
-  news: any;
+  newsTitle: string;
   user: any;
 }) {
   async function getBreadcrumbs() {
@@ -593,7 +595,7 @@ export async function BreadcrumbsWrapper({
 
   const breadcrumbs = await getBreadcrumbs();
 
-  return <Breadcrumbs items={breadcrumbs} title={news.title} />;
+  return <Breadcrumbs items={breadcrumbs} title={newsTitle} />;
 }
 
 export async function NewsInfoWrapper({
@@ -650,8 +652,24 @@ export async function SocialMediaWrapper({
   return <SocialMedia availableSocials={availableSocials} />;
 }
 
-export async function AttachmentListWrapper({news}: {news: any}) {
-  const {attachmentList = [], slug} = news;
+export async function AttachmentListWrapper({
+  workspace,
+  tenantId,
+  slug,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  slug: string;
+}) {
+  const session = await getSession();
+  const user = session?.user;
+
+  const attachmentList = await findNewsAttachments({
+    workspace,
+    tenantId,
+    slug,
+    user,
+  });
 
   if (!attachmentList?.length) {
     return null;
@@ -670,19 +688,31 @@ export async function AttachmentListWrapper({news}: {news: any}) {
 }
 
 export async function RelatedNewsWrapper({
-  news,
+  workspace,
+  tenantId,
+  slug,
   navigatingPathFrom,
 }: {
-  news: any;
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  slug: string;
   navigatingPathFrom: string;
 }) {
-  const {relatedNewsSet = []} = news;
-  const title = await t(RELATED_NEWS);
+  const session = await getSession();
+  const user = session?.user;
+
+  const relatedNewsSet = await findNewsRelatedNews({
+    workspace,
+    tenantId,
+    slug,
+    user,
+  });
 
   if (!relatedNewsSet?.length) {
     return null;
   }
 
+  const title = await t(RELATED_NEWS);
   return (
     <FeedList
       title={title}

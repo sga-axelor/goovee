@@ -227,67 +227,6 @@ export async function findNews({
             },
           },
         },
-        // TODO: Get these from params
-        content: true,
-        author: {
-          simpleFullName: true,
-          picture: true,
-        },
-        relatedNewsSet: {
-          take: DEFAULT_NEWS_ASIDE_LIMIT,
-          orderBy: {
-            publicationDateTime: ORDER_BY.DESC,
-          },
-          where: {
-            categorySet: {
-              workspace: {
-                id: workspace.id,
-              },
-              ...(nonarchivedcategoryids?.length
-                ? {
-                    id: {
-                      in: nonarchivedcategoryids,
-                    },
-                  }
-                : {}),
-            },
-            AND: [
-              await filterPrivate({user, tenantId}),
-              getArchivedFilter({archived}),
-            ],
-          },
-
-          select: {
-            title: true,
-            id: true,
-            image: {id: true},
-            categorySet: {
-              where: {
-                ...(nonarchivedcategoryids?.length
-                  ? {
-                      id: {
-                        in: nonarchivedcategoryids,
-                      },
-                    }
-                  : {}),
-              },
-            },
-            publicationDateTime: true,
-            slug: true,
-          },
-        },
-        attachmentList: {
-          select: {
-            title: true,
-            metaFile: {
-              id: true,
-              fileName: true,
-              fileSize: true,
-              sizeText: true,
-              fileType: true,
-            },
-          },
-        },
         slug: true,
         ...params?.select,
       },
@@ -816,4 +755,122 @@ export async function findNewsCount({
 
   const {news} = (await findNews({workspace, tenantId, user, slug})) ?? {};
   return news?.length ?? 0;
+}
+
+export async function findNewsAttachments({
+  workspace,
+  tenantId,
+  user,
+  slug,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  user?: User;
+  slug?: string;
+}) {
+  if (!workspace || !tenantId) return null;
+
+  const response = await findNews({
+    workspace,
+    tenantId,
+    user,
+    slug,
+    params: {
+      select: {
+        attachmentList: {
+          select: {
+            title: true,
+            metaFile: {
+              id: true,
+              fileName: true,
+              fileSize: true,
+              sizeText: true,
+              fileType: true,
+            },
+          },
+        },
+      },
+    },
+  }).then(clone);
+
+  const [{attachmentList = []} = {}] = response?.news ?? [];
+  return attachmentList ?? [];
+}
+
+export async function findNewsRelatedNews({
+  workspace,
+  tenantId,
+  user,
+  slug,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  user?: User;
+  slug?: string;
+}) {
+  if (!workspace || !tenantId) return null;
+
+  const nonarchivedcategory = await findNonArchivedNewsCategories({
+    tenantId: tenantId,
+    workspace: workspace,
+    user: user,
+  });
+
+  const nonarchivedcategoryids = nonarchivedcategory?.map((c: any) => c.id);
+
+  const response = await findNews({
+    workspace,
+    tenantId,
+    user,
+    slug,
+    params: {
+      select: {
+        relatedNewsSet: {
+          take: DEFAULT_NEWS_ASIDE_LIMIT,
+          orderBy: {
+            publicationDateTime: ORDER_BY.DESC,
+          },
+          where: {
+            categorySet: {
+              workspace: {
+                id: workspace.id,
+              },
+              ...(nonarchivedcategoryids?.length
+                ? {
+                    id: {
+                      in: nonarchivedcategoryids,
+                    },
+                  }
+                : {}),
+            },
+            AND: [
+              await filterPrivate({user, tenantId}),
+              getArchivedFilter({archived: false}),
+            ],
+          },
+          select: {
+            title: true,
+            id: true,
+            image: {id: true},
+            categorySet: {
+              where: {
+                ...(nonarchivedcategoryids?.length
+                  ? {
+                      id: {
+                        in: nonarchivedcategoryids,
+                      },
+                    }
+                  : {}),
+              },
+            },
+            publicationDateTime: true,
+            slug: true,
+          },
+        },
+      },
+    },
+  }).then(clone);
+
+  const [{relatedNewsSet = []} = {}] = response?.news ?? [];
+  return relatedNewsSet ?? [];
 }

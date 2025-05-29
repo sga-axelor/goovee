@@ -47,6 +47,15 @@ export async function ArticleNews({
     workspace,
     tenantId,
     user,
+    params: {
+      select: {
+        content: true,
+        author: {
+          simpleFullName: true,
+          picture: true,
+        },
+      },
+    },
   }).then(clone);
 
   const [newsObject] = news;
@@ -77,7 +86,7 @@ export async function ArticleNews({
               workspace={workspace}
               tenantId={tenantId}
               segments={slicedSegments}
-              news={newsObject}
+              newsTitle={newsObject.title}
               user={user}
             />
           </div>
@@ -100,13 +109,19 @@ export async function ArticleNews({
 
           {/* Attachments Section */}
           <Suspense fallback={<AttachmentListSkeleton />}>
-            <AttachmentListWrapper news={newsObject} />
+            <AttachmentListWrapper
+              workspace={workspace}
+              tenantId={tenantId}
+              slug={newsObject.slug}
+            />
           </Suspense>
 
           {/* RelatedNews Section */}
           <Suspense fallback={<FeedListSkeleton width="w-full" />}>
             <RelatedNewsWrapper
-              news={newsObject}
+              workspace={workspace}
+              tenantId={tenantId}
+              slug={newsObject.slug}
               navigatingPathFrom={navigatingPathFromURL}
             />
           </Suspense>
