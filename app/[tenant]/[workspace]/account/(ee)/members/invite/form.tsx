@@ -29,10 +29,10 @@ import {RadioGroup, RadioGroupItem} from '@/ui/components';
 import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
-import {Title} from '../../common/ui/components';
-import {Authorization, Role} from '../../common/types';
+import {Title} from '../../../common/ui/components';
+import {Authorization, Role} from '../../../common/types';
 import {sendInvites} from './action';
-import {useWorkspace} from '../../../workspace-context';
+import {useWorkspace} from '../../../../workspace-context';
 
 const formSchema = z.object({
   emails: z.string().min(1, i18n.t('Emails cannot be empty')),

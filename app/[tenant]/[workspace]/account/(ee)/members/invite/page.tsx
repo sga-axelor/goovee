@@ -6,7 +6,7 @@ import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {findAvailableSubapps} from '../../common/orm/members';
+import {findAvailableSubapps} from '../../../common/orm/members';
 import Form from './form';
 
 export default async function Page({

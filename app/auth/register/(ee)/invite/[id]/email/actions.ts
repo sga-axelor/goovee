@@ -5,7 +5,7 @@ import {t} from '@/locale/server';
 import {Scope} from '@/otp/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {type Tenant} from '@/tenant';
-import {findInviteById} from '../../../common/orm/register';
+import {findInviteById} from '../../../../common/orm/register';
 
 function error(message: string) {
   return {

@@ -7,8 +7,8 @@ import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
-import {findAvailableSubapps, findMembers} from '../common/orm/members';
-import {findInvites} from '../common/orm/invites';
+import {findAvailableSubapps, findMembers} from '../../common/orm/members';
+import {findInvites} from '../../common/orm/invites';
 
 export default async function Page({
   params,

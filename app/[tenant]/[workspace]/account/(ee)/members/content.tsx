@@ -32,7 +32,7 @@ import {
 import {Avatar, AvatarImage, AvatarFallback} from '@/ui/components/avatar';
 import {Button} from '@/ui/components/button';
 import {cn} from '@/utils/css';
-import {useWorkspace} from '../../workspace-context';
+import {useWorkspace} from '../../../workspace-context';
 import {getInitials} from '@/utils/names';
 import {getPartnerImageURL} from '@/utils/files';
 import {SUBAPP_WITH_ROLES} from '@/constants';
@@ -40,9 +40,9 @@ import {useToast} from '@/ui/hooks';
 import {useSession} from 'next-auth/react';
 
 // ---- LOCAL IMPORTS ---- //
-import {Authorization, Role} from '../common/types';
+import {Authorization, Role} from '../../common/types';
 import {deleteInvite} from './invite/action';
-import {RoleLabel} from '../common/constants';
+import {RoleLabel} from '../../common/constants';
 import {
   deleteMember,
   updateInviteApplication,

@@ -13,9 +13,9 @@ import {manager} from '@/tenant';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {findInviteById} from '../common/orm/invites';
-import {findAvailableSubapps} from '../common/orm/members';
-import {Authorization} from '../common/types';
+import {findInviteById} from '../../common/orm/invites';
+import {findAvailableSubapps} from '../../common/orm/members';
+import {Authorization} from '../../common/types';
 
 function error(message: string) {
   return {

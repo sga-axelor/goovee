@@ -4,10 +4,11 @@ import {notFound} from 'next/navigation';
 import {getSession} from '@/auth';
 import {SEARCH_PARAMS} from '@/constants';
 import {t} from '@/locale/server';
+import {findContactByEmail} from '@/orm/partner';
 
 // ---- LOCAL IMPORTS ---- //
 import Form from './form';
-import {findInviteById} from '../../../common/orm/register';
+import {findInviteById} from '../../../../common/orm/register';
 import Subscribe from '../subscribe';
 
 export default async function Page({
@@ -35,6 +36,15 @@ export default async function Page({
   const session = await getSession();
   const user = session?.user;
 
+  if (!user) {
+    return notFound();
+  }
+
+  /**
+   * Google Oauth Uses doesn't contain id or other information
+   */
+  const contact = await findContactByEmail(user.email, tenantId);
+
   if (user) {
     if (user.email !== invite.emailAddress.address) {
       return (
@@ -51,14 +61,25 @@ export default async function Page({
       );
     } else if (
       user.email === invite.emailAddress.address &&
-      user.isContact &&
-      user.mainPartnerId === invite.partner?.id
+      contact?.isActivatedOnPortal &&
+      contact?.isContact &&
+      contact?.mainPartner?.id === invite.partner?.id
     ) {
       return (
-        <Subscribe workspaceURL={invite.workspace.url} inviteId={invite.id} />
+        <Subscribe
+          workspaceURL={invite.workspace.url}
+          inviteId={invite.id}
+          updateSession={!!contact}
+        />
       );
     }
   }
 
-  return <Form email={invite?.emailAddress?.address} inviteId={invite.id} />;
+  return (
+    <Form
+      email={invite?.emailAddress?.address}
+      inviteId={invite.id}
+      updateSession={!!contact}
+    />
+  );
 }

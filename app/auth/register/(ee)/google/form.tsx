@@ -41,7 +41,7 @@ import {SEARCH_PARAMS} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {registerByGoogle, subscribe} from '../actions';
+import {registerByGoogle, subscribe} from '../../actions';
 
 const formSchema = z
   .object({

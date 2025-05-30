@@ -11,8 +11,8 @@ import {ALLOW_ALL_REGISTRATION, ALLOW_AOS_ONLY_REGISTRATION} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import Form from './form';
-import {extractSearchParams, isExistingUser} from '../common/utils';
-import {UserExists} from '../common/ui/components';
+import {extractSearchParams, isExistingUser} from '../../common/utils';
+import {UserExists} from '../../common/ui/components';
 
 export default async function Page({
   searchParams,

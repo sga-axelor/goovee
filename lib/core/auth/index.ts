@@ -5,7 +5,7 @@ import type {NextAuthOptions} from 'next-auth';
 import {findGooveeUserByEmail} from '@/orm/partner';
 import {type Tenant} from '@/tenant';
 
-import google from './google';
+import google from './(ee)/google';
 import credentials from './credentials';
 
 export const authOptions: NextAuthOptions = {

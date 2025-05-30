@@ -11,6 +11,7 @@ import {TENANT_HEADER} from '@/middleware';
 import {
   findContactByEmail,
   findGooveeUserByEmail,
+  findPartnerByEmail,
   findPartnerById,
   isAdminContact,
   isPartner,
@@ -21,15 +22,15 @@ import {SEARCH_PARAMS} from '@/constants';
 import type {PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {inviteTemplate} from '../../common/constants/template';
+import {inviteTemplate} from '../../../common/constants/template';
 import {
   findInviteForEmail,
   createInvite,
   findInviteById,
   deleteInviteById,
-} from '../../common/orm/invites';
-import {InviteAppsConfig, Role} from '../../common/types';
-import {findAvailableSubapps} from '../../common/orm/members';
+} from '../../../common/orm/invites';
+import {InviteAppsConfig, Role} from '../../../common/types';
+import {findAvailableSubapps} from '../../../common/orm/members';
 import {isValidMailConfig, replacePlaceholders} from '@/orm/email-template';
 
 function error(message: string) {

@@ -18,7 +18,7 @@ import {PortalWorkspace} from '@/types';
 import {findOne, isValid} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
 
-import {findInviteById} from '../../common/orm/register';
+import {findInviteById} from '../../../common/orm/register';
 
 function error(message: string) {
   return {
