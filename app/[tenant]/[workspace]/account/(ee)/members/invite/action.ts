@@ -259,14 +259,23 @@ export async function sendInvites({
     try {
       z.string().email({message: 'Invalid email address'}).parse(email);
 
-      const existingContact = await findContactByEmail(email, tenantId);
+      const existingGooveeUser = await findGooveeUserByEmail(email, tenantId);
+      const isExistingPartner =
+        existingGooveeUser && !existingGooveeUser?.isContact;
 
-      if (!existingContact?.isContact) {
+      if (isExistingPartner) {
         emailsAlreadyRegistered.push(email);
         continue; // don't send invite to email already registered
       }
 
+      const existingContact = await findContactByEmail(email, tenantId);
+
       if (workspace.config?.isExistingContactsOnly) {
+        if (!existingContact?.isContact) {
+          emailsWithOutSamePartner.push(email);
+          continue; // don't send invite to email who is not a contact
+        }
+
         if (existingContact?.mainPartner?.id !== partnerId) {
           emailsWithOutSamePartner.push(email);
           continue; // don't send invite to email who don't have current partner as main partner
