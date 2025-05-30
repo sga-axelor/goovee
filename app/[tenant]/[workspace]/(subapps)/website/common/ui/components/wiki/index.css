@@ -101,7 +101,6 @@
 
   .wiki-container {
     display: flex;
-    height: 100%;
     overflow: auto;
   }
 
@@ -139,6 +138,12 @@
     display: block;
     height: calc(100vh - 142px);
     overflow: auto;
+  }
+
+  @media screen and (max-width: 1023px) {
+    .editor-shell .editor-container {
+      height: calc(100vh - 182px);
+    }
   }
 
   .editor-shell .editor-container.tree-view {
