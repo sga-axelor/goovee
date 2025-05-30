@@ -753,7 +753,8 @@ export async function findNewsCount({
 }) {
   if (!workspace || !tenantId) return null;
 
-  const {news} = (await findNews({workspace, tenantId, user, slug})) ?? {};
+  const {news} =
+    (await findNews({workspace, tenantId, user, slug, limit: 1})) ?? {};
   return news?.length ?? 0;
 }
 
