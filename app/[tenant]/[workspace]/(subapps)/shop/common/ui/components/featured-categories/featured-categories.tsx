@@ -36,14 +36,12 @@ export function FeaturedCategories({categories, workspace}: any) {
 
   const handleProductClick = (category: Category) => (product: Product) => {
     router.push(
-      `${workspaceURI}/shop/category/${encodeURIComponent(category.name)}-${category.id}/product/${encodeURIComponent(product.name)}-${product.id}`,
+      `${workspaceURI}/shop/category/${category.slug}/product/${product.slug}`,
     );
   };
 
   const handleCategoryClick = ({category}: {category: Category}) => {
-    router.push(
-      `${workspaceURI}/shop/category/${encodeURIComponent(category.name)}-${category.id}`,
-    );
+    router.push(`${workspaceURI}/shop/category/${category.slug}`);
   };
 
   return categories?.map((category: any) =>

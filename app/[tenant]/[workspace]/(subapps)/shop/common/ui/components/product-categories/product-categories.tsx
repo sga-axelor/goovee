@@ -12,9 +12,7 @@ export function ProductCategories({categories}: any) {
   const router = useRouter();
 
   const handleCategoryClick = ({category}: {category: Category}) => {
-    router.push(
-      `${workspaceURI}/shop/category/${encodeURIComponent(category.name)}-${category.id}`,
-    );
+    router.push(`${workspaceURI}/shop/category/${category.slug}`);
   };
 
   return (

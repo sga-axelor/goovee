@@ -67,7 +67,7 @@ export function ProductList({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const search = searchParams.get('search') || '';
+
   const sort = searchParams.get('sort');
   const view = searchParams.get('view') || VIEW.GRID;
   const [searching, setSearching] = useState<string>('');
@@ -92,6 +92,7 @@ export function ProductList({
     const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`);
   };
+
   const handleAdd = async (computedProduct: ComputedProduct) => {
     const {product} = computedProduct;
 
@@ -108,6 +109,7 @@ export function ProductList({
 
     router.refresh();
   };
+
   const handleChangeSearch = (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
@@ -116,41 +118,43 @@ export function ProductList({
       {key: 'search', value: formData.get('search') as string},
     ]);
   };
+
   const handleChangeSortBy = ({value}: any) => {
     updateSearchParams([{key: 'sort', value}]);
   };
+
   const handleChangeView = (type: string) => {
     updateSearchParams([{key: 'view', value: type}]);
   };
+
   const handlePreviousPage = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {page, hasPrev} = pageInfo;
     if (!hasPrev) return;
     updateSearchParams([{key: 'page', value: Math.max(Number(page) - 1, 1)}]);
   };
+
   const handleNextPage = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {page, hasNext} = pageInfo;
     if (!hasNext) return;
     updateSearchParams([{key: 'page', value: Number(page) + 1}]);
   };
+
   const handlePage = (page: string | number) => {
     updateSearchParams([{key: 'page', value: page}]);
   };
+
   const handleCategoryClick = ({category}: {category: Category}) => {
-    router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
-    );
+    router.push(`${workspaceURI}/shop/category/${category.slug}`);
   };
+
   const handleProductClick = (product: Product) => {
-    router.push(
-      `${productPath}/${encodeURIComponent(product.name)}-${product.id}`,
-    );
+    router.push(`${productPath}/${product.slug}`);
   };
 
   const handleBreadCrumbClick = (category: any) => {
-    router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
-    );
+    handleCategoryClick({category});
   };
+
   const isGridView = view === VIEW.GRID;
   const isListView = view === VIEW.LIST;
 

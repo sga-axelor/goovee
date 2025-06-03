@@ -76,16 +76,13 @@ export function ProductView({
     setNote(value);
     await setProductNote(product.id, value);
   };
+
   const handleCategoryClick = ({category}: {category: Category}) => {
-    router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
-    );
+    router.push(`${workspaceURI}/shop/category/${category.slug}`);
   };
 
   const handleBreadCrumbClick = (category: any) => {
-    router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
-    );
+    handleCategoryClick({category});
   };
 
   useEffect(() => {
