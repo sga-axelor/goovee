@@ -27,14 +27,7 @@ import type {
 } from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  MobileSortBy,
-  SortBy,
-  ProductCard,
-  ProductListItem,
-  ProductListBrandFilter,
-  ProductListColorFilter,
-} from '..';
+import {MobileSortBy, SortBy, ProductCard, ProductListItem} from '..';
 import styles from './product-list.module.scss';
 
 const VIEW = {
@@ -44,8 +37,8 @@ const VIEW = {
 function MobileFilters() {
   return (
     <div className="flex items-center gap-2 text-foreground">
-      <MdOutlineFilterAlt className="text-xl" />
-      <p className="mb-0 font-bold">{i18n.t('Filters')}</p>
+      {/* <MdOutlineFilterAlt className="text-xl" /> */}
+      {/* <p className="mb-0 font-bold">{i18n.t('Filters')}</p> */}
     </div>
   );
 }
@@ -226,8 +219,8 @@ export function ProductList({
 
         <div className="grid gap-5 lg:grid-cols-[17.3125rem_1fr] grid-cols-1">
           <div className="flex flex-col gap-6">
-            <ProductListColorFilter />
-            <ProductListBrandFilter />
+            {/* <ProductListColorFilter /> */}
+            {/* <ProductListBrandFilter /> */}
           </div>
           <div
             className={`${isListView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'} grid gap-5 `}>
