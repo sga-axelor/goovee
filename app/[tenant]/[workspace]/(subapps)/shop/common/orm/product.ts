@@ -105,10 +105,12 @@ const getProductFields = ({workspace}: {workspace: PortalWorkspace}) =>
         },
       },
     },
+    slug: true,
   }) as const;
 
 const getWhereClause = async ({
   ids,
+  slugs,
   search,
   categoryids,
   associateWorkspace,
@@ -118,6 +120,7 @@ const getWhereClause = async ({
   archived,
 }: {
   ids?: Product['id'][];
+  slugs?: Product['slug'][];
   search?: string;
   categoryids?: (string | number)[];
   associateWorkspace?: boolean;
@@ -131,6 +134,13 @@ const getWhereClause = async ({
       ? {
           id: {
             in: ids,
+          },
+        }
+      : {}),
+    ...(slugs?.length
+      ? {
+          slug: {
+            in: slugs,
           },
         }
       : {}),
@@ -186,6 +196,7 @@ function getSortOrder(sort?: string) {
 
 export async function findProducts({
   ids,
+  slugs,
   search,
   sort,
   categoryids,
@@ -197,6 +208,7 @@ export async function findProducts({
   associateWorkspace,
 }: {
   ids?: Product['id'][];
+  slugs?: Product['slug'][];
   search?: string;
   sort?: string;
   categoryids?: (string | number)[];
@@ -229,6 +241,7 @@ export async function findProducts({
 
   const $filters: any = await getWhereClause({
     ids,
+    slugs,
     search,
     categoryids,
     associateWorkspace,
@@ -596,6 +609,36 @@ export async function findProduct({
   return findProducts({ids: [id], workspace, user, tenantId, categoryids}).then(
     ({products}: any = {}) => products && products[0],
   );
+}
+
+export async function findProductBySlug({
+  slug,
+  workspace,
+  user,
+  tenantId,
+  categoryids,
+}: {
+  slug: Product['slug'];
+  workspace: PortalWorkspace;
+  user?: User;
+  tenantId: Tenant['id'];
+  categoryids?: (string | number)[];
+}) {
+  if (!slug) {
+    return null;
+  }
+
+  if (!workspace) {
+    return null;
+  }
+
+  return findProducts({
+    slugs: [slug],
+    workspace,
+    user,
+    tenantId,
+    categoryids,
+  }).then(({products}: any = {}) => products && products[0]);
 }
 
 type WSProduct = {

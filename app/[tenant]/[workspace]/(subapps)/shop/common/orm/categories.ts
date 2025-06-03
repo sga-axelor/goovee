@@ -54,6 +54,7 @@ export async function findCategories({
     select: {
       name: true,
       parentProductCategory: {id: true},
+      slug: true,
     },
   });
 
@@ -102,6 +103,7 @@ export async function findFeaturedCategories({
           id: true,
         },
       },
+      slug: true,
     },
   });
 
