@@ -4,6 +4,7 @@ import type {ReactNode} from 'react';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {Website} from '@/types';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -89,7 +90,7 @@ export default async function Layout({
 
   return (
     <>
-      <Menu menu={website?.menu} />
+      <Menu menu={clone(website?.menu)} />
       <LanguageSelection
         languageList={mainWebsiteLanguages}
         active={websiteSlug}

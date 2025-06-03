@@ -14,6 +14,7 @@ import {Testimonial1} from './testimonial-1';
 import {Pricing1} from './pricing-1';
 import {Contact4} from './contacts-4';
 import {Clients1} from './clients-1';
+import {Navbar1} from './navbar-1';
 
 export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   'page-progress': PageProgress,
@@ -28,6 +29,8 @@ export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   'pricing-1': Pricing1,
   'contacts-4': Contact4,
   'clients-1': Clients1,
+  'navbar-1': Navbar1,
 };
 
 export {NotFound} from './not-found';
+export {DropdownToggleLink} from './dropdown-toggle-link';

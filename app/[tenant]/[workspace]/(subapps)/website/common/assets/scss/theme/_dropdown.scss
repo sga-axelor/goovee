@@ -426,6 +426,15 @@
   margin-top: 0;
   margin-right: 0;
 }
+.dropstart > .dropdown-toggle {
+  position: relative;
+  &:after {
+    position: absolute;
+    left: 0.69rem;
+    top: 0.4375rem;
+    @include font-size(1.125rem);
+  }
+}
 //----------------------------------------------------------//
 //	LANGUAGE DROPDOWN
 //----------------------------------------------------------//
@@ -488,5 +497,5 @@
   display: none;
 }
 .navbar-nav .dropdown.dropstart > .dropdown-toggle:after {
-  @include caret-end();
+  @include caret-start();
 }
