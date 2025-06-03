@@ -62,16 +62,8 @@ export default function MobileMenuCategory({categories}: any) {
 
   const [container, setContainer] = useState<any>(null);
 
-  const handleCategoryClick = ({
-    category,
-    url,
-  }: {
-    category: Category;
-    url?: string;
-  }) => {
-    router.push(
-      `${workspaceURI}/shop/category/${category.name}-${category.id}`,
-    );
+  const handleCategoryClick = ({category}: {category: Category}) => {
+    router.push(`${workspaceURI}/shop/category/${category.slug}`);
   };
   useEffect(() => {
     let container = document.getElementById('subapp-menu');
