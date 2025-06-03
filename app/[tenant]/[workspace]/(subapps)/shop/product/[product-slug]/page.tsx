@@ -4,7 +4,7 @@ import {notFound, redirect} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {clone, isNumeric} from '@/utils';
+import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -12,7 +12,7 @@ import {
   ProductView,
   ProductViewSkeleton,
 } from '@/subapps/shop/common/ui/components';
-import {findProduct} from '@/subapps/shop/common/orm/product';
+import {findProductBySlug} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 import {findModelFields} from '@/orm/model-fields';
@@ -25,16 +25,16 @@ import {
 async function Product({
   params,
 }: {
-  params: {tenant: string; workspace: string; 'product-id': string};
+  params: {tenant: string; workspace: string; 'product-slug': string};
 }) {
   const {tenant} = params;
   const session = await getSession();
   const user = session?.user;
 
-  const id = params['product-id']?.split('-')?.at(-1);
+  const productSlug = params['product-slug'];
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
-  if (!(id && isNumeric(id))) redirect(`${workspaceURI}/shop`);
+  if (!productSlug) redirect(`${workspaceURI}/shop`);
 
   const workspace = await findWorkspace({
     user: user,
@@ -52,8 +52,8 @@ async function Product({
 
   const categoryids = categories.map(c => getcategoryids(c)).flat();
 
-  const computedProduct = await findProduct({
-    id,
+  const computedProduct = await findProductBySlug({
+    slug: productSlug,
     workspace,
     user,
     tenantId: tenant,
@@ -97,7 +97,7 @@ async function Product({
 export default async function Page({
   params,
 }: {
-  params: {tenant: string; workspace: string; 'product-id': string};
+  params: {tenant: string; workspace: string; 'product-slug': string};
   searchParams: {[key: string]: string};
 }) {
   return (

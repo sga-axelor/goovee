@@ -4,7 +4,7 @@ import {notFound, redirect} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {clone, isNumeric} from '@/utils';
+import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -12,7 +12,7 @@ import {
   ProductView,
   ProductViewSkeleton,
 } from '@/subapps/shop/common/ui/components';
-import {findProduct} from '@/subapps/shop/common/orm/product';
+import {findProductBySlug} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {findModelFields} from '@/orm/model-fields';
 import {
@@ -27,22 +27,22 @@ async function Product({
   params: {
     tenant: string;
     workspace: string;
-    'product-id': string;
-    'category-id': string;
+    'product-slug': string;
+    'category-slug': string;
   };
 }) {
   const {tenant} = params;
 
-  const categoryId = params['category-id']?.split('-')?.at(-1);
+  const categorySlug = params['category-slug'];
 
   const session = await getSession();
   const user = session?.user;
 
-  const id = params['product-id']?.split('-')?.at(-1);
+  const productSlug = params['product-slug'];
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
 
-  if (!(id && isNumeric(id) && categoryId && isNumeric(categoryId))) {
+  if (!(productSlug && categorySlug)) {
     return redirect(`${workspaceURI}/shop`);
   }
 
@@ -62,16 +62,14 @@ async function Product({
     user,
   }).then(clone);
 
-  const $category: any = categories.find(
-    (c: any) => Number(c.id) === Number(categoryId),
-  );
+  const $category: any = categories.find((c: any) => c.slug === categorySlug);
 
   if (!$category) {
     return redirect(`${workspaceURI}/shop`);
   }
 
-  const computedProduct = await findProduct({
-    id,
+  const computedProduct = await findProductBySlug({
+    slug: productSlug,
     workspace,
     user,
     tenantId: tenant,
@@ -139,8 +137,8 @@ export default async function Page({
   params: {
     tenant: string;
     workspace: string;
-    'product-id': string;
-    'category-id': string;
+    'product-slug': string;
+    'category-slug': string;
   };
   searchParams: {[key: string]: string};
 }) {

@@ -23,13 +23,13 @@ async function Category({
   params,
   searchParams,
 }: {
-  params: {tenant: string; workspace: string; 'category-id': string};
+  params: {tenant: string; workspace: string; 'category-slug': string};
   searchParams: {[key: string]: string | undefined};
 }) {
   const {tenant} = params;
   const {search, limit, page, sort} = searchParams;
 
-  const category = params['category-id']?.split('-')?.at(-1);
+  const categorySlug = params['category-slug'];
 
   const session = await getSession();
   const user = session?.user;
@@ -70,8 +70,8 @@ async function Category({
     return breadcrumbs;
   };
 
-  const $category: any = category
-    ? categories.find((c: any) => Number(c.id) === Number(category))
+  const $category: any = categorySlug
+    ? categories.find((c: any) => c.slug === categorySlug)
     : null;
 
   if (!$category) {
@@ -111,7 +111,7 @@ async function Category({
       categories={parentcategories}
       pageInfo={pageInfo}
       workspace={workspace}
-      productPath={`${workspaceURI}/shop/category/${$category.id}/product/`}
+      productPath={`${workspaceURI}/shop/category/${$category.slug}/product/`}
       defaultSort={defaultSort}
     />
   );
@@ -121,7 +121,7 @@ export default function Page({
   params,
   searchParams,
 }: {
-  params: {tenant: string; workspace: string; 'category-id': string};
+  params: {tenant: string; workspace: string; 'category-slug': string};
   searchParams: {[key: string]: string | undefined};
 }) {
   return (
