@@ -51,6 +51,10 @@
       "name": "partnerCategorySet",
       "type": "ManyToMany",
       "target": "AOSPartnerCategory"
+    },
+    {
+      "name": "slug",
+      "type": "String"
     }
   ]
 }

@@ -126,6 +126,10 @@
     {
       "name": "stockManaged",
       "type": "Boolean"
+    },
+    {
+      "name": "slug",
+      "type": "String"
     }
   ]
 }

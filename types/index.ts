@@ -174,6 +174,7 @@ export interface PortalApp extends Model {
 export interface Product extends Model {
   name: string;
   code: string;
+  slug: string;
   description?: string;
   thumbnailImage?: {id: string};
   images?: Array<string | number>;
@@ -289,6 +290,7 @@ export type MetaFile = {
 
 export type Category = {
   name: string;
+  slug: string;
   id: number | string;
   items?: Category[];
 };
