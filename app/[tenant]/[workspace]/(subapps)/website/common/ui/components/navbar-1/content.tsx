@@ -62,14 +62,11 @@ export function NavbarContent(props: NavbarProps) {
       const hasValidHref = item.href !== '#';
 
       return hasChildren ? (
-        <li
-          key={index}
-          className={`dropdown dropdown-submenu ${isLgUp ? 'dropstart' : 'dropend'}`}>
+        <li key={index} className="dropdown dropdown-submenu dropend">
           <DropdownToggleLink
             title={item.label}
             className="dropdown-item dropdown-toggle"
             href={item.href}
-            caretPosition={caretPosition}
             {...(hasValidHref ? {'data-bs-toggle': ''} : {})}
           />
           <ul className="dropdown-menu">{renderMenuLinks(item.links)}</ul>
@@ -78,7 +75,7 @@ export function NavbarContent(props: NavbarProps) {
         <ListItemLink
           href={item.href}
           title={item.label}
-          linkClassName={`dropdown-item ${caretPosition === 'left' ? 'lg:!text-right' : ''}`}
+          linkClassName="dropdown-item"
           key={index}
         />
       );
