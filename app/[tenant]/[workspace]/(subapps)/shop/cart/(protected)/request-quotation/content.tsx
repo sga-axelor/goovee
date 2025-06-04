@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
+import {MdOutlineRefresh} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Button} from '@/ui/components/button';
@@ -17,7 +18,6 @@ import type {PortalWorkspace} from '@/types';
 // ---- LOCAL IMPORTS ---- //
 import {requestQuotation} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
 import {AddressSelection} from '../../../common/ui/components/address-selection';
-import {MdOutlineRefresh} from 'react-icons/md';
 
 export default function Content({
   workspace,
