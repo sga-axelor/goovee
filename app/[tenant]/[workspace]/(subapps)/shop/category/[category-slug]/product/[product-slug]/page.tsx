@@ -4,7 +4,7 @@ import {notFound, redirect} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
-import {clone} from '@/utils';
+import {clone, htmlToNormalString} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -20,6 +20,66 @@ import {
   PRODUCT_ATTRS,
 } from '@/subapps/shop/common/constants';
 import {transformMetaFields} from '@/subapps/shop/common/utils/meta-field-value';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: {
+    tenant: string;
+    workspace: string;
+    'category-slug': string;
+    'product-slug': string;
+  };
+}) {
+  const {workspaceURL, tenant} = workspacePathname(params);
+
+  const categorySlug = params['category-slug'];
+  const productSlug = params['product-slug'];
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const workspace = await findWorkspace({
+    user: user,
+    url: workspaceURL,
+    tenantId: tenant,
+  }).then(clone);
+
+  if (!workspace) {
+    return null;
+  }
+
+  const categories = await findCategories({
+    workspace,
+    tenantId: tenant,
+    user,
+  }).then(clone);
+
+  const $category: any = categories.find((c: any) => c.slug === categorySlug);
+
+  if (!$category) {
+    return null;
+  }
+
+  const computedProduct = await findProductBySlug({
+    slug: productSlug,
+    workspace,
+    user,
+    tenantId: tenant,
+    categoryids: $category.id,
+  });
+
+  if (!computedProduct?.product) {
+    return null;
+  }
+
+  const {product} = computedProduct;
+
+  return {
+    title: product?.name,
+    description: htmlToNormalString(product?.description),
+  };
+}
 
 async function Product({
   params,
