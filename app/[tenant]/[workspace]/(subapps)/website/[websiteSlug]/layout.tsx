@@ -2,7 +2,6 @@ import type {ReactNode} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {t} from '@/locale/server';
 import {workspacePathname} from '@/utils/workspace';
 import {Website} from '@/types';
 

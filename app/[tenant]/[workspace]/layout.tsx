@@ -25,6 +25,35 @@ const defaultTheme = {
   css: JSON.stringify(DEFAULT_THEME_OPTIONS),
 };
 
+export async function generateMetadata({
+  params,
+}: {
+  params: {
+    tenant: string;
+    workspace: string;
+    websiteSlug: string;
+  };
+}) {
+  const {workspaceURL, tenant} = workspacePathname(params);
+
+  const session = await getSession();
+  const user = session?.user;
+
+  const $workspace = await findWorkspace({
+    user,
+    url: workspaceURL,
+    tenantId: tenant,
+  });
+
+  if (!$workspace?.name) {
+    return null;
+  }
+
+  return {
+    title: $workspace?.name,
+  };
+}
+
 export default async function Layout({
   params,
   children,

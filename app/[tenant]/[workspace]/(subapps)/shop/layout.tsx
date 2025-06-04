@@ -13,12 +13,6 @@ import {SUBAPP_CODES} from '@/constants';
 import MobileMenuCategory from './mobile-menu-category';
 import {findCategories} from './common/orm/categories';
 
-export async function generateMetadata() {
-  return {
-    title: await t('Shop'),
-  };
-}
-
 export default async function Layout({
   params,
   children,

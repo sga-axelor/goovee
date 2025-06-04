@@ -1,5 +1,6 @@
 import {DEFAULT_SCALE} from '@/locale';
 import {DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+
 import type {Cloned} from '@/types/util';
 
 export function clone<T>(obj: T): Cloned<T> {
@@ -72,4 +73,22 @@ export function extractNumericValue(value?: string | null): number {
   if (!value) return 0;
   const numericValue = parseFloat(value.replace(/[^0-9.]/g, ''));
   return isNaN(numericValue) ? 0 : numericValue;
+}
+
+export function isBrowser() {
+  return typeof window !== 'undefined' && typeof document !== 'undefined';
+}
+
+export function htmlToNormalString(htmlString: string) {
+  let plainText = htmlString;
+
+  if (isBrowser() && htmlString) {
+    const div = document.createElement('div');
+    div.innerHTML = htmlString;
+    plainText = div.textContent || div.innerText || '';
+  } else {
+    plainText = htmlString?.replace(/<[^>]+>/g, '');
+  }
+
+  return plainText;
 }

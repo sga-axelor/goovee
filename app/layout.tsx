@@ -19,10 +19,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: {
-    template: '%s | Goovee',
-    default: 'Portal | Goovee',
-  },
+  title: 'Goovee',
   description: 'Next generation portal by Axelor',
 };
 

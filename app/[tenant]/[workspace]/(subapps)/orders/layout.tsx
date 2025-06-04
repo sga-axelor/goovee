@@ -8,12 +8,6 @@ import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 
-export async function generateMetadata() {
-  return {
-    title: await t('Orders'),
-  };
-}
-
 export default async function Layout({
   params,
   children,

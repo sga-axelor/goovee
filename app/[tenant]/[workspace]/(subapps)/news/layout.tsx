@@ -13,12 +13,6 @@ import {t} from '@/locale/server';
 import MobileMenuCategory from '@/subapps/news/mobile-menu-category';
 import {findCategories} from '@/subapps/news/common/orm/news';
 
-export async function generateMetadata() {
-  return {
-    title: await t('News'),
-  };
-}
-
 export default async function Layout({
   params,
   children,

@@ -4,15 +4,8 @@ import type {ReactNode} from 'react';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
-import {t} from '@/lib/core/locale/server';
 import {findSubappAccess} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-
-export async function generateMetadata() {
-  return {
-    title: await t('Directory'),
-  };
-}
 
 export default async function Layout({
   params,

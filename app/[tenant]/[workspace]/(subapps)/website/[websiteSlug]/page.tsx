@@ -15,12 +15,6 @@ import {
 } from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/ui/components';
 
-export async function generateMetadata() {
-  return {
-    title: await t('Website'),
-  };
-}
-
 export default async function Layout({
   params,
   children,

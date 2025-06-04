@@ -6,13 +6,6 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES} from '@/constants';
-import {t} from '@/locale/server';
-
-export async function generateMetadata() {
-  return {
-    title: await t('Quotations'),
-  };
-}
 
 export default async function Layout({
   params,

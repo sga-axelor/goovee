@@ -5,18 +5,10 @@ import {findEvent} from '@/subapps/events/common/orm/event';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
-import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDetails} from '@/subapps/events/common/ui/components';
-
-export async function generateMetadata() {
-  return {
-    title: await t('Event'),
-    description: await t('Event website'),
-  };
-}
 
 export default async function Page({
   params,

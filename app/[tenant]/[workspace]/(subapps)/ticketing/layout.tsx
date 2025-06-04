@@ -1,18 +1,6 @@
 import type {ReactNode} from 'react';
 
-// ---- CORE IMPORTS ---- //
-import {t} from '@/locale/server';
-
-// ---- LOCAL IMPORTS ---- //
-
-export async function generateMetadata() {
-  return {
-    title: await t('Ticketing'),
-  };
-}
-
 export default async function Layout({
-  params,
   children,
 }: {
   params: {tenant: string; workspace: string};
