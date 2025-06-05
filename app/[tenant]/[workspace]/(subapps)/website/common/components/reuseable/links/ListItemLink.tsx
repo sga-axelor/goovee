@@ -7,6 +7,7 @@ type ListItemLinkProps = {
   liClassName?: string;
   linkClassName?: string;
   title: string | ReactElement;
+  onClick?: () => void;
 };
 // =========================================================
 
@@ -16,10 +17,11 @@ const ListItemLink: FC<ListItemLinkProps> = props => {
     liClassName = 'nav-item',
     href,
     title,
+    onClick,
   } = props;
 
   return (
-    <li className={liClassName}>
+    <li className={liClassName} onClick={onClick}>
       <NextLink className={linkClassName} href={href} title={title} />
     </li>
   );

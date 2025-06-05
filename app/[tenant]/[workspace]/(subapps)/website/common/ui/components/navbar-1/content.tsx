@@ -1,11 +1,12 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
+import {useRef} from 'react';
 
 // ---- LOCAL IMPORTS ---- //
 import ListItemLink from '@/subapps/website/common/components/reuseable/links/ListItemLink';
 import {MenuItem} from '@/subapps/website/common/types';
 import {DropdownToggleLink} from '../dropdown-toggle-link';
+import {Offcanvas} from 'bootstrap';
 
 type NavbarProps = {
   values?: {
@@ -24,14 +25,8 @@ export function NavbarContent(props: NavbarProps) {
   const menuList = values?.menuList || [];
   const navbarRef = useRef<HTMLElement | null>(null);
 
-  const [isLgUp, setIsLgUp] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth > 1024 : false,
-  );
-
   const navClassName =
     'navbar navbar-expand-lg center-nav transparent navbar-light';
-
-  const caretPosition = 'left';
 
   const transformMenuList = (menu: MenuItem): Link => {
     return {
@@ -42,15 +37,6 @@ export function NavbarContent(props: NavbarProps) {
         [],
     };
   };
-
-  useEffect(() => {
-    const onResize = () => {
-      setIsLgUp(window.innerWidth > 1024);
-    };
-
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
 
   const $links: Link[] = menuList
     .filter(m => !m.archived)
@@ -121,6 +107,13 @@ export function NavbarContent(props: NavbarProps) {
                   title={link.label}
                   liClassName="nav-item dropdown"
                   linkClassName="nav-link"
+                  onClick={() => {
+                    const element = document.getElementById('offcanvas-nav');
+                    if (element) {
+                      const offcanvas = Offcanvas.getInstance(element);
+                      offcanvas?.hide();
+                    }
+                  }}
                 />
               );
             })}

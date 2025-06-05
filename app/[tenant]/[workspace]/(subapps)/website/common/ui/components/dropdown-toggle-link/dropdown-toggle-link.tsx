@@ -66,6 +66,11 @@ export const DropdownToggleLink: FC<DropdownToggleLinkProps> = props => {
           'margin-left: var(--bs-dropdown-spacer);',
         );
       }
+    } else {
+      const closeBtn = document.querySelector(
+        '.offcanvas.show .btn-close',
+      ) as HTMLElement;
+      closeBtn?.click();
     }
   };
 
