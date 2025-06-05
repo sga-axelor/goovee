@@ -1,11 +1,12 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Link from 'next/link';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import {signIn, useSession} from 'next-auth/react';
 import Image from 'next/image';
 import {MdOutlineRefresh} from 'react-icons/md';
+import {Dialog, DialogContent, DialogTitle} from '@/ui/components/dialog';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
@@ -14,7 +15,6 @@ import {Checkbox} from '@/ui/components/checkbox';
 import {Label} from '@/ui/components/label';
 import {Button} from '@/ui/components/button';
 import {Separator} from '@/ui/components/separator';
-import {Dialog, DialogContent, DialogTitle} from '@/ui/components/dialog';
 import {SEARCH_PARAMS} from '@/constants';
 import {useToast} from '@/ui/hooks';
 
@@ -27,16 +27,10 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
   const [submitting, setSubmitting] = useState(false);
   const {toast} = useToast();
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  const {status} = useSession();
-
-  const isAuthenticated = status === 'authenticated';
-
-  const revalidating = Boolean(searchParams.get('revalidating') === 'true');
   const searchQuery = new URLSearchParams(searchParams).toString();
   const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
+  const {status} = useSession();
 
   const toggleShowPassword = () => setShowPassword(show => !show);
 
@@ -71,18 +65,15 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
     });
 
     if (login?.ok) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('revalidating', 'true');
-      const newUrl = `${pathname}?${params.toString()}`;
-      router.push(newUrl);
+      await revalidate();
+      router.push(redirection);
     } else {
       toast({
         title: i18n.t('Login unsuccessful, Try again'),
         variant: 'destructive',
       });
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
   };
 
   const loginWithGoogle = async () => {
@@ -91,18 +82,20 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
     });
   };
 
-  useEffect(() => {
-    const revalidation = async () => {
-      if (revalidating && isAuthenticated) {
-        await revalidate();
-        setTimeout(() => {
-          router.replace(redirection);
-        }, 100);
-      }
-    };
+  const isSessionLoading = ['loading', 'authenticated'].includes(status);
 
-    revalidation();
-  }, [revalidating, router, redirection, isAuthenticated]);
+  if (isSessionLoading) {
+    return (
+      <Dialog open>
+        <DialogTitle></DialogTitle>
+        <DialogContent className="space-y-2" hideClose>
+          <div className="flex items-center justify-center">
+            <MdOutlineRefresh className="h-6 w-6 animate-spin" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <>
@@ -116,7 +109,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
                 type="email"
                 name="email"
                 placeholder={i18n.t('Enter email')}
-                disabled={submitting || revalidating}
+                disabled={submitting}
                 value={values.email}
                 onChange={handleChange}
               />
@@ -133,7 +126,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
                     onClick: toggleShowPassword,
                   },
                 ]}
-                disabled={submitting || revalidating}
+                disabled={submitting}
                 value={values.password}
                 onChange={handleChange}
               />
@@ -148,7 +141,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
               </div>
               <Link
                 href={`/auth/reset-password?${searchQuery}`}
-                aria-disabled={submitting || revalidating}
+                aria-disabled={submitting}
                 className="flex underline text-success">
                 {i18n.t('Reset Password')} ?
               </Link>
@@ -156,14 +149,12 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
             <Button
               variant="success"
               type="submit"
-              disabled={submitting || revalidating}
+              disabled={submitting}
               className="rounded-full w-full">
-              {Boolean(revalidating || submitting) ? (
+              {submitting ? (
                 <div className="flex items-center gap-2">
                   <span>{i18n.t('Submitting')}</span>
-                  {Boolean(revalidating || submitting) && (
-                    <MdOutlineRefresh className="h-6 w-6 animate-spin-fast" />
-                  )}
+                  <MdOutlineRefresh className="h-6 w-6 animate-spin-fast" />
                 </div>
               ) : (
                 <span>{i18n.t('Log In')}</span>
@@ -176,7 +167,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
                 </p>
                 <Link
                   href={`/auth/register?${searchQuery}`}
-                  aria-disabled={submitting || revalidating}
+                  aria-disabled={submitting}
                   className="inline-flex underline text-lg">
                   {i18n.t('Sign Up')}
                 </Link>
@@ -203,7 +194,7 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
               variant="outline-success"
               className="w-full rounded-full"
               onClick={loginWithGoogle}
-              disabled={submitting || revalidating}>
+              disabled={submitting}>
               <Image
                 alt="Google"
                 src="/images/google.svg"
@@ -216,16 +207,6 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
           </div>
         </div>
       </div>
-      {revalidating && (
-        <Dialog open>
-          <DialogTitle></DialogTitle>
-          <DialogContent className="space-y-2" hideClose>
-            <div className="flex items-center justify-center">
-              <MdOutlineRefresh className="h-6 w-6 animate-spin" />
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </>
   );
 }
