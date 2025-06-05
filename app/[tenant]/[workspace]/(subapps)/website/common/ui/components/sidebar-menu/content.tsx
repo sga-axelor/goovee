@@ -16,14 +16,22 @@ type SidebarMenuProps = {
     menuList?: MenuItem[];
   };
 };
-
-const COLORS = {
-  primary: '#010165',
-  secondary: '#606770',
-  background: '#f5f5ff',
-  hoverBackground: '#ebebff',
-  border: '#dadde1',
-  gray: '#7a7a7a',
+const BORDER_COLOR = '#dadde1';
+const STYLES = {
+  text: {
+    primary: 'text-[#010165]',
+    secondary: 'text-[#606770]',
+    default: 'text-[#7a7a7a]',
+    defaultHover: 'hover:text-[#7a7a7a]',
+  },
+  bg: {
+    primary: 'bg-[#f5f5ff]',
+    secondary: 'bg-[#ebebff]',
+    secondaryHover: 'hover:bg-[#ebebff]',
+  },
+  border: {
+    primaryColor: 'border-[#dadde1]',
+  },
 };
 
 const FONTS = {
@@ -102,13 +110,13 @@ export function SidebarMenuContent(props: SidebarMenuProps) {
 
         {!isVisible && !isMobile ? (
           // Desktop collapsed state
-          <div className={`hidden lg:flex h-full bg-[${COLORS.background}]`}>
+          <div className={`hidden lg:flex h-full ${STYLES.bg.primary}`}>
             <Button
               variant="ghost"
               onClick={() => toggleMenu(true)}
-              className={`h-full rounded-none border-r hover:bg-[${COLORS.hoverBackground}] border-[${COLORS.border}] p-0`}>
+              className={`h-full rounded-none border-r ${STYLES.bg.secondaryHover} ${STYLES.border.primaryColor} p-0`}>
               <MdDoubleArrow
-                className={`h-5 w-6 text-[${COLORS.gray}] hover:text-[${COLORS.gray}]`}
+                className={`h-5 w-6 ${STYLES.text.default} ${STYLES.text.defaultHover}`}
               />
             </Button>
           </div>
@@ -116,16 +124,15 @@ export function SidebarMenuContent(props: SidebarMenuProps) {
           // Expanded sidebar (both mobile and desktop)
           <div
             className={`
-                bg-[${COLORS.background}] flex flex-col
+                ${STYLES.bg.primary} flex flex-col
                 ${isMobile ? 'fixed top-0 left-0 h-full w-[83vw] z-50 shadow-xl' : 'min-w-80 relative'}
               `}>
             {/* Mobile Header with Close Button */}
             {isMobile && (
               <div
-                className={`flex items-center justify-between px-4 py-2 bg-white border-b border-[${COLORS.border}]`}>
+                className={`flex items-center justify-between px-4 py-2 bg-white border-b ${STYLES.border.primaryColor}`}>
                 {/* LOGO */}
-                <h2
-                  className={`text-lg font-semibold text-[${COLORS.primary}]`}>
+                <h2 className={`text-lg font-semibold ${STYLES.text.primary}`}>
                   Logo
                 </h2>
                 <Button
@@ -164,10 +171,10 @@ export function SidebarMenuContent(props: SidebarMenuProps) {
             {/* Desktop Collapse Button */}
             <Button
               onClick={() => toggleMenu(false)}
-              className={`hidden lg:flex h-8 w-full hover:bg-[${COLORS.hoverBackground}] p-4 bg-[${COLORS.background}]`}
-              style={{border: `1px solid ${COLORS.border}`}}>
+              className={`hidden lg:flex h-8 w-full ${STYLES.bg.secondaryHover} p-4 ${STYLES.bg.primary}`}
+              style={{border: `1px solid ${BORDER_COLOR}`}}>
               <MdDoubleArrow
-                className={`h-5 w-5 rotate-180 text-[${COLORS.gray}] hover:text-[${COLORS.gray}]`}
+                className={`h-5 w-5 rotate-180 ${STYLES.text.default} ${STYLES.text.defaultHover}`}
               />
             </Button>
           </div>
@@ -204,9 +211,7 @@ const MenuItemComponent = ({
     <div key={item.id}>
       <div
         className={`flex items-center justify-between mx-2 px-3 py-0 font-normal cursor-pointer rounded-md duration-150 ${
-          isSelected
-            ? `bg-[${COLORS.hoverBackground}]`
-            : `hover:bg-[${COLORS.hoverBackground}]`
+          isSelected ? STYLES.bg.secondary : STYLES.bg.secondaryHover
         }`}
         style={{
           marginLeft: `${Math.min(level * 16, 48)}px`,
@@ -217,7 +222,7 @@ const MenuItemComponent = ({
             className="flex-1 h-[32px] flex items-center"
             onClick={handleItemClick}>
             <span
-              className={`flex-1 ${isSelected ? `text-[${COLORS.primary}]` : `text-[${COLORS.secondary}]`}`}>
+              className={`flex-1 ${isSelected ? `${STYLES.text.primary}` : `${STYLES.text.secondary}`}`}>
               {item.title}
             </span>
           </div>
@@ -227,7 +232,7 @@ const MenuItemComponent = ({
             className="flex-1 h-[32px] flex items-center"
             onClick={onItemClick}>
             <span
-              className={`flex-1 ${isSelected ? `text-[${COLORS.primary}]` : `text-[${COLORS.secondary}]`}`}>
+              className={`flex-1 ${isSelected ? `${STYLES.text.primary}` : `${STYLES.text.secondary}`}`}>
               {item.title}
             </span>
           </Link>

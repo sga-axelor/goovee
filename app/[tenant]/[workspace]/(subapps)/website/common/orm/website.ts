@@ -258,7 +258,7 @@ export async function findWebsiteBySlug({
       },
       menu: {
         title: true,
-        component: {title: true, code: true},
+        component: {title: true, code: true, typeSelect: true},
         language: true,
         menuList: true,
       },

@@ -14,6 +14,7 @@ import {
 import {NotFound} from '@/subapps/website/common/ui/components';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
 import {LanguageSelection} from './language-selection';
+import {NAVIGATION_POSITION} from '../common/constants';
 
 export async function generateMetadata({
   params,
@@ -88,16 +89,22 @@ export default async function Layout({
   const Menu = getWebsiteComponent(website?.menu?.component);
   const Footer = getWebsiteComponent(website.footer?.component);
 
+  const navPosition = website.menu?.component?.typeSelect ?? 1;
+  const isSideNav = navPosition === NAVIGATION_POSITION.LEFT_RIGHT_MENU;
+
   return (
-    <>
-      <Menu menu={clone(website?.menu)} />
-      <LanguageSelection
-        languageList={mainWebsiteLanguages}
-        active={websiteSlug}
-      />
-      <Header />
-      {children}
-      <Footer />
-    </>
+    <div className="flex">
+      {isSideNav && <Menu menu={clone(website.menu)} />}
+      <div className="flex-1 overflow-auto">
+        {!isSideNav && <Menu menu={clone(website.menu)} />}
+        <LanguageSelection
+          languageList={mainWebsiteLanguages}
+          active={websiteSlug}
+        />
+        <Header />
+        {children}
+        <Footer />
+      </div>
+    </div>
   );
 }

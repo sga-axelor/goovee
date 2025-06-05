@@ -1,0 +1,5 @@
+export const NAVIGATION_POSITION = {
+  BLOCK: 1,
+  TOP_MENU: 2,
+  LEFT_RIGHT_MENU: 3,
+};
