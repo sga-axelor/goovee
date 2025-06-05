@@ -157,74 +157,77 @@ export default function ActionsPlugin({
 
   return (
     <div className="actions">
-      <button className="action-button" onClick={save} disabled={saving}>
-        save
-      </button>
-      {SUPPORT_SPEECH_RECOGNITION && (
-        <button
-          onClick={() => {
-            editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
-            setIsSpeechToText(!isSpeechToText);
-          }}
-          className={
-            'action-button action-button-mic ' +
-            (isSpeechToText ? 'active' : '')
-          }
-          title="Speech To Text"
-          aria-label={`${
-            isSpeechToText ? 'Enable' : 'Disable'
-          } speech to text`}>
-          <i className="mic" />
-        </button>
+      {isEditable && (
+        <>
+          <button className="action-button" onClick={save} disabled={saving}>
+            save
+          </button>
+          {SUPPORT_SPEECH_RECOGNITION && (
+            <button
+              onClick={() => {
+                editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
+                setIsSpeechToText(!isSpeechToText);
+              }}
+              className={
+                'action-button action-button-mic ' +
+                (isSpeechToText ? 'active' : '')
+              }
+              title="Speech To Text"
+              aria-label={`${
+                isSpeechToText ? 'Enable' : 'Disable'
+              } speech to text`}>
+              <i className="mic" />
+            </button>
+          )}
+          <button
+            className="action-button import"
+            onClick={() => importFile(editor)}
+            title="Import"
+            aria-label="Import editor state from JSON">
+            <i className="import" />
+          </button>
+          <button
+            className="action-button export"
+            onClick={() =>
+              exportFile(editor, {
+                fileName: `Playground ${new Date().toISOString()}`,
+                source: 'Playground',
+              })
+            }
+            title="Export"
+            aria-label="Export editor state to JSON">
+            <i className="export" />
+          </button>
+          <button
+            className="action-button share"
+            onClick={() =>
+              shareDoc(
+                serializedDocumentFromEditorState(editor.getEditorState(), {
+                  source: 'Playground',
+                }),
+              ).then(
+                () => showFlashMessage('URL copied to clipboard'),
+                () => showFlashMessage('URL could not be copied to clipboard'),
+              )
+            }
+            title="Share"
+            aria-label="Share Playground link to current editor state">
+            <i className="share" />
+          </button>
+          <button
+            className="action-button clear"
+            disabled={isEditorEmpty}
+            onClick={() => {
+              showModal('Clear editor', onClose => (
+                <ShowClearDialog editor={editor} onClose={onClose} />
+              ));
+            }}
+            title="Clear"
+            aria-label="Clear editor contents">
+            <i className="clear" />
+          </button>
+        </>
       )}
-      <button
-        className="action-button import"
-        onClick={() => importFile(editor)}
-        title="Import"
-        aria-label="Import editor state from JSON">
-        <i className="import" />
-      </button>
-
-      <button
-        className="action-button export"
-        onClick={() =>
-          exportFile(editor, {
-            fileName: `Playground ${new Date().toISOString()}`,
-            source: 'Playground',
-          })
-        }
-        title="Export"
-        aria-label="Export editor state to JSON">
-        <i className="export" />
-      </button>
-      <button
-        className="action-button share"
-        onClick={() =>
-          shareDoc(
-            serializedDocumentFromEditorState(editor.getEditorState(), {
-              source: 'Playground',
-            }),
-          ).then(
-            () => showFlashMessage('URL copied to clipboard'),
-            () => showFlashMessage('URL could not be copied to clipboard'),
-          )
-        }
-        title="Share"
-        aria-label="Share Playground link to current editor state">
-        <i className="share" />
-      </button>
-      <button
-        className="action-button clear"
-        disabled={isEditorEmpty}
-        onClick={() => {
-          showModal('Clear editor', onClose => (
-            <ShowClearDialog editor={editor} onClose={onClose} />
-          ));
-        }}
-        title="Clear"
-        aria-label="Clear editor contents">
-        <i className="clear" />
-      </button>
       <button
         className={`action-button ${!isEditable ? 'unlock' : 'lock'}`}
         onClick={() => {

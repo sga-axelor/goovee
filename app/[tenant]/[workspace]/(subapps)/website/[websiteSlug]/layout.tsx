@@ -93,18 +93,20 @@ export default async function Layout({
   const isSideNav = navPosition === NAVIGATION_POSITION.LEFT_RIGHT_MENU;
 
   return (
-    <div className="flex">
-      {isSideNav && <Menu menu={clone(website.menu)} />}
-      <div className="flex-1 overflow-auto">
-        {!isSideNav && <Menu menu={clone(website.menu)} />}
-        <LanguageSelection
-          languageList={mainWebsiteLanguages}
-          active={websiteSlug}
-        />
-        <Header />
-        {children}
-        <Footer />
+    <>
+      <LanguageSelection
+        languageList={mainWebsiteLanguages}
+        active={websiteSlug}
+      />
+      {!isSideNav && <Menu menu={clone(website.menu)} />}
+      <div className="flex">
+        {isSideNav && <Menu menu={clone(website.menu)} />}
+        <div className="flex-1">
+          <Header />
+          {children}
+          <Footer />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -69,49 +69,19 @@
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #eee;
   height: 100%;
-
-  header {
-    max-width: 580px;
-    margin: auto;
-    position: relative;
-    display: flex;
-    justify-content: center;
-  }
-
-  header a {
-    max-width: 220px;
-    margin: 20px 0 0 0;
-    display: block;
-  }
-
-  header img {
-    display: block;
-    height: 100%;
-    width: 100%;
-  }
-
-  header h1 {
-    text-align: left;
-    color: #333;
-    display: inline-block;
-    margin: 20px 0 0 0;
-  }
 
   .wiki-container {
     display: flex;
-    overflow: auto;
+    border-top: 1px solid #e5e7eb;
   }
 
   .editor-shell {
-    border-radius: 2px;
     color: #000;
     position: relative;
     line-height: 1.7;
     font-weight: 400;
     flex: 1 1 1px;
-    overflow: auto;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -120,11 +90,9 @@
   .wiki-sidebar {
     display: none;
     width: 300px;
-    background-color: #f9f9f9;
-    border-right: 1px solid #e0e0e0;
-    overflow-y: auto;
+    align-self: flex-start;
+    position: sticky;
     top: 0;
-    height: calc(100vh - 98px);
   }
 
   @media screen and (min-width: 1024px) {
@@ -136,14 +104,6 @@
   .editor-shell .editor-container {
     background: #fff;
     display: block;
-    height: calc(100vh - 142px);
-    overflow: auto;
-  }
-
-  @media screen and (max-width: 1023px) {
-    .editor-shell .editor-container {
-      height: calc(100vh - 182px);
-    }
   }
 
   .editor-shell .editor-container.tree-view {
@@ -1341,11 +1301,11 @@
   }
 
   .actions {
-    position: absolute;
+    position: sticky;
     text-align: right;
     margin: 10px;
-    bottom: 0;
-    right: 0;
+    bottom: 1rem;
+    right: 1rem;
   }
 
   .actions.tree-view {
@@ -1563,6 +1523,9 @@
     z-index: 2;
     overflow-y: hidden; /* disable vertical scroll*/
     flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    border-bottom: 1px solid #e5e7eb;
   }
 
   button.toolbar-item {

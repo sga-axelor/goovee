@@ -1,5 +1,8 @@
 'use client';
-import {LexicalComposer} from '@lexical/react/LexicalComposer';
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer';
 import {$isTextNode, DOMConversionMap, TextNode} from 'lexical';
 import type {TemplateProps} from '../../../types';
 import Editor from './Editor';
@@ -88,7 +91,7 @@ export function Wiki(props: TemplateProps<WikiProps>) {
   const {data, contentId, contentVersion} = props;
   const {content} = data || {};
 
-  const initialConfig = {
+  const initialConfig: InitialConfigType = {
     html: {import: buildImportMap()},
     namespace: 'Playground',
     nodes: [...PlaygroundNodes],
@@ -96,6 +99,7 @@ export function Wiki(props: TemplateProps<WikiProps>) {
       throw error;
     },
     theme: PlaygroundEditorTheme,
+    editable: false,
   };
 
   return (
@@ -106,9 +110,6 @@ export function Wiki(props: TemplateProps<WikiProps>) {
             <TableContext>
               <ToolbarContext>
                 <div className="wiki-container">
-                  <aside className="wiki-sidebar">
-                    <TableOfContentsPlugin />
-                  </aside>
                   <div className="editor-shell">
                     <Editor
                       content={content}
@@ -116,6 +117,9 @@ export function Wiki(props: TemplateProps<WikiProps>) {
                       contentVersion={contentVersion!}
                     />
                   </div>
+                  <aside className="wiki-sidebar">
+                    <TableOfContentsPlugin />
+                  </aside>
                 </div>
               </ToolbarContext>
             </TableContext>
