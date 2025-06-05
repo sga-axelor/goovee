@@ -875,3 +875,23 @@ export async function findNewsRelatedNews({
   const [{relatedNewsSet = []} = {}] = response?.news ?? [];
   return relatedNewsSet ?? [];
 }
+
+export async function findNewsByCategoryCount({
+  workspace,
+  tenantId,
+  user,
+  slug,
+}: {
+  workspace: PortalWorkspace;
+  tenantId: Tenant['id'];
+  user?: User;
+  slug?: string;
+}) {
+  if (!workspace || !tenantId) return null;
+
+  const {news} =
+    (await findNewsByCategory({workspace, tenantId, user, slug, limit: 1})) ??
+    {};
+
+  return news?.length ?? 0;
+}

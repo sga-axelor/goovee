@@ -11,7 +11,7 @@ import {t} from '@/locale/server';
 // ---- LOCAL IMPORTS ---- //
 import {
   findCategoryTitleBySlugName,
-  findNewsCount,
+  findNewsByCategoryCount,
 } from '@/subapps/news/common/orm/news';
 import {
   CategoriesSkeleton,
@@ -58,7 +58,13 @@ async function CategoryGrid({
     return notFound();
   }
 
-  const newsCount = await findNewsCount({workspace, tenantId, user, slug});
+  const newsCount = await findNewsByCategoryCount({
+    workspace,
+    tenantId,
+    user,
+    slug,
+  });
+
   if (!newsCount) {
     return (
       <div className="font-medium text-center flex items-center justify-center py-4 flex-1">
