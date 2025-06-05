@@ -87,6 +87,10 @@
     {
       "type": "String",
       "name": "logoSelect"
+    },
+    {
+      "type": "Boolean",
+      "name": "isHomepage"
     }
   ]
 }

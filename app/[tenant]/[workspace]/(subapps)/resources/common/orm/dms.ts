@@ -30,12 +30,13 @@ export async function fetchFolders({
       workspaceSet: {
         id: workspace?.id,
       },
-      ...params?.where,
+      ...(params?.where || {}),
       AND: [
         await filterPrivate({tenantId, user}),
         archived
           ? {archived: true}
           : {OR: [{archived: false}, {archived: null}]},
+        ...(params?.where?.AND || []),
       ],
     },
     select: {
@@ -69,6 +70,9 @@ export async function fetchLatestFolders({
     tenantId,
     user,
     params: {
+      where: {
+        AND: [{OR: [{parent: {id: null}}, {isHomepage: true}]}],
+      },
       take: 10,
     },
   });
