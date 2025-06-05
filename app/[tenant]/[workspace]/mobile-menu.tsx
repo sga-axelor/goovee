@@ -135,6 +135,7 @@ export function MobileMenu({subapps, workspaces, workspace}: any) {
   const user = session?.user;
 
   const {loading, visible} = useNavigationVisibility();
+  const {workspaceURI, tenant} = useWorkspace();
 
   const canDisplayContent = !loading && visible;
 
@@ -159,7 +160,7 @@ export function MobileMenu({subapps, workspaces, workspace}: any) {
           />
         )}
         <Cart />
-        <Account />
+        <Account baseURL={workspaceURI} tenant={tenant} />
       </div>
     </nav>
   );
