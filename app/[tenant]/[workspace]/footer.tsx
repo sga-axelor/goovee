@@ -10,7 +10,7 @@ export default function Footer({workspace}: {workspace: PortalWorkspace}) {
 
   return (
     <>
-      <div className="mt-auto bg-background text-foreground px-4 py-1 flex items-center border-t border-border border-solid ">
+      <div className="mt-auto bg-background text-foreground px-4 py-1 lg:flex hidden items-center justify-center border-t border-border border-solid">
         <div className="px-4">
           {displayContact && (
             <div className="flex flex-col gap-0.5 items-start text-xs">
