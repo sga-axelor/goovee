@@ -99,7 +99,7 @@ export function SidebarMenuContent(props: SidebarMenuProps) {
       </div>
 
       {/* Desktop and Mobile Sidebar */}
-      <div className="h-full flex">
+      <div className="h-full flex z-10">
         {/* Mobile Backdrop */}
         {isMobile && isVisible && (
           <div
@@ -125,7 +125,7 @@ export function SidebarMenuContent(props: SidebarMenuProps) {
           <div
             className={`
                 ${STYLES.bg.primary} flex flex-col
-                ${isMobile ? 'fixed top-0 left-0 h-full w-[83vw] z-50 shadow-xl' : 'min-w-80 relative'}
+                ${isMobile ? 'fixed top-0 left-0 h-full w-[83vw] z-50 shadow-xl' : 'min-w-72 relative'}
               `}>
             {/* Mobile Header with Close Button */}
             {isMobile && (
