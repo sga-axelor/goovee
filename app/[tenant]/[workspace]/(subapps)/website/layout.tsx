@@ -34,7 +34,7 @@ export default async function Layout({
   if (!subapp) return notFound();
 
   return (
-    <div className="h-full">
+    <div className="mb-[72px] lg:mb-0">
       <TemplateRoot>{children}</TemplateRoot>
     </div>
   );
