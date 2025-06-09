@@ -22,6 +22,10 @@ export const SHORTCUTS = Object.freeze({
   CODE_BLOCK: IS_APPLE ? '⌘+Opt+C' : 'Ctrl+Alt+C',
   QUOTE: IS_APPLE ? '⌘+Opt+Q' : 'Ctrl+Alt+Q',
   ADD_COMMENT: IS_APPLE ? '⌘+Opt+M' : 'Ctrl+Alt+M',
+  INSERT_INFO_ALERT: IS_APPLE ? '⌘+Opt+I' : 'Ctrl+Alt+I',
+  INSERT_WARNING_ALERT: IS_APPLE ? '⌘+Opt+W' : 'Ctrl+Alt+W',
+  INSERT_ERROR_ALERT: IS_APPLE ? '⌘+Opt+E' : 'Ctrl+Alt+E',
+  INSERT_URGENT_ALERT: IS_APPLE ? '⌘+Opt+U' : 'Ctrl+Alt+U',
 
   // (Ctrl|⌘) + Shift + <key> shortcuts
   INCREASE_FONT_SIZE: IS_APPLE ? '⌘+Shift+.' : 'Ctrl+Shift+.',

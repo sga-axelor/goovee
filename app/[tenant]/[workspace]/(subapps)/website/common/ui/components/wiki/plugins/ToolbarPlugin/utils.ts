@@ -19,22 +19,27 @@ import {
   $isQuoteNode,
   HeadingTagType,
 } from '@lexical/rich-text';
-import {$patchStyleText, $setBlocksType} from '@lexical/selection';
+import {$patchStyleText, $setBlocksType, $wrapNodes} from '@lexical/selection';
 import {$isTableSelection} from '@lexical/table';
 import {$getNearestBlockElementAncestorOrThrow} from '@lexical/utils';
 import {
   $createParagraphNode,
   $getSelection,
+  $insertNodes,
+  $isElementNode,
   $isRangeSelection,
   $isTextNode,
   LexicalEditor,
+  ParagraphNode,
 } from 'lexical';
 
 import {
+  BlockType,
   DEFAULT_FONT_SIZE,
   MAX_ALLOWED_FONT_SIZE,
   MIN_ALLOWED_FONT_SIZE,
 } from '../../context/ToolbarContext';
+import {$createAlertNode, AlertNode, AlertType} from '../../nodes/AlertNode';
 
 // eslint-disable-next-line no-shadow
 export enum UpdateFontSizeType {
@@ -231,6 +236,55 @@ export const formatCode = (editor: LexicalEditor, blockType: string) => {
       }
     });
   }
+};
+
+export const formatAlert = (
+  editor: LexicalEditor,
+  currentType: BlockType,
+  toType: Extract<BlockType, `alert-${string}`>,
+) => {
+  if (currentType === toType) return;
+
+  const alertType = toType.replace('alert-', '') as AlertNode['__alertType'];
+
+  editor.update(() => {
+    const selection = $getSelection();
+    if (!$isRangeSelection(selection)) return;
+
+    const anchorNode = selection.anchor.getNode();
+    const alertAncestor = anchorNode
+      .getParents()
+      .find(p => p instanceof AlertNode) as AlertNode | null;
+
+    if (alertAncestor) {
+      const writable = alertAncestor.getWritable();
+      writable.__alertType = alertType;
+      writable.getFirstChild()?.selectEnd();
+      return;
+    }
+
+    const nodes = selection.getNodes();
+    const alertNode = new AlertNode(alertType);
+
+    // Insert the AlertNode before the first selected node
+    nodes[0].insertBefore(alertNode);
+
+    const onlyInline = nodes.every(n => n.isInline());
+
+    if (onlyInline) {
+      const paragraph = $createParagraphNode();
+      for (const node of nodes) {
+        paragraph.append(node);
+      }
+      alertNode.append(paragraph);
+    } else {
+      for (const node of nodes) {
+        alertNode.append(node);
+      }
+    }
+
+    alertNode.getFirstDescendant()?.selectEnd();
+  });
 };
 
 export const clearFormatting = (editor: LexicalEditor) => {

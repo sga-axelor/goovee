@@ -41,12 +41,18 @@ export const blockTypeToBlockName = {
   number: 'Numbered List',
   paragraph: 'Normal',
   quote: 'Quote',
+  'alert-info': 'Alert: Info',
+  'alert-warning': 'Alert: Warning',
+  'alert-error': 'Alert: Error',
+  'alert-urgent': 'Alert: Urgent',
 };
+
+export type BlockType = keyof typeof blockTypeToBlockName;
 
 //disable eslint sorting rule for quick reference to toolbar state
 const INITIAL_TOOLBAR_STATE = {
   bgColor: '#fff',
-  blockType: 'paragraph' as keyof typeof blockTypeToBlockName,
+  blockType: 'paragraph' as BlockType,
   canRedo: false,
   canUndo: false,
   codeLanguage: '',

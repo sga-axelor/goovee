@@ -139,6 +139,41 @@
     width: 100%;
   }
 
+  /* Alert styling starts here */
+  .alert-box {
+    border-left: 4px solid;
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-family: sans-serif;
+  }
+
+  .alert-info {
+    background-color: #e6f4ff;
+    color: #084298;
+    border-color: #2196f3;
+  }
+
+  .alert-warning {
+    background-color: #fff8e1;
+    color: #8a6d3b;
+    border-color: #ffc107;
+  }
+
+  .alert-error {
+    background-color: #fbe9e7;
+    color: #a94442;
+    border-color: #f44336;
+  }
+
+  .alert-urgent {
+    background-color: #fff3e0;
+    color: #d84315;
+    border-color: #ff9800;
+  }
+
+  /* Alert styling ends here */
+
   pre {
     line-height: 1.1;
     background: #222;

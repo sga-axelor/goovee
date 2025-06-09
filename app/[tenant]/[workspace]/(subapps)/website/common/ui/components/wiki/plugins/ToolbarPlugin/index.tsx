@@ -58,6 +58,7 @@ import {Dispatch, useCallback, useEffect, useState} from 'react';
 import * as React from 'react';
 
 import {
+  BlockType,
   blockTypeToBlockName,
   useToolbarState,
 } from '../../context/ToolbarContext';
@@ -84,6 +85,7 @@ import {InsertTableDialog} from '../TablePlugin';
 import FontSize from './fontSize';
 import {
   clearFormatting,
+  formatAlert,
   formatBulletList,
   formatCheckList,
   formatCode,
@@ -188,7 +190,7 @@ function BlockFormatDropDown({
   rootType,
   disabled = false,
 }: {
-  blockType: keyof typeof blockTypeToBlockName;
+  blockType: BlockType;
   rootType: keyof typeof rootTypeToRootName;
   editor: LexicalEditor;
   disabled?: boolean;
@@ -282,6 +284,50 @@ function BlockFormatDropDown({
           <span className="text">Code Block</span>
         </div>
         <span className="shortcut">{SHORTCUTS.CODE_BLOCK}</span>
+      </DropDownItem>
+      <DropDownItem
+        className={
+          'item wide ' + dropDownActiveClass(blockType === 'alert-info')
+        }
+        onClick={() => formatAlert(editor, blockType, 'alert-info')}>
+        <div className="icon-text-container">
+          <i className="icon code" />
+          <span className="text">Info Alert</span>
+        </div>
+        <span className="shortcut">{SHORTCUTS.INSERT_INFO_ALERT}</span>
+      </DropDownItem>
+      <DropDownItem
+        className={
+          'item wide ' + dropDownActiveClass(blockType === 'alert-warning')
+        }
+        onClick={() => formatAlert(editor, blockType, 'alert-warning')}>
+        <div className="icon-text-container">
+          <i className="icon code" />
+          <span className="text">Warning Alert</span>
+        </div>
+        <span className="shortcut">{SHORTCUTS.INSERT_WARNING_ALERT}</span>
+      </DropDownItem>
+      <DropDownItem
+        className={
+          'item wide ' + dropDownActiveClass(blockType === 'alert-error')
+        }
+        onClick={() => formatAlert(editor, blockType, 'alert-error')}>
+        <div className="icon-text-container">
+          <i className="icon code" />
+          <span className="text">Error Alert</span>
+        </div>
+        <span className="shortcut">{SHORTCUTS.INSERT_ERROR_ALERT}</span>
+      </DropDownItem>
+      <DropDownItem
+        className={
+          'item wide ' + dropDownActiveClass(blockType === 'alert-urgent')
+        }
+        onClick={() => formatAlert(editor, blockType, 'alert-urgent')}>
+        <div className="icon-text-container">
+          <i className="icon code" />
+          <span className="text">Urgent Alert</span>
+        </div>
+        <span className="shortcut">{SHORTCUTS.INSERT_URGENT_ALERT}</span>
       </DropDownItem>
     </DropDown>
   );
@@ -548,10 +594,7 @@ export default function ToolbarPlugin({
             ? element.getTag()
             : element.getType();
           if (type in blockTypeToBlockName) {
-            updateToolbarState(
-              'blockType',
-              type as keyof typeof blockTypeToBlockName,
-            );
+            updateToolbarState('blockType', type as BlockType);
           }
           if ($isCodeNode(element)) {
             const language =
