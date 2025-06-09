@@ -1525,13 +1525,12 @@
     padding: 4px;
     vertical-align: middle;
     overflow: auto;
-    height: 36px;
     z-index: 2;
-    overflow-y: hidden; /* disable vertical scroll*/
     flex-shrink: 0;
     position: sticky;
     top: 0;
     border-bottom: 1px solid #e5e7eb;
+    flex-wrap: wrap;
   }
 
   button.toolbar-item {
