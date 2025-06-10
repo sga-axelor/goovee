@@ -147,6 +147,11 @@
     position: relative;
   }
 
+  .alert-success {
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+  }
+
   .alert-info {
     background-color: #e0f0ff;
     border-left: 4px solid #2196f3;
@@ -185,19 +190,23 @@
     margin-left: 32px;
   }
 
-  .alert i.info-icon {
+  i.success-icon {
+    background-image: url(/images/icons/success-outline.svg);
+  }
+
+  i.info-icon {
     background-image: url(/images/icons/info.svg);
   }
 
-  .alert i.warning-icon {
+  i.warning-icon {
     background-image: url(/images/icons/warning.svg);
   }
 
-  .alert i.error-icon {
+  i.error-icon {
     background-image: url(/images/icons/error.svg);
   }
 
-  .alert i.urgent-icon {
+  i.urgent-icon {
     background-image: url(/images/icons/urgent.svg);
   }
 

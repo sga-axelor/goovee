@@ -24,6 +24,7 @@ import {useToolbarState} from '../../context/ToolbarContext';
 import {sanitizeUrl} from '../../utils/url';
 import {
   clearFormatting,
+  formatAlert,
   formatBulletList,
   formatCheckList,
   formatCode,
@@ -42,10 +43,15 @@ import {
   isFormatBulletList,
   isFormatCheckList,
   isFormatCode,
+  isFormatErrorAlert,
   isFormatHeading,
+  isFormatInfoAlert,
   isFormatNumberedList,
   isFormatParagraph,
   isFormatQuote,
+  isFormatSuccessAlert,
+  isFormatUrgentAlert,
+  isFormatWarningAlert,
   isIncreaseFontSize,
   isIndent,
   isInsertCodeBlock,
@@ -91,6 +97,16 @@ export default function ShortcutsPlugin({
         formatCode(editor, toolbarState.blockType);
       } else if (isFormatQuote(event)) {
         formatQuote(editor, toolbarState.blockType);
+      } else if (isFormatInfoAlert(event)) {
+        formatAlert(editor, toolbarState.blockType, 'alert-info');
+      } else if (isFormatWarningAlert(event)) {
+        formatAlert(editor, toolbarState.blockType, 'alert-warning');
+      } else if (isFormatErrorAlert(event)) {
+        formatAlert(editor, toolbarState.blockType, 'alert-error');
+      } else if (isFormatUrgentAlert(event)) {
+        formatAlert(editor, toolbarState.blockType, 'alert-urgent');
+      } else if (isFormatSuccessAlert(event)) {
+        formatAlert(editor, toolbarState.blockType, 'alert-success');
       } else if (isStrikeThrough(event)) {
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
       } else if (isLowercase(event)) {

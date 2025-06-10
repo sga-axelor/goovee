@@ -6,10 +6,9 @@ import {
   DOMExportOutput,
   $applyNodeReplacement,
   LexicalNode,
-  EditorConfig,
 } from 'lexical';
 
-export type AlertType = 'info' | 'warning' | 'error' | 'urgent';
+export type AlertType = 'info' | 'warning' | 'error' | 'urgent' | 'success';
 
 export type SerializedAlertNode = Spread<
   {

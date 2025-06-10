@@ -26,6 +26,7 @@ export const SHORTCUTS = Object.freeze({
   INSERT_WARNING_ALERT: IS_APPLE ? '⌘+Opt+W' : 'Ctrl+Alt+W',
   INSERT_ERROR_ALERT: IS_APPLE ? '⌘+Opt+E' : 'Ctrl+Alt+E',
   INSERT_URGENT_ALERT: IS_APPLE ? '⌘+Opt+U' : 'Ctrl+Alt+U',
+  INSERT_SUCCESS_ALERT: IS_APPLE ? '⌘+Opt+S' : 'Ctrl+Alt+S',
 
   // (Ctrl|⌘) + Shift + <key> shortcuts
   INCREASE_FONT_SIZE: IS_APPLE ? '⌘+Shift+.' : 'Ctrl+Shift+.',
@@ -111,6 +112,46 @@ export function isFormatQuote(event: KeyboardEvent): boolean {
   const {code} = event;
   return (
     code === 'KeyQ' &&
+    isModifierMatch(event, {...CONTROL_OR_META, altKey: true})
+  );
+}
+
+export function isFormatInfoAlert(event: KeyboardEvent): boolean {
+  const {code} = event;
+  return (
+    code === 'KeyI' &&
+    isModifierMatch(event, {...CONTROL_OR_META, altKey: true})
+  );
+}
+
+export function isFormatWarningAlert(event: KeyboardEvent): boolean {
+  const {code} = event;
+  return (
+    code === 'KeyW' &&
+    isModifierMatch(event, {...CONTROL_OR_META, altKey: true})
+  );
+}
+
+export function isFormatErrorAlert(event: KeyboardEvent): boolean {
+  const {code} = event;
+  return (
+    code === 'KeyE' &&
+    isModifierMatch(event, {...CONTROL_OR_META, altKey: true})
+  );
+}
+
+export function isFormatUrgentAlert(event: KeyboardEvent): boolean {
+  const {code} = event;
+  return (
+    code === 'KeyU' &&
+    isModifierMatch(event, {...CONTROL_OR_META, altKey: true})
+  );
+}
+
+export function isFormatSuccessAlert(event: KeyboardEvent): boolean {
+  const {code} = event;
+  return (
+    code === 'KeyS' &&
     isModifierMatch(event, {...CONTROL_OR_META, altKey: true})
   );
 }

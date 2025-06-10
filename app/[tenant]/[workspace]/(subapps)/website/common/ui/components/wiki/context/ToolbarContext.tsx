@@ -45,6 +45,7 @@ export const blockTypeToBlockName = {
   'alert-warning': 'Alert: Warning',
   'alert-error': 'Alert: Error',
   'alert-urgent': 'Alert: Urgent',
+  'alert-success': 'Alert: Success',
 };
 
 export type BlockType = keyof typeof blockTypeToBlockName;

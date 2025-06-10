@@ -19,18 +19,15 @@ import {
   $isQuoteNode,
   HeadingTagType,
 } from '@lexical/rich-text';
-import {$patchStyleText, $setBlocksType, $wrapNodes} from '@lexical/selection';
+import {$patchStyleText, $setBlocksType} from '@lexical/selection';
 import {$isTableSelection} from '@lexical/table';
 import {$getNearestBlockElementAncestorOrThrow} from '@lexical/utils';
 import {
   $createParagraphNode,
   $getSelection,
-  $insertNodes,
-  $isElementNode,
   $isRangeSelection,
   $isTextNode,
   LexicalEditor,
-  ParagraphNode,
 } from 'lexical';
 
 import {
@@ -39,7 +36,7 @@ import {
   MAX_ALLOWED_FONT_SIZE,
   MIN_ALLOWED_FONT_SIZE,
 } from '../../context/ToolbarContext';
-import {$createAlertNode, AlertNode, AlertType} from '../../nodes/AlertNode';
+import {$createAlertNode, $isAlertNode, AlertNode} from '../../nodes/AlertNode';
 
 // eslint-disable-next-line no-shadow
 export enum UpdateFontSizeType {
@@ -254,8 +251,9 @@ export const formatAlert = (
     const anchorNode = selection.anchor.getNode();
     const alertAncestor = anchorNode
       .getParents()
-      .find(p => p instanceof AlertNode) as AlertNode | null;
+      .find(p => $isAlertNode(p)) as AlertNode | null;
 
+    // If already in an alert, just update its type
     if (alertAncestor) {
       const writable = alertAncestor.getWritable();
       writable.__alertType = alertType;
@@ -263,27 +261,36 @@ export const formatAlert = (
       return;
     }
 
+    // Get the selected nodes
     const nodes = selection.getNodes();
-    const alertNode = new AlertNode(alertType);
 
-    // Insert the AlertNode before the first selected node
-    nodes[0].insertBefore(alertNode);
+    // Find all top-level elements in the selection
+    const topLevelNodes = new Set(
+      nodes.map(node => node.getTopLevelElement() || node),
+    );
 
-    const onlyInline = nodes.every(n => n.isInline());
+    // Create the alert node
+    const alertNode = $createAlertNode(alertType);
 
-    if (onlyInline) {
-      const paragraph = $createParagraphNode();
-      for (const node of nodes) {
-        paragraph.append(node);
-      }
-      alertNode.append(paragraph);
-    } else {
-      for (const node of nodes) {
-        alertNode.append(node);
+    // Find the insertion point (before the first selected node)
+    const firstNode = nodes[0];
+    const insertionPoint = firstNode.getTopLevelElement() || firstNode;
+
+    // Insert the alert node at the correct position
+    insertionPoint.insertBefore(alertNode);
+
+    // Move all top-level nodes into the alert
+    const nodesToMove = Array.from(topLevelNodes);
+    for (const node of nodesToMove) {
+      if (node.isAttached() && !alertNode.isParentOf(node)) {
+        const writableNode = node.getWritable();
+        writableNode.remove();
+        alertNode.append(writableNode);
       }
     }
 
-    alertNode.getFirstDescendant()?.selectEnd();
+    // Set selection at the end of the alert's content
+    alertNode.selectEnd();
   });
 };
 

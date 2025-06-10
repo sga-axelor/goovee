@@ -291,10 +291,21 @@ function BlockFormatDropDown({
         }
         onClick={() => formatAlert(editor, blockType, 'alert-info')}>
         <div className="icon-text-container">
-          <i className="icon code" />
+          <i className="icon info-icon" />
           <span className="text">Info Alert</span>
         </div>
         <span className="shortcut">{SHORTCUTS.INSERT_INFO_ALERT}</span>
+      </DropDownItem>
+      <DropDownItem
+        className={
+          'item wide ' + dropDownActiveClass(blockType === 'alert-success')
+        }
+        onClick={() => formatAlert(editor, blockType, 'alert-success')}>
+        <div className="icon-text-container">
+          <i className="icon success-icon" />
+          <span className="text">Success Alert</span>
+        </div>
+        <span className="shortcut">{SHORTCUTS.INSERT_SUCCESS_ALERT}</span>
       </DropDownItem>
       <DropDownItem
         className={
@@ -302,7 +313,7 @@ function BlockFormatDropDown({
         }
         onClick={() => formatAlert(editor, blockType, 'alert-warning')}>
         <div className="icon-text-container">
-          <i className="icon code" />
+          <i className="icon warning-icon" />
           <span className="text">Warning Alert</span>
         </div>
         <span className="shortcut">{SHORTCUTS.INSERT_WARNING_ALERT}</span>
@@ -313,7 +324,7 @@ function BlockFormatDropDown({
         }
         onClick={() => formatAlert(editor, blockType, 'alert-error')}>
         <div className="icon-text-container">
-          <i className="icon code" />
+          <i className="icon error-icon" />
           <span className="text">Error Alert</span>
         </div>
         <span className="shortcut">{SHORTCUTS.INSERT_ERROR_ALERT}</span>
@@ -324,7 +335,7 @@ function BlockFormatDropDown({
         }
         onClick={() => formatAlert(editor, blockType, 'alert-urgent')}>
         <div className="icon-text-container">
-          <i className="icon code" />
+          <i className="icon urgent-icon" />
           <span className="text">Urgent Alert</span>
         </div>
         <span className="shortcut">{SHORTCUTS.INSERT_URGENT_ALERT}</span>
