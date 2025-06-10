@@ -111,7 +111,10 @@ export function EventTabs({
 
   const handleTabChange = (t: TabItem) => {
     setActiveTab(t);
-    update([{key: 'type', value: t.label}]);
+    update([
+      {key: 'type', value: t.label},
+      {key: 'page', value: null},
+    ]);
   };
 
   useEffect(() => {
