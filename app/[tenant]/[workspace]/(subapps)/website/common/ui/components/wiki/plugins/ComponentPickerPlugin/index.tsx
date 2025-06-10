@@ -46,6 +46,7 @@ import {INSERT_IMAGE_COMMAND, InsertImageDialog} from '../ImagesPlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
 import {INSERT_PAGE_BREAK} from '../PageBreakPlugin';
 import {InsertTableDialog} from '../TablePlugin';
+import {formatAlert} from '../ToolbarPlugin/utils';
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
@@ -207,6 +208,31 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
             $setBlocksType(selection, () => $createQuoteNode());
           }
         }),
+    }),
+    new ComponentPickerOption('Info Alert', {
+      icon: <i className="icon info-icon" />,
+      keywords: ['info', 'alert', 'alert-info'],
+      onSelect: () => formatAlert(editor, 'paragraph', 'alert-info'),
+    }),
+    new ComponentPickerOption('Warning Alert', {
+      icon: <i className="icon warning-icon" />,
+      keywords: ['warning', 'alert', 'alert-warning'],
+      onSelect: () => formatAlert(editor, 'paragraph', 'alert-warning'),
+    }),
+    new ComponentPickerOption('Error Alert', {
+      icon: <i className="icon error-icon" />,
+      keywords: ['error', 'alert', 'alert-error', 'danger'],
+      onSelect: () => formatAlert(editor, 'paragraph', 'alert-error'),
+    }),
+    new ComponentPickerOption('Urgent Alert', {
+      icon: <i className="icon urgent-icon" />,
+      keywords: ['urgent', 'alert', 'alert-urgent'],
+      onSelect: () => formatAlert(editor, 'paragraph', 'alert-urgent'),
+    }),
+    new ComponentPickerOption('Success Alert', {
+      icon: <i className="icon success-icon" />,
+      keywords: ['success', 'alert', 'alert-success'],
+      onSelect: () => formatAlert(editor, 'paragraph', 'alert-success'),
     }),
     new ComponentPickerOption('Code', {
       icon: <i className="icon code" />,
