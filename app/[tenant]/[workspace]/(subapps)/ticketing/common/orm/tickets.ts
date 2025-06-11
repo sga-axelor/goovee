@@ -144,6 +144,7 @@ export async function createTicket({
       typeSelect: TYPE_SELECT.TICKET,
       invoicingType: INVOICING_TYPE.NO_INVOICING,
       isPrivate: false,
+      isInternal: false,
       progress: '0.00',
       createdByContact: {select: {id: auth.userId}},
       project: {select: {id: projectId}},
@@ -173,6 +174,7 @@ export async function createTicket({
       typeSelect: true,
       invoicingType: true,
       isPrivate: true,
+      isInternal: true,
       progress: true,
       createdByContact: {name: true},
       project: {name: true},
@@ -195,6 +197,11 @@ export async function createTicket({
     },
     {name: 'typeSelect', title: 'Type', value: newTicket.typeSelect ?? ''},
     {name: 'isPrivate', title: 'Private', value: String(newTicket.isPrivate)},
+    {
+      name: 'isInternal',
+      title: 'Internal',
+      value: String(newTicket.isInternal),
+    },
     {name: 'progress', title: 'Progress', value: newTicket.progress ?? ''},
     {name: 'project', title: 'Project', value: newTicket.project?.name ?? ''},
     {

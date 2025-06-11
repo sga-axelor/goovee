@@ -53,6 +53,11 @@
     },
     {
       "type": "Boolean",
+      "name": "isInternal",
+      "default": true
+    },
+    {
+      "type": "Boolean",
       "name": "displayFinancialData",
       "default": false
     },
