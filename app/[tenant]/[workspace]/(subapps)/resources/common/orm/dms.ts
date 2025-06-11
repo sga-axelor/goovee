@@ -70,7 +70,7 @@ export async function fetchLatestFolders({
     tenantId,
     user,
     params: {
-      where:{ isHomepage:true },
+      where: {isHomepage: true},
       take: 10,
     },
   });
