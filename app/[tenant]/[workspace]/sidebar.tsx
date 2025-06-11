@@ -119,7 +119,7 @@ export function Sidebar({
                         align="center"
                         className="bg-success-light"
                         hidden={!collapsed}>
-                        <p>{name}</p>
+                        <p>{i18n.t(name)}</p>
                         <TooltipArrow className="fill-success-light" />
                       </TooltipContent>
                     </Tooltip>
@@ -128,7 +128,7 @@ export function Sidebar({
                       className={`${
                         collapsed ? 'hidden' : 'block'
                       } whitespace-nowrap overflow-hidden duration-500`}>
-                      {name}
+                      {i18n.t(name)}
                     </p>
                   </div>
                 </Link>

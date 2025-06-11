@@ -97,7 +97,7 @@ function MobileSidebar({subapps, workspaces, workspace}: any) {
                       style={{color}}
                     />
                     <p className="max-w-full whitespace-nowrap text-main-black">
-                      {name}
+                      {i18n.t(name)}
                     </p>
                   </div>
                 </Link>
