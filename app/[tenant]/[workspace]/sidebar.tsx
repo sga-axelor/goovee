@@ -161,7 +161,7 @@ export function Sidebar({
             </div>
           </Link>
           <div className="flex-1" />
-          {displayContact && (
+          {displayContact && !collapsed && (
             <div className="flex flex-col gap-1">
               <p className="font-medium">{workspace?.config?.contactName}</p>
               <p>{workspace?.config?.contactEmailAddress?.address}</p>
