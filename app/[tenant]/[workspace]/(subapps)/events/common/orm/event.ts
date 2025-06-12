@@ -311,6 +311,7 @@ export async function findEvents({
   user,
   onlyRegisteredEvent,
   eventType,
+  orderBy,
 }: {
   ids?: ID[];
   search?: string;
@@ -326,6 +327,7 @@ export async function findEvents({
   user?: User;
   onlyRegisteredEvent?: boolean;
   eventType?: string;
+  orderBy: any;
 }) {
   if (!(workspace && tenantId)) {
     return {events: [], pageInfo: {}};
@@ -407,7 +409,8 @@ export async function findEvents({
 
   const skip = Number(limit) * Math.max(Number(page) - 1, 0);
 
-  const orderBy: any = {eventStartDateTime: ORDER_BY.DESC};
+  orderBy = orderBy || {eventStartDateTime: ORDER_BY.DESC};
+
   const events = await c.aOSPortalEvent
     .find({
       where: whereClause,

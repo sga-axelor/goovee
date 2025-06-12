@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ----//
@@ -5,6 +6,8 @@ import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
+import {Card} from '@/ui/components/card';
+import {ORDER_BY} from '@/constants';
 import type {PortalWorkspace, User} from '@/types';
 import type {Tenant} from '@/lib/core/tenant';
 
@@ -26,9 +29,6 @@ import {
   EventTabsContent,
 } from '@/subapps/events/common/ui/components';
 import Hero from './hero';
-import {Suspense} from 'react';
-import {Skeleton} from '@/ui/components/skeleton';
-import {Card} from '@/ui/components';
 
 export default async function Page(context: any) {
   const params = context?.params;
@@ -151,6 +151,10 @@ async function EventList({
     workspace,
     tenantId: tenant,
     user,
+    orderBy: {
+      eventStartDateTime:
+        type === EVENT_TYPE.ACTIVE ? ORDER_BY.ASC : ORDER_BY.DESC,
+    },
   }).then(clone);
 
   return <EventTabsContent pageInfo={pageInfo} events={events} />;
