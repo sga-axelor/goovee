@@ -131,18 +131,24 @@ export function mapParticipants(
 export function getPartnerAddress(user: any): string {
   if (!user) return '';
 
-  if (user.isContact) {
-    return user.mainAddress?.formattedFullName || '';
-  }
+  const partnerAddresses =
+    (user.isContact
+      ? user.mainPartner?.partnerAddressList
+      : user.partnerAddressList) ?? [];
 
-  const partnerAddresses = user.partnerAddressList || [];
   if (partnerAddresses.length === 0) return '';
 
   const address =
+    partnerAddresses.find(
+      (addr: any) => addr.isInvoicingAddr && addr.isDefaultAddr,
+    )?.address ||
     partnerAddresses.find((addr: any) => addr.isInvoicingAddr)?.address ||
     partnerAddresses[0]?.address;
 
-  return address?.formattedFullName || '';
+  return (
+    address?.formattedFullName ||
+    (user.isContact ? (user.mainPartner?.simpleFullName ?? '') : '')
+  );
 }
 
 export function getEventEndDate(event: {

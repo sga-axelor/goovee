@@ -25,6 +25,14 @@ const partnerFields = {
   picture: true,
   mainPartner: {
     id: true,
+    simpleFullName: true,
+    partnerAddressList: {
+      select: {
+        isInvoicingAddr: true,
+        isDefaultAddr: true,
+        address: true,
+      },
+    },
   },
   partnerCategory: {
     name: true,
@@ -65,6 +73,7 @@ const partnerFields = {
   partnerAddressList: {
     select: {
       isInvoicingAddr: true,
+      isDefaultAddr: true,
       address: true,
     },
   },
