@@ -155,7 +155,7 @@ export async function getEventContacts({
             isActivatedOnPortal: false,
             isPublicPartner: true,
             portalCompanyName: company,
-            fixedPhone: phone,
+            mobilePhone: phone,
             createdOn: new Date(),
             updatedOn: new Date(),
           },

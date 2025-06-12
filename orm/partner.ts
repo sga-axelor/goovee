@@ -1,4 +1,4 @@
-import type {CreateArgs} from '@goovee/orm';
+import type {CreateArgs, SelectOptions} from '@goovee/orm';
 import {getSession} from '@/auth';
 import {UserType} from '@/auth/types';
 import {hash} from '@/auth/utils';
@@ -17,6 +17,7 @@ const partnerFields = {
   fullName: true,
   simpleFullName: true,
   fixedPhone: true,
+  mobilePhone: true,
   isContact: true,
   name: true,
   password: true,
@@ -67,7 +68,7 @@ const partnerFields = {
       address: true,
     },
   },
-};
+} satisfies SelectOptions<AOSPartner>;
 
 export async function findPartnerById(
   id: ID,

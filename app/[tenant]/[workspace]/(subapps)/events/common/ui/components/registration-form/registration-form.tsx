@@ -147,7 +147,7 @@ export const RegistrationForm = ({
       },
       {
         name: 'phone',
-        title: i18n.t('Phone'),
+        title: i18n.t('Mobile phone'),
         type: 'string',
         widget: 'phone',
         helper: i18n.t('Enter phone number'),
@@ -155,7 +155,7 @@ export const RegistrationForm = ({
         required: true,
         readonly: false,
         order: 5,
-        defaultValue: user?.fixedPhone || '',
+        defaultValue: user?.mobilePhone || '',
       },
       {
         name: 'subscriptionSet',
