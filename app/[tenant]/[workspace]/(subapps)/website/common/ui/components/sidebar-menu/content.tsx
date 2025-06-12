@@ -99,7 +99,7 @@ export function SidebarMenuContent(props: SidebarMenuProps) {
       </div>
 
       {/* Desktop and Mobile Sidebar */}
-      <div className="h-full flex z-10">
+      <div className="max-h-screen overflow-auto sticky top-0 flex z-10">
         {/* Mobile Backdrop */}
         {isMobile && isVisible && (
           <div
