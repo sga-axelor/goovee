@@ -99,14 +99,14 @@ export default async function Layout({
         active={websiteSlug}
       />
       {!isSideNav && <Menu menu={clone(website.menu)} />}
-      <div className="flex">
+      <div className={`flex ${isSideNav ? 'flex-col lg:flex-row' : ''}`}>
         {isSideNav && <Menu menu={clone(website.menu)} />}
         <div className="flex-1">
           <Header />
           {children}
-          <Footer />
         </div>
       </div>
+      <Footer />
     </>
   );
 }
