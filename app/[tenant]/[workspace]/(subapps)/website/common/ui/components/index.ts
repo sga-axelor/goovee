@@ -17,6 +17,7 @@ import {Clients1} from './clients-1';
 import {Navbar1} from './navbar-1';
 import {Wiki} from './wiki';
 import {SidebarMenu} from './sidebar-menu';
+import {Footer1} from './footer-1';
 
 export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   'page-progress': PageProgress,
@@ -32,6 +33,7 @@ export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   'contacts-4': Contact4,
   'clients-1': Clients1,
   'navbar-1': Navbar1,
+  'footer-1': Footer1,
   wiki: Wiki,
   'sidebar-menu': SidebarMenu,
 };
