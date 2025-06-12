@@ -76,16 +76,6 @@ export function NavbarContent(props: NavbarProps) {
         id="offcanvas-nav"
         data-bs-scroll="true"
         className="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
-        <div className="offcanvas-header d-lg-none justify-end">
-          {/* LOGO for the company in mobile view */}
-          {/* <h3 className="text-white fs-30 mb-0">Lighthouse</h3> */}
-          <button
-            type="button"
-            aria-label="Close"
-            data-bs-dismiss="offcanvas"
-            className="btn-close btn-close-white"
-          />
-        </div>
         <div className="offcanvas-body m-auto d-flex flex-column h-100">
           <ul className="navbar-nav">
             {$links.map((link, i) => {
