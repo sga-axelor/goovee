@@ -1,12 +1,13 @@
 'use client';
 
 import {useRef} from 'react';
+import {Offcanvas} from 'bootstrap';
 
 // ---- LOCAL IMPORTS ---- //
 import ListItemLink from '@/subapps/website/common/components/reuseable/links/ListItemLink';
 import {MenuItem} from '@/subapps/website/common/types';
 import {DropdownToggleLink} from '../dropdown-toggle-link';
-import {Offcanvas} from 'bootstrap';
+import MobileMenu from './mobile-menu';
 
 type NavbarProps = {
   values?: {
@@ -23,6 +24,7 @@ type Link = {
 export function NavbarContent(props: NavbarProps) {
   const {values} = props;
   const menuList = values?.menuList || [];
+
   const navbarRef = useRef<HTMLElement | null>(null);
 
   const navClassName =
@@ -84,7 +86,7 @@ export function NavbarContent(props: NavbarProps) {
             className="btn-close btn-close-white"
           />
         </div>
-        <div className="offcanvas-body ms-lg-auto d-flex flex-column h-100">
+        <div className="offcanvas-body m-auto d-flex flex-column h-100">
           <ul className="navbar-nav">
             {$links.map((link, i) => {
               const isDropDown = link.links.length > 0;
@@ -121,19 +123,8 @@ export function NavbarContent(props: NavbarProps) {
         </div>
       </div>
 
-      {/* Hamburger */}
-      <div className="flex lg:hidden items-center py-6">
-        <ul className="flex flex-row items-center">
-          <li>
-            <button
-              data-bs-toggle="offcanvas"
-              data-bs-target="#offcanvas-nav"
-              className="hamburger offcanvas-nav-btn">
-              <span />
-            </button>
-          </li>
-        </ul>
-      </div>
+      {/* Mobile Menu Overlay */}
+      <MobileMenu menu={$links} />
     </div>
   );
 
