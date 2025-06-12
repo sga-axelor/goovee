@@ -13,6 +13,7 @@ import {
   Input,
 } from '@/ui/components';
 import {i18n} from '@/locale';
+import type {Field} from '@/ui/form';
 
 export function EmailFormField({
   title,
@@ -21,6 +22,7 @@ export function EmailFormField({
   formKey,
   form,
   onValidation,
+  field,
 }: {
   title: string;
   placeholder: string;
@@ -28,11 +30,13 @@ export function EmailFormField({
   formKey: string;
   form: UseFormReturn<any>;
   onValidation: any;
+  field: Field;
 }) {
   const {setValue, watch, setError, clearErrors} = form;
   const [validating, setValidating] = useState(false);
   const emailValue = watch(formKey);
   const hasValidated = useRef(false);
+  const isRequired = field.required;
 
   const handleValidation = useCallback(
     async (email: string) => {
@@ -78,6 +82,7 @@ export function EmailFormField({
         <FormItem>
           <FormLabel className="text-base font-medium leading-6">
             {title}
+            {isRequired && <span className="text-destructive ms-1">*</span>}
           </FormLabel>
           <FormControl>
             <Input

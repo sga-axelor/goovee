@@ -11,6 +11,7 @@ import {
   Input,
   Textarea,
 } from '@/ui/components';
+import type {Field} from '@/ui/form';
 
 interface CompanyAddressFieldProps {
   form: {
@@ -20,6 +21,7 @@ interface CompanyAddressFieldProps {
   title: string;
   placeholder?: string;
   isSecondary?: boolean;
+  field: Field;
 }
 
 export function CompanyAddressField({
@@ -28,9 +30,11 @@ export function CompanyAddressField({
   title,
   placeholder = '',
   isSecondary = false,
+  field,
 }: CompanyAddressFieldProps) {
   const InputComponent = isSecondary ? Input : Textarea;
 
+  const isRequired = field.required;
   return (
     <FormField
       control={form.control}
@@ -39,6 +43,7 @@ export function CompanyAddressField({
         <FormItem>
           <FormLabel className="text-base font-medium leading-6">
             {title}
+            {isRequired && <span className="text-destructive ms-1">*</span>}
           </FormLabel>
           <FormControl>
             <InputComponent

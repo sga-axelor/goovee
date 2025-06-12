@@ -82,6 +82,7 @@ export const FieldComponent = ({
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
               {i18n.t(item.title ?? '')}
+              {isRequired && <span className="text-destructive ms-1">*</span>}
             </FormLabel>
             <SelectionPicker
               form={form}
@@ -114,6 +115,7 @@ export const FieldComponent = ({
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
               {i18n.t(item.title ?? '')}
+              {isRequired && <span className="text-destructive ms-1">*</span>}
             </FormLabel>
             <ObjectPicker
               form={form}
@@ -144,6 +146,7 @@ export const FieldComponent = ({
               className="text-md font-normal cursor-pointer"
               style={{margin: 0}}>
               {i18n.t(item.title ?? '')}
+              {isRequired && <span className="text-destructive ms-1">*</span>}
             </FormLabel>
           </Wrapper>
         );
@@ -154,6 +157,7 @@ export const FieldComponent = ({
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
               {i18n.t(item.title ?? '')}
+              {isRequired && <span className="text-destructive ms-1">*</span>}
             </FormLabel>
             <FormControl>
               <RichTextEditor
@@ -177,6 +181,7 @@ export const FieldComponent = ({
           <Wrapper>
             <FormLabel className="text-base font-medium leading-6">
               {i18n.t(item.title ?? '')}
+              {isRequired && <span className="text-destructive ms-1">*</span>}
             </FormLabel>
             <FormControl>
               <Input
