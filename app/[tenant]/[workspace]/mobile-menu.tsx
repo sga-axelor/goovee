@@ -121,7 +121,9 @@ function MobileSidebar({subapps, workspaces, workspace}: any) {
             {displayContact && (
               <div className="flex flex-col gap-1 mt-4 pt-8 px-6 py-2">
                 <p className="font-medium">{workspace?.config?.contactName}</p>
-                <p>{contactEmail}</p>
+                <p>
+                  <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+                </p>
                 <p>{workspace?.config?.contactPhone}</p>
               </div>
             )}

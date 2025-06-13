@@ -15,7 +15,9 @@ export default function Footer({workspace}: {workspace: PortalWorkspace}) {
           {displayContact && (
             <div className="flex flex-col gap-0.5 items-start text-xs">
               <p className="font-medium">{workspace?.config?.contactName}</p>
-              <p>{contactEmail}</p>
+              <p>
+                <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+              </p>
               <p>{workspace?.config?.contactPhone}</p>
             </div>
           )}
