@@ -237,6 +237,7 @@ export default function ContextMenuPlugin(): JSX.Element {
 
   return (
     <LexicalContextMenuPlugin
+      anchorClassName="wiki"
       options={options}
       onSelectOption={onSelectOption}
       onWillOpen={onWillOpen}
