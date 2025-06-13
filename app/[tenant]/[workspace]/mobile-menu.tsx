@@ -45,12 +45,15 @@ function MobileSidebar({subapps, workspaces, workspace}: any) {
   }, [pathname, closeSidebar]);
 
   const displayContact = workspace?.config?.isDisplayContact;
+  const contactEmail = workspace?.config?.contactEmailAddress?.address;
 
   return (
     <>
       <MdApps onClick={openSidebar} className="cursor-pointer h-6 w-6" />
       <Sheet open={open} onOpenChange={closeSidebar}>
-        <SheetContent side="left" className="bg-white overflow-auto">
+        <SheetContent
+          side="left"
+          className="bg-white overflow-auto flex flex-col">
           {user && Boolean(workspaces?.length) ? (
             workspaces.length === 1 ? (
               <Link href={workspaceURL}>
@@ -114,13 +117,15 @@ function MobileSidebar({subapps, workspaces, workspace}: any) {
               </div>
             </Link>
           )}
-          {displayContact && (
-            <div className="flex flex-col gap-1 mt-4 pt-8 px-6 py-2">
-              <p className="font-medium">{workspace?.config?.contactName}</p>
-              <p>{workspace?.config?.contactEmailAddress?.address}</p>
-              <p>{workspace?.config?.contactPhone}</p>
-            </div>
-          )}
+          <div className="flex flex-grow flex-col justify-end">
+            {displayContact && (
+              <div className="flex flex-col gap-1 mt-4 pt-8 px-6 py-2">
+                <p className="font-medium">{workspace?.config?.contactName}</p>
+                <p>{contactEmail}</p>
+                <p>{workspace?.config?.contactPhone}</p>
+              </div>
+            )}
+          </div>
         </SheetContent>
       </Sheet>
     </>

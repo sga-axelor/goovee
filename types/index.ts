@@ -159,6 +159,10 @@ export interface PortalAppConfig extends Model {
   isShowPublicationAuthor: boolean;
   isShowPublicationDate: boolean;
   isShowPublicationTime: boolean;
+  isDisplayContact?: boolean;
+  contactName?: string;
+  contactEmailAddress?: {address?: string};
+  contactPhone?: string;
 }
 
 export interface PortalApp extends Model {

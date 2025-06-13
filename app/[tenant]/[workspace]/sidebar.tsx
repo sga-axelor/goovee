@@ -28,11 +28,9 @@ import {useWorkspace} from './workspace-context';
 export function Sidebar({
   subapps,
   workspaces,
-  workspace,
 }: {
   subapps: any;
   workspaces?: any;
-  workspace?: any;
 }) {
   const {data: session} = useSession();
   const [collapsed, setCollapsed] = useState(false);
@@ -51,8 +49,6 @@ export function Sidebar({
   if (!user) {
     return null;
   }
-
-  const displayContact = workspace?.config?.isDisplayContact;
 
   return (
     <div
@@ -161,13 +157,6 @@ export function Sidebar({
             </div>
           </Link>
           <div className="flex-1" />
-          {displayContact && !collapsed && (
-            <div className="flex flex-col gap-1">
-              <p className="font-medium">{workspace?.config?.contactName}</p>
-              <p>{workspace?.config?.contactEmailAddress?.address}</p>
-              <p>{workspace?.config?.contactPhone}</p>
-            </div>
-          )}
         </TooltipProvider>
       </div>
     </div>
