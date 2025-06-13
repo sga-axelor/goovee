@@ -6,8 +6,6 @@
  *
  */
 
-import type {JSX} from 'react';
-
 import {$isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {
@@ -28,6 +26,7 @@ import {
 import {useCallback, useMemo} from 'react';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {mergeRegister} from '@lexical/utils';
 
 function ContextMenuItem({
   index,
@@ -106,8 +105,9 @@ export class ContextMenuOption extends MenuOption {
   }
 }
 
-export default function ContextMenuPlugin(): JSX.Element {
+export default function ContextMenuPlugin(): React.ReactNode {
   const [editor] = useLexicalComposerContext();
+  const [isEditable, setIsEditable] = React.useState(() => editor.isEditable());
 
   const defaultOptions = useMemo(() => {
     return [
@@ -235,6 +235,15 @@ export default function ContextMenuPlugin(): JSX.Element {
     setOptions(newOptions);
   };
 
+  React.useEffect(() => {
+    return mergeRegister(
+      editor.registerEditableListener(editable => {
+        setIsEditable(editable);
+      }),
+    );
+  }, [editor]);
+
+  if (!isEditable) return null;
   return (
     <LexicalContextMenuPlugin
       anchorClassName="wiki"
