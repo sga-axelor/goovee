@@ -1,4 +1,5 @@
 import {notFound} from 'next/navigation';
+import {Suspense} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -17,8 +18,9 @@ import {
 } from '@/subapps/forum/common/orm/forum';
 import Content from './content';
 import {GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
+import {ForumSkeleton} from '@/subapps/forum/common/ui/components/skeletons';
 
-export default async function Page({
+async function ForumGroup({
   params,
   searchParams,
 }: {
@@ -105,5 +107,19 @@ export default async function Page({
       pageInfo={pageInfo}
       workspace={workspace}
     />
+  );
+}
+
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: {id: string; type: string; tenant: string; workspace: string};
+  searchParams: {[key: string]: string | undefined};
+}) {
+  return (
+    <Suspense fallback={<ForumSkeleton />}>
+      <ForumGroup params={params} searchParams={searchParams} />
+    </Suspense>
   );
 }

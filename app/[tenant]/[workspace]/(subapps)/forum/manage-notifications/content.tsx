@@ -31,9 +31,11 @@ import {
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
 import {Group} from '@/subapps/forum/common/types/forum';
 import {fetchGroupsByMembers} from '@/subapps/forum/common/action/action';
+import {ForumNotificationSkeleton} from '../common/ui/components/skeletons';
 
 const Content = ({userId}: {userId: string}) => {
   const [memberGroups, setMemberGroup] = useState<Group[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [searchKey, setSearchKey] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>(ORDER_BY.ASC);
 
@@ -49,6 +51,7 @@ const Content = ({userId}: {userId: string}) => {
 
     const fetchGroups = async () => {
       try {
+        setLoading(true);
         const result: any = await fetchGroupsByMembers({
           id: userId,
           searchKey,
@@ -62,6 +65,8 @@ const Content = ({userId}: {userId: string}) => {
         setMemberGroup(result);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -120,9 +125,13 @@ const Content = ({userId}: {userId: string}) => {
             </div>
           </div>
           <div className="my-4">
-            {memberGroups.map(item => (
-              <GroupNotification key={item.id} group={item} />
-            ))}
+            {loading ? (
+              <ForumNotificationSkeleton />
+            ) : (
+              memberGroups.map(item => (
+                <GroupNotification key={item.id} group={item} />
+              ))
+            )}
           </div>
         </div>
       </section>
