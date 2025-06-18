@@ -47,17 +47,19 @@ export function Card(props: CardProps) {
         )}
       </div>
       {!small && (
-        <Image
-          width={150}
-          height={138}
-          className="rounded-r-lg h-[138px] object-cover"
-          src={
-            item.image?.id
-              ? `${workspaceURI}/${SUBAPP_CODES.directory}/api/entry/${item.id}/image`
-              : NO_IMAGE_URL
-          }
-          alt="image"
-        />
+        <div className="rounded-r-lg w-[150px] shrink-0 relative">
+          <Image
+            fill
+            sizes="150px"
+            className="rounded-r-lg w-[150px] object-cover shrink-0"
+            src={
+              item.image?.id
+                ? `${workspaceURI}/${SUBAPP_CODES.directory}/api/entry/${item.id}/image`
+                : NO_IMAGE_URL
+            }
+            alt="image"
+          />
+        </div>
       )}
     </Link>
   );
