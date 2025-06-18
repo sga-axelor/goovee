@@ -508,6 +508,14 @@
     background-image: url(/images/icons/code.svg);
   }
 
+  i.save {
+    background-image: url(/images/icons/save.svg);
+  }
+
+  i.edit {
+    background-image: url(/images/icons/edit.svg);
+  }
+
   i.underline {
     background-image: url(/images/icons/type-underline.svg);
   }

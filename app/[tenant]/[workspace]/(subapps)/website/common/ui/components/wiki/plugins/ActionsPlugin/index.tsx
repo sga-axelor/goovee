@@ -160,7 +160,7 @@ export default function ActionsPlugin({
       {isEditable && (
         <>
           <button className="action-button" onClick={save} disabled={saving}>
-            save
+            <i className="save" />
           </button>
           {SUPPORT_SPEECH_RECOGNITION && (
             <button
@@ -233,9 +233,9 @@ export default function ActionsPlugin({
         onClick={() => {
           editor.setEditable(!editor.isEditable());
         }}
-        title="Read-Only Mode"
-        aria-label={`${!isEditable ? 'Unlock' : 'Lock'} read-only mode`}>
-        <i className={!isEditable ? 'unlock' : 'lock'} />
+        title={!isEditable ? 'Edit' : 'Lock'}
+        aria-label={!isEditable ? 'Edit' : 'Lock'}>
+        <i className={!isEditable ? 'edit' : 'lock'} />
       </button>
       {modal}
     </div>
