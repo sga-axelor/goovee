@@ -12,7 +12,8 @@ import type {
 import type {JSX} from 'react';
 import type {ExcalidrawInitialElements} from '../../ui/ExcalidrawModal';
 
-import '@excalidraw/excalidraw/index.css';
+// import '@excalidraw/excalidraw/index.css';
+import './excalidraw.css';
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {$wrapNodeInElement} from '@lexical/utils';

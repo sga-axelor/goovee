@@ -52,7 +52,7 @@
 }
 
 .wiki.wiki.wiki {
-  *,
+  *:not(svg *):not(svg),
   *::before,
   *::after {
     all: revert;
