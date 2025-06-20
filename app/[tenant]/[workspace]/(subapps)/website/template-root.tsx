@@ -2,7 +2,6 @@
 import {usePathname} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import '@/subapps/website/common/assets/scss/scoped.scss';
-import ThemeProvider from '@/subapps/website/common/theme/ThemeProvider';
 
 export function TemplateRoot({children}: {children: React.ReactNode}) {
   const pathname = usePathname();
@@ -30,10 +29,7 @@ export function TemplateRoot({children}: {children: React.ReactNode}) {
 
   return (
     <div className="gv relative">
-      <ThemeProvider>
-        {/* <div className="page-loader" /> */}
-        {loading ? <div className="page-loader" /> : children}
-      </ThemeProvider>
+      {loading ? <div className="page-loader" /> : children}
     </div>
   );
 }
