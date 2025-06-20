@@ -41,4 +41,4 @@ goovee/.generated
 portal/
 
 # generated css for templates
-public/css
+app/\[tenant]/\[workspace]/\(subapps)/website/common/assets/css

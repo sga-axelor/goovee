@@ -1,8 +1,8 @@
 'use client';
 import {usePathname} from 'next/navigation';
 import {useEffect, useState} from 'react';
+import '@/subapps/website/common/assets/scss/scoped.scss';
 import ThemeProvider from '@/subapps/website/common/theme/ThemeProvider';
-import '/public/scss/scoped.scss';
 
 export function TemplateRoot({children}: {children: React.ReactNode}) {
   const pathname = usePathname();
