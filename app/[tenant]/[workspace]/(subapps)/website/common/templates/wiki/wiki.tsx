@@ -103,13 +103,13 @@ export function Wiki(props: TemplateProps<WikiProps>) {
   };
 
   return (
-    <div className="wiki relative h-full">
+    <div className="lexical relative h-full">
       <FlashMessageContext>
         <LexicalComposer initialConfig={initialConfig}>
           <SharedHistoryContext>
             <TableContext>
               <ToolbarContext>
-                <div className="wiki-container">
+                <div className="lexical-container">
                   <div className="editor-shell">
                     <Editor
                       content={content}
@@ -117,7 +117,7 @@ export function Wiki(props: TemplateProps<WikiProps>) {
                       contentVersion={contentVersion!}
                     />
                   </div>
-                  <aside className="wiki-sidebar">
+                  <aside className="lexical-sidebar">
                     <TableOfContentsPlugin />
                   </aside>
                 </div>

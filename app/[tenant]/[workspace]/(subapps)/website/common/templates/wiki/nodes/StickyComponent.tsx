@@ -193,7 +193,7 @@ export default function StickyComponent({
   const {historyState} = useSharedHistoryContext();
 
   return (
-    <div className="wiki">
+    <div className="lexical">
       <div ref={stickyContainerRef} className="sticky-note-container">
         <div
           className={`sticky-note ${color}`}

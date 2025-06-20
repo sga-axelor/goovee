@@ -382,7 +382,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
         onQueryChange={setQueryString}
         onSelectOption={onSelectOption}
         triggerFn={checkForTriggerMatch}
-        anchorClassName="wiki"
+        anchorClassName="lexical"
         options={options}
         menuRenderFn={(
           anchorElementRef,

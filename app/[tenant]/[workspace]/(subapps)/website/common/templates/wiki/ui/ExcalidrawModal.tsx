@@ -220,7 +220,7 @@ export default function ExcalidrawModal({
   };
 
   return createPortal(
-    <div className="wiki">
+    <div className="lexical">
       <div className="ExcalidrawModal__overlay" role="dialog">
         <div
           className="ExcalidrawModal__modal"

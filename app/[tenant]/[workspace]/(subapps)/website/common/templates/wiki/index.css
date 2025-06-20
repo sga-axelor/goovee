@@ -8,7 +8,7 @@
 
 @import 'https://fonts.googleapis.com/css?family=Reenie+Beanie';
 
-@keyframes wiki-slide-in {
+@keyframes lexical-slide-in {
   0% {
     opacity: 0;
     transform: translateX(-200px);
@@ -20,7 +20,7 @@
   }
 }
 
-@keyframes wiki-mic-pulsate-color {
+@keyframes lexical-mic-pulsate-color {
   0% {
     background-color: #ffdcdc;
   }
@@ -34,7 +34,7 @@
   }
 }
 
-@keyframes wiki-octocat-wave {
+@keyframes lexical-octocat-wave {
   0%,
   100% {
     transform: rotate(0);
@@ -51,7 +51,7 @@
   }
 }
 
-.wiki.wiki.wiki {
+.lexical.lexical.lexical {
   *:not(svg *):not(svg),
   *::before,
   *::after {
@@ -59,7 +59,7 @@
   }
 }
 
-.wiki.wiki.wiki.wiki {
+.lexical.lexical.lexical.lexical {
   margin: 0;
   font-family:
     system-ui,
@@ -71,7 +71,7 @@
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
 
-  .wiki-container {
+  .lexical-container {
     display: flex;
     border-top: 1px solid #e5e7eb;
   }
@@ -87,7 +87,7 @@
     min-height: 0;
   }
 
-  .wiki-sidebar {
+  .lexical-sidebar {
     display: none;
     width: 300px;
     align-self: flex-start;
@@ -96,7 +96,7 @@
   }
 
   @media screen and (min-width: 1024px) {
-    .wiki-sidebar {
+    .lexical-sidebar {
       display: block;
     }
   }
@@ -1047,7 +1047,7 @@
     position: fixed;
     left: 10px;
     bottom: 70px;
-    animation: wiki-slide-in 0.4s ease;
+    animation: lexical-slide-in 0.4s ease;
   }
 
   .switch {
@@ -1513,7 +1513,7 @@
   }
 
   .action-button-mic.active {
-    animation: wiki-mic-pulsate-color 3s infinite;
+    animation: lexical-mic-pulsate-color 3s infinite;
   }
 
   button.action-button:disabled {
@@ -1836,7 +1836,7 @@
   }
 
   .github-corner:hover .octo-arm {
-    animation: wiki-octocat-wave 560ms ease-in-out;
+    animation: lexical-octocat-wave 560ms ease-in-out;
   }
 
   @media (max-width: 500px) {
@@ -1845,7 +1845,7 @@
     }
 
     .github-corner .octo-arm {
-      animation: wiki-octocat-wave 560ms ease-in-out;
+      animation: lexical-octocat-wave 560ms ease-in-out;
     }
   }
 

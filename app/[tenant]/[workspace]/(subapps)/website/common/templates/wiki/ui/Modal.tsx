@@ -71,7 +71,7 @@ function PortalImpl({
   }, [closeOnClickOutside, onClose]);
 
   return (
-    <div className="wiki">
+    <div className="lexical">
       <div className="Modal__overlay" role="dialog">
         <div className="Modal__modal" tabIndex={-1} ref={modalRef}>
           <h2 className="Modal__title">{title}</h2>

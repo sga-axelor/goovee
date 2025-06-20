@@ -246,7 +246,7 @@ export default function ContextMenuPlugin(): React.ReactNode {
   if (!isEditable) return null;
   return (
     <LexicalContextMenuPlugin
-      anchorClassName="wiki"
+      anchorClassName="lexical"
       options={options}
       onSelectOption={onSelectOption}
       onWillOpen={onWillOpen}

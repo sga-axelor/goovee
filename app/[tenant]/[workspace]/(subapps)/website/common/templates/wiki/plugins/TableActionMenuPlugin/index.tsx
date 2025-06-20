@@ -497,7 +497,7 @@ function TableActionMenu({
 
   return createPortal(
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div className="wiki">
+    <div className="lexical">
       <div
         className="dropdown"
         ref={dropDownRef}

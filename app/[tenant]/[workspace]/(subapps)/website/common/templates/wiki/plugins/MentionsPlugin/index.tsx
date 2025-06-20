@@ -663,7 +663,7 @@ export default function NewMentionsPlugin(): JSX.Element | null {
       onQueryChange={setQueryString}
       onSelectOption={onSelectOption}
       triggerFn={checkForMentionMatch}
-      anchorClassName="wiki"
+      anchorClassName="lexical"
       options={options}
       menuRenderFn={(
         anchorElementRef,

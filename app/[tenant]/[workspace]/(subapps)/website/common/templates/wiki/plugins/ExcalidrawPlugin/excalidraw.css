@@ -30,12 +30,12 @@
   display: swap;
 }
 
-@keyframes wiki-excalidraw-rotate {
+@keyframes lexical-excalidraw-rotate {
   100% {
     transform: rotate(360deg);
   }
 }
-@keyframes wiki-excalidraw-dash {
+@keyframes lexical-excalidraw-dash {
   0% {
     stroke-dasharray: 1, 300;
     stroke-dashoffset: 0;
@@ -114,7 +114,7 @@
   }
 }
 
-@keyframes wiki-excacode-fade-in {
+@keyframes lexical-excacode-fade-in {
   from {
     opacity: 0;
   }
@@ -123,199 +123,241 @@
   }
 }
 
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .unlocked-icon {
+:root[dir='ltr'] .lexical.lexical.lexical.lexical .excalidraw .unlocked-icon {
   left: 2px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .unlocked-icon {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .unlocked-icon {
   right: 2px;
 }
 
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .color-picker {
+:root[dir='ltr'] .lexical.lexical.lexical.lexical .excalidraw .color-picker {
   left: -5.5px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .color-picker {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .color-picker {
   right: -5.5px;
 }
 
 :root[dir='ltr']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .color-picker-popover-container {
   margin-left: 0.5rem;
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .color-picker-popover-container {
   margin-left: -3rem;
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-triangle {
+:root[dir='ltr']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-triangle {
   transform: rotate(270deg);
   left: -14px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-triangle {
+:root[dir='rtl']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-triangle {
   transform: rotate(90deg);
   right: -14px;
 }
 :root[dir='ltr']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .color-picker-triangle-shadow {
   left: -14px;
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .color-picker-triangle-shadow {
   right: -16px;
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-hash {
+:root[dir='ltr']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-hash {
   border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg);
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-hash {
+:root[dir='rtl']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-hash {
   border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
   border-right: 1px solid var(--default-border-color);
   border-left: 0;
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-input {
+:root[dir='ltr']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-input {
   border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-input {
+:root[dir='rtl']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-input {
   border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg);
   border-left: 1px solid var(--default-border-color);
   border-right: 0;
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-keybinding {
+:root[dir='ltr']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-keybinding {
   right: 2px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .color-picker-keybinding {
+:root[dir='rtl']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .color-picker-keybinding {
   left: 2px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .picker {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .picker {
   padding: 0.4rem;
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .picker-keybinding {
+:root[dir='ltr']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .picker-keybinding {
   right: 2px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .picker-keybinding {
+:root[dir='rtl']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .picker-keybinding {
   left: 2px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .zoom-out-button {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .zoom-out-button {
   transform: scaleX(-1);
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .zoom-in-button {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .zoom-in-button {
   transform: scaleX(-1);
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .undo-redo-buttons
   .undo-button-container
   button {
   transform: scaleX(-1);
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .undo-redo-buttons
   .redo-button-container
   button {
   transform: scaleX(-1);
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .sidebar {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .sidebar {
   left: 0;
   right: auto;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .sidebar {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .sidebar {
   border-right: 1px solid var(--sidebar-border-color);
   border-left: 0;
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .drag-input-label {
+:root[dir='ltr']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .drag-input-label {
   border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .drag-input-label {
+:root[dir='rtl']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .drag-input-label {
   border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
   border-right: 1px solid var(--default-border-color);
   border-left: 0;
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .drag-input {
+:root[dir='ltr'] .lexical.lexical.lexical.lexical .excalidraw .drag-input {
   border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .drag-input {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .drag-input {
   border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
   border-left: 1px solid var(--default-border-color);
   border-right: 0;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .exc-stats {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .exc-stats {
   left: 12px;
   right: initial;
 }
 :root[dir='ltr']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .layer-ui__wrapper
   .zen-mode-transition.transition-left {
   transform: translate(-999px, 0);
 }
 :root[dir='ltr']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .layer-ui__wrapper
   .zen-mode-transition.transition-right {
   transform: translate(999px, 0);
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .layer-ui__wrapper
   .zen-mode-transition.transition-left {
   transform: translate(999px, 0);
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .layer-ui__wrapper
   .zen-mode-transition.transition-right {
   transform: translate(-999px, 0);
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .dropdown-select {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .dropdown-select {
   background-position:
     left 0.7rem top 50%,
     0 0;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .rtl-mirror {
+:root[dir='rtl'] .lexical.lexical.lexical.lexical .excalidraw .rtl-mirror {
   transform: scaleX(-1);
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .welcome-screen-decor-hint--help {
   left: 0;
   right: auto;
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .welcome-screen-decor-hint--help
   svg {
   transform: rotate(80deg);
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .welcome-screen-decor-hint--toolbar
   svg {
   transform: scaleX(-1);
 }
 :root[dir='rtl']
-  .wiki.wiki.wiki.wiki
+  .lexical.lexical.lexical.lexical
   .excalidraw
   .welcome-screen-decor-hint--menu
   svg {
   transform: scaleX(-1);
 }
-:root[dir='ltr'] .wiki.wiki.wiki.wiki .excalidraw .CollabButton-collaborators {
+:root[dir='ltr']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .CollabButton-collaborators {
   right: -5px;
 }
-:root[dir='rtl'] .wiki.wiki.wiki.wiki .excalidraw .CollabButton-collaborators {
+:root[dir='rtl']
+  .lexical.lexical.lexical.lexical
+  .excalidraw
+  .CollabButton-collaborators {
   left: -5px;
 }
 :root {
@@ -342,7 +384,7 @@ body.excalidraw-cursor-resize * {
   cursor: ew-resize;
 }
 /** scoping starts here **/
-.wiki.wiki.wiki.wiki {
+.lexical.lexical.lexical.lexical {
   .excalidraw .Spinner {
     display: flex;
     align-items: center;
@@ -353,13 +395,13 @@ body.excalidraw-cursor-resize * {
     --spinner-color: var(--icon-fill-color);
   }
   .excalidraw .Spinner svg {
-    animation: wiki-excalidraw-rotate 1.6s linear infinite;
+    animation: lexical-excalidraw-rotate 1.6s linear infinite;
     animation-delay: var(--spinner-delay);
     transform-origin: center center;
   }
   .excalidraw .Spinner circle {
     stroke: var(--spinner-color);
-    animation: wiki-excalidraw-dash 1.6s linear 0s infinite;
+    animation: lexical-excalidraw-dash 1.6s linear 0s infinite;
     stroke-linecap: round;
   }
 
@@ -5474,7 +5516,7 @@ body.excalidraw-cursor-resize * {
 
   /* components/Toast.scss */
   .excalidraw .Toast {
-    animation: wiki-excacode-fade-in 0.5s;
+    animation: lexical-excacode-fade-in 0.5s;
     background-color: var(--button-gray-1);
     border-radius: 4px;
     bottom: 10px;
