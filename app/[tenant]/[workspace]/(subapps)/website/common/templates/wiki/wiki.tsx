@@ -4,7 +4,7 @@ import {
   LexicalComposer,
 } from '@lexical/react/LexicalComposer';
 import {$isTextNode, DOMConversionMap, TextNode} from 'lexical';
-import type {TemplateProps} from '../../../types';
+import type {TemplateProps} from '@/subapps/website/common/types';
 import Editor from './Editor';
 import {FlashMessageContext} from './context/FlashMessageContext';
 import {SharedHistoryContext} from './context/SharedHistoryContext';

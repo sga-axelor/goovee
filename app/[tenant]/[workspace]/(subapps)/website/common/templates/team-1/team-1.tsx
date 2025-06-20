@@ -1,5 +1,5 @@
 import {TeamCard1} from '@/subapps/website/common/components/reuseable/team-cards';
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '@/subapps/website/common/types';
 
 type Team1Data = {
   team1Title: string;

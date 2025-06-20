@@ -1,6 +1,6 @@
 import ListColumn from '@/subapps/website/common/components/reuseable/ListColumn';
 // -------- data -------- //
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '@/subapps/website/common/types';
 
 type Services2Data = {
   services2Title: string;

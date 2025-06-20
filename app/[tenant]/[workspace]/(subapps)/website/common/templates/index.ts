@@ -1,6 +1,6 @@
 import {ComponentType} from 'react';
 
-import type {TemplateProps} from '../../types';
+import type {TemplateProps} from '../types';
 
 import {Hero1} from './hero-1';
 import {PageProgress} from './page-progress';
@@ -37,6 +37,3 @@ export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   wiki: Wiki,
   'sidebar-menu': SidebarMenu,
 };
-
-export {NotFound} from './not-found';
-export {DropdownToggleLink} from './dropdown-toggle-link';

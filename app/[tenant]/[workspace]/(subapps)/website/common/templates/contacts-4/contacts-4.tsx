@@ -1,5 +1,5 @@
 import NextLink from '@/subapps/website/common/components/reuseable/links/NextLink';
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '@/subapps/website/common/types';
 
 type Contact4Props = {
   contact4Title: string;

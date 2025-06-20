@@ -4,7 +4,7 @@ import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {findWebsitePageBySlug} from '@/subapps/website/common/orm/website';
-import {NotFound} from '@/subapps/website/common/ui/components';
+import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
 import {clone} from '@/utils';
 

@@ -1,4 +1,4 @@
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '@/subapps/website/common/types';
 
 type CTA1Data = {
   cta1Title: string;

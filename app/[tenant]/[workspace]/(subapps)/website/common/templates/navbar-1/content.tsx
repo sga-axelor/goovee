@@ -6,7 +6,7 @@ import {Offcanvas} from 'bootstrap';
 // ---- LOCAL IMPORTS ---- //
 import ListItemLink from '@/subapps/website/common/components/reuseable/links/ListItemLink';
 import {MenuItem} from '@/subapps/website/common/types';
-import {DropdownToggleLink} from '../dropdown-toggle-link';
+import {DropdownToggleLink} from './dropdown-toggle-link';
 import MobileMenu from './mobile-menu';
 
 type NavbarProps = {

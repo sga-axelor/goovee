@@ -3,7 +3,7 @@ import {ServiceCard1} from '@/subapps/website/common/components/reuseable/servic
 // -------- data -------- //
 import Design from '@/subapps/website/common/icons/solid/Design';
 import dynamic from 'next/dynamic';
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '@/subapps/website/common/types';
 
 function getIcon(icon: string) {
   return icon

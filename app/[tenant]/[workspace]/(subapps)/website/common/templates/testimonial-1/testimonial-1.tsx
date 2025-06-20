@@ -1,7 +1,7 @@
 import NextLink from '@/subapps/website/common/components/reuseable/links/NextLink';
 import {TestimonialCard1} from '@/subapps/website/common/components/reuseable/testimonial-cards';
 // -------- data -------- //
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '@/subapps/website/common/types';
 
 type Testimonial1Data = {
   testimonial1Title: string;

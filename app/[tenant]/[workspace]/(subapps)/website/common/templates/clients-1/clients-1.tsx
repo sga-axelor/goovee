@@ -1,4 +1,4 @@
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '../../types';
 
 type Clients1Data = {
   clients1ClientList: {

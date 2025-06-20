@@ -23,7 +23,7 @@ export function getWebsiteComponent(
 
   return dynamic(
     () =>
-      import('../ui/components').then(mod => {
+      import('../templates').then(mod => {
         let Component = mod?.ComponentMap?.[code];
 
         if (!Component) {

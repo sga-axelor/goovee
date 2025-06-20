@@ -30,7 +30,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import {useParams, useRouter} from 'next/navigation';
-import {updateWikiContent} from '../../../../../action';
+import {updateWikiContent} from '@/subapps/website/common/action';
 import useFlashMessage from '../../hooks/useFlashMessage';
 import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';

@@ -9,7 +9,7 @@ import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {findAllMainWebsites} from '@/subapps/website/common/orm/website';
-import {NotFound} from '@/subapps/website/common/ui/components';
+import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {inverseTransformLocale} from '@/locale/utils';
 import type {Website} from '@/types';
 

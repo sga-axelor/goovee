@@ -5,7 +5,7 @@ import NextLink from '@/subapps/website/common/components/reuseable/links/NextLi
 import {PricingCard1} from '@/subapps/website/common/components/reuseable/pricing-cards';
 
 // -------- data -------- //
-import {TemplateProps} from '../../../types';
+import {TemplateProps} from '@/subapps/website/common/types';
 
 type Pricing1Props = {
   roundShape?: boolean;
