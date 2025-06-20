@@ -42,6 +42,8 @@ import {isWithProvider} from '../../../utils';
 import {Category, Priority, Status} from '../pills';
 import {useTicketDetails} from './ticket-details-provider';
 
+import '@/ui/components/rich-text-editor/rich-text-editor.css';
+
 type Props = {
   categories: TCategory[];
   priorities: TPriority[];
@@ -376,8 +378,11 @@ export function TicketDetails(props: Props) {
                   <hr />
                 </>
               )}
-            <div>
-              <InnerHTML content={ticket.description} />
+            <div className="DraftEditor-editorContainer">
+              <InnerHTML
+                content={ticket.description}
+                className="public-DraftEditor-content"
+              />
             </div>
           </div>
         </div>
