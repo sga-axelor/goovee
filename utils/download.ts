@@ -178,6 +178,7 @@ export async function streamFile({
         'content-disposition': `attachment; filename=${fileName}`,
         'content-type': fileType,
         'content-length': stats.size + '',
+        'access-control-expose-headers': 'Content-Disposition',
       }),
     });
 

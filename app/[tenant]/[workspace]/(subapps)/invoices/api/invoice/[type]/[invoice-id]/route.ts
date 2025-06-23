@@ -88,5 +88,11 @@ export async function GET(
     return new NextResponse('File not found', {status: 404});
   }
 
+  const allowedTypes = ['application/pdf'];
+
+  if (!allowedTypes.includes(file.fileType)) {
+    return new NextResponse('Unsupported file type', {status: 415});
+  }
+
   return streamFile(file);
 }
