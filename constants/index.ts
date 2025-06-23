@@ -41,7 +41,6 @@ export const DEFAULT_TENANT = 'd';
  */
 export const DEFAULT_WORKSPACE = 'w';
 export const DEFAULT_WORKSPACE_URI = `/${DEFAULT_TENANT}/${DEFAULT_WORKSPACE}`;
-export const DEFAULT_WORKSPACE_URL = `${process.env.NEXT_PUBLIC_HOST}${DEFAULT_WORKSPACE_URI}`;
 
 /**
  * CUSTOMER ROLE

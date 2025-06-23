@@ -13,6 +13,7 @@ import {
   SHARE_ON_SOCIAL_MEDIA,
   SOCIAL_ICONS,
 } from '@/subapps/news/common/constants';
+import {getSocialURL} from '../../../utils';
 
 type SocialMediaProps = {
   availableSocials?: string;
@@ -36,19 +37,22 @@ export const SocialMedia = ({
       </div>
 
       <div className="flex gap-6">
-        {availableSocials.map(({key, redirectUrl = '', color, image}) => (
-          <Link
-            key={key}
-            href={redirectUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer">
-            <Avatar
-              className={`w-8 h-8 bg-[${color}] p-1 rounded cursor-pointer`}>
-              <AvatarImage src={image} alt={`Visit ${redirectUrl}`} />
-            </Avatar>
-          </Link>
-        ))}
+        {availableSocials.map(({key, name, color, image}) => {
+          const redirectUrl = getSocialURL(name);
+          return (
+            <Link
+              key={key}
+              href={redirectUrl!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer">
+              <Avatar
+                className={`w-8 h-8 bg-[${color}] p-1 rounded cursor-pointer`}>
+                <AvatarImage src={image} alt={`Visit ${redirectUrl}`} />
+              </Avatar>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

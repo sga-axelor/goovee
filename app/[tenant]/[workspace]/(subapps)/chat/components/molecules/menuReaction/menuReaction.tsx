@@ -2,11 +2,11 @@
 'use client';
 
 import React, {useState, useRef} from 'react';
-import {HOST} from '../../../constants';
 import {EmojiPopup} from '../../atoms';
 import {SmilePlus, Reply} from 'lucide-react';
 import {focusInputMessage} from '../../../utils/focusOnInput';
 import {firtThreeEmojis} from '../../../constants/emojis';
+import {getHOST} from '../../../utils';
 
 export const MenuReaction = ({
   onEmojiClick,
@@ -32,7 +32,7 @@ export const MenuReaction = ({
             className="hover:bg-gray-200 rounded-full p-1"
             onClick={() => onEmojiClick(emojiName)}>
             <img
-              src={`${HOST}/static/emoji/${filename}`}
+              src={`${getHOST()}/static/emoji/${filename}`}
               alt={emojiName}
               className="w-6 h-6"
             />

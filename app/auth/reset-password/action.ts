@@ -117,7 +117,7 @@ export async function requestResetPassword({
 
   const user = await findGooveeUserByEmail(email, tenantId);
 
-  const link = `${process.env.NEXT_PUBLIC_HOST}/auth/reset-password/${email}?${searchQuery}`;
+  const link = `${process.env.GOOVEE_PUBLIC_HOST}/auth/reset-password/${email}?${searchQuery}`;
 
   if (!user) {
     return {

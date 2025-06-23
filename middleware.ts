@@ -51,7 +51,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const tenant = extractTenant(pathname, process.env.NEXT_PUBLIC_BASE_PATH);
+  const tenant = extractTenant(pathname, process.env.GOOVEE_PUBLIC_BASE_PATH);
 
   if (isMultiTenancy) {
     if (!tenant) return notFound(req);

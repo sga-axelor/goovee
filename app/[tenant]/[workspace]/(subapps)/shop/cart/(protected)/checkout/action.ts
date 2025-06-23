@@ -781,8 +781,8 @@ export async function payboxCreateOrder({
       email: payer?.emailAddress?.address!,
       context: cart,
       url: {
-        success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true`,
-        failure: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_error=true`,
+        success: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_response=true`,
+        failure: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_error=true`,
       },
     });
 

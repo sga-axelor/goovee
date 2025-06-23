@@ -10,6 +10,7 @@ import {PaymentOption} from '@/types';
 import {Portal, Spinner} from '@/ui/components';
 import {PaypalProps} from '@/ui/components/payment/types';
 import {useToast} from '@/ui/hooks';
+import {useEnvironment} from '@/environment';
 
 export function Paypal({
   disabled,
@@ -84,10 +85,12 @@ export function Paypal({
     }
   };
 
+  const env = useEnvironment();
+
   return (
     <PayPalScriptProvider
       options={{
-        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+        clientId: env.GOOVEE_PUBLIC_PAYPAL_CLIENT_ID!,
         currency: DEFAULT_CURRENCY_CODE,
         intent: 'capture',
         disableFunding: 'card',

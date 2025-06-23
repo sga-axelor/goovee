@@ -1,13 +1,3 @@
-export const HOST =
-  process.env.MATTERMOST_HOST ||
-  process.env.NEXT_PUBLIC_MATTERMOST_HOST ||
-  process.env.VITE_MATTERMOST_HOST;
-
-export const WEBSOCKET_URL =
-  process.env.MATTERMOST_WEBSOCKET_URL ||
-  process.env.NEXT_PUBLIC_MATTERMOST_WEBSOCKET_URL ||
-  process.env.VITE_MATTERMOST_WEBSOCKET_URL;
-
 export const SocketEvents = {
   POSTED: 'posted',
   POST_EDITED: 'post_edited',

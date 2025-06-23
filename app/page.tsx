@@ -32,7 +32,7 @@ export default async function Page({
   }
 
   const workspaces = await findWorkspaces({
-    url: process.env.NEXT_PUBLIC_HOST,
+    url: process.env.GOOVEE_PUBLIC_HOST,
     user,
     tenantId,
   });
@@ -44,7 +44,7 @@ export default async function Page({
   const workspaceURI = decodeURIComponent(searchParams.workspaceURI || '');
 
   if (workspaceURI) {
-    const url = `${process.env.NEXT_PUBLIC_HOST}${decodeURIComponent(workspaceURI)}`;
+    const url = `${process.env.GOOVEE_PUBLIC_HOST}${decodeURIComponent(workspaceURI)}`;
 
     const workspaceApps = await findSubapps({
       user,

@@ -33,28 +33,24 @@ export const SOCIAL_ICONS = [
     name: 'linkedin',
     color: '#E0ECFF',
     image: '/images/linkedin.png',
-    redirectUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL,
   },
   {
     key: 2,
     name: 'twitter',
     color: '#E6E7E7',
     image: '/images/twitter-x.png',
-    redirectUrl: process.env.NEXT_PUBLIC_TWITTER_URL,
   },
   {
     key: 3,
     name: 'instagram',
     color: '#FEF1CC',
     image: '/images/instagram.png',
-    redirectUrl: process.env.NEXT_PUBLIC_INSTAGRAM_URL,
   },
   {
     key: 4,
     name: 'whatsapp',
     color: '#EBFFF0',
     image: '/images/whatsapp.png',
-    redirectUrl: process.env.NEXT_PUBLIC_WHATSAPP_URL,
   },
 ];
 export const NEWS = 'News';

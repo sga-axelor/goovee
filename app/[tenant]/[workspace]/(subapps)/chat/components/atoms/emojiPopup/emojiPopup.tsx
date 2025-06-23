@@ -3,7 +3,6 @@
 'use client';
 
 import React, {useState, useEffect, useRef} from 'react';
-import {HOST} from '../../../constants';
 import {
   SmilePlus,
   Leaf,
@@ -24,6 +23,7 @@ import {
   flags,
 } from '../../../constants/emojis';
 import {focusInputMessage} from '../../../utils/focusOnInput';
+import {getHOST} from '../../../utils';
 
 const categories = [
   {name: 'Smileys & Emotion', icon: SmilePlus, emojis: smileysAndEmotion},
@@ -50,7 +50,7 @@ const EmojiButton = ({
   useEffect(() => {
     const img = new Image();
     img.onload = () => setIsLoaded(true);
-    img.src = `${HOST}/static/emoji/${filename}`;
+    img.src = `${getHOST()}/static/emoji/${filename}`;
   }, [filename]);
 
   return (
@@ -59,7 +59,7 @@ const EmojiButton = ({
       onClick={onClick}>
       {isLoaded ? (
         <img
-          src={`${HOST}/static/emoji/${filename}`}
+          src={`${getHOST()}/static/emoji/${filename}`}
           alt={emojiName}
           className="w-6 h-6 object-contain"
         />
@@ -129,7 +129,7 @@ export const EmojiPopup = ({
   useEffect(() => {
     Object.values(categories[activeCategory].emojis).forEach(filename => {
       const img = new Image();
-      img.src = `${HOST}/static/emoji/${filename}`;
+      img.src = `${getHOST()}/static/emoji/${filename}`;
     });
   }, [activeCategory]);
 

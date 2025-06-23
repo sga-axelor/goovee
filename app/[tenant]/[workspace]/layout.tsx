@@ -93,7 +93,7 @@ export default async function Layout({
   }
 
   const workspaces = await findWorkspaces({
-    url: process.env.NEXT_PUBLIC_HOST,
+    url: process.env.GOOVEE_PUBLIC_HOST,
     user,
     tenantId: tenant,
   }).then(clone);

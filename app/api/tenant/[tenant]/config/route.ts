@@ -17,7 +17,7 @@ const tenants: {[key: string]: TenantConfig} = [DEFAULT_TENANT].reduce(
         url: process.env.DATABASE_URL,
       },
       aos: {
-        url: process.env.NEXT_PUBLIC_AOS_URL,
+        url: process.env.GOOVEE_PUBLIC_AOS_URL,
         storage: process.env.DATA_STORAGE,
         auth: {
           username: process.env.BASIC_AUTH_USERNAME,

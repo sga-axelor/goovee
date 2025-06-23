@@ -1,9 +1,10 @@
 /* eslint-disable */
 
 import React, {memo, useCallback, useEffect, useState} from 'react';
-import {SocketEvents, WEBSOCKET_URL} from '../constants';
+import {SocketEvents} from '../constants';
 import {WebSocketClient} from '../api/websocket';
 import {Post, Reaction, SocketMsg} from '../types/types';
+import {getWebsocketURL} from '../utils';
 
 let socket: WebSocketClient;
 
@@ -163,7 +164,7 @@ export const Socket = memo(function Socket({
     }
     socket.addMessageListener(handleSocketEvent);
     if (!socket.isConnected()) {
-      socket.initialize(WEBSOCKET_URL, token);
+      socket.initialize(getWebsocketURL(), token);
     }
   }, [token]);
 

@@ -23,6 +23,7 @@ import {
   Comments,
   CommentsSkeleton,
 } from '@/comments';
+import {useEnvironment} from '@/environment';
 import {PaymentOption, type PortalWorkspace} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
@@ -181,10 +182,12 @@ function Paypal({onApprove, quotation}: any) {
     }
   };
 
+  const env = useEnvironment();
+
   return (
     <PayPalScriptProvider
       options={{
-        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+        clientId: env.GOOVEE_PUBLIC_PAYPAL_CLIENT_ID!,
         currency: quotation?.currency?.code || DEFAULT_CURRENCY_CODE,
         intent: 'capture',
         disableFunding: 'card',

@@ -2,6 +2,7 @@ import {Poppins as FontSans} from 'next/font/google';
 import type {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
+import {Environment} from '@/environment';
 import {findTheme} from '@/orm/theme';
 import {Toaster} from '@/ui/components/toaster';
 
@@ -31,15 +32,17 @@ export default async function RootLayout({
   const theme = await findTheme();
 
   return (
-    <Theme theme={theme}>
-      <html lang="en">
-        <body className={fontSans.className}>
-          <Session>
-            <Locale>{children}</Locale>
-          </Session>
-          <Toaster />
-        </body>
-      </html>
-    </Theme>
+    <Environment>
+      <Theme theme={theme}>
+        <html lang="en">
+          <body className={fontSans.className}>
+            <Session>
+              <Locale>{children}</Locale>
+            </Session>
+            <Toaster />
+          </body>
+        </html>
+      </Theme>
+    </Environment>
   );
 }

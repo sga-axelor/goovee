@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {HOST} from '../constants';
 import {REACTIONS_API_ENDPOINT} from './path-helpers';
+import {getHOST} from '../utils';
 
 export const createReaction = async (
   userId: string,
@@ -11,7 +11,7 @@ export const createReaction = async (
 ) => {
   const {data: reaction} = await axios({
     method: 'post',
-    url: `${HOST}${REACTIONS_API_ENDPOINT}`,
+    url: `${getHOST()}${REACTIONS_API_ENDPOINT}`,
     headers: {Authorization: `Bearer ${token}`},
     data: {
       user_id: userId,

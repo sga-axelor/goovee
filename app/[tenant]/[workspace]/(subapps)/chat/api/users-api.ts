@@ -1,11 +1,11 @@
 import axios from 'axios';
-import {HOST} from '../constants';
 import {USERS_API_ENDPOINT} from './path-helpers';
+import {getHOST} from '../utils';
 
 export const getChannelsTeam = async (token: any, teamId: any, userId: any) => {
   try {
     const {data} = await axios.get(
-      `${HOST}${USERS_API_ENDPOINT}/${userId}/teams/${teamId}/channels`,
+      `${getHOST()}${USERS_API_ENDPOINT}/${userId}/teams/${teamId}/channels`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -24,7 +24,7 @@ export const getChannelsTeam = async (token: any, teamId: any, userId: any) => {
 export const getChannelUsers = async (channelId: string, token: string) => {
   const {data: user} = await axios({
     method: 'get',
-    url: `${HOST}${USERS_API_ENDPOINT}`,
+    url: `${getHOST()}${USERS_API_ENDPOINT}`,
     headers: {Authorization: `Bearer ${token}`},
     params: {in_channel: channelId},
   });
@@ -36,7 +36,7 @@ export const getUserProfileImage = async (userId: string, token: string) => {
   const {data} = await axios({
     responseType: 'blob',
     method: 'get',
-    url: `${HOST}${USERS_API_ENDPOINT}/${userId}/image`,
+    url: `${getHOST()}${USERS_API_ENDPOINT}/${userId}/image`,
     headers: {Authorization: `Bearer ${token}`},
   });
   const blob = new Blob([data], {type: 'image/png'});
@@ -51,7 +51,7 @@ export const removeReactionFromAPost = async (
 ) => {
   const {data} = await axios({
     method: 'delete',
-    url: `${HOST}${USERS_API_ENDPOINT}/${userId}/posts/${postId}/reactions/${emojiName}`,
+    url: `${getHOST()}${USERS_API_ENDPOINT}/${userId}/posts/${postId}/reactions/${emojiName}`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data.status;
@@ -64,7 +64,7 @@ export const getUnreadChannel = async (
 ) => {
   const data = await axios({
     method: 'get',
-    url: `${HOST}${USERS_API_ENDPOINT}/${userId}/channels/${channelId}/unread`,
+    url: `${getHOST()}${USERS_API_ENDPOINT}/${userId}/channels/${channelId}/unread`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;
@@ -73,7 +73,7 @@ export const getUnreadChannel = async (
 export const getUserStatus = async (userId: string, token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${USERS_API_ENDPOINT}/${userId}/status`,
+    url: `${getHOST()}${USERS_API_ENDPOINT}/${userId}/status`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;
@@ -82,7 +82,7 @@ export const getUserStatus = async (userId: string, token: string) => {
 export const getUsers = async (token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${USERS_API_ENDPOINT}`,
+    url: `${getHOST()}${USERS_API_ENDPOINT}`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;

@@ -13,7 +13,7 @@ async function fetchConfig(id: Tenant['id']) {
   if (!id) return null;
 
   return await axios
-    .get(`${process.env.NEXT_PUBLIC_HOST}/api/tenant/${id}/config`, {
+    .get(`${process.env.GOOVEE_PUBLIC_HOST}/api/tenant/${id}/config`, {
       auth: {
         username: process.env.TENANT_MANAGER_BASIC_USERNAME as string,
         password: process.env.TENANT_MANAGER_BASIC_PASSWORD as string,
@@ -54,7 +54,7 @@ export class SingleTenantManager implements TenantManager {
         url: process.env.DATABASE_URL!,
       },
       aos: {
-        url: process.env.NEXT_PUBLIC_AOS_URL!,
+        url: process.env.GOOVEE_PUBLIC_AOS_URL!,
         storage: process.env.DATA_STORAGE!,
         auth: {
           username: process.env.BASIC_AUTH_USERNAME!,

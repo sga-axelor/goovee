@@ -571,8 +571,8 @@ export async function payboxCreateOrder({
       email: payer?.emailAddress?.address!,
       context: invoice,
       url: {
-        success: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_response=true&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}`,
-        failure: `${process.env.NEXT_PUBLIC_HOST}/${uri}?paybox_error=true`,
+        success: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_response=true&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}`,
+        failure: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_error=true`,
       },
     });
 

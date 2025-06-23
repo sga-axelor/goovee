@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {HOST} from '../constants';
 import {CHANNELS_API_ENDPOINT} from './path-helpers';
+import {getHOST} from '../utils';
 
 export const getPostsChannel = async (
   token: string,
@@ -10,7 +10,7 @@ export const getPostsChannel = async (
   const {before, per_page = 60, after} = options;
   try {
     const {data} = await axios.get(
-      `${HOST}${CHANNELS_API_ENDPOINT}/${channelId}/posts`,
+      `${getHOST()}${CHANNELS_API_ENDPOINT}/${channelId}/posts`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

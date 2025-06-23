@@ -2,6 +2,7 @@ import {DEFAULT_CURRENCY_CODE} from '@/constants';
 import {encodeFilter as encode} from '@/utils/url';
 import {formatAmountForPaybox, hasKeys, join} from './utils';
 import {createHMAC} from './crypto';
+import {getGooveeEnvironment} from '@/environment';
 
 const CurrencyCode: Record<string, number> = {
   EUR: 978,
@@ -41,7 +42,7 @@ export function getPaymentURL({
     PBX_ATTENTE: url?.success,
     PBX_REFUSE: url?.failure,
     PBX_ANNULE: url?.failure,
-    PBX_REPONDRE_A: `${process.env.NEXT_PUBLIC_HOST}/api/payment/paybox/validate`,
+    PBX_REPONDRE_A: `${getGooveeEnvironment().GOOVEE_PUBLIC_HOST}/api/payment/paybox/validate`,
     PBX_RETOUR: 'reference:R;error:E;transaction:S;sign:K',
     PBX_TIME: new Date().toISOString(),
   };

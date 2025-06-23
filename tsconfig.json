@@ -37,7 +37,9 @@
       "@/otp": ["./lib/core/otp/index"],
       "@/otp/*": ["./lib/core/otp/*"],
       "@/comments": ["./lib/core/comments/index"],
-      "@/comments/*": ["./lib/core/comments/*"]
+      "@/comments/*": ["./lib/core/comments/*"],
+      "@/environment": ["./lib/core/environment/index"],
+      "@/environment/*": ["./lib/core/environment/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

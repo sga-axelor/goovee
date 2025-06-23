@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {HOST} from '../constants';
 import {USERS_API_ENDPOINT} from './path-helpers';
+import {getHOST} from '../utils';
 
 export const getAuthToken = async (
   login: string | undefined,
@@ -8,7 +8,7 @@ export const getAuthToken = async (
 ) => {
   try {
     const {data, headers} = await axios.post(
-      `${HOST}${USERS_API_ENDPOINT}/login`,
+      `${getHOST()}${USERS_API_ENDPOINT}/login`,
       {
         login_id: login,
         password: password,

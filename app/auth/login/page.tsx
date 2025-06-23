@@ -47,7 +47,7 @@ export default async function Page({
   }
 
   const workspaceURL = workspaceURI
-    ? `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`
+    ? `${process.env.GOOVEE_PUBLIC_HOST}${workspaceURI}`
     : '';
 
   let canRegister;

@@ -1,14 +1,14 @@
 import axios from 'axios';
-import {HOST} from '../constants';
 import {POSTS_API_ENDPOINT} from './path-helpers';
 import {asyncForEach} from '../services/services';
 import {uploadFile} from '../api';
 import {File} from '../types/types';
+import {getHOST} from '../utils';
 
 export const getPostReactions = async (postId: string, token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${POSTS_API_ENDPOINT}/${postId}/reactions`,
+    url: `${getHOST()}${POSTS_API_ENDPOINT}/${postId}/reactions`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;
@@ -45,7 +45,7 @@ export const createPost = async (
   }
   const {data: post} = await axios({
     method: 'post',
-    url: `${HOST}${POSTS_API_ENDPOINT}`,
+    url: `${getHOST()}${POSTS_API_ENDPOINT}`,
     headers: {Authorization: `Bearer ${token}`},
     data: data,
   });
@@ -55,7 +55,7 @@ export const createPost = async (
 export const getPostById = async (postId: string, token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${POSTS_API_ENDPOINT}/${postId}`,
+    url: `${getHOST()}${POSTS_API_ENDPOINT}/${postId}`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;

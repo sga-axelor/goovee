@@ -5,13 +5,13 @@ import {
   DEFAULT_TENANT,
   DEFAULT_WORKSPACE,
   DEFAULT_WORKSPACE_URI,
-  DEFAULT_WORKSPACE_URL,
 } from '@/constants';
 
 // ---- CORE IMPORTS ---- //
 import {useTheme} from '@/app/theme';
 import {Theme} from '@/types/theme';
 import {type PortalWorkspace} from '@/types';
+import {useEnvironment} from '@/environment';
 
 export const WorkspaceContext = React.createContext<{
   tenant: string;
@@ -23,7 +23,7 @@ export const WorkspaceContext = React.createContext<{
   tenant: DEFAULT_TENANT,
   workspace: DEFAULT_WORKSPACE,
   workspaceURI: DEFAULT_WORKSPACE_URI,
-  workspaceURL: DEFAULT_WORKSPACE_URL,
+  workspaceURL: '',
   workspaceID: '',
 });
 
@@ -42,9 +42,10 @@ export function Workspace({
 }) {
   const {updateTheme} = useTheme();
   const prevTheme = useRef<any>();
+  const env = useEnvironment();
 
   const workspaceURI = `/${tenant}/${workspace}`;
-  const workspaceURL = `${process.env.NEXT_PUBLIC_HOST}${workspaceURI}`;
+  const workspaceURL = `${env.GOOVEE_PUBLIC_HOST}${workspaceURI}`;
   const workspaceID = id;
 
   const value = useMemo(

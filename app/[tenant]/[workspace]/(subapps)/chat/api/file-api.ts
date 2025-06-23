@@ -1,12 +1,12 @@
 import axios from 'axios';
-import {HOST} from '../constants';
 import {FILES_API_ENDPOINT} from './path-helpers';
 import {generateUniqueId} from '../services/services';
+import {getHOST} from '../utils';
 
 export const getFileInfoById = async (fileId: string, token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${FILES_API_ENDPOINT}/${fileId}/info`,
+    url: `${getHOST()}${FILES_API_ENDPOINT}/${fileId}/info`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;
@@ -36,7 +36,7 @@ export const getFilePreview = async (fileId: string, token: string) => {
   const {data} = await axios({
     responseType: 'blob',
     method: 'get',
-    url: `${HOST}${FILES_API_ENDPOINT}/${fileId}/preview`,
+    url: `${getHOST()}${FILES_API_ENDPOINT}/${fileId}/preview`,
     headers: {Authorization: `Bearer ${token}`},
   });
   const blob = new Blob([data], {type: 'image/png'});
@@ -46,7 +46,7 @@ export const getFilePreview = async (fileId: string, token: string) => {
 export const getFileLink = async (fileId: string, token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${FILES_API_ENDPOINT}/${fileId}/link`,
+    url: `${getHOST()}${FILES_API_ENDPOINT}/${fileId}/link`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;

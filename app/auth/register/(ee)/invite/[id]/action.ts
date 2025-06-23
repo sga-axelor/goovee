@@ -97,7 +97,7 @@ export async function register({
       localizationId: localization?.id,
     });
 
-    const uri = `${workspace.url.replace(process.env.NEXT_PUBLIC_HOST, '')}`;
+    const uri = `${workspace.url.replace(process.env.GOOVEE_PUBLIC_HOST, '')}`;
 
     revalidatePath('/', 'layout');
 
