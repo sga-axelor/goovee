@@ -9,7 +9,7 @@ import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from '@/app/[tenant]/[workspace]/(subapps)/events/[slug]/register/content';
-import {findModelFields} from '@/orm/model-fields';
+import {findModelFields, findSelectionItems} from '@/orm/model-fields';
 import {
   CONTACT_ATTRS,
   PORTAL_PARTICIPANT_MODEL,
@@ -73,6 +73,28 @@ export default async function Page({
     tenantId: tenant,
   }).then(clone);
 
+  const fields = eventDetails.additionalFieldSet || [];
+  const result = [];
+
+  for (const _f of fields) {
+    if (_f.selection != null) {
+      const options = await findSelectionItems({
+        selectionName: _f.selection,
+        tenantId: tenant,
+      });
+      result.push({..._f, selectionOptions: options});
+    } else {
+      result.push(_f);
+    }
+  }
+
+  const updatedEventDetails = JSON.parse(
+    JSON.stringify({
+      ...eventDetails,
+      additionalFieldSet: result,
+    }),
+  );
+
   const partner = user
     ? await findGooveeUserByEmail(user.email, tenant).then(clone)
     : {};
@@ -80,7 +102,7 @@ export default async function Page({
   return (
     <>
       <Content
-        eventDetails={eventDetails}
+        eventDetails={updatedEventDetails}
         metaFields={metaFields}
         workspace={workspace}
         user={partner}
