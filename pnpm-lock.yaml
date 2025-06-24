@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@axelor-ent/survey-react-components':
-    specifier: 0.1.0
-    version: 0.1.0(react-dom@18.3.1)
+    specifier: 0.2.0
+    version: 0.2.0
   '@cyntler/react-doc-viewer':
     specifier: ^1.17.0
     version: 1.17.0(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)
@@ -474,17 +474,17 @@ packages:
     hasBin: true
     dev: false
 
-  /@axelor-ent/survey-react-components@0.1.0(react-dom@18.3.1):
-    resolution: {integrity: sha512-i9gGcTftji5zhapkdwiy4V5COqhg5W0byO0MnvfFm34scdy31P/VzBeY3fjIl58IQ+FurPTJhSXzFhIb8D6s4A==}
+  /@axelor-ent/survey-react-components@0.2.0:
+    resolution: {integrity: sha512-eoIZbYHioY7D3QoRreiP/Oz46gadUVMGEUXRO3lcOJprlK2N1AA/h1z5hdsEQu5RtDF5TKEbrbi5ylp/Ylh5oA==}
     dependencies:
       react: 18.3.1
-      survey-core: 1.12.9
-      survey-creator-core: 1.12.9(survey-core@1.12.9)
-      survey-creator-react: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)(survey-creator-core@1.12.9)(survey-react-ui@1.12.9)
-      survey-react-ui: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)
+      react-dom: 18.3.1(react@18.3.1)
+      survey-core: 2.2.1
+      survey-creator-core: 2.2.1(survey-core@2.2.1)
+      survey-creator-react: 2.2.1(react-dom@18.3.1)(react@18.3.1)(survey-core@2.2.1)(survey-creator-core@2.2.1)(survey-react-ui@2.2.1)
+      survey-react-ui: 2.2.1(react-dom@18.3.1)(react@18.3.1)(survey-core@2.2.1)
     transitivePeerDependencies:
       - ace-builds
-      - react-dom
     dev: false
 
   /@babel/code-frame@7.26.2:
@@ -11318,54 +11318,54 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  /survey-core@1.12.9:
-    resolution: {integrity: sha512-vBV2ysXtxUacOdFzCDEkboiqlo5OtJh6tL2AD3QA/pYe+tnp1o02vRp27kjcH4T71EkUGOeZMcNWq0tz7n6YAg==}
+  /survey-core@2.2.1:
+    resolution: {integrity: sha512-5XsVGwsQCwgEP3ObOQvFjPlIdcmQ73yJgHm/XP5gzX+dTGFdvlVBp3Sk5RosxXv7JL3BuAB7mND8DzOqzrB77A==}
     dev: false
 
-  /survey-creator-core@1.12.9(survey-core@1.12.9):
-    resolution: {integrity: sha512-/MWfroF+x5gixmVqhRSlQxH5j4YwIgCs8AVQtDkLx0JaQHQWqiZDU4HOoJDvGmjD49iGxdLCVSeTIwHY18URVQ==}
+  /survey-creator-core@2.2.1(survey-core@2.2.1):
+    resolution: {integrity: sha512-m/5B0/iQ+0vWcNBA8MKkAJi6boYVN+Qo7s2oldbF05kErtFY1DfqbIusNjO8YHzmVQ0wk0OJXCiRndbvOb5wzA==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
-      survey-core: 1.12.9
+      survey-core: 2.2.1
     peerDependenciesMeta:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.12.9
+      survey-core: 2.2.1
     dev: false
 
-  /survey-creator-react@1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)(survey-creator-core@1.12.9)(survey-react-ui@1.12.9):
-    resolution: {integrity: sha512-eHyX+Op3NrHOgm+mI3w+xcfhMV+7NXWLriFmcoqLiIp2dTFMOwf/os1pUvdt5vkjg1LkPi8O6+1CXJDsxiwtLw==}
+  /survey-creator-react@2.2.1(react-dom@18.3.1)(react@18.3.1)(survey-core@2.2.1)(survey-creator-core@2.2.1)(survey-react-ui@2.2.1):
+    resolution: {integrity: sha512-69ZyrlTMyZWpDm24E1WSIui6dtG0/JGwhAMT0bdUClXIq4xZvPlAsGSfmspvzGJOVMo1uLaYpVbBDcNMhWqZWQ==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
-      react: ^16.5.0 || ^17.0.1 || ^18.1.0
-      react-dom: ^16.5.0 || ^17.0.1 || ^18.1.0
-      survey-core: 1.12.9
-      survey-creator-core: 1.12.9
-      survey-react-ui: 1.12.9
+      react: ^16.5.0 || ^17.0.1 || ^18.1.0 || ^19.0.0
+      react-dom: ^16.5.0 || ^17.0.1 || ^18.1.0 || ^19.0.0
+      survey-core: 2.2.1
+      survey-creator-core: 2.2.1
+      survey-react-ui: 2.2.1
     peerDependenciesMeta:
       ace-builds:
         optional: true
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      survey-core: 1.12.9
-      survey-creator-core: 1.12.9(survey-core@1.12.9)
-      survey-react-ui: 1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9)
+      survey-core: 2.2.1
+      survey-creator-core: 2.2.1(survey-core@2.2.1)
+      survey-react-ui: 2.2.1(react-dom@18.3.1)(react@18.3.1)(survey-core@2.2.1)
     dev: false
 
-  /survey-react-ui@1.12.9(react-dom@18.3.1)(react@18.3.1)(survey-core@1.12.9):
-    resolution: {integrity: sha512-gQFEZgcKeb+CNvY6BV3bcZebZJHvLsJVqi2oFFsAihMTDWwFS61GjmHo+ilrZRYyv7mxY1cwGT1Ersdr/QfOtQ==}
+  /survey-react-ui@2.2.1(react-dom@18.3.1)(react@18.3.1)(survey-core@2.2.1):
+    resolution: {integrity: sha512-hzkdDnjJuFnnjjppgsRwBluxc/DEMMGPupGcUXW8Bvxd2G+6O+Z0pFhNZDjTLwi+ep+DieznCRRT3fEPznqO/g==}
     peerDependencies:
-      react: ^16.5.0 || ^17.0.1 || ^18.2.0
-      react-dom: ^16.5.0 || ^17.0.1 || ^18.2.0
-      survey-core: 1.12.9
+      react: ^16.5.0 || ^17.0.1 || ^18.1.0 || ^19.0.0
+      react-dom: ^16.5.0 || ^17.0.1 || ^18.1.0 || ^19.0.0
+      survey-core: 2.2.1
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      survey-core: 1.12.9
+      survey-core: 2.2.1
     dev: false
 
   /svg-parser@2.0.4:

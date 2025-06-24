@@ -13,7 +13,7 @@
     "generate": "goovee generate"
   },
   "dependencies": {
-    "@axelor-ent/survey-react-components": "0.1.0",
+    "@axelor-ent/survey-react-components": "0.2.0",
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@excalidraw/excalidraw": "^0.18.0",
     "@goovee/orm": "beta",
