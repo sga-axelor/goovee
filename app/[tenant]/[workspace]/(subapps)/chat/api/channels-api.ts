@@ -34,7 +34,7 @@ export const getPostsChannel = async (
 export const getChannelById = async (channelId: string, token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${CHANNELS_API_ENDPOINT}/${channelId}`,
+    url: `${getHOST()}${CHANNELS_API_ENDPOINT}/${channelId}`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;
@@ -47,7 +47,7 @@ export const viewChannel = async (
 ) => {
   const data = await axios({
     method: 'post',
-    url: `${HOST}${CHANNELS_API_ENDPOINT}/members/${userId}/view`,
+    url: `${getHOST()}${CHANNELS_API_ENDPOINT}/members/${userId}/view`,
     headers: {Authorization: `Bearer ${token}`},
     data: {
       channel_id: channelId,
@@ -59,7 +59,7 @@ export const viewChannel = async (
 export const getChannelMembers = async (channelId: string, token: string) => {
   const {data} = await axios({
     method: 'get',
-    url: `${HOST}${CHANNELS_API_ENDPOINT}/${channelId}/members`,
+    url: `${getHOST()}${CHANNELS_API_ENDPOINT}/${channelId}/members`,
     headers: {Authorization: `Bearer ${token}`},
   });
   return data;
