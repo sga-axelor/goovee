@@ -32,17 +32,17 @@ export default async function RootLayout({
   const theme = await findTheme();
 
   return (
-    <Environment>
-      <Theme theme={theme}>
-        <html lang="en">
-          <body className={fontSans.className}>
+    <Theme theme={theme}>
+      <html lang="en">
+        <body className={fontSans.className}>
+          <Environment>
             <Session>
               <Locale>{children}</Locale>
             </Session>
             <Toaster />
-          </body>
-        </html>
-      </Theme>
-    </Environment>
+          </Environment>
+        </body>
+      </html>
+    </Theme>
   );
 }
