@@ -91,6 +91,9 @@ export const RegistrationForm = ({
   const canPay = defaultPrice || facilityList?.length;
   const eventPrice = defaultPrice ? (displayAti ?? 0) : 0;
 
+  const isCompanyOrAddressRequired =
+    workspace.config?.isCompanyOrAddressRequired;
+
   const basicPerson = useMemo(
     () => [
       {
@@ -124,7 +127,7 @@ export const RegistrationForm = ({
         widget: 'custom',
         order: 3,
         defaultValue: getPartnerAddress(user) || '',
-        required: false,
+        required: isCompanyOrAddressRequired ?? false,
         customComponent: (props: any) => (
           <CompanyAddressField
             {...props}
@@ -177,12 +180,13 @@ export const RegistrationForm = ({
       },
     ],
     [
+      user,
+      isCompanyOrAddressRequired,
       eventId,
       workspace.url,
       facilityList,
       eventPrice,
       formattedDefaultPriceAti,
-      user,
     ],
   );
 

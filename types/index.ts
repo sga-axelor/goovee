@@ -163,6 +163,7 @@ export interface PortalAppConfig extends Model {
   contactName?: string;
   contactEmailAddress?: {address?: string};
   contactPhone?: string;
+  isCompanyOrAddressRequired?: boolean;
 }
 
 export interface PortalApp extends Model {

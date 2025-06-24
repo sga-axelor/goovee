@@ -154,6 +154,14 @@ export async function validateRegistration({
     );
   }
 
+  const isCompanyOrAddressRequired =
+    workspace?.config?.isCompanyOrAddressRequired;
+  if (isCompanyOrAddressRequired && !values.company?.trim()) {
+    return error(
+      await t('Company/Address is required. Please enter a valid value.'),
+    );
+  }
+
   const event = await findEventConfig({id: eventId, tenantId, workspaceURL});
   if (!event) return error(await t('Event not found'));
 

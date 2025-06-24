@@ -118,6 +118,7 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   contactEmailAddress: true,
   contactName: true,
   contactPhone: true,
+  isCompanyOrAddressRequired: true,
 };
 
 export async function findWorkspaceMembers({
