@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {findLocaleLanguage, translate} from '@/locale/utils';
 import {DEFAULT_LOCALE} from '@/locale';
-import {getGooveeEnvironment} from '@/environment';
 
 const rest = axios.create();
 
@@ -15,9 +14,14 @@ export const i18n = (() => {
 
     if (tenant) {
       try {
+        const env: any = await rest
+          .get('/api/config')
+          .then(result => result?.data)
+          .catch(() => ({}));
+
         const result = await rest
           .get(
-            `${getGooveeEnvironment().GOOVEE_PUBLIC_HOST}/api/tenant/${tenant}/locales/${locale}`,
+            `${env?.GOOVEE_PUBLIC_HOST}/api/tenant/${tenant}/locales/${locale}`,
           )
           .then(result => result?.data || {})
           .catch(() => ({}));
