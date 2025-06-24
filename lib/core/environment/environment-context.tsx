@@ -3,30 +3,11 @@
 import React, {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 
+import {store} from './store';
+
 const EnvironmentContext = React.createContext<any>({});
 
 const rest = axios.create();
-
-const store = (() => {
-  let variables: Record<string, string> = {};
-
-  const setVariables = (values: any) => {
-    variables = {
-      ...values,
-    };
-  };
-
-  const getVariables = () => {
-    return variables;
-  };
-
-  return {
-    setVariables,
-    getVariables,
-  };
-})();
-
-export const getEnv = () => store.getVariables();
 
 export function Environment({children}: {children: React.ReactNode}) {
   const [loading, setLoading] = useState(true);
