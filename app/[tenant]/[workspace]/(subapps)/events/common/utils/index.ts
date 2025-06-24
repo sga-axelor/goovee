@@ -145,7 +145,7 @@ export function getPartnerAddress(user: any): string {
     partnerAddresses.find((addr: any) => addr.isInvoicingAddr)?.address ||
     partnerAddresses[0]?.address;
 
-  const fullName = user.mainPartner?.simpleFullName || '';
+  const fullName = user?.mainPartner?.simpleFullName || '';
 
   return `${fullName}${fullName ? '\n' : ''}${address?.formattedFullName || ''}`;
 }
