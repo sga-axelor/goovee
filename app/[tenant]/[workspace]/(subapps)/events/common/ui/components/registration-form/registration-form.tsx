@@ -57,7 +57,7 @@ export const RegistrationForm = ({
   user,
 }: EventPageCardProps) => {
   const {
-    defaultPrice = null || 0,
+    defaultPrice = 0,
     formattedDefaultPrice = null,
     formattedDefaultPriceAti = null,
     displayAti,
@@ -456,10 +456,9 @@ export const RegistrationForm = ({
           }
           submitTitle={i18n.t('Register')}
           mode={'onChange'}
-          onSubmit={onSubmit}
-          submitButton={
-            (canPay && totalPrice > 0) || stripeSessionId || payboxResponse
-              ? ({form}: any) => (
+          {...((canPay && totalPrice > 0) || stripeSessionId || payboxResponse
+            ? {
+                submitButton: ({form}: any) => (
                   <EventPayments
                     workspace={workspace}
                     event={{
@@ -472,9 +471,9 @@ export const RegistrationForm = ({
                     metaFieldsFacilities={metaFieldsFacilities}
                     additionalFieldSet={additionalFieldSet}
                   />
-                )
-              : undefined
-          }
+                ),
+              }
+            : {onSubmit})}
         />
       </CardContent>
     </Card>
