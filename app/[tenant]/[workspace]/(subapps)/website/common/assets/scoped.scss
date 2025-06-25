@@ -1,4 +1,4 @@
-@import './fonts/custom-fonts.scss';
+@import './scss/fonts/custom-fonts.scss';
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700');
 
 .gv {
@@ -207,17 +207,17 @@
   flex-direction: column;
 
   /* body styles end here */
-  @import '../../../../../../../../node_modules/animate.css/animate';
-  @import '../../../../../../../../node_modules/swiper/swiper.min';
-  @import '../../../../../../../../node_modules/swiper/modules/free-mode.min';
-  @import '../../../../../../../../node_modules/swiper/modules/navigation.min';
-  @import '../../../../../../../../node_modules/swiper/modules/pagination.min';
-  @import '../../../../../../../../node_modules/swiper/modules/thumbs.min';
-  @import '../../plugins/scrollcue/scrollCue';
-  @import '../../../../../../../../node_modules/glightbox/dist/css/glightbox';
+  @import '../../../../../../../node_modules/animate.css/animate';
+  @import '../../../../../../../node_modules/swiper/swiper.min';
+  @import '../../../../../../../node_modules/swiper/modules/free-mode.min';
+  @import '../../../../../../../node_modules/swiper/modules/navigation.min';
+  @import '../../../../../../../node_modules/swiper/modules/pagination.min';
+  @import '../../../../../../../node_modules/swiper/modules/thumbs.min';
+  @import '../plugins/scrollcue/scrollCue';
+  @import '../../../../../../../node_modules/glightbox/dist/css/glightbox';
 
-  @import '../../../../../../../../node_modules/plyr-react/plyr';
-  @import '../css/style';
+  @import '../../../../../../../node_modules/plyr-react/plyr';
+  @import './css/style';
 
   /* tailwind override start here */
   .show {
