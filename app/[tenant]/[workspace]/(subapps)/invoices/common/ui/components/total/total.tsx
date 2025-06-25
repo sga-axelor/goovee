@@ -51,8 +51,8 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
   }, []);
 
   const config = workspace?.config;
-  const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
-  const canPayInvoice = config?.canPayInvoice;
+  const allowOnlinePayment = config?.allowOnlinePaymentForInvoices;
+  const canPayInvoice = config?.canPayInvoice ?? INVOICE_PAYMENT_OPTIONS.NO;
   const paymentOptionSet = config?.paymentOptionSet;
 
   const allowInvoicePayment =
@@ -167,43 +167,47 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
                   }}>
                   {i18n.t('Pay all')}
                 </Button>
-                <Button
-                  variant={'success'}
-                  className="text-white font-medium"
-                  disabled={!form.formState.isValid}
-                  onClick={async () => {
-                    const isValid = await form.trigger('amount');
-                    if (isValid) {
-                      form.handleSubmit(onSubmit)();
-                    }
-                  }}>
-                  {i18n.t('Partially pay')}
-                </Button>
+                {canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL && (
+                  <Button
+                    variant={'success'}
+                    className="text-white font-medium"
+                    disabled={!form.formState.isValid}
+                    onClick={async () => {
+                      const isValid = await form.trigger('amount');
+                      if (isValid) {
+                        form.handleSubmit(onSubmit)();
+                      }
+                    }}>
+                    {i18n.t('Partially pay')}
+                  </Button>
+                )}
               </div>
-              <Form {...form}>
-                <form className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="amount"
-                    render={({field}) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder={i18n.t('Enter the amount to pay')}
-                            value={field.value}
-                            onChange={handleChange}
-                            inputMode="decimal"
-                            type="number"
-                            step="0.1"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
+              {canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL && (
+                <Form {...form}>
+                  <form className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="amount"
+                      render={({field}) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder={i18n.t('Enter the amount to pay')}
+                              value={field.value}
+                              onChange={handleChange}
+                              inputMode="decimal"
+                              type="number"
+                              step="0.1"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              )}
             </div>
           )}
 
