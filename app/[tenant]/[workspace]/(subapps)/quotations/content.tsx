@@ -30,7 +30,7 @@ const Content = (props: Props) => {
 
   return (
     <>
-      <Container title={i18n.t('Quotations')}>
+      <Container title={i18n.t('Current quotations')}>
         <div className="flex flex-col gap-4">
           <TableList
             columns={Columns}

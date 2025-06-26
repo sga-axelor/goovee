@@ -9,8 +9,8 @@ export const QUOTATION_STATUS = {
 };
 
 export const QUOTATION_TYPE = {
-  DRAFT: 'Draft quotation',
-  FINALISED: 'Finalized quotation',
+  DRAFT: 'Request',
+  FINALISED: 'Proposal',
   CANCELED: 'Cancelled',
   UNKNOWN: 'Unknown',
 };
