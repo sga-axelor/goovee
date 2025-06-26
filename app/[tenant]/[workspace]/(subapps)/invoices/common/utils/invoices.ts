@@ -29,27 +29,20 @@ export function buildWhereClause({
     ],
   };
 
-  const archivedCondition = {
-    OR: [{archived: true}, {amountRemaining: {eq: 0}}],
-  };
-
-  const isArchived = type === INVOICE.ARCHIVED;
+  const isPaid = type === INVOICE.PAID;
 
   let whereClause: any = {
     ...params?.where,
     statusSelect: {eq: INVOICE_STATUS.VENTILATED},
     operationTypeSelect: INVOICE_CATEGORY.SALE_INVOICE,
+    // ARCHIVED FILTER
+    OR: [{archived: false}, {archived: null}],
   };
 
   whereClause.AND = [
     ...(whereClause.AND || []),
     workspaceConditions,
-    isArchived
-      ? archivedCondition
-      : {
-          OR: [{archived: false}, {archived: null}],
-          amountRemaining: {ne: 0},
-        },
+    isPaid ? {amountRemaining: {eq: 0}} : {amountRemaining: {ne: 0}},
   ];
 
   return whereClause;

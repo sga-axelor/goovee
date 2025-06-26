@@ -153,7 +153,7 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
           </div>
         )}
       </div>
-      {invoiceType !== INVOICE.ARCHIVED && (
+      {invoiceType !== INVOICE.PAID && (
         <>
           {allowInvoicePayment && !paymentType && (
             <div className="flex flex-col gap-2.5">

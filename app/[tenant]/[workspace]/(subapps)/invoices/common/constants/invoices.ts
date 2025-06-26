@@ -4,7 +4,7 @@ const HEADING =
   'You have unpaid invoices that will soon reach their limit date.';
 
 const INVOICE = {
-  ARCHIVED: 'archived',
+  PAID: 'paid',
   UNPAID: 'unpaid',
 };
 const INVOICE_TAB_ITEMS = [
@@ -15,8 +15,8 @@ const INVOICE_TAB_ITEMS = [
   },
   {
     id: '2',
-    title: 'Archived invoices',
-    href: INVOICE.ARCHIVED,
+    title: 'Paid invoices',
+    href: INVOICE.PAID,
   },
 ];
 

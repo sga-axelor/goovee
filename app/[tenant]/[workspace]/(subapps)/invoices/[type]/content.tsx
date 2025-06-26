@@ -72,7 +72,7 @@ export default function Content({
     () =>
       new Map<String, any>([
         [INVOICE.UNPAID, unpaidColumns],
-        [INVOICE.ARCHIVED, Columns],
+        [INVOICE.PAID, Columns],
       ]),
     [unpaidColumns],
   );

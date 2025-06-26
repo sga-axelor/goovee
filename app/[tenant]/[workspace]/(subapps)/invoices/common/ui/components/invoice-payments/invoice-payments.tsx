@@ -53,11 +53,11 @@ export function InvoicePayments({
           resetPaymentType();
           resetForm();
           router.replace(
-            `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.invoices}/${data.id}`,
+            `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}/${data.id}`,
           );
         } else {
           router.replace(
-            `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.archived}/${data.id}`,
+            `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.paid}/${data.id}`,
           );
         }
       }

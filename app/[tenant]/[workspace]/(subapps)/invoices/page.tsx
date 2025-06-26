@@ -12,6 +12,6 @@ export default function Page({
   const {workspaceURL} = workspacePathname(params);
 
   return redirect(
-    `${workspaceURL}/${SUBAPP_CODES.invoices}${SUBAPP_PAGE.invoices}`,
+    `${workspaceURL}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}`,
   );
 }
