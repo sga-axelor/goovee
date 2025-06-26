@@ -66,7 +66,7 @@ async function Order({
     isContactAdmin,
     partnerKey: PartnerKey.PARTNER,
   });
-  const isArchived = type === ORDER.ARCHIVED ? true : false;
+  const isCompleted = type === ORDER.COMPLETED ? true : false;
 
   const order = await findOrder({
     id,
@@ -75,7 +75,7 @@ async function Order({
       where,
     },
     workspaceURL,
-    archived: isArchived,
+    isCompleted,
     invoicesParams: {where: invoicesWhereClasuse},
   });
 

@@ -84,6 +84,7 @@ export const SUBAPP_WITH_ROLES = [
  */
 export const SUBAPP_PAGE = {
   orders: '/ongoing',
+  completed: 'completed',
   archived: '/archived',
   unpaid: 'unpaid',
   paid: 'paid',

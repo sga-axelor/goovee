@@ -6,8 +6,8 @@ export const ORDER_TAB_ITEMS = [
   },
   {
     id: '2',
-    title: 'Archived orders',
-    href: 'archived',
+    title: 'Completed orders',
+    href: 'completed',
   },
 ];
 
@@ -64,5 +64,5 @@ export const DOWNLOAD_PDF = 'Download pdf';
 
 export const ORDER = {
   ONGOING: 'ongoing',
-  ARCHIVED: 'archived',
+  COMPLETED: 'completed',
 };

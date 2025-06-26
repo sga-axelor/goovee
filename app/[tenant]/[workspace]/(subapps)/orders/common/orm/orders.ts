@@ -18,15 +18,15 @@ import {
   INVOICE_STATUS,
   ORDER_STATUS,
 } from '@/subapps/orders/common/constants/orders';
-import type {Invoice, Order} from '@/subapps/orders/common/types/orders';
+import type {Order} from '@/subapps/orders/common/types/orders';
 
 export const findOrders = async ({
-  archived = false,
+  isCompleted = false,
   params = {},
   tenantId,
   workspaceURL,
 }: {
-  archived?: boolean;
+  isCompleted?: boolean;
   params?: {
     where?: object & {
       clientPartner?: {
@@ -53,25 +53,16 @@ export const findOrders = async ({
         url: workspaceURL,
       },
       template: false,
+      OR: [{archived: false}, {archived: null}],
     },
-    archived
+    isCompleted
       ? {
-          OR: [
-            {
-              archived: {
-                eq: true,
-              },
-            },
-            {
-              statusSelect: {
-                eq: ORDER_STATUS.CLOSED,
-              },
-            },
-          ],
+          statusSelect: {
+            eq: ORDER_STATUS.CLOSED,
+          },
         }
       : {
           statusSelect: ORDER_STATUS.CONFIRMED,
-          OR: [{archived: false}, {archived: null}],
         },
   ]);
 
@@ -139,14 +130,14 @@ export async function findOrder({
   tenantId,
   workspaceURL,
   params = {},
-  archived = false,
+  isCompleted = false,
   invoicesParams = {},
 }: {
   id: Order['id'];
   tenantId: Tenant['id'];
   workspaceURL: PortalWorkspace['url'];
   params?: any;
-  archived?: boolean;
+  isCompleted?: boolean;
   invoicesParams?: any;
 }) {
   if (!tenantId && !workspaceURL) return null;
@@ -158,17 +149,16 @@ export async function findOrder({
 
   const baseWhereClause = and([
     params.where,
-    {id, portalWorkspace: {url: workspaceURL}, template: false},
-    archived
-      ? {
-          OR: [
-            {archived: {eq: true}},
-            {statusSelect: {eq: ORDER_STATUS.CLOSED}},
-          ],
-        }
+    {
+      id,
+      portalWorkspace: {url: workspaceURL},
+      template: false,
+      OR: [{archived: false}, {archived: null}],
+    },
+    isCompleted
+      ? {statusSelect: {eq: ORDER_STATUS.CLOSED}}
       : {
           statusSelect: ORDER_STATUS.CONFIRMED,
-          OR: [{archived: false}, {archived: null}],
         },
   ]);
 

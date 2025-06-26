@@ -1,4 +1,5 @@
 import {notFound} from 'next/navigation';
+import {Suspense} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {findWorkspace, findSubapp} from '@/orm/workspace';
@@ -14,7 +15,6 @@ import {getWhereClauseForEntity} from '@/utils/filters';
 import Content from '@/subapps/orders/[type]/content';
 import {findOrders} from '@/subapps/orders/common/orm/orders';
 import {ORDER} from '@/subapps/orders/common/constants/orders';
-import {Suspense} from 'react';
 
 async function Orders({
   params,
@@ -64,10 +64,10 @@ async function Orders({
     partnerKey: PartnerKey.CLIENT_PARTNER,
   });
 
-  const isArchived = type === ORDER.ARCHIVED ? true : false;
+  const isCompleted = type === ORDER.COMPLETED ? true : false;
 
   const result = await findOrders({
-    archived: isArchived,
+    isCompleted,
     params: {
       where,
       page,
