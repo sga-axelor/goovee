@@ -39,8 +39,8 @@ export const FieldComponent = ({
   }, [item, formState]);
 
   const isRequired = useMemo(() => {
-    return item.required;
-  }, [item]);
+    return item.required || item.requiredIf?.(formState);
+  }, [item, formState]);
 
   const isReadonly = useMemo(() => {
     return globalReadonly || item.readonly;

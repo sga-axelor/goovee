@@ -3,6 +3,7 @@
 import React, {type ReactNode, useCallback, useMemo} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
+import type {RefinementCtx} from 'zod';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
@@ -25,6 +26,7 @@ export const FormView = ({
   mode = 'onSubmit',
   submitButton,
   isReadonly = false,
+  superRefineCheck,
 }: {
   style?: React.CSSProperties;
   className?: string;
@@ -36,6 +38,7 @@ export const FormView = ({
   mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
   submitButton?: (form: any) => ReactNode;
   isReadonly?: boolean;
+  superRefineCheck?: (arg: any, ctx: RefinementCtx) => void;
 }) => {
   const formContent: (DisplayPanel | Field)[] = useMemo(
     () => getFormContent(fields, panels),
@@ -43,6 +46,10 @@ export const FormView = ({
   );
 
   const formSchema = useMemo(() => createFormSchema(fields), [fields]);
+
+  const refinedSchema = superRefineCheck
+    ? formSchema.superRefine(superRefineCheck)
+    : formSchema;
 
   const defaultValues = useMemo(() => {
     if (defaultValue != null) {
@@ -61,7 +68,7 @@ export const FormView = ({
   }, [fields, defaultValue]);
 
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(refinedSchema),
     defaultValues,
     mode,
   });

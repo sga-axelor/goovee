@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -13,12 +13,18 @@ import {
 import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 
+const getParentFromFormKey = (formKey: string) => {
+  const parts = formKey.split('.');
+  return parts.slice(0, parts.length - 1).join('.');
+};
+
 export function SubscriptionsView({
   formKey,
   form,
   list,
   isSecondary = false,
   event: {price: eventPrice, formattedDefaultPriceAti},
+  requiredFacilitiesCustomFields,
 }: {
   formKey: string;
   form: any;
@@ -28,7 +34,17 @@ export function SubscriptionsView({
     price: number;
     formattedDefaultPriceAti: string;
   };
+  requiredFacilitiesCustomFields: any[];
 }) {
+  const triggers = useMemo(() => {
+    if (!requiredFacilitiesCustomFields?.length) return;
+    const fieldNames = requiredFacilitiesCustomFields?.map((f: any) => f.name);
+
+    let parent = getParentFromFormKey(formKey);
+    parent = parent && parent + '.';
+    return fieldNames?.map((name: string) => parent + name);
+  }, [requiredFacilitiesCustomFields, formKey]);
+
   useEffect(() => {
     const currentValues = form.getValues(formKey);
 
@@ -53,6 +69,7 @@ export function SubscriptionsView({
         : [...selectedSubscriptions, subscription],
       {shouldValidate: true, shouldDirty: true},
     );
+    triggers && form.trigger(triggers);
   };
 
   const isEventChecked = form.watch(`${formKey}_eventPrice`);

@@ -24,6 +24,7 @@ export interface Field extends BasicItem {
   type: InputType;
   hidden?: boolean;
   hideIf?: (formState: any) => boolean;
+  requiredIf?: (formState: any) => boolean;
   required?: boolean;
   readonly?: boolean;
   widget?: WidgetType;

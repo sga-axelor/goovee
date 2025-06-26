@@ -94,6 +94,15 @@ export const RegistrationForm = ({
   const isCompanyOrAddressRequired =
     workspace.config?.isCompanyOrAddressRequired;
 
+  const [facilitiesCustomFields, requiredFacilitiesCustomFields] =
+    useMemo(() => {
+      const facilitiesCustomFields = getFacilitiesCustomFields(facilityList);
+      const requiredFacilitiesCustomFields = facilitiesCustomFields.filter(
+        f => f.requiredIf,
+      );
+      return [facilitiesCustomFields, requiredFacilitiesCustomFields];
+    }, [facilityList]);
+
   const basicPerson = useMemo(
     () => [
       {
@@ -171,6 +180,7 @@ export const RegistrationForm = ({
           <SubscriptionsView
             {...props}
             list={facilityList}
+            requiredFacilitiesCustomFields={requiredFacilitiesCustomFields}
             event={{
               price: eventPrice,
               formattedDefaultPriceAti: formattedDefaultPriceAti,
@@ -187,6 +197,7 @@ export const RegistrationForm = ({
       facilityList,
       eventPrice,
       formattedDefaultPriceAti,
+      requiredFacilitiesCustomFields,
     ],
   );
 
@@ -199,9 +210,9 @@ export const RegistrationForm = ({
       ...basicPerson,
       ...formatStudioFields(metaFields),
       ...getEventCustomFields(additionalFieldSet),
-      ...getFacilitiesCustomFields(facilityList),
+      ...facilitiesCustomFields,
     ],
-    [basicPerson, facilityList, metaFields, additionalFieldSet],
+    [basicPerson, facilitiesCustomFields, metaFields, additionalFieldSet],
   );
 
   const externalParticipantForm = useMemo(
@@ -315,6 +326,9 @@ export const RegistrationForm = ({
                   <SubscriptionsView
                     {...props}
                     list={facilityList}
+                    requiredFacilitiesCustomFields={
+                      requiredFacilitiesCustomFields
+                    }
                     isSecondary
                     event={{
                       price: eventPrice,
@@ -349,6 +363,7 @@ export const RegistrationForm = ({
       maxParticipantPerRegistration,
       eventPrice,
       formattedDefaultPriceAti,
+      requiredFacilitiesCustomFields,
       toast,
     ],
   );
@@ -455,6 +470,26 @@ export const RegistrationForm = ({
             ] as Field[]
           }
           submitTitle={i18n.t('Register')}
+          superRefineCheck={(val: any, ctx) => {
+            requiredFacilitiesCustomFields.forEach(field => {
+              if (field.requiredIf?.(val) && !val?.[field.name]) {
+                ctx.addIssue({
+                  code: 'custom',
+                  message: i18n.t('Required'),
+                  path: [field.name],
+                });
+              }
+              val.otherPeople?.forEach((p: any, i: number) => {
+                if (field.requiredIf(p) && !p?.[field.name]) {
+                  ctx.addIssue({
+                    code: 'custom',
+                    message: i18n.t('Required'),
+                    path: ['otherPeople', i, field.name],
+                  });
+                }
+              });
+            });
+          }}
           mode={'onChange'}
           {...((canPay && totalPrice > 0) || stripeSessionId || payboxResponse
             ? {
