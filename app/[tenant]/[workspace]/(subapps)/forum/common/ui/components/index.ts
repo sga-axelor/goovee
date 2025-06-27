@@ -20,3 +20,4 @@ export {SearchItem} from './search-item';
 export {FilePreviewer} from './file-previewer';
 export {ImagePreviewer} from './image-previewer';
 export {ImageViewer} from './image-viewer';
+export {NotificationHeader} from './notification-header';

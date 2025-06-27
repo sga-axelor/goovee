@@ -1,10 +1,13 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
+import {useSearchParams} from '@/ui/hooks';
+import {ORDER_BY, SUBAPP_CODES} from '@/constants';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   Select,
   SelectContent,
@@ -12,70 +15,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/components';
-import {ORDER_BY, SUBAPP_CODES} from '@/constants';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   GROUP_SORT_BY,
-  GROUPS,
   MANAGE_NOTIFICATIONS,
   MENU,
-  NOTIFICATIONS_OPTIONS,
   SORT_BY,
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {
-  GroupNotification,
   NavMenu,
   Search,
 } from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
-import {Group} from '@/subapps/forum/common/types/forum';
-import {fetchGroupsByMembers} from '@/subapps/forum/common/action/action';
-import {ForumNotificationSkeleton} from '../common/ui/components/skeletons';
 
-const Content = ({userId}: {userId: string}) => {
-  const [memberGroups, setMemberGroup] = useState<Group[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+const GroupAction = () => {
   const [searchKey, setSearchKey] = useState<string>('');
-  const [sortBy, setSortBy] = useState<string>(ORDER_BY.ASC);
-
+  const [sortBy, setSortBy] = useState<string>('asc');
+  const {update} = useSearchParams();
   const router = useRouter();
-  const {workspaceURI, workspaceID} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
   const handleMenuClick = (link: string) => {
     router.push(`${workspaceURI}/${SUBAPP_CODES.forum}/${link}`);
   };
-  const isLoggedIn = userId;
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-
-    const fetchGroups = async () => {
-      try {
-        setLoading(true);
-        const result: any = await fetchGroupsByMembers({
-          id: userId,
-          searchKey,
-          orderBy: {
-            forumGroup: {
-              name: sortBy,
-            },
-          },
-          workspaceID,
-        });
-        setMemberGroup(result);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGroups();
-  }, [isLoggedIn, userId, searchKey, sortBy, workspaceID]);
 
   const handleSearchKeyChange = (value: string) => {
     setSearchKey(value);
   };
+
+  useEffect(() => {
+    update([
+      {key: 'group', value: searchKey},
+      {key: 'sortBy', value: sortBy},
+    ]);
+  }, [sortBy, searchKey, update]);
 
   return (
     <>
@@ -115,28 +87,9 @@ const Content = ({userId}: {userId: string}) => {
             </div>
           </div>
         </div>
-        <div className="bg-white px-4 py-4 mt-8 rounded-md">
-          <div className="grid grid-cols-[1fr_4fr]  ">
-            <h2 className="text-xl font-semibold">{i18n.t(GROUPS)}</h2>
-            <div className="grid grid-cols-4 text-center text-sm font-normal">
-              {NOTIFICATIONS_OPTIONS.map(item => (
-                <span key={item.id}>{item.title}</span>
-              ))}
-            </div>
-          </div>
-          <div className="my-4">
-            {loading ? (
-              <ForumNotificationSkeleton />
-            ) : (
-              memberGroups.map(item => (
-                <GroupNotification key={item.id} group={item} />
-              ))
-            )}
-          </div>
-        </div>
       </section>
     </>
   );
 };
 
-export default Content;
+export default GroupAction;

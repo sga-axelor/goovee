@@ -62,11 +62,11 @@ export const JOIN_GROUP_TO_COMMENT = 'Join the group to comment';
 
 export const GROUP_SORT_BY = [
   {
-    id: 'ASC',
+    id: 'asc',
     title: 'A-Z',
   },
   {
-    id: 'DESC',
+    id: 'desc',
     title: 'Z-A',
   },
 ];
