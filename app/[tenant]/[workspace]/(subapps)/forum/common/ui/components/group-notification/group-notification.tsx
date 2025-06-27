@@ -25,9 +25,9 @@ interface groupNotificationPros {
 
 export const GroupNotification = ({group}: groupNotificationPros) => {
   const [selectedOption, setSelectedOption] = useState<string | null>('');
-  const {forumGroup, id, notificationSelect, isPin} = group;
+  const {forumGroup, notificationSelect} = group;
 
-  const {workspaceURL, tenant} = useWorkspace();
+  const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
   useEffect(() => {
@@ -35,6 +35,8 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
   }, []);
 
   const handleChange = async (notificationType: string) => {
+    const prevType = selectedOption;
+    setSelectedOption(notificationType);
     const {id, forumGroup} = group;
     const response = await addGroupNotification({
       id,
@@ -43,9 +45,8 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
       workspaceURL,
     });
 
-    if (response?.success) {
-      setSelectedOption(notificationType);
-    } else {
+    if (!response?.success) {
+      setSelectedOption(prevType);
       toast({
         variant: 'destructive',
         title: i18n.t(response?.message || 'An error occurred'),
