@@ -11,6 +11,8 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 // ---- LOCAL IMPORTS ---- //
 import styles from './styles.module.scss';
 
+const MAX_COUNT_DISPLAY = 99;
+
 export default function Cart() {
   const {cart} = useCart();
   const {workspaceURI} = useWorkspace();
@@ -23,7 +25,9 @@ export default function Cart() {
     <Link href={`${workspaceURI}/shop/cart`} className="flex relative">
       <MdOutlineShoppingCart className="cursor-pointer text-foreground text-2xl" />
       {count ? (
-        <Badge className={`${styles.badge} rounded bg-primary`}>{count}</Badge>
+        <Badge className={`${styles.badge} rounded bg-primary px-2`}>
+          {count > MAX_COUNT_DISPLAY ? `${MAX_COUNT_DISPLAY}+` : count}
+        </Badge>
       ) : null}
     </Link>
   );
