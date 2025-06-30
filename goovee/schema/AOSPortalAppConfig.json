@@ -348,6 +348,9 @@
       "name": "contactPhone",
       "type": "String"
     },
-    {"name": "isCompanyOrAddressRequired", "type": "Boolean"}
+    {
+      "name": "isCompanyOrAddressRequired",
+      "type": "Boolean"
+    }
   ]
 }
