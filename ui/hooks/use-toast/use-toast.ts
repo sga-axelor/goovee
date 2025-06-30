@@ -2,11 +2,11 @@
 
 // Inspired by react-hot-toast library
 import * as React from 'react';
-
+import {v4 as uuidv4} from 'uuid';
 import type {ToastActionElement, ToastProps} from '@/ui/components/toast';
 
 const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_REMOVE_DELAY = 3000;
 
 type ToasterToast = ToastProps & {
   id: string;
@@ -22,11 +22,8 @@ const actionTypes = {
   REMOVE_TOAST: 'REMOVE_TOAST',
 } as const;
 
-let count = 0;
-
 function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
+  return uuidv4();
 }
 
 type ActionType = typeof actionTypes;
@@ -147,6 +144,7 @@ function toast({...props}: Toast) {
       type: 'UPDATE_TOAST',
       toast: {...props, id},
     });
+
   const dismiss = () => dispatch({type: 'DISMISS_TOAST', toastId: id});
 
   dispatch({
@@ -179,7 +177,7 @@ function useToast() {
         listeners.splice(index, 1);
       }
     };
-  }, [state]);
+  }, []);
 
   return {
     ...state,

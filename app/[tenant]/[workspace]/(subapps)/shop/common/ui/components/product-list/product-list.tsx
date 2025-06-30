@@ -106,8 +106,6 @@ export function ProductList({
     toast({
       title: i18n.t('Added to cart'),
     });
-
-    router.refresh();
   };
 
   const handleChangeSearch = (event: React.FormEvent) => {

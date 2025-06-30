@@ -132,6 +132,7 @@
     "terser-webpack-plugin": "^5.3.10",
     "typewriter-effect": "^2.19.0",
     "usehooks-ts": "^3.1.0",
+    "uuid": "^11.1.0",
     "vaul": "^0.9.9",
     "y-websocket": "^1.5.4",
     "zod": "^3.23.8",

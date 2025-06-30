@@ -28,7 +28,6 @@ export function ProductCard({
 }: ProductCardProps) {
   const {product, price, errorMessage} = computedProduct;
   const {displayTwoPrices, displayPrimary, displaySecondary} = price;
-  const {toast} = useToast();
   const {tenant} = useWorkspace();
 
   const {outOfStockConfig} = product;
@@ -38,9 +37,6 @@ export function ProductCard({
 
   const handleAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     onAdd(computedProduct);
-    toast({
-      title: i18n.t('Added to cart'),
-    });
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
