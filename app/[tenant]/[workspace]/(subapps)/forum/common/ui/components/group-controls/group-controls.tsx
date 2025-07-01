@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
+import {Skeleton} from '@/ui/components';
 
 // ---- LOCAL IMPORTS ---- //
 import {ForumGroup} from '@/subapps/forum/common/types/forum';
@@ -87,3 +88,32 @@ export function GroupControls() {
 }
 
 export default GroupControls;
+
+export function GroupControlsSkeleton() {
+  return (
+    <div className="w-full overflow-hidden mb-16 lg:mb-0">
+      <div className="h-fit flex flex-col gap-6 bg-white p-4 rounded-lg">
+        <Skeleton className="h-6 w-50" />
+        <div className="w-full flex gap-2">
+          <Skeleton className="w-4/5 h-8" />
+          <Skeleton className="w-1/5 h-8" />
+        </div>
+        <div>
+          {[...Array(2)].map((_, i) => (
+            <div key={i}>
+              <Skeleton className="h-4 w-24 mb-4" />
+              <div className="flex gap-2  ">
+                <Skeleton className="rounded-full h-8 w-8" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+              <div className="flex gap-2 my-4">
+                <Skeleton className="rounded-full h-8 w-8" />
+                <Skeleton className="h-8 w-full " />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

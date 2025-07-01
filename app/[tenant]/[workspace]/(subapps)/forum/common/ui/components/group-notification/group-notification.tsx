@@ -9,6 +9,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Separator,
+  Skeleton,
 } from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
@@ -90,3 +91,25 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
 };
 
 export default GroupNotification;
+
+export function ForumNotificationSkeleton() {
+  return (
+    <section className="py-2 w-full rounded-sm bg-white">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="grid grid-cols-[1fr_4fr] mt-12">
+          <div className="flex gap-2 items-center">
+            <Skeleton className="w-8 h-8 rounded-full" />
+            <Skeleton className="w-full h-8" />
+          </div>
+          <div className="grid grid-cols-4 text-center align-middle text-sm font-normal gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex w-full items-center justify-center">
+                <Skeleton className="w-6 h-6 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}

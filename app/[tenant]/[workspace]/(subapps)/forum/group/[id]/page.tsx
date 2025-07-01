@@ -24,8 +24,8 @@ import {
   GroupControls,
   Hero,
 } from '@/subapps/forum/common/ui/components';
-import {ComposePost} from '@/subapps/forum/compose-post';
-import {PostSkeletonList} from '@/subapps/forum/common/ui/components/skeletons/forum-sekeleton';
+import {ComposePost} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/ui/components';
+import {ThreadListSkeleton} from '@/subapps/forum/common/ui/components';
 import {GroupPostsContent} from './group-post-content';
 
 async function ForumGroup({
@@ -114,7 +114,7 @@ async function ForumGroup({
           <div>
             <ComposePost />
             <Tabs activeTab={type} />
-            <Suspense fallback={<PostSkeletonList />}>
+            <Suspense fallback={<ThreadListSkeleton />}>
               {type == 'posts' && (
                 <GroupPostsContent
                   memberGroupIDs={memberGroupIDs}

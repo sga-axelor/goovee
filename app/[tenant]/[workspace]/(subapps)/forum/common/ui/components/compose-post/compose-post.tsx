@@ -5,7 +5,7 @@ import {MdOutlineImage} from 'react-icons/md';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {Avatar, AvatarImage, Button} from '@/ui/components';
+import {Avatar, AvatarImage, Button, Skeleton} from '@/ui/components';
 import {getPartnerImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
@@ -88,5 +88,14 @@ export function ComposePost() {
         onClose={handleClose}
       />
     </>
+  );
+}
+
+export function ComposePostSkeleton() {
+  return (
+    <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[0.625rem]">
+      <Skeleton className="rounded-full h-8 w-8" />;
+      <Skeleton className="w-full h-8" />
+    </div>
   );
 }

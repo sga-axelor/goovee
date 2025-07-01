@@ -1,1 +1,1 @@
-export {ForumSkeleton, ForumNotificationSkeleton} from './forum-sekeleton';
+export {ForumSkeleton} from './forum-sekeleton';

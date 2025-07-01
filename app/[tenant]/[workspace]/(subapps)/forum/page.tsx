@@ -15,18 +15,16 @@ import {
   findGroupsByMembers,
   findUser,
 } from '@/subapps/forum/common/orm/forum';
-import {
-  ForumSkeleton,
-  PostSkeletonList,
-} from '@/subapps/forum/common/ui/components/skeletons/forum-sekeleton';
+import {ForumSkeleton} from '@/subapps/forum/common/ui/components/skeletons/forum-sekeleton';
 import {
   NavMenu,
   Tabs,
   Hero,
   GroupControls,
+  ThreadListSkeleton,
 } from '@/subapps/forum/common/ui/components';
 import ForumContextProvider from '@/subapps/forum/common/ui/context';
-import {ComposePost} from './compose-post';
+import {ComposePost} from '@/subapps/forum/common/ui/components';
 import {PostsContent} from './post-content';
 
 async function Forum({
@@ -103,7 +101,7 @@ async function Forum({
           <div>
             <ComposePost />
             <Tabs activeTab={type} />
-            <Suspense fallback={<PostSkeletonList />}>
+            <Suspense fallback={<ThreadListSkeleton />}>
               {type == 'posts' && (
                 <PostsContent
                   searchParams={searchParams}

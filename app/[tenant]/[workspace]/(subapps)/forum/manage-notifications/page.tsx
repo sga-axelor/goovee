@@ -8,8 +8,10 @@ import {getSession} from '@/auth';
 // ---- LOCAL IMPORTS ---- //
 import {findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
-import {NotificationHeader} from '@/subapps/forum/common/ui/components';
-import {ForumNotificationSkeleton} from '@/subapps/forum/common/ui/components/skeletons';
+import {
+  ForumNotificationSkeleton,
+  NotificationHeader,
+} from '@/subapps/forum/common/ui/components';
 import {MembersNoticationsWrapper} from './wrapper';
 import GroupAction from './groupAction';
 

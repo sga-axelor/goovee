@@ -8,6 +8,7 @@ import {useSession} from 'next-auth/react';
 import {Separator} from '@/ui/components/separator';
 import {SUBAPP_CODES} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {Skeleton} from '@/ui/components';
 
 export const NavMenu = ({items}: {items: any}) => {
   const {data: session} = useSession();
@@ -40,3 +41,13 @@ export const NavMenu = ({items}: {items: any}) => {
 };
 
 export default NavMenu;
+
+export function NavMenuSkeleton({count = 2}: {count?: number}) {
+  return (
+    <div className="bg-white flex items-center justify-center gap-5 px-6 py-4 ">
+      {[...Array(count)].map((_, index) => (
+        <Skeleton key={index} className="h-8 w-32" />
+      ))}
+    </div>
+  );
+}

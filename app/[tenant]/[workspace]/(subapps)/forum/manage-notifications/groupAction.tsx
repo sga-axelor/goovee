@@ -6,7 +6,7 @@ import {useRouter} from 'next/navigation';
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
-import {ORDER_BY, SUBAPP_CODES} from '@/constants';
+import {SUBAPP_CODES} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {
   Select,
