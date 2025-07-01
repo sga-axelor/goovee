@@ -47,7 +47,7 @@ export const SelectionPicker = ({
         const _value = value.replace('-', '');
 
         if (isInteger) {
-          form.setValue(formKey, parseInt(_value));
+          form.setValue(formKey, parseInt(_value), {shouldValidate: true});
           return;
         }
 
@@ -55,7 +55,9 @@ export const SelectionPicker = ({
           ? _current.filter((_v: string) => _v !== _value)
           : [...(isMulti ? _current : []), _value];
 
-        form.setValue(formKey, _next.length > 0 ? _next.join(',') : undefined);
+        form.setValue(formKey, _next.length > 0 ? _next.join(',') : undefined, {
+          shouldValidate: true,
+        });
       }
     },
     [form, formKey, isInteger, isMulti],

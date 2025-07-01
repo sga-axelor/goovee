@@ -39,6 +39,7 @@ export const ObjectPicker = ({
       form.setValue(
         formKey,
         options.find(({id}: any) => id === parseInt(value, 10)),
+        {shouldValidate: true},
       );
     },
     [form, formKey, options],

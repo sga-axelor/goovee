@@ -136,7 +136,9 @@ export const FieldComponent = ({
               <Checkbox
                 checked={form.watch(identifier)}
                 onCheckedChange={() =>
-                  form.setValue(identifier, !form.watch(identifier))
+                  form.setValue(identifier, !form.watch(identifier), {
+                    shouldValidate: true,
+                  })
                 }
                 required={isRequired}
                 disabled={isReadonly}
