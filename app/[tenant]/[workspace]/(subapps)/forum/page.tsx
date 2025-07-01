@@ -2,22 +2,32 @@ import {notFound} from 'next/navigation';
 import {Suspense} from 'react';
 
 // ---- CORE IMPORTS ---- //
-import {clone} from '@/utils';
 import {getSession} from '@/auth';
-import {DEFAULT_LIMIT} from '@/constants';
-import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
+import {User} from '@/types';
+import {clone} from '@/utils';
+import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
+import {GROUPS_ORDER_BY, MENU} from '@/subapps/forum/common/constants';
 import {
-  findPosts,
-  findUser,
   findGroups,
   findGroupsByMembers,
+  findUser,
 } from '@/subapps/forum/common/orm/forum';
-import Content from './content';
-import {GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
-import {ForumSkeleton} from '@/subapps/forum/common/ui/components/skeletons/forum-sekeleton';
+import {
+  ForumSkeleton,
+  PostSkeletonList,
+} from '@/subapps/forum/common/ui/components/skeletons/forum-sekeleton';
+import {
+  NavMenu,
+  Tabs,
+  Hero,
+  GroupControls,
+} from '@/subapps/forum/common/ui/components';
+import ForumContextProvider from '@/subapps/forum/common/ui/context';
+import {ComposePost} from './compose-post';
+import {PostsContent} from './post-content';
 
 async function Forum({
   params,
@@ -27,8 +37,9 @@ async function Forum({
   searchParams: {[key: string]: string | undefined};
 }) {
   const session = await getSession();
-  const user = session?.user;
+  const user = session?.user as User;
   const userId = user?.id as string;
+  const type = searchParams?.type ?? 'posts';
 
   const {workspaceURL, tenant} = workspacePathname(params);
 
@@ -41,8 +52,6 @@ async function Forum({
   if (!workspace) {
     return notFound();
   }
-
-  const {sort, limit, search, searchid} = searchParams;
 
   const groups = await findGroups({
     workspace: workspace!,
@@ -70,32 +79,46 @@ async function Forum({
     return !memberGroupIDs.includes(group.id);
   });
 
-  const {posts, pageInfo} = await findPosts({
-    sort,
-    limit: limit ? Number(limit) : DEFAULT_LIMIT,
-    search,
-    ids: searchid ? [searchid] : undefined,
-    workspaceID: workspace?.id!,
-    groupIDs,
-    tenantId: tenant,
-    user,
-    memberGroupIDs,
-  }).then(clone);
-
-  const $user = await findUser({
+  const $user = (await findUser({
     userId,
     tenantId: tenant,
-  }).then(clone);
+  }).then(clone)) as User;
 
   return (
-    <Content
-      memberGroups={memberGroups}
-      nonMemberGroups={nonMemberGroups}
-      user={$user}
-      posts={posts}
-      pageInfo={pageInfo}
-      workspace={workspace}
-    />
+    <ForumContextProvider
+      value={{
+        nonMemberGroups,
+        memberGroups,
+        selectedGroup: null,
+        user: $user,
+        workspace,
+      }}>
+      <div className="flex flex-col h-full flex-1">
+        <div className="hidden lg:block">
+          <NavMenu items={MENU} />
+        </div>
+        <Hero />
+        <div className="container py-6 mx-auto grid grid-cols-1 md:grid-cols-[17.563rem_1fr] gap-5">
+          <GroupControls />
+          <div>
+            <ComposePost />
+            <Tabs activeTab={type} />
+            <Suspense fallback={<PostSkeletonList />}>
+              {type == 'posts' && (
+                <PostsContent
+                  searchParams={searchParams}
+                  workspace={workspace}
+                  groupIDs={groupIDs}
+                  memberGroupIDs={memberGroupIDs}
+                  user={user}
+                  tenant={tenant}
+                />
+              )}
+            </Suspense>
+          </div>
+        </div>
+      </div>
+    </ForumContextProvider>
   );
 }
 

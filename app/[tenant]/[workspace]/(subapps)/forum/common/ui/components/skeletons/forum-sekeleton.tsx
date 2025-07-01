@@ -111,7 +111,7 @@ function UploadPostSkeleton() {
   );
 }
 
-function PostSkeletonList({postCount = 5}: {postCount?: number}) {
+export function PostSkeletonList({postCount = 5}: {postCount?: number}) {
   const showImageView = Math.floor(Math.random() * postCount);
   return (
     <div>

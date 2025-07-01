@@ -52,7 +52,7 @@ const GroupAction = () => {
   return (
     <>
       <div className="hidden lg:block">
-        <NavMenu items={MENU} onClick={handleMenuClick} />
+        <NavMenu items={MENU} />
       </div>
       <section className="py-6 px-4 lg:px-[6.25rem] w-full rounded-sm">
         <div>
