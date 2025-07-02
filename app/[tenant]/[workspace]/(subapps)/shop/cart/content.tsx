@@ -118,8 +118,8 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
           <Link
             className="no-underline text-inherit"
             href={`${workspaceURI}/shop/product/${encodeURIComponent(
-              product.name,
-            )}-${product.id}`}>
+              product.slug,
+            )}`}>
             <h6 className="font-medium mb-2">{i18n.tattr(product.name)}</h6>
           </Link>
           {errorMessage && (
