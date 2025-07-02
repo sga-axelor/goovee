@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run format check
+        run: pnpm format:check
+      - name: Run linter
+        run: pnpm lint
+
+  release:
+    needs: build
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    name: Release tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub release
+        id: create-new-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
