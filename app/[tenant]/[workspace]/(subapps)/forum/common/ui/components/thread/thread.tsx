@@ -80,7 +80,7 @@ export function ThreadSkeleton({
     <div className="flex flex-col gap-4 p-4 bg-white rounded-md mt-4">
       <div>
         <div className="flex gap-4 ">
-          <Skeleton className="rounded-full h-8 w-8" />;
+          <Skeleton className="rounded-full h-8 w-8" />
           <Skeleton className="h-5 w-32" />
         </div>
         <Skeleton className="w-full h-[1px] my-2" />
