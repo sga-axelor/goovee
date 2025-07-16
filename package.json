@@ -10,10 +10,12 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "generate": "goovee generate",
-    "website:sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/website/common/assets/scss:app/[tenant]/[workspace]/'(subapps)'/website/common/assets/css",
-    "website:seed:templates": "node -r @swc-node/register app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/seed-templates.ts",
-    "website:reset:templates": "node -r @swc-node/register app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/reset-templates.ts",
-    "website:seed:contents": "node -r @swc-node/register app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/seed-contents.ts"
+    "website:common:dir": "app/[tenant]/[workspace]/(subapps)/website/common/",
+    "website:run": "node -r @swc-node/register",
+    "website:sass": "sass --no-source-map $npm_package_scripts_website_common_dir/assets/scss:$npm_package_scripts_website_common_dir/assets/css",
+    "website:seed:templates": "npm run website:run $npm_package_scripts_website_common_dir/scripts/seed-templates.ts",
+    "website:reset:templates": "npm run website:run $npm_package_scripts_website_common_dir/scripts/reset-templates.ts",
+    "website:seed:contents": "npm run website:run $npm_package_scripts_website_common_dir/scripts/seed-contents.ts"
   },
   "dependencies": {
     "@cyntler/react-doc-viewer": "^1.17.0",
