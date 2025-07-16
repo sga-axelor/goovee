@@ -94,6 +94,7 @@ export async function GET(
       user,
       tenantId,
       mountTypes: [mountType],
+      path: stringToPath(path),
     });
     if (!website) {
       return new NextResponse('Website not found', {status: 404});

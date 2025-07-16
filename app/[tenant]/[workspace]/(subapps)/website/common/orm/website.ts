@@ -164,12 +164,18 @@ export async function findWebsiteBySlug({
   user,
   tenantId,
   mountTypes,
+  path,
 }: {
   websiteSlug: Website['slug'];
   workspaceURL: PortalWorkspace['url'];
   user?: User;
   tenantId: Tenant['id'];
   mountTypes?: LayoutMountType[];
+  /** @param mounTypes should be an array of single mountType for path to work
+   * ex: mountTypes:[ "header" ]
+   * ex: path:[ "team1Reviews", "1", "attrs", "image" ]
+   **/
+  path?: string[];
 }) {
   if (!(websiteSlug && tenantId)) {
     return null;
@@ -188,11 +194,7 @@ export async function findWebsiteBySlug({
   const website = await client.aOSPortalCmsSite.findOne({
     where: {
       slug: websiteSlug,
-      mainWebsite: {
-        workspaceSet: {
-          url: workspaceURL,
-        },
-      },
+      mainWebsite: {workspaceSet: {url: workspaceURL}},
       AND: [
         await filterPrivate({tenantId, user}),
         {OR: [{archived: false}, {archived: null}]},
@@ -276,6 +278,7 @@ export async function findWebsiteBySlug({
       modelName: CONTENT_MODEL,
       modelField: CONTENT_MODEL_ATTRS,
       tenantId,
+      path,
       modelFieldCache,
       modelRecordCache,
       jsonModelCache,
@@ -289,6 +292,7 @@ export async function findWebsiteBySlug({
       modelName: CONTENT_MODEL,
       modelField: CONTENT_MODEL_ATTRS,
       tenantId,
+      path,
       modelFieldCache,
       modelRecordCache,
       jsonModelCache,
