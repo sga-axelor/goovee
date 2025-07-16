@@ -62,8 +62,7 @@ export default async function Page({
     } else if (
       user.email === invite.emailAddress.address &&
       contact?.isActivatedOnPortal &&
-      contact?.isContact &&
-      contact?.mainPartner?.id === invite.partner?.id
+      contact?.isContact
     ) {
       return (
         <Subscribe

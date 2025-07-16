@@ -49,11 +49,7 @@ export default async function Page({
           </div>
         </div>
       );
-    } else if (
-      user.email === invite.emailAddress.address &&
-      user.isContact &&
-      user.mainPartnerId === invite.partner?.id
-    ) {
+    } else if (user.email === invite.emailAddress.address && user.isContact) {
       return (
         <Subscribe workspaceURL={invite.workspace.url} inviteId={invite.id} />
       );

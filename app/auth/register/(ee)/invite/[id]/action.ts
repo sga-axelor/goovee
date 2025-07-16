@@ -191,8 +191,8 @@ export async function subscribe({
     !(
       invite &&
       invite.partner &&
-      invite.partner.id === user.mainPartnerId &&
-      invite.emailAddress.address === user.email &&
+      invite.partner.id &&
+      invite.emailAddress?.address === user.email &&
       invite.workspace &&
       invite.workspace.url === workspaceURL
     )
