@@ -1,4 +1,9 @@
-import {Template, Data, Meta} from '@/subapps/website/common/types/templates';
+import {
+  Template,
+  Data,
+  Demo,
+  Meta,
+} from '@/subapps/website/common/types/templates';
 
 export const sidebarMenu1Meta = {
   title: 'Sidebar Menu 1',
@@ -9,4 +14,9 @@ export const sidebarMenu1Meta = {
 
 export type SidebarMenu1Data = Data<typeof sidebarMenu1Meta>;
 
-export const sidebarMenu1Demo: SidebarMenu1Data = {};
+export const sidebarMenu1Demos: Demo<typeof sidebarMenu1Meta>[] = [
+  {
+    language: 'en_US',
+    data: {},
+  },
+];

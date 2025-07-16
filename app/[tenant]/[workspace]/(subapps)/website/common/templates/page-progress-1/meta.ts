@@ -1,4 +1,9 @@
-import {Template, Data, Meta} from '@/subapps/website/common/types/templates';
+import {
+  Template,
+  Data,
+  Demo,
+  Meta,
+} from '@/subapps/website/common/types/templates';
 
 export const pageProgress1Meta = {
   title: 'Page Progress 1',
@@ -9,4 +14,9 @@ export const pageProgress1Meta = {
 
 export type PageProgress1Data = Data<typeof pageProgress1Meta>;
 
-export const pageProgress1Demo: PageProgress1Data = {};
+export const pageProgress1Demos: Demo<typeof pageProgress1Meta>[] = [
+  {
+    language: 'en_US',
+    data: {},
+  },
+];

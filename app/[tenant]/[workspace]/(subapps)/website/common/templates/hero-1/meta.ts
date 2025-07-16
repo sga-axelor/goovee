@@ -1,4 +1,4 @@
-import {Data, Meta} from '@/subapps/website/common/types/templates';
+import {Data, Demo, Meta} from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
 
 export const hero1Meta = {
@@ -39,17 +39,22 @@ export const hero1Meta = {
 
 export type Hero1Data = Data<typeof hero1Meta>;
 
-export const hero1Demo: Hero1Data = {
-  hero1Title: 'Expand Your Business with Our Solutions.',
-  hero1Description:
-    "Boost your website's traffic, rankings, and online visibility  with our services.",
-  hero1ButtonText: 'Try It For Free',
-  hero1ButtonLink: '#',
-  hero1Image: {
-    id: '1',
-    version: 1,
-    fileName: 'i2.png',
-    fileType: 'image/png',
-    filePath: '/img/illustrations/i2.png',
+export const hero1Demos: Demo<typeof hero1Meta>[] = [
+  {
+    language: 'en_US',
+    data: {
+      hero1Title: 'Expand Your Business with Our Solutions.',
+      hero1Description:
+        "Boost your website's traffic, rankings, and online visibility  with our services.",
+      hero1ButtonText: 'Try It For Free',
+      hero1ButtonLink: '#',
+      hero1Image: {
+        id: '1',
+        version: 1,
+        fileName: 'i2.png',
+        fileType: 'image/png',
+        filePath: '/img/illustrations/i2.png',
+      },
+    },
   },
-};
+];

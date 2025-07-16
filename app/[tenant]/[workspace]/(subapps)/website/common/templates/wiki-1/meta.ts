@@ -1,4 +1,9 @@
-import {Template, Data, Meta} from '@/subapps/website/common/types/templates';
+import {
+  Template,
+  Data,
+  Demo,
+  Meta,
+} from '@/subapps/website/common/types/templates';
 
 export const wiki1Meta = {
   title: 'Wiki 1',
@@ -15,6 +20,11 @@ export const wiki1Meta = {
 
 export type Wiki1Data = Data<typeof wiki1Meta>;
 
-export const wiki1Demo: Wiki1Data = {
-  wiki1Content: undefined,
-};
+export const wiki1Demos: Demo<typeof wiki1Meta>[] = [
+  {
+    language: 'en_US',
+    data: {
+      wiki1Content: undefined,
+    },
+  },
+];

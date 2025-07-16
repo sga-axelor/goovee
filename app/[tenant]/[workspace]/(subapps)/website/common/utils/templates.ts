@@ -23,6 +23,7 @@ import {demos} from '@/subapps/website/common/templates';
 import {
   ArrayField,
   CustomField,
+  Demo,
   Field,
   JsonRelationalField,
   Meta,
@@ -251,8 +252,8 @@ export async function resetFields(tenantId: Tenant['id']) {
 
 export async function seedContents(tenantId: Tenant['id']) {
   const res = Promise.all(
-    demos.map(({meta, data}) => {
-      return createCMSContent({tenantId, meta, data});
+    demos.map(({meta, demos}) => {
+      return createCMSContent({tenantId, meta, demos: demos as Demo<Meta>[]});
     }),
   );
   return res;

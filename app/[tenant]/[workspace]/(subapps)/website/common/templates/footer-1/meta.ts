@@ -1,4 +1,4 @@
-import {Data, Meta} from '@/subapps/website/common/types/templates';
+import {Data, Demo, Meta} from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
 import {socialMediaUnicons} from '../../constants/unicons';
 import {startCase} from 'lodash-es';
@@ -141,80 +141,85 @@ export const footer1Meta = {
 
 export type Footer1Data = Data<typeof footer1Meta>;
 
-export const footer1Demo: Footer1Data = {
-  footer1Title:
-    'Join our community by using our services and grow your business.',
-  footer1ButtonLink: '#',
-  footer1ButtonText: 'Try It For Free',
-  footer1CopyrightText:
-    '© 2022 Lighthouse. <br className="d-none d-lg-block" /> All rights reserved.',
-  footer1Logo: {
-    id: '5',
-    version: 1,
-    fileName: 'logo-light.png',
-    filePath: '/img/logo-light.png',
-    fileType: 'image/png',
+export const footer1Demos: Demo<typeof footer1Meta>[] = [
+  {
+    language: 'en_US',
+    data: {
+      footer1Title:
+        'Join our community by using our services and grow your business.',
+      footer1ButtonLink: '#',
+      footer1ButtonText: 'Try It For Free',
+      footer1CopyrightText:
+        '© 2022 Lighthouse. <br className="d-none d-lg-block" /> All rights reserved.',
+      footer1Logo: {
+        id: '5',
+        version: 1,
+        fileName: 'logo-light.png',
+        filePath: '/img/logo-light.png',
+        fileType: 'image/png',
+      },
+      footer1AddressTitle: 'Get in Touch',
+      footer1Address: 'Moonshine St. 14/05 Light City, London, United Kingdom',
+      footer1Email: 'info@email.com',
+      footer1Phone: '00 (123) 456 78 90',
+      footer1NavTitle: 'Learn More',
+      footer1FormTitle: 'Our Newsletter',
+      footer1FormDescription:
+        'Subscribe to our newsletter to get our news & deals delivered to you.',
+      footer1NavLinks: [
+        {id: '1', version: 1, attrs: {title: 'About Us', url: '#'}},
+        {id: '2', version: 1, attrs: {title: 'Our Story', url: '#'}},
+        {id: '3', version: 1, attrs: {title: 'Projects', url: '#'}},
+        {id: '4', version: 1, attrs: {title: 'Terms of Use', url: '#'}},
+        {id: '5', version: 1, attrs: {title: 'Privacy Policy', url: '#'}},
+      ],
+      footer1SocialLinks: [
+        {
+          id: '1',
+          version: 1,
+          attrs: {
+            name: 'Twitter',
+            icon: 'twitter',
+            url: 'https://twitter.com/uilibofficial',
+          },
+        },
+        {
+          id: '2',
+          version: 1,
+          attrs: {
+            name: 'Facebook',
+            icon: 'facebook-f',
+            url: 'https://facebook.com/uiLibOfficial/',
+          },
+        },
+        {
+          id: '3',
+          version: 1,
+          attrs: {
+            name: 'Dribbble',
+            icon: 'dribbble',
+            url: '#',
+          },
+        },
+        {
+          id: '4',
+          version: 1,
+          attrs: {
+            name: 'Instagram',
+            icon: 'instagram',
+            url: 'https://www.instagram.com/uilibofficial/',
+          },
+        },
+        {
+          id: '5',
+          version: 1,
+          attrs: {
+            name: 'Youtube',
+            icon: 'youtube',
+            url: 'https://www.youtube.com/channel/UCsIyD-TSO1wQFz-n2Y4i3Rg',
+          },
+        },
+      ],
+    },
   },
-  footer1AddressTitle: 'Get in Touch',
-  footer1Address: 'Moonshine St. 14/05 Light City, London, United Kingdom',
-  footer1Email: 'info@email.com',
-  footer1Phone: '00 (123) 456 78 90',
-  footer1NavTitle: 'Learn More',
-  footer1FormTitle: 'Our Newsletter',
-  footer1FormDescription:
-    'Subscribe to our newsletter to get our news & deals delivered to you.',
-  footer1NavLinks: [
-    {id: '1', version: 1, attrs: {title: 'About Us', url: '#'}},
-    {id: '2', version: 1, attrs: {title: 'Our Story', url: '#'}},
-    {id: '3', version: 1, attrs: {title: 'Projects', url: '#'}},
-    {id: '4', version: 1, attrs: {title: 'Terms of Use', url: '#'}},
-    {id: '5', version: 1, attrs: {title: 'Privacy Policy', url: '#'}},
-  ],
-  footer1SocialLinks: [
-    {
-      id: '1',
-      version: 1,
-      attrs: {
-        name: 'Twitter',
-        icon: 'twitter',
-        url: 'https://twitter.com/uilibofficial',
-      },
-    },
-    {
-      id: '2',
-      version: 1,
-      attrs: {
-        name: 'Facebook',
-        icon: 'facebook-f',
-        url: 'https://facebook.com/uiLibOfficial/',
-      },
-    },
-    {
-      id: '3',
-      version: 1,
-      attrs: {
-        name: 'Dribbble',
-        icon: 'dribbble',
-        url: '#',
-      },
-    },
-    {
-      id: '4',
-      version: 1,
-      attrs: {
-        name: 'Instagram',
-        icon: 'instagram',
-        url: 'https://www.instagram.com/uilibofficial/',
-      },
-    },
-    {
-      id: '5',
-      version: 1,
-      attrs: {
-        name: 'Youtube',
-        icon: 'youtube',
-        url: 'https://www.youtube.com/channel/UCsIyD-TSO1wQFz-n2Y4i3Rg',
-      },
-    },
-  ],
-};
+];

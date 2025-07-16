@@ -1,4 +1,4 @@
-import {Data, Meta} from '@/subapps/website/common/types/templates';
+import {Data, Demo, Meta} from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
 
 export const contact4Meta = {
@@ -44,19 +44,24 @@ export const contact4Meta = {
 
 export type Contact4Data = Data<typeof contact4Meta>;
 
-export const contact4Demo: Contact4Data = {
-  contact4Image: {
-    id: '1',
-    version: 1,
-    fileName: 'i5.png',
-    fileType: 'image/png',
-    filePath: '/img/illustrations/i5.png',
+export const contact4Demos: Demo<typeof contact4Meta>[] = [
+  {
+    language: 'en_US',
+    data: {
+      contact4Image: {
+        id: '1',
+        version: 1,
+        fileName: 'i5.png',
+        fileType: 'image/png',
+        filePath: '/img/illustrations/i5.png',
+      },
+      contact4Title: 'Let’s Talk',
+      contact4Caption:
+        "Together, let's build something fantastic. We have more than 5000 clients who trust us.",
+      contact4LinkUrl: '#',
+      contact4LinkText: 'Join Us',
+      contact4Description:
+        'At our company, we understand that managing spending can be stressful and overwhelming, which is why we offer a range of services aimed at making it effortless for you to stay in control.',
+    },
   },
-  contact4Title: 'Let’s Talk',
-  contact4Caption:
-    "Together, let's build something fantastic. We have more than 5000 clients who trust us.",
-  contact4LinkUrl: '#',
-  contact4LinkText: 'Join Us',
-  contact4Description:
-    'At our company, we understand that managing spending can be stressful and overwhelming, which is why we offer a range of services aimed at making it effortless for you to stay in control.',
-};
+];

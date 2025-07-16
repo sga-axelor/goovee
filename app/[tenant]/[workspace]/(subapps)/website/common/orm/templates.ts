@@ -20,7 +20,7 @@ import type {CreateArgs} from '@goovee/orm';
 import {startCase} from 'lodash-es';
 import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
 import {metaFileModel} from '../templates/meta-models';
-import type {CustomField, Field, Meta, Model} from '../types/templates';
+import type {CustomField, Demo, Field, Meta, Model} from '../types/templates';
 import {
   formatComponentCode,
   formatCustomFieldName,
@@ -36,7 +36,9 @@ const pump = promisify(pipeline);
 const storage = process.env.DATA_STORAGE as string;
 const skipIfExists = false;
 const demoFileDirectory = '/public';
-const getContentTitle = (code: string) => `Demo - ${startCase(code)}`;
+function getContentTitle({code, language}: {code: string; language: string}) {
+  return `Demo - ${startCase(code)} - ${language}`;
+}
 
 if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
@@ -555,61 +557,65 @@ export async function deleteMetaJsonModels({
 export async function createCMSContent(props: {
   tenantId: Tenant['id'];
   meta: Meta;
-  data: any;
+  demos: Demo<Meta>[];
 }) {
-  const {tenantId, data, meta} = props;
+  const {tenantId, demos, meta} = props;
   const code = formatComponentCode(meta.code);
 
   const client = await manager.getClient(tenantId);
-  const timeStamp = new Date();
-  const title = getContentTitle(code);
+  return await Promise.all(
+    demos.map(async demo => {
+      const timeStamp = new Date();
+      const title = getContentTitle({code, language: demo.language});
 
-  const _content = await client.aOSPortalCmsContent.findOne({
-    where: {title, component: {code}},
-    select: {id: true, title: true},
-  });
+      const _content = await client.aOSPortalCmsContent.findOne({
+        where: {title, component: {code}, language: {code: demo.language}},
+        select: {id: true, title: true},
+      });
 
-  if (skipIfExists && _content) {
-    console.log(`\x1b[33m⚠️ Skipped content: ${_content.title}\x1b[0m `);
-    return _content;
-  }
+      if (skipIfExists && _content) {
+        console.log(`\x1b[33m⚠️ Skipped content: ${_content.title}\x1b[0m `);
+        return _content;
+      }
 
-  //TODO: add support for updating attrs
-  const attrs = await createAttrs({
-    tenantId,
-    meta,
-    data,
-    prefix: code,
-    fields: meta.fields,
-  });
+      //TODO: add support for updating attrs
+      const attrs = await createAttrs({
+        tenantId,
+        meta,
+        data: demo.data,
+        prefix: code,
+        fields: meta.fields,
+      });
 
-  const contentData: CreateArgs<AOSPortalCmsContent> = {
-    language: {select: {code: 'en_US'}},
-    component: {select: {code}},
-    attrs: attrs as any,
-    title,
-    updatedOn: timeStamp,
-  };
+      const contentData: CreateArgs<AOSPortalCmsContent> = {
+        language: {select: {code: demo.language}},
+        component: {select: {code}},
+        attrs: attrs as any,
+        title,
+        updatedOn: timeStamp,
+      };
 
-  if (_content) {
-    const content = await client.aOSPortalCmsContent.update({
-      data: {
-        id: _content.id,
-        version: _content.version,
-        ...contentData,
-      },
-      select: {id: true, title: true},
-    });
-    console.log(`\x1b[33m⚠️ Updated content: ${_content.title}\x1b[0m `);
-    return content;
-  }
+      if (_content) {
+        const content = await client.aOSPortalCmsContent.update({
+          data: {
+            id: _content.id,
+            version: _content.version,
+            ...contentData,
+          },
+          select: {id: true, title: true},
+        });
+        console.log(`\x1b[33m⚠️ Updated content: ${_content.title}\x1b[0m `);
+        return content;
+      }
 
-  const content = await client.aOSPortalCmsContent.create({
-    data: {...contentData, createdOn: timeStamp},
-    select: {id: true, title: true},
-  });
-  console.log(`\x1b[32m✅ Created content: ${content.title}\x1b[0m `);
-  return content;
+      const content = await client.aOSPortalCmsContent.create({
+        data: {...contentData, createdOn: timeStamp},
+        select: {id: true, title: true},
+      });
+      console.log(`\x1b[32m✅ Created content: ${content.title}\x1b[0m `);
+      return content;
+    }),
+  );
 }
 
 async function createMetaJsonRecord(props: {

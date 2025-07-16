@@ -382,3 +382,8 @@ export type Data<TMeta extends Meta> = ExpandRecursively<
       : FieldKey<F, TMeta>]?: FieldType<F, TMeta>;
   }
 >;
+
+export type Demo<TMeta extends Meta> = {
+  language: 'en_US' | 'fr_FR';
+  data: Data<TMeta>;
+};
