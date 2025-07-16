@@ -6,15 +6,15 @@ export function getMetaFileURL(props: {
   websitePageSlug: string;
   path: string;
   workspaceURI: string;
-  code?: string;
+  contentId?: string | number;
 }) {
   const {workspaceURI, metaFile} = props;
-  if (!metaFile?.id || !props.code) return '';
+  if (!metaFile?.id || !props.contentId) return '';
 
-  const code = encodeURIComponent(props.code);
+  const contentId = encodeURIComponent(props.contentId);
   const path = encodeURIComponent(props.path);
   const websiteSlug = encodeURIComponent(props.websiteSlug);
   const websitePageSlug = encodeURIComponent(props.websitePageSlug);
 
-  return `${workspaceURI}/${SUBAPP_CODES.website}/api/templates/${websiteSlug}/${websitePageSlug}/${code}/${path}/${metaFile.id}`;
+  return `${workspaceURI}/${SUBAPP_CODES.website}/api/templates/${websiteSlug}/${websitePageSlug}/${contentId}/${path}/${metaFile.id}`;
 }

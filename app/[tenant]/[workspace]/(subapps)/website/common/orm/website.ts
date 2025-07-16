@@ -335,12 +335,19 @@ export async function findWebsitePageBySlug({
   workspaceURL,
   user,
   tenantId,
+  contentId,
+  path,
 }: {
   websiteSlug: Website['slug'];
   websitePageSlug: WebsitePage['slug'];
   workspaceURL: PortalWorkspace['url'];
   user?: User;
   tenantId: Tenant['id'];
+  contentId?: string;
+  /** @param contentId is required if path is provide
+   * ex: path:[ "team1Reviews", "1", "attrs", "image" ]
+   **/
+  path?: string[];
 }) {
   if (!(websiteSlug && websitePageSlug && workspaceURL && tenantId)) {
     return null;
@@ -364,6 +371,7 @@ export async function findWebsitePageBySlug({
           },
         },
       },
+      ...(contentId && {contentLines: {content: {id: contentId}}}),
       AND: [
         await filterPrivate({tenantId, user}),
         {OR: [{archived: false}, {archived: null}]},
@@ -376,6 +384,7 @@ export async function findWebsitePageBySlug({
       seoDescription: true,
       seoKeyword: true,
       contentLines: {
+        ...(contentId && {where: {content: {id: contentId}}}),
         select: {
           sequence: true,
           content: {
@@ -401,7 +410,11 @@ export async function findWebsitePageBySlug({
   let contentLines: (ReplacedContentLine | undefined)[] = [];
 
   if (page?.contentLines?.length) {
-    contentLines = await populateContent(page?.contentLines, tenantId);
+    contentLines = await populateContent({
+      contentLines: page?.contentLines,
+      tenantId,
+      path,
+    });
   }
 
   return {
@@ -534,7 +547,9 @@ async function getCustomRelationalFieldTypeData({
   jsonModelCache,
   jsonModelRecordCache,
   tenantId,
+  path,
 }: any) {
+  const pathFieldName = path?.[0];
   const targetJsonModelName = field?.targetJsonModel;
 
   if (!targetJsonModelName) {
@@ -568,7 +583,11 @@ async function getCustomRelationalFieldTypeData({
     const ids = isToOneRelation
       ? [value.id]
       : isToManyRelation
-        ? value.map(({id}) => id)
+        ? value
+            .map(({id}) => id)
+            .filter((id, i) =>
+              pathFieldName ? i === Number(pathFieldName) : true,
+            ) // for toMany relation, pathFieldName is index of the array, so we skip getting value for other indices
         : [];
 
     if (!ids.length) return value;
@@ -613,6 +632,11 @@ async function getCustomRelationalFieldTypeData({
                 modelRecordCache,
                 jsonModelCache,
                 jsonModelRecordCache,
+                path: pathFieldName
+                  ? isToManyRelation
+                    ? path.slice(2) // [0 , attrs, image] , we are at index part if toMany, so we skip index, and attrs
+                    : path.slice(1) // [attrs, image] , we skip attrs
+                  : undefined,
               }),
             };
           }),
@@ -682,15 +706,17 @@ const getModelFields = async ({
   jsonModelName,
   modelField,
   modelFieldCache,
+  fieldName,
   tenantId,
 }: {
+  fieldName?: string;
   modelName?: string;
   jsonModelName?: string;
   modelField: string;
   modelFieldCache: Cache;
   tenantId: Tenant['id'];
 }) => {
-  const cacheKey = `${modelName || jsonModelName}-${modelField}`;
+  const cacheKey = `${modelName || jsonModelName}-${modelField}-${fieldName || ''}`;
   if (modelFieldCache.has(cacheKey)) {
     return modelFieldCache.get(cacheKey);
   }
@@ -700,6 +726,7 @@ const getModelFields = async ({
     jsonModelName,
     modelName,
     modelField,
+    fieldName,
   });
 
   modelFieldCache.set(cacheKey, fields);
@@ -716,6 +743,7 @@ const populateAttributes = async ({
   modelRecordCache,
   jsonModelCache,
   jsonModelRecordCache,
+  path,
 }: {
   attributes: Record<string, any> | undefined;
   modelName?: string;
@@ -726,16 +754,18 @@ const populateAttributes = async ({
   modelRecordCache: Cache;
   jsonModelCache: Cache;
   jsonModelRecordCache: Cache;
+  path?: string[];
 }): Promise<Record<string, any>> => {
   if (!attributes) return {};
-  const fieldNames = Object.keys(attributes);
+  const pathFieldName = path?.[0];
+  const fieldNames = pathFieldName ? [pathFieldName] : Object.keys(attributes);
 
   const data: Record<string, any> = {};
 
   for (const fieldName of fieldNames) {
     const value = attributes[fieldName];
 
-    const isPrimitiveType = typeof value !== 'object';
+    const isPrimitiveType = typeof value !== 'object' && value !== null;
 
     if (isPrimitiveType) {
       data[fieldName] = value;
@@ -748,6 +778,7 @@ const populateAttributes = async ({
       modelField,
       modelFieldCache,
       tenantId,
+      fieldName: pathFieldName,
     });
 
     const field = fields.find((field: any) => field.name === fieldName);
@@ -783,6 +814,7 @@ const populateAttributes = async ({
       jsonModelCache,
       jsonModelRecordCache,
       tenantId,
+      path: path?.[1] ? path.slice(1) : undefined,
     });
 
     data[fieldName] = $value;
@@ -791,10 +823,15 @@ const populateAttributes = async ({
   return data;
 };
 
-async function populateContent(
-  contentLines: ContentLine[],
-  tenantId: Tenant['id'],
-): Promise<(ReplacedContentLine | undefined)[]> {
+async function populateContent({
+  contentLines,
+  tenantId,
+  path,
+}: {
+  path?: string[];
+  contentLines: ContentLine[];
+  tenantId: Tenant['id'];
+}): Promise<(ReplacedContentLine | undefined)[]> {
   const jsonModelCache = new Cache();
   const jsonModelRecordCache = new Cache();
   const modelRecordCache = new Cache();
@@ -817,6 +854,7 @@ async function populateContent(
             modelRecordCache,
             jsonModelCache,
             jsonModelRecordCache,
+            path: path,
           }),
         },
       };

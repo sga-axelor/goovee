@@ -6,7 +6,6 @@ import {NextRequest, NextResponse} from 'next/server';
 import {findWebsitePageBySlug} from '@/subapps/website/common/orm/website';
 import {get} from 'lodash';
 import {findFile, streamFile} from '@/utils/download';
-import {formatComponentCode} from '@/app/[tenant]/[workspace]/(subapps)/website/common/utils/templates';
 
 export async function GET(
   req: NextRequest,
@@ -18,14 +17,20 @@ export async function GET(
       workspace: string;
       websiteSlug: string;
       websitePageSlug: string;
-      code: string;
+      'content-id': string;
       path: string;
       'file-id': string;
     };
   },
 ) {
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
-  const {code, 'file-id': fileId, websitePageSlug, websiteSlug, path} = params;
+  const {
+    'content-id': contentId,
+    'file-id': fileId,
+    websitePageSlug,
+    websiteSlug,
+    path,
+  } = params;
   const session = await getSession();
   const user = session?.user;
 
@@ -55,15 +60,15 @@ export async function GET(
     workspaceURL: workspaceURL,
     user,
     tenantId,
+    contentId,
+    path: stringToPath(path),
   });
 
   if (!websitePage) {
     return new NextResponse('Page not found', {status: 404});
   }
 
-  const attrs = websitePage.contentLines.find(
-    line => line?.content?.component?.code === formatComponentCode(code),
-  )?.content?.attrs;
+  const attrs = websitePage.contentLines?.[0]?.content?.attrs;
 
   const metaFile = get(attrs, path);
 
@@ -92,4 +97,22 @@ export async function GET(
 
 const isMetaFile = (file: any): boolean => {
   return !!(file?.filePath && file?.fileName && file?.id);
+};
+
+// lodash interal function
+const stringToPath = function (string: string) {
+  const result = [];
+  const rePropName =
+    /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+  const reEscapeChar = /\\(\\)?/g;
+  if (string.charCodeAt(0) === 46 /* . */) {
+    result.push('');
+  }
+  //@ts-expect-error second argument can not be function, but it is a hack lodash uses
+  string.replace(rePropName, function (match, number, quote, subString) {
+    result.push(
+      quote ? subString.replace(reEscapeChar, '$1') : number || match,
+    );
+  });
+  return result;
 };

@@ -7,11 +7,13 @@ export async function findModelFields({
   jsonModelName,
   modelField,
   tenantId,
+  fieldName,
 }: {
   modelName?: string;
   jsonModelName?: string;
   modelField: string;
   tenantId: Tenant['id'];
+  fieldName?: string;
 }) {
   if (!tenantId) {
     return [];
@@ -26,6 +28,7 @@ export async function findModelFields({
         showIf: null,
         ...(modelName && {model: modelName}),
         ...(jsonModelName && {jsonModel: {name: jsonModelName}}),
+        ...(fieldName && {name: fieldName}),
         OR: [{hidden: false}, {hidden: null}],
       },
       orderBy: {sequence: 'ASC'},
