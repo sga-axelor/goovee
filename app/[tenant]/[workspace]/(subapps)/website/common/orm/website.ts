@@ -550,7 +550,7 @@ async function getCustomRelationalFieldTypeData({
   path,
 }: any) {
   const pathFieldName = path?.[0];
-  const targetJsonModelName = field?.targetJsonModel;
+  const targetJsonModelName = field?.targetJsonModel?.name;
 
   if (!targetJsonModelName) {
     return value;
