@@ -233,6 +233,11 @@ export async function createInvite({
     contactConfig = await client.aOSPortalContactWorkspaceConfig.create({
       data: {
         name: `${email}-${workspace.name || workspace.url}-config`,
+        partnerSet: {
+          select: {
+            id: partnerId,
+          },
+        },
         portalWorkspace: {
           select: {
             id: workspace.id,
