@@ -17,6 +17,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/ui/components';
+import {i18n} from '@/locale';
 import {DEFAULT_LOGO_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Icon} from '@/ui/components';
@@ -119,7 +120,7 @@ export default function Header({
                       {icon ? (
                         <Icon name={icon} className="h-6 w-6" style={{color}} />
                       ) : (
-                        <p className="font-medium">{name}</p>
+                        <p className="font-medium">{i18n.t(name)}</p>
                       )}
                     </Link>
                   );
@@ -170,7 +171,7 @@ export default function Header({
                     )}
                     <Link href={`${workspaceURI}/${code}${page}`}>
                       <div key={code} className="font-medium">
-                        {name}
+                        {i18n.t(name)}
                       </div>
                     </Link>
                   </Fragment>
