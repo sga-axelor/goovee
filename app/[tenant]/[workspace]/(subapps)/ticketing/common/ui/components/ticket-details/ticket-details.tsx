@@ -3,7 +3,7 @@
 import {i18n} from '@/locale';
 import {formatDate} from '@/locale/formatters';
 import type {PortalAppConfig} from '@/types';
-import type {Maybe} from '@/types/util';
+import type {Cloned, Maybe} from '@/types/util';
 import {
   Button,
   Dialog,

@@ -1,3 +1,5 @@
+import {type BigDecimal} from '@goovee/orm';
+
 export type * from './search-param';
 
 export type Company = {id: string; version: number; name?: string};
@@ -179,7 +181,6 @@ export type Ticket = {
   displayFinancialData?: boolean | undefined;
   description?: string | undefined;
   assignment?: number | undefined;
-  unitPrice?: string | undefined;
   assignedTo?: {id: string; version: number; name?: string};
   managedByContact?: {
     id: string;
@@ -206,7 +207,7 @@ export type Ticket = {
   status?: {id: string; version: number; name?: string; isCompleted?: boolean};
   targetVersion?: {id: string; version: number; title?: string};
   projectTaskCategory?: {id: string; version: number; name?: string};
-  progress?: string | undefined;
-  quantity?: string | undefined;
+  progress?: BigDecimal | undefined;
+  quantity?: BigDecimal | undefined;
   createdOn?: Date | undefined;
 };

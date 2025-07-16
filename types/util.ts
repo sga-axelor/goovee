@@ -1,3 +1,5 @@
+import {BigDecimal} from '@goovee/orm';
+
 export type Maybe<T> = T | null | undefined;
 
 export type Expand<T> = T extends (...args: infer A) => infer R
@@ -50,8 +52,10 @@ export type Cloned<T> = T extends JSONValue
   ? T
   : T extends Date
     ? string
-    : T extends NotAssignableToJson
-      ? never
-      : T extends object
-        ? {[K in keyof T]: Cloned<T[K]>}
-        : never;
+    : T extends BigDecimal
+      ? string
+      : T extends NotAssignableToJson
+        ? never
+        : T extends object
+          ? {[K in keyof T]: Cloned<T[K]>}
+          : never;

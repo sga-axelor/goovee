@@ -202,7 +202,11 @@ export async function createTicket({
       title: 'Internal',
       value: String(newTicket.isInternal),
     },
-    {name: 'progress', title: 'Progress', value: newTicket.progress ?? ''},
+    {
+      name: 'progress',
+      title: 'Progress',
+      value: newTicket.progress?.toString() ?? '',
+    },
     {name: 'project', title: 'Project', value: newTicket.project?.name ?? ''},
     {
       name: 'taskDate',
@@ -815,7 +819,6 @@ export async function findTicket({
       targetVersion: {title: true},
       progress: true,
       quantity: true,
-      unitPrice: true,
       invoicingType: true,
       invoicingUnit: {name: true},
       description: true,
