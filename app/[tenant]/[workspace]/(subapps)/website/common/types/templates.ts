@@ -1,4 +1,11 @@
-import {CamelCase, ExpandRecursively} from '@/types/util';
+import type {Client} from '@/goovee/.generated/client';
+import type {CamelCase, ExpandRecursively} from '@/types/util';
+import type {
+  Payload,
+  QueryClient,
+  Repository,
+  SelectOptions,
+} from '@goovee/orm';
 import fontAwesome from '../constants/fa-icons';
 
 // === Common Base ===
@@ -247,7 +254,16 @@ export type Model = {
   fields: ModelField[];
 };
 
-export type MetaModel = Model;
+type Entities = Omit<Client, keyof QueryClient>;
+export type EntityName = keyof Entities;
+type EntityClass<Name extends EntityName> =
+  Omit<Client, keyof QueryClient>[Name] extends Repository<infer U> ? U : never;
+
+export type MetaModel<T extends EntityName = any> = {
+  name: string;
+  entity: T;
+  select: SelectOptions<EntityClass<T>>;
+};
 
 export enum Template {
   block = 0,
@@ -307,33 +323,16 @@ type JsonModelAttrs<
     : never
   : never;
 
-type BasicRecord = {
-  id: string;
-  version: number;
-};
-
 type RelationalModelAttrs<
   ModelName extends string,
   TMeta extends Meta,
 > = TMeta['metaModels'] extends any[]
   ? Extract<TMeta['metaModels'][number], {name: ModelName}> extends infer M
-    ? M extends {fields: Field[]}
-      ? BasicRecord & {
-          [F in NonDecorativeFields<M['fields']> as F extends {
-            required: true;
-          }
-            ? F['name']
-            : never]: FieldType<F, TMeta>;
-        } & {
-          [F in NonDecorativeFields<M['fields']> as F extends {
-            required: true;
-          }
-            ? never
-            : F['name']]?: FieldType<F, TMeta>;
-        }
-      : never
-    : never
-  : never;
+    ? M extends {entity: EntityName; select: any}
+      ? Payload<EntityClass<M['entity']>, {select: M['select']}>
+      : any
+    : any
+  : any;
 
 type JSONRecord = {
   id: string;

@@ -22,6 +22,7 @@ import {
 } from '../constants';
 import {LayoutMountType, MenuItem} from '../types';
 import {Cache} from '../utils/helper';
+import {metaModels} from '../templates/meta-models';
 
 export async function findAllMainWebsites({
   workspaceURL,
@@ -901,6 +902,18 @@ async function findModelRecords({
   modelName: string;
   ids: string[];
 }) {
+  const metaModel = metaModels[modelName];
+  const entity = metaModel?.entity;
+  if (entity) {
+    const client = await manager.getClient(tenantId);
+    // @ts-expect-error  it's dynamic so no issues
+    const records = await client[entity].find({
+      where: {id: {in: ids}},
+      select: metaModel.select,
+    });
+    return records;
+  }
+
   const tenant = await manager.getTenant(tenantId);
   const aos = tenant?.config?.aos;
 
