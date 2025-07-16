@@ -41,10 +41,15 @@ export default async function Page({
   } = partner;
 
   const isPartner = !partner.isContact;
+
   const isAdminContact =
     partner.isContact &&
     partner.contactWorkspaceConfigSet?.find(
-      (c: any) => c.portalWorkspace?.url === workspaceURL,
+      (c: any) =>
+        c.portalWorkspace?.url === workspaceURL &&
+        c?.partnerSet?.find(
+          (partner: any) => partner.id === user.mainPartnerId,
+        ),
     )?.isAdmin;
 
   let role: Role = Role.user;
@@ -61,6 +66,18 @@ export default async function Page({
     ([key, value]) => value === partnerTypeSelect,
   )?.[0];
 
+  const partners =
+    (partner.isContact &&
+      partner.contactWorkspaceConfigSet
+        ?.map(config => config.partnerSet || [])
+        ?.flat()
+        ?.filter(Boolean)
+        ?.map((partner: any) => ({
+          id: partner.id?.toString(),
+          name: partner.name,
+        }))) ||
+    [];
+
   const settings = {
     type,
     companyName: name,
@@ -72,11 +89,12 @@ export default async function Page({
     picture: picture?.id,
     fullName,
     role,
+    mainPartner: user.mainPartnerId?.toString(),
   };
 
   return (
     <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
-      <Form settings={settings as any} />
+      <Form settings={settings as any} partners={partners} />
     </div>
   );
 }

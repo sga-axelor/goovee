@@ -179,6 +179,7 @@ export async function update({
   name,
   email,
   otp,
+  mainPartner,
 }: {
   companyName?: string;
   identificationNumber?: string;
@@ -187,6 +188,7 @@ export async function update({
   name: string;
   email: string;
   otp?: string;
+  mainPartner?: string;
 }) {
   const tenantId = headers().get(TENANT_HEADER);
 
@@ -258,6 +260,25 @@ export async function update({
       return error(await t('Email already exists'));
   }
 
+  const partners =
+    (partner.isContact &&
+      partner.contactWorkspaceConfigSet
+        ?.map(config => config.partnerSet || [])
+        ?.flat()
+        ?.filter(Boolean)
+        ?.map((partner: any) => ({id: partner.id, name: partner.name}))) ||
+    [];
+
+  if (partner.isContact && mainPartner) {
+    const isValidMainPartner = partners?.find(
+      p => String(p.id) === String(mainPartner),
+    );
+
+    if (!isValidMainPartner) {
+      return error(await t('Invalid partner'));
+    }
+  }
+
   try {
     if (email !== partner?.emailAddress.address) {
       const updateEmail = async (emailAddress: any, newEmail: string) => {
@@ -286,6 +307,15 @@ export async function update({
         fixedPhone: companyNumber,
         firstName,
         name: isCompany ? companyName : name,
+        ...(partner.isContact && mainPartner
+          ? {
+              mainPartner: {
+                select: {
+                  id: mainPartner,
+                },
+              },
+            }
+          : {}),
       },
       tenantId,
     });

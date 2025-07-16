@@ -1,6 +1,6 @@
 'use client';
 
-import {useMemo, useRef, useState} from 'react';
+import {useMemo, useReducer, useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useSession} from 'next-auth/react';
 import {z} from 'zod';
@@ -35,8 +35,16 @@ import {UserType} from '@/auth/types';
 import {useCountDown, useToast} from '@/ui/hooks';
 import {getInitials} from '@/utils/names';
 import {getPartnerImageURL} from '@/utils/files';
+import type {ID} from '@/types';
 import {cn} from '@/utils/css';
 import {useWorkspace} from '../../workspace-context';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/ui/components/select';
 
 // ---- LOCAL IMPORTS ---- //
 import {Title} from '../common/ui/components';
@@ -61,6 +69,7 @@ const formSchema = z
     showEmailOnDirectory: z.boolean(),
     showPhoneOnDirectory: z.boolean(),
     linkedInLink: z.string(),
+    mainPartner: z.string().optional(),
   })
   .refine(
     data => {
@@ -111,7 +120,9 @@ export default function Personal({
     picture: pictureProp,
     fullName,
     role,
+    mainPartner,
   },
+  partners,
 }: {
   settings: {
     type: UserType;
@@ -124,7 +135,9 @@ export default function Personal({
     picture?: string;
     fullName?: string;
     role?: string;
+    mainPartner?: string;
   };
+  partners: Array<{id: ID; name: string}>;
 }) {
   const {toast} = useToast();
   const {data: session, update: updateSession} = useSession();
@@ -157,6 +170,7 @@ export default function Personal({
       showEmailOnDirectory: false,
       showPhoneOnDirectory: false,
       linkedInLink: '',
+      mainPartner,
     },
   });
 
@@ -188,7 +202,15 @@ export default function Personal({
           title: res.message,
         });
 
-        if (editEmail) {
+        const isMainPartnerUpdated =
+          mainPartner &&
+          values.mainPartner &&
+          mainPartner !== values.mainPartner;
+
+        /**
+         * Update session when change in email or main partner for contact
+         */
+        if (editEmail || isMainPartnerUpdated) {
           await updateSession({
             email,
             id: session?.user?.id,
@@ -544,6 +566,36 @@ export default function Personal({
                   </FormItem>
                 )}
               />
+              {Boolean(partners?.length > 1) && (
+                <FormField
+                  control={form.control}
+                  name="mainPartner"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>{i18n.t('Partner')}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={i18n.t('Select your partner')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {partners.map((partner: any) => (
+                            <SelectItem value={partner.id} key={partner.id}>
+                              {partner.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
             <div className="sr-only space-y-4">
               <Title text={i18n.t('Directory')}></Title>
