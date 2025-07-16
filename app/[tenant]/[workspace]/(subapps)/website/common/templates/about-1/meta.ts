@@ -1,5 +1,5 @@
 import {Data, Meta} from '../../types/templates';
-import {metaFileModel} from '../metaModels';
+import {metaFileModel} from '../meta-models';
 
 export const about1Meta = {
   title: 'About 1',

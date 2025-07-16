@@ -1,5 +1,5 @@
 import {Data, Meta} from '@/subapps/website/common/types/templates';
-import {metaFileModel} from '../metaModels';
+import {metaFileModel} from '../meta-models';
 
 export const contact4Meta = {
   title: 'Contact 4',
