@@ -1,4 +1,5 @@
 import {notFound} from 'next/navigation';
+import uniqBy from 'lodash/uniqBy';
 
 // ---- CORE IMPORT ---- //
 import {getSession} from '@/auth';
@@ -64,7 +65,7 @@ export default async function Page({
     ([key, value]) => value === partnerTypeSelect,
   )?.[0];
 
-  const partners =
+  let partners =
     (partner.isContact &&
       partner.contactWorkspaceConfigSet
         ?.map(config => config.partner)
@@ -74,6 +75,8 @@ export default async function Page({
           name: partner.name,
         }))) ||
     [];
+
+  partners = uniqBy(partners, 'id');
 
   const settings = {
     type,
