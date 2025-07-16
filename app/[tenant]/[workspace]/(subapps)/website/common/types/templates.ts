@@ -1,8 +1,9 @@
-import {CamelCase, Expand, Merge} from '@/types/util';
+import {CamelCase, ExpandRecursively} from '@/types/util';
 
 // === Common Base ===
 type CommonField = {
   name: string;
+  required?: boolean;
   widgetAttrs?: Record<string, string>;
 };
 
@@ -249,10 +250,13 @@ type JsonModelAttrs<
   ? Extract<TMeta['models'][number], {name: ModelName}> extends infer M
     ? M extends {fields: Field[]}
       ? {
-          [F in NonDecorativeFields<M['fields']> as F['name']]: FieldType<
-            F,
-            TMeta
-          >;
+          [F in NonDecorativeFields<M['fields']> as F extends {required: true}
+            ? F['name']
+            : never]: FieldType<F, TMeta>;
+        } & {
+          [F in NonDecorativeFields<M['fields']> as F extends {required: true}
+            ? never
+            : F['name']]?: FieldType<F, TMeta>;
         }
       : never
     : never
@@ -265,17 +269,19 @@ type RelationalModelAttrs<
 > = TMeta['metaModels'] extends any[]
   ? Extract<TMeta['metaModels'][number], {name: ModelName}> extends infer M
     ? M extends {fields: Field[]}
-      ? Expand<
-          Merge<
-            BasicRecord,
-            {
-              [F in NonDecorativeFields<M['fields']> as F['name']]: FieldType<
-                F,
-                TMeta
-              >;
-            }
-          >
-        >
+      ? BasicRecord & {
+          [F in NonDecorativeFields<M['fields']> as F extends {
+            required: true;
+          }
+            ? F['name']
+            : never]: FieldType<F, TMeta>;
+        } & {
+          [F in NonDecorativeFields<M['fields']> as F extends {
+            required: true;
+          }
+            ? never
+            : F['name']]?: FieldType<F, TMeta>;
+        }
       : never
     : never
   : never;
@@ -302,9 +308,14 @@ type FieldKey<
   TMeta extends {code: string},
 > = `${CamelCase<TMeta['code']>}${Capitalize<CamelCase<F['name']>>}`;
 
-export type Data<TMeta extends Meta> = {
-  [F in NonDecorativeFields<TMeta['fields']> as FieldKey<F, TMeta>]: FieldType<
-    F,
-    TMeta
-  >;
-};
+export type Data<TMeta extends Meta> = ExpandRecursively<
+  {
+    [F in NonDecorativeFields<TMeta['fields']> as F extends {required: true}
+      ? FieldKey<F, TMeta>
+      : never]: FieldType<F, TMeta>;
+  } & {
+    [F in NonDecorativeFields<TMeta['fields']> as F extends {required: true}
+      ? never
+      : FieldKey<F, TMeta>]?: FieldType<F, TMeta>;
+  }
+>;

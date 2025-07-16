@@ -68,7 +68,8 @@ export async function createCustomFields({
           name: field.name,
           title: field.title,
           type: field.type,
-          sequence: i++,
+          required: field.required,
+          sequence: i,
           uniqueModel,
           widgetAttrs: JSON.stringify({
             ...WidgetAttrsMap[field.type],
