@@ -22,6 +22,10 @@ export type TemplateProps<T = any, M = any> = {
   contentVersion?: number;
   workspaceURI: string;
   websiteSlug: string;
-  websitePageSlug: string;
+  websitePageSlug?: string;
   code?: string;
+  mountType: MountType;
 };
+
+export type MountType = 'page' | 'footer' | 'header' | 'menu';
+export type LayoutMountType = Exclude<MountType, 'page'>;

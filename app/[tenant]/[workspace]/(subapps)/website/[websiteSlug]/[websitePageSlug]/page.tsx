@@ -84,6 +84,7 @@ export default async function Page({
         websiteSlug={websiteSlug}
         websitePageSlug={websitePageSlug}
         code={line.content.component.code}
+        mountType="page"
       />
     );
   });

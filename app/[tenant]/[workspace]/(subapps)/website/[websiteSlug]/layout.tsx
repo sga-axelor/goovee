@@ -14,7 +14,7 @@ import {
 import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
 import {LanguageSelection} from './language-selection';
-import {NAVIGATION_POSITION} from '../common/constants';
+import {layoutMountTypes, NAVIGATION_POSITION} from '../common/constants';
 
 export async function generateMetadata({
   params,
@@ -39,7 +39,7 @@ export async function generateMetadata({
   });
 
   if (!website) {
-    return null;
+    return {title: 'Page'};
   }
 
   return {
@@ -65,13 +65,14 @@ export default async function Layout({
   const user = session?.user;
 
   const {tenant, websiteSlug} = params;
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const website = await findWebsiteBySlug({
     websiteSlug,
     workspaceURL,
     user,
     tenantId: tenant,
+    mountTypes: layoutMountTypes,
   });
 
   if (!website) {
@@ -92,21 +93,51 @@ export default async function Layout({
   const navPosition = website.menu?.component?.typeSelect ?? 1;
   const isSideNav = navPosition === NAVIGATION_POSITION.LEFT_RIGHT_MENU;
 
+  const menu = website?.menu?.component && (
+    <Menu
+      menu={clone(website.menu)}
+      workspaceURI={workspaceURI}
+      websiteSlug={websiteSlug}
+      code={website.menu.component.code}
+      mountType="menu"
+    />
+  );
+
   return (
     <>
       <LanguageSelection
         languageList={mainWebsiteLanguages}
         active={websiteSlug}
       />
-      {!isSideNav && <Menu menu={clone(website.menu)} />}
+      {!isSideNav && menu}
       <div className={`flex ${isSideNav ? 'flex-col lg:flex-row' : ''}`}>
-        {isSideNav && <Menu menu={clone(website.menu)} />}
+        {isSideNav && menu}
         <div className="flex-1">
-          <Header />
+          {website.header?.component && (
+            <Header
+              workspaceURI={workspaceURI}
+              websiteSlug={websiteSlug}
+              data={clone(website.header.attrs)}
+              code={website.header.component.code}
+              contentId={website.header.id}
+              contentVersion={website.header.version}
+              mountType="header"
+            />
+          )}
           {children}
         </div>
       </div>
-      <Footer />
+      {website.footer?.component && (
+        <Footer
+          workspaceURI={workspaceURI}
+          websiteSlug={websiteSlug}
+          data={clone(website.footer.attrs)}
+          code={website.footer.component.code}
+          contentId={website.footer.id}
+          contentVersion={website.footer.version}
+          mountType="footer"
+        />
+      )}
     </>
   );
 }

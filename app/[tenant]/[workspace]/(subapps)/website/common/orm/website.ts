@@ -20,6 +20,8 @@ import {
   CONTENT_MODEL,
   CONTENT_MODEL_ATTRS,
 } from '../constants';
+import {LayoutMountType, MenuItem} from '../types';
+import {ExpandRecursively} from '@/types/util';
 
 type CacheValue = any;
 
@@ -172,7 +174,10 @@ export async function findAllWebsites({
   return websites;
 }
 
-function buildMenuHierarchy(menulines: any) {
+async function buildMenuHierarchy(
+  menulinesPromise: Promise<any>,
+): Promise<MenuItem[]> {
+  const menulines = await menulinesPromise;
   const map = new Map();
 
   menulines.forEach((item: any) => {
@@ -196,11 +201,13 @@ export async function findWebsiteBySlug({
   workspaceURL,
   user,
   tenantId,
+  mountTypes,
 }: {
   websiteSlug: Website['slug'];
   workspaceURL: PortalWorkspace['url'];
   user?: User;
   tenantId: Tenant['id'];
+  mountTypes?: LayoutMountType[];
 }) {
   if (!(websiteSlug && tenantId)) {
     return null;
@@ -211,6 +218,10 @@ export async function findWebsiteBySlug({
   if (!client) {
     return null;
   }
+
+  const includeHeader = mountTypes?.includes('header');
+  const includeFooter = mountTypes?.includes('footer');
+  const includeMenu = mountTypes?.includes('menu');
 
   const website = await client.aOSPortalCmsSite.findOne({
     where: {
@@ -229,33 +240,35 @@ export async function findWebsiteBySlug({
       name: true,
       slug: true,
       isGuestUserAllow: true,
-      header: {
-        component: {title: true, code: true},
-      },
-      footer: {
-        component: {title: true, code: true},
-      },
-      homepage: {
-        slug: true,
-      },
-      menu: {
-        title: true,
-        component: {title: true, code: true, typeSelect: true},
-        language: true,
-        menuList: true,
-      },
+      homepage: {slug: true},
       mainWebsite: true,
+      ...(includeHeader && {
+        header: {attrs: true, component: {title: true, code: true}},
+      }),
+      ...(includeFooter && {
+        footer: {attrs: true, component: {title: true, code: true}},
+      }),
+      ...(includeMenu && {
+        menu: {
+          title: true,
+          component: {title: true, code: true, typeSelect: true},
+          language: true,
+          menuList: true,
+        },
+      }),
     },
   });
 
+  if (!website) return null;
   const isGuest = !user;
 
-  if (isGuest && !website?.isGuestUserAllow) {
+  if (isGuest && !website.isGuestUserAllow) {
     return null;
   }
 
-  if (website?.menu) {
-    const menuList = await client.aOSPortalCmsMenuLine
+  let menuListPromise;
+  if (website.menu) {
+    const menuList = client.aOSPortalCmsMenuLine
       .find({
         where: {
           menu: {
@@ -268,6 +281,7 @@ export async function findWebsiteBySlug({
         select: {
           parentMenu: {
             id: true,
+            title: true,
           },
           page: {
             slug: true,
@@ -284,10 +298,53 @@ export async function findWebsiteBySlug({
         })),
       );
 
-    website.menu.menuList = buildMenuHierarchy(menuList);
+    menuListPromise = buildMenuHierarchy(menuList);
   }
 
-  return website;
+  const jsonModelCache = new Cache();
+  const jsonModelRecordCache = new Cache();
+  const modelRecordCache = new Cache();
+  const modelFieldCache = new Cache();
+  let footerAttrsPromise;
+  let headerAttrsPromise;
+
+  if (website.footer?.attrs) {
+    footerAttrsPromise = populateAttributes({
+      attributes: await website.footer.attrs,
+      modelName: CONTENT_MODEL,
+      modelField: CONTENT_MODEL_ATTRS,
+      tenantId,
+      modelFieldCache,
+      modelRecordCache,
+      jsonModelCache,
+      jsonModelRecordCache,
+    });
+  }
+
+  if (website.header?.attrs) {
+    headerAttrsPromise = populateAttributes({
+      attributes: await website.header.attrs,
+      modelName: CONTENT_MODEL,
+      modelField: CONTENT_MODEL_ATTRS,
+      tenantId,
+      modelFieldCache,
+      modelRecordCache,
+      jsonModelCache,
+      jsonModelRecordCache,
+    });
+  }
+  const [menuList, footerAttrs, headerAttrs] = await Promise.all([
+    menuListPromise,
+    footerAttrsPromise,
+    headerAttrsPromise,
+  ]);
+
+  return {
+    ...website,
+    ...(website.menu && {menu: {...website.menu, menuList}}),
+    ...(website.footer && {footer: {...website.footer, attrs: footerAttrs}}),
+    ...(website.header && {header: {...website.header, attrs: headerAttrs}}),
+  };
 }
 
 export async function findAllWebsitePages({
@@ -429,7 +486,7 @@ export async function findAllMainWebsiteLanguages({
   user,
   tenantId,
 }: {
-  mainWebsiteId: MainWebsite['id'];
+  mainWebsiteId: MainWebsite['id'] | undefined;
   workspaceURL: PortalWorkspace['url'];
   user?: User;
   tenantId: Tenant['id'];

@@ -3,9 +3,14 @@ import {getSession} from '@/lib/core/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {workspacePathname} from '@/utils/workspace';
 import {NextRequest, NextResponse} from 'next/server';
-import {findWebsitePageBySlug} from '@/subapps/website/common/orm/website';
+import {
+  findWebsiteBySlug,
+  findWebsitePageBySlug,
+} from '@/subapps/website/common/orm/website';
 import {get} from 'lodash';
 import {findFile, streamFile} from '@/utils/download';
+import {MountType} from '@/app/[tenant]/[workspace]/(subapps)/website/common/types';
+import {mountTypes} from '@/app/[tenant]/[workspace]/(subapps)/website/common/constants';
 
 export async function GET(
   req: NextRequest,
@@ -15,6 +20,7 @@ export async function GET(
     params: {
       tenant: string;
       workspace: string;
+      mountType: MountType;
       websiteSlug: string;
       websitePageSlug: string;
       'content-id': string;
@@ -30,7 +36,17 @@ export async function GET(
     websitePageSlug,
     websiteSlug,
     path,
+    mountType,
   } = params;
+
+  if (!mountTypes.includes(mountType)) {
+    return new NextResponse('Invalid mount type', {status: 400});
+  }
+  if (mountType === 'menu') {
+    return new NextResponse('file download not supported for menu', {
+      status: 400,
+    });
+  }
   const session = await getSession();
   const user = session?.user;
 
@@ -54,21 +70,37 @@ export async function GET(
     return new NextResponse('Unauthorized', {status: 401});
   }
 
-  const websitePage = await findWebsitePageBySlug({
-    websiteSlug: websiteSlug,
-    websitePageSlug: websitePageSlug,
-    workspaceURL: workspaceURL,
-    user,
-    tenantId,
-    contentId,
-    path: stringToPath(path),
-  });
+  let attrs;
+  if (mountType === 'page') {
+    const websitePage = await findWebsitePageBySlug({
+      websiteSlug: websiteSlug,
+      websitePageSlug: websitePageSlug,
+      workspaceURL: workspaceURL,
+      user,
+      tenantId,
+      contentId,
+      path: stringToPath(path),
+    });
 
-  if (!websitePage) {
-    return new NextResponse('Page not found', {status: 404});
+    if (!websitePage) {
+      return new NextResponse('Page not found', {status: 404});
+    }
+
+    attrs = websitePage.contentLines?.[0]?.content?.attrs;
+  } else {
+    const website = await findWebsiteBySlug({
+      websiteSlug,
+      workspaceURL,
+      user,
+      tenantId,
+      mountTypes: [mountType],
+    });
+    if (!website) {
+      return new NextResponse('Website not found', {status: 404});
+    }
+    if (mountType === 'footer') attrs = website.footer?.attrs;
+    if (mountType === 'header') attrs = website.header?.attrs;
   }
-
-  const attrs = websitePage.contentLines?.[0]?.content?.attrs;
 
   const metaFile = get(attrs, path);
 

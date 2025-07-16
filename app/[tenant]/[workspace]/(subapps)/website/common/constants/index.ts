@@ -1,3 +1,4 @@
+import {LayoutMountType, MountType} from '../types';
 import {Type} from '../types/templates';
 
 export const NAVIGATION_POSITION = {
@@ -60,3 +61,8 @@ export const WidgetAttrsMap: Record<Type, Record<string, string>> = {
   time: {showTitle: 'true'},
   panel: {showTitle: 'false'},
 };
+
+export const mountTypes: MountType[] = ['page', 'footer', 'header', 'menu'];
+export const layoutMountTypes: LayoutMountType[] = mountTypes.filter(
+  type => type !== 'page',
+);
