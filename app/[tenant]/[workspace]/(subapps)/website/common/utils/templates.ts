@@ -19,9 +19,11 @@ import {
 import {camelCase} from 'lodash-es';
 import {metas} from '@/subapps/website/common/templates';
 import {
+  CustomField,
   Field,
   JsonRelationalField,
   Meta,
+  Model,
   RelationalField,
 } from '../types/templates';
 
@@ -32,6 +34,15 @@ function capitalCase(str: string) {
 
 export function getCustomModelName(modelName: string) {
   return CUSTOM_MODEL_PREFIX + capitalCase(modelName);
+}
+
+export function getComponentCode(name: string) {
+  return camelCase(name);
+}
+
+export function getCustomFieldName(name: string, prefix?: string) {
+  prefix = prefix || '';
+  return camelCase(`${prefix} ${name}`);
 }
 
 export function isRelationalField(field: Field): field is RelationalField {
@@ -101,6 +112,52 @@ function validateMeta(metas: Meta[]) {
   return isValid;
 }
 
+function getFormattedFieldsAndModels(
+  metas: Meta[],
+  components: {id: string; code?: string; title?: string}[],
+): {fields: CustomField[]; models: Model[]} {
+  const fields = [];
+  const models = [];
+  for (const meta of metas) {
+    if (!meta.name) continue;
+    const code = getComponentCode(meta.name);
+    const component = components.find(c => c.code === code);
+    if (meta.fields.length) {
+      fields.push(
+        ...meta.fields.map(field => ({
+          ...field,
+          name: getCustomFieldName(field.name, code),
+          ...(component && {
+            contextField: 'component',
+            contextFieldTarget: COMPONENT_MODEL,
+            contextFieldTargetName: 'title',
+            contextFieldTitle: component.title,
+            contextFieldValue: component.id,
+          }),
+        })),
+      );
+    }
+    if (meta.models?.length) {
+      models.push(
+        ...meta.models.map(model => ({
+          ...model,
+          name: getCustomModelName(model.name),
+          fields: model.fields.map(field => {
+            if (isJsonRelationalField(field)) {
+              return {
+                ...field,
+                target: getCustomModelName(field.target),
+              };
+            }
+            return field;
+          }),
+        })),
+      );
+    }
+  }
+  return {fields, models};
+}
+
 export async function seedTemplates({
   tenantId,
 }: {
@@ -108,55 +165,34 @@ export async function seedTemplates({
   templatesDir: string;
 }) {
   if (!validateMeta(metas)) return;
-  const models = [];
-  for (const meta of metas) {
-    if (!meta.name) continue;
-    if (meta.models?.length) {
-      models.push(...meta.models);
-    }
-  }
 
   const components = await creteCMSComponents({
     metas,
     tenantId,
   });
 
-  await createMetaJsonModels({models, tenantId});
+  const {fields, models} = getFormattedFieldsAndModels(metas, components);
+  const jsonModels = await createMetaJsonModels({models, tenantId});
 
-  await Promise.all(
-    metas.map(async meta => {
-      const component = components.find(c => c.code === camelCase(meta.name));
-
-      return createCustomFields({
-        prefix: camelCase(meta.name),
-        model: CONTENT_MODEL,
-        uniqueModel: CONTENT_MODEL,
-        modelField: CONTENT_MODEL_ATTRS,
-        fields: meta.fields,
-        tenantId,
-        ...(component && {
-          context: {
-            contextField: 'component',
-            contextFieldTarget: COMPONENT_MODEL,
-            contextFieldTargetName: 'title',
-            contextFieldTitle: component.title!,
-            contextFieldValue: component.id,
-          },
-        }),
-      });
-    }),
-  );
+  const contentFields = await createCustomFields({
+    model: CONTENT_MODEL,
+    uniqueModel: CONTENT_MODEL,
+    modelField: CONTENT_MODEL_ATTRS,
+    fields,
+    tenantId,
+  });
 
   await Promise.all(
     models.map(model => {
       if (model.fields?.length) {
-        const modelName = getCustomModelName(model.name);
+        const jsonModel = jsonModels.find(m => m.name === model.name);
+        if (!jsonModel) return;
         return createCustomFields({
           model: JSON_MODEL,
-          uniqueModel: `${JSON_MODEL} ${modelName}`,
+          uniqueModel: `${JSON_MODEL} ${model.name}`,
           modelField: JSON_MODEL_ATTRS,
           fields: model.fields,
-          jsonModel: modelName,
+          jsonModel,
           tenantId,
         });
       }

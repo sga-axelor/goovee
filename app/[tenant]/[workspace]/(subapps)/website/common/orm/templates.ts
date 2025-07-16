@@ -1,10 +1,9 @@
 import {manager, type Tenant} from '@/lib/core/tenant';
 import {xml} from '@/utils/template-string';
-import {camelCase} from 'lodash-es';
-import {JSON_MODEL_ATTRS} from '../constants';
-import type {Field, Model, Template} from '../types/templates';
+import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
+import type {CustomField, Model, Template} from '../types/templates';
 import {
-  getCustomModelName,
+  getComponentCode,
   isJsonRelationalField,
   isRelationalField,
 } from '../utils/templates';
@@ -15,26 +14,15 @@ export async function createCustomFields({
   modelField,
   uniqueModel,
   tenantId,
-  prefix,
   jsonModel,
-  context,
 }: {
   model: string;
   modelField: string;
   uniqueModel: string;
-  fields: Field[];
+  fields: CustomField[];
   tenantId: Tenant['id'];
-  prefix?: string;
-  jsonModel?: string;
-  context?: {
-    contextField: string;
-    contextFieldValue: string;
-    contextFieldTarget: string;
-    contextFieldTargetName: string;
-    contextFieldTitle: string;
-  };
+  jsonModel?: {id: string};
 }) {
-  prefix = prefix || '';
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
 
@@ -42,15 +30,12 @@ export async function createCustomFields({
     fields.map(async (field, i) => {
       const isJsonRelational = isJsonRelationalField(field);
       const isRelational = isRelationalField(field);
-      const name = camelCase(`${prefix} ${field.name}`);
       const _field = await client.aOSMetaJsonField.findOne({
         where: {
-          name,
+          name: field.name,
           model,
           modelField,
-          ...(jsonModel && {
-            jsonModel: {name: jsonModel},
-          }),
+          ...(jsonModel && {jsonModel: {id: jsonModel.id}}),
         },
         select: {id: true},
       });
@@ -66,35 +51,34 @@ export async function createCustomFields({
         data: {
           model,
           modelField,
-          name,
+          name: field.name,
           title: field.title,
           type: field.type,
           sequence: i++,
           uniqueModel,
           widgetAttrs: JSON.stringify({
-            showTitle: true,
+            ...WidgetAttrsMap[field.type],
+            ...field.widgetAttrs,
           }),
-          ...(isRelational && {
-            targetModel: field.target,
-          }),
+          ...(isRelational && {targetModel: field.target}),
           ...(isJsonRelational && {
-            targetJsonModel: {
-              select: {name: getCustomModelName(field.target)},
-            },
+            targetJsonModel: {select: {name: field.target}},
           }),
-          ...(jsonModel && {
-            jsonModel: {select: {name: jsonModel}},
-          }),
+          ...(jsonModel && {jsonModel: {select: {id: jsonModel.id}}}),
           visibleInGrid: 'visibleInGrid' in field ? field.visibleInGrid : false,
           nameField: 'nameField' in field ? field.nameField : false,
-          ...context,
+          contextField: field.contextField,
+          contextFieldValue: field.contextFieldValue,
+          contextFieldTarget: field.contextFieldTarget,
+          contextFieldTargetName: field.contextFieldTargetName,
+          contextFieldTitle: field.contextFieldTitle,
           createdOn: timeStamp,
           updatedOn: timeStamp,
         },
         select: {id: true},
       });
       console.log(
-        `\x1b[32m✅ Created field:${name} | ${jsonModel || model}\x1b[0m`,
+        `\x1b[32m✅ Created field:${field.name} | ${jsonModel || model}\x1b[0m`,
       );
       return metaField;
     }),
@@ -115,22 +99,21 @@ export async function createMetaJsonModels({
 
   const res = await Promise.all(
     models.map(async model => {
-      const name = getCustomModelName(model.name);
       const nameField = model.fields.find(f => f.nameField)?.name;
       const _model = await client.aOSMetaJsonModel.findOne({
-        where: {name},
-        select: {id: true},
+        where: {name: model.name},
+        select: {id: true, name: true},
       });
 
       if (_model) {
-        console.log(`\x1b[33m⚠️ Skipped model: ${name}\x1b[0m`);
+        console.log(`\x1b[33m⚠️ Skipped model: ${model.name}\x1b[0m`);
         return _model;
       }
-      const formViewName = `custom-model-${name}-form`;
-      const gridViewName = `custom-model-${name}-grid`;
+      const formViewName = `custom-model-${model.name}-form`;
+      const gridViewName = `custom-model-${model.name}-grid`;
       const metaModel = await client.aOSMetaJsonModel.create({
         data: {
-          name,
+          name: model.name,
           title: model.title,
           formWidth: 'large',
           nameField: nameField,
@@ -148,7 +131,7 @@ export async function createMetaJsonModels({
                   onNew="action-json-record-defaults"
                   width="large">
                   <panel title="Overview" itemSpan="12">
-                    <field name="${JSON_MODEL_ATTRS}" x-json-model="${name}" />
+                    <field name="${JSON_MODEL_ATTRS}" x-json-model="${model.name}" />
                   </panel>
                 </form>`,
               createdOn: timeStamp,
@@ -166,7 +149,7 @@ export async function createMetaJsonModels({
                   name="${gridViewName}"
                   title="${model.title}"
                   model="com.axelor.meta.db.MetaJsonRecord">
-                  <field name="${JSON_MODEL_ATTRS}" x-json-model="${name}" />
+                  <field name="${JSON_MODEL_ATTRS}" x-json-model="${model.name}" />
                 </grid>`,
               createdOn: timeStamp,
               updatedOn: timeStamp,
@@ -184,6 +167,7 @@ export async function createMetaJsonModels({
       console.log(
         `\x1b[32m✅ Created views: ${metaModel.formView?.name} | ${metaModel.gridView?.name}\x1b[0m `,
       );
+      return metaModel;
     }),
   );
   return res;
@@ -204,7 +188,7 @@ export async function creteCMSComponents({
   const timeStamp = new Date();
   const components = await Promise.all(
     metas.map(async meta => {
-      const code = camelCase(meta.name);
+      const code = getComponentCode(meta.name);
       const _component = await client.aOSPortalCmsComponent.findOne({
         where: {code},
         select: {id: true, code: true, title: true},

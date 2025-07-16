@@ -13,8 +13,10 @@ type Decimal = 'decimal';
 type Datetime = 'datetime';
 type TDate = 'date';
 type Time = 'time';
+type Panel = 'panel';
+type TEnum = 'enum';
 
-type Type =
+export type Type =
   | OneToMany
   | ManyToMany
   | ManyToOne
@@ -27,7 +29,8 @@ type Type =
   | Decimal
   | Datetime
   | TDate
-  | Time;
+  | Time
+  | Panel;
 
 type ToOne = ManyToOne;
 type ToMany = OneToMany | ManyToMany;
@@ -60,6 +63,7 @@ type PrimitiveMap = {
 type CommonField = {
   name: string;
   title: string;
+  widgetAttrs?: Record<string, string>;
 };
 
 export type PrimitiveField = CommonField & {
@@ -76,14 +80,22 @@ export type JsonRelationalField = CommonField & {
   target: string;
 };
 
-type MetaField = PrimitiveField | RelationalField | JsonRelationalField;
+type ContentField = PrimitiveField | RelationalField | JsonRelationalField;
 
-type ModelField = MetaField & {
+type ModelField = ContentField & {
   nameField?: boolean;
   visibleInGrid?: boolean;
 };
 
-export type Field = MetaField | ModelField;
+export type Field = ContentField | ModelField;
+
+export type CustomField = Field & {
+  contextField?: string;
+  contextFieldValue?: string;
+  contextFieldTarget?: string;
+  contextFieldTargetName?: string;
+  contextFieldTitle?: string;
+};
 
 export type Model = {
   name: string;
@@ -95,7 +107,7 @@ export type Meta = {
   title: string;
   name: string;
   type: Template;
-  fields: MetaField[];
+  fields: ContentField[];
   models?: Model[];
 };
 

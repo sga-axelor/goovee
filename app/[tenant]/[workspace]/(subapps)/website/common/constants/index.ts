@@ -1,3 +1,5 @@
+import {Type} from '../types/templates';
+
 export const NAVIGATION_POSITION = {
   BLOCK: 1,
   TOP_MENU: 2,
@@ -30,3 +32,20 @@ export const JsonRelationalFieldTypes = [
   FieldType.CustomManyToMany,
   FieldType.CustomManyToOne,
 ];
+
+export const WidgetAttrsMap: Record<Type, Record<string, string>> = {
+  'one-to-many': {showTitle: 'true'},
+  'many-to-many': {showTitle: 'true'},
+  'many-to-one': {showTitle: 'true'},
+  'json-many-to-many': {showTitle: 'true'},
+  'json-many-to-one': {showTitle: 'true'},
+  'json-one-to-many': {showTitle: 'true'},
+  boolean: {showTitle: 'true'},
+  string: {showTitle: 'true'},
+  integer: {showTitle: 'true'},
+  decimal: {showTitle: 'true'},
+  datetime: {showTitle: 'true'},
+  date: {showTitle: 'true'},
+  time: {showTitle: 'true'},
+  panel: {showTitle: 'false'},
+};
