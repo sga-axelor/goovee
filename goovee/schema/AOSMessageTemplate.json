@@ -1,7 +1,6 @@
 {
   "name": "AOSMessageTemplate",
   "table": "message_template",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

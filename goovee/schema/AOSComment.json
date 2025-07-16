@@ -1,7 +1,6 @@
 {
   "name": "AOSComment",
   "table": "base_comment",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {"name": "id", "type": "String"},

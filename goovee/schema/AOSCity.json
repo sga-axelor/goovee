@@ -1,7 +1,6 @@
 {
   "name": "AOSCity",
   "table": "base_city",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

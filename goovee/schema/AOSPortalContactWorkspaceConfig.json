@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalContactWorkspaceConfig",
   "table": "portal_portal_contact_workspace_config",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

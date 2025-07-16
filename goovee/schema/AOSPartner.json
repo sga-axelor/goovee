@@ -1,7 +1,6 @@
 {
   "name": "AOSPartner",
   "table": "base_partner",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

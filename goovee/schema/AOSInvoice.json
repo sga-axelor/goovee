@@ -1,7 +1,6 @@
 {
   "name": "AOSInvoice",
   "table": "account_invoice",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

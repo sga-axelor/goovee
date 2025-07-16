@@ -1,7 +1,6 @@
 {
   "name": "AOSLocalization",
   "table": "base_localization",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

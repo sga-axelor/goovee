@@ -1,7 +1,6 @@
 {
   "name": "AOSPartnerPortalWorkspace",
   "table": "portal_partner_portal_workspace",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

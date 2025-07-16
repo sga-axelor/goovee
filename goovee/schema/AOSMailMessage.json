@@ -1,7 +1,6 @@
 {
   "name": "AOSMailMessage",
   "table": "mail_message",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

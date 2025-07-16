@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalDirectoryCategory",
   "table": "portal_directory_category",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

@@ -1,7 +1,6 @@
 {
   "name": "AOSMetaJsonField",
   "table": "meta_json_field",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

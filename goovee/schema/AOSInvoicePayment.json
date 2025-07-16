@@ -1,7 +1,6 @@
 {
   "name": "AOSInvoicePayment",
   "table": "account_invoice_payment",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

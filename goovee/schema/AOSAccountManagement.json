@@ -1,7 +1,6 @@
 {
   "name": "AOSAccountManagement",
   "table": "account_account_management",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

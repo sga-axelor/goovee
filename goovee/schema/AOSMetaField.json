@@ -1,7 +1,6 @@
 {
   "name": "AOSMetaField",
   "table": "meta_field",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

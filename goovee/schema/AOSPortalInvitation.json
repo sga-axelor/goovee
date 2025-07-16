@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalInvitation",
   "table": "portal_invitation",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

@@ -1,6 +1,7 @@
 {
   "name": "AOSMetaTranslation",
   "table": "meta_translation",
+  "auditable": false,
   "synchronize": false,
   "fields": [
     {

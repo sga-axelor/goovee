@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalForumNotificationConfig",
   "table": "portal_portal_forum_notification_config",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

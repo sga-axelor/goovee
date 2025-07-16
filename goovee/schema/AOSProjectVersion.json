@@ -1,7 +1,6 @@
 {
   "name": "AOSProjectVersion",
   "table": "project_project_version",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

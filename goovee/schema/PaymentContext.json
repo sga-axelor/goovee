@@ -1,7 +1,6 @@
 {
   "name": "PaymentContext",
   "table": "portal_payment_context",
-  "extends": "Model",
   "synchronize": true,
   "fields": [
     {

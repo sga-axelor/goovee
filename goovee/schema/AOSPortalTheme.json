@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalTheme",
   "table": "portal_portal_theme",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

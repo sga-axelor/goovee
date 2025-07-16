@@ -1,7 +1,6 @@
 {
   "name": "AOSStudioResource",
   "table": "studio_resource",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

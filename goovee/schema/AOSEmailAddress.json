@@ -1,7 +1,6 @@
 {
   "name": "AOSEmailAddress",
   "table": "message_email_address",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

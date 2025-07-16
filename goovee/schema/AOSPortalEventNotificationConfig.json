@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalEventNotificationConfig",
   "table": "portal_portal_event_notification_config",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

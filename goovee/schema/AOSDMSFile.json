@@ -1,7 +1,6 @@
 {
   "name": "AOSDMSFile",
   "table": "dms_file",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

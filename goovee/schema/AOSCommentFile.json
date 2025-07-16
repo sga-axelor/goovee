@@ -1,7 +1,6 @@
 {
   "name": "AOSCommentFile",
   "table": "base_comment_file",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

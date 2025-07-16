@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalEventCategory",
   "table": "portal_portal_event_category",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

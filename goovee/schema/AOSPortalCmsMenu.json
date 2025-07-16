@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalCmsMenu",
   "table": "portal_portal_cms_menu",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

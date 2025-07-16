@@ -1,7 +1,6 @@
 {
   "name": "AOSProductCategory",
   "table": "base_product_category",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

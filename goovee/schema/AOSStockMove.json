@@ -1,7 +1,6 @@
 {
   "name": "AOSStockMove",
   "table": "stock_stock_move",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {"name": "saleOrderSet", "type": "ManyToMany", "target": "AOSOrder"},

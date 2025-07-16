@@ -1,7 +1,6 @@
 {
   "name": "AOSCountry",
   "table": "base_country",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

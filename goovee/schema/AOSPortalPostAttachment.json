@@ -1,7 +1,7 @@
 {
   "name": "AOSPortalPostAttachment",
   "table": "portal_post_attachment",
-  "extends": "Model",
+
   "synchronize": false,
   "fields": [
     {"name": "forumPost", "type": "ManyToOne", "target": "AOSPortalForumPost"},

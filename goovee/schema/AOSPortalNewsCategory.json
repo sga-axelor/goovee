@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalNewsCategory",
   "table": "portal_portal_news_category",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

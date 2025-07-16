@@ -1,7 +1,6 @@
 {
   "name": "AOSMetaFile",
   "table": "meta_file",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

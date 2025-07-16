@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalAppConfig",
   "table": "portal_portal_app_config",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

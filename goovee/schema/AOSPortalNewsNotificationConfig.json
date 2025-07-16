@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalNewsNotificationConfig",
   "table": "portal_portal_news_notification_config",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

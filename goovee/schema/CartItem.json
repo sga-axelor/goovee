@@ -1,7 +1,6 @@
 {
   "name": "CartItem",
   "table": "customer_portal_cart_item",
-  "extends": "Model",
   "synchronize": true,
   "fields": [
     {

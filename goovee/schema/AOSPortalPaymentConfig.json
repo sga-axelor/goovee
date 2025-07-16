@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalPaymentConfig",
   "table": "portal_portal_payment_config",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

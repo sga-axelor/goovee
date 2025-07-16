@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalCmsComponent",
   "table": "portal_portal_cms_component",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

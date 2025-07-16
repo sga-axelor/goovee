@@ -1,7 +1,6 @@
 {
   "name": "AOSStockLocationLine",
   "table": "stock_stock_location_line",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

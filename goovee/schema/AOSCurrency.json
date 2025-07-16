@@ -1,7 +1,6 @@
 {
   "name": "AOSCurrency",
   "table": "base_currency",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

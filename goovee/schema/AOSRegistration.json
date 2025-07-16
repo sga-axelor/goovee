@@ -1,7 +1,6 @@
 {
   "name": "AOSRegistration",
   "table": "portal_registration",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

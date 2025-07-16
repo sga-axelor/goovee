@@ -1,7 +1,6 @@
 {
   "name": "AOSProjectPriority",
   "table": "project_project_priority",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

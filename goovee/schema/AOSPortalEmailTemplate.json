@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalEmailTemplate",
   "table": "portal_email_template",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

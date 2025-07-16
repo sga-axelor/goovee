@@ -1,7 +1,6 @@
 {
   "name": "AOSAppProject",
   "table": "studio_app_project",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

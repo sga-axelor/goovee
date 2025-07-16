@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalUserPreference",
   "table": "portal_portal_user_preference",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

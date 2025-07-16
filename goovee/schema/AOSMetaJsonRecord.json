@@ -1,7 +1,6 @@
 {
   "name": "AOSMetaJsonRecord",
   "table": "meta_json_record",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

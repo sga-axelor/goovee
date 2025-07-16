@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalParticipant",
   "table": "portal_portal_participant",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

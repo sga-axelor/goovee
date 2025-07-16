@@ -1,7 +1,6 @@
 {
   "name": "AOSProject",
   "table": "project_project",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

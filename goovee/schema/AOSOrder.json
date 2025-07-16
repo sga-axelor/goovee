@@ -1,7 +1,6 @@
 {
   "name": "AOSOrder",
   "table": "sale_sale_order",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

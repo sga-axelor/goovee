@@ -1,7 +1,6 @@
 {
   "name": "AOSPartnerCategory",
   "table": "base_partner_category",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

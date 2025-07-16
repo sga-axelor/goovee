@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalResourceNotificationConfig",
   "table": "portal_portal_resource_notification_config",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

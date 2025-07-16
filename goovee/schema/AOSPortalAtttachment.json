@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalAttachment",
   "table": "portal_attachment",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {"name": "portalNews", "type": "ManyToOne", "target": "AOSPortalNews"},

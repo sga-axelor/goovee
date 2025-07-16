@@ -1,7 +1,6 @@
 {
   "name": "AOSPaymentCondition",
   "table": "account_payment_condition",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

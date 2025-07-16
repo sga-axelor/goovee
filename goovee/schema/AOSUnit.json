@@ -1,7 +1,6 @@
 {
   "name": "AOSUnit",
   "table": "base_unit",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

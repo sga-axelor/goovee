@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalEvent",
   "table": "portal_portal_event",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

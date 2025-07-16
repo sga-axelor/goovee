@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalDirectoryEntry",
   "table": "portal_directory_entry",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

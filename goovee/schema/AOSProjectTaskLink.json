@@ -1,7 +1,6 @@
 {
   "name": "AOSProjectTaskLink",
   "table": "project_project_task_link",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

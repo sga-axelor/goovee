@@ -1,7 +1,6 @@
 {
   "name": "AOSProductPicture",
   "table": "base_product_picture",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

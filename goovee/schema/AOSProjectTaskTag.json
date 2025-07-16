@@ -1,7 +1,6 @@
 {
   "name": "AOSProjectTaskTag",
   "table": "project_project_task_tag",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

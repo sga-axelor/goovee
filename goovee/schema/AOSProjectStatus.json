@@ -1,7 +1,6 @@
 {
   "name": "AOSProjectStatus",
   "table": "project_project_status",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

@@ -1,7 +1,6 @@
 {
   "name": "AOSUser",
   "table": "auth_user",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

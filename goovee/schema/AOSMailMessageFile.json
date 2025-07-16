@@ -1,7 +1,6 @@
 {
   "name": "AOSMailMessageFile",
   "table": "base_mail_message_file",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

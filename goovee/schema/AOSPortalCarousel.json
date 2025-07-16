@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalCarousel",
   "table": "portal_carousel",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

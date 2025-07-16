@@ -1,7 +1,6 @@
 {
   "name": "AOSMetaSelectItem",
   "table": "meta_select_item",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

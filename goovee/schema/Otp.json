@@ -1,7 +1,6 @@
 {
   "name": "Otp",
   "table": "portal_otp",
-  "extends": "Model",
   "synchronize": true,
   "fields": [
     {

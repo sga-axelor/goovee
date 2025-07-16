@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalCmsSiteLanguage",
   "table": "portal_portal_cms_site_language",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

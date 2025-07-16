@@ -1,7 +1,6 @@
 {
   "name": "AOSCompany",
   "table": "base_company",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

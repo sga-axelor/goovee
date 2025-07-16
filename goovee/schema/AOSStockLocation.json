@@ -1,7 +1,6 @@
 {
   "name": "AOSStockLocation",
   "table": "stock_stock_location",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

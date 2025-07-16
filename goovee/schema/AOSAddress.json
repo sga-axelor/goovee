@@ -1,7 +1,6 @@
 {
   "name": "AOSAddress",
   "table": "base_address",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

@@ -1,7 +1,6 @@
 {
   "name": "AOSPortalForumPost",
   "table": "portal_forum_post",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

@@ -1,7 +1,6 @@
 {
   "name": "AOSTax",
   "table": "account_tax",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

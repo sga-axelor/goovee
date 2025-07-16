@@ -1,7 +1,6 @@
 {
   "name": "AOSSaleOrderLine",
   "table": "sale_sale_order_line",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {

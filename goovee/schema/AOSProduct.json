@@ -1,7 +1,6 @@
 {
   "name": "AOSProduct",
   "table": "base_product",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {
