@@ -229,14 +229,16 @@ export async function findWorkspaceMembers({
 
 export async function findContactWorkspaceConfig({
   url,
+  partnerId,
   contactId,
   tenantId,
 }: {
   url?: string;
+  partnerId: Partner['id'];
   contactId: ID;
   tenantId: Tenant['id'];
 }) {
-  if (!(url && contactId && tenantId)) return null;
+  if (!(url && contactId && tenantId && partnerId)) return null;
 
   const client = await manager.getClient(tenantId);
 
@@ -249,6 +251,9 @@ export async function findContactWorkspaceConfig({
         where: {
           portalWorkspace: {
             url,
+          },
+          partnerSet: {
+            id: partnerId,
           },
         },
         select: {
@@ -640,6 +645,9 @@ export async function findContactWorkspaces({
                   },
                 }
               : {}),
+            partnerSet: {
+              id: partnerId,
+            },
           },
           select: {
             portalWorkspace: {
@@ -756,6 +764,7 @@ export async function findWorkspaceApps({
   const contactWorkpaceConfig = await findContactWorkspaceConfig({
     url: workspace.url,
     contactId: user.id,
+    partnerId: user.mainPartnerId!,
     tenantId,
   });
 

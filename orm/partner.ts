@@ -141,6 +141,7 @@ export async function isAdminContact({
     tenantId,
     url: workspaceURL,
     contactId: user.id,
+    partnerId: user.mainPartnerId!,
   });
 
   if (!contactWorkspaceConfig?.isAdmin) {
