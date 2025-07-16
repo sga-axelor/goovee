@@ -7,6 +7,8 @@ import {promisify} from 'util';
 import type {
   AOSMetaJsonField,
   AOSMetaJsonModel,
+  AOSMetaSelect,
+  AOSMetaSelectItem,
   AOSMetaView,
   AOSPortalCmsComponent,
   AOSPortalCmsContent,
@@ -85,6 +87,42 @@ export async function createCustomFields({
         select: {id: true, name: true},
       });
 
+      let selectionText: string | undefined;
+      let selection: string | undefined;
+      let metaSelectData: CreateArgs<AOSMetaSelect> | undefined;
+      let metaSelectItemsData: CreateArgs<AOSMetaSelectItem>[] | undefined;
+
+      if ('selection' in field && field.selection?.length) {
+        const name = `goovee-template-select-${field.name}-${jsonModel?.name || model}`;
+        metaSelectData = {
+          isCustom: true,
+          priority: 20,
+          name: name,
+          xmlId: name,
+          updatedOn: timeStamp,
+        };
+
+        metaSelectItemsData = field.selection.map((item, i) => ({
+          title: item.title,
+          value: String(item.value),
+          color: item.color,
+          icon: item.icon,
+          order: i + 1,
+          updatedOn: timeStamp,
+        }));
+
+        selection = name;
+        selectionText = field.selection
+          .map(
+            item =>
+              `${item.value}:${item.title}` +
+              '\n' +
+              (item.color ? `color:${item.color}` + '\n' : '') +
+              (item.icon ? `icon:${item.icon}` + '\n' : ''),
+          )
+          .join('\n');
+      }
+
       const fieldData: CreateArgs<AOSMetaJsonField> = {
         model,
         modelField,
@@ -92,6 +130,9 @@ export async function createCustomFields({
         title: field.title,
         type: field.type,
         required: field.required,
+        isSelectionField: 'selection' in field && !!field.selection?.length,
+        selectionText: selectionText,
+        selection: selection,
         sequence: i,
         uniqueModel,
         widgetAttrs: JSON.stringify({
@@ -129,6 +170,63 @@ export async function createCustomFields({
         console.log(
           `\x1b[33m⚠️ Updated field:${field.name} | ${jsonModel?.name || model}\x1b[0m `,
         );
+        if (metaSelectData && metaSelectItemsData) {
+          const _metaSelect = await client.aOSMetaSelect.findOne({
+            where: {name: metaSelectData.name},
+            select: {
+              id: true,
+              items: {
+                select: {id: true, order: true},
+                orderBy: {order: 'ASC'},
+              } as {select: {id: true; order: true}},
+            },
+          });
+
+          if (_metaSelect) {
+            const existingItemsLength = _metaSelect.items?.length || 0;
+            const currentItemsLength = metaSelectItemsData.length;
+            await client.aOSMetaSelect.update({
+              data: {
+                id: _metaSelect.id,
+                version: _metaSelect.version,
+                items: {
+                  update: existingItemsLength
+                    ? _metaSelect.items?.map((item, i) => ({
+                        id: item.id,
+                        version: item.version,
+                        ...metaSelectItemsData[i],
+                      }))
+                    : undefined,
+                  create:
+                    existingItemsLength < currentItemsLength
+                      ? metaSelectItemsData
+                          .slice(existingItemsLength)
+                          .map(item => ({
+                            ...item,
+                            createdOn: timeStamp,
+                          }))
+                      : undefined,
+                  remove:
+                    existingItemsLength > currentItemsLength
+                      ? _metaSelect.items
+                          ?.slice(currentItemsLength)
+                          .map(item => item.id)
+                      : undefined,
+                },
+              },
+              select: {id: true, name: true},
+            });
+            console.log(
+              `\x1b[33m⚠️ Updated select: ${metaSelectData.name}\x1b[0m `,
+            );
+          } else {
+            await createMetaSelect({
+              tenantId,
+              metaSelectData,
+              metaSelectItemsData,
+            });
+          }
+        }
         return metaField;
       }
 
@@ -136,14 +234,51 @@ export async function createCustomFields({
         data: {...fieldData, createdOn: timeStamp},
         select: {id: true, name: true},
       });
+
       console.log(
         `\x1b[32m✅ Created field: ${field.name} | ${jsonModel?.name || model}\x1b[0m`,
       );
+
+      if (metaSelectData && metaSelectItemsData) {
+        await createMetaSelect({
+          tenantId,
+          metaSelectData,
+          metaSelectItemsData,
+        });
+      }
       return metaField;
     }),
   );
 
   return res;
+}
+
+async function createMetaSelect({
+  tenantId,
+  metaSelectData,
+  metaSelectItemsData,
+}: {
+  tenantId: Tenant['id'];
+  metaSelectData: CreateArgs<AOSMetaSelect>;
+  metaSelectItemsData: CreateArgs<AOSMetaSelectItem>[];
+}) {
+  const client = await manager.getClient(tenantId);
+
+  const metaSelect = await client.aOSMetaSelect.create({
+    data: {
+      ...metaSelectData,
+      createdOn: metaSelectData.updatedOn,
+      items: {
+        create: metaSelectItemsData.map(item => ({
+          ...item,
+          createdOn: metaSelectData.updatedOn,
+        })),
+      },
+    },
+    select: {id: true, name: true},
+  });
+  console.log(`\x1b[32m✅ Created select: ${metaSelect.name}\x1b[0m`);
+  return metaSelect;
 }
 
 export async function createMetaJsonModel({

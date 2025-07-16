@@ -1,4 +1,5 @@
 import {CamelCase, ExpandRecursively} from '@/types/util';
+import fontAwesome from '../constants/fa-icons';
 
 // === Common Base ===
 type CommonField = {
@@ -6,6 +7,31 @@ type CommonField = {
   required?: boolean;
   widgetAttrs?: Record<string, string>;
 };
+
+type Color =
+  | 'red'
+  | 'pink'
+  | 'purple'
+  | 'deeppurple'
+  | 'indigo'
+  | 'blue'
+  | 'lightblue'
+  | 'cyan'
+  | 'teal'
+  | 'green'
+  | 'lightgreen'
+  | 'lime'
+  | 'yellow'
+  | 'amber'
+  | 'orange'
+  | 'deeporange'
+  | 'brown'
+  | 'grey'
+  | 'bluegrey'
+  | 'black'
+  | 'white';
+
+type Icon = (typeof fontAwesome)[number];
 
 // === Primitive Fields ===
 type BooleanField = CommonField & {
@@ -27,6 +53,12 @@ type BooleanField = CommonField & {
 type IntegerField = CommonField & {
   type: 'integer';
   title: string;
+  selection?: {
+    title: string;
+    value: number;
+    color?: Color;
+    icon?: Icon;
+  }[];
   widget?:
     | 'RelativeTime'
     | 'Duration'
@@ -42,6 +74,12 @@ type IntegerField = CommonField & {
 type StringField = CommonField & {
   type: 'string';
   title: string;
+  selection?: {
+    title: string;
+    value: string;
+    color?: Color;
+    icon?: Icon;
+  }[];
   widget?:
     | 'Email'
     | 'Url'
@@ -273,6 +311,7 @@ type BasicRecord = {
   id: string;
   version: number;
 };
+
 type RelationalModelAttrs<
   ModelName extends string,
   TMeta extends Meta,
@@ -304,6 +343,7 @@ type JSONRecord = {
   name?: string | null;
   jsonModel?: string;
 };
+type SelectionValue<T> = T extends readonly {value: infer V}[] ? V : never;
 
 type FieldType<F, TMeta extends Meta> = F extends {
   type: JsonToMany;
@@ -316,11 +356,15 @@ type FieldType<F, TMeta extends Meta> = F extends {
       ? RelationalModelAttrs<F['target'], TMeta>[]
       : F extends {type: RelToOne; target: string}
         ? RelationalModelAttrs<F['target'], TMeta>
-        : F extends {type: keyof PrimitiveMap}
-          ? PrimitiveMap[F['type']]
-          : F extends {type: DecorativeFieldType}
-            ? never
-            : unknown;
+        : F extends {type: 'integer'; selection: readonly any[]}
+          ? SelectionValue<F['selection']>
+          : F extends {type: 'string'; selection: readonly any[]}
+            ? SelectionValue<F['selection']>
+            : F extends {type: keyof PrimitiveMap}
+              ? PrimitiveMap[F['type']]
+              : F extends {type: DecorativeFieldType}
+                ? never
+                : unknown;
 
 type FieldKey<
   F extends {name: string},

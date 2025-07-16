@@ -8,6 +8,18 @@
       "name": "name"
     },
     {
+      "type": "Boolean",
+      "name": "isCustom"
+    },
+    {
+      "type": "String",
+      "name": "xmlId"
+    },
+    {
+      "type": "Int",
+      "name": "priority"
+    },
+    {
       "type": "OneToMany",
       "name": "items",
       "target": "AOSMetaSelectItem",

@@ -1,5 +1,7 @@
 import {Data, Meta} from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
+import {socialMediaUnicons} from '../../constants/unicons';
+import {startCase} from 'lodash-es';
 
 export const footer1Meta = {
   title: 'Footer 1',
@@ -94,9 +96,13 @@ export const footer1Meta = {
           visibleInGrid: true,
         },
         {
-          name: 'iconClassName',
-          title: 'Icon ClassName',
+          name: 'icon',
+          title: 'Icon',
           type: 'string',
+          selection: socialMediaUnicons.map(icon => ({
+            title: startCase(icon),
+            value: icon,
+          })),
           visibleInGrid: true,
           required: true,
         },
@@ -170,7 +176,7 @@ export const footer1Demo: Footer1Data = {
       version: 1,
       attrs: {
         name: 'Twitter',
-        iconClassName: 'uil uil-twitter',
+        icon: 'twitter',
         url: 'https://twitter.com/uilibofficial',
       },
     },
@@ -179,7 +185,7 @@ export const footer1Demo: Footer1Data = {
       version: 1,
       attrs: {
         name: 'Facebook',
-        iconClassName: 'uil uil-facebook-f',
+        icon: 'facebook-f',
         url: 'https://facebook.com/uiLibOfficial/',
       },
     },
@@ -188,7 +194,7 @@ export const footer1Demo: Footer1Data = {
       version: 1,
       attrs: {
         name: 'Dribbble',
-        iconClassName: 'uil uil-dribbble',
+        icon: 'dribbble',
         url: '#',
       },
     },
@@ -197,7 +203,7 @@ export const footer1Demo: Footer1Data = {
       version: 1,
       attrs: {
         name: 'Instagram',
-        iconClassName: 'uil uil-instagram',
+        icon: 'instagram',
         url: 'https://www.instagram.com/uilibofficial/',
       },
     },
@@ -206,7 +212,7 @@ export const footer1Demo: Footer1Data = {
       version: 1,
       attrs: {
         name: 'Youtube',
-        iconClassName: 'uil uil-youtube',
+        icon: 'youtube',
         url: 'https://www.youtube.com/channel/UCsIyD-TSO1wQFz-n2Y4i3Rg',
       },
     },

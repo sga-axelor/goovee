@@ -148,6 +148,14 @@
     {
       "type": "Boolean",
       "name": "visibleInGrid"
+    },
+    {
+      "type": "Boolean",
+      "name": "isSelectionField"
+    },
+    {
+      "type": "String",
+      "name": "selectionText"
     }
   ]
 }

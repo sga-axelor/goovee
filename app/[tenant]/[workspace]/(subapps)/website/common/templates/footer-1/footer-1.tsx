@@ -33,7 +33,7 @@ export function Footer1(props: TemplateProps<Footer1Data>) {
 
   const socialLinks = footer1SocialLinks?.map(socialLink => ({
     id: socialLink.id,
-    icon: socialLink.attrs.iconClassName || '',
+    icon: `uil uil-${socialLink.attrs.icon || ''}`,
     url: socialLink.attrs.url || '#',
   }));
 
