@@ -2,7 +2,7 @@ import {Template, Data, Meta} from '@/subapps/website/common/types/templates';
 
 export const pageProgress1Meta = {
   title: 'Page Progress 1',
-  name: 'pageProgress1',
+  code: 'pageProgress1',
   type: Template.block,
   fields: [],
 } as const satisfies Meta;

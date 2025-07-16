@@ -76,7 +76,7 @@ function validateMeta(metas: Meta[]) {
       if (!model.fields.length) {
         isValid = false;
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.name} should have at least 1 field.\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${meta.code} should have at least 1 field.\x1b[0m`,
         );
       }
       for (const field of model.fields) {
@@ -91,13 +91,13 @@ function validateMeta(metas: Meta[]) {
       }
       if (nameFieldCount > 1) {
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.name} has more than 1 nameField .\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${meta.code} has more than 1 nameField .\x1b[0m`,
         );
       }
       if (visibleInGridCount === 0) {
         isValid = false;
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.name} should have at least 1 visibleInGrid field .\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${meta.code} should have at least 1 visibleInGrid field .\x1b[0m`,
         );
       }
       jsonModels.delete(model.name);
@@ -105,7 +105,7 @@ function validateMeta(metas: Meta[]) {
     if (jsonModels.size) {
       isValid = false;
       console.log(
-        `\x1b[31m✖ model:${[...jsonModels].join(', ')} in ${meta.name} does not have a model declaration .\x1b[0m`,
+        `\x1b[31m✖ model:${[...jsonModels].join(', ')} in ${meta.code} does not have a model declaration .\x1b[0m`,
       );
     }
   });
@@ -119,8 +119,8 @@ function getFormattedFieldsAndModels(
   const fields = [];
   const models = [];
   for (const meta of metas) {
-    if (!meta.name) continue;
-    const code = getComponentCode(meta.name);
+    if (!meta.code) continue;
+    const code = getComponentCode(meta.code);
     const component = components.find(c => c.code === code);
     if (meta.fields.length) {
       fields.push(

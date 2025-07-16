@@ -105,7 +105,7 @@ export type Model = {
 
 export type Meta = {
   title: string;
-  name: string;
+  code: string;
   type: Template;
   fields: ContentField[];
   models?: Model[];
@@ -138,8 +138,8 @@ type ModelAttrs<
 
 type FieldKey<
   F extends {name: string},
-  TMeta extends {name: string},
-> = `${CamelCase<TMeta['name']>}${Capitalize<CamelCase<F['name']>>}`;
+  TMeta extends {code: string},
+> = `${CamelCase<TMeta['code']>}${Capitalize<CamelCase<F['name']>>}`;
 
 export type Data<TMeta extends Meta> = {
   [F in TMeta['fields'][number] as FieldKey<F, TMeta>]: FieldType<F, TMeta>;

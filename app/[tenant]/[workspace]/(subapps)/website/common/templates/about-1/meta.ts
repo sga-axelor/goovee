@@ -2,7 +2,7 @@ import {Data, Meta} from '../../types/templates';
 
 export const about1Meta = {
   title: 'About 1',
-  name: 'about1',
+  code: 'about1',
   type: 1,
   fields: [
     {

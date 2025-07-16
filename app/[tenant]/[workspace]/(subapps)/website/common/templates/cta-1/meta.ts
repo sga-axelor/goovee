@@ -2,7 +2,7 @@ import {Data, Meta} from '@/subapps/website/common/types/templates';
 
 export const cta1Meta = {
   title: 'CTA 1',
-  name: 'cta1',
+  code: 'cta1',
   type: 1,
   fields: [
     {

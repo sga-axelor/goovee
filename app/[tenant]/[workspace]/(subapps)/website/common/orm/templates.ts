@@ -1,7 +1,7 @@
 import {manager, type Tenant} from '@/lib/core/tenant';
 import {xml} from '@/utils/template-string';
 import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
-import type {CustomField, Model, Template} from '../types/templates';
+import type {CustomField, Meta, Model, Template} from '../types/templates';
 import {
   getComponentCode,
   isJsonRelationalField,
@@ -177,18 +177,14 @@ export async function creteCMSComponents({
   metas,
   tenantId,
 }: {
-  metas: {
-    name: string;
-    title: string;
-    type: Template;
-  }[];
+  metas: Meta[];
   tenantId: Tenant['id'];
 }) {
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
   const components = await Promise.all(
     metas.map(async meta => {
-      const code = getComponentCode(meta.name);
+      const code = getComponentCode(meta.code);
       const _component = await client.aOSPortalCmsComponent.findOne({
         where: {code},
         select: {id: true, code: true, title: true},

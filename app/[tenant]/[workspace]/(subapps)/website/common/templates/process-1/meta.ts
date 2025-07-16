@@ -2,7 +2,7 @@ import {Template, Data, Meta} from '@/subapps/website/common/types/templates';
 
 export const process1Meta = {
   title: 'Process 1',
-  name: 'process1',
+  code: 'process1',
   type: Template.block,
   fields: [
     {
