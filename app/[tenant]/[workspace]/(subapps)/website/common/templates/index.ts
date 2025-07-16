@@ -21,22 +21,22 @@ import {SidebarMenu1, sidebarMenu1Meta} from './sidebar-menu-1';
 import {Footer1, footer1Meta} from './footer-1';
 
 export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
-  [about1Meta.name]: About1,
-  [hero1Meta.name]: Hero1,
-  [pageProgress1Meta.name]: PageProgress1,
-  [services1Meta.name]: Services1,
-  [cta1Meta.name]: CTA1,
-  [process1Meta.name]: Process1,
-  [team1Meta.name]: Team1,
-  [services2Meta.name]: Services2,
-  [testimonial1Meta.name]: Testimonial1,
-  [pricing1Meta.name]: Pricing1,
-  [contact4Meta.name]: Contact4,
-  [clients1Meta.name]: Clients1,
-  [navbar1Meta.name]: Navbar1,
-  [footer1Meta.name]: Footer1,
-  [wiki1Meta.name]: Wiki1,
-  [sidebarMenu1Meta.name]: SidebarMenu1,
+  [about1Meta.code]: About1,
+  [hero1Meta.code]: Hero1,
+  [pageProgress1Meta.code]: PageProgress1,
+  [services1Meta.code]: Services1,
+  [cta1Meta.code]: CTA1,
+  [process1Meta.code]: Process1,
+  [team1Meta.code]: Team1,
+  [services2Meta.code]: Services2,
+  [testimonial1Meta.code]: Testimonial1,
+  [pricing1Meta.code]: Pricing1,
+  [contact4Meta.code]: Contact4,
+  [clients1Meta.code]: Clients1,
+  [navbar1Meta.code]: Navbar1,
+  [footer1Meta.code]: Footer1,
+  [wiki1Meta.code]: Wiki1,
+  [sidebarMenu1Meta.code]: SidebarMenu1,
 };
 
 export const metas: Meta[] = [
