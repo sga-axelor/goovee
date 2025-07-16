@@ -6,7 +6,6 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
 import {Button} from '@/ui/components/button';
 import {Input} from '@/ui/components/input';

@@ -11,7 +11,6 @@ import {TENANT_HEADER} from '@/middleware';
 import {
   findContactByEmail,
   findGooveeUserByEmail,
-  findPartnerByEmail,
   findPartnerById,
   isAdminContact,
   isPartner,
