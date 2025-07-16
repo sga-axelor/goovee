@@ -37,7 +37,7 @@ export async function createCustomFields({
           modelField,
           ...(jsonModel && {jsonModel: {id: jsonModel.id}}),
         },
-        select: {id: true},
+        select: {id: true, name: true},
       });
 
       if (_field) {
@@ -75,7 +75,7 @@ export async function createCustomFields({
           createdOn: timeStamp,
           updatedOn: timeStamp,
         },
-        select: {id: true},
+        select: {id: true, name: true},
       });
       console.log(
         `\x1b[32m✅ Created field:${field.name} | ${jsonModel || model}\x1b[0m`,
