@@ -61,6 +61,7 @@ export async function findProductsFromWS({
       .then(({data}) => data);
 
     if (res?.data?.status === -1) {
+      console.log('Error:', res);
       return null;
     }
 
