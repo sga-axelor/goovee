@@ -29,9 +29,7 @@ import type {
   Model,
 } from '../types/templates';
 import {
-  formatComponentCode,
   formatCustomFieldName,
-  formatCustomModelName,
   isArrayField,
   isJsonRelationalField,
   isRelationalField,
@@ -444,13 +442,12 @@ export async function createCMSComponent({
 }) {
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
-  const code = formatComponentCode(schema.code);
   const _component = await client.aOSPortalCmsComponent.findOne({
-    where: {code},
+    where: {code: schema.code},
     select: {id: true, code: true, title: true},
   });
   const componentData: CreateArgs<AOSPortalCmsComponent> = {
-    code,
+    code: schema.code,
     title: schema.title,
     typeSelect: schema.type,
     updatedOn: timeStamp,
@@ -599,16 +596,22 @@ export async function createCMSContent(props: {
   fileCache: Cache<Promise<{id: string}>>;
 }) {
   const {tenantId, demos, schema, fileCache} = props;
-  const code = formatComponentCode(schema.code);
 
   const client = await manager.getClient(tenantId);
   return await Promise.all(
     demos.map(async demo => {
       const timeStamp = new Date();
-      const title = getContentTitle({code, language: demo.language});
+      const title = getContentTitle({
+        code: schema.code,
+        language: demo.language,
+      });
 
       const _content = await client.aOSPortalCmsContent.findOne({
-        where: {title, component: {code}, language: {code: demo.language}},
+        where: {
+          title,
+          component: {code: schema.code},
+          language: {code: demo.language},
+        },
         select: {id: true, title: true},
       });
 
@@ -622,14 +625,13 @@ export async function createCMSContent(props: {
         tenantId,
         schema,
         data: demo.data,
-        prefix: code,
         fields: schema.fields,
         fileCache,
       });
 
       const contentData: CreateArgs<AOSPortalCmsContent> = {
         language: {select: {code: demo.language}},
-        component: {select: {code}},
+        component: {select: {code: schema.code}},
         attrs: attrs as any,
         title,
         updatedOn: timeStamp,
@@ -780,27 +782,23 @@ async function createAttrs(props: {
   schema: TemplateSchema;
   fields: Field[];
   data: any;
-  prefix?: string;
   fileCache: Cache<Promise<{id: string}>>;
 }) {
   const attrs: Record<string, any> = {};
-  const {tenantId, fields, schema, data, prefix, fileCache} = props;
+  const {tenantId, fields, schema, data, fileCache} = props;
   await Promise.all(
     Object.entries(data || {}).map(async ([key, value]: [string, any]) => {
-      const field = fields.find(
-        f => formatCustomFieldName(f.name, prefix) === key,
-      );
+      const field = fields.find(f => f.name === key);
       if (!field) return;
       if (isJsonRelationalField(field)) {
-        const jsonModel = formatCustomModelName(field.target);
         const modelFields = schema.models!.find(
-          m => formatCustomModelName(m.name) === jsonModel,
+          m => m.name === field.target,
         )!.fields;
         if (isArrayField(field)) {
           const metaJsonRecords = await Promise.all(
             value.map(async (record: any) => {
               return createMetaJsonRecord({
-                jsonModel,
+                jsonModel: field.target,
                 attrs: await createAttrs({
                   tenantId,
                   schema,
@@ -817,7 +815,7 @@ async function createAttrs(props: {
           }));
         } else {
           const metaJsonRecord = await createMetaJsonRecord({
-            jsonModel,
+            jsonModel: field.target,
             attrs: await createAttrs({
               tenantId,
               fields: modelFields,

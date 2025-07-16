@@ -71,22 +71,31 @@ export function isObjectField(field: Field): field is ObjectField {
   return ObjectFieldTypes.includes(field.type);
 }
 
-function validateSchema(schemas: TemplateSchema[]) {
+function validateSchemas(schemas: TemplateSchema[]) {
   let isValid = true;
   /** conditons
    * 1. model should have at least one field
    * 2. model should have only one nameField
    * 3. model should have at least one visibleInGrid field
    * 4. json target model should have a model declaration within the same schema
+   * 5. model names should be unique
    */
+  const jsonModelMap = new Map();
   schemas.forEach(schema => {
-    const jsonModels = new Set();
+    const targetModels = new Set();
     schema.fields?.forEach(field => {
       if (isJsonRelationalField(field)) {
-        jsonModels.add(field.target);
+        targetModels.add(field.target);
       }
     });
     schema.models?.forEach(model => {
+      if (jsonModelMap.has(model.name)) {
+        isValid = false;
+        console.log(
+          `\x1b[31m✖ model:${model.name} in ${schema.code} is duplicated in ${jsonModelMap.get(model.name)}.\x1b[0m`,
+        );
+      }
+      jsonModelMap.set(model.name, schema.code);
       let nameFieldCount = 0;
       let visibleInGridCount = 0;
       if (!model.fields.length) {
@@ -97,7 +106,7 @@ function validateSchema(schemas: TemplateSchema[]) {
       }
       for (const field of model.fields) {
         if (isJsonRelationalField(field)) {
-          jsonModels.add(field.target);
+          targetModels.add(field.target);
         }
         if (field.visibleInGrid) visibleInGridCount++;
         if (field.nameField) nameFieldCount++;
@@ -116,60 +125,40 @@ function validateSchema(schemas: TemplateSchema[]) {
           `\x1b[31m✖ model:${model.name} in ${schema.code} should have at least 1 visibleInGrid field .\x1b[0m`,
         );
       }
-      jsonModels.delete(model.name);
+      targetModels.delete(model.name);
     });
-    if (jsonModels.size) {
+    if (targetModels.size) {
       isValid = false;
       console.log(
-        `\x1b[31m✖ model:${[...jsonModels].join(', ')} in ${schema.code} does not have a model declaration .\x1b[0m`,
+        `\x1b[31m✖ model:${[...targetModels].join(', ')} in ${schema.code} does not have a model declaration .\x1b[0m`,
       );
     }
   });
   return isValid;
 }
 
-function getFormattedModels(schemas: TemplateSchema[]): Model[] {
+function getModels(schemas: TemplateSchema[]): Model[] {
   const models = [];
   for (const schema of schemas) {
     if (schema.models?.length) {
-      models.push(
-        ...schema.models.map(model => ({
-          ...model,
-          name: formatCustomModelName(model.name),
-          fields: model.fields.map(field => {
-            if (isJsonRelationalField(field)) {
-              return {
-                ...field,
-                name: formatCustomFieldName(field.name),
-                target: formatCustomModelName(field.target),
-              };
-            }
-            return field;
-          }),
-        })),
-      );
+      models.push(...schema.models);
     }
   }
   return models;
 }
 
-function getFormattedContentFields(
+function getContentFields(
   schemas: TemplateSchema[],
   components: {id: string; code?: string; title?: string}[],
 ): CustomField[] {
   const fields = [];
   for (const schema of schemas) {
-    const code = formatComponentCode(schema.code);
-    const component = components.find(c => c.code === code);
+    const component = components.find(c => c.code === schema.code);
     if (!component) continue;
     if (schema.fields.length) {
       fields.push(
         ...schema.fields.map(field => ({
           ...field,
-          name: formatCustomFieldName(field.name, code),
-          ...(isJsonRelationalField(field) && {
-            target: formatCustomModelName(field.target),
-          }),
           contextField: 'component',
           contextFieldTarget: COMPONENT_MODEL,
           contextFieldTargetName: 'title',
@@ -182,15 +171,45 @@ function getFormattedContentFields(
   return fields;
 }
 
+function formatSchema<T extends TemplateSchema>(schema: T): T {
+  const code = formatComponentCode(schema.code);
+  return {
+    ...schema,
+    code,
+    fields: schema.fields?.map(field => ({
+      ...field,
+      name: formatCustomFieldName(field.name, code),
+      ...(isJsonRelationalField(field) && {
+        target: formatCustomModelName(field.target),
+      }),
+    })),
+    models: schema.models?.map(model => ({
+      ...model,
+      name: formatCustomModelName(model.name),
+      fields: model.fields.map(field => {
+        if (isJsonRelationalField(field)) {
+          return {
+            ...field,
+            name: formatCustomFieldName(field.name),
+            target: formatCustomModelName(field.target),
+          };
+        }
+        return field;
+      }),
+    })),
+  };
+}
+
 export async function seedComponents(tenantId: Tenant['id']) {
-  const schemas = metas.map(demo => demo.schema);
-  if (!validateSchema(schemas)) return;
+  const _schemas = metas.map(demo => demo.schema);
+  if (!validateSchemas(_schemas)) return;
+  const schemas = _schemas.map(formatSchema);
 
   const componentsPromise = schemas.map(schema =>
     createCMSComponent({schema, tenantId}),
   );
 
-  const models = getFormattedModels(schemas);
+  const models = getModels(schemas);
   const jsonModels = await Promise.all(
     models.map(async model => createMetaJsonModel({model, tenantId})),
   );
@@ -214,7 +233,7 @@ export async function seedComponents(tenantId: Tenant['id']) {
 
   const components = await Promise.all(componentsPromise);
 
-  const fields = getFormattedContentFields(schemas, components);
+  const fields = getContentFields(schemas, components);
   // NOTE: json models should be created before fields since target models are referenced in fields by name
   const contentFields = await createCustomFields({
     model: CONTENT_MODEL,
@@ -252,11 +271,14 @@ export async function resetFields(tenantId: Tenant['id']) {
 }
 
 export async function seedContents(tenantId: Tenant['id']) {
+  const _schemas = metas.map(demo => demo.schema);
+  if (!validateSchemas(_schemas)) return;
+
   const fileCache = new Cache<Promise<{id: string}>>();
   const res = await processBatch(metas, async ({schema, demos}) => {
     return await createCMSContent({
       tenantId,
-      schema,
+      schema: formatSchema(schema),
       demos: demos as Demo<TemplateSchema>[],
       fileCache,
     });
