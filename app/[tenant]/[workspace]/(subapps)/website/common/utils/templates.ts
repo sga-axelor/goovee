@@ -38,47 +38,65 @@ export function isRelationalField(field: Field): field is RelationalField {
   return RelationalFieldTypes.includes(field.type);
 }
 
-export function isjJsonRelationalField(
+export function isJsonRelationalField(
   field: Field,
 ): field is JsonRelationalField {
   return JsonRelationalFieldTypes.includes(field.type);
 }
 
-function validateMeta(meta: Meta[]) {
+function validateMeta(metas: Meta[]) {
   let isValid = true;
   /** conditons
    * 1. model should have at least one field
    * 2. model should have only one nameField
    * 3. model should have at least one visibleInGrid field
+   * 4. json target model should have a model declaration within the same meta
    */
-  meta.forEach(meta => {
+  metas.forEach(meta => {
+    const jsonModels = new Set();
+    meta.fields?.forEach(field => {
+      if (isJsonRelationalField(field)) {
+        jsonModels.add(field.target);
+      }
+    });
     meta.models?.forEach(model => {
       let nameFieldCount = 0;
       let visibleInGridCount = 0;
       if (!model.fields.length) {
         isValid = false;
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.name} has no fields .\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${meta.name} should have at least 1 field.\x1b[0m`,
         );
       }
       for (const field of model.fields) {
+        if (isJsonRelationalField(field)) {
+          jsonModels.add(field.target);
+        }
         if (field.visibleInGrid) visibleInGridCount++;
         if (field.nameField) nameFieldCount++;
-        if (nameFieldCount === 2) {
-          console.log(
-            `\x1b[31m✖ model:${model.name} in ${meta.name} has more than 1 nameField .\x1b[0m`,
-          );
+        if (nameFieldCount > 1) {
           isValid = false;
-          if (visibleInGridCount > 0) break;
         }
+      }
+      if (nameFieldCount > 1) {
+        console.log(
+          `\x1b[31m✖ model:${model.name} in ${meta.name} has more than 1 nameField .\x1b[0m`,
+        );
       }
       if (visibleInGridCount === 0) {
         isValid = false;
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.name} has no visibleInGrid field .\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${meta.name} should have at least 1 visibleInGrid field .\x1b[0m`,
         );
       }
+      jsonModels.delete(model.name);
     });
+    if (jsonModels.size) {
+      isValid = false;
+      console.log(
+        `\x1b[31m✖ model:${[...jsonModels].join(', ')} in ${meta.name} does not have a model declaration .\x1b[0m`,
+      );
+    }
   });
   return isValid;
 }

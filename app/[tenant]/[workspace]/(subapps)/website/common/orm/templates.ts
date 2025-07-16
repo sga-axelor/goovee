@@ -5,7 +5,7 @@ import {JSON_MODEL_ATTRS} from '../constants';
 import type {Field, Model, Template} from '../types/templates';
 import {
   getCustomModelName,
-  isjJsonRelationalField,
+  isJsonRelationalField,
   isRelationalField,
 } from '../utils/templates';
 
@@ -40,7 +40,7 @@ export async function createCustomFields({
 
   const res = await Promise.all(
     fields.map(async (field, i) => {
-      const isJsonRelational = isjJsonRelationalField(field);
+      const isJsonRelational = isJsonRelationalField(field);
       const isRelational = isRelationalField(field);
       const name = camelCase(`${prefix} ${field.name}`);
       const _field = await client.aOSMetaJsonField.findOne({
