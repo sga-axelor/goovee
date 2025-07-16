@@ -151,6 +151,12 @@
     {
       "type": "Boolean",
       "name": "archived"
+    },
+    {
+      "type": "OneToMany",
+      "name": "mainPartnerSet",
+      "target": "AOSPartner",
+      "mappedBy": "mainPartner"
     }
   ]
 }

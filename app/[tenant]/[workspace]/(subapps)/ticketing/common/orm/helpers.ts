@@ -20,7 +20,7 @@ export function getProjectAccessFilter(props: AuthProps) {
     projectStatus: {isCompleted: false},
     portalWorkspace: {id: workspaceId},
     ...(isContact
-      ? {clientPartner: {contactPartnerSet: {id: userId}}}
+      ? {clientPartner: {mainPartnerSet: {id: userId}}}
       : {clientPartner: {id: userId}}),
   };
   return where;
