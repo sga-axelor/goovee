@@ -1,5 +1,6 @@
 import type {Tenant} from '@/tenant';
 import type {Theme} from '@/types/theme';
+import {BigDecimal} from '@goovee/orm';
 
 export type ID = string | number;
 export type Version = number;
@@ -135,7 +136,7 @@ export interface PortalAppConfig extends Model {
   enableEventComment?: boolean;
   socialMediaSelect?: string;
   noMoreStockSelect?: number;
-  outOfStockQty?: string;
+  outOfStockQty?: BigDecimal;
   defaultStockLocation?: any;
   nonPublicEmailNotFoundMessage?: string;
   enableRecommendedNews?: boolean;
