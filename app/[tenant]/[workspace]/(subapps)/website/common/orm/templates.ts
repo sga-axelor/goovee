@@ -34,7 +34,8 @@ const pump = promisify(pipeline);
 
 /** seeding  variables **/
 const storage = process.env.DATA_STORAGE as string;
-const skipIfExists = false;
+const disableUpdates = false;
+const enableMetaSelect = true;
 const demoFileDirectory = '/public';
 function getContentTitle({code, language}: {code: string; language: string}) {
   return `Demo - ${startCase(code)} - ${language}`;
@@ -96,24 +97,26 @@ export async function createCustomFields({
 
       if ('selection' in field && field.selection?.length) {
         const name = `goovee-template-select-${field.name}-${jsonModel?.name || model}`;
-        metaSelectData = {
-          isCustom: true,
-          priority: 20,
-          name: name,
-          xmlId: name,
-          updatedOn: timeStamp,
-        };
+        if (enableMetaSelect) {
+          metaSelectData = {
+            isCustom: true,
+            priority: 20,
+            name: name,
+            xmlId: name,
+            updatedOn: timeStamp,
+          };
 
-        metaSelectItemsData = field.selection.map((item, i) => ({
-          title: item.title,
-          value: String(item.value),
-          color: item.color,
-          icon: item.icon,
-          order: i + 1,
-          updatedOn: timeStamp,
-        }));
+          metaSelectItemsData = field.selection.map((item, i) => ({
+            title: item.title,
+            value: String(item.value),
+            color: item.color,
+            icon: item.icon,
+            order: i + 1,
+            updatedOn: timeStamp,
+          }));
 
-        selection = name;
+          selection = name;
+        }
         selectionText = field.selection
           .map(
             item =>
@@ -158,7 +161,7 @@ export async function createCustomFields({
       };
 
       if (_field) {
-        if (skipIfExists) {
+        if (disableUpdates) {
           console.log(
             `\x1b[33m⚠️ Skipped field:${field.name} | ${jsonModel?.name || model}\x1b[0m `,
           );
@@ -172,7 +175,7 @@ export async function createCustomFields({
         console.log(
           `\x1b[33m⚠️ Updated field:${field.name} | ${jsonModel?.name || model}\x1b[0m `,
         );
-        if (metaSelectData && metaSelectItemsData) {
+        if (metaSelectData && metaSelectItemsData && enableMetaSelect) {
           const _metaSelect = await client.aOSMetaSelect.findOne({
             where: {name: metaSelectData.name},
             select: {
@@ -248,7 +251,7 @@ export async function createCustomFields({
         `\x1b[32m✅ Created field: ${field.name} | ${jsonModel?.name || model}\x1b[0m`,
       );
 
-      if (metaSelectData && metaSelectItemsData) {
+      if (metaSelectData && metaSelectItemsData && enableMetaSelect) {
         await createMetaSelect({
           tenantId,
           metaSelectData,
@@ -364,7 +367,7 @@ export async function createMetaJsonModel({
   };
 
   if (_model) {
-    if (skipIfExists) {
+    if (disableUpdates) {
       console.log(`\x1b[33m⚠️ Skipped model: ${model.name}\x1b[0m`);
       return _model;
     }
@@ -445,7 +448,7 @@ export async function createCMSComponent({
   };
 
   if (_component) {
-    if (skipIfExists) {
+    if (disableUpdates) {
       console.log(`\x1b[33m⚠️ Skipped component: ${_component.title}\x1b[0m `);
       return _component;
     }
@@ -498,7 +501,7 @@ export async function deleteCustomFields({
       console.log(
         `\x1b[31m✖ field:${field.name} | ${field.jsonModel?.name || model}.\x1b[0m`,
       );
-      if (field.selection) {
+      if (field.selection && enableMetaSelect) {
         const metaSelect = await client.aOSMetaSelect.findOne({
           where: {name: field.selection},
           select: {id: true, items: {select: {id: true}}},
@@ -599,7 +602,7 @@ export async function createCMSContent(props: {
         select: {id: true, title: true},
       });
 
-      if (skipIfExists && _content) {
+      if (disableUpdates && _content) {
         console.log(`\x1b[33m⚠️ Skipped content: ${_content.title}\x1b[0m `);
         return _content;
       }
@@ -669,7 +672,7 @@ async function getFileFromPublic(filePath: string) {
   return file;
 }
 
-async function creatMetaFile({
+async function createMetaFile({
   tenantId,
   buffer,
   fileName,
@@ -770,7 +773,7 @@ async function createAttrs(props: {
           const records = await Promise.all(
             value.map(async (record: any) => {
               const buffer = await getFileFromPublic(record.filePath);
-              return await creatMetaFile({
+              return await createMetaFile({
                 buffer,
                 fileName: record.fileName,
                 fileType: record.fileType,
@@ -781,7 +784,7 @@ async function createAttrs(props: {
           attrs[key] = records.map(r => ({id: Number(r.id)}));
         } else {
           const buffer = await getFileFromPublic(value.filePath);
-          const record = await creatMetaFile({
+          const record = await createMetaFile({
             buffer,
             fileName: value.fileName,
             fileType: value.fileType,
