@@ -31,6 +31,7 @@ import {
   ObjectField,
   RelationalField,
 } from '../types/templates';
+import {processBatch} from './helper';
 
 const CUSTOM_MODEL_PREFIX = 'GooveeTemplate';
 
@@ -251,10 +252,12 @@ export async function resetFields(tenantId: Tenant['id']) {
 }
 
 export async function seedContents(tenantId: Tenant['id']) {
-  const res = Promise.all(
-    demos.map(({meta, demos}) => {
-      return createCMSContent({tenantId, meta, demos: demos as Demo<Meta>[]});
-    }),
-  );
+  const res = await processBatch(demos, async ({meta, demos}) => {
+    return await createCMSContent({
+      tenantId,
+      meta,
+      demos: demos as Demo<Meta>[],
+    });
+  });
   return res;
 }
