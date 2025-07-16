@@ -1,21 +1,15 @@
 import type {TemplateProps} from '@/subapps/website/common/types';
 
-type Hero1Data = {
-  heroTitle: string;
-  heroDescription: string;
-  heroButtonText: string;
-  heroButtonLink: string;
-  heroImage: string;
-};
+import type {Hero1Data} from './meta.ts';
 
 export function Hero1(props: TemplateProps<Hero1Data>) {
   const {data} = props;
   const {
-    heroTitle: title,
-    heroDescription: description,
-    heroButtonText: buttonText,
-    heroButtonLink: buttonLink,
-    heroImage: image,
+    hero1Title: title,
+    hero1Description: description,
+    hero1ButtonText: buttonText,
+    hero1ButtonLink: buttonLink,
+    hero1Image: image,
   } = data || {};
 
   return (

@@ -1,22 +1,7 @@
 import {TeamCard1} from '@/subapps/website/common/components/reuseable/team-cards';
 import {TemplateProps} from '@/subapps/website/common/types';
 
-type Team1Data = {
-  team1Title: string;
-  team1Caption: string;
-  team1Teams: {
-    id: string;
-    attrs: {
-      name: string;
-      image: string;
-      designation: string;
-      dribbbleUrl: string;
-      twitterUrl: string;
-      facebookUrl: string;
-      description: string;
-    };
-  }[];
-};
+import type {Team1Data} from './meta';
 
 export function Team1(props: TemplateProps<Team1Data>) {
   const {data} = props;

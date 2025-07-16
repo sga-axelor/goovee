@@ -1,11 +1,7 @@
 import {TemplateProps} from '@/subapps/website/common/types';
 
-type CTA1Data = {
-  cta1Title: string;
-  cta1Caption: string;
-  cta1Description: string;
-  cta1Image: string;
-};
+import type {CTA1Data} from './meta.ts';
+
 export function CTA1(props: TemplateProps<CTA1Data>) {
   const {data} = props;
   const {

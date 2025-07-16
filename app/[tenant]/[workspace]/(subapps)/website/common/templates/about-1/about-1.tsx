@@ -1,19 +1,6 @@
 import AccordionList from '@/subapps/website/common/components/common/AccordionList';
 import type {TemplateProps} from '@/subapps/website/common/types';
-
-type About1Data = {
-  about1Title: string;
-  about1Caption: string;
-  about1Image: string;
-  about1Accordions: {
-    id: string;
-    attrs: {
-      heading: string;
-      body: string;
-      expand: boolean;
-    };
-  }[];
-};
+import type {About1Data} from './meta';
 
 export function About1(props: TemplateProps<About1Data>) {
   const {data} = props;

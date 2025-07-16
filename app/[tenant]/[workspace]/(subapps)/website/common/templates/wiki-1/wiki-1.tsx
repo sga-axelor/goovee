@@ -16,6 +16,8 @@ import {parseAllowedFontSize} from './plugins/ToolbarPlugin/fontSize';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 import {parseAllowedColor} from './ui/ColorPicker';
 
+import type {Wiki1Data} from './meta';
+
 import './index.css';
 
 function getExtraStyles(element: HTMLElement): string {
@@ -83,13 +85,9 @@ function buildImportMap(): DOMConversionMap {
   return importMap;
 }
 
-type WikiProps = {
-  content: string;
-};
-
-export function Wiki(props: TemplateProps<WikiProps>) {
+export function Wiki1(props: TemplateProps<Wiki1Data>) {
   const {data, contentId, contentVersion} = props;
-  const {content} = data || {};
+  const {wiki1Content: content} = data || {};
 
   const initialConfig: InitialConfigType = {
     html: {import: buildImportMap()},

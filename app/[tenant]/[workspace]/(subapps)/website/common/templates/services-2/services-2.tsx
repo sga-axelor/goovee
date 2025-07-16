@@ -2,13 +2,7 @@ import ListColumn from '@/subapps/website/common/components/reuseable/ListColumn
 // -------- data -------- //
 import {TemplateProps} from '@/subapps/website/common/types';
 
-type Services2Data = {
-  services2Title: string;
-  services2Caption: string;
-  services2Description: string;
-  services2Image: string;
-  services2Services: {id: string; attrs: {title: string}}[];
-};
+import type {Services2Data} from './meta';
 
 export function Services2(props: TemplateProps<Services2Data>) {
   const {data} = props;

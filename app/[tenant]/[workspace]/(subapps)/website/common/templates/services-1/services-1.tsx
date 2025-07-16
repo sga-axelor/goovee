@@ -5,6 +5,8 @@ import Design from '@/subapps/website/common/icons/solid/Design';
 import dynamic from 'next/dynamic';
 import {TemplateProps} from '@/subapps/website/common/types';
 
+import type {Services1Data} from './meta';
+
 function getIcon(icon: string) {
   return icon
     ? dynamic(() =>
@@ -14,21 +16,6 @@ function getIcon(icon: string) {
       )
     : Design;
 }
-
-type Services1Data = {
-  services1Title: string;
-  services1Caption: string;
-  services1Services: {
-    id: string;
-    attrs: {
-      title: string;
-      description: string;
-      icon: string;
-      link: string;
-      linkType: string;
-    };
-  }[];
-};
 
 export function Services1(props: TemplateProps<Services1Data>) {
   const {data} = props;

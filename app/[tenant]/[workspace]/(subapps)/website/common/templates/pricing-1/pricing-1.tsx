@@ -7,47 +7,20 @@ import {PricingCard1} from '@/subapps/website/common/components/reuseable/pricin
 // -------- data -------- //
 import {TemplateProps} from '@/subapps/website/common/types';
 
-type Pricing1Props = {
-  roundShape?: boolean;
-  title: string;
-  caption: string;
-  description: string;
-  switchLeftLabel: string;
-  switchRightLabel: string;
-  buttonText: string;
-  buttonLink: string;
-  plans: {
-    id: string;
-    attrs: {
-      plan: string;
-      price1: number;
-      price2: number;
-      bulletBg?: boolean;
-      roundedButton?: boolean;
-      buttonLink?: string;
-      buttonText?: string;
-      features: {
-        id: string;
-        attrs: {
-          label: string;
-        };
-      }[];
-    };
-  }[];
-};
+import type {Pricing1Data} from './meta';
 
-export function Pricing1(props: TemplateProps<Pricing1Props>) {
+export function Pricing1(props: TemplateProps<Pricing1Data>) {
   const {data} = props;
   const {
-    roundShape,
-    title,
-    caption,
-    description,
-    switchLeftLabel,
-    switchRightLabel,
-    buttonText,
-    buttonLink,
-    plans,
+    pricing1RoundShape: roundShape,
+    pricing1Title: title,
+    pricing1Caption: caption,
+    pricing1Description: description,
+    pricing1SwitchLeftLabel: switchLeftLabel,
+    pricing1SwitchRightLabel: switchRightLabel,
+    pricing1ButtonText: buttonText,
+    pricing1ButtonLink: buttonLink,
+    pricing1Plans: plans,
   } = data || {};
 
   const [activeYearly, setActiveYearly] = useState(false);

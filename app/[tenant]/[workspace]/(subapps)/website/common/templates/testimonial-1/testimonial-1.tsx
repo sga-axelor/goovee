@@ -3,22 +3,7 @@ import {TestimonialCard1} from '@/subapps/website/common/components/reuseable/te
 // -------- data -------- //
 import {TemplateProps} from '@/subapps/website/common/types';
 
-type Testimonial1Data = {
-  testimonial1Title: string;
-  testimonial1Caption: string;
-  testimonial1Description: string;
-  testimonial1LinkText: string;
-  testimonial1Link: string;
-  testimonial1TestimonialList: {
-    id: string;
-    attrs: {
-      name: string;
-      designation: string;
-      review: string;
-      columnClasses: string;
-    };
-  }[];
-};
+import type {Testimonial1Data} from './meta';
 
 export function Testimonial1(props: TemplateProps<Testimonial1Data>) {
   const {data} = props;

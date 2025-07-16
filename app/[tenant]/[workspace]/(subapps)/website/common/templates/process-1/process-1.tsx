@@ -2,22 +2,7 @@ import NextLink from '@/subapps/website/common/components/reuseable/links/NextLi
 import {ProcessList1} from '@/subapps/website/common/components/reuseable/process-list';
 import type {TemplateProps} from '@/subapps/website/common/types';
 
-type Process1Data = {
-  process1Title: string;
-  process1Caption: string;
-  process1Description1: string;
-  process1Description2: string;
-  process1LinkText: string;
-  process1Link: string;
-  process1ProcessList: {
-    id: string;
-    attrs: {
-      title: string;
-      subtitle: string;
-      className: string;
-    };
-  }[];
-};
+import type {Process1Data} from './meta';
 
 export function Process1(props: TemplateProps<Process1Data>) {
   const {data} = props;

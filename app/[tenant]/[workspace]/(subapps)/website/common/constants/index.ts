@@ -30,9 +30,3 @@ export const CustomRelationalFieldTypes = [
   FieldType.CustomManyToMany,
   FieldType.CustomManyToOne,
 ];
-
-export enum ComponentType {
-  block = 0,
-  topMenu = 1,
-  leftRightMenu = 2,
-}

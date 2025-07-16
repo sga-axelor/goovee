@@ -1,16 +1,9 @@
 import NextLink from '@/subapps/website/common/components/reuseable/links/NextLink';
 import {TemplateProps} from '@/subapps/website/common/types';
 
-type Contact4Props = {
-  contact4Title: string;
-  contact4Caption: string;
-  contact4Description: string;
-  contact4LinkText: string;
-  contact4LinkUrl: string;
-  contact4Image: string;
-};
+import type {Contact4Data} from './meta.ts';
 
-export function Contact4(props: TemplateProps<Contact4Props>) {
+export function Contact4(props: TemplateProps<Contact4Data>) {
   const {data} = props;
   const {
     contact4Title: title,

@@ -8,62 +8,35 @@ import {
   JSON_MODEL,
   JSON_MODEL_ATTRS,
   CUSTOM_MODEL_PREFIX,
-} from '../constants';
+} from '@/subapps/website/common/constants';
 import {
   createCustomFields,
   createMetaJsonModels,
   creteCMSComponents,
   deleteCustomFields,
   deleteMetaJsonModels,
-} from '../orm/templates';
+} from '@/subapps/website/common/orm/templates';
 import {camelCase} from 'lodash-es';
+import {metas} from '@/subapps/website/common/templates';
 
 function capitalCase(str: string) {
   str = camelCase(str);
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-async function getTemplates(templatesDir: string) {
-  const templates = (await fs.readdir(templatesDir, {withFileTypes: true}))
-    .filter(f => f.isDirectory())
-    .map(f => f.name);
-
-  return templates;
-}
-
 export function getCustomModelName(modelName: string) {
   return CUSTOM_MODEL_PREFIX + capitalCase(modelName);
 }
 
-async function getMetaJSON(templatesDir: string, templateDir: string) {
-  const dir = path.join(templatesDir, templateDir);
-
-  try {
-    return JSON.parse(
-      await fs.readFile(path.join(dir, 'meta.json'), {
-        encoding: 'utf-8',
-      }),
-    );
-  } catch (err) {
-    return {};
-  }
-}
-
 export async function seedTemplates({
   tenantId,
-  templatesDir,
 }: {
   tenantId: Tenant['id'];
   templatesDir: string;
 }) {
-  const templates = await getTemplates(templatesDir);
-
-  const metas = [];
   const models = [];
-  for (const template of templates) {
-    const meta = await getMetaJSON(templatesDir, template);
+  for (const meta of metas) {
     if (!meta.name) continue;
-    metas.push(meta);
     if (meta.models?.length) {
       models.push(...meta.models);
     }

@@ -2,7 +2,7 @@
 import {TemplateProps, Menu} from '@/subapps/website/common/types';
 import {SidebarMenuContent} from './content';
 
-export function SidebarMenu(props: TemplateProps<any, Menu>) {
+export function SidebarMenu1(props: TemplateProps<any, Menu>) {
   const {menu} = props;
 
   if (!menu) {

@@ -1,13 +1,6 @@
 import {TemplateProps} from '../../types';
 
-type Clients1Data = {
-  clients1ClientList: {
-    id: string;
-    attrs: {
-      image: string;
-    };
-  }[];
-};
+import type {Clients1Data} from './meta';
 
 export function Clients1(props: TemplateProps<Clients1Data>) {
   const {data} = props;

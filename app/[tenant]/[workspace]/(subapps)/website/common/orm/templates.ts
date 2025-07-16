@@ -1,11 +1,11 @@
 import {manager, type Tenant} from '@/lib/core/tenant';
 import {xml} from '@/utils/template-string';
 import {
-  ComponentType,
   CustomRelationalFieldTypes,
   JSON_MODEL_ATTRS,
   RelationalFieldTypes,
 } from '../constants';
+import type {Template, Model} from '../types/templates';
 import {camelCase} from 'lodash-es';
 import {getCustomModelName} from '../utils/templates';
 
@@ -113,16 +113,7 @@ export async function createMetaJsonModels({
   models,
   tenantId,
 }: {
-  models: {
-    name: string;
-    title: string;
-    fields: {
-      type: string;
-      name: string;
-      title: string;
-      target?: string;
-    }[];
-  }[];
+  models: Model[];
   tenantId: Tenant['id'];
 }) {
   const client = await manager.getClient(tenantId);
@@ -209,7 +200,7 @@ export async function creteCMSComponents({
   metas: {
     name: string;
     title: string;
-    type: ComponentType;
+    type: Template;
   }[];
   tenantId: Tenant['id'];
 }) {
