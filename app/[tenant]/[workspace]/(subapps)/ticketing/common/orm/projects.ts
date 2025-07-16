@@ -213,7 +213,7 @@ export async function findTicketCancelledStatus(
   return projectAppConfig?.cancelledTaskStatus?.id;
 }
 
-export async function findMainPartners(
+export async function findMainPartnerContacts(
   projectId: ID,
   tenantId: Tenant['id'],
 ): Promise<ContactPartner[]> {
@@ -230,7 +230,7 @@ export async function findMainPartners(
         id: true,
         simpleFullName: true,
         isActivatedOnPortal: true,
-        mainPartnerSet: {
+        mainPartnerContacts: {
           where: {
             OR: [{archived: false}, {archived: null}],
             isActivatedOnPortal: true,
@@ -254,7 +254,7 @@ export async function findMainPartners(
   if (!project?.clientPartner) return [];
 
   const partners =
-    project.clientPartner.mainPartnerSet?.map(p => ({
+    project.clientPartner.mainPartnerContacts?.map(p => ({
       id: p.id,
       version: p.version,
       simpleFullName: p.simpleFullName,

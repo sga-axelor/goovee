@@ -28,7 +28,7 @@ import type {PortalAppConfig} from '@/types';
 import {createComment, fetchComments} from '../../../../common/actions';
 import {ALL_TICKETS_TITLE} from '../../../../common/constants';
 import {
-  findMainPartners,
+  findMainPartnerContacts,
   findTicketCategories,
   findTicketPriorities,
   findTicketStatuses,
@@ -98,7 +98,7 @@ export default async function Page({
       findTicketStatuses(projectId, tenant),
       findTicketCategories(projectId, tenant),
       findTicketPriorities(projectId, tenant),
-      findMainPartners(projectId, tenant),
+      findMainPartnerContacts(projectId, tenant),
     ]).then(clone);
 
   if (!ticket) notFound();

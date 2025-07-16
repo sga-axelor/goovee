@@ -154,7 +154,7 @@
     },
     {
       "type": "OneToMany",
-      "name": "mainPartnerSet",
+      "name": "mainPartnerContacts",
       "target": "AOSPartner",
       "mappedBy": "mainPartner"
     }
