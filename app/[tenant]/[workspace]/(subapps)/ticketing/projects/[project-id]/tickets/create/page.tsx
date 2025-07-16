@@ -20,7 +20,7 @@ import {
 } from '@/ui/components';
 import {ALL_TICKETS_TITLE} from '../../../../common/constants';
 import {
-  findContactPartners,
+  findMainPartners,
   findProject,
   findTicketCategories,
   findTicketPriorities,
@@ -76,7 +76,7 @@ export default async function Page({
       findTicketStatuses(projectId, tenant),
       findTicketCategories(projectId, tenant).then(clone),
       findTicketPriorities(projectId, tenant).then(clone),
-      findContactPartners(projectId, tenant).then(clone),
+      findMainPartners(projectId, tenant).then(clone),
     ]);
 
   if (!project) notFound();

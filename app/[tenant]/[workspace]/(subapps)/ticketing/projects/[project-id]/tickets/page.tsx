@@ -40,7 +40,7 @@ import {DEFAULT_SORT, FIELDS, sortKeyPathMap} from '../../../common/constants';
 import {
   findClientPartner,
   findCompany,
-  findContactPartners,
+  findMainPartners,
   findProject,
   findTicketCategories,
   findTicketPriorities,
@@ -286,7 +286,7 @@ async function AsyncFilter({
 }) {
   const [contacts, statuses, priorities, company, clientPartner, categories] =
     await Promise.all([
-      findContactPartners(projectId, tenantId),
+      findMainPartners(projectId, tenantId),
       findTicketStatuses(projectId, tenantId),
       findTicketPriorities(projectId, tenantId),
       findCompany(projectId, tenantId),
