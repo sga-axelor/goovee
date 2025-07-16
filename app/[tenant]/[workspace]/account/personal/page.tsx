@@ -47,9 +47,7 @@ export default async function Page({
     partner.contactWorkspaceConfigSet?.find(
       (c: any) =>
         c.portalWorkspace?.url === workspaceURL &&
-        c?.partnerSet?.find(
-          (partner: any) => partner.id === user.mainPartnerId,
-        ),
+        c?.partner?.id === user.mainPartnerId,
     )?.isAdmin;
 
   let role: Role = Role.user;
@@ -69,8 +67,7 @@ export default async function Page({
   const partners =
     (partner.isContact &&
       partner.contactWorkspaceConfigSet
-        ?.map(config => config.partnerSet || [])
-        ?.flat()
+        ?.map(config => config.partner)
         ?.filter(Boolean)
         ?.map((partner: any) => ({
           id: partner.id?.toString(),

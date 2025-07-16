@@ -252,7 +252,7 @@ export async function findContactWorkspaceConfig({
           portalWorkspace: {
             url,
           },
-          partnerSet: {
+          partner: {
             id: partnerId,
           },
         },
@@ -645,7 +645,7 @@ export async function findContactWorkspaces({
                   },
                 }
               : {}),
-            partnerSet: {
+            partner: {
               id: partnerId,
             },
           },

@@ -57,7 +57,7 @@ const partnerFields = {
         url: true,
       },
       isAdmin: true,
-      partnerSet: true,
+      partner: true,
     },
   },
   localization: {

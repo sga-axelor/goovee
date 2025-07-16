@@ -263,8 +263,7 @@ export async function update({
   const partners =
     (partner.isContact &&
       partner.contactWorkspaceConfigSet
-        ?.map(config => config.partnerSet || [])
-        ?.flat()
+        ?.map(config => config.partner)
         ?.filter(Boolean)
         ?.map((partner: any) => ({id: partner.id, name: partner.name}))) ||
     [];

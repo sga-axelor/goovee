@@ -283,7 +283,7 @@ export async function sendInvites({
       const memberAlready = existingContact?.contactWorkspaceConfigSet?.find(
         (config: any) =>
           config?.portalWorkspace?.url === workspaceURL &&
-          config?.partnerSet?.find((partner: any) => partner.id === partnerId),
+          config?.partner?.id === partnerId,
       );
 
       if (memberAlready) {

@@ -24,8 +24,8 @@
       "mappedBy": "contactWorkspaceConfig"
     },
     {
-      "type": "ManyToMany",
-      "name": "partnerSet",
+      "type": "ManyToOne",
+      "name": "partner",
       "target": "AOSPartner"
     }
   ]
