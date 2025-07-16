@@ -198,7 +198,6 @@ export async function sendInvites({
 
   let emailsWithMemberAlready = [],
     emailsWithOutSamePartner = [],
-    emailsWithDifferentPartner = [],
     emailsWithExistingInvite = [],
     emailsAlreadyRegistered = [];
   let invitesCount = 0;
@@ -264,7 +263,7 @@ export async function sendInvites({
 
       if (isExistingPartner) {
         emailsAlreadyRegistered.push(email);
-        continue; // don't send invite to email already registered
+        continue; // don't send invite to partner already registered
       }
 
       const existingContact = await findContactByEmail(email, tenantId);
@@ -278,13 +277,6 @@ export async function sendInvites({
         if (existingContact?.mainPartner?.id !== partnerId) {
           emailsWithOutSamePartner.push(email);
           continue; // don't send invite to email who don't have current partner as main partner
-        }
-      }
-
-      if (existingContact?.mainPartner) {
-        if (existingContact.mainPartner.id !== partnerId) {
-          emailsWithDifferentPartner.push(email);
-          continue; // don't send invite to contact with different partner
         }
       }
 
@@ -349,14 +341,13 @@ export async function sendInvites({
 
     const isEmailsWithMemberAlready = emailsWithMemberAlready.length;
     const isEmailsWithoutSamePartner = emailsWithOutSamePartner.length;
-    const isEmailsWithDifferentPartner = emailsWithDifferentPartner.length;
+
     const isEmailsWithExistingInvite = emailsWithExistingInvite.length;
     const isEmailsAlreadyRegistered = emailsAlreadyRegistered.length;
 
     if (
       isEmailsWithMemberAlready ||
       isEmailsWithoutSamePartner ||
-      isEmailsWithDifferentPartner ||
       isEmailsWithExistingInvite ||
       isEmailsAlreadyRegistered
     ) {
@@ -379,11 +370,6 @@ export async function sendInvites({
       isEmailsWithoutSamePartner &&
         errors.push(
           `${await t(`Registered under different owner already`)} - ${getEmails(emailsWithOutSamePartner)}`,
-        );
-
-      isEmailsWithDifferentPartner &&
-        errors.push(
-          `${await t('Registered under different owner already')} - ${getEmails(emailsWithDifferentPartner)}`,
         );
 
       isEmailsAlreadyRegistered &&
