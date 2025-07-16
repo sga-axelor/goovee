@@ -25,7 +25,7 @@ export const RelationalFieldTypes = [
   FieldType.ManyToOne,
 ];
 
-export const CustomRelationalFieldTypes = [
+export const JsonRelationalFieldTypes = [
   FieldType.CustomOneToMany,
   FieldType.CustomManyToMany,
   FieldType.CustomManyToOne,

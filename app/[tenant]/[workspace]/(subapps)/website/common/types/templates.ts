@@ -57,39 +57,45 @@ type PrimitiveMap = {
   boolean: boolean;
 };
 
-type PrimitiveField = {
+type CommonField = {
   name: string;
   title: string;
+};
+
+export type PrimitiveField = CommonField & {
   type: PrimitiveType;
 };
 
-type RelationalField = {
-  name: string;
-  title: string;
+export type RelationalField = CommonField & {
   type: RelationalType;
   target: string;
 };
 
-type JsonRelationalField = {
-  name: string;
-  title: string;
+export type JsonRelationalField = CommonField & {
   type: JsonRelationalType;
   target: string;
 };
 
-type Field = PrimitiveField | RelationalField | JsonRelationalField;
+type MetaField = PrimitiveField | RelationalField | JsonRelationalField;
+
+type ModelField = MetaField & {
+  nameField?: boolean;
+  visibleInGrid?: boolean;
+};
+
+export type Field = MetaField | ModelField;
 
 export type Model = {
   name: string;
   title: string;
-  fields: Field[];
+  fields: ModelField[];
 };
 
 export type Meta = {
   title: string;
   name: string;
   type: Template;
-  fields: Field[];
+  fields: MetaField[];
   models?: Model[];
 };
 

@@ -31,6 +31,8 @@ export const services1Meta = {
           name: 'title',
           title: 'Title',
           type: 'string',
+          nameField: true,
+          visibleInGrid: true,
         },
         {
           name: 'description',
@@ -46,11 +48,13 @@ export const services1Meta = {
           name: 'link',
           title: 'Link',
           type: 'string',
+          visibleInGrid: true,
         },
         {
           name: 'linkType',
           title: 'Link Type',
           type: 'string',
+          visibleInGrid: true,
         },
       ],
     },

@@ -41,6 +41,8 @@ export const services2Meta = {
           name: 'title',
           title: 'Title',
           type: 'string',
+          nameField: true,
+          visibleInGrid: true,
         },
       ],
     },

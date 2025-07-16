@@ -31,6 +31,8 @@ export const team1Meta = {
           name: 'name',
           title: 'Name',
           type: 'string',
+          nameField: true,
+          visibleInGrid: true,
         },
         {
           name: 'image',
@@ -41,6 +43,7 @@ export const team1Meta = {
           name: 'designation',
           title: 'Designation',
           type: 'string',
+          visibleInGrid: true,
         },
         {
           name: 'dribbbleUrl',

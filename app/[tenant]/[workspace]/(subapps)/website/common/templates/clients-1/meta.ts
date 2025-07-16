@@ -21,6 +21,8 @@ export const clients1Meta = {
           name: 'image',
           title: 'Image',
           type: 'string',
+          nameField: true,
+          visibleInGrid: true,
         },
       ],
     },

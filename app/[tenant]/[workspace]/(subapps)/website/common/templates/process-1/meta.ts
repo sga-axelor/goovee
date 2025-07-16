@@ -51,11 +51,14 @@ export const process1Meta = {
           name: 'title',
           title: 'Title',
           type: 'string',
+          nameField: true,
+          visibleInGrid: true,
         },
         {
           name: 'subtitle',
           title: 'Subtitle',
           type: 'string',
+          visibleInGrid: true,
         },
         {
           name: 'className',

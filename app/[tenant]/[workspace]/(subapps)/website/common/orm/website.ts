@@ -16,7 +16,7 @@ import {SUBAPP_CODES} from '@/constants';
 import {
   JSON_MODEL_ATTRS,
   RelationalFieldTypes,
-  CustomRelationalFieldTypes,
+  JsonRelationalFieldTypes,
   CONTENT_MODEL,
   CONTENT_MODEL_ATTRS,
 } from '../constants';
@@ -759,7 +759,7 @@ const populateAttributes = async ({
 
     const type = field.type;
     const isRelationalField = RelationalFieldTypes.includes(type);
-    const isCustomRelationalField = CustomRelationalFieldTypes.includes(type);
+    const isCustomRelationalField = JsonRelationalFieldTypes.includes(type);
 
     let handler;
 

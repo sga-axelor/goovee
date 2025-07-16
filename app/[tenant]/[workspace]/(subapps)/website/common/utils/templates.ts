@@ -6,6 +6,8 @@ import {
   JSON_MODEL,
   JSON_MODEL_ATTRS,
   CUSTOM_MODEL_PREFIX,
+  RelationalFieldTypes,
+  JsonRelationalFieldTypes,
 } from '@/subapps/website/common/constants';
 import {
   createCustomFields,
@@ -16,6 +18,12 @@ import {
 } from '@/subapps/website/common/orm/templates';
 import {camelCase} from 'lodash-es';
 import {metas} from '@/subapps/website/common/templates';
+import {
+  Field,
+  JsonRelationalField,
+  Meta,
+  RelationalField,
+} from '../types/templates';
 
 function capitalCase(str: string) {
   str = camelCase(str);
@@ -26,12 +34,62 @@ export function getCustomModelName(modelName: string) {
   return CUSTOM_MODEL_PREFIX + capitalCase(modelName);
 }
 
+export function isRelationalField(field: Field): field is RelationalField {
+  return RelationalFieldTypes.includes(field.type);
+}
+
+export function isjJsonRelationalField(
+  field: Field,
+): field is JsonRelationalField {
+  return JsonRelationalFieldTypes.includes(field.type);
+}
+
+function validateMeta(meta: Meta[]) {
+  let isValid = true;
+  /** conditons
+   * 1. model should have at least one field
+   * 2. model should have only one nameField
+   * 3. model should have at least one visibleInGrid field
+   */
+  meta.forEach(meta => {
+    meta.models?.forEach(model => {
+      let nameFieldCount = 0;
+      let visibleInGridCount = 0;
+      if (!model.fields.length) {
+        isValid = false;
+        console.log(
+          `\x1b[31m✖ model:${model.name} in ${meta.name} has no fields .\x1b[0m`,
+        );
+      }
+      for (const field of model.fields) {
+        if (field.visibleInGrid) visibleInGridCount++;
+        if (field.nameField) nameFieldCount++;
+        if (nameFieldCount === 2) {
+          console.log(
+            `\x1b[31m✖ model:${model.name} in ${meta.name} has more than 1 nameField .\x1b[0m`,
+          );
+          isValid = false;
+          if (visibleInGridCount > 0) break;
+        }
+      }
+      if (visibleInGridCount === 0) {
+        isValid = false;
+        console.log(
+          `\x1b[31m✖ model:${model.name} in ${meta.name} has no visibleInGrid field .\x1b[0m`,
+        );
+      }
+    });
+  });
+  return isValid;
+}
+
 export async function seedTemplates({
   tenantId,
 }: {
   tenantId: Tenant['id'];
   templatesDir: string;
 }) {
+  if (!validateMeta(metas)) return;
   const models = [];
   for (const meta of metas) {
     if (!meta.name) continue;

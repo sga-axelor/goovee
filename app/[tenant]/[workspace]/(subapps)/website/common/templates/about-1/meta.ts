@@ -36,6 +36,8 @@ export const about1Meta = {
           name: 'heading',
           title: 'Heading',
           type: 'string',
+          nameField: true,
+          visibleInGrid: true,
         },
         {
           name: 'body',

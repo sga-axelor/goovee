@@ -22,6 +22,10 @@
       "name": "formWidth"
     },
     {
+      "type": "String",
+      "name": "nameField"
+    },
+    {
       "type": "ManyToOne",
       "name": "formView",
       "target": "AOSMetaView"

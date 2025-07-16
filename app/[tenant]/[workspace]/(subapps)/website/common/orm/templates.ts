@@ -1,20 +1,13 @@
 import {manager, type Tenant} from '@/lib/core/tenant';
 import {xml} from '@/utils/template-string';
-import {
-  CustomRelationalFieldTypes,
-  JSON_MODEL_ATTRS,
-  RelationalFieldTypes,
-} from '../constants';
-import type {Template, Model} from '../types/templates';
 import {camelCase} from 'lodash-es';
-import {getCustomModelName} from '../utils/templates';
-
-type Field = {
-  type: string;
-  name: string;
-  title: string;
-  target?: string;
-};
+import {JSON_MODEL_ATTRS} from '../constants';
+import type {Field, Model, Template} from '../types/templates';
+import {
+  getCustomModelName,
+  isjJsonRelationalField,
+  isRelationalField,
+} from '../utils/templates';
 
 export async function createCustomFields({
   fields,
@@ -47,10 +40,8 @@ export async function createCustomFields({
 
   const res = await Promise.all(
     fields.map(async (field, i) => {
-      const isCustomRelationalField = CustomRelationalFieldTypes.includes(
-        field.type,
-      );
-      const isRelationalField = RelationalFieldTypes.includes(field.type);
+      const isJsonRelational = isjJsonRelationalField(field);
+      const isRelational = isRelationalField(field);
       const name = camelCase(`${prefix} ${field.name}`);
       const _field = await client.aOSMetaJsonField.findOne({
         where: {
@@ -80,21 +71,22 @@ export async function createCustomFields({
           type: field.type,
           sequence: i++,
           uniqueModel,
-          visibleInGrid: true,
           widgetAttrs: JSON.stringify({
             showTitle: true,
           }),
-          ...(isRelationalField && {
+          ...(isRelational && {
             targetModel: field.target,
           }),
-          ...(isCustomRelationalField && {
+          ...(isJsonRelational && {
             targetJsonModel: {
-              select: {name: getCustomModelName(field.target!)},
+              select: {name: getCustomModelName(field.target)},
             },
           }),
           ...(jsonModel && {
             jsonModel: {select: {name: jsonModel}},
           }),
+          visibleInGrid: 'visibleInGrid' in field ? field.visibleInGrid : false,
+          nameField: 'nameField' in field ? field.nameField : false,
           ...context,
           createdOn: timeStamp,
           updatedOn: timeStamp,
@@ -124,6 +116,7 @@ export async function createMetaJsonModels({
   const res = await Promise.all(
     models.map(async model => {
       const name = getCustomModelName(model.name);
+      const nameField = model.fields.find(f => f.nameField)?.name;
       const _model = await client.aOSMetaJsonModel.findOne({
         where: {name},
         select: {id: true},
@@ -140,6 +133,7 @@ export async function createMetaJsonModels({
           name,
           title: model.title,
           formWidth: 'large',
+          nameField: nameField,
           formView: {
             create: {
               name: formViewName,

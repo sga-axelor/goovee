@@ -46,11 +46,14 @@ export const testimonial1Meta = {
           name: 'name',
           title: 'Name',
           type: 'string',
+          nameField: true,
+          visibleInGrid: true,
         },
         {
           name: 'designation',
           title: 'Designation',
           type: 'string',
+          visibleInGrid: true,
         },
         {
           name: 'review',
