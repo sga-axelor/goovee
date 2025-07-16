@@ -168,11 +168,13 @@ export async function findInvites({
 export async function findInviteForEmail({
   email,
   tenantId,
+  partnerId,
   workspaceURL,
 }: {
   email: string;
   workspaceURL: PortalWorkspace['url'];
   tenantId: Tenant['id'];
+  partnerId: Partner['id'];
 }) {
   if (!tenantId) {
     return null;
@@ -191,6 +193,9 @@ export async function findInviteForEmail({
       },
       workspace: {
         url: workspaceURL,
+      },
+      partner: {
+        id: partnerId,
       },
     },
     select: {

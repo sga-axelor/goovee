@@ -294,6 +294,7 @@ export async function sendInvites({
       const existingInvite = await findInviteForEmail({
         email,
         tenantId,
+        partnerId,
         workspaceURL,
       });
 
