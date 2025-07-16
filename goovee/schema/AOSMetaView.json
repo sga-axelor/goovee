@@ -6,15 +6,18 @@
   "fields": [
     {
       "type": "String",
-      "name": "name"
+      "name": "name",
+      "required": true
     },
     {
       "type": "String",
-      "name": "title"
+      "name": "title",
+      "requred": true
     },
     {
       "type": "String",
-      "name": "type"
+      "name": "type",
+      "required": true
     },
     {
       "type": "String",
@@ -22,11 +25,13 @@
     },
     {
       "type": "String",
-      "name": "xml"
+      "name": "xml",
+      "required": true
     },
     {
       "type": "Int",
-      "name": "priority"
+      "name": "priority",
+      "required": true
     }
   ]
 }

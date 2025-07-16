@@ -10,8 +10,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "generate": "goovee generate",
-    "sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/website/common/assets/scss:app/[tenant]/[workspace]/'(subapps)'/website/common/assets/css",
-    "seed": "tsx app/[tenant]/[workspace]/'(subapps)'/website/common/templates/bin.ts"
+    "templates:sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/website/common/assets/scss:app/[tenant]/[workspace]/'(subapps)'/website/common/assets/css",
+    "templates:seed": "tsx app/[tenant]/[workspace]/'(subapps)'/website/common/templates/seed.ts",
+    "templates:reset": "tsx app/[tenant]/[workspace]/'(subapps)'/website/common/templates/reset.ts"
   },
   "dependencies": {
     "@cyntler/react-doc-viewer": "^1.17.0",

@@ -7,15 +7,18 @@ import {
   CONTENT_MODEL_ATTRS,
   JSON_MODEL,
   JSON_MODEL_ATTRS,
+  CUSTOM_MODEL_PREFIX,
 } from '../constants';
 import {
   createCustomFields,
   createMetaJsonModels,
   creteCMSComponents,
+  deleteCustomFields,
+  deleteMetaJsonModels,
 } from '../orm/templates';
 import {camelCase} from 'lodash-es';
 
-export function capitalCase(str: string) {
+function capitalCase(str: string) {
   str = camelCase(str);
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -26,6 +29,10 @@ async function getTemplates(templatesDir: string) {
     .map(f => f.name);
 
   return templates;
+}
+
+export function getCustomModelName(modelName: string) {
+  return CUSTOM_MODEL_PREFIX + capitalCase(modelName);
 }
 
 async function getMetaJSON(templatesDir: string, templateDir: string) {
@@ -96,7 +103,7 @@ export async function seedTemplates({
   await Promise.all(
     models.map((model: any) => {
       if (model.fields?.length) {
-        const modelName = capitalCase(model.name);
+        const modelName = getCustomModelName(model.name);
         return createCustomFields({
           model: JSON_MODEL,
           uniqueModel: `${JSON_MODEL} ${modelName}`,
@@ -108,4 +115,24 @@ export async function seedTemplates({
       }
     }),
   );
+}
+
+export async function resetTemplates(tenantId: Tenant['id']) {
+  await deleteCustomFields({
+    model: CONTENT_MODEL,
+    modelField: CONTENT_MODEL_ATTRS,
+    tenantId,
+  });
+
+  await deleteCustomFields({
+    model: JSON_MODEL,
+    modelField: JSON_MODEL_ATTRS,
+    jsonModelPrefix: CUSTOM_MODEL_PREFIX,
+    tenantId,
+  });
+
+  await deleteMetaJsonModels({
+    jsonModelPrefix: CUSTOM_MODEL_PREFIX,
+    tenantId,
+  });
 }

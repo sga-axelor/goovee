@@ -7,7 +7,7 @@ import {
   RelationalFieldTypes,
 } from '../constants';
 import {camelCase} from 'lodash-es';
-import {capitalCase} from '../utils/templates';
+import {getCustomModelName} from '../utils/templates';
 
 type Field = {
   type: string;
@@ -53,12 +53,25 @@ export async function createCustomFields({
       const isRelationalField = RelationalFieldTypes.includes(field.type);
       const name = camelCase(`${prefix} ${field.name}`);
       const _field = await client.aOSMetaJsonField.findOne({
-        where: {name, model, modelField},
+        where: {
+          name,
+          model,
+          modelField,
+          ...(jsonModel && {
+            jsonModel: {name: jsonModel},
+          }),
+        },
         select: {id: true},
       });
-      if (_field) return _field; // TODO: update field
 
-      return await client.aOSMetaJsonField.create({
+      if (_field) {
+        console.log(
+          `\x1b[33m⚠️ Skipped field:${name} | ${jsonModel || model}\x1b[0m `,
+        );
+        return _field;
+      } // TODO: update field
+
+      const metaField = await client.aOSMetaJsonField.create({
         data: {
           model,
           modelField,
@@ -86,6 +99,10 @@ export async function createCustomFields({
         },
         select: {id: true},
       });
+      console.log(
+        `\x1b[32m✅ Created field:${name} | ${jsonModel || model}\x1b[0m`,
+      );
+      return metaField;
     }),
   );
 
@@ -113,25 +130,32 @@ export async function createMetaJsonModels({
 
   const res = await Promise.all(
     models.map(async model => {
-      const name = capitalCase(model.name);
+      const name = getCustomModelName(model.name);
       const _model = await client.aOSMetaJsonModel.findOne({
         where: {name},
         select: {id: true},
       });
 
-      if (_model) return _model;
-      return await client.aOSMetaJsonModel.create({
+      if (_model) {
+        console.log(`\x1b[33m⚠️ Skipped model: ${name}\x1b[0m`);
+        return _model;
+      }
+      const formViewName = `custom-model-${name}-form`;
+      const gridViewName = `custom-model-${name}-grid`;
+      const metaModel = await client.aOSMetaJsonModel.create({
         data: {
           name,
           title: model.title,
           formWidth: 'large',
           formView: {
             create: {
+              name: formViewName,
               type: 'form',
               title: model.title,
               model: 'com.axelor.meta.db.MetaJsonRecord',
+              priority: 20,
               xml: xml`<form
-                  name="custom-model-${name}-form"
+                  name="${formViewName}"
                   title="${model.title}"
                   model="com.axelor.meta.db.MetaJsonRecord"
                   onNew="action-json-record-defaults"
@@ -146,11 +170,13 @@ export async function createMetaJsonModels({
           },
           gridView: {
             create: {
+              name: gridViewName,
               type: 'grid',
               title: model.title,
               model: 'com.axelor.meta.db.MetaJsonRecord',
+              priority: 20,
               xml: xml`<grid
-                  name="custom-model-${name}-grid"
+                  name="${gridViewName}"
                   title="${model.title}"
                   model="com.axelor.meta.db.MetaJsonRecord">
                   <field name="${JSON_MODEL_ATTRS}" x-json-model="${name}" />
@@ -160,11 +186,19 @@ export async function createMetaJsonModels({
             },
           },
         },
-        select: {id: true},
+        select: {
+          id: true,
+          name: true,
+          formView: {name: true},
+          gridView: {name: true},
+        },
       });
+      console.log(`\x1b[32m✅ Created model: ${metaModel.name}\x1b[0m `);
+      console.log(
+        `\x1b[32m✅ Created views: ${metaModel.formView?.name} | ${metaModel.gridView?.name}\x1b[0m `,
+      );
     }),
   );
-
   return res;
 }
 
@@ -188,9 +222,14 @@ export async function creteCMSComponents({
         where: {code},
         select: {id: true, code: true, title: true},
       });
-      if (_component) return _component;
+      if (_component) {
+        console.log(
+          `\x1b[33m⚠️ Skipped component: ${_component.title}\x1b[0m `,
+        );
+        return _component;
+      }
 
-      return client.aOSPortalCmsComponent.create({
+      const component = await client.aOSPortalCmsComponent.create({
         data: {
           code,
           title: meta.title,
@@ -200,7 +239,98 @@ export async function creteCMSComponents({
         },
         select: {id: true, code: true, title: true},
       });
+
+      console.log(`\x1b[32m✅ component: ${component.title}\x1b[0m`);
+      return component;
     }),
   );
   return components;
+}
+
+export async function deleteCustomFields({
+  model,
+  modelField,
+  tenantId,
+  jsonModelPrefix,
+}: {
+  model: string;
+  modelField: string;
+  jsonModelPrefix?: string;
+  tenantId: Tenant['id'];
+}) {
+  const client = await manager.getClient(tenantId);
+  const fields = await client.aOSMetaJsonField.find({
+    where: {
+      model,
+      modelField,
+      ...(jsonModelPrefix && {
+        jsonModel: {name: {like: jsonModelPrefix + '%'}},
+      }),
+    },
+    select: {id: true, name: true, jsonModel: {name: true}},
+  });
+
+  await Promise.all(
+    fields.map(field => {
+      console.log(
+        `\x1b[31m✖ field:${field.name} | ${field.jsonModel?.name || model}.\x1b[0m`,
+      );
+      client.aOSMetaJsonField.delete({id: field.id, version: field.version});
+    }),
+  );
+}
+
+export async function deleteMetaJsonModels({
+  jsonModelPrefix,
+  tenantId,
+}: {
+  jsonModelPrefix?: string;
+  tenantId: Tenant['id'];
+}) {
+  const client = await manager.getClient(tenantId);
+  const models = await client.aOSMetaJsonModel.find({
+    where: {
+      name: {like: jsonModelPrefix + '%'},
+    },
+    select: {
+      id: true,
+      formView: {id: true, name: true},
+      gridView: {id: true, name: true},
+      name: true,
+    },
+  });
+
+  await Promise.all(
+    models.map(async model => {
+      await client.aOSMetaJsonModel.delete({
+        id: model.id,
+        version: model.version,
+      });
+      console.log(`\x1b[31m✖ model:${model.name}.\x1b[0m`);
+    }),
+  );
+
+  await Promise.all(
+    models.map(async model => {
+      let formView, gridView;
+      if (model.formView) {
+        formView = client.aOSMetaView.delete({
+          id: model.formView.id,
+          version: model.formView.version,
+        });
+      }
+      if (model.gridView) {
+        gridView = client.aOSMetaView.delete({
+          id: model.gridView.id,
+          version: model.gridView.version,
+        });
+      }
+      await formView;
+      await gridView;
+
+      console.log(
+        `\x1b[31m✖ view:${model.formView?.name} | ${model.gridView?.name}.\x1b[0m`,
+      );
+    }),
+  );
 }
