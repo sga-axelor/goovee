@@ -22,13 +22,17 @@ export const uploadFile = async (
   formData.append('channel_id', channelId);
   formData.append('client_ids', uniqueId);
   formData.append('files', file);
-  const {data} = await axios.post(`${HOST}${FILES_API_ENDPOINT}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${token}`,
+  const {data} = await axios.post(
+    `${getHOST()}${FILES_API_ENDPOINT}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+      transformRequest: formData => formData,
     },
-    transformRequest: formData => formData,
-  });
+  );
   return data;
 };
 
