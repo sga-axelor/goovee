@@ -30,12 +30,12 @@ export async function processBatch<T, R>(
   data: T[],
   action: (data: NoInfer<T>) => Promise<R>,
   batchSize: number = BATCH_SIZE,
-): Promise<R[]> {
+): Promise<PromiseSettledResult<R>[]> {
   const chunks = chunkArray(data, batchSize);
 
-  const results: R[] = [];
+  const results: PromiseSettledResult<R>[] = [];
   for (const chunk of chunks) {
-    const result = await Promise.all(chunk.map(data => action(data)));
+    const result = await Promise.allSettled(chunk.map(data => action(data)));
     results.push(...result);
   }
   return results;
@@ -47,4 +47,40 @@ function chunkArray<T>(array: T[], size: number): T[][] {
     result.push(array.slice(i, i + size));
   }
   return result;
+}
+
+export class Cache<T = any> {
+  private store = new Map<string, T>();
+
+  set(key: string, value: T): void {
+    this.store.set(key, value);
+  }
+
+  get(key: string): T | undefined {
+    return this.store.get(key);
+  }
+
+  has(key: string): boolean {
+    return this.store.has(key);
+  }
+
+  delete(key: string): boolean {
+    return this.store.delete(key);
+  }
+
+  clear(): void {
+    this.store.clear();
+  }
+
+  keys(): string[] {
+    return Array.from(this.store.keys());
+  }
+
+  values(): T[] {
+    return Array.from(this.store.values());
+  }
+
+  entries(): [string, T][] {
+    return Array.from(this.store.entries());
+  }
 }

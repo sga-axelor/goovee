@@ -21,45 +21,7 @@ import {
   CONTENT_MODEL_ATTRS,
 } from '../constants';
 import {LayoutMountType, MenuItem} from '../types';
-import {ExpandRecursively} from '@/types/util';
-
-type CacheValue = any;
-
-export class Cache {
-  private store = new Map<string, CacheValue>();
-
-  set(key: string, value: CacheValue): void {
-    this.store.set(key, value);
-  }
-
-  get(key: string): CacheValue | undefined {
-    return this.store.get(key);
-  }
-
-  has(key: string): boolean {
-    return this.store.has(key);
-  }
-
-  delete(key: string): boolean {
-    return this.store.delete(key);
-  }
-
-  clear(): void {
-    this.store.clear();
-  }
-
-  keys(): string[] {
-    return Array.from(this.store.keys());
-  }
-
-  values(): CacheValue[] {
-    return Array.from(this.store.values());
-  }
-
-  entries(): [string, CacheValue][] {
-    return Array.from(this.store.entries());
-  }
-}
+import {Cache} from '../utils/helper';
 
 export async function findAllMainWebsites({
   workspaceURL,

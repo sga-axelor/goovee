@@ -30,6 +30,7 @@ import {
   isJsonRelationalField,
   isRelationalField,
 } from '../utils/templates';
+import {Cache} from '../utils/helper';
 
 const pump = promisify(pipeline);
 
@@ -589,8 +590,9 @@ export async function createCMSContent(props: {
   tenantId: Tenant['id'];
   meta: Meta;
   demos: Demo<Meta>[];
+  fileCache: Cache<Promise<{id: string}>>;
 }) {
-  const {tenantId, demos, meta} = props;
+  const {tenantId, demos, meta, fileCache} = props;
   const code = formatComponentCode(meta.code);
 
   const client = await manager.getClient(tenantId);
@@ -616,6 +618,7 @@ export async function createCMSContent(props: {
         data: demo.data,
         prefix: code,
         fields: meta.fields,
+        fileCache,
       });
 
       const contentData: CreateArgs<AOSPortalCmsContent> = {
@@ -676,56 +679,91 @@ async function getFileFromPublic(filePath: string) {
 
 async function createMetaFile({
   tenantId,
-  buffer,
+  originPath,
+  metaFilePath,
   fileName,
   fileType,
 }: {
-  buffer: Buffer;
+  tenantId: Tenant['id'];
+  originPath: string;
+  metaFilePath: string;
   fileName: string;
   fileType: string;
-  tenantId: Tenant['id'];
-}) {
+}): Promise<{id: string}> {
   const client = await manager.getClient(tenantId);
-  const filePath = `${FILE_PREFIX}-${fileName}`;
-  const _metaFile = await client.aOSMetaFile.findOne({
-    where: {filePath},
-    select: {id: true},
-  });
+
+  const buffer = await getFileFromPublic(originPath);
+  await pump(
+    Readable.from(buffer),
+    fs.createWriteStream(path.resolve(storage, metaFilePath)),
+  );
 
   const metaFileData: CreateArgs<AOSMetaFile> = {
     fileName,
-    filePath,
+    filePath: metaFilePath,
     fileType,
     fileSize: buffer.length.toString(),
     sizeText: getFileSizeText(buffer.length),
   };
 
-  try {
-    await pump(
-      Readable.from(buffer),
-      fs.createWriteStream(path.resolve(storage, filePath)),
-    );
+  const _metaFile = await client.aOSMetaFile.findOne({
+    where: {filePath: metaFilePath, fileName, fileType},
+    select: {id: true, version: true},
+  });
 
-    if (_metaFile) {
-      const metaFile = await client.aOSMetaFile.update({
-        data: {
-          id: _metaFile.id,
-          version: _metaFile.version,
-          ...metaFileData,
-        },
-        select: {id: true, version: true},
-      });
-      console.log(`\x1b[33m⚠️ Updated metaFile: ${fileName}\x1b[0m `);
-      return metaFile;
-    }
-
-    const metaFile = await client.aOSMetaFile.create({
-      data: metaFileData,
+  if (_metaFile) {
+    const metaFile = await client.aOSMetaFile.update({
+      data: {
+        id: _metaFile.id,
+        version: _metaFile.version,
+        ...metaFileData,
+      },
       select: {id: true, version: true},
     });
-
-    console.log(`\x1b[32m✅ Created metaFile: ${fileName}\x1b[0m `);
+    console.log(`\x1b[33m⚠️ Updated metaFile: ${fileName}\x1b[0m `);
     return metaFile;
+  }
+
+  const metaFile = await client.aOSMetaFile.create({
+    data: metaFileData,
+    select: {id: true, version: true},
+  });
+
+  console.log(`\x1b[32m✅ Created metaFile: ${fileName}\x1b[0m `);
+  return metaFile;
+}
+
+async function getMetaFile({
+  tenantId,
+  fileName,
+  fileType,
+  filePath: originPath,
+  fileCache,
+}: {
+  fileName: string;
+  fileType: string;
+  tenantId: Tenant['id'];
+  filePath: string;
+  fileCache: Cache<Promise<{id: string}>>;
+}) {
+  try {
+    const metaFilePath = `${FILE_PREFIX}-${fileName}`;
+    const fileCacheKey = `${metaFilePath}-${fileType}-${fileName}`;
+
+    const cachedMetaFile = await fileCache.get(fileCacheKey);
+    if (cachedMetaFile) return cachedMetaFile;
+
+    //NOTE: FileCache is used to avoid copying the same file multiple times in the given seeding process
+    const metaFilePromise = createMetaFile({
+      tenantId,
+      originPath,
+      metaFilePath,
+      fileName,
+      fileType,
+    });
+
+    fileCache.set(fileCacheKey, metaFilePromise);
+    return metaFilePromise;
   } catch (error) {
     throw new Error('Failed to create meta file');
   }
@@ -737,9 +775,10 @@ async function createAttrs(props: {
   fields: Field[];
   data: any;
   prefix?: string;
+  fileCache: Cache<Promise<{id: string}>>;
 }) {
   const attrs: Record<string, any> = {};
-  const {tenantId, fields, meta, data, prefix} = props;
+  const {tenantId, fields, meta, data, prefix, fileCache} = props;
   await Promise.all(
     Object.entries(data || {}).map(async ([key, value]: [string, any]) => {
       const field = fields.find(
@@ -761,6 +800,7 @@ async function createAttrs(props: {
                   meta,
                   fields: modelFields,
                   data: record.attrs,
+                  fileCache,
                 }),
                 tenantId,
               });
@@ -777,6 +817,7 @@ async function createAttrs(props: {
               fields: modelFields,
               meta,
               data: value.attrs,
+              fileCache,
             }),
             tenantId,
           });
@@ -794,23 +835,23 @@ async function createAttrs(props: {
         if (isArrayField(field)) {
           const records = await Promise.all(
             value.map(async (record: any) => {
-              const buffer = await getFileFromPublic(record.filePath);
-              return await createMetaFile({
-                buffer,
+              return await getMetaFile({
                 fileName: record.fileName,
                 fileType: record.fileType,
+                filePath: record.filePath,
                 tenantId,
+                fileCache,
               });
             }),
           );
           attrs[key] = records.map(r => ({id: Number(r.id)}));
         } else {
-          const buffer = await getFileFromPublic(value.filePath);
-          const record = await createMetaFile({
-            buffer,
+          const record = await getMetaFile({
             fileName: value.fileName,
             fileType: value.fileType,
+            filePath: value.filePath,
             tenantId,
+            fileCache,
           });
           attrs[key] = {id: Number(record.id)};
         }
