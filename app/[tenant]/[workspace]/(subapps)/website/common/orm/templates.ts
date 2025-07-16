@@ -88,7 +88,9 @@ export async function createCustomFields({
             targetModel: field.target,
           }),
           ...(isCustomRelationalField && {
-            targetJsonModel: {select: {name: field.target}},
+            targetJsonModel: {
+              select: {name: getCustomModelName(field.target!)},
+            },
           }),
           ...(jsonModel && {
             jsonModel: {select: {name: jsonModel}},

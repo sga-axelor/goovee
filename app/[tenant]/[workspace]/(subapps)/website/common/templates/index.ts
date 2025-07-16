@@ -1,6 +1,7 @@
 import {ComponentType} from 'react';
 
 import type {TemplateProps} from '../types';
+import type {Meta} from '../types/templates';
 
 import {About1, about1Meta} from './about-1';
 import {Hero1, hero1Meta} from './hero-1';
@@ -38,7 +39,7 @@ export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   [sidebarMenu1Meta.name]: SidebarMenu1,
 };
 
-export const metas = [
+export const metas: Meta[] = [
   about1Meta,
   hero1Meta,
   pageProgress1Meta,

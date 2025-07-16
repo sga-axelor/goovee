@@ -1,6 +1,4 @@
 import {Tenant} from '@/lib/core/tenant';
-import fs from 'fs/promises';
-import path from 'path';
 import {
   COMPONENT_MODEL,
   CONTENT_MODEL,
@@ -50,7 +48,7 @@ export async function seedTemplates({
   await createMetaJsonModels({models, tenantId});
 
   await Promise.all(
-    metas.map(async (meta: any) => {
+    metas.map(async meta => {
       const component = components.find(c => c.code === camelCase(meta.name));
 
       return createCustomFields({
@@ -74,7 +72,7 @@ export async function seedTemplates({
   );
 
   await Promise.all(
-    models.map((model: any) => {
+    models.map(model => {
       if (model.fields?.length) {
         const modelName = getCustomModelName(model.name);
         return createCustomFields({
