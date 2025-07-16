@@ -190,6 +190,7 @@ export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
       fields: model.fields,
       jsonModel,
       tenantId,
+      addPanel: true,
     });
     return {...jsonModel, fields};
   });
@@ -204,6 +205,7 @@ export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
     modelField: CONTENT_MODEL_ATTRS,
     fields,
     tenantId,
+    addPanel: true,
   });
 
   const customModels = await Promise.all(customModelPromises);

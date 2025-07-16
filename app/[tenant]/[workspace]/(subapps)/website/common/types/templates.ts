@@ -50,6 +50,8 @@ type PrimitiveType =
   | TDate
   | Time;
 
+type DecorativeFieldType = Panel;
+
 type PrimitiveMap = {
   string: string;
   integer: number;
@@ -62,25 +64,36 @@ type PrimitiveMap = {
 
 type CommonField = {
   name: string;
-  title: string;
   widgetAttrs?: Record<string, string>;
 };
 
 export type PrimitiveField = CommonField & {
   type: PrimitiveType;
+  title: string;
 };
 
 export type RelationalField = CommonField & {
   type: RelationalType;
+  title: string;
   target: string;
 };
 
 export type JsonRelationalField = CommonField & {
   type: JsonRelationalType;
+  title: string;
   target: string;
 };
 
-type ContentField = PrimitiveField | RelationalField | JsonRelationalField;
+export type DecorativeField = CommonField & {
+  type: DecorativeFieldType;
+  title?: string;
+};
+
+type ContentField =
+  | PrimitiveField
+  | RelationalField
+  | JsonRelationalField
+  | DecorativeField;
 
 type ModelField = ContentField & {
   nameField?: boolean;
@@ -121,7 +134,15 @@ type FieldType<F, TMeta extends Meta> = F extends {
     }[]
   : F extends {type: keyof PrimitiveMap}
     ? PrimitiveMap[F['type']]
-    : unknown;
+    : F extends {type: DecorativeFieldType}
+      ? never
+      : unknown;
+
+type NonDecorativeFields<T extends Field[]> = T extends (infer F)[]
+  ? F extends {type: DecorativeFieldType}
+    ? never
+    : F
+  : never;
 
 type ModelAttrs<
   ModelName extends string,
@@ -130,7 +151,10 @@ type ModelAttrs<
   ? Extract<TMeta['models'][number], {name: ModelName}> extends infer M
     ? M extends {fields: Field[]}
       ? {
-          [F in M['fields'][number] as F['name']]: FieldType<F, TMeta>;
+          [F in NonDecorativeFields<M['fields']> as F['name']]: FieldType<
+            F,
+            TMeta
+          >;
         }
       : never
     : never
@@ -142,7 +166,10 @@ type FieldKey<
 > = `${CamelCase<TMeta['code']>}${Capitalize<CamelCase<F['name']>>}`;
 
 export type Data<TMeta extends Meta> = {
-  [F in TMeta['fields'][number] as FieldKey<F, TMeta>]: FieldType<F, TMeta>;
+  [F in NonDecorativeFields<TMeta['fields']> as FieldKey<F, TMeta>]: FieldType<
+    F,
+    TMeta
+  >;
 };
 
 export enum Template {

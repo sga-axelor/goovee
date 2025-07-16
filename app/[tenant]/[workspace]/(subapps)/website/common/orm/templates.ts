@@ -4,6 +4,7 @@ import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
 import type {CustomField, Meta, Model} from '../types/templates';
 import {
   getComponentCode,
+  getCustomFieldName,
   isJsonRelationalField,
   isRelationalField,
 } from '../utils/templates';
@@ -15,6 +16,7 @@ export async function createCustomFields({
   uniqueModel,
   tenantId,
   jsonModel,
+  addPanel,
 }: {
   model: string;
   modelField: string;
@@ -22,9 +24,21 @@ export async function createCustomFields({
   fields: CustomField[];
   tenantId: Tenant['id'];
   jsonModel?: {id: string; name?: string};
+  addPanel?: boolean;
 }) {
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
+
+  if (addPanel && fields[0]?.type !== 'panel') {
+    fields = [
+      {
+        name: getCustomFieldName(`${jsonModel?.name || model}-panel`),
+        type: 'panel',
+        ...(!jsonModel?.id && {widgetAttrs: {colSpan: '12'}}),
+      },
+      ...fields,
+    ];
+  }
 
   const res = await Promise.all(
     fields.map(async (field, i) => {
