@@ -486,15 +486,41 @@ export async function deleteCustomFields({
         jsonModel: {name: {like: jsonModelPrefix + '%'}},
       }),
     },
-    select: {id: true, name: true, jsonModel: {name: true}},
+    select: {id: true, name: true, selection: true, jsonModel: {name: true}},
   });
 
   await Promise.all(
-    fields.map(field => {
+    fields.map(async field => {
+      await client.aOSMetaJsonField.delete({
+        id: field.id,
+        version: field.version,
+      });
       console.log(
         `\x1b[31m✖ field:${field.name} | ${field.jsonModel?.name || model}.\x1b[0m`,
       );
-      client.aOSMetaJsonField.delete({id: field.id, version: field.version});
+      if (field.selection) {
+        const metaSelect = await client.aOSMetaSelect.findOne({
+          where: {name: field.selection},
+          select: {id: true, items: {select: {id: true}}},
+        });
+        if (metaSelect) {
+          if (metaSelect.items?.length) {
+            await Promise.all(
+              metaSelect.items.map(item =>
+                client.aOSMetaSelectItem.delete({
+                  id: item.id,
+                  version: item.version,
+                }),
+              ),
+            );
+          }
+          await client.aOSMetaSelect.delete({
+            id: metaSelect.id,
+            version: metaSelect.version,
+          });
+          console.log(`\x1b[31m✖ metaSelect:${field.selection}.\x1b[0m`);
+        }
+      }
     }),
   );
 }
