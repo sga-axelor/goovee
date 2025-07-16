@@ -5,6 +5,7 @@ import {pipeline, Readable} from 'stream';
 import {promisify} from 'util';
 
 import type {
+  AOSMetaFile,
   AOSMetaJsonField,
   AOSMetaJsonModel,
   AOSMetaSelect,
@@ -37,6 +38,7 @@ const storage = process.env.DATA_STORAGE as string;
 const disableUpdates = false;
 const enableMetaSelect = true;
 const demoFileDirectory = '/public';
+const FILE_PREFIX = 'goovee-template-file';
 function getContentTitle({code, language}: {code: string; language: string}) {
   return `Demo - ${startCase(code)} - ${language}`;
 }
@@ -684,25 +686,45 @@ async function createMetaFile({
   tenantId: Tenant['id'];
 }) {
   const client = await manager.getClient(tenantId);
-  const timestampFilename = `${new Date().getTime()}-${fileName}`;
+  const filePath = `${FILE_PREFIX}-${fileName}`;
+  const _metaFile = await client.aOSMetaFile.findOne({
+    where: {filePath},
+    select: {id: true},
+  });
+
+  const metaFileData: CreateArgs<AOSMetaFile> = {
+    fileName,
+    filePath,
+    fileType,
+    fileSize: buffer.length.toString(),
+    sizeText: getFileSizeText(buffer.length),
+  };
 
   try {
     await pump(
       Readable.from(buffer),
-      fs.createWriteStream(path.resolve(storage, timestampFilename)),
+      fs.createWriteStream(path.resolve(storage, filePath)),
     );
 
+    if (_metaFile) {
+      const metaFile = await client.aOSMetaFile.update({
+        data: {
+          id: _metaFile.id,
+          version: _metaFile.version,
+          ...metaFileData,
+        },
+        select: {id: true, version: true},
+      });
+      console.log(`\x1b[33m⚠️ Updated metaFile: ${fileName}\x1b[0m `);
+      return metaFile;
+    }
+
     const metaFile = await client.aOSMetaFile.create({
-      data: {
-        fileName: fileName,
-        filePath: timestampFilename,
-        fileType: fileType,
-        fileSize: buffer.length.toString(),
-        sizeText: getFileSizeText(buffer.length),
-      },
+      data: metaFileData,
       select: {id: true, version: true},
     });
 
+    console.log(`\x1b[32m✅ Created metaFile: ${fileName}\x1b[0m `);
     return metaFile;
   } catch (error) {
     throw new Error('Failed to create meta file');
