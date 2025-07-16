@@ -40,7 +40,7 @@ export async function generateMetadata({
   });
 
   if (!website) {
-    return {title: 'Page'};
+    return null;
   }
 
   return {

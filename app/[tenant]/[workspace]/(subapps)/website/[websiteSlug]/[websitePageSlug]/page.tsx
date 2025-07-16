@@ -34,7 +34,7 @@ export async function generateMetadata({
   });
 
   if (!websitePage) {
-    return {title: 'Page'};
+    return null;
   }
 
   return {
