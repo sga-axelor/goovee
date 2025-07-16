@@ -1,4 +1,4 @@
-import {seedTemplates} from '@/subapps/website/common/utils/templates';
+import {seedContents} from '@/subapps/website/common/utils/templates';
 
 const tenantId = process.argv[2];
 
@@ -7,7 +7,7 @@ if (!tenantId) {
   process.exit(1);
 }
 
-seedTemplates({tenantId})
+seedContents(tenantId)
   .then(() =>
     console.log('\x1b[32m🔥 Success:\x1b[0m Templates seeded successfully!'),
   )

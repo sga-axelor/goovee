@@ -180,7 +180,7 @@ function getFormattedContentFields(
   return fields;
 }
 
-export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
+export async function seedComponents(tenantId: Tenant['id']) {
   const metas = demos.map(demo => demo.meta);
   if (!validateMeta(metas)) return;
 
@@ -228,7 +228,7 @@ export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
   return {components, contentFields, customModels};
 }
 
-export async function resetTemplates(tenantId: Tenant['id']) {
+export async function resetFields(tenantId: Tenant['id']) {
   await Promise.all([
     deleteCustomFields({
       model: CONTENT_MODEL,
@@ -249,7 +249,7 @@ export async function resetTemplates(tenantId: Tenant['id']) {
   });
 }
 
-export async function seedContent(tenantId: Tenant['id']) {
+export async function seedContents(tenantId: Tenant['id']) {
   const res = Promise.all(
     demos.map(({meta, data}) => {
       return createCMSContent({tenantId, meta, data});

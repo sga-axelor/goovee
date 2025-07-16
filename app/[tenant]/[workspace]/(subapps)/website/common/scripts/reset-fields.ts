@@ -1,4 +1,4 @@
-import {resetTemplates} from '@/subapps/website/common/utils/templates';
+import {resetFields} from '@/subapps/website/common/utils/templates';
 
 const tenantId = process.argv[2];
 
@@ -7,7 +7,7 @@ if (!tenantId) {
   process.exit(1);
 }
 
-resetTemplates(tenantId)
+resetFields(tenantId)
   .then(() =>
     console.log(
       '\x1b[32m🔥 Success:\x1b[0m Templates reset successfully!, Components are not deleted',
