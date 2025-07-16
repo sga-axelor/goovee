@@ -8,9 +8,10 @@ import {InnerHTML} from '@/ui/components';
 import {colors} from '../../../constants';
 import type {Entry, ListEntry} from '../../../types';
 import {Category} from '../pills';
+import {Cloned} from '@/types/util';
 
 export type CardProps = {
-  item: ListEntry | Entry;
+  item: ListEntry | Entry | Cloned<Entry> | Cloned<ListEntry>;
   url: string;
   small?: boolean;
   workspaceURI: string;

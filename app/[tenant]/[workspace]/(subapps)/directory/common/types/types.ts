@@ -1,5 +1,5 @@
-import {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
-import {OrderByOptions} from '@goovee/orm';
+import type {AOSPortalDirectoryEntry} from '@/goovee/.generated/models';
+import type {BigDecimal, OrderByOptions} from '@goovee/orm';
 
 type Pagination = {
   _count?: string;
@@ -38,8 +38,8 @@ export type Entry = {
     id: string;
     version: number;
     formattedFullName?: string;
-    latit?: string;
-    longit?: string;
+    latit?: BigDecimal;
+    longit?: BigDecimal;
   };
   linkedIn?: string;
   twitter?: string;
@@ -75,8 +75,8 @@ export type ListEntry = {
     id: string;
     version: number;
     formattedFullName?: string;
-    latit?: string;
-    longit?: string;
+    latit?: BigDecimal;
+    longit?: BigDecimal;
   };
   isMap?: boolean;
   image?: {id: string; version: number};

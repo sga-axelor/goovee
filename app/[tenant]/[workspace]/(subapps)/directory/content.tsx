@@ -58,7 +58,7 @@ export async function Content({
         <aside className="space-y-4 z-10">
           <Suspense fallback={<MapSkeleton />}>
             <ServerMap
-              entries={clone(entries)}
+              entries={entries}
               workspaceId={workspaceId}
               tenant={tenant}
             />
