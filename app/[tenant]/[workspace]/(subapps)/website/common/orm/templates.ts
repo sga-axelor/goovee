@@ -177,7 +177,7 @@ export async function createCustomFields({
           return _field;
         }
         const metaField = await client.aOSMetaJsonField.update({
-          data: {id: _field.id, version: _field.version, ...fieldData},
+          data: {...fieldData, id: _field.id, version: _field.version},
           select: {id: true, name: true},
         });
 
@@ -207,9 +207,9 @@ export async function createCustomFields({
                   items: {
                     update: existingItemsLength
                       ? _metaSelect.items?.map((item, i) => ({
+                          ...metaSelectItemsData[i],
                           id: item.id,
                           version: item.version,
-                          ...metaSelectItemsData[i],
                         }))
                       : undefined,
                     create:
@@ -382,16 +382,16 @@ export async function createMetaJsonModel({
     }
     const metaModel = await client.aOSMetaJsonModel.update({
       data: {
+        ...metaModelData,
         id: _model.id,
         version: _model.version,
-        ...metaModelData,
         formView: {
           ...(_model.formView
             ? {
                 update: {
+                  ...formViewData,
                   id: _model.formView.id,
                   version: _model.formView.version,
-                  ...formViewData,
                 },
               }
             : {create: {...formViewData, createdOn: timeStamp}}),
@@ -400,9 +400,9 @@ export async function createMetaJsonModel({
           ...(_model.gridView
             ? {
                 update: {
+                  ...gridViewData,
                   id: _model.gridView.id,
                   version: _model.gridView.version,
-                  ...gridViewData,
                 },
               }
             : {create: {...gridViewData, createdOn: timeStamp}}),
@@ -462,7 +462,7 @@ export async function createCMSComponent({
       return _component;
     }
     const component = await client.aOSPortalCmsComponent.update({
-      data: {id: _component.id, version: _component.version, ...componentData},
+      data: {...componentData, id: _component.id, version: _component.version},
       select: {id: true, code: true, title: true},
     });
     console.log(`\x1b[33m⚠️ Updated component: ${_component.title}\x1b[0m `);
@@ -638,9 +638,9 @@ export async function createCMSContent(props: {
       if (_content) {
         const content = await client.aOSPortalCmsContent.update({
           data: {
+            ...contentData,
             id: _content.id,
             version: _content.version,
-            ...contentData,
           },
           select: {id: true, title: true},
         });
@@ -720,9 +720,9 @@ async function createMetaFile({
   if (_metaFile) {
     const metaFile = await client.aOSMetaFile.update({
       data: {
+        ...metaFileData,
         id: _metaFile.id,
         version: _metaFile.version,
-        ...metaFileData,
       },
       select: {id: true, version: true},
     });
