@@ -1,4 +1,6 @@
 import {Template, Data, Meta} from '@/subapps/website/common/types/templates';
+import {solidIcons} from '@/subapps/website/common/icons/solid';
+import {startCase} from 'lodash-es';
 
 export const services1Meta = {
   title: 'Services 1',
@@ -43,6 +45,10 @@ export const services1Meta = {
           name: 'icon',
           title: 'Icon',
           type: 'string',
+          selection: solidIcons.map(icon => ({
+            title: startCase(icon),
+            value: icon,
+          })),
         },
         {
           name: 'link',
