@@ -23,10 +23,10 @@ export async function findModelFields({
     .find({
       where: {
         modelField,
-        hidden: false,
         showIf: null,
         ...(modelName && {model: modelName}),
         ...(jsonModelName && {jsonModel: {name: jsonModelName}}),
+        OR: [{hidden: false}, {hidden: null}],
       },
       orderBy: {sequence: 'ASC'},
       select: {
