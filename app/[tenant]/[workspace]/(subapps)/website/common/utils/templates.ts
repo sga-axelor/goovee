@@ -32,15 +32,15 @@ function capitalCase(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function getCustomModelName(modelName: string) {
+export function formatCustomModelName(modelName: string) {
   return CUSTOM_MODEL_PREFIX + capitalCase(modelName);
 }
 
-export function getComponentCode(name: string) {
+export function formatComponentCode(name: string) {
   return camelCase(name);
 }
 
-export function getCustomFieldName(name: string, prefix?: string) {
+export function formatCustomFieldName(name: string, prefix?: string) {
   prefix = prefix || '';
   return camelCase(`${prefix} ${name}`);
 }
@@ -119,13 +119,13 @@ function getFormattedModels(metas: Meta[]): Model[] {
       models.push(
         ...meta.models.map(model => ({
           ...model,
-          name: getCustomModelName(model.name),
+          name: formatCustomModelName(model.name),
           fields: model.fields.map(field => {
             if (isJsonRelationalField(field)) {
               return {
                 ...field,
-                name: getCustomFieldName(field.name),
-                target: getCustomModelName(field.target),
+                name: formatCustomFieldName(field.name),
+                target: formatCustomModelName(field.target),
               };
             }
             return field;
@@ -143,16 +143,16 @@ function getFormattedContentFields(
 ): CustomField[] {
   const fields = [];
   for (const meta of metas) {
-    const code = getComponentCode(meta.code);
+    const code = formatComponentCode(meta.code);
     const component = components.find(c => c.code === code);
     if (!component) continue;
     if (meta.fields.length) {
       fields.push(
         ...meta.fields.map(field => ({
           ...field,
-          name: getCustomFieldName(field.name, code),
+          name: formatCustomFieldName(field.name, code),
           ...(isJsonRelationalField(field) && {
-            target: getCustomModelName(field.target),
+            target: formatCustomModelName(field.target),
           }),
           contextField: 'component',
           contextFieldTarget: COMPONENT_MODEL,

@@ -3,8 +3,8 @@ import {xml} from '@/utils/template-string';
 import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
 import type {CustomField, Meta, Model} from '../types/templates';
 import {
-  getComponentCode,
-  getCustomFieldName,
+  formatComponentCode,
+  formatCustomFieldName,
   isJsonRelationalField,
   isRelationalField,
 } from '../utils/templates';
@@ -32,7 +32,7 @@ export async function createCustomFields({
   if (addPanel && fields[0]?.type !== 'panel') {
     fields = [
       {
-        name: getCustomFieldName(`${jsonModel?.name || model}-panel`),
+        name: formatCustomFieldName(`${jsonModel?.name || model}-panel`),
         type: 'panel',
         ...(!jsonModel?.id && {widgetAttrs: {colSpan: '12'}}),
       },
@@ -196,7 +196,7 @@ export async function creteCMSComponents({
 }) {
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
-  const code = getComponentCode(meta.code);
+  const code = formatComponentCode(meta.code);
   const _component = await client.aOSPortalCmsComponent.findOne({
     where: {code},
     select: {id: true, code: true, title: true},
