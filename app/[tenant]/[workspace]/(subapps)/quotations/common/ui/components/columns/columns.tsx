@@ -9,7 +9,6 @@ import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
-import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
 
 export const Columns = [
   {
