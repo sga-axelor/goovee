@@ -163,12 +163,7 @@ function getFormattedContentFields(
   return fields;
 }
 
-export async function seedTemplates({
-  tenantId,
-}: {
-  tenantId: Tenant['id'];
-  templatesDir: string;
-}) {
+export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
   if (!validateMeta(metas)) return;
 
   const componentsPromise = metas.map(meta =>

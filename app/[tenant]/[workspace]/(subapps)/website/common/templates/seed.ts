@@ -1,9 +1,4 @@
-import path from 'path';
-import {fileURLToPath} from 'url';
 import {seedTemplates} from '@/subapps/website/common/utils/templates';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const tenantId = process.argv[2];
 
@@ -12,7 +7,7 @@ if (!tenantId) {
   process.exit(1);
 }
 
-seedTemplates({tenantId, templatesDir: __dirname})
+seedTemplates({tenantId})
   .then(() =>
     console.log('\x1b[32m🔥 Success:\x1b[0m Templates seeded successfully!'),
   )
