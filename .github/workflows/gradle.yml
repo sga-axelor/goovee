@@ -30,7 +30,7 @@ jobs:
         run: pnpm lint
 
   release:
-    needs: build
+    needs: format
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     name: Release tag
     runs-on: ubuntu-latest
