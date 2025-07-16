@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/website/common/assets/scss:app/[tenant]/[workspace]/'(subapps)'/website/common/assets/css",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
-    "generate": "goovee generate"
+    "generate": "goovee generate",
+    "sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/website/common/assets/scss:app/[tenant]/[workspace]/'(subapps)'/website/common/assets/css",
+    "seed": "tsx app/[tenant]/[workspace]/'(subapps)'/website/common/templates/bin.ts"
   },
   "dependencies": {
     "@cyntler/react-doc-viewer": "^1.17.0",
@@ -163,6 +164,7 @@
     "eslint-config-next": "14.2.4",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.20.3",
     "typescript": "^5.6.3"
   },
   "engines": {

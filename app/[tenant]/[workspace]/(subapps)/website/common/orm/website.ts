@@ -13,6 +13,13 @@ import type {
 import {clone} from '@/utils';
 import {findModelFields} from '@/orm/model-fields';
 import {SUBAPP_CODES} from '@/constants';
+import {
+  JSON_MODEL_ATTRS,
+  RelationalFieldTypes,
+  CustomRelationalFieldTypes,
+  CONTENT_MODEL,
+  CONTENT_MODEL_ATTRS,
+} from '../constants';
 
 type CacheValue = any;
 
@@ -51,31 +58,6 @@ export class Cache {
     return Array.from(this.store.entries());
   }
 }
-
-const CONTENT_MODEL = 'com.axelor.apps.portal.db.PortalCmsContent';
-const CONTENT_MODEL_ATTRS = 'attrs';
-const JSON_MODEL_ATTRS = 'attrs';
-
-const FieldType = {
-  OneToMany: 'one-to-many',
-  ManyToMany: 'many-to-many',
-  ManyToOne: 'many-to-one',
-  CustomOneToMany: 'json-one-to-many',
-  CustomManyToMany: 'json-many-to-many',
-  CustomManyToOne: 'json-many-to-one',
-};
-
-const RelationalFieldTypes = [
-  FieldType.OneToMany,
-  FieldType.ManyToMany,
-  FieldType.ManyToOne,
-];
-
-const CustomRelationalFieldTypes = [
-  FieldType.CustomOneToMany,
-  FieldType.CustomManyToMany,
-  FieldType.CustomManyToOne,
-];
 
 export async function findAllMainWebsites({
   workspaceURL,

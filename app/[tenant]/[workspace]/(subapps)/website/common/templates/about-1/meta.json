@@ -1,0 +1,51 @@
+{
+  "title": "About 1",
+  "name": "about1",
+  "type": 1,
+  "fields": [
+    {
+      "name": "title",
+      "title": "Title",
+      "type": "text"
+    },
+    {
+      "name": "caption",
+      "title": "Caption",
+      "type": "text"
+    },
+    {
+      "name": "image",
+      "title": "Image",
+      "type": "many-to-one"
+    },
+    {
+      "name": "accordions",
+      "title": "Accordions",
+      "target": "About1Accordion",
+      "type": "json-one-to-many"
+    }
+  ],
+  "models": [
+    {
+      "name": "About1Accordion",
+      "title": "About 1 Accordions",
+      "fields": [
+        {
+          "name": "heading",
+          "title": "Heading",
+          "type": "text"
+        },
+        {
+          "name": "body",
+          "title": "Body",
+          "type": "text"
+        },
+        {
+          "name": "expand",
+          "title": "Expand",
+          "type": "boolean"
+        }
+      ]
+    }
+  ]
+}

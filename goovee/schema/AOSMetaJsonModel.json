@@ -8,10 +8,28 @@
       "name": "name"
     },
     {
+      "type": "String",
+      "name": "title"
+    },
+    {
       "type": "OneToMany",
       "name": "fields",
       "target": "AOSMetaJsonField",
       "mappedBy": "jsonModel"
+    },
+    {
+      "type": "String",
+      "name": "formWidth"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "formView",
+      "target": "AOSMetaView"
+    },
+    {
+      "type": "ManyToOne",
+      "name": "gridView",
+      "target": "AOSMetaView"
     }
   ]
 }

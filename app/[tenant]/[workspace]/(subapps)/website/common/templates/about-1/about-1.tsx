@@ -14,6 +14,7 @@ type About1Data = {
     };
   }[];
 };
+
 export function About1(props: TemplateProps<About1Data>) {
   const {data} = props;
   const {
