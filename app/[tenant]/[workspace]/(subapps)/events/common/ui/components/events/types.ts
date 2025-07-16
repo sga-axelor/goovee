@@ -22,20 +22,18 @@ export interface Event {
       symbol: string;
     };
   } | null;
-  defaultPrice: number;
+  defaultPrice: string;
   formattedDefaultPrice: string;
   formattedDefaultPriceAti: string;
   displayAtiPrice: string;
   displayAti: string;
-  facilityList: [
-    {
-      id: number;
-      price: number;
-      formattedPrice: string;
-      facility: string;
-      additionalFieldSet: any[];
-    },
-  ];
+  facilityList: {
+    id: number;
+    price: string;
+    formattedPrice: string;
+    facility: string;
+    additionalFieldSet: any[];
+  }[];
   slug: string;
   isPrivate: boolean;
   isHidden: boolean;

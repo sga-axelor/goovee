@@ -208,7 +208,7 @@ export async function findEvent({
     });
 
   if (!event) return null;
-  const {eventProduct, defaultPrice}: any = event;
+  const {eventProduct, defaultPrice} = event;
   const {saleCurrency} = eventProduct || {};
 
   const productsFromWS = await findProductsFromWS({
@@ -217,8 +217,8 @@ export async function findEvent({
     eventId: event.id,
   });
 
-  const displayWt = productsFromWS?.priceWT || defaultPrice;
-  const displayAti = productsFromWS?.priceATI || defaultPrice;
+  const displayWt = productsFromWS?.priceWT || defaultPrice?.toString();
+  const displayAti = productsFromWS?.priceATI || defaultPrice?.toString();
 
   const currencySymbol = saleCurrency?.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = saleCurrency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
@@ -242,11 +242,11 @@ export async function findEvent({
 
     const facilityWt = matchingFacility
       ? matchingFacility.priceWT
-      : facility.price;
+      : facility.price?.toString();
 
     const facilityAti = matchingFacility
       ? matchingFacility.priceATI
-      : facility.price;
+      : facility.price?.toString();
 
     const formattedPriceWt = await formatNumber(facilityWt, {
       currency: currencySymbol,
@@ -262,6 +262,7 @@ export async function findEvent({
 
     return {
       ...facility,
+      price: facility.price?.toString(),
       displayWt: facilityWt,
       displayAti: facilityAti,
       formattedPrice: await formatNumber(facilityWt, {
@@ -277,6 +278,7 @@ export async function findEvent({
 
   return {
     ...event,
+    defaultPrice: event.defaultPrice?.toString(),
     displayWt,
     displayAti,
     formattedDefaultPrice,

@@ -14,7 +14,7 @@
     },
     {
       "name": "price",
-      "type": "Int"
+      "type": "Decimal"
     },
     {
       "type": "ManyToMany",

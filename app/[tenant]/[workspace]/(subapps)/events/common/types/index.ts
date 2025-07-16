@@ -11,7 +11,7 @@ export type Event = {
   eventAllowMultipleRegistrations: boolean;
   eventDescription: string;
   isPrivate: boolean;
-  defaultPrice: number;
+  defaultPrice: string;
   slug: string;
   isPublic: boolean;
   isLoginNotNeeded: boolean;
@@ -56,7 +56,7 @@ export type Event = {
     createdOn: string;
     updatedOn: string | null;
     facility: string;
-    price: number;
+    price: string;
     displayWt: string;
     displayAti: string;
     formattedPrice: string;
@@ -83,7 +83,7 @@ export type EventPayments = {
   facilityList: Array<{
     id: string | number;
     facility: string;
-    price: number;
+    price: string;
     formattedPrice: string;
     displayAti?: string | number;
   }>;
@@ -91,7 +91,7 @@ export type EventPayments = {
 
 export type Subscription = {
   id: string;
-  price: number;
+  price: string;
   displayAti: string;
 };
 
