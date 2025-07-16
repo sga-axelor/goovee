@@ -1,22 +1,53 @@
-import {FC} from 'react';
 // -------- custom component -------- //
 import SocialLinks from '@/subapps/website/common/components/reuseable/SocialLinks';
 import NextLink from '@/subapps/website/common/components/reuseable/links/NextLink';
 // -------- data -------- //
-import footerNav from '@/subapps/website/common/data/footer';
+import type {TemplateProps} from '../../types';
+import type {Footer1Data} from './meta';
+import {getMetaFileURL} from '../../utils/helper';
 
-export const Footer1: FC = () => {
+export function Footer1(props: TemplateProps<Footer1Data>) {
+  const {data} = props;
+  const {
+    footer1Title: title,
+    footer1ButtonLink: buttonLink,
+    footer1ButtonText: buttonText,
+    footer1CopyrightText: copyrightText,
+    footer1Logo,
+    footer1SocialLinks,
+    footer1AddressTitle: addressTitle,
+    footer1Address: address,
+    footer1Email: email,
+    footer1Phone: phone,
+    footer1NavTitle: navTitle,
+    footer1NavLinks: navLinks,
+    footer1FormTitle: formTitle,
+    footer1FormDescription: formDescription,
+  } = data || {};
+
+  const logo = getMetaFileURL({
+    metaFile: footer1Logo,
+    path: 'footer1Logo',
+    ...props,
+  });
+
+  const socialLinks = footer1SocialLinks?.map(socialLink => ({
+    id: socialLink.id,
+    icon: socialLink.attrs.iconClassName || '',
+    url: socialLink.attrs.url || '#',
+  }));
+
   return (
     <footer className="bg-navy text-inverse">
       <div className="container pt-15 pt-md-17 pb-13 pb-md-15">
         <div className="d-lg-flex flex-row align-items-lg-center">
           <h3 className="display-4 mb-6 mb-lg-0 pe-lg-20 pe-xl-22 pe-xxl-25 text-white">
-            Join our community by using our services and grow your business.
+            {title}
           </h3>
 
           <NextLink
-            href="#"
-            title="Try It For Free"
+            href={buttonLink || '#'}
+            title={buttonText || 'Try It For Free'}
             className="btn btn-primary rounded-pill mb-0 text-nowrap"
           />
         </div>
@@ -26,39 +57,34 @@ export const Footer1: FC = () => {
         <div className="row gy-6 gy-lg-0">
           <div className="col-md-4 col-lg-3">
             <div className="widget">
-              <img
+              <img className="mb-4" src={logo} alt="logo" />
+
+              <p
                 className="mb-4"
-                src="/img/logo-light.png"
-                srcSet="/img/logo-light@2x.png 2x"
-                alt=""
+                dangerouslySetInnerHTML={{__html: copyrightText || ''}}
               />
-
-              <p className="mb-4">
-                © 2022 Lighthouse. <br className="d-none d-lg-block" />
-                All rights reserved.
-              </p>
-
-              <SocialLinks className="nav social social-white" />
+              <SocialLinks
+                links={socialLinks || []}
+                className="nav social social-white"
+              />
             </div>
           </div>
 
           <div className="col-md-4 col-lg-3">
             <div className="widget">
-              <h4 className="widget-title text-white mb-3">Get in Touch</h4>
-              <address className="pe-xl-15 pe-xxl-17">
-                Moonshine St. 14/05 Light City, London, United Kingdom
-              </address>
-              <NextLink title="info@email.com" href="mailto:#" />
-              <br /> 00 (123) 456 78 90
+              <h4 className="widget-title text-white mb-3">{addressTitle}</h4>
+              <address className="pe-xl-15 pe-xxl-17">{address}</address>
+              {email && <NextLink title={email} href={`mailto:${email}`} />}
+              <br /> {phone && <NextLink title={phone} href={`tel:${phone}`} />}
             </div>
           </div>
 
           <div className="col-md-4 col-lg-3">
             <div className="widget">
-              <h4 className="widget-title text-white mb-3">Learn More</h4>
+              <h4 className="widget-title text-white mb-3">{navTitle}</h4>
               <ul className="list-unstyled  mb-0">
-                {footerNav.map(({title, url}) => (
-                  <li key={title}>
+                {navLinks?.map(({id, attrs: {title, url}}) => (
+                  <li key={id}>
                     <NextLink title={title} href={url} />
                   </li>
                 ))}
@@ -68,12 +94,11 @@ export const Footer1: FC = () => {
 
           <div className="col-md-12 col-lg-3">
             <div className="widget">
-              <h4 className="widget-title text-white mb-3">Our Newsletter</h4>
-              <p className="mb-5">
-                Subscribe to our newsletter to get our news &amp; deals
-                delivered to you.
-              </p>
-
+              <h4 className="widget-title text-white mb-3">{formTitle}</h4>
+              <p className="mb-5">{formDescription}</p>
+              {
+                //TODO: figure out how add newsletter form
+              }
               <div className="newsletter-wrapper">
                 <div id="mc_embed_signup2">
                   <form
@@ -137,6 +162,4 @@ export const Footer1: FC = () => {
       </div>
     </footer>
   );
-};
-
-export default Footer1;
+}
