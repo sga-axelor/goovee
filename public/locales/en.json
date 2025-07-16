@@ -748,5 +748,18 @@
   "Page not available": "Page not available",
   "Chat": "Chat",
   "Website": "Website",
-  "Company/Address is required. Please enter a valid value.": "Company/Address is required. Please enter a valid value."
+  "Company/Address is required. Please enter a valid value.": "Company/Address is required. Please enter a valid value.",
+  "app-chat": "Chat",
+  "app-directory": "Directory",
+  "app-events": "Events",
+  "app-forum": "Forum",
+  "app-invoices": "Invoices",
+  "app-news": "News",
+  "app-orders": "Orders",
+  "app-quotations": "Quotations",
+  "app-resources": "Documents",
+  "app-shop": "E-Shop",
+  "app-survey": "Forms",
+  "app-ticketing": "Helpdesk",
+  "app-website": "Content"
 }

@@ -71,7 +71,7 @@ export default async function Page({
   return (
     <>
       <HeroSearch
-        title={workspace.config.ticketHeroTitle || (await t('Ticketing'))}
+        title={workspace.config.ticketHeroTitle || (await t('app-ticketing'))}
         description={
           workspace.config.ticketHeroDescription ||
           (await t(

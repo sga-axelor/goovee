@@ -27,7 +27,7 @@ export const Hero = ({
 
   return (
     <HeroSearch
-      title={title || i18n.t('Directory')}
+      title={title || i18n.t('app-directory')}
       description={
         description ||
         i18n.t(

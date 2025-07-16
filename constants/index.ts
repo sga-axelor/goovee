@@ -122,10 +122,10 @@ export const DATE_FORMATS = {
  */
 
 export const BANNER_TITLES = {
-  resources: 'Resources',
-  news: 'News',
-  events: 'Events',
-  forum: 'Forum',
+  resources: 'app-resources',
+  news: 'app-news',
+  events: 'app-events',
+  forum: 'app-forum',
 };
 export const BANNER_DESCRIPTION =
   'Mi eget leo viverra cras pharetra enim viverra. Ac at non pretium etiam viverra. Ac at non pretium etiam';
