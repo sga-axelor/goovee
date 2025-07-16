@@ -1,94 +1,177 @@
-import {CamelCase} from '@/types/util';
+import {CamelCase, Expand, Merge} from '@/types/util';
 
-type OneToMany = 'one-to-many';
-type ManyToMany = 'many-to-many';
-type ManyToOne = 'many-to-one';
-type JsonOneToMany = 'json-one-to-many';
-type JsonManyToMany = 'json-many-to-many';
-type JsonManyToOne = 'json-many-to-one';
-type TBoolean = 'boolean';
-type Tstring = 'string';
-type Integer = 'integer';
-type Decimal = 'decimal';
-type Datetime = 'datetime';
-type TDate = 'date';
-type Time = 'time';
-type Panel = 'panel';
-type TEnum = 'enum';
-
-export type Type =
-  | OneToMany
-  | ManyToMany
-  | ManyToOne
-  | JsonOneToMany
-  | JsonManyToMany
-  | JsonManyToOne
-  | TBoolean
-  | Tstring
-  | Integer
-  | Decimal
-  | Datetime
-  | TDate
-  | Time
-  | Panel;
-
-type ToOne = ManyToOne;
-type ToMany = OneToMany | ManyToMany;
-
-type JsonToMany = JsonOneToMany | JsonManyToMany;
-type JsonToOne = JsonManyToOne;
-
-type RelationalType = OneToMany | ManyToMany | ManyToOne;
-type JsonRelationalType = JsonOneToMany | JsonManyToMany | JsonManyToOne;
-
-type PrimitiveType =
-  | TBoolean
-  | Tstring
-  | Integer
-  | Decimal
-  | Datetime
-  | TDate
-  | Time;
-
-type DecorativeFieldType = Panel;
-
-type PrimitiveMap = {
-  string: string;
-  integer: number;
-  decimal: number;
-  datetime: string;
-  date: string;
-  time: string;
-  boolean: boolean;
-};
-
+// === Common Base ===
 type CommonField = {
   name: string;
   widgetAttrs?: Record<string, string>;
 };
 
-export type PrimitiveField = CommonField & {
-  type: PrimitiveType;
+// === Primitive Fields ===
+type BooleanField = CommonField & {
+  type: 'boolean';
   title: string;
+  widget?:
+    | 'InlineCheckbox'
+    | 'Toggle'
+    | 'BooleanSelect'
+    | 'BooleanRadio'
+    | 'BooleanSwitch'
+    | 'NavSelect'
+    | 'CheckboxSelect'
+    | 'RadioSelect'
+    | 'MultiSelect'
+    | 'ImageSelect';
 };
 
-export type RelationalField = CommonField & {
-  type: RelationalType;
+type IntegerField = CommonField & {
+  type: 'integer';
+  title: string;
+  widget?:
+    | 'RelativeTime'
+    | 'Duration'
+    | 'Progress'
+    | 'SelectProgress'
+    | 'NavSelect'
+    | 'CheckboxSelect'
+    | 'RadioSelect'
+    | 'MultiSelect'
+    | 'ImageSelect';
+};
+
+type StringField = CommonField & {
+  type: 'string';
+  title: string;
+  widget?:
+    | 'Email'
+    | 'Url'
+    | 'Password'
+    | 'Html'
+    | 'CodeEditor'
+    | 'ImageLine'
+    | 'NavSelect'
+    | 'CheckboxSelect'
+    | 'RadioSelect'
+    | 'MultiSelect'
+    | 'ImageSelect';
+};
+
+type DecimalField = CommonField & {
+  type: 'decimal';
+  title: string;
+  widget?:
+    | 'RelativeTime'
+    | 'Duration'
+    | 'Progress'
+    | 'SelectProgress'
+    | 'NavSelect'
+    | 'CheckboxSelect'
+    | 'RadioSelect'
+    | 'MultiSelect'
+    | 'ImageSelect';
+};
+
+type DatetimeField = CommonField & {
+  type: 'datetime';
+  title: string;
+  widget?:
+    | 'NavSelect'
+    | 'CheckboxSelect'
+    | 'RadioSelect'
+    | 'MultiSelect'
+    | 'ImageSelect';
+};
+
+type DateField = CommonField & {
+  type: 'date';
+  title: string;
+  widget?:
+    | 'NavSelect'
+    | 'CheckboxSelect'
+    | 'RadioSelect'
+    | 'MultiSelect'
+    | 'ImageSelect';
+};
+
+type TimeField = CommonField & {
+  type: 'time';
+  title: string;
+  widget?:
+    | 'NavSelect'
+    | 'CheckboxSelect'
+    | 'RadioSelect'
+    | 'MultiSelect'
+    | 'ImageSelect';
+};
+
+export type PrimitiveField =
+  | BooleanField
+  | IntegerField
+  | StringField
+  | DecimalField
+  | DatetimeField
+  | DateField
+  | TimeField;
+
+// === Relational Fields ===
+type ManyToOneField = CommonField & {
+  type: 'many-to-one';
   title: string;
   target: string;
+  widget?: 'SuggestBox' | 'Image' | 'binary-link';
 };
 
-export type JsonRelationalField = CommonField & {
-  type: JsonRelationalType;
+type OneToManyField = CommonField & {
+  type: 'one-to-many';
   title: string;
   target: string;
+  widget?: 'TagSelect';
 };
 
-export type DecorativeField = CommonField & {
-  type: DecorativeFieldType;
+type ManyToManyField = CommonField & {
+  type: 'many-to-many';
+  title: string;
+  target: string;
+  widget?: 'TagSelect';
+};
+
+export type RelationalField = ManyToOneField | OneToManyField | ManyToManyField;
+
+// === JSON Relational Fields ===
+type JsonManyToOneField = CommonField & {
+  type: 'json-many-to-one';
+  title: string;
+  target: string;
+  widget?: 'SuggestBox' | 'Image' | 'binary-link';
+};
+
+type JsonOneToManyField = CommonField & {
+  type: 'json-one-to-many';
+  title: string;
+  target: string;
+  widget?: 'TagSelect';
+};
+
+type JsonManyToManyField = CommonField & {
+  type: 'json-many-to-many';
+  title: string;
+  target: string;
+  widget?: 'TagSelect';
+};
+
+export type JsonRelationalField =
+  | JsonManyToOneField
+  | JsonOneToManyField
+  | JsonManyToManyField;
+
+// === Decorative Fields ===
+type PanelField = CommonField & {
+  type: 'panel';
   title?: string;
 };
 
+export type DecorativeField = PanelField;
+
+// === Field Groups ===
 type ContentField =
   | PrimitiveField
   | RelationalField
@@ -101,6 +184,8 @@ type ModelField = ContentField & {
 };
 
 export type Field = ContentField | ModelField;
+
+export type Type = Field extends {type: infer T} ? T : never;
 
 export type CustomField = Field & {
   contextField?: string;
@@ -116,35 +201,48 @@ export type Model = {
   fields: ModelField[];
 };
 
+export type MetaModel = Model;
+
+export enum Template {
+  block = 0,
+  topMenu = 1,
+  leftRightMenu = 2,
+}
+
 export type Meta = {
   title: string;
   code: string;
   type: Template;
   fields: ContentField[];
   models?: Model[];
+  metaModels?: MetaModel[];
 };
 
-type FieldType<F, TMeta extends Meta> = F extends {
-  type: JsonToMany;
-  target: string;
-}
-  ? {
-      id: string;
-      attrs: ModelAttrs<F['target'], TMeta>;
-    }[]
-  : F extends {type: keyof PrimitiveMap}
-    ? PrimitiveMap[F['type']]
-    : F extends {type: DecorativeFieldType}
-      ? never
-      : unknown;
+// === Type Resolution ===
+type PrimitiveMap = {
+  string: string;
+  integer: number;
+  decimal: number;
+  datetime: string;
+  date: string;
+  time: string;
+  boolean: boolean;
+};
 
+type JsonToMany = 'json-one-to-many' | 'json-many-to-many';
+type JsonToOne = 'json-many-to-one';
+type RelToMany = 'one-to-many' | 'many-to-many';
+type RelToOne = 'many-to-one';
+type DecorativeFieldType = 'panel';
+
+// Remove decorative fields from consideration in output types
 type NonDecorativeFields<T extends Field[]> = T extends (infer F)[]
   ? F extends {type: DecorativeFieldType}
     ? never
     : F
   : never;
 
-type ModelAttrs<
+type JsonModelAttrs<
   ModelName extends string,
   TMeta extends Meta,
 > = TMeta['models'] extends any[]
@@ -160,6 +258,45 @@ type ModelAttrs<
     : never
   : never;
 
+type BasicRecord = {id: string; version: number};
+type RelationalModelAttrs<
+  ModelName extends string,
+  TMeta extends Meta,
+> = TMeta['metaModels'] extends any[]
+  ? Extract<TMeta['metaModels'][number], {name: ModelName}> extends infer M
+    ? M extends {fields: Field[]}
+      ? Expand<
+          Merge<
+            BasicRecord,
+            {
+              [F in NonDecorativeFields<M['fields']> as F['name']]: FieldType<
+                F,
+                TMeta
+              >;
+            }
+          >
+        >
+      : never
+    : never
+  : never;
+
+type FieldType<F, TMeta extends Meta> = F extends {
+  type: JsonToMany;
+  target: string;
+}
+  ? {id: string; version: number; attrs: JsonModelAttrs<F['target'], TMeta>}[]
+  : F extends {type: JsonToOne; target: string}
+    ? {id: string; version: number; attrs: JsonModelAttrs<F['target'], TMeta>}
+    : F extends {type: RelToMany; target: string}
+      ? RelationalModelAttrs<F['target'], TMeta>[]
+      : F extends {type: RelToOne; target: string}
+        ? RelationalModelAttrs<F['target'], TMeta>
+        : F extends {type: keyof PrimitiveMap}
+          ? PrimitiveMap[F['type']]
+          : F extends {type: DecorativeFieldType}
+            ? never
+            : unknown;
+
 type FieldKey<
   F extends {name: string},
   TMeta extends {code: string},
@@ -171,9 +308,3 @@ export type Data<TMeta extends Meta> = {
     TMeta
   >;
 };
-
-export enum Template {
-  block = 0,
-  topMenu = 1,
-  leftRightMenu = 2,
-}

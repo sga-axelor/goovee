@@ -81,6 +81,7 @@ export async function createCustomFields({
           ...(jsonModel && {jsonModel: {select: {id: jsonModel.id}}}),
           visibleInGrid: 'visibleInGrid' in field ? field.visibleInGrid : false,
           nameField: 'nameField' in field ? field.nameField : false,
+          widget: 'widget' in field ? field.widget : undefined,
           contextField: field.contextField,
           contextFieldValue: field.contextFieldValue,
           contextFieldTarget: field.contextFieldTarget,
