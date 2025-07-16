@@ -4,9 +4,20 @@ import path from 'path';
 import {pipeline, Readable} from 'stream';
 import {promisify} from 'util';
 
+import type {
+  AOSMetaJsonField,
+  AOSMetaJsonModel,
+  AOSMetaView,
+  AOSPortalCmsComponent,
+  AOSPortalCmsContent,
+} from '@/goovee/.generated/models';
 import {manager, type Tenant} from '@/lib/core/tenant';
+import {getFileSizeText} from '@/utils/files';
 import {xml} from '@/utils/template-string';
+import type {CreateArgs} from '@goovee/orm';
+import {startCase} from 'lodash-es';
 import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
+import {metaFileModel} from '../templates/meta-models';
 import type {CustomField, Field, Meta, Model} from '../types/templates';
 import {
   formatComponentCode,
@@ -16,13 +27,14 @@ import {
   isJsonRelationalField,
   isRelationalField,
 } from '../utils/templates';
-import {startCase} from 'lodash-es';
-import {metaFileModel} from '../templates/meta-models';
-import {getFileSizeText} from '@/utils/files';
 
 const pump = promisify(pipeline);
 
+/** seeding  variables **/
 const storage = process.env.DATA_STORAGE as string;
+const skipIfExists = false;
+const demoFileDirectory = '/public';
+const getContentTitle = (code: string) => `Demo - ${startCase(code)}`;
 
 if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, {recursive: true});
@@ -73,43 +85,55 @@ export async function createCustomFields({
         select: {id: true, name: true},
       });
 
+      const fieldData: CreateArgs<AOSMetaJsonField> = {
+        model,
+        modelField,
+        name: field.name,
+        title: field.title,
+        type: field.type,
+        required: field.required,
+        sequence: i,
+        uniqueModel,
+        widgetAttrs: JSON.stringify({
+          ...WidgetAttrsMap[field.type],
+          ...field.widgetAttrs,
+        }),
+        ...(isRelational && {targetModel: field.target}),
+        ...(isJsonRelational && {
+          targetJsonModel: {select: {name: field.target}},
+        }),
+        ...(jsonModel && {jsonModel: {select: {id: jsonModel.id}}}),
+        visibleInGrid: 'visibleInGrid' in field ? field.visibleInGrid : false,
+        nameField: 'nameField' in field ? field.nameField : false,
+        widget: 'widget' in field ? field.widget : undefined,
+        contextField: field.contextField,
+        contextFieldValue: field.contextFieldValue,
+        contextFieldTarget: field.contextFieldTarget,
+        contextFieldTargetName: field.contextFieldTargetName,
+        contextFieldTitle: field.contextFieldTitle,
+        updatedOn: timeStamp,
+      };
+
       if (_field) {
+        if (skipIfExists) {
+          console.log(
+            `\x1b[33m⚠️ Skipped field:${field.name} | ${jsonModel?.name || model}\x1b[0m `,
+          );
+          return _field;
+        }
+        const metaField = await client.aOSMetaJsonField.update({
+          data: {id: _field.id, version: _field.version, ...fieldData},
+          select: {id: true, name: true},
+        });
+
         console.log(
-          `\x1b[33m⚠️ Skipped field:${field.name} | ${jsonModel?.name || model}\x1b[0m `,
+          `\x1b[33m⚠️ Updated field:${field.name} | ${jsonModel?.name || model}\x1b[0m `,
         );
-        return _field;
-      } // TODO: update field
+        return metaField;
+      }
 
       const metaField = await client.aOSMetaJsonField.create({
-        data: {
-          model,
-          modelField,
-          name: field.name,
-          title: field.title,
-          type: field.type,
-          required: field.required,
-          sequence: i,
-          uniqueModel,
-          widgetAttrs: JSON.stringify({
-            ...WidgetAttrsMap[field.type],
-            ...field.widgetAttrs,
-          }),
-          ...(isRelational && {targetModel: field.target}),
-          ...(isJsonRelational && {
-            targetJsonModel: {select: {name: field.target}},
-          }),
-          ...(jsonModel && {jsonModel: {select: {id: jsonModel.id}}}),
-          visibleInGrid: 'visibleInGrid' in field ? field.visibleInGrid : false,
-          nameField: 'nameField' in field ? field.nameField : false,
-          widget: 'widget' in field ? field.widget : undefined,
-          contextField: field.contextField,
-          contextFieldValue: field.contextFieldValue,
-          contextFieldTarget: field.contextFieldTarget,
-          contextFieldTargetName: field.contextFieldTargetName,
-          contextFieldTitle: field.contextFieldTitle,
-          createdOn: timeStamp,
-          updatedOn: timeStamp,
-        },
+        data: {...fieldData, createdOn: timeStamp},
         select: {id: true, name: true},
       });
       console.log(
@@ -143,56 +167,96 @@ export async function createMetaJsonModel({
     },
   });
 
-  if (_model) {
-    console.log(`\x1b[33m⚠️ Skipped model: ${model.name}\x1b[0m`);
-    return _model;
-  }
   const formViewName = `custom-model-${model.name}-form`;
   const gridViewName = `custom-model-${model.name}-grid`;
+
+  const metaModelData: CreateArgs<AOSMetaJsonModel> = {
+    name: model.name,
+    title: model.title,
+    formWidth: 'large',
+    nameField: nameField,
+    updatedOn: timeStamp,
+  };
+
+  const gridViewData: CreateArgs<AOSMetaView> = {
+    name: gridViewName,
+    type: 'grid',
+    title: model.title,
+    model: 'com.axelor.meta.db.MetaJsonRecord',
+    priority: 20,
+    xml: xml`<grid
+        name="${gridViewName}"
+        title="${model.title}"
+        model="com.axelor.meta.db.MetaJsonRecord">
+        <field name="${JSON_MODEL_ATTRS}" x-json-model="${model.name}" />
+      </grid>`,
+    updatedOn: timeStamp,
+  };
+
+  const formViewData: CreateArgs<AOSMetaView> = {
+    name: formViewName,
+    type: 'form',
+    title: model.title,
+    model: 'com.axelor.meta.db.MetaJsonRecord',
+    priority: 20,
+    xml: xml`<form
+        name="${formViewName}"
+        title="${model.title}"
+        model="com.axelor.meta.db.MetaJsonRecord"
+        onNew="action-json-record-defaults"
+        width="large">
+        <panel title="Overview" itemSpan="12">
+          <field name="${JSON_MODEL_ATTRS}" x-json-model="${model.name}" />
+        </panel>
+      </form>`,
+    updatedOn: timeStamp,
+  };
+
+  if (_model) {
+    if (skipIfExists) {
+      console.log(`\x1b[33m⚠️ Skipped model: ${model.name}\x1b[0m`);
+      return _model;
+    }
+    const metaModel = await client.aOSMetaJsonModel.update({
+      data: {
+        id: _model.id,
+        version: _model.version,
+        ...metaModelData,
+        formView: {
+          ...(_model.formView
+            ? {
+                update: {
+                  id: _model.formView.id,
+                  version: _model.formView.version,
+                  ...formViewData,
+                },
+              }
+            : {create: {...formViewData, createdOn: timeStamp}}),
+        },
+        gridView: {
+          ...(_model.gridView
+            ? {
+                update: {
+                  id: _model.gridView.id,
+                  version: _model.gridView.version,
+                  ...gridViewData,
+                },
+              }
+            : {create: {...gridViewData, createdOn: timeStamp}}),
+        },
+      },
+      select: {id: true, name: true},
+    });
+    console.log(`\x1b[33m⚠️ Updated model: ${model.name}\x1b[0m`);
+    return metaModel;
+  }
+
   const metaModel = await client.aOSMetaJsonModel.create({
     data: {
-      name: model.name,
-      title: model.title,
-      formWidth: 'large',
-      nameField: nameField,
-      formView: {
-        create: {
-          name: formViewName,
-          type: 'form',
-          title: model.title,
-          model: 'com.axelor.meta.db.MetaJsonRecord',
-          priority: 20,
-          xml: xml`<form
-                  name="${formViewName}"
-                  title="${model.title}"
-                  model="com.axelor.meta.db.MetaJsonRecord"
-                  onNew="action-json-record-defaults"
-                  width="large">
-                  <panel title="Overview" itemSpan="12">
-                    <field name="${JSON_MODEL_ATTRS}" x-json-model="${model.name}" />
-                  </panel>
-                </form>`,
-          createdOn: timeStamp,
-          updatedOn: timeStamp,
-        },
-      },
-      gridView: {
-        create: {
-          name: gridViewName,
-          type: 'grid',
-          title: model.title,
-          model: 'com.axelor.meta.db.MetaJsonRecord',
-          priority: 20,
-          xml: xml`<grid
-                  name="${gridViewName}"
-                  title="${model.title}"
-                  model="com.axelor.meta.db.MetaJsonRecord">
-                  <field name="${JSON_MODEL_ATTRS}" x-json-model="${model.name}" />
-                </grid>`,
-          createdOn: timeStamp,
-          updatedOn: timeStamp,
-        },
-      },
+      ...metaModelData,
+      createdOn: timeStamp,
+      formView: {create: {...formViewData, createdOn: timeStamp}},
+      gridView: {create: {...gridViewData, createdOn: timeStamp}},
     },
     select: {
       id: true,
@@ -208,7 +272,7 @@ export async function createMetaJsonModel({
   return metaModel;
 }
 
-export async function creteCMSComponents({
+export async function createCMSComponent({
   meta,
   tenantId,
 }: {
@@ -222,19 +286,28 @@ export async function creteCMSComponents({
     where: {code},
     select: {id: true, code: true, title: true},
   });
+  const componentData: CreateArgs<AOSPortalCmsComponent> = {
+    code,
+    title: meta.title,
+    typeSelect: meta.type,
+    updatedOn: timeStamp,
+  };
+
   if (_component) {
-    console.log(`\x1b[33m⚠️ Skipped component: ${_component.title}\x1b[0m `);
-    return _component;
+    if (skipIfExists) {
+      console.log(`\x1b[33m⚠️ Skipped component: ${_component.title}\x1b[0m `);
+      return _component;
+    }
+    const component = await client.aOSPortalCmsComponent.update({
+      data: {id: _component.id, version: _component.version, ...componentData},
+      select: {id: true, code: true, title: true},
+    });
+    console.log(`\x1b[33m⚠️ Updated component: ${_component.title}\x1b[0m `);
+    return component;
   }
 
   const component = await client.aOSPortalCmsComponent.create({
-    data: {
-      code,
-      title: meta.title,
-      typeSelect: meta.type,
-      createdOn: timeStamp,
-      updatedOn: timeStamp,
-    },
+    data: {...componentData, createdOn: timeStamp},
     select: {id: true, code: true, title: true},
   });
 
@@ -330,7 +403,7 @@ export async function deleteMetaJsonModels({
   );
 }
 
-export async function craeteCMSContent(props: {
+export async function createCMSContent(props: {
   tenantId: Tenant['id'];
   meta: Meta;
   data: any;
@@ -340,7 +413,7 @@ export async function craeteCMSContent(props: {
 
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
-  const title = `Demo Content ${startCase(code)}`;
+  const title = getContentTitle(code);
   const attrs = await getAttrs({
     tenantId,
     meta,
@@ -351,32 +424,40 @@ export async function craeteCMSContent(props: {
 
   const _content = await client.aOSPortalCmsContent.findOne({
     where: {title, component: {code}},
-    select: {id: true, title: true, attrs: true},
+    select: {id: true, title: true},
   });
 
+  const contentData: CreateArgs<AOSPortalCmsContent> = {
+    language: {select: {code: 'en_US'}},
+    component: {select: {code}},
+    attrs: attrs as any,
+    title,
+    updatedOn: timeStamp,
+  };
+
   if (_content) {
-    return await client.aOSPortalCmsContent.update({
+    if (skipIfExists) {
+      console.log(`\x1b[33m⚠️ Skipped content: ${_content.title}\x1b[0m `);
+      return _content;
+    }
+    const content = await client.aOSPortalCmsContent.update({
       data: {
         id: _content.id,
         version: _content.version,
-        attrs: attrs as any,
-        updatedOn: timeStamp,
+        ...contentData,
       },
       select: {id: true, title: true},
     });
+    console.log(`\x1b[33m⚠️ Updated content: ${_content.title}\x1b[0m `);
+    return content;
   }
 
-  return await client.aOSPortalCmsContent.create({
-    data: {
-      language: {select: {code: 'en_US'}},
-      component: {select: {code}},
-      attrs: attrs as any,
-      title,
-      createdOn: timeStamp,
-      updatedOn: timeStamp,
-    },
+  const content = await client.aOSPortalCmsContent.create({
+    data: {...contentData, createdOn: timeStamp},
     select: {id: true, title: true},
   });
+  console.log(`\x1b[32m✅ Created content: ${content.title}\x1b[0m `);
+  return content;
 }
 
 async function createMetaJsonRecord(props: {
@@ -396,7 +477,7 @@ async function createMetaJsonRecord(props: {
 }
 
 async function getFileFromPublic(filePath: string) {
-  filePath = process.cwd() + `/public${filePath}`;
+  filePath = process.cwd() + `${demoFileDirectory}${filePath}`;
   const file = await fsPromise.readFile(filePath);
   if (!file) {
     throw new Error(`File at location ${filePath} not found`);
@@ -451,7 +532,7 @@ async function getAttrs(props: {
   const attrs: Record<string, any> = {};
   const {tenantId, fields, meta, data, prefix} = props;
   await Promise.all(
-    Object.entries(data).map(async ([key, value]: [string, any]) => {
+    Object.entries(data || {}).map(async ([key, value]: [string, any]) => {
       const field = fields.find(
         f => formatCustomFieldName(f.name, prefix) === key,
       );
@@ -495,9 +576,10 @@ async function getAttrs(props: {
         return;
       } else if (isRelationalField(field)) {
         if (field.target !== metaFileModel.name) {
-          throw new Error(
-            'Creating content is only supported for metaFileModel for relational fields',
+          console.log(
+            `\x1b[31m✖ Skipped field: ${field.title} in ${meta.title} Creating content is only supported for metaFileModel for relational fields\x1b[0m`,
           );
+          return;
         }
 
         if (isArrayField(field)) {

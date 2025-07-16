@@ -1,7 +1,6 @@
 import {ComponentType} from 'react';
 
 import type {TemplateProps} from '../types';
-import type {Meta} from '../types/templates';
 import {formatComponentCode} from '../utils/templates';
 
 import {About1, about1Demo, about1Meta} from './about-1';
@@ -58,25 +57,6 @@ export const ComponentMap = Object.fromEntries(
     value,
   ]),
 ) as Record<string, ComponentType<TemplateProps>>;
-
-export const metas: Meta[] = [
-  about1Meta,
-  hero1Meta,
-  pageProgress1Meta,
-  services1Meta,
-  cta1Meta,
-  process1Meta,
-  team1Meta,
-  services2Meta,
-  testimonial1Meta,
-  pricing1Meta,
-  contact4Meta,
-  clients1Meta,
-  navbar1Meta,
-  footer1Meta,
-  wiki1Meta,
-  sidebarMenu1Meta,
-];
 
 export const demos = [
   {meta: about1Meta, data: about1Demo},

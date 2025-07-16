@@ -10,7 +10,6 @@ export const COMPONENT_MODEL = 'com.axelor.apps.portal.db.PortalCmsComponent';
 export const JSON_MODEL = 'com.axelor.meta.db.MetaJsonRecord';
 export const CONTENT_MODEL_ATTRS = 'attrs';
 export const JSON_MODEL_ATTRS = 'attrs';
-export const CUSTOM_MODEL_PREFIX = 'GooveeTemplate';
 
 const FieldType = {
   OneToMany: 'one-to-many',

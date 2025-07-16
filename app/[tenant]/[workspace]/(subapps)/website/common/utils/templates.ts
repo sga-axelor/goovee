@@ -5,22 +5,21 @@ import {
   CONTENT_MODEL_ATTRS,
   JSON_MODEL,
   JSON_MODEL_ATTRS,
-  CUSTOM_MODEL_PREFIX,
   RelationalFieldTypes,
   JsonRelationalFieldTypes,
   ArrayFieldTypes,
   ObjectFieldTypes,
 } from '@/subapps/website/common/constants';
 import {
-  craeteCMSContent,
+  createCMSContent,
   createCustomFields,
   createMetaJsonModel,
-  creteCMSComponents as creteCMSComponent,
+  createCMSComponent,
   deleteCustomFields,
   deleteMetaJsonModels,
 } from '@/subapps/website/common/orm/templates';
 import {camelCase} from 'lodash-es';
-import {demos, metas} from '@/subapps/website/common/templates';
+import {demos} from '@/subapps/website/common/templates';
 import {
   ArrayField,
   CustomField,
@@ -31,6 +30,8 @@ import {
   ObjectField,
   RelationalField,
 } from '../types/templates';
+
+const CUSTOM_MODEL_PREFIX = 'GooveeTemplate';
 
 function capitalCase(str: string) {
   str = camelCase(str);
@@ -180,10 +181,11 @@ function getFormattedContentFields(
 }
 
 export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
+  const metas = demos.map(demo => demo.meta);
   if (!validateMeta(metas)) return;
 
   const componentsPromise = metas.map(meta =>
-    creteCMSComponent({meta, tenantId}),
+    createCMSComponent({meta, tenantId}),
   );
 
   const models = getFormattedModels(metas);
@@ -227,18 +229,19 @@ export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
 }
 
 export async function resetTemplates(tenantId: Tenant['id']) {
-  await deleteCustomFields({
-    model: CONTENT_MODEL,
-    modelField: CONTENT_MODEL_ATTRS,
-    tenantId,
-  });
-
-  await deleteCustomFields({
-    model: JSON_MODEL,
-    modelField: JSON_MODEL_ATTRS,
-    jsonModelPrefix: CUSTOM_MODEL_PREFIX,
-    tenantId,
-  });
+  await Promise.all([
+    deleteCustomFields({
+      model: CONTENT_MODEL,
+      modelField: CONTENT_MODEL_ATTRS,
+      tenantId,
+    }),
+    deleteCustomFields({
+      model: JSON_MODEL,
+      modelField: JSON_MODEL_ATTRS,
+      jsonModelPrefix: CUSTOM_MODEL_PREFIX,
+      tenantId,
+    }),
+  ]);
 
   await deleteMetaJsonModels({
     jsonModelPrefix: CUSTOM_MODEL_PREFIX,
@@ -249,7 +252,7 @@ export async function resetTemplates(tenantId: Tenant['id']) {
 export async function seedContent(tenantId: Tenant['id']) {
   const res = Promise.all(
     demos.map(({meta, data}) => {
-      return craeteCMSContent({tenantId, meta, data});
+      return createCMSContent({tenantId, meta, data});
     }),
   );
   return res;
