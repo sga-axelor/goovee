@@ -11,8 +11,8 @@ import {
 } from '@/subapps/website/common/constants';
 import {
   createCustomFields,
-  createMetaJsonModels,
-  creteCMSComponents,
+  createMetaJsonModel,
+  creteCMSComponents as creteCMSComponent,
   deleteCustomFields,
   deleteMetaJsonModels,
 } from '@/subapps/website/common/orm/templates';
@@ -112,31 +112,9 @@ function validateMeta(metas: Meta[]) {
   return isValid;
 }
 
-function getFormattedFieldsAndModels(
-  metas: Meta[],
-  components: {id: string; code?: string; title?: string}[],
-): {fields: CustomField[]; models: Model[]} {
-  const fields = [];
+function getFormattedModels(metas: Meta[]): Model[] {
   const models = [];
   for (const meta of metas) {
-    if (!meta.code) continue;
-    const code = getComponentCode(meta.code);
-    const component = components.find(c => c.code === code);
-    if (meta.fields.length) {
-      fields.push(
-        ...meta.fields.map(field => ({
-          ...field,
-          name: getCustomFieldName(field.name, code),
-          ...(component && {
-            contextField: 'component',
-            contextFieldTarget: COMPONENT_MODEL,
-            contextFieldTargetName: 'title',
-            contextFieldTitle: component.title,
-            contextFieldValue: component.id,
-          }),
-        })),
-      );
-    }
     if (meta.models?.length) {
       models.push(
         ...meta.models.map(model => ({
@@ -146,6 +124,7 @@ function getFormattedFieldsAndModels(
             if (isJsonRelationalField(field)) {
               return {
                 ...field,
+                name: getCustomFieldName(field.name),
                 target: getCustomModelName(field.target),
               };
             }
@@ -155,7 +134,33 @@ function getFormattedFieldsAndModels(
       );
     }
   }
-  return {fields, models};
+  return models;
+}
+
+function getFormattedContentFields(
+  metas: Meta[],
+  components: {id: string; code?: string; title?: string}[],
+): CustomField[] {
+  const fields = [];
+  for (const meta of metas) {
+    const code = getComponentCode(meta.code);
+    const component = components.find(c => c.code === code);
+    if (!component) continue;
+    if (meta.fields.length) {
+      fields.push(
+        ...meta.fields.map(field => ({
+          ...field,
+          name: getCustomFieldName(field.name, code),
+          contextField: 'component',
+          contextFieldTarget: COMPONENT_MODEL,
+          contextFieldTargetName: 'title',
+          contextFieldTitle: component.title,
+          contextFieldValue: component.id,
+        })),
+      );
+    }
+  }
+  return fields;
 }
 
 export async function seedTemplates({
@@ -166,14 +171,35 @@ export async function seedTemplates({
 }) {
   if (!validateMeta(metas)) return;
 
-  const components = await creteCMSComponents({
-    metas,
-    tenantId,
+  const componentsPromise = metas.map(meta =>
+    creteCMSComponent({meta, tenantId}),
+  );
+
+  const models = getFormattedModels(metas);
+  const jsonModels = await Promise.all(
+    models.map(async model => createMetaJsonModel({model, tenantId})),
+  );
+
+  const customModelPromises = models.map(async model => {
+    const jsonModel = jsonModels.find(m => m.name === model.name);
+    if (!jsonModel) {
+      throw new Error(`Model ${model.name} was not created`);
+    }
+    const fields = await createCustomFields({
+      model: JSON_MODEL,
+      uniqueModel: `${JSON_MODEL} ${model.name}`,
+      modelField: JSON_MODEL_ATTRS,
+      fields: model.fields,
+      jsonModel,
+      tenantId,
+    });
+    return {...jsonModel, fields};
   });
 
-  const {fields, models} = getFormattedFieldsAndModels(metas, components);
-  const jsonModels = await createMetaJsonModels({models, tenantId});
+  const components = await Promise.all(componentsPromise);
 
+  const fields = getFormattedContentFields(metas, components);
+  // NOTE: custom models should be created before fields since target models are referenced in fields by name
   const contentFields = await createCustomFields({
     model: CONTENT_MODEL,
     uniqueModel: CONTENT_MODEL,
@@ -182,22 +208,9 @@ export async function seedTemplates({
     tenantId,
   });
 
-  await Promise.all(
-    models.map(model => {
-      if (model.fields?.length) {
-        const jsonModel = jsonModels.find(m => m.name === model.name);
-        if (!jsonModel) return;
-        return createCustomFields({
-          model: JSON_MODEL,
-          uniqueModel: `${JSON_MODEL} ${model.name}`,
-          modelField: JSON_MODEL_ATTRS,
-          fields: model.fields,
-          jsonModel,
-          tenantId,
-        });
-      }
-    }),
-  );
+  const customModels = await Promise.all(customModelPromises);
+
+  return {components, contentFields, customModels};
 }
 
 export async function resetTemplates(tenantId: Tenant['id']) {
