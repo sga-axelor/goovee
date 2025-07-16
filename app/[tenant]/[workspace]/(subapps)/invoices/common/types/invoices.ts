@@ -29,27 +29,3 @@ export type TotalProps = {
   workspace?: PortalWorkspace;
   invoiceType: string;
 };
-
-export type InvoiceTable = {
-  invoiceLineList: [];
-  exTaxTotal: string;
-  amountRemaining: {value: 'string'; symbol: 'string'};
-  inTaxTotal: string;
-  taxTotal: string;
-};
-
-export type TableHeaderProps = {
-  columns: string[];
-};
-
-export type TableBodyProps = {
-  invoiceLineList: [];
-};
-
-export type TableFooterProps = {
-  exTaxTotal: string;
-  inTaxTotal: string;
-  amountRemaining: {value: 'string'; symbol: 'string'};
-  taxTotal: string;
-  sumOfDiscounts: number;
-};

@@ -149,15 +149,6 @@ export const findInvoice = async ({
         inTaxTotal: true,
         amountRemaining: true,
         note: true,
-        invoiceLineList: {
-          select: {
-            productName: true,
-            qty: true,
-            price: true,
-            exTaxTotal: true,
-            discountAmount: true,
-          },
-        },
         taxTotal: true,
         company: {
           name: true,
@@ -215,32 +206,12 @@ export const findInvoice = async ({
     inTaxTotal,
     amountRemaining,
     taxTotal,
-    invoiceLineList,
     dueDate,
     invoiceDate,
     invoicePaymentList,
   } = invoice;
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
-
-  const $invoiceLineList: any = [];
-  for (const list of invoiceLineList) {
-    const line = {
-      ...list,
-      exTaxTotal: await formatNumber(list?.exTaxTotal, {
-        scale,
-        currency: currencySymbol,
-        type: 'DECIMAL',
-      }),
-      price: await formatNumber(list?.price, {
-        scale,
-        currency: currencySymbol,
-        type: 'DECIMAL',
-      }),
-      qty: await formatNumber(list.qty, {scale}),
-    };
-    $invoiceLineList.push(line);
-  }
 
   const $invoicePaymentList: any = [];
   for (const list of invoicePaymentList || []) {
@@ -283,7 +254,6 @@ export const findInvoice = async ({
       currency: currencySymbol,
       type: 'DECIMAL',
     }),
-    invoiceLineList: $invoiceLineList,
     invoicePaymentList: $invoicePaymentList,
     isUnpaid: Number(invoice.amountRemaining) !== 0,
   };
