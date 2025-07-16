@@ -78,7 +78,7 @@ export async function createCustomFields({
         select: {id: true, name: true},
       });
       console.log(
-        `\x1b[32m✅ Created field:${field.name} | ${jsonModel || model}\x1b[0m`,
+        `\x1b[32m✅ Created field: ${field.name} | ${jsonModel?.name || model}\x1b[0m`,
       );
       return metaField;
     }),
