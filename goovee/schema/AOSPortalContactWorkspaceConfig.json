@@ -22,6 +22,11 @@
       "name": "contactAppPermissionList",
       "target": "AOSPortalContactAppPermission",
       "mappedBy": "contactWorkspaceConfig"
+    },
+    {
+      "type": "ManyToMany",
+      "name": "partnerSet",
+      "target": "AOSPartner"
     }
   ]
 }
