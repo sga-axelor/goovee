@@ -71,16 +71,16 @@ export function isObjectField(field: Field): field is ObjectField {
   return ObjectFieldTypes.includes(field.type);
 }
 
+/** conditons
+ * 1. model should have at least one field
+ * 2. model should have only one nameField
+ * 3. model should have at least one visibleInGrid field
+ * 4. json target model should have a model declaration within the same schema
+ * 5. model names should be unique if models are not referencially equal
+ */
 function validateSchemas(schemas: TemplateSchema[]) {
   let isValid = true;
-  /** conditons
-   * 1. model should have at least one field
-   * 2. model should have only one nameField
-   * 3. model should have at least one visibleInGrid field
-   * 4. json target model should have a model declaration within the same schema
-   * 5. model names should be unique
-   */
-  const jsonModelMap = new Map();
+  const jsonModelMap = new Map<string, Model>();
   schemas.forEach(schema => {
     const targetModels = new Set();
     schema.fields?.forEach(field => {
@@ -89,13 +89,16 @@ function validateSchemas(schemas: TemplateSchema[]) {
       }
     });
     schema.models?.forEach(model => {
-      if (jsonModelMap.has(model.name)) {
+      if (
+        jsonModelMap.has(model.name) &&
+        model !== jsonModelMap.get(model.name) // check reference equality
+      ) {
         isValid = false;
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${schema.code} is duplicated in ${jsonModelMap.get(model.name)}.\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${schema.code} is duplicated.\x1b[0m`,
         );
       }
-      jsonModelMap.set(model.name, schema.code);
+      jsonModelMap.set(model.name, model);
       let nameFieldCount = 0;
       let visibleInGridCount = 0;
       if (!model.fields.length) {
@@ -138,13 +141,15 @@ function validateSchemas(schemas: TemplateSchema[]) {
 }
 
 function getModels(schemas: TemplateSchema[]): Model[] {
-  const models = [];
+  const models = new Set<Model>(); // use a set to remove referencially duplicate models
   for (const schema of schemas) {
     if (schema.models?.length) {
-      models.push(...schema.models);
+      for (const model of schema.models) {
+        models.add(model);
+      }
     }
   }
-  return models;
+  return Array.from(models);
 }
 
 function getContentFields(
