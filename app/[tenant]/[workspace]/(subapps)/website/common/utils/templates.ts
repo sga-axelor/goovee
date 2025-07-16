@@ -8,8 +8,11 @@ import {
   CUSTOM_MODEL_PREFIX,
   RelationalFieldTypes,
   JsonRelationalFieldTypes,
+  ArrayFieldTypes,
+  ObjectFieldTypes,
 } from '@/subapps/website/common/constants';
 import {
+  craeteCMSContent,
   createCustomFields,
   createMetaJsonModel,
   creteCMSComponents as creteCMSComponent,
@@ -17,13 +20,15 @@ import {
   deleteMetaJsonModels,
 } from '@/subapps/website/common/orm/templates';
 import {camelCase} from 'lodash-es';
-import {metas} from '@/subapps/website/common/templates';
+import {demos, metas} from '@/subapps/website/common/templates';
 import {
+  ArrayField,
   CustomField,
   Field,
   JsonRelationalField,
   Meta,
   Model,
+  ObjectField,
   RelationalField,
 } from '../types/templates';
 
@@ -53,6 +58,14 @@ export function isJsonRelationalField(
   field: Field,
 ): field is JsonRelationalField {
   return JsonRelationalFieldTypes.includes(field.type);
+}
+
+export function isArrayField(field: Field): field is ArrayField {
+  return ArrayFieldTypes.includes(field.type);
+}
+
+export function isObjectField(field: Field): field is ObjectField {
+  return ObjectFieldTypes.includes(field.type);
 }
 
 function validateMeta(metas: Meta[]) {
@@ -231,4 +244,13 @@ export async function resetTemplates(tenantId: Tenant['id']) {
     jsonModelPrefix: CUSTOM_MODEL_PREFIX,
     tenantId,
   });
+}
+
+export async function seedContent(tenantId: Tenant['id']) {
+  const res = Promise.all(
+    demos.map(({meta, data}) => {
+      return craeteCMSContent({tenantId, meta, data});
+    }),
+  );
+  return res;
 }

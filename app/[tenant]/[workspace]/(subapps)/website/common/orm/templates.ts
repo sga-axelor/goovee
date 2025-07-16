@@ -1,13 +1,32 @@
+import fs from 'fs';
+import fsPromise from 'fs/promises';
+import path from 'path';
+import {pipeline, Readable} from 'stream';
+import {promisify} from 'util';
+
 import {manager, type Tenant} from '@/lib/core/tenant';
 import {xml} from '@/utils/template-string';
 import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
-import type {CustomField, Meta, Model} from '../types/templates';
+import type {CustomField, Field, Meta, Model} from '../types/templates';
 import {
   formatComponentCode,
   formatCustomFieldName,
+  formatCustomModelName,
+  isArrayField,
   isJsonRelationalField,
   isRelationalField,
 } from '../utils/templates';
+import {startCase} from 'lodash-es';
+import {metaFileModel} from '../templates/meta-models';
+import {getFileSizeText} from '@/utils/files';
+
+const pump = promisify(pipeline);
+
+const storage = process.env.DATA_STORAGE as string;
+
+if (!fs.existsSync(storage)) {
+  fs.mkdirSync(storage, {recursive: true});
+}
 
 export async function createCustomFields({
   fields,
@@ -309,4 +328,205 @@ export async function deleteMetaJsonModels({
       );
     }),
   );
+}
+
+export async function craeteCMSContent(props: {
+  tenantId: Tenant['id'];
+  meta: Meta;
+  data: any;
+}) {
+  const {tenantId, data, meta} = props;
+  const code = formatComponentCode(meta.code);
+
+  const client = await manager.getClient(tenantId);
+  const timeStamp = new Date();
+  const title = `Demo Content ${startCase(code)}`;
+  const attrs = await getAttrs({
+    tenantId,
+    meta,
+    data,
+    prefix: code,
+    fields: meta.fields,
+  });
+
+  const _content = await client.aOSPortalCmsContent.findOne({
+    where: {title, component: {code}},
+    select: {id: true, title: true, attrs: true},
+  });
+
+  if (_content) {
+    return await client.aOSPortalCmsContent.update({
+      data: {
+        id: _content.id,
+        version: _content.version,
+        attrs: attrs as any,
+        updatedOn: timeStamp,
+      },
+      select: {id: true, title: true},
+    });
+  }
+
+  return await client.aOSPortalCmsContent.create({
+    data: {
+      language: {select: {code: 'en_US'}},
+      component: {select: {code}},
+      attrs: attrs as any,
+      title,
+      createdOn: timeStamp,
+      updatedOn: timeStamp,
+    },
+    select: {id: true, title: true},
+  });
+}
+
+async function createMetaJsonRecord(props: {
+  jsonModel: string;
+  attrs: any;
+  tenantId: Tenant['id'];
+}) {
+  const {tenantId, jsonModel, attrs} = props;
+  const client = await manager.getClient(tenantId);
+  const timeStamp = new Date();
+  const record = await client.aOSMetaJsonRecord.create({
+    data: {jsonModel, attrs, updatedOn: timeStamp, createdOn: timeStamp},
+    select: {id: true, version: true},
+  });
+
+  return record;
+}
+
+async function getFileFromPublic(filePath: string) {
+  filePath = process.cwd() + `/public${filePath}`;
+  const file = await fsPromise.readFile(filePath);
+  if (!file) {
+    throw new Error(`File at location ${filePath} not found`);
+  }
+  return file;
+}
+
+async function creatMetaFile({
+  tenantId,
+  buffer,
+  fileName,
+  fileType,
+}: {
+  buffer: Buffer;
+  fileName: string;
+  fileType: string;
+  tenantId: Tenant['id'];
+}) {
+  const client = await manager.getClient(tenantId);
+  const timestampFilename = `${new Date().getTime()}-${fileName}`;
+
+  try {
+    await pump(
+      Readable.from(buffer),
+      fs.createWriteStream(path.resolve(storage, timestampFilename)),
+    );
+
+    const metaFile = await client.aOSMetaFile.create({
+      data: {
+        fileName: fileName,
+        filePath: timestampFilename,
+        fileType: fileType,
+        fileSize: buffer.length.toString(),
+        sizeText: getFileSizeText(buffer.length),
+      },
+      select: {id: true, version: true},
+    });
+
+    return metaFile;
+  } catch (error) {
+    throw new Error('Failed to create meta file');
+  }
+}
+
+async function getAttrs(props: {
+  tenantId: Tenant['id'];
+  meta: Meta;
+  fields: Field[];
+  data: any;
+  prefix?: string;
+}) {
+  const attrs: Record<string, any> = {};
+  const {tenantId, fields, meta, data, prefix} = props;
+  await Promise.all(
+    Object.entries(data).map(async ([key, value]: [string, any]) => {
+      const field = fields.find(
+        f => formatCustomFieldName(f.name, prefix) === key,
+      );
+      if (!field) return;
+      if (isJsonRelationalField(field)) {
+        const jsonModel = formatCustomModelName(field.target);
+        const modelFields = meta.models!.find(
+          m => formatCustomModelName(m.name) === jsonModel,
+        )!.fields;
+        if (isArrayField(field)) {
+          const metaJsonRecords = await Promise.all(
+            value.map(async (record: any) => {
+              return createMetaJsonRecord({
+                jsonModel,
+                attrs: await getAttrs({
+                  tenantId,
+                  meta,
+                  fields: modelFields,
+                  data: record.attrs,
+                }),
+                tenantId,
+              });
+            }),
+          );
+          attrs[key] = metaJsonRecords.map(r => ({
+            id: Number(r.id),
+          }));
+        } else {
+          const metaJsonRecord = await createMetaJsonRecord({
+            jsonModel,
+            attrs: await getAttrs({
+              tenantId,
+              fields: modelFields,
+              meta,
+              data: value.attrs,
+            }),
+            tenantId,
+          });
+          attrs[key] = {id: Number(metaJsonRecord.id)};
+        }
+        return;
+      } else if (isRelationalField(field)) {
+        if (field.target !== metaFileModel.name) {
+          throw new Error(
+            'Creating content is only supported for metaFileModel for relational fields',
+          );
+        }
+
+        if (isArrayField(field)) {
+          const records = await Promise.all(
+            value.map(async (record: any) => {
+              const buffer = await getFileFromPublic(record.filePath);
+              return await creatMetaFile({
+                buffer,
+                fileName: record.fileName,
+                fileType: record.fileType,
+                tenantId,
+              });
+            }),
+          );
+          attrs[key] = records.map(r => ({id: Number(r.id)}));
+        } else {
+          const buffer = await getFileFromPublic(value.filePath);
+          const record = await creatMetaFile({
+            buffer,
+            fileName: value.fileName,
+            fileType: value.fileType,
+            tenantId,
+          });
+          attrs[key] = {id: Number(record.id)};
+        }
+      } else {
+        attrs[key] = value;
+      }
+    }),
+  );
+  return attrs;
 }

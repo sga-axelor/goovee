@@ -164,6 +164,13 @@ export type JsonRelationalField =
   | JsonOneToManyField
   | JsonManyToManyField;
 
+export type ArrayField =
+  | OneToManyField
+  | ManyToManyField
+  | JsonOneToManyField
+  | JsonManyToManyField;
+
+export type ObjectField = ManyToOneField | JsonManyToOneField;
 // === Decorative Fields ===
 type PanelField = CommonField & {
   type: 'panel';
@@ -262,7 +269,10 @@ type JsonModelAttrs<
     : never
   : never;
 
-type BasicRecord = {id: string; version: number};
+type BasicRecord = {
+  id: string;
+  version: number;
+};
 type RelationalModelAttrs<
   ModelName extends string,
   TMeta extends Meta,
@@ -286,13 +296,22 @@ type RelationalModelAttrs<
     : never
   : never;
 
+type JSONRecord = {
+  id: string;
+  version: number;
+  createdOn?: string | null;
+  updatedOn?: string | null;
+  name?: string | null;
+  jsonModel?: string;
+};
+
 type FieldType<F, TMeta extends Meta> = F extends {
   type: JsonToMany;
   target: string;
 }
-  ? {id: string; version: number; attrs: JsonModelAttrs<F['target'], TMeta>}[]
+  ? (JSONRecord & {attrs: JsonModelAttrs<F['target'], TMeta>})[]
   : F extends {type: JsonToOne; target: string}
-    ? {id: string; version: number; attrs: JsonModelAttrs<F['target'], TMeta>}
+    ? JSONRecord & {attrs: JsonModelAttrs<F['target'], TMeta>}
     : F extends {type: RelToMany; target: string}
       ? RelationalModelAttrs<F['target'], TMeta>[]
       : F extends {type: RelToOne; target: string}

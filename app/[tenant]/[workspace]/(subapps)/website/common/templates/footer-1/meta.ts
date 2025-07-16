@@ -8,3 +8,5 @@ export const footer1Meta = {
 } as const satisfies Meta;
 
 export type Footer1Data = Data<typeof footer1Meta>;
+
+export const footer1Demo: Footer1Data = {};

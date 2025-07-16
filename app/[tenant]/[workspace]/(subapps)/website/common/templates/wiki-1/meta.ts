@@ -14,3 +14,7 @@ export const wiki1Meta = {
 } as const satisfies Meta;
 
 export type Wiki1Data = Data<typeof wiki1Meta>;
+
+export const wiki1Demo: Wiki1Data = {
+  wiki1Content: undefined,
+};

@@ -7,4 +7,6 @@ export const pageProgress1Meta = {
   fields: [],
 } as const satisfies Meta;
 
-export type Footer1Data = Data<typeof pageProgress1Meta>;
+export type PageProgress1Data = Data<typeof pageProgress1Meta>;
+
+export const pageProgress1Demo: PageProgress1Data = {};

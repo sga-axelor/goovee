@@ -7,4 +7,6 @@ export const navbar1Meta = {
   fields: [],
 } as const satisfies Meta;
 
-export type Footer1Data = Data<typeof navbar1Meta>;
+export type Navbar11Data = Data<typeof navbar1Meta>;
+
+export const navbar1Demo: Navbar11Data = {};

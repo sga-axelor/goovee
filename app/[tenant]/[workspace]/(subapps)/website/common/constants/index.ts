@@ -33,6 +33,18 @@ export const JsonRelationalFieldTypes = [
   FieldType.CustomManyToOne,
 ];
 
+export const ArrayFieldTypes = [
+  FieldType.OneToMany,
+  FieldType.ManyToMany,
+  FieldType.CustomOneToMany,
+  FieldType.CustomManyToMany,
+];
+
+export const ObjectFieldTypes = [
+  FieldType.ManyToOne,
+  FieldType.CustomManyToOne,
+];
+
 export const WidgetAttrsMap: Record<Type, Record<string, string>> = {
   'one-to-many': {showTitle: 'true'},
   'many-to-many': {showTitle: 'true'},

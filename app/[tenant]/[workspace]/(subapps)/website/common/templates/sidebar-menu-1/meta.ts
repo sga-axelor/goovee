@@ -7,4 +7,6 @@ export const sidebarMenu1Meta = {
   fields: [],
 } as const satisfies Meta;
 
-export type Footer1Data = Data<typeof sidebarMenu1Meta>;
+export type SidebarMenu1Data = Data<typeof sidebarMenu1Meta>;
+
+export const sidebarMenu1Demo: SidebarMenu1Data = {};

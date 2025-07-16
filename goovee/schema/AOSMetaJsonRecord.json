@@ -5,8 +5,7 @@
   "fields": [
     {
       "type": "String",
-      "name": "name",
-      "required": true
+      "name": "name"
     },
     {
       "type": "String",

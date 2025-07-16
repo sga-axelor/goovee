@@ -62,3 +62,47 @@ export const services1Meta = {
 } as const satisfies Meta;
 
 export type Services1Data = Data<typeof services1Meta>;
+
+export const services1Demo: Services1Data = {
+  services1Title: 'What We Do?',
+  services1Caption:
+    'We have designed our services with your specific needs in mind.',
+  services1Services: [
+    {
+      id: '5',
+      version: 1,
+      attrs: {
+        icon: 'Rocket',
+        link: '#',
+        title: 'DevOps',
+        linkType: 'yellow',
+        description:
+          'The agency can provide DevOps services to help businesses streamline their software development',
+      },
+    },
+    {
+      id: '6',
+      version: 1,
+      attrs: {
+        icon: 'Code',
+        link: '#',
+        title: 'Software Development',
+        linkType: 'red',
+        description:
+          'The agency can provide DevOps services to help businesses streamline their software development',
+      },
+    },
+    {
+      id: '7',
+      version: 0,
+      attrs: {
+        icon: 'DevicesTwo',
+        link: '#',
+        title: 'App Development',
+        linkType: 'green',
+        description:
+          'The agency can provide DevOps services to help businesses streamline their software development',
+      },
+    },
+  ],
+};
