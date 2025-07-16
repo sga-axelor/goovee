@@ -104,5 +104,16 @@ export const services1Demo: Services1Data = {
           'The agency can provide DevOps services to help businesses streamline their software development',
       },
     },
+    {
+      id: '8',
+      version: 1,
+      attrs: {
+        link: '#',
+        icon: 'Hand',
+        linkType: 'blue',
+        title: 'Maintenance & Support',
+        description: `The agency can provide DevOps services to help businesses streamline their software development`,
+      },
+    },
   ],
 };

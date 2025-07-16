@@ -76,7 +76,7 @@ export const testimonial1Demo: Testimonial1Data = {
   testimonial1Link: '#',
   testimonial1Title: 'Testimonial 1',
   testimonial1Caption:
-    'Don&apos;t believe anything we say. Check out what our clients are saying about us.',
+    "Don't believe anything we say. Check out what our clients are saying about us.",
   testimonial1LinkText: 'All Testimonials',
   testimonial1Description:
     'They provided excellent communication and kept me informed every step of the way. The end product exceeded my expectations and has already made a significant impact on my business. I would highly recommend Lighthouse.',
