@@ -151,6 +151,9 @@ function getFormattedContentFields(
         ...meta.fields.map(field => ({
           ...field,
           name: getCustomFieldName(field.name, code),
+          ...(isJsonRelationalField(field) && {
+            target: getCustomModelName(field.target),
+          }),
           contextField: 'component',
           contextFieldTarget: COMPONENT_MODEL,
           contextFieldTargetName: 'title',
@@ -194,7 +197,7 @@ export async function seedTemplates({tenantId}: {tenantId: Tenant['id']}) {
   const components = await Promise.all(componentsPromise);
 
   const fields = getFormattedContentFields(metas, components);
-  // NOTE: custom models should be created before fields since target models are referenced in fields by name
+  // NOTE: json models should be created before fields since target models are referenced in fields by name
   const contentFields = await createCustomFields({
     model: CONTENT_MODEL,
     uniqueModel: CONTENT_MODEL,
