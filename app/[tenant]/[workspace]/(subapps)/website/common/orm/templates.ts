@@ -185,40 +185,47 @@ export async function createCustomFields({
           if (_metaSelect) {
             const existingItemsLength = _metaSelect.items?.length || 0;
             const currentItemsLength = metaSelectItemsData.length;
-            await client.aOSMetaSelect.update({
-              data: {
-                id: _metaSelect.id,
-                version: _metaSelect.version,
-                items: {
-                  update: existingItemsLength
-                    ? _metaSelect.items?.map((item, i) => ({
-                        id: item.id,
-                        version: item.version,
-                        ...metaSelectItemsData[i],
-                      }))
-                    : undefined,
-                  create:
-                    existingItemsLength < currentItemsLength
-                      ? metaSelectItemsData
-                          .slice(existingItemsLength)
-                          .map(item => ({
-                            ...item,
-                            createdOn: timeStamp,
-                          }))
+            try {
+              await client.aOSMetaSelect.update({
+                data: {
+                  id: _metaSelect.id,
+                  version: _metaSelect.version,
+                  items: {
+                    update: existingItemsLength
+                      ? _metaSelect.items?.map((item, i) => ({
+                          id: item.id,
+                          version: item.version,
+                          ...metaSelectItemsData[i],
+                        }))
                       : undefined,
-                  remove:
-                    existingItemsLength > currentItemsLength
-                      ? _metaSelect.items
-                          ?.slice(currentItemsLength)
-                          .map(item => item.id)
-                      : undefined,
+                    create:
+                      existingItemsLength < currentItemsLength
+                        ? metaSelectItemsData
+                            .slice(existingItemsLength)
+                            .map(item => ({
+                              ...item,
+                              createdOn: timeStamp,
+                            }))
+                        : undefined,
+                    remove:
+                      existingItemsLength > currentItemsLength
+                        ? _metaSelect.items
+                            ?.slice(currentItemsLength)
+                            .map(item => item.id)
+                        : undefined,
+                  },
                 },
-              },
-              select: {id: true, name: true},
-            });
-            console.log(
-              `\x1b[33m⚠️ Updated select: ${metaSelectData.name}\x1b[0m `,
-            );
+                select: {id: true, name: true},
+              });
+              console.log(
+                `\x1b[33m⚠️ Updated select: ${metaSelectData.name}\x1b[0m `,
+              );
+            } catch (error) {
+              console.log(
+                `\x1b[31m✖ Failed to update metaSelect: ${metaSelectData.name}\x1b[0m`,
+              );
+              console.log(error);
+            }
           } else {
             await createMetaSelect({
               tenantId,
@@ -264,21 +271,28 @@ async function createMetaSelect({
 }) {
   const client = await manager.getClient(tenantId);
 
-  const metaSelect = await client.aOSMetaSelect.create({
-    data: {
-      ...metaSelectData,
-      createdOn: metaSelectData.updatedOn,
-      items: {
-        create: metaSelectItemsData.map(item => ({
-          ...item,
-          createdOn: metaSelectData.updatedOn,
-        })),
+  try {
+    const metaSelect = await client.aOSMetaSelect.create({
+      data: {
+        ...metaSelectData,
+        createdOn: metaSelectData.updatedOn,
+        items: {
+          create: metaSelectItemsData.map(item => ({
+            ...item,
+            createdOn: metaSelectData.updatedOn,
+          })),
+        },
       },
-    },
-    select: {id: true, name: true},
-  });
-  console.log(`\x1b[32m✅ Created select: ${metaSelect.name}\x1b[0m`);
-  return metaSelect;
+      select: {id: true, name: true},
+    });
+    console.log(`\x1b[32m✔ Created metaSelect: ${metaSelectData.name}\x1b[0m`);
+  } catch (error) {
+    console.log(
+      `\x1b[31m✖ Failed to create metaSelect: ${metaSelectData.name}\x1b[0m`,
+    );
+
+    console.log(error);
+  }
 }
 
 export async function createMetaJsonModel({
