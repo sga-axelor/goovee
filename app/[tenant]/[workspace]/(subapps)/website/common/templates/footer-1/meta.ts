@@ -1,9 +1,13 @@
-import {Data, Demo, Meta} from '@/subapps/website/common/types/templates';
+import {
+  Data,
+  Demo,
+  TemplateSchema,
+} from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
 import {socialMediaUnicons} from '../../constants/unicons';
 import {startCase} from 'lodash-es';
 
-export const footer1Meta = {
+export const footer1Schema = {
   title: 'Footer 1',
   code: 'footer1',
   type: 1,
@@ -138,11 +142,11 @@ export const footer1Meta = {
     },
   ],
   metaModels: [metaFileModel],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Footer1Data = Data<typeof footer1Meta>;
+export type Footer1Data = Data<typeof footer1Schema>;
 
-export const footer1Demos: Demo<typeof footer1Meta>[] = [
+export const footer1Demos: Demo<typeof footer1Schema>[] = [
   {
     language: 'en_US',
     data: {

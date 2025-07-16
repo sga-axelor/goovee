@@ -1,7 +1,11 @@
-import {Data, Demo, Meta} from '@/subapps/website/common/types/templates';
+import {
+  Data,
+  Demo,
+  TemplateSchema,
+} from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
 
-export const cta1Meta = {
+export const cta1Schema = {
   title: 'CTA 1',
   code: 'cta1',
   type: 1,
@@ -30,11 +34,11 @@ export const cta1Meta = {
     },
   ],
   metaModels: [metaFileModel],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type CTA1Data = Data<typeof cta1Meta>;
+export type Cta1Data = Data<typeof cta1Schema>;
 
-export const cta1Demos: Demo<typeof cta1Meta>[] = [
+export const cta1Demos: Demo<typeof cta1Schema>[] = [
   {
     language: 'en_US',
     data: {

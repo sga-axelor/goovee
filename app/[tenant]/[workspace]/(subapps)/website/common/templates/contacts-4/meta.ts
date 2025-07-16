@@ -1,7 +1,11 @@
-import {Data, Demo, Meta} from '@/subapps/website/common/types/templates';
+import {
+  Data,
+  Demo,
+  TemplateSchema,
+} from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
 
-export const contact4Meta = {
+export const contact4Schema = {
   title: 'Contact 4',
   code: 'contact4',
   type: 1,
@@ -40,11 +44,11 @@ export const contact4Meta = {
     },
   ],
   metaModels: [metaFileModel],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Contact4Data = Data<typeof contact4Meta>;
+export type Contact4Data = Data<typeof contact4Schema>;
 
-export const contact4Demos: Demo<typeof contact4Meta>[] = [
+export const contact4Demos: Demo<typeof contact4Schema>[] = [
   {
     language: 'en_US',
     data: {

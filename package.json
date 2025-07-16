@@ -11,9 +11,9 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "generate": "goovee generate",
     "website:sass": "sass --no-source-map app/[tenant]/[workspace]/'(subapps)'/website/common/assets/scss:app/[tenant]/[workspace]/'(subapps)'/website/common/assets/css",
-    "website:seed:components": "tsx app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/seed-components.ts",
-    "website:seed:contents": "tsx app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/seed-contents.ts",
-    "website:reset:fields": "tsx app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/reset-fields.ts"
+    "website:seed:templates": "node -r @swc-node/register app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/seed-templates.ts",
+    "website:reset:templates": "node -r @swc-node/register app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/reset-templates.ts",
+    "website:seed:contents": "node -r @swc-node/register app/[tenant]/[workspace]/'(subapps)'/website/common/scripts/seed-contents.ts"
   },
   "dependencies": {
     "@cyntler/react-doc-viewer": "^1.17.0",
@@ -141,6 +141,9 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@swc-node/register": "^1.10.10",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.12.11",
     "@types/bcrypt": "^5.0.2",
     "@types/bootstrap": "^5.2.6",
     "@types/draft-js": "^0.11.18",
@@ -162,6 +165,7 @@
     "@types/react-syntax-highlighter": "^15.5.6",
     "@types/sanitize-html": "^2.15.0",
     "autoprefixer": "^10.4.20",
+    "dotenv": "^17.2.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.4",
     "postcss": "^8.4.47",

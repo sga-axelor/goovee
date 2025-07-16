@@ -2,10 +2,10 @@ import {
   Template,
   Data,
   Demo,
-  Meta,
+  TemplateSchema,
 } from '@/subapps/website/common/types/templates';
 
-export const testimonial1Meta = {
+export const testimonial1Schema = {
   title: 'Testimonial 1',
   code: 'testimonial1',
   type: Template.block,
@@ -73,11 +73,11 @@ export const testimonial1Meta = {
       ],
     },
   ],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Testimonial1Data = Data<typeof testimonial1Meta>;
+export type Testimonial1Data = Data<typeof testimonial1Schema>;
 
-export const testimonial1Demos: Demo<typeof testimonial1Meta>[] = [
+export const testimonial1Demos: Demo<typeof testimonial1Schema>[] = [
   {
     language: 'en_US',
     data: {

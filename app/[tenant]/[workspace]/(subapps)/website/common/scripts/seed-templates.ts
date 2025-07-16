@@ -1,6 +1,7 @@
+import '@/load-swc-env';
 import {seedComponents} from '@/subapps/website/common/utils/templates';
 
-const tenantId = process.argv[2];
+const tenantId = process.env.MULTI_TENANCY === 'true' ? process.argv[2] : 'd';
 
 if (!tenantId) {
   console.error('\x1b[31m✖ Tenant id is required.\x1b[0m');

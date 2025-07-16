@@ -1,7 +1,7 @@
-import type {Data, Demo, Meta} from '../../types/templates';
+import type {Data, Demo, TemplateSchema} from '../../types/templates';
 import {metaFileModel} from '../meta-models';
 
-export const about1Meta = {
+export const about1Schema = {
   title: 'About 1',
   code: 'about1',
   type: 1,
@@ -56,11 +56,11 @@ export const about1Meta = {
     },
   ],
   metaModels: [metaFileModel],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type About1Data = Data<typeof about1Meta>;
+export type About1Data = Data<typeof about1Schema>;
 
-export const about1Demos: Demo<typeof about1Meta>[] = [
+export const about1Demos: Demo<typeof about1Schema>[] = [
   {
     language: 'en_US',
     data: {

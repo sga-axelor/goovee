@@ -19,14 +19,14 @@ import {
   deleteMetaJsonModels,
 } from '@/subapps/website/common/orm/templates';
 import {camelCase} from 'lodash-es';
-import {demos} from '@/subapps/website/common/templates';
+import {metas} from '@/subapps/website/common/templates/metas';
 import {
   ArrayField,
   CustomField,
   Demo,
   Field,
   JsonRelationalField,
-  Meta,
+  TemplateSchema,
   Model,
   ObjectField,
   RelationalField,
@@ -71,28 +71,28 @@ export function isObjectField(field: Field): field is ObjectField {
   return ObjectFieldTypes.includes(field.type);
 }
 
-function validateMeta(metas: Meta[]) {
+function validateSchema(schemas: TemplateSchema[]) {
   let isValid = true;
   /** conditons
    * 1. model should have at least one field
    * 2. model should have only one nameField
    * 3. model should have at least one visibleInGrid field
-   * 4. json target model should have a model declaration within the same meta
+   * 4. json target model should have a model declaration within the same schema
    */
-  metas.forEach(meta => {
+  schemas.forEach(schema => {
     const jsonModels = new Set();
-    meta.fields?.forEach(field => {
+    schema.fields?.forEach(field => {
       if (isJsonRelationalField(field)) {
         jsonModels.add(field.target);
       }
     });
-    meta.models?.forEach(model => {
+    schema.models?.forEach(model => {
       let nameFieldCount = 0;
       let visibleInGridCount = 0;
       if (!model.fields.length) {
         isValid = false;
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.code} should have at least 1 field.\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${schema.code} should have at least 1 field.\x1b[0m`,
         );
       }
       for (const field of model.fields) {
@@ -107,13 +107,13 @@ function validateMeta(metas: Meta[]) {
       }
       if (nameFieldCount > 1) {
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.code} has more than 1 nameField .\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${schema.code} has more than 1 nameField .\x1b[0m`,
         );
       }
       if (visibleInGridCount === 0) {
         isValid = false;
         console.log(
-          `\x1b[31m✖ model:${model.name} in ${meta.code} should have at least 1 visibleInGrid field .\x1b[0m`,
+          `\x1b[31m✖ model:${model.name} in ${schema.code} should have at least 1 visibleInGrid field .\x1b[0m`,
         );
       }
       jsonModels.delete(model.name);
@@ -121,19 +121,19 @@ function validateMeta(metas: Meta[]) {
     if (jsonModels.size) {
       isValid = false;
       console.log(
-        `\x1b[31m✖ model:${[...jsonModels].join(', ')} in ${meta.code} does not have a model declaration .\x1b[0m`,
+        `\x1b[31m✖ model:${[...jsonModels].join(', ')} in ${schema.code} does not have a model declaration .\x1b[0m`,
       );
     }
   });
   return isValid;
 }
 
-function getFormattedModels(metas: Meta[]): Model[] {
+function getFormattedModels(schemas: TemplateSchema[]): Model[] {
   const models = [];
-  for (const meta of metas) {
-    if (meta.models?.length) {
+  for (const schema of schemas) {
+    if (schema.models?.length) {
       models.push(
-        ...meta.models.map(model => ({
+        ...schema.models.map(model => ({
           ...model,
           name: formatCustomModelName(model.name),
           fields: model.fields.map(field => {
@@ -154,17 +154,17 @@ function getFormattedModels(metas: Meta[]): Model[] {
 }
 
 function getFormattedContentFields(
-  metas: Meta[],
+  schemas: TemplateSchema[],
   components: {id: string; code?: string; title?: string}[],
 ): CustomField[] {
   const fields = [];
-  for (const meta of metas) {
-    const code = formatComponentCode(meta.code);
+  for (const schema of schemas) {
+    const code = formatComponentCode(schema.code);
     const component = components.find(c => c.code === code);
     if (!component) continue;
-    if (meta.fields.length) {
+    if (schema.fields.length) {
       fields.push(
-        ...meta.fields.map(field => ({
+        ...schema.fields.map(field => ({
           ...field,
           name: formatCustomFieldName(field.name, code),
           ...(isJsonRelationalField(field) && {
@@ -183,14 +183,14 @@ function getFormattedContentFields(
 }
 
 export async function seedComponents(tenantId: Tenant['id']) {
-  const metas = demos.map(demo => demo.meta);
-  if (!validateMeta(metas)) return;
+  const schemas = metas.map(demo => demo.schema);
+  if (!validateSchema(schemas)) return;
 
-  const componentsPromise = metas.map(meta =>
-    createCMSComponent({meta, tenantId}),
+  const componentsPromise = schemas.map(schema =>
+    createCMSComponent({schema, tenantId}),
   );
 
-  const models = getFormattedModels(metas);
+  const models = getFormattedModels(schemas);
   const jsonModels = await Promise.all(
     models.map(async model => createMetaJsonModel({model, tenantId})),
   );
@@ -214,7 +214,7 @@ export async function seedComponents(tenantId: Tenant['id']) {
 
   const components = await Promise.all(componentsPromise);
 
-  const fields = getFormattedContentFields(metas, components);
+  const fields = getFormattedContentFields(schemas, components);
   // NOTE: json models should be created before fields since target models are referenced in fields by name
   const contentFields = await createCustomFields({
     model: CONTENT_MODEL,
@@ -253,11 +253,11 @@ export async function resetFields(tenantId: Tenant['id']) {
 
 export async function seedContents(tenantId: Tenant['id']) {
   const fileCache = new Cache<Promise<{id: string}>>();
-  const res = await processBatch(demos, async ({meta, demos}) => {
+  const res = await processBatch(metas, async ({schema, demos}) => {
     return await createCMSContent({
       tenantId,
-      meta,
-      demos: demos as Demo<Meta>[],
+      schema,
+      demos: demos as Demo<TemplateSchema>[],
       fileCache,
     });
   });

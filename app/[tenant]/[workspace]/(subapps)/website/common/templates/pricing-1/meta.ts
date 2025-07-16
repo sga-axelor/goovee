@@ -2,10 +2,10 @@ import {
   Template,
   Data,
   Demo,
-  Meta,
+  TemplateSchema,
 } from '@/subapps/website/common/types/templates';
 
-export const pricing1Meta = {
+export const pricing1Schema = {
   title: 'Pricing 1',
   code: 'pricing1',
   type: Template.block,
@@ -123,11 +123,11 @@ export const pricing1Meta = {
       ],
     },
   ],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Pricing1Data = Data<typeof pricing1Meta>;
+export type Pricing1Data = Data<typeof pricing1Schema>;
 
-export const pricing1Demos: Demo<typeof pricing1Meta>[] = [
+export const pricing1Demos: Demo<typeof pricing1Schema>[] = [
   {
     language: 'en_US',
     data: {

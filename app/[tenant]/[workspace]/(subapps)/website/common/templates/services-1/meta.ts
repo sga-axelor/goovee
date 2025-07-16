@@ -2,12 +2,12 @@ import {
   Template,
   Data,
   Demo,
-  Meta,
+  TemplateSchema,
 } from '@/subapps/website/common/types/templates';
 import {solidIcons} from '@/subapps/website/common/icons/solid';
 import {startCase} from 'lodash-es';
 
-export const services1Meta = {
+export const services1Schema = {
   title: 'Services 1',
   code: 'services1',
   type: Template.block,
@@ -70,11 +70,11 @@ export const services1Meta = {
       ],
     },
   ],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Services1Data = Data<typeof services1Meta>;
+export type Services1Data = Data<typeof services1Schema>;
 
-export const services1Demos: Demo<typeof services1Meta>[] = [
+export const services1Demos: Demo<typeof services1Schema>[] = [
   {
     language: 'en_US',
     data: {

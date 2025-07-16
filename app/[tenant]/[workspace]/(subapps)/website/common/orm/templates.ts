@@ -21,7 +21,13 @@ import type {CreateArgs} from '@goovee/orm';
 import {startCase} from 'lodash-es';
 import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
 import {metaFileModel} from '../templates/meta-models';
-import type {CustomField, Demo, Field, Meta, Model} from '../types/templates';
+import type {
+  CustomField,
+  Demo,
+  Field,
+  TemplateSchema,
+  Model,
+} from '../types/templates';
 import {
   formatComponentCode,
   formatCustomFieldName,
@@ -430,23 +436,23 @@ export async function createMetaJsonModel({
 }
 
 export async function createCMSComponent({
-  meta,
+  schema,
   tenantId,
 }: {
-  meta: Meta;
+  schema: TemplateSchema;
   tenantId: Tenant['id'];
 }) {
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
-  const code = formatComponentCode(meta.code);
+  const code = formatComponentCode(schema.code);
   const _component = await client.aOSPortalCmsComponent.findOne({
     where: {code},
     select: {id: true, code: true, title: true},
   });
   const componentData: CreateArgs<AOSPortalCmsComponent> = {
     code,
-    title: meta.title,
-    typeSelect: meta.type,
+    title: schema.title,
+    typeSelect: schema.type,
     updatedOn: timeStamp,
   };
 
@@ -588,12 +594,12 @@ export async function deleteMetaJsonModels({
 
 export async function createCMSContent(props: {
   tenantId: Tenant['id'];
-  meta: Meta;
-  demos: Demo<Meta>[];
+  schema: TemplateSchema;
+  demos: Demo<TemplateSchema>[];
   fileCache: Cache<Promise<{id: string}>>;
 }) {
-  const {tenantId, demos, meta, fileCache} = props;
-  const code = formatComponentCode(meta.code);
+  const {tenantId, demos, schema, fileCache} = props;
+  const code = formatComponentCode(schema.code);
 
   const client = await manager.getClient(tenantId);
   return await Promise.all(
@@ -614,10 +620,10 @@ export async function createCMSContent(props: {
       //TODO: add support for updating attrs
       const attrs = await createAttrs({
         tenantId,
-        meta,
+        schema,
         data: demo.data,
         prefix: code,
-        fields: meta.fields,
+        fields: schema.fields,
         fileCache,
       });
 
@@ -771,14 +777,14 @@ async function getMetaFile({
 
 async function createAttrs(props: {
   tenantId: Tenant['id'];
-  meta: Meta;
+  schema: TemplateSchema;
   fields: Field[];
   data: any;
   prefix?: string;
   fileCache: Cache<Promise<{id: string}>>;
 }) {
   const attrs: Record<string, any> = {};
-  const {tenantId, fields, meta, data, prefix, fileCache} = props;
+  const {tenantId, fields, schema, data, prefix, fileCache} = props;
   await Promise.all(
     Object.entries(data || {}).map(async ([key, value]: [string, any]) => {
       const field = fields.find(
@@ -787,7 +793,7 @@ async function createAttrs(props: {
       if (!field) return;
       if (isJsonRelationalField(field)) {
         const jsonModel = formatCustomModelName(field.target);
-        const modelFields = meta.models!.find(
+        const modelFields = schema.models!.find(
           m => formatCustomModelName(m.name) === jsonModel,
         )!.fields;
         if (isArrayField(field)) {
@@ -797,7 +803,7 @@ async function createAttrs(props: {
                 jsonModel,
                 attrs: await createAttrs({
                   tenantId,
-                  meta,
+                  schema,
                   fields: modelFields,
                   data: record.attrs,
                   fileCache,
@@ -815,7 +821,7 @@ async function createAttrs(props: {
             attrs: await createAttrs({
               tenantId,
               fields: modelFields,
-              meta,
+              schema,
               data: value.attrs,
               fileCache,
             }),
@@ -827,7 +833,7 @@ async function createAttrs(props: {
       } else if (isRelationalField(field)) {
         if (field.target !== metaFileModel.name) {
           console.log(
-            `\x1b[31m✖ Skipped field: ${field.title} in ${meta.title} Creating content is only supported for metaFileModel for relational fields\x1b[0m`,
+            `\x1b[31m✖ Skipped field: ${field.title} in ${schema.title} Creating content is only supported for metaFileModel for relational fields\x1b[0m`,
           );
           return;
         }

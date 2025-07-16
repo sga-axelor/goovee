@@ -2,11 +2,11 @@ import {
   Template,
   Data,
   Demo,
-  Meta,
+  TemplateSchema,
 } from '@/subapps/website/common/types/templates';
 import {metaFileModel} from '../meta-models';
 
-export const team1Meta = {
+export const team1Schema = {
   title: 'Team 1',
   code: 'team1',
   type: Template.block,
@@ -77,11 +77,11 @@ export const team1Meta = {
     },
   ],
   metaModels: [metaFileModel],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Team1Data = Data<typeof team1Meta>;
+export type Team1Data = Data<typeof team1Schema>;
 
-export const team1Demos: Demo<typeof team1Meta>[] = [
+export const team1Demos: Demo<typeof team1Schema>[] = [
   {
     language: 'en_US',
     data: {

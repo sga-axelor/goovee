@@ -2,10 +2,10 @@ import {
   Template,
   Data,
   Demo,
-  Meta,
+  TemplateSchema,
 } from '@/subapps/website/common/types/templates';
 
-export const wiki1Meta = {
+export const wiki1Schema = {
   title: 'Wiki 1',
   code: 'wiki1',
   type: Template.block,
@@ -16,11 +16,11 @@ export const wiki1Meta = {
       type: 'string',
     },
   ],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Wiki1Data = Data<typeof wiki1Meta>;
+export type Wiki1Data = Data<typeof wiki1Schema>;
 
-export const wiki1Demos: Demo<typeof wiki1Meta>[] = [
+export const wiki1Demos: Demo<typeof wiki1Schema>[] = [
   {
     language: 'en_US',
     data: {

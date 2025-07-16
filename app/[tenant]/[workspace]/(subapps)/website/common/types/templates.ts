@@ -271,7 +271,7 @@ export enum Template {
   leftRightMenu = 2,
 }
 
-export type Meta = {
+export type TemplateSchema = {
   title: string;
   code: string;
   type: Template;
@@ -306,18 +306,18 @@ type NonDecorativeFields<T extends Field[]> = T extends (infer F)[]
 
 type JsonModelAttrs<
   ModelName extends string,
-  TMeta extends Meta,
-> = TMeta['models'] extends any[]
-  ? Extract<TMeta['models'][number], {name: ModelName}> extends infer M
+  TSchema extends TemplateSchema,
+> = TSchema['models'] extends any[]
+  ? Extract<TSchema['models'][number], {name: ModelName}> extends infer M
     ? M extends {fields: Field[]}
       ? {
           [F in NonDecorativeFields<M['fields']> as F extends {required: true}
             ? F['name']
-            : never]: FieldType<F, TMeta>;
+            : never]: FieldType<F, TSchema>;
         } & {
           [F in NonDecorativeFields<M['fields']> as F extends {required: true}
             ? never
-            : F['name']]?: FieldType<F, TMeta>;
+            : F['name']]?: FieldType<F, TSchema>;
         }
       : never
     : never
@@ -325,9 +325,9 @@ type JsonModelAttrs<
 
 type RelationalModelAttrs<
   ModelName extends string,
-  TMeta extends Meta,
-> = TMeta['metaModels'] extends any[]
-  ? Extract<TMeta['metaModels'][number], {name: ModelName}> extends infer M
+  TSchema extends TemplateSchema,
+> = TSchema['metaModels'] extends any[]
+  ? Extract<TSchema['metaModels'][number], {name: ModelName}> extends infer M
     ? M extends {entity: EntityName; select: any}
       ? Payload<EntityClass<M['entity']>, {select: M['select']}>
       : any
@@ -344,17 +344,17 @@ type JSONRecord = {
 };
 type SelectionValue<T> = T extends readonly {value: infer V}[] ? V : never;
 
-type FieldType<F, TMeta extends Meta> = F extends {
+type FieldType<F, TSchema extends TemplateSchema> = F extends {
   type: JsonToMany;
   target: string;
 }
-  ? (JSONRecord & {attrs: JsonModelAttrs<F['target'], TMeta>})[]
+  ? (JSONRecord & {attrs: JsonModelAttrs<F['target'], TSchema>})[]
   : F extends {type: JsonToOne; target: string}
-    ? JSONRecord & {attrs: JsonModelAttrs<F['target'], TMeta>}
+    ? JSONRecord & {attrs: JsonModelAttrs<F['target'], TSchema>}
     : F extends {type: RelToMany; target: string}
-      ? RelationalModelAttrs<F['target'], TMeta>[]
+      ? RelationalModelAttrs<F['target'], TSchema>[]
       : F extends {type: RelToOne; target: string}
-        ? RelationalModelAttrs<F['target'], TMeta>
+        ? RelationalModelAttrs<F['target'], TSchema>
         : F extends {type: 'integer'; selection: readonly any[]}
           ? SelectionValue<F['selection']>
           : F extends {type: 'string'; selection: readonly any[]}
@@ -367,22 +367,22 @@ type FieldType<F, TMeta extends Meta> = F extends {
 
 type FieldKey<
   F extends {name: string},
-  TMeta extends {code: string},
-> = `${CamelCase<TMeta['code']>}${Capitalize<CamelCase<F['name']>>}`;
+  TSchema extends {code: string},
+> = `${CamelCase<TSchema['code']>}${Capitalize<CamelCase<F['name']>>}`;
 
-export type Data<TMeta extends Meta> = ExpandRecursively<
+export type Data<TSchema extends TemplateSchema> = ExpandRecursively<
   {
-    [F in NonDecorativeFields<TMeta['fields']> as F extends {required: true}
-      ? FieldKey<F, TMeta>
-      : never]: FieldType<F, TMeta>;
+    [F in NonDecorativeFields<TSchema['fields']> as F extends {required: true}
+      ? FieldKey<F, TSchema>
+      : never]: FieldType<F, TSchema>;
   } & {
-    [F in NonDecorativeFields<TMeta['fields']> as F extends {required: true}
+    [F in NonDecorativeFields<TSchema['fields']> as F extends {required: true}
       ? never
-      : FieldKey<F, TMeta>]?: FieldType<F, TMeta>;
+      : FieldKey<F, TSchema>]?: FieldType<F, TSchema>;
   }
 >;
 
-export type Demo<TMeta extends Meta> = {
+export type Demo<TSchema extends TemplateSchema> = {
   language: 'en_US' | 'fr_FR';
-  data: Data<TMeta>;
+  data: Data<TSchema>;
 };

@@ -2,19 +2,19 @@ import {
   Template,
   Data,
   Demo,
-  Meta,
+  TemplateSchema,
 } from '@/subapps/website/common/types/templates';
 
-export const navbar1Meta = {
+export const navbar1Schema = {
   title: 'Navbar 1',
   code: 'navbar1',
   type: Template.block,
   fields: [],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type Navbar11Data = Data<typeof navbar1Meta>;
+export type Navbar1Data = Data<typeof navbar1Schema>;
 
-export const navbar1Demos: Demo<typeof navbar1Meta>[] = [
+export const navbar1Demos: Demo<typeof navbar1Schema>[] = [
   {
     language: 'en_US',
     data: {},

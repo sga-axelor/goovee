@@ -2,19 +2,19 @@ import {
   Template,
   Data,
   Demo,
-  Meta,
+  TemplateSchema,
 } from '@/subapps/website/common/types/templates';
 
-export const pageProgress1Meta = {
+export const pageProgress1Schema = {
   title: 'Page Progress 1',
   code: 'pageProgress1',
   type: Template.block,
   fields: [],
-} as const satisfies Meta;
+} as const satisfies TemplateSchema;
 
-export type PageProgress1Data = Data<typeof pageProgress1Meta>;
+export type PageProgress1Data = Data<typeof pageProgress1Schema>;
 
-export const pageProgress1Demos: Demo<typeof pageProgress1Meta>[] = [
+export const pageProgress1Demos: Demo<typeof pageProgress1Schema>[] = [
   {
     language: 'en_US',
     data: {},
