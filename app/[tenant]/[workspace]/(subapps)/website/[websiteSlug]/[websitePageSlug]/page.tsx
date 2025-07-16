@@ -1,13 +1,14 @@
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {findWebsitePageBySlug} from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
+import {MOUNT_TYPE} from '@/subapps/website/common/constants';
 import {clone} from '@/utils';
-import {SUBAPP_CODES} from '@/constants';
 
 export async function generateMetadata({
   params,
@@ -85,7 +86,7 @@ export default async function Page({
         websiteSlug={websiteSlug}
         websitePageSlug={websitePageSlug}
         code={line.content.component.code}
-        mountType="page"
+        mountType={MOUNT_TYPE.PAGE}
       />
     );
   });

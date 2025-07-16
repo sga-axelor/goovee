@@ -10,7 +10,10 @@ import {
 import {get} from 'lodash';
 import {findFile, streamFile} from '@/utils/download';
 import {MountType} from '@/app/[tenant]/[workspace]/(subapps)/website/common/types';
-import {mountTypes} from '@/app/[tenant]/[workspace]/(subapps)/website/common/constants';
+import {
+  MOUNT_TYPE,
+  mountTypes,
+} from '@/app/[tenant]/[workspace]/(subapps)/website/common/constants';
 
 export async function GET(
   req: NextRequest,
@@ -42,7 +45,7 @@ export async function GET(
   if (!mountTypes.includes(mountType)) {
     return new NextResponse('Invalid mount type', {status: 400});
   }
-  if (mountType === 'menu') {
+  if (mountType === MOUNT_TYPE.MENU) {
     return new NextResponse('file download not supported for menu', {
       status: 400,
     });
@@ -71,7 +74,7 @@ export async function GET(
   }
 
   let attrs;
-  if (mountType === 'page') {
+  if (mountType === MOUNT_TYPE.PAGE) {
     const websitePage = await findWebsitePageBySlug({
       websiteSlug: websiteSlug,
       websitePageSlug: websitePageSlug,
@@ -99,8 +102,8 @@ export async function GET(
     if (!website) {
       return new NextResponse('Website not found', {status: 404});
     }
-    if (mountType === 'footer') attrs = website.footer?.attrs;
-    if (mountType === 'header') attrs = website.header?.attrs;
+    if (mountType === MOUNT_TYPE.FOOTER) attrs = website.footer?.attrs;
+    if (mountType === MOUNT_TYPE.HEADER) attrs = website.header?.attrs;
   }
 
   const metaFile = get(attrs, path);

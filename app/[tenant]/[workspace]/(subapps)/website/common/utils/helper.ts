@@ -1,5 +1,6 @@
 import {SUBAPP_CODES} from '@/constants';
 import type {MountType} from '../types';
+import {MOUNT_TYPE} from '../constants';
 
 export function getMetaFileURL(props: {
   metaFile: {id: string | number} | undefined;
@@ -17,7 +18,9 @@ export function getMetaFileURL(props: {
   const path = encodeURIComponent(props.path);
   const websiteSlug = encodeURIComponent(props.websiteSlug);
   const websitePageSlug = encodeURIComponent(
-    props.mountType === 'page' ? props.websitePageSlug! : props.mountType,
+    props.mountType === MOUNT_TYPE.PAGE
+      ? props.websitePageSlug!
+      : props.mountType,
   );
   const mountType = encodeURIComponent(props.mountType);
 

@@ -5,6 +5,7 @@ import {getSession} from '@/auth';
 import {workspacePathname} from '@/utils/workspace';
 import {Website} from '@/types';
 import {clone} from '@/utils';
+import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -14,8 +15,11 @@ import {
 import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
 import {LanguageSelection} from './language-selection';
-import {layoutMountTypes, NAVIGATION_POSITION} from '../common/constants';
-import {SUBAPP_CODES} from '@/constants';
+import {
+  layoutMountTypes,
+  MOUNT_TYPE,
+  NAVIGATION_POSITION,
+} from '@/subapps/website/common/constants';
 
 export async function generateMetadata({
   params,
@@ -100,7 +104,7 @@ export default async function Layout({
       workspaceURI={workspaceURI}
       websiteSlug={websiteSlug}
       code={website.menu.component.code}
-      mountType="menu"
+      mountType={MOUNT_TYPE.MENU}
     />
   );
 
@@ -122,7 +126,7 @@ export default async function Layout({
               code={website.header.component.code}
               contentId={website.header.id}
               contentVersion={website.header.version}
-              mountType="header"
+              mountType={MOUNT_TYPE.HEADER}
             />
           )}
           {children}
@@ -136,7 +140,7 @@ export default async function Layout({
           code={website.footer.component.code}
           contentId={website.footer.id}
           contentVersion={website.footer.version}
-          mountType="footer"
+          mountType={MOUNT_TYPE.FOOTER}
         />
       )}
     </>

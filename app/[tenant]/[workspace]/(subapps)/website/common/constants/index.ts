@@ -62,7 +62,20 @@ export const WidgetAttrsMap: Record<Type, Record<string, string>> = {
   panel: {showTitle: 'false'},
 };
 
-export const mountTypes: MountType[] = ['page', 'footer', 'header', 'menu'];
+export const MOUNT_TYPE = {
+  PAGE: 'page',
+  FOOTER: 'footer',
+  HEADER: 'header',
+  MENU: 'menu',
+} satisfies Record<string, MountType>;
+
+export const mountTypes: MountType[] = [
+  MOUNT_TYPE.PAGE,
+  MOUNT_TYPE.FOOTER,
+  MOUNT_TYPE.HEADER,
+  MOUNT_TYPE.MENU,
+];
+
 export const layoutMountTypes: LayoutMountType[] = mountTypes.filter(
-  type => type !== 'page',
+  type => type !== MOUNT_TYPE.PAGE,
 );

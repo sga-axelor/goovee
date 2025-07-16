@@ -19,6 +19,7 @@ import {
   JsonRelationalFieldTypes,
   CONTENT_MODEL,
   CONTENT_MODEL_ATTRS,
+  MOUNT_TYPE,
 } from '../constants';
 import {LayoutMountType, MenuItem} from '../types';
 import {Cache} from '../utils/helper';
@@ -188,9 +189,9 @@ export async function findWebsiteBySlug({
     return null;
   }
 
-  const includeHeader = mountTypes?.includes('header');
-  const includeFooter = mountTypes?.includes('footer');
-  const includeMenu = mountTypes?.includes('menu');
+  const includeHeader = mountTypes?.includes(MOUNT_TYPE.HEADER);
+  const includeFooter = mountTypes?.includes(MOUNT_TYPE.FOOTER);
+  const includeMenu = mountTypes?.includes(MOUNT_TYPE.MENU);
 
   const website = await client.aOSPortalCmsSite.findOne({
     where: {

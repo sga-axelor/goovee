@@ -1,5 +1,4 @@
 import {notFound, redirect} from 'next/navigation';
-import type {ReactNode} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
