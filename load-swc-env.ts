@@ -12,7 +12,7 @@ import path from 'path';
  * Later files do NOT override previously loaded variables.
  */
 function loadEnv(cwd: string = process.cwd()) {
-  const dotenvFiles = ['.env.swc.local', `.env.swc.production`, '.env.swc'];
+  const dotenvFiles = ['.env.local', `.env.production`, '.env'];
 
   for (const file of dotenvFiles) {
     const fullPath = path.join(cwd, file);
