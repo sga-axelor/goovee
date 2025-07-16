@@ -1,7 +1,6 @@
 {
   "name": "AOSMetaView",
   "table": "meta_view",
-  "extends": "Model",
   "synchronize": false,
   "fields": [
     {
