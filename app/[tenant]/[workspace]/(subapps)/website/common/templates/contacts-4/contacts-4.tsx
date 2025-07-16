@@ -1,5 +1,6 @@
 import NextLink from '@/subapps/website/common/components/reuseable/links/NextLink';
 import {TemplateProps} from '@/subapps/website/common/types';
+import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
 
 import type {Contact4Data} from './meta.ts';
 
@@ -11,8 +12,14 @@ export function Contact4(props: TemplateProps<Contact4Data>) {
     contact4Description: description,
     contact4LinkText: linkText,
     contact4LinkUrl: linkUrl,
-    contact4Image: image,
+    contact4Image,
   } = data || {};
+
+  const image = getMetaFileURL({
+    metaFile: contact4Image,
+    path: `contact4Image`,
+    ...props,
+  });
 
   return (
     <section className="wrapper bg-light angled upper-end lower-end">

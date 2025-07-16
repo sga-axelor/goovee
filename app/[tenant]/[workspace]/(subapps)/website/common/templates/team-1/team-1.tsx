@@ -1,5 +1,6 @@
 import {TeamCard1} from '@/subapps/website/common/components/reuseable/team-cards';
 import {TemplateProps} from '@/subapps/website/common/types';
+import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
 
 import type {Team1Data} from './meta';
 
@@ -34,11 +35,15 @@ export function Team1(props: TemplateProps<Team1Data>) {
             />
 
             <div className="row grid-view gy-6 gy-xl-0">
-              {teams?.slice(0, 4).map(item => (
+              {teams?.slice(0, 4).map((item, i) => (
                 <div className="col-md-6 col-xl-3" key={item.id}>
                   <TeamCard1
                     name={item.attrs.name}
-                    image={item.attrs.image}
+                    image={getMetaFileURL({
+                      metaFile: item.attrs.image,
+                      path: `team1Teams[${i}].attrs.image`,
+                      ...props,
+                    })}
                     designation={item.attrs.designation}
                     dribbbleUrl={item.attrs.dribbbleUrl}
                     twitterUrl={item.attrs.twitterUrl}

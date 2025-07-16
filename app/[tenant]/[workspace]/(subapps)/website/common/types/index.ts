@@ -20,4 +20,8 @@ export type TemplateProps<T = any, M = any> = {
   menu?: M;
   contentId?: ID;
   contentVersion?: number;
+  workspaceURI: string;
+  websiteSlug: string;
+  websitePageSlug: string;
+  code?: string;
 };

@@ -1,18 +1,25 @@
 import ListColumn from '@/subapps/website/common/components/reuseable/ListColumn';
 // -------- data -------- //
 import {TemplateProps} from '@/subapps/website/common/types';
+import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
 
 import type {Services2Data} from './meta';
 
 export function Services2(props: TemplateProps<Services2Data>) {
   const {data} = props;
   const {
-    services2Image: image,
+    services2Image,
     services2Title: title,
     services2Caption: caption,
     services2Description: description,
     services2Services: services,
   } = data || {};
+
+  const image = getMetaFileURL({
+    metaFile: services2Image,
+    path: `services2Image`,
+    ...props,
+  });
 
   const list: string[][] = [];
 

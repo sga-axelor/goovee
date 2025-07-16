@@ -1,4 +1,5 @@
 import type {TemplateProps} from '@/subapps/website/common/types';
+import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
 
 import type {Hero1Data} from './meta.ts';
 
@@ -9,8 +10,14 @@ export function Hero1(props: TemplateProps<Hero1Data>) {
     hero1Description: description,
     hero1ButtonText: buttonText,
     hero1ButtonLink: buttonLink,
-    hero1Image: image,
+    hero1Image,
   } = data || {};
+
+  const image = getMetaFileURL({
+    metaFile: hero1Image,
+    path: `hero1Image`,
+    ...props,
+  });
 
   return (
     <section className="wrapper bg-gradient-primary">

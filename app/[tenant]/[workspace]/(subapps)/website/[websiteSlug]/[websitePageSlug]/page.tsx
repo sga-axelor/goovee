@@ -53,7 +53,7 @@ export default async function Page({
     websitePageSlug: string;
   };
 }) {
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
   const {tenant, websiteSlug, websitePageSlug} = params;
 
   const session = await getSession();
@@ -80,6 +80,10 @@ export default async function Page({
         data={clone(line.content.attrs)}
         contentId={line.content.id}
         contentVersion={line.content.version}
+        workspaceURI={workspaceURI}
+        websiteSlug={websiteSlug}
+        websitePageSlug={websitePageSlug}
+        code={line.content.component.code}
       />
     );
   });

@@ -1,4 +1,5 @@
 import {Data, Meta} from '@/subapps/website/common/types/templates';
+import {metaFileModel} from '../metaModels';
 
 export const hero1Meta = {
   title: 'Hero 1',
@@ -28,9 +29,12 @@ export const hero1Meta = {
     {
       name: 'image',
       title: 'Image',
-      type: 'string',
+      type: 'many-to-one',
+      target: 'com.axelor.meta.db.MetaFile',
+      widget: 'Image',
     },
   ],
+  metaModels: [metaFileModel],
 } as const satisfies Meta;
 
 export type Hero1Data = Data<typeof hero1Meta>;

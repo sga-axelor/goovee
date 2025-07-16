@@ -2,25 +2,26 @@ import {ComponentType} from 'react';
 
 import type {TemplateProps} from '../types';
 import type {Meta} from '../types/templates';
+import {formatComponentCode} from '../utils/templates';
 
 import {About1, about1Meta} from './about-1';
-import {Hero1, hero1Meta} from './hero-1';
-import {PageProgress1, pageProgress1Meta} from './page-progress-1';
-import {Services1, services1Meta} from './services-1';
-import {CTA1, cta1Meta} from './cta-1';
-import {Process1, process1Meta} from './process-1';
-import {Team1, team1Meta} from './team-1';
-import {Services2, services2Meta} from './services-2';
-import {Testimonial1, testimonial1Meta} from './testimonial-1';
-import {Pricing1, pricing1Meta} from './pricing-1';
-import {Contact4, contact4Meta} from './contacts-4';
 import {Clients1, clients1Meta} from './clients-1';
-import {Navbar1, navbar1Meta} from './navbar-1';
-import {Wiki1, wiki1Meta} from './wiki-1';
-import {SidebarMenu1, sidebarMenu1Meta} from './sidebar-menu-1';
+import {Contact4, contact4Meta} from './contacts-4';
+import {CTA1, cta1Meta} from './cta-1';
 import {Footer1, footer1Meta} from './footer-1';
+import {Hero1, hero1Meta} from './hero-1';
+import {Navbar1, navbar1Meta} from './navbar-1';
+import {PageProgress1, pageProgress1Meta} from './page-progress-1';
+import {Pricing1, pricing1Meta} from './pricing-1';
+import {Process1, process1Meta} from './process-1';
+import {Services1, services1Meta} from './services-1';
+import {Services2, services2Meta} from './services-2';
+import {SidebarMenu1, sidebarMenu1Meta} from './sidebar-menu-1';
+import {Team1, team1Meta} from './team-1';
+import {Testimonial1, testimonial1Meta} from './testimonial-1';
+import {Wiki1, wiki1Meta} from './wiki-1';
 
-export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
+const componentMap: Record<string, ComponentType<TemplateProps>> = {
   [about1Meta.code]: About1,
   [hero1Meta.code]: Hero1,
   [pageProgress1Meta.code]: PageProgress1,
@@ -38,6 +39,13 @@ export const ComponentMap: Record<string, ComponentType<TemplateProps>> = {
   [wiki1Meta.code]: Wiki1,
   [sidebarMenu1Meta.code]: SidebarMenu1,
 };
+
+export const ComponentMap = Object.fromEntries(
+  Object.entries(componentMap).map(([key, value]) => [
+    formatComponentCode(key),
+    value,
+  ]),
+) as Record<string, ComponentType<TemplateProps>>;
 
 export const metas: Meta[] = [
   about1Meta,

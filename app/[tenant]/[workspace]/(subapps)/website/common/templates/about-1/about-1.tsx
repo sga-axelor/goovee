@@ -1,15 +1,22 @@
 import AccordionList from '@/subapps/website/common/components/common/AccordionList';
 import type {TemplateProps} from '@/subapps/website/common/types';
-import type {About1Data} from './meta';
+import {type About1Data} from './meta';
+import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
 
 export function About1(props: TemplateProps<About1Data>) {
   const {data} = props;
   const {
     about1Title: title,
     about1Caption: caption,
-    about1Image: image,
+    about1Image,
     about1Accordions: accordionsList,
   } = data || {};
+
+  const image = getMetaFileURL({
+    metaFile: about1Image,
+    path: 'about1Image',
+    ...props,
+  });
 
   const accordions =
     accordionsList?.map(({id, attrs: item}) => ({

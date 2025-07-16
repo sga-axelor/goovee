@@ -1,4 +1,5 @@
 import {TemplateProps} from '@/subapps/website/common/types';
+import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
 
 import type {CTA1Data} from './meta.ts';
 
@@ -8,8 +9,14 @@ export function CTA1(props: TemplateProps<CTA1Data>) {
     cta1Title: title,
     cta1Caption: caption,
     cta1Description: description,
-    cta1Image: image,
+    cta1Image,
   } = data || {};
+
+  const image = getMetaFileURL({
+    metaFile: cta1Image,
+    path: `cta1Image`,
+    ...props,
+  });
 
   return (
     <section className="wrapper bg-gradient-reverse-primary">
