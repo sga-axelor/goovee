@@ -414,17 +414,24 @@ export async function createCMSContent(props: {
   const client = await manager.getClient(tenantId);
   const timeStamp = new Date();
   const title = getContentTitle(code);
-  const attrs = await getAttrs({
+
+  const _content = await client.aOSPortalCmsContent.findOne({
+    where: {title, component: {code}},
+    select: {id: true, title: true},
+  });
+
+  if (skipIfExists && _content) {
+    console.log(`\x1b[33m⚠️ Skipped content: ${_content.title}\x1b[0m `);
+    return _content;
+  }
+
+  //TODO: add support for updating attrs
+  const attrs = await createAttrs({
     tenantId,
     meta,
     data,
     prefix: code,
     fields: meta.fields,
-  });
-
-  const _content = await client.aOSPortalCmsContent.findOne({
-    where: {title, component: {code}},
-    select: {id: true, title: true},
   });
 
   const contentData: CreateArgs<AOSPortalCmsContent> = {
@@ -436,10 +443,6 @@ export async function createCMSContent(props: {
   };
 
   if (_content) {
-    if (skipIfExists) {
-      console.log(`\x1b[33m⚠️ Skipped content: ${_content.title}\x1b[0m `);
-      return _content;
-    }
     const content = await client.aOSPortalCmsContent.update({
       data: {
         id: _content.id,
@@ -522,7 +525,7 @@ async function creatMetaFile({
   }
 }
 
-async function getAttrs(props: {
+async function createAttrs(props: {
   tenantId: Tenant['id'];
   meta: Meta;
   fields: Field[];
@@ -547,7 +550,7 @@ async function getAttrs(props: {
             value.map(async (record: any) => {
               return createMetaJsonRecord({
                 jsonModel,
-                attrs: await getAttrs({
+                attrs: await createAttrs({
                   tenantId,
                   meta,
                   fields: modelFields,
@@ -563,7 +566,7 @@ async function getAttrs(props: {
         } else {
           const metaJsonRecord = await createMetaJsonRecord({
             jsonModel,
-            attrs: await getAttrs({
+            attrs: await createAttrs({
               tenantId,
               fields: modelFields,
               meta,
