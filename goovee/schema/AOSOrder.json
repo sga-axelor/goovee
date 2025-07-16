@@ -8,11 +8,11 @@
       "name": "saleOrderSeq"
     },
     {
-      "type": "Decimal",
+      "type": "Int",
       "name": "statusSelect"
     },
     {
-      "type": "Decimal",
+      "type": "Int",
       "name": "deliveryState"
     },
     {
