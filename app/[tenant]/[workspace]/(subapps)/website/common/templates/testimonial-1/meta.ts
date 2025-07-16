@@ -135,4 +135,62 @@ export const testimonial1Demos: Demo<typeof testimonial1Meta>[] = [
       ],
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      testimonial1Link: '#',
+      testimonial1Title: 'Témoignage 1',
+      testimonial1Caption:
+        'Ne croyez rien de ce que nous disons. Découvrez ce que nos clients disent de nous.',
+      testimonial1LinkText: 'Tous les témoignages',
+      testimonial1Description:
+        "Ils ont fourni une excellente communication et m'ont tenu informé à chaque étape. Le produit final a dépassé mes attentes et a déjà eu un impact significatif sur mon entreprise. Je recommanderais vivement Lighthouse.",
+      testimonial1TestimonialList: [
+        {
+          id: '24',
+          version: 1,
+          attrs: {
+            name: 'Tom Onix',
+            review:
+              "Leurs connaissances de l'équipe, leur professionnalisme et leur facilité à travailler",
+            designation: 'Analyste financier',
+            columnClasses: 'col-xl-5 align-self-end',
+          },
+        },
+        {
+          id: '25',
+          version: 1,
+          attrs: {
+            name: 'Lessar Carey',
+            review:
+              "Je recommande vivement [Nom de l'entreprise] à quiconque recherche des services de premier ordre. Impact sur mon entreprise",
+            designation: 'Spécialiste en marketing',
+            columnClasses: 'align-self-end',
+          },
+        },
+        {
+          id: '26',
+          version: 1,
+          attrs: {
+            name: 'Ocsiloco Termend',
+            review:
+              "Ils ont fourni une excellente communication et m'ont tenu informé à chaque étape.",
+            designation: 'Spécialiste des ventes',
+            columnClasses: 'col-xl-5 offset-xl-1',
+          },
+        },
+        {
+          id: '27',
+          version: 1,
+          attrs: {
+            name: 'Aliko Andree',
+            review:
+              'Le produit final a dépassé mes attentes et a déjà eu un impact sur mon entreprise.',
+            designation: "Planificateur d'investissement",
+            columnClasses: 'align-self-start',
+          },
+        },
+      ],
+    },
+  },
 ];

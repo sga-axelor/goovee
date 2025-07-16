@@ -19,4 +19,8 @@ export const navbar1Demos: Demo<typeof navbar1Meta>[] = [
     language: 'en_US',
     data: {},
   },
+  {
+    language: 'fr_FR',
+    data: {},
+  },
 ];

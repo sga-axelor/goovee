@@ -57,4 +57,21 @@ export const hero1Demos: Demo<typeof hero1Meta>[] = [
       },
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      hero1Title: 'Développez votre entreprise avec nos solutions.',
+      hero1Description:
+        'Augmentez le trafic, le classement et la visibilité en ligne de votre site web grâce à nos services.',
+      hero1ButtonText: 'Essayez-le gratuitement',
+      hero1ButtonLink: '#',
+      hero1Image: {
+        id: '1',
+        version: 1,
+        fileName: 'i2.png',
+        fileType: 'image/png',
+        filePath: '/img/illustrations/i2.png',
+      },
+    },
+  },
 ];

@@ -19,4 +19,8 @@ export const sidebarMenu1Demos: Demo<typeof sidebarMenu1Meta>[] = [
     language: 'en_US',
     data: {},
   },
+  {
+    language: 'fr_FR',
+    data: {},
+  },
 ];

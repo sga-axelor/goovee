@@ -52,4 +52,21 @@ export const cta1Demos: Demo<typeof cta1Meta>[] = [
         'Digital marketing encompasses a wide range of activities, including search engine optimization, social media marketing, email marketing, and content marketing. By leveraging businesses can increase their visibility online.',
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      cta1Image: {
+        id: '1',
+        version: 1,
+        fileName: 'i3.png',
+        fileType: 'image/png',
+        filePath: '/img/illustrations/i3.png',
+      },
+      cta1Title: 'Analyser maintenant',
+      cta1Caption:
+        'Améliorez votre site web. Vérifiez le score SEO pour une vitesse plus rapide, un meilleur classement et plus de trafic.',
+      cta1Description:
+        "Le marketing numérique englobe un large éventail d'activités, notamment l'optimisation des moteurs de recherche, le marketing des médias sociaux, le marketing par e-mail et le marketing de contenu. En tirant parti, les entreprises peuvent accroître leur visibilité en ligne.",
+    },
+  },
 ];

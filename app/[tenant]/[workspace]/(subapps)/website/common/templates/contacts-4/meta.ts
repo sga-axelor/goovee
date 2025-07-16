@@ -64,4 +64,23 @@ export const contact4Demos: Demo<typeof contact4Meta>[] = [
         'At our company, we understand that managing spending can be stressful and overwhelming, which is why we offer a range of services aimed at making it effortless for you to stay in control.',
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      contact4Image: {
+        id: '1',
+        version: 1,
+        fileName: 'i5.png',
+        fileType: 'image/png',
+        filePath: '/img/illustrations/i5.png',
+      },
+      contact4Title: 'Parlons-en',
+      contact4Caption:
+        'Ensemble, construisons quelque chose de fantastique. Plus de 5000 clients nous font confiance.',
+      contact4LinkUrl: '#',
+      contact4LinkText: 'Rejoignez-nous',
+      contact4Description:
+        "Dans notre entreprise, nous comprenons que la gestion des dépenses peut être stressante et accablante, c'est pourquoi nous proposons une gamme de services visant à vous permettre de garder le contrôle sans effort.",
+    },
+  },
 ];

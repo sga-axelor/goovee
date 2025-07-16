@@ -121,4 +121,50 @@ export const process1Demos: Demo<typeof process1Meta>[] = [
         "By improving your website's speed, you can provide a better user experience for your visitors, reduce bounce rates, and ultimately increase conversions.",
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      process1Link: '#',
+      process1Title: 'Notre stratégie',
+      process1Caption:
+        'Ces 3 mesures pratiques nous aideront à organiser les projets de notre entreprise.',
+      process1LinkText: 'En savoir plus',
+      process1ProcessList: [
+        {
+          id: '8',
+          version: 1,
+          attrs: {
+            title: 'Spécialisation',
+            subtitle:
+              "Cela implique de se concentrer sur un créneau d'expertise spécifique",
+            className: 'me-lg-6',
+          },
+        },
+        {
+          id: '9',
+          version: 1,
+          attrs: {
+            title: 'Collaboration',
+            subtitle:
+              'Cela implique de se concentrer sur une expertise de niche spécifique',
+            className: 'ms-lg-13 mt-6',
+          },
+        },
+        {
+          id: '10',
+          version: 1,
+          attrs: {
+            title: 'Innovation',
+            subtitle:
+              "Cela implique de se concentrer sur un créneau d'expertise spécifique",
+            className: 'mx-lg-6 mt-6',
+          },
+        },
+      ],
+      process1Description1:
+        "Vous êtes-vous déjà demandé à quel point votre site web pourrait être plus rapide ? Découvrez-le maintenant en vérifiant votre score SEO. Un score SEO élevé signifie que votre site web est optimisé pour les moteurs de recherche, ce qui le rend plus susceptible d'apparaître en haut des résultats de recherche.",
+      process1Description2:
+        'En améliorant la vitesse de votre site web, vous pouvez offrir une meilleure expérience utilisateur à vos visiteurs, réduire les taux de rebond et, finalement, augmenter les conversions.',
+    },
+  },
 ];

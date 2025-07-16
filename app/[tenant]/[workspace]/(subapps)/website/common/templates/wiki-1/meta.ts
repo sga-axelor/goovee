@@ -27,4 +27,10 @@ export const wiki1Demos: Demo<typeof wiki1Meta>[] = [
       wiki1Content: undefined,
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      wiki1Content: undefined,
+    },
+  },
 ];

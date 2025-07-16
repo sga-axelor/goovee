@@ -102,4 +102,46 @@ export const about1Demos: Demo<typeof about1Meta>[] = [
       ],
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      about1Image: {
+        id: '1',
+        version: 1,
+        fileName: 'i6.png',
+        fileType: 'image/png',
+        filePath: '/img/illustrations/i6.png',
+      },
+      about1Title: 'Pourquoi nous choisir ?',
+      about1Caption:
+        'Nous proposons des solutions qui facilitent la vie de nos clients.',
+      about1Accordions: [
+        {
+          id: '11',
+          version: 0,
+          attrs: {
+            body: 'Les clients peuvent choisir votre entreprise car vous proposez des produits ou services de haute qualité qui répondent à leurs besoins et dépassent leurs attentes. Cela peut conduire à la satisfaction des clients, à la fidélité et à des recommandations positives de bouche à oreille.',
+            expand: true,
+            heading: 'Qualité de service',
+          },
+        },
+        {
+          id: '12',
+          version: 0,
+          attrs: {
+            body: 'Les clients peuvent choisir votre entreprise car vous proposez des produits ou services de haute qualité qui répondent à leurs besoins et dépassent leurs attentes. Cela peut conduire à la satisfaction des clients, à la fidélité et à des recommandations positives de bouche à oreille.',
+            heading: 'Prix compétitifs',
+          },
+        },
+        {
+          id: '13',
+          version: 0,
+          attrs: {
+            body: 'Les clients peuvent choisir votre entreprise car vous proposez des produits ou services de haute qualité qui répondent à leurs besoins et dépassent leurs attentes. Cela peut conduire à la satisfaction des clients, à la fidélité et à des recommandations positives de bouche à oreille.',
+            heading: 'Service Clients',
+          },
+        },
+      ],
+    },
+  },
 ];

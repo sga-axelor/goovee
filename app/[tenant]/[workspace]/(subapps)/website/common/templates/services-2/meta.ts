@@ -100,4 +100,43 @@ export const services2Demos: Demo<typeof services2Meta>[] = [
       ],
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      services2Image: {
+        id: '1',
+        version: 1,
+        fileName: 'i8.png',
+        fileType: 'image/png',
+        filePath: '/img/illustrations/i8.png',
+      },
+      services2Title: 'Nos solutions',
+      services2Caption:
+        "Nous offrons un contrôle des dépenses sans effort et en toute tranquillité d'esprit.",
+      services2Description:
+        "Dans notre entreprise, nous comprenons que la gestion des dépenses peut être stressante et accablante, c'est pourquoi nous proposons une gamme de services visant à vous permettre de garder le contrôle sans effort.",
+      services2Services: [
+        {
+          id: '40',
+          version: 0,
+          attrs: {title: 'Nous offrons un contrôle des dépenses sans stress.'},
+        },
+        {
+          id: '41',
+          version: 0,
+          attrs: {title: 'Nous offrons un contrôle des dépenses sans stress.'},
+        },
+        {
+          id: '42',
+          version: 0,
+          attrs: {title: 'Nous offrons un contrôle des dépenses sans stress.'},
+        },
+        {
+          id: '43',
+          version: 0,
+          attrs: {title: 'Nous offrons un contrôle des dépenses sans stress.'},
+        },
+      ],
+    },
+  },
 ];

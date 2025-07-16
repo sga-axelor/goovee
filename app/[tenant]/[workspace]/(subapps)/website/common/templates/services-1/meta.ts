@@ -132,4 +132,61 @@ export const services1Demos: Demo<typeof services1Meta>[] = [
       ],
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      services1Title: 'Que faisons-nous ?',
+      services1Caption:
+        'Nous avons conçu nos services en pensant à vos besoins spécifiques.',
+      services1Services: [
+        {
+          id: '5',
+          version: 1,
+          attrs: {
+            icon: 'Rocket',
+            link: '#',
+            title: 'DevOps',
+            linkType: 'yellow',
+            description:
+              "L'agence peut fournir des services DevOps pour aider les entreprises à rationaliser leur développement de logiciels",
+          },
+        },
+        {
+          id: '6',
+          version: 1,
+          attrs: {
+            icon: 'Code',
+            link: '#',
+            title: 'Développement de logiciels',
+            linkType: 'red',
+            description:
+              "L'agence peut fournir des services DevOps pour aider les entreprises à rationaliser leur développement de logiciels",
+          },
+        },
+        {
+          id: '7',
+          version: 0,
+          attrs: {
+            icon: 'DevicesTwo',
+            link: '#',
+            title: "Développement d'applications",
+            linkType: 'green',
+            description:
+              "L'agence peut fournir des services DevOps pour aider les entreprises à rationaliser leur développement de logiciels",
+          },
+        },
+        {
+          id: '8',
+          version: 1,
+          attrs: {
+            link: '#',
+            icon: 'Hand',
+            linkType: 'blue',
+            title: 'Maintenance et assistance',
+            description: `L'agence peut fournir des services DevOps pour aider les entreprises à rationaliser leur développement de logiciels`,
+          },
+        },
+      ],
+    },
+  },
 ];

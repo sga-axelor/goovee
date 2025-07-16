@@ -19,4 +19,8 @@ export const pageProgress1Demos: Demo<typeof pageProgress1Meta>[] = [
     language: 'en_US',
     data: {},
   },
+  {
+    language: 'fr_FR',
+    data: {},
+  },
 ];

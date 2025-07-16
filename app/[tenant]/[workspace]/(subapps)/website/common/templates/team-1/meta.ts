@@ -169,4 +169,95 @@ export const team1Demos: Demo<typeof team1Meta>[] = [
       ],
     },
   },
+  {
+    language: 'fr_FR',
+    data: {
+      team1Title: 'Notre équipe',
+      team1Caption:
+        'Pensez hors des sentiers battus et soyez créatif. Lighthouse peut vous aider à faire la différence.',
+      team1Teams: [
+        {
+          id: '14',
+          version: 0,
+          attrs: {
+            name: 'Tom Accor',
+            image: {
+              id: '1',
+              version: 1,
+              fileName: 't8.jpg',
+              fileType: 'image/jpeg',
+              filePath: '/img/avatars/t8.jpg',
+            },
+            twitterUrl: 'https://www.twitter.com',
+            description:
+              'Je suis passionné par la création de thèmes élégants.',
+            designation: 'Développeur',
+            dribbbleUrl: 'https://dribbble.com',
+            facebookUrl: 'https://www.facebook.com',
+          },
+        },
+        {
+          id: '15',
+          version: 0,
+          attrs: {
+            name: 'Selina Anteree',
+
+            image: {
+              id: '1',
+              version: 1,
+              fileName: 't9.jpg',
+              fileType: 'image/jpeg',
+              filePath: '/img/avatars/t9.jpg',
+            },
+            twitterUrl: 'https://www.twitter.com',
+            description:
+              'Je suis passionné par la création de thèmes élégants.',
+            designation: 'Développeur',
+            dribbbleUrl: 'https://dribbble.com',
+            facebookUrl: 'https://www.facebook.com',
+          },
+        },
+        {
+          id: '16',
+          version: 0,
+          attrs: {
+            name: 'Olocks Pree',
+            image: {
+              id: '1',
+              version: 1,
+              fileName: 't10.jpg',
+              fileType: 'image/jpeg',
+              filePath: '/img/avatars/t10.jpg',
+            },
+            twitterUrl: 'https://www.twitter.com',
+            description:
+              'Je suis passionné par la création de thèmes élégants.',
+            designation: 'Designer',
+            dribbbleUrl: 'https://dribbble.com',
+            facebookUrl: 'https://www.facebook.com',
+          },
+        },
+        {
+          id: '17',
+          version: 0,
+          attrs: {
+            name: 'Andree Buie',
+            image: {
+              id: '1',
+              version: 1,
+              fileName: 't11.jpg',
+              fileType: 'image/jpeg',
+              filePath: '/img/avatars/t11.jpg',
+            },
+            twitterUrl: 'https://www.twitter.com',
+            description:
+              'Je suis passionné par la création de thèmes élégants.',
+            designation: 'Directeur',
+            dribbbleUrl: 'https://dribbble.com',
+            facebookUrl: 'https://www.facebook.com',
+          },
+        },
+      ],
+    },
+  },
 ];
