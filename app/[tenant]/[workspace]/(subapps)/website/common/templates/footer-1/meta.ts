@@ -13,6 +13,7 @@ export const footer1Meta = {
       title: 'Logo',
       type: 'many-to-one',
       target: 'com.axelor.meta.db.MetaFile',
+      widget: 'Image',
     },
     {
       name: 'title',
