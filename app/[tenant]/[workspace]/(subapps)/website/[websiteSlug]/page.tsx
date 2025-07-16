@@ -16,20 +16,18 @@ import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 
 export default async function Layout({
   params,
-  children,
 }: {
   params: {
     tenant: string;
     workspace: string;
     websiteSlug: Website['slug'];
   };
-  children: ReactNode;
 }) {
   const session = await getSession();
   const user = session?.user;
 
   const {tenant, websiteSlug} = params;
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const website = await findWebsiteBySlug({
     websiteSlug,
@@ -61,5 +59,5 @@ export default async function Layout({
     );
   }
 
-  return <NotFound />;
+  return <NotFound homePageUrl={`${workspaceURI}/${SUBAPP_CODES.website}`} />;
 }

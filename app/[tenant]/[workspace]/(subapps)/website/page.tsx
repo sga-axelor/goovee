@@ -20,7 +20,7 @@ export default async function Page({
 }) {
   const {tenant} = params;
 
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const session = await getSession();
 
@@ -44,7 +44,7 @@ export default async function Page({
     locale,
   });
 
-  if (!mainWebsites?.length) return <NotFound />;
+  if (!mainWebsites?.length) return <NotFound homePageUrl={workspaceURI} />;
 
   const getWebsiteURL = (website: Website) =>
     `${workspaceURL}/${SUBAPP_CODES.website}/${website.slug}`;

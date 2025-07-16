@@ -15,6 +15,7 @@ import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
 import {LanguageSelection} from './language-selection';
 import {layoutMountTypes, NAVIGATION_POSITION} from '../common/constants';
+import {SUBAPP_CODES} from '@/constants';
 
 export async function generateMetadata({
   params,
@@ -76,7 +77,7 @@ export default async function Layout({
   });
 
   if (!website) {
-    return <NotFound />;
+    return <NotFound homePageUrl={`${workspaceURI}/${SUBAPP_CODES.website}`} />;
   }
 
   const mainWebsiteLanguages = await findAllMainWebsiteLanguages({

@@ -7,6 +7,7 @@ import {findWebsitePageBySlug} from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {getWebsiteComponent} from '@/subapps/website/common/utils/component';
 import {clone} from '@/utils';
+import {SUBAPP_CODES} from '@/constants';
 
 export async function generateMetadata({
   params,
@@ -33,7 +34,7 @@ export async function generateMetadata({
   });
 
   if (!websitePage) {
-    return null;
+    return {title: 'Page'};
   }
 
   return {
@@ -68,7 +69,7 @@ export default async function Page({
   });
 
   if (!websitePage) {
-    return <NotFound />;
+    return <NotFound homePageUrl={`${workspaceURI}/${SUBAPP_CODES.website}`} />;
   }
 
   const components = websitePage.contentLines.map(line => {

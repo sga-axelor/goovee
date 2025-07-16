@@ -430,9 +430,10 @@ export async function findWebsitePageBySlug({
     },
   });
 
+  if (!page) return null;
   let contentLines: (ReplacedContentLine | undefined)[] = [];
 
-  if (page?.contentLines?.length) {
+  if (page.contentLines?.length) {
     contentLines = await populateContent({
       contentLines: page?.contentLines,
       tenantId,
