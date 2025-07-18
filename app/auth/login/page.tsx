@@ -61,5 +61,9 @@ export default async function Page({
     ].includes(workspace?.allowRegistrationSelect);
   }
 
-  return <Content canRegister={canRegister} />;
+  const showGoogleOauth = process.env.SHOW_GOOGLE_OAUTH === 'true';
+
+  return (
+    <Content canRegister={canRegister} showGoogleOauth={showGoogleOauth} />
+  );
 }

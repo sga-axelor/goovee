@@ -21,7 +21,13 @@ import {useToast} from '@/ui/hooks';
 // ---- LOCAL IMPORTS ---- //
 import {revalidate} from './actions';
 
-export default function Content({canRegister}: {canRegister?: boolean}) {
+export default function Content({
+  canRegister,
+  showGoogleOauth = true,
+}: {
+  canRegister?: boolean;
+  showGoogleOauth?: boolean;
+}) {
   const [values, setValues] = useState({email: '', password: ''});
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -179,32 +185,36 @@ export default function Content({canRegister}: {canRegister?: boolean}) {
               </div>
             )}
           </form>
-          <div className="flex items-center gap-4 mt-4">
-            <div className="grow">
-              <Separator />
-            </div>
-            <h5 className="mb-0 font-medium text-xl">{i18n.t('Or')}</h5>
-            <div className="grow">
-              <Separator />
-            </div>
-          </div>
-          <div className="mt-4">
-            <Button
-              type="button"
-              variant="outline-success"
-              className="w-full rounded-full"
-              onClick={loginWithGoogle}
-              disabled={submitting}>
-              <Image
-                alt="Google"
-                src="/images/google.svg"
-                height={24}
-                width={24}
-                className="me-2"
-              />
-              {i18n.t('Log In with Google')}
-            </Button>
-          </div>
+          {showGoogleOauth && (
+            <>
+              <div className="flex items-center gap-4 mt-4">
+                <div className="grow">
+                  <Separator />
+                </div>
+                <h5 className="mb-0 font-medium text-xl">{i18n.t('Or')}</h5>
+                <div className="grow">
+                  <Separator />
+                </div>
+              </div>
+              <div className="mt-4">
+                <Button
+                  type="button"
+                  variant="outline-success"
+                  className="w-full rounded-full"
+                  onClick={loginWithGoogle}
+                  disabled={submitting}>
+                  <Image
+                    alt="Google"
+                    src="/images/google.svg"
+                    height={24}
+                    width={24}
+                    className="me-2"
+                  />
+                  {i18n.t('Log In with Google')}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
