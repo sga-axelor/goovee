@@ -1,5 +1,5 @@
 {
   "title": "Fix image alignment for events html description",
   "type": "fix",
-  "scope": ["events"]
+  "scope": ["events", "news"]
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 // ---- CORE IMPORTS ---- //
 import {Avatar, AvatarImage} from '@/ui/components/avatar';
@@ -12,11 +13,12 @@ import {formatDate} from '@/locale/formatters';
 import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {BadgeList, Skeleton} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {getFormatString} from '@/subapps/news/common/utils';
 import {PUBLISHED_ON} from '@/subapps/news/common/constants';
-import Image from 'next/image';
+import styles from './style.module.css';
 
 export const NewsInfo = ({
   title,
@@ -119,7 +121,10 @@ export const NewsInfo = ({
             <>
               <Separator className="bg-zinc-300" />
               <div
-                className="relative overflow-auto"
+                className={cn(
+                  'relative overflow-auto',
+                  styles['news-content-html'],
+                )}
                 dangerouslySetInnerHTML={{__html: content}}
               />
             </>
