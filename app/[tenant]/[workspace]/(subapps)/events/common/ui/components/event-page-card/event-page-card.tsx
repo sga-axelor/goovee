@@ -19,6 +19,7 @@ import {
   CardTitle,
   InnerHTML,
 } from '@/ui/components';
+import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -30,6 +31,7 @@ import {
   hasRegistrationEnded,
   isLoginNeededForRegistration,
 } from '@/subapps/events/common/utils';
+import styles from './style.module.css';
 
 export const EventPageCard = ({eventDetails, workspace}: any) => {
   const {
@@ -88,9 +90,12 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
             sizes="(min-width: 1024px) 1152px, 100vw"
           />
         </div>
-        <CardDescription className="herllo">
+        <CardDescription>
           <InnerHTML
-            className={`text-sm font-normal tracking-wide leading-6 w-full overflow-x-auto`}
+            className={cn(
+              'text-sm font-normal tracking-wide leading-6 w-full overflow-x-auto',
+              styles['card-description-html'],
+            )}
             content={eventDetails?.eventDescription}
           />
         </CardDescription>
