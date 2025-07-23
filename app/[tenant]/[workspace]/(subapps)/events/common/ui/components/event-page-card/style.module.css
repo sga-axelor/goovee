@@ -1,3 +1,7 @@
 .card-description-html img {
   display: inline-block;
 }
+
+.card-description-html p {
+  margin-bottom: 1rem;
+}

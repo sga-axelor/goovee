@@ -1,0 +1,6 @@
+{
+  "title": "Fix margin for paragraph in events html description",
+  "type": "fix",
+  "scope": ["events"],
+  "description": "Display paragraph to have line break by providing appropriate bottom margin"
+}
