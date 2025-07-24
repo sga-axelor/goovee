@@ -20,6 +20,12 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SearchItem} from '@/subapps/news/common/ui/components';
 import {findSearchNews} from '@/subapps/news/common/actions/action';
 
+async function findNews({workspaceURL}: {workspaceURL: string}) {
+  return findSearchNews({workspaceURL})
+    .then((result: any) => (result?.error ? [] : result))
+    .catch(() => []);
+}
+
 export function Hero({workspace}: {workspace: PortalWorkspace}) {
   const router = useRouter();
 
@@ -37,7 +43,7 @@ export function Hero({workspace}: {workspace: PortalWorkspace}) {
   const renderSearch = () => (
     <Search
       searchKey="title"
-      findQuery={() => findSearchNews({workspaceURL})}
+      findQuery={() => findNews({workspaceURL})}
       renderItem={SearchItem}
       onItemClick={handleClick}
     />

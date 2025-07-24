@@ -100,10 +100,10 @@ export const Search = ({
             </CommandEmpty>
             <CommandGroup className="p-2">
               {Boolean(results?.length)
-                ? results.map((result: any) => (
+                ? results.map((result: any, index) => (
                     <CommandItem
                       key={result.id}
-                      value={result[searchKey]}
+                      value={`${result?.[searchKey]}-${result?.id || index}`}
                       className="block py-2 sm:px-6">
                       <RenderItem result={result} onClick={onItemClick} />
                     </CommandItem>
