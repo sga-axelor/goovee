@@ -15,7 +15,8 @@
     "website:sass": "sass --no-source-map $npm_package_scripts_website_common_dir/assets/scss:$npm_package_scripts_website_common_dir/assets/css",
     "website:seed:templates": "npm run website:run $npm_package_scripts_website_common_dir/scripts/seed-templates.ts",
     "website:reset:templates": "npm run website:run $npm_package_scripts_website_common_dir/scripts/reset-templates.ts",
-    "website:seed:contents": "npm run website:run $npm_package_scripts_website_common_dir/scripts/seed-contents.ts"
+    "website:seed:contents": "npm run website:run $npm_package_scripts_website_common_dir/scripts/seed-contents.ts",
+    "changelogs:validate": "node ./changelogs/validate"
   },
   "dependencies": {
     "@cyntler/react-doc-viewer": "^1.17.0",
