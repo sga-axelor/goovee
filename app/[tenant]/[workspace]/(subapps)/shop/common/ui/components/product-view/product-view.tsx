@@ -12,6 +12,7 @@ import {
   Button,
   Breadcrumbs,
   NavbarCategoryMenu,
+  Textarea,
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
@@ -165,7 +166,7 @@ export function ProductView({
             {Boolean(cartQuantity) && product.allowCustomNote && (
               <div>
                 <Label>{i18n.t('Note')}</Label>
-                <textarea
+                <Textarea
                   className="border rounded-lg"
                   value={note}
                   onChange={handleChangeNote}
