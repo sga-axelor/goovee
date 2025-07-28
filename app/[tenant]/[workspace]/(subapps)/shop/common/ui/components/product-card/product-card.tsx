@@ -10,25 +10,29 @@ import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {useToast} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {ComputedProduct, ID, Product} from '@/types';
+import type {Category, ComputedProduct, ID, Product} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
+import {Link} from '@/subapps/shop/common/ui/components';
 
 export type ProductCardProps = {
   product: ComputedProduct;
   quantity?: string | number;
   onAdd: (product: ComputedProduct) => Promise<void>;
-  onClick: (product: Product) => void;
   displayPrices?: boolean;
+  category: Category;
 };
+
 export function ProductCard({
   product: computedProduct,
   quantity = 0,
   onAdd,
-  onClick,
+  category,
   displayPrices,
 }: ProductCardProps) {
   const {product, price, errorMessage} = computedProduct;
   const {displayTwoPrices, displayPrimary, displaySecondary} = price;
-  const {tenant} = useWorkspace();
+  const {tenant, workspaceURI} = useWorkspace();
 
   const {outOfStockConfig} = product;
   const isOutOfStock = outOfStockConfig?.outOfStock;
@@ -39,10 +43,6 @@ export function ProductCard({
     onAdd(computedProduct);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    onClick && onClick(product);
-  };
-
   return (
     <div
       className={cn(
@@ -51,7 +51,8 @@ export function ProductCard({
           'min-h-[25.625rem]': displayPrices,
         },
       )}>
-      <div onClick={handleClick}>
+      <Link
+        href={`${workspaceURI}/shop/category/${category.slug}/product/${product.slug}`}>
         <BackgroundImage
           className="rounded-t-lg bg-cover relative h-[14.5rem]"
           src={getProductImageURL(
@@ -79,7 +80,7 @@ export function ProductCard({
             </>
           )}
         </div>
-      </div>
+      </Link>
       <div className="flex items-start justify-between p-6 pt-0">
         <div>
           {showMessage && isOutOfStock && (

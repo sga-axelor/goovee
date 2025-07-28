@@ -241,7 +241,7 @@ export function ProductList({
                     quantity={quantity}
                     onAdd={handleAdd}
                     displayPrices={workspace?.config?.displayPrices}
-                    onClick={handleProductClick}
+                    category={category}
                   />
                 );
               })
