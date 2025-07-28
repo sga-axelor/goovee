@@ -80,7 +80,7 @@ export const Banner = ({
   return (
     <div
       className={cn(
-        'relative overflow-hidden flex-col lg:w-auto w-full h-[300px] lg:h-[353px] flex items-center justify-center bg-secondary',
+        'relative flex-col lg:w-auto w-full h-[300px] lg:h-[353px] flex items-center justify-center bg-secondary',
         className,
       )}>
       <Image
