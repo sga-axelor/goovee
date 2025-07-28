@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
   BackgroundImage,
   Quantity,
+  Textarea,
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
@@ -130,7 +131,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
           {product.allowCustomNote && (
             <div>
               <Label>{i18n.t('Note')}</Label>
-              <textarea
+              <Textarea
                 className="border rounded-lg"
                 value={note}
                 onChange={handleChangeNote}
