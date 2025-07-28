@@ -10,7 +10,8 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {Product, Category, ComputedProduct} from '@/types';
 
-import {ProductCard} from '../product-card';
+// ---- LOCAL IMPORTS ---- //
+import {Link, ProductCard} from '@/subapps/shop/common/ui/components';
 
 export function FeaturedCategories({categories, workspace}: any) {
   const router = useRouter();
@@ -34,27 +35,17 @@ export function FeaturedCategories({categories, workspace}: any) {
     });
   };
 
-  const handleProductClick = (category: Category) => (product: Product) => {
-    router.push(
-      `${workspaceURI}/shop/category/${category.slug}/product/${product.slug}`,
-    );
-  };
-
-  const handleCategoryClick = ({category}: {category: Category}) => {
-    router.push(`${workspaceURI}/shop/category/${category.slug}`);
-  };
-
   return categories?.map((category: any) =>
     category?.products?.length ? (
       <Fragment key={category.id}>
         <div className="flex justify-between items-center">
           <h3 className="text-xl leading-7 font-medium">{category.name}</h3>
-          <div
-            className="flex gap-2 px-3 py-4 cursor-pointer"
-            onClick={() => handleCategoryClick({category})}>
-            <span className="leading-6 text-sm">{i18n.t('See All')}</span>
-            <MdEast className="w-6 h-6" />
-          </div>
+          <Link href={`${workspaceURI}/shop/category/${category.slug}`}>
+            <div className="flex gap-2 px-3 py-4 cursor-pointer">
+              <span className="leading-6 text-sm">{i18n.t('See All')}</span>
+              <MdEast className="w-6 h-6" />
+            </div>
+          </Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {category.products.map((computedProduct: ComputedProduct) => {
@@ -69,8 +60,8 @@ export function FeaturedCategories({categories, workspace}: any) {
                 product={computedProduct}
                 quantity={quantity}
                 onAdd={handleAddProduct}
+                category={category}
                 displayPrices={workspace?.config?.displayPrices}
-                onClick={handleProductClick(category)}
               />
             );
           })}
