@@ -1,0 +1,5 @@
+{
+  "title": "Resolve crash on hero search",
+  "type": "fix",
+  "scope": ["news"]
+}

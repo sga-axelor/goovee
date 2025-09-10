@@ -1,0 +1,5 @@
+{
+  "title": "Fix banner search selection appearance",
+  "type": "fix",
+  "scope": ["core"]
+}
