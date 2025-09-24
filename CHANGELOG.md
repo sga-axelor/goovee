@@ -24,10 +24,6 @@
   </details>
 
 
-### projects
-
-- Add projects app – #98016
-
 ### Content
 
 - Add demo content for Wiki 1 – #98844
