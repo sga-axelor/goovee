@@ -1,35 +1,31 @@
 # 1.0.0 (2025-09-11)
 
-
 ## Features
-
 
 ### Core Platform
 
 - Add environment configuration to show/hide Google Oauth option – #98313
-- Add PWA support to the application – #94548  
+- Add PWA support to the application – #94548
   <details>
     <summary>Details</summary>
 
-    Implemented Progressive Web App (PWA) support including service worker registration, manifest setup.
+  Implemented Progressive Web App (PWA) support including service worker registration, manifest setup.
   </details>
 
 ### Events
 
-- Show category image in event list – #100009  
+- Show category image in event list – #100009
   <details>
     <summary>Details</summary>
 
-    Shows the category image in event list if available, if not show the event image
+  Shows the category image in event list if available, if not show the event image
   </details>
-
 
 ### Content
 
 - Add demo content for Wiki 1 – #98844
 
 ## Fixes
-
 
 ### Core Platform
 
@@ -39,22 +35,23 @@
 ### Events
 
 - Fix image alignment for events html description – #98430
-- Fix margin for paragraph in html description – #98433  
+- Fix margin for paragraph in html description – #98433
   <details>
     <summary>Details</summary>
 
-    Display paragraph to have line break by providing appropriate bottom margin
+  Display paragraph to have line break by providing appropriate bottom margin
   </details>
 
 ### News
 
 - Fix image alignment for events html description – #98430
-- Fix margin for paragraph in html description – #98433  
+- Fix margin for paragraph in html description – #98433
   <details>
     <summary>Details</summary>
 
-    Display paragraph to have line break by providing appropriate bottom margin
+  Display paragraph to have line break by providing appropriate bottom margin
   </details>
+
 - Resolve crash on hero search – #98434
 
 ### Content
@@ -63,7 +60,6 @@
 - Update proper type for component during template seed – #98836
 
 ## Changes
-
 
 ### Core Platform
 
@@ -77,12 +73,11 @@
 
 ## Security
 
-
 ### Helpdesk
 
-- Restrict access to ticket details – #98497  
+- Restrict access to ticket details – #98497
   <details>
     <summary>Details</summary>
 
-    Only allow access to ticket details if the user has access to the project.
+  Only allow access to ticket details if the user has access to the project.
   </details>
