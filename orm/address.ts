@@ -427,11 +427,13 @@ export async function findCountry({
 export async function findCities({
   countryId,
   tenantId,
+  zip,
 }: {
   countryId: string | number;
   tenantId: Tenant['id'];
+  zip: string;
 }): Promise<City[]> {
-  if (!tenantId || !countryId) return [];
+  if (!tenantId || !countryId || !zip) return [];
 
   try {
     const client = await manager.getClient(tenantId);
@@ -439,6 +441,7 @@ export async function findCities({
     const cities = await client.aOSCity.find({
       where: {
         country: {id: countryId},
+        zip,
       },
     });
 

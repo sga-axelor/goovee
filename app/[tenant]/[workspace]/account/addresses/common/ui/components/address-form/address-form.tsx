@@ -35,23 +35,58 @@ const personalInformationSchema = z.object({
   companyName: z.string(),
 });
 
-const addressInformationSchema = z.object({
-  country: z.object({
-    id: z.string().min(1, 'Country is required'),
-    name: z.string().min(1, i18n.t('Country name is required')),
-  }),
-  streetName: z.string().min(1, i18n.t('Street name is required')),
-  addressAddition: z.string().optional(),
-  zip: z
-    .string()
-    .min(1, i18n.t('Zip code is required'))
-    .regex(/^\d+$/, i18n.t('Zip code must contain only numbers')),
-  city: z.object({
-    id: z.string().min(1, 'City is required'),
-    name: z.string().min(1, i18n.t('City name is required')),
-  }),
-  multipletype: z.boolean().default(false),
-});
+const addressInformationSchema = z
+  .object({
+    country: z.object({
+      id: z.string().min(1, 'Country is required'),
+      name: z.string().min(1, i18n.t('Country name is required')),
+    }),
+    streetName: z.string().min(1, i18n.t('Street name is required')),
+    addressAddition: z.string().optional(),
+    zip: z
+      .string()
+      .min(1, i18n.t('Zip code is required'))
+      .regex(/^\d+$/, i18n.t('Zip code must contain only numbers')),
+    city: z.object({
+      id: z.string().optional(),
+      name: z.string().optional(),
+    }),
+    multipletype: z.boolean().default(false),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.country.id && !data.zip) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['city.id'],
+        message: i18n.t(
+          'Country and Zip must be selected before choosing a city',
+        ),
+      });
+    }
+
+    if (!data.country.id && data.zip) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['city.id'],
+        message: i18n.t('Country must be selected before choosing a city'),
+      });
+    }
+    if (data.country.id && !data.zip) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['city.id'],
+        message: i18n.t('Zip must be entered before choosing a city'),
+      });
+    }
+
+    if (data.country.id && data.zip && !data.city.id) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['city.id'],
+        message: i18n.t('City is required'),
+      });
+    }
+  });
 
 const formSchema = z.object({
   personalInformation: personalInformationSchema,
@@ -112,6 +147,7 @@ export const AddressForm = ({
   });
 
   const country = form.watch('addressInformation.country');
+  const zip = form.watch('addressInformation.zip');
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const {addressInformation, personalInformation} = values;
@@ -128,7 +164,6 @@ export const AddressForm = ({
         .join(' ')
         .toUpperCase();
     };
-
     const formattedFullName = () => {
       return [streetName, addressAddition, zip, city?.name, country?.name]
         .filter(Boolean)
@@ -194,13 +229,14 @@ export const AddressForm = ({
 
   useEffect(() => {
     const getCities = async () => {
-      if (!country.id) {
+      if (!country.id || !zip) {
         return;
       }
 
       try {
         const response: any = await fetchCities({
           countryId: country.id,
+          zip,
           workspaceURL,
         });
         if (response.success) {
@@ -215,7 +251,7 @@ export const AddressForm = ({
     };
 
     getCities();
-  }, [country, workspaceURL]);
+  }, [country, workspaceURL, zip]);
 
   return (
     <Form {...form}>
@@ -229,7 +265,6 @@ export const AddressForm = ({
             countries={countries}
             form={form}
             cities={cities}
-            country={country}
           />
         </div>
 

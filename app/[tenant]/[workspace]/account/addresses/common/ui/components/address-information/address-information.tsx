@@ -1,5 +1,8 @@
 'use client';
 
+import {useEffect} from 'react';
+import clsx from 'clsx';
+
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {
@@ -17,10 +20,6 @@ import {
 import {City, Country} from '@/types';
 
 interface AddressInformationProps {
-  country: {
-    id: string | number;
-    name: string;
-  };
   countries: Country[];
   cities: City[];
   form: any;
@@ -30,8 +29,10 @@ export function AddressInformation({
   countries,
   cities = [],
   form,
-  country,
 }: AddressInformationProps) {
+  const countryId = form.watch('addressInformation.country.id');
+  const zipCode = form.watch('addressInformation.zip');
+
   const handleCountryChange = (selectedOption: {id: string; name: string}) => {
     form.setValue('addressInformation.country', selectedOption, {
       shouldValidate: true,
@@ -45,6 +46,12 @@ export function AddressInformation({
     });
     form.trigger('addressInformation.city.id');
   };
+
+  useEffect(() => {
+    if (countryId && zipCode) {
+      form.trigger('addressInformation.city.id');
+    }
+  }, [countryId, zipCode, form]);
 
   return (
     <div className="bg-white py-4 px-6 rounded-lg">
@@ -142,7 +149,7 @@ export function AddressInformation({
           <FormField
             control={form.control}
             name="addressInformation.city.id"
-            render={({field}) => (
+            render={({field, fieldState}) => (
               <FormItem className="md:col-span-2">
                 <FormControl>
                   <DropdownSelector
@@ -151,12 +158,12 @@ export function AddressInformation({
                     isRequired={true}
                     label={i18n.t('City')}
                     placeholder={i18n.t('Select city')}
-                    labelClassName="mb-0"
+                    labelClassName={clsx(
+                      'mb-0',
+                      fieldState?.error && 'text-destructive',
+                    )}
                     rootClassName="space-y-2"
-                    disabled={!country.id}
-                    hasError={
-                      !!form.formState.errors?.addressInformation?.city?.id
-                    }
+                    disabled={!countryId || !zipCode}
                     onValueChange={handleCityChange}
                   />
                 </FormControl>
