@@ -23,15 +23,8 @@
     Shows the category image in event list if available, if not show the event image
   </details>
 
-### Invoices
-
-- Add projects app – #98016
 
 ### projects
-
-- Add projects app – #98016
-
-### Helpdesk
 
 - Add projects app – #98016
 
