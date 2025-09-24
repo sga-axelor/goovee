@@ -354,6 +354,10 @@
     {
       "name": "hidePriceForEmptyPricelist",
       "type": "Boolean"
+    },
+    {
+      "name": "advancePaymentPercentage",
+      "type": "Decimal"
     }
   ]
 }
