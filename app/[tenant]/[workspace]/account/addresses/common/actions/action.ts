@@ -29,9 +29,11 @@ import {getQuotationRecord} from '@/app/[tenant]/[workspace]/account/addresses/c
 export const fetchCities = async ({
   countryId,
   workspaceURL,
+  zip,
 }: {
   countryId: string | number;
   workspaceURL: string;
+  zip: string;
 }) => {
   if (!countryId) {
     return {
@@ -39,6 +41,12 @@ export const fetchCities = async ({
       message: await t('Country Id is required'),
     };
   }
+
+  if (!zip)
+    return {
+      error: true,
+      message: await t('Zip is required'),
+    };
 
   if (!workspaceURL) {
     return {
@@ -79,7 +87,7 @@ export const fetchCities = async ({
   }
 
   try {
-    const cities = await findCities({countryId: country.id, tenantId});
+    const cities = await findCities({countryId: country.id, zip, tenantId});
     return {
       success: true,
       data: clone(cities),
