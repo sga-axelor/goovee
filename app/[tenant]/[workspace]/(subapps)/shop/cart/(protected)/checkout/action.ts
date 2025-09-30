@@ -13,7 +13,7 @@ import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
 import {manager, type Tenant} from '@/tenant';
-import {PaymentOption} from '@/types';
+import {PaymentOption, PortalWorkspace} from '@/types';
 import {computeTotal} from '@/utils/cart';
 import {calculateAdvanceAmount} from '@/utils/payment';
 
@@ -24,6 +24,31 @@ import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {markPaymentAsProcessed} from '@/lib/core/payment/common/orm';
 
 const formatNumber = (n: any) => n;
+
+function computeExpectedAmount({
+  total,
+  workspace,
+}: {
+  total: number | string;
+  workspace: PortalWorkspace;
+}): string {
+  const payInAdvance = workspace.config?.payInAdvance;
+  const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
+
+  if (
+    payInAdvance &&
+    advancePaymentPercentage &&
+    Number(advancePaymentPercentage) > 0
+  ) {
+    return calculateAdvanceAmount({
+      amount: Number(total),
+      percentage: Number(advancePaymentPercentage),
+      payInAdvance,
+    }).toString();
+  }
+
+  return total.toString();
+}
 
 async function createOrder({
   cart,
@@ -120,11 +145,7 @@ async function createOrder({
     const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
 
     let expectedAmount;
-    if (
-      payInAdvance &&
-      advancePaymentPercentage &&
-      Number(advancePaymentPercentage) > 0
-    ) {
+    if (payInAdvance && Number(advancePaymentPercentage) > 0) {
       expectedAmount = calculateAdvanceAmount({
         amount: Number(total),
         percentage: Number(advancePaymentPercentage),
@@ -297,21 +318,7 @@ export async function paypalCaptureOrder({
       formatNumber,
     });
 
-    const payInAdvance = workspace.config?.payInAdvance;
-    const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
-
-    let expectedAmount = total;
-    if (
-      payInAdvance &&
-      advancePaymentPercentage &&
-      Number(advancePaymentPercentage) > 0
-    ) {
-      expectedAmount = calculateAdvanceAmount({
-        amount: Number(total),
-        percentage: Number(advancePaymentPercentage),
-        payInAdvance,
-      }).toString();
-    }
+    const expectedAmount = computeExpectedAmount({total, workspace});
 
     if (Number(amount) !== Number(expectedAmount)) {
       return {
@@ -446,21 +453,7 @@ export async function paypalCreateOrder({
     formatNumber,
   });
 
-  const payInAdvance = workspace.config?.payInAdvance;
-  const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
-
-  let expectedAmount = total;
-  if (
-    payInAdvance &&
-    advancePaymentPercentage &&
-    Number(advancePaymentPercentage) > 0
-  ) {
-    expectedAmount = calculateAdvanceAmount({
-      amount: Number(total),
-      percentage: Number(advancePaymentPercentage),
-      payInAdvance,
-    }).toString();
-  }
+  const expectedAmount = computeExpectedAmount({total, workspace});
 
   const payer = await findGooveeUserByEmail(user?.email, tenantId);
 
@@ -594,21 +587,7 @@ export async function createStripeCheckoutSession({
     formatNumber,
   });
 
-  const payInAdvance = workspace.config?.payInAdvance;
-  const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
-
-  let expectedAmount = total;
-  if (
-    payInAdvance &&
-    advancePaymentPercentage &&
-    Number(advancePaymentPercentage) > 0
-  ) {
-    expectedAmount = calculateAdvanceAmount({
-      amount: Number(total),
-      percentage: Number(advancePaymentPercentage),
-      payInAdvance,
-    }).toString();
-  }
+  const expectedAmount = computeExpectedAmount({total, workspace});
 
   const payer = await findGooveeUserByEmail(user.email, tenantId);
 
@@ -771,21 +750,7 @@ export async function validateStripePayment({
     formatNumber,
   });
 
-  const payInAdvance = workspace.config?.payInAdvance;
-  const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
-
-  let expectedAmount = total;
-  if (
-    payInAdvance &&
-    advancePaymentPercentage &&
-    Number(advancePaymentPercentage) > 0
-  ) {
-    expectedAmount = calculateAdvanceAmount({
-      amount: Number(total),
-      percentage: Number(advancePaymentPercentage),
-      payInAdvance,
-    }).toString();
-  }
+  const expectedAmount = computeExpectedAmount({total, workspace});
 
   if (Number(paidAmount) !== Number(expectedAmount)) {
     return {
@@ -916,21 +881,7 @@ export async function payboxCreateOrder({
     formatNumber,
   });
 
-  const payInAdvance = workspace.config?.payInAdvance;
-  const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
-
-  let expectedAmount = total;
-  if (
-    payInAdvance &&
-    advancePaymentPercentage &&
-    Number(advancePaymentPercentage) > 0
-  ) {
-    expectedAmount = calculateAdvanceAmount({
-      amount: Number(total),
-      percentage: Number(advancePaymentPercentage),
-      payInAdvance,
-    }).toString();
-  }
+  const expectedAmount = computeExpectedAmount({total, workspace});
 
   const payer = await findGooveeUserByEmail(user?.email, tenantId);
 
@@ -1081,25 +1032,9 @@ export async function validatePayboxPayment({
     formatNumber,
   });
 
-  const payInAdvance = workspace.config?.payInAdvance;
-  const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
+  const expectedAmount = computeExpectedAmount({total, workspace});
 
-  let expectedAmount = Number(total);
-  if (
-    payInAdvance &&
-    advancePaymentPercentage &&
-    Number(advancePaymentPercentage) > 0
-  ) {
-    expectedAmount = Number(
-      calculateAdvanceAmount({
-        amount: Number(total),
-        percentage: Number(advancePaymentPercentage),
-        payInAdvance,
-      }),
-    );
-  }
-
-  if (Number(paidAmount) !== expectedAmount) {
+  if (Number(paidAmount) !== Number(expectedAmount)) {
     return {
       error: true,
       message: await t('Payment amount mismatch'),
