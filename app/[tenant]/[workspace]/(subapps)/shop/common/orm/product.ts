@@ -20,6 +20,7 @@ import type {
 import {manager, type Tenant} from '@/tenant';
 import {filterPrivate} from '@/orm/filter';
 import {formatNumber} from '@/locale/server/formatters';
+import {shouldHidePricesAndPurchase} from '@/orm/product';
 
 function getPageInfo({
   count = 0,
@@ -42,7 +43,13 @@ function getPageInfo({
   };
 }
 
-const getProductFields = ({workspace}: {workspace: PortalWorkspace}) =>
+const getProductFields = ({
+  workspace,
+  shouldHidePrices,
+}: {
+  workspace: PortalWorkspace;
+  shouldHidePrices: boolean;
+}) =>
   ({
     name: true,
     code: true,
@@ -51,7 +58,7 @@ const getProductFields = ({workspace}: {workspace: PortalWorkspace}) =>
     saleCurrency: {
       symbol: true,
     },
-    salePrice: true,
+    ...(shouldHidePrices ? {} : {salePrice: true}),
     featured: true,
     createdOn: true,
     thumbnailImage: {
@@ -71,7 +78,7 @@ const getProductFields = ({workspace}: {workspace: PortalWorkspace}) =>
     },
     productCompanyList: {
       select: {
-        salePrice: true,
+        ...(shouldHidePrices ? {} : {salePrice: true}),
         company: {
           id: true,
           name: true,
@@ -237,7 +244,15 @@ export async function findProducts({
   const outOfStockAction =
     noMoreStockSelect ?? OUT_OF_STOCK_TYPE.HIDE_PRODUCT_CANNOT_BUY;
 
-  const productFields = getProductFields({workspace});
+  const hidePrices = await shouldHidePricesAndPurchase({
+    user,
+    workspace,
+    tenantId,
+  });
+  const productFields = getProductFields({
+    workspace,
+    shouldHidePrices: hidePrices,
+  });
 
   const $filters: any = await getWhereClause({
     ids,
@@ -387,6 +402,7 @@ export async function findProducts({
     const account = product?.productFamily?.accountManagementList?.[0];
 
     const getTax = (): ComputedProduct['tax'] => {
+      if (hidePrices) return {value: 0};
       if (ws) {
         const wt = Number(
           wsProduct?.prices.find(p => p.type === 'WT')?.price || 0,
@@ -447,6 +463,7 @@ export async function findProducts({
     };
 
     const getPrice = async (): Promise<ComputedProduct['price']> => {
+      if (hidePrices) return {};
       const value = productcompany?.salePrice || product.salePrice || 0;
 
       const taxrate = getTax()?.value || 0;

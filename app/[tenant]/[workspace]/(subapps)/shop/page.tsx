@@ -9,6 +9,7 @@ import {findWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProducts} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/product';
+import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {
   findCategories,
   findFeaturedCategories,
@@ -62,8 +63,18 @@ async function Featured({tenant, user, workspace}: any) {
     }
   }
 
+  const hidePriceAndPurchase = await shouldHidePricesAndPurchase({
+    user,
+    workspace,
+    tenantId: tenant,
+  });
+
   return (
-    <FeaturedCategories categories={featuredCategories} workspace={workspace} />
+    <FeaturedCategories
+      categories={featuredCategories}
+      workspace={workspace}
+      hidePriceAndPurchase={hidePriceAndPurchase}
+    />
   );
 }
 

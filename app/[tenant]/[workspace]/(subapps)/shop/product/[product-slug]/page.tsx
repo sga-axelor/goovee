@@ -13,6 +13,7 @@ import {
   ProductViewSkeleton,
 } from '@/subapps/shop/common/ui/components';
 import {findProductBySlug} from '@/subapps/shop/common/orm/product';
+import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 import {findModelFields} from '@/orm/model-fields';
@@ -134,8 +135,15 @@ async function Product({
 
   const parentcategories = categories?.filter((c: any) => !c.parent);
 
+  const hidePriceAndPurchase = await shouldHidePricesAndPurchase({
+    user,
+    workspace,
+    tenantId: tenant,
+  });
+
   return (
     <ProductView
+      hidePriceAndPurchase={hidePriceAndPurchase}
       product={clone(computedProduct)}
       workspace={workspace}
       breadcrumbs={breadcrumbs}
