@@ -1,8 +1,7 @@
-import {clone} from 'lodash';
-
 // ---- CORE IMPORTS ---- //
 import {DEFAULT_LIMIT} from '@/constants';
 import {PortalWorkspace, User} from '@/types';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {findPosts} from '@/subapps/forum/common/orm/forum';

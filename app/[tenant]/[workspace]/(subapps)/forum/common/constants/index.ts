@@ -51,14 +51,19 @@ export const JOIN_GROUP_TO_COMMENT = 'Join the group to comment';
 
 export const GROUP_SORT_BY = [
   {
-    id: 'asc',
+    id: 'ASC',
     title: 'A-Z',
   },
   {
-    id: 'desc',
+    id: 'DESC',
     title: 'Z-A',
   },
 ];
+
+export const FORUM_CONTENT = {
+  POSTS: 'posts',
+  MEDIA: 'media',
+};
 
 export const MENU = [
   {id: 1, name: 'Homepage', link: ''},
@@ -73,7 +78,7 @@ export const MENU = [
 export const TAB_TITLES = [
   {
     id: 1,
-    key: 'posts',
+    key: FORUM_CONTENT.POSTS,
     title: 'Posts',
     icon: MdOutlineArticle,
   },

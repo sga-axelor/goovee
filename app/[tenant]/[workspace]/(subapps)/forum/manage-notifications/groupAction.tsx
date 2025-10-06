@@ -1,13 +1,11 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
-import {SUBAPP_CODES} from '@/constants';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {ORDER_BY} from '@/constants';
 import {
   Select,
   SelectContent,
@@ -30,13 +28,8 @@ import {
 
 const GroupAction = () => {
   const [searchKey, setSearchKey] = useState<string>('');
-  const [sortBy, setSortBy] = useState<string>('asc');
+  const [sortBy, setSortBy] = useState<string>(ORDER_BY.ASC.toLowerCase());
   const {update} = useSearchParams();
-  const router = useRouter();
-  const {workspaceURI} = useWorkspace();
-  const handleMenuClick = (link: string) => {
-    router.push(`${workspaceURI}/${SUBAPP_CODES.forum}/${link}`);
-  };
 
   const handleSearchKeyChange = (value: string) => {
     setSearchKey(value);
@@ -67,7 +60,8 @@ const GroupAction = () => {
               <span className="pl-2 mb-3 text-muted-foreground">
                 {i18n.t(SORT_BY)}:
                 <div>
-                  <Select onValueChange={value => setSortBy(value)}>
+                  <Select
+                    onValueChange={value => setSortBy(value.toLowerCase())}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="A-Z" />
                     </SelectTrigger>

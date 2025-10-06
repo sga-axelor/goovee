@@ -33,7 +33,7 @@ export function Hero() {
     : IMAGE_URL;
 
   const handleSearch = (term: string) => {
-    if (term.length === 0) {
+    if (!term.length) {
       update(
         [
           {key: URL_PARAMS.searchid, value: null},

@@ -30,4 +30,4 @@ export {ImageViewer} from './image-viewer';
 export {NotificationHeader} from './notification-header';
 export {Hero, HeroSkeleton} from './hero';
 export {GroupControls, GroupControlsSkeleton} from './group-controls';
-export {ComposePost} from './compose-post';
+export {ComposePost, ComposePostSkeleton} from './compose-post';

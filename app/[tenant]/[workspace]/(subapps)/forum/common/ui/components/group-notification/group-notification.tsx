@@ -13,12 +13,12 @@ import {
 } from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {NOTIFICATIONS_OPTIONS} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
 import {Group} from '@/subapps/forum/common/types/forum';
 import {addGroupNotification} from '@/subapps/forum/common/action/action';
-import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 interface groupNotificationPros {
   group: Group;

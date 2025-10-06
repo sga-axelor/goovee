@@ -1,14 +1,13 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
-import {Skeleton} from '@/ui/components';
 import {
   GroupControlsSkeleton,
   HeroSkeleton,
   NavMenuSkeleton,
   ThreadListSkeleton,
 } from '@/subapps/forum/common/ui/components';
-import {ComposePostSkeleton} from '../compose-post/compose-post';
+import {ComposePostSkeleton} from '@/subapps/forum/common/ui/components';
 
 export function ForumSkeleton() {
   return (

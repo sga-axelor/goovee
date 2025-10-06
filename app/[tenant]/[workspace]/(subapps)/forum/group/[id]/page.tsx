@@ -15,7 +15,11 @@ import {
   findGroupsByMembers,
   findGroups,
 } from '@/subapps/forum/common/orm/forum';
-import {GROUPS_ORDER_BY, MENU} from '@/subapps/forum/common/constants';
+import {
+  FORUM_CONTENT,
+  GROUPS_ORDER_BY,
+  MENU,
+} from '@/subapps/forum/common/constants';
 import {ForumSkeleton} from '@/subapps/forum/common/ui/components/skeletons';
 import ForumContextProvider from '@/subapps/forum/common/ui/context';
 import {
@@ -42,7 +46,7 @@ async function ForumGroup({
   const session = await getSession();
   const user = session?.user as User;
   const userId = user?.id as string;
-  const type = searchParams?.type ?? 'posts';
+  const type = searchParams?.type ?? FORUM_CONTENT.POSTS;
 
   const {workspaceURL, tenant} = workspacePathname(params);
 
@@ -115,7 +119,7 @@ async function ForumGroup({
             <ComposePost />
             <Tabs activeTab={type} />
             <Suspense fallback={<ThreadListSkeleton />}>
-              {type == 'posts' && (
+              {type === FORUM_CONTENT.POSTS && (
                 <GroupPostsContent
                   memberGroupIDs={memberGroupIDs}
                   params={params}

@@ -1,8 +1,11 @@
+// ---- CORE IMPORTS ---- //
 import {DEFAULT_LIMIT} from '@/constants';
 import {PortalWorkspace, User} from '@/types';
-import {clone} from 'lodash';
-import {findPostsByGroupId} from '../../common/orm/forum';
-import {ThreadList} from '../../common/ui/components';
+import {clone} from '@/utils';
+
+// ---- LOCAL IMPORTS ---- //
+import {findPostsByGroupId} from '@/subapps/forum/common/orm/forum';
+import {ThreadList} from '@/subapps/forum/common/ui/components';
 
 export async function GroupPostsContent({
   params,

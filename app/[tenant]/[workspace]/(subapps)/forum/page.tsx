@@ -9,7 +9,11 @@ import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {GROUPS_ORDER_BY, MENU} from '@/subapps/forum/common/constants';
+import {
+  FORUM_CONTENT,
+  GROUPS_ORDER_BY,
+  MENU,
+} from '@/subapps/forum/common/constants';
 import {
   findGroups,
   findGroupsByMembers,
@@ -37,7 +41,7 @@ async function Forum({
   const session = await getSession();
   const user = session?.user as User;
   const userId = user?.id as string;
-  const type = searchParams?.type ?? 'posts';
+  const type = searchParams?.type || FORUM_CONTENT.POSTS;
 
   const {workspaceURL, tenant} = workspacePathname(params);
 
@@ -102,7 +106,7 @@ async function Forum({
             <ComposePost />
             <Tabs activeTab={type} />
             <Suspense fallback={<ThreadListSkeleton />}>
-              {type == 'posts' && (
+              {type === FORUM_CONTENT.POSTS && (
                 <PostsContent
                   searchParams={searchParams}
                   workspace={workspace}

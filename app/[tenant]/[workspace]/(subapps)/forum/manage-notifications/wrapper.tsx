@@ -1,11 +1,9 @@
-import {clone} from 'lodash';
-
 // ---- CORE IMPORTS ---- //
 import {ID} from '@goovee/orm';
 import {PortalWorkspace} from '@/types';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-
 import {Group} from '@/subapps/forum/common/types/forum';
 import {GroupNotification} from '@/subapps/forum/common/ui/components';
 import {fetchGroupsByMembers} from '@/subapps/forum/common/action/action';

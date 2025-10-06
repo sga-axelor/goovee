@@ -1,9 +1,9 @@
 import {Suspense} from 'react';
 import {notFound} from 'next/navigation';
-import {clone} from 'lodash';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
+import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {findWorkspace} from '@/orm/workspace';

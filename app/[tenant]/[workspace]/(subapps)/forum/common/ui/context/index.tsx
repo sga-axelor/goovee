@@ -1,8 +1,12 @@
 'use client';
 
 import React, {useContext} from 'react';
-import {ForumGroup, Group} from '../../types/forum';
+
+// ---- CORE IMPORTS ---- //
 import {PortalWorkspace, User} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
+import {ForumGroup} from '@/subapps/forum/common/types/forum';
 
 type ForumContextType = {
   memberGroups: ForumGroup[];
