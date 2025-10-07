@@ -1,5 +1,0 @@
-{
-  "title": "Add support for login using keycloak",
-  "type": "feature",
-  "scope": ["core"]
-}

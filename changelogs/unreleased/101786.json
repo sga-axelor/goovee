@@ -1,5 +1,0 @@
-{
-  "title": "Add goovee config file to discover nested schema",
-  "type": "change",
-  "scope": ["core"]
-}
