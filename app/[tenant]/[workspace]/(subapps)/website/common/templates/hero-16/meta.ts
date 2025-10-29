@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const hero16Schema = {
   title: 'Hero 16',
@@ -44,9 +44,8 @@ export const hero16Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'countUp',
@@ -76,7 +75,7 @@ export const hero16Schema = {
       defaultValue: 'container pt-12 pt-md-14 pb-14 pb-md-16',
     },
   ],
-  metaModels: [metaFileModel],
+  models: [imageModel],
 } as const satisfies TemplateSchema;
 
 export type Hero16Data = Data<typeof hero16Schema>;
@@ -84,6 +83,7 @@ export type Hero16Data = Data<typeof hero16Schema>;
 export const hero16Demos: Demo<typeof hero16Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-16',
     sequence: 1,
     data: {
@@ -96,10 +96,19 @@ export const hero16Demos: Demo<typeof hero16Schema>[] = [
       hero16ButtonLink2: '#',
       hero16Image: {
         id: '1',
-        version: 1,
-        fileName: 'about17.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/about17.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Software Engineer & UX Designer',
+          width: 560,
+          height: 540,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'about17.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/about17.jpg',
+          },
+        },
       },
       hero16CountUp: 250,
       hero16Suffix: '+',
@@ -108,6 +117,7 @@ export const hero16Demos: Demo<typeof hero16Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-16',
     sequence: 1,
     data: {
@@ -120,10 +130,19 @@ export const hero16Demos: Demo<typeof hero16Schema>[] = [
       hero16ButtonLink2: '#',
       hero16Image: {
         id: '1',
-        version: 1,
-        fileName: 'about17.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/about17.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Ingénieur logiciel et concepteur UX',
+          width: 560,
+          height: 540,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'about17.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/about17.jpg',
+          },
+        },
       },
       hero16CountUp: 250,
       hero16Suffix: '+',

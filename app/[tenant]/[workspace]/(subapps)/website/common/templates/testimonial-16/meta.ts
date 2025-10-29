@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 import {ratingsSelection} from '../meta-selections';
 
 export const testimonial16Schema = {
@@ -15,9 +15,8 @@ export const testimonial16Schema = {
     {
       name: 'backgroundImage',
       title: 'Background Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'slidesPerView',
@@ -78,8 +77,8 @@ export const testimonial16Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
   selections: [ratingsSelection],
 } as const satisfies TemplateSchema;
 
@@ -88,15 +87,25 @@ export type Testimonial16Data = Data<typeof testimonial16Schema>;
 export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-19',
     sequence: 5,
     data: {
       testimonial16BackgroundImage: {
         id: '1',
-        version: 1,
-        fileName: 'tm2.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/tm2.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Testimonial background',
+          width: 1370,
+          height: 1050,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'tm2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/tm2.jpg',
+          },
+        },
       },
       testimonial16SlidesPerView: 1,
       testimonial16Navigation: false,
@@ -139,15 +148,25 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-19',
     sequence: 5,
     data: {
       testimonial16BackgroundImage: {
         id: '1',
-        version: 1,
-        fileName: 'tm2.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/tm2.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Arrière-plan de témoignage',
+          width: 1370,
+          height: 1050,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'tm2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/tm2.jpg',
+          },
+        },
       },
       testimonial16SlidesPerView: 1,
       testimonial16Navigation: false,

@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {bulletListModel} from '../json-models';
+import {bulletListModel, imageModel} from '../json-models';
 import {solidIconsSelection} from '../meta-selections';
 
 export const service5Schema = {
@@ -36,6 +36,24 @@ export const service5Schema = {
       name: 'experienceDescription',
       title: 'Experience Description',
       type: 'string',
+    },
+    {
+      name: 'image1',
+      title: 'Image 1',
+      type: 'json-many-to-one',
+      target: 'Image',
+    },
+    {
+      name: 'image2',
+      title: 'Image 2',
+      type: 'json-many-to-one',
+      target: 'Image',
+    },
+    {
+      name: 'image3',
+      title: 'Image 3',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'services',
@@ -89,6 +107,7 @@ export const service5Schema = {
       ],
     },
     bulletListModel,
+    imageModel,
   ],
   selections: [solidIconsSelection],
 } as const satisfies TemplateSchema;
@@ -98,6 +117,7 @@ export type Service5Data = Data<typeof service5Schema>;
 export const service5Demos: Demo<typeof service5Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-4',
     sequence: 2,
     data: {
@@ -108,6 +128,54 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
       service5Experience: 20,
       service5ExperienceSuffix: '+',
       service5ExperienceDescription: 'Year Experience',
+      service5Image1: {
+        id: '1',
+        version: 0,
+        attrs: {
+          alt: 'Company value proposition',
+          width: 240,
+          height: 245,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'ab1.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/ab1.jpg',
+          },
+        },
+      },
+      service5Image2: {
+        id: '1',
+        version: 0,
+        attrs: {
+          alt: 'Company value proposition',
+          width: 290,
+          height: 225,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'ab2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/ab2.jpg',
+          },
+        },
+      },
+      service5Image3: {
+        id: '1',
+        version: 0,
+        attrs: {
+          alt: 'Company value proposition',
+          width: 290,
+          height: 440,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'ab3.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/ab3.jpg',
+          },
+        },
+      },
       service5Services: [
         {
           id: '1',
@@ -216,6 +284,7 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-4',
     sequence: 2,
     data: {
@@ -226,6 +295,54 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
       service5Experience: 20,
       service5ExperienceSuffix: '+',
       service5ExperienceDescription: 'Année d’expérience',
+      service5Image1: {
+        id: '1',
+        version: 0,
+        attrs: {
+          alt: "Proposition de valeur de l'entreprise",
+          width: 240,
+          height: 245,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'ab1.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/ab1.jpg',
+          },
+        },
+      },
+      service5Image2: {
+        id: '1',
+        version: 0,
+        attrs: {
+          alt: "Proposition de valeur de l'entreprise",
+          width: 290,
+          height: 225,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'ab2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/ab2.jpg',
+          },
+        },
+      },
+      service5Image3: {
+        id: '1',
+        version: 0,
+        attrs: {
+          alt: "Proposition de valeur de l'entreprise",
+          width: 290,
+          height: 440,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'ab3.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/ab3.jpg',
+          },
+        },
+      },
       service5Services: [
         {
           id: '1',

@@ -4,6 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
+import {imageModel} from '../json-models';
 import {metaFileModel} from '../meta-models';
 
 export const banner6Schema = {
@@ -22,9 +23,8 @@ export const banner6Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'wrapperClassName',
@@ -39,7 +39,7 @@ export const banner6Schema = {
       defaultValue: 'container py-18 text-center',
     },
   ],
-  models: [],
+  models: [imageModel],
   metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
@@ -48,6 +48,7 @@ export type Banner6Data = Data<typeof banner6Schema>;
 export const banner6Demos: Demo<typeof banner6Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'others',
     sequence: 2,
     data: {
@@ -60,15 +61,25 @@ export const banner6Demos: Demo<typeof banner6Schema>[] = [
       },
       banner6Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg1.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg1.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Video background',
+          width: 1440,
+          height: 523,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg1.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg1.jpg',
+          },
+        },
       },
     },
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'others',
     sequence: 2,
     data: {
@@ -81,10 +92,19 @@ export const banner6Demos: Demo<typeof banner6Schema>[] = [
       },
       banner6Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg1.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg1.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Arrière-plan vidéo',
+          width: 1440,
+          height: 523,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg1.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg1.jpg',
+          },
+        },
       },
     },
   },

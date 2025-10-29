@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const service27Schema = {
   title: 'Service 27',
@@ -65,9 +65,8 @@ export const service27Schema = {
         {
           name: 'image',
           title: 'Image',
-          type: 'many-to-one',
-          target: 'com.axelor.meta.db.MetaFile',
-          widget: 'Image',
+          type: 'json-many-to-one',
+          target: 'Image',
         },
         {
           name: 'url',
@@ -81,8 +80,8 @@ export const service27Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Service27Data = Data<typeof service27Schema>;
@@ -90,6 +89,7 @@ export type Service27Data = Data<typeof service27Schema>;
 export const service27Demos: Demo<typeof service27Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-24',
     sequence: 2,
     data: {
@@ -108,10 +108,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             figcaption: 'View Gallery',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs4.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs4.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Products',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs4.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs4.jpg',
+                },
+              },
             },
           },
         },
@@ -124,10 +133,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             title: 'Recipes',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs6.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Recipes',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs6.jpg',
+                },
+              },
             },
           },
         },
@@ -140,10 +158,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             title: 'Restaurants',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs5.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs5.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Restaurants',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs5.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs5.jpg',
+                },
+              },
             },
           },
         },
@@ -156,10 +183,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             title: 'Still Life',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs7.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs7.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Still Life',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs7.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs7.jpg',
+                },
+              },
             },
           },
         },
@@ -168,6 +204,7 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-24',
     sequence: 2,
     data: {
@@ -186,10 +223,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             title: 'Produits',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs4.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs4.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Produits',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs4.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs4.jpg',
+                },
+              },
             },
           },
         },
@@ -202,10 +248,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             title: 'Recettes',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs6.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Recettes',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs6.jpg',
+                },
+              },
             },
           },
         },
@@ -218,10 +273,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             title: 'Restaurants',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs5.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs5.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Restaurants',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs5.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs5.jpg',
+                },
+              },
             },
           },
         },
@@ -234,10 +298,19 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
             title: 'Nature morte',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'fs7.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/fs7.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Nature morte',
+                width: 278,
+                height: 190,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'fs7.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/fs7.jpg',
+                },
+              },
             },
           },
         },

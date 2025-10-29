@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const blog1Schema = {
   title: 'Blog 1',
@@ -65,14 +65,13 @@ export const blog1Schema = {
         {
           name: 'image',
           title: 'Image',
-          type: 'many-to-one',
-          target: 'com.axelor.meta.db.MetaFile',
-          widget: 'Image',
+          type: 'json-many-to-one',
+          target: 'Image',
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Blog1Data = Data<typeof blog1Schema>;
@@ -80,6 +79,7 @@ export type Blog1Data = Data<typeof blog1Schema>;
 export const blog1Demos: Demo<typeof blog1Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-3',
     sequence: 6,
     data: {
@@ -96,10 +96,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '14 Apr 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b4.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b4.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Blog post image',
+                width: 775,
+                height: 485,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b4.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b4.jpg',
+                },
+              },
             },
           },
         },
@@ -112,10 +121,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '29 Mar 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b5.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b5.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Blog post image',
+                width: 380,
+                height: 240,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b5.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b5.jpg',
+                },
+              },
             },
           },
         },
@@ -128,10 +146,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '26 Feb 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b6.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Blog post image',
+                width: 380,
+                height: 240,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b6.jpg',
+                },
+              },
             },
           },
         },
@@ -144,10 +171,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '7 Jan 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b7.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b7.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Blog post image',
+                width: 480,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b7.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b7.jpg',
+                },
+              },
             },
           },
         },
@@ -156,6 +192,7 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-3',
     sequence: 6,
     data: {
@@ -172,10 +209,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '14 avr. 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b4.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b4.jpg',
+              version: 0,
+              attrs: {
+                alt: "Image de l'article de blog",
+                width: 775,
+                height: 485,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b4.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b4.jpg',
+                },
+              },
             },
           },
         },
@@ -188,10 +234,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '29 mars 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b5.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b5.jpg',
+              version: 0,
+              attrs: {
+                alt: "Image de l'article de blog",
+                width: 380,
+                height: 240,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b5.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b5.jpg',
+                },
+              },
             },
           },
         },
@@ -204,10 +259,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '26 févr. 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b6.jpg',
+              version: 0,
+              attrs: {
+                alt: "Image de l'article de blog",
+                width: 380,
+                height: 240,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b6.jpg',
+                },
+              },
             },
           },
         },
@@ -220,10 +284,19 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
             date: '7 janv. 2022',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'b7.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/photos/b7.jpg',
+              version: 0,
+              attrs: {
+                alt: "Image de l'article de blog",
+                width: 480,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'b7.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/photos/b7.jpg',
+                },
+              },
             },
           },
         },

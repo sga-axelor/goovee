@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const cta2Schema = {
   title: 'CTA 2',
@@ -39,26 +39,23 @@ export const cta2Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'wrapperClassName',
       title: 'Wrapper Class Name',
       type: 'string',
-      defaultValue:
-        'wrapper image-wrapper bg-auto no-overlay bg-image bg-map text-center',
+      defaultValue: 'wrapper image-wrapper bg-auto bg-map text-center',
     },
     {
       name: 'containerClassName',
       title: 'Container Class Name',
       type: 'string',
-      defaultValue: 'container pt-0 pb-14 pt-md-18 pb-md-18',
+      defaultValue: 'container pt-0 pb-14 pt-md-18 pb-md-18 position-relative',
     },
   ],
-  models: [],
-  metaModels: [metaFileModel],
+  models: [imageModel],
 } as const satisfies TemplateSchema;
 
 export type Cta2Data = Data<typeof cta2Schema>;
@@ -66,6 +63,7 @@ export type Cta2Data = Data<typeof cta2Schema>;
 export const cta2Demos: Demo<typeof cta2Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-5',
     sequence: 7,
     data: {
@@ -76,15 +74,25 @@ export const cta2Demos: Demo<typeof cta2Schema>[] = [
       cta2LinkHref2: '#',
       cta2Image: {
         id: '1',
-        version: 1,
-        fileName: 'map.png',
-        fileType: 'image/png',
-        filePath: '/img/map.png',
+        version: 0,
+        attrs: {
+          alt: 'World map background',
+          width: 800,
+          height: 484,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'map.png',
+            fileType: 'image/png',
+            filePath: '/img/map.png',
+          },
+        },
       },
     },
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-5',
     sequence: 7,
     data: {
@@ -96,10 +104,19 @@ export const cta2Demos: Demo<typeof cta2Schema>[] = [
       cta2LinkHref2: '#',
       cta2Image: {
         id: '1',
-        version: 1,
-        fileName: 'map.png',
-        fileType: 'image/png',
-        filePath: '/img/map.png',
+        version: 0,
+        attrs: {
+          alt: 'Fond de carte du monde',
+          width: 800,
+          height: 484,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'map.png',
+            fileType: 'image/png',
+            filePath: '/img/map.png',
+          },
+        },
       },
     },
   },

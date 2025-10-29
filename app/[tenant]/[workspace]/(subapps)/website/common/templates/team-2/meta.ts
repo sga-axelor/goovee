@@ -4,8 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
-import {socialLinksModel} from '../json-models';
+import {imageModel, socialLinksModel} from '../json-models';
 
 export const team2Schema = {
   title: 'Team 2',
@@ -86,9 +85,8 @@ export const team2Schema = {
         {
           name: 'image',
           title: 'Image',
-          type: 'many-to-one',
-          target: 'com.axelor.meta.db.MetaFile',
-          widget: 'Image',
+          type: 'json-many-to-one',
+          target: 'Image',
         },
         {
           name: 'socialLinks',
@@ -99,8 +97,8 @@ export const team2Schema = {
       ],
     },
     socialLinksModel,
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Team2Data = Data<typeof team2Schema>;
@@ -108,6 +106,7 @@ export type Team2Data = Data<typeof team2Schema>;
 export const team2Demos: Demo<typeof team2Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-2',
     sequence: 7,
     data: {
@@ -127,10 +126,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Ethan Johnson',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't3.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t3.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Ethan Johnson',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't3.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t3.jpg',
+                },
+              },
             },
             designation: 'MARKETING MANAGER',
             description: 'Strategic marketing is my passion.',
@@ -172,10 +180,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Gabriel Rodriguez',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't7.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t7.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Gabriel Rodriguez',
+                width: 600,
+                height: 600,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't7.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t7.jpg',
+                },
+              },
             },
             designation: 'SALES DIRECTOR',
             description: 'Strategic marketing is my passion.',
@@ -217,10 +234,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Samuel Patel',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t6.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Samuel Patel',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t6.jpg',
+                },
+              },
             },
             designation: 'HR MANAGER',
             description: 'Strategic marketing is my passion.',
@@ -262,10 +288,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Andree Buie',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't11.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t11.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Andree Buie',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't11.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t11.jpg',
+                },
+              },
             },
             designation: 'Manager',
             description: 'Strategic marketing is my passion.',
@@ -305,6 +340,7 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-2',
     sequence: 7,
     data: {
@@ -324,10 +360,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Ethan Johnson',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't3.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t3.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Ethan Johnson',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't3.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t3.jpg',
+                },
+              },
             },
             designation: 'RESPONSABLE MARKETING',
             description: 'Le marketing stratégique est ma passion.',
@@ -369,10 +414,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Gabriel Rodriguez',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't7.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t7.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Gabriel Rodriguez',
+                width: 600,
+                height: 600,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't7.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t7.jpg',
+                },
+              },
             },
             designation: 'DIRECTEUR DES VENTES',
             description: 'Le marketing stratégique est ma passion.',
@@ -414,10 +468,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Samuel Patel',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t6.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Samuel Patel',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t6.jpg',
+                },
+              },
             },
             designation: 'RESPONSABLE RH',
             description: 'Le marketing stratégique est ma passion.',
@@ -459,10 +522,19 @@ export const team2Demos: Demo<typeof team2Schema>[] = [
             name: 'Andree Buie',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't11.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t11.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Andree Buie',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't11.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t11.jpg',
+                },
+              },
             },
             designation: 'Directrice',
             description: 'Le marketing stratégique est ma passion.',

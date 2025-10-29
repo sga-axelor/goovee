@@ -4,7 +4,7 @@ import {
   Template,
   TemplateSchema,
 } from '@/subapps/website/common/types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const contact4Schema = {
   title: 'Contact 4',
@@ -39,9 +39,8 @@ export const contact4Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'wrapperClassName',
@@ -56,7 +55,7 @@ export const contact4Schema = {
       defaultValue: 'container',
     },
   ],
-  metaModels: [metaFileModel],
+  models: [imageModel],
 } as const satisfies TemplateSchema;
 
 export type Contact4Data = Data<typeof contact4Schema>;
@@ -64,15 +63,25 @@ export type Contact4Data = Data<typeof contact4Schema>;
 export const contact4Demos: Demo<typeof contact4Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-1',
     sequence: 10,
     data: {
       contact4Image: {
         id: '1',
-        version: 1,
-        fileName: 'i5.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i5.png',
+        version: 0,
+        attrs: {
+          alt: "Let's talk",
+          width: 636,
+          height: 300,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i5.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i5.png',
+          },
+        },
       },
       contact4Title: 'Let’s Talk',
       contact4Caption:
@@ -85,15 +94,25 @@ export const contact4Demos: Demo<typeof contact4Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-1',
     sequence: 10,
     data: {
       contact4Image: {
         id: '1',
-        version: 1,
-        fileName: 'i5.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i5.png',
+        version: 0,
+        attrs: {
+          alt: 'Parlons',
+          width: 636,
+          height: 300,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i5.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i5.png',
+          },
+        },
       },
       contact4Title: 'Parlons-en',
       contact4Caption:

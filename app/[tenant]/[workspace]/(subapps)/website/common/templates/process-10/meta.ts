@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const process10Schema = {
   title: 'Process 10',
@@ -19,9 +19,8 @@ export const process10Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'processes',
@@ -66,8 +65,8 @@ export const process10Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Process10Data = Data<typeof process10Schema>;
@@ -75,16 +74,26 @@ export type Process10Data = Data<typeof process10Schema>;
 export const process10Demos: Demo<typeof process10Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-12',
     sequence: 3,
     data: {
       process10Title: 'Our three process steps on creating awesome projects.',
       process10Image: {
         id: '1',
-        version: 1,
-        fileName: 'i8.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i8.png',
+        version: 0,
+        attrs: {
+          alt: 'Our process',
+          width: 600,
+          height: 428,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i8.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i8.png',
+          },
+        },
       },
       process10Processes: [
         {
@@ -122,6 +131,7 @@ export const process10Demos: Demo<typeof process10Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-12',
     sequence: 3,
     data: {
@@ -129,10 +139,19 @@ export const process10Demos: Demo<typeof process10Schema>[] = [
         'Nos trois étapes de processus pour créer des projets impressionnants.',
       process10Image: {
         id: '1',
-        version: 1,
-        fileName: 'i8.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i8.png',
+        version: 0,
+        attrs: {
+          alt: 'Notre processus',
+          width: 600,
+          height: 428,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i8.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i8.png',
+          },
+        },
       },
       process10Processes: [
         {

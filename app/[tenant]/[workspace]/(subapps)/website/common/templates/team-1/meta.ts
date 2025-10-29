@@ -4,8 +4,7 @@ import {
   Demo,
   TemplateSchema,
 } from '@/subapps/website/common/types/templates';
-import {metaFileModel} from '../meta-models';
-import {socialLinksModel} from '../json-models';
+import {imageModel, socialLinksModel} from '../json-models';
 
 export const team1Schema = {
   title: 'Team 1',
@@ -56,9 +55,8 @@ export const team1Schema = {
         {
           name: 'image',
           title: 'Image',
-          type: 'many-to-one',
-          target: 'com.axelor.meta.db.MetaFile',
-          widget: 'Image',
+          type: 'json-many-to-one',
+          target: 'Image',
         },
         {
           name: 'designation',
@@ -80,8 +78,8 @@ export const team1Schema = {
       ],
     },
     socialLinksModel,
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Team1Data = Data<typeof team1Schema>;
@@ -89,6 +87,7 @@ export type Team1Data = Data<typeof team1Schema>;
 export const team1Demos: Demo<typeof team1Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-1',
     sequence: 6,
     data: {
@@ -103,10 +102,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             name: 'Tom Accor',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't8.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t8.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Tom Accor',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't8.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t8.jpg',
+                },
+              },
             },
             description: "I'm passionate about creating elegant theme.",
             designation: 'Developer',
@@ -148,10 +156,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             name: 'Selina Anteree',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't9.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t9.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Selina Anteree',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't9.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t9.jpg',
+                },
+              },
             },
             description: "I'm passionate about creating elegant theme.",
             designation: 'Developer',
@@ -193,10 +210,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             name: 'Olocks Pree',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't10.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t10.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Olocks Pree',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't10.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t10.jpg',
+                },
+              },
             },
             description: "I'm passionate about creating elegant theme.",
             designation: 'Designer',
@@ -238,10 +264,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             name: 'Andree Buie',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't11.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t11.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Andree Buie',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't11.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t11.jpg',
+                },
+              },
             },
             description: "I'm passionate about creating elegant theme.",
             designation: 'Manager',
@@ -281,6 +316,7 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-1',
     sequence: 6,
     data: {
@@ -295,10 +331,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             name: 'Tom Accor',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't8.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t8.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Tom Accor',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't8.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t8.jpg',
+                },
+              },
             },
             description:
               'Je suis passionné par la création de thèmes élégants.',
@@ -342,10 +387,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
 
             image: {
               id: '1',
-              version: 1,
-              fileName: 't9.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t9.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Selina Anteree',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't9.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t9.jpg',
+                },
+              },
             },
             description:
               'Je suis passionné par la création de thèmes élégants.',
@@ -388,10 +442,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             name: 'Olocks Pree',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't10.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t10.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Olocks Pree',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't10.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t10.jpg',
+                },
+              },
             },
             description:
               'Je suis passionné par la création de thèmes élégants.',
@@ -434,10 +497,19 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             name: 'Andree Buie',
             image: {
               id: '1',
-              version: 1,
-              fileName: 't11.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/t11.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Andree Buie',
+                width: 300,
+                height: 300,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 't11.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/t11.jpg',
+                },
+              },
             },
             description:
               'Je suis passionné par la création de thèmes élégants.',

@@ -30,7 +30,7 @@ export const facts1Schema = {
       name: 'wrapperClassName',
       title: 'Wrapper Class Name',
       type: 'string',
-      defaultValue: 'wrapper bg-soft-primary',
+      defaultValue: 'wrapper bg-soft-primary angled lower-start',
     },
     {
       name: 'containerClassName',
@@ -66,6 +66,7 @@ export type Facts1Data = Data<typeof facts1Schema>;
 export const facts1Demos: Demo<typeof facts1Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-3',
     sequence: 7,
     data: {
@@ -101,6 +102,7 @@ export const facts1Demos: Demo<typeof facts1Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-3',
     sequence: 7,
     data: {

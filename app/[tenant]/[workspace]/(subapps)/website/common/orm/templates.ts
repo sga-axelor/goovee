@@ -13,22 +13,26 @@ import type {
   AOSMetaView,
   AOSPortalCmsComponent,
   AOSPortalCmsContent,
+  AOSPortalCmsContentLine,
+  AOSPortalCmsMainWebsite,
+  AOSPortalCmsPage,
+  AOSPortalCmsSite,
 } from '@/goovee/.generated/models';
 import {manager, type Tenant} from '@/lib/core/tenant';
 import {getFileSizeText} from '@/utils/files';
 import {xml} from '@/utils/template-string';
-import type {CreateArgs} from '@goovee/orm';
+import type {CreateArgs, SelectArg} from '@goovee/orm';
 import {startCase} from 'lodash-es';
 import {JSON_MODEL_ATTRS, WidgetAttrsMap} from '../constants';
 import {metaFileModel} from '../templates/meta-models';
 import type {
   CustomField,
-  Demo,
   Field,
   TemplateSchema,
   Model,
   MetaSelection,
   SelectionOption,
+  DemoLite,
 } from '../types/templates';
 import {
   isArrayField,
@@ -41,6 +45,7 @@ import {
   formatCustomFieldName,
 } from '../utils/helper';
 import {getStoragePath} from '@/storage/index';
+import {Website} from '../templates/site';
 
 const pump = promisify(pipeline);
 
@@ -53,13 +58,16 @@ function getContentTitle({
   language,
   page,
   sequence,
+  skipCasingCode,
 }: {
   code: string;
   language: string;
   page: string;
   sequence: number;
+  skipCasingCode?: boolean;
 }) {
-  return `Demo - ${startCase(code)} - ${language} - ${page} - ${sequence}`;
+  const _code = skipCasingCode ? code : startCase(code);
+  return `Demo - ${_code} - ${language} - ${page} - ${sequence}`;
 }
 
 export function getCommnonSelectionName(name: string) {
@@ -272,34 +280,21 @@ export async function createMetaSelect({
     },
   });
   if (_metaSelect) {
-    const existingItemsLength = _metaSelect.items?.length || 0;
-    const currentItemsLength = metaSelectItemsData.length;
+    if (_metaSelect.items?.length) {
+      await client.aOSMetaSelectItem.deleteAll({
+        where: {select: {id: _metaSelect.id}},
+      });
+    }
     try {
       metaSelect = await client.aOSMetaSelect.update({
         data: {
           id: _metaSelect.id,
           version: _metaSelect.version,
           items: {
-            update: existingItemsLength
-              ? _metaSelect.items?.map((item, i) => ({
-                  ...metaSelectItemsData[i],
-                  id: item.id,
-                  version: item.version,
-                }))
-              : undefined,
-            create:
-              existingItemsLength < currentItemsLength
-                ? metaSelectItemsData.slice(existingItemsLength).map(item => ({
-                    ...item,
-                    createdOn: item.updatedOn,
-                  }))
-                : undefined,
-            remove:
-              existingItemsLength > currentItemsLength
-                ? _metaSelect.items
-                    ?.slice(currentItemsLength)
-                    .map(item => item.id)
-                : undefined,
+            create: metaSelectItemsData.map(item => ({
+              ...item,
+              createdOn: item.updatedOn,
+            })),
           },
         },
         select: {id: true, name: true},
@@ -327,7 +322,7 @@ export async function createMetaSelect({
         select: {id: true, name: true},
       });
       console.log(
-        `\x1b[32m✔ Created metaSelect: ${metaSelectData.name}\x1b[0m`,
+        `\x1b[32m✅ Created metaSelect: ${metaSelectData.name}\x1b[0m`,
       );
     } catch (error) {
       console.log(
@@ -520,7 +515,7 @@ export async function deleteCustomFields({
   tenantId: Tenant['id'];
 }) {
   const client = await manager.getClient(tenantId);
-  const fields = await client.aOSMetaJsonField.find({
+  await client.aOSMetaJsonField.deleteAll({
     where: {
       model,
       modelField,
@@ -528,20 +523,16 @@ export async function deleteCustomFields({
         jsonModel: {name: {like: jsonModelPrefix + '%'}},
       }),
     },
-    select: {id: true, name: true, selection: true, jsonModel: {name: true}},
   });
-
-  await Promise.all(
-    fields.map(async field => {
-      await client.aOSMetaJsonField.delete({
-        id: field.id,
-        version: field.version,
-      });
-      console.log(
-        `\x1b[31m✖ field:${field.name} | ${field.jsonModel?.name || model}.\x1b[0m`,
-      );
-    }),
-  );
+  if (jsonModelPrefix) {
+    console.log(
+      `\x1b[32m✅ Deleted fields for the models with prefix: ${jsonModelPrefix} in the modelField: ${modelField}.\x1b[0m`,
+    );
+  } else {
+    console.log(
+      `\x1b[32m✅ Deleted all fields for the model: ${model} in the modelField: ${modelField}.\x1b[0m`,
+    );
+  }
 }
 
 export async function deleteMetaJsonModels({
@@ -564,38 +555,25 @@ export async function deleteMetaJsonModels({
     },
   });
 
-  await Promise.all(
-    models.map(async model => {
-      await client.aOSMetaJsonModel.delete({
-        id: model.id,
-        version: model.version,
-      });
-      console.log(`\x1b[31m✖ model:${model.name}.\x1b[0m`);
-    }),
-  );
+  await client.aOSMetaJsonModel.deleteAll({
+    where: {
+      name: {like: jsonModelPrefix + '%'},
+    },
+  });
 
-  await Promise.all(
-    models.map(async model => {
-      let formView, gridView;
-      if (model.formView) {
-        formView = client.aOSMetaView.delete({
-          id: model.formView.id,
-          version: model.formView.version,
-        });
-      }
-      if (model.gridView) {
-        gridView = client.aOSMetaView.delete({
-          id: model.gridView.id,
-          version: model.gridView.version,
-        });
-      }
-      await formView;
-      await gridView;
+  const views = models
+    .flatMap(model => [model.formView, model.gridView])
+    .filter(Boolean);
+  if (views.length) {
+    await client.aOSMetaView.deleteAll({
+      where: {
+        id: {in: views.map(view => view!.id)},
+      },
+    });
+  }
 
-      console.log(
-        `\x1b[31m✖ view:${model.formView?.name} | ${model.gridView?.name}.\x1b[0m`,
-      );
-    }),
+  console.log(
+    `\x1b[32m✅  Deleted all models with the prefix ${jsonModelPrefix} and their views.\x1b[0m`,
   );
 }
 
@@ -605,15 +583,18 @@ export async function deleteMetaSelects(props: {tenantId: Tenant['id']}) {
   await client.aOSMetaSelectItem.deleteAll({
     where: {select: {name: {like: `${SELECT_PREFIX}%`}}},
   });
-  return await client.aOSMetaSelect.deleteAll({
+  await client.aOSMetaSelect.deleteAll({
     where: {name: {like: `${SELECT_PREFIX}%`}},
   });
+  console.log(
+    `\x1b[32m✅  Deleted all selects and their items with the prefix ${SELECT_PREFIX}.\x1b[0m`,
+  );
 }
 
 export async function createCMSContent(props: {
   tenantId: Tenant['id'];
   schema: TemplateSchema;
-  demos: Demo<TemplateSchema>[];
+  demos: DemoLite<TemplateSchema>[];
   fileCache: Cache<Promise<{id: string}>>;
 }) {
   const {tenantId, demos, schema, fileCache} = props;
@@ -907,4 +888,311 @@ async function createAttrs(props: {
     }),
   );
   return attrs;
+}
+
+export async function createCMSPage(props: {
+  tenantId: Tenant['id'];
+  page: string;
+  language: string;
+  siteId: string;
+  demos: DemoLite<TemplateSchema>[];
+  title: string;
+}) {
+  const {tenantId, siteId, page, language, demos, title} = props;
+  const client = await manager.getClient(tenantId);
+  const timeStamp = new Date();
+
+  const cmsPageFields = {
+    id: true,
+    title: true,
+    website: {id: true},
+    slug: true,
+    language: {code: true},
+  } satisfies SelectArg<AOSPortalCmsPage>;
+
+  const _cmsPage = await client.aOSPortalCmsPage.findOne({
+    where: {
+      website: {id: siteId},
+      slug: page,
+      title: title,
+      language: {code: language},
+    },
+    select: {
+      ...cmsPageFields,
+      contentLines: {select: {id: true}},
+    },
+  });
+
+  const contentLines: CreateArgs<AOSPortalCmsContentLine>[] = demos.map(
+    demo => ({
+      sequence: demo.sequence,
+      language: {select: {code: language}},
+      content: {
+        select: {
+          title: {
+            like: getContentTitle({
+              code: '%',
+              language,
+              page,
+              sequence: demo.sequence,
+              skipCasingCode: true,
+            }),
+          },
+        },
+      },
+    }),
+  );
+
+  const pageData: CreateArgs<AOSPortalCmsPage> = {
+    statusSelect: '1',
+    language: {select: {code: language}},
+    title,
+    slug: page,
+    updatedOn: timeStamp,
+    website: {select: {id: siteId}},
+  };
+
+  if (_cmsPage) {
+    if (disableUpdates) {
+      console.log(`\x1b[33m⚠️ Skipped page: ${_cmsPage.title}\x1b[0m `);
+      return _cmsPage;
+    }
+
+    await client.aOSPortalCmsContentLine.deleteAll({
+      where: {
+        page: {id: _cmsPage.id},
+      },
+    });
+
+    const cmsPage = await client.aOSPortalCmsPage.update({
+      data: {
+        ...pageData,
+        contentLines: {
+          create: contentLines,
+        },
+        id: _cmsPage.id,
+        version: _cmsPage.version,
+      },
+      select: cmsPageFields,
+    });
+
+    console.log(`\x1b[33m⚠️ Updated page: ${_cmsPage.title}\x1b[0m `);
+    return cmsPage;
+  }
+
+  const cmsPage = await client.aOSPortalCmsPage.create({
+    data: {
+      ...pageData,
+      contentLines: {create: contentLines},
+      createdOn: timeStamp,
+    },
+    select: cmsPageFields,
+  });
+  console.log(`\x1b[32m✅ Created page: ${cmsPage.title}\x1b[0m `);
+  return cmsPage;
+}
+
+export async function createCMSWebsite(props: {
+  tenantId: Tenant['id'];
+  website: Website;
+}) {
+  const {tenantId, website} = props;
+  const client = await manager.getClient(tenantId);
+  const timeStamp = new Date();
+  const _mainWebsite = await client.aOSPortalCmsMainWebsite.findOne({
+    where: {
+      name: website.name,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  const websiteData: CreateArgs<AOSPortalCmsMainWebsite> = {
+    name: website.name,
+    updatedOn: timeStamp,
+  };
+  let mainWebsite;
+  if (_mainWebsite) {
+    mainWebsite = await client.aOSPortalCmsMainWebsite.update({
+      data: {
+        ...websiteData,
+        id: _mainWebsite.id,
+        version: _mainWebsite.version,
+      },
+    });
+    await client.aOSPortalCmsSiteLanguage.deleteAll({
+      where: {
+        mainWebsite: {
+          id: _mainWebsite.id,
+        },
+      },
+    });
+  } else {
+    mainWebsite = await client.aOSPortalCmsMainWebsite.create({
+      data: {
+        ...websiteData,
+        createdOn: timeStamp,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
+
+  const cmsSites = await createCMSSites({
+    tenantId,
+    website,
+    mainWebsiteId: mainWebsite.id,
+  });
+
+  const defaultSiteSlug = website.sites.find(site => site.website.isDefault)
+    ?.website?.slug;
+
+  await client.aOSPortalCmsMainWebsite.update({
+    data: {
+      id: mainWebsite.id,
+      version: mainWebsite.version,
+      ...(defaultSiteSlug && {
+        defaultWebsite: {
+          select: {mainWebsite: {id: mainWebsite.id}, slug: defaultSiteSlug},
+        },
+      }),
+      languageList: {
+        create: website.sites.map(site => ({
+          language: {
+            select: {
+              code: site.language,
+            },
+          },
+          website: {
+            select: {
+              id: cmsSites.find(s => s.slug === site.website.slug)?.id,
+            },
+          },
+        })),
+      },
+    },
+  });
+
+  if (_mainWebsite) {
+    console.log(`\x1b[33m⚠️ Updated website: ${_mainWebsite.name}\x1b[0m `);
+  } else {
+    console.log(`\x1b[32m✅ Created website: ${mainWebsite.name}\x1b[0m `);
+  }
+  return {
+    mainWebsite,
+    sites: cmsSites,
+  };
+}
+
+export async function createCMSSites(props: {
+  tenantId: Tenant['id'];
+  website: Website;
+  mainWebsiteId: string;
+}) {
+  const {tenantId, website, mainWebsiteId} = props;
+  const client = await manager.getClient(tenantId);
+  const timeStamp = new Date();
+  const cmsSites = await Promise.all(
+    website.sites.map(async site => {
+      const _cmsSite = await client.aOSPortalCmsSite.findOne({
+        where: {mainWebsite: {id: mainWebsiteId}, slug: site.website.slug},
+        select: {id: true, name: true, slug: true},
+      });
+      const siteData: CreateArgs<AOSPortalCmsSite> = {
+        mainWebsite: {select: {id: mainWebsiteId}},
+        name: site.website.name,
+        slug: site.website.slug,
+        isPrivate: false,
+        isGuestUserAllow: site.website.isGuestUserAllow,
+        updatedOn: timeStamp,
+      };
+
+      if (_cmsSite) {
+        if (disableUpdates) {
+          console.log(`\x1b[33m⚠️ Skipped site: ${_cmsSite.name}\x1b[0m `);
+          return _cmsSite;
+        }
+        const cmsSite = await client.aOSPortalCmsSite.update({
+          data: {...siteData, id: _cmsSite.id, version: _cmsSite.version},
+          select: {id: true, name: true, slug: true},
+        });
+        console.log(`\x1b[33m⚠️ Updated site: ${_cmsSite.name}\x1b[0m `);
+        return cmsSite;
+      }
+      const cmsSite = await client.aOSPortalCmsSite.create({
+        data: {...siteData, createdOn: timeStamp},
+        select: {id: true, name: true, slug: true},
+      });
+      console.log(`\x1b[32m✅ Created site: ${cmsSite.name}\x1b[0m `);
+      return cmsSite;
+    }),
+  );
+  return cmsSites;
+}
+
+export async function updateHomepage(props: {
+  tenantId: Tenant['id'];
+  siteId: string;
+  siteVersion: number;
+  pageId: string;
+}) {
+  const {tenantId, siteId, siteVersion, pageId} = props;
+  const client = await manager.getClient(tenantId);
+  const timeStamp = new Date();
+
+  const site = await client.aOSPortalCmsSite.update({
+    data: {
+      id: siteId,
+      version: siteVersion,
+      homepage: {select: {id: pageId}},
+      updatedOn: timeStamp,
+    },
+    select: {id: true},
+  });
+
+  return site;
+}
+
+export async function replacePageSet(props: {
+  tenantId: Tenant['id'];
+  pageId: string;
+  pageVersion: number;
+  pageSetIds: string[];
+}) {
+  const {tenantId, pageId, pageVersion, pageSetIds: pageSetIds} = props;
+  const client = await manager.getClient(tenantId);
+
+  const _page = await client.aOSPortalCmsPage.findOne({
+    where: {id: pageId},
+    select: {id: true, pageSet: {select: {id: true}}},
+  });
+
+  if (!_page) {
+    throw new Error(`Page ${pageId} not found`);
+  }
+
+  const existingPageSetIds = _page.pageSet?.map(page => page.id);
+  const pageSetIdsToRemove = existingPageSetIds?.filter(
+    id => !pageSetIds.includes(id),
+  );
+
+  const page = await client.aOSPortalCmsPage.update({
+    data: {
+      id: pageId,
+      version: pageVersion,
+      pageSet: {
+        ...(pageSetIdsToRemove?.length && {
+          remove: pageSetIdsToRemove,
+        }),
+        select: pageSetIds.map(id => ({id})),
+      },
+    },
+    select: {id: true},
+  });
+
+  return page;
 }

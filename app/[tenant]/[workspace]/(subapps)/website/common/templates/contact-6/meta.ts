@@ -4,8 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
-import {contactInfoModel} from '../json-models';
+import {contactInfoModel, imageModel} from '../json-models';
 
 export const contact6Schema = {
   title: 'Contact 6',
@@ -20,9 +19,8 @@ export const contact6Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'contactInfo',
@@ -44,8 +42,7 @@ export const contact6Schema = {
       defaultValue: 'container py-14 py-md-17',
     },
   ],
-  models: [contactInfoModel],
-  metaModels: [metaFileModel],
+  models: [contactInfoModel, imageModel],
 } as const satisfies TemplateSchema;
 
 export type Contact6Data = Data<typeof contact6Schema>;
@@ -53,15 +50,25 @@ export type Contact6Data = Data<typeof contact6Schema>;
 export const contact6Demos: Demo<typeof contact6Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-12',
     sequence: 8,
     data: {
       contact6Image: {
         id: '1',
-        version: 1,
-        fileName: 'i5.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i5.png',
+        version: 0,
+        attrs: {
+          alt: 'Got any questions?',
+          width: 636,
+          height: 300,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i5.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i5.png',
+          },
+        },
       },
       contact6Title: "Got any questions? Don't hesitate to get in touch.",
       contact6ContactInfo: {
@@ -81,15 +88,25 @@ export const contact6Demos: Demo<typeof contact6Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-12',
     sequence: 8,
     data: {
       contact6Image: {
         id: '1',
-        version: 1,
-        fileName: 'i5.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i5.png',
+        version: 0,
+        attrs: {
+          alt: 'Des questions ?',
+          width: 636,
+          height: 300,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i5.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i5.png',
+          },
+        },
       },
       contact6Title:
         'Vous avez des questions ? N’hésitez pas à nous contacter.',

@@ -1,6 +1,7 @@
 import type {TemplateProps} from '@/subapps/website/common/types';
+import Image from 'next/image';
 import {type Facts12Data} from './meta';
-import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
+import {getImage} from '@/subapps/website/common/utils/helper';
 import {CountUp} from '@/subapps/website/common/components/reuseable/countup';
 
 export function Facts12(props: TemplateProps<Facts12Data>) {
@@ -17,8 +18,8 @@ export function Facts12(props: TemplateProps<Facts12Data>) {
     facts12ContainerClassName: containerClassName,
   } = data || {};
 
-  const image = getMetaFileURL({
-    metaFile: facts12Image,
+  const image = getImage({
+    image: facts12Image,
     path: 'facts12Image',
     ...props,
   });
@@ -26,9 +27,14 @@ export function Facts12(props: TemplateProps<Facts12Data>) {
   return (
     <section className={sectionClassName} data-code={props.code}>
       <div className={containerCardClassName}>
-        <div
-          className={cardClassName}
-          style={{backgroundImage: `url(${image})`}}>
+        <div className={cardClassName}>
+          <Image
+            src={image.url}
+            alt={image.alt || 'Facts background'}
+            fill
+            className="object-cover"
+          />
+          <div className="absolute top-0 left-0 w-full h-full bg-white/50"></div>
           <div className={cardBodyClassName}>
             <div className={containerClassName}>
               <div className="row align-items-center gx-lg-8 gx-xl-12 gy-10 gy-lg-0">

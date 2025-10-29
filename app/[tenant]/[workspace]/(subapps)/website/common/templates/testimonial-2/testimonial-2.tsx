@@ -1,6 +1,7 @@
 import type {TemplateProps} from '@/subapps/website/common/types';
+import Image from 'next/image';
 import {type Testimonial2Data} from './meta';
-import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
+import {getImage} from '@/subapps/website/common/utils/helper';
 import Carousel from '@/subapps/website/common/components/reuseable/Carousel';
 import {TestimonialCard2} from '@/subapps/website/common/components/reuseable/testimonial-cards';
 
@@ -13,8 +14,8 @@ export function Testimonial2(props: TemplateProps<Testimonial2Data>) {
     testimonial2ContainerClassName: containerClassName,
   } = data || {};
 
-  const image = getMetaFileURL({
-    metaFile: testimonial2Image,
+  const image = getImage({
+    image: testimonial2Image,
     path: 'testimonial2Image',
     ...props,
   });
@@ -34,10 +35,14 @@ export function Testimonial2(props: TemplateProps<Testimonial2Data>) {
 
           <div className={`card shadow-lg`}>
             <div className="row gx-0">
-              <div
-                style={{backgroundImage: `url(${image}`}}
-                className="col-lg-6 image-wrapper bg-image bg-cover rounded-top rounded-lg-start"
-              />
+              <div className="col-lg-6 image-wrapper rounded-top rounded-lg-start overflow-hidden">
+                <Image
+                  src={image.url}
+                  alt={image.alt || 'testimonial background'}
+                  fill
+                  className="object-cover"
+                />
+              </div>
 
               <div className="col-lg-6">
                 <div className={'p-10 p-md-11 p-lg-13'}>

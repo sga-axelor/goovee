@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 import {ratingsSelection} from '../meta-selections';
 
 export const testimonial8Schema = {
@@ -67,14 +67,13 @@ export const testimonial8Schema = {
         {
           name: 'image',
           title: 'Image',
-          type: 'many-to-one',
-          target: 'com.axelor.meta.db.MetaFile',
-          widget: 'Image',
+          type: 'json-many-to-one',
+          target: 'Image',
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
   selections: [ratingsSelection],
 } as const satisfies TemplateSchema;
 
@@ -83,6 +82,7 @@ export type Testimonial8Data = Data<typeof testimonial8Schema>;
 export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-7',
     sequence: 7,
     data: {
@@ -95,10 +95,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Coriss Ambady',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te1.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te1.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Coriss Ambady',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te1.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te1.jpg',
+                },
+              },
             },
             designation: 'Financial Analyst',
             review:
@@ -113,10 +122,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Cory Zamora',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te2.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te2.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Cory Zamora',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te2.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te2.jpg',
+                },
+              },
             },
             designation: 'Marketing Specialist',
             review:
@@ -131,10 +149,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Nikolas Brooten',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te3.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te3.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Nikolas Brooten',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te3.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te3.jpg',
+                },
+              },
             },
             designation: 'Sales Manager',
             review:
@@ -149,10 +176,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Coriss Ambady',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te4.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te4.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Coriss Ambady',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te4.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te4.jpg',
+                },
+              },
             },
             designation: 'Financial Analyst',
             review:
@@ -167,10 +203,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Laura Widerski',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te5.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te5.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Laura Widerski',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te5.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te5.jpg',
+                },
+              },
             },
             designation: 'Sales Specialist',
             review:
@@ -185,10 +230,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Jackie Sanders',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te6.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Jackie Sanders',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te6.jpg',
+                },
+              },
             },
             designation: 'Jackie Sanders',
             review:
@@ -201,6 +255,7 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-7',
     sequence: 7,
     data: {
@@ -213,10 +268,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Coriss Ambady',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te1.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te1.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Coriss Ambady',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te1.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te1.jpg',
+                },
+              },
             },
             designation: 'Analyste financier',
             review:
@@ -231,10 +295,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Cory Zamora',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te2.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te2.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Cory Zamora',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te2.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te2.jpg',
+                },
+              },
             },
             designation: 'Spécialiste en marketing',
             review:
@@ -249,10 +322,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Nikolas Brooten',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te3.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te3.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Nikolas Brooten',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te3.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te3.jpg',
+                },
+              },
             },
             designation: 'Directeur des ventes',
             review:
@@ -267,10 +349,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Coriss Ambady',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te4.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te4.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Coriss Ambady',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te4.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te4.jpg',
+                },
+              },
             },
             designation: 'Analyste financier',
             review:
@@ -285,10 +376,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Laura Widerski',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te5.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te5.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Laura Widerski',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te5.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te5.jpg',
+                },
+              },
             },
             designation: 'Spécialiste des ventes',
             review:
@@ -303,10 +403,19 @@ export const testimonial8Demos: Demo<typeof testimonial8Schema>[] = [
             name: 'Jackie Sanders',
             image: {
               id: '1',
-              version: 1,
-              fileName: 'te6.jpg',
-              fileType: 'image/jpeg',
-              filePath: '/img/avatars/te6.jpg',
+              version: 0,
+              attrs: {
+                alt: 'Jackie Sanders',
+                width: 100,
+                height: 100,
+                image: {
+                  id: '1',
+                  version: 1,
+                  fileName: 'te6.jpg',
+                  fileType: 'image/jpeg',
+                  filePath: '/img/avatars/te6.jpg',
+                },
+              },
             },
             designation: 'Jackie Sanders',
             review:

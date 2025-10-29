@@ -4,6 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
+import {imageModel} from '../json-models';
 import {metaFileModel} from '../meta-models';
 
 export const hero22Schema = {
@@ -32,9 +33,8 @@ export const hero22Schema = {
     {
       name: 'backgroundImage',
       title: 'Background Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'wrapperClassName',
@@ -49,7 +49,7 @@ export const hero22Schema = {
       defaultValue: 'container pt-18 pt-lg-21 pb-17 pb-lg-19 text-center',
     },
   ],
-  models: [],
+  models: [imageModel],
   metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
@@ -58,6 +58,7 @@ export type Hero22Data = Data<typeof hero22Schema>;
 export const hero22Demos: Demo<typeof hero22Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-22',
     sequence: 1,
     data: {
@@ -72,15 +73,25 @@ export const hero22Demos: Demo<typeof hero22Schema>[] = [
       },
       hero22BackgroundImage: {
         id: '1',
-        version: 1,
-        fileName: 'bg26.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg26.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Marketing services background',
+          width: 1383,
+          height: 734,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg26.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg26.jpg',
+          },
+        },
       },
     },
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-22',
     sequence: 1,
     data: {
@@ -96,10 +107,19 @@ export const hero22Demos: Demo<typeof hero22Schema>[] = [
       },
       hero22BackgroundImage: {
         id: '1',
-        version: 1,
-        fileName: 'bg26.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg26.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Arrière-plan des services marketing',
+          width: 1383,
+          height: 734,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg26.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg26.jpg',
+          },
+        },
       },
     },
   },

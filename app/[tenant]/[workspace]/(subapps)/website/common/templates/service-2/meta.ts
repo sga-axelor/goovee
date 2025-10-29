@@ -4,7 +4,7 @@ import {
   Demo,
   TemplateSchema,
 } from '@/subapps/website/common/types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 import {bulletListModel} from '../json-models';
 
 export const service2Schema = {
@@ -30,9 +30,8 @@ export const service2Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'services',
@@ -54,8 +53,7 @@ export const service2Schema = {
       defaultValue: 'container',
     },
   ],
-  models: [bulletListModel],
-  metaModels: [metaFileModel],
+  models: [bulletListModel, imageModel],
 } as const satisfies TemplateSchema;
 
 export type Services2Data = Data<typeof service2Schema>;
@@ -63,15 +61,25 @@ export type Services2Data = Data<typeof service2Schema>;
 export const service2Demos: Demo<typeof service2Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-1',
     sequence: 7,
     data: {
       service2Image: {
         id: '1',
-        version: 1,
-        fileName: 'i8.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i8.png',
+        version: 0,
+        attrs: {
+          alt: 'our solutions',
+          width: 600,
+          height: 428,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i8.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i8.png',
+          },
+        },
       },
       service2Title: 'Our Solutions',
       service2Caption:
@@ -112,15 +120,25 @@ export const service2Demos: Demo<typeof service2Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-1',
     sequence: 7,
     data: {
       service2Image: {
         id: '1',
-        version: 1,
-        fileName: 'i8.png',
-        fileType: 'image/png',
-        filePath: '/img/illustrations/i8.png',
+        version: 0,
+        attrs: {
+          alt: 'nos solutions',
+          width: 600,
+          height: 428,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'i8.png',
+            fileType: 'image/png',
+            filePath: '/img/illustrations/i8.png',
+          },
+        },
       },
       service2Title: 'Nos solutions',
       service2Caption:

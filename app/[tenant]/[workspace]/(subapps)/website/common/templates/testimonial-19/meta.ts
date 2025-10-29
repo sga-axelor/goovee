@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 import {ratingsSelection} from '../meta-selections';
 
 export const testimonial19Schema = {
@@ -15,9 +15,8 @@ export const testimonial19Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'caption',
@@ -83,8 +82,8 @@ export const testimonial19Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
   selections: [ratingsSelection],
 } as const satisfies TemplateSchema;
 
@@ -93,15 +92,25 @@ export type Testimonial19Data = Data<typeof testimonial19Schema>;
 export const testimonial19Demos: Demo<typeof testimonial19Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-24',
     sequence: 5,
     data: {
       testimonial19Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg35.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg35.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Testimonial background',
+          width: 1440,
+          height: 558,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg35.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg35.jpg',
+          },
+        },
       },
       testimonial19Caption: 'Happy Customers',
       testimonial19Navigation: false,
@@ -167,15 +176,25 @@ export const testimonial19Demos: Demo<typeof testimonial19Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-24',
     sequence: 5,
     data: {
       testimonial19Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg35.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg35.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Arrière-plan de témoignage',
+          width: 1440,
+          height: 558,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg35.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg35.jpg',
+          },
+        },
       },
       testimonial19Caption: 'Clients satisfaits',
       testimonial19Navigation: false,

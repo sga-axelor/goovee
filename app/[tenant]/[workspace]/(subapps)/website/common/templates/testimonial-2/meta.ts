@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const testimonial2Schema = {
   title: 'Testimonial 2',
@@ -14,9 +14,8 @@ export const testimonial2Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'testimonials',
@@ -28,14 +27,14 @@ export const testimonial2Schema = {
       name: 'wrapperClassName',
       title: 'Wrapper Class Name',
       type: 'string',
-      defaultValue: 'wrapper bg-light angled upper-end',
+      defaultValue: 'wrapper',
     },
     {
       name: 'containerClassName',
       title: 'Container Class Name',
       type: 'string',
       defaultValue:
-        'container position-relative py-16 py-md-18 mt-n18 mt-md-n23 mb-16 mb-md-18',
+        'container position-relative pt-16 pt-md-18 mt-n18 mt-md-n23 mb-16 mb-md-18',
     },
   ],
   models: [
@@ -63,8 +62,8 @@ export const testimonial2Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Testimonial2Data = Data<typeof testimonial2Schema>;
@@ -72,15 +71,25 @@ export type Testimonial2Data = Data<typeof testimonial2Schema>;
 export const testimonial2Demos: Demo<typeof testimonial2Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-3',
     sequence: 8,
     data: {
       testimonial2Image: {
         id: '1',
-        version: 1,
-        fileName: 'tm1.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/tm1.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Testimonial',
+          width: 598,
+          height: 432,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'tm1.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/tm1.jpg',
+          },
+        },
       },
       testimonial2Testimonials: [
         {
@@ -124,15 +133,25 @@ export const testimonial2Demos: Demo<typeof testimonial2Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-3',
     sequence: 8,
     data: {
       testimonial2Image: {
         id: '1',
-        version: 1,
-        fileName: 'tm1.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/tm1.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Témoignage',
+          width: 598,
+          height: 432,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'tm1.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/tm1.jpg',
+          },
+        },
       },
       testimonial2Testimonials: [
         {

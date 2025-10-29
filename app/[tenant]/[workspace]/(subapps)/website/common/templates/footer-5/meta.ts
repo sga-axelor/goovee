@@ -4,8 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
-import {socialLinksModel} from '../json-models';
+import {imageModel, socialLinksModel} from '../json-models';
 
 export const footer5Schema = {
   title: 'Footer 5',
@@ -15,9 +14,8 @@ export const footer5Schema = {
     {
       name: 'logo',
       title: 'Logo',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'copyright',
@@ -104,8 +102,8 @@ export const footer5Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Footer5Data = Data<typeof footer5Schema>;
@@ -113,15 +111,25 @@ export type Footer5Data = Data<typeof footer5Schema>;
 export const footer5Demos: Demo<typeof footer5Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-3',
     sequence: 11,
     data: {
       footer5Logo: {
         id: '1',
-        version: 1,
-        fileName: 'logo-light.png',
-        fileType: 'image/png',
-        filePath: '/img/logo-light.png',
+        version: 0,
+        attrs: {
+          alt: 'logo',
+          width: 146,
+          height: 38,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'logo-light.png',
+            fileType: 'image/png',
+            filePath: '/img/logo-light.png',
+          },
+        },
       },
       footer5Copyright: '© 2022 Lighthouse. All rights reserved.',
       footer5AddressTitle: 'Get in Touch',
@@ -191,15 +199,25 @@ export const footer5Demos: Demo<typeof footer5Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-3',
     sequence: 11,
     data: {
       footer5Logo: {
         id: '1',
-        version: 1,
-        fileName: 'logo-light.png',
-        fileType: 'image/png',
-        filePath: '/img/logo-light.png',
+        version: 0,
+        attrs: {
+          alt: 'logo',
+          width: 146,
+          height: 38,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'logo-light.png',
+            fileType: 'image/png',
+            filePath: '/img/logo-light.png',
+          },
+        },
       },
       footer5Copyright: '© 2022 Lighthouse. Tous les droits sont réservés.',
       footer5AddressTitle: 'Contactez-nous',

@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const hero6Schema = {
   title: 'Hero 6',
@@ -44,9 +44,8 @@ export const hero6Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'wrapperClassName',
@@ -61,7 +60,7 @@ export const hero6Schema = {
       defaultValue: 'container py-10',
     },
   ],
-  metaModels: [metaFileModel],
+  models: [imageModel],
 } as const satisfies TemplateSchema;
 
 export type Hero6Data = Data<typeof hero6Schema>;
@@ -69,6 +68,7 @@ export type Hero6Data = Data<typeof hero6Schema>;
 export const hero6Demos: Demo<typeof hero6Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-6',
     sequence: 1,
     data: {
@@ -83,14 +83,24 @@ export const hero6Demos: Demo<typeof hero6Schema>[] = [
       hero6Image: {
         id: '1',
         version: 1,
-        fileName: 'devices.png',
-        fileType: 'image/png',
-        filePath: '/img/photos/devices.png',
+        attrs: {
+          alt: 'Devices',
+          width: 830,
+          height: 895,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'devices.png',
+            fileType: 'image/png',
+            filePath: '/img/photos/devices.png',
+          },
+        },
       },
     },
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-6',
     sequence: 1,
     data: {
@@ -105,9 +115,18 @@ export const hero6Demos: Demo<typeof hero6Schema>[] = [
       hero6Image: {
         id: '1',
         version: 1,
-        fileName: 'devices.png',
-        fileType: 'image/png',
-        filePath: '/img/photos/devices.png',
+        attrs: {
+          alt: 'Devices',
+          width: 830,
+          height: 895,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'devices.png',
+            fileType: 'image/png',
+            filePath: '/img/photos/devices.png',
+          },
+        },
       },
     },
   },

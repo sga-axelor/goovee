@@ -4,6 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
+import {imageModel} from '../json-models';
 import {metaFileModel} from '../meta-models';
 
 export const hero13Schema = {
@@ -32,9 +33,8 @@ export const hero13Schema = {
     {
       name: 'backgroundImage',
       title: 'Background Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'wrapperClassName',
@@ -50,7 +50,7 @@ export const hero13Schema = {
       defaultValue: 'container pt-17 pb-19 pt-md-19 pb-md-20 text-center',
     },
   ],
-  models: [],
+  models: [imageModel],
   metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
@@ -59,6 +59,7 @@ export type Hero13Data = Data<typeof hero13Schema>;
 export const hero13Demos: Demo<typeof hero13Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-13',
     sequence: 1,
     data: {
@@ -73,15 +74,25 @@ export const hero13Demos: Demo<typeof hero13Schema>[] = [
       },
       hero13BackgroundImage: {
         id: '1',
-        version: 1,
-        fileName: 'bg2.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg2.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Rapid solutions background',
+          width: 1440,
+          height: 680,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg2.jpg',
+          },
+        },
       },
     },
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-13',
     sequence: 1,
     data: {
@@ -96,10 +107,19 @@ export const hero13Demos: Demo<typeof hero13Schema>[] = [
       },
       hero13BackgroundImage: {
         id: '1',
-        version: 1,
-        fileName: 'bg2.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg2.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Arrière-plan des solutions rapides',
+          width: 1440,
+          height: 680,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg2.jpg',
+          },
+        },
       },
     },
   },

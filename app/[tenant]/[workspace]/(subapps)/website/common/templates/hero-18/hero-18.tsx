@@ -1,11 +1,12 @@
 import type {TemplateProps} from '@/subapps/website/common/types';
 import {type Hero18Data} from './meta';
-import {getMetaFileURL} from '@/subapps/website/common/utils/helper';
+import {getImage} from '@/subapps/website/common/utils/helper';
 import NextLink from '@/subapps/website/common/components/reuseable/links/NextLink';
 import {
   fadeInAnimate,
   slideInDownAnimate,
 } from '@/subapps/website/common/utils/animation';
+import Image from 'next/image';
 
 export function Hero18(props: TemplateProps<Hero18Data>) {
   const {data} = props;
@@ -24,14 +25,14 @@ export function Hero18(props: TemplateProps<Hero18Data>) {
     hero18ContainerClassName: containerClassName,
   } = data || {};
 
-  const image = getMetaFileURL({
-    metaFile: hero18Image,
+  const image = getImage({
+    image: hero18Image,
     path: 'hero18Image',
     ...props,
   });
 
-  const backgroundImage = getMetaFileURL({
-    metaFile: hero18BackgroundImage,
+  const backgroundImage = getImage({
+    image: hero18BackgroundImage,
     path: 'hero18BackgroundImage',
     ...props,
   });
@@ -39,10 +40,17 @@ export function Hero18(props: TemplateProps<Hero18Data>) {
   return (
     <section className={sectionClassName} data-code={props.code}>
       <div className={containerCardClassName}>
-        <div
-          className={cardClassName}
-          style={{backgroundImage: `url(${backgroundImage})`}}>
-          <div className={cardBodyClassName}>
+        <div className={cardClassName}>
+          <Image
+            src={backgroundImage.url}
+            alt={backgroundImage.alt || 'Hero background'}
+            fill
+            className="object-fit-cover"
+          />
+          <div
+            className="position-absolute top-0 left-0 w-100 h-100 bg-white opacity-50"
+            style={{zIndex: 1}}></div>
+          <div className={cardBodyClassName} style={{zIndex: 2}}>
             <div className={containerClassName}>
               <div className="row gx-md-8 gx-xl-12 gy-10 align-items-center text-center text-lg-start">
                 <div className="col-lg-6">
@@ -69,10 +77,12 @@ export function Hero18(props: TemplateProps<Hero18Data>) {
                 </div>
 
                 <div className="col-lg-6">
-                  <img
-                    alt="demo"
+                  <Image
+                    alt={image.alt}
                     className="img-fluid mb-n10"
-                    src={image}
+                    src={image.url}
+                    width={image.width}
+                    height={image.height}
                     style={fadeInAnimate('300ms')}
                   />
                 </div>

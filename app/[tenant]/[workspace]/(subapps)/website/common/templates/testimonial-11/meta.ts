@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 import {ratingsSelection} from '../meta-selections';
 
 export const testimonial11Schema = {
@@ -15,9 +15,8 @@ export const testimonial11Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'slidesPerView',
@@ -78,8 +77,8 @@ export const testimonial11Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
   selections: [ratingsSelection],
 } as const satisfies TemplateSchema;
 
@@ -88,15 +87,25 @@ export type Testimonial11Data = Data<typeof testimonial11Schema>;
 export const testimonial11Demos: Demo<typeof testimonial11Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-11',
     sequence: 9,
     data: {
       testimonial11Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg2.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg2.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Testimonial',
+          width: 1440,
+          height: 680,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg2.jpg',
+          },
+        },
       },
       testimonial11SlidesPerView: 1,
       testimonial11Navigation: false,
@@ -139,15 +148,25 @@ export const testimonial11Demos: Demo<typeof testimonial11Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-11',
     sequence: 9,
     data: {
       testimonial11Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg2.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/bg2.jpg',
+        version: 0,
+        attrs: {
+          alt: 'Témoignage',
+          width: 1440,
+          height: 680,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg2.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/bg2.jpg',
+          },
+        },
       },
       testimonial11SlidesPerView: 1,
       testimonial11Navigation: false,

@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 
 export const facts12Schema = {
   title: 'Facts 12',
@@ -24,9 +24,8 @@ export const facts12Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'facts',
@@ -50,14 +49,13 @@ export const facts12Schema = {
       name: 'cardClassName',
       title: 'Card Class Name',
       type: 'string',
-      defaultValue:
-        'card image-wrapper bg-full bg-image bg-overlay bg-overlay-light-500 pb-15',
+      defaultValue: 'card image-wrapper bg-full pb-15',
     },
     {
       name: 'cardBodyClassName',
       title: 'Card Body Class Name',
       type: 'string',
-      defaultValue: 'card-body py-14 px-0',
+      defaultValue: 'card-body py-14 px-0 relative',
     },
     {
       name: 'containerClassName',
@@ -90,8 +88,8 @@ export const facts12Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
 } as const satisfies TemplateSchema;
 
 export type Facts12Data = Data<typeof facts12Schema>;
@@ -99,6 +97,7 @@ export type Facts12Data = Data<typeof facts12Schema>;
 export const facts12Demos: Demo<typeof facts12Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-18',
     sequence: 5,
     data: {
@@ -107,10 +106,19 @@ export const facts12Demos: Demo<typeof facts12Schema>[] = [
         'We bring solutions to make life easier for our customers.',
       facts12Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg22.png',
-        fileType: 'image/png',
-        filePath: '/img/photos/bg22.png',
+        version: 0,
+        attrs: {
+          alt: 'Company achievements',
+          width: 1372,
+          height: 596,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg22.png',
+            fileType: 'image/png',
+            filePath: '/img/photos/bg22.png',
+          },
+        },
       },
       facts12Facts: [
         {
@@ -145,6 +153,7 @@ export const facts12Demos: Demo<typeof facts12Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-18',
     sequence: 5,
     data: {
@@ -153,10 +162,19 @@ export const facts12Demos: Demo<typeof facts12Schema>[] = [
         'Nous apportons des solutions pour faciliter la vie de nos clients.',
       facts12Image: {
         id: '1',
-        version: 1,
-        fileName: 'bg22.png',
-        fileType: 'image/png',
-        filePath: '/img/photos/bg22.png',
+        version: 0,
+        attrs: {
+          alt: "Réalisations de l'entreprise",
+          width: 1372,
+          height: 596,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'bg22.png',
+            fileType: 'image/png',
+            filePath: '/img/photos/bg22.png',
+          },
+        },
       },
       facts12Facts: [
         {

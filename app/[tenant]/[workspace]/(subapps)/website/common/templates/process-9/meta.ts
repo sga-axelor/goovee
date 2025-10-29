@@ -4,7 +4,7 @@ import {
   type Demo,
   type TemplateSchema,
 } from '../../types/templates';
-import {metaFileModel} from '../meta-models';
+import {imageModel} from '../json-models';
 import {solidIconsSelection, buttonColorSelection} from '../meta-selections';
 
 export const process9Schema = {
@@ -30,9 +30,8 @@ export const process9Schema = {
     {
       name: 'image',
       title: 'Image',
-      type: 'many-to-one',
-      target: 'com.axelor.meta.db.MetaFile',
-      widget: 'Image',
+      type: 'json-many-to-one',
+      target: 'Image',
     },
     {
       name: 'btnColor',
@@ -102,8 +101,8 @@ export const process9Schema = {
         },
       ],
     },
+    imageModel,
   ],
-  metaModels: [metaFileModel],
   selections: [buttonColorSelection, solidIconsSelection],
 } as const satisfies TemplateSchema;
 
@@ -112,6 +111,7 @@ export type Process9Data = Data<typeof process9Schema>;
 export const process9Demos: Demo<typeof process9Schema>[] = [
   {
     language: 'en_US',
+    site: 'en',
     page: 'demo-9',
     sequence: 5,
     data: {
@@ -121,10 +121,19 @@ export const process9Demos: Demo<typeof process9Schema>[] = [
         'Find out why our happy customers choose us by following these steps',
       process9Image: {
         id: '1',
-        version: 1,
-        fileName: 'about8.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/about8.jpg',
+        version: 0,
+        attrs: {
+          alt: 'About us',
+          width: 596,
+          height: 565,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'about8.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/about8.jpg',
+          },
+        },
       },
       process9BtnColor: 'white',
       process9Video: {
@@ -174,6 +183,7 @@ export const process9Demos: Demo<typeof process9Schema>[] = [
   },
   {
     language: 'fr_FR',
+    site: 'fr',
     page: 'demo-9',
     sequence: 5,
     data: {
@@ -183,10 +193,19 @@ export const process9Demos: Demo<typeof process9Schema>[] = [
         'Découvrez pourquoi nos clients satisfaits nous choisissent en suivant ces étapes',
       process9Image: {
         id: '1',
-        version: 1,
-        fileName: 'about8.jpg',
-        fileType: 'image/jpeg',
-        filePath: '/img/photos/about8.jpg',
+        version: 0,
+        attrs: {
+          alt: 'À propos de nous',
+          width: 596,
+          height: 565,
+          image: {
+            id: '1',
+            version: 1,
+            fileName: 'about8.jpg',
+            fileType: 'image/jpeg',
+            filePath: '/img/photos/about8.jpg',
+          },
+        },
       },
       process9BtnColor: 'white',
       process9Video: {
