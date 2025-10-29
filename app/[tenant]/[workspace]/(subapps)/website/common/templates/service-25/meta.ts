@@ -97,7 +97,7 @@ export type Service25Data = Data<typeof service25Schema>;
 export const service25Demos: Demo<typeof service25Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-22',
     sequence: 2,
     data: {
@@ -106,8 +106,6 @@ export const service25Demos: Demo<typeof service25Schema>[] = [
         'We took pleasure in offering unique solutions to your particular needs.',
       service25Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Web Design',
             description:
@@ -119,8 +117,6 @@ export const service25Demos: Demo<typeof service25Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Graphic Design',
             description:
@@ -132,8 +128,6 @@ export const service25Demos: Demo<typeof service25Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: '3D Animation',
             description:
@@ -149,7 +143,7 @@ export const service25Demos: Demo<typeof service25Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-22',
     sequence: 2,
     data: {
@@ -158,8 +152,6 @@ export const service25Demos: Demo<typeof service25Schema>[] = [
         'Nous avons pris plaisir à offrir des solutions uniques à vos besoins particuliers.',
       service25Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Conception de sites Web',
             description:
@@ -171,8 +163,6 @@ export const service25Demos: Demo<typeof service25Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Conception graphique',
             description:
@@ -184,8 +174,6 @@ export const service25Demos: Demo<typeof service25Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Animation 3D',
             description:

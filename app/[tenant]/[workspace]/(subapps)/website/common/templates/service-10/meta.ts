@@ -43,12 +43,14 @@ export const service10Schema = {
       name: 'image1',
       title: 'Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image2',
       title: 'Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -125,7 +127,7 @@ export type Service10Data = Data<typeof service10Schema>;
 export const service10Demos: Demo<typeof service10Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-7',
     sequence: 2,
     data: {
@@ -137,15 +139,11 @@ export const service10Demos: Demo<typeof service10Schema>[] = [
       service10LinkTitle: 'More Details',
       service10LinkHref: '#',
       service10Image1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Service',
           width: 278,
           height: 278,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'se1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/se1.jpg',
@@ -153,15 +151,11 @@ export const service10Demos: Demo<typeof service10Schema>[] = [
         },
       },
       service10Image2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Service',
           width: 278,
           height: 278,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'se2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/se2.jpg',
@@ -184,7 +178,7 @@ export const service10Demos: Demo<typeof service10Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-7',
     sequence: 2,
     data: {
@@ -196,15 +190,11 @@ export const service10Demos: Demo<typeof service10Schema>[] = [
       service10LinkTitle: 'Plus de détails',
       service10LinkHref: '#',
       service10Image1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Service',
           width: 278,
           height: 278,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'se1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/se1.jpg',
@@ -212,15 +202,11 @@ export const service10Demos: Demo<typeof service10Schema>[] = [
         },
       },
       service10Image2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Service',
           width: 278,
           height: 278,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'se2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/se2.jpg',

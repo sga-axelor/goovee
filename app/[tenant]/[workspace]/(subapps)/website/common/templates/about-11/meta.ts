@@ -33,18 +33,21 @@ export const about11Schema = {
       name: 'tileImage1',
       title: 'Tile Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage2',
       title: 'Tile Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage3',
       title: 'Tile Image 3',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -102,20 +105,16 @@ export type About11Data = Data<typeof about11Schema>;
 export const about11Demos: Demo<typeof about11Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-10',
     sequence: 5,
     data: {
       about11TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company value proposition',
           width: 240,
           height: 245,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab1.jpg',
@@ -123,15 +122,11 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
         },
       },
       about11TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company value proposition',
           width: 290,
           height: 225,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab2.jpg',
@@ -139,15 +134,11 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
         },
       },
       about11TileImage3: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company value proposition',
           width: 290,
           height: 440,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab3.jpg',
@@ -160,30 +151,20 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
       about11Description:
         'A community refers to a group of people who share common interests, beliefs, values, or goals and interact with one another in a shared location or virtual space. Communities can be found in various forms.',
       about11AboutList1: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '2',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '3',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '4',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
           ],
@@ -191,8 +172,6 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
       },
       about11AboutList2: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Our Vision',
             description:
@@ -200,8 +179,6 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Our Mission',
             description:
@@ -209,8 +186,6 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Our Values',
             description:
@@ -222,20 +197,16 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-10',
     sequence: 5,
     data: {
       about11TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Proposition de valeur de l'entreprise",
           width: 240,
           height: 245,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab1.jpg',
@@ -243,15 +214,11 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
         },
       },
       about11TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Proposition de valeur de l'entreprise",
           width: 290,
           height: 225,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab2.jpg',
@@ -259,15 +226,11 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
         },
       },
       about11TileImage3: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Proposition de valeur de l'entreprise",
           width: 290,
           height: 440,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab3.jpg',
@@ -280,36 +243,26 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
       about11Description:
         'Une communauté fait référence à un groupe de personnes qui partagent des intérêts, des croyances, des valeurs ou des objectifs communs et interagissent les uns avec les autres dans un lieu partagé ou un espace virtuel. Les communautés peuvent être trouvées sous diverses formes.',
       about11AboutList1: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '4',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
@@ -319,8 +272,6 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
       },
       about11AboutList2: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Notre vision',
             description:
@@ -328,8 +279,6 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Notre mission',
             description:
@@ -337,8 +286,6 @@ export const about11Demos: Demo<typeof about11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Nos valeurs',
             description:

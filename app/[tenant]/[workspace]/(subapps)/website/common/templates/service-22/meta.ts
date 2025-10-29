@@ -96,6 +96,7 @@ export const service22Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
       ],
@@ -123,7 +124,7 @@ export type Service22Data = Data<typeof service22Schema>;
 export const service22Demos: Demo<typeof service22Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-19',
     sequence: 3,
     data: {
@@ -132,8 +133,6 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
         'Here are a small number of the reasons why our customers use Lighthouse.',
       service22Tabs: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'CheckShield',
             title: 'Easy Usage',
@@ -144,22 +143,16 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
               'Customers may choose your company because you provide excellent customer service that makes them feel valued and appreciated. This can include fast response times, personalized attention. Customers may choose your company because you provide excellent customer service.',
             list: [
               {
-                id: '1',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
               },
               {
-                id: '2',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
               },
               {
-                id: '3',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
@@ -169,15 +162,11 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
 
             linkHref: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Tab image',
                 width: 567,
                 height: 381,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'se5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/se5.jpg',
@@ -187,8 +176,6 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'Dollar',
             title: 'Fast Transactions',
@@ -199,22 +186,16 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
               'Customers may choose your company because you provide excellent customer service that makes them feel valued and appreciated. This can include fast response times, personalized attention. Customers may choose your company because you provide excellent customer service.',
             list: [
               {
-                id: '1',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
               },
               {
-                id: '2',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
               },
               {
-                id: '3',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
@@ -223,15 +204,11 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
             linkTitle: 'Learn More',
             linkHref: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Tab image',
                 width: 610,
                 height: 410,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'se6.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/se6.jpg',
@@ -241,8 +218,6 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'Update',
             title: 'Secure Payments',
@@ -253,22 +228,16 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
               'Customers may choose your company because you provide excellent customer service that makes them feel valued and appreciated. This can include fast response times, personalized attention. Customers may choose your company because you provide excellent customer service.',
             list: [
               {
-                id: '1',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
               },
               {
-                id: '2',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
               },
               {
-                id: '3',
-                version: 0,
                 attrs: {
                   item: 'Customers may choose company offer high-quality product.',
                 },
@@ -277,15 +246,11 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
             linkTitle: 'Learn More',
             linkHref: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Tab image',
                 width: 610,
                 height: 410,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'se7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/se7.jpg',
@@ -299,7 +264,7 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-19',
     sequence: 3,
     data: {
@@ -308,8 +273,6 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
         'Voici quelques-unes des raisons pour lesquelles nos clients utilisent Lighthouse.',
       service22Tabs: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'CheckShield',
             title: 'Utilisation facile',
@@ -320,22 +283,16 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
               'Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client qui leur donne le sentiment d’être valorisés et appréciés. Cela peut inclure des délais de réponse rapides, une attention personnalisée. Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client.',
             list: [
               {
-                id: '1',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
               },
               {
-                id: '2',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
               },
               {
-                id: '3',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
@@ -344,15 +301,11 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
             linkTitle: 'En savoir plus',
             linkHref: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: "Image de l'onglet",
                 width: 567,
                 height: 381,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'se5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/se5.jpg',
@@ -362,8 +315,6 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'Dollar',
             title: 'Transactions rapides',
@@ -374,22 +325,16 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
               'Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client qui leur donne le sentiment d’être valorisés et appréciés. Cela peut inclure des délais de réponse rapides, une attention personnalisée. Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client.',
             list: [
               {
-                id: '1',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
               },
               {
-                id: '2',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
               },
               {
-                id: '3',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
@@ -398,15 +343,11 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
             linkTitle: 'En savoir plus',
             linkHref: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: "Image de l'onglet",
                 width: 610,
                 height: 410,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'se6.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/se6.jpg',
@@ -416,8 +357,6 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'Update',
             title: 'Paiements sécurisés',
@@ -428,22 +367,16 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
               'Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client qui leur donne le sentiment d’être valorisés et appréciés. Cela peut inclure des délais de réponse rapides, une attention personnalisée. Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client.',
             list: [
               {
-                id: '1',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
               },
               {
-                id: '2',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
               },
               {
-                id: '3',
-                version: 0,
                 attrs: {
                   item: 'Les clients peuvent choisir une entreprise proposant des produits de haute qualité.',
                 },
@@ -452,15 +385,11 @@ export const service22Demos: Demo<typeof service22Schema>[] = [
             linkTitle: 'En savoir plus',
             linkHref: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: "Image de l'onglet",
                 width: 610,
                 height: 410,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'se7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/se7.jpg',

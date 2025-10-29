@@ -37,6 +37,7 @@ export const hero14Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -60,7 +61,7 @@ export type Hero14Data = Data<typeof hero14Schema>;
 export const hero14Demos: Demo<typeof hero14Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-14',
     sequence: 1,
     data: {
@@ -70,15 +71,11 @@ export const hero14Demos: Demo<typeof hero14Schema>[] = [
       hero14LinkTitle: 'Learn More',
       hero14LinkHref: '#',
       hero14Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Rapid solutions',
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about18.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about18.jpg',
@@ -89,7 +86,7 @@ export const hero14Demos: Demo<typeof hero14Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-14',
     sequence: 1,
     data: {
@@ -100,15 +97,11 @@ export const hero14Demos: Demo<typeof hero14Schema>[] = [
       hero14LinkTitle: 'En savoir plus',
       hero14LinkHref: '#',
       hero14Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Solutions rapides',
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about18.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about18.jpg',

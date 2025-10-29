@@ -84,23 +84,19 @@ export type Process13Data = Data<typeof process13Schema>;
 export const process13Demos: Demo<typeof process13Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-20',
     sequence: 3,
     data: {
       process13Caption: 'Our Working Process',
       process13Heading: 'Here are the 3 working steps on success.',
       process13Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       process13Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'Rocket',
             title: '1. Personalized service',
@@ -109,8 +105,6 @@ export const process13Demos: Demo<typeof process13Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'Dollar',
             title: '2. Competitive pricing',
@@ -119,8 +113,6 @@ export const process13Demos: Demo<typeof process13Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'TruckMedical',
             title: '3. Timely delivery',
@@ -133,23 +125,19 @@ export const process13Demos: Demo<typeof process13Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-20',
     sequence: 3,
     data: {
       process13Caption: 'Notre processus de travail',
       process13Heading: 'Voici les 3 étapes de travail vers le succès.',
       process13Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       process13Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'Rocket',
             title: '1. Service personnalisé',
@@ -158,8 +146,6 @@ export const process13Demos: Demo<typeof process13Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'Dollar',
             title: '2. Prix compétitifs',
@@ -168,8 +154,6 @@ export const process13Demos: Demo<typeof process13Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'TruckMedical',
             title: '3. Livraison à temps',

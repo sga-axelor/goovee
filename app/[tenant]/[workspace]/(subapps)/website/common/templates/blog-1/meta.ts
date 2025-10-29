@@ -68,6 +68,7 @@ export const blog1Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
       ],
@@ -81,7 +82,7 @@ export type Blog1Data = Data<typeof blog1Schema>;
 export const blog1Demos: Demo<typeof blog1Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-3',
     sequence: 6,
     data: {
@@ -90,22 +91,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
         'Explore our impressive portfolio of projects, <br /> featuring innovative concepts and exceptional design.',
       blog1BlogList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Excellent customer service',
             category: 'Coding',
             date: '14 Apr 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Blog post image',
                 width: 775,
                 height: 485,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b4.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b4.jpg',
@@ -115,22 +110,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Excellent customer service',
             category: 'Workspace',
             date: '29 Mar 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Blog post image',
                 width: 380,
                 height: 240,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b5.jpg',
@@ -140,22 +129,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Excellent customer service',
             category: 'Meeting',
             date: '26 Feb 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Blog post image',
                 width: 380,
                 height: 240,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b6.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b6.jpg',
@@ -165,22 +148,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Excellent customer service',
             category: 'Business Tips',
             date: '7 Jan 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Blog post image',
                 width: 480,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b7.jpg',
@@ -194,7 +171,7 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-3',
     sequence: 6,
     data: {
@@ -203,22 +180,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
         'Découvrez notre impressionnant portefeuille de projets, <br /> présentant des concepts innovants et un design exceptionnel.',
       blog1BlogList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Excellent service client',
             category: 'Codage',
             date: '14 avr. 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: "Image de l'article de blog",
                 width: 775,
                 height: 485,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b4.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b4.jpg',
@@ -228,22 +199,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Excellent service client',
             category: 'Espace de travail',
             date: '29 mars 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: "Image de l'article de blog",
                 width: 380,
                 height: 240,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b5.jpg',
@@ -253,22 +218,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Excellent service client',
             category: 'Réunion',
             date: '26 févr. 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: "Image de l'article de blog",
                 width: 380,
                 height: 240,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b6.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b6.jpg',
@@ -278,22 +237,16 @@ export const blog1Demos: Demo<typeof blog1Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Excellent service client',
             category: 'Conseils aux entreprises',
             date: '7 janv. 2022',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: "Image de l'article de blog",
                 width: 480,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b7.jpg',

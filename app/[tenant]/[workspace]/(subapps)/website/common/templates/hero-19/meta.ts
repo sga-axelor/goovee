@@ -42,6 +42,7 @@ export const hero19Schema = {
       name: 'backgroundImage',
       title: 'Background Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -66,7 +67,7 @@ export type Hero19Data = Data<typeof hero19Schema>;
 export const hero19Demos: Demo<typeof hero19Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-19',
     sequence: 1,
     data: {
@@ -77,15 +78,11 @@ export const hero19Demos: Demo<typeof hero19Schema>[] = [
       hero19ButtonLabel: 'Read More',
       hero19ButtonLink: '#',
       hero19BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Quick solutions background',
           width: 1440,
           height: 674,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg16.png',
             fileType: 'image/png',
             filePath: '/img/photos/bg16.png',
@@ -96,7 +93,7 @@ export const hero19Demos: Demo<typeof hero19Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-19',
     sequence: 1,
     data: {
@@ -107,15 +104,11 @@ export const hero19Demos: Demo<typeof hero19Schema>[] = [
       hero19ButtonLabel: 'Lire la suite',
       hero19ButtonLink: '#',
       hero19BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Arrière-plan des solutions rapides',
           width: 1440,
           height: 674,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg16.png',
             fileType: 'image/png',
             filePath: '/img/photos/bg16.png',

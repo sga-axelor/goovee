@@ -85,6 +85,7 @@ export const testimonial4Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
       ],
@@ -99,7 +100,7 @@ export type Testimonial4Data = Data<typeof testimonial4Schema>;
 export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-6',
     sequence: 5,
     data: {
@@ -110,20 +111,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
       testimonial4Navigation: false,
       testimonial4Testimonials: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Ethan Johnson',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Ethan Johnson',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te7.jpg',
@@ -137,20 +132,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Gabriel Rodriguez',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Gabriel Rodriguez',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te8.jpg',
@@ -164,20 +153,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Samuel Patel',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Samuel Patel',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te9.jpg',
@@ -191,20 +174,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             name: 'Jackie Sanders',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Jackie Sanders',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te10.jpg',
@@ -222,7 +199,7 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-6',
     sequence: 5,
     data: {
@@ -233,20 +210,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
       testimonial4Navigation: false,
       testimonial4Testimonials: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Ethan Johnson',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Ethan Johnson',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te7.jpg',
@@ -260,20 +231,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Gabriel Rodriguez',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Gabriel Rodriguez',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te8.jpg',
@@ -287,20 +252,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Samuel Patel',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Samuel Patel',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te9.jpg',
@@ -314,20 +273,14 @@ export const testimonial4Demos: Demo<typeof testimonial4Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             name: 'Jackie Sanders',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Jackie Sanders',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'te10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/te10.jpg',

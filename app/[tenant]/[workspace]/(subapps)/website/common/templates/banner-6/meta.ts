@@ -26,6 +26,7 @@ export const banner6Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -50,27 +51,21 @@ export type Banner6Data = Data<typeof banner6Schema>;
 export const banner6Demos: Demo<typeof banner6Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'others',
     sequence: 2,
     data: {
       banner6Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       banner6Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Video background',
           width: 1440,
           height: 523,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg1.jpg',
@@ -81,27 +76,21 @@ export const banner6Demos: Demo<typeof banner6Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'others',
     sequence: 2,
     data: {
       banner6Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       banner6Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Arrière-plan vidéo',
           width: 1440,
           height: 523,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg1.jpg',

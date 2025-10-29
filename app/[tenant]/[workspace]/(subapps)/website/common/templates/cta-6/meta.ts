@@ -32,6 +32,7 @@ export const cta6Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -56,7 +57,7 @@ export type Cta6Data = Data<typeof cta6Schema>;
 export const cta6Demos: Demo<typeof cta6Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-17',
     sequence: 8,
     data: {
@@ -64,15 +65,11 @@ export const cta6Demos: Demo<typeof cta6Schema>[] = [
       cta6LinkTitle: 'Get Started',
       cta6LinkHref: '#',
       cta6Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'World map background',
           width: 800,
           height: 484,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'map.png',
             fileType: 'image/png',
             filePath: '/img/map.png',
@@ -83,7 +80,7 @@ export const cta6Demos: Demo<typeof cta6Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-17',
     sequence: 8,
     data: {
@@ -92,15 +89,11 @@ export const cta6Demos: Demo<typeof cta6Schema>[] = [
       cta6LinkTitle: 'Commencer',
       cta6LinkHref: '#',
       cta6Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Fond de carte du monde',
           width: 800,
           height: 484,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'map.png',
             fileType: 'image/png',
             filePath: '/img/map.png',

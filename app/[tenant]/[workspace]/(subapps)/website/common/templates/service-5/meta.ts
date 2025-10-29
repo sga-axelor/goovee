@@ -43,18 +43,21 @@ export const service5Schema = {
       name: 'image1',
       title: 'Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image2',
       title: 'Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image3',
       title: 'Image 3',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -119,7 +122,7 @@ export type Service5Data = Data<typeof service5Schema>;
 export const service5Demos: Demo<typeof service5Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-4',
     sequence: 2,
     data: {
@@ -131,15 +134,11 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
       service5ExperienceSuffix: '+',
       service5ExperienceDescription: 'Year Experience',
       service5Image1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company value proposition',
           width: 240,
           height: 245,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab1.jpg',
@@ -147,15 +146,11 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
         },
       },
       service5Image2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company value proposition',
           width: 290,
           height: 225,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab2.jpg',
@@ -163,15 +158,11 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
         },
       },
       service5Image3: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company value proposition',
           width: 290,
           height: 440,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab3.jpg',
@@ -180,8 +171,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
       },
       service5Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'DevicesThree',
             title: 'IoT Development',
@@ -190,8 +179,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'AI',
             title: 'Artificial Intelligence',
@@ -200,8 +187,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'Setting',
             title: 'Software Maintenance',
@@ -210,8 +195,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             icon: 'Shield',
             title: 'Cybersecurity',
@@ -220,8 +203,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             icon: 'Rocket',
             title: 'IT Consulting',
@@ -230,8 +211,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '6',
-          version: 0,
           attrs: {
             icon: 'Cart',
             title: 'E-commerce Solutions',
@@ -241,39 +220,29 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
         },
       ],
       service5Features: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'features',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title:
                   'Customers may choose company offer high-quality product.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title:
                   'Customers may choose company offer high-quality product.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {
                 title:
                   'Customers may choose company offer high-quality product.',
               },
             },
             {
-              id: '4',
-              version: 0,
               attrs: {
                 title:
                   'Customers may choose company offer high-quality product.',
@@ -286,7 +255,7 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-4',
     sequence: 2,
     data: {
@@ -298,15 +267,11 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
       service5ExperienceSuffix: '+',
       service5ExperienceDescription: 'Année d’expérience',
       service5Image1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Proposition de valeur de l'entreprise",
           width: 240,
           height: 245,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab1.jpg',
@@ -314,15 +279,11 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
         },
       },
       service5Image2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Proposition de valeur de l'entreprise",
           width: 290,
           height: 225,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab2.jpg',
@@ -330,15 +291,11 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
         },
       },
       service5Image3: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Proposition de valeur de l'entreprise",
           width: 290,
           height: 440,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'ab3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/ab3.jpg',
@@ -347,8 +304,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
       },
       service5Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'DevicesThree',
             title: 'Développement IoT',
@@ -357,8 +312,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'AI',
             title: 'Intelligence artificielle',
@@ -367,8 +320,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'Setting',
             title: 'Maintenance logicielle',
@@ -377,8 +328,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             icon: 'Shield',
             title: 'Cybersécurité',
@@ -387,8 +336,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             icon: 'Rocket',
             title: 'Conseil en informatique',
@@ -397,8 +344,6 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
           },
         },
         {
-          id: '6',
-          version: 0,
           attrs: {
             icon: 'Cart',
             title: 'Solutions de commerce électronique',
@@ -408,39 +353,29 @@ export const service5Demos: Demo<typeof service5Schema>[] = [
         },
       ],
       service5Features: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'features',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title:
                   'Les clients peuvent choisir une entreprise offrant des produits de haute qualité.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title:
                   'Les clients peuvent choisir une entreprise offrant des produits de haute qualité.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {
                 title:
                   'Les clients peuvent choisir une entreprise offrant des produits de haute qualité.',
               },
             },
             {
-              id: '4',
-              version: 0,
               attrs: {
                 title:
                   'Les clients peuvent choisir une entreprise offrant des produits de haute qualité.',

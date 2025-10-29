@@ -47,6 +47,7 @@ export const hero7Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -70,7 +71,7 @@ export type Hero7Data = Data<typeof hero7Schema>;
 export const hero7Demos: Demo<typeof hero7Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-7',
     sequence: 1,
     data: {
@@ -82,15 +83,11 @@ export const hero7Demos: Demo<typeof hero7Schema>[] = [
       hero7ButtonLink1: '#',
       hero7ButtonLink2: '#',
       hero7Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Benefits of choosing us',
           width: 793,
           height: 509,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i12.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i12.png',
@@ -101,7 +98,7 @@ export const hero7Demos: Demo<typeof hero7Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-7',
     sequence: 1,
     data: {
@@ -113,15 +110,11 @@ export const hero7Demos: Demo<typeof hero7Schema>[] = [
       hero7ButtonLink1: '#',
       hero7ButtonLink2: '#',
       hero7Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Benefits of choosing us',
           width: 793,
           height: 509,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i12.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i12.png',

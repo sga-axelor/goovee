@@ -23,6 +23,7 @@ export const service13Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -89,21 +90,17 @@ export type Service13Data = Data<typeof service13Schema>;
 export const service13Demos: Demo<typeof service13Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-10',
     sequence: 2,
     data: {
       service13Title: 'Our service is customized to the unique needs of you.',
       service13Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Our service',
           width: 1200,
           height: 582,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about15.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about15.jpg',
@@ -112,8 +109,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
       },
       service13Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'IoT Development',
             icon: 'circuit',
@@ -124,8 +119,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Artificial Intelligence',
             icon: 'processor',
@@ -136,8 +129,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Software Maintenance',
             icon: 'setting',
@@ -148,8 +139,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Cybersecurity',
             icon: 'lock-access',
@@ -164,22 +153,18 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-10',
     sequence: 2,
     data: {
       service13Title:
         'Notre service est personnalisé pour répondre à vos besoins uniques.',
       service13Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Notre service',
           width: 1200,
           height: 582,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about15.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about15.jpg',
@@ -188,8 +173,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
       },
       service13Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Développement IoT',
             icon: 'circuit',
@@ -200,8 +183,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Intelligence artificielle',
             icon: 'processor',
@@ -212,8 +193,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Maintenance logicielle',
             icon: 'setting',
@@ -224,8 +203,6 @@ export const service13Demos: Demo<typeof service13Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Cybersécurité',
             icon: 'lock-access',

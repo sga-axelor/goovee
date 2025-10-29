@@ -28,6 +28,7 @@ export const service11Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -84,7 +85,7 @@ export type Service11Data = Data<typeof service11Schema>;
 export const service11Demos: Demo<typeof service11Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-8',
     sequence: 4,
     data: {
@@ -92,15 +93,11 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
       service11Title:
         'The comprehensive service we provide is specifically tailored to your company’s requirements.',
       service11Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Our services',
           width: 585,
           height: 425,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about11.jpg',
@@ -109,8 +106,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
       },
       service11Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'DevicesThree',
             title: 'IoT Development',
@@ -119,8 +114,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'AI',
             title: 'Artificial Intelligence',
@@ -129,8 +122,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'Setting',
             title: 'Software Maintenance',
@@ -139,8 +130,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             icon: 'Cart',
             title: 'E-commerce Solutions',
@@ -153,7 +142,7 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-8',
     sequence: 4,
     data: {
@@ -161,15 +150,11 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
       service11Title:
         'Le service complet que nous fournissons est spécialement adapté aux besoins de votre entreprise.',
       service11Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Nos services',
           width: 585,
           height: 425,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about11.jpg',
@@ -178,8 +163,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
       },
       service11Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'DevicesThree',
             title: 'Développement IoT',
@@ -188,8 +171,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'AI',
             title: 'Intelligence artificielle',
@@ -198,8 +179,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'Setting',
             title: 'Maintenance logicielle',
@@ -208,8 +187,6 @@ export const service11Demos: Demo<typeof service11Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             icon: 'Cart',
             title: 'Solutions de commerce électronique',

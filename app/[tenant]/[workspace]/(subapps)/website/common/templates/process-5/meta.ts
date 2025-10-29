@@ -33,6 +33,7 @@ export const process5Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -89,7 +90,7 @@ export type Process5Data = Data<typeof process5Schema>;
 export const process5Demos: Demo<typeof process5Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-6',
     sequence: 3,
     data: {
@@ -99,15 +100,11 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
       process5Description:
         'Individual health-related objectives may vary depending on factors such as age, gender, medical history, and personal preferences. Additionally, it’s important to set realistic and achievable goals that are specific, measurable, and time-bound.',
       process5Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'how it work',
           width: 747,
           height: 786,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'device.png',
             fileType: 'image/png',
             filePath: '/img/photos/device.png',
@@ -116,8 +113,6 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
       },
       process5Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'Download',
             title: '1. Download',
@@ -125,8 +120,6 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'ClipboardList',
             title: '2. Set Profile',
@@ -134,8 +127,6 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'HourGlassStart',
             title: '3. Start',
@@ -147,7 +138,7 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-6',
     sequence: 3,
     data: {
@@ -157,15 +148,11 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
       process5Description:
         'Les objectifs individuels liés à la santé peuvent varier en fonction de facteurs tels que l’âge, le sexe, les antécédents médicaux et les préférences personnelles. De plus, il est important de se fixer des objectifs réalistes et réalisables, spécifiques, mesurables et limités dans le temps.',
       process5Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'comment ça marche',
           width: 747,
           height: 786,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'device.png',
             fileType: 'image/png',
             filePath: '/img/photos/device.png',
@@ -174,8 +161,6 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
       },
       process5Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             icon: 'Download',
             title: '1. Télécharger',
@@ -183,8 +168,6 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             icon: 'ClipboardList',
             title: '2. Définir le profil',
@@ -192,8 +175,6 @@ export const process5Demos: Demo<typeof process5Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             icon: 'HourGlassStart',
             title: '3. Démarrer',

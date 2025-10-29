@@ -115,7 +115,7 @@ export type Contact10Data = Data<typeof contact10Schema>;
 export const contact10Demos: Demo<typeof contact10Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-16',
     sequence: 4,
     data: {
@@ -137,8 +137,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
       contact10Placeholder3: 'Your message',
       contact10SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -146,8 +144,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -155,8 +151,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -164,8 +158,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -173,8 +165,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',
@@ -186,7 +176,7 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-16',
     sequence: 4,
     data: {
@@ -209,8 +199,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
       contact10Placeholder3: 'Votre message',
       contact10SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -218,8 +206,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -227,8 +213,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -236,8 +220,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -245,8 +227,6 @@ export const contact10Demos: Demo<typeof contact10Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',

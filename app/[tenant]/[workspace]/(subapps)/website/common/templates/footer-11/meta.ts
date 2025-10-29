@@ -18,6 +18,7 @@ export const footer11Schema = {
       name: 'logo',
       title: 'Logo',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -114,20 +115,16 @@ export type Footer11Data = Data<typeof footer11Schema>;
 export const footer11Demos: Demo<typeof footer11Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-19',
     sequence: 9,
     data: {
       footer11Logo: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Company logo',
           width: 146,
           height: 38,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'logo-dark.png',
             fileType: 'image/png',
             filePath: '/img/logo-dark.png',
@@ -145,16 +142,14 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
       footer11NewsletterDescription:
         'Subscribe to our newsletter to get our news & deals delivered to you.',
       footer11Links: [
-        {id: '1', version: 0, attrs: {title: 'About Us', url: '#'}},
-        {id: '2', version: 0, attrs: {title: 'Our Story', url: '#'}},
-        {id: '3', version: 0, attrs: {title: 'Projects', url: '#'}},
-        {id: '4', version: 0, attrs: {title: 'Terms of Use', url: '#'}},
-        {id: '5', version: 0, attrs: {title: 'Privacy Policy', url: '#'}},
+        {attrs: {title: 'About Us', url: '#'}},
+        {attrs: {title: 'Our Story', url: '#'}},
+        {attrs: {title: 'Projects', url: '#'}},
+        {attrs: {title: 'Terms of Use', url: '#'}},
+        {attrs: {title: 'Privacy Policy', url: '#'}},
       ],
       footer11SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -162,8 +157,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -171,8 +164,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -180,8 +171,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -189,8 +178,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',
@@ -202,20 +189,16 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-19',
     sequence: 9,
     data: {
       footer11Logo: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: "Logo de l'entreprise",
           width: 146,
           height: 38,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'logo-dark.png',
             fileType: 'image/png',
             filePath: '/img/logo-dark.png',
@@ -233,24 +216,18 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
       footer11NewsletterDescription:
         'Abonnez-vous à notre newsletter pour recevoir nos actualités et nos offres.',
       footer11Links: [
-        {id: '1', version: 0, attrs: {title: 'À propos de nous', url: '#'}},
-        {id: '2', version: 0, attrs: {title: 'Notre histoire', url: '#'}},
-        {id: '3', version: 0, attrs: {title: 'Projets', url: '#'}},
+        {attrs: {title: 'À propos de nous', url: '#'}},
+        {attrs: {title: 'Notre histoire', url: '#'}},
+        {attrs: {title: 'Projets', url: '#'}},
         {
-          id: '4',
-          version: 0,
           attrs: {title: "Conditions d'utilisation", url: '#'},
         },
         {
-          id: '5',
-          version: 0,
           attrs: {title: 'Politique de confidentialité', url: '#'},
         },
       ],
       footer11SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -258,8 +235,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -267,8 +242,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -276,8 +249,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -285,8 +256,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',
@@ -298,20 +267,16 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
   },
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-18',
     sequence: 11,
     data: {
       footer11Logo: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Company logo',
           width: 146,
           height: 38,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'logo-dark.png',
             fileType: 'image/png',
             filePath: '/img/logo-dark.png',
@@ -329,16 +294,14 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
       footer11NewsletterDescription:
         'Subscribe to our newsletter to get our news & deals delivered to you.',
       footer11Links: [
-        {id: '1', version: 0, attrs: {title: 'About Us', url: '#'}},
-        {id: '2', version: 0, attrs: {title: 'Our Story', url: '#'}},
-        {id: '3', version: 0, attrs: {title: 'Projects', url: '#'}},
-        {id: '4', version: 0, attrs: {title: 'Terms of Use', url: '#'}},
-        {id: '5', version: 0, attrs: {title: 'Privacy Policy', url: '#'}},
+        {attrs: {title: 'About Us', url: '#'}},
+        {attrs: {title: 'Our Story', url: '#'}},
+        {attrs: {title: 'Projects', url: '#'}},
+        {attrs: {title: 'Terms of Use', url: '#'}},
+        {attrs: {title: 'Privacy Policy', url: '#'}},
       ],
       footer11SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -346,8 +309,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -355,8 +316,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -364,8 +323,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -373,8 +330,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',
@@ -386,20 +341,16 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-18',
     sequence: 11,
     data: {
       footer11Logo: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: "Logo de l'entreprise",
           width: 146,
           height: 38,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'logo-dark.png',
             fileType: 'image/png',
             filePath: '/img/logo-dark.png',
@@ -417,24 +368,18 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
       footer11NewsletterDescription:
         'Abonnez-vous à notre newsletter pour recevoir nos actualités et nos offres.',
       footer11Links: [
-        {id: '1', version: 0, attrs: {title: 'À propos de nous', url: '#'}},
-        {id: '2', version: 0, attrs: {title: 'Notre histoire', url: '#'}},
-        {id: '3', version: 0, attrs: {title: 'Projets', url: '#'}},
+        {attrs: {title: 'À propos de nous', url: '#'}},
+        {attrs: {title: 'Notre histoire', url: '#'}},
+        {attrs: {title: 'Projets', url: '#'}},
         {
-          id: '4',
-          version: 0,
           attrs: {title: "Conditions d'utilisation", url: '#'},
         },
         {
-          id: '5',
-          version: 0,
           attrs: {title: 'Politique de confidentialité', url: '#'},
         },
       ],
       footer11SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -442,8 +387,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -451,8 +394,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -460,8 +401,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -469,8 +408,6 @@ export const footer11Demos: Demo<typeof footer11Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',

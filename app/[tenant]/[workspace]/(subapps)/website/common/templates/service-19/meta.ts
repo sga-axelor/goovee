@@ -102,7 +102,7 @@ export type Service19Data = Data<typeof service19Schema>;
 export const service19Demos: Demo<typeof service19Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-17',
     sequence: 2,
     data: {
@@ -111,8 +111,6 @@ export const service19Demos: Demo<typeof service19Schema>[] = [
         'We have designed our services with your specific needs in mind.',
       service19Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'IoT Development',
             linkUrl: '#',
@@ -125,8 +123,6 @@ export const service19Demos: Demo<typeof service19Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Artificial Intelligence',
             linkUrl: '#',
@@ -139,8 +135,6 @@ export const service19Demos: Demo<typeof service19Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Software Maintenance',
             linkUrl: '#',
@@ -157,7 +151,7 @@ export const service19Demos: Demo<typeof service19Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-17',
     sequence: 2,
     data: {
@@ -166,8 +160,6 @@ export const service19Demos: Demo<typeof service19Schema>[] = [
         'Nous avons conçu nos services en pensant à vos besoins spécifiques.',
       service19Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Développement IoT',
             linkUrl: '#',
@@ -180,8 +172,6 @@ export const service19Demos: Demo<typeof service19Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Intelligence artificielle',
             linkUrl: '#',
@@ -194,8 +184,6 @@ export const service19Demos: Demo<typeof service19Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Maintenance logicielle',
             linkUrl: '#',

@@ -32,12 +32,14 @@ export const about6Schema = {
       name: 'image1',
       title: 'Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image2',
       title: 'Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -68,7 +70,7 @@ export type About6Data = Data<typeof about6Schema>;
 export const about6Demos: Demo<typeof about6Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-15',
     sequence: 2,
     data: {
@@ -78,15 +80,11 @@ export const about6Demos: Demo<typeof about6Schema>[] = [
       about6Paragraph:
         'Customers may choose your company because you provide excellent customer service that makes them feel valued and appreciated. This can include fast response times, personalized attention. Customers may choose your company because you provide excellent customer service.',
       about6Image1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Creative advertising firm',
           width: 396,
           height: 399,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about2.jpg',
@@ -94,15 +92,11 @@ export const about6Demos: Demo<typeof about6Schema>[] = [
         },
       },
       about6Image2: {
-        id: '2',
-        version: 0,
         attrs: {
           alt: 'Creative advertising firm',
           width: 311,
           height: 311,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about3.jpg',
@@ -110,36 +104,26 @@ export const about6Demos: Demo<typeof about6Schema>[] = [
         },
       },
       about6List: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title: 'Aenean eu leo quam ornare curabitur blandit tempus.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title: 'Nullam quis risus eget urna mollis ornare donec elit.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {
                 title: 'Etiam porta sem malesuada magna mollis euismod.',
               },
             },
             {
-              id: '4',
-              version: 0,
               attrs: {
                 title: 'Fermentum massa vivamus faucibus amet euismod.',
               },
@@ -151,7 +135,7 @@ export const about6Demos: Demo<typeof about6Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-15',
     sequence: 2,
     data: {
@@ -161,15 +145,11 @@ export const about6Demos: Demo<typeof about6Schema>[] = [
       about6Paragraph:
         'Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client qui leur permet de se sentir valorisés et appréciés. Cela peut inclure des temps de réponse rapides, une attention personnalisée. Les clients peuvent choisir votre entreprise parce que vous offrez un excellent service client.',
       about6Image1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Agence de publicité créative',
           width: 396,
           height: 399,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about2.jpg',
@@ -177,15 +157,11 @@ export const about6Demos: Demo<typeof about6Schema>[] = [
         },
       },
       about6Image2: {
-        id: '2',
-        version: 0,
         attrs: {
           alt: 'Agence de publicité créative',
           width: 311,
           height: 311,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about3.jpg',
@@ -193,36 +169,26 @@ export const about6Demos: Demo<typeof about6Schema>[] = [
         },
       },
       about6List: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title: 'Aenean eu leo quam ornare curabitur blandit tempus.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title: 'Nullam quis risus eget urna mollis ornare donec elit.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {
                 title: 'Etiam porta sem malesuada magna mollis euismod.',
               },
             },
             {
-              id: '4',
-              version: 0,
               attrs: {
                 title: 'Fermentum massa vivamus faucibus amet euismod.',
               },

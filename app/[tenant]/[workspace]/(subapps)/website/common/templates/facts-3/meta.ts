@@ -17,6 +17,7 @@ export const facts3Schema = {
       name: 'backgroundImage',
       title: 'Background Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -66,20 +67,16 @@ export type Facts3Data = Data<typeof facts3Schema>;
 export const facts3Demos: Demo<typeof facts3Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'others',
     sequence: 6,
     data: {
       facts3BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company achievements background',
           width: 1440,
           height: 512,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg3.jpg',
@@ -88,32 +85,24 @@ export const facts3Demos: Demo<typeof facts3Schema>[] = [
       },
       facts3Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Completed Projects',
             amount: 7518,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Satisfied Customers',
             amount: 3472,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Expert Employees',
             amount: 2184,
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Awards Won',
             amount: 4523,
@@ -124,20 +113,16 @@ export const facts3Demos: Demo<typeof facts3Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'others',
     sequence: 6,
     data: {
       facts3BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Arrière-plan des réalisations de l'entreprise",
           width: 1440,
           height: 512,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg3.jpg',
@@ -146,32 +131,24 @@ export const facts3Demos: Demo<typeof facts3Schema>[] = [
       },
       facts3Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Projets terminés',
             amount: 7518,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Clients satisfaits',
             amount: 3472,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Employés experts',
             amount: 2184,
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Récompenses gagnées',
             amount: 4523,

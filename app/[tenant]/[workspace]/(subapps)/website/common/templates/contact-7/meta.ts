@@ -22,6 +22,7 @@ export const contact7Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -52,20 +53,16 @@ export type Contact7Data = Data<typeof contact7Schema>;
 export const contact7Demos: Demo<typeof contact7Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-15',
     sequence: 7,
     data: {
       contact7Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Great things together',
           width: 465,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about4.jpg',
@@ -75,8 +72,6 @@ export const contact7Demos: Demo<typeof contact7Schema>[] = [
       contact7Title:
         'Are you ready to start creating something great together?',
       contact7ContactInfo: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'contact-7-contact-info',
           addressTitle: 'Address',
@@ -91,20 +86,16 @@ export const contact7Demos: Demo<typeof contact7Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-15',
     sequence: 7,
     data: {
       contact7Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'De grandes choses ensemble',
           width: 465,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about4.jpg',
@@ -114,8 +105,6 @@ export const contact7Demos: Demo<typeof contact7Schema>[] = [
       contact7Title:
         'Êtes-vous prêt à commencer à créer quelque chose de grand ensemble ?',
       contact7ContactInfo: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'contact-7-contact-info',
           addressTitle: 'Adresse',

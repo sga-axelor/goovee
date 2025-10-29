@@ -36,6 +36,7 @@ export const hero13Schema = {
       name: 'backgroundImage',
       title: 'Background Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -61,29 +62,23 @@ export type Hero13Data = Data<typeof hero13Schema>;
 export const hero13Demos: Demo<typeof hero13Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-13',
     sequence: 1,
     data: {
       hero13Title: 'We bring rapid solutions for your business',
       hero13Caption: 'HELLO 👋',
       hero13Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       hero13BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Rapid solutions background',
           width: 1440,
           height: 680,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg2.jpg',
@@ -94,29 +89,23 @@ export const hero13Demos: Demo<typeof hero13Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-13',
     sequence: 1,
     data: {
       hero13Title: 'Nous apportons des solutions rapides pour votre entreprise',
       hero13Caption: 'HELLO 👋',
       hero13Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       hero13BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Arrière-plan des solutions rapides',
           width: 1440,
           height: 680,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg2.jpg',

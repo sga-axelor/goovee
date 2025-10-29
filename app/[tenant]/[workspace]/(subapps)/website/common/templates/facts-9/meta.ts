@@ -17,12 +17,14 @@ export const facts9Schema = {
       name: 'backgroundImage',
       title: 'Background Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -84,20 +86,16 @@ export type Facts9Data = Data<typeof facts9Schema>;
 export const facts9Demos: Demo<typeof facts9Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-13',
     sequence: 2,
     data: {
       facts9BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company achievements background',
           width: 1440,
           height: 680,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg2.jpg',
@@ -105,15 +103,11 @@ export const facts9Demos: Demo<typeof facts9Schema>[] = [
         },
       },
       facts9Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company achievements',
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about5.jpg',
@@ -122,32 +116,24 @@ export const facts9Demos: Demo<typeof facts9Schema>[] = [
       },
       facts9Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Completed Projects',
             amount: 7518,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Satisfied Customers',
             amount: 3472,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Expert Employees',
             amount: 2184,
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Awards Won',
             amount: 4523,
@@ -158,20 +144,16 @@ export const facts9Demos: Demo<typeof facts9Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-13',
     sequence: 2,
     data: {
       facts9BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Arrière-plan des réalisations de l'entreprise",
           width: 1440,
           height: 680,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg2.jpg',
@@ -179,15 +161,11 @@ export const facts9Demos: Demo<typeof facts9Schema>[] = [
         },
       },
       facts9Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Réalisations de l'entreprise",
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about5.jpg',
@@ -196,32 +174,24 @@ export const facts9Demos: Demo<typeof facts9Schema>[] = [
       },
       facts9Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Projets terminés',
             amount: 7518,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Clients satisfaits',
             amount: 3472,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Employés experts',
             amount: 2184,
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Récompenses gagnées',
             amount: 4523,

@@ -137,24 +137,28 @@ export const portfolio9Schema = {
       name: 'image1',
       title: 'Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image2',
       title: 'Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image3',
       title: 'Image 3',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'image4',
       title: 'Image 4',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -178,7 +182,7 @@ export type Portfolio9Data = Data<typeof portfolio9Schema>;
 export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-16',
     sequence: 3,
     data: {
@@ -212,15 +216,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
       portfolio9Section4LinkTitle: 'See Project',
       portfolio9Section4LinkHref: '#',
       portfolio9Image1: {
-        id: 'img-1',
-        version: 0,
         attrs: {
           alt: 'Sandbox Real Estate',
           width: 1036,
           height: 578,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f1.png',
             fileType: 'image/png',
             filePath: '/img/photos/f1.png',
@@ -228,15 +228,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
         },
       },
       portfolio9Image2: {
-        id: 'img-2',
-        version: 0,
         attrs: {
           alt: 'Budget App',
           width: 524,
           height: 528,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f2.png',
             fileType: 'image/png',
             filePath: '/img/photos/f2.png',
@@ -244,15 +240,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
         },
       },
       portfolio9Image3: {
-        id: 'img-3',
-        version: 0,
         attrs: {
           alt: 'Missio Theme',
           width: 585,
           height: 350,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f3.png',
             fileType: 'image/png',
             filePath: '/img/photos/f3.png',
@@ -260,15 +252,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
         },
       },
       portfolio9Image4: {
-        id: 'img-4',
-        version: 0,
         attrs: {
           alt: 'Storage App',
           width: 585,
           height: 350,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f4.png',
             fileType: 'image/png',
             filePath: '/img/photos/f4.png',
@@ -279,7 +267,7 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-16',
     sequence: 3,
     data: {
@@ -313,15 +301,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
       portfolio9Section4LinkTitle: 'Voir le projet',
       portfolio9Section4LinkHref: '#',
       portfolio9Image1: {
-        id: 'img-1',
-        version: 0,
         attrs: {
           alt: 'Sandbox Real Estate',
           width: 1036,
           height: 578,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f1.png',
             fileType: 'image/png',
             filePath: '/img/photos/f1.png',
@@ -329,15 +313,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
         },
       },
       portfolio9Image2: {
-        id: 'img-2',
-        version: 0,
         attrs: {
           alt: 'Application de budget',
           width: 524,
           height: 528,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f2.png',
             fileType: 'image/png',
             filePath: '/img/photos/f2.png',
@@ -345,15 +325,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
         },
       },
       portfolio9Image3: {
-        id: 'img-3',
-        version: 0,
         attrs: {
           alt: 'Thème Missio',
           width: 585,
           height: 350,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f3.png',
             fileType: 'image/png',
             filePath: '/img/photos/f3.png',
@@ -361,15 +337,11 @@ export const portfolio9Demos: Demo<typeof portfolio9Schema>[] = [
         },
       },
       portfolio9Image4: {
-        id: 'img-4',
-        version: 0,
         attrs: {
           alt: 'Application de stockage',
           width: 585,
           height: 350,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'f4.png',
             fileType: 'image/png',
             filePath: '/img/photos/f4.png',

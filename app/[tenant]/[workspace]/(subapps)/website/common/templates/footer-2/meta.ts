@@ -42,6 +42,7 @@ export const footer2Schema = {
       name: 'contactImage',
       title: 'Contact Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -121,7 +122,7 @@ export type Footer2Data = Data<typeof footer2Schema>;
 export const footer2Demos: Demo<typeof footer2Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-4',
     sequence: 11,
     data: {
@@ -133,15 +134,11 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
       footer2ContactLinkTitle: 'Join Us',
       footer2ContactLinkHref: '#',
       footer2ContactImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Let's talk",
           width: 598,
           height: 432,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'tm1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/tm1.jpg',
@@ -160,8 +157,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
       footer2Copyright: '© 2022 Lighthouse. All rights reserved.',
       footer2SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -169,8 +164,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -178,8 +171,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -187,8 +178,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -196,8 +185,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',
@@ -209,7 +196,7 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-4',
     sequence: 11,
     data: {
@@ -221,15 +208,11 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
       footer2ContactLinkTitle: 'Rejoignez-nous',
       footer2ContactLinkHref: '#',
       footer2ContactImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Parlons',
           width: 598,
           height: 432,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'tm1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/tm1.jpg',
@@ -248,8 +231,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
       footer2Copyright: '© 2022 Lighthouse. Tous droits réservés.',
       footer2SocialLinks: [
         {
-          id: '1',
-          version: 1,
           attrs: {
             name: 'Twitter',
             icon: 'twitter',
@@ -257,8 +238,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 1,
           attrs: {
             name: 'Facebook',
             icon: 'facebook-f',
@@ -266,8 +245,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 1,
           attrs: {
             name: 'Dribbble',
             icon: 'dribbble',
@@ -275,8 +252,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 1,
           attrs: {
             name: 'Instagram',
             icon: 'instagram',
@@ -284,8 +259,6 @@ export const footer2Demos: Demo<typeof footer2Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 1,
           attrs: {
             name: 'Youtube',
             icon: 'youtube',

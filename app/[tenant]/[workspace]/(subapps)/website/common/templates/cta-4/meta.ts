@@ -37,6 +37,7 @@ export const cta4Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -60,7 +61,7 @@ export type Cta4Data = Data<typeof cta4Schema>;
 export const cta4Demos: Demo<typeof cta4Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-3',
     sequence: 5,
     data: {
@@ -69,15 +70,11 @@ export const cta4Demos: Demo<typeof cta4Schema>[] = [
       cta4LinkTitle: 'Join Us',
       cta4LinkHref: '#',
       cta4Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Join our community',
           width: 1500,
           height: 1000,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg9.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg9.jpg',
@@ -88,7 +85,7 @@ export const cta4Demos: Demo<typeof cta4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-3',
     sequence: 5,
     data: {
@@ -98,15 +95,11 @@ export const cta4Demos: Demo<typeof cta4Schema>[] = [
       cta4LinkTitle: 'Rejoignez-nous',
       cta4LinkHref: '#',
       cta4Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Rejoignez notre communauté',
           width: 1500,
           height: 1000,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg9.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg9.jpg',

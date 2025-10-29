@@ -27,6 +27,7 @@ export const about7Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -56,7 +57,7 @@ export type About7Data = Data<typeof about7Schema>;
 export const about7Demos: Demo<typeof about7Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-7',
     sequence: 6,
     data: {
@@ -64,15 +65,11 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
       about7LeadParagraph:
         'We are committed to building lasting connections with our clients.',
       about7Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Benefits of choosing us',
           width: 673,
           height: 472,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i17.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i17.png',
@@ -81,8 +78,6 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
       },
       about7Accordions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             expand: true,
             heading: 'Quality of Service',
@@ -90,8 +85,6 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Competitive Pricing',
@@ -99,8 +92,6 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Customer Service',
@@ -112,7 +103,7 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-7',
     sequence: 6,
     data: {
@@ -120,15 +111,11 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
       about7LeadParagraph:
         'Nous nous engageons à établir des liens durables avec nos clients.',
       about7Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Avantages de nous choisir',
           width: 673,
           height: 472,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i17.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i17.png',
@@ -137,8 +124,6 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
       },
       about7Accordions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             expand: true,
             heading: 'Qualité de service',
@@ -146,8 +131,6 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Prix compétitifs',
@@ -155,8 +138,6 @@ export const about7Demos: Demo<typeof about7Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Service Clients',

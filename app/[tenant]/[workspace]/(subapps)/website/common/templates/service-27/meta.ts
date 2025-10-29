@@ -68,6 +68,7 @@ export const service27Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
         {
@@ -91,7 +92,7 @@ export type Service27Data = Data<typeof service27Schema>;
 export const service27Demos: Demo<typeof service27Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-24',
     sequence: 2,
     data: {
@@ -102,22 +103,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
       service27LinkHref: '#',
       service27Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Products',
             url: '#',
             figcaption: 'View Gallery',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Products',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs4.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs4.jpg',
@@ -127,22 +122,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             url: '#',
             figcaption: 'View Gallery',
             title: 'Recipes',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Recipes',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs6.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs6.jpg',
@@ -152,22 +141,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             url: '#',
             figcaption: 'View Gallery',
             title: 'Restaurants',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Restaurants',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs5.jpg',
@@ -177,22 +160,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             url: '#',
             figcaption: 'View Gallery',
             title: 'Still Life',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Still Life',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs7.jpg',
@@ -206,7 +183,7 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-24',
     sequence: 2,
     data: {
@@ -217,22 +194,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
       service27LinkHref: '#',
       service27Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             url: '#',
             figcaption: 'Voir la galerie',
             title: 'Produits',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Produits',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs4.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs4.jpg',
@@ -242,22 +213,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             url: '#',
             figcaption: 'Voir la galerie',
             title: 'Recettes',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Recettes',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs6.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs6.jpg',
@@ -267,22 +232,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             url: '#',
             figcaption: 'Voir la galerie',
             title: 'Restaurants',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Restaurants',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs5.jpg',
@@ -292,22 +251,16 @@ export const service27Demos: Demo<typeof service27Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             url: '#',
             figcaption: 'Voir la galerie',
             title: 'Nature morte',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Nature morte',
                 width: 278,
                 height: 190,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'fs7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/fs7.jpg',

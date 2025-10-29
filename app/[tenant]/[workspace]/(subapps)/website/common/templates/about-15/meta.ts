@@ -27,6 +27,7 @@ export const about15Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -67,20 +68,16 @@ export type About15Data = Data<typeof about15Schema>;
 export const about15Demos: Demo<typeof about15Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-14',
     sequence: 8,
     data: {
       about15Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Why Choose Us?',
           width: 566,
           height: 458,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about19.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about19.jpg',
@@ -93,30 +90,20 @@ export const about15Demos: Demo<typeof about15Schema>[] = [
       about15LinkTitle: 'More Details',
       about15LinkHref: '#',
       about15AboutList: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '2',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '3',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '4',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
           ],
@@ -126,20 +113,16 @@ export const about15Demos: Demo<typeof about15Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-14',
     sequence: 8,
     data: {
       about15Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Pourquoi nous choisir ?',
           width: 566,
           height: 458,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about19.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about19.jpg',
@@ -152,36 +135,26 @@ export const about15Demos: Demo<typeof about15Schema>[] = [
       about15LinkTitle: 'Plus de détails',
       about15LinkHref: '#',
       about15AboutList: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '4',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },

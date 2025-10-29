@@ -100,7 +100,7 @@ export type Process1Data = Data<typeof process1Schema>;
 export const process1Demos: Demo<typeof process1Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-1',
     sequence: 4,
     data: {
@@ -111,8 +111,6 @@ export const process1Demos: Demo<typeof process1Schema>[] = [
       process1LinkText: 'Learn More',
       process1ProcessList: [
         {
-          id: '8',
-          version: 1,
           attrs: {
             no: '1',
             title: 'Specialization',
@@ -121,8 +119,6 @@ export const process1Demos: Demo<typeof process1Schema>[] = [
           },
         },
         {
-          id: '9',
-          version: 1,
           attrs: {
             no: '2',
             title: 'Collaboration',
@@ -131,8 +127,6 @@ export const process1Demos: Demo<typeof process1Schema>[] = [
           },
         },
         {
-          id: '10',
-          version: 1,
           attrs: {
             no: '3',
             title: 'Innovation',
@@ -149,7 +143,7 @@ export const process1Demos: Demo<typeof process1Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-1',
     sequence: 4,
     data: {
@@ -160,8 +154,6 @@ export const process1Demos: Demo<typeof process1Schema>[] = [
       process1LinkText: 'En savoir plus',
       process1ProcessList: [
         {
-          id: '8',
-          version: 1,
           attrs: {
             no: '1',
             title: 'Spécialisation',
@@ -171,8 +163,6 @@ export const process1Demos: Demo<typeof process1Schema>[] = [
           },
         },
         {
-          id: '9',
-          version: 1,
           attrs: {
             no: '2',
             title: 'Collaboration',
@@ -182,8 +172,6 @@ export const process1Demos: Demo<typeof process1Schema>[] = [
           },
         },
         {
-          id: '10',
-          version: 1,
           attrs: {
             no: '3',
             title: 'Innovation',

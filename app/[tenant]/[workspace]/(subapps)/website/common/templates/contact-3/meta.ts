@@ -42,12 +42,14 @@ export const contact3Schema = {
       name: 'tileImage1',
       title: 'Tile Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage2',
       title: 'Tile Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -86,7 +88,7 @@ export type Contact3Data = Data<typeof contact3Schema>;
 export const contact3Demos: Demo<typeof contact3Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'others',
     sequence: 4,
     data: {
@@ -98,15 +100,11 @@ export const contact3Demos: Demo<typeof contact3Schema>[] = [
       contact3LinkTitle: 'Join Us',
       contact3LinkHref: '#',
       contact3TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Great things together',
           width: 465,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about4.jpg',
@@ -114,15 +112,11 @@ export const contact3Demos: Demo<typeof contact3Schema>[] = [
         },
       },
       contact3TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Get in touch',
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about5.jpg',
@@ -136,7 +130,7 @@ export const contact3Demos: Demo<typeof contact3Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'others',
     sequence: 4,
     data: {
@@ -148,15 +142,11 @@ export const contact3Demos: Demo<typeof contact3Schema>[] = [
       contact3LinkTitle: 'Rejoignez-nous',
       contact3LinkHref: '#',
       contact3TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Great things together',
           width: 465,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about4.jpg',
@@ -164,15 +154,11 @@ export const contact3Demos: Demo<typeof contact3Schema>[] = [
         },
       },
       contact3TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Get in touch',
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about5.jpg',

@@ -33,6 +33,7 @@ export const service2Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -63,20 +64,16 @@ export type Services2Data = Data<typeof service2Schema>;
 export const service2Demos: Demo<typeof service2Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-1',
     sequence: 7,
     data: {
       service2Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'our solutions',
           width: 600,
           height: 428,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i8.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i8.png',
@@ -89,30 +86,20 @@ export const service2Demos: Demo<typeof service2Schema>[] = [
       service2Description:
         'At our company, we understand that managing spending can be stressful and overwhelming, which is why we offer a range of services aimed at effortless for you to stay in control.',
       service2Services: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'service',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '40',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '41',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '42',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '43',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
           ],
@@ -122,20 +109,16 @@ export const service2Demos: Demo<typeof service2Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-1',
     sequence: 7,
     data: {
       service2Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'nos solutions',
           width: 600,
           height: 428,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i8.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i8.png',
@@ -148,36 +131,26 @@ export const service2Demos: Demo<typeof service2Schema>[] = [
       service2Description:
         "Dans notre entreprise, nous comprenons que la gestion des dépenses peut être stressante et accablante, c'est pourquoi nous proposons une gamme de services visant à vous permettre de garder le contrôle sans effort.",
       service2Services: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'services',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '40',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '41',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '42',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '43',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },

@@ -27,6 +27,7 @@ export const about3Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -56,7 +57,7 @@ export type About3Data = Data<typeof about3Schema>;
 export const about3Demos: Demo<typeof about3Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-3',
     sequence: 4,
     data: {
@@ -64,15 +65,11 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
         'There are some of the factors why the people we serve find us.',
       about3Caption: 'Why Choose Us?',
       about3Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'About US',
           width: 594,
           height: 568,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about9.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about9.jpg',
@@ -81,8 +78,6 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
       },
       about3Accordions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             expand: true,
             heading: 'Quality of Service',
@@ -90,8 +85,6 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Competitive Pricing',
@@ -99,8 +92,6 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Customer Service',
@@ -112,7 +103,7 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-3',
     sequence: 4,
     data: {
@@ -120,15 +111,11 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
         'Voici quelques-uns des facteurs pour lesquels les personnes que nous servons nous trouvent.',
       about3Caption: 'Pourquoi nous choisir ?',
       about3Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'About US',
           width: 594,
           height: 568,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about9.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about9.jpg',
@@ -137,8 +124,6 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
       },
       about3Accordions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             expand: true,
             heading: 'Qualité de service',
@@ -146,8 +131,6 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Prix compétitifs',
@@ -155,8 +138,6 @@ export const about3Demos: Demo<typeof about3Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Service Clients',

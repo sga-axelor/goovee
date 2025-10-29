@@ -32,6 +32,7 @@ export const about8Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -62,20 +63,16 @@ export type About8Data = Data<typeof about8Schema>;
 export const about8Demos: Demo<typeof about8Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-7',
     sequence: 5,
     data: {
       about8Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Mastery of control',
           width: 676,
           height: 514,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i9.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i9.png',
@@ -88,30 +85,20 @@ export const about8Demos: Demo<typeof about8Schema>[] = [
       about8Description:
         'A community refers to a group of people who share common interests, beliefs, values, or goals and interact with one another in a shared location or virtual space. Communities can be found in various forms.',
       about8AboutList: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '2',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '3',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
             {
-              id: '4',
-              version: 0,
               attrs: {title: 'We offer stress-free spending control.'},
             },
           ],
@@ -121,20 +108,16 @@ export const about8Demos: Demo<typeof about8Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-7',
     sequence: 5,
     data: {
       about8Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Maîtrise du contrôle',
           width: 676,
           height: 514,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i9.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i9.png',
@@ -147,36 +130,26 @@ export const about8Demos: Demo<typeof about8Schema>[] = [
       about8Description:
         'Une communauté fait référence à un groupe de personnes qui partagent des intérêts, des croyances, des valeurs ou des objectifs communs et interagissent les uns avec les autres dans un lieu partagé ou un espace virtuel. Les communautés peuvent être trouvées sous diverses formes.',
       about8AboutList: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },
             },
             {
-              id: '4',
-              version: 0,
               attrs: {
                 title: 'Nous offrons un contrôle des dépenses sans stress.',
               },

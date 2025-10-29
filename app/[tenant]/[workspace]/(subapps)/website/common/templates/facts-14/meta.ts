@@ -27,6 +27,7 @@ export const facts14Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -81,22 +82,18 @@ export type Facts14Data = Data<typeof facts14Schema>;
 export const facts14Demos: Demo<typeof facts14Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-20',
     sequence: 7,
     data: {
       facts14Title: 'Trust us, join 10K+ clients to grow your business.',
       facts14Caption: 'Join Our Community',
       facts14Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Company achievements',
           width: 952,
           height: 471,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about26.png',
             fileType: 'image/png',
             filePath: '/img/photos/about26.png',
@@ -105,8 +102,6 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
       },
       facts14Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Completed Projects',
             amount: 500,
@@ -114,8 +109,6 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Happy Customers',
             amount: 2000,
@@ -123,8 +116,6 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Revenue Growth',
             amount: 2,
@@ -136,7 +127,7 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-20',
     sequence: 7,
     data: {
@@ -144,15 +135,11 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
         'Faites-nous confiance, rejoignez plus de 10 000 clients pour développer votre entreprise.',
       facts14Caption: 'Rejoignez notre communauté',
       facts14Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Réalisations de l'entreprise",
           width: 952,
           height: 471,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about26.png',
             fileType: 'image/png',
             filePath: '/img/photos/about26.png',
@@ -161,8 +148,6 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
       },
       facts14Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Projets terminés',
             amount: 500,
@@ -170,8 +155,6 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Clients heureux',
             amount: 2000,
@@ -179,8 +162,6 @@ export const facts14Demos: Demo<typeof facts14Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Croissance des revenus',
             amount: 2,

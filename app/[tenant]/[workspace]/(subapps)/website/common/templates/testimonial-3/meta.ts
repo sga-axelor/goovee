@@ -27,12 +27,14 @@ export const testimonial3Schema = {
       name: 'tileImage1',
       title: 'Tile Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage2',
       title: 'Tile Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -112,7 +114,7 @@ export type Testimonial3Data = Data<typeof testimonial3Schema>;
 export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-4',
     sequence: 9,
     data: {
@@ -120,15 +122,11 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
       testimonial3Description:
         'Read our customer reviews to see what they are saying about our services and expertise.',
       testimonial3TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Testimonial',
           width: 325,
           height: 325,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g5.jpg',
@@ -136,15 +134,11 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
         },
       },
       testimonial3TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Testimonial',
           width: 324,
           height: 217,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g6.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g6.jpg',
@@ -158,8 +152,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
       testimonial3Navigation: false,
       testimonial3Testimonials: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Ethan Johnson',
             designation: 'Sales Director',
@@ -167,8 +159,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Gabriel Rodriguez',
             designation: 'Marketing Manager',
@@ -176,8 +166,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Samuel Patel',
             designation: 'HR Manager',
@@ -185,8 +173,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             name: 'Jackie Sanders',
             designation: 'Investment Planner',
@@ -198,7 +184,7 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-4',
     sequence: 9,
     data: {
@@ -206,15 +192,11 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
       testimonial3Description:
         'Lisez les avis de nos clients pour voir ce qu’ils disent de nos services et de notre expertise.',
       testimonial3TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Témoignage',
           width: 325,
           height: 325,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g5.jpg',
@@ -222,15 +204,11 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
         },
       },
       testimonial3TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Témoignage',
           width: 324,
           height: 217,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g6.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g6.jpg',
@@ -244,8 +222,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
       testimonial3Navigation: false,
       testimonial3Testimonials: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Ethan Johnson',
             designation: 'Directeur des ventes',
@@ -253,8 +229,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Gabriel Rodriguez',
             designation: 'Responsable marketing',
@@ -262,8 +236,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Samuel Patel',
             designation: 'Responsable RH',
@@ -271,8 +243,6 @@ export const testimonial3Demos: Demo<typeof testimonial3Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             name: 'Jackie Sanders',
             designation: 'Planificateur d’investissement',

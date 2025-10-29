@@ -18,6 +18,7 @@ export const testimonial16Schema = {
       name: 'backgroundImage',
       title: 'Background Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -89,20 +90,16 @@ export type Testimonial16Data = Data<typeof testimonial16Schema>;
 export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-19',
     sequence: 5,
     data: {
       testimonial16BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Testimonial background',
           width: 1370,
           height: 1050,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'tm2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/tm2.jpg',
@@ -113,8 +110,6 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
       testimonial16Navigation: false,
       testimonial16Testimonials: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Coriss Ambady',
             designation: 'Financial Analyst',
@@ -124,8 +119,6 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Cory Zamora',
             designation: 'Marketing Specialist',
@@ -135,8 +128,6 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Nikolas Brooten',
             designation: 'Sales Manager',
@@ -150,20 +141,16 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-19',
     sequence: 5,
     data: {
       testimonial16BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Arrière-plan de témoignage',
           width: 1370,
           height: 1050,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'tm2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/tm2.jpg',
@@ -174,8 +161,6 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
       testimonial16Navigation: false,
       testimonial16Testimonials: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Coriss Ambady',
             designation: 'Analyste financier',
@@ -185,8 +170,6 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Cory Zamora',
             designation: 'Spécialiste en marketing',
@@ -196,8 +179,6 @@ export const testimonial16Demos: Demo<typeof testimonial16Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Nikolas Brooten',
             designation: 'Directeur des ventes',

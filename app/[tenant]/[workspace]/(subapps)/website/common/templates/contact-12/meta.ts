@@ -27,6 +27,7 @@ export const contact12Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -115,7 +116,7 @@ export type Contact12Data = Data<typeof contact12Schema>;
 export const contact12Demos: Demo<typeof contact12Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-24',
     sequence: 7,
     data: {
@@ -123,15 +124,11 @@ export const contact12Demos: Demo<typeof contact12Schema>[] = [
       contact12Description:
         'For more information please get in touch using the form below:',
       contact12Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Photography pricing request form background',
           width: 1440,
           height: 816,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg36.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg36.jpg',
@@ -155,7 +152,7 @@ export const contact12Demos: Demo<typeof contact12Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-24',
     sequence: 7,
     data: {
@@ -163,15 +160,11 @@ export const contact12Demos: Demo<typeof contact12Schema>[] = [
       contact12Description:
         'Pour plus d’informations, veuillez nous contacter en utilisant le formulaire ci-dessous :',
       contact12Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Arrière-plan du formulaire de demande de prix de photographie',
           width: 1440,
           height: 816,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg36.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/bg36.jpg',

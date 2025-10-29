@@ -22,24 +22,28 @@ export const about4Schema = {
       name: 'tileImage1',
       title: 'Tile Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage2',
       title: 'Tile Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage3',
       title: 'Tile Image 3',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage4',
       title: 'Tile Image 4',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -69,22 +73,18 @@ export type About4Data = Data<typeof about4Schema>;
 export const about4Demos: Demo<typeof about4Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-4',
     sequence: 4,
     data: {
       about4Title:
         'There are some of the factors why the people we serve find us.',
       about4TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Reasons why people find us',
           width: 176,
           height: 184,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g1.jpg',
@@ -92,15 +92,11 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
         },
       },
       about4TileImage2: {
-        id: '2',
-        version: 0,
         attrs: {
           alt: 'Reasons why people find us',
           width: 275,
           height: 208,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g2.jpg',
@@ -108,15 +104,11 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
         },
       },
       about4TileImage3: {
-        id: '3',
-        version: 0,
         attrs: {
           alt: 'Reasons why people find us',
           width: 275,
           height: 177,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g3.jpg',
@@ -124,15 +116,11 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
         },
       },
       about4TileImage4: {
-        id: '4',
-        version: 0,
         attrs: {
           alt: 'Reasons why people find us',
           width: 176,
           height: 197,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g4.jpg',
@@ -141,8 +129,6 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
       },
       about4Accordions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             expand: true,
             heading: 'Quality of Service',
@@ -150,8 +136,6 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Competitive Pricing',
@@ -159,8 +143,6 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Customer Service',
@@ -172,22 +154,18 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-4',
     sequence: 4,
     data: {
       about4Title:
         'Voici quelques-uns des facteurs pour lesquels les personnes que nous servons nous trouvent.',
       about4TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Raisons pour lesquelles les gens nous trouvent',
           width: 176,
           height: 184,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g1.jpg',
@@ -195,15 +173,11 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
         },
       },
       about4TileImage2: {
-        id: '2',
-        version: 0,
         attrs: {
           alt: 'Raisons pour lesquelles les gens nous trouvent',
           width: 275,
           height: 208,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g2.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g2.jpg',
@@ -211,15 +185,11 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
         },
       },
       about4TileImage3: {
-        id: '3',
-        version: 0,
         attrs: {
           alt: 'Raisons pour lesquelles les gens nous trouvent',
           width: 275,
           height: 177,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g3.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g3.jpg',
@@ -227,15 +197,11 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
         },
       },
       about4TileImage4: {
-        id: '4',
-        version: 0,
         attrs: {
           alt: 'Raisons pour lesquelles les gens nous trouvent',
           width: 176,
           height: 197,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g4.jpg',
@@ -244,8 +210,6 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
       },
       about4Accordions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             expand: true,
             heading: 'Qualité de service',
@@ -253,8 +217,6 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Prix compétitifs',
@@ -262,8 +224,6 @@ export const about4Demos: Demo<typeof about4Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             expand: false,
             heading: 'Service Clients',

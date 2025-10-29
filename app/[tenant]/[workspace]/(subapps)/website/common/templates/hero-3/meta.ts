@@ -38,6 +38,7 @@ export const hero3Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -92,7 +93,7 @@ export type Hero3Data = Data<typeof hero3Schema>;
 export const hero3Demos: Demo<typeof hero3Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-3',
     sequence: 1,
     data: {
@@ -102,15 +103,11 @@ export const hero3Demos: Demo<typeof hero3Schema>[] = [
       hero3ButtonLabel: 'Get Started',
       hero3ButtonLink: '#',
       hero3Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Specialized in',
           width: 500,
           height: 552,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about13.png',
             fileType: 'image/png',
             filePath: '/img/photos/about13.png',
@@ -118,22 +115,20 @@ export const hero3Demos: Demo<typeof hero3Schema>[] = [
         },
       },
       hero3Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       hero3Typewriter: [
-        {id: '1', version: 0, attrs: {text: 'revolutionary ideas.'}},
-        {id: '2', version: 0, attrs: {text: 'business needs'}},
-        {id: '3', version: 0, attrs: {text: 'creative ideas'}},
+        {attrs: {text: 'revolutionary ideas.'}},
+        {attrs: {text: 'business needs'}},
+        {attrs: {text: 'creative ideas'}},
       ],
     },
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-3',
     sequence: 1,
     data: {
@@ -143,15 +138,11 @@ export const hero3Demos: Demo<typeof hero3Schema>[] = [
       hero3ButtonLabel: 'Commencer',
       hero3ButtonLink: '#',
       hero3Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Specialized in',
           width: 500,
           height: 552,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about13.png',
             fileType: 'image/png',
             filePath: '/img/photos/about13.png',
@@ -159,16 +150,14 @@ export const hero3Demos: Demo<typeof hero3Schema>[] = [
         },
       },
       hero3Video: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       hero3Typewriter: [
-        {id: '1', version: 0, attrs: {text: 'idées révolutionnaires.'}},
-        {id: '2', version: 0, attrs: {text: 'besoins des entreprises'}},
-        {id: '3', version: 0, attrs: {text: 'idées créatives'}},
+        {attrs: {text: 'idées révolutionnaires.'}},
+        {attrs: {text: 'besoins des entreprises'}},
+        {attrs: {text: 'idées créatives'}},
       ],
     },
   },

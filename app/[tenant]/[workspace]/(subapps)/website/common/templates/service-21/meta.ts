@@ -82,14 +82,12 @@ export type Service21Data = Data<typeof service21Schema>;
 export const service21Demos: Demo<typeof service21Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-19',
     sequence: 2,
     data: {
       service21Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'Rocket',
@@ -101,8 +99,6 @@ export const service21Demos: Demo<typeof service21Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'Code',
@@ -114,8 +110,6 @@ export const service21Demos: Demo<typeof service21Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'DevicesTwo',
@@ -127,8 +121,6 @@ export const service21Demos: Demo<typeof service21Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'Hand',
@@ -144,14 +136,12 @@ export const service21Demos: Demo<typeof service21Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-19',
     sequence: 2,
     data: {
       service21Services: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'Rocket',
@@ -163,8 +153,6 @@ export const service21Demos: Demo<typeof service21Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'Code',
@@ -176,8 +164,6 @@ export const service21Demos: Demo<typeof service21Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'DevicesTwo',
@@ -189,8 +175,6 @@ export const service21Demos: Demo<typeof service21Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             link: '#',
             icon: 'Hand',

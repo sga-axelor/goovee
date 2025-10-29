@@ -68,7 +68,7 @@ export type Facts7Data = Data<typeof facts7Schema>;
 export const facts7Demos: Demo<typeof facts7Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-10',
     sequence: 4,
     data: {
@@ -77,24 +77,18 @@ export const facts7Demos: Demo<typeof facts7Schema>[] = [
         'Let us handle your business needs while you sit back and relax.',
       facts7Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Completed Projects',
             amount: 10000,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Happy Clients',
             amount: 5000,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Awards Won',
             amount: 265,
@@ -105,7 +99,7 @@ export const facts7Demos: Demo<typeof facts7Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-10',
     sequence: 4,
     data: {
@@ -114,24 +108,18 @@ export const facts7Demos: Demo<typeof facts7Schema>[] = [
         'Laissez-nous répondre aux besoins de votre entreprise pendant que vous vous asseyez et vous détendez.',
       facts7Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Projets terminés',
             amount: 10000,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Clients heureux',
             amount: 5000,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Récompenses gagnées',
             amount: 265,

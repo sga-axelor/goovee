@@ -79,7 +79,7 @@ export type Pricing4Data = Data<typeof pricing4Schema>;
 export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-5',
     sequence: 6,
     data: {
@@ -88,8 +88,6 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
       pricing4SwitchRightLabel: 'Yearly',
       pricing4Plans: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             plan: 'Basic Plan',
             price1: 9,
@@ -97,17 +95,15 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choose Plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '1 Project'}},
-              {id: '2', version: 0, attrs: {label: '100K API Access'}},
-              {id: '3', version: 0, attrs: {label: '100MB Storage'}},
-              {id: '4', version: 0, attrs: {label: 'Weekly Reports'}},
-              {id: '5', version: 0, attrs: {label: '7/24 Support'}},
+              {attrs: {label: '1 Project'}},
+              {attrs: {label: '100K API Access'}},
+              {attrs: {label: '100MB Storage'}},
+              {attrs: {label: 'Weekly Reports'}},
+              {attrs: {label: '7/24 Support'}},
             ],
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             plan: 'Premium Plan',
             price1: 19,
@@ -115,17 +111,15 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choose Plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '5 Projects'}},
-              {id: '2', version: 0, attrs: {label: '100K API Access'}},
-              {id: '3', version: 0, attrs: {label: '200MB Storage'}},
-              {id: '4', version: 0, attrs: {label: 'Weekly Reports'}},
-              {id: '5', version: 0, attrs: {label: '7/24 Support'}},
+              {attrs: {label: '5 Projects'}},
+              {attrs: {label: '100K API Access'}},
+              {attrs: {label: '200MB Storage'}},
+              {attrs: {label: 'Weekly Reports'}},
+              {attrs: {label: '7/24 Support'}},
             ],
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             plan: 'Corporate Plan',
             price1: 49,
@@ -133,11 +127,11 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choose Plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '20 Projects'}},
-              {id: '2', version: 0, attrs: {label: '300K API Access'}},
-              {id: '3', version: 0, attrs: {label: '500MB Storage'}},
-              {id: '4', version: 0, attrs: {label: 'Weekly Reports'}},
-              {id: '5', version: 0, attrs: {label: '7/24 Support'}},
+              {attrs: {label: '20 Projects'}},
+              {attrs: {label: '300K API Access'}},
+              {attrs: {label: '500MB Storage'}},
+              {attrs: {label: 'Weekly Reports'}},
+              {attrs: {label: '7/24 Support'}},
             ],
           },
         },
@@ -146,7 +140,7 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-5',
     sequence: 6,
     data: {
@@ -155,8 +149,6 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
       pricing4SwitchRightLabel: 'Annuel',
       pricing4Plans: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             plan: 'Plan de base',
             price1: 9,
@@ -164,34 +156,30 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choisir le plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '1 projet'}},
-              {id: '2', version: 0, attrs: {label: '100K accès API'}},
-              {id: '3', version: 0, attrs: {label: '100 Mo de stockage'}},
-              {id: '4', version: 0, attrs: {label: 'Rapports hebdomadaires'}},
-              {id: '5', version: 0, attrs: {label: 'Assistance 7j/24'}},
+              {attrs: {label: '1 projet'}},
+              {attrs: {label: '100K accès API'}},
+              {attrs: {label: '100 Mo de stockage'}},
+              {attrs: {label: 'Rapports hebdomadaires'}},
+              {attrs: {label: 'Assistance 7j/24'}},
             ],
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             plan: 'Plan Premium',
             price1: 19,
             price2: 199,
             buttonText: 'Choisir le plan',
             features: [
-              {id: '1', version: 0, attrs: {label: '5 projets'}},
-              {id: '2', version: 0, attrs: {label: '100K accès API'}},
-              {id: '3', version: 0, attrs: {label: '200 Mo de stockage'}},
-              {id: '4', version: 0, attrs: {label: 'Rapports hebdomadaires'}},
-              {id: '5', version: 0, attrs: {label: 'Assistance 7j/24'}},
+              {attrs: {label: '5 projets'}},
+              {attrs: {label: '100K accès API'}},
+              {attrs: {label: '200 Mo de stockage'}},
+              {attrs: {label: 'Rapports hebdomadaires'}},
+              {attrs: {label: 'Assistance 7j/24'}},
             ],
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             plan: "Plan d'entreprise",
             price1: 49,
@@ -199,11 +187,11 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choisir le plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '20 projets'}},
-              {id: '2', version: 0, attrs: {label: '300K accès API'}},
-              {id: '3', version: 0, attrs: {label: '500 Mo de stockage'}},
-              {id: '4', version: 0, attrs: {label: 'Rapports hebdomadaires'}},
-              {id: '5', version: 0, attrs: {label: 'Assistance 7j/24'}},
+              {attrs: {label: '20 projets'}},
+              {attrs: {label: '300K accès API'}},
+              {attrs: {label: '500 Mo de stockage'}},
+              {attrs: {label: 'Rapports hebdomadaires'}},
+              {attrs: {label: 'Assistance 7j/24'}},
             ],
           },
         },
@@ -212,7 +200,7 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
   },
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-11',
     sequence: 10,
     data: {
@@ -224,8 +212,6 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
       pricing4SwitchRightLabel: 'Yearly',
       pricing4Plans: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             plan: 'Basic Plan',
             price1: 9,
@@ -233,17 +219,15 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choose Plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '1 Project'}},
-              {id: '2', version: 0, attrs: {label: '100K API Access'}},
-              {id: '3', version: 0, attrs: {label: '100MB Storage'}},
-              {id: '4', version: 0, attrs: {label: 'Weekly Reports'}},
-              {id: '5', version: 0, attrs: {label: '7/24 Support'}},
+              {attrs: {label: '1 Project'}},
+              {attrs: {label: '100K API Access'}},
+              {attrs: {label: '100MB Storage'}},
+              {attrs: {label: 'Weekly Reports'}},
+              {attrs: {label: '7/24 Support'}},
             ],
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             plan: 'Premium Plan',
             price1: 19,
@@ -251,17 +235,15 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choose Plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '5 Projects'}},
-              {id: '2', version: 0, attrs: {label: '100K API Access'}},
-              {id: '3', version: 0, attrs: {label: '200MB Storage'}},
-              {id: '4', version: 0, attrs: {label: 'Weekly Reports'}},
-              {id: '5', version: 0, attrs: {label: '7/24 Support'}},
+              {attrs: {label: '5 Projects'}},
+              {attrs: {label: '100K API Access'}},
+              {attrs: {label: '200MB Storage'}},
+              {attrs: {label: 'Weekly Reports'}},
+              {attrs: {label: '7/24 Support'}},
             ],
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             plan: 'Corporate Plan',
             price1: 49,
@@ -269,11 +251,11 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choose Plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '20 Projects'}},
-              {id: '2', version: 0, attrs: {label: '300K API Access'}},
-              {id: '3', version: 0, attrs: {label: '500MB Storage'}},
-              {id: '4', version: 0, attrs: {label: 'Weekly Reports'}},
-              {id: '5', version: 0, attrs: {label: '7/24 Support'}},
+              {attrs: {label: '20 Projects'}},
+              {attrs: {label: '300K API Access'}},
+              {attrs: {label: '500MB Storage'}},
+              {attrs: {label: 'Weekly Reports'}},
+              {attrs: {label: '7/24 Support'}},
             ],
           },
         },
@@ -282,7 +264,7 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-11',
     sequence: 10,
     data: {
@@ -294,8 +276,6 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
       pricing4SwitchRightLabel: 'Annuel',
       pricing4Plans: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             plan: 'Plan de base',
             price1: 9,
@@ -303,34 +283,30 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choisir le plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '1 projet'}},
-              {id: '2', version: 0, attrs: {label: '100K accès API'}},
-              {id: '3', version: 0, attrs: {label: '100 Mo de stockage'}},
-              {id: '4', version: 0, attrs: {label: 'Rapports hebdomadaires'}},
-              {id: '5', version: 0, attrs: {label: 'Assistance 7j/24'}},
+              {attrs: {label: '1 projet'}},
+              {attrs: {label: '100K accès API'}},
+              {attrs: {label: '100 Mo de stockage'}},
+              {attrs: {label: 'Rapports hebdomadaires'}},
+              {attrs: {label: 'Assistance 7j/24'}},
             ],
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             plan: 'Plan Premium',
             price1: 19,
             price2: 199,
             buttonText: 'Choisir le plan',
             features: [
-              {id: '1', version: 0, attrs: {label: '5 projets'}},
-              {id: '2', version: 0, attrs: {label: '100K accès API'}},
-              {id: '3', version: 0, attrs: {label: '200 Mo de stockage'}},
-              {id: '4', version: 0, attrs: {label: 'Rapports hebdomadaires'}},
-              {id: '5', version: 0, attrs: {label: 'Assistance 7j/24'}},
+              {attrs: {label: '5 projets'}},
+              {attrs: {label: '100K accès API'}},
+              {attrs: {label: '200 Mo de stockage'}},
+              {attrs: {label: 'Rapports hebdomadaires'}},
+              {attrs: {label: 'Assistance 7j/24'}},
             ],
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             plan: "Plan d'entreprise",
             price1: 49,
@@ -338,11 +314,11 @@ export const pricing4Demos: Demo<typeof pricing4Schema>[] = [
             buttonText: 'Choisir le plan',
             buttonLink: '#',
             features: [
-              {id: '1', version: 0, attrs: {label: '20 projets'}},
-              {id: '2', version: 0, attrs: {label: '300K accès API'}},
-              {id: '3', version: 0, attrs: {label: '500 Mo de stockage'}},
-              {id: '4', version: 0, attrs: {label: 'Rapports hebdomadaires'}},
-              {id: '5', version: 0, attrs: {label: 'Assistance 7j/24'}},
+              {attrs: {label: '20 projets'}},
+              {attrs: {label: '300K accès API'}},
+              {attrs: {label: '500 Mo de stockage'}},
+              {attrs: {label: 'Rapports hebdomadaires'}},
+              {attrs: {label: 'Assistance 7j/24'}},
             ],
           },
         },

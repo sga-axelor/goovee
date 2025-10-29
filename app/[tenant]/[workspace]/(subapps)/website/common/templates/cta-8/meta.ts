@@ -37,6 +37,7 @@ export const cta8Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -60,7 +61,7 @@ export type Cta8Data = Data<typeof cta8Schema>;
 export const cta8Demos: Demo<typeof cta8Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-19',
     sequence: 8,
     data: {
@@ -69,15 +70,11 @@ export const cta8Demos: Demo<typeof cta8Schema>[] = [
       cta8LinkTitle: 'Get Started',
       cta8LinkHref: '#',
       cta8Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Join our community',
           width: 1440,
           height: 674,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg16.png',
             fileType: 'image/png',
             filePath: '/img/photos/bg16.png',
@@ -88,7 +85,7 @@ export const cta8Demos: Demo<typeof cta8Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-19',
     sequence: 8,
     data: {
@@ -98,15 +95,11 @@ export const cta8Demos: Demo<typeof cta8Schema>[] = [
       cta8LinkTitle: 'Commencer',
       cta8LinkHref: '#',
       cta8Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Rejoignez notre communauté',
           width: 1440,
           height: 674,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg16.png',
             fileType: 'image/png',
             filePath: '/img/photos/bg16.png',

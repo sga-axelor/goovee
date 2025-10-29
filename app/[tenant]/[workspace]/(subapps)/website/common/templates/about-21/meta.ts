@@ -29,6 +29,7 @@ export const about21Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -79,20 +80,16 @@ export type About21Data = Data<typeof about21Schema>;
 export const about21Demos: Demo<typeof about21Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-20',
     sequence: 6,
     data: {
       about21Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'What makes us different',
           width: 585,
           height: 425,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about11.jpg',
@@ -104,8 +101,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
         'We provide ideas for creating the lives of our clients easier.',
       about21BtnColor: 'white',
       about21Media: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
@@ -113,8 +108,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
       about21HideShape: true,
       about21AboutList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Secure Payment',
             description: 'Curabitur blandit lacus porttitor riduculus mus.',
@@ -122,8 +115,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Daily Update',
             description: 'Curabitur blandit lacus porttitor ridiculus mus.',
@@ -131,8 +122,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'AI Design',
             description: 'Curabitur blandit lacus porttitor ridiculus mus.',
@@ -140,8 +129,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Trendy Product',
             description: 'Curabitur blandit lacus porttitor ridiculus mus.',
@@ -153,20 +140,16 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-20',
     sequence: 6,
     data: {
       about21Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Ce qui nous rend différents',
           width: 585,
           height: 425,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about11.jpg',
@@ -178,8 +161,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
         'Nous fournissons des idées pour faciliter la vie de nos clients.',
       about21BtnColor: 'white',
       about21Media: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
@@ -187,8 +168,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
       about21HideShape: true,
       about21AboutList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Paiement sécurisé',
             description: 'Curabitur blandit lacus porttitor riduculus mus.',
@@ -196,8 +175,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Mise à jour quotidienne',
             description: 'Curabitur blandit lacus porttitor ridiculus mus.',
@@ -205,8 +182,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Conception IA',
             description: 'Curabitur blandit lacus porttitor ridiculus mus.',
@@ -214,8 +189,6 @@ export const about21Demos: Demo<typeof about21Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Produit tendance',
             description: 'Curabitur blandit lacus porttitor ridiculus mus.',

@@ -58,6 +58,7 @@ export const team1Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
         {
@@ -89,7 +90,7 @@ export type Team1Data = Data<typeof team1Schema>;
 export const team1Demos: Demo<typeof team1Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-1',
     sequence: 6,
     data: {
@@ -98,20 +99,14 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
         'Think beyond the box and be creative. Lighthouse can help you make a difference.',
       team1Teams: [
         {
-          id: '14',
-          version: 0,
           attrs: {
             name: 'Tom Accor',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Tom Accor',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t8.jpg',
@@ -122,8 +117,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Developer',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -131,8 +124,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -140,8 +131,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -152,20 +141,14 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
           },
         },
         {
-          id: '15',
-          version: 0,
           attrs: {
             name: 'Selina Anteree',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Selina Anteree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t9.jpg',
@@ -176,8 +159,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Developer',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -185,8 +166,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -194,8 +173,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -206,20 +183,14 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
           },
         },
         {
-          id: '16',
-          version: 0,
           attrs: {
             name: 'Olocks Pree',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Olocks Pree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t10.jpg',
@@ -230,8 +201,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Designer',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -239,8 +208,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -248,8 +215,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -260,20 +225,14 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
           },
         },
         {
-          id: '17',
-          version: 0,
           attrs: {
             name: 'Andree Buie',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Andree Buie',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't11.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t11.jpg',
@@ -284,8 +243,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Manager',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -293,8 +250,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -302,8 +257,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -318,7 +271,7 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-1',
     sequence: 6,
     data: {
@@ -327,20 +280,14 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
         'Pensez hors des sentiers battus et soyez créatif. Lighthouse peut vous aider à faire la différence.',
       team1Teams: [
         {
-          id: '14',
-          version: 0,
           attrs: {
             name: 'Tom Accor',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Tom Accor',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t8.jpg',
@@ -352,8 +299,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Développeur',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -361,8 +306,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -370,8 +313,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -382,21 +323,15 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
           },
         },
         {
-          id: '15',
-          version: 0,
           attrs: {
             name: 'Selina Anteree',
 
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Selina Anteree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t9.jpg',
@@ -408,8 +343,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Développeur',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -417,8 +350,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -426,8 +357,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -438,20 +367,14 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
           },
         },
         {
-          id: '16',
-          version: 0,
           attrs: {
             name: 'Olocks Pree',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Olocks Pree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t10.jpg',
@@ -463,8 +386,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Designer',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -472,8 +393,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -481,8 +400,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -493,20 +410,14 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
           },
         },
         {
-          id: '17',
-          version: 0,
           attrs: {
             name: 'Andree Buie',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Andree Buie',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't11.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t11.jpg',
@@ -518,8 +429,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
             designation: 'Directeur',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -527,8 +436,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -536,8 +443,6 @@ export const team1Demos: Demo<typeof team1Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',

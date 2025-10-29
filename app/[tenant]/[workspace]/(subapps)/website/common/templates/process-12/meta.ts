@@ -106,7 +106,7 @@ export type Process12Data = Data<typeof process12Schema>;
 export const process12Demos: Demo<typeof process12Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-17',
     sequence: 3,
     data: {
@@ -121,8 +121,6 @@ export const process12Demos: Demo<typeof process12Schema>[] = [
       process12LinkHref: '#',
       process12Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             no: '01',
             className: '',
@@ -133,8 +131,6 @@ export const process12Demos: Demo<typeof process12Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             no: '02',
             color: 'soft-green',
@@ -145,8 +141,6 @@ export const process12Demos: Demo<typeof process12Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             no: '03',
             color: 'soft-orange',
@@ -161,7 +155,7 @@ export const process12Demos: Demo<typeof process12Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-17',
     sequence: 3,
     data: {
@@ -176,8 +170,6 @@ export const process12Demos: Demo<typeof process12Schema>[] = [
       process12LinkHref: '#',
       process12Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             no: '01',
             className: '',
@@ -188,8 +180,6 @@ export const process12Demos: Demo<typeof process12Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             no: '02',
             color: 'soft-green',
@@ -200,8 +190,6 @@ export const process12Demos: Demo<typeof process12Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             no: '03',
             color: 'soft-orange',

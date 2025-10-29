@@ -73,7 +73,7 @@ export type Process6Data = Data<typeof process6Schema>;
 export const process6Demos: Demo<typeof process6Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-13',
     sequence: 4,
     data: {
@@ -82,8 +82,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
         'We create expenses relaxed so that you maintain full control over them.',
       process6Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             no: '01',
             title: 'Concept',
@@ -92,8 +90,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             no: '02',
             title: 'Prepare',
@@ -102,8 +98,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             no: '03',
             title: 'Retouch',
@@ -112,8 +106,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             no: '04',
             title: 'Finalize',
@@ -126,7 +118,7 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-13',
     sequence: 4,
     data: {
@@ -135,8 +127,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
         'Nous créons des dépenses détendues afin que vous puissiez en garder le contrôle total.',
       process6Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             no: '01',
             title: 'Concept',
@@ -145,8 +135,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             no: '02',
             title: 'Préparer',
@@ -155,8 +143,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             no: '03',
             title: 'Retoucher',
@@ -165,8 +151,6 @@ export const process6Demos: Demo<typeof process6Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             no: '04',
             title: 'Finaliser',

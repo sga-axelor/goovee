@@ -29,6 +29,7 @@ export const about10Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -79,20 +80,16 @@ export type About10Data = Data<typeof about10Schema>;
 export const about10Demos: Demo<typeof about10Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-8',
     sequence: 8,
     data: {
       about10Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Strategies for achievement',
           width: 585,
           height: 425,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about11.jpg',
@@ -104,8 +101,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
         'We designed our strategies to help you at each stage of achievement.',
       about10BtnColor: 'white',
       about10Media: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
@@ -113,8 +108,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
       about10HideShape: false,
       about10ProgressList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Marketing',
             percent: 100,
@@ -122,8 +115,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Strategy',
             percent: 80,
@@ -131,8 +122,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Development',
             percent: 85,
@@ -144,20 +133,16 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-8',
     sequence: 8,
     data: {
       about10Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Stratégies de réussite',
           width: 585,
           height: 425,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about11.jpg',
@@ -169,8 +154,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
         'Nous avons conçu nos stratégies pour vous aider à chaque étape de votre réussite.',
       about10BtnColor: 'white',
       about10Media: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
@@ -178,8 +161,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
       about10HideShape: false,
       about10ProgressList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Marketing',
             percent: 100,
@@ -187,8 +168,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Stratégie',
             percent: 80,
@@ -196,8 +175,6 @@ export const about10Demos: Demo<typeof about10Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Développement',
             percent: 85,

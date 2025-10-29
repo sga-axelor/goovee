@@ -93,6 +93,7 @@ export const blog5Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
         {
@@ -111,7 +112,7 @@ export type Blog5Data = Data<typeof blog5Schema>;
 export const blog5Demos: Demo<typeof blog5Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-23',
     sequence: 8,
     data: {
@@ -119,8 +120,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
       blog5Pagination: false,
       blog5BlogList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Happy Married Life Belong',
             category: 'Wedding',
@@ -131,15 +130,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'By Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Happy Married Life Belong',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b12.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b12.jpg',
@@ -149,8 +144,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Engagement of Lina Anna',
             category: 'Engagement',
@@ -161,15 +154,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'By Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Engagement of Lina Anna',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b13.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b13.jpg',
@@ -179,8 +168,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Ultricies fusce porta elit',
             category: 'Couples',
@@ -191,15 +178,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'By Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Ultricies fusce porta elit',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b14.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b14.jpg',
@@ -209,8 +192,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Morbi leo risus porta eget',
             category: 'Engagement',
@@ -221,15 +202,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'By Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Morbi leo risus porta eget',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b15.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b15.jpg',
@@ -239,8 +216,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             title: 'Nulla vitae elit libero',
             category: 'Couples',
@@ -251,15 +226,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'By Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Pharetra augue elit sem',
                 width: 410,
                 height: 290,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b16.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b16.jpg',
@@ -269,8 +240,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '6',
-          version: 0,
           attrs: {
             title: 'Pharetra augue elit sem',
             category: 'Wedding',
@@ -281,15 +250,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'By Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Nulla vitae elit libero',
                 width: 410,
                 height: 290,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b17.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b17.jpg',
@@ -303,7 +268,7 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-23',
     sequence: 8,
     data: {
@@ -311,8 +276,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
       blog5Pagination: false,
       blog5BlogList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Une vie de couple heureuse',
             category: 'Mariage',
@@ -323,15 +286,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'par Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Une vie de couple heureuse',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b12.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b12.jpg',
@@ -341,8 +300,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Fiançailles de Lina Anna',
             category: 'Fiançailles',
@@ -353,15 +310,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'par Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Fiançailles de Lina Anna',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b13.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b13.jpg',
@@ -371,8 +324,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Ultricies fusce porta elit',
             category: 'Couples',
@@ -383,15 +334,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'par Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Morbi leo risus porta eget',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b14.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b14.jpg',
@@ -401,8 +348,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             title: 'Morbi leo risus porta eget',
             category: 'Fiançailles',
@@ -413,15 +358,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'par Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Morbi leo risus porta eget',
                 width: 380,
                 height: 269,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b15.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b15.jpg',
@@ -431,8 +372,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             title: 'Nulla vitae elit libero',
             category: 'Couples',
@@ -443,15 +382,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'par Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Pharetra augue elit sem',
                 width: 410,
                 height: 290,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b16.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b16.jpg',
@@ -461,8 +396,6 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
           },
         },
         {
-          id: '6',
-          version: 0,
           attrs: {
             title: 'Pharetra augue elit sem',
             category: 'Mariage',
@@ -473,15 +406,11 @@ export const blog5Demos: Demo<typeof blog5Schema>[] = [
             author: 'par Jhon Doe',
             authorLink: '#',
             image: {
-              id: '1',
-              version: 1,
               attrs: {
                 alt: 'Nulla vitae elit libero',
                 width: 410,
                 height: 290,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'b17.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/b17.jpg',

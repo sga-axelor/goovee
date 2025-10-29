@@ -27,6 +27,7 @@ export const process2Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -81,7 +82,7 @@ export type Process2Data = Data<typeof process2Schema>;
 export const process2Demos: Demo<typeof process2Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-2',
     sequence: 4,
     data: {
@@ -89,15 +90,11 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
       process2Caption:
         'Find out why our happy customers choose us by following these steps',
       process2Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'how-work',
           width: 594,
           height: 568,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about9.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about9.jpg',
@@ -106,8 +103,6 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
       },
       process2Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             no: '1',
             title: 'Personalized service',
@@ -116,8 +111,6 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             no: '2',
             title: 'Competitive pricing',
@@ -126,8 +119,6 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             no: '3',
             title: 'Timely delivery',
@@ -140,7 +131,7 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-2',
     sequence: 4,
     data: {
@@ -148,15 +139,11 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
       process2Caption:
         'Découvrez pourquoi nos clients satisfaits nous choisissent en suivant ces étapes',
       process2Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'comment-travailler',
           width: 594,
           height: 568,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about9.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about9.jpg',
@@ -165,8 +152,6 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
       },
       process2Processes: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             no: '1',
             title: 'Service personnalisé',
@@ -175,8 +160,6 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             no: '2',
             title: 'Prix compétitifs',
@@ -185,8 +168,6 @@ export const process2Demos: Demo<typeof process2Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             no: '3',
             title: 'Livraison à temps',

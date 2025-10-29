@@ -42,6 +42,7 @@ export const contact4Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -65,20 +66,16 @@ export type Contact4Data = Data<typeof contact4Schema>;
 export const contact4Demos: Demo<typeof contact4Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-1',
     sequence: 10,
     data: {
       contact4Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Let's talk",
           width: 636,
           height: 300,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i5.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i5.png',
@@ -96,20 +93,16 @@ export const contact4Demos: Demo<typeof contact4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-1',
     sequence: 10,
     data: {
       contact4Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Parlons',
           width: 636,
           height: 300,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i5.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i5.png',

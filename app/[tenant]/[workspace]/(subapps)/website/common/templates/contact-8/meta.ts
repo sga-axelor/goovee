@@ -42,12 +42,14 @@ export const contact8Schema = {
       name: 'tileImage1',
       title: 'Tile Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage2',
       title: 'Tile Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -86,7 +88,7 @@ export type Contact8Data = Data<typeof contact8Schema>;
 export const contact8Demos: Demo<typeof contact8Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-13',
     sequence: 9,
     data: {
@@ -98,15 +100,11 @@ export const contact8Demos: Demo<typeof contact8Schema>[] = [
       contact8LinkTitle: 'Join Us',
       contact8LinkHref: '#',
       contact8TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Grow your business',
           width: 465,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about4.jpg',
@@ -114,15 +112,11 @@ export const contact8Demos: Demo<typeof contact8Schema>[] = [
         },
       },
       contact8TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Grow your business',
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about5.jpg',
@@ -136,7 +130,7 @@ export const contact8Demos: Demo<typeof contact8Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-13',
     sequence: 9,
     data: {
@@ -148,15 +142,11 @@ export const contact8Demos: Demo<typeof contact8Schema>[] = [
       contact8LinkTitle: 'Rejoignez-nous',
       contact8LinkHref: '#',
       contact8TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Développez votre entreprise',
           width: 465,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about4.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about4.jpg',
@@ -164,15 +154,11 @@ export const contact8Demos: Demo<typeof contact8Schema>[] = [
         },
       },
       contact8TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Développez votre entreprise',
           width: 1200,
           height: 650,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about5.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about5.jpg',

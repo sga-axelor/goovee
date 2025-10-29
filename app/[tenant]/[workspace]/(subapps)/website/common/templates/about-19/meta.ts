@@ -32,18 +32,21 @@ export const about19Schema = {
       name: 'tileImage1',
       title: 'Tile Image 1',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage2',
       title: 'Tile Image 2',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'tileImage3',
       title: 'Tile Image 3',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -101,20 +104,16 @@ export type About19Data = Data<typeof about19Schema>;
 export const about19Demos: Demo<typeof about19Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-18',
     sequence: 8,
     data: {
       about19TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Creative advertising firm',
           width: 272,
           height: 239,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g12.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g12.jpg',
@@ -122,15 +121,11 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
         },
       },
       about19TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Creative advertising firm',
           width: 272,
           height: 218,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g13.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g13.jpg',
@@ -138,15 +133,11 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
         },
       },
       about19TileImage3: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Creative advertising firm',
           width: 545,
           height: 267,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g11.jpg',
@@ -159,34 +150,24 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
       about19Description:
         'A community refers to a group of people who share common interests, beliefs, values, or goals and interact with one another in a shared location or virtual space. Communities can be found in various forms. A community refers to a group of people who share common interests.',
       about19AboutList1: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title: 'Aenean eu leo quam ornare curabitur blandit tempus.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title: 'Nullam quis risus eget urna mollis ornare donec elit.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {title: 'Etiam porta sem malesuada magna mollis euismod.'},
             },
             {
-              id: '4',
-              version: 0,
               attrs: {title: 'Fermentum massa vivamus faucibus amet euismod.'},
             },
           ],
@@ -194,8 +175,6 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
       },
       about19AboutList2: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Our Vision',
             description:
@@ -203,8 +182,6 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Our Mission',
             description:
@@ -212,8 +189,6 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Our Values',
             description:
@@ -225,20 +200,16 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-18',
     sequence: 8,
     data: {
       about19TileImage1: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Entreprise de publicité créative',
           width: 272,
           height: 239,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g12.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g12.jpg',
@@ -246,15 +217,11 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
         },
       },
       about19TileImage2: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Entreprise de publicité créative',
           width: 272,
           height: 218,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g13.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g13.jpg',
@@ -262,15 +229,11 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
         },
       },
       about19TileImage3: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Entreprise de publicité créative',
           width: 545,
           height: 267,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'g11.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/g11.jpg',
@@ -283,34 +246,24 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
       about19Description:
         'Une communauté fait référence à un groupe de personnes qui partagent des intérêts, des croyances, des valeurs ou des objectifs communs et interagissent les uns avec les autres dans un lieu partagé ou un espace virtuel. Les communautés peuvent être trouvées sous diverses formes. Une communauté fait référence à un groupe de personnes qui partagent des intérêts communs.',
       about19AboutList1: {
-        id: '1',
-        version: 0,
         attrs: {
           name: 'aboutlist',
           bulletColor: 'soft-primary',
           list: [
             {
-              id: '1',
-              version: 0,
               attrs: {
                 title: 'Aenean eu leo quam ornare curabitur blandit tempus.',
               },
             },
             {
-              id: '2',
-              version: 0,
               attrs: {
                 title: 'Nullam quis risus eget urna mollis ornare donec elit.',
               },
             },
             {
-              id: '3',
-              version: 0,
               attrs: {title: 'Etiam porta sem malesuada magna mollis euismod.'},
             },
             {
-              id: '4',
-              version: 0,
               attrs: {title: 'Fermentum massa vivamus faucibus amet euismod.'},
             },
           ],
@@ -318,8 +271,6 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
       },
       about19AboutList2: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Notre vision',
             description:
@@ -327,8 +278,6 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Notre mission',
             description:
@@ -336,8 +285,6 @@ export const about19Demos: Demo<typeof about19Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Nos valeurs',
             description:

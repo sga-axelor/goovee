@@ -47,6 +47,7 @@ export const hero8Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -98,7 +99,7 @@ export type Hero8Data = Data<typeof hero8Schema>;
 export const hero8Demos: Demo<typeof hero8Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-8',
     sequence: 1,
     data: {
@@ -110,15 +111,11 @@ export const hero8Demos: Demo<typeof hero8Schema>[] = [
       hero8ButtonLink1: '#',
       hero8ButtonLink2: '#',
       hero8Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Business process model',
           width: 369,
           height: 471,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'co3.png',
             fileType: 'image/png',
             filePath: '/img/photos/co3.png',
@@ -132,7 +129,7 @@ export const hero8Demos: Demo<typeof hero8Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-8',
     sequence: 1,
     data: {
@@ -144,15 +141,11 @@ export const hero8Demos: Demo<typeof hero8Schema>[] = [
       hero8ButtonLink1: '#',
       hero8ButtonLink2: '#',
       hero8Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'Modèle de processus métier',
           width: 369,
           height: 471,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'co3.png',
             fileType: 'image/png',
             filePath: '/img/photos/co3.png',

@@ -27,6 +27,7 @@ export const facts4Schema = {
       name: 'backgroundImage',
       title: 'Background Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -82,22 +83,18 @@ export type Facts4Data = Data<typeof facts4Schema>;
 export const facts4Demos: Demo<typeof facts4Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'others',
     sequence: 7,
     data: {
       facts4Title: 'Trust us, join 10K+ clients to grow your business.',
       facts4Caption: 'Join Our Community',
       facts4BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'World map background',
           width: 800,
           height: 484,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'map.png',
             fileType: 'image/png',
             filePath: '/img/map.png',
@@ -106,8 +103,6 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
       },
       facts4Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Completed Projects',
             value: 7,
@@ -115,8 +110,6 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Satisfied Customers',
             value: 5,
@@ -124,8 +117,6 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Expert Employees',
             value: 3,
@@ -137,7 +128,7 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'others',
     sequence: 7,
     data: {
@@ -145,15 +136,11 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
         'Faites-nous confiance, rejoignez plus de 10 000 clients pour développer votre entreprise.',
       facts4Caption: 'Rejoignez notre communauté',
       facts4BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Fond de carte du monde',
           width: 800,
           height: 484,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'map.png',
             fileType: 'image/png',
             filePath: '/img/map.png',
@@ -162,8 +149,6 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
       },
       facts4Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Projets terminés',
             value: 7,
@@ -171,8 +156,6 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Clients satisfaits',
             value: 5,
@@ -180,8 +163,6 @@ export const facts4Demos: Demo<typeof facts4Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Employés experts',
             value: 3,

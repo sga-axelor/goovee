@@ -42,6 +42,7 @@ export const contact2Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -65,7 +66,7 @@ export type Contact2Data = Data<typeof contact2Schema>;
 export const contact2Demos: Demo<typeof contact2Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'others',
     sequence: 3,
     data: {
@@ -77,15 +78,11 @@ export const contact2Demos: Demo<typeof contact2Schema>[] = [
       contact2LinkTitle: 'Join Us',
       contact2LinkHref: '#',
       contact2Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: "Let's talk",
           width: 598,
           height: 432,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'tm1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/tm1.jpg',
@@ -96,7 +93,7 @@ export const contact2Demos: Demo<typeof contact2Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'others',
     sequence: 3,
     data: {
@@ -108,15 +105,11 @@ export const contact2Demos: Demo<typeof contact2Schema>[] = [
       contact2LinkTitle: 'Rejoignez-nous',
       contact2LinkHref: '#',
       contact2Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Parlons',
           width: 598,
           height: 432,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'tm1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/tm1.jpg',

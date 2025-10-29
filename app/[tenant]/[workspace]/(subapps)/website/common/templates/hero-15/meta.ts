@@ -72,6 +72,7 @@ export const hero15Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
       ],
@@ -86,14 +87,12 @@ export type Hero15Data = Data<typeof hero15Schema>;
 export const hero15Demos: Demo<typeof hero15Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-15',
     sequence: 1,
     data: {
       hero15Slides: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'We bring solutions to make life easier.',
             description:
@@ -101,15 +100,11 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
             buttonLabel: 'Read More',
             buttonLink: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Hero background',
                 width: 1440,
                 height: 700,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'bg7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/bg7.jpg',
@@ -119,28 +114,20 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'We are trusted by over a million customers.',
             description: 'Here a few reasons why our customers choose us.',
             video: {
-              id: '1',
-              version: 1,
               fileName: 'movie.mp4',
               fileType: 'video/mp4',
               filePath: '/media/movie.mp4',
             },
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Hero background',
                 width: 2800,
                 height: 1150,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'bg8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/bg8.jpg',
@@ -150,8 +137,6 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Just sit and relax.',
             description:
@@ -159,15 +144,11 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
             buttonLabel: 'Contact Us',
             buttonLink: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Hero background',
                 width: 1500,
                 height: 1000,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'bg9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/bg9.jpg',
@@ -181,14 +162,12 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-15',
     sequence: 1,
     data: {
       hero15Slides: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Nous apportons des solutions pour vous faciliter la vie.',
             description:
@@ -196,15 +175,11 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
             buttonLabel: 'Lire la suite',
             buttonLink: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Fond de héros',
                 width: 1440,
                 height: 700,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'bg7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/bg7.jpg',
@@ -214,29 +189,21 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Plus d’un million de clients nous font confiance.',
             description:
               'Voici quelques raisons pour lesquelles nos clients nous choisissent.',
             video: {
-              id: '1',
-              version: 1,
               fileName: 'movie.mp4',
               fileType: 'video/mp4',
               filePath: '/media/movie.mp4',
             },
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Fond de héros',
                 width: 2800,
                 height: 1150,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'bg8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/bg8.jpg',
@@ -246,8 +213,6 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Asseyez-vous et détendez-vous.',
             description:
@@ -255,15 +220,11 @@ export const hero15Demos: Demo<typeof hero15Schema>[] = [
             buttonLabel: 'Contactez-nous',
             buttonLink: '#',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Fond de héros',
                 width: 1500,
                 height: 1000,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'bg9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/bg9.jpg',

@@ -42,12 +42,14 @@ export const hero18Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
       name: 'backgroundImage',
       title: 'Background Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -89,7 +91,7 @@ export type Hero18Data = Data<typeof hero18Schema>;
 export const hero18Demos: Demo<typeof hero18Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-18',
     sequence: 1,
     data: {
@@ -100,15 +102,11 @@ export const hero18Demos: Demo<typeof hero18Schema>[] = [
       hero18ButtonLabel: 'Explore Now',
       hero18ButtonLink: '#',
       hero18Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Networking solutions',
           width: 548,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: '3d2.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/3d2.png',
@@ -116,15 +114,11 @@ export const hero18Demos: Demo<typeof hero18Schema>[] = [
         },
       },
       hero18BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Networking solutions background',
           width: 1372,
           height: 596,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg22.png',
             fileType: 'image/png',
             filePath: '/img/photos/bg22.png',
@@ -135,7 +129,7 @@ export const hero18Demos: Demo<typeof hero18Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-18',
     sequence: 1,
     data: {
@@ -146,15 +140,11 @@ export const hero18Demos: Demo<typeof hero18Schema>[] = [
       hero18ButtonLabel: 'Explorer maintenant',
       hero18ButtonLink: '#',
       hero18Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Solutions de mise en réseau',
           width: 548,
           height: 533,
           image: {
-            id: '1',
-            version: 1,
             fileName: '3d2.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/3d2.png',
@@ -162,15 +152,11 @@ export const hero18Demos: Demo<typeof hero18Schema>[] = [
         },
       },
       hero18BackgroundImage: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Arrière-plan des solutions de mise en réseau',
           width: 1372,
           height: 596,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'bg22.png',
             fileType: 'image/png',
             filePath: '/img/photos/bg22.png',

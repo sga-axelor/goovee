@@ -73,6 +73,7 @@ export const team3Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
         {
@@ -93,7 +94,7 @@ export type Team3Data = Data<typeof team3Schema>;
 export const team3Demos: Demo<typeof team3Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-15',
     sequence: 5,
     data: {
@@ -103,20 +104,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
       team3Navigation: false,
       team3Members: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Tom Accor',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Tom Accor',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t8.jpg',
@@ -127,8 +122,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
             description: "I'm passionate about creating elegant theme.",
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -136,8 +129,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -145,8 +136,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -157,20 +146,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Selina Anteree',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Selina Anteree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t9.jpg',
@@ -181,8 +164,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
             description: "I'm passionate about creating elegant theme.",
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -190,8 +171,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -199,8 +178,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -211,20 +188,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Olocks Pree',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Olocks Pree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t10.jpg',
@@ -235,8 +206,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
             description: "I'm passionate about creating elegant theme.",
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -244,8 +213,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -253,8 +220,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -265,20 +230,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             name: 'Andree Buie',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Andree Buie',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't11.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t11.jpg',
@@ -289,8 +248,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
             description: "I'm passionate about creating elegant theme.",
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -298,8 +255,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -307,8 +262,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -319,20 +272,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             name: 'Cory Smith',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Cory Smith',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t5.jpg',
@@ -343,8 +290,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
             description: "I'm passionate about creating elegant theme.",
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -352,8 +297,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -361,8 +304,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -377,7 +318,7 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-15',
     sequence: 5,
     data: {
@@ -387,20 +328,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
       team3Navigation: false,
       team3Members: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             name: 'Tom Accor',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Tom Accor',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t8.jpg',
@@ -412,8 +347,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
               'Je suis passionné par la création de thèmes élégants.',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -421,8 +354,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -430,8 +361,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -442,20 +371,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             name: 'Selina Anteree',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Selina Anteree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t9.jpg',
@@ -467,8 +390,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
               'Je suis passionné par la création de thèmes élégants.',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -476,8 +397,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -485,8 +404,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -497,20 +414,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             name: 'Olocks Pree',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Olocks Pree',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t10.jpg',
@@ -522,8 +433,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
               'Je suis passionné par la création de thèmes élégants.',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -531,8 +440,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -540,8 +447,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -552,20 +457,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             name: 'Andree Buie',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Andree Buie',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't11.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t11.jpg',
@@ -577,8 +476,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
               'Je suis passionné par la création de thèmes élégants.',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -586,8 +483,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -595,8 +490,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',
@@ -607,20 +500,14 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             name: 'Cory Smith',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Cory Smith',
                 width: 300,
                 height: 300,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 't5.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/avatars/t5.jpg',
@@ -632,8 +519,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
               'Je suis passionné par la création de thèmes élégants.',
             socialLinks: [
               {
-                id: '1',
-                version: 1,
                 attrs: {
                   name: 'Twitter',
                   icon: 'twitter',
@@ -641,8 +526,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '2',
-                version: 1,
                 attrs: {
                   name: 'Facebook',
                   icon: 'facebook-f',
@@ -650,8 +533,6 @@ export const team3Demos: Demo<typeof team3Schema>[] = [
                 },
               },
               {
-                id: '3',
-                version: 1,
                 attrs: {
                   name: 'Dribbble',
                   icon: 'dribbble',

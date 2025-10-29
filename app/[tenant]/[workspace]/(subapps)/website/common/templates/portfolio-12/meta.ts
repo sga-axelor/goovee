@@ -73,12 +73,14 @@ export const portfolio12Schema = {
           name: 'image',
           title: 'Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
         {
           name: 'fullImage',
           title: 'Full Image',
           type: 'json-many-to-one',
+          widgetAttrs: {canNew: 'true', canEdit: 'true'},
           target: 'Image',
         },
       ],
@@ -92,7 +94,7 @@ export type Portfolio12Data = Data<typeof portfolio12Schema>;
 export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-22',
     sequence: 6,
     data: {
@@ -102,22 +104,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
       portfolio12Navigation: false,
       portfolio12PortfolioList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Stationary',
             title: 'Cras Fermentum Sem',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd7.jpg',
@@ -125,15 +121,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd7-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd7-full.jpg',
@@ -143,22 +135,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Magazine, Book',
             title: 'Mollis Ipsum Mattis',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd8.jpg',
@@ -166,15 +152,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd8-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd8-full.jpg',
@@ -184,22 +166,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Packaging',
             title: 'Ipsum Ultricies Cursus',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd9.jpg',
@@ -207,15 +183,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd9-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd9-full.jpg',
@@ -225,22 +197,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Stationary, Branding',
             title: 'Inceptos Euismod Egestas',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd10.jpg',
@@ -248,15 +214,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd10-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd10-full.jpg',
@@ -266,22 +228,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Packaging',
             title: 'Ipsum Mollis Vulputate',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd11.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd11.jpg',
@@ -289,15 +245,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Project',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd11-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd11-full.jpg',
@@ -311,7 +263,7 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-22',
     sequence: 6,
     data: {
@@ -321,22 +273,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
       portfolio12Navigation: false,
       portfolio12PortfolioList: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Papeterie',
             title: 'Cras Fermentum Sem',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd7.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd7.jpg',
@@ -344,15 +290,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd7-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd7-full.jpg',
@@ -362,22 +304,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Magazine, Livre',
             title: 'Mollis Ipsum Mattis',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd8.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd8.jpg',
@@ -385,15 +321,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd8-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd8-full.jpg',
@@ -403,22 +335,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Emballage',
             title: 'Ipsum Ultricies Cursus',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd9.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd9.jpg',
@@ -426,15 +352,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd9-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd9-full.jpg',
@@ -444,22 +366,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Papeterie, Marque',
             title: 'Inceptos Euismod Egestas',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd10.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd10.jpg',
@@ -467,15 +383,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd10-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd10-full.jpg',
@@ -485,22 +397,16 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             link: '/single-project-1',
             category: 'Emballage',
             title: 'Ipsum Mollis Vulputate',
             image: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 380,
                 height: 408,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd11.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd11.jpg',
@@ -508,15 +414,11 @@ export const portfolio12Demos: Demo<typeof portfolio12Schema>[] = [
               },
             },
             fullImage: {
-              id: '1',
-              version: 0,
               attrs: {
                 alt: 'Projet',
                 width: 1800,
                 height: 1939,
                 image: {
-                  id: '1',
-                  version: 1,
                   fileName: 'pd11-full.jpg',
                   fileType: 'image/jpeg',
                   filePath: '/img/photos/pd11-full.jpg',

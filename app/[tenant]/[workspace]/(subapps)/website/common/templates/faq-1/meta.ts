@@ -26,6 +26,7 @@ export const faq1Schema = {
       name: 'thumbnail',
       title: 'Thumbnail',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -66,27 +67,21 @@ export type Faq1Data = Data<typeof faq1Schema>;
 export const faq1Demos: Demo<typeof faq1Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-6',
     sequence: 4,
     data: {
       faq1Media: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       faq1Thumbnail: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'FAQ video thumbnail',
           width: 995,
           height: 604,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'v1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/v1.jpg',
@@ -98,8 +93,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
       faq1Caption: 'FAQ',
       faq1Questions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             heading: 'How often should I get a physical examination?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -107,8 +100,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             heading: 'How can I access mental health services?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -116,8 +107,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             heading: 'What should I do if I have a medical emergency?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -125,8 +114,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             heading: 'What is telemedicine, and how does it work?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -134,8 +121,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             heading: 'How can I quit smoking or other tobacco use?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -143,8 +128,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '6',
-          version: 0,
           attrs: {
             heading: 'How can I stay safe and healthy while traveling?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -156,27 +139,21 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-6',
     sequence: 4,
     data: {
       faq1Media: {
-        id: '1',
-        version: 1,
         fileName: 'movie.mp4',
         fileType: 'video/mp4',
         filePath: '/media/movie.mp4',
       },
       faq1Thumbnail: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Vignette vidéo FAQ',
           width: 995,
           height: 604,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'v1.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/v1.jpg',
@@ -188,8 +165,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
       faq1Caption: 'FAQ',
       faq1Questions: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             heading: 'À quelle fréquence dois-je passer un examen physique ?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -197,8 +172,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             heading: 'Comment puis-je accéder aux services de santé mentale ?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -206,8 +179,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             heading: 'Que dois-je faire en cas d’urgence médicale ?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -215,8 +186,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '4',
-          version: 0,
           attrs: {
             heading: 'Qu’est-ce que la télémédecine et comment ça marche ?',
             body: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Cras justo odio, dapibus ac facilisis.',
@@ -224,8 +193,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '5',
-          version: 0,
           attrs: {
             heading:
               'Comment puis-je arrêter de fumer ou de consommer d’autres produits du tabac ?',
@@ -234,8 +201,6 @@ export const faq1Demos: Demo<typeof faq1Schema>[] = [
           },
         },
         {
-          id: '6',
-          version: 0,
           attrs: {
             heading:
               'Comment puis-je rester en sécurité et en bonne santé en voyage ?',

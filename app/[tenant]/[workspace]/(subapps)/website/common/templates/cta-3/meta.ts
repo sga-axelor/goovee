@@ -37,6 +37,7 @@ export const cta3Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -61,7 +62,7 @@ export type Cta3Data = Data<typeof cta3Schema>;
 export const cta3Demos: Demo<typeof cta3Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'others',
     sequence: 5,
     data: {
@@ -71,15 +72,11 @@ export const cta3Demos: Demo<typeof cta3Schema>[] = [
       cta3LinkTitle: 'Join Us',
       cta3LinkHref: '#',
       cta3Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'World map background',
           width: 800,
           height: 484,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'map.png',
             fileType: 'image/png',
             filePath: '/img/map.png',
@@ -90,7 +87,7 @@ export const cta3Demos: Demo<typeof cta3Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'others',
     sequence: 5,
     data: {
@@ -100,15 +97,11 @@ export const cta3Demos: Demo<typeof cta3Schema>[] = [
       cta3LinkTitle: 'Rejoignez-nous',
       cta3LinkHref: '#',
       cta3Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Fond de carte du monde',
           width: 800,
           height: 484,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'map.png',
             fileType: 'image/png',
             filePath: '/img/map.png',

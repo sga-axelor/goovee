@@ -47,6 +47,7 @@ export const hero4Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -71,7 +72,7 @@ export type Hero4Data = Data<typeof hero4Schema>;
 export const hero4Demos: Demo<typeof hero4Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-4',
     sequence: 1,
     data: {
@@ -84,15 +85,11 @@ export const hero4Demos: Demo<typeof hero4Schema>[] = [
       hero4ButtonLink1: '#',
       hero4ButtonLink2: '#',
       hero4Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'About us',
           width: 720,
           height: 784,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about16.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about16.jpg',
@@ -103,7 +100,7 @@ export const hero4Demos: Demo<typeof hero4Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-4',
     sequence: 1,
     data: {
@@ -115,15 +112,11 @@ export const hero4Demos: Demo<typeof hero4Schema>[] = [
       hero4ButtonLink1: '#',
       hero4ButtonLink2: '#',
       hero4Image: {
-        id: '1',
-        version: 1,
         attrs: {
           alt: 'About us',
           width: 720,
           height: 784,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'about16.jpg',
             fileType: 'image/jpeg',
             filePath: '/img/photos/about16.jpg',

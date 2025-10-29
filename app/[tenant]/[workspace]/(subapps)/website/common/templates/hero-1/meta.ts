@@ -37,6 +37,7 @@ export const hero1Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -60,7 +61,7 @@ export type Hero1Data = Data<typeof hero1Schema>;
 export const hero1Demos: Demo<typeof hero1Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-1',
     sequence: 1,
     data: {
@@ -70,15 +71,11 @@ export const hero1Demos: Demo<typeof hero1Schema>[] = [
       hero1ButtonText: 'Try It For Free',
       hero1ButtonLink: '#',
       hero1Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'hero',
           width: 628,
           height: 426,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i2.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i2.png',
@@ -89,7 +86,7 @@ export const hero1Demos: Demo<typeof hero1Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-1',
     sequence: 1,
     data: {
@@ -99,15 +96,11 @@ export const hero1Demos: Demo<typeof hero1Schema>[] = [
       hero1ButtonText: 'Essayez-le gratuitement',
       hero1ButtonLink: '#',
       hero1Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'héro',
           width: 628,
           height: 426,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'i2.png',
             fileType: 'image/png',
             filePath: '/img/illustrations/i2.png',

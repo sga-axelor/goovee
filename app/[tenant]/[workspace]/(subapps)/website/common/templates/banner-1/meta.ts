@@ -27,6 +27,7 @@ export const banner1Schema = {
       name: 'image',
       title: 'Image',
       type: 'json-many-to-one',
+      widgetAttrs: {canNew: 'true', canEdit: 'true'},
       target: 'Image',
     },
     {
@@ -60,7 +61,7 @@ export type Banner1Data = Data<typeof banner1Schema>;
 export const banner1Demos: Demo<typeof banner1Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-6',
     sequence: 6,
     data: {
@@ -69,15 +70,11 @@ export const banner1Demos: Demo<typeof banner1Schema>[] = [
       banner1Title:
         'Lighthouse is currently accessible to download from the App Store as well as the Google Play Store.',
       banner1Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Lighthouse app on mobile devices',
           width: 740,
           height: 726,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'devices2.png',
             fileType: 'image/png',
             filePath: '/img/photos/devices2.png',
@@ -90,7 +87,7 @@ export const banner1Demos: Demo<typeof banner1Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-6',
     sequence: 6,
     data: {
@@ -99,15 +96,11 @@ export const banner1Demos: Demo<typeof banner1Schema>[] = [
       banner1Title:
         'Lighthouse est actuellement accessible au téléchargement sur l’App Store ainsi que sur le Google Play Store.',
       banner1Image: {
-        id: '1',
-        version: 0,
         attrs: {
           alt: 'Application Lighthouse sur appareils mobiles',
           width: 740,
           height: 726,
           image: {
-            id: '1',
-            version: 1,
             fileName: 'devices2.png',
             fileType: 'image/png',
             filePath: '/img/photos/devices2.png',

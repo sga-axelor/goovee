@@ -68,7 +68,7 @@ export type Facts10Data = Data<typeof facts10Schema>;
 export const facts10Demos: Demo<typeof facts10Schema>[] = [
   {
     language: 'en_US',
-    site: 'en',
+    site: 'lighthouse-en',
     page: 'demo-14',
     sequence: 5,
     data: {
@@ -76,24 +76,18 @@ export const facts10Demos: Demo<typeof facts10Schema>[] = [
       facts10Caption: 'Company Facts',
       facts10Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Completed Projects',
             amount: 10000,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Happy Clients',
             amount: 5000,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Awards Won',
             amount: 265,
@@ -104,7 +98,7 @@ export const facts10Demos: Demo<typeof facts10Schema>[] = [
   },
   {
     language: 'fr_FR',
-    site: 'fr',
+    site: 'lighthouse-fr',
     page: 'demo-14',
     sequence: 5,
     data: {
@@ -112,24 +106,18 @@ export const facts10Demos: Demo<typeof facts10Schema>[] = [
       facts10Caption: 'Faits sur l’entreprise',
       facts10Facts: [
         {
-          id: '1',
-          version: 0,
           attrs: {
             title: 'Projets terminés',
             amount: 10000,
           },
         },
         {
-          id: '2',
-          version: 0,
           attrs: {
             title: 'Clients heureux',
             amount: 5000,
           },
         },
         {
-          id: '3',
-          version: 0,
           attrs: {
             title: 'Récompenses gagnées',
             amount: 265,
