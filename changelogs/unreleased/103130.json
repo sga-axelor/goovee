@@ -1,0 +1,6 @@
+{
+  "title": "Add Support for Managing Addresses for Contacts",
+  "type": "feature",
+  "description": "Ensures consistent address handling across Partners and Contacts",
+  "scope": ["users"]
+}
