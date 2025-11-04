@@ -762,5 +762,7 @@
   "app-shop": "E-Shop",
   "app-survey": "Forms",
   "app-ticketing": "Helpdesk",
-  "app-website": "Content"
+  "app-website": "Content",
+  "Your cart is empty. Please add items before placing an order.": "Your cart is empty. Please add items before placing an order.",
+  "Order creation failed. Please try again.": "Order creation failed. Please try again."
 }
