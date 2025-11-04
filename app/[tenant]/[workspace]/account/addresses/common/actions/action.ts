@@ -81,7 +81,12 @@ export async function updateDefaultAddress({
     ? session?.user.mainPartnerId!
     : session?.user.id!;
 
-  return updateHandler(id, userId, tenantId, isDefault).then(clone);
+  return updateHandler({
+    partnerAddressId: id,
+    partnerId: userId,
+    tenantId,
+    isDefault,
+  }).then(clone);
 }
 
 export async function deleteAddress(id: PartnerAddress['id']) {

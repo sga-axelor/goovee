@@ -281,12 +281,17 @@ export async function findDefaultDeliveryAddress(
   return result;
 }
 
-export async function updateDefaultDeliveryAddress(
-  partnerAddressId: PartnerAddress['id'],
-  partnerId: Partner['id'],
-  tenantId: Tenant['id'],
-  isDefault?: boolean,
-) {
+export async function updateDefaultDeliveryAddress({
+  partnerAddressId,
+  partnerId,
+  tenantId,
+  isDefault,
+}: {
+  partnerAddressId: PartnerAddress['id'];
+  partnerId: Partner['id'];
+  tenantId: Tenant['id'];
+  isDefault?: boolean;
+}) {
   if (!(partnerAddressId && partnerId && tenantId)) return null;
 
   const client = await manager.getClient(tenantId);
@@ -377,12 +382,17 @@ export async function findDefaultInvoicingAddress(
   return result;
 }
 
-export async function updateDefaultInvoicingAddress(
-  partnerAddressId: PartnerAddress['id'],
-  partnerId: Partner['id'],
-  tenantId: Tenant['id'],
-  isDefault?: boolean,
-) {
+export async function updateDefaultInvoicingAddress({
+  partnerAddressId,
+  partnerId,
+  tenantId,
+  isDefault,
+}: {
+  partnerAddressId: PartnerAddress['id'];
+  partnerId: Partner['id'];
+  tenantId: Tenant['id'];
+  isDefault?: boolean;
+}) {
   if (!(partnerAddressId && partnerId && tenantId)) return null;
 
   const client = await manager.getClient(tenantId);
