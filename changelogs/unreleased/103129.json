@@ -1,6 +1,0 @@
-{
-  "title": "Refine order creation error messages",
-  "type": "change",
-  "description": "Updated user-facing error messages during order creation to be clearer and more helpful across different failure scenarios.",
-  "scope": ["shop"]
-}

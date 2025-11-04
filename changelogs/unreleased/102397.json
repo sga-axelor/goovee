@@ -1,5 +1,0 @@
-{
-  "title": "Fix duplicate default address",
-  "type": "fix",
-  "scope": ["core"]
-}
