@@ -186,11 +186,10 @@ async function createOrder({
     });
 
     if (res?.data?.status === -1) {
+      console.error('Order creation failed: ', res?.data?.message);
       return {
         error: true,
-        message: await t(
-          res?.data?.message ?? 'Order creation failed. Please try again.',
-        ),
+        message: await t('Order creation failed. Please try again.'),
       };
     }
 
