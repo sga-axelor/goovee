@@ -1,5 +1,5 @@
 import {manager, type Tenant} from '@/tenant';
-import {PartnerAddress, Partner, ID, City} from '@/types';
+import {PartnerAddress, Partner, ID} from '@/types';
 
 const addressFields = {
   address: {
@@ -27,10 +27,15 @@ const addressFields = {
   isInvoicingAddr: true,
 };
 
-export async function findPartnerAddress(
-  addressId: PartnerAddress['id'],
-  tenantId: Tenant['id'],
-) {
+export async function findPartnerAddress({
+  partnerId,
+  addressId,
+  tenantId,
+}: {
+  partnerId: Partner['id'];
+  addressId: PartnerAddress['id'];
+  tenantId: Tenant['id'];
+}) {
   if (!(addressId && tenantId)) return null;
 
   const client = await manager.getClient(tenantId);
@@ -38,6 +43,9 @@ export async function findPartnerAddress(
   const address = await client.aOSPartnerAddress.findOne({
     where: {
       id: addressId,
+      partner: {
+        id: partnerId,
+      },
     },
     select: addressFields,
   });
@@ -100,7 +108,11 @@ export async function updatePartnerAddress(
 
   if (!(partnerId && tenantId && partnerAddressId)) return null;
 
-  const partnerAddress = await findPartnerAddress(partnerAddressId, tenantId);
+  const partnerAddress = await findPartnerAddress({
+    partnerId,
+    addressId: partnerAddressId,
+    tenantId,
+  });
 
   if (!partnerAddress) return null;
 
