@@ -7,13 +7,12 @@ import {promisify} from 'util';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
-
 import {manager} from '@/lib/core/tenant';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/middleware';
 import {getFileSizeText} from '@/utils/files';
 import {getTranslation, t} from '@/locale/server';
-import {clone} from '@/utils';
+import {clone, getPartnerId} from '@/utils';
 import {
   PartnerTypeMap,
   findGooveeUserByEmail,
@@ -358,7 +357,7 @@ export async function generateOTPForUpdate({
     return error(await t('Bad request'));
   }
 
-  const partnerId = user.isContact ? user.mainPartnerId : user.id;
+  const partnerId = getPartnerId(user);
 
   const partner = await findPartnerById(partnerId!, tenantId);
 
