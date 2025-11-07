@@ -13,7 +13,7 @@ import {
   findPartnerAddress,
 } from '@/orm/address';
 import type {ID} from '@/types';
-import {clone, getUserId} from '@/utils';
+import {clone, getPartnerId} from '@/utils';
 
 export async function findDefaultInvoicing() {
   const session = await getSession();
@@ -23,7 +23,7 @@ export async function findDefaultInvoicing() {
 
   if (!(user && tenantId)) return null;
 
-  const userId = getUserId(user);
+  const userId = getPartnerId(user);
 
   return findDefaultInvoicingAddress(userId, tenantId).then(clone);
 }
@@ -36,7 +36,7 @@ export async function findDefaultDelivery() {
 
   if (!(user && tenantId)) return null;
 
-  const userId = getUserId(user);
+  const userId = getPartnerId(user);
 
   return findDefaultDeliveryAddress(userId, tenantId).then(clone);
 }
@@ -49,7 +49,7 @@ export async function findAddress(id: ID) {
 
   if (!(user && tenantId)) return null;
 
-  const userId = getUserId(user);
+  const userId = getPartnerId(user);
 
   return findPartnerAddress({partnerId: userId, addressId: id, tenantId}).then(
     clone,
@@ -64,7 +64,7 @@ export async function fetchDeliveryAddresses() {
 
   if (!(user && tenantId)) return null;
 
-  const userId = getUserId(user);
+  const userId = getPartnerId(user);
 
   return findDeliveryAddresses(userId, tenantId).then(clone);
 }
@@ -77,7 +77,7 @@ export async function fetchInvoicingAddresses() {
 
   if (!(user && tenantId)) return null;
 
-  const userId = getUserId(user);
+  const userId = getPartnerId(user);
 
   return findInvoicingAddresses(userId, tenantId).then(clone);
 }

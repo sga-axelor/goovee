@@ -3,7 +3,7 @@ import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORRS ---- //
 import {ADDRESS_TYPE, SUBAPP_PAGE} from '@/constants';
-import {clone, getUserId} from '@/utils';
+import {clone, getPartnerId} from '@/utils';
 import {getSession} from '@/auth';
 import {findCountries, findPartnerAddress} from '@/orm/address';
 import {findGooveeUserByEmail, PartnerTypeMap} from '@/orm/partner';
@@ -52,7 +52,7 @@ export default async function Page({
 
   const countries: any = await findCountries(tenant).then(clone);
 
-  const userId = getUserId(user);
+  const userId = getPartnerId(user);
 
   const partnerAddress = await findPartnerAddress({
     partnerId: userId,

@@ -8,7 +8,7 @@ import {t} from '@/locale/server';
 import {ADDRESS_TYPE, SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import {clone, getUserId} from '@/utils';
+import {clone, getPartnerId} from '@/utils';
 import {
   updateDefaultDeliveryAddress,
   updateDefaultInvoicingAddress,
@@ -30,7 +30,7 @@ export async function createAddress(values: Partial<PartnerAddress>) {
 
   if (!(session && tenantId)) return null;
 
-  const userId = getUserId(session?.user);
+  const userId = getPartnerId(session?.user);
 
   const address = await createPartnerAddress(userId, values, tenantId).then(
     clone,
@@ -45,7 +45,7 @@ export async function updateAddress(values: PartnerAddress) {
 
   if (!(session && tenantId)) return null;
 
-  const userId = getUserId(session?.user);
+  const userId = getPartnerId(session?.user);
 
   const address = await updatePartnerAddress(userId, values, tenantId).then(
     clone,
@@ -73,7 +73,7 @@ export async function updateDefaultAddress({
       ? updateDefaultDeliveryAddress
       : updateDefaultInvoicingAddress;
 
-  const userId = getUserId(session?.user);
+  const userId = getPartnerId(session?.user);
 
   return updateHandler({
     partnerAddressId: id,
@@ -90,7 +90,7 @@ export async function deleteAddress(id: PartnerAddress['id']) {
   if (!(session?.user && tenantId && id)) return null;
 
   const {user} = session;
-  const userId = getUserId(user);
+  const userId = getPartnerId(user);
 
   const address = await deletePartnerAddress(userId, id, tenantId).then(clone);
 
