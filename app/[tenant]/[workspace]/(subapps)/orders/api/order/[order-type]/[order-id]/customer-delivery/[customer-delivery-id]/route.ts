@@ -11,6 +11,8 @@ import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findOrder} from '@/subapps/orders/common/orm/orders';
+import {OrderType} from '@/subapps/orders/common/types/orders';
+import {ORDER} from '@/subapps/orders/common/constants/orders';
 
 export async function GET(
   request: NextRequest,
@@ -20,25 +22,30 @@ export async function GET(
     params: {
       tenant: string;
       workspace: string;
+      'order-type': OrderType;
       'order-id': string;
       'customer-delivery-id': string;
     };
   },
 ) {
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
-  const {'order-id': orderId, 'customer-delivery-id': customerDeliveryId} =
-    params;
+  const {
+    'order-type': orderType,
+    'order-id': orderId,
+    'customer-delivery-id': customerDeliveryId,
+  } = params;
+  const isCompleted = orderType === ORDER.COMPLETED;
 
   const session = await getSession();
 
-  const user = session!.user;
-
-  if (!user) {
+  if (!session?.user) {
     return new NextResponse('Unauthorized', {status: 401});
   }
 
+  const user = session.user;
+
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
     tenantId,
   });
@@ -55,7 +62,7 @@ export async function GET(
   });
 
   if (!subapp?.installed) {
-    return new NextResponse('Unauthorized', {status: 401});
+    return new NextResponse('Access denied', {status: 401});
   }
 
   const orderWhereClause = getWhereClauseForEntity({
@@ -70,6 +77,7 @@ export async function GET(
     tenantId,
     workspaceURL,
     params: {where: orderWhereClause},
+    isCompleted,
   });
 
   if (!order) {
@@ -81,13 +89,13 @@ export async function GET(
   );
 
   if (!customerDelivery) {
-    return new NextResponse('Invoice not found', {status: 404});
+    return new NextResponse('Customer delivery not found', {status: 404});
   }
 
   const file = await findLatestDMSFileByName({
     tenant: tenantId,
     user,
-    relatedId: customerDeliveryId,
+    relatedId: customerDelivery.id,
     relatedModel: RELATED_MODELS.STOCK_MOVE,
     name: customerDelivery.stockMoveSeq || '',
   });
