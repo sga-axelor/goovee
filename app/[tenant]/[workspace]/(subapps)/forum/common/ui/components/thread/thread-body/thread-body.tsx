@@ -4,7 +4,7 @@ import {MdOutlineMoreHoriz} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {DATE_FORMATS, NOT_INTERESTED, REPORT, SUBAPP_CODES} from '@/constants';
+import {NOT_INTERESTED, REPORT, SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
 import {
   Avatar,
@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from '@/ui/components';
 import {getPartnerImageURL} from '@/utils/files';
-import {formatDate} from '@/locale/formatters';
+import {formatDateTime} from '@/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {SEE_LESS, SEE_MORE} from '@/subapps/forum/common/constants';
@@ -82,7 +82,10 @@ export const ThreadBody = ({
                 {author?.simpleFullName}
               </div>
               <div className="text-xs">
-                {formatDate(postDateT, {dateFormat: DATE_FORMATS.full_date})}
+                {formatDateTime(postDateT, {
+                  dateFormat: 'MMMM D YYYY,',
+                  timeFormat: ' h:mm a',
+                })}
               </div>
             </div>
           </div>

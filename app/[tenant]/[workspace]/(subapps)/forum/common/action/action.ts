@@ -15,7 +15,6 @@ import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/auth';
 import {getFileSizeText} from '@/utils/files';
-import {getCurrentDateTime} from '@/utils/date';
 import {manager} from '@/tenant';
 import {TENANT_HEADER} from '@/middleware';
 import {filterPrivate} from '@/orm/filter';
@@ -498,8 +497,7 @@ export async function addPost({
     );
   }
 
-  const publicationDateTime: any = getCurrentDateTime();
-
+  const timeStamp = new Date();
   try {
     const post = await client.aOSPortalForumPost.create({
       select: {
@@ -517,8 +515,8 @@ export async function addPost({
         createdOn: true,
       },
       data: {
-        postDateT: publicationDateTime,
-        createdOn: publicationDateTime,
+        postDateT: timeStamp,
+        createdOn: timeStamp,
         forumGroup: {
           where: {
             ...(await filterPrivate({user, tenantId})),
