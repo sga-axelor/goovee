@@ -1,6 +1,6 @@
 {
-  "title": "Enable contact-based address selection in Shop and Quotations",
+  "title": "Restrict Contact Address Selection to Partner Addresses in Shop and Quotations",
   "type": "fix",
-  "description": "Allow address selection based on the Contact associated with a transaction instead of being restricted to the Partner level. Added `getPartnerId` utility to ensure accurate partner resolution for contact-based transactions, improving flexibility and accuracy in Shop and Quotations modules.",
+  "description": "Implemented strict address filtering in Shop and Quotations. Contacts are now restricted to selecting only addresses associated with their parent Partner.",
   "scope": ["core", "shop", "quotations"]
 }
